@@ -4051,6 +4051,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   ratio reject, and a widened qualitative fallback. Each was subsumed by a guard that IS pinned,
   and two could cause FALSE NEGATIVES (suppressing a real guide that merely shares a sentence with
   an announcement or a ratio). A guard that cannot be shown to fire does not ship.
+  **REVIEW FINDING (operator, before merge): the refusal VANISHED SILENTLY — item 22's exact
+  prohibition, inside the PR that cites item 22.** Refusing BellRing's ambiguous sentence was
+  right; dropping it without trace was not. "We found guidance we could not parse safely" is a
+  DIFFERENT FACT from "this release states no guidance", and a reader whose guidance picture is
+  incomplete needs to know which one they have. The refusal now emits an attributed caveat naming
+  the competing metrics, quoting the sentence and citing the accession.
+  **AND IT HAD TO CROSS A TIER TO GET THERE.** `qa_flags` is the machine tier by design
+  (`render.py`: "dev/JSON only") and a release's own flags roll up NOWHERE — so filing the note
+  there would have left it invisible on every surface, satisfying the letter of the rule and none
+  of it. `guidance_refusal_flags()` lifts ONLY refusals into the caveat channel; the sibling
+  `no anchored pattern matched` flags stay put, because "this release stated no guidance" is
+  ordinary across the fleet and promoting it would drown the channel. A refused release is also no
+  longer ALSO reported as stating no guidance — the two facts are mutually exclusive.
   **REACHES A NAME ONLY ON REBUILD** — no committed artifact changes in the PR.
 - **SEQUENCING (operator): do NOT re-assemble CNXC until this ships** — its quarterly-as-annual
   period comes from the extractor, so re-assembling first re-extracts the same defect twice.

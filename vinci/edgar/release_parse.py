@@ -353,6 +353,9 @@ def _guide_metric(raw: str) -> str:
 _METRIC_WORDS = re.compile(
     r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
     r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin", re.I)
+# The prefix a guidance REFUSAL carries. Shared so the rollup in `vinci.dossier.mechanical`
+# selects on the same literal that is emitted here, rather than on a copy that can drift.
+GUIDANCE_REFUSAL_PREFIX = "Guidance stated but not attributable"
 _QUARTER = re.compile(r"\b(first|second|third|fourth)\s+quarter\b", re.I)
 _Q_NUM = {"first": 1, "second": 2, "third": 3, "fourth": 4}
 # A forward statement ABOUT THE BUSINESS. "updated its financial outlook" is a statement about the
@@ -401,9 +404,18 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
     return _period_near(text, start, end) or "next-fy"
 
 
-def _guidance(text: str, src: str) -> list[GuidanceItem]:
+def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:
+    """Guidance items from a release. ``notes`` collects REFUSALS — sentences that plainly state a
+    guidance range which cannot be attributed safely.
+
+    A REFUSAL MUST NOT BE SILENT (item 22). "We found guidance and could not parse it" is a
+    different fact from "this release states no guidance", and a reader whose guidance picture is
+    incomplete needs to know which one they have. The existing ``no anchored pattern matched`` flag
+    already covers the second; before this, the first vanished entirely — leaving no trace that a
+    number had been seen and declined, which is the absent-and-silent shape the rule prohibits."""
     out: list[GuidanceItem] = []
     seen: set[str] = set()
+    notes = notes if notes is not None else []
     for m in _GUIDE_RANGE.finditer(text):
         metric = _guide_metric(m["metric"])
         low, high = _money(m["low"]), _money(m["high"])
@@ -414,8 +426,14 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         # Adjusted EBITDA* expected to range between $2.41-$2.49 billion": TWO metrics, ONE range.
         # The regex binds it to whichever sits nearer the introducer, which produced an "adjusted
         # EBITDA" guide of $2,410–2,490M against a business earning ~$490M — a ~5x error stated
-        # confidently. A reader cannot resolve that sentence either, so neither may we.
-        if len({_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}) > 1:
+        # confidently. A reader cannot resolve that sentence either, so neither may we — but the
+        # refusal is ATTRIBUTED, with the sentence, so the reader can resolve it from the filing.
+        named = {_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}
+        if len(named) > 1:
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — one range is shared by "
+                f"{len(named)} metrics ({', '.join(sorted(named))}), so which it governs cannot be "
+                f"read from the sentence; verify against the filing: \"{vb[:150]}\" ({src})")
             continue
         # UNITS: normalise to $M. Concentrix guides revenue in BILLIONS ("$2.465 to $2.49 billion")
         # while every other name guides in millions, and the composer prints the bare number — so an
@@ -694,12 +712,15 @@ def operating_drivers(text: str, *, source_ref: str) -> list[OperatingDriver]:
 def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     """Parse ONE 99.1 exhibit's normalized text into a source-bound ReleaseExtract. Each empty
     section fails loud with a qa_flag — a miss is UNKNOWN, never a fabricated value."""
-    guidance = _guidance(text, source_ref)
+    guidance_notes: list[str] = []
+    guidance = _guidance(text, source_ref, guidance_notes)
     reconciliation = _reconciliation(text, source_ref, _release_period(text))
     one_offs = _one_offs(text, source_ref)
     event_impacts = _event_impacts(text, source_ref)
-    flags: list[str] = []
-    if not guidance:
+    flags: list[str] = list(guidance_notes)
+    if not guidance and not guidance_notes:
+        # ONLY when nothing was found at all. A release whose guidance was FOUND and refused states
+        # guidance — saying "no anchored pattern matched" there would be the false-UNKNOWN shape.
         flags.append(f"no anchored pattern matched — guidance/outlook: {source_ref}")
     if not reconciliation:
         flags.append(f"no anchored pattern matched — non-GAAP reconciliation: {source_ref}")

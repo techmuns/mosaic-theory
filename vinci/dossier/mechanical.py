@@ -14,6 +14,7 @@ import re
 import statistics
 import time
 import xml.etree.ElementTree as ET
+from collections.abc import Sequence
 from datetime import date, timedelta
 from typing import Any, TypeVar
 
@@ -57,6 +58,7 @@ from vinci.dossier.schemas import (
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
@@ -420,6 +422,25 @@ def _fmt_driver(metric: str, value: float) -> str:
     if "eps" in metric:
         return f"-${abs(value):.2f}" if value < 0 else f"${value:.2f}"
     return f"-${abs(value):,.1f}M" if value < 0 else f"${value:,.1f}M"
+
+
+def guidance_refusal_flags(releases: Sequence[ReleaseExtract]) -> list[str]:
+    """(item 22) Lift GUIDANCE REFUSALS off the releases so they reach the READER.
+
+    ``qa_flags`` is the machine tier by design (``render.py``: "dev/JSON only"), and a release's
+    own flags roll up nowhere — so a refused guidance sentence was invisible on every surface, the
+    absent-and-silent shape the visible-absence rule prohibits. ``flags.partition`` routes anything
+    off the QA hide-list to the human caveat channel, which is where "your guidance picture is
+    incomplete, and here is the sentence" belongs.
+
+    ONLY the refusals. The sibling ``no anchored pattern matched`` flags say a release stated no
+    guidance at all — ordinary across the fleet, and promoting those would drown the channel and
+    make the real refusals harder to see, not easier.
+
+    A named function rather than an inline comprehension so the routing has a behavioural pin:
+    inlined, the only available test was a source-text assertion."""
+    return [f for r in releases for f in r.qa_flags
+            if f.startswith(GUIDANCE_REFUSAL_PREFIX)]
 
 
 def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
@@ -2602,6 +2623,7 @@ def assemble_mechanical(
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
     mech = mech.model_copy(update={"catalyst_calendar": calendar})
     flags: list[str] = list(primary.qa_flags)
+    flags += guidance_refusal_flags(primary.releases)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None

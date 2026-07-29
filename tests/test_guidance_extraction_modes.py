@@ -24,9 +24,10 @@ from __future__ import annotations
 
 import pytest
 
-from vinci.dossier.mechanical import _fmt_guide_range
+from vinci.dossier.flags import is_qa, partition
+from vinci.dossier.mechanical import _fmt_guide_range, guidance_refusal_flags
 from vinci.dossier.schemas import GUIDANCE_UNITS, GuidanceItem
-from vinci.edgar.release_parse import _guidance
+from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX, _guidance
 
 
 def parse(sentence: str) -> list[GuidanceItem]:
@@ -98,6 +99,69 @@ def test_two_metrics_sharing_one_range_are_refused_not_guessed() -> None:
     A reader cannot resolve that sentence either. Refusing is the only honest answer."""
     assert parse("Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between "
                  "$2.41-$2.49 billion") == []
+
+
+def test_the_refusal_is_visible_and_attributed_never_silent() -> None:
+    """REVIEW FINDING (operator, before merge). Refusing the sentence was right; DROPPING it
+    silently was item 22's exact prohibition — "we found guidance we could not parse safely" is a
+    different fact from "this release states no guidance", and a reader whose guidance picture is
+    incomplete needs to know which one they have.
+
+    The note must carry the SENTENCE and the ACCESSION, so the reader can resolve from the filing
+    what the parser would not guess at."""
+    notes: list[str] = []
+    src = "8-K 0001772016-26-000045 EX-99.1"
+    got = _guidance(". Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between "
+                    "$2.41-$2.49 billion", src, notes)
+    assert got == []
+    assert len(notes) == 1, "the refusal left no trace"
+    n = notes[0]
+    assert "not attributable" in n
+    assert "net sales" in n and "adjusted ebitda" in n, "the note must name the competing metrics"
+    assert "$2.41-$2.49 billion" in n, "the note must carry the sentence the reader must resolve"
+    assert src in n, "the note must be source-bound"
+
+
+def test_the_refusal_reaches_the_reader_not_only_the_json() -> None:
+    """`qa_flags` is the machine tier by design ("dev/JSON only"), and a release's own flags roll
+    up nowhere — so a note filed there would still be invisible on every surface. The partition
+    sends anything off the QA hide-list to the human caveat channel; this pins that routing."""
+    notes: list[str] = []
+    _guidance(". Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between "
+              "$2.41-$2.49 billion", "8-K x", notes)
+    assert not is_qa(notes[0]), "the refusal was routed to the machine-only tier"
+    caveats, qa = partition(notes)
+    assert len(caveats) == 1 and qa == []
+
+
+def test_a_refused_release_is_not_also_reported_as_stating_no_guidance() -> None:
+    """The two facts are mutually exclusive. A release whose guidance was found and refused DOES
+    state guidance — emitting `no anchored pattern matched` beside the refusal would be the
+    false-UNKNOWN shape, asserting absence where the parser saw a number."""
+    from vinci.edgar.release_parse import _guidance as g
+
+    notes: list[str] = []
+    g(". Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between "
+      "$2.41-$2.49 billion", "8-K x", notes)
+    assert notes and not any("no anchored pattern matched" in n for n in notes)
+
+
+def test_the_rollup_lifts_refusals_and_only_refusals() -> None:
+    """The routing's own red. Refusals must be lifted off the releases into the dossier flags; the
+    sibling "no anchored pattern matched" flags must NOT be — those say a release stated no
+    guidance, which is ordinary across the fleet, and promoting them would drown the channel and
+    make the real refusals harder to see."""
+    from vinci.dossier.schemas import ReleaseExtract
+
+    def rel(*flags: str) -> ReleaseExtract:
+        return ReleaseExtract(source_ref="8-K x", guidance=[], reconciliation=[], one_offs=[],
+                              event_impacts=[], qa_flags=list(flags))
+
+    got = guidance_refusal_flags([
+        rel(f"{GUIDANCE_REFUSAL_PREFIX} — one range is shared by 2 metrics …"),
+        rel("no anchored pattern matched — guidance/outlook: 8-K y"),
+    ])
+    assert len(got) == 1 and got[0].startswith(GUIDANCE_REFUSAL_PREFIX)
 
 
 def test_a_ratio_is_not_a_level() -> None:
