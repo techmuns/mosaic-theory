@@ -4025,6 +4025,35 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   breaks the R2 terminal bridge (the NCI item). Labelling the gate's refusal "the Class A/B ≈5x
   case" merged two diagnoses; the ratio is the field that distinguishes corporate action from
   drift, so it has to be right.
+- **GUIDANCE EXTRACTION — FOUR MODES BUILT 2026-07-29 at the ASSEMBLY layer (operator ruling).**
+  Derive-at-render was rejected for a better reason than mine: it would add a SIXTH composition
+  site across both twins — the exact surface that produced five twin-drift instances — trading a
+  contained defect for the structural hazard we have spent weeks closing. And once VRRM's comps are
+  re-exported it becomes assemblable, which dissolved my only argument for the render route.
+  · **Mode 1** — a results announcement is not an outlook. Gartner's opener matched on the phrase
+    "financial outlook" while stating none, fabricating IT's ENTIRE guidance (2 items, 0 numeric).
+    Now requires a forward statement about the BUSINESS.
+  · **Mode 2** — Artivion's "revenues for the full year 2026 to be in the range of $486 to $504
+    million" needed an INTERLUDE between metric and introducer; it was invisible, marked
+    qualitative, then truncated at "$4…".
+  · **Mode 3** — field mis-assignment: BellRing's two-metrics-one-range now REFUSED (it recorded a
+    ~5x-wrong adjusted-EBITDA guide); the period now comes from the guide's OWN sentence, fixing
+    CNXC (quarterly→`Q3`, was `Fiscal 2026`, a ~4x error LIVE) and FUBO (`Fiscal 2028`→`2026`).
+  · **Mode 4** — `GUIDANCE_UNITS` gains `$/sh`, and the formatter is unit- AND precision-aware.
+    VRRM's `$1.19–$1.25` per share rendered `$1.2–$1.2M`: wrong by 1e6 AND collapsed to a
+    zero-width range. Fixing either half alone still prints a wrong number.
+  **THE PER-ITEM GATE CAUGHT MY OWN REGRESSIONS, which is the whole argument for it.** A first cut
+  used a `[^.$•]{0,60}?` wildcard between metric and range; the table over all 51 showed it binding
+  VITL's revenue guide to the adjusted-EBITDA range (900–920 → 105–115) and EPAM's to a prior
+  year's — the same wrong-magnitude class the item exists to remove, introduced by its own fix. The
+  interlude is now spelled out.
+  **THREE GUARDS WERE WRITTEN AND THEN REMOVED as speculative**: an announcement-opener reject, a
+  ratio reject, and a widened qualitative fallback. Each was subsumed by a guard that IS pinned,
+  and two could cause FALSE NEGATIVES (suppressing a real guide that merely shares a sentence with
+  an announcement or a ratio). A guard that cannot be shown to fire does not ship.
+  **REACHES A NAME ONLY ON REBUILD** — no committed artifact changes in the PR.
+- **SEQUENCING (operator): do NOT re-assemble CNXC until this ships** — its quarterly-as-annual
+  period comes from the extractor, so re-assembling first re-extracts the same defect twice.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it

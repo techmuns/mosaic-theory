@@ -422,6 +422,37 @@ def _fmt_driver(metric: str, value: float) -> str:
     return f"-${abs(value):,.1f}M" if value < 0 else f"${value:,.1f}M"
 
 
+def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
+    """A guidance range, formatted from its OWN unit and at a precision that keeps the range a
+    range. TWO defects, one root, and fixing either alone still prints a wrong number.
+
+    UNIT. The old formatter had one branch for "%" and assumed "$M" for everything else, so VRRM's
+    adjusted-EPS guide of $1.19–$1.25 **per share** printed as "$1.2–$1.2M" — wrong by 1e6. The
+    unit was unexpressible upstream (``GuidanceItem.unit`` had no ``$/sh``), which is why the
+    default was never questioned: every new metric inherits it.
+
+    PRECISION. ``.1f`` collapsed 1.19–1.25 to "$1.2–$1.2" — a ZERO-WIDTH range, which reads as a
+    point estimate the company never gave. Decimals are widened until the two bounds are actually
+    distinguishable, so the printed range is the recorded one.
+    """
+    if low is None or high is None:
+        return "stated, no number given"
+
+    def pair(dp: int) -> tuple[str, str]:
+        return f"{low:,.{dp}f}", f"{high:,.{dp}f}"
+
+    base = {"$M": 1, "$/sh": 2, "%": 1}.get(unit, 1)
+    dp = base
+    while dp < 4 and low != high and pair(dp)[0] == pair(dp)[1]:
+        dp += 1
+    lo, hi = pair(dp)
+    if unit == "%":
+        return f"{lo}–{hi}% growth"
+    if unit == "$/sh":
+        return f"${lo}–${hi}/sh"
+    return f"${lo}–${hi}M"
+
+
 def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
     """WHAT the results showed — the latest-period adjusted EBITDA / net income / EPS (with the
     prior-period contrast), one-off charges, and the forward outlook — from an already-parsed
@@ -459,14 +490,10 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
                         o.description, maxsplit=1)[0].strip(" ,;")
         parts.append(f"${o.amount:,.1f}M {desc}")
     for g in release.guidance:
-        # UNITS on the range: values are normalised to $M upstream, but an unlabelled
-        # "2325.0–2365.0" invites the reader to supply their own scale.
         if g.qualitative:
             outlook = "stated, no number given"  # honest: the company spoke, without a figure
-        elif getattr(g, "unit", "$M") == "%":
-            outlook = f"{g.low:g}–{g.high:g}% growth"
         else:
-            outlook = f"${g.low:,.1f}–${g.high:,.1f}M"
+            outlook = _fmt_guide_range(g.low, g.high, getattr(g, "unit", "$M"))
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None

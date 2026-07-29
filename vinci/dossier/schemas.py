@@ -18,7 +18,7 @@ import enum
 from datetime import date, datetime
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.midcycle import MidCycle
@@ -690,6 +690,12 @@ class FinancialSummary(BaseModel):
 # --- RC-1 (A): primary-source release extraction — 8-K EX-99.1, DETERMINISTIC / anchored ----------
 
 
+# The unit vocabulary a guidance range may be stated in. "$M" is the default because most guides
+# are dollar amounts in millions; "$/sh" exists because per-share guides are NOT, and the absence
+# of this member is what let adjusted EPS render in millions (2026-07-29).
+GUIDANCE_UNITS: frozenset[str] = frozenset({"$M", "%", "$/sh"})
+
+
 class GuidanceItem(BaseModel):
     """(RC-1 A) One company guidance/outlook metric from a 99.1 press release — a range, or a
     QUALITATIVE-only marker when the outlook names the metric but states NO number (MVST's
@@ -697,18 +703,36 @@ class GuidanceItem(BaseModel):
 
     metric: str  # revenue | adjusted ebitda | adjusted eps | gross margin | free cash flow
     period: str  # e.g. "2026"
-    low: float | None  # range low ($M; $/sh for EPS; % for margin). None when QUALITATIVE
+    low: float | None  # range low, in `unit`. None when QUALITATIVE
     high: float | None  # range high. None when a single value or QUALITATIVE
-    # "$M" (default) or "%" — a guide can be a GROWTH-RATE range ("revenue growth rate in the range
-    # of 4.5% to 7.5%"), which is a real number, not a qualitative outlook. Rendering that as
-    # "qualitative" asserts the company said nothing when it said the most decision-relevant thing
-    # in the release. Optional so pre-existing dossier.json still validates.
+    # THE UNIT THE VALUES ARE IN — and the vocabulary was UNEXPRESSIVE until 2026-07-29.
+    #
+    # It held "$M" | "%" over a THREE-value reality, and this field's own docstring used to record
+    # the third in prose — "$M; $/sh for EPS; % for margin" — encoding a unit in the METRIC NAME
+    # where no formatter reads it. So every adjusted-EPS guide carried `unit="$M"` while holding
+    # dollars per share, and the driver composer (which assumes $M for anything not "%") rendered
+    # VRRM's $1.19–$1.25 guide as "$1.2–$1.2M": wrong by 1e6, and collapsed to a zero-width range
+    # by a hardcoded .1f. A vocabulary that cannot express a unit keeps producing values that
+    # claim the wrong one — every new metric inherits the wrong default.
+    #
+    # Validated against a closed set, on the BEAR_BASES precedent: an unlisted unit is not
+    # formattable, so it is added deliberately rather than arriving through a typo.
     unit: str = "$M"
     qualitative: bool  # True ⇒ named in the outlook with NO number (fail-loud honest, not a guess)
     verbatim: str  # the outlook sentence, ≤200c
     source_ref: str  # accession + exhibit
 
     model_config = {"frozen": True}
+
+    @field_validator("unit")
+    @classmethod
+    def _unit_known(cls, v: str) -> str:
+        if v not in GUIDANCE_UNITS:
+            raise ValueError(
+                f"guidance unit {v!r} is not one of {sorted(GUIDANCE_UNITS)} — an unlisted unit "
+                "cannot be formatted, and a value that claims the wrong unit is worse than an "
+                "absent one; add the member deliberately")
+        return v
 
 
 class ReconciliationValue(BaseModel):
