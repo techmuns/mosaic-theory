@@ -11,16 +11,16 @@ _July 27, 2026 · extraction unstamped_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-21); the live close is in Snapshot, above._
+
+WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.
+
 ### What would reopen this name
 
 - price below about $11.5 - the base case in today's terms with interim free cash flow credited (about 8.17 plus 3.58) - then re-run the underwrite at the new price [amended 2026-07-22: was 'below about $9', which credited no interim cash.]
 - subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]
 - reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]
-
-### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-21); the live close is in Key figures._
-
-WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; Distorted-P/E anchor (a bull point): 'On a forward basis the name's NTM TEV/EBITDA of 12.32x sits BELOW the peer-medi… — full caveats in Analysis.
 

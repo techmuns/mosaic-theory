@@ -11,16 +11,16 @@ _July 10, 2026 · extraction unstamped_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-22); the live close is in Snapshot, above._
+
+WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly the market price in today's terms, so the price pays nothing for the very real chance the equity is worth zero - the company's own filings state substantial doubt it can continue, a debt wall comes due within a year against roughly matching cash, and the share count is compounding double-digit through an open selling programme. The gross-margin turnaround is real engineering - from deeply negative to thirty percent in three years - which is why this stays on the watch list at all. We revisit on a completed refinancing, or on returning growth with cash generation.
+
 ### What would reopen this name
 
 - the maturity wall is refinanced or extended (a material-agreement or debt-obligation filing) - re-underwrite survival
 - two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases
 - going-concern language removed in a periodic filing - re-underwrite in full
-
-### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-22); the live close is in Key figures._
-
-WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly the market price in today's terms, so the price pays nothing for the very real chance the equity is worth zero - the company's own filings state substantial doubt it can continue, a debt wall comes due within a year against roughly matching cash, and the share count is compounding double-digit through an open selling programme. The gross-margin turnaround is real engineering - from deeply negative to thirty percent in three years - which is why this stays on the watch list at all. We revisit on a completed refinancing, or on returning growth with cash generation.
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 

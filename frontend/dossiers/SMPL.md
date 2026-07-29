@@ -11,16 +11,16 @@ _July 29, 2026 · extraction 2026-07-28.1_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-27); the live close is in Snapshot, above._
+
+WATCH at $10.53 — not held. The market prices this business below the cheapest multiple in its own trading history, on the view that GLP-1 drugs permanently shrink the snacking category. Our judgment is that the sell-off has overshot. The third quarter confirmed real damage — gross margin down four points and large write-downs — and we now treat part of that as permanent, at a 14% normal margin. Even so the grid reads 3.8 to 1 against our 2:1 bar, with cash generation near thirteen percent of market value. The case fails if the growth engine stalls two more quarters or October cuts guidance — Quest printed +1%, the open question; the October report is the next evidence.
+
 ### What would reopen this name
 
 - Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.
 - FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.
 - Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)
-
-### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-27); the live close is in Key figures._
-
-WATCH at $10.53 — not held. The market prices this business below the cheapest multiple in its own trading history, on the view that GLP-1 drugs permanently shrink the snacking category. Our judgment is that the sell-off has overshot. The third quarter confirmed real damage — gross margin down four points and large write-downs — and we now treat part of that as permanent, at a 14% normal margin. Even so the grid reads 3.8 to 1 against our 2:1 bar, with cash generation near thirteen percent of market value. The case fails if the growth engine stalls two more quarters or October cuts guidance — Quest printed +1%, the open question; the October report is the next evidence.
 
 > ⚠ **Verify before the verdict:** EDGAR P/E 10.0x rest on normalized/adjusted earnings; Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 

@@ -11,15 +11,15 @@ _July 27, 2026 · extraction unstamped_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-20); the live close is in Snapshot, above._
+
+BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business — five straight years of 18–21% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes — a shrinking Gartner deserving ~12x — with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case — base revenue -20% (~$5,144M) at a 13% margin and an 8x exit — reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.] [amended 2026-07-22: position closed 2026-07-21 at 141.06 - the entry price, flat before costs - by operator action immediately after entry. The re-underwrite completed 2026-07-22 set the downside from market evidence and no coherent grid clears the 2:1 bar, confirming the exit; the record moves to watch. The August 5 report is still read; it informs re-engagement, not this exit.]
+
 ### What would reopen this name
 
 - price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price
 - the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%).
-
-### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-20); the live close is in Key figures._
-
-BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business — five straight years of 18–21% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes — a shrinking Gartner deserving ~12x — with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case — base revenue -20% (~$5,144M) at a 13% margin and an 8x exit — reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.] [amended 2026-07-22: position closed 2026-07-21 at 141.06 - the entry price, flat before costs - by operator action immediately after entry. The re-underwrite completed 2026-07-22 set the downside from market evidence and no coherent grid clears the 2:1 bar, confirming the exit; the record moves to watch. The August 5 report is still read; it informs re-engagement, not this exit.]
 
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
 - **Segments:** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [1]
