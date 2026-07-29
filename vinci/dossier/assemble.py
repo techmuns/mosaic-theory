@@ -169,6 +169,25 @@ def _mark_material(mech: Any) -> Any:
         "financial_summary": fs.model_copy(update={
             "annual": ann.model_copy(update={"value": marked})})})
 
+def _freshness_check(mech: Any, *, ticker: str) -> None:
+    """(item 1) FAIL LOUD on a build whose dated inputs cannot honestly sit on one page: a panel
+    spread past the ceiling, or a market cap whose share basis disagrees with the price's.
+
+    Ordinary drift is deliberately NOT fatal — it is a RENDERING obligation (clause (e)), and the
+    cap now carries its own vintage on both twins. Failing on drift would fail 11 of 11 committed
+    dossiers, which is a freeze wearing a guard's name."""
+    from vinci.dossier.freshness import check_freshness, panel_spread, reconcile_cap
+
+    si = getattr(mech, "stock_info", None)
+
+    def val(k: str) -> float | None:
+        v = getattr(getattr(si, k, None), "value", None) if si is not None else None
+        return float(v) if isinstance(v, (int, float)) else None
+
+    recon = reconcile_cap(cap_musd=val("market_cap"), shares=val("shares_out"), spot=val("price"))
+    check_freshness(panel_spread(mech.model_dump(mode="json")), recon, ticker=ticker)
+
+
 def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -> None:
     """Run the materiality guard on the assembled record (P1). Skips silently ONLY when a
     denominator or the sheet is genuinely unavailable — never when the check merely found nothing,
@@ -309,6 +328,7 @@ def assemble_one(
         # smaller. A warning here would have been read past on exactly the day it mattered.
         mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
+        _freshness_check(mech, ticker=ticker)
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:

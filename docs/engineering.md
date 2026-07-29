@@ -303,6 +303,22 @@ list-item continuation. That false negative reached main in #250 and rewrote a c
 sampling a document to render, include enough enclosing structure that it parses the way it does in
 situ — for a list item, start at the marker.
 
+## A date that travels with a value is not a date that describes an arrival
+
+*(operator, 2026-07-29, after the two were conflated twice)*
+
+> **A value-borne date and an arrival date are different objects.** Mixing them inverts rankings.
+
+An own-history band's `as_of` is the date of the close its current reading came from — item 20's
+fix, so a stale reading is labelled rather than silently claimed as latest. A panel's `as_of` is
+when an export was taken. Counting the first as the second made SMPL read **115 days stale** and
+top of the fleet's staleness list, when its true panel spread is **3 days — the tightest in the
+fleet**. The whole ranking was upside down, and a threshold placed on it would have been placed on
+noise.
+
+Same distinction item 20 turns on. When measuring staleness, harvest arrivals only, and say in the
+code which is which.
+
 ## A measurement in a throwaway tree establishes its own baseline first
 
 *(operator, 2026-07-28)*

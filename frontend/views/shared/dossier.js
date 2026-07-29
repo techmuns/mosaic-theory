@@ -1126,7 +1126,16 @@ function briefSnapshot(d, m) {
   const rows = [];
   const push = (label, val) => { if (val) rows.push(`<tr><td>${label}</td><td>${val}</td></tr>`); };
   if (ok(si.price)) push("CMP", `$${si.price.value.toFixed(2)}${si.as_of ? ` <span class="muted">(${escapeHtml(si.as_of)})</span>` : ""}${si.price.note ? ` <span class="pill unresolved" title="${escapeHtml(si.price.note)}">STALE</span>` : ""}`);
-  if (ok(si.market_cap)) push("Market cap", fmtCap(si.market_cap.value));
+  // (item 1, clause (e)) The cap is the CIQ comps panel's and the price is the EOD store's;
+  // on all 11 committed dossiers they disagree. An unlabelled cap beside a live price reads
+  // as one moment when it is two. Twin of _brief_snapshot() in render.py.
+  if (ok(si.market_cap)) {
+    const capAsOf = String((((m || {}).valuation || {}).implied_expectations
+      || {}).multiples_as_of || "").slice(0, 10);
+    const siAsOf = String(si.as_of || "").slice(0, 10);
+    const vint = capAsOf && capAsOf !== siAsOf ? ` (${escapeHtml(capAsOf)})` : "";
+    push("Market cap", fmtCap(si.market_cap.value) + vint);
+  }
   if (ok(si.low_52w) && ok(si.high_52w)) push("52-wk range", `$${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
   if (ok(si.shares_out)) push("Shares out", fmtShares(si.shares_out.value));
   if (ok(si.book_value_ps)) push("Book / sh", `$${si.book_value_ps.value.toFixed(2)}`);

@@ -2107,7 +2107,8 @@ def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
     return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
 
 
-def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
+def _brief_snapshot(exchange: str | None, si: StockInfo | None,
+                    cap_as_of: object = None) -> list[str]:
     """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
     value/sh — the linear-markdown mirror of the web key-figures table (CIK moved to Record &
     reproduce: an identifier, not a decision figure). Fail-honest:
@@ -2123,7 +2124,15 @@ def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
             stale = f" ⚠ {si.price.note}" if si.price.note else ""  # assembly staleness, loud
             parts.append(f"CMP ${si.price.value:,.2f}{asof}{stale}")
         if si.market_cap.status is p and si.market_cap.value is not None:
-            parts.append(f"cap {_fmt_cap(si.market_cap.value)}")
+            # (item 1, clause (e)) The cap comes from the CIQ comps panel and the price from the
+            # EOD store. On all 11 committed dossiers those disagree — SMPL least at -2.4%, FUBO
+            # worst at -91% — so an unlabelled cap sitting beside a live price reads as though the
+            # two describe the same moment. They do not. Label the older one with its own vintage.
+            cap_iso = (cap_as_of.isoformat() if hasattr(cap_as_of, "isoformat")
+                       else str(cap_as_of or ""))[:10]
+            si_iso = si.as_of.isoformat() if si.as_of is not None else ""
+            cap_v = f" ({cap_iso})" if cap_iso and cap_iso != si_iso else ""
+            parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}")
         if (si.low_52w.status is p and si.low_52w.value is not None
                 and si.high_52w.status is p and si.high_52w.value is not None):
             parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
@@ -2440,7 +2449,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     cc = _customer_concentration(m)
     if cc is not None:
         out.append(cc)
-    snap = _brief_snapshot(d.exchange, m.stock_info)
+    ie = getattr(m.valuation, "implied_expectations", None)
+    snap = _brief_snapshot(d.exchange, m.stock_info,
+                           getattr(ie, "multiples_as_of", None) if ie else None)
     if snap:
         out += snap
     # (buy-side cover) THE CRUX closes the cover — the decisive question ONLY, plus an honest
@@ -2982,6 +2993,16 @@ def _how_to_read_lines() -> list[str]:
     ]
 
 
+def _panel_spread_note(d: Dossier) -> str | None:
+    """The build's oldest→newest PANEL as-of gap (item 1). None when fewer than two panels are
+    dated. Value-borne dates (an own-history band's observation date) are NOT panels — conflating
+    them inverted the fleet ranking twice, putting SMPL top of a staleness list it is bottom of."""
+    from vinci.dossier.freshness import panel_spread
+
+    sp = panel_spread(d.mechanical.model_dump(mode="json"))
+    return sp.note() if sp is not None else None
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -2996,6 +3017,11 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # a reader meets it; this carries the meaning, which is audit-tier context by the three-tier
         # rule and print-expanded regardless.
         f"- **Extraction:** {stamp_detail(d.extraction_version)}",
+        # (item 1) The build's panel spread, rendered on EVERY dossier rather than only when it
+        # breaches: the spread is context a reader needs in order to read a multiple at all. Nine
+        # of eleven committed dossiers pair fundamentals 30+ days older than their price with
+        # nothing on the page saying so.
+        *( [f"- **Panel spread:** {_panel_spread_note(d)}"] if _panel_spread_note(d) else [] ),
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"
