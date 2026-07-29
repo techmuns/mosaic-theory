@@ -734,6 +734,38 @@ function howToRead() {
 // old header meta (assembly stamp, model), the assembly-log caveat line, the identifiers, and the
 // logged-verdict block (with its CLI how-to when no verdict exists — process documentation lives
 // with process). The queued assembly-provenance stamp (STATE §5 item 1) lands here when built.
+// (item 1) PANEL SPREAD — twin of panel_spread()/_panel_spread_note() in vinci/dossier/freshness.py
+// and render.py. A PANEL date is an ARRIVAL (when an export was taken). A date that TRAVELS WITH A
+// VALUE — an own-history band's observation date, a per-point series date — is a different object,
+// and counting the second as the first inverts the ranking: SMPL reads 115d stale on the mixed
+// measure and 3d, the tightest in the fleet, on arrivals alone. Exclusions pinned in test_parity_pins.
+const _NOT_A_PANEL = /own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points/;
+function panelDates(node, path = "") {
+  const out = [];
+  if (node && typeof node === "object" && !Array.isArray(node)) {
+    for (const [k, v] of Object.entries(node)) {
+      const p = path ? `${path}.${k}` : k;
+      if (/as_of|asof|detail_as_of/i.test(k) && !_NOT_A_PANEL.test(p)) {
+        const raw = v && typeof v === "object" && "value" in v ? v.value : v;
+        const m = /(20\d\d-\d\d-\d\d)/.exec(String(raw));
+        if (m) out.push([p, m[1]]);
+      }
+      out.push(...panelDates(v, p));
+    }
+  } else if (Array.isArray(node)) {
+    node.forEach((v, i) => out.push(...panelDates(v, `${path}[${i}]`)));
+  }
+  return out;
+}
+function panelSpreadNote(m) {
+  const ds = panelDates(m || {});
+  if (ds.length < 2) return null;
+  ds.sort((a, b) => (a[1] < b[1] ? -1 : 1));
+  const [ok, ov] = ds[0], [nk, nv] = ds[ds.length - 1];
+  const days = Math.round((Date.parse(nv + "T00:00:00Z") - Date.parse(ov + "T00:00:00Z")) / 86400000);
+  return `panel spread ${days}d — oldest ${ov} (${ok}), newest ${nv} (${nk})`;
+}
+
 function recordAndReproduce(d, verdict, card = null) {
   const proc = (d.caveats || []).filter(isProcessCaveat);
   const row = (label, val) => `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
@@ -742,6 +774,7 @@ function recordAndReproduce(d, verdict, card = null) {
     <div class="subtitle muted ds-sub">Everything needed to date, audit, or regenerate this document.</div>
     ${row("Data window", `screened as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>`)}
     ${row("Extraction", escapeHtml(stampDetail(d.extraction_version)))}
+    ${(() => { const n = panelSpreadNote(d.mechanical); return n ? row("Panel spread", escapeHtml(n)) : ""; })()}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
