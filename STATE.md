@@ -3970,6 +3970,16 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**TWO NUMBER SERIES LIVE IN THIS BLOCK — READ THIS BEFORE QUOTING AN ITEM NUMBER.**
+`### LIVE QUEUE` holds **SERIES A — ENGINEERING / AUDIT-REMEDIATION** (items 1..32: 16, 17, 18a,
+19, 20 … 32) and then **SERIES B — ANALYST / OPERATOR**, which RESTARTS at 13. Numbers **13–32
+therefore appear TWICE with different meanings** — "item 22" is the VISIBLE-ABSENCE RULE in A and
+"Full STATE split" in B. The operator's conversational numbering is **always SERIES A**; anything
+meaning B says so. Both series KEEP their numbers: renumbering would invalidate every reference in
+the build records, the merged PR bodies and `docs/audits/`, which is a larger correctness risk than
+the ambiguity. The fix is that each series now sits under its own heading, and cross-file
+references name their series.
+
 **Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
@@ -4378,7 +4388,7 @@ scheduled; 24 needs an operator policy line before any build encodes it.
 28. **SCENARIO-INPUT DISCLOSURE — P7 part 1, THE ORPHAN found by the 13-part audit (queued
     2026-07-28).** Print **shares, D&A and net debt inside the scenario block**, so every scenario
     value recomputes from figures on the same page. ORIGIN: the auditor could not reproduce a single
-    scenario cell from anything the dossier printed — he solved the system backwards and landed on
+    scenario cell from anything the dossier printed — they solved the system backwards and landed on
     93.77M shares against our recorded 93.678M, which is itself the proof (the inputs were
     recoverable only by inference). Distinct from item 24, which is the SHARES-BASIS policy
     question — this is disclosure of whatever basis is chosen, and it is queued because the audit
@@ -4664,8 +4674,8 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     dedicated pin for it; but a fleet invariant that excludes the comparability field is the
     cleanest possible case that the exclusion is arbitrary rather than principled.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
-    IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
-    neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
+    IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 —
+    DECISIONS, not builds; the machine proposes neither.) (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
     outstanding (~88.5M) vs guided ~90M for FORWARD per-share values while the company retires
     ~11.7% of its equity — the auditor sizes the difference at ~$1.00–1.50/sh of understatement.
     (b) REGIME TEST (operator-added): when is an own-history multiple band admissible after an
@@ -4718,7 +4728,8 @@ content merged as #211, corrected here by the 2026-07-27 queue-integrity pass; B
 RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-only and source D
 (dated operating events) superseded the 8-K-events slice — dispositions in the build records.
 
-**ANALYST / OPERATOR**
+#### SERIES B — ANALYST / OPERATOR (its own 13.. number series)
+
 13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
@@ -4833,12 +4844,15 @@ RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-on
     field in a scenario record, because a record is read by an outside buy-side analyst who has
     never seen this repo, and the registers differ by field:
 
-    | field | register |
-    |---|---|
-    | `rationale_plain` | plain thesis, ≤~120 words: action + asymmetry → the variant view with its carrying numbers → the kill condition |
-    | `reunderwrite_triggers` | measurable condition → threshold → action |
-    | leg `reason` | investment-committee register — statistics cited BY NAME |
-    | `assumptions[].method` | technical replication detail (a reader must be able to rebuild the number) |
+    (written as lines, NOT a markdown table: an indented table inside an ORDERED list item does
+    not render on GitHub — verified against the API. Note a table indented inside a BULLET DOES
+    render, which is why a naive "indented = broken" rule over-flags and is not shippable.)
+    · `rationale_plain` — plain thesis, ≤~120 words: action + asymmetry → the variant view with
+      its carrying numbers → the kill condition
+    · `reunderwrite_triggers` — measurable condition → threshold → action
+    · leg `reason` — investment-committee register, statistics cited BY NAME
+    · `assumptions[].method` — technical replication detail (a reader must be able to rebuild
+      the number)
 
     Binding on every field regardless of register: **accessions and vendor names live in the
     structured `references` / `source` fields only**, and **house-internal labels appear nowhere —
@@ -5288,7 +5302,7 @@ listed in; it precedes the batch precisely so the batch does not fight it.
 
 **THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
 DISTINCT failures, verify against the committed report rather than accept the count). THE
-OPERATOR'S COUNT OF 13 IS CORRECT; TWO OF HIS HOMES ARE NOT.**
+OPERATOR'S COUNT OF 13 IS CORRECT; TWO OF THEIR HOMES ARE NOT.**
 
 | item | parts | disposition (verified) |
 |---|---|---|
@@ -5436,6 +5450,36 @@ STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate 
 behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
 rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
 scope creep this repo keeps refusing, and the work is already queued.**
+**STATE TOPOLOGY — BUILT 2026-07-29. THE COLLISION IS FIXED BY NAMING, NOT RENUMBERING; AND TWO OF
+THE FOUR RECORDED MARKDOWN DEFECTS TURNED OUT NOT TO EXIST.**
+**(a) THE TWO SERIES.** Both keep their numbers — renumbering would invalidate every reference in
+the build records, the merged PR bodies and `docs/audits/`, a larger correctness risk than the
+ambiguity itself. Instead each now sits under its own heading (**SERIES A — ENGINEERING /
+AUDIT-REMEDIATION**, **SERIES B — ANALYST / OPERATOR**, which restarts at 13), with the collision
+stated where a reader enters the queue and the convention recorded: conversational numbering is
+ALWAYS series A.
+**(b) PRONOUNS — all three fixed** (4381, 5291, 5859): the operator's and the auditor's are
+unstated, so they/them.
+**(c) THE ORPHAN `**` — ONE WAS REAL, ONE WAS MY CHECKER LYING.** Queue item 24's trailing `).**`
+was genuine and is closed. §7 item 19's flagged marker is ``*** NO GATE — new exposure`` INSIDE A
+CODE SPAN, where `**` is not markup — it renders correctly, verified against GitHub's API. The
+naive counter was wrong, not the document.
+**(d) THE INDENTED TABLES — ONE OF TWO WAS REAL.** Measured against the API rather than reasoned
+from CommonMark: a table indented inside an ORDERED list item does NOT render (the `| field |
+register |` one — fixed, rewritten as `·` lines); indented inside a BULLET it DOES (the `| check |
+honest worst |` one — correct, left alone). "Indented = broken" over-flags.
+**(e) WHAT SHIPPED, AND WHAT DELIBERATELY DID NOT.** SHIPPED:
+`test_state_and_engineering_docs_have_no_orphan_bold` — per LIST ITEM (a blank-line block puts §1's
+1,223 markers in one bucket, where an orphan is neither detectable nor locatable), with CODE SPANS
+STRIPPED FIRST so it cannot fire on correct content. Mutation-verified BOTH ways: one added `**`
+reds it; a `***` in a code span does not. **NOT SHIPPED — the indented-table check**, because the
+distinguishing rule is ordered-vs-bullet and no offline GFM renderer is installed to arbitrate;
+adding a dependency is outside topology's scope. **A known gap, stated rather than silently
+omitted** — which is item 22's own rule applied to this work.
+**THE PATTERN WORTH KEEPING:** of four recorded markdown defects, two were checker artifacts. Both
+times the renderer was the authority and the local heuristic was not — the same lesson as the
+CommonMark-vs-GitHub table finding in #248.
+
 **ADDED TO THAT SLOT 2026-07-28 (2) — INDENTED TABLES DO NOT RENDER, and it is the SAME shape as
 the orphan-`**` class: a markdown defect invisible to the author and only visible to the reader.**
 A markdown table INDENTED inside a list item is NOT parsed as a table by GitHub — it renders as a
@@ -5856,7 +5900,7 @@ accepted class rather than opening one; FALSIFIER: if a materializing write ever
 mode.
 
 **BUILD RECORD — 2026-07-27 "HOW THESE NUMBERS WERE SET" — ENDNOTE CITES + ONE GRID.** Operator
-spotted inline sources on a MAIN-BODY card and asked why, against the house convention. He was
+spotted inline sources on a MAIN-BODY card and asked why, against the house convention. They were
 right, and it was worse than a style slip: the card used NEITHER sanctioned citation mode.
 `frontend/lib/cites.js` states two and says the choice is not stylistic — `withEndnotes()` for the
 main body, `auditCitesInline()` for on-demand `<details>`. This card HARDCODED the source string

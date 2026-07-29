@@ -110,3 +110,45 @@ def test_every_preview_server_serves_an_absolute_directory() -> None:
         "preview server(s) with a RELATIVE --directory, which resolve against whatever CWD the "
         f"server starts in rather than a named tree: {relative}. Use an absolute path — a preview "
         "that silently reads the wrong worktree can only ever mislead.")
+
+def test_state_and_engineering_docs_have_no_orphan_bold() -> None:
+    """MARKDOWN PARITY — the orphan-`**` class, guarded (queue: STATE topology).
+
+    An unbalanced `**` renders the REST OF THE ITEM as literal asterisks. It has happened three
+    times: §7's THEME #2 (its own fix-PR), queue item 26 in #244, and queue item 24 pre-existing.
+    Invisible to the author, visible only to the reader — so it needs a machine, not attention.
+
+    CODE SPANS ARE STRIPPED FIRST, and that is the whole design point. A naive counter flags
+    ``vinci audit r1 reads SMPL as `*** NO GATE — new exposure` `` — which renders perfectly,
+    because inside a code span `**` is not markup. Verified against GitHub's own markdown API. A
+    guard that fires on correct content is switched off within a week, and then it never fires on
+    the real one either — the unusual-items guard's filing-date lesson, applied here.
+
+    NOT COVERED, stated rather than silently omitted: the INDENTED-TABLE class. A table indented
+    inside an ORDERED list item does not render; indented inside a BULLET it does. Both were
+    measured against the API. No offline GFM renderer is installed to arbitrate, and adding a
+    dependency is out of scope, so that class has no check — a known gap, not a covered one."""
+    import re
+
+    def _strip_code(s: str) -> str:
+        s = re.sub(r"```.*?```", "", s, flags=re.S)     # fenced blocks
+        return re.sub(r"`[^`\n]*`", "", s)             # inline spans
+
+    bad: list[str] = []
+    for rel in ("STATE.md", "docs/engineering.md"):
+        lines = (Path(__file__).resolve().parents[1] / rel).read_text().splitlines()
+        # PER LIST ITEM, not per blank-line block: §1 alone is one 1,200-marker block, in which a
+        # single orphan is neither detectable nor locatable. The item is the unit that breaks.
+        starts = [i for i, ln in enumerate(lines) if re.match(r"^\d{1,2}[ab]?\.\s+\*\*", ln)]
+        for a, b in zip(starts, starts[1:] + [len(lines)], strict=True):
+            body: list[str] = []
+            for ln in lines[a:b]:
+                if not ln.strip():
+                    break                                # the item ends at its first blank line
+                body.append(ln)
+            n = _strip_code("\n".join(body)).count("**")
+            if n % 2:
+                bad.append(f"{rel}:{a + 1} ({n} markers) — {body[0].strip()[:64]}")
+    assert not bad, (
+        "unbalanced `**` — everything after the orphan renders as literal asterisks:\n"
+        + "\n".join(bad))
