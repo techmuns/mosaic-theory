@@ -5,11 +5,20 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $221.09 (+57.7% vs spot) · **Spot** $140.19 (underwritten 2026-07-20) · **Reward** $80.90 · **Risk** $62.63 · **Reward : risk** 1.29 : 1 (bar 2 : 1)
+**Target (base)** $221.09 (+57.7% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — underwritten 2026-07-20) · **Reward** $80.90 · **Risk** $62.63 · **Reward : risk** 1.29 : 1 (bar 2 : 1)
 
-**Underwrite disposition:** WATCH (2026-07-21) · entry $141.06 — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** WATCH (2026-07-21) · entry $141.06 (entry-vintage) — _the BUY/AVOID verdict of record is the ledger's_
+
+> **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
+### What would reopen this name
+
+- price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price
+- the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%).
 
 ### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-20); the live close is in Key figures._
+
 BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business — five straight years of 18–21% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes — a shrinking Gartner deserving ~12x — with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case — base revenue -20% (~$5,144M) at a 13% margin and an 8x exit — reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.] [amended 2026-07-22: position closed 2026-07-21 at 141.06 - the entry price, flat before costs - by operator action immediately after entry. The re-underwrite completed 2026-07-22 set the downside from market evidence and no coherent grid clears the 2:1 bar, confirming the exit; the record moves to watch. The August 5 report is still read; it informs re-engagement, not this exit.]
 
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
@@ -33,7 +42,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-20 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 5,800 | 13.2% | 7.5x | $77.56 | -44.7% |
 | base | 6,430 | 18.5% | 12.5x | $221.09 | +57.7% |
@@ -42,6 +51,19 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **bear** — set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]
 - **base** — the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]
 - **bull** — The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]
+
+**Scenario inputs** — every value in the grid recomputes from these.
+
+| input | value | basis | source |
+| --- | ---: | --- | --- |
+| d and a | 183 $M | FY2026 guided depreciation, accretion and amortization — post-divestiture perimeter [amended 2026-07-22: FY2025's 200.309 straddles the Digital Markets divestiture (sold 2026-02-05, $110.0M gross / $104.8M net of cash, 10-K Note 19 acc 0000749251-26-000112); forward legs use the guided post-perimeter figure. Label caveat: the guided line includes accretion.] | Gartner Q1-2026 IR earnings supplement slide 32 (company document, unfiled) — https://investor.gartner.com/static-files/05ed704c-f905-4c68-9b57-e55eed5df9eb retrieved 2026-07-22, sha256 18428be16e5212ca961bbf1285fdee68ea6b21e42c90f16f97930b8868c67715 |
+| net debt | 1,688.229 $M | lease-inclusive net debt (latest 10-Q) | committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR: total debt 2,983 + finance leases 0 + operating leases 372 − cash 1,667 ($M) |
+| diluted shares | 69.965 M shares | diluted weighted-average (latest 10-Q) (anchor raw count / 1e6) | committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR WeightedAverageNumberOfDilutedSharesOutstanding |
+| ltm revenue | 6,474.137 $M | LTM revenue | committed anchor block (dossier.json, PR #158/#160-verified) — committed financial_summary.annual (LTM) |
+| cash interest | 125.277 $M | FY2025 non-operating interest expense (FCF cross-check only) | EDGAR companyfacts us-gaap InterestExpenseNonoperating FY2025 |
+| cash tax rate | 0.2468 rate | FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share) | EDGAR companyfacts IncomeTaxExpenseBenefit 238.9 / pre-tax 968.1 (FY2025) |
+
+_Chain (EV/EBITDA):_ EBIT = revenue × op margin → EBITDA = EBIT + D&A → EV = EBITDA × exit multiple (EV/EBITDA) → equity = EV − net debt → value/share = equity ÷ diluted shares
 
 ### Screening context — how this name surfaced — _not a verdict_
 

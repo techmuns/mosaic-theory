@@ -5,11 +5,21 @@ _July 10, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $0.60 (-34.5% vs spot) · **Spot** $0.92 (underwritten 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
+**Target (base)** $0.60 (-34.5% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — underwritten 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
 
 **Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
 
+> **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
+### What would reopen this name
+
+- the maturity wall is refinanced or extended (a material-agreement or debt-obligation filing) - re-underwrite survival
+- two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases
+- going-concern language removed in a periodic filing - re-underwrite in full
+
 ### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-22); the live close is in Key figures._
+
 WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly the market price in today's terms, so the price pays nothing for the very real chance the equity is worth zero - the company's own filings state substantial doubt it can continue, a debt wall comes due within a year against roughly matching cash, and the share count is compounding double-digit through an open selling programme. The gross-margin turnaround is real engineering - from deeply negative to thirty percent in three years - which is why this stays on the watch list at all. We revisit on a completed refinancing, or on returning growth with cash generation.
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
@@ -36,7 +46,7 @@ _8 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-22 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 550 | 2.0% | 6x | $-0.05 | -105.4% |
 | base | 850 | 6.0% | 7.9x | $0.60 | -34.5% |
@@ -45,6 +55,18 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — the contraction proves durable: the largest customer (52% of revenue) wobbles, revenue stabilizes well below the peak run-rate, margins hold barely positive as a marginal producer; a levered, distressed supplier exit.
 - **base** — revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.
 - **bull** — the gross-margin engineering (-28% to +31% in three years) carries through: revenue re-accelerates, double-digit operating margin arrives, partial deleveraging earns a step above the analogue.
+
+**Scenario inputs** — every value in the grid recomputes from these.
+
+| input | value | basis | source |
+| --- | ---: | --- | --- |
+| net debt | 199.9 $M | classified total debt less total cash and short-term investments, latest balance sheet [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer] | CIQ Financials->Balance Sheet (vendor basis; EDGAR debt tags under-captured) |
+| diluted shares | 385.272 shares | latest-quarter diluted weighted-average count, quarter ended 2026-03-31 | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding |
+| d and a ratio | 0.08941 rate | depreciation and amortisation over trailing revenue (33.228 / 371.637) [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer] | CIQ Financials->Cash Flow and Income Statement (vendor basis) |
+| share growth | 0.1 rate | OVERRIDE. The organic three-year compound rate (2.30%) cannot see the open $125M at-the-market programme already drawn +19% in two quarters; 10% a year approximates full remaining draw near current prices plus organic issuance. | EDGAR 8-K Item 1.01 accession 0000947871-25-000881 and the 424B5 of 2025-10-03 (Controlled Equity Offering Sales Agreement, up to $125,000,000); share series FY2022-FY2025 |
+| burn to breakeven | 307.8 $M | three years at the stated current burn (102.60 x 3) - the survival block's years to breakeven | EDGAR 10-Q accession 0001628280-26-033590, quarter ended 2026-03-31 |
+
+_Chain (EV/EBITDA):_ EBIT_T = terminal revenue × terminal margin → D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue → EBITDA_T = EBIT_T + D&A_T → EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT) → net debt_T = current net debt + cumulative burn to breakeven → equity_T = EV_T − net debt_T → shares_T = current diluted × (1 + share growth)^years + announced-raise shares → value_T = equity_T ÷ shares_T → PV = value_T ÷ (1 + hurdle)^years
 
 ### Screening context — how this name surfaced — _not a verdict_
 

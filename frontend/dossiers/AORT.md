@@ -5,11 +5,21 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $10.44 (-58.9% vs spot) · **Spot** $25.37 (underwritten 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
+**Target (base)** $10.44 (-58.9% vs entry-vintage spot) · **Spot** $25.37 (entry-vintage — underwritten 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
 
 **Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
 
+> **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
+### What would reopen this name
+
+- price below about $10.50, roughly the base case in today's terms, then re-run at the new price
+- the second-quarter report quantifies the recall as bounded AND valve and stent-graft revenue growth holds double-digit - re-underwrite the optimistic and central cases
+- reported operating margin at or above 10% for two consecutive halves with spending growing slower than revenue - the cost model is structural; raise the terminal path
+
 ### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-22); the live close is in Key figures._
+
 WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base case is worth about $10 a share in today's terms - under half the market price - and even the optimistic case sits a quarter below it. The market is paying today for margins this company has never printed: breaking even needs roughly 15% operating margins at the stock's own historical floor multiple, against a best-ever year of 10%, margins that moved backwards last year, three-and-a-half turns of debt, and a product recall whose cost is not yet quantified. A real franchise, priced past its delivery. We revisit near $10, or on proof the 2024 cost discipline was structural rather than a one-year event.
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; Distorted-P/E anchor (a bull point): 'The trailing EV/EBITDA sits at the 7th percentile of its own ~10.5-year range (… — full caveats in Analysis.
@@ -35,7 +45,7 @@ _6 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-22 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 590 | 4.5% | 9x | $3.12 | -87.7% |
 | base | 638 | 9.5% | 13x | $10.44 | -58.9% |
@@ -44,6 +54,17 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.
 - **bull** — the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.
+
+**Scenario inputs** — every value in the grid recomputes from these.
+
+| input | value | basis | source |
+| --- | ---: | --- | --- |
+| net debt | 202.393 $M | lease-inclusive net debt, latest quarter: total debt 215 + finance leases 4 + operating leases 39 - cash 56 | EDGAR companyfacts, 10-Q period ended 2026-03-31 |
+| diluted shares | 49.731 shares | latest-quarter diluted weighted-average count; it includes the May-2025 debt-for-equity exchange shares, and the retired principal is correspondingly out of the net-debt bridge - a coherent pair, with no double-count | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-03-31 |
+| d and a ratio | 0.048961 rate | latest depreciation and amortisation over trailing-twelve-month revenue (22.458 / 458.689) | EDGAR companyfacts dep_amort, FY2025; revenue from the committed financial summary |
+| share growth | 0.022516 rate | OVERRIDE. The raw three-year compound rate (5.62%) terminates in a one-off convert-for-stock exchange whose balance-sheet benefit is already banked in net debt; compounding it forward would charge the terminal year twice. Forward rate = the FY2021-FY2024 organic basic-share compound rate. | EDGAR 8-K Item 3.02 accessions 0000784199-25-000080 (2025-05-14) and 0000784199-25-000129 (2025-05-29); share series FY2021-FY2024 |
+
+_Chain (EV/EBITDA):_ EBIT_T = terminal revenue × terminal margin → D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue → EBITDA_T = EBIT_T + D&A_T → EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT) → net debt_T = current net debt + cumulative burn to breakeven → equity_T = EV_T − net debt_T → shares_T = current diluted × (1 + share growth)^years + announced-raise shares → value_T = equity_T ÷ shares_T → PV = value_T ÷ (1 + hurdle)^years
 
 ### Screening context — how this name surfaced — _not a verdict_
 

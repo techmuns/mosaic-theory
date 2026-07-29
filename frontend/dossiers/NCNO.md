@@ -5,11 +5,21 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $8.17 (-54.4% vs spot) · **Spot** $17.93 (underwritten 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
+**Target (base)** $8.17 (-54.4% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — underwritten 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
 
 **Underwrite disposition:** WATCH (2026-07-21) — _the BUY/AVOID verdict of record is the ledger's_
 
+> **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
+### What would reopen this name
+
+- price below about $11.5 - the base case in today's terms with interim free cash flow credited (about 8.17 plus 3.58) - then re-run the underwrite at the new price [amended 2026-07-22: was 'below about $9', which credited no interim cash.]
+- subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]
+- reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]
+
 ### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-07-21); the live close is in Key figures._
+
 WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; Distorted-P/E anchor (a bull point): 'On a forward basis the name's NTM TEV/EBITDA of 12.32x sits BELOW the peer-medi… — full caveats in Analysis.
@@ -35,7 +45,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-21 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 684 | 8.6% | 10x | $4.25 | -76.3% |
 | base | 755 | 12.6% | 12.5x | $8.17 | -54.4% |
@@ -44,6 +54,17 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
 - **bull** — the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.
+
+**Scenario inputs** — every value in the grid recomputes from these.
+
+| input | value | basis | source |
+| --- | ---: | --- | --- |
+| net debt | 223.899 $M | lease-inclusive net debt, latest quarter: total debt 263 + finance leases 51 + operating leases 13 - cash 103 | EDGAR companyfacts, 10-Q period ended 2026-04-30 |
+| diluted shares | 109.458 shares | latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30 |
+| d and a ratio | 0.071043 rate | latest full-year depreciation and amortisation over the SAME year's revenue (42.255 / 594.781, fiscal 2026) [amended 2026-07-22: the denominator was 610.058, which is not that year's revenue, so the ratio was not the same-period figure its basis described; both terms now come from the fiscal-2026 annual report.] | EDGAR companyfacts, FY2026 (Feb-2025 to Jan-2026), acc 0001902733-26-000022 |
+| share growth | 0.011119 rate | three-year compound growth in the diluted count, floored at zero | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, FY2023-FY2026 |
+
+_Chain (EV/EBITDA):_ EBIT_T = terminal revenue × terminal margin → D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue → EBITDA_T = EBIT_T + D&A_T → EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT) → net debt_T = current net debt + cumulative burn to breakeven → equity_T = EV_T − net debt_T → shares_T = current diluted × (1 + share growth)^years + announced-raise shares → value_T = equity_T ÷ shares_T → PV = value_T ÷ (1 + hurdle)^years
 
 ### Screening context — how this name surfaced — _not a verdict_
 
