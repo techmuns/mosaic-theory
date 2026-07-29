@@ -4844,15 +4844,12 @@ RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-on
     field in a scenario record, because a record is read by an outside buy-side analyst who has
     never seen this repo, and the registers differ by field:
 
-    (written as lines, NOT a markdown table: an indented table inside an ORDERED list item does
-    not render on GitHub — verified against the API. Note a table indented inside a BULLET DOES
-    render, which is why a naive "indented = broken" rule over-flags and is not shippable.)
-    · `rationale_plain` — plain thesis, ≤~120 words: action + asymmetry → the variant view with
-      its carrying numbers → the kill condition
-    · `reunderwrite_triggers` — measurable condition → threshold → action
-    · leg `reason` — investment-committee register, statistics cited BY NAME
-    · `assumptions[].method` — technical replication detail (a reader must be able to rebuild
-      the number)
+    | field | register |
+    |---|---|
+    | `rationale_plain` | plain thesis, ≤~120 words: action + asymmetry → the variant view with its carrying numbers → the kill condition |
+    | `reunderwrite_triggers` | measurable condition → threshold → action |
+    | leg `reason` | investment-committee register — statistics cited BY NAME |
+    | `assumptions[].method` | technical replication detail (a reader must be able to rebuild the number) |
 
     Binding on every field regardless of register: **accessions and vendor names live in the
     structured `references` / `source` fields only**, and **house-internal labels appear nowhere —
@@ -5287,6 +5284,13 @@ FOR CLASSES ON SPEC.** Twenty-one sites correct by three distinct mechanisms is 
 careful, which is evidence the original nine were SPECIFIC GAPS rather than symptoms of general
 looseness. Run a scan when it is cheap AND motivated by a live recurrence; not on a hunch.
 
+**ITEM 21's REVIEW BASIS — STATED, because the previous message was ambiguous about it
+(operator 2026-07-29).** 21 changes EXTRACTED VALUES, so it needs a **REAL SHOWN RUN as its own
+evidence** — the decision-path rule — **NOT operator approval**. It ships on that run unless the
+run surprises. The two that need the operator are **28 and 22**, both RENDER changes, which the
+PREVIEW RULE gates: preview from committed JSON, then STOP. The operator's mechanical list was
+wrong on those two and is corrected here.
+
 **PR CADENCE CHANGED — 2026-07-28 (operator, reviewing the run: eight PRs, five docs-only). THE
 RULES LIVE IN docs/engineering.md §PR cadence; THE CONSEQUENCE FOR THIS QUEUE IS AN ORDER.**
 (i) **No more record-only PRs** — the record rides in the PR that implements what it records, one
@@ -5464,21 +5468,37 @@ unstated, so they/them.
 was genuine and is closed. §7 item 19's flagged marker is ``*** NO GATE — new exposure`` INSIDE A
 CODE SPAN, where `**` is not markup — it renders correctly, verified against GitHub's API. The
 naive counter was wrong, not the document.
-**(d) THE INDENTED TABLES — ONE OF TWO WAS REAL.** Measured against the API rather than reasoned
-from CommonMark: a table indented inside an ORDERED list item does NOT render (the `| field |
-register |` one — fixed, rewritten as `·` lines); indented inside a BULLET it DOES (the `| check |
-honest worst |` one — correct, left alone). "Indented = broken" over-flags.
-**(e) WHAT SHIPPED, AND WHAT DELIBERATELY DID NOT.** SHIPPED:
+**(d) THE INDENTED TABLES — CORRECTED 2026-07-29: NEITHER WAS REAL, AND #250's EXPLANATION WAS
+WRONG. THE ERROR WAS MINE, IN THE MEASUREMENT.** #250 recorded that a table indented inside an
+ORDERED list item does not render while one inside a BULLET does. **FALSIFIED** by constructing 10
+cases and settling them against the API: EVERY indented case renders — ordered, bullet, nested,
+1-digit, 2-digit, with or without a preceding blank line, at indents 2/3/4. The ONLY non-rendering
+case is a table at indent 0 inside a list item, which is not what either instance was.
+**WHAT ACTUALLY HAPPENED: I FED THE RENDERER A TRUNCATED WINDOW.** The failing sample started 9
+lines BELOW its `26. ` list marker, so its 4-space indentation parsed as a top-level INDENTED CODE
+BLOCK rather than as list-item continuation. Re-rendered from the marker: it produces a real
+`<table>`. The document was correct the whole time; the sample was not.
+**CONSEQUENCE, and it is a correction to shipped work:** #250 rewrote a CORRECT table as `·` lines
+on the strength of a false negative. **The table is RESTORED here.** (#248's item-22 truth table was
+converted on the same measurement error; its `·` lines read fine and are left, but the record no
+longer claims they fixed a defect.) So of the four markdown defects recorded across #248/#250,
+**ONE was real** — queue item 24's orphan — and three were artifacts of my own checkers and sampling.
+**THE INDENTED-TABLE CHECK IS NOT NEEDED, which is a stronger answer than "not shippable".** There
+is no defect class to guard: indented tables render. The gap #250 recorded as open is closed by
+measurement rather than by code.
+
+**(e) WHAT SHIPPED.** SHIPPED:
 `test_state_and_engineering_docs_have_no_orphan_bold` — per LIST ITEM (a blank-line block puts §1's
 1,223 markers in one bucket, where an orphan is neither detectable nor locatable), with CODE SPANS
 STRIPPED FIRST so it cannot fire on correct content. Mutation-verified BOTH ways: one added `**`
-reds it; a `***` in a code span does not. **NOT SHIPPED — the indented-table check**, because the
-distinguishing rule is ordered-vs-bullet and no offline GFM renderer is installed to arbitrate;
-adding a dependency is outside topology's scope. **A known gap, stated rather than silently
-omitted** — which is item 22's own rule applied to this work.
-**THE PATTERN WORTH KEEPING:** of four recorded markdown defects, two were checker artifacts. Both
-times the renderer was the authority and the local heuristic was not — the same lesson as the
-CommonMark-vs-GitHub table finding in #248.
+reds it; a `***` in a code span does not. **NO indented-table check — because there is nothing to
+check** (see (d)): every indented table renders. #250 recorded this as an open gap; it is closed by
+measurement, not by code.
+**THE PATTERN WORTH KEEPING — and it now cuts both ways.** Of the four recorded markdown defects,
+**ONE was real**; three were artifacts of my own checkers and my own sampling. Three times the
+renderer corrected a heuristic; the fourth time **the renderer itself was wrong because I truncated
+the sample**. So the rule shipped to docs/engineering.md is the renderer-as-authority rule PLUS its
+corollary: an authority fed the wrong context is not an authority.
 
 **ADDED TO THAT SLOT 2026-07-28 (2) — INDENTED TABLES DO NOT RENDER, and it is the SAME shape as
 the orphan-`**` class: a markdown defect invisible to the author and only visible to the reader.**

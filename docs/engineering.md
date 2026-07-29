@@ -278,6 +278,25 @@ correct by one of three mechanisms, and the third is the one to watch:
    `source_ref="Close (latest)"` came to sit on a months-old value: the same false-provenance shape,
    arriving through the data provider instead of through the code.
 
+## For anything a reader sees rendered, the renderer is the authority
+
+*(operator, 2026-07-29, after three heuristics over-flagged in a week)*
+
+> **Not the spec, not a heuristic, not a counter — the renderer.**
+
+| the heuristic said | the renderer said |
+|---|---|
+| CommonMark: a table cannot interrupt a paragraph | GitHub renders it |
+| a `**` counter: orphan bold in §7 item 19 | it is inside a code span; renders correctly |
+| an indent rule: two indented tables are broken | both render |
+
+**AND THE COROLLARY, which cost a shipped correction: the renderer is only an authority if you give
+it the REAL CONTEXT.** A sample of a STATE.md table taken from 9 lines below its `26. ` list marker
+renders as an indented code block, because without the marker the 4-space indent is no longer
+list-item continuation. That false negative reached main in #250 and rewrote a correct table. When
+sampling a document to render, include enough enclosing structure that it parses the way it does in
+situ — for a list item, start at the marker.
+
 ## A measurement in a throwaway tree establishes its own baseline first
 
 *(operator, 2026-07-28)*
