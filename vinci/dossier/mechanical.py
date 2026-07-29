@@ -2210,6 +2210,11 @@ def _release_revenue_guide(
     return (None, None, False)
 
 
+#: Display cap for a qualitative guide's verbatim in the MAIN BODY. The stored text is a 200-char
+#: raw extract; the whole of it is not a decision value.
+_GUIDE_VERBATIM_CAP = 110
+
+
 def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
     """(item 1 clause (c)) The guide from the LATEST results filing that carries one.
 
@@ -2237,9 +2242,30 @@ def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
     assert filed is not None                            # `dated` filtered on it
     parts = []
     for g in latest.guidance:
-        rng = (f"{g.low:,.1f}–{g.high:,.1f}" if g.low is not None and g.high is not None
-               else (f"{g.low:,.1f}" if g.low is not None else "—"))
-        parts.append(f"{g.metric} {g.period}: {rng} {g.unit or ''}".strip())
+        # REVIEW FIX (#254). The first cut printed "metric period: — $M" for BOTH a
+        # qualitative guide and a high-only range: it read `low`/`high` and ignored the
+        # `qualitative` flag and the `verbatim` text the model already carries. Live on 6 rows
+        # across 4 names (AORT, IT, MVST, VITL) — every one of them qualitative — so a
+        # reaffirmed-outlook statement rendered as an em-dash with a currency unit stuck to it:
+        # a missing NUMBER where the filer made a non-numeric statement, which is a different
+        # claim and the wrong one.
+        if g.qualitative or (g.low is None and g.high is None):
+            # the verbatim is a 200-char raw extract and carries page furniture ("Page 2 of 13 …")
+            # on real filings, so cap it for a MAIN-BODY slot. Truncation is MARKED, never silent,
+            # and the untruncated text stays in the release record.
+            said = " ".join((g.verbatim or "").split())
+            if len(said) > _GUIDE_VERBATIM_CAP:
+                said = said[:_GUIDE_VERBATIM_CAP].rstrip() + "… (full text in the release record)"
+            parts.append(f"{g.metric} {g.period}: {said}" if said
+                         else f"{g.metric} {g.period}: qualitative guide, no figure given")
+            continue
+        if g.low is not None and g.high is not None:
+            rng = f"{g.low:,.1f}–{g.high:,.1f}"
+        elif g.low is not None:
+            rng = f"≥ {g.low:,.1f}"          # a floor is not a point estimate; say which it is
+        else:
+            rng = f"≤ {g.high:,.1f}"         # was silently dropped — the bound is the whole guide
+        parts.append(f"{g.metric} {g.period}: {rng} {g.unit}".strip())
     return Sourced.present(
         "; ".join(parts),
         source_ref=f"{latest.source_ref} (filed {filed.isoformat()})")

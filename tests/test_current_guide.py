@@ -30,6 +30,21 @@ def _rel(acc: str, filed: str | None, *, guide: bool = True) -> ReleaseExtract:
         guidance=g, reconciliation=[], one_offs=[], event_impacts=[], qa_flags=[])
 
 
+def _qual_rel(*, verbatim: str) -> ReleaseExtract:
+    """A release whose guide is QUALITATIVE — no bounds, a statement instead."""
+    g = GuidanceItem(metric="net sales", period="2026", low=None, high=None, unit="$M",
+                     qualitative=True, verbatim=verbatim, source_ref="8-K q")
+    return ReleaseExtract(source_ref="8-K q EX-99.1", filed=dt.date(2026, 7, 9), guidance=[g],
+                          reconciliation=[], one_offs=[], event_impacts=[], qa_flags=[])
+
+
+def _bounded_rel(*, low: float | None, high: float | None) -> ReleaseExtract:
+    g = GuidanceItem(metric="net sales", period="2026", low=low, high=high, unit="$M",
+                     qualitative=False, verbatim="v", source_ref="8-K b")
+    return ReleaseExtract(source_ref="8-K b EX-99.1", filed=dt.date(2026, 7, 9), guidance=[g],
+                          reconciliation=[], one_offs=[], event_impacts=[], qa_flags=[])
+
+
 def test_current_guide_picks_by_date_never_by_position() -> None:
     """THE RED for the `[-1]` class. The fixture is deliberately ordered so that NEITHER the first
     nor the last element is the newest — position-based selection returns a different accession
@@ -102,3 +117,34 @@ def test_a_dated_release_beats_an_undated_one_rather_than_being_skipped() -> Non
     where dating is unreliable."""
     out = _current_guide([_rel("undated", None), _rel("dated", "2026-07-09")])
     assert out.status is SourceStatus.PRESENT and "dated" in (out.source_ref or "")
+
+
+def test_a_qualitative_guide_is_not_rendered_as_a_missing_number() -> None:
+    """REVIEW FINDING on #254, and it was LIVE: 6 guidance rows across 4 names (AORT, IT, MVST,
+    VITL) carry `qualitative=true` with neither bound. The first cut read `low`/`high` only and
+    printed `net sales 2026: — $M` for every one — an em-dash with a currency unit welded to it.
+
+    That is the wrong claim, not merely an ugly one: it says "we looked for a number and there
+    isn't one" when the filer made a NON-NUMERIC statement that `verbatim` already holds. The
+    model carries `qualitative` and `verbatim`; ignoring both to render a dash is the fabricated-
+    absence shape."""
+    v = "reaffirmed its full-year outlook"
+    out = _current_guide([_qual_rel(verbatim=v)])
+    assert out.status is SourceStatus.PRESENT
+    assert v in (out.value or ""), f"qualitative guide rendered as {out.value!r}"
+    assert "—" not in (out.value or ""), "a dash still stands in for a statement that exists"
+
+    # and with no verbatim to show, say WHICH kind of absence this is
+    bare = _current_guide([_qual_rel(verbatim="")])
+    assert "qualitative guide, no figure given" in (bare.value or "")
+
+
+def test_a_one_sided_range_keeps_its_bound_and_says_which_side() -> None:
+    """The other half of the same defect: a high-only guide printed `—`, dropping the only number
+    in it. Zero live rows today, so this is the latent case — but a floor and a ceiling are
+    different claims and a bare figure reads as a point estimate, so both are marked."""
+    lo = _current_guide([_bounded_rel(low=1345.0, high=None)])
+    hi = _current_guide([_bounded_rel(low=None, high=1355.0)])
+    assert "≥ 1,345.0" in (lo.value or ""), lo.value
+    assert "≤ 1,355.0" in (hi.value or ""), hi.value
+    assert "—" not in (lo.value or "") and "—" not in (hi.value or "")
