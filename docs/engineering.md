@@ -303,6 +303,31 @@ waiting for its trigger" was already written down — and the trigger was the fi
 > **A fix that makes a latent ordering assumption load-bearing inherits that assumption's defect.**
 > Check what your change promotes from cosmetic to critical.
 
+## A rule is satisfied at the surface where the harm occurs
+
+*(operator, 2026-07-29 — second instance, in a different layer from the first)*
+
+> **A rule is satisfied at the surface where the harm occurs, not wherever the field can be
+> written.** Compliance recorded in a tier no reader sees is non-compliance.
+
+The guidance-refusal fix nearly shipped as a note filed into `qa_flags`. That field is the machine
+tier BY DESIGN — `render.py` says "dev/JSON only" — and a release's own flags roll up nowhere, so
+the note would have been invisible on every surface. It would have passed its own rule while
+changing nothing a reader meets. 17b's brief gap was the same shape one layer up.
+
+The test to apply: **name the surface where the harm happens, and check the fix reaches THAT one.**
+For a misleading page, that is the page. Writing the fact somewhere true is not the same as writing
+it somewhere seen.
+
+### The corollary — the false-UNKNOWN arriving from the other direction
+
+The same fix emitted BOTH "guidance refused" and "no anchored pattern matched" for one release.
+Those are mutually exclusive: the second asserts a release stated no guidance, and the first says
+it stated guidance we declined to parse. Emitting both is the false-UNKNOWN shape reached from the
+opposite side — not a missing fact dressed as absent, but an absence asserted over a fact we saw.
+
+> **When a guard both refuses a value and reports it missing, one of the two is a lie.**
+
 ### Generalised from ordering to FORMAT — the fifth instance, 2026-07-29
 
 Five now, and the fifth is not about order at all:

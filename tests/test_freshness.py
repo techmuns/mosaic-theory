@@ -43,6 +43,13 @@ def _fleet() -> dict[str, dict]:
     return out
 
 
+def _assembled(ticker: str) -> str:
+    """A dossier's own assembly stamp — what panel age is measured against, so a committed artifact
+    reports the age it had WHEN BUILT rather than ageing every time it is re-read."""
+    return str(json.loads(((ROOT / "data" / "dossiers" / ticker / "dossier.json")).read_text())
+               ["assembled_at"])
+
+
 def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
     """THE MEASUREMENT BUG, pinned — it was made twice and inverted the fleet's ranking both times.
 
@@ -57,10 +64,10 @@ def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
     assert not [k for k in keys if "own_history" in k or "stock_performance" in k], (
         f"value-borne dates leaked into the panel set: {sorted(keys)}")
 
-    spread = fr.panel_spread(mech)
-    assert spread is not None and spread.days <= 10, (
-        f"SMPL's PANEL spread is {spread.days if spread else '?'}d — it is 3d in fact, and a "
-        "larger number here means value-borne dates are being counted as arrivals again")
+    age = fr.panel_age(mech, _assembled("SMPL"))
+    assert age is not None and age.days <= 15, (
+        f"SMPL's oldest PANEL is {age.days if age else '?'}d old — a much larger number here means "
+        "value-borne dates are being counted as arrivals again")
 
 
 def test_the_ratio_separates_a_corporate_action_from_price_drift() -> None:
@@ -178,19 +185,32 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     build stop. Failing on drift would fail 11 of 11, which is a freeze wearing a guard's name.
     FUBO fails on the SHARE BASIS rather than the spread — its 42d is inside the ceiling.
     """
-    spread_fail, basis_fail, quiet = set(), set(), set()
+    age_fail, basis_fail, quiet = set(), set(), set()
+    over_ceiling = set()
     for name, mech in _fleet().items():
         recon = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
                                  shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
+        age = fr.panel_age(mech, _assembled(name))
+        if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
+            over_ceiling.add(name)
         try:
-            fr.check_freshness(fr.panel_spread(mech), recon, ticker=name)
+            fr.check_freshness(age, recon, ticker=name)
             quiet.add(name)
         except fr.FreshnessError as exc:
-            (basis_fail if "share basis" in str(exc) else spread_fail).add(name)
+            (basis_fail if "share basis" in str(exc) else age_fail).add(name)
 
-    assert spread_fail == {"BRBR", "MVST", "CNXC"}, spread_fail
+    # SELF-CONSISTENT, not hardcoded: the gate must refuse exactly the names whose computed age is
+    # over the ceiling. Written this way deliberately — comps re-exports move names off the list,
+    # and a hardcoded set would red on a WIN and read as a regression. (It was hardcoded to
+    # {BRBR, MVST, CNXC} before the 2026-07-29 re-measure; VRRM joined at 48d.)
+    assert age_fail == over_ceiling, (age_fail, over_ceiling)
     assert basis_fail == {"FUBO"}, basis_fail
-    assert quiet == {"AORT", "EPAM", "IT", "NCNO", "SMPL", "VITL", "VRRM"}, quiet
+    assert quiet, "no name passes both guards — a gate that stops every build is a freeze"
+    # VRRM LEFT this set in the 2026-07-29 re-measure — not because anything about VRRM changed,
+    # but because the measure did: at 48d against its own build date it is over the ceiling, where
+    # the old oldest→newest form put it at exactly 45 and passing. Its comps re-export moves it
+    # back; when that lands, add it here rather than loosening the assertion.
+    assert quiet == {"AORT", "EPAM", "IT", "NCNO", "SMPL", "VITL"}, quiet
     # ...and each quiet name is quiet for a STATED reason — it either RECONCILES (the end state we
     # want) or merely DRIFTS (labelled, per clause (e)). The first cut asserted every quiet name
     # drifts, carrying the note "if a name now reconciles this is a WIN, but the assertion must
@@ -220,13 +240,12 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
 def test_the_ceiling_is_a_boundary_not_a_range() -> None:
     """`> 45`, not `>= 45`: VRRM sits at exactly 45d and passes. Pinned because a silent flip to
     `>=` would fail a fourth name and read as a data change rather than a code change."""
-    mech = _fleet()["VRRM"]
-    spread = fr.panel_spread(mech)
-    assert spread is not None and spread.days == fr.MAX_PANEL_SPREAD_DAYS
-    fr.check_freshness(spread, None, ticker="VRRM")        # must not raise
+    at = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-15",
+                     days=fr.MAX_PANEL_AGE_DAYS)
+    fr.check_freshness(at, None, ticker="X")               # exactly at the ceiling: must not raise
 
-    over = fr.PanelSpread(oldest="2026-01-01", oldest_key="a", newest="2026-02-16",
-                          newest_key="b", days=fr.MAX_PANEL_SPREAD_DAYS + 1)
+    over = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-16",
+                       days=fr.MAX_PANEL_AGE_DAYS + 1)
     with pytest.raises(fr.FreshnessError, match="ceiling"):
         fr.check_freshness(over, None, ticker="X")
 
@@ -235,8 +254,8 @@ def test_the_spread_note_renders_on_a_passing_build_too() -> None:
     """Rendered ALWAYS, not only on failure (operator): the spread is context a reader needs to
     read a multiple. A guard that speaks only when it fails leaves the other seven names looking
     clean when their fundamentals are weeks behind their price."""
-    spread = fr.panel_spread(_fleet()["AORT"])
-    assert spread is not None
-    note = spread.note()
-    assert "panel spread" in note and str(spread.days) in note
-    assert spread.oldest in note and spread.newest in note
+    age = fr.panel_age(_fleet()["AORT"], _assembled("AORT"))
+    assert age is not None
+    note = age.note()
+    assert "oldest panel" in note and str(age.days) in note
+    assert age.oldest in note and age.as_of in note

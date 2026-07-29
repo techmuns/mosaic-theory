@@ -169,9 +169,13 @@ def _mark_material(mech: Any) -> Any:
         "financial_summary": fs.model_copy(update={
             "annual": ann.model_copy(update={"value": marked})})})
 
-def _freshness_check(mech: Any, *, ticker: str) -> None:
+def _freshness_check(mech: Any, *, ticker: str, reference_date: date) -> None:
     """(item 1) FAIL LOUD on a build whose dated inputs cannot honestly sit on one page: a panel
-    spread past the ceiling, or a market cap whose share basis disagrees with the price's.
+    older than the ceiling, or a market cap whose share basis disagrees with the price's.
+
+    ``reference_date`` is the BUILD's date, and panel age is measured against it — never against
+    the newest panel, which was the price on 11 of 11 dossiers and made a refresh able to fail a
+    build on unchanged CIQ panels.
 
     Ordinary drift is deliberately NOT fatal — it is a RENDERING obligation (clause (e)), and the
     cap now carries its own vintage on both twins. Failing on drift would fail 11 of 11 committed
@@ -179,7 +183,7 @@ def _freshness_check(mech: Any, *, ticker: str) -> None:
     from vinci.dossier.freshness import (
         absent_cap_inputs,
         check_freshness,
-        panel_spread,
+        panel_age,
         reconcile_cap,
     )
 
@@ -191,7 +195,8 @@ def _freshness_check(mech: Any, *, ticker: str) -> None:
 
     cap, shares, spot = val("market_cap"), val("shares_out"), val("price")
     recon = reconcile_cap(cap_musd=cap, shares=shares, spot=spot)
-    check_freshness(panel_spread(mech.model_dump(mode="json")), recon, ticker=ticker,
+    check_freshness(panel_age(mech.model_dump(mode="json"), reference_date), recon,
+                    ticker=ticker,
                     absent=absent_cap_inputs(cap_musd=cap, shares=shares, spot=spot))
 
 
@@ -335,7 +340,7 @@ def assemble_one(
         # smaller. A warning here would have been read past on exactly the day it mattered.
         mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
-        _freshness_check(mech, ticker=ticker)
+        _freshness_check(mech, ticker=ticker, reference_date=fin.reference_date)
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:
