@@ -8175,10 +8175,12 @@ def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read()
     assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
 
     scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
-    # (item 1e) the % column is against the record's FROZEN spot, so the header carries the
-    # vintage. Asserted from the record rather than hardcoded — a re-underwrite must not rot it.
-    assert ("| scenario | revenue $M | margin | multiple | value / sh | "
-            f"vs spot @ {card.underwrite_date} |") in scen
+    # (item 1e) the % column is against the record's FROZEN spot, so the header names the
+    # BASIS. It deliberately carries NO date: `underwrite_date` is when the call was frozen,
+    # and the close it was struck on is older on every committed record (audit P4).
+    assert "| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |" \
+        in scen
+    assert f"vs spot @ {card.underwrite_date}" not in scen
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is None:

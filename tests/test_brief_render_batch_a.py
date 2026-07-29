@@ -140,14 +140,53 @@ def test_a_name_without_a_record_gains_no_scenario_block() -> None:
 
 
 def test_the_frozen_spot_is_labelled_wherever_it_renders_beside_a_live_value() -> None:
-    """SMPL printed `+130.2% vs spot` off a frozen $10.53 while the same page's Key figures read a
-    live $10.22 — two prices, one label. The label must name the basis; the DATE is asserted from
-    the record rather than hardcoded, so a re-underwrite cannot rot this."""
+    """SMPL printed `+130.2% vs spot` off a frozen $10.53 while the same page's live close read
+    $10.22 — two prices, one label. The label must name the BASIS. The date is asserted from the
+    record, never hardcoded, so a re-underwrite cannot rot this."""
     for name, _d, card in CARDED:
         md = _md(name)
         assert "vs entry-vintage spot" in md or "**Target (base)**" not in md, name
-        assert f"(entry-vintage — underwritten {card.underwrite_date})" in md, name
-        assert f"vs spot @ {card.underwrite_date} |" in md, f"{name}: table header undated"
+        assert f"(entry-vintage — frozen at underwrite {card.underwrite_date})" in md, name
+        assert "| vs entry-vintage spot |" in md, f"{name}: table header does not name the basis"
+
+
+def test_the_underwrite_date_is_never_presented_as_the_price_s_own_vintage() -> None:
+    """THE REVIEW FINDING THAT HELD THIS PR, and it is audit P4 verbatim: *"the page asserts
+    'underwritten 2026-07-27' over a 07-22 price"*.
+
+    ``underwrite_date`` is when the call was FROZEN. The close it was struck on is OLDER on 6 of 6
+    committed records — SMPL by 5 days, IT 3, AORT 2, MVST/NCNO/EPAM 1 — and that struck date
+    lives only inside ``spot_source`` free text. A first cut stamped ``$10.53 @ 2026-07-27``, which
+    reproduced P4 on every carded name AND, beside a live ``CMP $10.22 (2026-07-24)``, made the
+    FROZEN value read as NEWER than the live one — worse than leaving it undated.
+
+    The fixture is the corpus itself: only records whose two dates genuinely diverge are checked,
+    so this cannot pass by finding nothing."""
+    checked = 0
+    for name, _d, card in CARDED:
+        struck = re.search(r"\d{4}-\d{2}-\d{2}", card.spot_source or "")
+        if not struck or struck.group(0) == card.underwrite_date:
+            continue                      # no divergence on this record — it would pin nothing
+        md, ud, price = _md(name), card.underwrite_date, f"{card.spot:,.2f}"
+        for shape in (f"${price} @ {ud}", f"${price} ({ud})", f"${price}, {ud}"):
+            assert shape not in md, f"{name}: {shape!r} dates the price with the FREEZE date"
+        assert f"frozen at underwrite {ud}" in md, (
+            f"{name}: the date is shown without saying it is the freeze date")
+        checked += 1
+    assert checked >= 4, f"expected records whose two dates diverge, saw {checked}"
+
+
+def test_the_spot_s_own_provenance_reaches_the_print_reader() -> None:
+    """The corollary. Having refused to stamp a date it cannot support, the render must still put
+    the price's real vintage on the page — the web has carried it as the `[S1]` cite since the
+    masthead redesign, and the md rendered ``spot_source`` NOWHERE, so an export could state a
+    frozen price with no way to learn when it was struck.
+
+    Printed VERBATIM and never parsed: reading a date out of analyst free text to compose a stamp
+    is the display-string parse this repo forbids, and is what the finding above was."""
+    for name, _d, card in CARDED:
+        assert card.spot_source, f"{name}: record has no spot_source"
+        assert card.spot_source in _md(name), f"{name}: spot provenance missing from the md"
 
 
 def test_the_sealed_rationale_is_labelled_rather_than_edited() -> None:
@@ -240,11 +279,25 @@ def test_the_render_package_still_does_not_import_the_ledger() -> None:
 # --- twin parity: the web says the same thing about the same value ------------------------------
 
 
-def test_the_web_twin_dates_the_frozen_spot_too() -> None:
-    """Twin parity binds on CONSUMERS, not just fields: the md and the web both state "vs spot",
-    and both must date it. The web renders `@ <underwriteDate>`; the md says it in words."""
+def test_neither_twin_stamps_the_freeze_date_onto_the_spot_value() -> None:
+    """Twin parity binds on CONSUMERS — and here it binds on a REFUSAL, which is the more useful
+    direction. Both surfaces state "vs spot" against the frozen price, and NEITHER may date it
+    with ``underwriteDate``: that is the freeze date, and the close is 1-5 days older on every
+    committed record.
+
+    This test previously asserted the OPPOSITE — that the web stamped the date — because the first
+    cut believed the two were the same. Inverted deliberately, and left as the reminder: an
+    inherited assumption reached both twins at once, so twin parity confirmed the error rather
+    than catching it."""
     js = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
-    sub = js.split("function ", 1)[1]
-    assert "c.underwriteDate ? ` @ ${escapeHtml(c.underwriteDate)}`" in js, (
-        "the web still prints an undated frozen spot while the md dates it")
-    assert "vs spot ${escapeHtml(fmtPrice(c.spot))}${vintage}" in sub
+    lines = js.splitlines()
+    i = next(k for k, ln in enumerate(lines) if "vs spot ${escapeHtml(fmtPrice(c.spot))}" in ln)
+    stmt = "\n".join(lines[i:i + 2])       # the template literal wraps onto the next line
+    assert "underwriteDate" not in stmt, (
+        f"the web stamps the freeze date onto the spot value: {stmt.strip()}")
+    # and the cite — which carries the real struck date verbatim — is still attached
+    assert 'citeMark(c.spotSource)' in stmt, "the web dropped the spot's provenance cite"
+
+    py = (ROOT / "vinci" / "dossier" / "render.py").read_text()
+    assert "vs spot @ {card.underwrite_date}" not in py
+    assert "frozen at underwrite " in py

@@ -2293,7 +2293,18 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         # read $10.22 — two prices, one label, and nothing telling the reader which was which.
         strip.append(f"**Target (base)** ${vps:,.2f}"
                      + (f" ({upside:+.1%} vs entry-vintage spot)" if upside is not None else ""))
-    strip.append(f"**Spot** ${spot:,.2f} (entry-vintage — underwritten {card.underwrite_date})")
+    # (item 1e) "FROZEN AT UNDERWRITE <date>", never "underwritten <date>" as if it dated the
+    # price. `underwrite_date` is when the call was frozen; the close it was struck on is 1-5 days
+    # OLDER on all 6 committed records (SMPL's 10.53 is a 07-22 close under a 07-27 underwrite
+    # date). The old wording is audit P4 verbatim — "the page asserts 'underwritten 2026-07-27'
+    # over a 07-22 price" — and it survived into the fix meant to close P4.
+    #
+    # The struck date is NOT structurally available: `ScenarioRecord` has `spot` and `spot_source`
+    # and no `spot_as_of`, and the date lives inside analyst free text phrased differently per
+    # record. Parsing it out would be the banned display-string parse, so the source line below
+    # carries it VERBATIM instead, and a structured `spot_as_of` is queued as the real fix.
+    strip.append(f"**Spot** ${spot:,.2f} (entry-vintage — frozen at underwrite "
+                 f"{card.underwrite_date})")
     if r.reward is not None:
         strip.append(f"**Reward** ${r.reward:,.2f}")
     if r.risk is not None:
@@ -2303,6 +2314,14 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
     elif r.ratio_undefined:
         strip.append("**Reward : risk** UNDEFINED")
     out += [" · ".join(strip), ""]
+    # (item 1e) THE SPOT'S PROVENANCE, verbatim — the only place the price's OWN date reaches a
+    # print reader. The web has carried it since the masthead redesign, as the `[S1]` cite beside
+    # the value; the md rendered it NOWHERE, so the export could state a frozen price with no way
+    # to learn when it was struck. Printed as recorded and never parsed: it is analyst free text
+    # ("Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)"), and reading a
+    # date out of it to compose a stamp is precisely the display-string parse the repo forbids.
+    if card.spot_source:
+        out += [f"_Spot source: {card.spot_source}_", ""]
     if v.status:
         # DISPOSITION, not the verdict: `status` is confirm/override against the machine proposal.
         # The BUY/AVOID verdict of record lives in the append-only ledger, which this package does
@@ -2380,11 +2399,11 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     if not rows:
         return []
     # (item 1e) the % column is computed against the record's FROZEN spot, not the live close that
-    # leads this page. Undated it reads as a live number; the header carries the vintage so the
-    # basis travels with the value rather than being inferred from the section it sits in.
+    # leads this page — so the header names the BASIS. It deliberately does NOT carry
+    # `underwrite_date`: that is the freeze date, not the date the price was struck, and stamping
+    # it here would assert a vintage the record cannot support (see `_underwrite_lines`).
     out = [f"_{card.recipe_desc}_", "",
-           f"| scenario | revenue $M | margin | multiple | value / sh | "
-           f"vs spot @ {card.underwrite_date} |",
+           "| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |",
            "| --- | ---: | ---: | ---: | ---: | ---: |", *rows, ""]
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
