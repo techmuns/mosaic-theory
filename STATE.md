@@ -4469,10 +4469,15 @@ screen cohort.**
     whitespace and tab so a space bar cannot bypass it). A **CLOSE row may not carry facts**: a
     close repeats the original verdict for provenance and opens no position, so facts there would
     read as a second, later-dated underwrite — the same reason a close carries no verdict of its own.
-    **BINDS FORWARD** (`FACTS_AVAILABLE_FROM = "2026-07-29"`, on the BASIS_REQUIRED_FROM /
-    FIELDED_REFS_FROM pattern): the 3 committed V-rows predate the field, stay valid, and are **NOT
+    **BINDS FORWARD:** the 3 committed V-rows predate the field, stay valid, and are **NOT
     backfilled** — pinned by a test that re-validates every committed row AND asserts none acquired
     facts. Empty is a legitimate PERMANENT state, not a migration waypoint.
+    **REVIEW FINDING, fixed before merge: the first cut declared a `FACTS_AVAILABLE_FROM` constant
+    citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — and nothing read it.** Those two
+    ARE read, by real version gates in `vinci/scenarios.py`. This one could not be: they mark the
+    version from which a field becomes REQUIRED, and `facts` is permanently optional. A constant
+    that looks like a guard and enforces nothing is worse than no constant, so it was DELETED and
+    the forward-binding property left where it is actually true — on the field, and in the test.
     **TEST-LAYER NOTE.** The first cut pinned only the MODEL (construct → serialise → re-validate),
     which proves the shape and not the path. The brief's red names the write path, and the item's
     own scope sentence exists to stop it being relitigated as a parsing problem — so the pin was

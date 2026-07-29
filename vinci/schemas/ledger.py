@@ -19,11 +19,14 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 # The one non-decision event a ledger row may record. A close is an APPENDED row, never an edit.
 EVENT_CLOSE = "CLOSE"
 
-# From this version, a decision row MAY carry typed facts (item 18a). Binds FORWARD only, on the
-# BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern: the three committed V-rows predate the field,
-# stay valid, and are NOT backfilled — rewriting a sealed decision to satisfy a later schema is
-# exactly what an append-only ledger exists to prevent.
-FACTS_AVAILABLE_FROM = "2026-07-29"
+# NOTE (item 18a, review finding): there is deliberately NO `FACTS_AVAILABLE_FROM` constant here.
+# The first cut declared one, citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — but
+# those are READ by real version gates in vinci/scenarios.py, and nothing read this one. It could
+# not be read, either: those constants mark a version from which a field becomes REQUIRED, and
+# `facts` is permanently optional (a verdict that types nothing is still a verdict). A constant
+# that looks like a guard and enforces nothing is worse than no constant, so the forward-binding
+# property is stated where it is actually true — on the field, and in the test that pins that no
+# committed row was backfilled.
 
 # Close-row id convention. The decision row is "V-{candidate_id}" and re-logging it fails loud —
 # that uniqueness rule is what makes the ledger append-only in practice. It is widened HERE, once
@@ -87,7 +90,7 @@ class LedgerFact(BaseModel, frozen=True):
 
     @field_validator("unit", "basis", "source")
     @classmethod
-    def _not_blank(cls, v: str, info: object) -> str:
+    def _not_blank(cls, v: str) -> str:
         if not v.strip():
             raise ValueError(
                 "a ledger fact needs its unit, basis and source — refusing to seal a number into "
