@@ -4412,6 +4412,22 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     `render.py:1786` ↔ `dossier.js:466` — same words AND the same weight in two languages), plus
     `_CS_COLS` (see 27b). The prototype was a throwaway and is NOT in the repo; 27a is where it
     lands, baselined.
+**27a — BUILT 2026-07-29 (`tests/test_duplicate_definitions.py`). THE COUNT IS THIRTEEN, NOT TEN.**
+The prototype's ten was measured before the tree grew; re-derived against current code the detector
+finds **13** duplicated literal sets across the py↔JS twins, `_CS_COLS` among them. Baseline frozen
+at those 13 → **the build fails on the FOURTEENTH**, zero curation required, exactly as the split
+specified. Mutation-verified BOTH ways: a 14th duplicate reds the guard; a baseline entry whose
+duplicate no longer exists reds the second test, so **the baseline can only ever SHRINK** —
+otherwise it silently becomes a list of things that used to be true while the suite stays green
+(the assertion-integrity class applied to the guard's own bookkeeping). 27b's curation count is
+therefore 13, not 10.
+**AND THE BASELINE ALMOST SHIPPED FABRICATED.** The first cut was hand-transcribed from truncated
+prototype output that printed only the first five members of each set with an ellipsis — so four
+entries carried INVENTED vocabulary that no file contains. It reddened immediately (the
+still-exists test caught it), and the baseline is now GENERATED from the detector rather than
+copied by eye. Transcribing from a truncated display is the same shape as rendering a truncated
+sample: **the source was authoritative and the excerpt was not.**
+
 27b. **CURATE THE TEN DOWN — as each is touched, NOT as a project (operator 2026-07-28).** Each hit
     needs a judgment: genuine shared definition (collapse to one import, or pin) vs short domain
     vocabulary used inline (`["bear","base","bull"]`, where a literal is legitimate).
@@ -5259,6 +5275,27 @@ SCENARIO-RECORD schema change, NOT 18a (which is the LEDGER payload) — so P3 p
 different dependency than first recorded. **It is now QUEUE ITEM 29** (operator 2026-07-28): a
 schema change parked inside item 24 — blocked pending the validation run — would be stranded by
 that block, so it carries its own number and its own sequencing.
+
+**FIRST-PASS FINDINGS ARE WRONG ROUGHLY HALF THE TIME, IN BOTH DIRECTIONS — the evidence, kept
+where a later session will read it (operator 2026-07-29). This is the case for the verification
+discipline stated in EVIDENCE rather than in principle.** Tallied across this remediation:
+· operator MECHANISMS wrong **8** times (P1, P3, P4, P5, P8, the WATCH claim, P5's reach, item 26's
+  stamp) — while the acceptance condition was right every time;
+· operator SIZING wrong **3** times; operator PREDICTION wrong **1** (the `[-1]` scan, predicted to
+  find something, came back clean across all 21 series sites);
+· item **23** queued as a defect, closed as NOT-a-defect;
+· of 13 "hollow" corpus tests, **2 were false positives**;
+· of 4 recorded markdown defects, **3 were imaginary** — two checker artifacts and one truncated
+  render sample; and the duplicate-detector baseline nearly shipped with 4 FABRICATED entries
+  transcribed from a truncated print.
+**BOTH DIRECTIONS is the point.** Roughly as often as a first pass over-claims a defect, it
+under-claims one — CNXC's $1.5B impairment and the uw-card masthead were found only because
+something was checked that nobody had flagged. So the discipline is not scepticism toward findings;
+it is that **a first pass is a hypothesis, whichever way it points.**
+**AND: "NO CHECK IS NEEDED" BEAT "CHECK NOT SHIPPABLE."** The indented-table gap closed by
+MEASUREMENT rather than by code — a cheaper outcome that only became available because the
+hypothesis was tested instead of a guard being shipped on it. Prefer measuring the class out of
+existence to guarding it.
 
 **THE `[-1]` SCAN — RUN 2026-07-29 (operator-directed, after the trap appeared a THIRD time, that
 time in the diagnostic written by whoever had just fixed the other two). RESULT: CLEAN, no fourth

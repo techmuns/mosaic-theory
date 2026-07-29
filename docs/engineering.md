@@ -291,7 +291,13 @@ correct by one of three mechanisms, and the third is the one to watch:
 | an indent rule: two indented tables are broken | both render |
 
 **AND THE COROLLARY, which cost a shipped correction: the renderer is only an authority if you give
-it the REAL CONTEXT.** A sample of a STATE.md table taken from 9 lines below its `26. ` list marker
+it the REAL CONTEXT.** This generalises past markdown, and the operator names the connection:
+it is the same shape as an audit that reads the ARTIFACT — a real authority on what the dossier
+SAID — without the code context needed to answer WHERE THE DEFECT LIVED. Eight wrong mechanisms
+came from that. **An authority fed a truncated question returns a confident wrong answer, which is
+worse than no answer because it carries the authority's weight.** Same again when the baseline for
+the duplicate detector was transcribed from a truncated console print: the detector was
+authoritative, the visible excerpt was not. A sample of a STATE.md table taken from 9 lines below its `26. ` list marker
 renders as an indented code block, because without the marker the 4-space indent is no longer
 list-item continuation. That false negative reached main in #250 and rewrote a correct table. When
 sampling a document to render, include enough enclosing structure that it parses the way it does in
