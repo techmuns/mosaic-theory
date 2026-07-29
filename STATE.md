@@ -4018,6 +4018,64 @@ the market cap.
 (pinned). One day of ageing flips it. **A future VRRM failure is the guard working, not a
 regression.**
 
+**AFFECTED SURFACES, STATED PRECISELY (review of #255).** `render.py` renders NO own-history
+exhibit at all — `own_history` appears zero times in it — so the markdown twin and the "Full
+dossier MD" download were NEVER affected. The false stamp lived on the WEB PAGE and, because both
+PDF scopes are `window.print()` on that page, in BOTH PDFs. The md's prose line carried the correct
+EV/EBITDA as-of and `P/LTM EPS NM` throughout.
+**AND #255 OPENED ONE CASE WHILE CLOSING ANOTHER — hardened in review.** Removing the shared
+caption date moved a band with no `as_of` from carrying a WRONG date (bands[0]'s) to carrying NONE,
+silently. Zero bands lack one today, so it is latent — but a dateless panel that says nothing is
+item 22's prohibition, and the entire point of the fix was that a reader can tell which vintage a
+panel is. Such a panel now reads `· undated`. Pinned and mutation-verified.
+
+**THE NEW PIN WAS ITSELF THE DECAY CLASS — caught by the operator before merge, and it was worse
+than suspected.** The first cut hardcoded literal dates (`"2026-07-17"`, `"2025-12-31"`, and AORT's)
+against a LIVING artifact, so CNXC's queued re-assembly would have reddened it for a reason
+unrelated to its claim — the TEST-LAYER rule's exact prohibition. And its "fixture still disagrees"
+guard read `assert expect[0] != expect[1]`, comparing a HARDCODED TUPLE TO ITSELF: vacuously true,
+never looking at the data. **Third instance of the vacuous-assertion class this week**, after 26a's
+end-of-document slice and the `... or True` ruff caught.
+REWRITTEN per #249's own rule: **relational** — each panel's expected date is read from its OWN band
+in the committed JSON, so convergence is harmless — plus a **CONSTRUCTED companion** carrying the
+DISAGREEING shape, which is what makes the bug possible and would vanish from the corpus the moment
+both names re-assemble. **Verified by simulating the decay**: converging CNXC's panel dates to
+2026-09-30 leaves the relational test PASSING; removing the per-panel date reds BOTH.
+**STANDING VERIFICATION GAP, recorded (operator 2026-07-29): THE VISUAL LAYER HAS ONE VERIFIER AND
+IT IS THE OPERATOR.** Screenshot capture has failed twice — the 375px pane, and blank frames here —
+so render changes are verified by DOM assertions, which confirm a string and check overflow but
+CANNOT catch what the deploy check caught: a chart marker contradicting the prose beside it, on a
+page nobody questioned because the CHANGE rendered correctly. **After every render change deploys,
+the operator opens the live page.** Not the local preview. That is the only visual verification in
+the loop, and it has already found the most consequential render defect in this work.
+**COUNT HELD: P5 pt1 closes again on merge AND live-page confirmation — not on merge alone**, since
+that is how it re-opened.
+
+**P5 pt1 RE-OPENS — COUNT GOES 3 OF 13 BACK TO 2 OF 13. NOT a new finding: the SAME defect, one
+consumer down (operator 2026-07-29).** The audit's words were *"SMPL printed 'P/LTM EPS 16.0x'
+beside 'as-of 2026-07-23' while that 16.0x was the 2026-03-31 close."* **The chart does that
+today** — the own-history exhibit stamped `bands[0].as_of` (the EV/EBITDA band's date) across every
+panel, so CNXC's P/E panel plotted its 2025-12-31 close under **2026-07-17, 198 days out**, and
+SMPL's under 2026-07-23 at **114**. Item 20 fixed the PROSE readings and left the exhibit — closed
+in prose, open where the audit found it.
+**FOUND ON THE DEPLOYED PAGE, from an operator screenshot.** Nothing local would have shown it: the
+committed data is correct (the band carries `as_of: 2025-12-31`), the prose is correct (`P/LTM EPS
+NM`), and only the RENDERED page puts the two together wrongly. **The deploy is confirmed CURRENT**
+by the same screenshot — item 20's NM readings are live — so no third tracking column is needed;
+what is needed is that a preview reads the page.
+**FIXED: each panel states its OWN as-of; the shared caption carries NO date at all.** Removing it
+entirely rather than conditionalising it means there is no shared stamp left that COULD misdate a
+panel. Verified on all three shapes — CNXC (2026-07-17 / 2025-12-31), SMPL (2026-07-23 /
+2026-03-31), AORT (both 2026-07-17, agreeing, still dated). Pinned on the REAL names because the
+defect is that two panels DISAGREE and a synthetic fixture would not produce the disagreement;
+mutation-verified by restoring the `bands[0]` stamp.
+**CONSUMER ENUMERATION, both sides this time (operator):** `ownHistoryExhibit` is the ONLY JS
+consumer of own_history bands (`snapshots.js`'s `band` is the unrelated screen band). So this is
+the last round of item 20, not the fourth.
+**AND IT CORRECTS A RULE I RECORDED.** The `[-1]` scan classified the own-history band as safe
+under "the date travels with the value". That is true of the DATA and false of the RENDER — the
+qualifier is now in docs/engineering.md, because a future reader would have trusted it as written.
+
 **ITEM 1 CLAUSE (c) — BUILT 2026-07-29 (the guidance SPLIT). P2 CLOSES IN CODE — 3 OF 13 — BUT NO
 ARTIFACT CARRIES IT YET.** Stated with the qualification deliberately (operator): `current_guide`
 is None on every committed dossier because they predate the field, so **a reader does not meet it

@@ -9442,3 +9442,157 @@ console.log(JSON.stringify({{
         assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
         # `and web["sources"]` — all([]) is vacuously true, so an empty list must not pass
         assert web["sources"] and all(web["sources"]), f"{t}: web dropped a source"
+
+def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
+    """P5 pt1 IN THE EXHIBIT — the half item 20 left open, found on the DEPLOYED page.
+
+    The audit's words: *"SMPL printed 'P/LTM EPS 16.0x' beside 'as-of 2026-07-23' while that 16.0x
+    was the 2026-03-31 close."* Item 20 fixed the PROSE and the chart kept doing it: the shared
+    caption stamped `bands[0].as_of` across every panel, so CNXC's P/E panel (last usable close
+    2025-12-31) sat under 2026-07-17 — 198 days out — and SMPL's under 2026-07-23 at 114.
+
+    THE CLAIM, STATED RELATIONALLY (review fix): every panel shows the as_of OF ITS OWN BAND, read
+    from the committed JSON rather than hardcoded. The first cut pinned literal dates
+    ("2026-07-17", "2025-12-31") on a LIVING artifact — CNXC's re-assembly is queued, and would
+    have reddened it for a reason unrelated to its claim. It also asserted `expect[0] != expect[1]`,
+    which compares a hardcoded tuple to itself and is vacuously true.
+
+    The DISAGREEING case — two panels with different dates, which is what makes the bug possible —
+    is pinned on a CONSTRUCTED fixture below, so it survives every name's dates converging."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    names = ["CNXC", "SMPL", "AORT"]
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const out = {{}};
+for (const t of {json.dumps(names)}) {{
+  const h = renderDossier(JSON.parse(readFileSync(`data/dossiers/${{t}}/dossier.json`)), null);
+  out[t] = {{
+    panels: [...h.matchAll(/>(\\d+%ile\\*? \u00b7 \\d+q[^<]*)</g)].map((m) => m[1]),
+    caption: (/each quarter's close[^<]*/.exec(h) || [""])[0],
+  }};
+}}
+console.log(JSON.stringify(out));
+"""
+    r = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                  capture_output=True, text=True, check=True).stdout)
+
+    checked = 0
+    for name in names:
+        bands = [b for b in (json.loads(
+            Path(f"data/dossiers/{name}/dossier.json").read_text())["mechanical"]["valuation"]
+            ["own_history"]["value"]) if len(b.get("series") or []) >= 2]
+        panels = r[name]["panels"]
+        assert len(panels) == len(bands), f"{name}: {len(panels)} panels for {len(bands)} bands"
+        for band, panel in zip(bands, panels, strict=True):
+            want = band.get("as_of")
+            assert want, f"{name}: band {band.get('metric')!r} carries no as_of to render"
+            assert want in panel, (
+                f"{name}: panel {panel!r} does not carry ITS OWN band's as_of {want} — a panel "
+                "showing another band's date is the P5 false stamp")
+            checked += 1
+    assert checked >= 6, f"only {checked} panels checked — the corpus shrank, so this proves less"
+
+    # the shared caption must carry NO date: one stamp over differing panels IS the defect
+    for name in names:
+        assert "as-of" not in r[name]["caption"], (
+            f"{name}: the shared caption regained an as-of ({r[name]['caption']!r}) — whatever "
+            "single date it carries is wrong for a panel the moment two bands disagree")
+
+
+def test_two_panels_with_different_as_ofs_each_keep_their_own() -> None:
+    """The DISAGREEING case, on a CONSTRUCTED fixture — the shape that makes the bug possible.
+
+    Its sibling above reads the committed fleet, where two names happen to disagree today. Both
+    are queued for re-assembly, which would extend their P/E series and converge the dates; the
+    scenario would then vanish from the corpus and the sibling would still pass while pinning
+    nothing about disagreement. Building it here means it cannot decay with the fleet."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    band = {"metric": "EV/EBITDA (TEV/LTM)", "current": 4.0, "low": 3.0, "high": 9.0, "mean": 6.0,
+            "median": 6.0, "percentile": 0.1, "n_closes": 12, "as_of": "2026-07-17",
+            "series": [["2026-01-31", 6.0], ["2026-04-30", 5.0], ["2026-07-17", 4.0]]}
+    stale = {**band, "metric": "P/LTM EPS", "as_of": "2024-01-31", "current": 20.0,
+             "series": [["2023-07-31", 25.0], ["2023-10-31", 22.0], ["2024-01-31", 20.0]]}
+    doc = {"ticker": "X", "name": "X Co", "cik": "0", "reference_date": "2026-06-01",
+           "assembled_at": "2026-06-01T12:00:00", "synthesis": None,
+           "mechanical": {"valuation": {
+               "own_history": {"value": [band, stale], "status": "present", "source_ref": "test"},
+               # valuationCard() short-circuits to "" unless one of cross_sectional / comparability
+               # / range_position / consensus_stats is present — without this the exhibit is never
+               # reached and the fixture would pass by rendering NOTHING.
+               "range_position": {"value": "EV/EBITDA 4.0x", "status": "present",
+                                  "source_ref": "test"}}}}
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier({json.dumps(doc)}, null);
+console.log(JSON.stringify({{
+  panels: [...h.matchAll(/>(\\d+%ile\\*? \u00b7 \\d+q[^<]*)</g)].map((m) => m[1]),
+  caption: (/each quarter's close[^<]*/.exec(h) || [""])[0],
+}}));
+"""
+    r = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                  capture_output=True, text=True, check=True).stdout)
+    assert len(r["panels"]) == 2, r["panels"]
+    assert "2026-07-17" in r["panels"][0], r["panels"][0]
+    assert "2024-01-31" in r["panels"][1], (
+        f"the STALE panel shows {r['panels'][1]!r} — a 2.5-year-old series under the fresh band's "
+        "date is exactly P5, and this fixture exists so the case cannot vanish from the corpus")
+    assert "as-of" not in r["caption"], r["caption"]
+
+
+def test_a_band_with_no_as_of_says_undated_rather_than_going_silent() -> None:
+    """Item 22 applied to the change #255 itself made. Removing the shared caption date moved an
+    undated band from carrying a WRONG date (bands[0]'s) to carrying NONE — silently. Zero bands
+    lack an as_of today, so this is the latent case; but a dateless panel that says nothing is the
+    silent-omission this repo prohibits, and the whole point of the fix was that a reader can tell
+    which vintage a panel is."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    band = {"metric": "EV/EBITDA (TEV/LTM)", "current": 4.0, "low": 3.0, "high": 9.0, "mean": 6.0,
+            "median": 6.0, "percentile": 0.1, "n_closes": 12, "as_of": None,
+            "series": [["2026-01-31", 6.0], ["2026-04-30", 5.0], ["2026-07-17", 4.0]]}
+    doc = {"ticker": "X", "name": "X Co", "cik": "0", "reference_date": "2026-06-01",
+           "assembled_at": "2026-06-01T12:00:00", "synthesis": None,
+           "mechanical": {"valuation": {
+               "own_history": {"value": [band], "status": "present", "source_ref": "t"},
+               "range_position": {"value": "EV/EBITDA 4.0x", "status": "present",
+                                  "source_ref": "t"}}}}
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier({json.dumps(doc)}, null);
+console.log(JSON.stringify(
+  [...h.matchAll(/>(\\d+%ile\\*? \u00b7 \\d+q[^<]*)</g)].map((m) => m[1])));
+"""
+    panels = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                       capture_output=True, text=True, check=True).stdout)
+    assert len(panels) == 1, panels
+    assert "undated" in panels[0], (
+        f"panel {panels[0]!r} carries no date and does not say so — with the shared caption's date "
+        "removed, a dateless panel is now silently dateless, which is item 22's prohibition")
+

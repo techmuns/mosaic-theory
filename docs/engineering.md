@@ -270,9 +270,15 @@ correct by one of three mechanisms, and the third is the one to watch:
 
 1. **Named or guarded** — the caller refuses when the latest cell is absent, so `[-1]` is provably
    the latest.
-2. **The date travels** — the value is stamped with its own as-of, so a stale current is *labelled*
-   stale rather than silently claimed as latest. This is why the own-history band may take the last
-   surviving pair and the P/LTM tail may not.
+2. **The date travels — AND THE RENDER SHOWS IT.** The value is stamped with its own as-of, so a
+   stale current is *labelled* stale rather than silently claimed as latest.
+   **CORRECTED 2026-07-29, because this was recorded without the second half and a reader would
+   have trusted it as written.** The own-history band was classified safe under this mechanism. It
+   was not: the band carries its date in the DATA, and the exhibit dropped it and stamped
+   `bands[0].as_of` — another band's — across every panel. CNXC's P/E panel plotted its 2025-12-31
+   close under "as-of 2026-07-17", 198 days out, on the deployed site. **A date that travels with a
+   value protects nobody if the render substitutes a different one.** Check the render, not just
+   the model.
 3. **Correct by the export's shape** — true only because the vendor happens to order columns a
    particular way, with nothing asserting it. **Assert it.** An unasserted convention is how
    `source_ref="Close (latest)"` came to sit on a months-old value: the same false-provenance shape,
@@ -302,6 +308,30 @@ renders as an indented code block, because without the marker the 4-space indent
 list-item continuation. That false negative reached main in #250 and rewrote a correct table. When
 sampling a document to render, include enough enclosing structure that it parses the way it does in
 situ — for a list item, start at the marker.
+
+## A render preview inspects the PAGE, not the diff
+
+*(operator, 2026-07-29, after four render PRs passed over a live defect)*
+
+Every preview in this remediation confirmed **the new thing rendered**. None inspected the rest of
+the page. A change-focused preview cannot find a pre-existing defect sitting beside the change —
+which is exactly how a chart plotting a 198-day-old value under a current date survived four render
+PRs and reached the deployed site.
+
+> Open the page and read it. The diff tells you what you changed; the page tells you what a reader
+> meets.
+
+## Twin parity applies to CONSUMERS, not just fields
+
+*(operator, 2026-07-29, from item 20's third round)*
+
+Item 20 ran three times: `range_position`, then `pe_ltm_current`, then the exhibit caption. After
+the second miss the tests moved to per-consumer enumeration — but the enumeration walked the
+**Python** side only, and the JS twin has its own consumers of the same series. The field-level twin
+pins do not catch this: both twins carried the field; only one mis-rendered it.
+
+**When a shared series is fixed, enumerate its consumers on BOTH sides.** Extends item 32's class
+from fields to consumers.
 
 ## A Python diff is not a review surface for indentation-scoped changes
 
