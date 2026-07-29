@@ -284,6 +284,25 @@ correct by one of three mechanisms, and the third is the one to watch:
    `source_ref="Close (latest)"` came to sit on a months-old value: the same false-provenance shape,
    arriving through the data provider instead of through the code.
 
+### The first time this rule PREVENTED rather than diagnosed — 2026-07-29
+
+*(operator's note, recorded because the distinction is the whole point of writing rules down)*
+
+Instances 1–3 — `[-1]` on the multiples series, capital-structure ascending order, EDGAR
+newest-first — were all **diagnoses**: the defect had shipped, and the rule named it afterwards.
+The fourth was different.
+
+Routing the `.xls` customers export (item 21) made `bundle.workbook("customers")` load-bearing —
+and it returns `cands[0]` over a kind whose keywords match **both** the Customers and Suppliers
+files, so the choice rested on `"Customers"` sorting before `"Suppliers"`. That was harmless only
+while the `.xls` route failed loud. The real run returned `Atkins Nutritionals Holdings II, Inc. —
+Creditor` as SMPL's **customer** concentration: the fix would have put the creditor group into a
+decision field. Caught before the PR opened, because "an unasserted ordering convention is a defect
+waiting for its trigger" was already written down — and the trigger was the fix itself.
+
+> **A fix that makes a latent ordering assumption load-bearing inherits that assumption's defect.**
+> Check what your change promotes from cosmetic to critical.
+
 ## For anything a reader sees rendered, the renderer is the authority
 
 *(operator, 2026-07-29, after three heuristics over-flagged in a week)*

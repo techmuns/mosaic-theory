@@ -157,6 +157,20 @@ function headlineCell(c) {
   // to sit on its own line below the masthead — a citation that had lost its home when the
   // masthead replaced the old "Spot" fact row, restating a price the tile states one line above
   // and breaking the price/target pairing a tear-sheet header exists to make.
+  // (item 1e) NO DATE IS STAMPED ON THIS PRICE, deliberately — see the review finding below.
+  //
+  // A first cut appended ` @ ${c.underwriteDate}`. That is FALSE on 6 of 6 committed records:
+  // `underwriteDate` is when the call was FROZEN, and the close it was struck on is 1-5 days
+  // older (SMPL 10.53 is a 07-22 close under a 07-27 underwrite date; IT 3d; AORT 2d; MVST,
+  // NCNO, EPAM 1d). It reproduced audit P4 verbatim — "the page asserts 'underwritten 07-27'
+  // over a 07-22 price" — and beside a live `CMP $10.22 (2026-07-24)` it made the FROZEN value
+  // look NEWER than the live one, which is worse than leaving it undated.
+  //
+  // The struck date exists only inside `spotSource`, analyst free text phrased differently per
+  // record ("Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)"). Parsing
+  // it would be exactly the banned display-string parse. The honest surface is the CITE, which
+  // already carries that text verbatim — so the date reaches the reader unparsed. A structured
+  // `spot_as_of` on ScenarioRecord is the real fix and is queued.
   const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}${
     c.spotSource ? " " + citeMark(c.spotSource) : ""}`].filter(Boolean).join(" · ");
   return `<div class="uw-stat uw-stat-lead ${st}">

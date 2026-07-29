@@ -4251,7 +4251,56 @@ screen cohort.**
    where it does the damage. Entry-vintage values that are MEANT to be frozen (an underwrite
    record's reference frame) are exempt but must be LABELLED entry-vintage wherever they render
    beside fresh values.
-   **(e) THE FROZEN-VALUE LABEL — absorbed from item 23 when it closed as not-a-defect, and
+   **(e) THE FROZEN-VALUE LABEL — BUILT 2026-07-29 (Batch A) on BOTH twins.** The md's stat strip
+   and scenario-table `vs spot` were computed off the record's FROZEN spot and rendered undated;
+   the web's `vs spot $10.53` likewise. On SMPL that sat beside a live `CMP $10.22 (2026-07-24)` —
+   two prices, one label, and no way for a reader to tell which was which. Now: `vs entry-vintage
+   spot`, `Spot $10.53 (entry-vintage — underwritten 2026-07-27)`, `vs spot @ 2026-07-27` on the
+   table header, and `vs spot $10.53 @ 2026-07-27` on the web (twin parity binds on CONSUMERS).
+   **THE SEALED RATIONALE IS LABELLED, NEVER EDITED.** It quotes entry-vintage prices inside
+   analyst text (`WATCH at $10.53 — not held`); the vintage is supplied AROUND it by the renderer.
+   Rewriting the number would falsify the record instead of dating it — pinned both ways (the note
+   is present AND the sealed text is byte-identical).
+   **THE OPERATOR HELD #259 ON THIS, AND WAS RIGHT — THE FIX REPRODUCED THE DEFECT IT CLOSED.**
+   The first cut stamped `vs spot $10.53 @ 2026-07-27` on both twins. `underwrite_date` is when the
+   call was FROZEN; the close it was struck on is OLDER on **6 of 6** committed records — SMPL 5d
+   (10.53 is a **07-22** close), IT 3d, AORT 2d, MVST/NCNO/EPAM 1d. That is **audit P4 verbatim**
+   ("the page asserts 'underwritten 2026-07-27' over a 07-22 price"), and beside a live
+   `CMP $10.22 (2026-07-24)` it made the FROZEN value read as NEWER than the live one — strictly
+   worse than undated. The pre-existing `(underwritten <date>)` wording was the SAME defect and had
+   survived unexamined into the fix meant to close it.
+   **WHY "PRINT BOTH DATES" WAS NOT AVAILABLE.** `ScenarioRecord` carries `spot: float` and
+   `spot_source: str` and **no `spot_as_of`**. The struck date exists only inside analyst free text,
+   phrased differently per record ("Polygon daily aggregate close 2026-07-22 (store; latest bar at
+   reissue)" vs "Polygon EOD grouped-daily close 2026-07-17 (live)"). Composing a stamp from it is
+   the display-string parse the repo forbids — the `$1,101.80M` class. So: the false stamp is GONE
+   from both twins; the strip says **"frozen at underwrite <date>"**, which is unambiguous about
+   what the date means; and the md now prints `spot_source` VERBATIM, putting the real struck date
+   in front of a print reader for the first time (the web already had it as the `[S1]` cite; the md
+   rendered it nowhere — a fourth md-lags-web instance, found while fixing this).
+   **PARTIAL, AND SAID PLAINLY:** clause (e) asks for a frozen value's VINTAGE DATE. The frozen
+   MARKER now renders on both twins and the vintage is reachable via the source line — but it is
+   not a structured stamp. → **QUEUED: `spot_as_of` on `ScenarioRecord`** (same shape as 18a and
+   29: turn provenance prose into a typed field). Clause (e) is **not fully closed** until it lands.
+   **THE TWIN-PARITY LESSON, and it is uncomfortable:** the test I shipped asserted the web *did*
+   stamp the date — it confirmed the error on both surfaces instead of catching it, because the
+   wrong assumption reached both twins at once. Twin parity checks AGREEMENT, not truth. The pin is
+   now inverted and left with that note attached.
+   **REVIEW FINDING, fixed before merge: the vintage note pointed at a section the md does not
+   have.** It read *"the live close is in Key figures"* — the WEB card's heading; the markdown
+   carries the live close under `- **Snapshot:**`. A pointer to a non-existent section is a false
+   claim about the document, shipped inside the batch whose subject is false claims about the
+   document — the launch.json class again (a claim true on one surface, asserted on another). The
+   pin is written GENERALLY: it reads the target out of the note and requires a matching section in
+   the same render, so a future reword to another web-only label reds in CI rather than in a PDF.
+   Also aligned the twins' ORDER (rationale → triggers, as the web card does); twins may LAG each
+   other, but a reader should not meet the same two blocks in two orders.
+   **NOT CLOSED BY THIS:** the stale `'LTM revenue' = 1,416.208` RefPoint on SMPL (frozen at
+   underwrite, never refreshed after the 2026-07-09 print, against `facts.ltm_revenue`
+   1,392.235 — operator ruling 2026-07-29). It is a RECORD-DATA instance of clause (e), not a
+   render one: it needs the reference labelled entry-vintage in the record itself.
+   ORIGINAL SPEC BELOW.
+   **(e-spec) THE FROZEN-VALUE LABEL — absorbed from item 23 when it closed as not-a-defect, and
    WRITTEN HERE EXPLICITLY rather than inferred as covered (operator 2026-07-28):**
    > **A frozen entry-vintage value must render marked as frozen, with its vintage date, wherever
    > it appears beside a live value.**
@@ -4642,9 +4691,28 @@ screen cohort.**
     — AORT 4 rows, CNXC 3, EPAM 12, FUBO 8, IT 5 (32 rows total); BRBR, MVST, NCNO, VITL, VRRM are
     clean. Same root cause as the trap above (positional parsing of a variable-width table), and
     the header-keyed reader written here is the model for its fix. Queue it deliberately.
-22. **VISIBLE-ABSENCE RULE (generalised by the operator 2026-07-28 from audit N7 + the
-    WATCH/CLOSE gap): a render that cannot express a field MUST SAY SO. Silent omission is
-    prohibited; absence must be visible and attributed.** The md does not merely under-tell the
+22. **VISIBLE-ABSENCE RULE — N7 HALF AND THE DECLARATION BUILT 2026-07-29 (Batch A); THE
+    CLOSE-AWARE CHIP REMAINS OPEN BY RULING.**
+    **N7 half (SHIPPED).** `reunderwrite_triggers` — 16 across 6 names (AORT 3, IT 2, MVST 3,
+    NCNO 3, SMPL 3, WERN 2) — rendered on the web card at `uw-card.js` and **nowhere in the md**.
+    A trigger the reader never sees cannot do the job it was written for. Now a
+    `### What would reopen this name` section. Twin lag, not a missing field — same shape as 28.
+    **THE INTERIM WORDING WAS UNIMPLEMENTABLE, AND THE OPERATOR RULED RATHER THAN FORCING IT
+    (2026-07-29).** The spec'd string `disposition: WATCH — prior BUY closed 07-24` names a close
+    DATE that `_underwrite_lines` cannot obtain: it takes the `ScenarioRecord` only, and the render
+    package **deliberately does not import the ledger** — that isolation is what stops the machine
+    asserting verdicts, and it is load-bearing. **RULING: do not breach the isolation; take the
+    cannot-express note.** The md now declares the gap and points at the Decision log, and names no
+    date. Negative pin: the note must contain **no date and no claim of a close** — a render that
+    invents the fact it has just admitted it cannot reach is worse than the silence it replaces.
+    **A STRUCTURAL PIN SHIPPED WITH IT:** a test asserts `render.py` still does not import the
+    ledger, so a later "small" fix that threads it in has to argue with a test instead of sliding
+    past review.
+    **STILL OPEN:** the close-aware chip itself (the md cannot show the closed BUY beside SMPL's
+    WATCH). It needs a decision on whether the ledger reaches the renderer at all, or whether the
+    Decision log stays the only surface that can express it. The declaration makes the gap honest
+    in the meantime; it does not close it.
+    ORIGINAL SPEC BELOW. The md does not merely under-tell the
     WATCH — it shows WATCH + "not held" with no trace a BUY existed, and a reader CANNOT DETECT
     they are seeing a partial view: the same distinction as the false UNKNOWN — not incomplete,
     MISLEADING. One rule closes N7 (the record's three `reunderwrite_triggers` render nowhere),
@@ -4701,8 +4769,33 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
-28. **SCENARIO-INPUT DISCLOSURE — P7 part 1, THE ORPHAN found by the 13-part audit (queued
-    2026-07-28).** Print **shares, D&A and net debt inside the scenario block**, so every scenario
+28. **~~SCENARIO-INPUT DISCLOSURE~~ — BUILT 2026-07-29 (Batch A). AND IT WAS A TWIN LAG, NOT A
+    MISSING DISCLOSURE.** The mechanism pass expected a new disclosure; reading the code found the
+    inputs ALREADY in `ScenarioRecord.facts`, source-stamped, and already rendered by the WEB card
+    (`uw-card.js` — a `<details class="uw-inputs">` block, plus `recipeLine()` for the chain since
+    schema 1.1). `render.py` printed NEITHER. The md twin lagged the web on two blocks that had
+    existed there for versions — the same shape as item 22's N7 half, found in the same pass.
+    **PRINTS EVERY RECORDED FACT, not a fixed shares/D&A/net-debt trio**, because the trio is
+    recipe-specific: R1 records carry an absolute D&A figure, R2 records carry a D&A ratio + a
+    share-growth term (+ burn-to-breakeven on MVST). A hardcoded three would print blanks on half
+    the corpus and omit the inputs that actually drive the other half.
+    **THE GENERAL FORM (operator, 2026-07-29 — this CORRECTS the spec, which said only "print
+    shares, D&A and net debt"): INPUTS WITHOUT THEIR CHAIN ARE STILL A SYSTEM TO BE SOLVED
+    BACKWARDS.** `recipe_formula` rendering nowhere is *why* the auditor reverse-solved 93.77M at
+    all. Disclosure of inputs is necessary and not sufficient; the operation that combines them is
+    part of the disclosure.
+    **THE CHAIN SHIPPED BECAUSE THE RED FAILED — the most useful thing in this build.** The first
+    cut printed the inputs and not `recipe_formula`, and the recompute test FAILED at $21.38
+    against a recorded $24.24: the D&A add-back was invisible, and I made the auditor's own mistake
+    while verifying the fix for it. **Inputs without their chain are still a system to be solved
+    backwards**, which is precisely P7's complaint. Both now print; the recompute walks the
+    document's own stated chain over the document's own printed inputs and matches every leg on
+    every R1 name.
+    **PRECISION IS LOAD-BEARING HERE:** `%g` at 6 significant figures renders 93.677801 as
+    93.6778, and this item exists because an auditor back-solved 93.77 against that number —
+    printing a rounded input would reproduce the defect in smaller type. Pinned.
+    **ORIGINAL SPEC, kept for the record:**
+    Print **shares, D&A and net debt inside the scenario block**, so every scenario
     value recomputes from figures on the same page. ORIGIN: the auditor could not reproduce a single
     scenario cell from anything the dossier printed — they solved the system backwards and landed on
     93.77M shares against our recorded 93.678M, which is itself the proof (the inputs were
@@ -5005,6 +5098,35 @@ sample: **the source was authoritative and the excerpt was not.**
     itself unchecked for consistency between the two renderings.** Not live, because 26a shipped a
     dedicated pin for it; but a fleet invariant that excludes the comparability field is the
     cleanest possible case that the exclusion is arbitrary rather than principled.
+    **(c) SCOPE WIDENED 2026-07-29 BY THE OPERATOR — FROM FIELDS TO RENDER SURFACES. The md twin
+    lagging the web is ONE defect, not four.** Batch A found `reunderwrite_triggers`, `facts` and
+    `recipe_formula` all already rendered on the web card and absent from `render.py`; the
+    close-aware WATCH chip (item 21's "one of four surfaces") is the fourth; `spot_source` — found
+    while fixing clause (e)'s stamp — is the fifth. Every one was discovered by READING, one at a
+    time, at a cost of one build each. **This item's check compares FIELD NAMES in source text; a
+    check comparing what each twin actually EMITS would have caught all five at once.** That is the
+    general fix and it is the reason (b) is worth doing properly rather than as a token widen.
+    **INFRASTRUCTURE STAYS FROZEN — do NOT build this now** (operator, same message). Recorded so
+    the count is on the board when the freeze lifts.
+    **NOTE ON THE PARITY PIN'S OWN BLIND SPOT (found 2026-07-29):** its docstring accepts that a key
+    named only in a COMMENT gives a false PASS. The inverse is also true and undocumented — a key
+    named only in a comment gives a false FAIL: a Batch A docstring mentioning `d_and_a` reddened
+    the check. Symmetric blind spot, currently half-recorded.
+33. **`.rtf` RELATIONSHIP PARSER READS SHIFTED COLUMNS — LIVE CORRUPTION ON 5 OF 11 NAMES
+    (queued by the operator 2026-07-29; surfaced by #257, deliberately not fixed there).**
+    `_parse_business_relationships` splits on `|`, **DROPS EMPTY CELLS, then reads positionally**
+    (`cells[0], cells[1], cells[2]`), so any row with a blank column shifts left. Result: a COMPANY
+    NAME sits in the relationship-type slot. **32 rows: AORT 4, CNXC 3, EPAM 12, FUBO 8, IT 5**;
+    BRBR, MVST, NCNO, VITL, VRRM are clean. AORT reads *"Artivion, Inc. (NYSE:AORT) — Endospan Ltd.
+    · Distributor"* — the focal company named as its own counterparty.
+    **NOT one of the audit's thirteen** — found by measurement while routing item 21, in the field
+    right beside it. It is live in `concentration.customers`, a field the crux and the bear leg both
+    read, so the corruption is in a decision surface rather than a footnote.
+    **ITS MODEL ALREADY EXISTS:** `_parse_relationship_sheet` (#257) locates columns BY HEADER TEXT
+    and was written precisely because the positional read produced a fluent, plausible, wrong line
+    on the `.xls` shape. Same fix, the other format. RED: a row with a blank middle column keeps its
+    relationship type; the 32 live rows are the positive corpus.
+    **NOTE:** fixing this CHANGES committed values on 5 names — it is a re-assembly, not a render.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 —
     DECISIONS, not builds; the machine proposes neither.) (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
