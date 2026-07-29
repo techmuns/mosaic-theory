@@ -4018,6 +4018,17 @@ the market cap.
 (pinned). One day of ageing flips it. **A future VRRM failure is the guard working, not a
 regression.**
 
+**AFFECTED SURFACES, STATED PRECISELY (review of #255).** `render.py` renders NO own-history
+exhibit at all — `own_history` appears zero times in it — so the markdown twin and the "Full
+dossier MD" download were NEVER affected. The false stamp lived on the WEB PAGE and, because both
+PDF scopes are `window.print()` on that page, in BOTH PDFs. The md's prose line carried the correct
+EV/EBITDA as-of and `P/LTM EPS NM` throughout.
+**AND #255 OPENED ONE CASE WHILE CLOSING ANOTHER — hardened in review.** Removing the shared
+caption date moved a band with no `as_of` from carrying a WRONG date (bands[0]'s) to carrying NONE,
+silently. Zero bands lack one today, so it is latent — but a dateless panel that says nothing is
+item 22's prohibition, and the entire point of the fix was that a reader can tell which vintage a
+panel is. Such a panel now reads `· undated`. Pinned and mutation-verified.
+
 **THE NEW PIN WAS ITSELF THE DECAY CLASS — caught by the operator before merge, and it was worse
 than suspected.** The first cut hardcoded literal dates (`"2026-07-17"`, `"2025-12-31"`, and AORT's)
 against a LIVING artifact, so CNXC's queued re-assembly would have reddened it for a reason

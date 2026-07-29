@@ -9557,3 +9557,42 @@ console.log(JSON.stringify({{
         "date is exactly P5, and this fixture exists so the case cannot vanish from the corpus")
     assert "as-of" not in r["caption"], r["caption"]
 
+
+def test_a_band_with_no_as_of_says_undated_rather_than_going_silent() -> None:
+    """Item 22 applied to the change #255 itself made. Removing the shared caption date moved an
+    undated band from carrying a WRONG date (bands[0]'s) to carrying NONE — silently. Zero bands
+    lack an as_of today, so this is the latent case; but a dateless panel that says nothing is the
+    silent-omission this repo prohibits, and the whole point of the fix was that a reader can tell
+    which vintage a panel is."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    band = {"metric": "EV/EBITDA (TEV/LTM)", "current": 4.0, "low": 3.0, "high": 9.0, "mean": 6.0,
+            "median": 6.0, "percentile": 0.1, "n_closes": 12, "as_of": None,
+            "series": [["2026-01-31", 6.0], ["2026-04-30", 5.0], ["2026-07-17", 4.0]]}
+    doc = {"ticker": "X", "name": "X Co", "cik": "0", "reference_date": "2026-06-01",
+           "assembled_at": "2026-06-01T12:00:00", "synthesis": None,
+           "mechanical": {"valuation": {
+               "own_history": {"value": [band], "status": "present", "source_ref": "t"},
+               "range_position": {"value": "EV/EBITDA 4.0x", "status": "present",
+                                  "source_ref": "t"}}}}
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier({json.dumps(doc)}, null);
+console.log(JSON.stringify(
+  [...h.matchAll(/>(\\d+%ile\\*? \u00b7 \\d+q[^<]*)</g)].map((m) => m[1])));
+"""
+    panels = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                       capture_output=True, text=True, check=True).stdout)
+    assert len(panels) == 1, panels
+    assert "undated" in panels[0], (
+        f"panel {panels[0]!r} carries no date and does not say so — with the shared caption's date "
+        "removed, a dateless panel is now silently dateless, which is item 22's prohibition")
+

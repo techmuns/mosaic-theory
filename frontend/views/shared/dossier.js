@@ -1501,7 +1501,7 @@ function ownHistoryExhibit(m) {
     // that 16.0x was the 2026-03-31 close") surviving in the exhibit after item 20 fixed the
     // prose. A band's date TRAVELS WITH ITS VALUE in the data; that only protects a reader if the
     // RENDER shows that date, which is the correction to the [-1] rule.
-    s += `<text x="${x1}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q${b.as_of ? " · " + escapeHtml(b.as_of) : ""}</text>`;
+    s += `<text x="${x1}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q${b.as_of ? " · " + escapeHtml(b.as_of) : " · undated"}</text>`;
     s += ref(b.high, false, b.high.toFixed(1)) + ref(b.mean, true, b.mean.toFixed(1)) + ref(b.low, false, b.low.toFixed(1));
     s += `<polyline points="${pts.map((p, i) => `${px(i)},${sc(p[1])}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
     // current = the last close: DIRECTIONAL color (below/above its own trailing range is a FACT) + value;
