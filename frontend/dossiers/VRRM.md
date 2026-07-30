@@ -301,14 +301,19 @@ _export date unverified (data ≥ 2026-06-09)_
 | Capital Expenditure | -125.0 | FY 2026 | 2026-05-26 | fresh | spend ≤ ceiling 5/6 | FY 2025 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $9.71, median $6.00, high/low 28.00/4.00, N 7/7; Ratings: Buy 0, Outperform 1, Hold 6, Underperform 1, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-06-09 · export date unverified] [19]
-- **Revision-event log** (250 events · 12 broker-days) — [43]:
-  - **2026-06-09 · CJS Securities, Inc.** · 2↑/0↓ · Target Price Non-periodic 10.0→12.0 · +1 items in JSON
-  - **2026-06-01 · broker undisclosed** · 1↑/16↓ · EBITDA FY 2026 410.9→382.1 · +16 items in JSON
-  - **2026-05-29 · broker undisclosed** · 13↑/14↓ · EBITDA FY 2026 382.7→383.0 · +26 items in JSON
-  - **2026-05-28 · broker undisclosed** · 0↑/0↓ · +29 items in JSON
-  - **2026-05-27 · broker undisclosed** · 9↑/46↓ · EBITDA FY 2026 415.2→383.8 · +65 items in JSON
-  - **2026-05-27 · CJS Securities, Inc.** · 9↑/10↓ · EBITDA FQ2 2026 90.3→97.4 · +18 items in JSON
-  - _+6 more broker-days in JSON_
+- **Revision-event log (250 events · 12 broker-days)** — [43]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-06-09 | CJS Securities, Inc. | 2 | 2 | — | — | Target Price Non-periodic | 10.0 | 12.0 | +2.0 |
+| 2026-06-01 | broker undisclosed | 17 | 1 | 16 | — | EBITDA FY 2026 | 410.9 | 382.1 | −28.8 |
+| 2026-05-29 | broker undisclosed | 27 | 13 | 14 | — | EBITDA FY 2026 | 382.7 | 383.0 | +0.31 |
+| 2026-05-28 | broker undisclosed | 29 | — | — | 29 | — | — | — | — |
+| 2026-05-27 | CJS Securities, Inc. | 19 | 9 | 10 | — | EBITDA FQ2 2026 | 90.3 | 97.4 | +7.1 |
+| 2026-05-27 | William Blair & Company L.L.C. | 12 | 1 | 11 | — | EBITDA FY 2026 | 410.6 | 381.7 | −28.9 |
+
+_+6 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2018 +0%, FY2019 +5%, FY2020 +0%, FY2021 +9%, FY2022 +4%, FY2023 -32%, FY2024 -76%, FY2025 -11%; Revenue surprise: FY2018 -5%, FY2019 +1%, FY2020 +2%, FY2021 +2%, FY2022 +0%, FY2023 +1%, FY2024 +0%, FY2025 +2% (GAAP-EPS basis; +beat / −miss) [44]
 
 ## Leverage & survival

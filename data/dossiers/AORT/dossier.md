@@ -326,14 +326,19 @@ _export date unverified (data ≥ 2026-06-23)_
 | EPS Normalized | '0.28 - 0.32' | FY 2019 | 2019-10-30 | 2441d (stale) | actual ≥ floor 5/7 | FY 2019 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $42.00, median $43.00, high/low 48.00/36.00, N 8/8; Ratings: Buy 6, Outperform 2, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-06-23 · export date unverified] [19]
-- **Revision-event log** (250 events · 18 broker-days) — [37]:
-  - **2026-06-23 · Needham & Company** · 0↑/13↓ · EBITDA FY 2026 100.3→91.8 · +12 items in JSON
-  - **2026-06-09 · Lake Street Capital Markets, LLC** · 0↑/12↓ · EPS Normalized FQ2 2026 0.1→0.1 · +11 items in JSON
-  - **2026-05-20 · Freedom Capital Markets** · 0↑/29↓ · EBITDA FQ2 2026 29.4→24.1 · +28 items in JSON
-  - **2026-05-08 · Lake Street Capital Markets, LLC** · 2↑/17↓ · EBITDA FQ2 2026 26.4→20.0 · +18 items in JSON
-  - **2026-05-08 · Freedom Capital Markets** · 0↑/0↓, 9 initiations · +9 items in JSON
-  - **2026-05-08 · Oppenheimer & Co. Inc.** · 0↑/15↓ · Revenue FQ2 2026 123.8→121.0 · +14 items in JSON
-  - _+12 more broker-days in JSON_
+- **Revision-event log (250 events · 18 broker-days)** — [37]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-06-23 | Needham & Company | 13 | — | 13 | — | EBITDA FY 2026 | 100.3 | 91.8 | −8.5 |
+| 2026-06-09 | Lake Street Capital Markets, LLC | 12 | — | 12 | — | EPS Normalized FQ2 2026 | 0.1 | 0.1 | −0.05 |
+| 2026-05-20 | Freedom Capital Markets | 29 | — | 29 | — | EBITDA FQ2 2026 | 29.4 | 24.1 | −5.3 |
+| 2026-05-08 | Citizens JMP Securities, LLC | 21 | — | 21 | — | EBITDA FQ2 2026 | 26.4 | 22.0 | −4.4 |
+| 2026-05-08 | Freedom Capital Markets | 9 | — | — | 9 | — | — | — | — |
+| 2026-05-08 | Ladenburg Thalmann & Company | 21 | 1 | 20 | — | EBITDA FQ2 2026 | 26.3 | 25.6 | −0.75 |
+
+_+12 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2004 +0%, FY2005 +0%, FY2006 +0%, FY2007 +24%, FY2008 +152%, FY2009 +3%, FY2010 +0%, FY2011 +0%, FY2012 +4%, FY2013 -5%, FY2014 +4%, FY2015 +56%, FY2016 +7%, FY2017 -62%, FY2018 +0%, FY2019 -44%, FY2020 +0%, FY2021 +0%, FY2022 +0%, FY2023 +0%, FY2024 +0%, FY2025 -9%; Revenue surprise: FY2000 -3%, FY2001 -1%, FY2002 -2%, FY2003 -1%, FY2004 +0%, FY2005 +0%, FY2006 +0%, FY2007 +0%, FY2008 -2%, FY2009 -0%, FY2010 -0%, FY2011 -1%, FY2012 -0%, FY2013 +0%, FY2014 -0%, FY2015 -0%, FY2016 -1%, FY2017 +2%, FY2018 +0%, FY2019 -0%, FY2020 +1%, FY2021 +1%, FY2022 -0%, FY2023 +1%, FY2024 -1%, FY2025 -0% (GAAP-EPS basis; +beat / −miss) [38]
 
 ## Leverage & survival

@@ -110,6 +110,22 @@ export const EXHIBIT = Object.freeze({
 // ---- label placement ----
 // Anchor a value beside a marker on the roomier side of its panel midpoint (avoids running off-panel).
 export const labelAnchor = (px, mid) => (px < mid ? "start" : "end");
+
+// X-AXIS LABEL THINNING (2026-07-29). Every period label was drawn regardless of how many there
+// were: AORT's revenue exhibit put 24 of them in one axis and TEN PAIRS physically overlapped
+// (measured min gap −6px), which is worse than useless — a smear of ink where the reader looks
+// for a date. Keep every Nth label instead, with the stride chosen from the space actually
+// available, and ALWAYS keep the last one: on a time axis the most recent period is the one a
+// reader looks for first, and dropping it to keep a tidy stride would be the wrong trade.
+// Returns a predicate, so a caller renders the same loop and only decides whether to emit text.
+export function xLabelKeeper(count, panelWidth, { minPitch = 26 } = {}) {
+  if (count <= 1) return () => true;
+  const slot = panelWidth / count;
+  const stride = Math.max(1, Math.ceil(minPitch / Math.max(slot, 1)));
+  if (stride === 1) return () => true;
+  // count back FROM the last index so the newest period always lands on a kept tick
+  return (i) => (count - 1 - i) % stride === 0;
+}
 // Sign-aware vertical position for a bar's value label: ABOVE a positive bar's top, BELOW a negative
 // bar's bottom — so the label never lands inside the bar or collides across the zero baseline.
 export const barLabelY = (barEdgeY, isNeg, above = 4, below = 11) => (isNeg ? barEdgeY + below : barEdgeY - above);

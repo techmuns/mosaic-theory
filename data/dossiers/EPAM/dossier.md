@@ -315,14 +315,19 @@ _export date unverified (data ≥ 2026-06-18)_
 | Capital Expenditure | '(19.00) - (20.00)' | FY 2016 | 2016-02-18 | 3791d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $144.06, median $139.00, high/low 235.00/99.00, N 17/17; Ratings: Buy 9, Outperform 2, Hold 9, Underperform 0, Sell 0, No Opinion 0, Buy 0, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-06-18 · export date unverified] [18]
-- **Revision-event log** (250 events · 11 broker-days) — [36]:
-  - **2026-06-18 · Morningstar Inc.** · 1↑/0↓ · +1 items in JSON
-  - **2026-06-15 · Wedbush Securities Inc.** · 0↑/2↓, 26 initiations · Target Price Non-periodic 230.0→99.0 · +27 items in JSON
-  - **2026-05-29 · broker undisclosed** · 0↑/2↓ · Target Price Non-periodic 130.0→110.0 · +1 items in JSON
-  - **2026-05-10 · broker undisclosed** · 11↑/13↓ · Revenue FQ2 2026 1417.7→1406.9 · +23 items in JSON
-  - **2026-05-08 · Mizuho Securities USA LLC** · 8↑/11↓ · Revenue FQ2 2026 1438.0→1411.0 · +18 items in JSON
-  - **2026-05-08 · broker undisclosed** · 21↑/56↓ · EBITDA FQ2 2026 240.0→230.0 · +90 items in JSON
-  - _+5 more broker-days in JSON_
+- **Revision-event log (250 events · 11 broker-days)** — [36]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-06-18 | Morningstar Inc. | 1 | 1 | — | — | — | — | — | — |
+| 2026-06-15 | Wedbush Securities Inc. | 28 | — | 2 | 26 | Target Price Non-periodic | 230.0 | 99.0 | −131.0 |
+| 2026-05-29 | broker undisclosed | 2 | — | 2 | — | Target Price Non-periodic | 130.0 | 110.0 | −20.0 |
+| 2026-05-10 | broker undisclosed | 24 | 11 | 13 | — | Revenue FQ2 2026 | 1417.7 | 1406.9 | −10.8 |
+| 2026-05-08 | Guggenheim Securities, LLC | 26 | 8 | 17 | 1 | Revenue FY 2026 | 5803.6 | 5737.4 | −66.2 |
+| 2026-05-08 | Mizuho Securities USA LLC | 19 | 8 | 11 | — | Revenue FQ2 2026 | 1438.0 | 1411.0 | −27.0 |
+
+_+5 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2011 -34%, FY2012 -4%, FY2013 +2%, FY2014 -1%, FY2015 +4%, FY2016 -4%, FY2017 -51%, FY2018 +1%, FY2019 +2%, FY2020 -1%, FY2021 +2%, FY2022 +7%, FY2023 -4%, FY2024 -0%, FY2025 -2%; Revenue surprise: FY2011 +2%, FY2012 +2%, FY2013 +2%, FY2014 +0%, FY2015 +1%, FY2016 +0%, FY2017 +0%, FY2018 +0%, FY2019 +1%, FY2020 +1%, FY2021 +1%, FY2022 +0%, FY2023 +0%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [37]
 
 ## Leverage & survival

@@ -295,14 +295,19 @@ _export date unverified (data ≥ 2026-06-05)_
 | EPS Normalized | '2.57 - 2.69' | FQ2 2026 | 2026-03-24 | 104d (stale) | actual ≥ floor 11/12 | FQ1 2026 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $41.25, median $39.00, high/low 55.00/32.00, N 4/4; Ratings: Buy 2, Outperform 1, Hold 1, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-06-05 · export date unverified] [17]
-- **Revision-event log** (79 events · 8 broker-days) — [37]:
-  - **2026-06-05 · Barrington Research Associates, Inc.** · 2↑/4↓ · EBITDA FQ2 2026 355.6→355.6 · +5 items in JSON
-  - **2026-03-26 · broker undisclosed** · 0↑/2↓ · EPS Normalized FY 2026 11.9→11.8 · +1 items in JSON
-  - **2026-03-25 · broker undisclosed** · 3↑/19↓ · EBITDA FQ2 2026 392.2→351.9 · +21 items in JSON
-  - **2026-03-25 · Barrington Research Associates, Inc.** · 2↑/18↓ · EBITDA FY 2026 1490.1→1533.6 · +19 items in JSON
-  - **2026-03-24 · broker undisclosed** · 0↑/22↓ · EBITDA FQ2 2026 392.2→351.9 · +21 items in JSON
-  - **2026-03-24 · Barrington Research Associates, Inc.** · 1↑/1↓, 2 initiations · EBITDA FY 2026 1504.9→1490.1 · +3 items in JSON
-  - _+2 more broker-days in JSON_
+- **Revision-event log (79 events · 8 broker-days)** — [37]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-06-05 | Barrington Research Associates, Inc. | 6 | 2 | 4 | — | EBITDA FQ2 2026 | 355.6 | 355.6 | +0.03 |
+| 2026-03-26 | broker undisclosed | 2 | — | 2 | — | EPS Normalized FY 2026 | 11.9 | 11.8 | −0.08 |
+| 2026-03-25 | Barrington Research Associates, Inc. | 20 | 2 | 18 | — | EBITDA FY 2026 | 1490.1 | 1533.6 | +43.5 |
+| 2026-03-25 | broker undisclosed | 22 | 3 | 19 | — | EBITDA FQ2 2026 | 392.2 | 351.9 | −40.3 |
+| 2026-03-24 | Barrington Research Associates, Inc. | 4 | 1 | 1 | 2 | EBITDA FY 2026 | 1504.9 | 1490.1 | −14.8 |
+| 2026-03-24 | broker undisclosed | 22 | — | 22 | — | EBITDA FQ2 2026 | 392.2 | 351.9 | −40.3 |
+
+_+2 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2020 +0%, FY2021 +5%, FY2022 -3%, FY2023 -13%, FY2024 +24%, FY2025 +0%; Revenue surprise: FY2020 +1%, FY2021 +0%, FY2022 -1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [38]
 
 ## Leverage & survival

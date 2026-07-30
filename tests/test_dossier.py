@@ -45,6 +45,21 @@ from vinci.schemas.envelope import DataField, SourceTier
 from vinci.sec import build_sec_http
 from vinci.universe import benchmark_identity
 
+
+def _imports_from(src: str, module_suffix: str, symbol: str) -> bool:
+    """Is ``symbol`` in a named-import list drawn from ``*module_suffix``?
+
+    Order- and adjacency-free ON PURPOSE. Two pins here used to assert literals like
+    ``"EXHIBIT } from"``, which encode that a symbol is LAST in its import list — so adding an
+    unrelated sibling to the same line reddened them without touching the contract they guard.
+    The contract is "this symbol comes from the shared module"; that is what this checks.
+    """
+    for names, mod in re.findall(r"import\s*\{([^}]*)\}\s*from\s*[\"']([^\"']+)[\"']", src):
+        if mod.endswith(module_suffix) and symbol in {n.strip() for n in names.split(",")}:
+            return True
+    return False
+
+
 # A conclusion = verdict / recommendation / direction / score / rating / probability (or a synonym).
 # No dossier field may carry one: the LLM can't conclude because there is nowhere to put it.
 _FORBIDDEN = (
@@ -3730,7 +3745,12 @@ def test_exhibit_shared_frame_tokens_no_node() -> None:
     assert 'stroke-width="2.8"' in ex  # EXHIBIT.halo
     assert 'margin: "18px 0 16px"' in ex  # EXHIBIT.margin
     src = Path("frontend/views/shared/dossier.js").read_text()
-    assert "EXHIBIT } from" in src  # imported alongside the scale/domain primitives
+    # ADJACENCY-FREE (2026-07-29). This pinned the literal `EXHIBIT } from`, i.e. that EXHIBIT was
+    # the LAST name in the import list. Adding any sibling to the same import reddened it while the
+    # contract it guards — dossier.js takes the frame from the shared lib instead of re-declaring
+    # its own literals — was untouched. Assert the SYMBOL is imported from exhibit.js and let the
+    # list order be whatever it is.
+    assert _imports_from(src, "exhibit.js", "EXHIBIT")
     assert "= EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H" in src  # revEbitda references the frame
     assert "= EXHIBIT, n = cols.length" in src  # returnRatiosExhibit references the frame
     assert "single ? EXHIBIT.wSingle : EXHIBIT.wDual" in src  # ownHistory references the frame
@@ -3822,7 +3842,9 @@ def test_stock_perf_exhibit_static_contract_no_node() -> None:
     points/returns. It sits in .brief-snap (briefSnapshot renders it below the scalar table)."""
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function stockPerfExhibit" in src
-    assert "extent, EXHIBIT } from" in src  # extent imported for the index-domain (not floor-at-0)
+    # adjacency-free, same reasoning as the frame-token pin above
+    assert _imports_from(src, "exhibit.js", "extent")   # index-domain, not lineDomain's floor-at-0
+    assert _imports_from(src, "exhibit.js", "EXHIBIT")
     assert "const { fs, halo } = EXHIBIT" in src  # shared design language (margin: a fixed
     # 14px top so the sidebar chart shares the Key-figures rhythm — the uniform-padding decision)
     assert 'style="margin:14px 0 0;"' in src
@@ -4783,10 +4805,24 @@ def test_revision_events_render_groups_by_date_broker_and_caps() -> None:
     lines = dr._grouped_events_lines(cs.revision_events(_est_bundle({"Recent Changes": rows})))
     text = "\n".join(lines)
     assert "6 events · 1 broker-days" in text and "46100" not in text  # header + serial decoded
-    bd = next(ln for ln in lines if "· HCW" in ln)
-    assert "0↑/6↓" in bd  # action mix (all downward, no initiations)
-    assert "M1 FY 2026 100.0→50.0" in bd  # headline = the largest |Δ|
-    assert "+5 items in JSON" in bd  # the remaining line items counted (one line per broker-day)
+    # TABLE form (2026-07-29): one ROW per broker-day, and the fields that were run together in
+    # prose are now cells — up/down counts, the headline metric+period, its prior and current, and
+    # the remainder. Assert the CELLS, so the pin cannot be satisfied by a coincidental substring.
+    bd = next(ln for ln in lines if ln.startswith("|") and "HCW" in ln)
+    cells = [c.strip() for c in bd.split("|")]
+    assert "6" in cells                         # Revisions total, and all 6 downward
+    assert "—" in cells                         # 0 up renders as an honest dash, never "0"
+    assert "M1 FY 2026" in cells                # headline = the largest |Δ|
+    assert "100.0" in cells and "50.0" in cells  # its prior / current, now separate columns
+    assert "−50.0" in cells                     # Δ — the criterion the headline was selected by
+    # the counts must CLOSE against the Events total — that is the whole point of the column set
+    hdr = next(ln for ln in lines if ln.startswith("|  |"))
+    names = [c.strip() for c in hdr.split("|")]
+    def _cell(name: str) -> str:
+        return cells[names.index(name)] if name in names else "—"
+    ev = int(_cell("Revisions"))
+    parts = sum(0 if _cell(k) == "—" else int(_cell(k)) for k in ("↑", "↓", "Init", "Withheld"))
+    assert ev == parts == 6, f"Revisions {ev} must equal ↑+↓+Init+Withheld {parts}"
     # group cap: 12 distinct broker-days → 6 rendered + the rest noted
     ml = "\n".join(dr._grouped_events_lines(cs.revision_events(_est_bundle(
         {"Recent Changes": _recent_changes_fx(12)}))))
@@ -5113,10 +5149,16 @@ def test_t3_revision_log_compression_pin_mvst() -> None:
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
-    bd = [ln for ln in md.splitlines()
-          if ln.strip().startswith("- **2026-") and "↑/" in ln and "in JSON" in ln]
-    assert len(bd) == 3  # exactly 3 broker-day lines
-    assert any("2026-05-15" in ln and "EBITDA FY 2026 146.5→62.1" in ln for ln in bd)
+    # TABLE form (2026-07-29) — the compressed lines are a GFM table now, one ROW per broker-day.
+    # The contract is unchanged (3 broker-days, the EBITDA-preferred headline); only the shape is.
+    seg = md[md.index("Revision-event log"):]
+    bd = [ln for ln in seg.splitlines() if ln.startswith("| 2026-")]
+    assert len(bd) == 3  # exactly 3 broker-day rows
+    # cells are pipe-separated, so the headline's metric/period and its prior/current now sit in
+    # DIFFERENT cells — assert the components, not the old single-string rendering
+    row = next(ln for ln in bd if "2026-05-15" in ln)
+    cells = [c.strip() for c in row.split("|")]
+    assert "EBITDA FY 2026" in cells and "146.5" in cells and "62.1" in cells
 
 
 def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() -> None:
@@ -5134,6 +5176,45 @@ def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() ->
     css = pathlib.Path("frontend/assets/styles.css").read_text()
     assert "provenance" in js.lower() and "<details" in js  # web on-demand wrap
     assert "details:not([open])" in css and "display: none" in css  # print-exclusion rule
+
+
+def test_bulk_audit_tiers_out_specify_the_force_open_rule() -> None:
+    """(P5) A bulk audit tier must not print — and `!important` alone does not achieve that.
+
+    THE INCIDENT: `.ds-bulk { display: none !important }` was shipped and the 250-event revision
+    log kept printing in place, because T1's force-open rule is `details:not([open])` — specificity
+    (0,1,1) against a bare class at (0,1,0). Among competing !important declarations the HIGHER
+    SPECIFICITY wins, so emphasis lost to a type+attribute selector. The first verification missed
+    it by opening the <details> before measuring, which is the one state where that rule cannot
+    match; on paper the element sits CLOSED.
+
+    So pin the shape, not the intent: the suppression must qualify the class with the element AND
+    cover both open states, which is (0,2,1) and cannot lose to (0,1,1)."""
+    import pathlib
+    import re as _re
+
+    css = pathlib.Path("frontend/assets/styles.css").read_text()
+    # Slice from the RULE, not the first mention: a comment on line 8 names "@media print" in
+    # prose, and `.index("@media print")` therefore returned nearly the whole stylesheet.
+    block = css[css.index("\n@media print {"):]
+    # Strip comments before pattern-matching. The bare-class form is QUOTED in the note above the
+    # rule as the thing not to do, and scanning raw text flagged that comment as the defect.
+    block = _re.sub(r"/\*.*?\*/", "", block, flags=_re.S)
+    assert "details.ds-bulk:not([open])" in block, (
+        "the closed state must be matched with the element qualifier — a bare `.ds-bulk` is "
+        "out-specified by T1's `details:not([open])` and silently prints")
+    assert "details.ds-bulk[open]" in block, (
+        "a reader who expands the tier on screen and then prints must get the same suppression")
+    # and the bare form must not be the one carrying the suppression
+    bare = _re.search(r"(?<![\w.\]\)])\.ds-bulk\s*\{[^}]*display:\s*none", block)
+    assert not bare, f"bare .ds-bulk suppression is the specificity bug: {bare.group(0)[:60]!r}"
+    # the pointer that replaces it must exist and be print-only
+    assert ".ds-bulk-pointer { display: none; }" in css, "pointer must be hidden on screen"
+    assert _re.search(r"\.ds-bulk-pointer\s*\{[^}]*display:\s*block", block), (
+        "pointer must be shown in print, where the block it names is suppressed")
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    assert 'class="ds-bulk"' in js and "ds-bulk-pointer" in js
+    assert "dossier.json" in js, "the pointer must name where the full log actually lives"
 
 
 def test_print_reasserts_light_palette_so_dark_never_prints() -> None:
@@ -5332,7 +5413,13 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
     assert "_as-of 2026-05-15_" in md  # (declutter) the vintage is a line, not heading furniture
     assert "146.5 (6m) → 62.1 (now)" in md
     # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
-    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026 146.5→62.1" in md
+    # the broker-day summary is a TABLE now: date and broker are separate cells, and the headline's
+    # prior/current are their own numeric columns
+    _row = next(ln for ln in md[md.index("Revision-event log"):].splitlines()
+                if ln.startswith("| 2026-05-15"))
+    _cells = [c.strip() for c in _row.split("|")]
+    assert "HCW" in _cells and "EBITDA FY 2026" in _cells
+    assert "146.5" in _cells and "62.1" in _cells
     # Fix 5: the legacy 'Consensus context' block is GONE; only Surprise history is folded in
     assert "legacy light facts" not in md and "### Consensus context" not in md
     assert "Surprise history (annual beat/miss)" in md

@@ -300,14 +300,19 @@ _export date unverified (data ≥ 2026-07-08)_
 | Gross Margin % | 35.0 | FY 2027 | 2023-11-02 | 977d (stale) | actual ≥ floor 2/2 | FY 2022 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $12.00, median $12.00, high/low 16.00/10.00, N 8/8; Ratings: Buy 2, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-08 · export date unverified] [18]
-- **Revision-event log** (250 events · 10 broker-days) — [38]:
-  - **2026-07-08 · broker undisclosed** · 0↑/11↓, 5 initiations · EBITDA FY 2026 2.2→2.1 · +15 items in JSON
-  - **2026-07-01 · William Blair & Company L.L.C.** · 0↑/18↓ · EBITDA FQ2 2026 -14.5→-20.2 · +17 items in JSON
-  - **2026-06-30 · broker undisclosed** · 2↑/10↓ · EBITDA FQ2 2026 -18.6→-22.0 · +11 items in JSON
-  - **2026-05-28 · broker undisclosed** · 2↑/0↓, 2 initiations · EBITDA FY 2026 4.4→4.4 · +3 items in JSON
-  - **2026-05-08 · Needham & Company** · 0↑/35↓ · EBITDA FQ2 2026 16.7→-19.0 · +34 items in JSON
-  - **2026-05-08 · Mizuho Securities USA LLC** · 0↑/14↓ · Revenue FQ2 2026 222.0→215.0 · +13 items in JSON
-  - _+4 more broker-days in JSON_
+- **Revision-event log (250 events · 10 broker-days)** — [38]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-07-08 | broker undisclosed | 16 | — | 11 | 5 | EBITDA FY 2026 | 2.2 | 2.1 | −0.12 |
+| 2026-07-01 | William Blair & Company L.L.C. | 18 | — | 18 | — | EBITDA FQ2 2026 | -14.5 | -20.2 | −5.7 |
+| 2026-06-30 | broker undisclosed | 12 | 2 | 10 | — | EBITDA FQ2 2026 | -18.6 | -22.0 | −3.4 |
+| 2026-05-28 | broker undisclosed | 4 | 2 | — | 2 | EBITDA FY 2026 | 4.4 | 4.4 | +0.03 |
+| 2026-05-08 | Craig-Hallum Capital Group LLC | 30 | 2 | 28 | — | EBITDA FQ2 2026 | 13.8 | -14.7 | −28.5 |
+| 2026-05-08 | Mizuho Securities USA LLC | 14 | — | 14 | — | Revenue FQ2 2026 | 222.0 | 215.0 | −7.0 |
+
+_+4 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2020 +17%, FY2021 +50%, FY2022 -33%, FY2023 +20%, FY2024 +5%, FY2025 -3%; Revenue surprise: FY2020 +1%, FY2021 +2%, FY2022 +2%, FY2023 +1%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [39]
 
 ## Leverage & survival

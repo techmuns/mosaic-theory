@@ -826,3 +826,66 @@ def test_panel_date_exclusions_py_js_parity() -> None:
         "the two exclusions that inverted the ranking are gone from BOTH sides, so this pin would "
         "pass while the defect returned")
 
+
+
+def test_revision_broker_day_order_is_identical_on_both_twins() -> None:
+    """THE CAP MAKES ORDER A CONTRACT. `_GROUP_CAP` truncates the revision log to six broker-days,
+    so whichever six each renderer picks IS the published fact — and the two picked differently.
+
+    `render._grouped_events_lines` sorted by DATE alone (ties kept insertion order); dossier.js
+    reverse-sorted the composite "date|broker" string (ties broke by broker DESCENDING). AORT's md
+    and web disagreed on rows 5-6. Fixing that to "date DESC, broker ASC" then exposed a second,
+    finer split: JS `localeCompare` collates case-insensitively while python `sorted` orders by code
+    point, so "Morningstar Inc." vs "broker undisclosed" flipped IT's sixth row.
+
+    Pin the ORDERING RULE on both sides — the ordering is not incidental, it selects what prints."""
+    py = _src("vinci/dossier/render.py")
+    seg = py[py.index("def _grouped_events_lines"):]
+    seg = seg[:seg.index("\ndef ")]
+    assert "sorted(sorted(groups, key=lambda k: k[1]), key=lambda k: k[0], reverse=True)" in seg, (
+        "the md must sort date DESC then broker ASC — a date-only sort leaves ties to "
+        "insertion order")
+    js = _src("frontend/views/shared/dossier.js")
+    jseg = js[js.index("function eventGroups"):]
+    jseg = jseg[:jseg.index("\nfunction ")]
+    # STRIP COMMENTS FIRST. The note above the comparator names `localeCompare` as the thing not to
+    # use, and scanning raw source flagged that explanation as the violation — the same way the CSS
+    # suppression pin flagged its own comment. Assert against CODE, never against prose about code.
+    jseg = re.sub(r"//[^\n]*", "", re.sub(r"/\*.*?\*/", "", jseg, flags=re.S))
+    assert "localeCompare" not in jseg, (
+        "localeCompare collates case-insensitively and cannot agree with python's code-point sort")
+    assert "cmp(db, da) || cmp(ba, bb)" in jseg, "date DESC then broker ASC, by code point"
+
+
+def test_print_chunk_probe_mirrors_the_print_rules_it_cannot_see() -> None:
+    """(P7) Wide tables split into continued blocks at print time, and the split is decided by an
+    OFF-SCREEN PROBE — because at `beforeprint` the page is still laid out for screen, and column
+    widths differ per table (a quarterly cell is narrower than an annual one), so a fixed column
+    count would be wrong for one of them.
+
+    THE COUPLING THIS GUARDS: a media rule cannot be read on screen, so the probe HAND-COPIES the
+    print declarations that change a table's MINIMUM width. Copying only the padding and not the
+    wrap rules read the peer grid at 981px min-content when it prints at 848 — and split a table
+    that fits perfectly well. Every rule the probe replicates must still exist in @media print;
+    if one is edited there and not here, the probe silently mis-measures again."""
+    js = _src("frontend/views/shared/dossier.js")
+    seg = js[js.index("function _colWidthsAtPrintScale"):]
+    seg = seg[:seg.index("\nfunction splitWideTablesForPrint")]
+    css = _src("frontend/assets/styles.css")
+    block = css[css.index("\n@media print {"):]
+
+    # (1) cell padding — probe and print block must agree on the value
+    assert 'padding = "4px 9px"' in seg
+    assert "table.data td, table.data th { padding: 4px 9px; }" in block
+    # (2) the row-label wrap — without it a long label holds the table wide in the probe only
+    assert 'whiteSpace = "normal"' in seg and 'maxWidth = "280px"' in seg
+    assert "table.data td.row-label { white-space: normal; max-width: 280px; }" in block
+    # (3) P6's full-measure rule for wide grids
+    assert 'style.width = "100%"' in seg
+    assert "table.data:has(thead th:nth-child(5))" in block
+    # the measure itself, and that the split is PRINT-ONLY and reversible
+    assert "_PRINT_MEASURE = 880" in js
+    assert 'addEventListener("beforeprint", splitWideTablesForPrint)' in js
+    assert 'addEventListener("afterprint", unsplitWideTablesAfterPrint)' in js
+    # a suppressed bulk tier must never be measured or split (P5)
+    assert 'closest(".ds-bulk")' in js

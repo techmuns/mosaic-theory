@@ -283,14 +283,19 @@ _export date unverified (data ≥ 2026-06-12)_
 | EBITDA | '80.00 - 100.00' | FY 2026 | 2026-05-06 | 61d (stale) | — | — |
 
 - **Consensus stats (target + ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-06-12 · export date unverified] [17]
-- **Revision-event log** (250 events · 18 broker-days) — [38]:
-  - **2026-06-12 · Needham & Company** · 1↑/3↓ · Revenue FY 2026 6156.4→6137.8 · +3 items in JSON
-  - **2026-06-10 · Citizens JMP Securities, LLC** · 0↑/1↓, 2 initiations · Net Income (GAAP) FY 2026 -28.8→-28.9 · +2 items in JSON
-  - **2026-06-05 · Barrington Research Associates, Inc.** · 0↑/0↓, 2 initiations · +2 items in JSON
-  - **2026-05-22 · broker undisclosed** · 10↑/4↓, 6 initiations · EBITDA FQ3 2026 4.5→5.2 · +19 items in JSON
-  - **2026-05-22 · Needham & Company** · 5↑/1↓ · Gross Margin % FQ3 2026 7.0→8.0 · +5 items in JSON
-  - **2026-05-07 · broker undisclosed** · 6↑/11↓, 5 initiations · EBITDA FQ3 2026 23.0→15.9 · +21 items in JSON
-  - _+12 more broker-days in JSON_
+- **Revision-event log (250 events · 18 broker-days)** — [38]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-06-12 | Needham & Company | 4 | 1 | 3 | — | Revenue FY 2026 | 6156.4 | 6137.8 | −18.6 |
+| 2026-06-10 | Citizens JMP Securities, LLC | 3 | — | 1 | 2 | Net Income (GAAP) FY 2026 | -28.8 | -28.9 | −0.10 |
+| 2026-06-05 | Barrington Research Associates, Inc. | 2 | — | — | 2 | — | — | — | — |
+| 2026-05-22 | Needham & Company | 6 | 5 | 1 | — | Gross Margin % FQ3 2026 | 7.0 | 8.0 | +1.0 |
+| 2026-05-22 | broker undisclosed | 20 | 10 | 4 | 6 | EBITDA FQ3 2026 | 4.5 | 5.2 | +0.70 |
+| 2026-05-07 | Barrington Research Associates, Inc. | 18 | 8 | 10 | — | EBITDA FQ3 2026 | 26.6 | 13.4 | −13.2 |
+
+_+12 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** _UNKNOWN_ — Surprise sheet has no fiscal-year header row
 
 ## Leverage & survival

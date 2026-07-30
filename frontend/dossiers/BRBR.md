@@ -290,14 +290,19 @@ _export date unverified (data ≥ 2026-05-14)_
 | Gross Margin % | '28.20 - 32.40' | FQ4 2022 | 2022-08-05 | 1431d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $13.69, median $13.00, high/low 20.00/10.00, N 13/13; Ratings: Buy 6, Outperform 2, Hold 6, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-05-14 · export date unverified] [19]
-- **Revision-event log** (250 events · 8 broker-days) — [36]:
-  - **2026-05-14 · broker undisclosed** · 1↑/23↓ · EBITDA FQ3 2026 118.7→86.8 · +23 items in JSON
-  - **2026-05-07 · Consumer Edge Research, LLC** · 0↑/2↓ · Revenue FQ3 2026 588.0→542.0 · +1 items in JSON
-  - **2026-05-06 · broker undisclosed** · 29↑/106↓, 3 initiations · EBITDA FQ3 2026 123.7→87.0 · +163 items in JSON
-  - **2026-05-06 · Mizuho Securities USA LLC** · 0↑/9↓ · EPS Normalized FQ3 2026 0.6→0.6 · +8 items in JSON
-  - **2026-05-05 · William Blair & Company L.L.C.** · 4↑/14↓ · EBITDA FQ3 2026 113.1→82.2 · +17 items in JSON
-  - **2026-05-05 · broker undisclosed** · 5↑/9↓ · Revenue FY 2026 2328.8→2383.2 · +27 items in JSON
-  - _+2 more broker-days in JSON_
+- **Revision-event log (250 events · 8 broker-days)** — [36]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Withheld | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-05-14 | broker undisclosed | 24 | 1 | 23 | — | — | EBITDA FQ3 2026 | 118.7 | 86.8 | −31.9 |
+| 2026-05-07 | Consumer Edge Research, LLC | 2 | — | 2 | — | — | Revenue FQ3 2026 | 588.0 | 542.0 | −46.0 |
+| 2026-05-06 | Mizuho Securities USA LLC | 9 | — | 9 | — | — | EPS Normalized FQ3 2026 | 0.6 | 0.6 | −0.04 |
+| 2026-05-06 | broker undisclosed | 164 | 29 | 106 | 3 | 26 | EBITDA FQ3 2026 | 123.7 | 87.0 | −36.7 |
+| 2026-05-05 | Consumer Edge Research, LLC | 2 | — | 2 | — | — | Revenue FQ3 2026 | 605.0 | 588.0 | −17.0 |
+| 2026-05-05 | Mizuho Securities USA LLC | 3 | — | 3 | — | — | EPS Normalized FQ3 2026 | 0.6 | 0.6 | −0.04 |
+
+_+2 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2019 +259%, FY2020 +13%, FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2019 -0%, FY2020 +2%, FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [37]
 
 ## Leverage & survival
