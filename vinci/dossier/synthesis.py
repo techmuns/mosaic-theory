@@ -1068,17 +1068,37 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
     ann = getattr(getattr(fs, "annual", None), "value", None) if fs is not None else None
     rows = list(getattr(ann, "rows", []) or []) if ann is not None else []
     cols = list(getattr(ann, "columns", []) or []) if ann is not None else []
+    # ESTIMATE COLUMNS ARE OUT OF SCOPE. The summary carries FY26E/FY27E and a per-column
+    # `is_estimate` mask; demanding the prose state a FORECAST would require the argument to cite a
+    # projection as though it were a fact. No material value lands in an estimate column today, so
+    # this is a latent false positive rather than a live one — closed now because the flag exists
+    # and ignoring it would be an unasserted assumption about which columns are actuals.
+    est = list(getattr(ann, "is_estimate", []) or []) if ann is not None else []
+
+    def is_forecast(i: int) -> bool:
+        if i < len(est):
+            return bool(est[i])
+        return bool(i < len(cols) and str(cols[i]).rstrip(")").endswith("E"))
+
     prose = _synthesis_prose(synth)
     out: list[str] = []
     for r in rows:
         if not getattr(r, "material", False):
             continue
+        # ONE FIGURE, REPORTED ONCE. A charge commonly repeats across columns — CNXC's -1,523.3
+        # appears in both FY25 and LTM — and citing it once satisfies the reader for both. Keyed by
+        # value so the refusal names a number rather than a grid position, and so the count is a
+        # count of FIGURES rather than of cells.
+        seen: dict[float, list[str]] = {}
         for i, v in enumerate(getattr(r, "values", []) or []):
             if not isinstance(v, (int, float)) or abs(v) < MATERIAL_FIGURE_FLOOR_MUSD:
                 continue
-            if not _figure_cited(prose, float(v)):
-                period = cols[i] if i < len(cols) else str(i)
-                out.append(f"{r.label} {period} = {v:,.1f}")
+            if is_forecast(i):
+                continue
+            seen.setdefault(float(v), []).append(cols[i] if i < len(cols) else str(i))
+        for v, periods in seen.items():
+            if not _figure_cited(prose, v):
+                out.append(f"{r.label} {'/'.join(periods)} = {v:,.1f}")
     return out
 
 

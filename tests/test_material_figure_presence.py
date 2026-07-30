@@ -46,8 +46,11 @@ class _Row:
 
 
 class _Ann:
-    def __init__(self, rows: list[_Row], columns: list[str]) -> None:
+    def __init__(self, rows: list[_Row], columns: list[str],
+                 is_estimate: list[bool] | None = None) -> None:
         self.rows, self.columns = rows, columns
+        self.is_estimate = is_estimate if is_estimate is not None else [
+            c.rstrip(")").endswith("E") for c in columns]
 
 
 class _Val:
@@ -150,6 +153,31 @@ def test_a_build_with_no_financial_summary_is_not_refused() -> None:
         financial_summary = None
 
     assert uncited_material_figures(_Synth("x"), _Empty()) == []  # type: ignore[arg-type]
+
+
+def test_a_forecast_column_is_not_guarded() -> None:
+    """REVIEW FINDING. The summary carries FY26E/FY27E and a per-column `is_estimate` mask.
+    Demanding the prose state a FORECAST would require the argument to cite a projection as though
+    it were a fact. No material value lands in an estimate column on today's corpus, so this was a
+    LATENT false positive — closed because the flag exists and ignoring it is an unasserted
+    assumption about which columns are actuals."""
+    mech = _Mech(_Ann([_Row("Asset Writedown ($M)", [None, -500.0])], ["FY25", "FY26E"],
+                      is_estimate=[False, True]))
+    assert uncited_material_figures(_Synth("no figures"), mech) == []  # type: ignore[arg-type]
+    # and the same value in an ACTUAL column is still guarded
+    mech2 = _Mech(_Ann([_Row("Asset Writedown ($M)", [-500.0, None])], ["FY25", "FY26E"],
+                       is_estimate=[False, True]))
+    assert uncited_material_figures(_Synth("no figures"), mech2)  # type: ignore[arg-type]
+
+
+def test_one_figure_repeated_across_columns_is_reported_once() -> None:
+    """REVIEW FINDING. CNXC's -1,523.3 appears in BOTH FY25 and LTM. Citing it once satisfies the
+    reader for both, so reporting it twice would inflate the count and read as two distinct
+    omissions. The refusal names a FIGURE and lists the periods it spans."""
+    mech = _Mech(_Ann([_Row("Impairment of Goodwill ($M)", [-1523.3, -1523.3])], ["FY25", "LTM"]))
+    out = uncited_material_figures(_Synth("no figures here"), mech)  # type: ignore[arg-type]
+    assert len(out) == 1, out
+    assert "FY25/LTM" in out[0] and "1,523.3" in out[0], out[0]
 
 
 # --- the wiring: a guard nobody calls is not a guard ---------------------------------------------

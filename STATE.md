@@ -4239,8 +4239,10 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   run. Refusing means the bad roll FAILS and is re-rolled — which is what keeps the 07-30 revert a
   one-off rather than a practice.
   **BASE RATE MEASURED FIRST, and it re-scoped the item.** Across all 9 current pages there are
-  only **4 material figures ≥$10M on 2 names** (CNXC, SMPL) — 7 of 9 names carry NO material row at
-  all. All 4 are cited, so 07-30 was ONE BAD ROLL rather than a systematic rate. The guard's
+  only **3 DISTINCT material figures ≥$10M on 2 names** (CNXC −1,523.3; SMPL −60.9 and −391.9) —
+  7 of 9 names carry NO material row at all. All 3 are cited, so 07-30 was ONE BAD ROLL rather than
+  a systematic rate. *(First reported as 4 — that counted CELLS, and CNXC's −1,523.3 occupies both
+  FY25 and LTM. One figure, two columns. Corrected in review.)* The guard's
   coverage is therefore narrow by construction; it is worth building anyway because the failure it
   catches puts a wrong magnitude in the argument a reader actually reads.
   **THE MATCHER IS THE RISK, and measuring it changed the design.** An unanchored numeric match
@@ -4250,6 +4252,15 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   of 10 excludes figures too small to distinguish from prose noise (SMPL's -3.0).
   Five mutations, five reds — incl. the WIRING pin, which needed the exact condition text because
   `if False and <call>` still contains the call and passed a pin that matched the name alone.
+  **TWO REVIEW FINDINGS, both latent rather than live, both closed:**
+  (i) **ESTIMATE COLUMNS were guarded.** The summary carries FY26E/FY27E and a per-column
+  `is_estimate` mask the guard ignored, so a material FORECAST value would have demanded the prose
+  cite a projection as though it were a fact. No such value exists on today's corpus — a latent
+  false positive, closed because the flag exists and ignoring it is an unasserted assumption about
+  which columns are actuals.
+  (ii) **ONE FIGURE WAS REPORTED PER CELL.** CNXC's −1,523.3 sits in FY25 AND LTM; citing it once
+  satisfies a reader for both, so reporting twice inflated the count and read as two omissions.
+  Now keyed by VALUE, naming the periods it spans (`FY25/LTM`).
 - **`AS_OF` SIDECAR: BUILT AND NEVER WIRED — flags-well-closes-poorly in a new form (operator
   2026-07-30).** `estimates_as_of` supports an operator-attested `data/manual/ciq/<TICKER>/AS_OF`
   that takes precedence over the revision FLOOR. It is the designed remedy for the one case the
