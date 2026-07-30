@@ -44,6 +44,7 @@ from __future__ import annotations
 import datetime as dt
 import re
 from dataclasses import dataclass
+from typing import Any
 
 #: Days a build's OLDEST panel may be, measured against the build's own date, before it fails.
 #: Re-measured 2026-07-29 (see PanelAge): the old oldest→newest form was price-driven, so a price
@@ -166,6 +167,30 @@ CONSENSUS_PANELS: frozenset[str] = frozenset({
     "financial_summary.as_of",
     "valuation.implied_expectations.multiples_as_of",
 })
+
+
+def corrected_ciq_as_of(stated: str, bars: list[Any]) -> str:
+    """CIQ's ``As-Of`` is the EXPORT date; the data is the PRIOR trading close. Return the real one.
+
+    **MEASURED 11 OF 11, not inferred.** CIQ's printed ``Day Close Price Latest`` was compared
+    to the Polygon store on every committed name: none matched the close ON the stated date, all
+    eleven matched the close BEFORE it — SMPL's 07-24 stamp is the 07-23 close of 10.28, EPAM's
+    07-29 stamp is 100.40 against 106.89 on the day itself. So every CIQ-derived as-of reads one
+    trading day too new, panel ages are understated, and the ceiling passes a day early.
+
+    RESOLVED FROM THE STORE'S PRIOR BAR, NEVER ``date - 1`` (operator). Two of the eleven stamps
+    fall on a Monday — NCNO's 2026-07-20 and VITL's 2026-06-29 — where the correction is THREE
+    calendar days, not one. A calendar-day version ships clean on nine names and is wrong on those
+    two, and would be wrong again on every holiday. The prior bar handles both for free.
+
+    Fail-safe: with no bar before ``stated`` (an empty or short store) the stamp is returned
+    UNCHANGED. An uncorrected age is too NEW by a day, which the gate treats as fresher — but
+    inventing a date from a store that cannot support it is the fabrication this repo refuses, and
+    the honest miss is recoverable by refreshing the store."""
+    prior = [b for b in bars if str(getattr(b, "bar_date", "")) < stated]
+    if not prior:
+        return stated
+    return str(max(str(getattr(b, "bar_date", "")) for b in prior))
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:

@@ -21,6 +21,7 @@ from typing import Any, TypeVar
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.freshness import corrected_ciq_as_of
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
@@ -2091,7 +2092,8 @@ def _ie_bridge_net_debt(implied: ImpliedValuation) -> float | None:
 
 
 def _implied_expectations(
-    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle
+    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle,
+    price_bars: list[Any] | None = None,
 ) -> ImpliedExpectations | None:
     """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields. TEV = mcap + net debt
     (simple-TEV basis — the cell is not surfaced and carries a stale second pricing vintage,
@@ -2109,7 +2111,11 @@ def _implied_expectations(
         return None
     market_cap, net_debt = float(mc.value), float(name_row.net_debt)
     tev = market_cap + net_debt
-    tev_as_of = _ie_asof(mc.source_ref)
+    # CIQ's As-Of is the EXPORT date; the data is the PRIOR close (measured 11/11). Correct it
+    # from the store's own prior BAR, never `date - 1` — two stamps in the fleet land on a Monday.
+    stated_as_of = _ie_asof(mc.source_ref)
+    tev_as_of = (corrected_ciq_as_of(stated_as_of, price_bars)
+                 if price_bars and stated_as_of != "UNKNOWN" else stated_as_of)
     mult_as_of = (
         (catalyst.as_of.value or "UNKNOWN").lstrip("≥")
         if catalyst.as_of.status is SourceStatus.PRESENT else "UNKNOWN")
@@ -2649,7 +2655,8 @@ def assemble_mechanical(
     # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
     valuation = valuation.model_copy(
         update={"implied_expectations":
-                _implied_expectations(peer_comps, catalyst, implied_val, bundle)})
+                _implied_expectations(peer_comps, catalyst, implied_val, bundle,
+                                     store.get_price_history(record.identity.internal_id))})
     mech = MechanicalLayer(
         valuation=valuation,
         quality=quality,
