@@ -2373,8 +2373,17 @@ def _primary_source(
 ) -> tuple[PrimarySource, float, OperatingDriversExtract]:
     """(RC-1 C) Fetch the primary-source filings (recent 8-K EX-99.1 releases + the latest 10-Q),
     parse them, and run the four cross-source derivations over them + the CIQ/EDGAR mechanical
-    layer. RESILIENT: any fetch/parse miss becomes an honest UNKNOWN line + a QA flag — the assembly
-    NEVER aborts. Also assembles the (PR-B) operating-driver rows over the SAME already-fetched text
+    layer. RESILIENT TO SOURCE MISSES: any fetch/parse miss becomes an honest UNKNOWN line + a QA
+    flag — a missing source never aborts the assembly.
+
+    **ONE DELIBERATE ABORT (item 18), and it is NOT a source miss.** If the underwrite record holds
+    a typed covenant fact and this function would still emit ``covenant basis: UNKNOWN``, it RAISES.
+    The resilience rule exists so an ABSENT source degrades to an honest UNKNOWN; it is not licence
+    to ship a DISHONEST one. Bare ``ValueError`` on purpose — ``DossierAssemblyError`` lives in
+    ``assemble.py``, which imports this module, so raising it here would cycle; ``assemble_cohort``
+    collects either as a per-name error and the cohort continues.
+
+    Also assembles the (PR-B) operating-driver rows over the SAME already-fetched text
     (A1 releases + A2 10-Q MD&A) plus CIQ Key Developments (A3) — zero extra I/O. Returns
     (PrimarySource, fetch-latency seconds, OperatingDriversExtract)."""
     t0 = time.perf_counter()

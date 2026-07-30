@@ -159,36 +159,68 @@ def test_the_false_unknown_fails_the_build() -> None:
 # --- the corpus ----------------------------------------------------------------------------------
 
 
-def test_no_committed_dossier_asserts_a_false_unknown() -> None:
-    """THE CORPUS PIN. For every committed dossier, the covenant line must agree with whether that
-    name has an underwrite record — UNKNOWN only where there is none to check against.
+def test_no_committed_page_asserts_a_false_unknown() -> None:
+    """THE CORPUS PIN, and the first cut of it was VACUOUS — measured, not suspected.
 
-    Reads the artifacts as they stand. They predate this build, so the assertion is the ONE
-    direction that must already hold: no name may claim UNKNOWN while its record holds a typed
-    fact. The vintage message appears after the next artifact pass, and the test says so rather
-    than failing until then."""
-    recs = {p.stem for p in (ROOT / "scenarios").glob("*.json") if not p.stem.startswith("_")}
-    seen = 0
+    That version only asserted inside ``if COVENANT_LEVERAGE_FACT in facts``, which is true for no
+    record on the corpus. It walked 11 covenant lines and reached its only real assertion **0
+    times**, while a ``seen >= 5`` counter made it look covered. Same shape as the batch e2e that
+    covered 0 of 11: a guard whose gate is never satisfied is not a guard.
+
+    What is checkable TODAY, on every name, is the whole mapping: the committed line must equal what
+    this build's resolver produces from that name's own record. That reaches all 11, and it is the
+    property the item actually promises — no page asserting ignorance the fund does not have.
+
+    A name absent from the screen cohort CANNOT be re-assembled (``load_finalists`` raises), so its
+    artifact is frozen by circumstance, not neglect — MVST and FUBO are there today after an 11.13x
+    corporate action. Those are reported, never silently passed, and the exemption is DERIVED from
+    ``candidate_records.jsonl`` rather than a hardcoded name list, so it self-clears the moment the
+    name re-enters a screen."""
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.rank import load_candidates_from_snapshot
+
+    snap = ROOT / "data" / "snapshots" / "candidate_records.jsonl"
+    cohort = ({r.data_record.identity.ticker for r in load_candidates_from_snapshot(snap)}
+              if snap.exists() else set())
+    checked, stale, frozen = 0, [], []
     for folder in sorted((ROOT / "data" / "dossiers").glob("*")):
         jf = folder / "dossier.json"
         if not jf.exists():
             continue
-        blob = json.loads(jf.read_text())
-        tri = (((blob.get("mechanical") or {}).get("primary_source") or {})
+        tri = (((json.loads(jf.read_text()).get("mechanical") or {}).get("primary_source") or {})
                .get("basis_triangulation") or {}).get("value") or ""
         line = next((ln for ln in tri.splitlines() if "covenant basis:" in ln), None)
         if line is None:
             continue
-        seen += 1
-        if folder.name not in recs:
+        checked += 1
+        want = dm._covenant_basis(_read_scenario_card(folder.name)) or ps.COVENANT_BASIS_UNKNOWN
+        got = line.split("covenant basis:", 1)[1].strip()
+        if got == want:
             continue
-        card_path = ROOT / "scenarios" / f"{folder.name}.json"
-        facts = json.loads(card_path.read_text()).get("facts") or {}
-        if dm.COVENANT_LEVERAGE_FACT in facts:
-            assert ps.COVENANT_BASIS_UNKNOWN not in line, (
-                f"{folder.name}: record holds a typed {dm.COVENANT_LEVERAGE_FACT} and the "
-                f"committed dossier still claims ignorance — {line.strip()}")
-    assert seen >= 5, f"expected the committed corpus, saw {seen} covenant lines"
+        (frozen if folder.name not in cohort else stale).append(
+            f"{folder.name}: page says {got!r}, record implies {want!r}")
+    assert checked >= 10, f"expected the committed corpus, reached {checked} covenant lines"
+    assert not stale, (
+        "committed pages disagree with their own underwrite records — re-run the artifact pass:\n  "
+        + "\n  ".join(stale))
+    if frozen:  # visible, not swallowed — these clear when the name re-enters a screen
+        print("\nNOT RE-ASSEMBLABLE (absent from the screen cohort):\n  " + "\n  ".join(frozen))
+
+
+def test_the_corpus_pin_reaches_both_branches() -> None:
+    """The anti-vacuity check ON the pin above, because 'it reaches 11 names' would still be hollow
+    if all 11 took one branch. Both must be represented: names WITH a record (the vintage message)
+    and names WITHOUT (the historical line). Reds if the corpus ever collapses to one side, which
+    is when the pin above quietly stops discriminating."""
+    from vinci.dossier.assemble import _read_scenario_card
+
+    with_rec = [f.name for f in (ROOT / "data" / "dossiers").glob("*")
+                if (f / "dossier.json").exists() and _read_scenario_card(f.name) is not None]
+    without = [f.name for f in (ROOT / "data" / "dossiers").glob("*")
+               if (f / "dossier.json").exists() and _read_scenario_card(f.name) is None]
+    assert with_rec and without, (
+        f"the corpus pin only exercises one branch — with-record {sorted(with_rec)}, "
+        f"without {sorted(without)}")
 
 
 @pytest.mark.parametrize("name", ["AORT", "EPAM", "IT", "MVST", "NCNO", "SMPL"])
