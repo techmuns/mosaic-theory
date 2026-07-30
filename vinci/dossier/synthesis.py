@@ -1081,15 +1081,24 @@ def _figure_cited(prose: str, value: float) -> bool:
     return False
 
 
+#: THE FIELDS THAT CARRY CLAIMS — the single list, because more than one reader needs it. The
+#: mechanical-only refresh (`vinci.dossier.refresh`) asks the same question of a STORED dict rather
+#: than a model, so it cannot call `_synthesis_prose`; retyping the list there missed
+#: `decisive_question` and `evidence_balance`, which would have let a figure cited ONLY in those
+#: read as uncited and slip the refusal. Adding a claim block means adding it here, once.
+SYNTHESIS_CLAIM_LISTS: tuple[str, ...] = ("bull_points", "bear_points", "key_unknowns")
+SYNTHESIS_CLAIM_SCALARS: tuple[str, ...] = ("decisive_question", "evidence_balance")
+
+
 def _synthesis_prose(synth: Synthesis) -> str:
     """Every free-text claim the synthesis makes. The guard reads the PROSE, because that is where
     the reader meets a number — a figure present in a structured field but absent from the argument
     is exactly the gap (item 19c)."""
     out: list[str] = []
-    for block in (synth.bull_points, synth.bear_points, synth.key_unknowns):
-        for p in (block or []):
+    for name in SYNTHESIS_CLAIM_LISTS:
+        for p in (getattr(synth, name, None) or []):
             out.append(p if isinstance(p, str) else str(getattr(p, "claim", "") or ""))
-    for attr in ("decisive_question", "evidence_balance"):
+    for attr in SYNTHESIS_CLAIM_SCALARS:
         v = getattr(synth, attr, None)
         if isinstance(v, str):
             out.append(v)

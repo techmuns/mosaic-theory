@@ -56,10 +56,13 @@ def test_a_noop_refresh_is_byte_identical(tmp_path: pathlib.Path) -> None:
     for src in sorted(DOSS.glob("*/dossier.json")):
         if src.parent.name in pre:
             continue
-        copy = tmp_path / f"{src.parent.name}.json"
-        shutil.copy(src, copy)
+        folder = tmp_path / src.parent.name
+        folder.mkdir()
+        shutil.copy(src, folder / "dossier.json")
+        shutil.copy(src.parent / "dossier.md", folder / "dossier.md")
+        copy = folder / "dossier.json"
         original = copy.read_text()
-        changed, _ = refresh_dossier(copy)
+        changed = refresh_dossier(copy)
         if changed or copy.read_text() != original:
             drifted.append(src.parent.name)
     assert not drifted, (
@@ -79,8 +82,11 @@ def test_a_pre_schema_name_is_migrated_not_altered(tmp_path: pathlib.Path) -> No
         pytest.skip("no pre-schema artifacts left — the migration already happened")
     for name in sorted(pre):
         src = DOSS / name / "dossier.json"
-        copy = tmp_path / f"{name}.json"
-        shutil.copy(src, copy)
+        folder = tmp_path / name
+        folder.mkdir()
+        shutil.copy(src, folder / "dossier.json")
+        shutil.copy(src.parent / "dossier.md", folder / "dossier.md")
+        copy = folder / "dossier.json"
         before = json.loads(copy.read_text())
         refresh_dossier(copy)
         after = json.loads(copy.read_text())
@@ -273,3 +279,61 @@ def test_refresh_refuses_before_it_writes(tmp_path: pathlib.Path) -> None:
     with pytest.raises(RefreshRefusedError, match="CITES"):
         refresh_dossier(p, transform=drop)
     assert p.read_text() == before, "the refusal wrote before raising"
+
+
+# --- review findings ------------------------------------------------------------------------------
+
+
+def test_the_refresh_rewrites_the_page_not_only_the_record(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING, and the point of the whole path. The first cut wrote only `dossier.json`
+    while the assembler writes BOTH — so a refresh that moved SMPL's cap 909.4 → 1,000.0 updated TEV
+    to 1,324.6 in the record and left the page showing the old figure. Two committed artifacts
+    disagreeing, and a mechanism whose reason for existing is fixing numbers a READER sees."""
+    src = DOSS / "SMPL"
+    if not (src / "dossier.md").exists():
+        pytest.skip("no committed SMPL artifacts")
+    folder = tmp_path / "SMPL"
+    folder.mkdir()
+    shutil.copy(src / "dossier.json", folder / "dossier.json")
+    shutil.copy(src / "dossier.md", folder / "dossier.md")
+
+    def bump(mech: dict[str, object]) -> dict[str, object]:
+        mech["stock_info"]["market_cap"]["value"] = 1000.0  # type: ignore[index]
+        return mech
+
+    assert refresh_dossier(folder / "dossier.json", transform=bump) is True
+    from vinci.dossier import render as dr
+    from vinci.dossier import schemas as ds
+    from vinci.dossier.assemble import _read_scenario_card
+
+    model = ds.Dossier.model_validate_json((folder / "dossier.json").read_text())
+    assert model.mechanical.valuation.implied_expectations.tev.value == 1324.6
+    fresh = dr.render_markdown(model, card=_read_scenario_card("SMPL"))
+    assert (folder / "dossier.md").read_text() == fresh, (
+        "the page is stale against its own record after a refresh")
+
+
+def test_the_prose_reader_covers_every_claim_field_the_synthesis_has() -> None:
+    """REVIEW FINDING, and it was a correctness bug rather than duplication. `_synthesis_prose`
+    reads FIVE sources; the first cut of the refresh's own reader retyped THREE, dropping
+    `decisive_question` and `evidence_balance`. A figure cited only in those would have read as
+    UNCITED, and the refusal — the whole safety property — would not have fired.
+
+    Both now take the field list from one place. Pinned behaviourally: a figure that appears ONLY in
+    a scalar claim field must still count as cited."""
+    from vinci.dossier.refresh import _prose
+
+    doc = {"synthesis": {"bull_points": [], "bear_points": [], "key_unknowns": [],
+                         "decisive_question": "does the $391.9M writedown repeat?",
+                         "evidence_balance": "the $60.9M charge is one-off"}}
+    blob = _prose(doc)
+    assert "391.9" in blob and "60.9" in blob, blob
+    rows = [{"label": "W ($M)", "values": [-391.9], "material": True}]
+    before = {"financial_summary": {"annual": {"value": {
+        "rows": rows, "columns": ["LTM"], "is_estimate": [False]}}}}
+    after = {"financial_summary": {"annual": {"value": {
+        "rows": [{"label": "W ($M)", "values": [-420.0], "material": True}],
+        "columns": ["LTM"], "is_estimate": [False]}}}}
+    doc["mechanical"] = before
+    assert moved_cited_claims(before, after, doc), (
+        "a figure cited only in decisive_question slipped the refusal")

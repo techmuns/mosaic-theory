@@ -31,10 +31,19 @@ it would only ever run here.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from vinci.dossier.synthesis import MATERIAL_FIGURE_FLOOR_MUSD, _figure_cited
+from vinci.dossier.synthesis import (
+    MATERIAL_FIGURE_FLOOR_MUSD,
+    SYNTHESIS_CLAIM_LISTS,
+    SYNTHESIS_CLAIM_SCALARS,
+    _figure_cited,
+)
+
+#: ``mech -> mech``, applied before the derived rebuild. The seam B1 plugs into.
+Transform = Callable[[dict[str, Any]], dict[str, Any]]
 
 
 class RefreshRefusedError(RuntimeError):
@@ -70,12 +79,23 @@ def material_figures(mech: dict[str, Any]) -> dict[str, float]:
 
 
 def _prose(doc: dict[str, Any]) -> str:
-    """Every free-text claim the stored synthesis makes, as one blob."""
+    """Every free-text claim the stored synthesis makes, as one blob.
+
+    Reads the STORED dict rather than a ``Synthesis`` model, so it cannot call
+    ``synthesis._synthesis_prose`` directly — but it takes that function's BLOCK LIST from it by
+    import, so the two cannot disagree about which fields carry claims. REVIEW FINDING: the first
+    cut retyped the tuple here, which is the twin-drift class this file's own docstring warns about
+    two paragraphs up. Adding a fourth claim block to the synthesis would have silently left this
+    path checking three."""
     syn = doc.get("synthesis") or {}
     parts: list[str] = []
-    for block in ("bull_points", "bear_points", "key_unknowns"):
+    for block in SYNTHESIS_CLAIM_LISTS:
         for p in syn.get(block) or []:
             parts.append(p if isinstance(p, str) else json.dumps(p))
+    for attr in SYNTHESIS_CLAIM_SCALARS:
+        v = syn.get(attr)
+        if isinstance(v, str):
+            parts.append(v)
     return "\n".join(parts)
 
 
@@ -128,8 +148,15 @@ def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def refresh_dossier(path: Path, *, transform: Any = None) -> tuple[bool, list[str]]:
-    """Refresh one committed dossier IN PLACE, preserving its synthesis. ``(changed, notes)``.
+def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
+    """Refresh one committed dossier IN PLACE, preserving its synthesis. True when anything moved.
+
+    Writes BOTH artifacts — ``dossier.json`` and ``dossier.md`` — because the assembler does, and
+    the point of this path is to fix numbers a READER sees. REVIEW FINDING: the first cut wrote only
+    the JSON, so a refresh that moved SMPL's cap 909.4 → 1,000.0 updated TEV to 1,324.6 in the
+    record while the page still showed the old figure. Two committed artifacts that disagree, and
+    the repo's own e2e staleness pins would have caught it on the next run — after the diff had
+    already been reviewed as correct.
 
     ``transform`` is an optional ``mech -> mech`` applied to the stored mechanical layer BEFORE the
     derived rebuild — the seam B1 plugs into. Absent, this is a pure no-op round-trip, which is
@@ -154,10 +181,19 @@ def refresh_dossier(path: Path, *, transform: Any = None) -> tuple[bool, list[st
     # for one artifact is the twin-drift class, and here the second one would have churned every
     # file it touched. Validating on the way out is the bonus: a refresh that broke the schema
     # would now fail here rather than ship.
+    # Imported here, not at module scope: `assemble` imports this module's siblings and a top-level
+    # import of the renderer would cycle (the `_read_scenario_card` precedent).
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.render import render_markdown
     from vinci.dossier.schemas import Dossier
 
-    new_text = Dossier.model_validate(doc).model_dump_json(indent=2)
-    changed = new_text != path.read_text()
+    model = Dossier.model_validate(doc)
+    new_json = model.model_dump_json(indent=2)
+    new_md = render_markdown(model, card=_read_scenario_card(model.ticker))
+    md_path = path.with_name("dossier.md")
+    old_md = md_path.read_text() if md_path.exists() else None
+    changed = new_json != path.read_text() or (old_md is not None and new_md != old_md)
     if changed:
-        path.write_text(new_text)
-    return changed, []
+        path.write_text(new_json)
+        md_path.write_text(new_md)
+    return changed
