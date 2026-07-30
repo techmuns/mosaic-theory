@@ -175,13 +175,22 @@ def _mark_material(mech: Any) -> Any:
         "financial_summary": fs.model_copy(update={
             "annual": ann.model_copy(update={"value": marked})})})
 
-def _freshness_check(mech: Any, *, ticker: str, reference_date: date) -> None:
+def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
     """(item 1) FAIL LOUD on a build whose dated inputs cannot honestly sit on one page: a panel
     older than the ceiling, or a market cap whose share basis disagrees with the price's.
 
-    ``reference_date`` is the BUILD's date, and panel age is measured against it — never against
-    the newest panel, which was the price on 11 of 11 dossiers and made a refresh able to fail a
-    build on unchanged CIQ panels.
+    ``built_at`` IS THE DATE THIS BUILD RAN — the same instant that becomes ``assembled_at``, and
+    NOT the screen's ``reference_date``. The first cut used ``reference_date`` and it was wrong in
+    a way that defeated the guard: the screen's as-of is weeks behind the build (2026-07-06 against
+    a 07-29 run), so the gate measured a 23-day-shorter age than the page it was guarding. CNXC
+    passed at 31d and RENDERED "oldest panel 54d old"; NCNO's gate age came out at **−6 days**,
+    because its panel postdates the screen. A guard that can return a negative age is not measuring
+    anything, and a page stating a number its own guard never applied is the stamp-names-a-different
+    -object defect this contract exists to remove.
+
+    The render measures against ``assembled_at`` (a committed artifact reports the age it had when
+    built). Passing the same instant here is what makes the two agree BY CONSTRUCTION rather than
+    by coincidence.
 
     Ordinary drift is deliberately NOT fatal — it is a RENDERING obligation (clause (e)), and the
     cap now carries its own vintage on both twins. Failing on drift would fail 11 of 11 committed
@@ -201,7 +210,7 @@ def _freshness_check(mech: Any, *, ticker: str, reference_date: date) -> None:
 
     cap, shares, spot = val("market_cap"), val("shares_out"), val("price")
     recon = reconcile_cap(cap_musd=cap, shares=shares, spot=spot)
-    check_freshness(panel_age(mech.model_dump(mode="json"), reference_date), recon,
+    check_freshness(panel_age(mech.model_dump(mode="json"), built_at), recon,
                     ticker=ticker,
                     absent=absent_cap_inputs(cap_musd=cap, shares=shares, spot=spot))
 
@@ -287,6 +296,11 @@ def assemble_one(
     llm: LlmClient | None,
 ) -> Dossier:
     """Assemble + persist one finalist's dossier. Opens its own store/edgar (thread-safe)."""
+    # THE BUILD'S OWN INSTANT, taken ONCE and used for BOTH the freshness gate and the artifact's
+    # ``assembled_at``. Stamping it twice (a second ``datetime.now()`` at write time) would let the
+    # guard and the artifact disagree about when the build ran — a small window, but this contract
+    # exists so that the number a page reports is the number its own guard applied.
+    built_at = datetime.now(UTC)
     rec = fin.record.data_record
     ticker = rec.identity.ticker
     bundle = CiqBundle.from_files(ticker, manual.files(ticker))
@@ -376,7 +390,7 @@ def assemble_one(
         # smaller. A warning here would have been read past on exactly the day it mattered.
         mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
-        _freshness_check(mech, ticker=ticker, reference_date=fin.reference_date)
+        _freshness_check(mech, ticker=ticker, built_at=built_at.date())
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:
@@ -410,7 +424,7 @@ def assemble_one(
         business_description=ciq_sheets.business_description(bundle),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
-        llm_model=(llm.model if llm else None), assembled_at=datetime.now(UTC),
+        llm_model=(llm.model if llm else None), assembled_at=built_at,
         # (26a) the extractor's declared vintage — the assembly date says WHEN this was built, the
         # version says WITH WHAT. Stored rather than recomputed at render time, so re-rendering an
         # old JSON keeps the version that actually produced it instead of claiming today's.
