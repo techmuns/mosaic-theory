@@ -4176,10 +4176,20 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   measuring against the wrong date, and clamping would have hidden this defect instead of exposing
   it.
   **THE UNIT TESTS COULD NOT HAVE CAUGHT IT** — they call `_freshness_check` with a date, leaving
-  the call SITE (the actual bug) unpinned. The pin that catches it is an e2e invariant: **no
-  committed dossier may render a panel age its own gate would refuse**, grandfathered by assembly
-  date so artifacts built under the old rule are not treated as wiring defects and names that
-  cannot rebuild (FUBO, MVST, WERN) do not red it forever.
+  the call SITE (the actual bug) unpinned.
+  **REVIEW FINDING, and it corrected a claim made to the operator.** The e2e invariant — *no
+  committed dossier may render a panel age its own gate would refuse* — was described as "stronger
+  than the batch, which becomes confirmation". **MEASURED: it covers 0 of 11 committed dossiers.**
+  Every artifact predates the grandfather date, so the pin was passing VACUOUSLY, and reverting the
+  call site to `reference_date` reds NOTHING. A guard that cannot fire, asserted as the strongest
+  evidence available — the class this whole run has been closing, in the argument for closing it.
+  FIXED two ways: a **call-site pin** that the gate is handed the same instant the artifact is
+  stamped with (source-level by necessity — the coupling is between two call sites in one function,
+  and driving `assemble_one` end-to-end needs a live store, EDGAR and an LLM); and the e2e now
+  **SKIPS with a stated reason when it covers nothing**, so vacuity is visible rather than read as
+  a pass. It begins covering names as the fleet re-assembles.
+  Mutations after the fix: gate back on `reference_date` → RED · `built_at` stamped twice → RED ·
+  instant taken per-use rather than once → RED · negative age clamped → RED.
   **A HALF-APPLIED EDIT WAS FOUND IN THE TREE** — `built_at` referenced but never defined; the
   module did not type-check and would have raised `NameError` on every assembly. Completed by
   defining it once, so the gate and the artifact stamp cannot drift apart.

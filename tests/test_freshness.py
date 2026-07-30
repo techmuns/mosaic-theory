@@ -310,6 +310,30 @@ def test_the_gate_measures_against_the_build_date_not_the_screens_reference_date
         _freshness_check(mech, ticker="X", built_at=dt.date(2026, 6, 1) + dt.timedelta(days=46))
 
 
+def test_the_gate_is_wired_to_the_build_instant_not_the_screen_date() -> None:
+    """THE CALL-SITE PIN, and it is the one that matters — the defect WAS the call site.
+
+    `test_the_gate_measures_against_the_build_date...` calls `_freshness_check` WITH a date, so it
+    passes no matter what the caller hands over: reverting `built_at=built_at.date()` to
+    `built_at=fin.reference_date` reds nothing there. The e2e invariant below cannot cover it yet
+    either (see its docstring).
+
+    So this asserts the wiring directly: the gate must receive the SAME instant the artifact is
+    stamped with. Source-level by necessity — the coupling is between two call sites inside one
+    function, and driving `assemble_one` end-to-end needs a live store, EDGAR and an LLM."""
+    import inspect
+
+    from vinci.dossier import assemble as asm
+
+    src = inspect.getsource(asm.assemble_one)
+    assert "built_at = datetime.now(UTC)" in src, "the build instant must be taken ONCE"
+    assert "built_at=built_at.date()" in src, (
+        "the freshness gate must be handed the BUILD instant, not the screen's reference_date")
+    assert "assembled_at=built_at" in src, (
+        "the artifact must be stamped with the SAME instant the gate used, not a second now()")
+    assert "reference_date=fin.reference_date" not in src.split("_freshness_check")[1][:120]
+
+
 def test_a_date_before_the_panel_yields_a_negative_age_which_is_the_tell() -> None:
     """Kept as the diagnostic, not as accepted behaviour. `panel_age` does not clamp, deliberately:
     a negative age is the unmistakable signature of measuring against the wrong date, and clamping
@@ -338,7 +362,7 @@ def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> Non
     # names that CANNOT re-assemble (FUBO's corporate action, MVST/WERN outside the screen cohort)
     # would otherwise red this forever for a reason that is not a wiring defect. The scope clears
     # itself as names rebuild — no exemption list to go stale.
-    over = []
+    over, checked = [], 0
     for d in sorted((ROOT / "data" / "dossiers").iterdir()):
         j = d / "dossier.json"
         if not j.exists():
@@ -346,9 +370,19 @@ def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> Non
         doc = json.loads(j.read_text())
         if str(doc["assembled_at"])[:10] < GATE_FIXED_ON:
             continue
+        checked += 1
         age = fr.panel_age(doc.get("mechanical") or {}, doc["assembled_at"])
         if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
             over.append(f"{d.name}: renders {age.days}d, ceiling {fr.MAX_PANEL_AGE_DAYS}d")
     assert not over, (
         "committed dossiers render a panel age their own gate would refuse — the gate and the page "
         f"are measuring against different dates: {over}")
+    # DECLARE VACUITY. Every committed artifact predates GATE_FIXED_ON today, so this pin currently
+    # covers ZERO names and passes for that reason — not because the property holds. A guard that
+    # cannot fire must say so rather than read as evidence; it starts covering names as the fleet
+    # re-assembles. (This was claimed as "stronger than a batch run" before it was measured; it is
+    # stronger ONLY once names are built under the new gate.)
+    if not checked:
+        pytest.skip(
+            f"vacuous: no committed dossier is assembled on/after {GATE_FIXED_ON}, so this "
+            "invariant covers nothing yet — it begins covering names as the fleet re-assembles")
