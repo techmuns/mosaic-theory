@@ -516,6 +516,39 @@ noise.
 Same distinction item 20 turns on. When measuring staleness, harvest arrivals only, and say in the
 code which is which.
 
+## A probe must derive from the code, not restate it
+
+*(operator, 2026-07-30 — recorded after the FOURTH instance; a fifth was found in the same turn)*
+
+> **A probe must derive from the code, not restate it.** If it needs a mapping the code already
+> owns, it imports and calls it. A probe that hardcodes such a mapping is asserting, not measuring.
+
+Throwaway probes get written to answer a question fast, and their output then gets reported with the
+authority of a measurement. Two failures from one turn, both in a survey the operator commissioned
+*because* prior specs had been wrong:
+
+| what the probe hardcoded | what it reported | truth |
+|---|---|---|
+| a `{panel-key → workbook}` dict | "the oldest panel is the Comps workbook for all 11 names" | wrong for **7 of 11**, and in the opposite direction — `multiples_as_of` is the **Estimates** workbook, `tev_as_of` is **Comparable Analysis** |
+| a hand-rolled year→column index | FUBO's consensus Revenue median as `92.3` against a High of `6337.9` | a column-offset bug in the probe; the block is coherent, and `trends_fy_level` returns `6226.09` |
+
+**RETRACTED:** *"The oldest panel is the Comps / Trading Multiples workbook for all 11 names. One
+export gates fleet freshness."* Both sentences are false. Seven names bind on Estimates and four on
+Comparable Analysis, so there is no single gating export. The cause was not a misreading of the
+code — **the code was never read.** The mapping came from a dict written into the probe.
+
+The second case is the sharper lesson: the same question answered through the tested extractor
+(`trends_fy_level`) was right, while the hand-rolled index was wrong. The extractor existed the
+whole time. **Reaching past a tested accessor to re-implement its addressing is the tell** — if the
+codebase can already answer the question, calling it is both cheaper and the only version that
+measures anything.
+
+Related, and the reason this earns its own rule rather than a note: a probe's output is usually
+reported without the diff review, mutation testing, or CI that guards production code. It has the
+least verification and the most rhetorical weight. Treat a hardcoded constant in a probe the way a
+`# type: ignore` is treated in production — allowed, but it must be the thing under test, never the
+thing being trusted.
+
 ## One session per branch — a worktree you did not dirty belongs to someone else
 
 *(operator, 2026-07-30 — recorded as a standing hazard after the THIRD instance, with a rule
