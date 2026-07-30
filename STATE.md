@@ -7714,6 +7714,21 @@ mode, disclosed by its own flag. The guard sits inside `if llm is not None:` so 
 reach it; a control pins the placement, because hoisting it would freeze every mechanical-only
 build. Four mutations, four correct reds (guard removed · raise moved after the write · guard keyed
 on flag text · guard hoisted out of the branch).
+**THREE REVIEW FINDINGS, all fixed before merge.**
+(i) **The collection path was pinned by SOURCE TEXT.** The test asserted `"except Exception" in
+`assemble_cohort`'s source — which would pass even if the handler were narrowed to a type that does
+NOT catch `DossierAssemblyError`, letting the refusal crash the whole batch instead of failing one
+name. Now driven THROUGH `assemble_cohort` with a raising `assemble_one`: mutating the handler to
+`except LookupError` reds it.
+(ii) **THE COMMENT TRIM BROKE THE ORDER PIN — caught only by re-running the mutations.** Trimming
+the duplicated call-site rationale left the comment mentioning `` `_require_synthesis` ``, so
+`src.index("_require_synthesis")` found the COMMENT, not the call. The guard-precedes-write
+assertion then passed while the call sat AFTER `_write`. The pins now match
+`_require_synthesis(synthesis` — the call with its argument. **A cosmetic edit silently disarmed a
+guard's test, and only the mutation sweep noticed.**
+(iii) **VERIFIED there is no legitimate None**, rather than assuming: `synthesize` returns None on
+exactly two paths — an `LlmError` and a truncated/incomplete tool result — both failures. Refusing
+on None therefore cannot break a supported build. Recorded in the helper.
 **INCIDENT → INVARIANT: shipped Y.** (Was: recorded-and-accepted. The distinction matters — an
 accepted risk with no evidence is a prediction, and this one was wrong.)
 **API STATE: UNKNOWN, load- or payload-dependent — NOT "recovered" (2026-07-30).** Two full

@@ -19,11 +19,15 @@ FAILURE, and the two must not share an outcome.
 """
 from __future__ import annotations
 
+import datetime as dt
 import inspect
+import pathlib
 
 import pytest
 
 from vinci.dossier import assemble as asm
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 # --- the refusal itself, driven behaviourally ---------------------------------------------------
 
@@ -68,7 +72,10 @@ def test_the_guard_precedes_the_write() -> None:
     artifact on disk — the exact outcome being prevented — while reporting an error, which is worse
     than the silent version because the console would then contradict the disk."""
     src = inspect.getsource(asm.assemble_one)
-    assert src.index("_require_synthesis") < src.index("_write(dossier"), (
+    # Match the CALL, not the bare name: the surrounding comment mentions `_require_synthesis`
+    # too, and an `index()` on the name found the COMMENT — so this assertion passed while the
+    # call itself sat after `_write`. Caught by mutation, which is the only thing that would.
+    assert src.index("_require_synthesis(synthesis") < src.index("_write(dossier"), (
         "the refusal must come BEFORE the artifact is written")
 
 
@@ -78,14 +85,33 @@ def test_the_mechanical_only_mode_cannot_reach_the_guard() -> None:
     None``; this pins that, because moving it out would turn a supported mode into a hard failure
     and freeze every mechanical-only build."""
     src = inspect.getsource(asm.assemble_one)
-    assert src.index("if llm is not None:") < src.index("_require_synthesis")
+    assert src.index("if llm is not None:") < src.index("_require_synthesis(synthesis")
     assert "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only" in src
 
 
-def test_the_failure_is_counted_as_an_error_not_a_flag() -> None:
+def test_the_failure_is_counted_as_an_error_not_a_flag(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     """The 07-30 run reported ``0 error(s)`` while destroying an artifact. A guard whose failure is
-    not COUNTED as a failure has closed nothing — so the refusal must be an exception the cohort
-    collects into its error list, which the CLI prints as ``N done · M error(s)``."""
-    assert issubclass(asm.DossierAssemblyError, Exception)
-    cohort = inspect.getsource(asm.assemble_cohort)
-    assert "errors" in cohort and "except Exception" in cohort
+    not COUNTED as a failure has closed nothing.
+
+    DRIVEN THROUGH `assemble_cohort`, not asserted off its source. The first cut checked that the
+    string "except Exception" appears in the function — which would pass even if the handler were
+    narrowed to a type that does not catch `DossierAssemblyError`, letting the refusal crash the
+    whole batch instead of failing one name. This runs the real collection path: one name raises,
+    and the cohort must return it as an ERROR while continuing."""
+    from vinci.rank import load_candidates_from_snapshot
+
+    snap = ROOT / "data" / "snapshots" / "candidate_records.jsonl"
+    if not snap.exists():
+        pytest.skip("no committed candidate records in this checkout")
+    rec = load_candidates_from_snapshot(snap)[0]
+    fin = asm.Finalist(rec, rank=1, reference_date=dt.date(2026, 7, 30))
+
+    def _boom(*a: object, **k: object) -> object:
+        raise asm.DossierAssemblyError("TEST: synthesis returned NOTHING — refusing to write")
+
+    monkeypatch.setattr(asm, "assemble_one", _boom)
+    dossiers, errors = asm.assemble_cohort([fin])
+
+    assert dossiers == [], "a refused build must produce no dossier"
+    assert len(errors) == 1, f"the refusal was not collected as an error: {errors}"
+    assert "DossierAssemblyError" in errors[0] and "refusing to write" in errors[0], errors[0]

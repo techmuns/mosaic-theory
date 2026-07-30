@@ -260,6 +260,10 @@ def _require_synthesis(synthesis: object, *, ticker: str, flags: list[str]) -> N
     signal was the word ``NO-synth`` in a summary line, which is the weakness the 07-22 record
     itself names. Acceptance predated any evidence it fires; it has now fired twice.
 
+    VERIFIED there is no legitimate None: ``synthesize`` returns None on exactly two paths — an
+    ``LlmError`` and a truncated/incomplete tool result — both failures. So refusing on None
+    cannot break a supported build.
+
     Keys on the VALUE being absent, never on a flag's wording — the 07-22 guard pinned that a flag
     is emitted and the artifact was destroyed anyway. A named function rather than an inline raise
     so the refusal carries a behavioural pin instead of a source-text assertion."""
@@ -357,20 +361,8 @@ def assemble_one(
         )
         flags += synth_flags
         logs.append(synth_log)
-        # A NULL SYNTHESIS FROM A CONFIGURED CLIENT IS A FAILED BUILD — REFUSE THE WRITE.
-        #
-        # Recorded as an accepted risk on 2026-07-22 (BRBR's 6-bull/8-bear synthesis wiped by one
-        # flaky call). It FIRED on 2026-07-30 and destroyed AORT's committed synthesis: the run
-        # printed `1 done · 0 error(s)` and wrote `synthesis: null` over it. Two false statements in
-        # one line — the write happened, and it was not reported as an error. The only signal was
-        # the word `NO-synth` in a summary line, which is precisely the weakness the incident record
-        # names. Accepting the risk predated any evidence it fires; it has now fired, so the guard
-        # replaces the acceptance.
-        #
-        # THE ONE LEGITIMATE NO-SYNTHESIS CASE is a build with NO client configured — the
-        # mechanical-only path, which is disclosed by its own flag and never reaches here because
-        # this block is inside `if llm is not None`. A client that was asked and produced nothing is
-        # a failure, not a mode.
+        # A null synthesis from a CONFIGURED client is a failed build — refuse the write BEFORE
+        # `_write` below. Rationale and the 07-22/07-30 incidents: `_require_synthesis`.
         _require_synthesis(synthesis, ticker=ticker, flags=synth_flags)
         # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
         if term_rows is not None and mech.capital_structure is not None:
