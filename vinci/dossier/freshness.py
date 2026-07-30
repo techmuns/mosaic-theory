@@ -186,11 +186,18 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> str:
     Fail-safe: with no bar before ``stated`` (an empty or short store) the stamp is returned
     UNCHANGED. An uncorrected age is too NEW by a day, which the gate treats as fresher — but
     inventing a date from a store that cannot support it is the fabrication this repo refuses, and
-    the honest miss is recoverable by refreshing the store."""
-    prior = [b for b in bars if str(getattr(b, "bar_date", "")) < stated]
-    if not prior:
+    the honest miss is recoverable by refreshing the store.
+
+    REVIEW FINDING: the first cut read ``getattr(b, "bar_date", "")`` and a malformed bar became the
+    empty string, which sorts BELOW every date — so a list of malformed bars passed the "has a
+    prior" test and returned ``""`` as the corrected stamp. A fail-safe branch that fabricates an
+    empty date is worse than the defect it guards, so candidates are now filtered to real ISO dates
+    and the unchanged-stamp path catches the rest."""
+    dates = [d for b in bars
+             if _ISO.fullmatch(d := str(getattr(b, "bar_date", "") or "")) and d < stated]
+    if not dates:
         return stated
-    return str(max(str(getattr(b, "bar_date", "")) for b in prior))
+    return max(dates)
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:

@@ -2113,6 +2113,12 @@ def _implied_expectations(
     tev = market_cap + net_debt
     # CIQ's As-Of is the EXPORT date; the data is the PRIOR close (measured 11/11). Correct it
     # from the store's own prior BAR, never `date - 1` — two stamps in the fleet land on a Monday.
+    #
+    # SCOPE, STATED HONESTLY: this corrects the COMPS panel only. The offset was measured by
+    # comparing CIQ's `Day Close Price Latest` against the store, and that column exists only on
+    # Comparable Analysis → Financial Data. `mult_as_of` below comes from the ESTIMATES export,
+    # whose convention has NOT been measured — correcting it too would be assuming the convention
+    # generalises, which is the category-label rule. It stays uncorrected until measured.
     stated_as_of = _ie_asof(mc.source_ref)
     tev_as_of = (corrected_ciq_as_of(stated_as_of, price_bars)
                  if price_bars and stated_as_of != "UNKNOWN" else stated_as_of)
@@ -2188,7 +2194,9 @@ def _implied_expectations(
     nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
     tev_src = (
         f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
-        f"(CIQ Comparable Analysis→Financial Data, Latest, as-of {tev_as_of}) — simple-TEV basis"
+        f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}"
+        + (f", exported {stated_as_of}" if tev_as_of != stated_as_of else "")
+        + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(
         rows=rows, tev=Sourced.present(round(tev, 1), source_ref=tev_src), anchors=anchors,

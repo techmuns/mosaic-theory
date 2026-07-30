@@ -98,3 +98,63 @@ def test_it_is_wired_into_the_tev_stamp() -> None:
     caller = inspect.getsource(dm.assemble_mechanical)
     assert "store.get_price_history(record.identity.internal_id)" in caller, (
         "the bars never reach _implied_expectations, so the correction cannot fire")
+
+
+# --- review findings ------------------------------------------------------------------------------
+
+
+def test_malformed_bars_do_not_produce_an_empty_date() -> None:
+    """REVIEW FINDING, and the worst kind: a FAIL-SAFE branch that fabricates.
+
+    The first cut read `getattr(b, "bar_date", "")`, and the empty string sorts BELOW every date —
+    so a list of malformed bars passed the "has a prior bar" test and returned `""` as the corrected
+    stamp. An empty date is not a miss, it is a fabrication, produced by the very branch written to
+    avoid one."""
+    class _NoDate:
+        pass
+
+    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _NoDate()]) == "2026-07-24"
+    assert corrected_ciq_as_of("2026-07-24", [_Bar(""), _Bar("not-a-date")]) == "2026-07-24"
+    # a real bar mixed in with junk still resolves
+    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _Bar("2026-07-23")]) == "2026-07-23"
+
+
+def test_the_correction_never_returns_a_non_iso_string() -> None:
+    """The general form of the above — whatever comes back must be a date a caller can parse, since
+    `panel_age` does `date.fromisoformat` on it and would raise deep in the gate instead."""
+    for bars in ([], [_Bar("")], [_Bar("2026-07-23")], WEEK):
+        out = corrected_ciq_as_of("2026-07-24", bars)  # type: ignore[arg-type]
+        dt.date.fromisoformat(out)
+
+
+def test_the_tev_cite_carries_both_dates_when_they_differ() -> None:
+    """REVIEW FINDING. Correcting `tev_as_of` while `market_cap.source_ref` kept the EXPORT
+    date left one artifact showing two dates for one panel — the stamp-names-a-different-object
+    defect, introduced by the fix for a stamp defect.
+
+    Both are true; the defect was that neither said which it was. The TEV cite now labels them, and
+    stays single when there is nothing to distinguish."""
+    import inspect
+
+    import vinci.dossier.mechanical as dm
+
+    src = inspect.getsource(dm._implied_expectations)
+    assert 'f", exported {stated_as_of}" if tev_as_of != stated_as_of' in src, (
+        "the TEV cite does not disclose the export date beside the data date")
+    assert "data {tev_as_of}" in src
+
+
+def test_the_scope_is_the_comps_panel_only_and_says_so() -> None:
+    """The offset was measured on `Day Close Price Latest`, which exists ONLY on Comparable
+    Analysis → Financial Data. `mult_as_of` comes from the ESTIMATES export, whose convention has
+    not been measured — correcting it would assume the convention generalises, which is the
+    category-label rule. Pinned so a later widening is deliberate rather than assumed."""
+    import inspect
+
+    import vinci.dossier.mechanical as dm
+
+    src = inspect.getsource(dm._implied_expectations)
+    i = src.index("mult_as_of = (")
+    assert "corrected_ciq_as_of" not in src[i:], (
+        "the Estimates stamp is being corrected on an unmeasured convention")
+    assert "has NOT been measured" in src, "the scope limit is not stated where a reader would look"
