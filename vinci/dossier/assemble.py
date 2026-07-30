@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
@@ -34,7 +34,11 @@ from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier, Sourced, SourceStatus
-from vinci.dossier.synthesis import contradiction_flags, synthesize
+from vinci.dossier.synthesis import (
+    contradiction_flags,
+    synthesize,
+    uncited_material_figures,
+)
 from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
@@ -45,6 +49,8 @@ from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
 from vinci.sec import build_sec_http
 from vinci.store import Store
+
+_S = TypeVar("_S")
 
 
 class DossierAssemblyError(RuntimeError):
@@ -259,7 +265,7 @@ def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -
         return                                   # no unusual-items block on this sheet
 
 
-def _require_synthesis(synthesis: object, *, ticker: str, flags: list[str]) -> None:
+def _require_synthesis(synthesis: _S | None, *, ticker: str, flags: list[str]) -> _S:
     """REFUSE a build whose configured LLM produced no synthesis. Called from inside the
     ``llm is not None`` branch, so the mechanical-only mode never reaches it.
 
@@ -277,7 +283,7 @@ def _require_synthesis(synthesis: object, *, ticker: str, flags: list[str]) -> N
     is emitted and the artifact was destroyed anyway. A named function rather than an inline raise
     so the refusal carries a behavioural pin instead of a source-text assertion."""
     if synthesis is not None:
-        return
+        return synthesis          # RETURNS the validated value, so callers narrow through it
     raise DossierAssemblyError(
         f"{ticker}: synthesis returned NOTHING from a configured LLM client — refusing to write. "
         "Writing here replaces a committed synthesis with null and reports success; that is how "
@@ -377,7 +383,18 @@ def assemble_one(
         logs.append(synth_log)
         # A null synthesis from a CONFIGURED client is a failed build — refuse the write BEFORE
         # `_write` below. Rationale and the 07-22/07-30 incidents: `_require_synthesis`.
-        _require_synthesis(synthesis, ticker=ticker, flags=synth_flags)
+        synthesis = _require_synthesis(synthesis, ticker=ticker, flags=synth_flags)
+        # (item 19c) A MATERIAL figure the synthesis prose never states — REFUSE, do not flag.
+        # SMPL's bear case was right on 07-29 and wrong on 07-30 from identical inputs, so
+        # synthesis correctness is STOCHASTIC and a flag would just move the judgement to a human
+        # on every run. Refusing means the bad roll FAILS and is re-rolled; the good one ships.
+        if (uncited := uncited_material_figures(synthesis, mech)):
+            raise DossierAssemblyError(
+                f"{ticker}: the synthesis never states {len(uncited)} MATERIAL figure(s) its own "
+                f"financial summary shows — {'; '.join(uncited)}. A reader meets the number in the "
+                "argument, not the table, so an argument that omits it reads as though the item "
+                "did not happen (SMPL 2026-07-30 cited a $249M charge as if it were a $391.9M "
+                "writedown). Re-run: synthesis varies between runs.")
         # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})

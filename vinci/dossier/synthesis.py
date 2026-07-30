@@ -1010,6 +1010,98 @@ _WALL_DIVERGE_RE = re.compile(  # claims the filing wall / CIQ panel diverge whi
 )
 
 
+
+#: A material figure below this is not worth guarding and cannot be matched reliably — a bare "3"
+#: collides with any prose ("3.6%", "3 quarters"), and a $3M writedown is not the class of error
+#: this exists to catch. Measured while building it: an unanchored matcher scored 14 spurious hits
+#: on 3.0 and matched 391.9 against "$1,392M" REVENUE.
+MATERIAL_FIGURE_FLOOR_MUSD = 10.0
+
+
+def _figure_cited(prose: str, value: float) -> bool:
+    """Is ``value`` cited in ``prose`` AS A DOLLAR FIGURE?
+
+    STRICT BY NECESSITY. The figure must carry a currency or scale marker, because a bare number
+    matches everything: while measuring the base rate, an unanchored form reported 391.9 as cited
+    when the only match was ``$1,392M`` of REVENUE, and reported 3.0 as cited off ``3.6%``. A guard
+    that reads a false citation is worse than no guard — it certifies the page."""
+    a = abs(value)
+    for form in {f"{a:.1f}", f"{a:.0f}", f"{a:,.1f}", f"{a:,.0f}"}:
+        e = re.escape(form)
+        if re.search(rf"\$\s?{e}\s?(?:M\b|mm\b|million)", prose, re.I):
+            return True
+        if re.search(rf"(?<![\d.,]){e}\s?(?:M\b|million)", prose, re.I):
+            return True
+    return False
+
+
+def _synthesis_prose(synth: Synthesis) -> str:
+    """Every free-text claim the synthesis makes. The guard reads the PROSE, because that is where
+    the reader meets a number — a figure present in a structured field but absent from the argument
+    is exactly the gap (item 19c)."""
+    out: list[str] = []
+    for block in (synth.bull_points, synth.bear_points, synth.key_unknowns):
+        for p in (block or []):
+            out.append(p if isinstance(p, str) else str(getattr(p, "claim", "") or ""))
+    for attr in ("decisive_question", "evidence_balance"):
+        v = getattr(synth, attr, None)
+        if isinstance(v, str):
+            out.append(v)
+    return " ".join(out)
+
+
+def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
+    """(item 19c) A MATERIAL financial-summary figure that the synthesis prose never states.
+
+    THE INCIDENT, and it is why this is presence-based rather than plausibility-based. SMPL's bear
+    case was CORRECT on 2026-07-29 — "$60.9M Atkins impairment (FY25) plus $391.9M LTM asset
+    writedown" — and WRONG on 2026-07-30 from identical inputs: "$60.9M ... plus a $249M
+    OWYN/Atkins brand-asset impairment". The table said -60.9 and -391.9; the prose said 60.9 and
+    249. **Synthesis correctness is stochastic**, so every figure in every run is a fresh roll and
+    no amount of prompt care removes the need for a check.
+
+    THE BAD RUN WAS NOT FABRICATING: $249M is a real Q2 charge, cited as though it were the total.
+    So the check cannot ask "is this figure plausible" — every number in it was. It asks the one
+    question that separates the two runs: **does the material row's own figure appear at all?**
+    """
+    fs = getattr(mech, "financial_summary", None)
+    ann = getattr(getattr(fs, "annual", None), "value", None) if fs is not None else None
+    rows = list(getattr(ann, "rows", []) or []) if ann is not None else []
+    cols = list(getattr(ann, "columns", []) or []) if ann is not None else []
+    # ESTIMATE COLUMNS ARE OUT OF SCOPE. The summary carries FY26E/FY27E and a per-column
+    # `is_estimate` mask; demanding the prose state a FORECAST would require the argument to cite a
+    # projection as though it were a fact. No material value lands in an estimate column today, so
+    # this is a latent false positive rather than a live one — closed now because the flag exists
+    # and ignoring it would be an unasserted assumption about which columns are actuals.
+    est = list(getattr(ann, "is_estimate", []) or []) if ann is not None else []
+
+    def is_forecast(i: int) -> bool:
+        if i < len(est):
+            return bool(est[i])
+        return bool(i < len(cols) and str(cols[i]).rstrip(")").endswith("E"))
+
+    prose = _synthesis_prose(synth)
+    out: list[str] = []
+    for r in rows:
+        if not getattr(r, "material", False):
+            continue
+        # ONE FIGURE, REPORTED ONCE. A charge commonly repeats across columns — CNXC's -1,523.3
+        # appears in both FY25 and LTM — and citing it once satisfies the reader for both. Keyed by
+        # value so the refusal names a number rather than a grid position, and so the count is a
+        # count of FIGURES rather than of cells.
+        seen: dict[float, list[str]] = {}
+        for i, v in enumerate(getattr(r, "values", []) or []):
+            if not isinstance(v, (int, float)) or abs(v) < MATERIAL_FIGURE_FLOOR_MUSD:
+                continue
+            if is_forecast(i):
+                continue
+            seen.setdefault(float(v), []).append(cols[i] if i < len(cols) else str(i))
+        for v, periods in seen.items():
+            if not _figure_cited(prose, v):
+                out.append(f"{r.label} {'/'.join(periods)} = {v:,.1f}")
+    return out
+
+
 def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
     """(P2) The durable guard this incident earns: flag a synthesis pending-claim ('not extracted',
     'must be read', …) whose SUBJECT is a mechanical block that IS present — the failure where a
