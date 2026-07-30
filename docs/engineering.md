@@ -310,6 +310,29 @@ waiting for its trigger" was already written down — and the trigger was the fi
 > **A rule is satisfied at the surface where the harm occurs, not wherever the field can be
 > written.** Compliance recorded in a tier no reader sees is non-compliance.
 
+## Do not normalise away a nonsense value — it is the signal
+
+*(operator, 2026-07-30 — same family as the ordering and format rules, and the first where NOT
+writing code was the fix)*
+
+`panel_age` can return a NEGATIVE number. The obvious defensive move is `max(0, …)`, and it would
+have been a disaster: NCNO's gate age was **−6 days**, because the gate was measuring against the
+screen's `reference_date` while the page measured against `assembled_at`. Clamped, −6 becomes 0,
+the gate passes quietly, and the 23-day divergence stays live and invisible.
+
+> **Defensive normalisation hides the signal that something is measured WRONG.** A value that
+> cannot legitimately occur is a diagnostic. Let it through, loudly.
+
+The negative age is now PINNED as a diagnostic, with a test that reds if anyone clamps it. The rule
+generalises past sign: silently coercing an impossible unit, a future date, a ratio above 1.0 where
+1.0 is the ceiling, or an empty string to a default all destroy the same evidence. Fail loud,
+never fabricate — and a clamp is a fabrication with good manners.
+
+**The sibling call worth keeping: SELF-CLEARING SCOPE.** The same PR grandfathered its e2e
+invariant by ASSEMBLY DATE rather than by a roster of exempt names. The scope shrinks to nothing as
+names rebuild, with nothing to maintain — where a hardcoded list would have gone stale exactly like
+the fleet assertion that would have redded on a win.
+
 The guidance-refusal fix nearly shipped as a note filed into `qa_flags`. That field is the machine
 tier BY DESIGN — `render.py` says "dev/JSON only" — and a release's own flags roll up nowhere, so
 the note would have been invisible on every surface. It would have passed its own rule while

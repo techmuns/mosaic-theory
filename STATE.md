@@ -4193,6 +4193,21 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   **A HALF-APPLIED EDIT WAS FOUND IN THE TREE** — `built_at` referenced but never defined; the
   module did not type-check and would have raised `NameError` on every assembly. Completed by
   defining it once, so the gate and the artifact stamp cannot drift apart.
+- **GUARD ORDERING: THE FRESHNESS GATE FIRES *AFTER* THE LLM CALL — measured 2026-07-30, answering
+  the operator's pre-batch question.** In `assemble_one` the order is `synthesize` (line 85) →
+  `_require_synthesis` (92) → `_mark_material` (103) → `_materiality_check` (104) →
+  `_freshness_check` (105). So **BRBR burned an LLM call and was then refused on panel age** — and
+  with the API in an UNKNOWN, load-dependent state that is wasted exposure to the exact failure
+  that destroyed AORT's synthesis.
+  **MOVING IT EARLIER IS SAFE, VERIFIED NOT ASSUMED.** The gate reads `stock_info` plus every
+  panel `as_of`; the panel contributors across all 11 dossiers are `valuation`, `catalyst_path`,
+  `financial_summary` and `stock_info`. Of the blocks mutated AFTER synthesis
+  (`operating_drivers`, `capital_structure`, `financial_summary`) only `financial_summary`
+  contributes a panel — and `_mark_material` replaces ONLY `financial_summary.annual.value`,
+  leaving `financial_summary.as_of` untouched. So the panel set is identical at both points and
+  the gate would measure the same object.
+  **NOT MOVED — operator decision.** It changes when a build fails, which is a decision-path
+  change, and the standing instruction is that nothing else starts.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
@@ -4875,7 +4890,8 @@ screen cohort.**
     **PRE-EXISTING DEFECT SURFACED, NOT FIXED (out of scope, in the same function).** The `.rtf`
     parser splits on `|` and DROPS empty cells before reading positionally, so a row with a blank
     column shifts left. **5 of 10 `.rtf` names carry a COMPANY NAME in the relationship-type slot**
-    — AORT 4 rows, CNXC 3, EPAM 12, FUBO 8, IT 5 (32 rows total); BRBR, MVST, NCNO, VITL, VRRM are
+    — AORT 4 rows, CNXC 3, EPAM 20, FUBO 8, IT 5 (**40** rows total — the first count said 12 for
+    EPAM and 32 overall, under-measured); BRBR, MVST, NCNO, VITL, VRRM are
     clean. Same root cause as the trap above (positional parsing of a variable-width table), and
     the header-keyed reader written here is the model for its fix. Queue it deliberately.
 22. **VISIBLE-ABSENCE RULE — N7 HALF AND THE DECLARATION BUILT 2026-07-29 (Batch A); THE
@@ -5310,21 +5326,37 @@ sample: **the source was authoritative and the excerpt was not.**
     named only in a COMMENT gives a false PASS. The inverse is also true and undocumented — a key
     named only in a comment gives a false FAIL: a Batch A docstring mentioning `d_and_a` reddened
     the check. Symmetric blind spot, currently half-recorded.
-33. **`.rtf` RELATIONSHIP PARSER READS SHIFTED COLUMNS — LIVE CORRUPTION ON 5 OF 11 NAMES
-    (queued by the operator 2026-07-29; surfaced by #257, deliberately not fixed there).**
-    `_parse_business_relationships` splits on `|`, **DROPS EMPTY CELLS, then reads positionally**
-    (`cells[0], cells[1], cells[2]`), so any row with a blank column shifts left. Result: a COMPANY
-    NAME sits in the relationship-type slot. **32 rows: AORT 4, CNXC 3, EPAM 12, FUBO 8, IT 5**;
-    BRBR, MVST, NCNO, VITL, VRRM are clean. AORT reads *"Artivion, Inc. (NYSE:AORT) — Endospan Ltd.
-    · Distributor"* — the focal company named as its own counterparty.
-    **NOT one of the audit's thirteen** — found by measurement while routing item 21, in the field
-    right beside it. It is live in `concentration.customers`, a field the crux and the bear leg both
-    read, so the corruption is in a decision surface rather than a footnote.
-    **ITS MODEL ALREADY EXISTS:** `_parse_relationship_sheet` (#257) locates columns BY HEADER TEXT
-    and was written precisely because the positional read produced a fluent, plausible, wrong line
-    on the `.xls` shape. Same fix, the other format. RED: a row with a blank middle column keeps its
-    relationship type; the 32 live rows are the positive corpus.
-    **NOTE:** fixing this CHANGES committed values on 5 names — it is a re-assembly, not a render.
+33. **~~`.rtf` RELATIONSHIP PARSER READS SHIFTED COLUMNS~~ — BUILT 2026-07-30. AND THE RECORDED
+    MECHANISM WAS WRONG.** STATE said the parser "drops empty cells then reads positionally". The
+    real cause is a **VARIABLE HEADER** — the export ships TWO layouts:
+    · `Customer Name | Relationship Type | Primary Industry | Source` (4 columns)
+    · `Customer Name | **Supplier Name** | Relationship Type | Primary Industry | Source` (5)
+    `cells[1]` is the relationship type in the first and the **supplier name** in the second, so a
+    positional read was correct for exactly half the fleet and silently wrong for the other half.
+    AORT rendered `Artivion, Inc. (NYSE:AORT) — Endospan Ltd. · Distributor`: the focal company as
+    its own counterparty, the counterparty as the relationship, the relationship as the industry.
+    **MEASURED, and the split is exact:** the 5-column names are AORT, CNXC, EPAM, FUBO, IT —
+    EXACTLY the five that rendered a company in the relationship slot. **40 rows → 0** (40, not the
+    32 first reported: the first count under-measured EPAM, which has 181 relationships and 20 bad
+    rows in the rendered window). The five 4-column names are byte-unchanged.
+    **FIX:** columns located BY HEADER TEXT, and the split no longer filters empty cells — a blank
+    cell is a POSITION, not nothing. Same fix as item 21's `.xls` route and the same class as the
+    `[-1]` rule: an unasserted assumption about layout. A reordered or extended export now keeps
+    working instead of shifting silently.
+    **BOTH PARTIES RENDER when both are named** (`Customer ← Supplier`). Which side is the focal
+    company varies row to row — Artivion is the customer in one row and the supplier in the next —
+    so inferring "the counterparty" would be a conclusion the export does not make; the direction
+    is what `Relationship Type` already states.
+    **BYTE-IDENTITY VERIFIED, not inferred (review):** the PR claimed the 4-column names were
+    unchanged on the strength of their defect count being 0 both before and after — which is not
+    the same claim. Checked directly: all five 4-col names (BRBR, MVST, NCNO, VITL, VRRM) are
+    byte-identical, exactly the five 5-col names changed, and every one kept its ROW COUNT — fields
+    corrected, no rows gained or lost.
+    **DETECTOR NOTE:** the first gate used a whitelist of relationship types and produced SIX false
+    positives (`Borrower` and `Client Services` are real CIQ types). The corpus is the authority on
+    that vocabulary, so the gate now detects the DEFECT — a company name in the relationship slot —
+    rather than encoding a guess about the vocabulary.
+
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 —
     DECISIONS, not builds; the machine proposes neither.) (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
