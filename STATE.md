@@ -7697,7 +7697,47 @@ summary line, and a plain retry succeeded. Recovered from git; all five names ve
 synthesis-present before commit. SHIPPED: a pin that the failure must emit a NAMED flag (never a
 bare None). NOT shipped: a block on the write itself — the assembler would need to refuse to
 replace an existing synthesis with nothing, or write to a temp path and promote only on success.
-**ACCEPTED RISK until that lands: never re-assemble without verifying `synthesis` survived.**
+~~**ACCEPTED RISK until that lands: never re-assemble without verifying `synthesis` survived.**~~
+**CLOSED 2026-07-30 — THE RISK FIRED, AND ACCEPTANCE IS WITHDRAWN.** The acceptance predated any
+evidence it fires. It fired: a single-name AORT run during an unstable-LLM window printed
+**`1 done · 0 error(s)`** and wrote **`synthesis: null`** over AORT's committed synthesis. Two false
+statements in one line — the write happened, and it was not reported as an error. It was caught
+only by reading the word `NO-synth` in a summary line, which is exactly the weakness THIS RECORD
+already named as the problem. The artifact was reverted, not committed.
+**SHIPPED (operator-directed, own PR):** `_require_synthesis()` REFUSES the build when a CONFIGURED
+client returns no synthesis — raised BEFORE `_write`, as a `DossierAssemblyError` that
+`assemble_cohort` collects, so the CLI's `N done · M error(s)` line COUNTS it. It keys on the VALUE
+being absent, never on a flag's wording: the 07-22 guard pinned that a flag is emitted and the
+artifact was destroyed anyway.
+**THE ONE LEGITIMATE NO-SYNTHESIS CASE is a build with NO client configured** — the mechanical-only
+mode, disclosed by its own flag. The guard sits inside `if llm is not None:` so that mode cannot
+reach it; a control pins the placement, because hoisting it would freeze every mechanical-only
+build. Four mutations, four correct reds (guard removed · raise moved after the write · guard keyed
+on flag text · guard hoisted out of the branch).
+**THREE REVIEW FINDINGS, all fixed before merge.**
+(i) **The collection path was pinned by SOURCE TEXT.** The test asserted `"except Exception" in
+`assemble_cohort`'s source — which would pass even if the handler were narrowed to a type that does
+NOT catch `DossierAssemblyError`, letting the refusal crash the whole batch instead of failing one
+name. Now driven THROUGH `assemble_cohort` with a raising `assemble_one`: mutating the handler to
+`except LookupError` reds it.
+(ii) **THE COMMENT TRIM BROKE THE ORDER PIN — caught only by re-running the mutations.** Trimming
+the duplicated call-site rationale left the comment mentioning `` `_require_synthesis` ``, so
+`src.index("_require_synthesis")` found the COMMENT, not the call. The guard-precedes-write
+assertion then passed while the call sat AFTER `_write`. The pins now match
+`_require_synthesis(synthesis` — the call with its argument. **A cosmetic edit silently disarmed a
+guard's test, and only the mutation sweep noticed.**
+(iii) **VERIFIED there is no legitimate None**, rather than assuming: `synthesize` returns None on
+exactly two paths — an `LlmError` and a truncated/incomplete tool result — both failures. Refusing
+on None therefore cannot break a supported build. Recorded in the helper.
+**INCIDENT → INVARIANT: shipped Y.** (Was: recorded-and-accepted. The distinction matters — an
+accepted risk with no evidence is a prediction, and this one was wrong.)
+**API STATE: UNKNOWN, load- or payload-dependent — NOT "recovered" (2026-07-30).** Two full
+8-name batches failed 8/8 with `InternalServerError: 500` on the synthesis call. A trivial probe
+returned HTTP 200 and was reported as "recovered" — a WRONG CALL: the probe used a different model,
+token budget and no tool use. Re-probed with the real shape (`claude-opus-4-8`, `max_tokens=16384`,
+forced tool use): also 200, and the failure STILL did not reproduce. So the outage is not
+characterised in either direction. **"Recovered" invites a retry; "unknown" invites caution** —
+and the one retry taken on the strength of the wrong probe is what destroyed AORT's synthesis.
 
 **BUILD RECORD — 2026-07-21 IT full re-assembly (artifact pass e8181e7) + before/after comparison.**
 IT re-assembled against the same-vintage on-disk workbook; committed-vs-fresh compared leaf-by-leaf
