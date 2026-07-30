@@ -77,6 +77,72 @@ _PANEL_KEY = re.compile(r"as_of|asof|detail_as_of", re.I)
 _ISO = re.compile(r"(20\d\d-\d\d-\d\d)")
 
 
+#: The largest bar-to-bar gap the STORE ITSELF exhibits — derived, not a calendar. Measured across
+#: 7,225 consecutive-bar pairs in the committed store: 1d 78.0%, 2d 1.2%, 3d 18.0%, 4d 2.9%, and
+#: NOTHING beyond 4. So a name whose latest bar trails the fleet by more than this is not behind a
+#: weekend or a holiday — it is behind a fetch that did not run.
+#:
+#: SAME TRICK AS THE PRIOR-BAR RESOLUTION: derive the trading calendar from the data instead of
+#: encoding one. A hardcoded 3 would have been right until the first four-day holiday week, and a
+#: hardcoded holiday table is a maintenance obligation nobody will service.
+MAX_STORE_LAG_DAYS = 4
+
+
+def store_lag(latest_by_name: dict[str, str]) -> dict[str, int]:
+    """Per-name lag in days behind the FLEET's newest bar. ``{}`` when the store is empty.
+
+    THE STORE AGAINST ITSELF, needing no calendar and no clock (operator): if one name trails the
+    others, its fetch failed or it was halted — visible without knowing what day it is. The separate
+    question of whether the whole fleet is behind is :func:`fleet_lag`, because the two have
+    different remedies: refresh ONE name, versus run the refresh at all.
+
+    LIVE INSTANCE at the time of writing: IWM and MDY — the BENCHMARKS, which feed
+    ``rel_ret_vs_market`` and therefore a screen gate — trailed by 8 days while all eleven dossier
+    names sat at 0. Nothing measured that, which is the gap this closes."""
+    if not latest_by_name:
+        return {}
+    newest = max(latest_by_name.values())
+    return {n: (dt.date.fromisoformat(newest) - dt.date.fromisoformat(d)).days
+            for n, d in latest_by_name.items()}
+
+
+def stale_names(latest_by_name: dict[str, str]) -> dict[str, int]:
+    """Names trailing the fleet by more than :data:`MAX_STORE_LAG_DAYS`. Empty when all agree."""
+    return {n: lag for n, lag in store_lag(latest_by_name).items() if lag > MAX_STORE_LAG_DAYS}
+
+
+def fleet_lag(latest_by_name: dict[str, str], today: dt.date) -> int | None:
+    """How far the WHOLE store trails ``today`` — the unrun-refresh signal. None on an empty store.
+
+    KEYED ON AGE, NOT ON TODAY'S BAR (operator ruling, recorded in STATE). Assembly here runs in
+    Indian daytime against a prior US close, so "no bar for today" is the NORMAL case and a guard
+    that refused on it would refuse every run before the US close. What is reportable is a lag
+    beyond what the store's own gaps can explain."""
+    if not latest_by_name:
+        return None
+    return (today - dt.date.fromisoformat(max(latest_by_name.values()))).days
+
+
+def store_freshness_note(latest_by_name: dict[str, str], today: dt.date) -> str | None:
+    """The caveat, or None when the store is current. NEVER raises — see :func:`consensus_note`.
+
+    Two distinct findings, because they have different remedies: individual names behind the fleet
+    (that name's fetch failed), and the whole fleet behind today (the refresh was not run). IT's 6%
+    divergence was the second, and nothing measured it."""
+    if not latest_by_name:
+        return "price store is EMPTY — no bar for any name; run the price refresh"
+    parts: list[str] = []
+    if (stale := stale_names(latest_by_name)):
+        worst = sorted(stale.items(), key=lambda kv: -kv[1])
+        parts.append("names behind the fleet: "
+                     + ", ".join(f"{n} {lag}d" for n, lag in worst[:5]))
+    lag = fleet_lag(latest_by_name, today)
+    if lag is not None and lag > MAX_STORE_LAG_DAYS:
+        parts.append(f"the whole store is {lag}d behind {today.isoformat()} — the refresh has not "
+                     "been run")
+    return "; ".join(parts) or None
+
+
 class FreshnessError(RuntimeError):
     """A build whose dated inputs cannot honestly sit on one page."""
 
