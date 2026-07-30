@@ -34,7 +34,6 @@ import vinci.dossier.mechanical as dm
 from vinci.dossier import schemas as ds
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import SourceStatus
-from vinci.schemas.envelope import DataField, SourceTier
 
 from .test_dossier import _min_record
 
@@ -46,18 +45,14 @@ _NORMALIZED = re.compile(r"normalized/adjusted", re.I)
 _NON_CURRENT = re.compile(r"non-current", re.I)
 
 
-def _caveat(pe: float | None, ltm: float, ciq: float | None,
+def _caveat(pe: float, ltm: float, ciq: float | None,
             monkeypatch: pytest.MonkeyPatch) -> str | None:
     """The (d) caveat as today's code produces it, for one (P/E, LTM GAAP EPS, CIQ P/LTM) shape."""
     monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current", lambda b: (
         ds.Sourced.present(ciq, source_ref="t") if ciq is not None
         else ds.Sourced.unknown(note="none")))
-    rec = _min_record(pe if pe is not None else 5.0)
-    if pe is None:
-        rec = rec.model_copy(update={"fundamentals": rec.fundamentals.model_copy(update={
-            "pe": DataField.unknown(source="x", tier=SourceTier.DERIVED)})})
-    bundle = CiqBundle(ticker="X", workbooks=())
-    flags = dm._eps_caveat_flags(rec, bundle, eps_resolved=False, ltm_gaap_eps=ltm)
+    flags = dm._eps_caveat_flags(_min_record(pe), CiqBundle(ticker="X", workbooks=()),
+                                 eps_resolved=False, ltm_gaap_eps=ltm)
     return next((f for f in flags if "GAAP trailing multiple" in f), None)
 
 
@@ -136,6 +131,13 @@ def test_every_live_negative_eps_name_reads_grammatically_and_claims_no_cause(
     red until the post-merge artifact pass — a test that blocks its own merge. The inputs are real;
     the sentence is this build's.
 
+    HOW MANY MULTIPLES a name shows is DERIVED, not supplied. A first cut passed ``ciq=None`` for
+    every name and then asserted the SINGULAR agreement — asserting a branch off a value the test
+    itself had chosen. Today all three names are single-multiple, so it was green and would have
+    STAYED green if a name gained a CIQ P/LTM and production went plural. The CIQ multiple is not
+    in the artifact (it is read from the live bundle at assembly), but whether production printed
+    it IS: the committed caveat names it. That is the metadata to key on.
+
     Non-vacuous by construction: the run FAILS if it finds no triggering name, because a corpus
     pin that silently covers nothing is the vacuity that let the batch e2e cover 0 of 11."""
     seen: list[str] = []
@@ -146,33 +148,34 @@ def test_every_live_negative_eps_name_reads_grammatically_and_claims_no_cause(
         if ltm is None or ltm >= 0:
             continue
         pe_v = raw["mechanical"]["valuation"]["pe"]
-        pe = pe_v.get("value") if pe_v.get("status") == SourceStatus.PRESENT.value else None
+        if pe_v.get("status") != SourceStatus.PRESENT.value:
+            continue
+        pe = pe_v.get("value")
         if pe is None or pe <= 0:
             continue
-        c = _caveat(pe, ltm, None, monkeypatch)
+        live = next((c for c in doss.caveats if "GAAP trailing multiple" in c), None)
+        assert live is not None, (
+            f"{p.parent.name}: LTM GAAP EPS {ltm} < 0 beside P/E {pe} but the committed artifact "
+            "carries no (d) caveat — the guard is disconnected from the pipeline")
+        # DERIVED from the committed sentence, not chosen here: production names the CIQ multiple
+        # only when it had one, and that phrasing is identical before and after this fix.
+        plural = "CIQ P/LTM EPS" in live
+        c = _caveat(pe, ltm, 16.0 if plural else None, monkeypatch)
         assert c is not None, f"{p.parent.name}: the guard produced no caveat for LTM EPS {ltm}"
-        seen.append(p.parent.name)
-        assert "does not rest" in c and "do not rest" not in c, (
-            f"{p.parent.name} shows ONE multiple and reads ungrammatically: {c}")
+        seen.append(f"{p.parent.name}({'2' if plural else '1'})")
+        want, avoid = ("do not rest", "does not rest") if plural else ("does not rest",
+                                                                       "do not rest")
+        assert want in c and avoid not in c, (
+            f"{p.parent.name} shows {'two multiples' if plural else 'ONE multiple'} and reads "
+            f"ungrammatically: {c}")
         assert _NORMALIZED.search(c) and _NON_CURRENT.search(c), (
             f"{p.parent.name}: the caveat picks a single cause: {c}")
     assert seen, ("no committed dossier has a positive P/E beside a negative LTM GAAP EPS — this "
                   "pin is VACUOUS; re-scope it rather than leaving it green")
     assert len(seen) >= 3, f"expected the three known live names, covered {seen}"
 
-
-def test_the_corpus_names_are_the_ones_the_defect_shipped_on() -> None:
-    """MEASURED, not assumed. The committed artifacts still carry the OLD sentence, so the blast
-    radius is readable directly — and it is the same three names the coverage pin drives. This is
-    the only assertion here that reads the stale artifacts, and it reads them as EVIDENCE of the
-    defect, so it is retired by the artifact pass rather than broken by it."""
-    hit = [p.parent.name for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
-           if "rest on normalized/adjusted earnings" in p.read_text()]
-    if not hit:
-        pytest.skip("artifacts already re-assembled — the pre-fix evidence is gone, as intended")
-    assert hit == ["CNXC", "FUBO", "SMPL"], hit
-    for name in hit:
-        txt = (ROOT / "data" / "dossiers" / name / "dossier.json").read_text()
-        cav = next(f for f in json.loads(json.dumps(json.loads(txt)))["caveats"]
-                   if "rest on normalized" in f)
-        assert re.search(r"\d\.\dx rest on", cav), f"{name}: expected the singular agreement bug"
+# A test asserting the STALE artifacts still carry the old sentence was written here and removed in
+# review. It pinned the corpus's CURRENT DEFECTS, which this repo has already recorded as the
+# anti-pattern — it would have gone permanently skipped the moment the artifact pass fixed them,
+# leaving dead weight, and its claim (the defect's blast radius is exactly CNXC/FUBO/SMPL) is
+# already made by the coverage pin above, which does not decay. The measurement lives in STATE.

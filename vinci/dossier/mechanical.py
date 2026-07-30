@@ -914,8 +914,8 @@ def _eps_caveat_flags(
             out.append(
                 f"{' and '.join(shown)} {'do' if plural else 'does'} not rest on LTM GAAP "
                 f"earnings — LTM GAAP diluted EPS is NEGATIVE ({ltm_gaap_eps:.2f}), so a positive "
-                f"multiple must use some other denominator (a non-current period, or a "
-                f"normalized/adjusted figure — the displayed basis does not say which). Do not "
+                f"multiple must use some other denominator (an EPS from a non-current period, or "
+                f"a normalized/adjusted figure — the displayed basis does not say which). Do not "
                 f"read {'them' if plural else 'it'} as a GAAP trailing multiple."
             )
     # (c) FALLBACK, only when the LTM GAAP EPS sign is UNAVAILABLE: CIQ prints a finite trailing P/E
