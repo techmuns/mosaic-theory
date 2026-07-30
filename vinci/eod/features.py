@@ -152,17 +152,49 @@ def relative_return(
 ) -> DataField[float]:
     """Name return minus benchmark return over a window (the G2 idiosyncratic input).
 
+    **BOTH LEGS END ON THE COMMON LAST BAR** (2026-07-30). The first cut ran each series to its own
+    latest bar via ``_close_on_or_before(bars, reference_date)``, so a stale benchmark contributed a
+    return that stopped early while every name's ran to the reference date — an ASYMMETRIC
+    comparison rather than merely a stale one, and the difference decides the failure mode:
+
+      * asymmetric → a DIRECTIONAL bias whose sign is set by whichever way the market moved in the
+        missing days, mis-ranking every name the same way;
+      * common end → a SHORTER window, measured honestly on both sides.
+
+    MEASURED, not hypothetical. The 2026-07-27 screen ran with IWM's frontier at 07-21 while
+    names ran to 07-24 or later. The market fell 1.22% in that gap, so ``bench_ret`` was
+    overstated, every name's ``rel`` was understated by ~1.22pp, and **four of 318 candidates
+    passed G2 only because of it** — CABA, GO, NOMD, TROX. None reached a dossier; NOMD ranked
+    227 of 275. A market DECLINE admits names that fell with it, the permissive direction.
+
+    THE WINDOW IS STAMPED. ``as_of`` is the effective END — the common last bar — not the
+    reference date. The old value claimed ``reference_date`` even when the data stopped days
+    earlier: the stamp-names-a-different-object class, in the field that feeds a gate. ``note``
+    carries the window and each side's frontier so a later recompute can reconstruct what the
+    screen actually saw. The 07-27 bound was possible only because the committed ``rel`` values
+    survived; the store-side evidence had already been refreshed away.
+
     UNKNOWN if either series lacks coverage over the window (graceful, never a corrupted number).
     """
     name_bars = sorted(name_bars, key=lambda b: b.bar_date)
     bench_bars = sorted(bench_bars, key=lambda b: b.bar_date)
     start = reference_date - timedelta(days=lookback_days)
 
+    def frontier(bars: list[PriceBar]) -> date | None:
+        """This side's own end — its latest bar at or before the reference date."""
+        usable = [b.bar_date for b in bars if b.bar_date <= reference_date]
+        return max(usable) if usable else None
+
+    n_end, b_end = frontier(name_bars), frontier(bench_bars)
+    if n_end is None or b_end is None:
+        return DataField.unknown(
+            source="EOD", tier=SourceTier.DERIVED, note="insufficient coverage over window"
+        )
+    end = min(n_end, b_end)  # THE COMMON LAST BAR — never each side's own
+
     def ret(bars: list[PriceBar]) -> float | None:
-        if not bars:
-            return None
         then = _close_on_or_before(bars, start)
-        now = _close_on_or_before(bars, reference_date)
+        now = _close_on_or_before(bars, end)
         if then is None or now is None or then <= 0:
             return None
         return now / then - 1.0
@@ -172,6 +204,11 @@ def relative_return(
         return DataField.unknown(
             source="EOD", tier=SourceTier.DERIVED, note="insufficient coverage over window"
         )
+    lag = (reference_date - end).days
     return DataField.present(
-        name_ret - bench_ret, as_of=reference_date, source="EOD", tier=SourceTier.DERIVED
+        name_ret - bench_ret, as_of=end, source="EOD", tier=SourceTier.DERIVED,
+        note=(f"window {start.isoformat()}→{end.isoformat()} (common last bar; name frontier "
+              f"{n_end.isoformat()}, benchmark frontier {b_end.isoformat()}"
+              + (f"; {lag}d short of the {reference_date.isoformat()} reference)"
+                 if lag else ")")),
     )
