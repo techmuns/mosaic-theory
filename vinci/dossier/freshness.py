@@ -138,9 +138,41 @@ class CapReconciliation:
                 f"own as-of")
 
 
+#: THE STALENESS SPLIT (operator, 2026-07-30). Two ages wore one number, and only one is ours.
+#:
+#: * **EXPORT staleness** — we have not pulled. An operator action fixes it, so it GATES the build.
+#: * **CONSENSUS staleness** — no analyst has revised. Nothing we do moves it, so a name nobody
+#:   revises is a CANDIDATE, not a defect. It prints, caveats past the same ceiling, feeds the
+#:   neglect screen — and never gates.
+#:
+#: THE LIVE CASE: AORT's Estimates workbook was re-exported 2026-07-30 and still reads 2026-06-30,
+#: because no analyst has revised it since. Under one merged number that is 30 days of "staleness"
+#: no operator action can clear, counting down to a ceiling breach.
+#:
+#: MEMBERSHIP IS MEASURED, not assumed — each path classified by the source_ref its own node
+#: carries: ``catalyst_path.as_of`` and ``financial_summary.as_of`` both stamp from *CIQ
+#: Estimates→Recent Changes*, and ``implied_expectations.multiples_as_of`` is assigned from
+#: ``catalyst.as_of`` in ``_implied_expectations``. (``financial_summary`` is the surprise — the
+#: NAME says Financials workbook, the STAMP is the Estimates event.) The other two are ours:
+#: ``tev_as_of`` parses from ``comps_market_cap``'s source_ref (Comparable Analysis → Financial
+#: Data), and ``stock_info.as_of`` is the EOD store.
+#:
+#: WHY THIS IS NOT A LOOPHOLE: an Estimates workbook nobody re-exported is also stale, and this
+#: classification cannot see that — it reads the embedded data date either way. What still catches a
+#: missing pull is the export side, which still gates. What is removed is only the case where a
+#: freshly-pulled file reads old because the street went quiet.
+CONSENSUS_PANELS: frozenset[str] = frozenset({
+    "catalyst_path.as_of",
+    "financial_summary.as_of",
+    "valuation.implied_expectations.multiples_as_of",
+})
+
+
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
     """Every (key, ISO date) that is a PANEL arrival stamp. Value-borne dates are excluded — see
-    ``_NOT_A_PANEL``; conflating the two is what produced an inverted staleness ranking twice."""
+    ``_NOT_A_PANEL``; conflating the two is what produced an inverted staleness ranking twice.
+
+    Returns BOTH classes; callers select via :func:`panel_age`'s mandatory ``kind``."""
     out: list[tuple[str, str]] = []
     if isinstance(mechanical, dict):
         for k, v in mechanical.items():
@@ -157,8 +189,19 @@ def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
     return out
 
 
-def panel_age(mechanical: object, as_of: dt.date | str) -> PanelAge | None:
-    """How old the build's OLDEST panel is against ``as_of``, or None when no panel carries a date.
+def panel_age(mechanical: object, as_of: dt.date | str, *,
+              kind: str) -> PanelAge | None:
+    """How old the build's OLDEST panel of ``kind`` is against ``as_of``, or None when that class
+    carries no dated panel.
+
+    ``kind`` is ``"export"`` (ours to refresh — this is what GATES) or ``"consensus"`` (the street's
+    to revise — prints and caveats, never gates). See :data:`CONSENSUS_PANELS`.
+
+    **NO DEFAULT, deliberately.** Before the split this function answered one merged question and
+    both callers took it implicitly. Adding a default would let a caller keep the old meaning while
+    the constant beside it says the classes are different — the unasserted-convention class, in the
+    function whose whole purpose is now to distinguish them. Two callers; both state which they
+    want.
 
     ``as_of`` is the BUILD's date — the reference date at assembly, and the stored ``assembled_at``
     when a committed artifact re-renders. That distinction matters: a committed dossier reports the
@@ -166,7 +209,11 @@ def panel_age(mechanical: object, as_of: dt.date | str) -> PanelAge | None:
 
     ONE dated panel is enough (the old spread needed two, since a gap needs two ends). A build
     with a single dated panel still has an oldest one, and its age is what is being measured."""
-    dates = panel_dates(mechanical)
+    if kind not in ("export", "consensus"):
+        raise ValueError(f"panel_age kind must be 'export' or 'consensus', got {kind!r}")
+    want_consensus = kind == "consensus"
+    dates = [(k, d) for k, d in panel_dates(mechanical)
+             if (k in CONSENSUS_PANELS) is want_consensus]
     if not dates:
         return None
     dates.sort(key=lambda kv: kv[1])
@@ -233,11 +280,30 @@ def absent_cap_inputs(*, cap_musd: float | None, shares: float | None,
     return tuple(n for n, v in zip(_CAP_INPUTS, (cap_musd, shares, spot), strict=True) if not v)
 
 
+def consensus_note(age: PanelAge | None) -> str | None:
+    """The CAVEAT for a name the street has stopped revising, or None inside the ceiling.
+
+    NEVER raises. Consensus staleness is not ours to fix — an operator can re-export every workbook
+    and the date will not move — so gating on it would refuse a build for a condition no action
+    clears. The same ceiling is reused deliberately: a second threshold would be a second number to
+    justify, and the question ("is this data old enough to distrust?") is identical. What differs is
+    only who can act on the answer."""
+    if age is None or age.days <= MAX_PANEL_AGE_DAYS:
+        return None
+    return (f"consensus is {age.days}d old ({age.oldest}, {age.oldest_key}) — beyond the "
+            f"{MAX_PANEL_AGE_DAYS}d ceiling. No analyst has revised this name in that window; a "
+            "re-export will NOT move it. Treat as a neglect signal, not a stale pull.")
+
+
 def check_freshness(age: PanelAge | None, recon: CapReconciliation | None,
                     *, ticker: str, absent: tuple[str, ...] = ()) -> None:
     """FAIL LOUD on the two conditions a page cannot honestly carry. Ordinary drift is NOT one of
     them — it is a rendering obligation (clause (e)), because failing on it would fail 11 of 11 and
-    a guard that stops every build is a freeze wearing a guard's name."""
+    a guard that stops every build is a freeze wearing a guard's name.
+
+    ``age`` MUST be the EXPORT age (``panel_age(..., kind="export")``). Passing the consensus age
+    here would restore exactly the defect the split removed — refusing a build because the street
+    went quiet. :func:`consensus_note` carries that side, and it cannot raise."""
     if absent:
         raise FreshnessError(
             f"{ticker}: the build is missing {', '.join(absent)} — every ratio on the page rests "

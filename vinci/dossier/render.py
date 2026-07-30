@@ -3179,16 +3179,41 @@ def _panel_age_note(d: Dossier) -> str | None:
     the rendered number moved when someone refreshed prices, on unchanged CIQ panels."""
     from vinci.dossier.freshness import panel_age
 
-    pa = panel_age(d.mechanical.model_dump(mode="json"), d.assembled_at)
+    pa = panel_age(d.mechanical.model_dump(mode="json"), d.assembled_at, kind="export")
     return pa.note() if pa is not None else None
 
 
+def _consensus_age_note(d: Dossier) -> str | None:
+    """How old the STREET's view is — the estimates-sourced panels, which no re-export moves.
+
+    Printed SEPARATELY and ALWAYS, not folded into the panel age. Taking consensus staleness out of
+    the gate would otherwise take it out of view, which is the opposite of the intent: a name nobody
+    has revised in months is a neglect signal worth reading, and it is only readable if it is on the
+    page. Past the ceiling this carries the caveat too."""
+    from vinci.dossier.freshness import consensus_note, panel_age
+
+    ca = panel_age(d.mechanical.model_dump(mode="json"), d.assembled_at, kind="consensus")
+    if ca is None:
+        return None
+    return consensus_note(ca) or (
+        f"consensus {ca.days}d old ({ca.oldest}, {ca.oldest_key}) — within the ceiling")
+
+
 def _panel_age_line(d: Dossier) -> list[str]:
-    """The panel-age line, or nothing. Computed ONCE — the note walks the whole mechanical layer,
-    and the first cut called it twice in one expression (a second full model_dump per rendered
-    dossier, for a value it already had)."""
+    """The panel-age lines, or nothing. Each computed ONCE — the notes walk the whole mechanical
+    layer, and the first cut called one twice in a single expression (a second full model_dump per
+    rendered dossier, for a value it already had).
+
+    TWO LINES since the staleness split: the panel age is what we could have refreshed and did not,
+    and it GATES; the consensus age is what the street has not revised, and it never does."""
+    out: list[str] = []
     note = _panel_age_note(d)
-    return [f"- **Panel age:** {note}"] if note else []
+    if note:
+        out.append(f"- **Panel age:** {note}")
+    cnote = _consensus_age_note(d)
+    if cnote:
+        out.append(f"- **Consensus age:** {cnote}")
+    return out
 
 
 def _record_reproduce_lines(d: Dossier) -> list[str]:

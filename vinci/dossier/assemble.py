@@ -216,7 +216,11 @@ def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
 
     cap, shares, spot = val("market_cap"), val("shares_out"), val("price")
     recon = reconcile_cap(cap_musd=cap, shares=shares, spot=spot)
-    check_freshness(panel_age(mech.model_dump(mode="json"), built_at), recon,
+    # EXPORT age only (staleness split, 2026-07-30). Consensus staleness is the street's, not ours
+    # — no re-export moves it — so it prints and caveats instead of gating. AORT is the live case:
+    # its Estimates workbook was re-exported 2026-07-30 and still reads 2026-06-30.
+    dumped = mech.model_dump(mode="json")
+    check_freshness(panel_age(dumped, built_at, kind="export"), recon,
                     ticker=ticker,
                     absent=absent_cap_inputs(cap_musd=cap, shares=shares, spot=spot))
 
