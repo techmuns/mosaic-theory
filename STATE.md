@@ -3984,6 +3984,31 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
+**PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
+review and exist nowhere else; recording them is the first commit of the work, not its last.
+1. **NO OFFSET ON THE SHARES COLUMN.** A price's vintage is a CLOSE, a share count's is a FILING.
+   The vintage field takes the filing date or says UNKNOWN — it never inherits the CIQ export stamp.
+   **FUBO is the proof:** CIQ's 29.4M against our 342.4M differ by a *filing*, not a day, so no
+   export-date correction could reconcile them. (Rule in docs/engineering.md: *a stamp belongs to a
+   COLUMN, not a block*.)
+2. **THE STORE REFUSAL KEYS ON AGE, NOT ON TODAY.** Refuse on no price at all, or a price past the
+   ceiling — never on "no bar for today", or every run before the US close refuses. Assembly here
+   runs in Indian daytime against a prior-session close; that is the normal case, not a failure.
+3. **CIQ STAYS OUT OF PRICE SELECTION.** Its comps price is on-disk and often fresher, but using it
+   would give our derived cap and CIQ's cap a shared input and the comparison would stop testing
+   price vintage at all — the independence rule, one turn after recording it. **CIQ becomes a
+   staleness MONITOR instead (operator, better than the original ruling): if CIQ's dated close is
+   NEWER than the store's latest bar, flag that the store needs refreshing — never take the value.**
+   Comparing dates is not coupling.
+4. **ITEM 24'S BLOCKING EVIDENCE IS IN HAND.** CIQ's `Shares Outstanding Latest` independently
+   confirms our `shares_out` on **10 of 11 names within 0.1%** (ratios 0.9993–1.0011), FUBO the sole
+   exception at 11.65×. That is the multi-name study item 24 was waiting on. CAVEAT TO CARRY: CIQ's
+   count is printed to 0.1M granularity, so it is a CROSS-CHECK, never an authoritative source.
+5. **TWO SOURCES HAVE NO FRESHNESS MEASUREMENT AT ALL** — the **price store** and the **Financials
+   workbook**. Everything else carries an as-of. IT's 6% divergence was not a code defect: it was
+   the refresh command not having been run, and nothing measures that. Until a guard exists,
+   "fix the cadence" is a habit rather than a contract.
+
 **STALENESS SPLIT — BUILT 2026-07-30 (PR #275).** Two ages wore one number and only one is ours.
 **EXPORT staleness** (we have not pulled) gates the build; **CONSENSUS staleness** (no analyst has
 revised) prints, caveats past the SAME ceiling, feeds the neglect screen, and never gates.

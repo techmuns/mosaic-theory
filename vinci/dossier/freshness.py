@@ -44,7 +44,7 @@ from __future__ import annotations
 import datetime as dt
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, NamedTuple
 
 #: Days a build's OLDEST panel may be, measured against the build's own date, before it fails.
 #: Re-measured 2026-07-29 (see PanelAge): the old oldest→newest form was price-driven, so a price
@@ -169,7 +169,21 @@ CONSENSUS_PANELS: frozenset[str] = frozenset({
 })
 
 
-def corrected_ciq_as_of(stated: str, bars: list[Any]) -> str:
+class CiqAsOf(NamedTuple):
+    """The corrected stamp AND whether the correction actually ran.
+
+    ``resolved`` is REPORTED, not inferred. The first cut returned a bare date and callers worked
+    out "was this corrected?" from ``corrected != stated`` plus an empty-bars check — which is
+    wrong in two live cases: a stamp older than every bar, and a bar list whose entries are all
+    malformed. Both come back UNCHANGED with a non-empty list, so the caller concluded "corrected,
+    nothing to change" and labelled an export stamp as a data date. Assert it or derive it — so the
+    function that knows now says so."""
+
+    as_of: str
+    resolved: bool
+
+
+def corrected_ciq_as_of(stated: str, bars: list[Any]) -> CiqAsOf:
     """CIQ's ``As-Of`` is the EXPORT date; the data is the PRIOR trading close. Return the real one.
 
     **MEASURED 11 OF 11, not inferred.** CIQ's printed ``Day Close Price Latest`` was compared
@@ -196,8 +210,8 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> str:
     dates = [d for b in bars
              if _ISO.fullmatch(d := str(getattr(b, "bar_date", "") or "")) and d < stated]
     if not dates:
-        return stated
-    return max(dates)
+        return CiqAsOf(stated, resolved=False)
+    return CiqAsOf(max(dates), resolved=True)
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
