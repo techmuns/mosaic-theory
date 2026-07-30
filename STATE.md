@@ -3984,7 +3984,7 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
-**AUDIT-REMEDIATION COUNT — 8 of 13 after #269 (2026-07-30).** Three read-only verifications were
+**AUDIT-REMEDIATION COUNT — 8 of 13 after #270 (2026-07-30).** Three read-only verifications were
 run BEFORE building, at the operator's direction, and two of the three changed the plan:
 
 1. **P3 pt 1 is NOT closed by item 16's `role` — it stays open.** Measured on the committed record,
@@ -4913,7 +4913,7 @@ screen cohort.**
     named, because STATE carried the three examples as prose and the letters nowhere; the only
     occurrence of "19c" in this file was a passing reference in a build record. Sub-items are
     numbered HERE so an order that names one is unambiguous:
-    - **19a — BASIS AGREEMENT (audit P5 pt 2). BUILT 2026-07-30 (PR #269).** A caveat naming a
+    - **19a — BASIS AGREEMENT (audit P5 pt 2). BUILT 2026-07-30 (PR #270).** A caveat naming a
       basis must match the series it caveats: the (d) branch asserted "rest on normalized/adjusted
       earnings", which INFERS a basis from a negative GAAP EPS rather than reading one (a period
       mismatch produces the same symptom). **CONFIRMED WORSE THAN RECORDED, and the evidence is
