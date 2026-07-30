@@ -469,7 +469,8 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 07:57 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
-- **Panel age:** oldest panel 2d old — 2026-07-28 (valuation.implied_expectations.multiples_as_of), against a 2026-07-30 build
+- **Panel age:** oldest panel 2d old — 2026-07-28 (stock_info.as_of), against a 2026-07-30 build
+- **Consensus age:** consensus 2d old (2026-07-28, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001772016` · NYSE : BRBR
 - **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)

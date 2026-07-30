@@ -533,6 +533,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 11:41 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
 - **Panel age:** oldest panel 35d old — 2026-06-25 (valuation.implied_expectations.tev_as_of), against a 2026-07-30 build
+- **Consensus age:** consensus 3d old (2026-07-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+1.4s fetch)

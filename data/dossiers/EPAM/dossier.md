@@ -535,7 +535,8 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 11:39 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
-- **Panel age:** oldest panel 3d old — 2026-07-27 (valuation.implied_expectations.multiples_as_of), against a 2026-07-30 build
+- **Panel age:** oldest panel 2d old — 2026-07-28 (stock_info.as_of), against a 2026-07-30 build
+- **Consensus age:** consensus 3d old (2026-07-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001352010` · NYSE : EPAM
 - **Assembly log:** primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.1s fetch)

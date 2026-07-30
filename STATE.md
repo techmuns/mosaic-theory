@@ -3984,6 +3984,44 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
+**STALENESS SPLIT — BUILT 2026-07-30 (PR #275).** Two ages wore one number and only one is ours.
+**EXPORT staleness** (we have not pulled) gates the build; **CONSENSUS staleness** (no analyst has
+revised) prints, caveats past the SAME ceiling, feeds the neglect screen, and never gates.
+**THE LIVE CASE:** AORT's Estimates workbook was re-exported 2026-07-30 and still reads 2026-06-30 —
+30 days of "staleness" counting toward a breach no operator action could prevent.
+**MEMBERSHIP IS MEASURED, by each node's own source_ref, not by name:** `catalyst_path.as_of` and
+`financial_summary.as_of` both stamp from *CIQ Estimates→Recent Changes*, and
+`implied_expectations.multiples_as_of` is assigned from `catalyst.as_of` in code — so all three are
+CONSENSUS. `tev_as_of` (Comparable Analysis→Financial Data) and `stock_info.as_of` (EOD store) are
+EXPORT. **`financial_summary` is the trap the category-label rule predicts** — the NAME says
+Financials workbook, the STAMP is the Estimates event.
+**FLEET EFFECT, measured before building: exactly ONE name changes gate outcome** — MVST, refused at
+56d (consensus) against 16d of export age. No name newly fails; a corpus pin asserts the list is
+`["MVST"]` alone and that no name's export age can exceed its merged age (which would mean an export
+panel was misclassified and the gate weakened). `panel_age` now takes a **mandatory `kind`** — no
+default, because a default would let a caller keep the merged meaning while the constant beside it
+says the classes differ. Both call sites had to state which; five test sites surfaced the same way.
+**RE-RENDER ONLY, verified:** panel age is not persisted (no such field in `dossier.json`) — it is
+computed at `assemble.py:219` for the gate and `render.py:3182` for the page, both from stored panel
+dates, so 11 names re-rendered from committed JSON with no re-assembly and no LLM. Mutations: gate
+reads consensus → 2 red · `consensus_note` raises → 1 · `financial_summary` reclassified → 5 ·
+consensus line dropped from the page → 1 · own 90d threshold → 2.
+
+**D&A CONVENTION — QUEUED 2026-07-30, does NOT block A2 (operator ruling).** The two recipes use
+opposite conventions and nothing reconciles them: **R1** (EPAM, IT, SMPL, WERN) uses a **fixed $M
+anchor**, so D&A/revenue varies across legs (SMPL 1.82→1.51%, WERN 10.05→8.42%); **R2** (AORT, MVST,
+NCNO) uses a **ratio of revenue**, constant by construction. **Not a contradiction — a horizon
+difference** (operator): R1 is mid-cycle, where a fixed asset base is right; R2 is terminal, where
+D&A converges to maintenance capex as a stable share of revenue. **THE DECIDING QUESTION IS ANALYST,
+NOT CODE:** is R2's bear leg a terminal state or a recoverable trough? Terminal → a shrunken asset
+base is correct and MVST's −35.3% bear revenue gap stands. Recoverable → the assets are still there
+and bear D&A must be floored. **Direction is counterintuitive: flooring R2's bear D&A RAISES bear
+value and makes R2 names clear the 2:1 bar more easily** — so it moves committed numbers and is a
+decision, not a build. A2 prints the convention per name so the difference is visible while the
+question is open. The time-base point (multi-year median margin against a single latest-FY D&A
+point) shrinks to a disclosure line — WERN's 1.63pp spread is the convention working correctly, since
+trucks depreciate whether freight falls or not.
+
 **AUDIT-REMEDIATION COUNT — 8 of 13 after #270 (2026-07-30).** Three read-only verifications were
 run BEFORE building, at the operator's direction, and two of the three changed the plan:
 

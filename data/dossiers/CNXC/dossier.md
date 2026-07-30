@@ -496,7 +496,8 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 10:36 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
-- **Panel age:** oldest panel 24d old — 2026-07-06 (valuation.implied_expectations.multiples_as_of), against a 2026-07-30 build
+- **Panel age:** oldest panel 2d old — 2026-07-28 (stock_info.as_of), against a 2026-07-30 build
+- **Consensus age:** consensus 24d old (2026-07-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001803599` · Nasdaq : CNXC
 - **Assembly log:** primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)

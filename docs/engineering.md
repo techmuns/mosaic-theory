@@ -516,6 +516,51 @@ noise.
 Same distinction item 20 turns on. When measuring staleness, harvest arrivals only, and say in the
 code which is which.
 
+## NTM against a fiscal year is the same defect as LTM against NTM
+
+*(operator, 2026-07-30)*
+
+> **A multiple and the level it is applied to must share a period.** NTM is a *blend*; a fiscal year
+> is a *point*. Comparing them is the same basis error as LTM-against-NTM, and it is harder to see
+> because both sides are forward-looking.
+
+**Measured, on SMPL.** The three-ratio gap decomposition (`r_rev × r_margin × r_mult`) must reconcile
+to the total gap `our_EV ÷ TEV`. Using the name's NTM multiple as the market side, no consensus year
+reconciles:
+
+| anchor FY | 2026 | 2027 | 2028 | 2029 | 2030 |
+|---|---|---|---|---|---|
+| residual vs total | 0.983 | 0.989 | 0.938 | 0.928 | 0.907 |
+
+It closes only where `cons_EBITDA_k × market_mult == TEV`, i.e. where consensus equals the
+price-implied level (218.4) — and no year does. Computing the market multiple on the **same** year
+(`TEV ÷ cons_EBITDA_k`) reconciles at **1.0000× for every year**, because the consensus term then
+cancels algebraically.
+
+The residual was small enough (1–9%) to read as rounding. That is the danger: a basis error between
+two forward measures presents as noise, while an LTM-vs-NTM error is usually large enough to notice.
+
+## A rule keyed to a category label must be verified against the data the label predicts
+
+*(operator, 2026-07-30 — third instance this month)*
+
+> **A rule keyed to a category label must be verified against the data the label is supposed to
+> predict.** The label is a hypothesis about the data, not a substitute for reading it.
+
+| rule | keyed to | what the data said |
+|---|---|---|
+| shares basis | one buyback name | generalised from a single case |
+| regime test | one secular break | generalised from a single case |
+| degrade guard | "pre-profit recipe" | **VITL is a profitable-recipe name with the near-zero denominator** (consensus FY26 EBITDA 3.3, low 0.3, high 9.0) — while MVST, the name the label predicted, has a 13.97% margin and zero dispersion |
+
+The corollary that keeps costing us: **the label and the condition can point at disjoint sets.** MVST
+and NCNO route to the two-ratio form because their *recipe* is R2; VITL routes because its *value*
+trips the guard. Two independent routes, and a guard keyed to the label alone would have protected
+the wrong names and let the real one through.
+
+Same shape as *`financial_summary.as_of` is an Estimates stamp, not a Financials one* — the name
+predicted the wrong workbook, and only the source_ref settled it.
+
 ## A probe must derive from the code, not restate it
 
 *(operator, 2026-07-30 — recorded after the FOURTH instance; a fifth was found in the same turn)*

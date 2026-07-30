@@ -69,7 +69,7 @@ def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
     assert not [k for k in keys if "own_history" in k or "stock_performance" in k], (
         f"value-borne dates leaked into the panel set: {sorted(keys)}")
 
-    age = fr.panel_age(mech, _assembled("SMPL"))
+    age = fr.panel_age(mech, _assembled("SMPL"), kind="export")
     assert age is not None and age.days <= 15, (
         f"SMPL's oldest PANEL is {age.days if age else '?'}d old — a much larger number here means "
         "value-borne dates are being counted as arrivals again")
@@ -197,7 +197,7 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     for name, mech in _fleet().items():
         recon = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
                                  shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
-        age = fr.panel_age(mech, _assembled(name))
+        age = fr.panel_age(mech, _assembled(name), kind="export")
         if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
             over_ceiling.add(name)
         try:
@@ -218,7 +218,13 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     # Estimates + Comps re-exports landed and the fleet re-assembled — which is the assertion
     # moving with a WIN, as its own note instructed, rather than being loosened. FUBO stays out on
     # the 11.13x share basis and MVST cannot re-assemble at all (outside the screen cohort).
-    assert quiet == {"AORT", "BRBR", "CNXC", "EPAM", "IT", "NCNO", "SMPL", "VITL", "VRRM"}, quiet
+    # **MVST JOINED 2026-07-30 ON THE STALENESS SPLIT — the only name the split moves.** Its 56d
+    # was CONSENSUS age (no analyst had revised it) against 16d of export age, so the gate was
+    # refusing it for a condition no operator action clears. It still DRIFTS (+17.6% cap-vs-spot),
+    # which is a labelling obligation under clause (e) rather than a refusal, and it still cannot
+    # be re-assembled, so the change is on paper until a screen re-admits it.
+    assert quiet == {"AORT", "BRBR", "CNXC", "EPAM", "IT", "MVST", "NCNO", "SMPL", "VITL",
+                     "VRRM"}, quiet
     # ...and each quiet name is quiet for a STATED reason — it either RECONCILES (the end state we
     # want) or merely DRIFTS (labelled, per clause (e)). The first cut asserted every quiet name
     # drifts, carrying the note "if a name now reconciles this is a WIN, but the assertion must
@@ -267,7 +273,7 @@ def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
     """Rendered ALWAYS, not only on failure (operator): panel age is context a reader needs to
     read a multiple. A guard that speaks only when it fails leaves the other seven names looking
     clean when their fundamentals are weeks behind their price."""
-    age = fr.panel_age(_fleet()["AORT"], _assembled("AORT"))
+    age = fr.panel_age(_fleet()["AORT"], _assembled("AORT"), kind="export")
     assert age is not None
     note = age.note()
     assert "oldest panel" in note and str(age.days) in note
@@ -341,7 +347,7 @@ def test_a_date_before_the_panel_yields_a_negative_age_which_is_the_tell() -> No
     it to zero would have hidden the defect above instead of exposing it. NCNO produced -6d in the
     live batch and that number is what made the cause obvious."""
     mech = {"valuation": {"multiples_as_of": "2026-07-12"}}
-    age = fr.panel_age(mech, dt.date(2026, 7, 6))
+    age = fr.panel_age(mech, dt.date(2026, 7, 6), kind="export")
     assert age is not None and age.days < 0, "a negative age must stay visible, not be clamped"
 
 
@@ -372,7 +378,7 @@ def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> Non
         if str(doc["assembled_at"])[:10] < GATE_FIXED_ON:
             continue
         checked += 1
-        age = fr.panel_age(doc.get("mechanical") or {}, doc["assembled_at"])
+        age = fr.panel_age(doc.get("mechanical") or {}, doc["assembled_at"], kind="export")
         if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
             over.append(f"{d.name}: renders {age.days}d, ceiling {fr.MAX_PANEL_AGE_DAYS}d")
     assert not over, (
