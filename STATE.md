@@ -4208,6 +4208,24 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   the gate would measure the same object.
   **NOT MOVED — operator decision.** It changes when a build fails, which is a decision-path
   change, and the standing instruction is that nothing else starts.
+- **LLM COVENANT EXTRACTION CHURNS ACROSS RE-ASSEMBLIES — measured 2026-07-30 in the 8-name batch
+  review, never measured before.** `covenant_term_rows` is a Tier-2 LLM extraction, so the ROW SET
+  itself re-varies, not merely its wording. Across the eight names, **12 terms that were PRESENT
+  are not present after.** Most are RE-LABELLINGS where the concept survives under a new name —
+  CNXC's `Change of Control Offer price` → `Change of Control repurchase price`,
+  `Merger / consolidation / sale of assets covenant` → `Merger, Consolidation and Sale of Assets
+  covenant`. Net coverage ROSE on most names (AORT 12→15 present, CNXC 10→15, NCNO 6→7) and the
+  run also UPGRADED fields (CNXC's `Conversion price / mechanics` and `Maturity date` both
+  unknown→present, plus five new terms).
+  **ONE GENUINE DOWNGRADE, and it is the item-18 field: CNXC `Financial-maintenance covenants`
+  went PRESENT → UNKNOWN.** Nothing false was written — an honest UNKNOWN replaced a value — but
+  the covenant-basis question item 18 exists to answer is now less covered on CNXC than it was.
+  **CONSEQUENCE FOR ITEM 18:** its input is not stable across runs. A guard comparing the record's
+  covenant basis against the dossier's must tolerate a field that legitimately appears and
+  disappears between assemblies, or it will fire on churn rather than on disagreement. That is a
+  DESIGN CONSTRAINT on item 18, discovered before building it — the P1 shape caught early again.
+  **NOT A BLOCKER for the batch:** no gate fired, nothing false was written, and net coverage
+  improved. Recorded so "re-assembly is idempotent" is not assumed for LLM-extracted blocks.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
