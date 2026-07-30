@@ -2194,8 +2194,16 @@ def _implied_expectations(
     nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
     tev_src = (
         f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
-        f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}"
-        + (f", exported {stated_as_of}" if tev_as_of != stated_as_of else "")
+        # THREE STATES, DISTINGUISHABLE (review finding): corrected, nothing-to-correct, and
+        # COULD-NOT-CORRECT. The first cut printed the last two identically, so a reader could not
+        # tell a stamp that had been resolved against the store from one the store could not
+        # resolve — and the unresolved one is a day too NEW, i.e. reads fresher than it is. An
+        # uncorrectable stamp now says so on the page rather than passing as a corrected one.
+        + (f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}, "
+           f"exported {stated_as_of}" if tev_as_of != stated_as_of else
+           f"(CIQ Comparable Analysis→Financial Data, Latest, export stamp {stated_as_of} — "
+           f"NOT date-corrected: no prior bar in the store" if not price_bars else
+           f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}")
         + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(

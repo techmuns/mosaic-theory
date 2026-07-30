@@ -139,7 +139,7 @@ def test_the_tev_cite_carries_both_dates_when_they_differ() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert 'f", exported {stated_as_of}" if tev_as_of != stated_as_of' in src, (
+    assert "exported {stated_as_of}" in src and "tev_as_of != stated_as_of" in src, (
         "the TEV cite does not disclose the export date beside the data date")
     assert "data {tev_as_of}" in src
 
@@ -158,3 +158,22 @@ def test_the_scope_is_the_comps_panel_only_and_says_so() -> None:
     assert "corrected_ciq_as_of" not in src[i:], (
         "the Estimates stamp is being corrected on an unmeasured convention")
     assert "has NOT been measured" in src, "the scope limit is not stated where a reader would look"
+
+
+def test_an_uncorrectable_stamp_says_so_on_the_page() -> None:
+    """REVIEW FINDING. There are THREE states, and the first cut printed two of them identically:
+
+      * corrected            -> "data <D>, exported <E>"
+      * nothing to correct   -> "data <D>"
+      * COULD NOT correct    -> "data <D>"   <- indistinguishable, and it is a day too NEW
+
+    A reader could not tell a stamp resolved against the store from one the store could not resolve,
+    and only the second reads fresher than it is. The uncorrectable case now labels itself."""
+    import inspect
+
+    import vinci.dossier.mechanical as dm
+
+    src = inspect.getsource(dm._implied_expectations)
+    assert "NOT date-corrected: no prior bar in the store" in src, (
+        "an uncorrectable stamp is still indistinguishable from a corrected one")
+    assert "if not price_bars else" in src, "the three states are not branched on the bars"

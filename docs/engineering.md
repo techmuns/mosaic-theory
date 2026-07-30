@@ -561,6 +561,50 @@ the wrong names and let the real one through.
 Same shape as *`financial_summary.as_of` is an Estimates stamp, not a Financials one* — the name
 predicted the wrong workbook, and only the source_ref settled it.
 
+## A stamp belongs to a COLUMN, not a block, unless every column shares a vintage
+
+*(operator, 2026-07-30 — fourth instance, recorded as a rule rather than a fourth incident)*
+
+> **A stamp belongs to a column, not a block, unless every column shares a vintage.** A block-level
+> as-of is a claim that every field under it arrived together. Check that before writing one.
+
+Three shapes, all live in this repo:
+
+| stamp | covers | actually describes |
+|---|---|---|
+| `financial_summary.as_of` | annual actuals, quarterly, balance sheet | the **Estimates** →Recent-Changes event |
+| `tev_as_of` | the TEV and every implied level | the CIQ **export** date, one trading day after the data |
+| the comps row | `Day Close Price Latest` **and** `Shares Outstanding Latest` | one date over two different vintages |
+
+The third is the sharpest, and it generalises the rule: **a price's vintage is a CLOSE; a share
+count's is a FILING.** They are not the same kind of date and cannot share a stamp. FUBO proves it —
+CIQ's 29.4M against our 342.4M differ by a **filing**, not by a day, so no export-date correction
+could ever reconcile them.
+
+**Consequence for any vintage field: it takes the filing date for shares, or says UNKNOWN.** It
+never inherits the export stamp. An inherited stamp is a fabricated vintage, and it fabricates in
+the permissive direction — a share count looks fresher than it is, and per-share values inherit it.
+
+## An instrument that doesn't move can't measure
+
+*(operator, 2026-07-30 — recorded as one family after the third and fourth instances)*
+
+Three rules already written here are one principle, and stating it once is what makes a fourth
+instance recognisable:
+
+> **An instrument that doesn't move can't measure.**
+>
+> * **A probe must derive from the code, not restate it** — a hardcoded mapping asserts.
+> * **A cross-check must be independent** — derive one side from the other and it reports success.
+> * **A mutation must mutate** — a no-op mutation reports a passing test as a caught one.
+
+The third has its own corollary, learned the expensive way: **the restore must restore, and only a
+cache-cleared re-run proves it.** A mutation loop rewriting one file repeatedly within a single
+mtime second left a stale `__pycache__` entry, so a later run executed bytecode that no longer
+existed on disk — `inspect.getsource` showed the fix while the call returned the bug, and a merged
+branch went red on a defect its own source did not contain. Clear `__pycache__` between mutation
+rounds and re-run once at the end.
+
 ## A probe must derive from the code, not restate it
 
 *(operator, 2026-07-30 — recorded after the FOURTH instance; a fifth was found in the same turn)*
