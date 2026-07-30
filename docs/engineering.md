@@ -533,9 +533,16 @@ authority of a measurement. Two failures from one turn, both in a survey the ope
 | a hand-rolled year→column index | FUBO's consensus Revenue median as `92.3` against a High of `6337.9` | a column-offset bug in the probe; the block is coherent, and `trends_fy_level` returns `6226.09` |
 
 **RETRACTED:** *"The oldest panel is the Comps / Trading Multiples workbook for all 11 names. One
-export gates fleet freshness."* Both sentences are false. Seven names bind on Estimates and four on
-Comparable Analysis, so there is no single gating export. The cause was not a misreading of the
-code — **the code was never read.** The mapping came from a dict written into the probe.
+export gates fleet freshness."* Both sentences are false. The durable mechanism, read from the code:
+`multiples_as_of` is `catalyst.as_of`, which reads the **estimates** workbook; `tev_as_of` is parsed
+from `comps_market_cap`'s `source_ref`, which reads **comps → Financial Data**. Two workbooks, so
+whichever is older binds per name and no single export gates the fleet. The cause was not a
+misreading of the code — **the code was never read.** The mapping came from a dict in the probe.
+
+*(How many names sit on each side is fleet STATE and belongs in STATE.md, not here — and it moves:
+it was 7 Estimates / 4 Comps at the survey and 9 / 2 hours later, changed by one re-export. A first
+draft of this retraction put that count in this file, which is the same defect one level up —
+a durable rules document asserting a volatile fact. Cite the mechanism here; count in STATE.)*
 
 The second case is the sharper lesson: the same question answered through the tested extractor
 (`trends_fy_level`) was right, while the hand-rolled index was wrong. The extractor existed the
