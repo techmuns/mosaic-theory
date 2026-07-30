@@ -13,13 +13,13 @@
         "note": null
       },
       "pe": {
-        "value": 9.409722222222223,
+        "value": 9.041666666666666,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
         "note": null
       },
       "pe_percentile_5y": {
-        "value": 0.05985634477254589,
+        "value": 0.05107741420590583,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
         "note": null
@@ -292,9 +292,9 @@
           {
             "label": "name NTM TEV/EBITDA",
             "metric": "EBITDA",
-            "multiple": 84.63,
+            "multiple": 89.3,
             "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
-            "implied_level": 5.7,
+            "implied_level": 5.4,
             "is_identity": true,
             "note": null
           },
@@ -319,9 +319,9 @@
           {
             "label": "name NTM TEV/Rev",
             "metric": "Revenue",
-            "multiple": 0.72,
+            "multiple": 0.75,
             "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
-            "implied_level": 669.9,
+            "implied_level": 643.1,
             "is_identity": true,
             "note": null
           },
@@ -351,22 +351,22 @@
           "note": null
         },
         "anchors": {
-          "value": "FY26E $3.5M · FY27E $45.9M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
+          "value": "FY26E $3.4M · FY27E $45.7M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
           "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
           "status": "present",
           "note": null
         },
         "rev_anchors": {
-          "value": "FY26E $776.0M · FY27E $850.0M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
+          "value": "FY26E $775.3M · FY27E $848.6M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
           "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)",
           "status": "present",
           "note": null
         },
         "heterogeneity_gate": "market caps span $50M–$78.0B (1567x); the name is $480M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
         "tev_as_of": "2026-06-29",
-        "multiples_as_of": "2026-07-08",
+        "multiples_as_of": "2026-07-21",
         "vintage_coherent": false,
-        "coherence_note": "multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 $3.0M vs direct $3.5M, residual 0.145 > 0.10)",
+        "coherence_note": "multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 $2.8M vs direct $3.4M, residual 0.180 > 0.10)",
         "net_debt_reconciled": true
       }
     },
@@ -488,7 +488,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "Segments sheet has no 'EBITDA' section as expected"
+        "note": "single-segment reporting (Eggs and Butter) — no segment EBITDA to break out; the consolidated EBITDA is the whole business"
       },
       "customers": {
         "value": "Albertsons Companies, Inc. (NYSE:ACI) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Ben E. Keith Company — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Dot Foods, Inc. — Distributor · Air Freight and Logistics · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Gordon Food Service, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Performance Food Group, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Publix Super Markets, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Shamrock Foods Company — Distributor · Packaged Foods and Meats · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sprouts Farmers Market, Inc. (NasdaqGS:SFM) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sysco Corporation (NYSE:SYY) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Target Corporation (NYSE:TGT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; The Kroger Co. (NYSE:KR) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; United Natural Foods, Inc. (NYSE:UNFI) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; US Foods, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Whole Foods Market, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K",
@@ -847,7 +847,7 @@
         "note": null
       },
       "revenue_trend": {
-        "value": "Revenue FY 2026: 0↑/2↓ last mo",
+        "value": "Revenue FY 2026: 0↑/3↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "status": "present",
         "note": null
@@ -867,31 +867,31 @@
     },
     "catalyst_path": {
       "as_of": {
-        "value": "≥2026-07-08",
+        "value": "≥2026-07-21",
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
       },
       "horizon_read": {
-        "value": "EPS Normalized FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓; EPS Normalized FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓; Revenue FQ2 2026: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/9↓; Revenue FQ3 2026: 1m 3↑/0↓, 2m 3↑/0↓, 3m 0↑/9↓; EBITDA FQ2 2026: 1m 0↑/2↓, 2m 1↑/2↓, 3m 0↑/8↓; EBITDA FQ3 2026: 1m 1↑/0↓, 2m 2↑/0↓, 3m 0↑/8↓; EBIT FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/8↓; EBIT FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/8↓; Interest Expense FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/6↓; Interest Expense FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/6↓; EBT (GAAP) FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓; EBT (GAAP) FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓; Net Income (Excl. Excep) FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓; Net Income (Excl. Excep) FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓; Net Income (GAAP) FQ2 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/8↓  [data ≥ 2026-07-08 · export date unverified]",
+        "value": "EPS Normalized FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓; EPS Normalized FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓; Revenue FQ2 2026: 1m 0↑/4↓, 2m 0↑/4↓, 3m 0↑/9↓; Revenue FQ3 2026: 1m 4↑/0↓, 2m 4↑/0↓, 3m 0↑/9↓; EBITDA FQ2 2026: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/8↓; EBITDA FQ3 2026: 1m 1↑/1↓, 2m 1↑/1↓, 3m 0↑/8↓; EBIT FQ2 2026: 1m 0↑/3↓, 2m 0↑/3↓, 3m 0↑/8↓; EBIT FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/8↓; Interest Expense FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/6↓; Interest Expense FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/6↓; EBT (GAAP) FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/6↓; EBT (GAAP) FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/6↓; Net Income (Excl. Excep) FQ2 2026: 1m 0↑/2↓, 2m 0↑/2↓, 3m 0↑/7↓; Net Income (Excl. Excep) FQ3 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/7↓; Net Income (GAAP) FQ2 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/8↓  [data ≥ 2026-07-21 · export date unverified]",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "status": "present",
         "note": null
       },
       "acceleration_read": {
-        "value": "FY 2026 EPS Normalized: 1.56 (12m) → 1.61 (9m) → 1.71 (6m) → 1.03 (3m) → -0.45 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 EPS (GAAP): 1.57 (12m) → 1.63 (9m) → 1.70 (6m) → 1.02 (3m) → -0.44 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Revenue: 890.9 (12m) → 927.4 (9m) → 939.1 (6m) → 886.9 (3m) → 777.8 (2m) → 777.8 (1m) → 776.0 (latest); net -13% (12m→latest) | FY 2026 EBITDA: 122.9 (12m) → 131.1 (9m) → 134.5 (6m) → 92.6 (3m) → 4.05 (2m) → 4.05 (1m) → 3.49 (latest); net -97% (12m→latest) | FY 2026 EBIT: 90.7 (12m) → 96.2 (9m) → 103.3 (6m) → 63.9 (3m) → -24.8 (2m) → -24.8 (1m) → -25.4 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Interest Expense: -0.87 (12m) → -0.93 (9m) → -0.97 (6m) → -0.83 (3m) → -1.20 (2m) → -1.20 (1m) → -1.20 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 93.9 (12m) → 97.2 (9m) → 104.0 (6m) → 60.9 (3m) → -26.5 (2m) → -26.5 (1m) → -26.6 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): 71.9 (12m) → 75.0 (9m) → 78.9 (6m) → 47.4 (3m) → -19.6 (2m) → -18.7 (1m) → -18.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (GAAP): 72.0 (12m) → 74.1 (9m) → 78.7 (6m) → 45.6 (3m) → -19.9 (2m) → -18.8 (1m) → -19.0 (latest); worsening (crossed zero) (12m→latest)  [data ≥ 2026-07-08 · export date unverified]",
+        "value": "FY 2026 EPS Normalized: 1.54 (12m) → 1.61 (9m) → 1.71 (6m) → 0.95 (3m) → -0.42 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 EPS (GAAP): 1.56 (12m) → 1.63 (9m) → 1.69 (6m) → 0.88 (3m) → -0.42 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Revenue: 891.1 (12m) → 927.5 (9m) → 939.1 (6m) → 878.0 (3m) → 777.8 (2m) → 777.8 (1m) → 775.3 (latest); net -13% (12m→latest) | FY 2026 EBITDA: 123.1 (12m) → 131.2 (9m) → 133.7 (6m) → 85.9 (3m) → 4.05 (2m) → 4.05 (1m) → 3.42 (latest); net -97% (12m→latest) | FY 2026 EBIT: 90.8 (12m) → 96.4 (9m) → 102.5 (6m) → 56.5 (3m) → -24.8 (2m) → -24.8 (1m) → -25.4 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Interest Expense: -0.87 (12m) → -0.93 (9m) → -0.97 (6m) → -0.83 (3m) → -1.20 (2m) → -1.20 (1m) → -1.20 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 93.4 (12m) → 97.2 (9m) → 104.0 (6m) → 55.6 (3m) → -26.5 (2m) → -26.5 (1m) → -24.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): 71.8 (12m) → 75.1 (9m) → 78.9 (6m) → 41.9 (3m) → -18.7 (2m) → -18.7 (1m) → -18.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (GAAP): 71.3 (12m) → 74.0 (9m) → 78.7 (6m) → 41.6 (3m) → -18.8 (2m) → -18.8 (1m) → -19.0 (latest); worsening (crossed zero) (12m→latest)  [data ≥ 2026-07-21 · export date unverified]",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "status": "present",
         "note": null
       },
       "cross_name_anchor": {
-        "value": "NTM: TEV/REV 0.72 · TEV/EBITDA 84.63 · TEV/EBIT – · Price/Earnings – · PEG – | FY 2026: TEV/REV 0.73 · TEV/EBITDA 161.62 · TEV/EBIT – · Price/Earnings – · PEG – | FY 2027: TEV/REV 0.66 · TEV/EBITDA 12.31 · TEV/EBIT 21.39 · Price/Earnings 29.51 · PEG – | FY 2028: TEV/REV 0.60 · TEV/EBITDA 7.63 · TEV/EBIT 20.91 · Price/Earnings 26.76 · PEG –  [data ≥ 2026-07-08 · export date unverified]",
+        "value": "NTM: TEV/REV 0.75 · TEV/EBITDA 89.30 · TEV/EBIT – · Price/Earnings – · PEG – | FY 2026: TEV/REV 0.76 · TEV/EBITDA 172.06 · TEV/EBIT – · Price/Earnings – · PEG – | FY 2027: TEV/REV 0.69 · TEV/EBITDA 12.90 · TEV/EBIT 22.50 · Price/Earnings 30.79 · PEG – | FY 2028: TEV/REV 0.62 · TEV/EBITDA 7.96 · TEV/EBIT 21.81 · Price/Earnings 27.92 · PEG –  [data ≥ 2026-07-21 · export date unverified]",
         "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "status": "present",
         "note": null
       },
       "guidance_bridge": {
-        "value": "Revenue: latest guide '775.00 - 800.00' for FY 2026 (dated 2026-05-07) (stale — 60d old); actual ≥ guided floor 7/7 resolved; most recent resolved: FY 2025 MET; EBITDA: latest guide '0.00 - 10.00' for FY 2026 (dated 2026-05-07) (stale — 60d old); actual ≥ guided floor 6/7 resolved; most recent resolved: FY 2025 MISSED; Capital Expenditure: latest guide '(70.00) - (75.00)' for FY 2026 (dated 2026-05-07) (stale — 60d old); spend ≤ guided ceiling 3/3 resolved; most recent resolved: FY 2025 MET; Gross Margin %: latest guide 35.0 for FY 2027 (dated 2023-11-02) (stale — 977d old); actual ≥ guided floor 2/2 resolved; most recent resolved: FY 2022 MET  [data ≥ 2026-07-08 · export date unverified]",
+        "value": "Revenue: latest guide '775.00 - 800.00' for FY 2026 (dated 2026-05-07) (stale — 60d old); actual ≥ guided floor 7/7 resolved; most recent resolved: FY 2025 MET; EBITDA: latest guide '0.00 - 10.00' for FY 2026 (dated 2026-05-07) (stale — 60d old); actual ≥ guided floor 6/7 resolved; most recent resolved: FY 2025 MISSED; Capital Expenditure: latest guide '(70.00) - (75.00)' for FY 2026 (dated 2026-05-07) (stale — 60d old); spend ≤ guided ceiling 3/3 resolved; most recent resolved: FY 2025 MET; Gross Margin %: latest guide 35.0 for FY 2027 (dated 2023-11-02) (stale — 977d old); actual ≥ guided floor 2/2 resolved; most recent resolved: FY 2022 MET  [data ≥ 2026-07-21 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
         "status": "present",
         "note": null
@@ -941,6 +941,226 @@
       },
       "revision_events": {
         "value": [
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "-20.8",
+            "broker_current": "-21.3",
+            "consensus_before": "-19.99",
+            "consensus_after": "-19.99"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "-20.8",
+            "broker_current": "-21.3",
+            "consensus_before": "-20.1",
+            "consensus_after": "-20.1"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "-28.3",
+            "broker_current": "-28.9",
+            "consensus_before": "-26.83",
+            "consensus_after": "-26.59"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FQ2 2026",
+            "broker_prior": "-25.3",
+            "broker_current": "-25.9",
+            "consensus_before": "-26.48",
+            "consensus_after": "-26.55"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "-28.3",
+            "broker_current": "-28.9",
+            "consensus_before": "-26.59",
+            "consensus_after": "-26.59"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FQ2 2026",
+            "broker_prior": "-0.47",
+            "broker_current": "-0.48",
+            "consensus_before": "-0.45",
+            "consensus_after": "-0.45"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "-0.47",
+            "broker_current": "-0.48",
+            "consensus_before": "-0.45",
+            "consensus_after": "-0.45"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "-0.6",
+            "broker_current": "-0.61",
+            "consensus_before": "-0.42",
+            "consensus_after": "-0.42"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Upward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Gross Margin %",
+            "period": "FQ2 2026",
+            "broker_prior": "15.5",
+            "broker_current": "15.7",
+            "consensus_before": "17.69",
+            "consensus_after": "17.71"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FY 2026",
+            "broker_prior": "-0.6",
+            "broker_current": "-0.61",
+            "consensus_before": "-0.42",
+            "consensus_after": "-0.42"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "-35.9",
+            "broker_current": "-36.5",
+            "consensus_before": "-24.5",
+            "consensus_after": "-24.5"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "-35.9",
+            "broker_current": "-36.5",
+            "consensus_before": "-26.65",
+            "consensus_after": "-24.8"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FY 2026",
+            "broker_prior": "-24.8",
+            "broker_current": "-25.4",
+            "consensus_before": "-25.35",
+            "consensus_after": "-25.42"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "779.6",
+            "broker_current": "773.4",
+            "consensus_before": "776.0",
+            "consensus_after": "775.31"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "4.43",
+            "broker_current": "3.8",
+            "consensus_before": "3.49",
+            "consensus_after": "3.42"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FQ2 2026",
+            "broker_prior": "184.3",
+            "broker_current": "168.2",
+            "consensus_before": "163.86",
+            "consensus_after": "162.08"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "-17.95",
+            "broker_current": "-18.6",
+            "consensus_before": "-19.25",
+            "consensus_after": "-19.33"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Upward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Gross Margin %",
+            "period": "FY 2026",
+            "broker_prior": "24.4",
+            "broker_current": "24.7",
+            "consensus_before": "25.58",
+            "consensus_after": "25.61"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "-26.3",
+            "broker_current": "-26.8",
+            "consensus_before": "-18.79",
+            "consensus_after": "-18.79"
+          },
+          {
+            "date": "2026-07-21",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "-26.3",
+            "broker_current": "-26.8",
+            "consensus_before": "-18.96",
+            "consensus_after": "-18.96"
+          },
           {
             "date": "2026-07-08",
             "change_type": "Initiation of Coverage",
@@ -3409,100 +3629,23 @@
             "date": "2026-05-08",
             "change_type": "Downward Revision",
             "broker": "broker undisclosed",
-            "metric": "EPS Normalized",
-            "period": "FY 2026",
-            "broker_prior": "0.94",
-            "broker_current": "-0.6",
-            "consensus_before": "0.16",
-            "consensus_after": "-0.09"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EPS (GAAP)",
-            "period": "FY 2026",
-            "broker_prior": "0.94",
-            "broker_current": "-0.6",
-            "consensus_before": "-0.04",
-            "consensus_after": "-0.18"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EPS Normalized",
+            "metric": "EBT (Excl. Excep)",
             "period": "FQ2 2026",
-            "broker_prior": "0.27",
-            "broker_current": "-0.47",
-            "consensus_before": "0.11",
-            "consensus_after": "0.03"
+            "broker_prior": "16.8",
+            "broker_current": "-28.3",
+            "consensus_before": "5.34",
+            "consensus_after": "0.33"
           },
           {
             "date": "2026-05-08",
             "change_type": "Downward Revision",
             "broker": "broker undisclosed",
-            "metric": "Net Income (GAAP)",
-            "period": "FQ2 2026",
-            "broker_prior": "12.4",
-            "broker_current": "-20.8",
-            "consensus_before": "4.04",
-            "consensus_after": "0.35"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Gross Margin %",
-            "period": "FQ2 2026",
-            "broker_prior": "33.0",
-            "broker_current": "15.5",
-            "consensus_before": "28.2",
-            "consensus_after": "26.61"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Interest Expense",
-            "period": "FQ2 2026",
-            "broker_prior": "-2.7",
-            "broker_current": "-3.0",
-            "consensus_before": "-0.23",
-            "consensus_after": "-0.23"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EPS (GAAP)",
-            "period": "FQ2 2026",
-            "broker_prior": "0.27",
-            "broker_current": "-0.47",
-            "consensus_before": "0.04",
-            "consensus_after": "-0.04"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "Mizuho Securities USA LLC",
             "metric": "EBT (GAAP)",
-            "period": "FY 2026",
-            "broker_prior": "81.9",
-            "broker_current": "41.3",
-            "consensus_before": "38.86",
-            "consensus_after": "27.29"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Net Income (GAAP)",
-            "period": "FY 2026",
-            "broker_prior": "75.2",
-            "broker_current": "32.5",
-            "consensus_before": "29.15",
-            "consensus_after": "20.43"
+            "period": "FQ2 2026",
+            "broker_prior": "16.8",
+            "broker_current": "-28.3",
+            "consensus_before": "5.34",
+            "consensus_after": "0.33"
           },
           {
             "date": "2026-05-08",
@@ -3519,89 +3662,12 @@
             "date": "2026-05-08",
             "change_type": "Downward Revision",
             "broker": "broker undisclosed",
-            "metric": "Target Price",
-            "period": "Non-periodic",
-            "broker_prior": "34.0",
-            "broker_current": "10.0",
-            "consensus_before": "20.4",
-            "consensus_after": "18.0"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Recommendation",
-            "period": "Non-periodic",
-            "broker_prior": "Buy (1.00)",
-            "broker_current": "Hold (3.00)",
-            "consensus_before": "Outperform (1.75)",
-            "consensus_after": "Outperform (1.92)"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBT (GAAP)",
+            "metric": "Revenue",
             "period": "FY 2026",
-            "broker_prior": "99.0",
-            "broker_current": "42.7",
-            "consensus_before": "38.86",
-            "consensus_after": "27.29"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBT (GAAP)",
-            "period": "FY 2026",
-            "broker_prior": "58.0",
-            "broker_current": "-35.9",
-            "consensus_before": "38.86",
-            "consensus_after": "27.29"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Net Income (Excl. Excep)",
-            "period": "FY 2026",
-            "broker_prior": "42.6",
-            "broker_current": "-26.3",
-            "consensus_before": "18.55",
-            "consensus_after": "12.14"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Net Income (GAAP)",
-            "period": "FY 2026",
-            "broker_prior": "42.6",
-            "broker_current": "-26.3",
-            "consensus_before": "29.15",
-            "consensus_after": "20.43"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBITDA",
-            "period": "FY 2026",
-            "broker_prior": "101.2",
-            "broker_current": "4.4",
-            "consensus_before": "50.68",
-            "consensus_after": "45.54"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBIT",
-            "period": "FY 2026",
-            "broker_prior": "70.4",
-            "broker_current": "-24.8",
-            "consensus_before": "30.01",
-            "consensus_after": "23.92"
+            "broker_prior": "899.4",
+            "broker_current": "779.6",
+            "consensus_before": "837.87",
+            "consensus_after": "832.58"
           },
           {
             "date": "2026-05-08",
@@ -3618,86 +3684,20 @@
             "date": "2026-05-08",
             "change_type": "Downward Revision",
             "broker": "broker undisclosed",
-            "metric": "Gross Margin %",
-            "period": "FY 2026",
-            "broker_prior": "32.6",
-            "broker_current": "24.4",
-            "consensus_before": "30.61",
-            "consensus_after": "29.84"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBT (Excl. Excep)",
-            "period": "FQ2 2026",
-            "broker_prior": "16.8",
-            "broker_current": "-28.3",
-            "consensus_before": "5.34",
-            "consensus_after": "0.33"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
             "metric": "EBT (GAAP)",
-            "period": "FQ2 2026",
-            "broker_prior": "16.8",
-            "broker_current": "-28.3",
-            "consensus_before": "5.34",
-            "consensus_after": "0.33"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Net Income (Excl. Excep)",
-            "period": "FQ2 2026",
-            "broker_prior": "12.4",
-            "broker_current": "-20.8",
-            "consensus_before": "4.96",
-            "consensus_after": "1.64"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Upward Revision",
-            "broker": "broker undisclosed",
-            "metric": "Interest Expense",
             "period": "FY 2026",
-            "broker_prior": "-12.5",
-            "broker_current": "-11.1",
-            "consensus_before": "-0.8",
-            "consensus_after": "-0.8"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBITDA",
-            "period": "FQ2 2026",
-            "broker_prior": "27.2",
-            "broker_current": "-18.0",
-            "consensus_before": "9.59",
-            "consensus_after": "5.65"
-          },
-          {
-            "date": "2026-05-08",
-            "change_type": "Downward Revision",
-            "broker": "broker undisclosed",
-            "metric": "EBIT",
-            "period": "FQ2 2026",
-            "broker_prior": "19.5",
-            "broker_current": "-25.3",
-            "consensus_before": "6.44",
-            "consensus_after": "1.96"
+            "broker_prior": "58.0",
+            "broker_current": "-35.9",
+            "consensus_before": "38.86",
+            "consensus_after": "27.29"
           }
         ],
-        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-07-08 · export date unverified]",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-07-21 · export date unverified]",
         "status": "present",
         "note": null
       },
       "consensus_stats": {
-        "value": "Target price: mean $12.00, median $12.00, high/low 16.00/10.00, N 8/8; Ratings: Buy 2, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-08 · export date unverified]",
+        "value": "Target price: mean $12.00, median $12.00, high/low 16.00/10.00, N 8/8; Ratings: Buy 2, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-21 · export date unverified]",
         "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
         "status": "present",
         "note": null
@@ -3709,8 +3709,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.4d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 7,412,289 short ÷ 3,082,257 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.5d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 7,412,289 short ÷ 3,025,106 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -3946,8 +3946,8 @@
                 "606",
                 "759",
                 "784",
-                "776",
-                "850"
+                "775",
+                "849"
               ],
               "values": [
                 74.0,
@@ -3960,9 +3960,10 @@
                 606.307,
                 759.444,
                 784.41,
-                776.0,
-                849.98
-              ]
+                775.31,
+                848.58
+              ],
+              "material": false
             },
             {
               "label": "Revenue growth",
@@ -3978,9 +3979,10 @@
                 "+25%",
                 "— (basis)",
                 "+2% (vs FY25)",
-                "+10%"
+                "+9%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA ($M)",
@@ -4009,9 +4011,10 @@
                 76.645,
                 102.885,
                 79.484,
-                3.49,
-                45.86
-              ]
+                3.42,
+                45.67
+              ],
+              "material": false
             },
             {
               "label": "EBITDA margin",
@@ -4029,7 +4032,8 @@
                 "0%",
                 "5%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBIT ($M)",
@@ -4058,9 +4062,10 @@
                 63.552,
                 88.373,
                 64.272,
-                -25.35,
-                26.39
-              ]
+                -25.42,
+                26.18
+              ],
+              "material": false
             },
             {
               "label": "Net income ($M)",
@@ -4091,7 +4096,8 @@
                 47.859,
                 -18.96,
                 20.92
-              ]
+              ],
+              "material": false
             },
             {
               "label": "EPS (GAAP, dil.)",
@@ -4122,7 +4128,8 @@
                 1.05,
                 -0.42,
                 0.47
-              ]
+              ],
+              "material": false
             },
             {
               "label": "EPS (Normalized)",
@@ -4153,7 +4160,136 @@
                 0.916774,
                 -0.42,
                 0.44
-              ]
+              ],
+              "material": false
+            },
+            {
+              "label": "Restructuring Charges ($M)",
+              "cells": [
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "-2",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—"
+              ],
+              "values": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                -2.2,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "material": false
+            },
+            {
+              "label": "Gain (Loss) On Sale Of Invest. ($M)",
+              "cells": [
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "-0",
+                "-0",
+                "0",
+                "0",
+                "0",
+                "—",
+                "—"
+              ],
+              "values": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                -0.1,
+                -0.2,
+                0.0,
+                0.013,
+                0.006,
+                null,
+                null
+              ],
+              "material": false
+            },
+            {
+              "label": "Legal Settlements ($M)",
+              "cells": [
+                "—",
+                "—",
+                "1",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—"
+              ],
+              "values": [
+                null,
+                null,
+                1.2,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "material": false
+            },
+            {
+              "label": "Other Unusual Items ($M)",
+              "cells": [
+                "-0",
+                "-0",
+                "-0",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—"
+              ],
+              "values": [
+                -0.1,
+                -0.1,
+                -0.1,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "material": false
             },
             {
               "label": "CFO ($M)",
@@ -4171,7 +4307,8 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Capex ($M)",
@@ -4189,7 +4326,8 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "FCF ($M)",
@@ -4207,10 +4345,11 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             }
           ],
-          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-08; (R) = Reclassified basis",
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclassified basis",
           "is_estimate": [
             false,
             false,
@@ -4297,7 +4436,8 @@
                 "214",
                 "187"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Gross margin",
@@ -4332,7 +4472,8 @@
                 "36%",
                 "28%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA ($M)",
@@ -4367,7 +4508,8 @@
                 "26",
                 "2"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA margin",
@@ -4402,7 +4544,8 @@
                 "12%",
                 "1%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Revenue QoQ",
@@ -4437,7 +4580,8 @@
                 "+7%",
                 "-12%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Revenue YoY",
@@ -4472,7 +4616,8 @@
                 "+29%",
                 "+15%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             }
           ],
           "note": "QoQ/YoY same-basis only; (R) = Reclassified",
@@ -4495,7 +4640,7 @@
         "note": null
       },
       "as_of": {
-        "value": "≥2026-07-08",
+        "value": "≥2026-07-21",
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
@@ -4504,6 +4649,7 @@
     "primary_source": {
       "releases": [
         {
+          "filed": "2026-05-07",
           "source_ref": "8-K 0001193125-26-210294 EX-99.1",
           "guidance": [
             {
@@ -4550,6 +4696,7 @@
           "qa_flags": []
         },
         {
+          "filed": "2026-02-26",
           "source_ref": "8-K 0001193125-26-073373 EX-99.1",
           "guidance": [
             {
@@ -4604,6 +4751,7 @@
           "qa_flags": []
         },
         {
+          "filed": "2025-11-04",
           "source_ref": "8-K 0001193125-25-263585 EX-99.1",
           "guidance": [],
           "reconciliation": [
@@ -4631,6 +4779,7 @@
           ]
         },
         {
+          "filed": "2025-08-07",
           "source_ref": "8-K 0000950170-25-104561 EX-99.1",
           "guidance": [
             {
@@ -4675,6 +4824,7 @@
           "qa_flags": []
         },
         {
+          "filed": "2025-05-08",
           "source_ref": "8-K 0000950170-25-066385 EX-99.1",
           "guidance": [],
           "reconciliation": [
@@ -4710,6 +4860,7 @@
           ]
         },
         {
+          "filed": "2025-02-27",
           "source_ref": "8-K 0000950170-25-028361 EX-99.1",
           "guidance": [],
           "reconciliation": [
@@ -4794,6 +4945,12 @@
         "status": "present",
         "note": null
       },
+      "current_guide": {
+        "value": "revenue 2026: 775.0–800.0 $M; adjusted ebitda next-fy: 0.0–10.0 $M",
+        "source_ref": "8-K 0001193125-26-210294 EX-99.1 (filed 2026-05-07)",
+        "status": "present",
+        "note": null
+      },
       "guide_verification": {
         "value": "guide verification (revenue): CIQ 775.0–800.0 vs release 775.0–800.0 → cross-source VERIFIED",
         "source_ref": "CIQ revenue guide vs release actual/outlook",
@@ -4854,7 +5011,8 @@
               0.231127,
               0.213619,
               0.15443
-            ]
+            ],
+            "material": false
           },
           {
             "label": "RoCE %",
@@ -4881,7 +5039,8 @@
               0.157853,
               0.159457,
               0.115888
-            ]
+            ],
+            "material": false
           },
           {
             "label": "RoA %",
@@ -4908,7 +5067,8 @@
               0.125198,
               0.125805,
               0.092394
-            ]
+            ],
+            "material": false
           },
           {
             "label": "Total debt/equity",
@@ -4924,7 +5084,8 @@
               "0.15x",
               "0.16x"
             ],
-            "values": []
+            "values": [],
+            "material": false
           },
           {
             "label": "Current ratio",
@@ -4940,7 +5101,8 @@
               "2.16x",
               "1.77x"
             ],
-            "values": []
+            "values": [],
+            "material": false
           },
           {
             "label": "Dividend/sh",
@@ -4956,7 +5118,8 @@
               "none",
               "none"
             ],
-            "values": []
+            "values": [],
+            "material": false
           }
         ],
         "note": "",
@@ -4979,7 +5142,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 13.02,
+        "value": 13.82,
         "source_ref": "EOD VITL last close",
         "status": "present",
         "note": null
@@ -5014,7 +5177,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-24"
+      "as_of": "2026-07-28"
     },
     "stock_performance": {
       "points": [
@@ -6396,7 +6559,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "share of consumers that were new households (first-time buyers)",
+          "metric": "share of consumers that were new households (had not bought previously)",
           "period": "2024 and 2025",
           "value": "more than 55%",
           "value_num": null,
@@ -6407,7 +6570,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "share of consumers that were new households (first-time buyers)",
+          "metric": "share of consumers that were new households (had not bought previously)",
           "period": "first quarter of 2026",
           "value": "just 50%",
           "value_num": null,
@@ -6418,8 +6581,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "units per retained household (buy rate)",
-          "period": "first quarter vs. average for the prior 8 quarters",
+          "metric": "units per retained household",
+          "period": "first quarter",
           "value": "2% higher",
           "value_num": null,
           "unit": null,
@@ -6428,7 +6591,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "pricing_action",
           "metric": "price gap to competing premium branded outdoor access eggs at a top 10 customer",
           "period": "recently",
           "value": "from about 35% above ... to about 25%",
@@ -6440,8 +6603,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "volume increase after price gap reduction at a top 10 customer",
-          "period": "2 weeks vs. prior 4 weeks",
+          "metric": "volume change after price gap reduction at top 10 customer",
+          "period": "after just 2 weeks compared to the prior 4 weeks",
           "value": "increased by 18% after just 2 weeks compared to the prior 4 weeks",
           "value_num": null,
           "unit": null,
@@ -6452,7 +6615,7 @@
         {
           "kind": "competitive_position",
           "metric": "TDP increase secured with a top 3 customer",
-          "period": "2026",
+          "period": null,
           "value": "at least 50% TDP increase",
           "value_num": null,
           "unit": null,
@@ -6462,7 +6625,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "TDPs added over 2026",
+          "metric": "TDPs (total distribution points) anticipated to add over 2026",
           "period": "over the course of 2026",
           "value": "20 to 30 TDPs or 15% to 25%",
           "value_num": null,
@@ -6473,9 +6636,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "quarterly average PDPs",
-          "period": "Q1 2026 vs Q4 2025 vs Q1 2025",
-          "value": "149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025",
+          "metric": "quarterly average PDPs (TDPs)",
+          "period": "first quarter [2026]",
+          "value": "149.8 PDPs",
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
@@ -6483,46 +6646,46 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "leading_indicator",
+          "metric": "quarterly average PDPs (TDPs)",
+          "period": "fourth quarter 2025",
+          "value": "144.8",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "quarterly average PDPs (TDPs)",
+          "period": "first quarter of 2025",
+          "value": "115.8",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pass_through_structure",
+          "metric": "egg purchases from farmer partners regardless of retail sales environment",
+          "period": null,
+          "value": "we buy eggs from our farmer partners regardless of the retail sales environment",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Because we buy eggs from our farmer partners regardless of the retail sales environment, temporary imbalances between supply and demand can create a costly supply overhang.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "competitive_position",
-          "metric": "volume share within all outlets of MULO+ (Circana)",
+          "metric": "volume share gained within all outlets of MULO+ (Circana)",
           "period": "2025",
-          "value": "gained 25 basis points of volume share",
+          "value": "25 basis points of volume share",
           "value_num": null,
           "unit": null,
           "verbatim": "In 2025, we gained 25 basis points of volume share within all outlets of MULO+ according to Circana, making us the top share gainer in premium shell egg brands.",
-          "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "volume share (Circana)",
-          "period": "year-to-date through February 15",
-          "value": "gained 35 basis points of volume share",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "According to the same data source, year-to-date through February 15, we gained 35 basis points of volume share, again, positioning us as one of the top share gainers in premium shell egg brands.",
-          "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "farm network size",
-          "period": "2025",
-          "value": "more than 600 small farms",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Third, our farm network expanded to more than 600 small farms committed to our pasture-ais standards, where hands roam freely on open pastures with year-round outdoor access.",
-          "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "farms added in the year",
-          "period": "single year (2025)",
-          "value": "approximately 175 farms",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Adding approximately 175 farms in a single year is a testament to the trust we built in the agricultural community around our unwavering commitment to humane animal care.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -6533,83 +6696,78 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a self-funded, growing brand doing a self-inflicted price-gap reset, but FY26 profit consensus collapsed ~97% and trial is slowing.",
+    "evidence_balance": "mixed — a clean balance sheet and reversible price-gap mechanics offset an ~97% FY26 EBITDA collapse, cash burn, and weakening trial.",
     "bull_points": [
       {
-        "claim": "The FY26 EBITDA collapse is a self-inflicted margin reset, not a demand break: management ties compressed velocity to price gaps that briefly reached unsustainable levels, and the base of existing consumers stayed loyal.",
+        "claim": "The de-rate is a documented earnings/guidance shock, not a leverage or solvency event: gap-downs trace to the 2026-02-26 and 2026-05-07 earnings prints (with a founder departure and a butter wind-down), while the balance sheet stays net-debt/EBITDA 0.0x with interest coverage 99.4x.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Absolute revenue and EBITDA still grew over the full arc (revenue 74→784 and EBITDA -1→103 over FY17→FY25, LTM EBITDA $79M), so the collapsed trailing multiple sits on a base that had been rising, not a business already in absolute decline.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The load-bearing mechanism behind the reset is price-gap-driven, and management shows it is reversible: reducing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks vs the prior four.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Early evidence the price-gap remedy works: narrowing the gap to competing premium eggs at a top-10 customer from ~35% to ~25% lifted volumes 18% within two weeks vs the prior four.",
+        "claim": "Distribution momentum is expanding into the reset: an at-least-50% TDP increase secured with a top-3 customer and category-captain assignment, supporting a return to volume growth.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Distribution momentum is intact and dated: an at-least-50% TDP increase secured with a top-3 customer, plus a plan to add 20-30 TDPs (15%-25%) over 2026 for the best yearly TDP gain since IPO.",
+        "claim": "Quarterly average PDPs stepped up to 149.8 in Q1-26 from 144.8 in Q4-25 and 115.8 in Q1-25, with a guided 170–175 exit rate — a shelf-space leading indicator moving the right way through the shock.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Multi-year trajectory shows durable share and top-line strength, not terminal decline: revenue compounded 74M (FY17) to 784M (LTM) and the name gained 25bps of MULO+ volume share in 2025 as top premium-egg share gainer.",
-        "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet gives runway to fund the reset: net-debt/EBITDA 0.0x and interest coverage 99.4x, far below the peer-median 3.8x leverage.",
-        "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]",
-        "cited": true
-      },
-      {
-        "claim": "On revenue the peer discount looks partly residual, not fully earned: name grows 26% vs peer-median 4% and carries far lighter leverage (0.1x vs 3.8x), yet trades at TEV/Rev 0.6 vs peer-median 1.2 — pose whether the discount is overshoot given the growth/leverage edge.",
+        "claim": "The name grows faster and carries far less leverage than the peer median (rev growth 26% vs 4%, Debt/EBITDA 0.1 vs 3.8) — inputs the human must weigh in judging whether the discount to peers is earned or residual, given the peer set is heterogeneous.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Management has slowed CapEx by ~$75M and cut ~10% of non-ECS headcount to align cost with the lower price level, protecting cash while the top line resets.",
-        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+        "claim": "Consensus target ($12 mean/median) sits near the current $13.82 price and one broker raised its target to $13 on 2026-06-30, so the sell-side no longer prices large further downside despite the negative FY26 marks.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The consensus EBITDA path did not just dip — it crossed near zero: FY26 EBITDA consensus fell from 122.9 (12m ago) to 3.49 (net -97%), and EPS/EBIT/net-income all crossed into negative; this is the real signal, not an optical trailing artifact.",
+        "claim": "Forward earnings power has collapsed, not just the trailing optic: FY26E EBITDA was cut from $123M to $3.4M (net -97%) and FY26 EPS crossed from +$1.54 to -$0.42 over the revision window — the real signal is a genuine forward earnings hole, not a stale trailing multiple.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The headline EV/EBITDA 1.2x vs peer-median 7.2x is an optical MISREAD: on a forward basis the name trades NTM TEV/EBITDA 70.81x vs peer-median 8.98x — the trailing 'cheapness' inverts to a premium once collapsed forward EBITDA is used.",
+        "claim": "The 1.2x EV/EBITDA vs peer 7.2x is optically cheap but the paired forward basis exposes it as a MISREAD of the trailing figure: NTM TEV/EBITDA is 70.81x (name) vs 8.98x peers, because FY26 EBITDA has been guided to near zero — the trailing multiple is cheap only against a collapsing denominator.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "The margin % decline is corroborated by falling absolute EBITDA, not offset by it: LTM absolute EBITDA already slipped to 79 from 103 (FY25) even as the margin % fell to 10% — both the ratio and the dollars are deteriorating.",
+        "claim": "The margin % fall is a real signal, not just an optical dip: EBITDA margin fell to a guided FY26 ~0% and absolute FY26E EBITDA fell to $3.4M from FY25 $103M — here the absolute figure confirms the % decline rather than reconciling it away.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Cash generation has turned negative: LTM levered FCF is -53.9M with latest-quarter OCF also negative, so the company is burning cash through the reset.",
+        "claim": "The company is burning cash through the reset: LTM levered FCF is -$53.9M and FCF turned negative even as capex ran to -$100M, so the pristine 0.0x net-debt masks a self-funding gap.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
         "cited": true
       },
       {
-        "claim": "The trial engine that drove growth is weakening: the share of first-time-buyer households fell from >55% (2024-25) to just 50% in Q1 2026, management's own evidence that brand awareness is no longer converting at these price gaps.",
+        "claim": "The demand engine itself weakened: new-household share of consumers dropped to 50% in Q1-26 from more than 55% in 2024-2025, the direct evidence that price gaps choked new-customer acquisition.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Guidance has been cut twice in three months — FY26 revenue lowered from $900-920M (Feb) to $775-800M (May) — alongside a butter wind-down and a founder/Executive Chairperson departure, a stacked negative-event sequence.",
-        "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · May-07-2026",
-        "cited": true
-      },
-      {
-        "claim": "Revision breadth is uniformly negative: FY26 EPS 0↑/1↓ and revenue 0↑/2↓ last month, with brokers cutting FY26 EBITDA estimates from the 70-105 range down to low-single-digits across the May prints.",
+        "claim": "Revisions are uniformly negative and fresh: FY26 revenue breadth 0↑/3↓ and EPS 0↑/1↓ last month, with multiple brokers cutting FY26 revenue, EBITDA and ratings to Hold on 2026-05-08.",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       },
       {
-        "claim": "The delivery track record just broke on the metric that matters: most-recent resolved EBITDA guide was MISSED (FY2025), undermining confidence in the $0-10M FY26 adjusted-EBITDA floor.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "claim": "The pass-through cost structure amplifies the downturn: the company buys eggs from farmers regardless of the retail sales environment, so a demand shortfall creates a costly supply overhang that lands in margins.",
+        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       }
     ],
@@ -6617,95 +6775,98 @@
       {
         "name": "Freshpet",
         "outcome": "recovered",
-        "distinguishing_fact": "High-growth premium US perishable-food single-category brand that endured a margin/cash-burn scare during a capacity build before profitability inflected — the pattern VITL bulls invoke for the 2027 margin recovery.",
+        "distinguishing_fact": "US single-category premium-food growth name that endured a margin/velocity scare and heavy capex build before economics re-rated on volume recovery.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "The Simply Good Foods Company",
+        "outcome": "recovered",
+        "distinguishing_fact": "Branded premium consumer-staples name that navigated a demand/pricing wobble while keeping low leverage and reaccelerating distribution.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Oatly Group AB",
         "outcome": "went terminal",
-        "distinguishing_fact": "Premium branded perishable-food challenger whose growth story stalled into persistent negative EBITDA margin and cash burn — the pattern bears fear if VITL's trial engine and margins do not recover.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "The Hain Celestial Group",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Organic/natural-food brand that de-rated hard on revenue declines and thin margins into a value-trap zone — the pattern for a premium natural name whose premium erodes.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Cal-Maine Foods",
-        "outcome": "recovered",
-        "distinguishing_fact": "Pure-play shell-egg producer whose earnings swing violently with the egg-commodity cycle and mean-revert — the pattern for reading VITL's price-gap/glut hit as cyclical rather than structural.",
+        "distinguishing_fact": "Premium better-for-you brand where volume growth failed to fund a heavy capacity build and margins stayed negative, a value-trap pattern for a story stock outrunning its economics.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Beyond Meat",
         "outcome": "went terminal",
-        "distinguishing_fact": "Premium-priced better-for-you food brand whose price premium collapsed as trial stalled and category tailwind faded, driving durable losses — the pattern behind VITL's first-time-buyer slowdown.",
+        "distinguishing_fact": "Premium-priced niche category leader whose price premium eroded as competition/commodity dynamics compressed the gap and new-household trial stalled.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Chuy's Holdings",
+        "outcome": "recovered",
+        "distinguishing_fact": "Single-concept US consumer name that de-rated on a growth/margin reset but retained a clean balance sheet and re-rated as unit economics normalized.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the FY26 collapse a one-year, self-inflicted price-gap/oversupply reset that reverses as gaps narrow and distribution lands in 2027 — or the start of a structural erosion of the brand's sustainable price premium and trial engine?",
+      "question": "Is the FY26 earnings collapse a one-year 'low watermark' reset from a reversible price-gap shock (overshoot), or the start of a structural erosion of Vital Farms' premium pricing power (value trap)?",
       "evidence_for": [
         {
-          "claim": "Narrowing the price gap at a top-10 customer from ~35% to ~25% produced an 18% volume lift in two weeks, management's proof the remedy is mechanical and fast-acting.",
+          "claim": "Narrowing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks — direct evidence the velocity loss is price-gap-driven and reversible.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Distribution is expanding on committed terms — an at-least-50% TDP increase with a top-3 customer and 20-30 TDPs planned for 2026 — supporting a volume-driven return to growth.",
+          "claim": "Distribution is expanding through the reset (≥50% TDP increase with a top-3 customer; PDPs 149.8 vs 115.8 a year earlier), supporting a volume-led recovery path.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Retained-consumer buy rate held up (units per retained household 2% above the prior 8-quarter average), suggesting the loyal base did not defect.",
-          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "claim": "The balance sheet can absorb a reset year: net-debt/EBITDA 0.0x and interest coverage 99.4x leave room to fund the transition.",
+          "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "First-time-buyer household share fell from >55% to 50% — the trial engine driving 15 years of growth is decelerating at current price gaps.",
+          "claim": "New-household trial fell to 50% from more than 55% — the growth engine (brand-awareness → trial conversion) weakened at these price gaps, suggesting the premium may be structurally capped.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Consensus FY26 EBITDA fell -97% (122.9→3.49) and EPS/EBIT/net income crossed into negative, showing the profit base itself has evaporated for the year.",
+          "claim": "FY26E EBITDA was slashed ~97% to $3.4M and FY26 EPS crossed to a loss, and the cash burn (LTM FCF -$53.9M) means the reset year consumes capital, not just optics.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Management concedes cost-structure realignment lands mostly in '2027 and beyond,' so the margin recovery is a forward promise, not a delivered result, against a just-MISSED FY25 EBITDA guide.",
-          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+          "claim": "The pass-through egg-buying structure means demand shortfalls mechanically create a costly supply overhang, so margin damage is not purely a pricing choice management can fully reverse.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash runway is not derivable from the supplied facts: FCF is -53.9M with negative OCF, but survival_capacity explicitly flags cash 'not derived — a risk'; the quarterly burn rate versus the ~$51M cash / $113.4M cash+securities is unresolved — an opacity risk.",
-      "No forward-basis EV/EBITDA adjusted figure and no adjusted EPS are in the revised guidance (both UNKNOWN), so cheap-overshoot vs cheap-terminal cannot be distinguished on a clean forward multiple.",
-      "No segment-level EBITDA breakout (Segments sheet has no EBITDA section) — the profitability drag of the discontinued butter line versus core eggs cannot be isolated.",
-      "Covenant terms are UNKNOWN (extraction failed) and the JPMorgan revolver capacity/draw is undisclosed — no covenant-basis leverage or headroom read is possible.",
-      "The peer set is HETEROGENEOUS (market caps $50M-$78.0B, 1567x span); every peer multiple must be treated as confidence-gated, not a clean benchmark for a $480M name.",
-      "The revised FY26 guide assumes a return to positive shell-egg volume growth by Q3 2026 with Q4 acceleration — the 2026-08-06 print is the first checkpoint and that assumption is unverified.",
-      "The size of ongoing farmer-contract-amendment payments and inventory/breaker-channel drag from managing oversupply is not quantified in the supplied facts.",
-      "TEV vintage (2026-06-29) does not match the multiples-pricing vintage (2026-07-08), and coherence is flagged false — comps may need re-pull before leaning on any single figure."
+      "Cash runway is not derived from the supplied facts — self-funding is flagged MIXED (latest-Q OCF < 0 and LTM FCF < 0); with capex ~$100M and no forward FCF guide, the burn duration is an unresolved BEARISH gap.",
+      "No forward/adjusted EV/EBITDA basis and no adjusted EPS in the revised guidance — the trailing 1.2x cannot be reconciled to a forward number, leaving overshoot-vs-terminal formally unresolved (EV/EBITDA note).",
+      "Single-segment (Eggs and Butter) reporting means no segment EBITDA breakout; the butter wind-down charge magnitude and its FY26 P&L drag are not quantified in the supplied facts — an opacity risk.",
+      "Covenant terms are UNKNOWN (extraction failed) and the JPMorgan revolver is shown undrawn but with no disclosed terms — liquidity headroom under a prolonged burn is not verifiable.",
+      "Whether FY26 is truly the 'low watermark' with FY27 recovery (consensus FY27E EBITDA $45.7M) depends on cost-structure actions whose 2027 impact management says is still to be realized — unconfirmed.",
+      "The 2026-08-06 next print is the checkpoint that would confirm or refute the committed $775–800M revenue / $0–$10M EBITDA outlook and the Q3 return to positive shell-egg volume growth — not yet resolved.",
+      "Peer set is HETEROGENEOUS (caps $50M–$78.0B, 1567x); whether the discount to the 7.2x peer median is earned or residual cannot be read cleanly off any single peer multiple."
     ]
   },
   "caveats": [
-    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.3s fetch)",
-    "EV/EBITDA cross-sheet gap — CIQ's Financials→Multiples reads 1.5x and its Comparable-Analysis sheet reads 1.2x on the same concept; verify which the verdict should use (a stale Close, a different pricing date, or an EBITDA basis) before reading either."
+    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
+    "EV/EBITDA cross-sheet gap — CIQ's Financials→Multiples reads 1.5x and its Comparable-Analysis sheet reads 1.2x on the same concept; verify which the verdict should use (a stale Close, a different pricing date, or an EBITDA basis) before reading either.",
+    "Bare peer-comparison (a bear point): 'The 1.2x EV/EBITDA vs peer 7.2x is optically cheap but the paired forward basis exposes it as a MISREAD of the trailing figure: NTM TEV/EBITDA is 70.81x (name) vs 8.98x peers, because FY26 EBITDA has been guided to near zero — the trailing multiple is cheap only against a collapsing denominator.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The 1.2x EV/EBITDA vs peer 7.2x is optically cheap but the paired forward basis exposes it as a MISREAD of the trailing figure: NTM TEV/EBITDA is 70.81x (name) vs 8.98x peers, because FY26 EBITDA has been guided to near zero — the trailing multiple is cheap only against a collapsing denominator.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "operating-drivers: Tier-B rows capped at 12 — volume share gained (Circana) dropped",
+    "operating-drivers: Tier-B rows capped at 12 — farm network size / farms added dropped",
     "operating-drivers: Tier-B rows capped at 12 — brand awareness dropped",
     "operating-drivers: Tier-B rows capped at 12 — households served / retail locations dropped",
-    "operating-drivers: Tier-B rows capped at 12 — May price increase benefit to net revenue dropped",
-    "TWIN 'Freshpet' has numbers ['2027'] — must be non-numeric"
+    "operating-drivers: Tier-B rows capped at 12 — May price increase (benefit to net revenue) dropped"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-27T10:07:25.757475Z",
+  "assembled_at": "2026-07-30T07:54:29.746815Z",
+  "extraction_version": "2026-07-28.1",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Packaged Foods and Meats",
@@ -6725,7 +6886,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-27T10:07:25.467558Z",
+    "computed_at": "2026-07-30T07:55:54.759529Z",
     "reason": "own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced",
     "data_quality": "band_incoherent+band_unreconciled",
     "data_quality_detail": [
