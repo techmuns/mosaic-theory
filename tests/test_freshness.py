@@ -213,11 +213,12 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     assert age_fail == over_ceiling, (age_fail, over_ceiling)
     assert basis_fail == {"FUBO"}, basis_fail
     assert quiet, "no name passes both guards — a gate that stops every build is a freeze"
-    # VRRM LEFT this set in the 2026-07-29 re-measure — not because anything about VRRM changed,
-    # but because the measure did: at 48d against its own build date it is over the ceiling, where
-    # the old oldest→newest form put it at exactly 45 and passing. Its comps re-export moves it
-    # back; when that lands, add it here rather than loosening the assertion.
-    assert quiet == {"AORT", "EPAM", "IT", "NCNO", "SMPL", "VITL"}, quiet
+    # VRRM left this set in the 2026-07-29 re-measure (48d against its own build date), and
+    # CNXC/BRBR left it earlier on panel age. **All three RETURNED on 2026-07-30** when the
+    # Estimates + Comps re-exports landed and the fleet re-assembled — which is the assertion
+    # moving with a WIN, as its own note instructed, rather than being loosened. FUBO stays out on
+    # the 11.13x share basis and MVST cannot re-assemble at all (outside the screen cohort).
+    assert quiet == {"AORT", "BRBR", "CNXC", "EPAM", "IT", "NCNO", "SMPL", "VITL", "VRRM"}, quiet
     # ...and each quiet name is quiet for a STATED reason — it either RECONCILES (the end state we
     # want) or merely DRIFTS (labelled, per clause (e)). The first cut asserted every quiet name
     # drifts, carrying the note "if a name now reconciles this is a WIN, but the assertion must
