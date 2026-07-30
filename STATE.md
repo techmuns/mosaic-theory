@@ -3984,6 +3984,56 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
+**AUDIT-REMEDIATION COUNT — 8 of 13 after #270 (2026-07-30).** Three read-only verifications were
+run BEFORE building, at the operator's direction, and two of the three changed the plan:
+
+1. **P3 pt 1 is NOT closed by item 16's `role` — it stays open.** Measured on the committed record,
+   not reasoned from the schema. Three independent reasons, any one sufficient: (i) **the row is
+   untagged** — `scenarios/SMPL.json .assumptions.revenue.references[1]` (`label` "LTM revenue",
+   `value` 1416.208, `source` "committed dossier anchor block") carries no `role` at all, and only
+   **34 of 119** fleet reference rows do, because `FIELDED_REFS_FROM = "1.3"` binds at WRITE and
+   legacy rows stay legal forever; (ii) **`REF_ROLES` has no vintage member** — {median, mean,
+   percentile, band_low, band_high, trough, peak, current, reported, consensus, guidance,
+   peer_median, peer, analogue} types WHICH STATISTIC, never AS-OF, and the nearest (`reported`)
+   would assert something false; (iii) **different defect classes** — `role` fixed a SELECTION
+   defect (the masthead's `find(/median/i)` picking by array order), while P3 pt 1 is a DISCLOSURE
+   defect: the row is correctly typed and legitimately used, but its value is frozen entry-vintage
+   (1,416.208 vs live 1,392.235) and its source claims a provenance that now belongs to a different
+   number. Neither `role`, `leg` nor `excluded` can express either half — `excluded` would be a lie
+   in the other direction, since the row IS used. **So the stop point is 9, not 10** — the
+   operator's own 9-branch, reached independently.
+2. **19a does NOT batch with 29 + `spot_as_of` — split, and the reason is mechanism, not files.**
+   Files ARE disjoint but the attribution was off: 19a lives in **`vinci/dossier/mechanical.py`**,
+   not `ciq_sheets.py`. The disqualifier is that they are different KINDS of change: 19a is a
+   one-file derivation fix verified by calling a function on real bundles — no schema, no
+   migration, no record touched — whereas 29 + `spot_as_of` are schema-gated field additions on
+   `ScenarioRecord` touching all 7 committed records, `_schema.json`/`_seal.json`/
+   `_amendment_index.json`, both render twins, and a forward gate. Batching them means the
+   migration's green suite vouches for the derivation fix too. **And 29 cannot close its half in
+   any case** — this file's own closure table says ANALYST-DATA items close on "guard ships **AND**
+   the surfaced instance is adjudicated", so shipping the typed field surfaces SMPL's bull-leg
+   violation (1,420 vs LTM 1,392) and leaves the half open pending an operator ruling. Shipping it
+   now would add schema churn for **zero** count movement.
+3. **`_figure_cited` (#268) tolerates rounding, with one gap that would refuse a CORRECT page.**
+   Measured, not reasoned: `$392M` against a row holding 391.9 **matches** (the `f"{a:.0f}"` form),
+   as do `$391.9M`, `$1,523M` and `$61M`. **The live gap is unit-shifting: `$1.5bn` against
+   −1,523.3 does NOT match** — and CNXC's −1,523.3 is one of only **two** guarded figures on the
+   corpus, so the spurious-refusal risk is concentrated exactly where the guard applies. Also
+   missed: `$392.0M`, and `$1523M` matches when it should not (separator-blind). Truncation
+   (`$391M`) and 2-s.f. (`$390M`) are correctly refused — accepting those would widen toward false
+   positives. **NOT loosened** — the operator's instruction was to answer, not to widen on their
+   say-so. → **QUEUED: scale-aware forms in `_figure_cited`** (emit the value in $M and in $bn at
+   0/1/2 dp) before the guard meets a synthesis that writes billions.
+
+**CONSCIOUSLY DEFERRED (operator-directed 2026-07-30), with reasons — not forgotten, not blocked:**
+- **1(b) — stale price / P4 pt 1.** Deferred by the operator this run. Its structured half is
+  `spot_as_of`, which is itself deferred with 29 (see above), and its migration needs each record's
+  struck DATE — which exists only inside analyst free text (`spot_source`, phrased differently per
+  record). Composing it by parse is the forbidden display-string read; the honest route is to
+  DERIVE it (match the recorded `spot` against the Polygon store's bar for the candidate date and
+  fail loud on mismatch), which is its own build with its own verification.
+- **P7 pt 2 — wrong share basis (item 24).** Deferred by the operator this run; untouched.
+
 **OPERATOR ACTIONS / COHORT FACTS — appended by the build, 2026-07-29 (OPERATOR-ACTION RULE).**
 - **THE SCREEN COHORT IS SMALLER THAN THE DOSSIER CORPUS, and the fleet batch will hit it.**
   `data/snapshots/candidate_records.jsonl` holds **318 records from the 2026-07-27 screen**.
@@ -4863,14 +4913,25 @@ screen cohort.**
     named, because STATE carried the three examples as prose and the letters nowhere; the only
     occurrence of "19c" in this file was a passing reference in a build record. Sub-items are
     numbered HERE so an order that names one is unambiguous:
-    - **19a — BASIS AGREEMENT (audit P5 pt 2).** A caveat naming a basis must match the series it
-      caveats: `mechanical.py:856` asserts "rest on normalized/adjusted earnings" over CIQ's
-      **GAAP** `P/LTM EPS` row. **OPEN.** Live on CNXC, FUBO, SMPL. Item 20 changed its shape —
-      with the CIQ clause now refused, the surviving text reads `EDGAR P/E 6.0x rest on
-      normalized/adjusted earnings`, which INFERS a basis from a negative GAAP EPS rather than
-      reading one (a period mismatch produces the same symptom). **FOLD IN WHEN BUILT:** the
-      verb is hardcoded `rest` while the pronoun switches on `len(shown)`, so the now-common
-      one-multiple case is ungrammatical on all three names — trivial in the same edit.
+    - **19a — BASIS AGREEMENT (audit P5 pt 2). BUILT 2026-07-30 (PR #270).** A caveat naming a
+      basis must match the series it caveats: the (d) branch asserted "rest on normalized/adjusted
+      earnings", which INFERS a basis from a negative GAAP EPS rather than reading one (a period
+      mismatch produces the same symptom). **CONFIRMED WORSE THAN RECORDED, and the evidence is
+      the artifact contradicting itself:** on CNXC and FUBO the SAME dossier shipped both
+      `valuation.pe.note` = *"P/E rests on a NON-CURRENT positive EPS"* (DERIVED — it compares the
+      latest annual EPS against the recent median) and the (d) caveat = *"rest on
+      NORMALIZED/ADJUSTED earnings"* (INFERRED from a sign). Two causes, one number, one artifact
+      — and the note points the reader **at** the flag that contradicts it (*"see the P/E-basis
+      flag"*). **FIX:** the sign evidence proves only a NEGATIVE — the denominator is not the LTM
+      GAAP EPS — so the caveat now states that, names BOTH candidate denominators, and declares
+      the basis unstated. The verb bug folded in: `rest` was hardcoded while the pronoun switched
+      on `len(shown)`, two agreement calls from one fact; all three live names are single-multiple,
+      so the ungrammatical branch was the ONLY one production ever rendered — and the unit pin
+      asserted `"EDGAR P/E 10.9x rest"`, **pinning the defect as correct**. Verified by real run on
+      CNXC/FUBO/SMPL (before/after in the PR) and three mutations, each caught by an independent
+      subset: full revert (6 red), grammar-fixed-cause-kept (4 red), cause-fixed-verb-hardcoded
+      (3 red). Pins in `tests/test_pe_basis_cause_claim.py`; the artifacts still carry the old
+      sentence until the next artifact pass.
     - **19b — ABSENCE REASONS (audit P9). BUILT 2026-07-29, this build.** See below.
     - **19c — SYNTHESIS/DATA AGREEMENT (audit P1 pt 2).** A method sentence's stated relation must
       hold against the legs it describes (bull 1,420 vs LTM 1,392). **OPEN**; its live test case is
