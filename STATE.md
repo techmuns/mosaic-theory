@@ -4226,6 +4226,41 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   DESIGN CONSTRAINT on item 18, discovered before building it — the P1 shape caught early again.
   **NOT A BLOCKER for the batch:** no gate fired, nothing false was written, and net coverage
   improved. Recorded so "re-assembly is idempotent" is not assumed for LLM-extracted blocks.
+- **19c BUILT 2026-07-30 — MATERIAL-FIGURE PRESENCE, and it is the only defence against a class
+  with no other.** SMPL's bear case was CORRECT on 07-29 (`$60.9M Atkins impairment (FY25) plus
+  $391.9M LTM asset writedown`) and WRONG on 07-30 from IDENTICAL INPUTS (`$60.9M ... plus a $249M
+  OWYN/Atkins brand-asset impairment`). **SYNTHESIS CORRECTNESS IS STOCHASTIC** — every figure in
+  every run is a fresh roll, and the nine current pages each got one.
+  **PRESENCE, NOT PLAUSIBILITY.** The bad run was NOT fabricating: $249M is a real Q2 charge cited
+  as though it were the total, so every number in it was plausible and a plausibility check would
+  have passed it. The guard asks the one question that separates the two runs — *does the material
+  row's own figure appear at all?*
+  **IT REFUSES, IT DOES NOT FLAG** (operator): a flag moves the judgement back to a human on every
+  run. Refusing means the bad roll FAILS and is re-rolled — which is what keeps the 07-30 revert a
+  one-off rather than a practice.
+  **BASE RATE MEASURED FIRST, and it re-scoped the item.** Across all 9 current pages there are
+  only **4 material figures ≥$10M on 2 names** (CNXC, SMPL) — 7 of 9 names carry NO material row at
+  all. All 4 are cited, so 07-30 was ONE BAD ROLL rather than a systematic rate. The guard's
+  coverage is therefore narrow by construction; it is worth building anyway because the failure it
+  catches puts a wrong magnitude in the argument a reader actually reads.
+  **THE MATCHER IS THE RISK, and measuring it changed the design.** An unanchored numeric match
+  reported `391.9` as cited when the only hit was **`$1,392M` of REVENUE**, and `3.0` as cited off
+  `3.6%` — 14 spurious hits. A guard that reads a FALSE citation is worse than none: it certifies
+  the page. The matcher now requires a currency/scale marker, and a `MATERIAL_FIGURE_FLOOR_MUSD`
+  of 10 excludes figures too small to distinguish from prose noise (SMPL's -3.0).
+  Five mutations, five reds — incl. the WIRING pin, which needed the exact condition text because
+  `if False and <call>` still contains the call and passed a pin that matched the name alone.
+- **`AS_OF` SIDECAR: BUILT AND NEVER WIRED — flags-well-closes-poorly in a new form (operator
+  2026-07-30).** `estimates_as_of` supports an operator-attested `data/manual/ciq/<TICKER>/AS_OF`
+  that takes precedence over the revision FLOOR. It is the designed remedy for the one case the
+  cadence cannot fix — a QUIET name, whose Estimates floor cannot advance past a revision that did
+  not happen, so no re-export refreshes it. **Zero names use it.** A remedy that exists, is
+  documented, and has never been exercised is not closure.
+- **TEST-WRITING HAZARD: the twins format the same fact differently.** The md renders
+  `**<lead>** (N points)`; the web renders `<lead> … N points` with no parentheses. Neither is
+  wrong — but a probe written against one surface silently fails on the other, which cost a
+  round-trip when the count fixture was made count-agnostic and gained parentheses the web does not
+  emit. Derive the expected form from the surface under test, never from its twin.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
