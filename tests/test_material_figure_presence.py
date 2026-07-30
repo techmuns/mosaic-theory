@@ -127,6 +127,100 @@ def test_currency_and_scale_markers_are_accepted(prose: str) -> None:
     assert _figure_cited(prose, val), prose
 
 
+@pytest.mark.parametrize(
+    "prose",
+    ["a $1.5bn goodwill impairment", "a $1.5 billion goodwill impairment", "$1.5B written off",
+     "the $1.52bn charge", "1.5bn of goodwill went", "a $1,523.3M impairment", "$1,523M gone"],
+)
+def test_a_figure_past_a_billion_may_be_cited_in_billions(prose: str) -> None:
+    """THE RED, and it BLOCKED A DELIVERY. Rows are stored in $M and the matcher only knew millions
+    forms, so `$1.5bn` against CNXC's −1,523.3 goodwill impairment read as UNCITED — the guard would
+    have REFUSED a correct page. −1,523.3 is one of only TWO guarded figures on the corpus, so the
+    blind spot sat exactly where the guard applies, and re-assembling CNXC had to wait for this.
+
+    Worth its own line as a pattern: a guard's own coverage gap became the precondition for
+    delivering the artifact pass that the PREVIOUS guard existed to make safe."""
+    assert _figure_cited(prose, 1523.3), prose
+
+
+@pytest.mark.parametrize(
+    ("prose", "value"),
+    [("a $391M writedown", 391.9),          # truncation, not rounding
+     ("a $390M writedown", 391.9),          # two significant figures
+     # THE case that pins the sub-$1bn guard: 391.9 → "0.4" at 1 dp, so without the guard this
+     # WOULD match. Verified by mutation — removing the guard reds this one and nothing else.
+     ("a $0.4bn writedown", 391.9),
+     ("a $2bn impairment", 1523.3),         # "$2bn" is lossy for 1.5233bn
+     ("a $1.6bn impairment", 1523.3),       # a NEARBY billions figure is not this one
+     # a far-away billions figure, at the other scale. NOTE: this passes with or without the
+     # sub-$1bn guard — the comment here used to claim it pinned that guard, which mutation
+     # disproved. Kept as a plain distance case; `$0.4bn` above is the guard's actual pin.
+     ("a $1.5bn impairment", 391.9)],
+)
+def test_the_scale_pass_does_not_widen_the_tolerance(prose: str, value: float) -> None:
+    """The negative half, and the reason the fix is scale-only. Accepting a 2-s.f. restatement would
+    let a NEARBY-BUT-DIFFERENT figure satisfy the check — the false certification this guard exists
+    to prevent, and the exact shape of the original incident ($249M cited against a −391.9 row).
+    Every case here is a form a careless synthesis could produce while omitting the real figure."""
+    assert not _figure_cited(prose, value), f"{prose!r} must not satisfy {value}"
+
+
+def test_the_one_dp_billions_form_loses_precision_the_millions_path_kept() -> None:
+    """REVIEW FINDING, pinned as a KNOWN LIMITATION rather than fixed. "$1.5bn" spans a ±50M bucket,
+    so two material rows inside one bucket would cross-satisfy: citing either would mark the other
+    cited. That is the unavoidable cost of accepting the form a human actually writes, and it is
+    strictly narrower than the millions path, which matches to 0.1M.
+
+    NOT fixed here because detecting a collision needs every guarded figure at once, which
+    ``_figure_cited`` does not have and ``uncited_material_figures`` does — the fix belongs in the
+    caller, and only once a collision exists. Today's corpus has three distinct guarded figures and
+    no two share a bucket. Pinned so the exposure is a recorded decision, and so this test reds the
+    day someone widens the bucket further."""
+    assert _figure_cited("a $1.5bn charge", 1549.0), (
+        "the ±50M bucket is real — if this ever stops being true the limitation changed")
+    # …and it is bounded: a figure a full bucket away is still refused.
+    assert not _figure_cited("a $1.5bn charge", 1650.0)
+
+
+def test_an_exact_three_dp_billions_citation_is_accepted() -> None:
+    """REVIEW FINDING. `$1.523bn` is an EXACT citation of −1,523.3 and was refused — the same false
+    refusal this PR exists to close, one scale up. Adding 3 dp is exactness, not tolerance."""
+    assert _figure_cited("the $1.523bn goodwill charge", 1523.3)
+
+
+def test_the_bare_integer_threshold_matches_the_millions_path_on_relative_error() -> None:
+    """REVIEW FINDING, and it is a widening the PR claimed not to make. The first cut gated the bare
+    integer on ``|b - round(b)| < 0.05`` — an ABSOLUTE ±50M rule on a check whose other branch is
+    effectively relative. Measured, that accepted:
+
+        $2bn vs 1,951.0  ->  True   (2.51% off)
+
+    while the millions path REFUSES:
+
+        $391M vs 391.9   ->  False  (0.23% off)
+
+    An order of magnitude looser, on the one branch whose whole claim was "scale, not tolerance",
+    and it is exactly the failure this guard exists to prevent — a nearby-but-different figure
+    satisfying the check while the real one goes uncited. At 0.005 the worst accepted error is
+    ~0.25%, in line with the millions path.
+
+    Distinct from the ±50M bucket pinned above: that bucket buys a form humans actually write
+    ("$1.5bn"), whereas the bare integer has an exact alternative already accepted ("$2.0bn")."""
+    assert _figure_cited("a $2bn impairment", 2000.4)        # 0.02% — a genuinely round billion
+    assert not _figure_cited("a $2bn impairment", 1990.0)    # 0.50% — millions refuses 0.48%
+    assert not _figure_cited("a $2bn impairment", 1951.0)    # 2.51% — accepted by the first cut
+    assert not _figure_cited("a $2bn impairment", 1523.3)    # 31%  — never in doubt
+    # the exact form stays available at every scale, which is why tightening costs nothing
+    assert _figure_cited("a $1.951bn impairment", 1951.0)
+
+
+def test_a_round_billion_is_accepted_as_a_bare_integer() -> None:
+    """The one place the integer form is legitimate: when the value really is that round. Pinned
+    beside its refusal above so the boundary is a decision rather than an accident."""
+    assert _figure_cited("a $2bn impairment", 2000.4)      # 2.0004bn → "$2bn" is fair
+    assert not _figure_cited("a $2bn impairment", 1523.3)  # 1.5233bn → "$2bn" is not
+
+
 def test_tiny_figures_are_out_of_scope_and_say_why() -> None:
     """SMPL's row also carries -3.0. It is excluded: a bare "3" cannot be told from prose noise,
     and a $3M writedown is not the class of error this exists to catch. Pinned so the floor is a

@@ -4019,11 +4019,28 @@ run BEFORE building, at the operator's direction, and two of the three changed t
    as do `$391.9M`, `$1,523M` and `$61M`. **The live gap is unit-shifting: `$1.5bn` against
    −1,523.3 does NOT match** — and CNXC's −1,523.3 is one of only **two** guarded figures on the
    corpus, so the spurious-refusal risk is concentrated exactly where the guard applies. Also
-   missed: `$392.0M`, and `$1523M` matches when it should not (separator-blind). Truncation
-   (`$391M`) and 2-s.f. (`$390M`) are correctly refused — accepting those would widen toward false
-   positives. **NOT loosened** — the operator's instruction was to answer, not to widen on their
-   say-so. → **QUEUED: scale-aware forms in `_figure_cited`** (emit the value in $M and in $bn at
-   0/1/2 dp) before the guard meets a synthesis that writes billions.
+   missed: `$392.0M`. Truncation (`$391M`) and 2-s.f. (`$390M`) are correctly refused — accepting
+   those would widen toward false positives. **NOT loosened on report** — the instruction was to
+   answer, not to widen on the operator's say-so.
+   **BUILT 2026-07-30 (PR #271) — scale-aware, tolerance UNCHANGED.** Past $1bn the value is also
+   emitted in billions at 1 and 2 dp (`$1.5bn` / `$1.52bn` / `$1.5 billion` / `$1.5B`), plus the
+   bare integer ONLY when `|b − round(b)| < 0.05` — `$2bn` is a fair citation of 2,000.4 and a lossy
+   one of 1,523.3, and the second is the case the guard must refuse. `$392.0M` added via
+   `f"{round(a):.1f}"`. Sub-$1bn values get NO billions form, so `$0.4bn` against 391.9 stays
+   refused exactly like `$390M`. `$1523M` matching was recorded as a defect above and is NOT — a
+   separator-free rounded form is a correct citation; the earlier expectation was wrong.
+   Real-run on CNXC's actual row: `$1.5bn` / `$1.5 billion` / `$1,523.3M` all ACCEPT, `$1.6bn`
+   REFUSES. Mutations: block removed → 6 red; 2-s.f. billions admitted → 2 red.
+   **PATTERN, and it earns its own line — A GUARD'S COVERAGE GAP BECAME THE NEXT DELIVERY'S
+   BLOCKER.** 19c (#268) refuses a build whose synthesis omits a material figure. Two PRs later the
+   19a artifact pass needed CNXC re-assembled — and 19c would have refused a CORRECT CNXC page,
+   because its matcher knew only millions while the natural citation of −1,523.3 is `$1.5bn`. The
+   guard was not wrong about the page; it was blind about the FORM. Generalised:
+   **a guard that refuses on ABSENCE inherits the completeness of its own recogniser — every form it
+   fails to recognise is a false refusal waiting for the first author who writes that way.** So a
+   presence guard's recogniser needs its own coverage measurement, not just its decision logic
+   tested. The tell here was cheap and was already in hand: the corpus had only TWO guarded figures
+   and one of them sat past the recogniser's ceiling.
 
 **CONSCIOUSLY DEFERRED (operator-directed 2026-07-30), with reasons — not forgotten, not blocked:**
 - **1(b) — stale price / P4 pt 1.** Deferred by the operator this run. Its structured half is

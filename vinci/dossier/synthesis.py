@@ -1024,13 +1024,59 @@ def _figure_cited(prose: str, value: float) -> bool:
     STRICT BY NECESSITY. The figure must carry a currency or scale marker, because a bare number
     matches everything: while measuring the base rate, an unanchored form reported 391.9 as cited
     when the only match was ``$1,392M`` of REVENUE, and reported 3.0 as cited off ``3.6%``. A guard
-    that reads a false citation is worse than no guard — it certifies the page."""
+    that reads a false citation is worse than no guard — it certifies the page.
+
+    SCALE-AWARE (2026-07-30). Rows are stored in $M and the first cut only matched millions forms,
+    so ``$1.5bn`` against a row holding −1,523.3 read as UNCITED and the guard would have REFUSED a
+    correct page. Not hypothetical: −1,523.3 is CNXC's goodwill impairment and one of only two
+    guarded figures on the corpus, so the blind spot sat exactly where the guard applies — and it
+    blocked re-assembling the name. Past $1bn a figure is normally written in billions; the same
+    quantity at the scale a human would use is the same citation.
+
+    THE TOLERANCE IS NOT WIDENED, ONLY THE SCALE. ``$391M`` (truncation) and ``$390M`` (two
+    significant figures) against 391.9 stay uncited, and ``$0.4bn`` stays uncited for the same
+    reason: accepting a 2-s.f. restatement would let a nearby-but-different figure satisfy the
+    check, which is the false certification this guard exists to prevent."""
     a = abs(value)
-    for form in {f"{a:.1f}", f"{a:.0f}", f"{a:,.1f}", f"{a:,.0f}"}:
+    forms = {f"{a:.1f}", f"{a:.0f}", f"{a:,.1f}", f"{a:,.0f}"}
+    # ``392.0`` — the rounded value written to one decimal. The set above cannot produce it: .1f of
+    # 391.9 is "391.9" and .0f is "392", never "392.0".
+    forms |= {f"{round(a):.1f}", f"{round(a):,.1f}"}
+    for form in forms:
         e = re.escape(form)
         if re.search(rf"\$\s?{e}\s?(?:M\b|mm\b|million)", prose, re.I):
             return True
         if re.search(rf"(?<![\d.,]){e}\s?(?:M\b|million)", prose, re.I):
+            return True
+    if a < 1000.0:
+        return False   # under $1bn nobody writes it in billions; offering the form only adds risk
+    b = a / 1000.0
+    # 1, 2 and 3 dp. THE 1-DP FORM LOSES PRECISION THE MILLIONS PATH KEPT, and that is a real cost
+    # accepted deliberately: "$1.5bn" spans a ±50M bucket, so if TWO material rows ever landed in
+    # one bucket, citing either would satisfy the other. Today's corpus has three distinct guarded
+    # figures and no collision, and detecting one needs cross-figure context this function does not
+    # have (``uncited_material_figures`` holds it) — so the limitation is PINNED rather than fixed,
+    # and the fix belongs in the caller if a collision ever appears. 3 dp is here because "$1.523bn"
+    # is an EXACT citation of −1,523.3 and was being refused — the same false refusal, one scale up.
+    bn = {f"{b:.1f}", f"{b:.2f}", f"{b:.3f}"}
+    # The bare integer ONLY when the value really is that round. "$2bn" is a fair citation of
+    # 2,000.4 and a LOSSY one of 1,523.3, and the second is the case this must not accept.
+    # THRESHOLD IS RELATIVE-ERROR MATCHED, and the first cut was not. At 0.05 this accepted "$2bn"
+    # for 1,951.0 — 2.5% off — while the millions path REFUSES "$391M" for 391.9 at 0.23%. An order
+    # of magnitude looser on the one branch whose whole claim was "scale, not tolerance", and it is
+    # the widening this guard exists to prevent: a nearby-but-different figure satisfying the check.
+    # 0.005 (±$5M of a round billion) puts the worst accepted error at ~0.25%, in line with the
+    # millions path. It is NOT the ±50M bucket of the 1-dp form above — that bucket is the price of
+    # a form humans actually write, whereas the bare integer is a convenience with an exact
+    # alternative ("$2.0bn") already accepted.
+    if abs(b - round(b)) < 0.005:
+        bn.add(f"{round(b):d}")
+    for form in bn:
+        e = re.escape(form)
+        if re.search(rf"\$\s?{e}\s?(?:bn\b|b\b|billion)", prose, re.I):
+            return True
+        # no bare-``b`` here: without the ``$`` a lone "b" is far too common to key on
+        if re.search(rf"(?<![\d.,]){e}\s?(?:bn\b|billion)", prose, re.I):
             return True
     return False
 
