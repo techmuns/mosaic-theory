@@ -4042,6 +4042,26 @@ run BEFORE building, at the operator's direction, and two of the three changed t
    tested. The tell here was cheap and was already in hand: the corpus had only TWO guarded figures
    and one of them sat past the recogniser's ceiling.
 
+**THE FIVE DEFERRALS, closed out 2026-07-30 — the audit-remediation program stops here at 8 of 13.**
+Every one is deferred for a stated reason, and one of them is not a build at all:
+1. **P3 pt 2 / item 29 — UNCLOSEABLE BY CODE.** The bull leg (1,420) sits above the LTM it claims to
+   sit "just under" (1,392). A guard can only SURFACE that; the remedy is **an analyst re-setting the
+   bull leg or restating the method**, which is a DECISION, not a build. This file's own closure
+   table says analyst-data items close on "guard ships **AND** the surfaced instance is
+   adjudicated" — so shipping the typed field would buy a schema change across seven records, the
+   seal, the amendment index and both twins for **zero count movement**. Not deferred for cost:
+   deferred because code cannot close it.
+2. **`spot_as_of`** — completes clause (e) for P4 pt 2. Needs a schema field + forward gate + render
+   on both twins + a migration of seven records whose struck date exists ONLY in analyst prose
+   (`spot_source`, phrased differently per record). Composing it by parse is the forbidden
+   display-string read; the honest route is to DERIVE it — match the recorded `spot` against the
+   Polygon store's bar for the candidate date and fail loud on mismatch — which is its own build.
+3. **1(b) — stale price / P4 pt 1.** Its structured half IS `spot_as_of`, so it inherits (2).
+4. **P7 pt 2 / item 24 — wrong share basis.** Operator-deferred; untouched this run.
+5. **P3 pt 1 — the mislabelled frozen reference.** Verified NOT closed by item 16's `role` (untagged
+   row · `REF_ROLES` has no vintage member · disclosure vs selection defect). Needs the frozen
+   marker + vintage in the record itself.
+
 **CONSCIOUSLY DEFERRED (operator-directed 2026-07-30), with reasons — not forgotten, not blocked:**
 - **1(b) — stale price / P4 pt 1.** Deferred by the operator this run. Its structured half is
   `spot_as_of`, which is itself deferred with 29 (see above), and its migration needs each record's
@@ -4922,6 +4942,47 @@ screen cohort.**
     **RED:** a fixture where the record holds `1.2x` loan-basis leverage and the render emits
     UNKNOWN — the build must fail. That is the covenant case exactly, and it makes the fix
     testable rather than aspirational.
+    **BUILT 2026-07-30 (PR #273). THE MECHANISM WAS NOT WHAT THIS SPEC ASSUMED, and it was worse.**
+    "A field the dossier *would render* as UNKNOWN" implies a resolution path that came up empty.
+    There was none: `covenant basis: UNKNOWN (not disclosed)` was a **hardcoded string literal** in
+    `primary_source.basis_triangulation`, emitted unconditionally for every name on every build.
+    Nothing was ever consulted, so nothing could be checked — the page asserted ignorance as a
+    constant. (Fourteenth wrong attribution, and the operator flagged the risk in advance.)
+    **SECOND MECHANISM FINDING — the typed branch is unreachable today.** 18a's store is
+    `ScenarioRecord.facts: dict[str, Fact]`, and **not one of the seven committed records carries a
+    covenant key** (they hold cash_interest, cash_tax_rate, d_and_a, d_and_a_ratio, diluted_shares,
+    ltm_revenue, net_debt, share_growth, burn_to_breakeven). So every underwritten name takes the
+    LEGACY branch, and the vintage message *is* the delivery; the typed branch is forward-looking
+    and pinned so it is not discovered broken the day an analyst writes one.
+    **THIRD — the fix had to sit in the MECHANICAL layer, not the renderer.** The line is composed
+    in `_primary_source` and stored as a string in `dossier.json`; `render.py` only splits it. A
+    render-only fix would have left the false claim in the JSON *and on the web twin* — the
+    twin-parity trap. The record now reaches `assemble_mechanical(card=…)` via the SAME
+    `_read_scenario_card` the renderer uses (one definition of "the record", not two).
+    **THREE STATES:** no record → the historical line stands (nothing contradicts it; 5 of 11 names);
+    record without the typed fact → `covenant basis: no structured source for this decision
+    vintage` (6 of 11); record with it → rendered source-bound. **No prose is read anywhere** — the
+    legacy branch is chosen by the ABSENCE of a typed fact, never by inspecting thesis text.
+    **VERIFIED BY REAL RUN:** SMPL re-assembled 2026-07-30 now prints `covenant basis: no structured
+    source for this decision vintage`; the five no-record names are byte-unchanged. AORT, EPAM, IT,
+    MVST and NCNO have records and will flip on their next re-assembly — their committed artifacts
+    simply predate this build. Mutations: resolver unwired → 1 red; assembler stops passing the
+    record → 1 red; legacy branch returns UNKNOWN → 2 red; refusal downgraded to a flag → 1 red.
+18b. **CONCURRENT SESSIONS ON ONE BRANCH — STANDING HAZARD, now three instances (2026-07-30).**
+    (1) a stale stash silently re-applied, 07-23; (2) a half-applied `built_at` edit that left the
+    module unable to type-check; (3) **simultaneous writes to a LIVE branch** — during the #271
+    review, uncommitted edits from another session were sitting in `mosaic-theory-wb` on
+    `fix/19c-scale-forms`, and `fix/print-wide-tables` was checked out in a THIRD worktree
+    (`mosaic-theory-nx`) while #269 was being fixed. Three incidents is a pattern, not bad luck.
+    **THE RULE — ONE SESSION PER BRANCH.** Before touching a branch, `git worktree list` and
+    `git status`: a branch already checked out elsewhere, or a worktree with uncommitted changes you
+    did not make, is **another session's** — do not build on it, and never `git checkout --`,
+    `stash`, or `reset --hard` over it. Foreign edits found in your tree are **surfaced to the
+    operator and attributed**, never silently absorbed or discarded. (In #271 they were kept: the
+    3-dp billions form closed a real false refusal, and one of them corrected a false claim in a
+    comment this agent had written — the kind of error only another reader finds.)
+    Git's own worktree lock is the reason #269's fix had to run on a detached HEAD; that lock is
+    the mechanism to lean on, not to work around.
 19. **ASSERTION INTEGRITY (operator-added 2026-07-28; TIGHTENED same day).** Every claim the
     document makes ABOUT ITS OWN DATA is machine-checked at build. THE PRECISE REQUIREMENT: **a
     stamp must be generated from the object actually read.**

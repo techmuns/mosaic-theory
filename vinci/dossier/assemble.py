@@ -319,6 +319,10 @@ def assemble_one(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,
             reference_date=fin.reference_date, screen_cap_usd=fin.market_cap_screen,
+            # (item 18) the underwrite record, so a field about to render UNKNOWN can first be
+            # checked against what the fund already holds. Read-only, and the SAME reader the
+            # renderer already uses — one definition of "the record", not two.
+            card=_read_scenario_card(ticker),
         )
     flags += mech_flags
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not

@@ -2332,9 +2332,44 @@ def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
         source_ref=f"{latest.source_ref} (filed {filed.isoformat()})")
 
 
+# ITEM 18 — the key an underwrite record uses for its typed covenant-basis leverage, under 18a's
+# `facts` schema. NO committed record carries it today (the seven hold cash_interest, cash_tax_rate,
+# d_and_a, d_and_a_ratio, diluted_shares, ltm_revenue, net_debt, share_growth, burn_to_breakeven),
+# so every name currently takes the legacy branch. Named here so the typed branch is reachable the
+# day an analyst writes one, rather than requiring a code change then.
+COVENANT_LEVERAGE_FACT = "covenant_leverage"
+
+
+def _covenant_basis(card: Any | None) -> str | None:
+    """ITEM 18 — NO FALSE UNKNOWN. What the covenant-basis line may honestly say, given the fund's
+    own underwrite record.
+
+    > Any field the dossier would render as UNKNOWN must first be checked against the record.
+
+    Three states, and only the middle one is new:
+
+    * **no record** → None, and the historical "UNKNOWN (not disclosed)" stands. Most names are
+      never underwritten; with nothing to contradict it, the line is honest.
+    * **record, no typed fact** (every committed record today) → the vintage message. The record
+      predates 18a's typed fields, so the basis exists only as V-row prose. UNKNOWN is FALSE here —
+      that is the SMPL incident exactly.
+    * **record with the typed fact** → render it, source-bound.
+
+    NO PROSE IS READ. The legacy branch is chosen by the ABSENCE of a typed fact, never by
+    inspecting the thesis text — a prose reader is out of scope by decision, and it would be the
+    display-string parse this repo forbids besides."""
+    if card is None:
+        return None
+    fact = (getattr(card, "facts", None) or {}).get(COVENANT_LEVERAGE_FACT)
+    if fact is None:
+        return primary_source.COVENANT_BASIS_NO_STRUCTURED_SOURCE
+    return f"{fact.value:g}{fact.unit} ({fact.basis})"
+
+
 def _primary_source(
     record: DataRecord, edgar: EdgarClient, http: CachedHttp,
     bundle: CiqBundle, reference_date: date, mech: MechanicalLayer,
+    card: Any | None = None,
 ) -> tuple[PrimarySource, float, OperatingDriversExtract]:
     """(RC-1 C) Fetch the primary-source filings (recent 8-K EX-99.1 releases + the latest 10-Q),
     parse them, and run the four cross-source derivations over them + the CIQ/EDGAR mechanical
@@ -2445,7 +2480,18 @@ def _primary_source(
         net_debt.value if net_debt.status is SourceStatus.PRESENT else None,
         _ltm_adj_ebitda(releases),
         gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
-        revenue=fy.get("revenue"))
+        revenue=fy.get("revenue"), covenant_basis=_covenant_basis(card))
+    # ITEM 18's RED, as a coherence assertion rather than a hope. It can only fire if this wiring
+    # breaks — a typed fact present while the rendered line still claims ignorance of it. That is
+    # the false UNKNOWN, and a build that would print one must fail rather than ship the page.
+    if (card is not None
+            and (getattr(card, "facts", None) or {}).get(COVENANT_LEVERAGE_FACT) is not None
+            and f"covenant basis: {primary_source.COVENANT_BASIS_UNKNOWN}" in tri):
+        raise ValueError(
+            f"{record.identity.ticker}: the underwrite record holds a typed "
+            f"{COVENANT_LEVERAGE_FACT} fact and the dossier would still render "
+            f"'covenant basis: {primary_source.COVENANT_BASIS_UNKNOWN}' — a FALSE UNKNOWN "
+            "(item 18). Refusing the build: a gap invites a look, an UNKNOWN closes the question.")
     # guide verification — CIQ revenue guide (point OR range) vs the release guide + prior-FY actual
     ciq_lo, ciq_hi = ciq_sheets.revenue_guide_lohi(bundle, reference_date=reference_date)
     rel_lo, rel_hi, rel_qual = _release_revenue_guide(releases)
@@ -2531,6 +2577,7 @@ def assemble_mechanical(
     bundle: CiqBundle,
     reference_date: date,
     screen_cap_usd: float | None = None,
+    card: Any | None = None,
 ) -> tuple[MechanicalLayer, list[str]]:
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions. ``screen_cap_usd`` is the ranker's frozen
@@ -2627,7 +2674,7 @@ def assemble_mechanical(
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
     # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
     primary, ps_latency, op_drivers = _primary_source(
-        record, edgar, http, bundle, reference_date, mech)
+        record, edgar, http, bundle, reference_date, mech, card)
     mech = mech.model_copy(update={
         "primary_source": primary, "operating_drivers": op_drivers})  # (PR-B) mechanism tier
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers

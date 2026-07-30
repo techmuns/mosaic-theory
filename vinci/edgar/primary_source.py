@@ -103,6 +103,21 @@ def wall_coherence(
 
 
 # --- (surface 3) EBITDA-basis triangulation — every leverage row basis-labeled -------------------
+# ITEM 18 — the two non-numeric covenant-basis readings, defined beside the line that prints them.
+#
+# COVENANT_BASIS_UNKNOWN is the historical text and stays the default. It is only honest where
+# nothing in the fund's own records contradicts it — which is precisely what item 18's caller now
+# checks before letting it through.
+COVENANT_BASIS_UNKNOWN = "UNKNOWN (not disclosed)"
+# The LEGACY reading: an underwrite record exists but predates 18a's typed fact fields, so its
+# leverage basis lives only in the V-row's prose. Saying UNKNOWN there is FALSE — the fund holds the
+# number and is asserting ignorance of it (SMPL: the dossier printed UNKNOWN while V-SMPL recorded
+# "the 8-K's loan-basis reads 1.2x"). Saying the PROSE value would need a prose reader, which is
+# out of scope by decision. This says the true thing instead, and it self-clears: the moment a V-row
+# carries the typed fact, the typed branch takes over. Legacy rows are NOT backfilled.
+COVENANT_BASIS_NO_STRUCTURED_SOURCE = "no structured source for this decision vintage"
+
+
 def basis_triangulation(
     net_debt_ebitda_ciq: str | None,
     total_debt_ebitda_comps: str | None,
@@ -113,12 +128,18 @@ def basis_triangulation(
     impairment: float | None,
     revenue: float | None,
     ciq_adjusted_margin: float | None = None,
+    covenant_basis: str | None = None,
 ) -> str:
     """The EBITDA/margin bases table — LABELS are load-bearing (a leverage number is meaningless
     without its basis). net debt / company-adjusted LTM EBITDA is the third basis; covenant basis
     is UNKNOWN when the agreement's EBITDA definition is not disclosed. Margin: GAAP vs
     impairment-excluded (source CIQ's figure; render GAAP + impairment/revenue as the labeled
-    cross-check)."""
+    cross-check).
+
+    ``covenant_basis`` (item 18) is RESOLVED BY THE CALLER and rendered verbatim. This function
+    stays record-ignorant on purpose: it sits in ``vinci.edgar`` and must not learn what an
+    underwrite record is. None keeps the historical line, which is the honest reading when there is
+    no record to contradict it."""
     adj = (f"~{round(net_debt / ltm_adjusted_ebitda, 1)}x"
            if net_debt is not None and ltm_adjusted_ebitda else "UNKNOWN")
     ltm_lbl = f"${ltm_adjusted_ebitda}M" if ltm_adjusted_ebitda is not None else "LTM unavailable"
@@ -127,7 +148,7 @@ def basis_triangulation(
         f"  net debt / EBITDA (CIQ, GAAP basis): {net_debt_ebitda_ciq or 'UNKNOWN'}",
         f"  total debt / EBITDA (CIQ comps, GAAP basis): {total_debt_ebitda_comps or 'UNKNOWN'}",
         f"  net debt / company-adjusted LTM EBITDA ({ltm_lbl}): {adj}",
-        "  covenant basis: UNKNOWN (not disclosed)",
+        f"  covenant basis: {covenant_basis or COVENANT_BASIS_UNKNOWN}",
     ]
     if gaap_gross_margin is not None and impairment is not None and revenue:
         recon = round(gaap_gross_margin + impairment / revenue * 100, 1)
