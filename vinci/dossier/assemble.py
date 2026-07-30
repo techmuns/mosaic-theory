@@ -145,8 +145,42 @@ def _read_scenario_card(ticker: str) -> Any | None:
         return None  # not underwritten — the majority case, not a failure
 
 
+def _refuse_synthesis_overwrite(dossier: Dossier, folder: Path) -> None:
+    """A write that would replace a COMMITTED synthesis with nothing is refused.
+
+    GATED ON THE FILE, NOT THE MODE (operator, 2026-07-30). ``--no-llm`` on a fresh name is a
+    legitimate declared mode with its own disclosure, and ``test_the_mechanical_only_mode_cannot_
+    reach_the_guard`` exists to keep that working — so the precondition is NOT "an LLM was
+    configured". It is **a committed file with a synthesis already exists**, which is the only
+    situation where writing ``synthesis: null`` destroys something.
+
+    The 07-22 accepted risk and the 07-30 AORT incident were both the CONFIGURED-client case, closed
+    by ``_require_synthesis``. This closes the other door into the same room: the same artifact is
+    destroyed just as completely by a mechanical-only re-run over a name that already had prose, and
+    nothing stopped that until now. Use ``vinci.dossier.refresh`` to move mechanical numbers under a
+    kept synthesis."""
+    if dossier.synthesis is not None:
+        return
+    existing = folder / "dossier.json"
+    if not existing.exists():
+        return
+    try:
+        prior = json.loads(existing.read_text()).get("synthesis")
+    except (OSError, ValueError):
+        return  # an unreadable prior file is not evidence of a synthesis to protect
+    if prior is None:
+        return
+    raise DossierAssemblyError(
+        f"{dossier.ticker}: this build has NO synthesis and the committed dossier HAS one — "
+        "writing would replace it with null, which is the 2026-07-30 AORT incident reached through "
+        "the mechanical-only door instead of the flaky-call one. Re-run WITH a client, or use the "
+        "mechanical-only refresh (vinci.dossier.refresh), which moves numbers under a kept "
+        "synthesis and refuses per claim when the prose cites one that moved.")
+
+
 def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     folder = out_root / dossier.ticker
+    _refuse_synthesis_overwrite(dossier, folder)
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
     (folder / "dossier.md").write_text(
