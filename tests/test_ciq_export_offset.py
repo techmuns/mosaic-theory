@@ -36,8 +36,8 @@ WEEK = [_Bar(d) for d in ("2026-07-16", "2026-07-17", "2026-07-20", "2026-07-21"
 
 def test_a_weekday_stamp_moves_back_one_trading_day() -> None:
     """The ordinary case, nine of eleven. SMPL's 07-24 stamp is the 07-23 close."""
-    assert corrected_ciq_as_of("2026-07-24", WEEK) == "2026-07-23"
-    assert corrected_ciq_as_of("2026-07-29", WEEK) == "2026-07-28"
+    assert corrected_ciq_as_of("2026-07-24", WEEK).as_of == "2026-07-23"
+    assert corrected_ciq_as_of("2026-07-29", WEEK).as_of == "2026-07-28"
 
 
 def test_a_monday_stamp_moves_back_three_calendar_days() -> None:
@@ -47,7 +47,7 @@ def test_a_monday_stamp_moves_back_three_calendar_days() -> None:
 
     VITL's 2026-06-29 is the second instance. The operator's first framing called NCNO the only
     Monday in the fleet; measuring found two, which is exactly why the calendar is not hardcoded."""
-    assert corrected_ciq_as_of("2026-07-20", WEEK) == "2026-07-17"
+    assert corrected_ciq_as_of("2026-07-20", WEEK).as_of == "2026-07-17"
     assert dt.date.fromisoformat("2026-07-20").weekday() == 0
     naive = dt.date.fromisoformat("2026-07-20") - dt.timedelta(days=1)
     assert naive.weekday() == 6, "the naive version lands on a Sunday"
@@ -58,7 +58,7 @@ def test_a_holiday_gap_is_handled_without_a_calendar() -> None:
     """No holiday table anywhere. A four-day gap in the bars resolves to the last real session,
     which is what makes this correct in October without anyone updating a list."""
     bars = [_Bar("2026-11-25"), _Bar("2026-11-30")]  # Thanksgiving week
-    assert corrected_ciq_as_of("2026-11-30", bars) == "2026-11-25"
+    assert corrected_ciq_as_of("2026-11-30", bars).as_of == "2026-11-25"
 
 
 def test_an_empty_store_returns_the_stamp_unchanged() -> None:
@@ -68,13 +68,13 @@ def test_an_empty_store_returns_the_stamp_unchanged() -> None:
     refreshing the store, whereas a fabricated date is not recoverable at all.
 
     An empty store is a KNOWN worktree state here, so this path is live, not theoretical."""
-    assert corrected_ciq_as_of("2026-07-24", []) == "2026-07-24"
+    assert corrected_ciq_as_of("2026-07-24", []).as_of == "2026-07-24"
 
 
 def test_a_stamp_older_than_every_bar_is_unchanged() -> None:
     """The other end of the same fail-safe: a stamp predating the store's history has no prior bar
     either, and must not silently resolve forward to the earliest one."""
-    assert corrected_ciq_as_of("2020-01-02", WEEK) == "2020-01-02"
+    assert corrected_ciq_as_of("2020-01-02", WEEK).as_of == "2020-01-02"
 
 
 def test_the_correction_never_moves_a_stamp_forward() -> None:
@@ -82,7 +82,7 @@ def test_the_correction_never_moves_a_stamp_forward() -> None:
     never fresher. A forward move would mean the gate started passing something it used to refuse,
     which is the opposite of the defect being fixed."""
     for stamp in ("2026-07-17", "2026-07-20", "2026-07-24", "2026-07-29", "2026-08-15"):
-        assert corrected_ciq_as_of(stamp, WEEK) <= stamp
+        assert corrected_ciq_as_of(stamp, WEEK).as_of <= stamp
 
 
 def test_it_is_wired_into_the_tev_stamp() -> None:
@@ -93,7 +93,7 @@ def test_it_is_wired_into_the_tev_stamp() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert "corrected_ciq_as_of(stated_as_of, price_bars)" in src, (
+    assert "corrected_ciq_as_of(stated_as_of, price_bars or [])" in src, (
         "the TEV stamp is not being corrected — every CIQ as-of stays a day too new")
     caller = inspect.getsource(dm.assemble_mechanical)
     assert "store.get_price_history(record.identity.internal_id)" in caller, (
@@ -113,10 +113,10 @@ def test_malformed_bars_do_not_produce_an_empty_date() -> None:
     class _NoDate:
         pass
 
-    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _NoDate()]) == "2026-07-24"
-    assert corrected_ciq_as_of("2026-07-24", [_Bar(""), _Bar("not-a-date")]) == "2026-07-24"
+    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _NoDate()]).as_of == "2026-07-24"
+    assert corrected_ciq_as_of("2026-07-24", [_Bar(""), _Bar("not-a-date")]).as_of == "2026-07-24"
     # a real bar mixed in with junk still resolves
-    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _Bar("2026-07-23")]) == "2026-07-23"
+    assert corrected_ciq_as_of("2026-07-24", [_NoDate(), _Bar("2026-07-23")]).as_of == "2026-07-23"
 
 
 def test_the_correction_never_returns_a_non_iso_string() -> None:
@@ -124,7 +124,7 @@ def test_the_correction_never_returns_a_non_iso_string() -> None:
     `panel_age` does `date.fromisoformat` on it and would raise deep in the gate instead."""
     for bars in ([], [_Bar("")], [_Bar("2026-07-23")], WEEK):
         out = corrected_ciq_as_of("2026-07-24", bars)  # type: ignore[arg-type]
-        dt.date.fromisoformat(out)
+        dt.date.fromisoformat(out.as_of)
 
 
 def test_the_tev_cite_carries_both_dates_when_they_differ() -> None:
@@ -139,7 +139,7 @@ def test_the_tev_cite_carries_both_dates_when_they_differ() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert "exported {stated_as_of}" in src and "tev_as_of != stated_as_of" in src, (
+    assert "exported {stated_as_of}" in src and "if as_of.resolved else" in src, (
         "the TEV cite does not disclose the export date beside the data date")
     assert "data {tev_as_of}" in src
 
@@ -176,4 +176,36 @@ def test_an_uncorrectable_stamp_says_so_on_the_page() -> None:
     src = inspect.getsource(dm._implied_expectations)
     assert "NOT date-corrected: no prior bar in the store" in src, (
         "an uncorrectable stamp is still indistinguishable from a corrected one")
-    assert "if not price_bars else" in src, "the three states are not branched on the bars"
+    assert "if as_of.resolved else" in src, (
+        "the states are not branched on the REPORTED flag")
+
+
+def test_resolved_is_reported_not_inferred() -> None:
+    """REVIEW FINDING on the review fix. The cite worked out "was this corrected?" from
+    `corrected != stated` plus an empty-bars check, and that is wrong in two LIVE cases — a stamp
+    older than every bar, and a list whose entries are all malformed. Both return UNCHANGED with a
+    NON-empty list, so the caller concluded "corrected, nothing to change" and labelled an export
+    stamp as a data date, which reads a day fresher than it is.
+
+    Assert it or derive it: the function that knows now reports it."""
+    assert corrected_ciq_as_of("2026-07-24", WEEK).resolved is True
+    # non-empty bars, but none usable — the cases the inference missed
+    assert corrected_ciq_as_of("2020-01-02", WEEK).resolved is False
+    assert corrected_ciq_as_of("2026-07-24", [_Bar(""), _Bar("junk")]).resolved is False  # type: ignore[list-item]
+    assert corrected_ciq_as_of("2026-07-24", []).resolved is False
+    # and an unresolved result always returns the stamp untouched
+    for bars in ([], [_Bar("junk")]):
+        r = corrected_ciq_as_of("2026-07-24", bars)  # type: ignore[arg-type]
+        assert r.resolved is False and r.as_of == "2026-07-24"
+
+
+def test_the_cite_branches_on_the_reported_flag() -> None:
+    """The cite must read `as_of.resolved`, never re-derive it — two answers to one question is the
+    twin-drift class, and here the second copy would be the one a reader sees."""
+    import inspect
+
+    import vinci.dossier.mechanical as dm
+
+    src = inspect.getsource(dm._implied_expectations)
+    assert "if as_of.resolved else" in src, "the cite still infers whether the correction ran"
+    assert "if not price_bars else" not in src, "the old empty-list inference survives"

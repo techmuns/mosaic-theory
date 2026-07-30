@@ -21,7 +21,7 @@ from typing import Any, TypeVar
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
-from vinci.dossier.freshness import corrected_ciq_as_of
+from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
@@ -2120,8 +2120,9 @@ def _implied_expectations(
     # whose convention has NOT been measured — correcting it too would be assuming the convention
     # generalises, which is the category-label rule. It stays uncorrected until measured.
     stated_as_of = _ie_asof(mc.source_ref)
-    tev_as_of = (corrected_ciq_as_of(stated_as_of, price_bars)
-                 if price_bars and stated_as_of != "UNKNOWN" else stated_as_of)
+    as_of = (corrected_ciq_as_of(stated_as_of, price_bars or [])
+             if stated_as_of != "UNKNOWN" else CiqAsOf(stated_as_of, resolved=False))
+    tev_as_of = as_of.as_of
     mult_as_of = (
         (catalyst.as_of.value or "UNKNOWN").lstrip("≥")
         if catalyst.as_of.status is SourceStatus.PRESENT else "UNKNOWN")
@@ -2200,10 +2201,9 @@ def _implied_expectations(
         # resolve — and the unresolved one is a day too NEW, i.e. reads fresher than it is. An
         # uncorrectable stamp now says so on the page rather than passing as a corrected one.
         + (f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}, "
-           f"exported {stated_as_of}" if tev_as_of != stated_as_of else
+           f"exported {stated_as_of}" if as_of.resolved else
            f"(CIQ Comparable Analysis→Financial Data, Latest, export stamp {stated_as_of} — "
-           f"NOT date-corrected: no prior bar in the store" if not price_bars else
-           f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}")
+           f"NOT date-corrected: no prior bar in the store")
         + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(
