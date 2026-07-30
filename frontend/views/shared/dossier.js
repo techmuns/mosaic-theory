@@ -6,7 +6,7 @@ import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
 import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
-import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
+import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT, xLabelKeeper } from "../../lib/exhibit.js";
 import { uwCard, uwCardParts, amendMarks } from "./uw-card.js";
 
 // (26a) EXTRACTION VERSION — the twin of vinci/dossier/extraction_version.py. The dossier's date
@@ -74,6 +74,118 @@ document.addEventListener("click", (e) => {
   const help = document.querySelector(".ds-help.dd[open]");
   if (help && !e.target.closest(".ds-help.dd")) help.open = false;
 });
+
+// (P7, 2026-07-29) WIDE TABLES PRINT AS CONTINUED BLOCKS.
+//
+// The period-axis tables are intrinsically wider than the sheet — AORT's quarterly is 42 columns
+// and ran 2154px past an 880px measure. Type scale cannot save it (at 7pt it is still over even on
+// landscape), and until now the overflow was simply CLIPPED: the browser does not paginate
+// sideways, so the PDF silently dropped the right-hand — i.e. most recent — columns while looking
+// complete. Nothing marked the loss.
+//
+// So split, the way printed financial statements always have: the row-label column repeats and the
+// period columns continue in a second and third block. Nothing is dropped and no value is
+// re-formatted; only the seam is new.
+//
+// PRINT-ONLY, and measured rather than guessed. Column widths differ per table (a quarterly cell is
+// narrower than an annual one), so a fixed column count would be wrong for one of them. At
+// beforeprint the page is still laid out for SCREEN, so the widths are taken from an off-screen
+// probe forced to the print measure and print cell padding — the geometry the paper will actually
+// use, not the one currently on display.
+const _PRINT_MEASURE = 880;   // .main's content width on A4 — see the @page/zoom note in styles.css
+let _splitTables = null;
+
+function _colWidthsAtPrintScale(tb) {
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:absolute;left:-99999px;top:0;width:" + _PRINT_MEASURE + "px";
+  probe.className = "ds-section";
+  const clone = tb.cloneNode(true);
+  // THE PROBE MUST MIRROR @media print, not just its padding. These three declarations are the
+  // print rules that change a table's MINIMUM width; copying only the padding read the peer grid
+  // at 981px min-content when it prints at 848, and split a table that fits.
+  // COUPLED TO styles.css @media print — a pin asserts these stay in step, because the probe is a
+  // hand-copy of rules it cannot otherwise see (media rules do not apply on screen).
+  clone.querySelectorAll("td,th").forEach((c) => { c.style.padding = "4px 9px"; });      // (1) padding
+  clone.querySelectorAll("td.row-label").forEach((c) => {                                // (2) P2 wrap
+    c.style.whiteSpace = "normal"; c.style.maxWidth = "280px";
+  });
+  // …and P6's print-only `width: 100%` for wide grids. Without it the probe reads the table's
+  // NATURAL width and split tables that print perfectly well: the peer grid and the capital-
+  // structure panel are content-sized on screen but stretch to the measure on paper, where their
+  // text cells then wrap. What matters is the width the table CANNOT go below, so let it try to
+  // fit first — a table whose min-content exceeds the measure will still overflow the probe.
+  if (clone.querySelectorAll("thead th").length >= 5 || clone.querySelector("td.peer-desc")) {
+    clone.style.width = "100%";                                                          // (3) P6
+  }
+  probe.appendChild(clone);
+  document.body.appendChild(probe);
+  const widths = [...clone.querySelectorAll("thead th")].map((th) => th.getBoundingClientRect().width);
+  const total = clone.getBoundingClientRect().width;
+  probe.remove();
+  return { widths, total };
+}
+
+function splitWideTablesForPrint() {
+  const root = document.querySelector(".main");
+  if (!root || _splitTables) return;
+  const done = [];
+  for (const tb of [...root.querySelectorAll("table.data")]) {
+    // a bulk tier is suppressed in print (P5) — never pay to measure or split it
+    if (tb.closest(".ds-bulk")) continue;
+    const head = [...tb.querySelectorAll("thead th")];
+    if (head.length < 4) continue;
+    const { widths, total } = _colWidthsAtPrintScale(tb);
+    if (total <= _PRINT_MEASURE + 1) continue;
+    // pack period columns after the repeated label column
+    const groups = [];
+    let cur = [], acc = widths[0];
+    for (let i = 1; i < head.length; i++) {
+      if (cur.length && acc + widths[i] > _PRINT_MEASURE) { groups.push(cur); cur = []; acc = widths[0]; }
+      cur.push(i); acc += widths[i];
+    }
+    if (cur.length) groups.push(cur);
+    if (groups.length < 2) continue;
+    const holder = document.createElement("div");
+    holder.className = "ds-split";
+    const bodyRows = [...tb.querySelectorAll("tbody tr")];
+    groups.forEach((g, n) => {
+      const t2 = document.createElement("table");
+      t2.className = tb.className;
+      const keep = (row, cells) => {
+        const tr = document.createElement("tr");
+        if (row && row.className) tr.className = row.className;
+        tr.appendChild(cells[0].cloneNode(true));
+        g.forEach((i) => cells[i] && tr.appendChild(cells[i].cloneNode(true)));
+        return tr;
+      };
+      const th = document.createElement("thead");
+      th.appendChild(keep(null, head));
+      const tb2 = document.createElement("tbody");
+      bodyRows.forEach((r) => tb2.appendChild(keep(r, [...r.children])));
+      t2.append(th, tb2);
+      const cap = document.createElement("div");
+      cap.className = "ds-split-cap";
+      cap.textContent = n === 0
+        ? `${head[g[0]].textContent.trim()} → ${head[g[g.length - 1]].textContent.trim()}`
+        : `continued · ${head[g[0]].textContent.trim()} → ${head[g[g.length - 1]].textContent.trim()}`;
+      holder.append(cap, t2);
+    });
+    const anchor = tb.parentElement;
+    anchor.insertBefore(holder, tb);
+    tb.style.display = "none";
+    done.push({ tb, holder });
+  }
+  _splitTables = done.length ? done : null;
+}
+
+function unsplitWideTablesAfterPrint() {
+  if (!_splitTables) return;
+  for (const { tb, holder } of _splitTables) { holder.remove(); tb.style.display = ""; }
+  _splitTables = null;
+}
+
+window.addEventListener("beforeprint", splitWideTablesForPrint);
+window.addEventListener("afterprint", unsplitWideTablesAfterPrint);
 
 export async function render(root, params, { item, frame }) {
   const ticker = (params[0] || "").trim().toUpperCase();
@@ -933,8 +1045,35 @@ function thesisBlock(card) {
   // ONE marker, shared with the card (uw-card.js). This block used to carry its own copy of the
   // regex, which never learned about CLASSED tags — the same amendment rendered marked on the
   // card and unmarked here. Two parsers of one string; now there is one.
+  //
+  // P4 (2026-07-29) — SPLIT THE APPENDED FROM THE RECORDED. Marking the tags was not enough: a
+  // rationale that has been amended twice printed as one paragraph in which two dated 60-word
+  // insertions interrupt the argument mid-sentence, and IT's Brief was unreadable for it. The
+  // seal already models the text this way — `vinci/seal.py` splits `base_text` from
+  // `amendments` on the same marker to decide what is byte-immutable — so the surface now shows
+  // what the seal already believes: the thesis AS RECORDED, then what was appended, dated,
+  // beneath it. Nothing is hidden or reworded; only the running order changes.
+  const parts = splitAmendments(thesis);
+  const appended = parts.amendments.length ? `
+    <div class="brief-amends">
+      <div class="brief-vlab brief-eyebrow">Appended since the verdict</div>
+      ${parts.amendments.map((a) => `<div class="brief-amend">${amendMarks(a)}</div>`).join("")}
+    </div>` : "";
   return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>
-    <div class="brief-thesis">${amendMarks(thesis)}</div>`;
+    <div class="brief-thesis">${amendMarks(parts.base)}</div>${appended}`;
+}
+
+// JS twin of vinci.seal.base_text / amendments — ONE marker shape, split at the same boundary.
+// Kept deliberately dumb: it slices on the tag opener and never rewrites a character, so the
+// words that reach the page are the words in the sealed record.
+function splitAmendments(text) {
+  const s = String(text || "");
+  const re = /\[amended \d{4}-\d{2}-\d{2}/g;
+  const cuts = [...s.matchAll(re)].map((m) => m.index);
+  if (!cuts.length) return { base: s, amendments: [] };
+  const base = s.slice(0, cuts[0]).trimEnd();
+  const amendments = cuts.map((c, i) => s.slice(c, cuts[i + 1] ?? s.length).trim()).filter(Boolean);
+  return { base, amendments };
 }
 
 // (user decision) the standing proposal row is GONE from the web brief. The pivot
@@ -1243,7 +1382,11 @@ function revEbitdaExhibit(fsa) {
   // estimate shade is a BACKGROUND — render BEFORE the bars/labels so the E-column figures sit on top
   // (were behind the overlay). x-labels render LAST, over everything.
   const estShade = (px1, cxf, slot) => firstE >= 0 ? `<rect x="${cxf(firstE) - slot / 2}" y="${cy0}" width="${px1 - (cxf(firstE) - slot / 2)}" height="${cy1 - cy0}" fill="var(--surface-2)" opacity="0.7"/><line x1="${cxf(firstE) - slot / 2}" y1="${cy0}" x2="${cxf(firstE) - slot / 2}" y2="${cy1}" stroke="var(--line-2)" stroke-dasharray="3 3"/>` : "";
-  const xTicks = (cxf) => cols.map((c, i) => `<text x="${cxf(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(abbr(c))}</text>`).join("");
+  // thin the ticks to what the panel can actually hold — 24 labels here overlapped by -6px
+  const keepX = xLabelKeeper(cols.length, 322);
+  const xTicks = (cxf) => cols.map((c, i) => keepX(i)
+    ? `<text x="${cxf(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(abbr(c))}</text>`
+    : "").join("");
 
   // ---- LEFT panel: Revenue + EBITDA bars ($M), zero baseline (handles a negative EBITDA) ----
   const lx0 = 44, lx1 = 366, slotL = (lx1 - lx0) / n, cxL = (i) => lx0 + slotL * i + slotL / 2;
@@ -1321,7 +1464,10 @@ function returnRatiosExhibit(rr) {
     g += `<text x="${px0 - 4}" y="${cy0 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(hi)}%</text>`;
     g += `<text x="${px0 - 4}" y="${cy1 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(lo)}%</text>`;
     if (lo < 0 && hi > 0) g += `<line x1="${px0}" y1="${sc(0)}" x2="${px1}" y2="${sc(0)}" stroke="var(--line-2)" stroke-dasharray="3 2"/>`;
-    g += cols.map((c, i) => `<text x="${cx(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="var(--ink-2)">${escapeHtml(String(c))}</text>`).join("");
+    const keepR = xLabelKeeper(cols.length, px1 - px0);
+    g += cols.map((c, i) => keepR(i)
+      ? `<text x="${cx(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="var(--ink-2)">${escapeHtml(String(c))}</text>`
+      : "").join("");
     shown.forEach((s) => {
       const seg = s.pts.map((v, i) => (v == null ? null : `${cx(i)},${sc(v)}`)).filter(Boolean).join(" ");
       g += `<polyline points="${seg}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
@@ -2765,7 +2911,12 @@ function dataTable(label, cite, cols, rows, note, estimate = []) {
   const ec = (i) => (estimate[i] ? " est-col" : "");  // (P3) shade consensus / forward-FY columns
   const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(c)}</th>`).join("")}</tr>`;
   const body = rows.map((r) =>
-    `<tr${r.cls ? ` class="${r.cls}"` : ""}><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c, i) => `<td class="num${ec(i)}">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+    // ROW LABEL — a CLASS, not an inline style (2026-07-29). It was inline `white-space:nowrap`,
+    // which no stylesheet can override without `!important`, so print could not let a long label
+    // wrap: AORT's "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau
+    // Bank" held a 4-column table 203px past the page edge on width alone. Short labels
+    // ("Revenue ($M)") never wrap either way, so the print override costs nothing elsewhere.
+    `<tr${r.cls ? ` class="${r.cls}"` : ""}><td class="row-label">${escapeHtml(r.label)}</td>${r.cells.map((c, i) => `<td class="num${ec(i)}">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
   const noteHtml = note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(note)}</div>` : "";
   const citeHtml = citeMark(cite);
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
@@ -3080,8 +3231,54 @@ function eventGroups(s) {
     if (!groups.has(k)) groups.set(k, []);
     groups.get(k).push(e);
   }
-  const keys = [...groups.keys()].sort().reverse(); // date|broker, most recent first
-  const lines = keys.slice(0, _GROUP_CAP).map((k) => {
+  // ORDER IS A TWIN CONTRACT (2026-07-29) — see the matching note in render._grouped_events_lines.
+  // This reverse-sorted the composite "date|broker" string, which broke ties by broker DESCENDING,
+  // while the md sorted by date alone and kept insertion order. With the cap at six the two
+  // surfaces published DIFFERENT broker-days. Date DESC, then broker ASC, on both sides.
+  // CODEPOINT comparison, not localeCompare: python's `sorted` orders by code point, so "M" (77)
+  // precedes "b" (98), while localeCompare collates case-insensitively and put "broker undisclosed"
+  // first. That alone re-ordered IT's sixth row between the two surfaces. Same operator on both.
+  const cmp = (x, y) => (x < y ? -1 : x > y ? 1 : 0);
+  const keys = [...groups.keys()].sort((a, b) => {
+    const [da, ba] = a.split("|"), [db, bb] = b.split("|");
+    return cmp(db, da) || cmp(ba, bb);
+  });
+  // TABULAR (2026-07-29) — and this is the tier that PRINTS, so it matters more than the expanded
+  // one. Each broker-day is the same record: date, broker, up/down counts, the largest-|Δ| headline
+  // revision, the remainder. Run together with middots it read as prose and hid the one thing a
+  // reader wants from it — how hard each broker cut. As columns the ↑/↓ counts stack and that
+  // becomes a glance. Twin of render._grouped_events_lines; both emit a table.
+  // ONE definition of "withheld", shared by the summary and the expanded tier below — they used to
+  // disagree: the summary counted every event by change_type while the expanded table filtered
+  // gated ones out, so a fully-withheld broker-day printed as "0↑/0↓" and read as no activity.
+  // VERIFIED against the licensed workbooks (2026-07-29): CIQ writes "-" in Change Type on exactly
+  // the rows it withholds — 349 of 349 such rows are fully entitlement-gated, and 0 of 2,513 rows
+  // carrying a real change type are. So "no direction" and "withheld" are the same set, and
+  // Events = ↑ + ↓ + Init + Withheld closes. If a future export breaks that, the columns stop
+  // summing, which is the visible signal.
+  const _BLANKS = new Set(["", "-", "—", "NM", "NA"]);           // the pinned blank class
+  const fullyGated = (e) => {
+    const vals = ["broker_prior", "broker_current", "consensus_before", "consensus_after"]
+      .map((f) => String(e[f] ?? "").trim());
+    return vals.every((v) => v === "Entitlement Needed" || _BLANKS.has(v))
+      && vals.some((v) => v === "Entitlement Needed");
+  };
+  // defined ABOVE the summary on purpose: `const` lives in the TDZ, and the summary template
+  // evaluates immediately — declaring these after it threw a ReferenceError.
+  const _num = (v) => {
+    const s = String(v ?? "").trim().replace(/,/g, "");
+    if (!s || _BLANKS.has(s) || !/^-?\d*\.?\d+$/.test(s)) return null;
+    return Number(s);
+  };
+  const delta = (e) => {
+    const a = _num(e.broker_prior), b = _num(e.broker_current);
+    if (a === null || b === null) return { txt: DASH, cls: "muted" };
+    const d = b - a;
+    if (d === 0) return { txt: "0", cls: "muted" };
+    const mag = Math.abs(d) < 1 ? Math.abs(d).toFixed(2) : Math.abs(d).toFixed(1);
+    return { txt: `${d > 0 ? "+" : "−"}${mag}`, cls: d > 0 ? "ev-up" : "ev-dn" };
+  };
+  const summary = keys.slice(0, _GROUP_CAP).map((k) => {
     const evs = groups.get(k), [dt, broker] = k.split("|");
     let ups = 0, downs = 0, inits = 0;
     for (const e of evs) {
@@ -3090,12 +3287,35 @@ function eventGroups(s) {
       if (t.includes("downward")) downs += 1;
       if (t.includes("initiation")) inits += 1;
     }
-    const mix = `${ups}↑/${downs}↓` + (inits ? `, ${inits} initiations` : "");
     const head = _revisionHeadline(evs);
-    const headline = head ? ` · ${escapeHtml(head.metric)} ${escapeHtml(head.period)} ${_n1(head.broker_prior)}&rarr;${_n1(head.broker_current)}` : "";
-    const rest = evs.length - (head ? 1 : 0);
-    return `<div style="margin-top:5px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b> <span class="muted">· ${escapeHtml(mix)}</span>${headline}${rest > 0 ? ` <span class="muted">· +${rest} items in JSON</span>` : ""}</div>`;
-  }).join("");
+    const withheld = evs.length - ups - downs - inits;   // the residual — see render.py
+    return { dt, broker, events: evs.length, ups, downs, inits, withheld, head };
+  });
+  // an Initiations column only when some broker-day actually has one — a column of zeros is noise
+  const anyInits = summary.some((r) => r.inits > 0);
+  // a Withheld column only where the licence actually withholds something
+  const anyHeld = summary.some((r) => r.withheld > 0);
+  // first column UNLABELLED and carrying the date — the house table shape (see `dataTable` here and
+  // `_table` in render.py), so this reads like every other table in the report rather than a new one
+  const lines = `<div style="overflow-x:auto;"><table class="data revgroup-table">
+    <thead><tr><th></th><th>Broker</th><th class="num">Revisions</th>
+      <th class="num">&uarr;</th><th class="num">&darr;</th>
+      ${anyInits ? '<th class="num">Init</th>' : ""}
+      ${anyHeld ? '<th class="num">Withheld</th>' : ""}
+      <th>Largest revision</th><th class="num">Prior</th><th class="num">Current</th>
+      <th class="num">&Delta;</th></tr></thead><tbody>` + summary.map((r) => `<tr>
+      <td class="ev-when">${escapeHtml(r.dt)}</td>
+      <td class="ev-who">${escapeHtml(r.broker)}</td>
+      <td class="num">${r.events}</td>
+      <td class="num${r.ups ? " ev-up" : " muted"}">${r.ups || DASH}</td>
+      <td class="num${r.downs ? " ev-dn" : " muted"}">${r.downs || DASH}</td>
+      ${anyInits ? `<td class="num${r.inits ? "" : " muted"}">${r.inits || DASH}</td>` : ""}
+      ${anyHeld ? `<td class="num${r.withheld ? " ev-held" : " muted"}">${r.withheld || DASH}</td>` : ""}
+      <td class="row-label">${r.head ? `${escapeHtml(r.head.metric)} <span class="muted">${escapeHtml(r.head.period)}</span>` : DASH}</td>
+      <td class="num">${r.head ? _n1(r.head.broker_prior) : DASH}</td>
+      <td class="num">${r.head ? _n1(r.head.broker_current) : DASH}</td>
+      <td class="num ${r.head ? delta(r.head).cls : "muted"}">${r.head ? delta(r.head).txt : DASH}</td>
+    </tr>`).join("") + `</tbody></table></div>`;
   const moreGroups = keys.length > _GROUP_CAP ? `<div class="muted" style="font-size:12px; margin-top:4px;">+${keys.length - _GROUP_CAP} more broker-days in JSON</div>` : "";
   // (T3) ON-DEMAND expansion: the full per-item list — every event (metric period prior→current),
   // grouped by broker-day — collapsed in a <details>. This is the web on-demand tier of the moved facts.
@@ -3107,26 +3327,63 @@ function eventGroups(s) {
   // field stays verbatim (partial information is information), and at least one field must
   // actually read "Entitlement Needed" for the line's label to be honest — an all-blank item
   // (none exist today) would render verbatim rather than be mislabeled as entitlement-gated.
-  const _BLANKS = new Set(["", "-", "—", "NM", "NA"]);           // the pinned blank class
-  const fullyGated = (e) => {
-    const vals = ["broker_prior", "broker_current", "consensus_before", "consensus_after"]
-      .map((f) => String(e[f] ?? "").trim());
-    return vals.every((v) => v === "Entitlement Needed" || _BLANKS.has(v))
-      && vals.some((v) => v === "Entitlement Needed");
-  };
-  const expanded = keys.map((k) => {
+  // TABULAR, NOT BULLETS (2026-07-29). Every event is the same six-field record — metric, period,
+  // broker prior→current, consensus before→after. Two hundred and fifty records of identical shape
+  // is a table by definition, and as a bullet list it failed three ways: nothing aligned, so
+  // magnitudes could not be compared down a column; the reader re-parsed the same shape 250 times;
+  // and it could not be ranked, so "which estimate was cut hardest" meant reading all of it.
+  //
+  // The Δ column is the point of the change. It is ARITHMETIC on two recorded values, not a
+  // judgment — and it is UNKNOWN, never zero, whenever either side fails to parse (entitlement-
+  // withheld, NM, blank), because a fabricated delta in an audit tier is worse than an absent one.
+  // Source ORDER is untouched: rows stay in the recorded sequence, newest broker-day first. The
+  // column makes magnitude scannable without the render deciding what matters.
+  const rows = keys.map((k) => {
     const evs = groups.get(k), [dt, broker] = k.split("|");
     const shown = evs.filter((e) => !fullyGated(e));
     const gatedN = evs.length - shown.length;
-    const items = shown.map((e) =>
-      `<li><b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
-    const gatedLine = gatedN
-      ? `<li class="muted">${gatedN} entitlement-gated item${gatedN === 1 ? "" : "s"} — values withheld by CIQ entitlement; retained in JSON</li>` : "";
-    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b><ul class="event-log">${items}${gatedLine}</ul></div>`;
+    // date + broker print ONCE per group, on its first row — the grouping the old view carried in
+    // a heading, kept without repeating two columns down 250 rows
+    const body = shown.map((e, i) => {
+      const d = delta(e);
+      return `<tr${i === 0 ? ' class="ev-first"' : ""}>
+        <td class="ev-when">${i === 0 ? escapeHtml(dt) : ""}</td>
+        <td class="ev-who">${i === 0 ? escapeHtml(broker) : ""}</td>
+        <td class="row-label">${escapeHtml(e.metric)}</td>
+        <td>${escapeHtml(e.period)}</td>
+        <td class="num">${escapeHtml(e.broker_prior)}</td>
+        <td class="num">${escapeHtml(e.broker_current)}</td>
+        <td class="num ${d.cls}">${d.txt}</td>
+        <td class="num muted">${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)}</td>
+      </tr>`;
+    }).join("");
+    const gated = gatedN
+      ? `<tr class="ev-gated"><td class="ev-when">${shown.length ? "" : escapeHtml(dt)}</td>
+         <td class="ev-who">${shown.length ? "" : escapeHtml(broker)}</td>
+         <td colspan="6" class="muted">${gatedN} entitlement-gated item${gatedN === 1 ? "" : "s"} — values withheld by CIQ entitlement; retained in JSON</td></tr>` : "";
+    return body + gated;
   }).join("");
-  const details = `<details style="margin-top:6px;"><summary style="cursor:pointer; font-size:12px; color:var(--ink-2);">Expand all ${events.length} revisions per broker-day (on-demand)</summary><div>${expanded}</div></details>`;
+  const expanded = `<div style="overflow-x:auto;"><table class="data event-table">
+    <thead><tr><th>Date</th><th>Broker</th><th>Metric</th><th>Period</th>
+      <th class="num">Prior</th><th class="num">Current</th><th class="num">&Delta;</th>
+      <th class="num">Consensus</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  // (P5, 2026-07-29) BULK AUDIT TIER — WEB AND JSON, NOT PAPER.
+  //
+  // `ds-bulk` marks a block that stays on screen and is SUPPRESSED in print, replaced by the
+  // pointer below. The T1 rule force-opens every <details> on paper, which is right for a covenant
+  // clause but wrong for 250 estimate revisions: those are the working paper BEHIND figures this
+  // section already prints — revision breadth, the twelve-month consensus move, the monthly
+  // consensus path, and the compressed broker-day lines directly above. A buy-side note carries
+  // the aggregates; the per-item estimate history belongs in the model file. Printed in full it
+  // cost four of AORT's seventeen pages and read as a data dump.
+  //
+  // NOT a breach of the three-tier rule, which says a fact stays reachable in the expanded web
+  // on-demand tier, the printed PDF, OR the JSON — "or", not "and". Every event is in
+  // dossier.json and on the web behind this expander; print names the count and says where.
+  const details = `<details class="ds-bulk" style="margin-top:6px;"><summary style="cursor:pointer; font-size:12px; color:var(--ink-2);">Expand all ${events.length} revisions per broker-day (on-demand)</summary><div>${expanded}</div></details>`;
+  const pointer = `<div class="ds-bulk-pointer">Per-item revision log — ${events.length} events across ${keys.length} broker-days — in <span class="mono">dossier.json</span>; the broker-day summary above is the printed record.</div>`;
   const cite = citeMark(s.source_ref);
-  return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${cite}</div></div>`;
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${pointer}${cite}</div></div>`;
 }
 
 function catalystPath(cp, cc, dc = null, ps = null) {

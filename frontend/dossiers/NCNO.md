@@ -314,14 +314,19 @@ _export date unverified (data ≥ 2026-07-22)_
 | Revenue | '157.75 - 159.75' | FQ2 2027 | 2026-05-27 | fresh | actual ≥ floor 29/29 | FQ1 2027 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $23.36, median $23.00, high/low 28.00/17.00, N 11/11; Ratings: Buy 4, Outperform 6, Hold 4, Underperform 0, Sell 0, No Opinion 0, Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-22 · export date unverified] [19]
-- **Revision-event log** (250 events · 14 broker-days) — [37]:
-  - **2026-07-22 · KeyBanc Capital Markets Inc.** · 5↑/1↓ · EPS Normalized FQ2 2027 0.3→0.3 · +5 items in JSON
-  - **2026-07-12 · broker undisclosed** · 2↑/1↓ · EPS Normalized FQ2 2027 0.3→0.3 · +2 items in JSON
-  - **2026-06-22 · broker undisclosed** · 12↑/11↓ · EBITDA FY 2027 203.7→204.0 · +22 items in JSON
-  - **2026-05-28 · Truist Securities** · 16↑/14↓, 1 initiations · EBITDA FQ2 2027 42.4→37.7 · +30 items in JSON
-  - **2026-05-28 · William Blair & Company L.L.C.** · 17↑/4↓, 1 initiations · EBITDA FQ2 2027 38.8→38.1 · +21 items in JSON
-  - **2026-05-28 · KeyBanc Capital Markets Inc.** · 8↑/5↓, 1 initiations · Revenue FY 2027 642.8→645.6 · +13 items in JSON
-  - _+8 more broker-days in JSON_
+- **Revision-event log (250 events · 14 broker-days)** — [37]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-07-22 | KeyBanc Capital Markets Inc. | 6 | 5 | 1 | — | EPS Normalized FQ2 2027 | 0.3 | 0.3 | −0.01 |
+| 2026-07-12 | broker undisclosed | 3 | 2 | 1 | — | EPS Normalized FQ2 2027 | 0.3 | 0.3 | −0.01 |
+| 2026-06-22 | broker undisclosed | 23 | 12 | 11 | — | EBITDA FY 2027 | 203.7 | 204.0 | +0.34 |
+| 2026-05-28 | BTIG | 12 | 6 | 3 | 3 | Revenue FQ2 2027 | 159.8 | 158.8 | −0.98 |
+| 2026-05-28 | Citizens JMP Securities, LLC | 22 | 11 | 10 | 1 | Revenue FY 2027 | 641.7 | 645.0 | +3.4 |
+| 2026-05-28 | KeyBanc Capital Markets Inc. | 14 | 8 | 5 | 1 | Revenue FY 2027 | 642.8 | 645.6 | +2.8 |
+
+_+8 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2021 +0%, FY2022 +0%, FY2023 +0%, FY2024 +0%, FY2025 +0%, FY2026 +0%; Revenue surprise: FY2021 +2%, FY2022 +2%, FY2023 +1%, FY2024 -0%, FY2025 +0%, FY2026 +0% (GAAP-EPS basis; +beat / −miss) [38]
 
 ## Leverage & survival

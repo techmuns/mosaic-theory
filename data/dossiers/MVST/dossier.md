@@ -314,10 +314,14 @@ _export date unverified (data ≥ 2026-05-15)_
 | Gross Margin % | '32.00 - 35.00' | FY 2025 | 2025-11-10 | 238d (stale) | actual ≥ floor 4/4 | FY 2024 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $5.50, median $5.50, high/low 6.00/5.00, N 2/2; Ratings: Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-05-15 · export date unverified] [18]
-- **Revision-event log** (47 events · 3 broker-days) — [37]:
-  - **2026-05-15 · H.C. Wainwright & Co.** · 3↑/6↓, 9 initiations · EBITDA FY 2026 146.5→62.1 · +17 items in JSON
-  - **2026-05-11 · broker undisclosed** · 5↑/8↓ · Revenue FQ2 2026 103.2→95.9 · +12 items in JSON
-  - **2026-03-17 · broker undisclosed** · 0↑/16↓ · Revenue FY 2026 525.0→480.5 · +15 items in JSON
+- **Revision-event log (47 events · 3 broker-days)** — [37]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-05-15 | H.C. Wainwright & Co. | 18 | 3 | 6 | 9 | EBITDA FY 2026 | 146.5 | 62.1 | −84.4 |
+| 2026-05-11 | broker undisclosed | 13 | 5 | 8 | — | Revenue FQ2 2026 | 103.2 | 95.9 | −7.3 |
+| 2026-03-17 | broker undisclosed | 16 | — | 16 | — | Revenue FY 2026 | 525.0 | 480.5 | −44.5 |
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2022 +0%, FY2023 +0%, FY2024 +0%, FY2025 +0%; Revenue surprise: FY2021 +3%, FY2022 +2%, FY2023 +3%, FY2024 +6%, FY2025 -8% (GAAP-EPS basis; +beat / −miss) [38]
 
 ## Leverage & survival

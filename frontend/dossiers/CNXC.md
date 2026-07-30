@@ -295,14 +295,19 @@ _export date unverified (data ≥ 2026-07-06)_
 | Capital Expenditure | '(200.70) - (254.50)' | FY 2026 | 2026-01-13 | 174d (stale) | — | — |
 
 - **Consensus stats (target + ratings):** Target price: mean $35.25, median $35.00, high/low 45.00/26.00, N 4/4; Ratings: Buy 2, Outperform 1, Hold 1, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-07-06 · export date unverified] [18]
-- **Revision-event log** (81 events · 7 broker-days) — [37]:
-  - **2026-07-06 · broker undisclosed** · 2↑/1↓ · EBITDA FY 2026 1427.6→1400.0 · +2 items in JSON
-  - **2026-06-30 · broker undisclosed** · 1↑/20↓ · EBITDA FQ3 2026 375.3→353.0 · +20 items in JSON
-  - **2026-06-30 · Barrington Research Associates, Inc.** · 1↑/22↓ · EBITDA FQ3 2026 406.0→367.8 · +22 items in JSON
-  - **2026-06-29 · broker undisclosed** · 3↑/20↓ · EBITDA FQ3 2026 379.9→351.7 · +22 items in JSON
-  - **2026-06-29 · Barrington Research Associates, Inc.** · 0↑/3↓, 1 initiations · EBITDA FQ3 2026 406.0→406.0 · +3 items in JSON
-  - **2026-06-26 · broker undisclosed** · 1↑/0↓ · EPS Normalized FQ3 2026 3.1→3.1
-  - _+1 more broker-days in JSON_
+- **Revision-event log (81 events · 7 broker-days)** — [37]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-07-06 | broker undisclosed | 3 | 2 | 1 | — | EBITDA FY 2026 | 1427.6 | 1400.0 | −27.6 |
+| 2026-06-30 | Barrington Research Associates, Inc. | 23 | 1 | 22 | — | EBITDA FQ3 2026 | 406.0 | 367.8 | −38.2 |
+| 2026-06-30 | broker undisclosed | 21 | 1 | 20 | — | EBITDA FQ3 2026 | 375.3 | 353.0 | −22.3 |
+| 2026-06-29 | Barrington Research Associates, Inc. | 4 | — | 3 | 1 | EBITDA FQ3 2026 | 406.0 | 406.0 | −0.01 |
+| 2026-06-29 | broker undisclosed | 23 | 3 | 20 | — | EBITDA FQ3 2026 | 379.9 | 351.7 | −28.2 |
+| 2026-06-26 | broker undisclosed | 1 | 1 | — | — | EPS Normalized FQ3 2026 | 3.1 | 3.1 | +0.08 |
+
+_+1 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2020 +0%, FY2021 +5%, FY2022 -3%, FY2023 -13%, FY2024 +24%, FY2025 +0%; Revenue surprise: FY2020 +1%, FY2021 +0%, FY2022 -1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [38]
 
 ## Leverage & survival

@@ -309,14 +309,19 @@ _export date unverified (data ≥ 2026-07-27)_
 | Capital Expenditure | '(19.00) - (20.00)' | FY 2016 | 2016-02-18 | 3791d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $135.24, median $131.00, high/low 235.00/83.00, N 17/17; Ratings: Buy 8, Outperform 3, Hold 8, Underperform 0, Sell 0, No Opinion 0, Buy 0, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-07-27 · export date unverified] [19]
-- **Revision-event log** (250 events · 15 broker-days) — [25]:
-  - **2026-07-27 · broker undisclosed** · 0↑/0↓ · +1 items in JSON
-  - **2026-07-21 · broker undisclosed** · 0↑/0↓ · +22 items in JSON
-  - **2026-07-15 · broker undisclosed** · 0↑/18↓ · EBITDA FY 2026 961.6→957.1 · +17 items in JSON
-  - **2026-07-13 · broker undisclosed** · 0↑/21↓ · EBITDA FY 2026 957.2→954.4 · +20 items in JSON
-  - **2026-07-10 · broker undisclosed** · 3↑/16↓, 1 initiations · Revenue FY 2026 5743.4→5728.0 · +19 items in JSON
-  - **2026-07-09 · broker undisclosed** · 7↑/11↓, 2 initiations · EBITDA FQ2 2026 235.2→231.9 · +19 items in JSON
-  - _+9 more broker-days in JSON_
+- **Revision-event log (250 events · 15 broker-days)** — [25]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Init | Withheld | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-07-27 | broker undisclosed | 1 | — | — | — | 1 | — | — | — | — |
+| 2026-07-21 | broker undisclosed | 22 | — | — | — | 22 | — | — | — | — |
+| 2026-07-15 | broker undisclosed | 18 | — | 18 | — | — | EBITDA FY 2026 | 961.6 | 957.1 | −4.5 |
+| 2026-07-13 | broker undisclosed | 21 | — | 21 | — | — | EBITDA FY 2026 | 957.2 | 954.4 | −2.8 |
+| 2026-07-10 | broker undisclosed | 20 | 3 | 16 | 1 | — | Revenue FY 2026 | 5743.4 | 5728.0 | −15.4 |
+| 2026-07-09 | broker undisclosed | 20 | 7 | 11 | 2 | — | EBITDA FQ2 2026 | 235.2 | 231.9 | −3.3 |
+
+_+9 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2011 -34%, FY2012 -4%, FY2013 +2%, FY2014 -1%, FY2015 +4%, FY2016 -4%, FY2017 -51%, FY2018 +1%, FY2019 +2%, FY2020 -1%, FY2021 +2%, FY2022 +7%, FY2023 -4%, FY2024 -0%, FY2025 -2%; Revenue surprise: FY2011 +2%, FY2012 +2%, FY2013 +2%, FY2014 +0%, FY2015 +1%, FY2016 +0%, FY2017 +0%, FY2018 +0%, FY2019 +1%, FY2020 +1%, FY2021 +1%, FY2022 +0%, FY2023 +0%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [36]
 
 ## Leverage & survival

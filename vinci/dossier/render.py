@@ -458,6 +458,26 @@ def _revision_headline(evs: list[Any]) -> Any | None:
     return max(numeric, key=_pct_delta)
 
 
+def _delta_txt(e: Any) -> str:
+    """Signed magnitude of a revision — twin of `delta` in dossier.js. An em dash when either side
+    does not parse as a number: a rating move ("Hold (3.00)") or an initiation with no prior has no
+    delta, and inventing one would be worse than leaving it absent."""
+    def _n(v: Any) -> float | None:
+        t = str(v or "").strip().replace(",", "")
+        try:
+            return float(t)
+        except ValueError:
+            return None
+    a, b = _n(e.broker_prior), _n(e.broker_current)
+    if a is None or b is None:
+        return "—"
+    d = b - a
+    if d == 0:
+        return "0"
+    sign = "+" if d > 0 else "−"
+    return f"{sign}{abs(d):.2f}" if abs(d) < 1 else f"{sign}{abs(d):.1f}"
+
+
 def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
     """(4d · T3) Revision events COMPRESSED to ONE line per broker-day — date · broker · action mix
     (n↑/n↓, initiations) · the headline revision (largest-|Δ|, EBITDA-preferred) · '+N items in
@@ -470,25 +490,65 @@ def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
     groups: dict[tuple[str, str], list[Any]] = {}
     for e in events:
         groups.setdefault((e.date, e.broker), []).append(e)
-    keys = sorted(groups, key=lambda k: k[0], reverse=True)  # most-recent broker-day first
-    out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) "
-           f"— {_cite_inline(s.source_ref)}:"]
+    # ORDER IS A TWIN CONTRACT (2026-07-29). This sorted by DATE ONLY, so ties kept insertion
+    # order, while dossier.js reverse-sorted the composite "date|broker" string and so broke ties by
+    # broker DESCENDING. With `_GROUP_CAP` truncating to six, the two surfaces published DIFFERENT
+    # broker-days for the same name — AORT's md and web disagreed on rows 5 and 6, and neither was
+    # wrong, they just never had to agree. Both now sort date DESC then broker ASC: deterministic,
+    # and identical on either side.
+    keys = sorted(sorted(groups, key=lambda k: k[1]), key=lambda k: k[0], reverse=True)
+
+    # TABULAR (2026-07-29). Each broker-day is the same record — date, broker, up/down counts, the
+    # largest-|Δ| headline, the remainder — and run together with middots it read as prose, hiding
+    # the one thing a reader wants: how hard each broker cut. As columns the ↓ counts stack and that
+    # becomes a glance. Routed through the shared `_table` (B4) like every other table, so the first
+    # column is unlabelled and carries the date. Twin of `eventGroups` in dossier.js.
+    # ONE definition of "withheld", mirroring `fullyGated` in dossier.js. VERIFIED against the
+    # licensed workbooks (2026-07-29): CIQ writes "-" in Change Type on exactly the rows it
+    # withholds — 349 of 349 such rows are fully entitlement-gated, and 0 of 2,513 rows carrying a
+    # real change type are. So a broker-day with no direction is a WITHHELD one, not an empty one,
+    # and Events = ↑ + ↓ + Init + Withheld closes. Counting only ↑/↓ printed "0↑/0↓" for a
+    # fully-withheld day, which read as "nothing happened" when 27 revisions had landed.
+    # WITHHELD = the events CIQ gave no direction for. Derived as the residual rather than by
+    # re-testing the four value fields, which would duplicate dossier.js's field list across the
+    # twins (the duplicate-set guard catches exactly that) — and the residual is also the stronger
+    # definition, because Events = ↑ + ↓ + Init + Withheld then closes BY CONSTRUCTION.
+    rows: list[list[str]] = []
+    any_inits = any_held = False
+    em = "—"   # render.py uses the literal em dash for an honest absence (no DASH constant)
     for dt, broker in keys[:_GROUP_CAP]:
         evs = groups[(dt, broker)]
         ct = Counter(e.change_type for e in evs)
         ups = sum(n for t, n in ct.items() if "upward" in t.lower())
         downs = sum(n for t, n in ct.items() if "downward" in t.lower())
         inits = sum(n for t, n in ct.items() if "initiation" in t.lower())
-        mix = f"{ups}↑/{downs}↓" + (f", {inits} initiations" if inits else "")
+        held = len(evs) - ups - downs - inits
+        any_inits = any_inits or inits > 0
+        any_held = any_held or held > 0
         head = _revision_headline(evs)
-        headline = (f" · {head.metric} {head.period} {_n1(head.broker_prior)}→"
-                    f"{_n1(head.broker_current)}" if head else "")
-        rest = len(evs) - (1 if head else 0)
-        out.append(f"  - **{dt} · {broker}** · {mix}{headline}"
-                   + (f" · +{rest} items in JSON" if rest > 0 else ""))
-    if len(keys) > _GROUP_CAP:
-        out.append(f"  - _+{len(keys) - _GROUP_CAP} more broker-days in JSON_")
-    return out
+        rows.append([
+            dt, broker, str(len(evs)),
+            str(ups) if ups else em, str(downs) if downs else em,
+            str(inits) if inits else em, str(held) if held else em,
+            f"{head.metric} {head.period}" if head else em,
+            _n1(head.broker_prior) if head else em,
+            _n1(head.broker_current) if head else em,
+            _delta_txt(head) if head else em,
+        ])
+    # Init / Withheld columns only where they carry a value — a column of dashes is noise
+    if not any_held:
+        rows = [r[:6] + r[7:] for r in rows]
+    if not any_inits:
+        rows = [r[:5] + r[6:] for r in rows]
+    cols = (["Broker", "Revisions", "↑", "↓"] + (["Init"] if any_inits else [])
+            + (["Withheld"] if any_held else [])
+            + ["Largest revision", "Prior", "Current", "Δ"])
+    num = frozenset(i for i, c in enumerate(cols)
+                    if c in {"Revisions", "↑", "↓", "Init", "Withheld", "Prior", "Current", "Δ"})
+    note = (f"+{len(keys) - _GROUP_CAP} more broker-days in JSON"
+            if len(keys) > _GROUP_CAP else "")
+    return _table(f"{label} ({len(events)} events · {len(keys)} broker-days)",
+                  s.source_ref, cols, rows, note=note, num_cols=num)
 
 
 def _catalyst_section(m: MechanicalLayer) -> list[str]:

@@ -424,6 +424,12 @@ table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertica
 /* the ranker packs the most columns — tighten its cell gutters so all fit without a page h-scroll */
 #rk-table th, #rk-table td { padding-left: 6px; padding-right: 6px; }
 table.data td.mono { white-space: nowrap; } /* keep tickers (incl. the ▸ caret) on one line — never wrap a 4-char name */
+/* the dataTable row label. Was an inline style on the cell, which print could not override. */
+table.data td.row-label { white-space: nowrap; }
+
+/* (P5) the print-only pointer to a bulk audit tier. Hidden on screen, where the expander it
+   points at is sitting right beside it; shown in print, where that block is suppressed. */
+.ds-bulk-pointer { display: none; }
 table.data tr:hover td { background: var(--surface-2); }
 /* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */
 table.data tr.name-row td { font-weight: 650; background: var(--surface-2); }
@@ -689,7 +695,13 @@ table.data.vs-table { width: 100%; }
 .uw-rr-foot .row .k { color: var(--ink-3); }
 .uw-rr-foot .row .val { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-@media (max-width: 900px) {
+/* SCREEN-ONLY (2026-07-29). These are PHONE/TABLET breakpoints and they were firing on PAPER: the
+   initial containing block for print is the page box, and A4 is 210mm ≈ 794px — under every
+   max-width below. So every exported PDF got the mobile layout. The visible casualty was the
+   At-a-glance band, whose five-cell contract collapsed to `repeat(2, 1fr)`, printing as a ragged
+   2x3 grid with METHOD orphaned on its own row; `.uw-split` lost its rail column the same way.
+   `screen and` is the whole fix — the rules are correct, they were just never meant for paper. */
+@media screen and (max-width: 900px) {
   .uw-split { grid-template-columns: 1fr; }
   .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
     padding-top: 12px; margin-top: 10px; }
@@ -725,13 +737,13 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   background: var(--surface-2); border: 1px solid var(--line);
   border-radius: 999px; padding: 3px 11px; }
 
-@media (max-width: 820px) {
+@media screen and (max-width: 820px) {
   .uw-statband { grid-template-columns: repeat(2, 1fr); }
   .uw-stat { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
   .uw-stat:first-child, .uw-stat:nth-child(2) { border-top: 0; }
   .uw-stat-val.lead { font-size: 22px; }
 }
-@media (max-width: 560px) {
+@media screen and (max-width: 560px) {
   .uw-statband { grid-template-columns: 1fr; }
   .uw-stat:nth-child(2) { border-top: 1px solid var(--line); }
 }
@@ -768,7 +780,7 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .brief-verify { font-size: 12.5px; color: var(--ink-2); margin: 8px 0; line-height: 1.5; }
 .brief-chip { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
 .brief-case { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
-@media (max-width: 640px) { .brief-case { grid-template-columns: 1fr; } }
+@media screen and (max-width: 640px) { .brief-case { grid-template-columns: 1fr; } }
 /* (Brief) teaser — a 2/3 narrative beside a 1/3 snapshot table (identity + stock-info + CIK). */
 .brief-body { display: flex; gap: 22px; align-items: flex-start; margin-top: 8px; }
 .brief-narrative { flex: 2 1 0; min-width: 0; }
@@ -779,7 +791,7 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .brief-snap-t tr:last-child td { border-bottom: none; }
 .brief-snap-t td:first-child { color: var(--ink-3); white-space: nowrap; padding-right: 10px; }
 .brief-snap-t td:last-child { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
-@media (max-width: 640px) { .brief-body { flex-direction: column; } .brief-snap { max-width: none; width: 100%; } }
+@media screen and (max-width: 640px) { .brief-body { flex-direction: column; } .brief-snap { max-width: none; width: 100%; } }
 /* the machine's DERIVED proposal (2026-07-13 pivot) — solid border vs the human slot's dashed:
    the machine's row is filled, the human's is the one awaiting a hand. */
 .brief-vlab { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 600; }
@@ -788,7 +800,7 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .brief-eyebrow { display: block; margin: 13px 0 3px; }
 .brief-snap .brief-eyebrow { margin: 0 0 5px; }
 .brief-case > div + div { border-left: 1px solid var(--line); padding-left: 18px; }
-@media (max-width: 640px) { .brief-case > div + div { border-left: none; padding-left: 0; } }
+@media screen and (max-width: 640px) { .brief-case > div + div { border-left: none; padding-left: 0; } }
 
 /* (3-tier) dossier tabs — Brief · Analysis · Appendix (client-side; default Brief). */
 .ds-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 8px 0 16px; }
@@ -811,9 +823,30 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .fact-val { font-size: 13px; color: var(--ink); line-height: 1.5; }
 .fact-val.hi { font-weight: 600; }
 
-/* catalyst-path revision-event log — a compact dated list (capped at 10; full list in the JSON) */
-.event-log { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.55; }
-.event-log li { margin: 2px 0; }
+/* REVISION-EVENT TABLE (2026-07-29, replaced the `.event-log` bullet list). Every event is the
+   same six-field record — metric, period, prior→current, consensus before→after — so it is a grid:
+   prior / current / Δ align down their columns and magnitude becomes scannable, which a bullet
+   list cannot do at any length, let alone 250. Dense on purpose; this is the audit tier, not the
+   analysis. Web-only — the md renders the compressed broker-day lines and never this expansion. */
+table.data.event-table { font-size: 11.5px; }
+table.data.event-table td, table.data.event-table th { padding: 3px 8px; }
+/* the broker-day SUMMARY — the tier that prints. Same grid reasoning as the expanded table, but
+   it stays at the normal data-table size because it is decision surface, not audit detail. */
+table.data.revgroup-table td, table.data.revgroup-table th { padding: 4px 9px; }
+/* the broker-day grouping the old heading carried — printed once per group and ruled at the
+   boundary, so the eye still reads "this day, this broker" without two columns repeated 250 times */
+.event-table .ev-first > td { border-top: 1px solid var(--line-2); }
+.event-table .ev-when, .event-table .ev-who {
+  white-space: nowrap; color: var(--ink-2); font-weight: 600; }
+.event-table .ev-when { font-variant-numeric: tabular-nums; }
+/* direction lives on the Δ column ONLY — the recorded prior/current stay neutral, so the colour
+   marks the change rather than tinting the values themselves */
+.event-table .ev-up { color: var(--pos-text); font-weight: 600; }
+.event-table .ev-dn { color: var(--danger-text); font-weight: 600; }
+.event-table .ev-gated td { background: var(--surface-2); font-style: italic; }
+/* WITHHELD is not zero and not a gap — CIQ declines to state the direction on rows it gates.
+   Neutral-but-present: it must not read as an up or a down, and must not read as absent either. */
+.revgroup-table .ev-held { color: var(--ink-2); font-weight: 600; }
 
 /* table-bearing facts (peer roster, trading multiples, series, cohort) span the FULL width: the label
    sits above the table instead of in the fixed 210px column, so wide descriptive columns (e.g. the peer
@@ -875,7 +908,7 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .ds-index-card.uw { border-style: dashed; box-shadow: none; background: var(--surface-2); }
 .ds-index-card.uw:hover { border-color: var(--conditional); }
 
-@media (max-width: 820px) {
+@media screen and (max-width: 820px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; }
   .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr 1fr; }
@@ -994,11 +1027,32 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   .fact { padding: 4px 0; }
   .cite { margin-top: 2px; }
   table.data td, table.data th { padding: 4px 9px; }
+  /* A long row LABEL can hold an otherwise-narrow table off the page on its own: AORT's covenant
+     pointers is 4 columns and still ran 203px over, on one 78-character instrument name. Let it
+     wrap on paper — short labels are unaffected because they never reach the cap. */
+  table.data td.row-label { white-space: normal; max-width: 280px; }
   .flag { padding: 7px 12px; margin-bottom: 6px; }
   .point { padding: 5px 0; }
   .filing { padding: 8px 12px; margin-bottom: 7px; }
 
   /* (full-width table-bearing facts now apply everywhere — see the .fact:has(table.data) rule above) */
+
+  /* P6 — TABLE WIDTH POLICY ON PAPER (2026-07-29, operator-confirmed). `table.data` is
+     content-sized (K2), which is right on screen: a table sits at its natural width in a fluid
+     column. On a FIXED sheet the same rule left most tables using 40-60% of the measure with a
+     dead gutter down the right — the trajectory, return-ratio, acceleration and guidance grids
+     all print as narrow slabs against half a page of white.
+     The split is deliberate, and only the first half changes:
+       · a WIDE grid (>=5 columns) takes the full measure — its columns are a series, and spreading
+         them uses the page instead of wasting it;
+       · a 2-4 column REFERENCE table stays content-sized. Stretching those was tried and reverted
+         once already: a two-column label/value list at full width opens a 600px gulf between the
+         label and its number, which reads worse than the gutter it fixed.
+     The peer roster is the one 3-column table that stretches, because its third column is PROSE
+     (`.peer-desc`) rather than a reference value — the gulf argument does not apply to a
+     paragraph, which simply gets more room to breathe. */
+  table.data:has(thead th:nth-child(5)),
+  table.data:has(td.peer-desc) { width: 100%; }
 
   /* keep atomic units intact across page breaks; sections still flow naturally */
   .fact, .filing, .point, .flag, .logged-verdict, table.data tr { break-inside: avoid; }
@@ -1042,7 +1096,7 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 /* MAP tab — compact quadrant beside a status panel (Hybrid mockup layout). Swatch colours mirror
    the dot fills, so the map decodes without the list below. */
 .rq-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, 250px); gap: 30px; align-items: start; margin-bottom: 6px; }
-@media (max-width: 820px) { .rq-layout { grid-template-columns: 1fr; gap: 14px; } }
+@media screen and (max-width: 820px) { .rq-layout { grid-template-columns: 1fr; gap: 14px; } }
 .rq-panel { padding-top: 4px; }
 .rq-ph { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3); font-weight: 700; margin-bottom: 11px; }
 .rq-stats { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
@@ -1207,10 +1261,48 @@ tr.uw-ref-excl td.num { text-decoration: line-through; text-decoration-thickness
      final page. Every per-tier Sources list is well under a page, so keeping each whole is safe
      — a full block on the last page reads as intentional; a severed tail reads as breakage. */
   .ds-sources { break-inside: avoid; }
+  /* P2 — ONE SOURCE PER LINE (2026-07-29). On screen the list is `display:inline` with a middot
+     between entries: a compact 10px footnote strip under a card, which reads fine because you
+     scan it rarely. On PAPER the same rule ran every reference of a tier into a single justified
+     paragraph — accessions, tag names and URLs with no visual separation, the densest and least
+     readable block in the export. A citation list is a LIST; on paper it gets to be one. */
+  .ds-sources li { display: list-item; margin-right: 0; margin-left: 0; }
+  .ds-sources li:not(:last-child)::after { content: none; }
+  .ds-sources ol { line-height: 1.5; }
+  /* a reference is a pointer, not prose — never hyphenate or justify an accession or a URL */
+  .ds-sources li { overflow-wrap: anywhere; hyphens: none; }
   /* The appendix is a CHAPTER: the full export orphaned its header card at a page bottom with
      the financial table starting overleaf. A fresh page keeps header and table together — the
      institutional norm for an appendix — and only in the full export (the brief never prints it). */
   body.ds-print-full .ds-tier[data-tier="appendix"] { break-before: page; }
+  /* (P5) BULK AUDIT TIERS DO NOT PRINT — the pointer does. The single deliberate exception to
+     T1's force-open: these blocks are the working paper behind aggregates the report already
+     states, and the three-tier rule is satisfied by the JSON ("…or the JSON"). See the note at
+     `eventGroups` in dossier.js for why the revision log qualifies and a covenant clause does not. */
+  /* SPECIFICITY, NOT EMPHASIS. `.ds-bulk { display:none !important }` LOSES here: the T1 rule
+     above is `details:not([open])`, which is (0,1,1) against a bare class at (0,1,0), and among
+     !important declarations the higher specificity wins — so the log kept printing in place. Both
+     open and closed states are matched explicitly at (0,2,1) so neither can drift back. Do not
+     "simplify" this to `.ds-bulk`; it is the same bug. */
+  details.ds-bulk:not([open]), details.ds-bulk[open] { display: none !important; }
+  .ds-bulk-pointer { display: block; font-size: 10.5px; font-style: italic; color: var(--ink-3);
+    margin-top: 5px; }
+  /* (P7) a wide table printed as CONTINUED BLOCKS — the seam is labelled with the period span so a
+     reader always knows which slice they are in, and a block never splits across a page. */
+  .ds-split-cap { font-size: 10px; font-weight: 600; letter-spacing: 0.03em; color: var(--ink-3);
+    text-transform: uppercase; margin: 9px 0 3px; }
+  .ds-split-cap:first-child { margin-top: 0; }
+  .ds-split table.data { break-inside: avoid; }
+  /* THE FACT MUST BREAK once its table is split (2026-07-29). `.fact { break-inside: avoid }` is
+     right for a single table — keep it whole — but a split fact is header + N blocks and cannot
+     fit a page, so the avoid pushed the whole group overleaf and left ~60% of the preceding page
+     blank. AORT went 17 → 27 pages on that alone. Atomicity moves DOWN a level, exactly as the
+     uw-card rule above already does: the group breaks at its seams, each block stays whole. */
+  .fact:has(.ds-split) { break-inside: auto; }
+  /* …and the row label must not be squeezed. At `width:100%` the numeric columns took the space
+     and "Revenue ($M)" wrapped to two lines, doubling every row's height — the second half of the
+     page-count blowup. A floor wide enough for the longest real label, still free to wrap beyond. */
+  .ds-split table.data td.row-label { min-width: 118px; }
 }
 
 /* ---- dossier tier redesign (2026-07) ---- */
@@ -1289,6 +1381,12 @@ table.data thead th { border-bottom: 1px solid var(--line-2); }
 /* cover: thesis + crux */
 .brief-thesis { font-size: 13.5px; line-height: 1.55; color: var(--ink);
   border-left: 2px solid var(--accent); padding-left: 12px; margin: 4px 0 14px; }
+/* (P4) what was APPENDED after the verdict — same words, set apart from the recorded thesis so a
+   dated insertion no longer interrupts the argument mid-sentence. Quieter than the thesis and
+   marked by a neutral rule rather than the accent bar: it is provenance, not the case. */
+.brief-amends { margin: -6px 0 14px; padding-left: 12px; border-left: 2px solid var(--line-2); }
+.brief-amend { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); margin-top: 6px; }
+.brief-amend:first-of-type { margin-top: 2px; }
 .brief-crux { margin-top: 14px; border-top: 1px solid var(--line-2); padding-top: 6px; }
 .brief-crux .brief-dq { font-size: 13.5px; font-weight: 600; border-left: none; padding-left: 0; }
 .brief-crux .kv-list { margin-top: 6px; font-size: 12.5px; }
@@ -1321,7 +1419,7 @@ table.data thead th { border-bottom: 1px solid var(--line-2); }
 
 /* (review round) survival two-column: leverage | maturity wall; collapses on narrow screens */
 .ls-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 28px; }
-@media (max-width: 820px) { .ls-cols { grid-template-columns: 1fr; } }
+@media screen and (max-width: 820px) { .ls-cols { grid-template-columns: 1fr; } }
 .ls-wall .ds-title { margin-bottom: 6px; }
 
 /* (review round) peer roster business column: prose, never a numeric cell */

@@ -290,14 +290,19 @@ _export date unverified (data ≥ 2026-07-28)_
 | Gross Margin % | '28.20 - 32.40' | FQ4 2022 | 2022-08-05 | 1431d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $14.21, median $13.75, high/low 20.00/9.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-07-28 · export date unverified] [18]
-- **Revision-event log** (250 events · 10 broker-days) — [40]:
-  - **2026-07-28 · broker undisclosed** · 20↑/7↓ · EBITDA FQ3 2026 86.0→93.0 · +26 items in JSON
-  - **2026-07-23 · broker undisclosed** · 1↑/0↓ · EPS Normalized FY 2026 1.2→1.2
-  - **2026-07-21 · broker undisclosed** · 30↑/3↓ · EBITDA FQ3 2026 89.1→90.0 · +32 items in JSON
-  - **2026-07-16 · broker undisclosed** · 0↑/0↓ · +26 items in JSON
-  - **2026-07-10 · broker undisclosed** · 11↑/3↓ · EBITDA FQ3 2026 89.7→91.0 · +13 items in JSON
-  - **2026-06-24 · broker undisclosed** · 0↑/24↓ · EBITDA FQ3 2026 100.0→85.0 · +23 items in JSON
-  - _+4 more broker-days in JSON_
+- **Revision-event log (250 events · 10 broker-days)** — [40]  <!-- ds-table -->
+
+|  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|
+| 2026-07-28 | broker undisclosed | 27 | 20 | 7 | — | EBITDA FQ3 2026 | 86.0 | 93.0 | +7.0 |
+| 2026-07-23 | broker undisclosed | 1 | 1 | — | — | EPS Normalized FY 2026 | 1.2 | 1.2 | +0.02 |
+| 2026-07-21 | broker undisclosed | 33 | 30 | 3 | — | EBITDA FQ3 2026 | 89.1 | 90.0 | +0.98 |
+| 2026-07-16 | broker undisclosed | 26 | — | — | 26 | — | — | — | — |
+| 2026-07-10 | broker undisclosed | 14 | 11 | 3 | — | EBITDA FQ3 2026 | 89.7 | 91.0 | +1.4 |
+| 2026-06-24 | broker undisclosed | 24 | — | 24 | — | EBITDA FQ3 2026 | 100.0 | 85.0 | −15.0 |
+
+_+4 more broker-days in JSON_
+
 - **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2019 +259%, FY2020 +13%, FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2019 -0%, FY2020 +2%, FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [41]
 
 ## Leverage & survival
