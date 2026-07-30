@@ -2013,17 +2013,44 @@ def _parse_business_relationships(raw: str) -> list[str] | None:
     )
     if hdr is None:
         return None
+    # COLUMNS BY HEADER TEXT, never by position (item 33). The export ships TWO layouts and the
+    # positional read was correct for only one of them:
+    #   4-col: Customer Name | Relationship Type | Primary Industry | Source
+    #   5-col: Customer Name | Supplier Name | Relationship Type | Primary Industry | Source
+    # `cells[1]` is the relationship type in the first and the SUPPLIER NAME in the second, so
+    # Artivion rendered as "Artivion, Inc. (NYSE:AORT) — Endospan Ltd. · Distributor": the focal
+    # company named as its own counterparty, the counterparty as the relationship, and the
+    # relationship as the industry. 32 rows across AORT, CNXC, EPAM, FUBO and IT — exactly the
+    # five names carrying the 5-column header. Same class as the `.xls` route in item 21, and the
+    # same fix.
+    cols = [c.strip() for c in lines[hdr].split("|")]
+    idx = {name: i for i, name in enumerate(cols) if name}
+    ci, si = idx.get("Customer Name"), idx.get("Supplier Name")
+    ti, ii, xi = (idx.get("Relationship Type"), idx.get("Primary Industry"), idx.get("Source"))
+    if ci is None or ti is None:
+        return None
+
+    def cell(parts: list[str], i: int | None) -> str:
+        return parts[i].strip() if i is not None and i < len(parts) else ""
+
     out: list[str] = []
     for ln in lines[hdr + 1 :]:
         if not ln or ln.startswith("Business Description"):
             continue
-        cells = [c.strip() for c in ln.split("|") if c.strip()]
-        if len(cells) < 3:  # need at least name | type | industry
+        parts = ln.split("|")            # NOT filtered — a blank cell is a position, not nothing
+        customer, rtype = cell(parts, ci), cell(parts, ti)
+        if not customer or not rtype:
             continue
-        name, rtype, industry = cells[0], cells[1], cells[2]
-        line = f"{name} — {rtype} · {industry}"
-        if len(cells) > 3:
-            line += f" · src: {cells[3]}"
+        supplier = cell(parts, si)
+        # In the 5-column view BOTH parties are named and the focal company occupies one of them.
+        # Render the pair as stated rather than guessing which is the counterparty — the direction
+        # is what `Relationship Type` already says, and inferring it would be a new conclusion.
+        head = f"{customer} ← {supplier}" if supplier else customer
+        line = f"{head} — {rtype}"
+        if industry := cell(parts, ii):
+            line += f" · {industry}"
+        if src := cell(parts, xi):
+            line += f" · src: {src}"
         out.append(line)
     return out or None
 
