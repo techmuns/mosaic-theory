@@ -8539,7 +8539,7 @@ console.log(JSON.stringify({{
   catalystLeads: /Estimates data up to \\d+d stale/.test(cav),
   catalystOpenerGone: !/Catalyst-path as-of UNVERIFIABLE/.test(cav),
   dupLeadCount: (cav.match(/Unreconciled margin-compression/g) || []).length,
-  twoPointsBadges: (cav.match(/2 points/g) || []).length,
+  nPointsBadges: (cav.match(/\\d+ points/g) || []).length,
   ebitdaUpper: /adjusted EBITDA outlook/.test(h) && !/adjusted ebitda outlook/.test(h),
 }}));
 """
@@ -8558,7 +8558,10 @@ console.log(JSON.stringify({{
     # (twin coverage) the collapse renders ONE card with the N-points badge, not the count alone
     if dup is not None:
         assert r["dupLeadCount"] == 1, "the duplicate lead must render once on the web (collapsed)"
-        assert r["twoPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
+        # COUNT-AGNOSTIC. This probe hardcoded /2 points/ and reddened the day BRBR's duplicate
+        # lead went from 2 to 3 — the web was correct, the fixture assumed a number. The md
+        # assertion above already derives `n` from the data; this now matches any "(N points)".
+        assert r["nPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
     # (twin coverage) the JS driver line must uppercase EBITDA/EPS, like the md path
     if "adjusted ebitda outlook" in _json.dumps(d):
         assert r["ebitdaUpper"], "the web 'what broke' driver line must uppercase EBITDA"
