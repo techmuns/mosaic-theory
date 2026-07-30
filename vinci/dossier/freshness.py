@@ -78,9 +78,18 @@ _ISO = re.compile(r"(20\d\d-\d\d-\d\d)")
 
 
 #: The largest bar-to-bar gap the STORE ITSELF exhibits — derived, not a calendar. Measured across
-#: 7,225 consecutive-bar pairs in the committed store: 1d 78.0%, 2d 1.2%, 3d 18.0%, 4d 2.9%, and
-#: NOTHING beyond 4. So a name whose latest bar trails the fleet by more than this is not behind a
-#: weekend or a holiday — it is behind a fetch that did not run.
+#: 7,225 consecutive-bar pairs, 2021-07→2026-07, 14 symbols, in the local store on 2026-07-30:
+#: 1d 78.0%, 2d 1.2%, 3d 18.0%, 4d 2.9%, and NOTHING beyond 4. So a name whose latest bar trails the
+#: fleet by more than this is not behind a weekend or a holiday — it is behind a fetch that did not
+#: run. (4d is the Good-Friday / Monday-holiday shape; a Thanksgiving week peaks at 3d because the
+#: Friday session is open.)
+#:
+#: THE EVIDENCE IS NOT IN THE REPO, and the figures above are therefore not reproducible from a
+#: clone: ``data/`` is git-ignored and per-worktree, so another checkout re-deriving this would see
+#: a different distribution. That is why the number is not merely asserted here —
+#: ``test_the_tolerance_matches_the_stores_own_observed_gaps`` RE-DERIVES it from whatever store is
+#: present and reds if that store exhibits a larger gap. The constant is a claim the suite re-checks
+#: locally, not a measurement a reader can audit from the repo, and it is written down that way.
 #:
 #: SAME TRICK AS THE PRIOR-BAR RESOLUTION: derive the trading calendar from the data instead of
 #: encoding one. A hardcoded 3 would have been right until the first four-day holiday week, and a

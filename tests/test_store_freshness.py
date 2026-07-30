@@ -142,10 +142,17 @@ def test_the_committed_store_is_measured_and_reports_its_laggards() -> None:
     assert all(v >= 0 for v in lags.values()), "a negative lag means the frontier is wrong"
 
 
-def test_the_dossier_names_are_the_ones_that_must_be_current() -> None:
-    """The guard's PURPOSE, pinned to the names it protects: every committed dossier's ticker must
-    be inside the tolerance, or its next build carries a price nobody refreshed. Benchmarks and
-    non-dossier names are reported by the note but do not gate a dossier build."""
+def test_the_gated_set_includes_the_benchmark_not_only_the_dossiers() -> None:
+    """REVIEW FINDING, and it inverted the priority. The first cut gated on dossier names alone and
+    exempted everything else — but the names whose staleness matters MOST are the BENCHMARKS, which
+    this PR's own live instance found 8 days behind.
+
+    `IWM` feeds `rel_ret_vs_market`, which is a SCREEN GATE input, so a stale benchmark corrupts
+    candidate SELECTION — upstream of any rendered page. A pin that watches the eleven dossiers and
+    ignores the thing that decides which names become dossiers is guarding the wrong end.
+
+    The benchmark is DERIVED from `orchestrator`'s own default, not retyped here — three call sites
+    carry it and all three agree, so a change there moves this pin with it."""
     db = ROOT / "data" / "vinci.db"
     if not db.exists() or not (ROOT / "data" / "dossiers").is_dir():
         pytest.skip("no local store or dossiers in this worktree")
@@ -156,8 +163,15 @@ def test_the_dossier_names_are_the_ones_that_must_be_current() -> None:
         "select internal_id, max(bar_date) from prices group by internal_id")}
     if not latest:
         pytest.skip("store has no bars")
+    import inspect
+
+    from vinci.orchestrator import run_weekly
+
+    bench = str(inspect.signature(run_weekly).parameters["benchmark"].default)
     doss = {p.parent.name for p in (ROOT / "data" / "dossiers").glob("*/dossier.json")}
-    stale = {n: lag for n, lag in stale_names(latest).items() if n in doss}
+    gated = doss | {bench}
+    stale = {n: lag for n, lag in stale_names(latest).items() if n in gated}
     assert not stale, (
-        f"committed dossier names are behind the fleet: {stale} — their next build would carry a "
-        "price nobody refreshed. Run: vinci refresh <tickers> --start … --end … --aggs")
+        f"gated names are behind the fleet: {stale} (benchmark {bench!r} included) — a stale "
+        "benchmark corrupts rel_ret_vs_market and therefore candidate SELECTION, not just a "
+        "rendered page. Run: vinci refresh <tickers> --start … --end … --aggs")
