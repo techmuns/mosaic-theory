@@ -11,6 +11,7 @@ twice while measuring this — a value-borne date is not a panel arrival.
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 import pathlib
 import re
@@ -20,6 +21,9 @@ import pytest
 from vinci.dossier import freshness as fr
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+#: The gate began measuring against the BUILD date on this day. Artifacts assembled
+#: BEFORE it were guarded by the old rule and report its staleness honestly.
+GATE_FIXED_ON = "2026-07-30"
 
 
 def _num(x: object) -> float | None:
@@ -267,3 +271,118 @@ def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
     note = age.note()
     assert "oldest panel" in note and str(age.days) in note
     assert age.oldest in note and age.as_of in note
+
+
+def test_the_gate_measures_against_the_build_date_not_the_screens_reference_date() -> None:
+    """THE 2026-07-30 DEFECT, and it defeated the guard it was part of.
+
+    `_freshness_check` was handed `fin.reference_date` — the SCREEN's as-of, which runs weeks
+    behind the build (2026-07-06 against a 07-29 run). So the gate measured a 23-day-shorter age
+    than the page it was guarding: CNXC PASSED at 31d and rendered "oldest panel 54d old", and
+    NCNO's gate age came out at **-6 days** because its panel postdates the screen.
+
+    A guard that can return a negative age is not measuring anything, and a page stating a number
+    its own guard never applied is the stamp-names-a-different-object defect this contract exists
+    to remove. The render measures against `assembled_at`; the gate now takes the same instant, so
+    the two agree BY CONSTRUCTION rather than by coincidence."""
+    from vinci.dossier.assemble import _freshness_check
+
+    class _V:
+        def __init__(self, v: float) -> None:
+            self.value = v
+
+    class _SI:
+        # the completeness guard runs FIRST and refuses a build with no cap inputs, so the stub
+        # carries three that RECONCILE — otherwise this test would pass on the wrong refusal.
+        market_cap, shares_out, price = _V(1000.0), _V(100_000_000.0), _V(10.0)
+
+    class _M:
+        stock_info = _SI()
+
+        def model_dump(self, mode: str = "python") -> dict[str, object]:
+            return {"valuation": {"multiples_as_of": "2026-06-01"}}
+
+    mech = _M()
+    # one day inside the ceiling: passes
+    _freshness_check(mech, ticker="X", built_at=dt.date(2026, 6, 1) + dt.timedelta(days=45))
+    # one day past it: refuses
+    with pytest.raises(fr.FreshnessError, match="ceiling"):
+        _freshness_check(mech, ticker="X", built_at=dt.date(2026, 6, 1) + dt.timedelta(days=46))
+
+
+def test_the_gate_is_wired_to_the_build_instant_not_the_screen_date() -> None:
+    """THE CALL-SITE PIN, and it is the one that matters — the defect WAS the call site.
+
+    `test_the_gate_measures_against_the_build_date...` calls `_freshness_check` WITH a date, so it
+    passes no matter what the caller hands over: reverting `built_at=built_at.date()` to
+    `built_at=fin.reference_date` reds nothing there. The e2e invariant below cannot cover it yet
+    either (see its docstring).
+
+    So this asserts the wiring directly: the gate must receive the SAME instant the artifact is
+    stamped with. Source-level by necessity — the coupling is between two call sites inside one
+    function, and driving `assemble_one` end-to-end needs a live store, EDGAR and an LLM."""
+    import inspect
+
+    from vinci.dossier import assemble as asm
+
+    src = inspect.getsource(asm.assemble_one)
+    assert "built_at = datetime.now(UTC)" in src, "the build instant must be taken ONCE"
+    assert "built_at=built_at.date()" in src, (
+        "the freshness gate must be handed the BUILD instant, not the screen's reference_date")
+    assert "assembled_at=built_at" in src, (
+        "the artifact must be stamped with the SAME instant the gate used, not a second now()")
+    assert "reference_date=fin.reference_date" not in src.split("_freshness_check")[1][:120]
+
+
+def test_a_date_before_the_panel_yields_a_negative_age_which_is_the_tell() -> None:
+    """Kept as the diagnostic, not as accepted behaviour. `panel_age` does not clamp, deliberately:
+    a negative age is the unmistakable signature of measuring against the wrong date, and clamping
+    it to zero would have hidden the defect above instead of exposing it. NCNO produced -6d in the
+    live batch and that number is what made the cause obvious."""
+    mech = {"valuation": {"multiples_as_of": "2026-07-12"}}
+    age = fr.panel_age(mech, dt.date(2026, 7, 6))
+    assert age is not None and age.days < 0, "a negative age must stay visible, not be clamped"
+
+
+@pytest.mark.skipif(not (ROOT / "data" / "dossiers").is_dir(), reason="no committed dossiers")
+def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> None:
+    """THE WIRING PIN, and the one that would have caught the defect where the unit tests did not.
+
+    Everything above tests `_freshness_check` by CALLING it with a date. That leaves the call SITE
+    unpinned — and the call site was the bug: it passed `fin.reference_date` where the render uses
+    `assembled_at`. Reverting it reds nothing above.
+
+    This asserts the property a reader depends on: **a committed dossier's rendered panel age is
+    within the ceiling.** CNXC shipped at a rendered 54d having passed its gate at 31d; under this
+    pin that artifact cannot be committed at all. It is an e2e invariant on a living corpus, so it
+    asserts a THRESHOLD rather than any particular value — re-assembly moves the numbers and must
+    not red it."""
+    # GRANDFATHERED BY ASSEMBLY DATE, not exempted by name. An artifact built under the old gate
+    # honestly reports a staleness the old rule allowed; re-assembling it is what fixes it, and
+    # names that CANNOT re-assemble (FUBO's corporate action, MVST/WERN outside the screen cohort)
+    # would otherwise red this forever for a reason that is not a wiring defect. The scope clears
+    # itself as names rebuild — no exemption list to go stale.
+    over, checked = [], 0
+    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
+        j = d / "dossier.json"
+        if not j.exists():
+            continue
+        doc = json.loads(j.read_text())
+        if str(doc["assembled_at"])[:10] < GATE_FIXED_ON:
+            continue
+        checked += 1
+        age = fr.panel_age(doc.get("mechanical") or {}, doc["assembled_at"])
+        if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
+            over.append(f"{d.name}: renders {age.days}d, ceiling {fr.MAX_PANEL_AGE_DAYS}d")
+    assert not over, (
+        "committed dossiers render a panel age their own gate would refuse — the gate and the page "
+        f"are measuring against different dates: {over}")
+    # DECLARE VACUITY. Every committed artifact predates GATE_FIXED_ON today, so this pin currently
+    # covers ZERO names and passes for that reason — not because the property holds. A guard that
+    # cannot fire must say so rather than read as evidence; it starts covering names as the fleet
+    # re-assembles. (This was claimed as "stronger than a batch run" before it was measured; it is
+    # stronger ONLY once names are built under the new gate.)
+    if not checked:
+        pytest.skip(
+            f"vacuous: no committed dossier is assembled on/after {GATE_FIXED_ON}, so this "
+            "invariant covers nothing yet — it begins covering names as the fleet re-assembles")

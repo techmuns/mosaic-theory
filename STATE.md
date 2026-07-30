@@ -4138,6 +4138,61 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   conflicts raised alongside it; the operator-actions block has now conflicted twice across
   parallel branches. **Do not build — infrastructure stays frozen.** A third occurrence means it
   costs more than it saves.
+- **CIQ COMPS RE-EXPORT IS A RECURRING ~MONTHLY CALENDAR ITEM, not an incident response
+  (operator 2026-07-29).** At a 45-day ceiling measured against the build date, roughly a QUARTER
+  of the fleet needs re-exporting every month. Measured after the four re-exports landed
+  (2026-07-29 comps on CNXC, BRBR, VRRM, EPAM): **AORT 34d and IT 34d are already within ~11 days
+  of the ceiling**, NCNO 9d and VITL 30d behind them. Better as a standing calendar entry than as a
+  surprise when a build refuses — the refusal is correct but arrives at the worst moment, mid-batch.
+- **THE FAIL TABLE WAS ABOUT ARTIFACTS, NOT ASSEMBLABILITY — clarified 2026-07-29 before the
+  batch.** The BRBR 74 / CNXC 53 / VRRM 48 figures describe panel age in the COMMITTED artifacts,
+  which were built before the re-exports; "VRRM newly failing" reads as a blocker and is not one.
+  Verified by reading the re-exported workbooks rather than asserting it: all four carry a
+  **2026-07-29 As-Of, 0 days old**, and all eight batch names pass the ceiling on a today-build.
+34. **CIQ EXPORT CONFIGURATION IS UNRECORDED — WIDEST BLAST RADIUS OF THE UNASSERTED-CONVENTION
+    CLASS (operator, queued 2026-07-30; SIXTH instance).** CIQ's Estimates screen offers three
+    mutually exclusive branches — *Confirmed Estimate Within* (30/60/90/180d), a point-in-time
+    date, or *No Estimate Date Change*. S&P's own methodology documents ~**180 days** as the
+    studied optimum for North-American quarterly reporters, so the default already encodes a
+    researched staleness policy and a 30-day override would be **six times stricter than the
+    vendor's own finding**.
+    **VERIFIED BY READING THE WORKBOOK, not assumed:** the Estimates header block records Currency,
+    Conversion, Units, Decimals, Consolidation, Acctg. Standard, Current Fiscal Year End and the
+    next earnings-release date — and **NOT the estimate-date filter**. A scan of every sheet's
+    header rows on CNXC and BRBR finds no such string anywhere. So the claim that a new export
+    matches the previous one rests entirely on operator memory.
+    **WHY IT MATTERS MORE THAN THE OTHER FIVE:** the **vintage ladder** (Current / 1m / 3m / 6m /
+    12m ago) is what the dossier reads as *"consensus EBITDA cut 22%"*. A filter change moves those
+    numbers for reasons unrelated to analyst behaviour — a tighter window drops contributors, a
+    smaller N moves the median — so the fleet's revision narrative would shift with nothing
+    detecting it. **RECORD THE EXPORT CONFIGURATION ALONGSIDE THE FILE**, the way anchors are
+    source-stamped (an operator sidecar is the obvious carrier; `AS_OF` already sets the precedent).
+- **THE 2026-07-29 BATCH WAS DISCARDED, NOT COMMITTED — and the gate fix it forced.** 7 of 8 names
+  assembled; BRBR refused. Then the gate was found measuring against `reference_date` (the SCREEN's
+  as-of) while the page measures against `assembled_at`: **23 days apart, gate lenient.** CNXC
+  passed at 31d and RENDERED 54d; NCNO's gate age was **−6 days**. All seven were reverted. The
+  gate now takes `built_at` — one instant, used for the gate AND `assembled_at`, so the two agree by
+  construction. **A NEGATIVE AGE IS DELIBERATELY NOT CLAMPED**: it is the unmistakable signature of
+  measuring against the wrong date, and clamping would have hidden this defect instead of exposing
+  it.
+  **THE UNIT TESTS COULD NOT HAVE CAUGHT IT** — they call `_freshness_check` with a date, leaving
+  the call SITE (the actual bug) unpinned.
+  **REVIEW FINDING, and it corrected a claim made to the operator.** The e2e invariant — *no
+  committed dossier may render a panel age its own gate would refuse* — was described as "stronger
+  than the batch, which becomes confirmation". **MEASURED: it covers 0 of 11 committed dossiers.**
+  Every artifact predates the grandfather date, so the pin was passing VACUOUSLY, and reverting the
+  call site to `reference_date` reds NOTHING. A guard that cannot fire, asserted as the strongest
+  evidence available — the class this whole run has been closing, in the argument for closing it.
+  FIXED two ways: a **call-site pin** that the gate is handed the same instant the artifact is
+  stamped with (source-level by necessity — the coupling is between two call sites in one function,
+  and driving `assemble_one` end-to-end needs a live store, EDGAR and an LLM); and the e2e now
+  **SKIPS with a stated reason when it covers nothing**, so vacuity is visible rather than read as
+  a pass. It begins covering names as the fleet re-assembles.
+  Mutations after the fix: gate back on `reference_date` → RED · `built_at` stamped twice → RED ·
+  instant taken per-use rather than once → RED · negative age clamped → RED.
+  **A HALF-APPLIED EDIT WAS FOUND IN THE TREE** — `built_at` referenced but never defined; the
+  module did not type-check and would have raised `NameError` on every assembly. Completed by
+  defining it once, so the gate and the artifact stamp cannot drift apart.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
@@ -7729,6 +7784,12 @@ guard's test, and only the mutation sweep noticed.**
 (iii) **VERIFIED there is no legitimate None**, rather than assuming: `synthesize` returns None on
 exactly two paths — an `LlmError` and a truncated/incomplete tool result — both failures. Refusing
 on None therefore cannot break a supported build. Recorded in the helper.
+**BOUNDARY, RECORDED NOT FIXED (operator 2026-07-30): the guard catches `None`, not DEGRADED.**
+A synthesis that RETURNS but is empty, truncated to a single sentence, or otherwise thin still
+writes — the refusal keys on absence, not on quality. `None` was the observed failure on both
+occasions and is the right target; judging sufficiency is a different question with a different
+owner (the prose-register and false-balance guards live nearer it). Noted so "synthesis is
+protected" is not read as broader than it is.
 **INCIDENT → INVARIANT: shipped Y.** (Was: recorded-and-accepted. The distinction matters — an
 accepted risk with no evidence is a prediction, and this one was wrong.)
 **API STATE: UNKNOWN, load- or payload-dependent — NOT "recovered" (2026-07-30).** Two full

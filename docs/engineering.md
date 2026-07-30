@@ -328,6 +328,54 @@ opposite side — not a missing fact dressed as absent, but an absence asserted 
 
 > **When a guard both refuses a value and reports it missing, one of the two is a lie.**
 
+## A test that fails when things IMPROVE is worse than one that decays
+
+*(operator, 2026-07-29 — the inverse of the corpus-decay work)*
+
+The freshness fleet assertion was hardcoded to `{BRBR, MVST, CNXC}`. Four comps re-exports were
+about to move those names off the failing list — so the test would have **redded on a win**, and
+the natural response to a red is to investigate a regression that does not exist.
+
+> **A fixture pinned to a corpus's CURRENT DEFECTS fails when the defects are fixed.** Assert the
+> INVARIANT the guard implements, not the roster of names that happen to violate it today.
+
+The fix: assert the gate refuses *exactly* the names whose computed age is over the ceiling —
+self-consistent, and silent when a re-export moves one off.
+
+**Two instances in one PR, and the second was the sharper one.** The BOUNDARY test keyed on VRRM
+sitting at exactly 45d. The re-measure moved VRRM to 48 and put FUBO on 45 — so the test would have
+kept PASSING while asserting nothing about the boundary at all. A fleet-keyed boundary test stops
+testing the boundary the moment the fleet moves, and says nothing when it does. It is now driven
+off a constructed fixture: **the boundary is a property of the guard, not of whichever name lands
+on it.**
+
+Both were found by thinking about incoming work rather than by a red — which is the harder way,
+and the only way that works for the second one, since it never goes red.
+
+## The thing checked was not the thing reported — third instance
+
+*(operator, 2026-07-30, after the batch produced two misleading artifacts)*
+
+Same family as the tier rule, and it fired TWICE inside a single operation:
+
+* the **pre-flight** measured `comps_as_of` (Comparable Analysis) and declared the fleet clear —
+  but the gate keys on `multiples_as_of`, which is fed by the **Estimates** export. The panel that
+  was easy to reach was not the panel that binds;
+* the **gate** measured against `reference_date` (the screen's as-of, weeks stale) while the
+  **page** measured against `assembled_at`. CNXC passed at 31d and rendered `oldest panel 54d old`;
+  NCNO's gate age came out at **−6 days**.
+
+> **A check is only worth what it measures. Name the object the guard keys on, and the date the
+> reader sees — and verify the check uses BOTH.**
+
+Practical form, and the one to run as a pre-flight:
+
+> **Print, per name: the oldest panel, its source workbook, and the date the gate keys on.**
+
+And the trap that follows: once the binding input is refreshed, **the constraint moves.** After the
+Estimates re-export, four of eight names became bound by Comparable Analysis instead. Do not assume
+the constraint stayed where it was because you fixed the thing that used to be it.
+
 ### Generalised from ordering to FORMAT — the fifth instance, 2026-07-29
 
 Five now, and the fifth is not about order at all:
