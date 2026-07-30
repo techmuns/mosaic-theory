@@ -4890,7 +4890,8 @@ screen cohort.**
     **PRE-EXISTING DEFECT SURFACED, NOT FIXED (out of scope, in the same function).** The `.rtf`
     parser splits on `|` and DROPS empty cells before reading positionally, so a row with a blank
     column shifts left. **5 of 10 `.rtf` names carry a COMPANY NAME in the relationship-type slot**
-    — AORT 4 rows, CNXC 3, EPAM 12, FUBO 8, IT 5 (32 rows total); BRBR, MVST, NCNO, VITL, VRRM are
+    — AORT 4 rows, CNXC 3, EPAM 20, FUBO 8, IT 5 (**40** rows total — the first count said 12 for
+    EPAM and 32 overall, under-measured); BRBR, MVST, NCNO, VITL, VRRM are
     clean. Same root cause as the trap above (positional parsing of a variable-width table), and
     the header-keyed reader written here is the model for its fix. Queue it deliberately.
 22. **VISIBLE-ABSENCE RULE — N7 HALF AND THE DECLARATION BUILT 2026-07-29 (Batch A); THE
@@ -5346,6 +5347,11 @@ sample: **the source was authoritative and the excerpt was not.**
     company varies row to row — Artivion is the customer in one row and the supplier in the next —
     so inferring "the counterparty" would be a conclusion the export does not make; the direction
     is what `Relationship Type` already states.
+    **BYTE-IDENTITY VERIFIED, not inferred (review):** the PR claimed the 4-column names were
+    unchanged on the strength of their defect count being 0 both before and after — which is not
+    the same claim. Checked directly: all five 4-col names (BRBR, MVST, NCNO, VITL, VRRM) are
+    byte-identical, exactly the five 5-col names changed, and every one kept its ROW COUNT — fields
+    corrected, no rows gained or lost.
     **DETECTOR NOTE:** the first gate used a whitelist of relationship types and produced SIX false
     positives (`Borrower` and `Client Services` are real CIQ types). The corpus is the authority on
     that vocabulary, so the gate now detects the DEFECT — a company name in the relationship slot —

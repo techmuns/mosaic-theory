@@ -2020,9 +2020,9 @@ def _parse_business_relationships(raw: str) -> list[str] | None:
     # `cells[1]` is the relationship type in the first and the SUPPLIER NAME in the second, so
     # Artivion rendered as "Artivion, Inc. (NYSE:AORT) — Endospan Ltd. · Distributor": the focal
     # company named as its own counterparty, the counterparty as the relationship, and the
-    # relationship as the industry. 32 rows across AORT, CNXC, EPAM, FUBO and IT — exactly the
-    # five names carrying the 5-column header. Same class as the `.xls` route in item 21, and the
-    # same fix.
+    # relationship as the industry. 40 rows across AORT, CNXC, EPAM, FUBO and IT — exactly the
+    # five names carrying the 5-column header, and the five 4-col names are byte-unchanged by
+    # this fix (verified, not inferred). Same class as the `.xls` route in item 21, same fix.
     cols = [c.strip() for c in lines[hdr].split("|")]
     idx = {name: i for i, name in enumerate(cols) if name}
     ci, si = idx.get("Customer Name"), idx.get("Supplier Name")
