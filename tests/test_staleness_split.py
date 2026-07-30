@@ -108,11 +108,22 @@ def test_consensus_note_is_silent_inside_the_ceiling_and_never_raises() -> None:
 
 def test_the_same_ceiling_governs_both() -> None:
     """One number, deliberately. A second threshold would need its own justification, and the
-    question — is this old enough to distrust? — is identical; only who can act differs."""
-    src = inspect.getsource(fr.consensus_note)
-    assert "MAX_PANEL_AGE_DAYS" in src
-    assert not any(t in src for t in ("60", "90", "30")), (
-        "consensus_note introduced its own threshold instead of reusing the ceiling")
+    question — is this old enough to distrust? — is identical; only who can act differs.
+
+    REVIEW FINDING: the first cut scanned the SOURCE for the substrings "60"/"90"/"30". That reads
+    like a check and is not one — a hardcoded ``<= 45`` would have passed it while decoupling from
+    the constant, which is the exact drift it exists to prevent. Driven at the boundary instead, so
+    the tie to ``MAX_PANEL_AGE_DAYS`` holds by construction: silent AT the ceiling, speaking one day
+    past it, wherever the constant is set."""
+    at = dt.date(2026, 1, 1)
+    on_ceiling = {"catalyst_path": {"as_of": {"value": str(at - dt.timedelta(
+        days=fr.MAX_PANEL_AGE_DAYS))}}}
+    one_past = {"catalyst_path": {"as_of": {"value": str(at - dt.timedelta(
+        days=fr.MAX_PANEL_AGE_DAYS + 1))}}}
+    assert fr.consensus_note(fr.panel_age(on_ceiling, at, kind="consensus")) is None, (
+        "the caveat fires AT the ceiling; the gate's own comparison is `>`, not `>=`")
+    past = fr.consensus_note(fr.panel_age(one_past, at, kind="consensus"))
+    assert past is not None and str(fr.MAX_PANEL_AGE_DAYS) in past
 
 
 # --- the wiring: the gate must read EXPORT, or the split is undone -----------------------------
@@ -139,6 +150,27 @@ def test_both_ages_reach_the_page() -> None:
 
 
 # --- the corpus -------------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(not (ROOT / "data" / "dossiers").is_dir(), reason="no committed dossiers")
+def test_every_consensus_member_still_exists_in_the_corpus() -> None:
+    """REVIEW FINDING, and it is the split's real failure mode. ``CONSENSUS_PANELS`` matches EXACT
+    dotted paths. Rename one — ``catalyst_path`` moves, ``implied_expectations`` is restructured —
+    and the entry goes dead, the panel falls to the EXPORT side, and **the gate silently starts
+    refusing builds for consensus staleness again**. Nothing else in the suite would red: the
+    synthetic-fixture tests build their own paths, and the corpus tests only read what is there.
+
+    Fail-open in the dangerous direction, so it needs its own pin. Every member must be observed on
+    the real corpus; a dead entry is a classification that has quietly stopped classifying."""
+    seen: set[str] = set()
+    for d in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        seen |= {k for k, _ in fr.panel_dates(json.loads(d.read_text())["mechanical"])}
+    assert seen, "no panel paths found across the corpus — the harvester moved"
+    dead = sorted(fr.CONSENSUS_PANELS - seen)
+    assert not dead, (
+        f"CONSENSUS_PANELS entries match nothing in the corpus: {dead}. Each is now classified "
+        "EXPORT by default and will GATE — re-derive membership from the source_refs before "
+        "deleting the entry.")
 
 
 @pytest.mark.skipif(not (ROOT / "data" / "dossiers").is_dir(), reason="no committed dossiers")
@@ -180,6 +212,11 @@ def test_the_split_changes_exactly_one_name_and_loosens_nothing_else() -> None:
             "classified as consensus and the gate is measuring less than it should")
         if merged > fr.MAX_PANEL_AGE_DAYS >= exp.days:
             moved.append(d.name)
-    assert moved == ["MVST"], (
-        f"the split moves {moved}; measured 2026-07-30 it moves MVST alone. A longer list means "
-        "the classification widened — re-measure before accepting it.")
+    # SUBSET, not equality. REVIEW FINDING: `moved == ["MVST"]` would red on a WIN — the moment
+    # MVST re-enters a screen and rebuilds against fresh consensus, its merged age drops inside the
+    # ceiling and the list goes EMPTY. That is the corpus-pinned-to-current-defects anti-pattern,
+    # and a test that fails when things improve is worse than one that decays. The invariant is
+    # directional: the split may not move a name we have not measured. Fewer is progress.
+    assert set(moved) <= {"MVST"}, (
+        f"the split moves {sorted(moved)}; measured 2026-07-30 it moves MVST alone. A name not on "
+        "that list means the classification widened — re-measure before accepting it.")
