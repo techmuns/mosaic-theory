@@ -137,6 +137,13 @@ verdict placement.
      *(operator decision 2026-07-21 — previously excluded from print)*: every `<details>` force-opens
      in the PDF regardless of on-screen state, its summary printing as the section header, so the
      export is the COMPLETE record. The web surface stays collapsed — only the print fate flipped.
+     **ONE EXCEPTION — BULK AUDIT TIERS (`details.ds-bulk`), 2026-07-29 (PR #269):** a tier whose
+     expansion is a BULK LOG rather than provenance for a rendered claim prints as a POINTER, not in
+     full — the 250-event revision log ran to three pages mid-report. The carve-out is by explicit
+     CLASS, never by a size heuristic, and the pointer must name where the full record lives
+     (`dossier.json` + the web). Provenance — quotes, accessions, agreement terms, amendment chains
+     — is NOT bulk and still prints in full. Adding a `ds-bulk` is a decision to make the PDF
+     incomplete for that block: take it deliberately, and record it here.
   3. **JSON** — machine-complete, the full record behind every curated value.
   The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance).
   Curating never deletes a fact — a moved fact is reachable in the expanded web on-demand tier, the

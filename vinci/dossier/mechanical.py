@@ -891,8 +891,14 @@ def _eps_caveat_flags(
             )
     # (d) The real basis mismatch, keyed on the LTM GAAP EPS SIGN (the signal (b)/(c)/_pe_recon
     # miss). A displayed positive trailing P/E multiple — EDGAR and/or CIQ — while GAAP LTM diluted
-    # EPS is a LOSS: the multiple can only be on normalized/adjusted earnings, and unlabeled it
-    # reads as a GAAP trailing P/E. Names both multiples that are shown.
+    # EPS is a LOSS. What that PROVES is a NEGATIVE: the denominator is not the LTM GAAP EPS. Which
+    # denominator it IS the inputs do not say, so the caveat must not pick one (item 19a): the
+    # earlier text asserted "rest on normalized/adjusted earnings", while ``_pe_distortion_note``
+    # concluded the OTHER candidate — "P/E rests on a non-current positive EPS" — from a real
+    # comparison against the latest annual EPS. Both shipped on CNXC and FUBO, in one dossier, about
+    # one number, with the note pointing the reader AT the contradicting flag ("see the P/E-basis
+    # flag"). Naming both candidates and declaring the basis unstated is the only claim the inputs
+    # support. Names both multiples that are shown.
     if ltm_gaap_eps is not None and ltm_gaap_eps < 0:
         shown: list[str] = []
         if pe.is_known and pe.value and pe.value > 0:
@@ -900,10 +906,17 @@ def _eps_caveat_flags(
         if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value and ciq_pe.value > 0:
             shown.append(f"CIQ P/LTM EPS {ciq_pe.value:.1f}x")
         if shown:
+            # ONE plurality decision feeding every agreeing word. The verb was hardcoded `rest`
+            # while the pronoun switched on `len(shown)` — two agreement calls from one fact, so
+            # the singular case read "EDGAR P/E 6.0x rest … do not read it" on all three live
+            # names (CNXC, FUBO, SMPL), every one of them single-multiple.
+            plural = len(shown) > 1
             out.append(
-                f"{' and '.join(shown)} rest on normalized/adjusted earnings — LTM GAAP diluted "
-                f"EPS is NEGATIVE ({ltm_gaap_eps:.2f}); do not read "
-                f"{'them' if len(shown) > 1 else 'it'} as a GAAP trailing multiple."
+                f"{' and '.join(shown)} {'do' if plural else 'does'} not rest on LTM GAAP "
+                f"earnings — LTM GAAP diluted EPS is NEGATIVE ({ltm_gaap_eps:.2f}), so a positive "
+                f"multiple must use some other denominator (an EPS from a non-current period, or "
+                f"a normalized/adjusted figure — the displayed basis does not say which). Do not "
+                f"read {'them' if plural else 'it'} as a GAAP trailing multiple."
             )
     # (c) FALLBACK, only when the LTM GAAP EPS sign is UNAVAILABLE: CIQ prints a finite trailing P/E
     # while EDGAR shows none (an absent EDGAR P/E is itself the negative-GAAP tell). With the sign

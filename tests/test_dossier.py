@@ -2021,7 +2021,13 @@ def test_smpl_pltm_basis_caveat_present_in_committed_artifact_e2e() -> None:
     ltm = dm._ltm_gaap_eps(doss.mechanical.financial_summary)
     if ltm is None or ltm >= 0:
         return  # the shape that bit is gone from the artifact — nothing to guard here
-    assert any("rest on normalized/adjusted earnings" in c for c in doss.caveats), (
+    # ANCHOR ON THE DERIVED VALUE, not the wording. This held the literal "rest on
+    # normalized/adjusted earnings" and the docstring above argued a deterministic template
+    # "cannot rot on a reword" — item 19a reworded it, which is exactly how a template rots. What
+    # this test is FOR is that the guard reaches the artifact at all; the sentence it reaches with
+    # is the (d) branch's business. Keyed on the EPS the guard fired on, so it survives a reword
+    # and still reds if the caveat disappears.
+    assert any(f"NEGATIVE ({ltm:.2f})" in c and "GAAP" in c for c in doss.caveats), (
         f"SMPL LTM GAAP dil EPS {ltm} < 0 but the P/LTM basis caveat is ABSENT from the "
         "committed artifact — the guard is disconnected from the pipeline (claim-#7 regression)"
     )
@@ -4352,20 +4358,24 @@ def test_pltm_basis_caveat_on_negative_ltm_gaap_eps(monkeypatch: pytest.MonkeyPa
     # (1) the SMPL shape — EDGAR 10.86 + CIQ 16.0 + LTM GAAP −2.08 → names BOTH multiples
     set_ciq(16.0)
     f1 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
-    assert any("EDGAR P/E 10.9x and CIQ P/LTM EPS 16.0x" in f and "NEGATIVE (-2.08)" in f
-               and "do not read them" in f for f in f1)
-    # (2) only EDGAR positive (CIQ absent) → names EDGAR only, singular "it"
+    assert any("EDGAR P/E 10.9x and CIQ P/LTM EPS 16.0x do not rest" in f
+               and "NEGATIVE (-2.08)" in f and "Do not read them" in f for f in f1)
+    # (2) only EDGAR positive (CIQ absent) → names EDGAR only, singular "does"/"it". This pin
+    # previously asserted "EDGAR P/E 10.9x rest", pinning the AGREEMENT BUG as correct — the
+    # singular case is the one all three live names hit, so the pin protected the defect on 100%
+    # of production instances (item 19a).
     set_ciq(None)
     f2 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
-    assert any("EDGAR P/E 10.9x rest" in f and "do not read it" in f and "CIQ" not in f for f in f2)
+    assert any("EDGAR P/E 10.9x does not rest" in f and "Do not read it" in f and "CIQ" not in f
+               for f in f2)
     # (3) EDGAR absent + CIQ present + negative LTM → (d) names CIQ; NO (c) double
     set_ciq(16.0)
     f3 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
-    assert any("CIQ P/LTM EPS 16.0x rest" in f and "NEGATIVE (-2.08)" in f for f in f3)
+    assert any("CIQ P/LTM EPS 16.0x does not rest" in f and "NEGATIVE (-2.08)" in f for f in f3)
     assert not any("different earnings definition" in f for f in f3)
     # (4) positive LTM GAAP EPS → (d) stays quiet (multiples coherent with a positive GAAP trail)
     f4 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=1.15)
-    assert not any("rest on normalized" in f for f in f4)
+    assert not any("does not rest on LTM GAAP" in f for f in f4)
     # (5) sign UNAVAILABLE + EDGAR absent + CIQ present → the (c) #198 fallback is preserved
     f5 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=None)
     assert any("different earnings definition" in f for f in f5)
@@ -4374,7 +4384,9 @@ def test_pltm_basis_caveat_on_negative_ltm_gaap_eps(monkeypatch: pytest.MonkeyPa
     set_ciq(16.0)  # EDGAR 6.0x vs CIQ 16.0x → ratio 2.67 ≥ 2
     b_loss = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
     assert not any("one-time-inflated" in f for f in b_loss)             # (b) yields to (d)
-    assert any("rest on normalized" in f for f in b_loss)               # (d) fires instead
+    # agreement-neutral: this case shows BOTH multiples, so (d) reads "do not rest". Which caveat
+    # FIRES is the question here; its verb agreement is pinned in test_pe_basis_cause_claim.
+    assert any("not rest on LTM GAAP" in f for f in b_loss)             # (d) fires instead
     b_unknown = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=None)
     assert any("one-time-inflated" in f for f in b_unknown)             # sign unknown → (b) kept
 
@@ -8626,7 +8638,7 @@ console.log(JSON.stringify({{
   catalystLeads: /Estimates data up to \\d+d stale/.test(cav),
   catalystOpenerGone: !/Catalyst-path as-of UNVERIFIABLE/.test(cav),
   dupLeadCount: (cav.match(/Unreconciled margin-compression/g) || []).length,
-  twoPointsBadges: (cav.match(/2 points/g) || []).length,
+  nPointsBadges: (cav.match(/\\d+ points/g) || []).length,
   ebitdaUpper: /adjusted EBITDA outlook/.test(h) && !/adjusted ebitda outlook/.test(h),
 }}));
 """
@@ -8645,7 +8657,10 @@ console.log(JSON.stringify({{
     # (twin coverage) the collapse renders ONE card with the N-points badge, not the count alone
     if dup is not None:
         assert r["dupLeadCount"] == 1, "the duplicate lead must render once on the web (collapsed)"
-        assert r["twoPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
+        # COUNT-AGNOSTIC. This probe hardcoded /2 points/ and reddened the day BRBR's duplicate
+        # lead went from 2 to 3 — the web was correct, the fixture assumed a number. The md
+        # assertion above already derives `n` from the data; this now matches any "(N points)".
+        assert r["nPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
     # (twin coverage) the JS driver line must uppercase EBITDA/EPS, like the md path
     if "adjusted ebitda outlook" in _json.dumps(d):
         assert r["ebitdaUpper"], "the web 'what broke' driver line must uppercase EBITDA"
