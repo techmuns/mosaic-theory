@@ -21,6 +21,7 @@ from typing import Any, TypeVar
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.freshness import corrected_ciq_as_of
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
@@ -2091,7 +2092,8 @@ def _ie_bridge_net_debt(implied: ImpliedValuation) -> float | None:
 
 
 def _implied_expectations(
-    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle
+    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle,
+    price_bars: list[Any] | None = None,
 ) -> ImpliedExpectations | None:
     """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields. TEV = mcap + net debt
     (simple-TEV basis — the cell is not surfaced and carries a stale second pricing vintage,
@@ -2109,7 +2111,17 @@ def _implied_expectations(
         return None
     market_cap, net_debt = float(mc.value), float(name_row.net_debt)
     tev = market_cap + net_debt
-    tev_as_of = _ie_asof(mc.source_ref)
+    # CIQ's As-Of is the EXPORT date; the data is the PRIOR close (measured 11/11). Correct it
+    # from the store's own prior BAR, never `date - 1` — two stamps in the fleet land on a Monday.
+    #
+    # SCOPE, STATED HONESTLY: this corrects the COMPS panel only. The offset was measured by
+    # comparing CIQ's `Day Close Price Latest` against the store, and that column exists only on
+    # Comparable Analysis → Financial Data. `mult_as_of` below comes from the ESTIMATES export,
+    # whose convention has NOT been measured — correcting it too would be assuming the convention
+    # generalises, which is the category-label rule. It stays uncorrected until measured.
+    stated_as_of = _ie_asof(mc.source_ref)
+    tev_as_of = (corrected_ciq_as_of(stated_as_of, price_bars)
+                 if price_bars and stated_as_of != "UNKNOWN" else stated_as_of)
     mult_as_of = (
         (catalyst.as_of.value or "UNKNOWN").lstrip("≥")
         if catalyst.as_of.status is SourceStatus.PRESENT else "UNKNOWN")
@@ -2182,7 +2194,9 @@ def _implied_expectations(
     nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
     tev_src = (
         f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
-        f"(CIQ Comparable Analysis→Financial Data, Latest, as-of {tev_as_of}) — simple-TEV basis"
+        f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}"
+        + (f", exported {stated_as_of}" if tev_as_of != stated_as_of else "")
+        + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(
         rows=rows, tev=Sourced.present(round(tev, 1), source_ref=tev_src), anchors=anchors,
@@ -2649,7 +2663,8 @@ def assemble_mechanical(
     # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
     valuation = valuation.model_copy(
         update={"implied_expectations":
-                _implied_expectations(peer_comps, catalyst, implied_val, bundle)})
+                _implied_expectations(peer_comps, catalyst, implied_val, bundle,
+                                     store.get_price_history(record.identity.internal_id))})
     mech = MechanicalLayer(
         valuation=valuation,
         quality=quality,
