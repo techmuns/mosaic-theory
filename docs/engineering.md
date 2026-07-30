@@ -516,6 +516,35 @@ noise.
 Same distinction item 20 turns on. When measuring staleness, harvest arrivals only, and say in the
 code which is which.
 
+## One session per branch — a worktree you did not dirty belongs to someone else
+
+*(operator, 2026-07-30 — recorded as a standing hazard after the THIRD instance, with a rule
+rather than a third incident report)*
+
+Multiple agent sessions share this repo's worktrees. Three times that has produced a defect:
+
+| # | what happened | how it presented |
+|---|---|---|
+| 1 | a stale stash silently re-applied (07-23) | changes nobody in the session had written |
+| 2 | a half-applied `built_at` edit | the module would not type-check; `NameError` on every assembly |
+| 3 | **simultaneous writes to a LIVE branch** (07-30) | uncommitted edits from another session sitting on `fix/19c-scale-forms` mid-review, while `fix/print-wide-tables` was held by a third worktree |
+
+Three is a pattern, not bad luck.
+
+> **Before touching a branch, run `git worktree list` and `git status`.** A branch already checked
+> out elsewhere, or a worktree carrying uncommitted changes you did not make, is **another
+> session's**. Do not build on it. Never `git checkout --`, `git stash`, or `git reset --hard` over
+> work you did not write.
+
+**Foreign edits are surfaced and attributed, never silently absorbed or discarded.** In #271 they
+were *kept*: the 3-dp billions form closed a real false refusal, and one of them corrected a false
+claim in a comment this agent had written — the class of error only another reader finds. Absorbing
+them unattributed would have been the worse of the two failures, because the operator would have had
+no way to know a second session was live on the branch they were about to merge.
+
+Git's worktree lock is the mechanism to lean on, not to work around: it is why #269's fix ran on a
+detached HEAD instead of force-checking-out a branch another session held.
+
 ## Verify the worktree holds the data an operation needs, before running it
 
 *(operator, 2026-07-29 — the general form of the baseline rule, after three instances)*
