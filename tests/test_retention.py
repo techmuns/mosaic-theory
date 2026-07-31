@@ -762,3 +762,28 @@ def test_the_row_records_the_gates_result_not_the_admission() -> None:
     assert 'gates["g3_multiple_floor"]' in src and "outcome_from_gate(g3)" in src
     assert 'gates["admitted"]' in src, "admission is no longer recorded at all"
     assert '"g3_and_distress"' not in src, "the conflated gate is back"
+
+
+def test_the_reason_taxonomy_is_exhaustive_no_inline_fourth() -> None:
+    """REVIEW FINDING. The gate emitted a FOURTH reason — "no price at the reference date" — as an
+    inline literal: not a named constant, not counted in the population split, not covered by the
+    three-causes pin. An un-named reason is a cause the taxonomy does not know about, so it escapes
+    both the exhaustiveness check and the count.
+
+    Pinned structurally: every string literal assigned to `why`, plus the note prefix, must come
+    from `G3_REASONS`."""
+    import ast
+    import inspect
+
+    from vinci.screens import assemble as asm
+
+    src = inspect.getsource(asm.pe_current_and_percentile)
+    tree = ast.parse(src.lstrip())
+    inline = [n.value.value for n in ast.walk(tree)
+              if isinstance(n, ast.Assign) and isinstance(n.value, ast.Constant)
+              and isinstance(n.value.value, str)
+              and any(isinstance(t, ast.Name) and t.id == "why" for t in n.targets)]
+    assert not inline, f"a reason is an inline literal, outside the taxonomy: {inline}"
+    assert len(set(asm.G3_REASONS)) == 4, asm.G3_REASONS
+    for r in asm.G3_REASONS:
+        assert r.strip(), "an empty reason is not a reason"

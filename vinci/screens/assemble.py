@@ -37,15 +37,30 @@ _PE_WINDOW_DAYS = 1825  # ~5y multiple range (Polygon Starter gives 5y history) 
 # FAIL that would wrongly reject a clean de-rating. Face-validity, never forward-return tuning.
 _PE_MIN_POINTS = 450
 
-# G3's THREE REASONS FOR NOT VALUING A NAME. Distinct because their causes are distinct and a
-# reader acts differently on each: nothing tagged is a DATA gap, negative-throughout is a real
-# ANSWER about the business, and a short history is a TIMING state that resolves by waiting.
-# Measured across the 412 names reaching G3 on the 2026-07-29 run: 48 / 85 / 49.
+# G3's REASONS FOR NOT VALUING A NAME — distinct because their causes are distinct and a reader
+# acts differently on each: nothing tagged is a DATA gap, negative-throughout is a real ANSWER
+# about the business, a short history is a TIMING state that resolves by waiting, and no price is
+# an infrastructure failure.
+#
+# COUNTS CORRECTED AT REVIEW. The first pass reported 48 / 85 / 49, measured on a WIDER definition
+# than the code uses — it counted a name as "nothing tagged" only when BOTH EPS and the EBITDA
+# components were absent, while the code (rightly, since EV/EBITDA cannot gate) tests EPS alone.
+# The label's text and the code agreed; the NUMBER described a different set. Measured on the
+# code's own definition across the 412 names reaching G3 on the 2026-07-29 run:
+#   G3_NO_INPUT 54 · G3_NEGATIVE_ECONOMICS 94 · G3_SHORT_HISTORY 34 · G3_NO_PRICE 0 · resolves 230
 G3_NO_INPUT = "no valuation input tagged — no diluted EPS in the filing history"
 G3_NEGATIVE_ECONOMICS = (
     "inputs tagged but economics negative throughout — never a positive annual EPS. This is an "
     "answer about the business, not a gap in the data")
 G3_SHORT_HISTORY = "history below the floor — too short to judge a trailing range"
+#: Zero names on the 2026-07-29 run and structurally near-unreachable (a name reaching G3 cleared
+#: G1 and G2 on price), but NAMED rather than left an inline literal: an un-named reason is one the
+#: taxonomy does not know about, so it escapes both the exhaustiveness pin and the population count.
+G3_NO_PRICE = "no price at the reference date"
+
+#: Every reason G3 can emit. The pin asserts the emitted set is exactly this — a fourth reason
+#: added inline (as `G3_NO_PRICE` was) is a cause with no count and no label anyone reads.
+G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE)
 
 
 def annual_eps_as_of(points: list[ConceptPoint], d: date) -> float | None:
@@ -74,11 +89,11 @@ def pe_current_and_percentile(
         # THE CAUSE, NOT JUST THE ABSENCE. "no positive EPS/price" collapsed two states G3 must
         # tell apart: a filer that has NEVER tagged diluted EPS (nothing to value with) and one
         # that tags it every year and has simply never earned a positive number (a real answer
-        # about the business, not a gap in our data). Measured on the 412 reaching G3: 48 vs 85.
+        # about the business, not a gap in our data). Measured on the 412 reaching G3: 54 vs 94.
         if not annual_eps:
             why = G3_NO_INPUT
         elif cur_price is None:
-            why = "no price at the reference date"
+            why = G3_NO_PRICE
         else:
             why = G3_NEGATIVE_ECONOMICS
         u: DataField[float] = DataField.unknown(

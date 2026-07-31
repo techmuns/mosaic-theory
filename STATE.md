@@ -4040,9 +4040,17 @@ carrying its CAUSE, and the retention row records the GATE'S result separately f
 | cause | count | what it means |
 |---|---:|---|
 | RESOLVES | 230 | a real judgment |
-| `economics_negative_throughout` | **85** | an ANSWER about the business, not a data gap |
-| `history_below_floor` | 49 | a TIMING state — resolves by waiting |
-| `no_valuation_input_tagged` | 48 | a DATA gap |
+| `economics_negative_throughout` | **94** | an ANSWER about the business, not a data gap |
+| `no_valuation_input_tagged` | 54 | a DATA gap |
+| `history_below_floor` | 34 | a TIMING state — resolves by waiting |
+| `no_price_at_reference` | 0 | infrastructure — named, though unreachable today |
+
+**COUNTS CORRECTED AT REVIEW.** The first pass reported 48 / 85 / 49, measured on a WIDER
+definition than the code uses — it counted "nothing tagged" only when BOTH EPS and the EBITDA
+components were absent, while the code tests EPS alone (rightly, since EV/EBITDA cannot gate). The
+label TEXT and the code agreed; the NUMBER described a different set, which is the record saying two
+things. A FOURTH reason also existed as an inline literal, outside the taxonomy and outside the
+count — now named `G3_NO_PRICE` and pinned exhaustive by an AST scan for inline `why` assignments.
 
 **THE VALUATION OVERLAP across the 412:** P/E only **89** · EV/EBITDA only **4** · both **137** ·
 neither **182**. Union 230. EV/EBITDA adds four names P/E could not reach — it is not an alternative
