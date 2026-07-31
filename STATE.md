@@ -4038,8 +4038,12 @@ mode ADMITS names, and with the legs reversed it puts one in the pool cohort sel
 **THE POPULATION SEPARATES CLEANLY:** of the 596 that reached G2, **593 anchor exactly ON the
 window start**; the next three sit at 108d, 116d and 1,472d, with nothing in 1–107. Any bound in
 that range gives identical outcomes today, so `MAX_ANCHOR_LAG_DAYS = 10` is derived from the
-STORE'S OWN gap structure (observed consecutive-bar gaps run 1–4d at ~100% with a thin tail to 9d)
-rather than fitted to the three names it rejects. Out of range → **NOT_EVALUATED with its reason,
+MARKET CALENDAR — **corrected at review**: the first derivation used the STORE-wide distribution,
+whose 5–9d tail is per-name HALTS, i.e. the very population the bound refuses, so it set the
+threshold from what it screens out. IWM and MDY agree exactly (which is what makes them the
+calendar) and neither gap exceeds **4d**; the bound of 10 leaves six days of margin over the worst
+holiday weekend the market actually produces, and is pinned from both sides so it can neither
+refuse a normal weekend nor admit a multi-week halt. Out of range → **NOT_EVALUATED with its reason,
 never FAIL**. **THE STAMP NOW SAYS WHAT THE NUMBER COVERS:** `StampedInput` carries structured
 `span_days` + `observations`, and refuses one without the other — 296 days is innocuous at 124 bars
 and a hole at 28, so either alone cannot say which.

@@ -502,3 +502,55 @@ def test_a_window_described_by_only_one_of_span_or_bars_is_refused() -> None:
             StampedInput(value=-0.18, as_of=REF, source="EOD derived", **kw)  # type: ignore[arg-type]
     ok = StampedInput(value=-0.18, as_of=REF, source="EOD derived", span_days=296, observations=28)
     assert (ok.span_days, ok.observations) == (296, 28)
+
+
+def test_the_window_facts_have_exactly_one_implementation() -> None:
+    """REVIEW FINDING. `span_days`/`observations` were computed twice — once in `relative_return`
+    for the note, once in `screens.run` for the row. They agreed, which is how twin drift always
+    starts; the risk was never string-parsing, it was duplication.
+
+    Pinned on the CALL, not on a comment: `screens.run` must reach the same function the field
+    uses, so a later edit to one cannot leave the row saying something the note does not."""
+    import inspect
+
+    from vinci.eod.features import relative_return, window_facts
+    from vinci.screens import run as _run
+
+    assert _run.window_facts is window_facts, "screens.run rebound its own window_facts"
+    assert "window_facts(name_bars, start=start, end=end)" in inspect.getsource(relative_return)
+    assert "window_facts(bars, start=window_start, end=f.as_of)" in inspect.getsource(
+        _run._gate_inputs)
+    assert not hasattr(_run, "_window_facts"), "the duplicate implementation is back"
+
+
+def test_the_anchor_bound_clears_the_market_calendar_not_the_halt_tail() -> None:
+    """REVIEW CORRECTION to the bound's stated basis. It was derived from the STORE-wide gap
+    distribution, whose 5–9d tail is per-name HALTS — the very thing the bound refuses — so that
+    derivation set the threshold from the population it screens out.
+
+    The relevant gap is MARKET-WIDE. IWM and MDY agree exactly (which is what makes them the
+    calendar) and neither exceeds 4d. The bound must clear that with room, and must not be so wide
+    that a halt of a few weeks slips through."""
+    import sqlite3
+
+    from vinci.eod.features import MAX_ANCHOR_LAG_DAYS
+
+    db = ROOT / "data" / "vinci.db"
+    if not db.is_file():
+        pytest.skip("no local store in this worktree")
+    c = sqlite3.connect(db)
+    worst = 0
+    for sym in ("IWM", "MDY"):
+        q = "select bar_date from prices where internal_id like ? order by bar_date"
+        ds = [dt.date.fromisoformat(r[0]) for r in c.execute(q, (f"%-{sym}",))]
+        if len(ds) < 2:
+            continue
+        worst = max(worst, max((b - a).days for a, b in zip(ds, ds[1:], strict=False)))
+    if not worst:
+        pytest.skip("no benchmark bars to measure the calendar from")
+    assert worst <= MAX_ANCHOR_LAG_DAYS, (
+        f"the market calendar shows a {worst}d gap but the bound is {MAX_ANCHOR_LAG_DAYS}d — every "
+        "name would read unassessable after that weekend. Re-derive from the benchmark series.")
+    assert 2 * worst + 2 >= MAX_ANCHOR_LAG_DAYS, (
+        f"bound {MAX_ANCHOR_LAG_DAYS}d is far wider than the {worst}d market gap it must clear — "
+        "a wide bound admits the halted windows this exists to refuse")

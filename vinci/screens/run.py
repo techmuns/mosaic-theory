@@ -13,6 +13,7 @@ from pathlib import Path
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
+from vinci.eod.features import window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult
 from vinci.schemas.market import PriceBar
@@ -154,23 +155,6 @@ def screen_universe(
     }
 
 
-def _window_facts(bars: list[PriceBar], *, start: date, end: date | None
-                  ) -> tuple[int, int] | None:
-    """(span_days, bars) for the window actually used — measured from the bars, never parsed.
-
-    The span is anchored on the bar the return STARTED from, which is the latest at or before
-    ``start`` — the same bar `relative_return` uses — so a hole in the series shows up here as a
-    span wider than the target rather than being invisible.
-    """
-    if end is None:
-        return None
-    prior = [b for b in bars if b.bar_date <= start]
-    if not prior:
-        return None
-    a = prior[-1].bar_date
-    return (end - a).days, sum(1 for b in bars if a <= b.bar_date <= end)
-
-
 def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: date
                  ) -> dict[str, StampedInput]:
     """The gate inputs with THEIR OWN stamps — never the run's.
@@ -184,7 +168,7 @@ def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: date
         f = getattr(prices, name, None)
         if f is None:
             continue
-        win = (_window_facts(bars, start=window_start, end=f.as_of)
+        win = (window_facts(bars, start=window_start, end=f.as_of)
                if name == "rel_ret_vs_market" and f.value is not None else None)
         out[name] = StampedInput(
             value=f.value, as_of=f.as_of if f.value is not None else None,
