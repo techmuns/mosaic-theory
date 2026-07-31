@@ -828,3 +828,43 @@ def test_the_g3_resolved_count_reads_the_gate_not_the_capability() -> None:
         "EV/EBITDA now resolves — the gate's count is no longer P/E-only and STATE's 226/186 "
         "must be re-measured on the union")
     assert "ev_unknown: DataField[float] = DataField.unknown(" in src
+
+
+def test_a_retired_key_is_dropped_only_when_it_held_nothing(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING on the removal itself. Pydantic's default is `extra="ignore"`, so removing
+    `UniverseRow.outcome` meant 5,871 committed rows per run read CLEAN with the field silently
+    vanishing. Fine for a field that was the constant FAIL; catastrophic for one that held data —
+    and `scenarios.RETIRED_VERDICT_FIELDS` already refuses exactly this class.
+
+    Retention cannot simply raise: the committed rows ARE the evidence, and making them unreadable
+    to protect them is self-defeating. So the rule is narrower — a retired key is dropped silently
+    only when it carries the value it always carried, and anything else raises."""
+    from vinci.screens.retention import RETIRED_ROW_FIELDS
+
+    assert RETIRED_ROW_FIELDS["universe"] == {"outcome": "FAIL"}
+    rid = next_run_id(REF, tmp_path)
+    append_rows([_universe("TINY", rid)], run_id=rid, snapshots_dir=tmp_path)
+    path = run_path(rid, tmp_path)
+
+    legacy = json.loads(path.read_text().strip())
+    # the shape every committed row has: the retired key at its only-ever value
+    path.write_text(json.dumps({**legacy, "outcome": "FAIL"}) + "\n")
+    assert len(read_rows(rid, snapshots_dir=tmp_path)) == 1, "a legacy row became unreadable"
+
+    # and a retired key holding something else is a key that carried real data
+    path.write_text(json.dumps({**legacy, "outcome": "PASS"}) + "\n")
+    with pytest.raises(ValueError, match="held real data"):
+        read_rows(rid, snapshots_dir=tmp_path)
+
+
+def test_the_committed_run_still_reads_after_the_field_was_removed() -> None:
+    """The corpus check the schema change needed: 5,871 universe rows on disk carry `outcome`, and
+    the removal must not have made the committed evidence unreadable."""
+    from vinci.config import get_config
+
+    d = get_config().snapshots_dir / "screen_runs"
+    if not (d / "2026-07-29-01.jsonl").is_file():
+        pytest.skip("no committed retention run in this worktree")
+    rows = read_rows("2026-07-29-01", snapshots_dir=get_config().snapshots_dir)
+    univ = [r for r in rows if r.grain == "universe"]
+    assert len(univ) > 5_000, f"only {len(univ)} universe rows read back"

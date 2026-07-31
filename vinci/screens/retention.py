@@ -62,6 +62,19 @@ from vinci.schemas.candidate import GateResult
 RETENTION_SUBDIR = "screen_runs"
 _RUN_ID = re.compile(r"^(\d{4}-\d{2}-\d{2})-(\d{2})$")
 
+#: Keys that WERE written into rows and have since been removed, with the only value they ever
+#: legitimately held. Pydantic's default is ``extra="ignore"``, so a retired key reads CLEAN and
+#: vanishes — which is fine for a field that carried no information and catastrophic for one that
+#: did. `scenarios.RETIRED_VERDICT_FIELDS` refuses the same class outright; retention cannot,
+#: because raising would make 5,871 committed rows per run unreadable and the evidence is the point.
+#:
+#: So the rule is narrower and checkable: a retired key is dropped SILENTLY only when it carries the
+#: value it always carried. Anything else RAISES, because that is a key which held real data.
+#:
+#: ``universe.outcome`` was the constant ``"FAIL"`` on every row ever written (verified across the
+#: 5,871 rows of 2026-07-29-01) — only DROPS emit a universe row, so it could not say anything else.
+RETIRED_ROW_FIELDS: dict[str, dict[str, object]] = {"universe": {"outcome": "FAIL"}}
+
 
 class Outcome(enum.StrEnum):
     """PASS / FAIL / NOT_EVALUATED — the third is why this enum is not ``GateResult``.
@@ -364,7 +377,13 @@ def read_rows(run_id: str, snapshots_dir: Path) -> list[Row]:
         if not line.strip():
             continue
         try:
-            out.append(_ROW_ADAPTER.validate_python(json.loads(line)))
+            raw = json.loads(line)
+            for key, only in RETIRED_ROW_FIELDS.get(str(raw.get("grain")), {}).items():
+                if key in raw and raw[key] != only:
+                    raise ValueError(
+                        f"retired key {key!r} carries {raw[key]!r}, not the constant {only!r} it "
+                        "was removed for — that key held real data and dropping it would lose it")
+            out.append(_ROW_ADAPTER.validate_python(raw))
         except Exception as exc:
             raise ValueError(f"{path.name}:{i} is not a valid retention row — {exc}") from exc
     return out
