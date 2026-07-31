@@ -4153,7 +4153,7 @@ filer's tagging and are NOT self-evidently right for a profitable name. The page
 filer reports no dilutive difference in this period*, never leave a reader to infer we checked and
 found none — item 22's visible-absence rule applied to the denominator.
 
-**D14. THE MATERIALIZING-WRITE ACCEPTED RISK HAS ITS FIRST LIVE INSTANCE — and its falsifier did
+*(scheduling superseded by D19.)* **D14. THE MATERIALIZING-WRITE ACCEPTED RISK HAS ITS FIRST LIVE INSTANCE — and its falsifier did
 NOT fire.** #284's re-render of MVST added **79 schema-default keys, 0 changed, 0 removed** — the
 exact event the 2026-07-27 acceptance predicted ("the NEXT programmatic write of a migrated record
 will materialize `role: null / leg: null / excluded: false` on every untagged reference"). The
@@ -4179,7 +4179,7 @@ same understanding inherits it. Add to the review pass, not to a doc nobody re-r
 its OWN sibling assertion, and the first rewrite still let a `passFail: "PASS"` hardcode through —
 **two attempts to get a pin that tests transport rather than coincidence.**)
 
-**D13. `diluted_shares` NOW MEANS TWO DIFFERENT THINGS IN TWO ARTIFACTS** (review finding on #284,
+*(scheduling superseded by D19.)* **D13. `diluted_shares` NOW MEANS TWO DIFFERENT THINGS IN TWO ARTIFACTS** (review finding on #284,
 QUEUED — not fixed here). After item 24 the **record's** `facts.diluted_shares` is a valuation-date
 OUTSTANDING count while the **anchor's** `anchor.diluted_shares` remains the latest quarter's
 WEIGHTED AVERAGE. On SMPL a reader sees 89,940,680 in the anchor block and 88.460545M in the
@@ -4211,7 +4211,7 @@ correcting — first `is_dir()` on a directory the client creates, now TTL. D15 
 `pytest ... | tail -1 && git commit && git push`, and `tail` exits 0 regardless — so a RED suite
 pushed. The gate must be its own command whose exit status is read, never piped into a chain.
 
-**D17. ACCEPTED RISK, opened by D16'"'"'s own fix (review finding on #286).** Making the network block
+**D17. ACCEPTED RISK, opened by D16's own fix (review finding on #286).** Making the network block
 `skip` rather than `fail` is right — a TTL must not red main — but it moves the corpus pins BACK
 toward the shape #283 removed: they can now stop running and say so only in a skip line. Cold cache,
 expired cache, or a resolver change all yield "3 skipped", and a suite that reports 1394 passed
@@ -4222,7 +4222,7 @@ any exception), and its reason names the remedy — but the failure mode "the pi
 running" is genuinely re-opened. **ACCEPTED, not fixed**, because the alternative (fail on a cold
 cache) reddens every fresh checkout and CI, which #283 verified in a cleanroom. **FALSIFIER: if a
 real defect ever ships while these three pins are skipping, the acceptance is void** and the pins
-move to a committed fixture of the eleven names'"'"' companyfacts subsets, which removes the cache
+move to a committed fixture of the eleven names' companyfacts subsets, which removes the cache
 dependency entirely. Cheap and pre-designed; not built now because nothing has failed yet.
 
 **D18. THE `tail` BOUND, and the FIXTURE DESIGN that retires D17** (operator 2026-07-31).
@@ -4230,13 +4230,14 @@ dependency entirely. Cheap and pre-designed; not built now because nothing has f
 **HOW FAR THE UNGATED-PUSH PATTERN REACHES — bounded, not unknown.** The general form of D16 is
 *any command whose exit status is consumed by a pipe is not a gate* (`tail` exits 0 whatever it
 read). How many past commits ran that way is not reconstructable. But the bound is stronger than
-"unknown": **a persistent red would have surfaced** — the full offline suite is run and read on
-every build, and main verifies green at HEAD — so anything merged broken was transient or was fixed
+"unknown": **a persistent red would have surfaced** — main verifies green at HEAD with each
+command run separately, and subsequent sessions ran the suite and reported. **REPEATED INDEPENDENT
+GREEN RUNS ACROSS SESSIONS are the evidence, not growth** — so anything merged broken was transient or was fixed
 later without anyone noticing which. Weaker than a verified history, stronger than "unknown", and
 stated deliberately: **"unknown" invites someone to re-audit history that cannot be re-audited.**
-**CORRECTED AT REVIEW, because the bound'"'"'s own evidence was two unchecked claims.** The first
+**CORRECTED AT REVIEW, because the bound's own evidence was two unchecked claims.** The first
 draft argued from "the suite has grown MONOTONICALLY from ~1,130 to 1,394". Neither half survives:
-~1,130 is a number nobody measured, and monotonic is FALSE on this session'"'"'s own observations —
+~1,130 is a number nobody measured, and monotonic is FALSE on this session's own observations —
 1397 passed became 1394 when #286 turned three corpus pins into skips. Total collected did not
 shrink, but the figure quoted as evidence did. **An argument for a bound must not rest on a
 statistic asserted from memory** — that is the defect class this whole run keeps finding, appearing
@@ -4247,7 +4248,7 @@ cold case: before #283 they hit the network or skipped silently; after #283 they
 #286 they skip on any attempted fetch. Honest at each step, useless at the end. **FIX, ahead of
 retention: commit a FROZEN companyfacts subset for the eleven names** — the pattern `test_anchor`
 and `test_band_guards` already use, and these were the only pins reaching for a real client. Then
-they run offline every time and **D17'"'"'s accepted risk dissolves instead of being carried.**
+they run offline every time and **D17's accepted risk dissolves instead of being carried.**
 Three constraints, all operator, all recorded before the build:
 1. **SUBSET BY CONCEPT, NOT BY BLOB.** Full companyfacts responses run to megabytes; eleven of them
    would be a large permanent addition. Freeze only the tags the pins actually read.
@@ -4263,8 +4264,8 @@ Three constraints, all operator, all recorded before the build:
 2026-07-31). Recorded before the build, and it is the ORDER OF RECORD from here.
 **IT SUPERSEDES THE "QUEUED" STATUS in D10, D13 and D14** (review finding). Those three entries each
 close by saying the item is queued or deferred, written before this consolidation existed — a reader
-arriving at D10 alone would take it as unscheduled when it now rides with piece three'"'"'s guard. Two
-places describing one item'"'"'s status differently is the record saying two things; the pointer lives
+arriving at D10 alone would take it as unscheduled when it now rides with piece three's guard. Two
+places describing one item's status differently is the record saying two things; the pointer lives
 here rather than in three edits so there is ONE place the schedule is stated.
 
 **THE PATH:** fixture → retention → **piece three** (guard + universe-from-demand + frontier stamp
@@ -4338,7 +4339,7 @@ which does not exist.** Now gated on `shares is None`. The generalisable tell is
 read one field of a NamedTuple whose OTHER field carries the refusal — a partial read of a
 partially-valid record. Pinned by `test_zero_dilution_is_false_on_a_refused_result`.
 
-**D10. FUBO DOES NOT CLOSE FOR FREE — the selector is right and the SOURCE is missing** (the cheap
+*(scheduling superseded by D19.)* **D10. FUBO DOES NOT CLOSE FOR FREE — the selector is right and the SOURCE is missing** (the cheap
 read, 2026-07-31). The tie-break fix does not touch `shares_out`: that path is
 `_edgar_shares_outstanding` → `latest_instant(extract_points(facts, "shares"))`, a DIFFERENT
 selector, and cover-page counts are **instants** — there is no quarter-vs-cumulative ambiguity to
