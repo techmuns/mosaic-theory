@@ -62,6 +62,19 @@ from vinci.schemas.candidate import GateResult
 RETENTION_SUBDIR = "screen_runs"
 _RUN_ID = re.compile(r"^(\d{4}-\d{2}-\d{2})-(\d{2})$")
 
+#: Keys that WERE written into rows and have since been removed, with the only value they ever
+#: legitimately held. Pydantic's default is ``extra="ignore"``, so a retired key reads CLEAN and
+#: vanishes — which is fine for a field that carried no information and catastrophic for one that
+#: did. `scenarios.RETIRED_VERDICT_FIELDS` refuses the same class outright; retention cannot,
+#: because raising would make 5,871 committed rows per run unreadable and the evidence is the point.
+#:
+#: So the rule is narrower and checkable: a retired key is dropped SILENTLY only when it carries the
+#: value it always carried. Anything else RAISES, because that is a key which held real data.
+#:
+#: ``universe.outcome`` was the constant ``"FAIL"`` on every row ever written (verified across the
+#: 5,871 rows of 2026-07-29-01) — only DROPS emit a universe row, so it could not say anything else.
+RETIRED_ROW_FIELDS: dict[str, dict[str, object]] = {"universe": {"outcome": "FAIL"}}
+
 
 class Outcome(enum.StrEnum):
     """PASS / FAIL / NOT_EVALUATED — the third is why this enum is not ``GateResult``.
@@ -177,22 +190,13 @@ class RunManifest(BaseModel, frozen=True):
 
 
 class _Row(BaseModel, frozen=True):
+    """What both grains share. NOT ``outcome`` — see :class:`UniverseRow`."""
+
     ticker: str
     run_id: str
     reference_date: date
-    outcome: Outcome
-    not_evaluated_reason: str | None = None
 
     def model_post_init(self, _ctx: Any) -> None:
-        if self.outcome is Outcome.NOT_EVALUATED and not (self.not_evaluated_reason or "").strip():
-            raise ValueError(
-                f"{self.ticker}: NOT_EVALUATED requires its reason — an unexplained "
-                "not-evaluated is indistinguishable from a rejection, which is the whole "
-                "distinction this grain exists to keep")
-        if self.outcome is not Outcome.NOT_EVALUATED and self.not_evaluated_reason:
-            raise ValueError(
-                f"{self.ticker}: not_evaluated_reason is set on a {self.outcome} row — a reason "
-                "for a state the row is not in will be read as if it were")
         if not _RUN_ID.match(self.run_id):
             raise ValueError(f"run_id {self.run_id!r} is not <YYYY-MM-DD>-<NN>")
 
@@ -221,6 +225,8 @@ class CandidateRow(_Row, frozen=True):
     """The full grain: every gate, its inputs, its outcome, and the config that judged it."""
 
     grain: Literal["candidate"] = "candidate"
+    outcome: Outcome
+    not_evaluated_reason: str | None = None
     gate_inputs: dict[str, StampedInput]
     per_gate: dict[str, GateOutcome]
 
@@ -234,6 +240,15 @@ class CandidateRow(_Row, frozen=True):
         inconsistency, it is an analysis that is silently wrong.
         """
         super().model_post_init(_ctx)
+        if self.outcome is Outcome.NOT_EVALUATED and not (self.not_evaluated_reason or "").strip():
+            raise ValueError(
+                f"{self.ticker}: NOT_EVALUATED requires its reason — an unexplained "
+                "not-evaluated is indistinguishable from a rejection, which is the whole "
+                "distinction this grain exists to keep")
+        if self.outcome is not Outcome.NOT_EVALUATED and self.not_evaluated_reason:
+            raise ValueError(
+                f"{self.ticker}: not_evaluated_reason is set on a {self.outcome} row — a reason "
+                "for a state the row is not in will be read as if it were")
         expected = rollup(self.per_gate)
         if self.outcome is not expected:
             failed = sorted(g for g, o in self.per_gate.items() if o.outcome is Outcome.FAIL)
@@ -251,6 +266,14 @@ class UniverseRow(_Row, frozen=True):
     Deliberately NOT a candidate row with fields omitted — a name that never reached the screen has
     no gate outcomes, and modelling it as a candidate with empty gates would make "not run" and
     "ran and found nothing" the same shape.
+
+    **NO ``outcome`` FIELD (2026-07-31).** It was the constant ``FAIL`` on all 5,871 rows of a run,
+    because only DROPS emit a universe row — so the field carried no information and actively
+    misled: a name filtered by the cap band was never assessed by a gate, and ``FAIL`` reads as a
+    judgment the screen made. ``NOT_EVALUATED`` would be equally wrong in the other direction —
+    the band rule DID assess it, just not against the gates. ``stage`` + ``reason`` +
+    ``deciding_input`` already say exactly what happened, so the honest fix is to remove the field
+    rather than pick a less-wrong constant for it.
     """
 
     grain: Literal["universe"] = "universe"
@@ -354,7 +377,13 @@ def read_rows(run_id: str, snapshots_dir: Path) -> list[Row]:
         if not line.strip():
             continue
         try:
-            out.append(_ROW_ADAPTER.validate_python(json.loads(line)))
+            raw = json.loads(line)
+            for key, only in RETIRED_ROW_FIELDS.get(str(raw.get("grain")), {}).items():
+                if key in raw and raw[key] != only:
+                    raise ValueError(
+                        f"retired key {key!r} carries {raw[key]!r}, not the constant {only!r} it "
+                        "was removed for — that key held real data and dropping it would lose it")
+            out.append(_ROW_ADAPTER.validate_python(raw))
         except Exception as exc:
             raise ValueError(f"{path.name}:{i} is not a valid retention row — {exc}") from exc
     return out

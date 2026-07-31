@@ -4053,7 +4053,19 @@ things. A FOURTH reason also existed as an inline literal, outside the taxonomy 
 count — now named `G3_NO_PRICE` and pinned exhaustive by an AST scan for inline `why` assignments.
 
 **THE VALUATION OVERLAP across the 412:** P/E only **89** · EV/EBITDA only **4** · both **137** ·
-neither **182**. Union 230. EV/EBITDA adds four names P/E could not reach — it is not an alternative
+neither **182**. Union 230.
+**BUT THE GATE'S FIGURE IS 226 / 186, NOT 230 / 182 — corrected 2026-07-31.** The union is a
+CAPABILITY count; `gate_g3_multiple_floor` reads `ev_ebitda_pctile_vs_history`, which
+`enrich_with_fundamentals` sets UNKNOWN unconditionally, so EV/EBITDA **never decides**. The four
+names the union credits to it — **ENPH, IDR, LAND, TRUP** — are not valued by the gate. Every G3
+count published against a gate claim is P/E-only: **226 valued, 186 not.** Pinned on the code: as
+long as the EV field is unconditionally UNKNOWN, a count crediting it is counting a path that
+cannot fire.
+**AND `UniverseRow.outcome` IS GONE.** It was the constant `FAIL` on all 5,871 rows of a run —
+only DROPS emit a universe row, so it carried no information and misled: a name filtered by the cap
+band was never assessed by a gate. `NOT_EVALUATED` would be wrong the other way (the band rule DID
+assess it, just not against the gates), so the field is removed rather than set to a less-wrong
+constant. `stage` + `reason` + `deciding_input` already say what happened. EV/EBITDA adds four names P/E could not reach — it is not an alternative
 path, it is almost a subset. Of the 66 in-pool names with a deep EV/EBITDA series, **62 were already
 judged by P/E and only 4 sit in the unvalued 186**, which is why the earlier reshape did not survive
 measurement.

@@ -126,7 +126,7 @@ def build_universe(
     # `vinci.universe` — so a module-scope import of anything under `vinci.screens` makes importing
     # `vinci.universe` FIRST a circular-import crash. It only fires on that import order, which is
     # why the suite stayed green and a real `build_universe` run did not.
-    from vinci.screens.retention import Outcome, StampedInput, UniverseRow, append_rows
+    from vinci.screens.retention import StampedInput, UniverseRow, append_rows
 
     stats: Counter[str] = Counter()
     dropped: list[UniverseRow] = []
@@ -136,7 +136,7 @@ def build_universe(
         if retain_run_id is not None:
             dropped.append(UniverseRow(
                 ticker=ticker, run_id=retain_run_id, reference_date=reference_date,
-                outcome=Outcome.FAIL, stage=stage, reason=reason, deciding_input=inp))
+                stage=stage, reason=reason, deciding_input=inp))
 
     with Store(cfg.db_path) as store:
         store.clear_universe()  # FULL replace — a rebuild is a clean snapshot, not an accretion

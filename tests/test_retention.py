@@ -82,7 +82,7 @@ def _candidate(ticker: str, run_id: str, outcome: Outcome = Outcome.FAIL, **kw: 
 
 def _universe(ticker: str, run_id: str) -> UniverseRow:
     return UniverseRow(
-        ticker=ticker, run_id=run_id, reference_date=REF, outcome=Outcome.FAIL,
+        ticker=ticker, run_id=run_id, reference_date=REF,
         stage="cap_band", reason="market cap 120.4M below the band floor 300.0M",
         deciding_input=StampedInput(value=1.204e8, as_of=dt.date(2026, 7, 24),
                                     source="EOD close x EDGAR XBRL shares"),
@@ -787,3 +787,84 @@ def test_the_reason_taxonomy_is_exhaustive_no_inline_fourth() -> None:
     assert len(set(asm.G3_REASONS)) == 4, asm.G3_REASONS
     for r in asm.G3_REASONS:
         assert r.strip(), "an empty reason is not a reason"
+
+
+# --- the record must not claim a judgment that was never made -----------------------------------
+
+
+def test_a_universe_row_cannot_claim_an_outcome() -> None:
+    """REVIEW OF #296, applied. `UniverseRow.outcome` was the constant FAIL on all 5,871 rows of a
+    run — only DROPS emit a universe row, so the field carried no information and actively misled:
+    a name filtered by the cap band was never assessed by a gate, and FAIL reads as a judgment the
+    screen made.
+
+    NOT_EVALUATED would be wrong in the other direction — the band rule DID assess it, just not
+    against the gates. `stage` + `reason` + `deciding_input` already say what happened, so the
+    field is gone rather than set to a less-wrong constant."""
+    assert "outcome" not in UniverseRow.model_fields, (
+        "a universe row can report an outcome again — the constant that carried no information")
+    assert "not_evaluated_reason" not in UniverseRow.model_fields
+    for f in ("stage", "reason", "deciding_input"):
+        assert f in UniverseRow.model_fields, f
+    # the candidate grain keeps both, because its gates genuinely decided
+    assert "outcome" in CandidateRow.model_fields
+    assert "not_evaluated_reason" in CandidateRow.model_fields
+
+
+def test_the_g3_resolved_count_reads_the_gate_not_the_capability() -> None:
+    """#296 PUBLISHED CAPABILITY, NOT THE GATE. It reported 230 resolving / 182 not, the UNION of
+    the P/E and EV/EBITDA paths. But `gate_g3_multiple_floor` reads `ev_ebitda_pctile_vs_history`,
+    which `enrich_with_fundamentals` sets UNKNOWN unconditionally — so EV/EBITDA never decides and
+    the gate's own figure is 226 / 186. The four-name difference is ENPH, IDR, LAND, TRUP.
+
+    Pinned on the CODE: as long as the EV field is unconditionally UNKNOWN, any count that credits
+    it is counting a path that cannot fire."""
+    import inspect
+
+    from vinci.screens.assemble import enrich_with_fundamentals
+
+    src = inspect.getsource(enrich_with_fundamentals)
+    assert "ev_ebitda_pctile_vs_history=ev_unknown" in src, (
+        "EV/EBITDA now resolves — the gate's count is no longer P/E-only and STATE's 226/186 "
+        "must be re-measured on the union")
+    assert "ev_unknown: DataField[float] = DataField.unknown(" in src
+
+
+def test_a_retired_key_is_dropped_only_when_it_held_nothing(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING on the removal itself. Pydantic's default is `extra="ignore"`, so removing
+    `UniverseRow.outcome` meant 5,871 committed rows per run read CLEAN with the field silently
+    vanishing. Fine for a field that was the constant FAIL; catastrophic for one that held data —
+    and `scenarios.RETIRED_VERDICT_FIELDS` already refuses exactly this class.
+
+    Retention cannot simply raise: the committed rows ARE the evidence, and making them unreadable
+    to protect them is self-defeating. So the rule is narrower — a retired key is dropped silently
+    only when it carries the value it always carried, and anything else raises."""
+    from vinci.screens.retention import RETIRED_ROW_FIELDS
+
+    assert RETIRED_ROW_FIELDS["universe"] == {"outcome": "FAIL"}
+    rid = next_run_id(REF, tmp_path)
+    append_rows([_universe("TINY", rid)], run_id=rid, snapshots_dir=tmp_path)
+    path = run_path(rid, tmp_path)
+
+    legacy = json.loads(path.read_text().strip())
+    # the shape every committed row has: the retired key at its only-ever value
+    path.write_text(json.dumps({**legacy, "outcome": "FAIL"}) + "\n")
+    assert len(read_rows(rid, snapshots_dir=tmp_path)) == 1, "a legacy row became unreadable"
+
+    # and a retired key holding something else is a key that carried real data
+    path.write_text(json.dumps({**legacy, "outcome": "PASS"}) + "\n")
+    with pytest.raises(ValueError, match="held real data"):
+        read_rows(rid, snapshots_dir=tmp_path)
+
+
+def test_the_committed_run_still_reads_after_the_field_was_removed() -> None:
+    """The corpus check the schema change needed: 5,871 universe rows on disk carry `outcome`, and
+    the removal must not have made the committed evidence unreadable."""
+    from vinci.config import get_config
+
+    d = get_config().snapshots_dir / "screen_runs"
+    if not (d / "2026-07-29-01.jsonl").is_file():
+        pytest.skip("no committed retention run in this worktree")
+    rows = read_rows("2026-07-29-01", snapshots_dir=get_config().snapshots_dir)
+    univ = [r for r in rows if r.grain == "universe"]
+    assert len(univ) > 5_000, f"only {len(univ)} universe rows read back"
