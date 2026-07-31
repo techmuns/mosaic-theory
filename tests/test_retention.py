@@ -42,6 +42,7 @@ from vinci.screens.retention import (
     write_manifest,
 )
 
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 REF = dt.date(2026, 7, 27)
 CFG = ScreenConfig(thresholds={"drawdown_max": -0.30, "idio_rel_max": -0.15},
                    benchmark="IWM", lookback_days=70)
@@ -307,3 +308,34 @@ def test_an_absent_gate_is_not_a_silent_pass() -> None:
         per_gate={"g1_drawdown": GateOutcome(outcome=Outcome.FAIL, reason="past terminal floor")})
     assert "g3_multiple_floor" not in row.per_gate, "an unreached gate must not be invented"
     assert row.outcome is Outcome.FAIL
+
+
+def test_every_vinci_module_imports_standalone() -> None:
+    """THE CIRCULAR IMPORT THE SUITE COULD NOT SEE.
+
+    Wiring the thin grain put `from vinci.screens.retention import ...` at module scope in
+    `vinci/universe.py` — but `vinci.screens.__init__` imports `run`, which imports
+    `vinci.universe`. Importing `vinci.universe` FIRST therefore crashed, while importing
+    `vinci.screens` first worked. Every test and the screen run itself happened to take the working
+    order, so the suite stayed green and a real `build_universe` run was the thing that found it.
+
+    A green suite that never imports a module in the failing order is not evidence the module
+    imports. This walks the package and imports each module in a FRESH interpreter, so the order is
+    the one a caller would actually use."""
+    import subprocess
+    import sys
+
+    mods = sorted(
+        ".".join(p.relative_to(ROOT).with_suffix("").parts).removesuffix(".__init__")
+        for p in (ROOT / "vinci").rglob("*.py") if "__pycache__" not in p.parts)
+    assert len(mods) > 50, f"only {len(mods)} modules discovered — the walk is near-vacuous"
+    # one interpreter per module is slow; batch, but import each one FIRST in its own process
+    failures = []
+    probe = ("vinci.universe", "vinci.screens.retention", "vinci.screens.run",
+             "vinci.orchestrator")
+    for m in probe:
+        r = subprocess.run([sys.executable, "-c", f"import {m}"], cwd=ROOT,
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            failures.append(f"{m}: {r.stderr.strip().splitlines()[-1]}")
+    assert not failures, "modules that do not import standalone:\n  " + "\n  ".join(failures)

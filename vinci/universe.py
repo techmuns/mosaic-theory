@@ -23,7 +23,6 @@ from vinci.eod import EodClient, PolygonEodClient
 from vinci.resolver import EntityResolver
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
-from vinci.screens.retention import Outcome, StampedInput, UniverseRow, append_rows
 from vinci.store import Store
 
 _QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
@@ -118,6 +117,12 @@ def build_universe(
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
     periods = share_periods or recent_share_periods(reference_date)
     shares = edgar.shares_outstanding_by_cik(periods)
+
+    # IMPORTED HERE, NOT AT MODULE SCOPE. `vinci.screens.__init__` imports `run`, which imports
+    # `vinci.universe` — so a module-scope import of anything under `vinci.screens` makes importing
+    # `vinci.universe` FIRST a circular-import crash. It only fires on that import order, which is
+    # why the suite stayed green and a real `build_universe` run did not.
+    from vinci.screens.retention import Outcome, StampedInput, UniverseRow, append_rows
 
     stats: Counter[str] = Counter()
     dropped: list[UniverseRow] = []
