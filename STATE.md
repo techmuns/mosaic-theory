@@ -4261,6 +4261,11 @@ Three constraints, all operator, all recorded before the build:
 
 **D19. THE PLAN CONSOLIDATES — five pieces plus three queued items become about four** (operator
 2026-07-31). Recorded before the build, and it is the ORDER OF RECORD from here.
+**IT SUPERSEDES THE "QUEUED" STATUS in D10, D13 and D14** (review finding). Those three entries each
+close by saying the item is queued or deferred, written before this consolidation existed — a reader
+arriving at D10 alone would take it as unscheduled when it now rides with piece three'"'"'s guard. Two
+places describing one item'"'"'s status differently is the record saying two things; the pointer lives
+here rather than in three edits so there is ONE place the schedule is stated.
 
 **THE PATH:** fixture → retention → **piece three** (guard + universe-from-demand + frontier stamp
 + the two shrinking reads + D10) → **piece four, or folded** (`migrated` + G2/G3/universe stamps) →
