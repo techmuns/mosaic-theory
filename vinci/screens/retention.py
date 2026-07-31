@@ -177,22 +177,13 @@ class RunManifest(BaseModel, frozen=True):
 
 
 class _Row(BaseModel, frozen=True):
+    """What both grains share. NOT ``outcome`` — see :class:`UniverseRow`."""
+
     ticker: str
     run_id: str
     reference_date: date
-    outcome: Outcome
-    not_evaluated_reason: str | None = None
 
     def model_post_init(self, _ctx: Any) -> None:
-        if self.outcome is Outcome.NOT_EVALUATED and not (self.not_evaluated_reason or "").strip():
-            raise ValueError(
-                f"{self.ticker}: NOT_EVALUATED requires its reason — an unexplained "
-                "not-evaluated is indistinguishable from a rejection, which is the whole "
-                "distinction this grain exists to keep")
-        if self.outcome is not Outcome.NOT_EVALUATED and self.not_evaluated_reason:
-            raise ValueError(
-                f"{self.ticker}: not_evaluated_reason is set on a {self.outcome} row — a reason "
-                "for a state the row is not in will be read as if it were")
         if not _RUN_ID.match(self.run_id):
             raise ValueError(f"run_id {self.run_id!r} is not <YYYY-MM-DD>-<NN>")
 
@@ -221,6 +212,8 @@ class CandidateRow(_Row, frozen=True):
     """The full grain: every gate, its inputs, its outcome, and the config that judged it."""
 
     grain: Literal["candidate"] = "candidate"
+    outcome: Outcome
+    not_evaluated_reason: str | None = None
     gate_inputs: dict[str, StampedInput]
     per_gate: dict[str, GateOutcome]
 
@@ -234,6 +227,15 @@ class CandidateRow(_Row, frozen=True):
         inconsistency, it is an analysis that is silently wrong.
         """
         super().model_post_init(_ctx)
+        if self.outcome is Outcome.NOT_EVALUATED and not (self.not_evaluated_reason or "").strip():
+            raise ValueError(
+                f"{self.ticker}: NOT_EVALUATED requires its reason — an unexplained "
+                "not-evaluated is indistinguishable from a rejection, which is the whole "
+                "distinction this grain exists to keep")
+        if self.outcome is not Outcome.NOT_EVALUATED and self.not_evaluated_reason:
+            raise ValueError(
+                f"{self.ticker}: not_evaluated_reason is set on a {self.outcome} row — a reason "
+                "for a state the row is not in will be read as if it were")
         expected = rollup(self.per_gate)
         if self.outcome is not expected:
             failed = sorted(g for g, o in self.per_gate.items() if o.outcome is Outcome.FAIL)
@@ -251,6 +253,14 @@ class UniverseRow(_Row, frozen=True):
     Deliberately NOT a candidate row with fields omitted — a name that never reached the screen has
     no gate outcomes, and modelling it as a candidate with empty gates would make "not run" and
     "ran and found nothing" the same shape.
+
+    **NO ``outcome`` FIELD (2026-07-31).** It was the constant ``FAIL`` on all 5,871 rows of a run,
+    because only DROPS emit a universe row — so the field carried no information and actively
+    misled: a name filtered by the cap band was never assessed by a gate, and ``FAIL`` reads as a
+    judgment the screen made. ``NOT_EVALUATED`` would be equally wrong in the other direction —
+    the band rule DID assess it, just not against the gates. ``stage`` + ``reason`` +
+    ``deciding_input`` already say exactly what happened, so the honest fix is to remove the field
+    rather than pick a less-wrong constant for it.
     """
 
     grain: Literal["universe"] = "universe"

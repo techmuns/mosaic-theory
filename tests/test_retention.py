@@ -82,7 +82,7 @@ def _candidate(ticker: str, run_id: str, outcome: Outcome = Outcome.FAIL, **kw: 
 
 def _universe(ticker: str, run_id: str) -> UniverseRow:
     return UniverseRow(
-        ticker=ticker, run_id=run_id, reference_date=REF, outcome=Outcome.FAIL,
+        ticker=ticker, run_id=run_id, reference_date=REF,
         stage="cap_band", reason="market cap 120.4M below the band floor 300.0M",
         deciding_input=StampedInput(value=1.204e8, as_of=dt.date(2026, 7, 24),
                                     source="EOD close x EDGAR XBRL shares"),
@@ -787,3 +787,44 @@ def test_the_reason_taxonomy_is_exhaustive_no_inline_fourth() -> None:
     assert len(set(asm.G3_REASONS)) == 4, asm.G3_REASONS
     for r in asm.G3_REASONS:
         assert r.strip(), "an empty reason is not a reason"
+
+
+# --- the record must not claim a judgment that was never made -----------------------------------
+
+
+def test_a_universe_row_cannot_claim_an_outcome() -> None:
+    """REVIEW OF #296, applied. `UniverseRow.outcome` was the constant FAIL on all 5,871 rows of a
+    run — only DROPS emit a universe row, so the field carried no information and actively misled:
+    a name filtered by the cap band was never assessed by a gate, and FAIL reads as a judgment the
+    screen made.
+
+    NOT_EVALUATED would be wrong in the other direction — the band rule DID assess it, just not
+    against the gates. `stage` + `reason` + `deciding_input` already say what happened, so the
+    field is gone rather than set to a less-wrong constant."""
+    assert "outcome" not in UniverseRow.model_fields, (
+        "a universe row can report an outcome again — the constant that carried no information")
+    assert "not_evaluated_reason" not in UniverseRow.model_fields
+    for f in ("stage", "reason", "deciding_input"):
+        assert f in UniverseRow.model_fields, f
+    # the candidate grain keeps both, because its gates genuinely decided
+    assert "outcome" in CandidateRow.model_fields
+    assert "not_evaluated_reason" in CandidateRow.model_fields
+
+
+def test_the_g3_resolved_count_reads_the_gate_not_the_capability() -> None:
+    """#296 PUBLISHED CAPABILITY, NOT THE GATE. It reported 230 resolving / 182 not, the UNION of
+    the P/E and EV/EBITDA paths. But `gate_g3_multiple_floor` reads `ev_ebitda_pctile_vs_history`,
+    which `enrich_with_fundamentals` sets UNKNOWN unconditionally — so EV/EBITDA never decides and
+    the gate's own figure is 226 / 186. The four-name difference is ENPH, IDR, LAND, TRUP.
+
+    Pinned on the CODE: as long as the EV field is unconditionally UNKNOWN, any count that credits
+    it is counting a path that cannot fire."""
+    import inspect
+
+    from vinci.screens.assemble import enrich_with_fundamentals
+
+    src = inspect.getsource(enrich_with_fundamentals)
+    assert "ev_ebitda_pctile_vs_history=ev_unknown" in src, (
+        "EV/EBITDA now resolves — the gate's count is no longer P/E-only and STATE's 226/186 "
+        "must be re-measured on the union")
+    assert "ev_unknown: DataField[float] = DataField.unknown(" in src
