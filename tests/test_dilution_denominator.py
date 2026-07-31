@@ -235,12 +235,14 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back() -> None:
             diluted_outstanding(f, basic_out=out)), t
 
 
-#: Committed anchors whose ``anchor_base_value_per_share`` still carries the cumulative-period
-#: defect and therefore diverges from a fresh recompute. These are the names the anchor backfill
-#: has not yet been run on — measured, not chosen: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97
-#: (+1.02%), CNXC 62.33→62.55 (+0.35%). The list SHRINKS to empty once the operator runs the
-#: backfill, and this pin reds until STATE is updated with it — which is the point.
-ANCHORS_AWAITING_BACKFILL = {"BRBR", "CNXC", "SMPL"}
+#: Committed anchors whose ``anchor_base_value_per_share`` diverges from a fresh recompute.
+#:
+#: **NOW EMPTY — the backfill ran (2026-07-31).** It held ``{BRBR, CNXC, SMPL}`` for exactly one
+#: PR: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97 (+1.02%), CNXC 62.33→62.55 (+0.35%), each the
+#: cumulative-period defect leaving the committed artifact. Empty is the load-bearing state — from
+#: here the pin asserts committed JSON and a fresh recompute AGREE on every applicable anchor, so
+#: future drift reds on the first run rather than waiting to be noticed.
+ANCHORS_AWAITING_BACKFILL: set[str] = set()
 
 
 def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> None:
@@ -253,7 +255,13 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> 
 
     This pin is the invariant: the divergence set must be EXACTLY the recorded backfill list. A new
     name drifting in reds it; the backfill landing reds it too, which forces STATE to track the
-    artifacts rather than describe them."""
+    artifacts rather than describe them. **The backfill has now run and the list is EMPTY**, so from
+    here this asserts committed JSON and a fresh recompute agree on every applicable anchor.
+
+    The recompute passes ``ciq=None`` DELIBERATELY. With the workbook bridge attached, FUBO and IT
+    also read as changed — but for PRE-EXISTING vendor fills (FUBO's `net_debt` None→170.4, IT's
+    `ltm_fcf` None→1257.9) that predate this work and belong to their own decision. Including the
+    bridge here would fold two unrelated backlogs into one pin and neither would be actionable."""
     import json
     from datetime import UTC, datetime
 
