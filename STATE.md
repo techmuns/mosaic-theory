@@ -3984,6 +3984,57 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
+**SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
+existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
+
+**S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
+`gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
+benchmark produced PERMISSIVE ADMISSION — countable, because admitted names leave records (4 of
+318 on the 2026-07-27 run: CABA, GO, NOMD, TROX; none reached a dossier, NOMD ranked 227 of 275).
+After #280 the same input produces a SHORTER window, so `|rel|` shrinks, the −15% threshold gets
+harder, and the name FAILS — **silent rejection, no record anywhere.** The fix is right; the
+consequence relocated to where nothing sees it. **THEREFORE RETENTION IS THE PRECONDITION FOR
+LIFTING THE SCREEN HOLD, not an item behind it** (operator correction — the dependency was stated
+backwards). **THE FIX SPLITS ON CAUSE, which dissolves the threshold nobody could derive**
+(operator, withdrawing an earlier floor ruling): **end-truncation** (stale benchmark) is uniform
+and operator-fixable → the CONSUMPTION GUARD REFUSES THE RUN before G2 computes, so the population
+is never degraded for an unrun command — and that is also why "UNKNOWN the whole screen" stops
+being an objection; **start-truncation** (short history, halt) is per-name and no action fixes it
+→ RECORDED NOT-EVALUATED WITH ITS REASON, NEVER FAIL, which is item 22 applied to the screen: a
+name that could not be assessed must not look like one that was assessed and rejected. BASIS
+MISTRANSLATION, SEVENTH SIGHTING — −15% was struck on a ~70-day window, so a `rel` measured over 7
+days is a different quantity. Measured: a name 30d behind yields 37d/−10.0%, 60d behind yields
+7d/−3.0%, one bar past the start yields 1d/−0.5% — all FAIL a threshold calibrated on 67d/−20.0%.
+
+**S2. G3's INPUT IS A SELECTION DISTORTION, not a labelling defect** (operator re-scope). In
+`screens/assemble.py`, `cur_price = _close_on_or_before(bars, reference_date)` (days old) and
+`cur_eps = annual_eps_as_of(...)` (a filing, up to a YEAR old) are combined into `cur_pe` and
+stamped `as_of=reference_date`, which is true of neither; `pe_pctile` inherits it. **DIRECTION:**
+stale annual EPS against a current price makes GROWERS look expensive and DECLINERS look cheap,
+systematically, in the gate that sets the multiple floor — on an overshoot screen that biases
+toward VALUE TRAPS. **TWO HALVES, split deliberately:** the STAMP half (honest labelling, no
+outcome change) ships with the screen PR; the BASIS half (a fresher EPS moves G3 outcomes and can
+flip names) is its own item with its own fleet before/after. **READ FIRST:** is a fresher EPS
+basis even available? And **is this the same surface as the dossier's P/E staleness fix** — if so
+that fix was scoped to one consumer rather than the source, making this a recurrence.
+
+**S3. `universe.py`'s MARKET-CAP STAMP IS THE DEEPEST OF THE FIVE.** A falsely-stamped cap decides
+UNIVERSE MEMBERSHIP — upstream of the screen — so an exclusion there leaves **no record even after
+retention ships**, because retention cannot capture a name that never reached the screen. Breadth
+is the fund's stated edge, and this is the one blind spot nothing measures. Same two-half split:
+stamp with the screen PR, basis (does membership actually move?) its own item. **READ FIRST: how
+stale are the universe caps in fact** — if current, the item collapses to a stamp.
+
+**S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the
+shape). Immutable, timestamped, append-only; every name with its gate INPUTS and PER-GATE OUTCOME,
+not just survivors. **A screen discarding names that later outperform has negative alpha and
+nothing would show it** — so the reject set is the data for measuring whether the gates select for
+return, not merely forensics after a defect. STANDING HOLD: do not run the screen until this lands
+— `candidate_records.jsonl` is overwritten each run and is the only screen evidence that exists;
+the 2026-07-27 bound was possible only because it survived. The CROSS-SECTIONAL COHORT SELECTION
+(two or three finalists inside ONE theme rather than one per theme) waits behind the hold, and it
+is what stands between the platform and the variant view's cross-sectional form.
+
 **PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
 review and exist nowhere else; recording them is the first commit of the work, not its last.
 1. **NO OFFSET ON THE SHARES COLUMN.** A price's vintage is a CLOSE, a share count's is a FILING.
