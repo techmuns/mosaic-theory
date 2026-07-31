@@ -511,16 +511,26 @@ def test_the_window_facts_have_exactly_one_implementation() -> None:
 
     Pinned on the CALL, not on a comment: `screens.run` must reach the same function the field
     uses, so a later edit to one cannot leave the row saying something the note does not."""
+    import ast
     import inspect
 
     from vinci.eod.features import relative_return, window_facts
     from vinci.screens import run as _run
 
     assert _run.window_facts is window_facts, "screens.run rebound its own window_facts"
-    assert "window_facts(name_bars, start=start, end=end)" in inspect.getsource(relative_return)
-    assert "window_facts(bars, start=window_start, end=f.as_of)" in inspect.getsource(
-        _run._gate_inputs)
     assert not hasattr(_run, "_window_facts"), "the duplicate implementation is back"
+
+    # STRUCTURAL, not the argument spelling. The first cut pinned the exact call text and reddened
+    # when a caller legitimately renamed a variable — the seen-instances defect, one layer up. What
+    # must hold is that every producer of a window description CALLS the shared function.
+    for fn in (relative_return, _run._gate_inputs, _run.screen_universe):
+        tree = ast.parse(inspect.getsource(fn).lstrip())
+        called = {n.func.id for n in ast.walk(tree)
+                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)}
+        defined = {n.name for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
+        assert "window_facts" not in defined, f"{fn.__name__} defines its own window_facts"
+        if fn is not _run.screen_universe:
+            assert "window_facts" in called, f"{fn.__name__} no longer calls the shared helper"
 
 
 def test_the_anchor_bound_clears_the_market_calendar_not_the_halt_tail() -> None:
@@ -554,3 +564,117 @@ def test_the_anchor_bound_clears_the_market_calendar_not_the_halt_tail() -> None
     assert 2 * worst + 2 >= MAX_ANCHOR_LAG_DAYS, (
         f"bound {MAX_ANCHOR_LAG_DAYS}d is far wider than the {worst}d market gap it must clear — "
         "a wide bound admits the halted windows this exists to refuse")
+
+
+# --- G1's reach-back: the drawdown is a ratio to `latest`, however old that is -------------------
+
+
+G1_REF = dt.date(2026, 7, 29)
+#: INHD's real shape from the run: bars stop 2026-06-08, 51 days before the reference, and G1
+#: computed a drawdown against that close and recorded FAIL.
+INHD = _bars([("2025-06-02", 40.0), ("2026-01-15", 30.0), ("2026-06-08", 12.0)])
+
+
+def _g1(bars: list, staleness: int = 5) -> tuple:
+    from vinci.eod.features import compute_price_features
+    from vinci.screens.screen2 import Screen2Thresholds, gate_g1_drawdown
+
+    feats = compute_price_features(bars, reference_date=G1_REF, staleness_days=staleness)
+
+    class _R:
+        prices = feats
+
+    return gate_g1_drawdown(_R(), Screen2Thresholds()), feats  # type: ignore[arg-type]
+
+
+def test_the_red_a_stale_latest_bar_is_not_evaluated_where_it_was_a_fail() -> None:
+    """THE RED. `drawdown_from_high` is `latest.close / hi - 1` and G1 gates on it, so a name whose
+    bars stopped weeks ago is judged on a price from that day while the gate treats the answer as
+    current. INHD ran on a 2026-06-08 close, 51 days stale, and was recorded FAIL — assessed and
+    rejected, when it could not be assessed at all."""
+    (result, why), feats = _g1(INHD)
+    assert feats.drawdown_from_high.value is None, "the stale drawdown still produced a value"
+    assert outcome_from_gate(result) is Outcome.NOT_EVALUATED, (result, why)
+    note = feats.drawdown_from_high.note or ""
+    assert "51d before the 2026-07-29 reference" in note, note
+    assert "presented as current" in note, note
+
+
+def test_a_bar_inside_the_staleness_contract_still_evaluates() -> None:
+    """The control. 1,778 of the 1,780 names had a same-day bar; the bound must not touch them, and
+    must still clear a holiday weekend — IWM and MDY agree exactly and neither gap exceeds 4d."""
+    from vinci.config import get_config
+
+    contract = get_config().price_staleness_days
+    for age in range(contract + 1):
+        d = (G1_REF - dt.timedelta(days=age)).isoformat()
+        (result, _), feats = _g1(_bars([("2025-06-02", 40.0), ("2026-01-15", 30.0), (d, 12.0)]))
+        assert feats.drawdown_from_high.value is not None, f"{age}d refused, in contract"
+        assert outcome_from_gate(result) is Outcome.PASS
+    over = (G1_REF - dt.timedelta(days=contract + 1)).isoformat()
+    _, feats = _g1(_bars([("2025-06-02", 40.0), ("2026-01-15", 30.0), (over, 12.0)]))
+    assert feats.drawdown_from_high.value is None
+
+
+def test_the_bound_is_the_shipped_contract_not_a_new_constant() -> None:
+    """It is not a number picked for this fix. `staleness_days` already existed and was already
+    applied to `last`; the defect was that the DERIVED ratio G1 gates on ignored it. Pinned so a
+    later edit cannot fork a second staleness rule for the same input."""
+    from vinci.config import get_config
+    from vinci.eod.features import compute_price_features
+
+    assert get_config().price_staleness_days == 5
+    # STRUCTURAL, not a source-text count (review finding — a `src.count(...) == 2` pin reds on any
+    # rename or restructure, which is the brittleness just removed from the window_facts pin one PR
+    # earlier). The property: BOTH the `last` field and the derived ratio must change behaviour at
+    # the SAME threshold, proven by moving it.
+    bars = _bars([("2025-06-02", 40.0), ("2026-01-15", 30.0), ("2026-07-19", 12.0)])  # 10d stale
+    tight = compute_price_features(bars, reference_date=G1_REF, staleness_days=5)
+    loose = compute_price_features(bars, reference_date=G1_REF, staleness_days=30)
+    assert tight.drawdown_from_high.value is None and tight.last.value is not None
+    assert "10d old" in (tight.last.note or ""), tight.last.note
+    assert loose.drawdown_from_high.value is not None, "the ratio ignored a widened contract"
+    assert not (loose.last.note or "").startswith("10d old")
+
+
+def test_the_stale_drawdown_records_its_window_via_the_shared_helper() -> None:
+    """Span and count come from `window_facts` — the one implementation consolidated in #294. This
+    class recurred on the fix after it, which is why it is pinned here too."""
+    import inspect
+
+    from vinci.eod.features import compute_price_features, window_facts
+    from vinci.screens import run as _run
+
+    src = inspect.getsource(compute_price_features)
+    assert "window_facts(" in src and "def window_facts" not in src
+    assert _run.window_facts is window_facts
+    _, feats = _g1(INHD)
+    assert "spans" in (feats.drawdown_from_high.note or "")
+
+
+def test_each_input_is_described_by_its_own_window() -> None:
+    """G2 compares over the decline window, G1 over 52 weeks. One start for both would mis-describe
+    whichever it did not belong to — the stamp-names-a-different-object class."""
+    import inspect
+
+    from vinci.screens import run as _run
+
+    src = inspect.getsource(_run.screen_universe)
+    assert '"rel_ret_vs_market": reference_date - timedelta(days=DECLINE_WINDOW_DAYS)' in src
+    assert '"drawdown_from_high": reference_date - timedelta(days=YEAR_DAYS)' in src
+
+
+def test_an_unresolvable_window_says_so_rather_than_reporting_zeros() -> None:
+    """REVIEW FINDING. `window_facts` returns None when no bar sits at or before the window start —
+    reachable whenever `have_year` is met by a span beginning INSIDE the 52-week window — and the
+    first cut defaulted to (0, 0), printing "spans 0d over 0 bars". That reads as a MEASURED empty
+    window rather than a measurement that could not be made: a fabricated zero, inside the fix for
+    a mislabelled value."""
+    from vinci.eod.features import compute_price_features
+
+    # span 340d (clears the 330d history rule) but the first bar is after ref−365, and 13d stale
+    bars = _bars([("2025-08-10", 40.0), ("2026-03-01", 20.0), ("2026-07-16", 12.0)])
+    note = compute_price_features(
+        bars, reference_date=G1_REF, staleness_days=5).drawdown_from_high.note or ""
+    assert "spans 0d over 0 bars" not in note, note
+    assert "window not resolvable" in note and "2025-07-29" in note, note

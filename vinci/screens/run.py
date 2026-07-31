@@ -13,7 +13,7 @@ from pathlib import Path
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
-from vinci.eod.features import window_facts
+from vinci.eod.features import YEAR_DAYS, window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult
 from vinci.schemas.market import PriceBar
@@ -96,7 +96,10 @@ def screen_universe(
     reporter = ProgressReporter("screen", len(universe), emit=progress, step=200)
     retained: list[CandidateRow] = []
 
-    win_start = reference_date - timedelta(days=DECLINE_WINDOW_DAYS)
+    # EACH INPUT'S OWN WINDOW START — G2 compares over the decline window, G1 over 52 weeks. One
+    # start for both would mis-describe whichever it did not belong to.
+    win_start = {"rel_ret_vs_market": reference_date - timedelta(days=DECLINE_WINDOW_DAYS),
+                 "drawdown_from_high": reference_date - timedelta(days=YEAR_DAYS)}
 
     def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome],
               name_bars: list[PriceBar]) -> None:
@@ -155,7 +158,7 @@ def screen_universe(
     }
 
 
-def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: date
+def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: dict[str, date]
                  ) -> dict[str, StampedInput]:
     """The gate inputs with THEIR OWN stamps — never the run's.
 
@@ -168,8 +171,9 @@ def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: date
         f = getattr(prices, name, None)
         if f is None:
             continue
-        win = (window_facts(bars, start=window_start, end=f.as_of)
-               if name == "rel_ret_vs_market" and f.value is not None else None)
+        start = window_start.get(name)
+        win = (window_facts(bars, start=start, end=f.as_of)
+               if start is not None and f.value is not None and f.as_of is not None else None)
         out[name] = StampedInput(
             value=f.value, as_of=f.as_of if f.value is not None else None,
             source=f.source or "EOD", note=f.note,

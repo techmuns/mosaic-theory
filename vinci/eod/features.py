@@ -20,7 +20,7 @@ from vinci.schemas.envelope import DataField, SourceTier
 from vinci.schemas.market import PriceBar
 
 # Calendar lookbacks. 52w features need ~a full year of history to be meaningful.
-_YEAR_DAYS = 365
+YEAR_DAYS = 365  # the 52-week window G1's high/low is drawn over
 _MIN_52W_SPAN = 330  # require at least this much history before reporting 52w-based features
 _RET_LOOKBACK = {"3m": 91, "6m": 182, "12m": 365}
 _ADV_WINDOW = 90
@@ -129,13 +129,47 @@ def compute_price_features(
 
     # 52-week high/low + drawdown/distance (only if we actually have ~a year of history)
     if have_year:
-        window = [b for b in bars if b.bar_date >= reference_date - timedelta(days=_YEAR_DAYS)]
+        w_start = reference_date - timedelta(days=YEAR_DAYS)
+        window = [b for b in bars if b.bar_date >= w_start]
         hi = max(b.high for b in window)
         lo = min(b.low for b in window)
         high_52w = _eod(hi, as_of)
         low_52w = _eod(lo, as_of)
-        drawdown = _derived(latest.close / hi - 1.0, as_of)
-        dist_low = _derived(latest.close / lo - 1.0, as_of)
+        # THE RATIO FIELDS REACH BACK FOR `latest` AND CLAIM TO BE CURRENT (2026-07-31).
+        #
+        # `drawdown_from_high` is what G1 gates on, and it is `latest.close / hi - 1` — so a name
+        # whose bars stopped weeks ago is judged on a price from that day while the gate treats the
+        # answer as current. INHD ran on a 2026-06-08 close, 51 days stale, and FAILED G1: recorded
+        # as assessed-and-rejected when it could not be assessed at all.
+        #
+        # THE CONTRACT ALREADY EXISTED and this field ignored it. `staleness_days` (config default
+        # 5) is applied to `last` a few lines above, which becomes a STALE field — but the derived
+        # ratios were built with `_derived(...)`, which carries no staleness at all. The bound is
+        # therefore not a new constant: it is the shipped contract, finally applied to the field
+        # that decides. It clears the market calendar with a day to spare — IWM and MDY agree
+        # exactly and neither shows a gap over 4d — and refuses anything past it.
+        #
+        # UNKNOWN, never a value: the gate maps UNKNOWN to NOT_EVALUATED, so a name that could not
+        # be assessed stops looking like one that was assessed and rejected.
+        if age > staleness_days:
+            # NEVER (0, 0) ON A FAILED LOOKUP (review finding). `window_facts` returns None when
+            # no bar sits at or before the window start — reachable whenever `have_year` is met by
+            # a span that begins INSIDE the 52-week window — and defaulting to zeros printed
+            # "spans 0d over 0 bars", which reads as a measured empty window rather than a
+            # measurement that could not be made. A fabricated zero inside the fix for a
+            # mislabelled value is the same defect one layer along.
+            facts = window_facts(bars, start=w_start, end=as_of)
+            window_desc = (f"window spans {facts[0]}d over {facts[1]} bars" if facts
+                           else "window not resolvable — no bar at or before "
+                                f"{w_start.isoformat()}")
+            stale_note = (
+                f"latest bar {as_of.isoformat()} is {age}d before the {reference_date.isoformat()} "
+                f"reference (> {staleness_days}d) — the drawdown would be a ratio to a "
+                f"{age}d-old close presented as current; {window_desc}")
+            drawdown = dist_low = _unknown(stale_note)
+        else:
+            drawdown = _derived(latest.close / hi - 1.0, as_of)
+            dist_low = _derived(latest.close / lo - 1.0, as_of)
     else:
         note = f"only {span_days}d history (< {_MIN_52W_SPAN}d)"
         high_52w = low_52w = drawdown = dist_low = _unknown(note)
