@@ -190,28 +190,74 @@ def test_a_refusal_note_says_unavailable_rather_than_printing_a_number() -> None
 
 
 # --- the corpus ----------------------------------------------------------------------------------
+#
+# THESE PINS ARE CACHE-ONLY, AND THE WIRE IS BLOCKED WHILE THEY RUN (review finding on #283).
+#
+# The first cut built a live ``EdgarClient`` and wrapped each fetch in ``except Exception:
+# pytest.skip("EDGAR facts unavailable offline")``. `data/dossiers` is COMMITTED but `data/cache` is
+# git-ignored, so on a fresh checkout the `is_dir()` guard passes, the cache misses, and
+# ``companyfacts`` goes to the wire — inside ``pytest -m "not network"``. MEASURED in a cleanroom
+# with `socket.create_connection` blocked: a cold cache attempts a live call, it does not degrade.
+#
+# Both outcomes were wrong. With egress, ~33 live SEC requests run in the gate that exists to be
+# offline; without it, the broad `except` swallows the failure and every corpus pin SILENTLY passes
+# by skipping — the guard-that-cannot-fire class, in the pins written to prevent it. Every other
+# EDGAR test in this suite (`test_anchor`, `test_band_guards`) uses a synthetic fixture; these were
+# the only ones reaching for a real client, and the repo already has `@pytest.mark.network` for
+# tests that mean it.
+#
+# The fixture skips on an ABSENT CACHE — a deterministic, stated condition — and blocks outbound
+# connections for the duration, so a cache miss fails LOUDLY instead of quietly fetching.
 
 
-def test_the_overlay_serves_every_committed_name_and_none_falls_back() -> None:
+@pytest.fixture
+def offline_edgar() -> object:
+    """A cache-only (resolver, EdgarClient) pair. Any attempted fetch fails the test."""
+    import socket
+
+    from vinci.config import get_config
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    cfg = get_config()
+    # WARMTH, NOT EXISTENCE. `cache_dir.is_dir()` is not a usable test — the config/client CREATE
+    # the directory, so a cleanroom run found it present and empty, sailed past the guard, and hit
+    # the network block instead: a RED main on any fresh checkout. Count entries.
+    sec = cfg.cache_dir / "sec"
+    if not sec.is_dir() or next(sec.glob("*.json"), None) is None:
+        pytest.skip("no warm EDGAR cache in this checkout — these corpus pins are cache-only by "
+                    "design; warm it with a real run to enable them")
+    pair = (EntityResolver.from_config(cfg), EdgarClient.from_config(cfg))
+    real = socket.create_connection
+
+    def refuse(*_a: object, **_k: object) -> object:
+        raise AssertionError(
+            "a corpus pin tried to reach the network — these run against the committed cache only. "
+            "Warm it with a real run, or mark the test @pytest.mark.network if it truly needs the "
+            "wire. A silent fetch here turns the offline gate into a live SEC client.")
+
+    socket.create_connection = refuse  # type: ignore[assignment]
+    try:
+        yield pair
+    finally:
+        socket.create_connection = real  # type: ignore[assignment]
+
+
+def test_the_overlay_serves_every_committed_name_and_none_falls_back(
+    offline_edgar: tuple[object, object],
+) -> None:
     """NON-VACUOUS: runs on the real fleet, so an extraction that stops resolving reds here rather
     than in a rendered page. Measured when written: 11 of 11 servable, uplift 0.00%–15.88%."""
     db = ROOT / "data" / "dossiers"
     if not db.is_dir():
         pytest.skip("no local dossiers in this worktree")
-    from vinci.config import get_config
-    from vinci.edgar.client import EdgarClient
     from vinci.edgar.concepts import points_for_tag
-    from vinci.resolver import EntityResolver
 
-    cfg = get_config()
-    res, ed = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+    res, ed = offline_edgar
     names = sorted(p.name for p in db.iterdir() if p.is_dir())
     served, zero = [], []
     for t in names:
-        try:
-            f = ed.companyfacts(res.resolve_ticker(t).cik)
-        except Exception:  # noqa: BLE001 — offline worktree, not a failure of the overlay
-            pytest.skip("EDGAR facts unavailable offline")
+        f = ed.companyfacts(res.resolve_ticker(t).cik)  # type: ignore[attr-defined]
         pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
         out = max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
         d = diluted_outstanding(f, basic_out=out)
@@ -228,22 +274,26 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back() -> None:
     # construction — `zero` is built from `names`. A vacuous assertion dressed as a check.)
     assert zero, "no zero-dilution name found — measured at 3 of 11; the state may have gone silent"
     for t in zero:
-        f = ed.companyfacts(res.resolve_ticker(t).cik)
+        f = ed.companyfacts(res.resolve_ticker(t).cik)  # type: ignore[attr-defined]
         pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
         out = max(pts, key=lambda p: (p.period_end, p.filed)).value
         assert "reported zero, not an unchecked one" in denominator_note(
             diluted_outstanding(f, basic_out=out)), t
 
 
-#: Committed anchors whose ``anchor_base_value_per_share`` still carries the cumulative-period
-#: defect and therefore diverges from a fresh recompute. These are the names the anchor backfill
-#: has not yet been run on — measured, not chosen: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97
-#: (+1.02%), CNXC 62.33→62.55 (+0.35%). The list SHRINKS to empty once the operator runs the
-#: backfill, and this pin reds until STATE is updated with it — which is the point.
-ANCHORS_AWAITING_BACKFILL = {"BRBR", "CNXC", "SMPL"}
+#: Committed anchors whose ``anchor_base_value_per_share`` diverges from a fresh recompute.
+#:
+#: **NOW EMPTY — the backfill ran (2026-07-31).** It held ``{BRBR, CNXC, SMPL}`` for exactly one
+#: PR: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97 (+1.02%), CNXC 62.33→62.55 (+0.35%), each the
+#: cumulative-period defect leaving the committed artifact. Empty is the load-bearing state — from
+#: here the pin asserts committed JSON and a fresh recompute AGREE on every applicable anchor, so
+#: future drift reds on the first run rather than waiting to be noticed.
+ANCHORS_AWAITING_BACKFILL: set[str] = set()
 
 
-def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> None:
+def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
+    offline_edgar: tuple[object, object],
+) -> None:
     """REVIEW FINDING — the fix has TWO consumers and only one was measured.
 
     `anchor_base_value_per_share` is `equity ÷ dil.value` (anchor.py), and `tagger._leverage` and
@@ -253,7 +303,13 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> 
 
     This pin is the invariant: the divergence set must be EXACTLY the recorded backfill list. A new
     name drifting in reds it; the backfill landing reds it too, which forces STATE to track the
-    artifacts rather than describe them."""
+    artifacts rather than describe them. **The backfill has now run and the list is EMPTY**, so from
+    here this asserts committed JSON and a fresh recompute agree on every applicable anchor.
+
+    The recompute passes ``ciq=None`` DELIBERATELY. With the workbook bridge attached, FUBO and IT
+    also read as changed — but for PRE-EXISTING vendor fills (FUBO's `net_debt` None→170.4, IT's
+    `ltm_fcf` None→1257.9) that predate this work and belong to their own decision. Including the
+    bridge here would fold two unrelated backlogs into one pin and neither would be actionable."""
     import json
     from datetime import UTC, datetime
 
@@ -262,12 +318,7 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> 
     dd = ROOT / "data" / "dossiers"
     if not dd.is_dir():
         pytest.skip("no local dossiers in this worktree")
-    from vinci.config import get_config
-    from vinci.edgar.client import EdgarClient
-    from vinci.resolver import EntityResolver
-
-    cfg = get_config()
-    res, ed = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+    res, ed = offline_edgar
     diverged, compared = set(), 0
     for p in sorted(dd.iterdir()):
         doc = p / "dossier.json"
@@ -277,10 +328,7 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> 
         committed = (d.get("anchor") or {}).get("anchor_base_value_per_share")
         if committed is None:
             continue  # anchor inapplicable — no base value to compare
-        try:
-            f = ed.companyfacts(res.resolve_ticker(p.name).cik)
-        except Exception:  # noqa: BLE001 — offline worktree
-            pytest.skip("EDGAR facts unavailable offline")
+        f = ed.companyfacts(res.resolve_ticker(p.name).cik)  # type: ignore[attr-defined]
         fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
                                  computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
         compared += 1
@@ -295,7 +343,9 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> 
         "STATE; if a NEW name drifted, something moved the anchor inputs without a record.")
 
 
-def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative() -> None:
+def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative(
+    offline_edgar: tuple[object, object],
+) -> None:
     """THE FLEET INSTANCE OF THE MIS-DATING. `facts.diluted_shares` agrees with the extraction on
     7 of 7 records — so a mis-dated extraction is a mis-dated record. SMPL is the one name where
     the committed value is a nine-month average; this pins the SELECTOR, so once the record is
@@ -307,12 +357,7 @@ def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative() -
     recs = ROOT / "scenarios"
     if not recs.is_dir():
         pytest.skip("no scenario records in this worktree")
-    from vinci.config import get_config
-    from vinci.edgar.client import EdgarClient
-    from vinci.resolver import EntityResolver
-
-    cfg = get_config()
-    res, ed = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+    res, ed = offline_edgar
     checked = 0
     for f_ in sorted(recs.glob("*.json")):
         if f_.stem.startswith("_"):
@@ -320,10 +365,7 @@ def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative() -
         ds = (json.loads(f_.read_text()).get("facts") or {}).get("diluted_shares") or {}
         if ds.get("value") is None:
             continue
-        try:
-            cf = ed.companyfacts(res.resolve_ticker(f_.stem).cik)
-        except Exception:  # noqa: BLE001
-            pytest.skip("EDGAR facts unavailable offline")
+        cf = ed.companyfacts(res.resolve_ticker(f_.stem).cik)  # type: ignore[attr-defined]
         p = _latest_point(cf, _DILUTED_TAG)
         assert p is not None, f_.stem
         span = (p.period_end - p.period_start).days if p.period_start else 0

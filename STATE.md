@@ -4094,6 +4094,45 @@ filer's tagging and are NOT self-evidently right for a profitable name. The page
 filer reports no dilutive difference in this period*, never leave a reader to infer we checked and
 found none — item 22's visible-absence rule applied to the denominator.
 
+**D11. THE OFFLINE GATE HAD A LIVE SEC CLIENT IN IT** (review finding on #283, and #282 shipped it).
+Three corpus pins built a real `EdgarClient` and wrapped each fetch in
+`except Exception: pytest.skip("EDGAR facts unavailable offline")`. **`data/dossiers` is COMMITTED
+but `data/cache` is git-ignored**, so on a fresh checkout the `is_dir()` guard passes, the cache
+misses, and `companyfacts` goes to the wire — inside `pytest -m "not network"`. MEASURED in a
+cleanroom with `socket.create_connection` blocked: a cold cache **attempts a live call**, it does
+not degrade. Both outcomes were wrong — with egress, ~33 live SEC requests inside the gate that
+exists to be offline; without it, the broad `except` swallows the failure and **every corpus pin
+silently passes by skipping**, which is the guard-that-cannot-fire class inside the pins written to
+prevent it. Every other EDGAR test in the suite (`test_anchor`, `test_band_guards`) uses a synthetic
+fixture; these were the only ones reaching for a real client, and `@pytest.mark.network` already
+exists for tests that mean it. **FIXED with an `offline_edgar` fixture that skips on a COLD cache
+and BLOCKS outbound connections while the pins run**, so a cache miss fails loudly instead of
+fetching. **THE FIRST GUARD WAS ITSELF WRONG and the cleanroom caught it:** `cache_dir.is_dir()`
+tests existence, but the config/client CREATE the directory — an empty cache sailed past and hit the
+network block, which would have RED-ed main on any fresh checkout. The guard counts entries.
+Verified both ways: cold cache → 3 skipped, no network attempt; partially-warm cache → 3 loud
+failures, not silent skips.
+
+**D9. THE FALSE-UNKNOWN CLASS, THIRD INSTANCE** (review finding on #282, recorded at the operator's
+direction). `DilutedOutstanding.is_zero_dilution` tested the increment alone, so a REFUSED pair
+whose increment was a small negative — an inverted tagging error of −0.5 shares — answered **True**:
+"the filer reports no dilution, checked" over a pair the module had just refused to use. Same shape
+as the covenant line and as item 18's hardcoded UNKNOWN: **a derived answer that speaks for a result
+which does not exist.** Now gated on `shares is None`. The generalisable tell is that the property
+read one field of a NamedTuple whose OTHER field carries the refusal — a partial read of a
+partially-valid record. Pinned by `test_zero_dilution_is_false_on_a_refused_result`.
+
+**D10. FUBO DOES NOT CLOSE FOR FREE — the selector is right and the SOURCE is missing** (the cheap
+read, 2026-07-31). The tie-break fix does not touch `shares_out`: that path is
+`_edgar_shares_outstanding` → `latest_instant(extract_points(facts, "shares"))`, a DIFFERENT
+selector, and cover-page counts are **instants** — there is no quarter-vs-cumulative ambiguity to
+break. The real cause is upstream of any selection: **EDGAR's companyfacts for CIK 0001484769 has
+no `dei:EntityCommonStockSharesOutstanding` point after 2025-07-31**, while the same blob carries
+us-gaap facts filed as recently as **2026-06-16**. The company kept filing; the dei fact stopped
+appearing. So it still needs the queued 10-Q cover-page read — now evidenced on both sides, with
+CIQ's 29.4M confirmed right and ours confirmed wrong. **The overlay cannot fix it either**: its
+`basic_out` leg is that same stale fact.
+
 **D6. FUBO'S `shares_out` IS PRE-REVERSE-SPLIT AND A YEAR STALE — the 11.65× CIQ divergence now has
 its cause.** Its `EntityCommonStockSharesOutstanding` is dated **2025-07-31** while every other
 name's is 2026; the weighted-average count fell 349,096,793 → 30,715,279 between the Dec-2025 and
@@ -4147,9 +4186,25 @@ committed values are the ones carrying the defect** — the fix does not corrupt
 them — and until a backfill runs, committed JSON and a fresh recompute disagree on three names.
 INVARIANT SHIPPED: a corpus pin asserts the divergence set is EXACTLY `{BRBR, CNXC, SMPL}`, so a
 new name drifting in reds, and the backfill landing also reds until this record is updated.
-**OPERATOR ACTION: run `vinci anchor-backfill --tickers BRBR,CNXC,SMPL --dry-run` and then without
-the flag** (anchor-only writer — no re-assembly, no LLM, every other field byte-identical), then
-shrink `ANCHORS_AWAITING_BACKFILL` in `tests/test_dilution_denominator.py` and this entry with it.
+**DONE 2026-07-31 — the backfill ran and `ANCHORS_AWAITING_BACKFILL` is now EMPTY**, so the pin has
+flipped from "these three diverge" to "nothing diverges", and future drift reds on its first run.
+Dry-run confirmed the recorded moves before writing. Three lines changed per `dossier.json`
+(`computed_at`, `diluted_shares`, base VPS) and one per rendered page.
+
+**"NOTHING ELSE MOVES" DID NOT HOLD, and the failure is worth keeping.** Dry-running the other
+eight flagged **FUBO and IT as CHANGED too** — but for reasons that are NOT this fix. Isolated by
+recomputing each anchor under both tie-breaks with the workbook attached: FUBO's `net_debt`
+(None → 170.4) and IT's `ltm_fcf` (None → 1257.9, plus its two `data_quality` fields) are
+**PRE-EXISTING CIQ-bridge fills** that predate this work; only FUBO's `diluted_shares` (+2.22%) is
+the period fix, and its base is None so no value moved. **The backfill is not surgical — it
+rewrites the whole anchor block, carrying whatever else has drifted since the last run.** A
+fleet-wide "while I'm here" backfill would have landed two unrelated vendor fills inside a PR
+labelled for the period fix. Those two names keep their own pending decision.
+
+**AND THE BACKFILL WRITES `dossier.json` ONLY** — it left the pages at `$41.60` while the record
+said `43.3326`. Same hole `refresh_dossier` was built to close in #276, in a different writer. A
+no-op refresh re-rendered all three pages before the frontend mirror ran. **Every writer that
+touches a committed record needs the page checked, not just the one that was caught.**
 
 **PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
 review and exist nowhere else; recording them is the first commit of the work, not its last.

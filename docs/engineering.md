@@ -561,6 +561,33 @@ the wrong names and let the real one through.
 Same shape as *`financial_summary.as_of` is an Estimates stamp, not a Financials one* — the name
 predicted the wrong workbook, and only the source_ref settled it.
 
+## When one change moves a committed number for two reasons, the decomposition goes in the record
+
+*(operator, 2026-07-31)*
+
+> **By separate SEAL where the surfaces differ; by documented INTERMEDIATE where they don't.**
+
+A number that moves once for two causes is unattributable forever after — the diff shows the
+endpoints, and nothing recovers which cause carried how much. So the decomposition is written down
+while it is still knowable, and the FORM follows the surfaces, not the ceremony:
+
+* **Different surface, different writer → separate seal.** The anchor block (`anchor-backfill`,
+  writing `dossier.json`) and the scenario record (the refresh path) are two writers over two
+  artifacts; folding both into one PR would put two review questions behind one approval.
+* **Same surface, same writer → one write, both numbers in the body.** SMPL's denominator moves
+  `3.83 → 4.48` because *we read the wrong row* and `4.48 → 4.78` because *we changed what we
+  divide by*. Two commits to the same field would be ceremony; what matters is that the
+  intermediate is recorded with its cause named.
+
+The failure this prevents is not confusion at review time — it is a later question ("why did SMPL's
+target jump 25%?") that has no answer because the record kept only the endpoints.
+
+**Corollary, learned the same day: a backfill is not surgical.** `anchor-backfill` rewrites the
+whole block, so it carries every drift accumulated since the last run — dry-running it fleet-wide
+surfaced FUBO's `net_debt` and IT's `ltm_fcf` vendor fills, unrelated to the change being shipped.
+Scope the write to the names the change actually moves, and isolate anything else by recomputing
+under both versions before assuming it is yours.
+
 ## A stamp belongs to a COLUMN, not a block, unless every column shares a vintage
 
 *(operator, 2026-07-30 — fourth instance, recorded as a rule rather than a fourth incident)*
