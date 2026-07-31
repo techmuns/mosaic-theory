@@ -352,7 +352,15 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     (latest 10-Q)" over the nine-month number. A denominator whose stated basis is not what it is
     is the exact defect class the share-count work exists to close.
 
-    Instant facts (``period_start is None``) have no span to compare and keep the old ordering."""
+    Instant facts (``period_start is None``) sort as span 0, so at a shared end date an instant
+    beats any duration — it cannot BE a cumulative, which is the thing being excluded. No caller
+    currently mixes the two: the sole call site reads the diluted weighted average, a duration.
+
+    **THIS ALSO MOVES THE COMMITTED ANCHOR.** ``anchor_base_value_per_share`` is ``equity ÷
+    dil.value`` (below), and ``tagger._leverage`` / ``audit_r1.check_leverage`` read it — so a
+    fresh recompute now diverges from committed JSON on SMPL (41.60→43.33, +4.16%), BRBR
+    (55.41→55.97, +1.02%) and CNXC (62.33→62.55, +0.35%). The committed values are the ones
+    carrying the defect; they are corrected by an anchor backfill, not by this function."""
     pts = points_for_tag(facts, tag)
     if not pts:
         return None

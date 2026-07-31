@@ -4137,6 +4137,20 @@ changes a basis; bundling them would seal a single 3.83→4.78 with no way to at
 **NOT YET WRITTEN.** The seven records still carry column A. Moving them is a decision-path data
 change (it moves the bar test), so it waits on the operator, not on more code.
 
+**D8. THE PERIOD FIX HAS TWO CONSUMERS AND THE PR MEASURED ONE** (review finding on #282). Besides
+the scenario engine, `anchor.py` computes `anchor_base_value_per_share = equity ÷ dil.value`, and
+`tagger._leverage` + `audit_r1.check_leverage` read it — so correcting the period moves a value
+**committed in `dossier.json`**. Measured before/after on the fleet: **SMPL 41.60→43.33 (+4.16%),
+BRBR 55.41→55.97 (+1.02%), CNXC 62.33→62.55 (+0.35%)**; the other eight are unmoved (five have no
+applicable anchor). FUBO's base is None but its anchor `diluted_shares` moves +2.22%. **The
+committed values are the ones carrying the defect** — the fix does not corrupt them, it exposes
+them — and until a backfill runs, committed JSON and a fresh recompute disagree on three names.
+INVARIANT SHIPPED: a corpus pin asserts the divergence set is EXACTLY `{BRBR, CNXC, SMPL}`, so a
+new name drifting in reds, and the backfill landing also reds until this record is updated.
+**OPERATOR ACTION: run `vinci anchor-backfill --tickers BRBR,CNXC,SMPL --dry-run` and then without
+the flag** (anchor-only writer — no re-assembly, no LLM, every other field byte-identical), then
+shrink `ANCHORS_AWAITING_BACKFILL` in `tests/test_dilution_denominator.py` and this entry with it.
+
 **PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
 review and exist nowhere else; recording them is the first commit of the work, not its last.
 1. **NO OFFSET ON THE SHARES COLUMN.** A price's vintage is a CLOSE, a share count's is a FILING.

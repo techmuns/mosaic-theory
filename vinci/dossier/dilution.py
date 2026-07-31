@@ -82,7 +82,15 @@ class DilutedOutstanding(NamedTuple):
         no-dilution period from one the pipeline never reached (the visible-absence rule). Three of
         eleven fleet names sit here — FUBO correctly (a loss), SMPL and VITL by the filer's own
         tagging, which is not self-evidently right for a profitable name.
+
+        **GATED ON ``shares`` (review finding).** The first cut tested the increment alone, so a
+        REFUSED result whose increment happened to be a small negative — an inverted tagging error
+        of −0.5 shares — answered True. A property that speaks for a result which does not exist is
+        the same class as a guard that cannot fire: it reads as "checked, none found" on a pair the
+        module explicitly refused.
         """
+        if self.shares is None:
+            return False
         inc = self.increment
         return inc is not None and abs(inc) < 1.0
 

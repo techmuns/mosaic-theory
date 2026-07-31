@@ -156,6 +156,20 @@ def test_zero_dilution_is_a_distinct_state_and_the_note_says_it_was_reported() -
     assert "reported zero, not an unchecked one" in note
 
 
+def test_zero_dilution_is_false_on_a_refused_result() -> None:
+    """REVIEW FINDING. The property tested the increment alone, so a REFUSED pair whose increment
+    was a small NEGATIVE — an inverted tagging error of half a share — answered True. A property
+    that speaks for a result which does not exist reads as "checked, none found" on exactly the
+    pair the module refused, which is the guard-that-cannot-fire class in a different costume."""
+    inverted = _facts([
+        (BASIC_WA_TAG, "2026-01-01", "2026-03-31", 100_000_000.0, "2026-05-01"),
+        (DILUTED_WA_TAG, "2026-01-01", "2026-03-31", 99_999_999.5, "2026-05-01"),
+    ])
+    d = diluted_outstanding(inverted, basic_out=100_000_000)
+    assert d.shares is None and d.increment == pytest.approx(-0.5)
+    assert not d.is_zero_dilution, "a refused result claimed the filer reported no dilution"
+
+
 def test_the_note_states_the_carry_forward_assumption_and_the_exclusions() -> None:
     """A per-share value whose divisor is unexplained cannot be checked by the human, which is what
     source-binding is for. Both the assumption and what the filer's average omits must print."""
@@ -207,9 +221,78 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back() -> None:
         if d.is_zero_dilution:
             zero.append(t)
     assert len(served) == len(names)
-    # the zero-dilution set is REPORTED, not asserted to a fixed list — a filer that starts tagging
-    # dilution must not red this pin. What must hold is that the state stays distinguishable.
-    assert set(zero) <= set(names)
+    # The zero-dilution set is REPORTED, not pinned to a fixed list — a filer that starts tagging
+    # dilution must not red this. What must hold is that the state stays DISTINGUISHABLE on the
+    # surface, since the number itself is identical to the basic count.
+    # (Review finding: the first cut asserted `set(zero) <= set(names)`, which is true by
+    # construction — `zero` is built from `names`. A vacuous assertion dressed as a check.)
+    assert zero, "no zero-dilution name found — measured at 3 of 11; the state may have gone silent"
+    for t in zero:
+        f = ed.companyfacts(res.resolve_ticker(t).cik)
+        pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
+        out = max(pts, key=lambda p: (p.period_end, p.filed)).value
+        assert "reported zero, not an unchecked one" in denominator_note(
+            diluted_outstanding(f, basic_out=out)), t
+
+
+#: Committed anchors whose ``anchor_base_value_per_share`` still carries the cumulative-period
+#: defect and therefore diverges from a fresh recompute. These are the names the anchor backfill
+#: has not yet been run on — measured, not chosen: SMPL 41.60→43.33 (+4.16%), BRBR 55.41→55.97
+#: (+1.02%), CNXC 62.33→62.55 (+0.35%). The list SHRINKS to empty once the operator runs the
+#: backfill, and this pin reds until STATE is updated with it — which is the point.
+ANCHORS_AWAITING_BACKFILL = {"BRBR", "CNXC", "SMPL"}
+
+
+def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names() -> None:
+    """REVIEW FINDING — the fix has TWO consumers and only one was measured.
+
+    `anchor_base_value_per_share` is `equity ÷ dil.value` (anchor.py), and `tagger._leverage` and
+    `audit_r1.check_leverage` read it — so correcting the period moves a value committed in
+    `dossier.json`, not just the scenario engine's reward:risk. The PR measured the engine and said
+    nothing about the anchor.
+
+    This pin is the invariant: the divergence set must be EXACTLY the recorded backfill list. A new
+    name drifting in reds it; the backfill landing reds it too, which forces STATE to track the
+    artifacts rather than describe them."""
+    import json
+    from datetime import UTC, datetime
+
+    from vinci.dossier.anchor import compute_anchor
+
+    dd = ROOT / "data" / "dossiers"
+    if not dd.is_dir():
+        pytest.skip("no local dossiers in this worktree")
+    from vinci.config import get_config
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    cfg = get_config()
+    res, ed = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+    diverged, compared = set(), 0
+    for p in sorted(dd.iterdir()):
+        doc = p / "dossier.json"
+        if not doc.is_file():
+            continue
+        d = json.loads(doc.read_text())
+        committed = (d.get("anchor") or {}).get("anchor_base_value_per_share")
+        if committed is None:
+            continue  # anchor inapplicable — no base value to compare
+        try:
+            f = ed.companyfacts(res.resolve_ticker(p.name).cik)
+        except Exception:  # noqa: BLE001 — offline worktree
+            pytest.skip("EDGAR facts unavailable offline")
+        fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
+                                 computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
+        compared += 1
+        if fresh.anchor_base_value_per_share is None:
+            continue
+        if abs(fresh.anchor_base_value_per_share / committed - 1) > 0.001:
+            diverged.add(p.name)
+    assert compared >= 5, f"only {compared} anchors reached the comparison — near-vacuous"
+    assert diverged == ANCHORS_AWAITING_BACKFILL, (
+        f"committed anchors diverging from a fresh recompute: {sorted(diverged)}, recorded: "
+        f"{sorted(ANCHORS_AWAITING_BACKFILL)}. If the backfill has run, shrink the list and update "
+        "STATE; if a NEW name drifted, something moved the anchor inputs without a record.")
 
 
 def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative() -> None:
