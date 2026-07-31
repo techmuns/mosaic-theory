@@ -35,13 +35,12 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: a quote character immediately adjacent to a quote character. Written as a regex over that shape
 #: so a variant nobody has seen yet is still caught.
 QUOTE_ESCAPE = re.compile(r"""'\\''|'"'"'""")
-#: A heredoc sentinel that reached the file means the block was pasted rather than executed.
-HEREDOC_SENTINEL = re.compile(r"<<-?\s*'?[A-Z_]{2,}'?\s*$", re.MULTILINE)
-
-PATTERNS = {
-    "shell single-quote escape": QUOTE_ESCAPE,
-    "unexecuted heredoc sentinel": HEREDOC_SENTINEL,
-}
+#: ONE PATTERN, because one is what was OBSERVED (review finding). The first cut also scanned for
+#: heredoc sentinels — a shape that has never leaked here, added on the theory it might. That is
+#: the speculative-build rule broken inside a hygiene guard, and it carried a real cost: a handbook
+#: documenting the heredoc idiom would have reddened the suite, so the guard would have punished
+#: writing down the very thing it guards. Add the second pattern the day a second shape leaks.
+PATTERNS = {"shell single-quote escape": QUOTE_ESCAPE}
 
 
 def _committed_docs() -> list[pathlib.Path]:
@@ -77,8 +76,9 @@ def test_the_scan_fires_on_the_idiom_including_shapes_never_yet_seen() -> None:
     for sample in (seen, unseen):
         assert QUOTE_ESCAPE.search(sample), sample
     assert not QUOTE_ESCAPE.search("an ordinary apostrophe's prose, and \"a quotation\".")
-    assert HEREDOC_SENTINEL.search("run: python - <<'PYEOF'")
-    assert not HEREDOC_SENTINEL.search("the value is << the threshold")
+    # and the negative that matters most: a doc DESCRIBING the idiom in prose must stay clean, or
+    # the guard makes its own incident unwritable
+    assert not QUOTE_ESCAPE.search("escape it by closing the quote and reopening it")
 
 
 def test_the_corpus_is_real_and_not_an_empty_glob() -> None:
