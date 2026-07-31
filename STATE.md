@@ -4230,10 +4230,17 @@ dependency entirely. Cheap and pre-designed; not built now because nothing has f
 **HOW FAR THE UNGATED-PUSH PATTERN REACHES — bounded, not unknown.** The general form of D16 is
 *any command whose exit status is consumed by a pipe is not a gate* (`tail` exits 0 whatever it
 read). How many past commits ran that way is not reconstructable. But the bound is stronger than
-"unknown": **a persistent red would have surfaced** — the suite has grown monotonically from ~1,130
-to 1,394 and main verifies green at HEAD — so anything merged broken was transient or was fixed
+"unknown": **a persistent red would have surfaced** — the full offline suite is run and read on
+every build, and main verifies green at HEAD — so anything merged broken was transient or was fixed
 later without anyone noticing which. Weaker than a verified history, stronger than "unknown", and
 stated deliberately: **"unknown" invites someone to re-audit history that cannot be re-audited.**
+**CORRECTED AT REVIEW, because the bound'"'"'s own evidence was two unchecked claims.** The first
+draft argued from "the suite has grown MONOTONICALLY from ~1,130 to 1,394". Neither half survives:
+~1,130 is a number nobody measured, and monotonic is FALSE on this session'"'"'s own observations —
+1397 passed became 1394 when #286 turned three corpus pins into skips. Total collected did not
+shrink, but the figure quoted as evidence did. **An argument for a bound must not rest on a
+statistic asserted from memory** — that is the defect class this whole run keeps finding, appearing
+inside the record written to bound another one (D15, again).
 
 **THE THREE CORPUS PINS HAVE NEVER GATED IN CI.** `data/cache` is git-ignored, so CI is always the
 cold case: before #283 they hit the network or skipped silently; after #283 they skipped cold; after
