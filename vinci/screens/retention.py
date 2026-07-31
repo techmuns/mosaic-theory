@@ -48,7 +48,7 @@ from __future__ import annotations
 import enum
 import json
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -164,6 +164,26 @@ class _Row(BaseModel, frozen=True):
             raise ValueError(f"run_id {self.run_id!r} is not <YYYY-MM-DD>-<NN>")
 
 
+def rollup(per_gate: Mapping[str, GateOutcome]) -> Outcome:
+    """The row's overall outcome, DERIVED from its gates — never asserted alongside them.
+
+    FAIL dominates: a name that failed any gate failed the screen, regardless of what a later gate
+    said or whether it ran at all. Then NOT_EVALUATED, because a screen that could not assess a name
+    has not passed it. All-PASS is the only way through.
+
+    Only gates PRESENT in the map are considered — a short-circuiting screen legitimately never
+    reaches G3, and an absent gate is not a silent PASS.
+    """
+    if not per_gate:
+        raise ValueError("a candidate row with no gate outcomes records nothing — refusing")
+    outcomes = {g.outcome for g in per_gate.values()}
+    if Outcome.FAIL in outcomes:
+        return Outcome.FAIL
+    if Outcome.NOT_EVALUATED in outcomes:
+        return Outcome.NOT_EVALUATED
+    return Outcome.PASS
+
+
 class CandidateRow(_Row, frozen=True):
     """The full grain: every gate, its inputs, its outcome, and the config that judged it."""
 
@@ -171,6 +191,26 @@ class CandidateRow(_Row, frozen=True):
     gate_inputs: dict[str, StampedInput]
     per_gate: dict[str, GateOutcome]
     config: ScreenConfig
+
+    def model_post_init(self, _ctx: Any) -> None:
+        """THE AGGREGATE MUST AGREE WITH ITS DETAIL (review finding).
+
+        The first cut let ``outcome`` be set independently of ``per_gate``, so a row could read PASS
+        while a gate it carries read FAIL — the record saying two things, in the one artifact whose
+        purpose is to be re-read later. It matters more here than elsewhere: a calibration query
+        GROUPS BY the aggregate and EXPLAINS with the detail, so a disagreement is not a cosmetic
+        inconsistency, it is an analysis that is silently wrong.
+        """
+        super().model_post_init(_ctx)
+        expected = rollup(self.per_gate)
+        if self.outcome is not expected:
+            failed = sorted(g for g, o in self.per_gate.items() if o.outcome is Outcome.FAIL)
+            unrun = sorted(g for g, o in self.per_gate.items()
+                           if o.outcome is Outcome.NOT_EVALUATED)
+            raise ValueError(
+                f"{self.ticker}: row outcome {self.outcome} contradicts its gates (expected "
+                f"{expected}; failed={failed or 'none'}, not-evaluated={unrun or 'none'}). Build "
+                "the outcome with `rollup(per_gate)` — never assert it beside the detail")
 
 
 class UniverseRow(_Row, frozen=True):

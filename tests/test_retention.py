@@ -35,6 +35,7 @@ from vinci.screens.retention import (
     next_run_id,
     outcome_from_gate,
     read_rows,
+    rollup,
     run_path,
 )
 
@@ -42,6 +43,22 @@ REF = dt.date(2026, 7, 27)
 CFG = ScreenConfig(thresholds={"drawdown_max": -0.30, "idio_rel_max": -0.15},
                    benchmark="IWM", lookback_days=70)
 BAND = BandConfig(market_cap_min_usd=3e8, market_cap_max_usd=1e10, exchanges=("XNYS", "XNAS"))
+
+
+def _g(outcome: Outcome, reason: str) -> GateOutcome:
+    return GateOutcome(outcome=outcome, reason=reason)
+
+
+_G1 = _g(Outcome.PASS, "drawdown -42.0% <= -30%")
+_GATES = {
+    Outcome.FAIL: {"g1_drawdown": _G1,
+                   "g2_idiosyncratic": _g(Outcome.FAIL, "rel -18% vs -15%")},
+    Outcome.PASS: {"g1_drawdown": _G1,
+                   "g2_idiosyncratic": _g(Outcome.PASS, "rel -18% clears -15%")},
+    Outcome.NOT_EVALUATED: {
+        "g1_drawdown": _G1,
+        "g2_idiosyncratic": _g(Outcome.NOT_EVALUATED, "the 70d window has no start")},
+}
 
 
 def _candidate(ticker: str, run_id: str, outcome: Outcome = Outcome.FAIL, **kw: object
@@ -56,9 +73,7 @@ def _candidate(ticker: str, run_id: str, outcome: Outcome = Outcome.FAIL, **kw: 
             "drawdown_from_high": StampedInput(
                 value=-0.42, as_of=dt.date(2026, 7, 24), source="EOD"),
         },
-        per_gate={
-            "g1_drawdown": GateOutcome(outcome=Outcome.PASS, reason="drawdown -42.0% <= -30%"),
-            "g2_idiosyncratic": GateOutcome(outcome=Outcome.FAIL, reason="rel -18.0% vs -15%")},
+        per_gate=_GATES[outcome],
         config=CFG, **kw)  # type: ignore[arg-type]
 
 
@@ -227,3 +242,45 @@ def test_an_absent_run_reads_empty_and_a_bad_run_id_raises(tmp_path: pathlib.Pat
     for bad in ("2026-07-27", "latest", "../escape", "2026-07-27-1"):
         with pytest.raises(ValueError, match="is not <YYYY-MM-DD>-<NN>"):
             run_path(bad, tmp_path)
+
+
+def test_the_row_outcome_must_agree_with_its_gates(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. The first cut let `outcome` be set independently of `per_gate`, so a row
+    could read PASS while a gate it carries read FAIL — the record saying two things, in the one
+    artifact whose purpose is to be re-read later.
+
+    It matters more here than elsewhere: a calibration query GROUPS BY the aggregate and EXPLAINS
+    with the detail, so a disagreement is not cosmetic — the analysis is silently wrong."""
+    with pytest.raises(ValidationError, match="contradicts its gates"):
+        CandidateRow(
+            ticker="X", run_id="2026-07-27-01", reference_date=REF, outcome=Outcome.PASS,
+            gate_inputs={"a": StampedInput(value=1.0, as_of=REF, source="s")},
+            per_gate={"g1": GateOutcome(outcome=Outcome.FAIL, reason="failed hard")}, config=CFG)
+
+
+def test_fail_dominates_and_not_evaluated_never_reads_as_a_pass() -> None:
+    """The rollup order, stated as behaviour. A name that failed ANY gate failed the screen — later
+    gates need not have run. A name that could not be assessed has NOT passed."""
+    def g(o: Outcome) -> GateOutcome:
+        return GateOutcome(outcome=o, reason="r")
+    assert rollup({"a": g(Outcome.PASS), "b": g(Outcome.PASS)}) is Outcome.PASS
+    assert rollup({"a": g(Outcome.PASS), "b": g(Outcome.FAIL)}) is Outcome.FAIL
+    ne = rollup({"a": g(Outcome.PASS), "b": g(Outcome.NOT_EVALUATED)})
+    assert ne is Outcome.NOT_EVALUATED
+    # FAIL beats NOT_EVALUATED: a short-circuiting screen stops after the failure, and the name
+    # was genuinely rejected rather than merely unassessable
+    assert rollup({"a": g(Outcome.FAIL), "b": g(Outcome.NOT_EVALUATED)}) is Outcome.FAIL
+    with pytest.raises(ValueError, match="records nothing"):
+        rollup({})
+
+
+def test_an_absent_gate_is_not_a_silent_pass() -> None:
+    """A short-circuiting screen legitimately never reaches G3, so only gates PRESENT are judged —
+    but the row must not therefore read as though the missing gate passed."""
+    row = CandidateRow(
+        ticker="X", run_id="2026-07-27-01", reference_date=REF, outcome=Outcome.FAIL,
+        gate_inputs={"a": StampedInput(value=1.0, as_of=REF, source="s")},
+        per_gate={"g1_drawdown": GateOutcome(outcome=Outcome.FAIL, reason="past terminal floor")},
+        config=CFG)
+    assert "g3_multiple_floor" not in row.per_gate, "an unreached gate must not be invented"
+    assert row.outcome is Outcome.FAIL
