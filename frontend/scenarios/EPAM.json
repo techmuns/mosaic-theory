@@ -145,10 +145,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 54.183,
+   "value": 52.634451,
    "unit": "M shares",
-   "basis": "diluted weighted-average, latest 10-Q (anchor stores the raw count 54,183,000 \u2014 converted to MILLIONS for this block's unit contract)",
-   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding; 10-Q acc 0001352010-26-000029"
+   "basis": "Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 \u2212 basic 53,793,000 weighted average, 2026-01-01\u21922026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "ltm_revenue",
@@ -179,7 +179,7 @@
    "margin": 0.08,
    "multiple": 6.0,
    "reason": "Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds \u2014 floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) \u2014 a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 71.94,
+   "valuePerShare": 74.06,
    "opIncome": 400.0,
    "ebitda": 524.8,
    "ev": 3148.9,
@@ -193,7 +193,7 @@
    "margin": 0.105,
    "multiple": 12.5,
    "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income \u2014 the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 181.42,
+   "valuePerShare": 186.76,
    "opIncome": 601.6,
    "ebitda": 726.5,
    "ev": 9080.8,
@@ -207,7 +207,7 @@
    "margin": 0.13,
    "multiple": 18.0,
    "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 317.65,
+   "valuePerShare": 326.99,
    "opIncome": 789.8,
    "ebitda": 914.6,
    "ev": 16462.1,
@@ -216,15 +216,15 @@
    "normFcf": 588.9
   }
  ],
- "reward": 92.02,
- "risk": 17.46,
- "ratio": 5.27,
+ "reward": 97.36,
+ "risk": 15.34,
+ "ratio": 6.34,
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "PASS",
  "currentState": {
   "status": "pending_analyst",
-  "ratio": 5.27,
+  "ratio": 6.34,
   "bar": 2.0,
   "passFail": "PASS",
   "spot": 89.4,
@@ -235,7 +235,7 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 108.43
+  "ceiling2to1": 111.62
  },
  "verdict": {
   "status": "pending_analyst",

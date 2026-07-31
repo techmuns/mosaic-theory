@@ -29,10 +29,10 @@
       "source": "EDGAR: total debt 165 + finance leases 0 + operating leases 123 − cash 1,037 ($M) = −749.016; 10-Q acc 0001352010-26-000029. Equity = EV − (−749.016), i.e. the cash is ADDED — reproduced against the committed anchor's $306.05/sh before this run"
     },
     "diluted_shares": {
-      "value": 54.183,
+      "value": 52.634451,
       "unit": "M shares",
-      "basis": "diluted weighted-average, latest 10-Q (anchor stores the raw count 54,183,000 — converted to MILLIONS for this block's unit contract)",
-      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding; 10-Q acc 0001352010-26-000029"
+      "basis": "Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 − basic 53,793,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     },
     "ltm_revenue": {
       "value": 5555.425,
@@ -68,14 +68,18 @@
       "margin": 0.105,
       "multiple": 12.5,
       "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]",
-      "years_to_terminal": null
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     },
     "bull": {
       "revenue": 6075.0,
       "margin": 0.13,
       "multiple": 18.0,
       "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]",
-      "years_to_terminal": null
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     }
   },
   "assumptions": {
@@ -86,21 +90,34 @@
           "label": "consensus FY26E revenue",
           "value": 5730.43,
           "unit": "$M",
-          "source": "committed financial_summary.annual FY26E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18"
+          "source": "committed financial_summary.annual FY26E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "consensus FY27E revenue",
           "value": 6074.52,
           "unit": "$M",
-          "source": "committed financial_summary.annual FY27E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18"
+          "source": "committed financial_summary.annual FY27E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "LTM revenue",
           "value": 5555.425,
           "unit": "$M",
-          "source": "committed financial_summary.annual (LTM) — CIQ Income Statement"
+          "source": "committed financial_summary.annual (LTM) — CIQ Income Statement",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     },
@@ -111,19 +128,31 @@
           "label": "post-2022 regime median operating margin (FY2022-2025)",
           "value": 11.1,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss ÷ RevenueFromContractWithCustomerExcludingAssessedTax, 10-K 365d points — regime-split basis pull 2026-07-21"
+          "source": "EDGAR companyfacts OperatingIncomeLoss ÷ RevenueFromContractWithCustomerExcludingAssessedTax, 10-K 365d points — regime-split basis pull 2026-07-21",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "post-2022 worst year (FY2025)",
           "value": 9.53,
           "unit": "%",
-          "source": "EDGAR companyfacts — same basis, FY2025 (520 EBIT / 5,457 revenue)"
+          "source": "EDGAR companyfacts — same basis, FY2025 (520 EBIT / 5,457 revenue)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "post-2022 best year (FY2022)",
           "value": 11.88,
           "unit": "%",
-          "source": "EDGAR companyfacts — same basis, FY2022 (573 EBIT / 4,825 revenue); GAAP carries the war-year charges, so a cleaned FY22 would sit higher"
+          "source": "EDGAR companyfacts — same basis, FY2022 (573 EBIT / 4,825 revenue); GAAP carries the war-year charges, so a cleaned FY22 would sit higher",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "pre-war median operating margin (FY2016-2021)",
@@ -131,6 +160,7 @@
           "unit": "%",
           "source": "EDGAR companyfacts — same basis, pre-2022 window; shown for reference ONLY (the pre-invasion cost structure no longer exists)",
           "role": "median",
+          "leg": null,
           "excluded": true,
           "excluded_reason": "the pre-war margin structure no longer obtains"
         },
@@ -140,10 +170,12 @@
           "unit": "%",
           "source": "EDGAR companyfacts — same basis, 10 FY; equals the committed anchor's margin, which averages across the 2022 regime break and describes neither regime",
           "role": "median",
+          "leg": null,
           "excluded": true,
           "excluded_reason": "blends across the structural break"
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     },
@@ -154,40 +186,64 @@
           "label": "post-2022 band 25th percentile",
           "value": 11.83,
           "unit": "x",
-          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e"
+          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "post-2022 band median",
           "value": 15.16,
           "unit": "x",
           "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e",
-          "role": "median"
+          "role": "median",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "post-2022 band 75th percentile",
           "value": 20.09,
           "unit": "x",
-          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e"
+          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "full-band minimum (9.5y history)",
           "value": 4.26,
           "unit": "x",
-          "source": "committed valuation.own_history — refreshed band sha 9614730c9e"
+          "source": "committed valuation.own_history — refreshed band sha 9614730c9e",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "current TEV/LTM-EBITDA (2.6th percentile of the full band)",
           "value": 4.87,
           "unit": "x",
-          "source": "committed valuation.own_history current, as-of 2026-07-17 — refreshed band sha 9614730c9e"
+          "source": "committed valuation.own_history current, as-of 2026-07-17 — refreshed band sha 9614730c9e",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "band multiples are vendor TEV/LTM-EBITDA computed on the filer's actual depreciation - the corrected fact aligns the grid's EBITDA basis with the band's",
           "value": 124.811,
           "unit": "$M",
-          "source": "EDGAR companyfacts DepreciationAndAmortization FY2025 (accession 0001352010-26-000015)"
+          "source": "EDGAR companyfacts DepreciationAndAmortization FY2025 (accession 0001352010-26-000015)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     }
@@ -198,7 +254,7 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 71.93920602402967,
+        "value_per_share": 74.05571685358701,
         "op_income": 400.0,
         "ebitda": 524.811,
         "ev": 3148.866,
@@ -213,7 +269,7 @@
         "hurdle": null
       },
       "base": {
-        "value_per_share": 181.41812930254878,
+        "value_per_share": 186.75560043363996,
         "op_income": 601.65,
         "ebitda": 726.461,
         "ev": 9080.7625,
@@ -228,7 +284,7 @@
         "hurdle": null
       },
       "bull": {
-        "value_per_share": 317.6478600298987,
+        "value_per_share": 326.9933223013954,
         "op_income": 789.75,
         "ebitda": 914.561,
         "ev": 16462.098,
@@ -245,9 +301,9 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 92.01812930254877,
-    "risk": 17.460793975970333,
-    "ratio": 5.269985398670001,
+    "reward": 97.35560043363995,
+    "risk": 15.344283146412991,
+    "ratio": 6.344747389284107,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "PASS"
@@ -259,9 +315,28 @@
     "rationale_plain": null,
     "rationale_plain_recorded": null,
     "reunderwrite_triggers": [],
+    "dated_triggers": [],
     "entry_price": null,
     "ratio_at_entry": null,
     "avoid_priced": false,
     "avoid_priced_note": null
-  }
+  },
+  "refresh_log": [
+    {
+      "field": "facts.diluted_shares",
+      "old": "54.183",
+      "new": "52.634451",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    {
+      "field": "facts.diluted_shares.basis",
+      "old": "diluted weighted-average, latest 10-Q (anchor stores the raw count 54,183,000 — converted to MILLIONS for this block's unit contract)",
+      "new": "Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 − basic 53,793,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    }
+  ],
+  "supersedes": null,
+  "superseded_by": null
 }

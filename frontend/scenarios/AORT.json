@@ -204,10 +204,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 49.731,
+   "value": 50.20035,
    "unit": "shares",
-   "basis": "latest-quarter diluted weighted-average count; it includes the May-2025 debt-for-equity exchange shares, and the retired principal is correspondingly out of the net-debt bridge - a coherent pair, with no double-count",
-   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-03-31"
+   "basis": "Diluted shares outstanding 50,200,350 = basic outstanding 48,543,350 + dilutive increment 1,657,000 (diluted 49,731,000 \u2212 basic 48,074,000 weighted average, 2026-01-01\u21922026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "d_and_a_ratio",
@@ -232,18 +232,18 @@
    "multiple": 9.0,
    "reason": "the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 3.12,
+   "valuePerShare": 3.09,
    "opIncome": 26.6,
    "ebitda": 55.4,
    "ev": 498.9,
    "equity": 296.5,
    "evEbit": 18.8,
    "normFcf": null,
-   "valueTerminal": 5.45,
+   "valueTerminal": 5.4,
    "years": 4.0,
    "dAndAT": 28.9,
    "netDebtT": 202.4,
-   "sharesT": 54.36
+   "sharesT": 54.88
   },
   {
    "name": "base",
@@ -252,18 +252,18 @@
    "multiple": 13.0,
    "reason": "revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 10.44,
+   "valuePerShare": 10.34,
    "opIncome": 60.7,
    "ebitda": 91.9,
    "ev": 1194.9,
    "equity": 992.6,
    "evEbit": 19.7,
    "normFcf": null,
-   "valueTerminal": 18.26,
+   "valueTerminal": 18.09,
    "years": 4.0,
    "dAndAT": 31.3,
    "netDebtT": 202.4,
-   "sharesT": 54.36
+   "sharesT": 54.88
   },
   {
    "name": "bull",
@@ -272,18 +272,18 @@
    "multiple": 16.0,
    "reason": "the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 18.35,
+   "valuePerShare": 18.18,
    "opIncome": 88.4,
    "ebitda": 121.7,
    "ev": 1947.1,
    "equity": 1744.7,
    "evEbit": 22.0,
    "normFcf": null,
-   "valueTerminal": 32.09,
+   "valueTerminal": 31.79,
    "years": 4.0,
    "dAndAT": 33.3,
    "netDebtT": 202.4,
-   "sharesT": 54.36
+   "sharesT": 54.88
   }
  ],
  "tier": "B",
@@ -303,8 +303,8 @@
   "note": "trivial pass \u2014 free cash flow is positive (0.8, latest full year (FY2025), operating cash flow less capital expenditure - a cushion of essentially zero: cash generation nearly doubled but capital spending tripled to $39.0M and consumed it); the company funds itself and has no runway question",
   "detail": []
  },
- "reward": -14.93,
- "risk": 22.25,
+ "reward": -15.03,
+ "risk": 22.28,
  "ratio": -0.67,
  "bar": 2.0,
  "ratioUndefined": null,
@@ -322,7 +322,7 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 5.56
+  "ceiling2to1": 5.51
  },
  "verdict": {
   "status": "watch",

@@ -5,7 +5,7 @@ _July 30, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $10.44 (-58.9% vs entry-vintage spot) · **Spot** $25.37 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
+**Target (base)** $10.34 (-59.2% vs entry-vintage spot) · **Spot** $25.37 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-15.03 · **Risk** $22.28 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
 
 _Spot source: Polygon AORT close 2026-07-20 (live at underwrite)_
 
@@ -49,9 +49,9 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 590 | 4.5% | 9x | $3.12 | -87.7% |
-| base | 638 | 9.5% | 13x | $10.44 | -58.9% |
-| bull | 680 | 13.0% | 16x | $18.35 | -27.7% |
+| bear | 590 | 4.5% | 9x | $3.09 | -87.8% |
+| base | 638 | 9.5% | 13x | $10.34 | -59.2% |
+| bull | 680 | 13.0% | 16x | $18.18 | -28.3% |
 
 - **bear** — the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.
@@ -62,7 +62,7 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 | input | value | basis | source |
 | --- | ---: | --- | --- |
 | net debt | 202.393 $M | lease-inclusive net debt, latest quarter: total debt 215 + finance leases 4 + operating leases 39 - cash 56 | EDGAR companyfacts, 10-Q period ended 2026-03-31 |
-| diluted shares | 49.731 shares | latest-quarter diluted weighted-average count; it includes the May-2025 debt-for-equity exchange shares, and the retired principal is correspondingly out of the net-debt bridge - a coherent pair, with no double-count | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-03-31 |
+| diluted shares | 50.20035 shares | Diluted shares outstanding 50,200,350 = basic outstanding 48,543,350 + dilutive increment 1,657,000 (diluted 49,731,000 − basic 48,074,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | d and a ratio | 0.048961 rate | latest depreciation and amortisation over trailing-twelve-month revenue (22.458 / 458.689) | EDGAR companyfacts dep_amort, FY2025; revenue from the committed financial summary |
 | share growth | 0.022516 rate | OVERRIDE. The raw three-year compound rate (5.62%) terminates in a one-off convert-for-stock exchange whose balance-sheet benefit is already banked in net debt; compounding it forward would charge the terminal year twice. Forward rate = the FY2021-FY2024 organic basic-share compound rate. | EDGAR 8-K Item 3.02 accessions 0000784199-25-000080 (2025-05-14) and 0000784199-25-000129 (2025-05-29); share series FY2021-FY2024 |
 

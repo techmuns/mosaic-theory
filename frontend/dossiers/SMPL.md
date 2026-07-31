@@ -5,7 +5,7 @@ _July 30, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $24.24 (+130.2% vs entry-vintage spot) · **Spot** $10.53 (entry-vintage — frozen at underwrite 2026-07-27) · **Reward** $13.71 · **Risk** $3.58 · **Reward : risk** 3.83 : 1 (bar 2 : 1)
+**Target (base)** $25.67 (+143.8% vs entry-vintage spot) · **Spot** $10.53 (entry-vintage — frozen at underwrite 2026-07-27) · **Reward** $15.14 · **Risk** $3.17 · **Reward : risk** 4.78 : 1 (bar 2 : 1)
 
 _Spot source: Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)_
 
@@ -49,9 +49,9 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 1,180 | 10.0% | 7x | $6.95 | -34.0% |
-| base | 1,330 | 14.0% | 12.5x | $24.24 | +130.2% |
-| bull | 1,420 | 16.5% | 16x | $40.21 | +281.9% |
+| bear | 1,180 | 10.0% | 7x | $7.36 | -30.1% |
+| base | 1,330 | 14.0% | 12.5x | $25.67 | +143.8% |
+| bull | 1,420 | 16.5% | 16x | $42.59 | +304.4% |
 
 - **bear** — Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020, 9.58%); the multiple at the trough of the trading range (prior low 6.11x). METHOD — bear-state evidence: declining packaged-food comparables with clean income statements trade at 6.08x (INGR) to 8.57x (LW) on the lease-inclusive basis, so the recorded 7.0x sits inside the observed state while the market prices the name below it. Against the 14% normal the 10% margin retains 71%, milder than the weakest survivor's 63%; a retention-consistent bear near 8.8% still reads about 3.0 to 1. No quarter this fiscal year fell below the worst clean year.
 - **base** — Revenue is consensus FY26E of 1,334, below management's reinstated $1.345-1.355B guide, so the base is conservative against their own path. METHOD — the normal margin is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14% the business recovers most — not all — of its historical profitability. The multiple sits below the 17.9x median of the 8.55-year range (35 quarterly closes); 12.5x is the 14th percentile, a durable discount for the unresolved category question.
@@ -63,7 +63,7 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 | --- | ---: | --- | --- |
 | d and a | 21.431 $M | consolidated latest FY | EDGAR companyfacts dep_amort (combined) — via committed dossier anchor block (#158/#160/#162-verified) |
 | net debt | 324.582 $M | lease-inclusive net debt (latest 10-Q) | EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M) — via committed dossier anchor block (#158/#160/#162-verified) |
-| diluted shares | 93.677801 M shares | diluted weighted-average (latest 10-Q) (anchor raw count / 1e6) | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified) |
+| diluted shares | 88.460545 M shares | The filer reports NO dilutive difference for 2026-03-01→2026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | ltm revenue | 1,392.235 $M | LTM revenue | committed financial_summary.annual (LTM) — via committed dossier anchor block (#158/#160/#162-verified) |
 | cash interest | 23.249 $M | FY2025 non-operating interest expense (FCF cross-check only) | EDGAR companyfacts InterestExpenseNonoperating FY2025 |
 | cash tax rate | 0.2376 rate | FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share) | EDGAR companyfacts IncomeTaxExpenseBenefit 32.289 / pre-tax 135.903 (FY2025) |

@@ -101,6 +101,9 @@
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+            "implied_ebitda_margin": null,
+            "implied_ebit_margin": null,
+            "implied_d_and_a_margin": null,
             "source_sha256": "30aa558d20",
             "source_mtime": "2026-07-20T13:19:08+00:00"
           }
@@ -540,7 +543,8 @@
             "source_ref": "8-K 0001628280-26-018235 EX-99.1",
             "status": "present",
             "note": null
-          }
+          },
+          "explanatory": true
         },
         {
           "gap_date": "2026-05-12",
@@ -562,7 +566,8 @@
             "source_ref": "8-K 0001628280-26-033601 EX-99.1",
             "status": "present",
             "note": null
-          }
+          },
+          "explanatory": true
         }
       ],
       "revised_guidance": {
@@ -570,7 +575,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001628280-26-018235', '0001628280-26-033601']"
-      }
+      },
+      "gap_threshold": null,
+      "gap_window_days": null
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
@@ -602,7 +609,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
-      }
+      },
+      "benchmark_symbol": "IWM",
+      "benchmark_basis": null
     },
     "consensus_context": {
       "eps_trend": {
@@ -1237,6 +1246,18 @@
         "status": "present",
         "note": null
       }
+    },
+    "catalyst_calendar": {
+      "rows": [
+        {
+          "event": "Next results print",
+          "expected_date": "2026-08-11",
+          "date_basis": "cadence-estimate",
+          "tests_what": "the next reported quarter against the committed trajectory",
+          "source_ref": "cadence: EDGAR submissions (median 92d gap over 19 results 8-Ks; last print 2026-05-11)"
+        }
+      ],
+      "qa_flags": []
     },
     "leverage_survival": {
       "net_debt_to_ebitda": {
@@ -2120,7 +2141,8 @@
                 371.637,
                 444.41,
                 591.5
-              ]
+              ],
+              "material": false
             },
             {
               "label": "Revenue growth",
@@ -2137,7 +2159,8 @@
                 "+4% (vs FY25)",
                 "+33%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA ($M)",
@@ -2166,7 +2189,8 @@
                 51.932,
                 62.08,
                 147.72
-              ]
+              ],
+              "material": false
             },
             {
               "label": "EBITDA margin",
@@ -2183,7 +2207,8 @@
                 "14%",
                 "25%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBIT ($M)",
@@ -2212,7 +2237,8 @@
                 18.704,
                 19.96,
                 68.62
-              ]
+              ],
+              "material": false
             },
             {
               "label": "Net income ($M)",
@@ -2241,7 +2267,8 @@
                 -42.8,
                 70.13,
                 55.93
-              ]
+              ],
+              "material": false
             },
             {
               "label": "EPS (GAAP, dil.)",
@@ -2270,7 +2297,8 @@
                 -0.19,
                 0.18,
                 0.17
-              ]
+              ],
+              "material": false
             },
             {
               "label": "EPS (Normalized)",
@@ -2299,7 +2327,8 @@
                 -0.03,
                 0.04,
                 0.15
-              ]
+              ],
+              "material": false
             },
             {
               "label": "CFO ($M)",
@@ -2316,7 +2345,8 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Capex ($M)",
@@ -2333,7 +2363,8 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "FCF ($M)",
@@ -2350,7 +2381,8 @@
                 "—",
                 "—"
               ],
-              "values": []
+              "values": [],
+              "material": false
             }
           ],
           "note": "E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis",
@@ -2433,7 +2465,8 @@
                 "96",
                 "61"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Gross margin",
@@ -2465,7 +2498,8 @@
                 "35%",
                 "32%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA ($M)",
@@ -2497,7 +2531,8 @@
                 "11",
                 "0"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "EBITDA margin",
@@ -2529,7 +2564,8 @@
                 "11%",
                 "0%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Revenue QoQ",
@@ -2561,7 +2597,8 @@
                 "-22%",
                 "-37%"
               ],
-              "values": []
+              "values": [],
+              "material": false
             },
             {
               "label": "Revenue YoY",
@@ -2593,7 +2630,8 @@
                 "— (basis)",
                 "— (basis)"
               ],
-              "values": []
+              "values": [],
+              "material": false
             }
           ],
           "note": "QoQ/YoY same-basis only; (R) = Reclassified",
@@ -2625,6 +2663,7 @@
     "primary_source": {
       "releases": [
         {
+          "filed": null,
           "source_ref": "8-K 0001628280-26-033601 EX-99.1",
           "guidance": [
             {
@@ -2632,6 +2671,7 @@
               "period": "2026",
               "low": null,
               "high": null,
+              "unit": "$M",
               "qualitative": true,
               "verbatim": "2026 Outlook & Forward-Looking Information • While we continue to navigate evolving tariff structures and shifting geopolitical dynamics, we anticipate a recovery in delivery schedules and a steady re",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
@@ -2642,6 +2682,7 @@
               "metric": "adjusted net income",
               "period": "Q1 2026",
               "value": -14.6,
+              "change": null,
               "verbatim": "Non-GAAP adjusted net loss was $14.6 million",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2649,6 +2690,7 @@
               "metric": "adjusted net income",
               "period": "Q1 2025",
               "value": 19.3,
+              "change": null,
               "verbatim": "Non-GAAP adjusted net loss was $14.6 million, compared to non-GAAP adjusted net profit of $19.3 million",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2656,6 +2698,7 @@
               "metric": "adjusted eps",
               "period": "Q1 2026",
               "value": -0.04,
+              "change": null,
               "verbatim": "Non-GAAP adjusted net loss per share was $0.04,",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2663,6 +2706,7 @@
               "metric": "adjusted ebitda",
               "period": "Q1 2026",
               "value": -5.5,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of negative $5.5 million",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2670,6 +2714,7 @@
               "metric": "adjusted ebitda",
               "period": "Q1 2025",
               "value": 28.5,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of negative $5.5 million in Q1 2026, compared to non-GAAP adjusted EBITDA of $28.5 million",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2677,6 +2722,7 @@
               "metric": "revenue",
               "period": "Q1 2026",
               "value": 60.6,
+              "change": null,
               "verbatim": "While revenue of $60.6 million",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
@@ -2684,6 +2730,7 @@
               "metric": "gross margin",
               "period": "Q1 2026",
               "value": 31.6,
+              "change": null,
               "verbatim": "While revenue of $60.6 million was impacted by delivery timing and regional headwinds in APAC, our resilient gross margin of 31.6%",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             }
@@ -2693,6 +2740,7 @@
           "qa_flags": []
         },
         {
+          "filed": null,
           "source_ref": "8-K 0001628280-26-018235 EX-99.1",
           "guidance": [
             {
@@ -2700,6 +2748,7 @@
               "period": "2026",
               "low": null,
               "high": null,
+              "unit": "$M",
               "qualitative": true,
               "verbatim": "2026 Outlook & Forward-Looking Information • While we are navigating evolving tariff structures and shifting regulatory and geopolitical events, we expect continued revenue growth in 2026 • We are tar",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
@@ -2710,6 +2759,7 @@
               "metric": "adjusted net income",
               "period": "2025",
               "value": 13.0,
+              "change": null,
               "verbatim": "Full Year net loss of $29.2 million, compared to net loss of $195.5 million in 2024; Non-GAAP adjusted net profit of $13.0 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2717,6 +2767,7 @@
               "metric": "adjusted net income",
               "period": "2024",
               "value": -84.6,
+              "change": null,
               "verbatim": "Full Year net loss of $29.2 million, compared to net loss of $195.5 million in 2024; Non-GAAP adjusted net profit of $13.0 million, compared to non-GAAP adjusted net loss of $84.6 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2724,6 +2775,7 @@
               "metric": "adjusted eps",
               "period": "2024",
               "value": -0.27,
+              "change": null,
               "verbatim": "Net loss per share of $0.09 compared to net loss per share of $0.61 in 2024; Non-GAAP adjusted net profit per share of $0.04, compared to non-GAAP adjusted net loss per share of $0.27",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2731,6 +2783,7 @@
               "metric": "adjusted ebitda",
               "period": "2025",
               "value": 44.7,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $44.7 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2738,6 +2791,7 @@
               "metric": "adjusted ebitda",
               "period": "2024",
               "value": -44.8,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $44.7 million, compared to Non-GAAP adjusted EBITDA of negative $44.8 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2745,6 +2799,7 @@
               "metric": "adjusted net income",
               "period": "Q4 2024",
               "value": -0.6,
+              "change": null,
               "verbatim": "Net profit of $16.5 million, compared to net loss of $82.3 million in Q4 2024; Non-GAAP adjusted net loss of $34.5 million, compared to non-GAAP adjusted net loss of $0.6 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2752,6 +2807,7 @@
               "metric": "adjusted eps",
               "period": "2025",
               "value": -0.11,
+              "change": null,
               "verbatim": "Net profit per share of $0.05, compared to net loss per share of $0.26 in Q4 2024; Non-GAAP adjusted net loss per share of $0.11,",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2759,6 +2815,7 @@
               "metric": "adjusted eps",
               "period": "Q4 2024",
               "value": -0.01,
+              "change": null,
               "verbatim": "Net profit per share of $0.05, compared to net loss per share of $0.26 in Q4 2024; Non-GAAP adjusted net loss per share of $0.11, compared to non-GAAP adjusted net loss per share of $0.01",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2766,6 +2823,7 @@
               "metric": "adjusted ebitda",
               "period": "Q4 2024",
               "value": 8.6,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of negative $31.6 million, compared to Non-GAAP adjusted EBITDA of positive $8.6 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2773,6 +2831,7 @@
               "metric": "revenue",
               "period": "2025",
               "value": 427.5,
+              "change": null,
               "verbatim": "While our full-year revenue of $427.5 million",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
@@ -2780,6 +2839,7 @@
               "metric": "gross margin",
               "period": "2025",
               "value": 28.6,
+              "change": null,
               "verbatim": "Gross margin decreased to 28.6%",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             }
@@ -2796,6 +2856,7 @@
           "qa_flags": []
         },
         {
+          "filed": null,
           "source_ref": "8-K 0001628280-25-051130 EX-99.1",
           "guidance": [],
           "reconciliation": [
@@ -2803,6 +2864,7 @@
               "metric": "adjusted ebitda",
               "period": "Q3 2025",
               "value": 21.9,
+              "change": null,
               "verbatim": "While we booked a GAAP net loss of $1.5 million, we also delivered a positive adjusted EBITDA of $21.9 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2810,6 +2872,7 @@
               "metric": "adjusted net income",
               "period": "Q3 2025",
               "value": 11.9,
+              "change": null,
               "verbatim": "Net loss of $1.5 million, compared to net profit of $13.2 million in Q3 2024; Non-GAAP adjusted net profit of $11.9 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2817,6 +2880,7 @@
               "metric": "adjusted net income",
               "period": "Q3 2024",
               "value": 16.8,
+              "change": null,
               "verbatim": "Net loss of $1.5 million, compared to net profit of $13.2 million in Q3 2024; Non-GAAP adjusted net profit of $11.9 million, compared to non-GAAP adjusted net profit of $16.8 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2824,6 +2888,7 @@
               "metric": "adjusted ebitda",
               "period": "Q3 2024",
               "value": 28.6,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $21.9 million in Q3 2025, compared to non-GAAP adjusted EBITDA of positive $28.6 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2831,6 +2896,7 @@
               "metric": "adjusted net income",
               "period": "2024",
               "value": -84.1,
+              "change": null,
               "verbatim": "Net loss of $45.8 million, compared to net loss of $113.1 million in YTD 2024; Non-GAAP adjusted net profit of $47.5 million, compared to non-GAAP adjusted net loss of $84.1 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2838,6 +2904,7 @@
               "metric": "adjusted eps",
               "period": "2024",
               "value": -0.27,
+              "change": null,
               "verbatim": "Net loss per share of $0.14 compared to net loss per share of $0.36 in YTD 2024; Non-GAAP adjusted net profit per share of $0.15, compared to non-GAAP adjusted net loss per share of $0.27",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2845,6 +2912,7 @@
               "metric": "adjusted ebitda",
               "period": "2024",
               "value": -53.5,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $76.3 million in YTD 2025, compared to non-GAAP adjusted EBITDA of negative $53.5 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2852,6 +2920,7 @@
               "metric": "revenue",
               "period": "Q3 2025",
               "value": 123.3,
+              "change": null,
               "verbatim": "Record Q3 revenue of $123.3 million",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             },
@@ -2859,6 +2928,7 @@
               "metric": "gross margin",
               "period": "Q3 2025",
               "value": 37.6,
+              "change": null,
               "verbatim": "Gross margin increased to 37.6%",
               "source_ref": "8-K 0001628280-25-051130 EX-99.1"
             }
@@ -2870,6 +2940,7 @@
           ]
         },
         {
+          "filed": null,
           "source_ref": "8-K 0001628280-25-039708 EX-99.1",
           "guidance": [],
           "reconciliation": [
@@ -2877,6 +2948,7 @@
               "metric": "adjusted ebitda",
               "period": "Q2 2025",
               "value": 25.9,
+              "change": null,
               "verbatim": "While we booked a GAAP net loss of $106.1 million, we also achieved a positive adjusted EBITDA of $25.9 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2884,6 +2956,7 @@
               "metric": "adjusted net income",
               "period": "Q2 2025",
               "value": 16.3,
+              "change": null,
               "verbatim": "Net loss of $106.1 million, compared to net loss of $101.6 million in Q2 2024; Non-GAAP adjusted net profit of $16.3 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2891,6 +2964,7 @@
               "metric": "adjusted net income",
               "period": "Q2 2024",
               "value": -87.9,
+              "change": null,
               "verbatim": "Net loss of $106.1 million, compared to net loss of $101.6 million in Q2 2024; Non-GAAP adjusted net profit of $16.3 million, compared to non-GAAP adjusted net loss of $87.9 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2898,6 +2972,7 @@
               "metric": "adjusted eps",
               "period": "Q2 2024",
               "value": -0.28,
+              "change": null,
               "verbatim": "Net loss per share of $0.33 compared to net loss per share of $0.32 in Q2 2024; Non-GAAP adjusted net profit per share of $0.05, compared to non-GAAP adjusted net loss per share of $0.28",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2905,6 +2980,7 @@
               "metric": "adjusted ebitda",
               "period": "Q2 2024",
               "value": -78.4,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $25.9 million in Q2 2025, compared to non-GAAP adjusted EBITDA of negative $78.4 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2912,6 +2988,7 @@
               "metric": "adjusted net income",
               "period": "2024",
               "value": -100.9,
+              "change": null,
               "verbatim": "Net loss of $44.3 million, compared to net loss of $126.4 million in YTD 2024; Non-GAAP adjusted net profit of $35.6 million, compared to non-GAAP adjusted net loss of $100.9 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2919,6 +2996,7 @@
               "metric": "adjusted eps",
               "period": "2024",
               "value": -0.32,
+              "change": null,
               "verbatim": "Net loss per share of $0.14 compared to net loss per share of $0.40 in YTD 2024; Non-GAAP adjusted net profit per share of $0.11, compared to non-GAAP adjusted net loss per share of $0.32",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2926,6 +3004,7 @@
               "metric": "adjusted ebitda",
               "period": "2024",
               "value": -82.1,
+              "change": null,
               "verbatim": "Non-GAAP adjusted EBITDA of positive $54.4 million in YTD 2025, compared to adjusted EBITDA of negative $82.1 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2933,6 +3012,7 @@
               "metric": "revenue",
               "period": "Q2 2025",
               "value": 91.3,
+              "change": null,
               "verbatim": "Record Q2 revenue of $91.3 million",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             },
@@ -2940,6 +3020,7 @@
               "metric": "gross margin",
               "period": "Q2 2025",
               "value": 34.7,
+              "change": null,
               "verbatim": "Gross margin increased to 34.7%",
               "source_ref": "8-K 0001628280-25-039708 EX-99.1"
             }
@@ -3037,6 +3118,7 @@
         "status": "present",
         "note": null
       },
+      "current_guide": null,
       "guide_verification": {
         "value": "guide verification (revenue): CIQ FY guide 427.516 ≈ prior-FY actual 427.5 (within source-rounding) → VENDOR-ECHO flag (stale carry-forward); release outlook QUALITATIVE-only — render the qualitative growth line",
         "source_ref": "CIQ revenue guide vs release actual/outlook",
@@ -3085,7 +3167,8 @@
               -0.410587,
               -0.07319,
               -0.093002
-            ]
+            ],
+            "material": false
           },
           {
             "label": "RoCE %",
@@ -3104,7 +3187,8 @@
               -0.021511,
               0.033478,
               0.015155
-            ]
+            ],
+            "material": false
           },
           {
             "label": "RoA %",
@@ -3123,7 +3207,8 @@
               -0.015605,
               0.025858,
               0.011865
-            ]
+            ],
+            "material": false
           },
           {
             "label": "Total debt/equity",
@@ -3135,7 +3220,8 @@
               "0.94x",
               "0.70x"
             ],
-            "values": []
+            "values": [],
+            "material": false
           },
           {
             "label": "Current ratio",
@@ -3147,7 +3233,8 @@
               "0.92x",
               "0.96x"
             ],
-            "values": []
+            "values": [],
+            "material": false
           },
           {
             "label": "Dividend/sh",
@@ -3159,7 +3246,8 @@
               "none",
               "none"
             ],
-            "values": []
+            "values": [],
+            "material": false
           }
         ],
         "note": "",
@@ -3546,18 +3634,7 @@
       "benchmark_return": 0.360305829882128,
       "source_ref": "EOD MVST vs IWM rebased to 100, 2025-07-07..2026-07-06"
     },
-    "catalyst_calendar": {
-      "rows": [
-        {
-          "event": "Next results print",
-          "expected_date": "2026-08-11",
-          "date_basis": "cadence-estimate",
-          "tests_what": "the next reported quarter against the committed trajectory",
-          "source_ref": "cadence: EDGAR submissions (median 92d gap over 19 results 8-Ks; last print 2026-05-11)"
-        }
-      ],
-      "qa_flags": []
-    }
+    "operating_drivers": null
   },
   "synthesis": {
     "evidence_balance": "strongly-bearish — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
@@ -3711,6 +3788,7 @@
   ],
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-07-10T07:06:48.016414Z",
+  "extraction_version": null,
   "sector": "Technology",
   "industry": {
     "value": "Construction Machinery and Heavy Transportation Equipment",
@@ -3725,6 +3803,7 @@
     "status": "present",
     "note": null
   },
+  "midcycle": null,
   "anchor": {
     "recipe_hint": "R2_NEEDED",
     "applicable": false,

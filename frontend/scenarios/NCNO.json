@@ -157,10 +157,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 109.458,
+   "value": 110.508875,
    "unit": "shares",
-   "basis": "latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction",
-   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30"
+   "basis": "Diluted shares outstanding 110,508,875 = basic outstanding 109,552,950 + dilutive increment 955,925 (diluted 109,458,472 \u2212 basic 108,502,547 weighted average, 2026-02-01\u21922026-04-30). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "d_and_a_ratio",
@@ -185,18 +185,18 @@
    "multiple": 10.0,
    "reason": "deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 4.25,
+   "valuePerShare": 4.21,
    "opIncome": 58.8,
    "ebitda": 107.4,
    "ev": 1074.2,
    "equity": 850.3,
    "evEbit": 18.3,
    "normFcf": null,
-   "valueTerminal": 7.43,
+   "valueTerminal": 7.36,
    "years": 4.0,
    "dAndAT": 48.6,
    "netDebtT": 223.9,
-   "sharesT": 114.41
+   "sharesT": 115.51
   },
   {
    "name": "base",
@@ -205,18 +205,18 @@
    "multiple": 12.5,
    "reason": "revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 8.17,
+   "valuePerShare": 8.09,
    "opIncome": 95.1,
    "ebitda": 148.7,
    "ev": 1859.1,
    "equity": 1635.2,
    "evEbit": 19.5,
    "normFcf": null,
-   "valueTerminal": 14.29,
+   "valueTerminal": 14.16,
    "years": 4.0,
    "dAndAT": 53.6,
    "netDebtT": 223.9,
-   "sharesT": 114.41
+   "sharesT": 115.51
   },
   {
    "name": "bull",
@@ -225,18 +225,18 @@
    "multiple": 16.0,
    "reason": "the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.",
    "yearsToTerminal": 4.0,
-   "valuePerShare": 14.22,
+   "valuePerShare": 14.08,
    "opIncome": 134.3,
    "ebitda": 191.8,
    "ev": 3069.0,
    "equity": 2845.1,
    "evEbit": 22.8,
    "normFcf": null,
-   "valueTerminal": 24.87,
+   "valueTerminal": 24.63,
    "years": 4.0,
    "dAndAT": 57.5,
    "netDebtT": 223.9,
-   "sharesT": 114.41
+   "sharesT": 115.51
   }
  ],
  "tier": "A",
@@ -256,15 +256,15 @@
   "note": "trivial pass \u2014 free cash flow is positive (82.6, latest full year (FY2026), not a trailing twelve months); the company funds itself and has no runway question",
   "detail": []
  },
- "reward": -9.76,
- "risk": 13.68,
- "ratio": -0.71,
+ "reward": -9.84,
+ "risk": 13.72,
+ "ratio": -0.72,
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "FAIL",
  "currentState": {
   "status": "watch",
-  "ratio": -0.71,
+  "ratio": -0.72,
   "bar": 2.0,
   "passFail": "FAIL",
   "spot": 17.93,
@@ -275,7 +275,7 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 5.56
+  "ceiling2to1": 5.5
  },
  "verdict": {
   "status": "watch",

@@ -29,10 +29,10 @@
       "source": "committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR: total debt 2,983 + finance leases 0 + operating leases 372 − cash 1,667 ($M)"
     },
     "diluted_shares": {
-      "value": 69.965,
+      "value": 67.120889,
       "unit": "M shares",
-      "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
-      "source": "committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+      "basis": "Diluted shares outstanding 67,120,889 = basic outstanding 66,951,889 + dilutive increment 169,000 (diluted 69,965,000 − basic 69,796,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     },
     "ltm_revenue": {
       "value": 6474.137,
@@ -68,14 +68,18 @@
       "margin": 0.185,
       "multiple": 12.5,
       "reason": "the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]",
-      "years_to_terminal": null
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     },
     "bull": {
       "revenue": 6715.0,
       "margin": 0.205,
       "multiple": 20.0,
       "reason": "The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]",
-      "years_to_terminal": null
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     }
   },
   "assumptions": {
@@ -86,13 +90,21 @@
           "label": "FY2025 reported revenue",
           "value": 6497.0,
           "unit": "$M",
-          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
+          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "LTM revenue",
           "value": 6474.137,
           "unit": "$M",
-          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
+          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "consensus FY26E revenue",
@@ -100,7 +112,9 @@
           "unit": "$M",
           "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
           "role": "consensus",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "consensus FY27E revenue",
@@ -108,15 +122,22 @@
           "unit": "$M",
           "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
           "role": "consensus",
-          "leg": "bull"
+          "leg": "bull",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%)",
           "value": 1.6,
           "unit": "%",
-          "source": "8-K EX-99.1 acc 0000749251-26-000165"
+          "source": "8-K EX-99.1 acc 0000749251-26-000165",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": "analyst",
       "ratified": "2026-07-21"
     },
@@ -128,7 +149,10 @@
           "value": 14.13,
           "unit": "%",
           "source": "committed anchor block margin.value",
-          "role": "median"
+          "role": "median",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "7yr clean median (FY2025 adjusted)",
@@ -136,13 +160,19 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
           "role": "median",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "5yr clean median (FY2025 adjusted)",
           "value": 19.34,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2020 COVID trough",
@@ -150,7 +180,9 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
           "role": "trough",
-          "leg": "bear"
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2023 best clean year",
@@ -158,15 +190,22 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
           "role": "peak",
-          "leg": "bull"
+          "leg": "bull",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2025 adjusted ex $150.0M impairment",
           "value": 18.1,
           "unit": "%",
-          "source": "EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)"
+          "source": "EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": "analyst",
       "ratified": "2026-07-21"
     },
@@ -179,7 +218,9 @@
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
           "role": "band_low",
-          "leg": "bear"
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing median",
@@ -187,22 +228,32 @@
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
           "role": "median",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing 75th percentile",
           "value": 26.82,
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
-          "role": "percentile"
+          "role": "percentile",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "current multiple (3rd pctile)",
           "value": 7.97,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": "analyst",
       "ratified": "2026-07-21"
     }
@@ -213,7 +264,7 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 77.55693561066246,
+        "value_per_share": 80.84325283593904,
         "op_income": 765.6,
         "ebitda": 948.6,
         "ev": 7114.5,
@@ -228,7 +279,7 @@
         "hurdle": null
       },
       "base": {
-        "value_per_share": 221.09120274422926,
+        "value_per_share": 230.45949227519915,
         "op_income": 1189.55,
         "ebitda": 1372.55,
         "ev": 17156.875,
@@ -243,7 +294,7 @@
         "hurdle": null
       },
       "bull": {
-        "value_per_share": 421.6861430715357,
+        "value_per_share": 439.5542347479932,
         "op_income": 1376.5749999999998,
         "ebitda": 1559.5749999999998,
         "ev": 31191.499999999996,
@@ -260,9 +311,9 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 80.90120274422927,
-    "risk": 62.633064389337534,
-    "ratio": 1.2916692410470922,
+    "reward": 90.26949227519916,
+    "risk": 59.34674716406096,
+    "ratio": 1.521052064162066,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "FAIL"
@@ -277,9 +328,28 @@
       "price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price",
       "the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%)."
     ],
+    "dated_triggers": [],
     "entry_price": 141.06,
     "ratio_at_entry": 6.685869749511423,
     "avoid_priced": true,
     "avoid_priced_note": "position closed flat at the entry price on 2026-07-21 by operator action, before this analysis existed. Under the revised grid no evidence-coherent reading clears the 2.0 bar at that price - about 1.3 to 1 on the most charitable cells, far below 1 on the central ones. Disclosure: under the previously recorded base multiple (15.0x, amended above with reasons), the charitable downside alone would have read 2.03 to 1 - a knife-edge inside the boundary band, flipped by one step on any cell. The base revision is load-bearing; its reasons stand independent of the exit."
-  }
+  },
+  "refresh_log": [
+    {
+      "field": "facts.diluted_shares",
+      "old": "69.965",
+      "new": "67.120889",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    {
+      "field": "facts.diluted_shares.basis",
+      "old": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
+      "new": "Diluted shares outstanding 67,120,889 = basic outstanding 66,951,889 + dilutive increment 169,000 (diluted 69,965,000 − basic 69,796,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    }
+  ],
+  "supersedes": null,
+  "superseded_by": null
 }

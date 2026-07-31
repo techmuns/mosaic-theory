@@ -27,10 +27,10 @@
       "source": "EDGAR companyfacts, 10-Q period ended 2026-04-30"
     },
     "diluted_shares": {
-      "value": 109.458,
+      "value": 110.508875,
       "unit": "shares",
-      "basis": "latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction",
-      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30"
+      "basis": "Diluted shares outstanding 110,508,875 = basic outstanding 109,552,950 + dilutive increment 955,925 (diluted 109,458,472 − basic 108,502,547 weighted average, 2026-02-01→2026-04-30). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     },
     "d_and_a_ratio": {
       "value": 0.071043,
@@ -60,14 +60,18 @@
       "margin": 0.126,
       "multiple": 12.5,
       "reason": "revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.",
-      "years_to_terminal": 4.0
+      "years_to_terminal": 4.0,
+      "bear_basis": null,
+      "margin_basis": null
     },
     "bull": {
       "revenue": 809.2,
       "margin": 0.166,
       "multiple": 16.0,
       "reason": "the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.",
-      "years_to_terminal": 4.0
+      "years_to_terminal": 4.0,
+      "bear_basis": null,
+      "margin_basis": null
     }
   },
   "assumptions": {
@@ -78,21 +82,34 @@
           "label": "consensus revenue, FY2027",
           "value": 644.7,
           "unit": "$M",
-          "source": "CIQ Estimates->Trends"
+          "source": "CIQ Estimates->Trends",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "reported revenue, FY2026",
           "value": 594.8,
           "unit": "$M",
-          "source": "EDGAR RevenueFromContractWithCustomerExcludingAssessedTax"
+          "source": "EDGAR RevenueFromContractWithCustomerExcludingAssessedTax",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "realised growth, FY2024/FY2025/FY2026",
           "value": 10.0,
           "unit": "%",
-          "source": "EDGAR revenue series (16.7 / 13.5 / 10.0)"
+          "source": "EDGAR revenue series (16.7 / 13.5 / 10.0)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     },
@@ -103,45 +120,74 @@
           "label": "reported operating margin, FY2026",
           "value": 0.6,
           "unit": "%",
-          "source": "EDGAR OperatingIncomeLoss / revenue"
+          "source": "EDGAR OperatingIncomeLoss / revenue",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "margin path at +2 points a year, pessimistic",
           "value": 8.6,
           "unit": "%",
-          "source": "extrapolation of the reported margin series"
+          "source": "extrapolation of the reported margin series",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "margin path at +3 points a year, central",
           "value": 12.6,
           "unit": "%",
-          "source": "extrapolation of the reported margin series"
+          "source": "extrapolation of the reported margin series",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "margin path at +4 points a year, optimistic",
           "value": 16.6,
           "unit": "%",
-          "source": "extrapolation of the reported margin series"
+          "source": "extrapolation of the reported margin series",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "gross margin, FY2026 - the structural ceiling",
           "value": 60.6,
           "unit": "%",
-          "source": "EDGAR GrossProfit / revenue"
+          "source": "EDGAR GrossProfit / revenue",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "depreciation implied by the consensus layer",
           "value": 5.7,
           "unit": "$M",
-          "source": "CIQ Estimates->Trends (EBITDA less EBIT, FY2027)"
+          "source": "CIQ Estimates->Trends (EBITDA less EBIT, FY2027)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "depreciation reported, FY2026",
           "value": 42.255,
           "unit": "$M",
-          "source": "EDGAR companyfacts dep_amort"
+          "source": "EDGAR companyfacts dep_amort",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     },
@@ -152,13 +198,21 @@
           "label": "mature vertical-software peer, enterprise value to EBITDA",
           "value": 12.3,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)"
+          "source": "CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "closest bank-software peer, enterprise value to EBITDA",
           "value": 33.2,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (Q2 Holdings, pre-maturity)"
+          "source": "CIQ Comparable Analysis (Q2 Holdings, pre-maturity)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing median, ten closes over 2.3 years",
@@ -166,6 +220,7 @@
           "unit": "x",
           "source": "CIQ Financials->Multiples (near-zero denominator)",
           "role": "median",
+          "leg": null,
           "excluded": true,
           "excluded_reason": "ten closes over 2.3 years — too short a series to stand on"
         },
@@ -173,9 +228,14 @@
           "label": "mature vertical-software peer, enterprise value to revenue",
           "value": 3.0,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (SPS Commerce)"
+          "source": "CIQ Comparable Analysis (SPS Commerce)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     },
@@ -186,15 +246,24 @@
           "label": "years to the terminal year",
           "value": 4.0,
           "unit": "years",
-          "source": "analyst judgement, set against the realised margin pace"
+          "source": "analyst judgement, set against the realised margin pace",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "waiting charge applied over the horizon",
           "value": 74.9,
           "unit": "%",
-          "source": "house rate of 15% a year compounded over four years"
+          "source": "house rate of 15% a year compounded over four years",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": null,
       "ratified": null
     }
@@ -222,7 +291,7 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 4.249242495732015,
+        "value_per_share": 4.208834675928381,
         "op_income": 58.824,
         "ebitda": 107.41741199999998,
         "ev": 1074.17412,
@@ -232,12 +301,12 @@
         "years": 4.0,
         "d_and_a_t": 48.593411999999994,
         "net_debt_t": 223.899,
-        "shares_t": 114.40805272829161,
-        "value_terminal": 7.431951682800891,
+        "shares_t": 115.5064517709458,
+        "value_terminal": 7.36127815341546,
         "hurdle": 0.15
       },
       "base": {
-        "value_per_share": 8.171906257799767,
+        "value_per_share": 8.094196191629377,
         "op_income": 95.1048,
         "ebitda": 148.72805639999999,
         "ev": 1859.1007049999998,
@@ -247,12 +316,12 @@
         "years": 4.0,
         "d_and_a_t": 53.623256399999995,
         "net_debt_t": 223.899,
-        "shares_t": 114.40805272829161,
-        "value_terminal": 14.2927151193059,
+        "shares_t": 115.5064517709458,
+        "value_terminal": 14.156799727885975,
         "hurdle": 0.15
       },
       "bull": {
-        "value_per_share": 14.218582971096227,
+        "value_per_share": 14.08337253320379,
         "op_income": 134.3272,
         "ebitda": 191.8151956,
         "ev": 3069.0431296,
@@ -262,8 +331,8 @@
         "years": 4.0,
         "d_and_a_t": 57.4879956,
         "net_debt_t": 223.899,
-        "shares_t": 114.40805272829161,
-        "value_terminal": 24.86839048259086,
+        "shares_t": 115.5064517709458,
+        "value_terminal": 24.63190658165175,
         "hurdle": 0.15
       }
     },
@@ -283,9 +352,9 @@
       "detail": []
     },
     "hurdle": 0.15,
-    "reward": -9.758093742200233,
-    "risk": 13.680757504267984,
-    "ratio": -0.7132714500023849,
+    "reward": -9.835803808370622,
+    "risk": 13.721165324071618,
+    "ratio": -0.716834436147727,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "FAIL"
@@ -301,9 +370,28 @@
       "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]",
       "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]"
     ],
+    "dated_triggers": [],
     "entry_price": null,
     "ratio_at_entry": null,
     "avoid_priced": true,
     "avoid_priced_note": "inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow. [amended 2026-07-22: the fail verdict is invariant to interim free cash flow - with four guided years of roughly $137.5M a year (the fiscal-2027 guide is $135-140M) credited in full, the central case reaches about $11.7 and the ratio stays deeply negative - but the optimistic case then reaches roughly the market price, so 'even the optimistic case sits below the price' holds only before interim cash.]"
-  }
+  },
+  "refresh_log": [
+    {
+      "field": "facts.diluted_shares",
+      "old": "109.458",
+      "new": "110.508875",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    {
+      "field": "facts.diluted_shares.basis",
+      "old": "latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction",
+      "new": "Diluted shares outstanding 110,508,875 = basic outstanding 109,552,950 + dilutive increment 955,925 (diluted 109,458,472 − basic 108,502,547 weighted average, 2026-02-01→2026-04-30). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    }
+  ],
+  "supersedes": null,
+  "superseded_by": null
 }

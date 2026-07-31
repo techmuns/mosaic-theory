@@ -5,7 +5,7 @@ _July 10, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $0.60 (-34.5% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
+**Target (base)** $0.60 (-34.7% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
 
 _Spot source: Polygon MVST close 2026-07-21 (live at underwrite)_
 
@@ -51,8 +51,8 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 550 | 2.0% | 6x | $-0.05 | -105.4% |
-| base | 850 | 6.0% | 7.9x | $0.60 | -34.5% |
-| bull | 1,000 | 10.0% | 10x | $1.50 | +63.8% |
+| base | 850 | 6.0% | 7.9x | $0.60 | -34.7% |
+| bull | 1,000 | 10.0% | 10x | $1.50 | +63.4% |
 
 - **bear** — the contraction proves durable: the largest customer (52% of revenue) wobbles, revenue stabilizes well below the peak run-rate, margins hold barely positive as a marginal producer; a levered, distressed supplier exit.
 - **base** — revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.
@@ -63,7 +63,7 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 | input | value | basis | source |
 | --- | ---: | --- | --- |
 | net debt | 199.9 $M | classified total debt less total cash and short-term investments, latest balance sheet [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer] | CIQ Financials->Balance Sheet (vendor basis; EDGAR debt tags under-captured) |
-| diluted shares | 385.272 shares | latest-quarter diluted weighted-average count, quarter ended 2026-03-31 | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding |
+| diluted shares | 386.069384 shares | Diluted shares outstanding 386,069,384 = basic outstanding 333,157,384 + dilutive increment 52,912,000 (diluted 385,272,000 − basic 332,360,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | d and a ratio | 0.08941 rate | depreciation and amortisation over trailing revenue (33.228 / 371.637) [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer] | CIQ Financials->Cash Flow and Income Statement (vendor basis) |
 | share growth | 0.1 rate | OVERRIDE. The organic three-year compound rate (2.30%) cannot see the open $125M at-the-market programme already drawn +19% in two quarters; 10% a year approximates full remaining draw near current prices plus organic issuance. | EDGAR 8-K Item 1.01 accession 0000947871-25-000881 and the 424B5 of 2025-10-03 (Controlled Equity Offering Sales Agreement, up to $125,000,000); share series FY2022-FY2025 |
 | burn to breakeven | 307.8 $M | three years at the stated current burn (102.60 x 3) - the survival block's years to breakeven | EDGAR 10-Q accession 0001628280-26-033590, quarter ended 2026-03-31 |
