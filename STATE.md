@@ -4211,6 +4211,20 @@ correcting — first `is_dir()` on a directory the client creates, now TTL. D15 
 `pytest ... | tail -1 && git commit && git push`, and `tail` exits 0 regardless — so a RED suite
 pushed. The gate must be its own command whose exit status is read, never piped into a chain.
 
+**D17. ACCEPTED RISK, opened by D16'"'"'s own fix (review finding on #286).** Making the network block
+`skip` rather than `fail` is right — a TTL must not red main — but it moves the corpus pins BACK
+toward the shape #283 removed: they can now stop running and say so only in a skip line. Cold cache,
+expired cache, or a resolver change all yield "3 skipped", and a suite that reports 1394 passed
+reads as verified. **The coverage of `test_the_overlay_serves_every_committed_name_and_none_falls_back`,
+the anchor-divergence pin and the record-period pin is CONTINGENT ON CACHE WARMTH.** Distinct from
+the original defect in two ways that matter — the skip fires only on an attempted CONNECTION (not on
+any exception), and its reason names the remedy — but the failure mode "the pin silently stopped
+running" is genuinely re-opened. **ACCEPTED, not fixed**, because the alternative (fail on a cold
+cache) reddens every fresh checkout and CI, which #283 verified in a cleanroom. **FALSIFIER: if a
+real defect ever ships while these three pins are skipping, the acceptance is void** and the pins
+move to a committed fixture of the eleven names'"'"' companyfacts subsets, which removes the cache
+dependency entirely. Cheap and pre-designed; not built now because nothing has failed yet.
+
 **D12. THE THREE PRE-BUILD CHECKS (2026-07-31).**
 1. **NO OTHER `except → skip` PINS.** AST scan of the whole suite (not grep — an except handler
    whose body can reach `pytest.skip`, however spelled): **one** site remains,
