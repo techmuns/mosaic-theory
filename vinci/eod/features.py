@@ -39,15 +39,61 @@ def _unknown(note: str) -> DataField[float]:
     return DataField.unknown(source="EOD", tier=SourceTier.DERIVED, note=note)
 
 
-def _close_on_or_before(bars: list[PriceBar], target: date) -> float | None:
-    """Latest close at or before ``target`` (bars sorted ascending). None if none qualify."""
-    chosen: float | None = None
+#: How far before the window start an anchor bar may sit before the comparison is refused.
+#:
+#: DERIVED FROM THE MARKET CALENDAR, read off the data rather than encoded — the same trick as
+#: ``MAX_STORE_LAG_DAYS``. **The relevant gap is MARKET-WIDE, not store-wide** (review correction):
+#: the store's 5–9d tail is per-name HALTS, and a halted name is exactly what this bound exists to
+#: refuse, so deriving from it would have set the bound by the population it screens out. Measured
+#: on IWM and MDY — identical, which is what makes them the calendar — consecutive-bar gaps are
+#: 1d ×994, 2d ×14, 3d ×228, 4d ×37 and **nothing beyond 4**. The bound is 10, leaving six days of
+#: margin over the worst holiday weekend the market actually produces.
+#:
+#: THE POPULATION CONFIRMS IT IS NOWHERE NEAR THE BOUNDARY. Of the 596 names that reached G2 on the
+#: 2026-07-29 run, **593 anchor exactly ON the window start** and the next three sit at 108d, 116d
+#: and 1,472d. Nothing occupies 1–107, so any value in that range yields the same outcomes today;
+#: the constant is set from market structure so that it also refuses a smaller abnormal gap, rather
+#: than being fitted to the three names that happen to fail it.
+MAX_ANCHOR_LAG_DAYS = 10
+
+
+def window_facts(bars: list[PriceBar], *, start: date, end: date) -> tuple[int, int] | None:
+    """(span_days, bar_count) for the window a return over ``[start, end]`` ACTUALLY covered.
+
+    ONE IMPLEMENTATION, called by both the field that reports the number and the retention row that
+    records it (review finding — the first cut computed this twice, in `features` and in
+    `screens.run`. They agreed, but two computations of one quantity is the twin-drift class this
+    repo keeps finding, and the risk was never string-parsing, it was duplication).
+
+    Anchored on the bar the return STARTED from — the latest at or before ``start`` — so a hole in
+    the series shows up as a span wider than the target instead of being invisible.
+    """
+    prior = [b for b in bars if b.bar_date <= start]
+    if not prior:
+        return None
+    a = prior[-1].bar_date
+    return (end - a).days, sum(1 for b in bars if a <= b.bar_date <= end)
+
+
+def _bar_on_or_before(bars: list[PriceBar], target: date) -> PriceBar | None:
+    """Latest BAR at or before ``target`` (bars sorted ascending). None if none qualify.
+
+    Returns the bar, not the close, because the caller needs its DATE: a close alone cannot say how
+    far back the series had to reach to find it.
+    """
+    chosen: PriceBar | None = None
     for b in bars:
         if b.bar_date <= target:
-            chosen = b.close
+            chosen = b
         else:
             break
     return chosen
+
+
+def _close_on_or_before(bars: list[PriceBar], target: date) -> float | None:
+    """Latest close at or before ``target`` (bars sorted ascending). None if none qualify."""
+    b = _bar_on_or_before(bars, target)
+    return b.close if b else None
 
 
 def compute_price_features(
@@ -192,23 +238,50 @@ def relative_return(
         )
     end = min(n_end, b_end)  # THE COMMON LAST BAR — never each side's own
 
-    def ret(bars: list[PriceBar]) -> float | None:
-        then = _close_on_or_before(bars, start)
+    def leg(bars: list[PriceBar]) -> tuple[float, date] | None:
+        """This side's return over the window, with the DATE its start price came from."""
+        a = _bar_on_or_before(bars, start)
         now = _close_on_or_before(bars, end)
-        if then is None or now is None or then <= 0:
+        if a is None or now is None or a.close <= 0:
             return None
-        return now / then - 1.0
+        return now / a.close - 1.0, a.bar_date
 
-    name_ret, bench_ret = ret(name_bars), ret(bench_bars)
-    if name_ret is None or bench_ret is None:
+    n_leg, b_leg = leg(name_bars), leg(bench_bars)
+    if n_leg is None or b_leg is None:
         return DataField.unknown(
             source="EOD", tier=SourceTier.DERIVED, note="insufficient coverage over window"
         )
+    name_ret, n_anchor = n_leg
+    bench_ret, b_anchor = b_leg
+
+    # THE START ANCHOR IS BOUNDED (2026-07-31). `_bar_on_or_before` reaches back with NO limit, so a
+    # hole in the series silently widens the window: OPI's anchor sat 116d before the start and the
+    # gate compared 296 days of move against a 180-day threshold. A longer window means a larger
+    # |rel|, which makes the −15% bar EASIER — so the failure mode admits names, and with the legs
+    # reversed it would have put one in the pool cohort selection draws from.
+    #
+    # NOT_EVALUATED, never FAIL: the name could not be assessed on the window the threshold was
+    # calibrated for, and it must not look like one that was assessed and rejected.
+    for side, anchor in (("name", n_anchor), ("benchmark", b_anchor)):
+        back = (start - anchor).days
+        if back > MAX_ANCHOR_LAG_DAYS:
+            return DataField.unknown(
+                source="EOD", tier=SourceTier.DERIVED,
+                note=(f"{side} start anchor {anchor.isoformat()} is {back}d before the window "
+                      f"start {start.isoformat()} (> {MAX_ANCHOR_LAG_DAYS}d) — the series has a "
+                      f"hole there, so the comparison would span "
+                      f"{(end - anchor).days}d against a {lookback_days}d threshold"),
+            )
+
     lag = (reference_date - end).days
+    facts = window_facts(name_bars, start=start, end=end)
+    assert facts is not None  # an anchor was just resolved above, so this cannot be None
+    span, obs = facts
     return DataField.present(
         name_ret - bench_ret, as_of=end, source="EOD", tier=SourceTier.DERIVED,
-        note=(f"window {start.isoformat()}→{end.isoformat()} (common last bar; name frontier "
-              f"{n_end.isoformat()}, benchmark frontier {b_end.isoformat()}"
+        note=(f"window {n_anchor.isoformat()}→{end.isoformat()} spans {span}d over {obs} bars "
+              f"(target {lookback_days}d; common last bar; name frontier {n_end.isoformat()}, "
+              f"benchmark frontier {b_end.isoformat()}"
               + (f"; {lag}d short of the {reference_date.isoformat()} reference)"
                  if lag else ")")),
     )

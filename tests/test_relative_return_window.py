@@ -31,10 +31,16 @@ def _bars(pairs: list[tuple[str, float]]) -> list[PriceBar]:
                      close=c, volume=1.0, source="t") for d, c in pairs]
 
 
+# THE ANCHOR SITS ON THE WINDOW START (2026-05-18), not before it. The first cut dated these bars
+# 2026-05-01 — 17 days back, an 81-day hole — which was incidental to what these pins test and is
+# now refused by `MAX_ANCHOR_LAG_DAYS`. Every asserted number is unchanged: the anchor price is
+# still 100, so the legs still read −20%/−21%/+1%. What moved is that the fixture now has a shape
+# real data could produce, which is what a regression pin should be built on.
+#
 # The shape of the real incident: the name has a bar the benchmark does not.
-NAME = _bars([("2026-05-01", 100.0), ("2026-07-21", 80.0), ("2026-07-24", 79.0)])
-BENCH_STALE = _bars([("2026-05-01", 100.0), ("2026-07-21", 101.0)])
-BENCH_FRESH = _bars([("2026-05-01", 100.0), ("2026-07-21", 101.0), ("2026-07-24", 99.0)])
+NAME = _bars([("2026-05-18", 100.0), ("2026-07-21", 80.0), ("2026-07-24", 79.0)])
+BENCH_STALE = _bars([("2026-05-18", 100.0), ("2026-07-21", 101.0)])
+BENCH_FRESH = _bars([("2026-05-18", 100.0), ("2026-07-21", 101.0), ("2026-07-24", 99.0)])
 
 
 def test_a_stale_benchmark_shortens_the_window_it_does_not_skew_the_comparison() -> None:
@@ -62,7 +68,7 @@ def test_the_common_end_is_the_earlier_frontier_whichever_side_is_behind() -> No
     """Symmetry: the rule is `min(frontiers)`, not "clamp to the benchmark". A name that is itself
     behind must shorten the window the same way — otherwise a halted name gets a free comparison
     against a market that kept trading."""
-    name_behind = _bars([("2026-05-01", 100.0), ("2026-07-21", 80.0)])
+    name_behind = _bars([("2026-05-18", 100.0), ("2026-07-21", 80.0)])
     r = relative_return(name_behind, BENCH_FRESH, reference_date=REF, lookback_days=LOOKBACK)
     assert r.as_of == dt.date(2026, 7, 21), "the earlier frontier must win regardless of side"
 
@@ -101,6 +107,6 @@ def test_an_empty_side_is_unknown_not_a_number() -> None:
 def test_bars_after_the_reference_date_are_never_used() -> None:
     """The lookahead guard, which the frontier rewrite must not break: a bar dated after the
     reference date may not set the frontier, or a rerun would silently use future data."""
-    future = _bars([("2026-05-01", 100.0), ("2026-07-24", 99.0), ("2026-08-15", 50.0)])
+    future = _bars([("2026-05-18", 100.0), ("2026-07-24", 99.0), ("2026-08-15", 50.0)])
     r = relative_return(NAME, future, reference_date=REF, lookback_days=LOOKBACK)
     assert r.as_of == dt.date(2026, 7, 24), "a post-reference bar leaked into the frontier"

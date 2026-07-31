@@ -13,9 +13,15 @@ from pathlib import Path
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
+from vinci.eod.features import window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult
-from vinci.screens.assemble import build_price_record, enrich_with_fundamentals
+from vinci.schemas.market import PriceBar
+from vinci.screens.assemble import (
+    DECLINE_WINDOW_DAYS,
+    build_price_record,
+    enrich_with_fundamentals,
+)
 from vinci.screens.retention import (
     CandidateRow,
     GateOutcome,
@@ -90,12 +96,16 @@ def screen_universe(
     reporter = ProgressReporter("screen", len(universe), emit=progress, step=200)
     retained: list[CandidateRow] = []
 
-    def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome]) -> None:
+    win_start = reference_date - timedelta(days=DECLINE_WINDOW_DAYS)
+
+    def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome],
+              name_bars: list[PriceBar]) -> None:
         if retain_run_id is None:
             return
         retained.append(CandidateRow(
             ticker=sec_ticker, run_id=retain_run_id, reference_date=reference_date,
-            outcome=rollup(gates), gate_inputs=_gate_inputs(rec), per_gate=gates,
+            outcome=rollup(gates),
+            gate_inputs=_gate_inputs(rec, name_bars, window_start=win_start), per_gate=gates,
             not_evaluated_reason=_first_unrun(gates)))
 
     for i, s in enumerate(universe, start=1):
@@ -109,12 +119,12 @@ def screen_universe(
         g1, g1_why = gate_g1_drawdown(rec, th)
         gates = {"g1_drawdown": GateOutcome(outcome=outcome_from_gate(g1), reason=g1_why)}
         if g1 is not GateResult.PASS:
-            _keep(s.ticker, rec, gates)
+            _keep(s.ticker, rec, gates, bars)
             continue
         g2, g2_why = gate_g2_idiosyncratic(rec, th)
         gates["g2_idiosyncratic"] = GateOutcome(outcome=outcome_from_gate(g2), reason=g2_why)
         if g2 is GateResult.FAIL:
-            _keep(s.ticker, rec, gates)
+            _keep(s.ticker, rec, gates, bars)
             continue
         g1_survivors += 1
         full = enrich_with_fundamentals(
@@ -129,7 +139,7 @@ def screen_universe(
             outcome=(Outcome.PASS if cand is not None else Outcome.FAIL),
             reason=("admitted to the candidate set" if cand is not None
                     else "rejected by the multiple floor or a distress signal"))
-        _keep(s.ticker, full, gates)
+        _keep(s.ticker, full, gates, bars)
 
     written = 0
     if retain_run_id is not None and retain_dir is not None:
@@ -145,7 +155,8 @@ def screen_universe(
     }
 
 
-def _gate_inputs(rec: object) -> dict[str, StampedInput]:
+def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: date
+                 ) -> dict[str, StampedInput]:
     """The gate inputs with THEIR OWN stamps — never the run's.
 
     A gate input claiming the reference date while its data stopped days earlier is exactly what
@@ -157,9 +168,12 @@ def _gate_inputs(rec: object) -> dict[str, StampedInput]:
         f = getattr(prices, name, None)
         if f is None:
             continue
+        win = (window_facts(bars, start=window_start, end=f.as_of)
+               if name == "rel_ret_vs_market" and f.value is not None else None)
         out[name] = StampedInput(
             value=f.value, as_of=f.as_of if f.value is not None else None,
-            source=f.source or "EOD", note=f.note)
+            source=f.source or "EOD", note=f.note,
+            span_days=win[0] if win else None, observations=win[1] if win else None)
     return out
 
 
