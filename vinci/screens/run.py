@@ -59,6 +59,14 @@ def screen_universe(
     confirm the screen and never contradict it, and the 2026-07-27 benchmark bound was recoverable
     only because the survivors' values happened to persist — luck, not method.
     """
+    # BOTH OR NEITHER, ENFORCED (review finding). The first cut COLLECTED rows on `retain_run_id`
+    # but only WROTE them when `retain_dir` was also set — so a caller passing one and not the other
+    # got 1,800 rows built, silently dropped, and a stats dict REPORTING them as retained. A
+    # partially-configured retention that claims success is worse than one that refuses.
+    if (retain_run_id is None) != (retain_dir is None):
+        raise ValueError(
+            "retain_run_id and retain_dir must be given together — one without the other builds "
+            "retention rows and discards them while reporting them as retained")
     th = thresholds or Screen2Thresholds()
     # Screen the cap-band universe membership (not every security ever stored). Fall back to all
     # non-benchmark securities when no universe snapshot exists yet (e.g. a small test seed).
@@ -123,14 +131,17 @@ def screen_universe(
                     else "rejected by the multiple floor or a distress signal"))
         _keep(s.ticker, full, gates)
 
+    written = 0
     if retain_run_id is not None and retain_dir is not None:
-        append_rows(retained, run_id=retain_run_id, snapshots_dir=retain_dir)
+        written = append_rows(retained, run_id=retain_run_id, snapshots_dir=retain_dir)
 
     return candidates, {
         "universe": len(universe),
         "g1_g2_survivors": g1_survivors,
         "candidates": len(candidates),
-        "retained_candidate_rows": len(retained),
+        # WHAT WAS WRITTEN, not what was built — the stat a caller trusts must be the one the
+        # writer returned, or it reports evidence that does not exist on disk.
+        "retained_candidate_rows": written,
     }
 
 

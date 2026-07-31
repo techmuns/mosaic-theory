@@ -339,3 +339,73 @@ def test_every_vinci_module_imports_standalone() -> None:
         if r.returncode != 0:
             failures.append(f"{m}: {r.stderr.strip().splitlines()[-1]}")
     assert not failures, "modules that do not import standalone:\n  " + "\n  ".join(failures)
+
+
+# --- the wiring: retention must never claim rows it did not write --------------------------------
+
+
+def test_partial_retention_config_is_refused_by_both_writers() -> None:
+    """REVIEW FINDING, and the dangerous half is the STAT. The first cut COLLECTED rows on
+    `retain_run_id` alone but only WROTE them when `retain_dir` was also set — so a caller passing
+    one and not the other got ~1,800 rows built, silently discarded, and a stats dict REPORTING
+    them as retained.
+
+    A partially-configured retention that claims success is worse than one that refuses: the caller
+    believes evidence exists on disk, and the absence is only discovered when someone goes looking
+    for a run that was never written."""
+    import datetime as _dt
+    import inspect
+
+    from vinci.screens.run import screen_universe
+    from vinci.universe import build_universe
+
+    for fn in (screen_universe, build_universe):
+        src = inspect.getsource(fn)
+        assert "(retain_run_id is None) != (retain_dir is None)" in src, (
+            f"{fn.__name__} does not enforce both-or-neither — one without the other silently "
+            "discards every retained row")
+    # and the stat reports what the WRITER returned, not what was collected
+    assert '"retained_candidate_rows": written,' in inspect.getsource(screen_universe)
+
+    with pytest.raises(ValueError, match="must be given together"):
+        build_universe(reference_date=_dt.date(2026, 7, 29), retain_run_id="2026-07-29-01")
+
+
+def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
+    """THE THIN GRAIN'S INVARIANT, derived from the source rather than string-matched.
+
+    A stage that increments a counter but appends no row MOVES the blind spot instead of closing it
+    — and `build_universe`'s drops are precisely the filter nothing has ever measured. The check is
+    structural: inside `build_universe`, the ONLY `stats[...] += 1` sites outside the `_drop` helper
+    must be the two non-drop counters. Every genuine drop must route through `_drop`, which
+    increments and appends together so the two cannot diverge.
+
+    Two stages (`unknown_type`/`non_common_equity`) are chosen into a variable before the call, so a
+    substring scan for `_drop(..., "unknown_type"` reports a false absence — the reason this parses
+    instead of grepping."""
+    import ast
+    import inspect
+
+    from vinci.universe import DROP_STAGES, build_universe
+
+    assert len(DROP_STAGES) == 8, DROP_STAGES
+    tree = ast.parse(inspect.getsource(build_universe).lstrip())
+    fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
+              and n.name == "build_universe")
+    helper = next((n for n in ast.walk(fn) if isinstance(n, ast.FunctionDef) and n.name == "_drop"),
+                  None)
+    assert helper is not None, "_drop is gone — nothing couples the counter to the row"
+    inside = {id(n) for n in ast.walk(helper)}
+    loose: list[str] = []
+    for node in ast.walk(fn):
+        if (isinstance(node, ast.AugAssign) and id(node) not in inside
+                and isinstance(node.target, ast.Subscript)
+                and isinstance(node.target.value, ast.Name) and node.target.value.id == "stats"
+                and isinstance(node.target.slice, ast.Constant)):
+            loose.append(str(node.target.slice.value))
+    assert set(loose) <= {"considered", "in_universe"}, (
+        f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
+        "without emitting a row leaves that stage with no evidence trail")
+    # and the guard that refuses a run when the two diverge anyway
+    # matched on the literal, not across the implicit-concatenation boundary the message spans
+    assert "drop path is not writing its row" in inspect.getsource(build_universe)

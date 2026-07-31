@@ -106,6 +106,10 @@ def build_universe(
     trace at all — and `universe.py`'s market-cap stamp (STATE S3) is exactly a defect at this
     stage. Admitted names are NOT retained here; the screen records them at the candidate grain.
     """
+    if (retain_run_id is None) != (retain_dir is None):
+        raise ValueError(
+            "retain_run_id and retain_dir must be given together — one without the other builds "
+            "retention rows and discards them while reporting them as retained")
     cfg = config or get_config()
     cfg.ensure_dirs()
     resolver = EntityResolver.from_config(cfg)
