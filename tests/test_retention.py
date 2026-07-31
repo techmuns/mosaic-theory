@@ -678,3 +678,87 @@ def test_an_unresolvable_window_says_so_rather_than_reporting_zeros() -> None:
         bars, reference_date=G1_REF, staleness_days=5).drawdown_from_high.note or ""
     assert "spans 0d over 0 bars" not in note, note
     assert "window not resolvable" in note and "2025-07-29" in note, note
+
+
+# --- G3 recorded a PASS for every name it could not value ----------------------------------------
+
+
+def _g3(pe_note: str | None, pctile: float | None = None) -> tuple:
+    from vinci.schemas.envelope import DataField, SourceTier
+    from vinci.screens.screen2 import Screen2Thresholds, gate_g3_multiple_floor
+
+    u: DataField[float] = (
+        DataField.present(pctile, as_of=REF, source="EDGAR", tier=SourceTier.DERIVED)
+        if pctile is not None
+        else DataField.unknown(source="EDGAR", tier=SourceTier.DERIVED, note=pe_note))
+    ev: DataField[float] = DataField.unknown(
+        source="EDGAR", tier=SourceTier.DERIVED, note="EV/EBITDA deferred")
+
+    class _F:
+        ev_ebitda_pctile_vs_history = ev
+        pe_pctile_vs_history = u
+
+    class _R:
+        fundamentals = _F()
+
+    return gate_g3_multiple_floor(_R(), Screen2Thresholds())  # type: ignore[arg-type]
+
+
+def test_the_red_a_name_with_no_valuation_is_not_evaluated_not_passed() -> None:
+    """THE RED. G3 returns UNKNOWN when nothing values the name and the runner admits it anyway —
+    so **186 of the 281 in the 2026-07-29 pool were never valued at all and every one passed**.
+    UNKNOWN maps to NOT_EVALUATED, so the row must record that the name could not be assessed."""
+    from vinci.screens.assemble import G3_NO_INPUT
+
+    result, why = _g3(G3_NO_INPUT)
+    assert outcome_from_gate(result) is Outcome.NOT_EVALUATED, (result, why)
+    assert outcome_from_gate(result) is not Outcome.PASS
+
+
+def test_each_cause_carries_its_own_reason() -> None:
+    """THREE CAUSES, THREE REASONS, because a reader acts differently on each: nothing tagged is a
+    DATA gap, negative-throughout is an ANSWER about the business, a short history is a TIMING
+    state that resolves by waiting. Measured across the 412 reaching G3: 48 / 85 / 49.
+
+    One reason covering two causes would put 'we have no data' and 'the company has never earned
+    anything' behind the same label."""
+    from vinci.screens.assemble import (
+        G3_NEGATIVE_ECONOMICS,
+        G3_NO_INPUT,
+        G3_SHORT_HISTORY,
+    )
+
+    reasons = {G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY}
+    assert len(reasons) == 3, "two causes collapsed onto one reason"
+    for r in reasons:
+        result, why = _g3(r)
+        assert outcome_from_gate(result) is Outcome.NOT_EVALUATED
+        assert why == r, f"the gate restated the reason instead of forwarding it: {why!r}"
+    # and the distinction is legible, not just distinct strings
+    assert "not a gap in the data" in G3_NEGATIVE_ECONOMICS
+    assert "no diluted EPS in the filing history" in G3_NO_INPUT
+    assert "too short" in G3_SHORT_HISTORY
+
+
+def test_a_resolved_percentile_still_passes_and_fails_normally() -> None:
+    """The control: labelling the unvaluable must not change the 226 that got a real judgment."""
+    from vinci.screens.screen2 import Screen2Thresholds
+
+    floor = Screen2Thresholds().multiple_floor_pctile
+    assert outcome_from_gate(_g3(None, pctile=floor - 0.05)[0]) is Outcome.PASS
+    assert outcome_from_gate(_g3(None, pctile=floor + 0.05)[0]) is Outcome.FAIL
+
+
+def test_the_row_records_the_gates_result_not_the_admission() -> None:
+    """The silent pass ONE LAYER ALONG. The row wrote PASS whenever a candidate was produced, so a
+    name G3 could not value was recorded as having passed G3. Routing is not decided here — the
+    runner still admits it — so the two are recorded as SEPARATE gates and whoever chooses the
+    routing can count both from the same rows."""
+    import inspect
+
+    from vinci.screens.run import screen_universe
+
+    src = inspect.getsource(screen_universe)
+    assert 'gates["g3_multiple_floor"]' in src and "outcome_from_gate(g3)" in src
+    assert 'gates["admitted"]' in src, "admission is no longer recorded at all"
+    assert '"g3_and_distress"' not in src, "the conflated gate is back"

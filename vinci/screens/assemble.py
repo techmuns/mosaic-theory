@@ -37,6 +37,16 @@ _PE_WINDOW_DAYS = 1825  # ~5y multiple range (Polygon Starter gives 5y history) 
 # FAIL that would wrongly reject a clean de-rating. Face-validity, never forward-return tuning.
 _PE_MIN_POINTS = 450
 
+# G3's THREE REASONS FOR NOT VALUING A NAME. Distinct because their causes are distinct and a
+# reader acts differently on each: nothing tagged is a DATA gap, negative-throughout is a real
+# ANSWER about the business, and a short history is a TIMING state that resolves by waiting.
+# Measured across the 412 names reaching G3 on the 2026-07-29 run: 48 / 85 / 49.
+G3_NO_INPUT = "no valuation input tagged — no diluted EPS in the filing history"
+G3_NEGATIVE_ECONOMICS = (
+    "inputs tagged but economics negative throughout — never a positive annual EPS. This is an "
+    "answer about the business, not a gap in the data")
+G3_SHORT_HISTORY = "history below the floor — too short to judge a trailing range"
+
 
 def annual_eps_as_of(points: list[ConceptPoint], d: date) -> float | None:
     """Latest *positive* annual diluted EPS known on/before ``d`` (point-in-time); None if none."""
@@ -61,8 +71,18 @@ def pe_current_and_percentile(
     cur_eps = annual_eps_as_of(annual_eps, reference_date)
     cur_price = _close_on_or_before(bars, reference_date)
     if cur_eps is None or cur_price is None:
+        # THE CAUSE, NOT JUST THE ABSENCE. "no positive EPS/price" collapsed two states G3 must
+        # tell apart: a filer that has NEVER tagged diluted EPS (nothing to value with) and one
+        # that tags it every year and has simply never earned a positive number (a real answer
+        # about the business, not a gap in our data). Measured on the 412 reaching G3: 48 vs 85.
+        if not annual_eps:
+            why = G3_NO_INPUT
+        elif cur_price is None:
+            why = "no price at the reference date"
+        else:
+            why = G3_NEGATIVE_ECONOMICS
         u: DataField[float] = DataField.unknown(
-            source="EDGAR", tier=SourceTier.DERIVED, note="no positive EPS/price"
+            source="EDGAR", tier=SourceTier.DERIVED, note=why
         )
         return u, u
     cur_pe = cur_price / cur_eps
@@ -79,7 +99,7 @@ def pe_current_and_percentile(
         pctile_u: DataField[float] = DataField.unknown(
             source="EDGAR",
             tier=SourceTier.DERIVED,
-            note=f"only {len(hist)} P/E points (< {min_points}) — too short to judge floor",
+            note=f"{G3_SHORT_HISTORY}: only {len(hist)} P/E points (< {min_points})",
         )
         return pe_df, pctile_u
     pctile = sum(1 for x in hist if x <= cur_pe) / len(hist)
