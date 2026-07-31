@@ -4061,6 +4061,11 @@ MDY agree exactly; neither gap exceeds 4d) and refuses anything past it. Out of 
    (The other 149 have no positive annual EPS at all → G3 UNKNOWN → **admitted**, since UNKNOWN
    does not reject.)
 
+**FLAGGED, NOT FIXED:** `high_52w`/`low_52w` stay PRESENT on a stale name and are still labelled
+52-week while their window is truncated at the last bar — INHD's covers ~10.5 months, not 12. Same
+class (a value claiming a window it does not cover), but they do not gate, so they are out of this
+PR's invariant. Queued beside the G3 bound.
+
 **POOL EFFECT OF THIS BOUND: none.** 0 of the 281 become NOT_EVALUATED at G1 — INHD, the one stale
 name, had already FAILED G1 and was never in the pool. Whole-run effect is 1 of 1,780 names, and the
 value of the change is that the failure is now recorded as *unassessable* rather than *rejected*.

@@ -620,15 +620,21 @@ def test_the_bound_is_the_shipped_contract_not_a_new_constant() -> None:
     """It is not a number picked for this fix. `staleness_days` already existed and was already
     applied to `last`; the defect was that the DERIVED ratio G1 gates on ignored it. Pinned so a
     later edit cannot fork a second staleness rule for the same input."""
-    import inspect
-
     from vinci.config import get_config
     from vinci.eod.features import compute_price_features
 
     assert get_config().price_staleness_days == 5
-    src = inspect.getsource(compute_price_features)
-    assert src.count("if age > staleness_days:") == 2, (
-        "the derived ratio and `last` must gate on the SAME staleness rule")
+    # STRUCTURAL, not a source-text count (review finding — a `src.count(...) == 2` pin reds on any
+    # rename or restructure, which is the brittleness just removed from the window_facts pin one PR
+    # earlier). The property: BOTH the `last` field and the derived ratio must change behaviour at
+    # the SAME threshold, proven by moving it.
+    bars = _bars([("2025-06-02", 40.0), ("2026-01-15", 30.0), ("2026-07-19", 12.0)])  # 10d stale
+    tight = compute_price_features(bars, reference_date=G1_REF, staleness_days=5)
+    loose = compute_price_features(bars, reference_date=G1_REF, staleness_days=30)
+    assert tight.drawdown_from_high.value is None and tight.last.value is not None
+    assert "10d old" in (tight.last.note or ""), tight.last.note
+    assert loose.drawdown_from_high.value is not None, "the ratio ignored a widened contract"
+    assert not (loose.last.note or "").startswith("10d old")
 
 
 def test_the_stale_drawdown_records_its_window_via_the_shared_helper() -> None:
@@ -656,3 +662,19 @@ def test_each_input_is_described_by_its_own_window() -> None:
     src = inspect.getsource(_run.screen_universe)
     assert '"rel_ret_vs_market": reference_date - timedelta(days=DECLINE_WINDOW_DAYS)' in src
     assert '"drawdown_from_high": reference_date - timedelta(days=YEAR_DAYS)' in src
+
+
+def test_an_unresolvable_window_says_so_rather_than_reporting_zeros() -> None:
+    """REVIEW FINDING. `window_facts` returns None when no bar sits at or before the window start —
+    reachable whenever `have_year` is met by a span beginning INSIDE the 52-week window — and the
+    first cut defaulted to (0, 0), printing "spans 0d over 0 bars". That reads as a MEASURED empty
+    window rather than a measurement that could not be made: a fabricated zero, inside the fix for
+    a mislabelled value."""
+    from vinci.eod.features import compute_price_features
+
+    # span 340d (clears the 330d history rule) but the first bar is after ref−365, and 13d stale
+    bars = _bars([("2025-08-10", 40.0), ("2026-03-01", 20.0), ("2026-07-16", 12.0)])
+    note = compute_price_features(
+        bars, reference_date=G1_REF, staleness_days=5).drawdown_from_high.note or ""
+    assert "spans 0d over 0 bars" not in note, note
+    assert "window not resolvable" in note and "2025-07-29" in note, note

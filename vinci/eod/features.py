@@ -152,12 +152,20 @@ def compute_price_features(
         # UNKNOWN, never a value: the gate maps UNKNOWN to NOT_EVALUATED, so a name that could not
         # be assessed stops looking like one that was assessed and rejected.
         if age > staleness_days:
+            # NEVER (0, 0) ON A FAILED LOOKUP (review finding). `window_facts` returns None when
+            # no bar sits at or before the window start — reachable whenever `have_year` is met by
+            # a span that begins INSIDE the 52-week window — and defaulting to zeros printed
+            # "spans 0d over 0 bars", which reads as a measured empty window rather than a
+            # measurement that could not be made. A fabricated zero inside the fix for a
+            # mislabelled value is the same defect one layer along.
             facts = window_facts(bars, start=w_start, end=as_of)
-            span, obs = facts if facts else (0, 0)
+            window_desc = (f"window spans {facts[0]}d over {facts[1]} bars" if facts
+                           else "window not resolvable — no bar at or before "
+                                f"{w_start.isoformat()}")
             stale_note = (
                 f"latest bar {as_of.isoformat()} is {age}d before the {reference_date.isoformat()} "
                 f"reference (> {staleness_days}d) — the drawdown would be a ratio to a "
-                f"{age}d-old close presented as current; window spans {span}d over {obs} bars")
+                f"{age}d-old close presented as current; {window_desc}")
             drawdown = dist_low = _unknown(stale_note)
         else:
             drawdown = _derived(latest.close / hi - 1.0, as_of)
