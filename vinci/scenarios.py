@@ -935,7 +935,8 @@ class RefreshRefusedError(RuntimeError):
 
 
 def refresh_record(
-    rec: ScenarioRecord, *, spot: float | None = None, facts: dict[str, float] | None = None,
+    rec: ScenarioRecord, *, spot: float | None = None,
+    facts: dict[str, float | Fact] | None = None,
     source: str, on_date: str,
 ) -> ScenarioRecord:
     """Refresh MACHINE inputs on ``rec`` and return a NEW record with the result recomputed.
@@ -943,6 +944,21 @@ def refresh_record(
     ``spot`` and ``facts`` are the only things this may move. Every change is appended to
     ``refresh_log`` with its old → new value, the date, and the SOURCE it came from — provenance is
     required, because a refresh nobody can re-derive is just an untraceable edit.
+
+    **A FACT VALUE MAY CARRY ITS BASIS (2026-07-31).** Pass a bare float to refresh the SAME
+    quantity — the basis is unchanged, which is right for a re-read of the same line. Pass a
+    :class:`Fact` when the refresh changes what the number IS, and the new ``basis``/``source`` move
+    with it, each logged as its own entry.
+
+    The first cut moved the value alone, so swapping ``diluted_shares`` from a weighted average to a
+    point-in-time outstanding count would have left the string ``"diluted weighted-average (latest
+    10-Q)"`` sitting over a number that is neither weighted nor an average. ``Fact.basis`` documents
+    itself as naming WHAT the number is; a writer that moves the value and freezes the basis
+    MANUFACTURES a mislabelled figure — the exact defect class the share-count work exists to close,
+    inside the writer meant to close it.
+
+    **A UNIT CHANGE IS REFUSED.** Basis is prose about the same quantity; unit is the quantity's
+    scale, and silently re-scaling a denominator is how a per-share value becomes wrong by 1e6.
 
     REFUSES (raises :class:`RefreshRefusedError`) on any attempt to reach an analyst surface: a fact
     outside :data:`REFRESHABLE_FACTS`, or a fact the record does not already carry. The legs,
@@ -974,11 +990,29 @@ def refresh_record(
                 "recorded; it never introduces one")
         new_facts = dict(rec.facts)
         for k, v in facts.items():
-            if v == rec.facts[k].value:
+            old = rec.facts[k]
+            new_value = v.value if isinstance(v, Fact) else v
+            if isinstance(v, Fact) and v.unit != old.unit:
+                raise RefreshRefusedError(
+                    f"facts.{k}: a refresh may restate the BASIS but never the UNIT "
+                    f"({old.unit!r} → {v.unit!r}) — a silent re-scale of a denominator is how a "
+                    "per-share value goes wrong by a factor of a million. Re-underwrite instead")
+            restated = v if isinstance(v, Fact) and (
+                v.basis != old.basis or v.source != old.source) else None
+            if new_value == old.value and restated is None:
                 continue
-            entries.append(RefreshEntry(field=f"facts.{k}", old=str(rec.facts[k].value),
-                                        new=str(v), date=on_date, source=source))
-            new_facts[k] = rec.facts[k].model_copy(update={"value": v})
+            if new_value != old.value:
+                entries.append(RefreshEntry(field=f"facts.{k}", old=str(old.value),
+                                            new=str(new_value), date=on_date, source=source))
+            if restated is not None:
+                # its own entry: a number that keeps its value while changing meaning is exactly
+                # the move a reader must be able to see in the log
+                entries.append(RefreshEntry(field=f"facts.{k}.basis", old=old.basis,
+                                            new=restated.basis, date=on_date, source=source))
+                new_facts[k] = old.model_copy(update={
+                    "value": new_value, "basis": restated.basis, "source": restated.source})
+            else:
+                new_facts[k] = old.model_copy(update={"value": new_value})
         updates["facts"] = new_facts
 
     if not entries[len(rec.refresh_log):]:
