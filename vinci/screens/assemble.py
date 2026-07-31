@@ -92,7 +92,7 @@ MAX_EPS_AGE_DAYS = 470
 
 
 def annual_eps_as_of(points: list[ConceptPoint], d: date,
-                     *, max_age_days: int = MAX_EPS_AGE_DAYS) -> float | None:
+                     *, max_age_days: int | None = MAX_EPS_AGE_DAYS) -> float | None:
     """Latest *positive* annual diluted EPS known on/before ``d``, within ``max_age_days`` of its
     period end. None if none qualifies.
 
@@ -102,9 +102,14 @@ def annual_eps_as_of(points: list[ConceptPoint], d: date,
     have left the peer-cohort command valuing names on sixteen-year-old earnings, so the default is
     applied at the source and neither caller can opt out by omission.
     """
+    # ``None`` means UNBOUNDED, and it is spelled that way on purpose (review finding). The first
+    # cut used ``max_age_days=10**6`` as the sentinel — a magic number a reader has to decode, and
+    # one a pin then hard-matched as source text. The only caller that wants it is the cause-split
+    # probe below, asking "did a positive figure exist AT ALL", which is a different question from
+    # "is one current"; naming that distinction is worth more than saving a branch.
     cand = [p for p in points
             if p.is_annual and p.filed <= d and p.value > 0
-            and (d - p.period_end).days <= max_age_days]
+            and (max_age_days is None or (d - p.period_end).days <= max_age_days)]
     if not cand:
         return None
     return max(cand, key=lambda p: (p.period_end, p.filed)).value
@@ -133,7 +138,7 @@ def pe_current_and_percentile(
             why = G3_NO_INPUT
         elif cur_price is None:
             why = G3_NO_PRICE
-        elif annual_eps_as_of(annual_eps, reference_date, max_age_days=10**6) is not None:
+        elif annual_eps_as_of(annual_eps, reference_date, max_age_days=None) is not None:
             # a positive figure EXISTS but is out of range — distinct from never having earned one
             why = G3_EPS_TOO_OLD
         else:

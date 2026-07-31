@@ -963,9 +963,19 @@ def test_the_bound_lives_in_the_shared_reader_so_both_consumers_get_it() -> None
         "the bound is no longer the default — a caller that omits it reaches back forever")
     # no production call site may pass a wider age; the only widened calls are the cause-split
     # probe inside pe_current_and_percentile (which asks 'did a positive figure EXIST at all')
-    src = inspect.getsource(asm)
-    widened = [ln.strip() for ln in src.splitlines()
-               if "max_age_days=" in ln and "MAX_EPS_AGE_DAYS" not in ln
-               and "def annual_eps_as_of" not in ln]
-    assert widened == ["elif annual_eps_as_of(annual_eps, reference_date, max_age_days=10**6) "
-                       "is not None:"], widened
+    # STRUCTURAL, not the call's source text (review finding — a hard-matched literal is the
+    # brittleness this session has removed twice already). Parse the module: every call that
+    # widens the bound must pass the explicit `None` sentinel, and there may be exactly one —
+    # the cause-split probe asking "did a positive figure exist AT ALL".
+    import ast
+
+    tree = ast.parse(inspect.getsource(asm))
+    widened = [n for n in ast.walk(tree)
+               if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+               and n.func.id == "annual_eps_as_of"
+               and any(k.arg == "max_age_days" for k in n.keywords)]
+    assert len(widened) == 1, f"{len(widened)} call sites override the bound; expected 1"
+    kw = next(k for k in widened[0].keywords if k.arg == "max_age_days")
+    assert isinstance(kw.value, ast.Constant) and kw.value.value is None, (
+        "the unbounded sentinel is not the explicit `None` — a magic number here is a bound "
+        "a reader cannot check")

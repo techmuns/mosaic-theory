@@ -4065,6 +4065,14 @@ one needs a different valuation basis, the other needs the company to file again
 **THE POOL BOTH WAYS — NOT CHOSEN:** 281 today · **51** if NOT_EVALUATED leaves the candidate set ·
 **281 with 230 labelled** if carried as a bucket.
 
+**NO COMMITTED ARTIFACT MOVES — verified at review.** The shared reader has a second consumer,
+`cli.py`'s `_pc_valuation`, whose output IS persisted ("dated + immutable snapshot" with a
+`valuation` key), so the bound could have silently changed a committed number. It does not:
+`data/scan_history/` is untracked and holds nothing, so no peer-cohort snapshot exists. And the
+dossiers' `mechanical.valuation.own_history` is CIQ-sourced (`EV/EBITDA (TEV/LTM)`, n_closes 42),
+not from `pe_current_and_percentile` — confirming a third time that the dossier is not a consumer
+of this path.
+
 **AORT IS AMONG THE HISTORY-SHORTENED** — a committed dossier, 1,132 → **112** P/E points under the
 bound. So is BHC (1,254 → 111) and ALLT (1,254 → 86). The dossiers are not re-screened by this
 change, but AORT's screen provenance now includes a G3 that would defer.
