@@ -4103,12 +4103,39 @@ Mar-2026 quarters. So the committed `shares_out` of 342,433,118 is a pre-split c
 cover-page tag is the reason. **The overlay does not fix this**: its `basic_out` leg is that same
 stale cover-page fact. A staleness rule on the cover-page point is a separate, required piece.
 
-**D7. THE BASIC-BASIS FLEET REWARD:RISK NUMBERS ARE VOID.** SMPL 3.83→4.78, EPAM 5.27→6.68,
-IT 1.29→1.54, NCNO −0.71→−0.71, AORT −0.67→−0.66, MVST −0.33→−0.23 all carry the dropped-dilution
-error, and **"no name crosses 2:1" is PROVISIONAL** until the corrected run. MVST rising rather
-than falling is what exposed the conflation and is the name to watch: with dilution retained
-(15.92% on the latest quarter, by far the fleet's largest) it must FALL. If it does not, the basis
-still is not held.
+**D7. THE VOIDED FLEET NUMBERS, REPLACED BY THE CORRECTED RUN — and the premise behind them was
+wrong too.** The discarded pass (SMPL 3.83→4.78, EPAM 5.27→6.68, IT 1.29→1.54, MVST −0.33→−0.23)
+was described as a BASIC-basis error on both sides. It was not: the **"before" was already the
+DILUTED weighted average** — `scenarios.py:725` has read `facts.diluted_shares` all along — so only
+the "after" carried the dropped-dilution error, having used the basic cover-page `shares_out`.
+Item 24 is therefore **weighted average → outstanding**, not basic → diluted.
+
+MEASURED, engine re-run, nothing written. Three denominators, one change isolated per column:
+**A** = committed (diluted WA, mis-periodised on SMPL) · **B** = same basis, correct quarter (the
+`_latest_point` fix alone) · **C** = diluted OUTSTANDING at the valuation date (item 24).
+
+| name | A shares | B shares | C shares | A r:r | B r:r | C r:r | A→C |
+|------|---------:|---------:|---------:|------:|------:|------:|----:|
+| AORT |    49.73 |    49.73 |    50.20 | −0.67 | −0.67 | −0.67 | −0.00 |
+| EPAM |    54.18 |    54.18 |    52.63 |  5.27 |  5.27 |  6.34 | +1.07 |
+| IT   |    69.97 |    69.97 |    67.12 |  1.29 |  1.29 |  1.52 | +0.23 |
+| MVST |   385.27 |   385.27 |   386.07 | −0.33 | −0.33 | −0.33 | −0.00 |
+| NCNO |   109.46 |   109.46 |   110.51 | −0.71 | −0.71 | −0.72 | −0.00 |
+| SMPL |    93.68 |    89.94 |    88.46 |  3.83 |  4.48 |  4.78 | +0.95 |
+| WERN |    59.91 |    59.91 |    59.95 | −0.35 | −0.35 | −0.35 | −0.00 |
+
+**MVST'S TEST PASSES.** The operator's falsifier was "with dilution retained it must FALL, not
+rise". It reads −0.33 — back from the erroneous −0.23, unchanged from committed, because its
+denominator RISES 385.27→386.07M. The basis is held.
+**NO NAME CROSSES 2:1 IN EITHER DIRECTION** — EPAM and SMPL were already PASS, IT stays FAIL at
+1.52, the remaining four are negative-reward and structurally unmoved. No re-underwrite trigger.
+**THE PERIOD FIX IS THE BIGGER ERROR ON SMPL:** column B moves it 3.83→4.48 on its own, more than
+the denominator swap's 4.48→4.78. SMPL is the only name column B touches.
+**SMPL'S TWO MOVES MUST BE APPROVED SEPARATELY** — one corrects a mis-dated input, the other
+changes a basis; bundling them would seal a single 3.83→4.78 with no way to attribute it.
+
+**NOT YET WRITTEN.** The seven records still carry column A. Moving them is a decision-path data
+change (it moves the bar test), so it waits on the operator, not on more code.
 
 **PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
 review and exist nowhere else; recording them is the first commit of the work, not its last.
