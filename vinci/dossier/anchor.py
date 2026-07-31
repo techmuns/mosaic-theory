@@ -336,14 +336,33 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
 
 
 def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
-    """The most recent reported point for an explicit tag, by (period_end, filed).
+    """The most recent reported point for an explicit tag — the DISCRETE period, never a cumulative.
 
     For a DURATION concept — the diluted weighted-average share count has no instant context —
     ``latest_instant`` would only reach it through its balance-sheet fallback, so the selection is
-    made explicit here rather than resting on that fallback. The latest period IS the latest 10-Q's
-    weighted average, which is the divisor the anchor wants."""
+    made explicit here rather than resting on that fallback.
+
+    **THE SHORTEST SPAN WINS AT A GIVEN END DATE (2026-07-31).** The first cut sorted by
+    ``(period_end, filed)`` alone, but a 10-Q tags the discrete quarter AND the year-to-date span
+    with the SAME ``end`` and the SAME ``filed`` — so the tie broke arbitrarily and the docstring's
+    promise of "the latest 10-Q's weighted average" was not what came back. MEASURED on the
+    committed fleet: **4 of 11 names got a cumulative period** — SMPL a 272-day nine-month figure
+    **4.16% above** its quarter (93,677,801 vs 89,940,680), FUBO a 181-day span −2.17%, BRBR +1.02%,
+    CNXC +0.35% — and SMPL's committed record carries the basis string "diluted weighted-average
+    (latest 10-Q)" over the nine-month number. A denominator whose stated basis is not what it is
+    is the exact defect class the share-count work exists to close.
+
+    Instant facts (``period_start is None``) have no span to compare and keep the old ordering."""
     pts = points_for_tag(facts, tag)
-    return max(pts, key=lambda p: (p.period_end, p.filed)) if pts else None
+    if not pts:
+        return None
+
+    def span(p: ConceptPoint) -> int:
+        # instants sort as span 0 — they cannot be cumulative, so nothing is preferred over them
+        return (p.period_end - p.period_start).days if p.period_start else 0
+
+    # latest end date first, then the SHORTEST span at that end, then the latest filing
+    return max(pts, key=lambda p: (p.period_end, -span(p), p.filed))
 
 
 def _sum_latest_tags(facts: dict[str, Any], *tags: str) -> float:
