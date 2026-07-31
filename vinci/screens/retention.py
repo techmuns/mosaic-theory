@@ -103,8 +103,19 @@ class StampedInput(BaseModel, frozen=True):
     as_of: date | None = None
     source: str
     note: str | None = None
+    #: WHAT THE NUMBER COVERS, not only when it ends. `as_of` is the window's END — it cannot say
+    #: that a "180-day" relative return actually spanned 296 days over 28 bars, which is exactly
+    #: what OPI's row claimed. Structured, not parsed back out of `note`: two consumers of one
+    #: string is the twin-drift class this repo keeps finding.
+    span_days: int | None = None
+    observations: int | None = None
 
     def model_post_init(self, _ctx: Any) -> None:
+        if (self.span_days is None) != (self.observations is None):
+            raise ValueError(
+                f"{self.source!r}: a window is described by its SPAN and its BAR COUNT together — "
+                "296 days is innocuous at 124 bars and a hole at 28, so one without the other "
+                "cannot say which")
         if self.value is not None and self.as_of is None:
             raise ValueError(
                 f"a present input must carry its own as-of ({self.source!r} has value "

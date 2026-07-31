@@ -409,3 +409,96 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # and the guard that refuses a run when the two diverge anyway
     # matched on the literal, not across the implicit-concatenation boundary the message spans
     assert "drop path is not writing its row" in inspect.getsource(build_universe)
+
+
+# --- the start anchor: a hole in the series silently widened the window --------------------------
+
+
+def _bars(pairs: list[tuple[str, float]]) -> list:
+    from vinci.schemas.market import PriceBar
+    return [PriceBar(internal_id="X", bar_date=dt.date.fromisoformat(d), open=c, high=c, low=c,
+                     close=c, volume=1.0, source="t") for d, c in pairs]
+
+
+G2_REF = dt.date(2026, 7, 29)
+G2_WIN = 180                       # DECLINE_WINDOW_DAYS; start = 2026-01-30
+BENCH = _bars([("2026-01-30", 100.0), ("2026-07-29", 105.0)])
+
+#: OPI's real shape from the 2026-07-29 run: the anchor sits 116d before the window start, on the
+#: far side of an eight-month hole, and the "180-day" comparison actually spanned 296 days.
+OPI = _bars([("2025-10-06", 0.20), ("2026-06-22", 17.00), ("2026-07-29", 17.45)])
+
+
+def test_the_red_opi_is_not_evaluated_where_it_was_a_fail() -> None:
+    """THE RED. `_bar_on_or_before` reached back with no limit, so OPI's start price came from
+    2025-10-06 at $0.20 and the gate computed 17.45/0.20 − 1 = +8,625% over 296 days against a
+    180-day threshold. A longer window means a larger |rel|, which makes the −15% bar EASIER — so
+    the failure mode ADMITS names, and with the legs reversed it puts one in the pool cohort
+    selection draws from.
+
+    NOT_EVALUATED, never FAIL: the name could not be assessed on the window the threshold was
+    calibrated for, and must not look like one that was assessed and rejected."""
+    from vinci.eod.features import relative_return
+    from vinci.screens.screen2 import Screen2Thresholds, gate_g2_idiosyncratic
+
+    f = relative_return(OPI, BENCH, reference_date=G2_REF, lookback_days=G2_WIN)
+    assert f.value is None, f"the unbounded anchor still produced {f.value}"
+    assert "116d before the window start" in (f.note or ""), f.note
+    assert "296d against a 180d threshold" in (f.note or ""), f.note
+
+    class _P:
+        rel_ret_vs_market = f
+
+    class _R:
+        prices = _P()
+
+    result, why = gate_g2_idiosyncratic(_R(), Screen2Thresholds())  # type: ignore[arg-type]
+    assert outcome_from_gate(result) is Outcome.NOT_EVALUATED, (result, why)
+
+
+def test_a_normal_market_gap_at_the_window_start_still_evaluates() -> None:
+    """The control that keeps the bound from refusing ordinary names. 593 of the 596 anchored
+    exactly ON the start; a start landing on a holiday weekend must still resolve."""
+    from vinci.eod.features import MAX_ANCHOR_LAG_DAYS, relative_return
+
+    for back in range(MAX_ANCHOR_LAG_DAYS + 1):
+        a = (dt.date(2026, 1, 30) - dt.timedelta(days=back)).isoformat()
+        name = _bars([(a, 10.0), ("2026-07-29", 6.0)])
+        r = relative_return(name, BENCH, reference_date=G2_REF, lookback_days=G2_WIN)
+        assert r.value is not None, f"{back}d back was refused — inside normal market structure"
+    over = (dt.date(2026, 1, 30) - dt.timedelta(days=MAX_ANCHOR_LAG_DAYS + 1)).isoformat()
+    beyond = _bars([(over, 10.0), ("2026-07-29", 6.0)])
+    assert relative_return(beyond, BENCH, reference_date=G2_REF,
+                           lookback_days=G2_WIN).value is None
+
+
+def test_a_stale_benchmark_anchor_is_refused_on_the_same_rule() -> None:
+    """BOTH SIDES. A hole in the BENCHMARK's series widens the window identically, and the
+    benchmark's own staleness is what made the 2026-07-27 incident invisible."""
+    from vinci.eod.features import relative_return
+
+    holed = _bars([("2025-10-06", 100.0), ("2026-07-29", 105.0)])
+    name = _bars([("2026-01-30", 10.0), ("2026-07-29", 6.0)])
+    r = relative_return(name, holed, reference_date=G2_REF, lookback_days=G2_WIN)
+    assert r.value is None and "benchmark start anchor" in (r.note or ""), r.note
+
+
+def test_the_stamp_says_what_the_number_covers_not_only_when_it_ends() -> None:
+    """`as_of` is the window's END. It could not say that a "180-day" return spanned 296 days over
+    28 bars — which is exactly what OPI's row claimed before the bound. Span AND bar count, both,
+    because 296 days is innocuous at 124 bars and a hole at 28."""
+    from vinci.eod.features import relative_return
+
+    name = _bars([("2026-01-30", 10.0), ("2026-04-15", 8.0), ("2026-07-29", 6.0)])
+    note = relative_return(name, BENCH, reference_date=G2_REF, lookback_days=G2_WIN).note or ""
+    assert "spans 180d over 3 bars" in note, note
+    assert "target 180d" in note, note
+
+
+def test_a_window_described_by_only_one_of_span_or_bars_is_refused() -> None:
+    """One without the other cannot distinguish a long-but-dense window from a holed one."""
+    for kw in ({"span_days": 296}, {"observations": 28}):
+        with pytest.raises(ValidationError, match="SPAN and its BAR COUNT together"):
+            StampedInput(value=-0.18, as_of=REF, source="EOD derived", **kw)  # type: ignore[arg-type]
+    ok = StampedInput(value=-0.18, as_of=REF, source="EOD derived", span_days=296, observations=28)
+    assert (ok.span_days, ok.observations) == (296, 28)
