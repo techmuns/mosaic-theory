@@ -4002,9 +4002,13 @@ is never degraded for an unrun command — and that is also why "UNKNOWN the who
 being an objection; **start-truncation** (short history, halt) is per-name and no action fixes it
 → RECORDED NOT-EVALUATED WITH ITS REASON, NEVER FAIL, which is item 22 applied to the screen: a
 name that could not be assessed must not look like one that was assessed and rejected. BASIS
-MISTRANSLATION, SEVENTH SIGHTING — −15% was struck on a ~70-day window, so a `rel` measured over 7
-days is a different quantity. Measured: a name 30d behind yields 37d/−10.0%, 60d behind yields
-7d/−3.0%, one bar past the start yields 1d/−0.5% — all FAIL a threshold calibrated on 67d/−20.0%.
+MISTRANSLATION AGAIN — −15% was struck on a ~70-day window, so a `rel` measured over 7 days is a
+different quantity. (The operator called this the seventh sighting; the repo carries no enumerated
+tally, so the ordinal is not checkable and is recorded as a characterisation, not a count.)
+DEMONSTRATED ON A SYNTHETIC FIXTURE, not on the corpus — no committed name is currently behind
+its benchmark, so this shape has no live instance to measure: a name 30d behind yields a 37d
+window at −10.0%, 60d behind yields 7d/−3.0%, one bar past the start yields 1d/−0.5%, against
+67d/−20.0% for a current name. All three FAIL a threshold calibrated on the full window.
 
 **S2. G3's INPUT IS A SELECTION DISTORTION, not a labelling defect** (operator re-scope). In
 `screens/assemble.py`, `cur_price = _close_on_or_before(bars, reference_date)` (days old) and
