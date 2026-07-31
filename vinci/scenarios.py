@@ -1005,10 +1005,19 @@ def refresh_record(
                 entries.append(RefreshEntry(field=f"facts.{k}", old=str(old.value),
                                             new=str(new_value), date=on_date, source=source))
             if restated is not None:
-                # its own entry: a number that keeps its value while changing meaning is exactly
-                # the move a reader must be able to see in the log
-                entries.append(RefreshEntry(field=f"facts.{k}.basis", old=old.basis,
-                                            new=restated.basis, date=on_date, source=source))
+                # ONE ENTRY PER FIELD THAT ACTUALLY MOVED (review finding). The first cut logged a
+                # `.basis` entry whenever EITHER basis or source changed, so a source-only
+                # restatement wrote an entry whose `old` and `new` were the SAME string — a log
+                # claiming a change that did not happen, in the record whose whole job is to say
+                # what changed. `test_refresh_moves_machine_inputs_and_logs_provenance` already
+                # asserts `e.old != e.new` on refresh entries; this violated the file's own rule.
+                for field, was, now in (("basis", old.basis, restated.basis),
+                                        ("source", old.source, restated.source)):
+                    if was != now:
+                        # a number that keeps its value while changing MEANING is exactly the move
+                        # a value-diff cannot show, so it gets its own line either way
+                        entries.append(RefreshEntry(field=f"facts.{k}.{field}", old=was, new=now,
+                                                    date=on_date, source=source))
                 new_facts[k] = old.model_copy(update={
                     "value": new_value, "basis": restated.basis, "source": restated.source})
             else:

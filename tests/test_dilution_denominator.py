@@ -395,7 +395,28 @@ def test_a_refresh_may_restate_the_basis_and_logs_it_separately() -> None:
     assert out.facts["diluted_shares"].basis == "diluted shares OUTSTANDING"
     assert out.facts["diluted_shares"].source == "EDGAR dei + us-gaap weighted averages"
     added = {e.field for e in out.refresh_log[len(rec.refresh_log):]}
-    assert added == {"facts.diluted_shares", "facts.diluted_shares.basis"}, added
+    assert added == {"facts.diluted_shares", "facts.diluted_shares.basis",
+                     "facts.diluted_shares.source"}, added
+    for e in out.refresh_log[len(rec.refresh_log):]:
+        assert e.old != e.new, f"{e.field}: a log entry claiming a change that did not happen"
+
+
+def test_a_source_only_restatement_does_not_log_a_phantom_basis_change() -> None:
+    """REVIEW FINDING. The first cut logged a `.basis` entry whenever EITHER basis or source moved,
+    so a source-only restatement wrote `old == new` — a log claiming a change that did not happen,
+    in the record whose whole job is to say what changed. The suite's own
+    `test_refresh_moves_machine_inputs_and_logs_provenance` already asserts `e.old != e.new`."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    src_only = sc.Fact(value=old.value, unit=old.unit, basis=old.basis,
+                       source=old.source + " (re-cited)")
+    out = sc.refresh_record(rec, facts={"diluted_shares": src_only}, source="s",
+                            on_date="2026-07-31")
+    added = out.refresh_log[len(rec.refresh_log):]
+    assert [e.field for e in added] == ["facts.diluted_shares.source"], [e.field for e in added]
+    assert all(e.old != e.new for e in added)
 
 
 def test_a_basis_restatement_alone_is_recorded_even_when_the_value_holds() -> None:
