@@ -573,6 +573,35 @@ the wrong names and let the real one through.
 Same shape as *`financial_summary.as_of` is an Estimates stamp, not a Financials one* — the name
 predicted the wrong workbook, and only the source_ref settled it.
 
+## The review pass reads the COMMITTED ARTIFACT, not the command that produced it
+
+*(operator, 2026-07-31 — the diagnosis of why four passes missed the same defect)*
+
+> **All four read the input.**
+
+Seven shell-escape sequences sat in STATE.md across four PRs. Every one was CORRECT in the heredoc
+that wrote it, so a review reading the command could not see them — the defect existed only in the
+output nobody opened. It was found by accident, while checking whether an unrelated correction had
+landed.
+
+Generalises past quoting: a rendered page, a committed JSON, a written record. **Read the thing
+that shipped.** The four review catches of that session were all of this shape — a live SEC client
+in the offline gate, three pins that had never gated in CI, a statistic asserted from memory, and
+these escapes: in each case the verification machinery, not the code being verified.
+
+## Never `git stash` in this workflow
+
+*(operator, 2026-07-31 — unconditional, after the conditional form failed twice)*
+
+Use `git checkout -- <file>` to revert a mutation. `git stash` + `pop` takes whatever is on TOP of
+the stash, not what you just put there: with a clean tree the push is a no-op and the pop restores
+an unrelated stash from another session — which happened mid-review, leaving ten dossier files
+conflicted on a docs branch. Recovered with a targeted checkout, nothing lost.
+
+Stated without exceptions on purpose. **A rule that requires judging the case correctly every time
+is not a rule** — the earlier conditional version ("unsafe when the tree may be clean") is exactly
+the judgement that failed.
+
 ## A fix for a class is where that class recurs
 
 *(operator, 2026-07-31 — third instance, recorded as a pattern rather than a third incident)*
