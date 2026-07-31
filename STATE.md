@@ -4062,8 +4062,31 @@ Recorded ahead of code, per the durable-write-first rule.
 - **THE GUARDRAIL THAT BINDS HERE.** Retention is READ-ONLY evidence: no threshold, weight or gate
   may ever be set from it (validate forward, never tune on outcomes). The rows exist to FALSIFY the
   screen, never to fit it — a fitted gate is the replicable signal this fund is not.
+- **THE READ-ONLY RULE, IN ITS OPERABLE FORM** (operator 2026-07-31, replacing "no threshold may
+  ever be set from it" — right in intent, unenforceable in fact, since any redesign is informed by
+  something):
+  > **Retention may FALSIFY a design. Any parameter chosen after looking at it must be validated
+  > FORWARD, on runs retention had not recorded when the choice was made.**
+  Permits *"the screen's rejections have positive alpha, so the design is wrong."* Forbids *"tune
+  the threshold to what would have worked."* And it is CHECKABLE, which the first form was not: a
+  parameter change carries the date it was made and the runs it was tested on.
+- **BOTH GRAINS STAMP THE CONFIGURATION, not only the inputs** — gate thresholds, benchmark
+  identity and lookback on candidate rows; the band rule and its cap threshold on universe rows.
+  Without it, comparing two runs compares two different screens and nothing says so: if G2's ceiling
+  moves off −15%, every earlier row silently means something else. **The record must say what TEST
+  was applied, not only what went into it** — the stamp rule (a stamp belongs to what it names)
+  applied to the screen's own parameters.
+- **BOTH GRAINS MUST BE JOINABLE TO OUTCOMES** — ticker + run date against the price store, for THIN
+  rows as much as full ones. Calibration only pays if a discarded name's later return is
+  recoverable, and the universe rows are where it matters most: that is the filter nothing has ever
+  measured. Verify the join on the first real run rather than assuming it.
 - **BUILD ORDER INSIDE THE PIECE:** writer + schema + round-trip pin → wire the screen to emit BOTH
-  grains → one real run → then the hold lifts only after piece three.
+  grains → one real run, on which the outcome-join is verified → then the hold lifts only after
+  piece three.
+- **SCALE OF WHAT WAS UNMEASURED:** 1,482 of 1,800 names are filtered at the universe stage against
+  318 reaching the screen. **The biggest filter in the funnel discards 82% of the universe and had
+  no evidence trail** — which is why `universe.py` (S3) was called the deepest of the five, and why
+  candidate-only retention would have left it unmeasurable by construction.
 
 **S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the
 shape). Immutable, timestamped, append-only; every name with its gate INPUTS and PER-GATE OUTCOME,
