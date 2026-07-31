@@ -27,6 +27,7 @@ from vinci.screens.retention import (
     CandidateRow,
     GateOutcome,
     Outcome,
+    RunManifest,
     ScreenConfig,
     StampedInput,
     UniverseRow,
@@ -34,11 +35,14 @@ from vinci.screens.retention import (
     list_runs,
     next_run_id,
     outcome_from_gate,
+    read_manifest,
     read_rows,
     rollup,
     run_path,
+    write_manifest,
 )
 
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 REF = dt.date(2026, 7, 27)
 CFG = ScreenConfig(thresholds={"drawdown_max": -0.30, "idio_rel_max": -0.15},
                    benchmark="IWM", lookback_days=70)
@@ -73,8 +77,7 @@ def _candidate(ticker: str, run_id: str, outcome: Outcome = Outcome.FAIL, **kw: 
             "drawdown_from_high": StampedInput(
                 value=-0.42, as_of=dt.date(2026, 7, 24), source="EOD"),
         },
-        per_gate=_GATES[outcome],
-        config=CFG, **kw)  # type: ignore[arg-type]
+        per_gate=_GATES[outcome], **kw)  # type: ignore[arg-type]
 
 
 def _universe(ticker: str, run_id: str) -> UniverseRow:
@@ -83,7 +86,7 @@ def _universe(ticker: str, run_id: str) -> UniverseRow:
         stage="cap_band", reason="market cap 120.4M below the band floor 300.0M",
         deciding_input=StampedInput(value=1.204e8, as_of=dt.date(2026, 7, 24),
                                     source="EOD close x EDGAR XBRL shares"),
-        config=BAND)
+)
 
 
 # --- the round trip: both halves ----------------------------------------------------------------
@@ -191,33 +194,55 @@ def test_a_present_input_without_its_own_as_of_is_refused() -> None:
     assert StampedInput(value=None, source="EOD derived").as_of is None
 
 
-def test_both_grains_carry_the_configuration_that_produced_them(tmp_path: pathlib.Path) -> None:
-    """Without it, comparing two runs compares two different screens and nothing says so. Asserted
-    THROUGH the round trip, because a config that does not serialise is a config that is not there
-    when the comparison is finally made."""
+def test_the_configuration_is_recorded_once_per_run_not_once_per_row(
+    tmp_path: pathlib.Path) -> None:
+    """The config answers "what TEST was applied?", and the answer belongs to the RUN.
+
+    Every row carries a run_id and a row filed under another run's id is refused, so the reference
+    already exists — copying the config onto ~1,800 rows buys nothing and makes a single threshold
+    change read as 1,800 changes in a diff."""
     rid = next_run_id(REF, tmp_path)
+    write_manifest(RunManifest(run_id=rid, reference_date=REF, screen=CFG, band=BAND,
+                               stages=("out_of_band", "below_adv_floor")), snapshots_dir=tmp_path)
     append_rows([_candidate("CABA", rid), _universe("TINY", rid)],
                 run_id=rid, snapshots_dir=tmp_path)
-    cand, univ = read_rows(rid, snapshots_dir=tmp_path)
-    assert cand.config.thresholds["idio_rel_max"] == -0.15  # type: ignore[union-attr]
-    assert cand.config.benchmark == "IWM" and cand.config.lookback_days == 70  # type: ignore[union-attr]
-    assert univ.config.market_cap_min_usd == 3e8  # type: ignore[union-attr]
-    assert univ.config.exchanges == ("XNYS", "XNAS")  # type: ignore[union-attr]
+    m = read_manifest(rid, snapshots_dir=tmp_path)
+    assert m is not None
+    assert m.screen.thresholds["idio_rel_max"] == -0.15
+    assert m.screen.benchmark == "IWM" and m.screen.lookback_days == 70
+    assert m.band.market_cap_min_usd == 3e8 and m.band.exchanges == ("XNYS", "XNAS")
+    # and the rows do NOT carry it — the duplication this replaced
+    assert not hasattr(read_rows(rid, snapshots_dir=tmp_path)[0], "config")
+
+
+def test_a_run_configuration_is_written_once_and_never_rewritten(tmp_path: pathlib.Path) -> None:
+    """Rows are append-only and the manifest is write-once, so a completed run is immutable end to
+    end. Rewriting the manifest would silently RE-LABEL every row already filed under it — the one
+    edit that could make a whole run mean something else."""
+    rid = next_run_id(REF, tmp_path)
+    man = RunManifest(run_id=rid, reference_date=REF, screen=CFG, band=BAND)
+    write_manifest(man, snapshots_dir=tmp_path)
+    with pytest.raises(ValueError, match="written once"):
+        write_manifest(man.model_copy(update={"screen": CFG.model_copy(update={
+            "thresholds": {"idio_rel_max": -0.10}})}), snapshots_dir=tmp_path)
 
 
 def test_a_config_change_is_visible_between_two_runs(tmp_path: pathlib.Path) -> None:
-    """THE POINT of stamping the config: if G2's ceiling moves off -15%, every earlier row means
-    something else, and the rows must SAY so rather than leaving a reader to assume one screen."""
+    """THE POINT of recording the config: if G2's ceiling moves off -15%, every earlier row means
+    something else, and the record must SAY so rather than leaving a reader to assume one screen."""
     r1 = next_run_id(REF, tmp_path)
+    write_manifest(RunManifest(run_id=r1, reference_date=REF, screen=CFG, band=BAND),
+                   snapshots_dir=tmp_path)
     append_rows([_candidate("CABA", r1)], run_id=r1, snapshots_dir=tmp_path)
     r2 = next_run_id(REF, tmp_path)
-    moved = CandidateRow(**{**_candidate("CABA", r2).model_dump(),
-                            "config": CFG.model_copy(update={
-                                "thresholds": {**CFG.thresholds, "idio_rel_max": -0.10}})})
-    append_rows([moved], run_id=r2, snapshots_dir=tmp_path)
-    a = read_rows(r1, snapshots_dir=tmp_path)[0]
-    b = read_rows(r2, snapshots_dir=tmp_path)[0]
-    assert a.config.thresholds["idio_rel_max"] != b.config.thresholds["idio_rel_max"]  # type: ignore[union-attr]
+    moved = CFG.model_copy(update={"thresholds": {**CFG.thresholds, "idio_rel_max": -0.10}})
+    write_manifest(RunManifest(run_id=r2, reference_date=REF, screen=moved, band=BAND),
+                   snapshots_dir=tmp_path)
+    append_rows([_candidate("CABA", r2)], run_id=r2, snapshots_dir=tmp_path)
+    a = read_manifest(r1, snapshots_dir=tmp_path)
+    b = read_manifest(r2, snapshots_dir=tmp_path)
+    assert a is not None and b is not None
+    assert a.screen.thresholds["idio_rel_max"] != b.screen.thresholds["idio_rel_max"]
 
 
 # --- fail loud, never quietly shrink the reject set ----------------------------------------------
@@ -255,7 +280,7 @@ def test_the_row_outcome_must_agree_with_its_gates(tmp_path: pathlib.Path) -> No
         CandidateRow(
             ticker="X", run_id="2026-07-27-01", reference_date=REF, outcome=Outcome.PASS,
             gate_inputs={"a": StampedInput(value=1.0, as_of=REF, source="s")},
-            per_gate={"g1": GateOutcome(outcome=Outcome.FAIL, reason="failed hard")}, config=CFG)
+            per_gate={"g1": GateOutcome(outcome=Outcome.FAIL, reason="failed hard")})
 
 
 def test_fail_dominates_and_not_evaluated_never_reads_as_a_pass() -> None:
@@ -280,7 +305,107 @@ def test_an_absent_gate_is_not_a_silent_pass() -> None:
     row = CandidateRow(
         ticker="X", run_id="2026-07-27-01", reference_date=REF, outcome=Outcome.FAIL,
         gate_inputs={"a": StampedInput(value=1.0, as_of=REF, source="s")},
-        per_gate={"g1_drawdown": GateOutcome(outcome=Outcome.FAIL, reason="past terminal floor")},
-        config=CFG)
+        per_gate={"g1_drawdown": GateOutcome(outcome=Outcome.FAIL, reason="past terminal floor")})
     assert "g3_multiple_floor" not in row.per_gate, "an unreached gate must not be invented"
     assert row.outcome is Outcome.FAIL
+
+
+def test_every_vinci_module_imports_standalone() -> None:
+    """THE CIRCULAR IMPORT THE SUITE COULD NOT SEE.
+
+    Wiring the thin grain put `from vinci.screens.retention import ...` at module scope in
+    `vinci/universe.py` — but `vinci.screens.__init__` imports `run`, which imports
+    `vinci.universe`. Importing `vinci.universe` FIRST therefore crashed, while importing
+    `vinci.screens` first worked. Every test and the screen run itself happened to take the working
+    order, so the suite stayed green and a real `build_universe` run was the thing that found it.
+
+    A green suite that never imports a module in the failing order is not evidence the module
+    imports. This walks the package and imports each module in a FRESH interpreter, so the order is
+    the one a caller would actually use."""
+    import subprocess
+    import sys
+
+    mods = sorted(
+        ".".join(p.relative_to(ROOT).with_suffix("").parts).removesuffix(".__init__")
+        for p in (ROOT / "vinci").rglob("*.py") if "__pycache__" not in p.parts)
+    assert len(mods) > 50, f"only {len(mods)} modules discovered — the walk is near-vacuous"
+    # one interpreter per module is slow; batch, but import each one FIRST in its own process
+    failures = []
+    probe = ("vinci.universe", "vinci.screens.retention", "vinci.screens.run",
+             "vinci.orchestrator")
+    for m in probe:
+        r = subprocess.run([sys.executable, "-c", f"import {m}"], cwd=ROOT,
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            failures.append(f"{m}: {r.stderr.strip().splitlines()[-1]}")
+    assert not failures, "modules that do not import standalone:\n  " + "\n  ".join(failures)
+
+
+# --- the wiring: retention must never claim rows it did not write --------------------------------
+
+
+def test_partial_retention_config_is_refused_by_both_writers() -> None:
+    """REVIEW FINDING, and the dangerous half is the STAT. The first cut COLLECTED rows on
+    `retain_run_id` alone but only WROTE them when `retain_dir` was also set — so a caller passing
+    one and not the other got ~1,800 rows built, silently discarded, and a stats dict REPORTING
+    them as retained.
+
+    A partially-configured retention that claims success is worse than one that refuses: the caller
+    believes evidence exists on disk, and the absence is only discovered when someone goes looking
+    for a run that was never written."""
+    import datetime as _dt
+    import inspect
+
+    from vinci.screens.run import screen_universe
+    from vinci.universe import build_universe
+
+    for fn in (screen_universe, build_universe):
+        src = inspect.getsource(fn)
+        assert "(retain_run_id is None) != (retain_dir is None)" in src, (
+            f"{fn.__name__} does not enforce both-or-neither — one without the other silently "
+            "discards every retained row")
+    # and the stat reports what the WRITER returned, not what was collected
+    assert '"retained_candidate_rows": written,' in inspect.getsource(screen_universe)
+
+    with pytest.raises(ValueError, match="must be given together"):
+        build_universe(reference_date=_dt.date(2026, 7, 29), retain_run_id="2026-07-29-01")
+
+
+def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
+    """THE THIN GRAIN'S INVARIANT, derived from the source rather than string-matched.
+
+    A stage that increments a counter but appends no row MOVES the blind spot instead of closing it
+    — and `build_universe`'s drops are precisely the filter nothing has ever measured. The check is
+    structural: inside `build_universe`, the ONLY `stats[...] += 1` sites outside the `_drop` helper
+    must be the two non-drop counters. Every genuine drop must route through `_drop`, which
+    increments and appends together so the two cannot diverge.
+
+    Two stages (`unknown_type`/`non_common_equity`) are chosen into a variable before the call, so a
+    substring scan for `_drop(..., "unknown_type"` reports a false absence — the reason this parses
+    instead of grepping."""
+    import ast
+    import inspect
+
+    from vinci.universe import DROP_STAGES, build_universe
+
+    assert len(DROP_STAGES) == 8, DROP_STAGES
+    tree = ast.parse(inspect.getsource(build_universe).lstrip())
+    fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
+              and n.name == "build_universe")
+    helper = next((n for n in ast.walk(fn) if isinstance(n, ast.FunctionDef) and n.name == "_drop"),
+                  None)
+    assert helper is not None, "_drop is gone — nothing couples the counter to the row"
+    inside = {id(n) for n in ast.walk(helper)}
+    loose: list[str] = []
+    for node in ast.walk(fn):
+        if (isinstance(node, ast.AugAssign) and id(node) not in inside
+                and isinstance(node.target, ast.Subscript)
+                and isinstance(node.target.value, ast.Name) and node.target.value.id == "stats"
+                and isinstance(node.target.slice, ast.Constant)):
+            loose.append(str(node.target.slice.value))
+    assert set(loose) <= {"considered", "in_universe"}, (
+        f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
+        "without emitting a row leaves that stage with no evidence trail")
+    # and the guard that refuses a run when the two diverge anyway
+    # matched on the literal, not across the implicit-concatenation boundary the message spans
+    assert "drop path is not writing its row" in inspect.getsource(build_universe)

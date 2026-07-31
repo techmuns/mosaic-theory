@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 from collections import Counter, defaultdict
 from datetime import date, timedelta
+from pathlib import Path
 
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
@@ -84,10 +85,31 @@ def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
 BUILD_UNIVERSE_TABLES: tuple[str, ...] = ("issuers", "securities", "universe_snapshot")
 
 
+#: EVERY drop this builder can make, in funnel order. Enumerated rather than described, because a
+#: stage missing from the thin grain is a stage with no evidence trail — which just MOVES the blind
+#: spot instead of closing it. Each is emitted with the one input that decided it.
+DROP_STAGES: tuple[str, ...] = (
+    "no_price", "no_shares", "out_of_band", "below_adv_floor",
+    "unknown_sic", "non_operating", "unknown_type", "non_common_equity",
+)
+
+
 def build_universe(
-    config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None
+    config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None,
+    retain_run_id: str | None = None, retain_dir: Path | None = None,
 ) -> dict[str, int]:
-    """Build + snapshot the cap-band universe as of ``reference_date``. Returns a stats summary."""
+    """Build + snapshot the cap-band universe as of ``reference_date``. Returns a stats summary.
+
+    RETENTION (thin grain). Every name this builder DROPS gets a row naming the stage, the reason,
+    and the single input that decided it. This is the stage nothing has ever measured: a name
+    filtered here never reaches the screen, so it has no gate outcomes and would otherwise leave no
+    trace at all — and `universe.py`'s market-cap stamp (STATE S3) is exactly a defect at this
+    stage. Admitted names are NOT retained here; the screen records them at the candidate grain.
+    """
+    if (retain_run_id is None) != (retain_dir is None):
+        raise ValueError(
+            "retain_run_id and retain_dir must be given together — one without the other builds "
+            "retention rows and discards them while reporting them as retained")
     cfg = config or get_config()
     cfg.ensure_dirs()
     resolver = EntityResolver.from_config(cfg)
@@ -100,7 +122,22 @@ def build_universe(
     periods = share_periods or recent_share_periods(reference_date)
     shares = edgar.shares_outstanding_by_cik(periods)
 
+    # IMPORTED HERE, NOT AT MODULE SCOPE. `vinci.screens.__init__` imports `run`, which imports
+    # `vinci.universe` — so a module-scope import of anything under `vinci.screens` makes importing
+    # `vinci.universe` FIRST a circular-import crash. It only fires on that import order, which is
+    # why the suite stayed green and a real `build_universe` run did not.
+    from vinci.screens.retention import Outcome, StampedInput, UniverseRow, append_rows
+
     stats: Counter[str] = Counter()
+    dropped: list[UniverseRow] = []
+
+    def _drop(ticker: str, stage: str, reason: str, inp: StampedInput) -> None:
+        stats[stage] += 1
+        if retain_run_id is not None:
+            dropped.append(UniverseRow(
+                ticker=ticker, run_id=retain_run_id, reference_date=reference_date,
+                outcome=Outcome.FAIL, stage=stage, reason=reason, deciding_input=inp))
+
     with Store(cfg.db_path) as store:
         store.clear_universe()  # FULL replace — a rebuild is a clean snapshot, not an accretion
         # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
@@ -109,18 +146,27 @@ def build_universe(
             close = closes.get(ident.eod_symbol)
             sh = shares.get(ident.cik)
             if close is None:
-                stats["no_price"] += 1
+                _drop(ident.eod_symbol, "no_price", "no latest close in the grouped-daily pull",
+                      StampedInput(value=None, source="Polygon grouped-daily"))
                 continue
             if sh is None:
-                stats["no_shares"] += 1
+                _drop(ident.eod_symbol, "no_shares", "no EDGAR XBRL share count for the CIK",
+                      StampedInput(value=None, source="EDGAR shares_outstanding_by_cik"))
                 continue
             market_cap = close * sh
             if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
-                stats["out_of_band"] += 1
+                _drop(ident.eod_symbol, "out_of_band",
+                      f"market cap {market_cap / 1e6:,.1f}M outside "
+                      f"[{band.market_cap_min_usd / 1e6:,.0f}M, "
+                      f"{band.market_cap_max_usd / 1e6:,.0f}M]",
+                      StampedInput(value=market_cap, as_of=reference_date,
+                                   source="Polygon close x EDGAR XBRL shares"))
                 continue
-            if adv.get(ident.eod_symbol, 0.0) < band.adv_floor_usd:
-                stats["below_adv_floor"] += 1  # tradeability gate
-                continue
+            if (a := adv.get(ident.eod_symbol, 0.0)) < band.adv_floor_usd:
+                _drop(ident.eod_symbol, "below_adv_floor",
+                      f"ADV ${a / 1e6:,.2f}M below the ${band.adv_floor_usd / 1e6:,.1f}M floor",
+                      StampedInput(value=a, as_of=reference_date, source="Polygon ADV"))
+                continue  # tradeability gate
             # Operating-companies-only gate — TWO independent structural axes, both fail-CLOSED on a
             # missing value (exclude what we cannot confirm; never silently admit). SIC is fetched
             # only for names that already clear cap+ADV — the would-be-admitted set.
@@ -130,10 +176,15 @@ def build_universe(
             # the exclude set — CION, OTF). Then drop the confirmed fund/shell codes.
             sic, sic_desc = resolver.sic_for(ident.cik)
             if sic is None:
-                stats["unknown_sic"] += 1  # cannot confirm operating-co → excluded, not admitted
+                # cannot confirm operating-co → excluded, not admitted
+                _drop(ident.eod_symbol, "unknown_sic", "no SIC on the EDGAR issuer record",
+                      StampedInput(value=None, source="EDGAR submissions SIC"))
                 continue
             if sic in band.excluded_sic_codes:
-                stats["non_operating"] += 1  # ETF/ETP/fund/blank-check — a basket, not a business
+                # ETF/ETP/fund/blank-check — a basket, not a business
+                _drop(ident.eod_symbol, "non_operating", f"SIC {sic} ({sic_desc or '?'}) excluded",
+                      StampedInput(value=str(sic), as_of=reference_date,
+                                   source="EDGAR submissions SIC"))
                 continue
             # Axis 2 — security INSTRUMENT type (Polygon). An ALLOWLIST of operating-company common
             # equity, fail-CLOSED, with the two exclusion reasons counted separately:
@@ -144,7 +195,11 @@ def build_universe(
             #     (these carry stale bars the 90-day price gate still admitted); flagged, excluded.
             ptype = sec_types.get(ident.eod_symbol)
             if not admit_security_type(ptype, band.allowed_security_types):
-                stats["unknown_type" if ptype is None else "non_common_equity"] += 1
+                stage = "unknown_type" if ptype is None else "non_common_equity"
+                _drop(ident.eod_symbol, stage,
+                      f"security type {ptype or 'MISSING'} not in the operating-equity allowlist",
+                      StampedInput(value=(ptype if ptype else None), as_of=reference_date,
+                                   source="Polygon security reference"))
                 continue
             stats["in_universe"] += 1
             # Persist the SIC we ALREADY fetched (above, for the Axis-1 gate) onto the identity so
@@ -175,4 +230,15 @@ def build_universe(
         **stats_out,
     }
     (cfg.snapshots_dir / "universe_stats.json").write_text(json.dumps(payload, indent=2) + "\n")
+    if retain_run_id is not None and retain_dir is not None:
+        # THE COUNT MUST MATCH THE ROWS, or the thin grain is quietly incomplete. Every stage that
+        # increments a stat also appends a row, so a divergence means a drop path was added without
+        # its evidence — the exact way a blind spot re-opens after being closed.
+        expected = sum(stats_out.get(k, 0) for k in DROP_STAGES)
+        if len(dropped) != expected:
+            raise ValueError(
+                f"retention emitted {len(dropped)} thin rows against {expected} counted drops — a "
+                "drop path is not writing its row")
+        stats_out["retained_universe_rows"] = append_rows(
+            dropped, run_id=retain_run_id, snapshots_dir=retain_dir)
     return stats_out
