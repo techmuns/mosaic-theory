@@ -9,12 +9,22 @@ cheap-gates-gate-the-expensive-ones discipline made operational.
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
+from pathlib import Path
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult
 from vinci.screens.assemble import build_price_record, enrich_with_fundamentals
+from vinci.screens.retention import (
+    CandidateRow,
+    GateOutcome,
+    Outcome,
+    StampedInput,
+    append_rows,
+    outcome_from_gate,
+    rollup,
+)
 from vinci.screens.screen2 import (
     Screen2Thresholds,
     evaluate_screen2,
@@ -36,8 +46,19 @@ def screen_universe(
     benchmark: str = "IWM",
     thresholds: Screen2Thresholds | None = None,
     progress: ProgressFn | None = None,
+    retain_run_id: str | None = None,
+    retain_dir: Path | None = None,
 ) -> tuple[list[CandidateRecord], dict[str, int]]:
-    """Refresh prices, lazily screen the universe, persist candidates; return them + stats."""
+    """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
+
+    RETENTION (``retain_run_id`` + ``retain_dir``, both or neither). Every name the screen TOUCHES
+    gets a candidate row — all ~1,800, not the ~318 that survive. The gates ran on them, so the
+    record says what the gates saw; a name dropped at G1 simply carries one gate rather than five.
+
+    The reject set is the population that makes the gates falsifiable. Retaining survivors only can
+    confirm the screen and never contradict it, and the 2026-07-27 benchmark bound was recoverable
+    only because the survivors' values happened to persist — luck, not method.
+    """
     th = thresholds or Screen2Thresholds()
     # Screen the cap-band universe membership (not every security ever stored). Fall back to all
     # non-benchmark securities when no universe snapshot exists yet (e.g. a small test seed).
@@ -59,6 +80,16 @@ def screen_universe(
     candidates: list[CandidateRecord] = []
     g1_survivors = 0
     reporter = ProgressReporter("screen", len(universe), emit=progress, step=200)
+    retained: list[CandidateRow] = []
+
+    def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome]) -> None:
+        if retain_run_id is None:
+            return
+        retained.append(CandidateRow(
+            ticker=sec_ticker, run_id=retain_run_id, reference_date=reference_date,
+            outcome=rollup(gates), gate_inputs=_gate_inputs(rec), per_gate=gates,
+            not_evaluated_reason=_first_unrun(gates)))
+
     for i, s in enumerate(universe, start=1):
         reporter.tick(i, suffix=f"{g1_survivors} enriched")
         bars = store.get_price_history(s.internal_id)
@@ -67,9 +98,15 @@ def screen_universe(
             reference_date=reference_date, staleness_days=staleness_days,
         )
         # cheap price gates first — reject without any EDGAR call
-        if gate_g1_drawdown(rec, th)[0] is not GateResult.PASS:
+        g1, g1_why = gate_g1_drawdown(rec, th)
+        gates = {"g1_drawdown": GateOutcome(outcome=outcome_from_gate(g1), reason=g1_why)}
+        if g1 is not GateResult.PASS:
+            _keep(s.ticker, rec, gates)
             continue
-        if gate_g2_idiosyncratic(rec, th)[0] is GateResult.FAIL:
+        g2, g2_why = gate_g2_idiosyncratic(rec, th)
+        gates["g2_idiosyncratic"] = GateOutcome(outcome=outcome_from_gate(g2), reason=g2_why)
+        if g2 is GateResult.FAIL:
+            _keep(s.ticker, rec, gates)
             continue
         g1_survivors += 1
         full = enrich_with_fundamentals(
@@ -79,9 +116,45 @@ def screen_universe(
         if cand is not None:
             store.save_candidate(cand)
             candidates.append(cand)
+        # G3 + distress ran inside evaluate_screen2; its verdict is the row's third gate
+        gates["g3_and_distress"] = GateOutcome(
+            outcome=(Outcome.PASS if cand is not None else Outcome.FAIL),
+            reason=("admitted to the candidate set" if cand is not None
+                    else "rejected by the multiple floor or a distress signal"))
+        _keep(s.ticker, full, gates)
+
+    if retain_run_id is not None and retain_dir is not None:
+        append_rows(retained, run_id=retain_run_id, snapshots_dir=retain_dir)
 
     return candidates, {
         "universe": len(universe),
         "g1_g2_survivors": g1_survivors,
         "candidates": len(candidates),
+        "retained_candidate_rows": len(retained),
     }
+
+
+def _gate_inputs(rec: object) -> dict[str, StampedInput]:
+    """The gate inputs with THEIR OWN stamps — never the run's.
+
+    A gate input claiming the reference date while its data stopped days earlier is exactly what
+    made the benchmark incident invisible, so the field's own ``as_of`` and ``note`` travel with it.
+    """
+    prices = getattr(rec, "prices", None)
+    out: dict[str, StampedInput] = {}
+    for name in ("drawdown_from_high", "rel_ret_vs_market", "last"):
+        f = getattr(prices, name, None)
+        if f is None:
+            continue
+        out[name] = StampedInput(
+            value=f.value, as_of=f.as_of if f.value is not None else None,
+            source=f.source or "EOD", note=f.note)
+    return out
+
+
+def _first_unrun(gates: dict[str, GateOutcome]) -> str | None:
+    """The reason a row reads NOT_EVALUATED — the first gate that could not be assessed."""
+    for g, o in gates.items():
+        if o.outcome is Outcome.NOT_EVALUATED:
+            return f"{g}: {o.reason}"
+    return None

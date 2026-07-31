@@ -143,6 +143,28 @@ class BandConfig(BaseModel, frozen=True):
     exchanges: tuple[str, ...]
 
 
+class RunManifest(BaseModel, frozen=True):
+    """The configuration a run was executed under — written ONCE, not copied onto 1,800 rows.
+
+    Every row carries the ``run_id`` and a row filed under another run's id is refused, so the
+    reference already exists; duplicating the config per row buys nothing and makes a config change
+    look like 1,800 changes in a diff.
+
+    What it must answer is unchanged: **what TEST was applied?** If G2's ceiling moves off −15%,
+    every row of an earlier run means something else, and the manifest is what says so.
+    """
+
+    run_id: str
+    reference_date: date
+    screen: ScreenConfig
+    band: BandConfig
+    stages: tuple[str, ...] = ()   # the drop stages this run could emit, in funnel order
+
+    def model_post_init(self, _ctx: Any) -> None:
+        if not _RUN_ID.match(self.run_id):
+            raise ValueError(f"run_id {self.run_id!r} is not <YYYY-MM-DD>-<NN>")
+
+
 class _Row(BaseModel, frozen=True):
     ticker: str
     run_id: str
@@ -190,7 +212,6 @@ class CandidateRow(_Row, frozen=True):
     grain: Literal["candidate"] = "candidate"
     gate_inputs: dict[str, StampedInput]
     per_gate: dict[str, GateOutcome]
-    config: ScreenConfig
 
     def model_post_init(self, _ctx: Any) -> None:
         """THE AGGREGATE MUST AGREE WITH ITS DETAIL (review finding).
@@ -225,7 +246,6 @@ class UniverseRow(_Row, frozen=True):
     stage: str
     reason: str
     deciding_input: StampedInput
-    config: BandConfig
 
 
 Row = Annotated[CandidateRow | UniverseRow, Field(discriminator="grain")]
@@ -254,6 +274,36 @@ def run_path(run_id: str, snapshots_dir: Path) -> Path:
     if not _RUN_ID.match(run_id):
         raise ValueError(f"run_id {run_id!r} is not <YYYY-MM-DD>-<NN>")
     return retention_dir(snapshots_dir) / f"{run_id}.jsonl"
+
+
+def manifest_path(run_id: str, snapshots_dir: Path) -> Path:
+    if not _RUN_ID.match(run_id):
+        raise ValueError(f"run_id {run_id!r} is not <YYYY-MM-DD>-<NN>")
+    return retention_dir(snapshots_dir) / f"{run_id}.manifest.json"
+
+
+def write_manifest(manifest: RunManifest, *, snapshots_dir: Path) -> Path:
+    """Write a run's manifest ONCE. Refuses to overwrite — a run's configuration is not editable.
+
+    The rows are append-only and the manifest is write-once; together they mean a completed run is
+    immutable end to end. Rewriting the manifest would silently re-label every row already filed
+    under it, which is the one edit that could make a whole run mean something else.
+    """
+    path = manifest_path(manifest.run_id, snapshots_dir)
+    if path.exists():
+        raise ValueError(
+            f"{path.name} already exists — a run's configuration is written once. Rewriting it "
+            "would re-label every row already filed under this run id")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(manifest.model_dump_json(indent=1) + "\n", encoding="utf-8")
+    return path
+
+
+def read_manifest(run_id: str, snapshots_dir: Path) -> RunManifest | None:
+    path = manifest_path(run_id, snapshots_dir)
+    if not path.is_file():
+        return None
+    return RunManifest.model_validate_json(path.read_text(encoding="utf-8"))
 
 
 def append_rows(rows: Iterable[Row], *, run_id: str, snapshots_dir: Path) -> int:

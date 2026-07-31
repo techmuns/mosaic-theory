@@ -4035,12 +4035,30 @@ Recorded ahead of code, per the durable-write-first rule.
   + a monotonic suffix so two runs on one date cannot collide. Never overwritten —
   `candidate_records.jsonl` being rewritten each run is what made the 2026-07-27 bound luck rather
   than method.
-- **TWO GRAINS, because "every name" and "one row per candidate" are NOT the same set** (review
-  finding — S4 said the first, the first cut of this design said the second; they differ by 1,482
-  names). **Both are retained:**
-  - **CANDIDATE rows (≈318/run), full** — every gate input with its own stamp, per-gate outcome.
-  - **UNIVERSE rows (≈1,800/run), thin** — ticker, the stage that dropped it, the reason, and the
-    one input that decided it.
+- **TWO GRAINS — REASSIGNED 2026-07-31, because the first assignment was wrong about WHERE the
+  funnel narrows.** The design put the thin grain on the 1,482 and called them "filtered at the
+  universe stage". Measured against the runner, they are not: `screen_universe` loads all ~1,800
+  cap-band members and runs **G1 and G2 on every one of them**, so those names WERE assessed and
+  carry real gate inputs and per-gate outcomes. The true funnel is three stages —
+  `build_universe` (all listed → 1,800: cap band, liquidity, SIC, security type), then G1/G2
+  inside the screen, then G3 + distress. Writing the assessed names thin would have discarded the
+  calibration data the grain exists to capture, and left what `build_universe` drops — the actual
+  blind spot, and S3's home — with no row at all. **Both are retained, reassigned:**
+  - **CANDIDATE rows (~1,800/run), full** — EVERY name the screen touches, not the survivors. The
+    gates ran on them, so the record says what the gates saw; a name dropped at G1 carries one gate
+    rather than three.
+  - **UNIVERSE rows, thin** — emitted by `build_universe` for every name it DROPS, across all eight
+    enumerated stages (`no_price`, `no_shares`, `out_of_band`, `below_adv_floor`, `unknown_sic`,
+    `non_operating`, `unknown_type`, `non_common_equity`). Enumerated rather than described: a stage
+    missing from the grain is a stage with no evidence trail, which moves the blind spot instead of
+    closing it. A shipped guard refuses the run if the emitted row count and the counted drops
+    disagree.
+- **THE CONFIG IS STAMPED ONCE PER RUN, NOT PER ROW** (operator). Every row carries a `run_id` and a
+  row filed under another run's id is refused, so the reference already exists; copying the config
+  onto ~1,800 rows buys nothing and makes one threshold change read as 1,800 changes in a diff. The
+  `RunManifest` is **write-once** — rows are append-only and the manifest cannot be rewritten, so a
+  completed run is immutable end to end. Rewriting it would silently RE-LABEL every row filed under
+  it, the one edit that could make a whole run mean something else.
   **WHY THE UNIVERSE PASS CANNOT BE DROPPED:** a name filtered at the universe stage is also a
   DISCARDED name, and the whole premise is that a screen discarding names that later outperform has
   negative alpha. Retaining candidates only would make the universe filter unmeasurable by
