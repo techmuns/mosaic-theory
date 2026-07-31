@@ -157,10 +157,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 69.965,
+   "value": 67.120889,
    "unit": "M shares",
-   "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
-   "source": "committed anchor block (dossier.json, PR #158/#160-verified) \u2014 EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+   "basis": "Diluted shares outstanding 67,120,889 = basic outstanding 66,951,889 + dilutive increment 169,000 (diluted 69,965,000 \u2212 basic 69,796,000 weighted average, 2026-01-01\u21922026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "ltm_revenue",
@@ -191,7 +191,7 @@
    "margin": 0.132,
    "multiple": 7.5,
    "reason": "set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]",
-   "valuePerShare": 77.56,
+   "valuePerShare": 80.84,
    "opIncome": 765.6,
    "ebitda": 948.6,
    "ev": 7114.5,
@@ -205,7 +205,7 @@
    "margin": 0.185,
    "multiple": 12.5,
    "reason": "the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]",
-   "valuePerShare": 221.09,
+   "valuePerShare": 230.46,
    "opIncome": 1189.5,
    "ebitda": 1372.5,
    "ev": 17156.9,
@@ -219,7 +219,7 @@
    "margin": 0.205,
    "multiple": 20.0,
    "reason": "The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 421.69,
+   "valuePerShare": 439.55,
    "opIncome": 1376.6,
    "ebitda": 1559.6,
    "ev": 31191.5,
@@ -228,15 +228,15 @@
    "normFcf": 942.5
   }
  ],
- "reward": 80.9,
- "risk": 62.63,
- "ratio": 1.29,
+ "reward": 90.27,
+ "risk": 59.35,
+ "ratio": 1.52,
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "FAIL",
  "currentState": {
   "status": "watch",
-  "ratio": 1.29,
+  "ratio": 1.52,
   "bar": 2.0,
   "passFail": "FAIL",
   "spot": 140.19,
@@ -247,7 +247,7 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 125.4
+  "ceiling2to1": 130.72
  },
  "amendmentIndex": [
   {

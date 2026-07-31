@@ -29,10 +29,10 @@
       "source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M) — via committed dossier anchor block (#158/#160/#162-verified)"
     },
     "diluted_shares": {
-      "value": 93.677801,
+      "value": 88.460545,
       "unit": "M shares",
-      "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
-      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified)"
+      "basis": "The filer reports NO dilutive difference for 2026-03-01→2026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     },
     "ltm_revenue": {
       "value": 1392.235,
@@ -90,13 +90,21 @@
           "label": "FY2025 reported revenue",
           "value": 1450.9,
           "unit": "$M",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "LTM revenue",
           "value": 1416.208,
           "unit": "$M",
-          "source": "committed dossier anchor block (#158/#160/#162-verified)"
+          "source": "committed dossier anchor block (#158/#160/#162-verified)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "consensus FY26E revenue",
@@ -104,9 +112,12 @@
           "unit": "$M",
           "source": "committed dossier financial_summary (E cols = consensus)",
           "role": "consensus",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": "analyst",
       "ratified": "2026-07-27"
     },
@@ -118,7 +129,10 @@
           "value": 15.45,
           "unit": "%",
           "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value",
-          "role": "median"
+          "role": "median",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "7yr clean median (FY2025 adjusted)",
@@ -126,7 +140,9 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment",
           "role": "median",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2020 worst clean year",
@@ -134,7 +150,9 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)",
           "role": "trough",
-          "leg": "bear"
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2022 best clean year",
@@ -142,15 +160,22 @@
           "unit": "%",
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)",
           "role": "peak",
-          "leg": "bull"
+          "leg": "bull",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "FY2025 adjusted ex $60.9M impairment",
           "value": 15.01,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
+      "notes": [],
       "ratified_by": "analyst",
       "ratified": "2026-07-27"
     },
@@ -163,14 +188,19 @@
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
           "role": "band_low",
-          "leg": "bear"
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing 25th percentile",
           "value": 15.2,
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-          "role": "percentile"
+          "role": "percentile",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing median",
@@ -178,44 +208,60 @@
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
           "role": "median",
-          "leg": "base"
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "this company's trailing 75th percentile",
           "value": 20.88,
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-          "role": "percentile"
+          "role": "percentile",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "current multiple (0th pctile)",
           "value": 5.65,
           "unit": "x",
           "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-          "role": "current"
+          "role": "current",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "entry-boundary cell A (1,100 × 8% × 6.0x)",
           "value": 1.96,
           "unit": ":1",
-          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         },
         {
           "label": "entry-boundary cell B (1,050 × 7% × 6.0x)",
           "value": 1.73,
           "unit": ":1",
-          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
         }
       ],
-      "ratified_by": "analyst",
-      "ratified": "2026-07-27",
       "notes": [
         {
           "text": "entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
           "date": "2026-07-26",
           "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-27"
     }
   },
   "gate_adjudication": null,
@@ -224,7 +270,7 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 6.953995429504158,
+        "value_per_share": 7.364130528474588,
         "op_income": 118.0,
         "ebitda": 139.431,
         "ev": 976.017,
@@ -239,7 +285,7 @@
         "hurdle": null
       },
       "base": {
-        "value_per_share": 24.240593563890343,
+        "value_per_share": 25.670263505611462,
         "op_income": 186.20000000000002,
         "ebitda": 207.63100000000003,
         "ev": 2595.3875000000003,
@@ -254,7 +300,7 @@
         "hurdle": null
       },
       "bull": {
-        "value_per_share": 40.21351867557182,
+        "value_per_share": 42.58524520734075,
         "op_income": 234.3,
         "ebitda": 255.73100000000002,
         "ev": 4091.6960000000004,
@@ -271,9 +317,9 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 13.710593563890344,
-    "risk": 3.576004570495841,
-    "ratio": 3.8340537025625956,
+    "reward": 15.140263505611463,
+    "risk": 3.1658694715254114,
+    "ratio": 4.782339777993572,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "PASS"
@@ -301,7 +347,22 @@
     "avoid_priced": false,
     "avoid_priced_note": null
   },
-  "refresh_log": [],
+  "refresh_log": [
+    {
+      "field": "facts.diluted_shares",
+      "old": "93.677801",
+      "new": "88.460545",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    {
+      "field": "facts.diluted_shares.basis",
+      "old": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
+      "new": "The filer reports NO dilutive difference for 2026-03-01→2026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    }
+  ],
   "supersedes": "SMPL-2026-07-21",
   "superseded_by": null
 }

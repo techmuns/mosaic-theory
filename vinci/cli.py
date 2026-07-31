@@ -966,7 +966,7 @@ def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
 
     import vinci.scenarios as sc
 
-    facts: dict[str, float] = {}
+    facts: dict[str, float | sc.Fact] = {}
     for kv in args.fact:
         if "=" not in kv:
             print(f"--fact expects KEY=VALUE, got {kv!r}")

@@ -666,10 +666,10 @@
      },
      {
       "key": "diluted_shares",
-      "value": 59.91,
+      "value": 59.950115,
       "unit": "M shares",
-      "basis": "diluted weighted-average, 3 months ended 2026-03-31",
-      "source": "10-Q acc 0000793074-26-000096 \u2014 income statement"
+      "basis": "The filer reports NO dilutive difference for 2026-01-01\u21922026-03-31 (basic and diluted weighted averages are equal at 59,910,000), so the diluted denominator equals the basic outstanding count of 59,950,115. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
      },
      {
       "key": "cash_interest",
@@ -693,7 +693,7 @@
       "margin": 0.015,
       "multiple": 6.0,
       "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor.",
-      "valuePerShare": 16.6,
+      "valuePerShare": 16.59,
       "opIncome": 42.8,
       "ebitda": 329.1,
       "ev": 1974.4,
@@ -707,7 +707,7 @@
       "margin": 0.0625,
       "multiple": 6.5,
       "reason": "Set below the 7.45% full-history screening median: the insurance run-rate is about 125bps higher (2018-22 average 4.06% against 2025-26 underlying ~5.3%, excluding the one-off Q2-25 favourable credit), and about 50bps comes off for the Dedicated mix shift from 51.5% to 73%, which caps One-Way upside in peak-margin years. [restated for external readability 2026-07-21; substance unchanged]",
-      "valuePerShare": 35.73,
+      "valuePerShare": 35.71,
       "opIncome": 193.8,
       "ebitda": 480.1,
       "ev": 3120.5,
@@ -721,7 +721,7 @@
       "margin": 0.08,
       "multiple": 7.0,
       "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below TTS-segment peaks of 12\u201314% (FY20\u201322: 12.04/13.78/12.13%; consolidated 9.6\u201311.3%) (One-Way exposure reduced; insurance ~125bps higher) [amended 2026-07-21: scoped to segment level \u2014 consolidated record 9.59/11.31/9.82%, FY22 10-K segment footnote].",
-      "valuePerShare": 48.88,
+      "valuePerShare": 48.85,
       "opIncome": 272.0,
       "ebitda": 558.3,
       "ev": 3908.2,
@@ -730,8 +730,8 @@
       "normFcf": 174.7
      }
     ],
-    "reward": -10.31,
-    "risk": 29.44,
+    "reward": -10.33,
+    "risk": 29.45,
     "ratio": -0.35,
     "bar": 2.0,
     "ratioUndefined": null,
@@ -749,7 +749,7 @@
       "what": "no scheduled evidence",
       "source": "none on file"
      },
-     "ceiling2to1": 22.98
+     "ceiling2to1": 22.96
     },
     "verdict": {
      "status": "watch",

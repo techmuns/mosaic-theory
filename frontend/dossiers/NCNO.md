@@ -5,7 +5,7 @@ _July 30, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $8.17 (-54.4% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
+**Target (base)** $8.09 (-54.9% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $-9.84 · **Risk** $13.72 · **Reward : risk** -0.72 : 1 (bar 2 : 1)
 
 _Spot source: Polygon NCNO close 2026-07-20 (live at underwrite)_
 
@@ -49,9 +49,9 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 684 | 8.6% | 10x | $4.25 | -76.3% |
-| base | 755 | 12.6% | 12.5x | $8.17 | -54.4% |
-| bull | 809 | 16.6% | 16x | $14.22 | -20.7% |
+| bear | 684 | 8.6% | 10x | $4.21 | -76.5% |
+| base | 755 | 12.6% | 12.5x | $8.09 | -54.9% |
+| bull | 809 | 16.6% | 16x | $14.08 | -21.5% |
 
 - **bear** — deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
@@ -62,7 +62,7 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 | input | value | basis | source |
 | --- | ---: | --- | --- |
 | net debt | 223.899 $M | lease-inclusive net debt, latest quarter: total debt 263 + finance leases 51 + operating leases 13 - cash 103 | EDGAR companyfacts, 10-Q period ended 2026-04-30 |
-| diluted shares | 109.458 shares | latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30 |
+| diluted shares | 110.508875 shares | Diluted shares outstanding 110,508,875 = basic outstanding 109,552,950 + dilutive increment 955,925 (diluted 109,458,472 − basic 108,502,547 weighted average, 2026-02-01→2026-04-30). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | d and a ratio | 0.071043 rate | latest full-year depreciation and amortisation over the SAME year's revenue (42.255 / 594.781, fiscal 2026) [amended 2026-07-22: the denominator was 610.058, which is not that year's revenue, so the ratio was not the same-period figure its basis described; both terms now come from the fiscal-2026 annual report.] | EDGAR companyfacts, FY2026 (Feb-2025 to Jan-2026), acc 0001902733-26-000022 |
 | share growth | 0.011119 rate | three-year compound growth in the diluted count, floored at zero | EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, FY2023-FY2026 |
 

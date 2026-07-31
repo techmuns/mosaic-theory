@@ -194,10 +194,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 385.272,
+   "value": 386.069384,
    "unit": "shares",
-   "basis": "latest-quarter diluted weighted-average count, quarter ended 2026-03-31",
-   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+   "basis": "Diluted shares outstanding 386,069,384 = basic outstanding 333,157,384 + dilutive increment 52,912,000 (diluted 385,272,000 \u2212 basic 332,360,000 weighted average, 2026-01-01\u21922026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "d_and_a_ratio",
@@ -240,7 +240,7 @@
    "years": 4.0,
    "dAndAT": 49.2,
    "netDebtT": 409.7,
-   "sharesT": 564.08
+   "sharesT": 565.24
   },
   {
    "name": "base",
@@ -260,7 +260,7 @@
    "years": 4.0,
    "dAndAT": 76.0,
    "netDebtT": 409.7,
-   "sharesT": 564.08
+   "sharesT": 565.24
   },
   {
    "name": "bull",
@@ -280,7 +280,7 @@
    "years": 4.0,
    "dAndAT": 89.4,
    "netDebtT": 409.7,
-   "sharesT": 564.08
+   "sharesT": 565.24
   }
  ],
  "tier": "B",

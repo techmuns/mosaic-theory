@@ -5,7 +5,7 @@ _July 30, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $221.09 (+57.7% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — frozen at underwrite 2026-07-20) · **Reward** $80.90 · **Risk** $62.63 · **Reward : risk** 1.29 : 1 (bar 2 : 1)
+**Target (base)** $230.46 (+64.4% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — frozen at underwrite 2026-07-20) · **Reward** $90.27 · **Risk** $59.35 · **Reward : risk** 1.52 : 1 (bar 2 : 1)
 
 _Spot source: Polygon EOD grouped-daily close 2026-07-17 (live)_
 
@@ -46,9 +46,9 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 5,800 | 13.2% | 7.5x | $77.56 | -44.7% |
-| base | 6,430 | 18.5% | 12.5x | $221.09 | +57.7% |
-| bull | 6,715 | 20.5% | 20x | $421.69 | +200.8% |
+| bear | 5,800 | 13.2% | 7.5x | $80.84 | -42.3% |
+| base | 6,430 | 18.5% | 12.5x | $230.46 | +64.4% |
+| bull | 6,715 | 20.5% | 20x | $439.55 | +213.5% |
 
 - **bear** — set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]
 - **base** — the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]
@@ -60,7 +60,7 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 | --- | ---: | --- | --- |
 | d and a | 183 $M | FY2026 guided depreciation, accretion and amortization — post-divestiture perimeter [amended 2026-07-22: FY2025's 200.309 straddles the Digital Markets divestiture (sold 2026-02-05, $110.0M gross / $104.8M net of cash, 10-K Note 19 acc 0000749251-26-000112); forward legs use the guided post-perimeter figure. Label caveat: the guided line includes accretion.] | Gartner Q1-2026 IR earnings supplement slide 32 (company document, unfiled) — https://investor.gartner.com/static-files/05ed704c-f905-4c68-9b57-e55eed5df9eb retrieved 2026-07-22, sha256 18428be16e5212ca961bbf1285fdee68ea6b21e42c90f16f97930b8868c67715 |
 | net debt | 1,688.229 $M | lease-inclusive net debt (latest 10-Q) | committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR: total debt 2,983 + finance leases 0 + operating leases 372 − cash 1,667 ($M) |
-| diluted shares | 69.965 M shares | diluted weighted-average (latest 10-Q) (anchor raw count / 1e6) | committed anchor block (dossier.json, PR #158/#160-verified) — EDGAR WeightedAverageNumberOfDilutedSharesOutstanding |
+| diluted shares | 67.120889 M shares | Diluted shares outstanding 67,120,889 = basic outstanding 66,951,889 + dilutive increment 169,000 (diluted 69,965,000 − basic 69,796,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | ltm revenue | 6,474.137 $M | LTM revenue | committed anchor block (dossier.json, PR #158/#160-verified) — committed financial_summary.annual (LTM) |
 | cash interest | 125.277 $M | FY2025 non-operating interest expense (FCF cross-check only) | EDGAR companyfacts us-gaap InterestExpenseNonoperating FY2025 |
 | cash tax rate | 0.2468 rate | FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share) | EDGAR companyfacts IncomeTaxExpenseBenefit 238.9 / pre-tax 968.1 (FY2025) |

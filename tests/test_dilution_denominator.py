@@ -374,3 +374,120 @@ def test_the_committed_records_dilution_matches_the_quarter_not_a_cumulative(
             "read as 'the latest 10-Q's weighted average' again")
         checked += 1
     assert checked >= 5, f"only {checked} records reached the assertion — the pin is near-vacuous"
+
+
+# --- the writer: a value that changes MEANING must move its basis with it ------------------------
+
+
+def test_a_refresh_may_restate_the_basis_and_logs_it_separately() -> None:
+    """THE WRITER HAD THE ITEM'S OWN DEFECT. `refresh_record` moved the VALUE and froze the basis,
+    so swapping `diluted_shares` from a weighted average to a point-in-time outstanding count would
+    have left the string "diluted weighted-average (latest 10-Q)" over a number that is neither
+    weighted nor an average. `Fact.basis` documents itself as naming WHAT the number is; a writer
+    that moves one and not the other MANUFACTURES a mislabelled figure."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    new = sc.Fact(value=old.value - 1.0, unit=old.unit, basis="diluted shares OUTSTANDING",
+                  source="EDGAR dei + us-gaap weighted averages")
+    out = sc.refresh_record(rec, facts={"diluted_shares": new}, source="s", on_date="2026-07-31")
+    assert out.facts["diluted_shares"].basis == "diluted shares OUTSTANDING"
+    assert out.facts["diluted_shares"].source == "EDGAR dei + us-gaap weighted averages"
+    added = {e.field for e in out.refresh_log[len(rec.refresh_log):]}
+    assert added == {"facts.diluted_shares", "facts.diluted_shares.basis",
+                     "facts.diluted_shares.source"}, added
+    for e in out.refresh_log[len(rec.refresh_log):]:
+        assert e.old != e.new, f"{e.field}: a log entry claiming a change that did not happen"
+
+
+def test_a_source_only_restatement_does_not_log_a_phantom_basis_change() -> None:
+    """REVIEW FINDING. The first cut logged a `.basis` entry whenever EITHER basis or source moved,
+    so a source-only restatement wrote `old == new` — a log claiming a change that did not happen,
+    in the record whose whole job is to say what changed. The suite's own
+    `test_refresh_moves_machine_inputs_and_logs_provenance` already asserts `e.old != e.new`."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    src_only = sc.Fact(value=old.value, unit=old.unit, basis=old.basis,
+                       source=old.source + " (re-cited)")
+    out = sc.refresh_record(rec, facts={"diluted_shares": src_only}, source="s",
+                            on_date="2026-07-31")
+    added = out.refresh_log[len(rec.refresh_log):]
+    assert [e.field for e in added] == ["facts.diluted_shares.source"], [e.field for e in added]
+    assert all(e.old != e.new for e in added)
+
+
+def test_a_basis_restatement_alone_is_recorded_even_when_the_value_holds() -> None:
+    """A number that keeps its value while changing MEANING is the move a reader most needs to see
+    — and the one a value-diff cannot show. It must still write, and still log."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    same_value = sc.Fact(value=old.value, unit=old.unit, basis="restated meaning, same count",
+                         source=old.source)
+    out = sc.refresh_record(rec, facts={"diluted_shares": same_value}, source="s",
+                            on_date="2026-07-31")
+    assert out is not rec, "a basis-only restatement was dropped as a no-op"
+    assert out.facts["diluted_shares"].value == old.value
+    assert [e.field for e in out.refresh_log[len(rec.refresh_log):]] == \
+        ["facts.diluted_shares.basis"]
+
+
+def test_a_unit_change_is_refused_because_it_rescales_the_denominator() -> None:
+    """Basis is prose about the same quantity; UNIT is its scale. Letting a refresh move the unit is
+    how a per-share value goes wrong by a factor of a million — the same class as the
+    thousands-blind re-parse, arriving through the writer instead of a parser."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    rescaled = sc.Fact(value=old.value * 1e6, unit="shares" if old.unit != "shares" else "M shares",
+                       basis=old.basis, source=old.source)
+    with pytest.raises(sc.RefreshRefusedError, match="never the UNIT"):
+        sc.refresh_record(rec, facts={"diluted_shares": rescaled}, source="s", on_date="2026-07-31")
+
+
+def test_a_bare_float_still_refreshes_the_same_quantity_without_touching_the_basis() -> None:
+    """The ordinary case must not regress: re-reading the SAME line to a new value keeps its basis,
+    and logs one entry, exactly as before."""
+    import vinci.scenarios as sc
+
+    rec = sc.read_record("SMPL", root=ROOT)
+    old = rec.facts["diluted_shares"]
+    out = sc.refresh_record(rec, facts={"diluted_shares": old.value - 1.0}, source="s",
+                            on_date="2026-07-31")
+    assert out.facts["diluted_shares"].basis == old.basis
+    assert [e.field for e in out.refresh_log[len(rec.refresh_log):]] == ["facts.diluted_shares"]
+
+
+def test_every_committed_record_states_the_denominator_it_actually_uses() -> None:
+    """THE ARTIFACT PIN. After the swap, no record may still describe its denominator as a weighted
+    average — that phrase over a point-in-time count is the mislabel this work exists to remove.
+    Phrasing-independent on the LLM axis (nothing here is LLM-composed) but deliberately anchored on
+    the two deterministic tokens the note is built from."""
+    import json as _json
+
+    recs = ROOT / "scenarios"
+    if not recs.is_dir():
+        pytest.skip("no scenario records in this worktree")
+    checked = 0
+    for f_ in sorted(recs.glob("*.json")):
+        if f_.stem.startswith("_"):
+            continue
+        fact = (_json.loads(f_.read_text()).get("facts") or {}).get("diluted_shares")
+        if not fact:
+            continue
+        basis = fact["basis"]
+        checked += 1
+        assert "weighted-average (latest 10-Q)" not in basis, (
+            f"{f_.stem}: the denominator is described as a weighted average but the value is a "
+            "point-in-time outstanding count")
+        low = basis.lower()
+        assert ("diluted shares outstanding" in low
+                or "no dilutive difference" in low), f_.stem
+        assert "Excluded from the filer's diluted average" in basis, (
+            f"{f_.stem}: the exclusions are not stated beside the denominator")
+    assert checked >= 5, f"only {checked} records reached the assertion — near-vacuous"

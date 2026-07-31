@@ -206,13 +206,41 @@ def test_the_holding_question_is_answered_by_the_band_not_a_dead_key() -> None:
 
 
 def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
+    """The card must TRANSPORT the record's decision numbers — asserted against the record itself,
+    never against frozen literals.
+
+    TEST-LAYER RULE (2026-07-31). This pinned `ratio == 3.83` and `ceiling2to1 == 12.72` on a LIVING
+    committed artifact, so it reddened the moment the record legitimately moved — item 24 swapped
+    SMPL's denominator to diluted shares outstanding and the ratio became 4.78. Nothing was broken;
+    the pin was reading a VALUE where it should have been reading a DERIVATION. Its own sibling
+    assertion already knew — the `underwriteDate` line says a frozen literal "would pin the
+    pre-supersession vintage forever" — the reasoning was simply not carried across the test."""
     rec = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
     s = _BUILD._current_state(rec)
-    assert s["ratio"] == 3.83 and s["bar"] == 2.0 and s["passFail"] == "PASS"
-    assert s["ceiling2to1"] == 12.72
+    r = rec["result"]
+    assert s["ratio"] == pytest.approx(r["ratio"], abs=0.005), "the card recomputed the ratio"
+    assert s["bar"] == r["bar"] == 2.0, "the ratified 2:1 bar is not the one on the card"
+    assert s["passFail"] == r["pass_fail"] and s["passFail"] in {"PASS", "FAIL", "UNDEFINED"}
+    # TRANSPORT, PROVEN BY MOVING THE INPUT. Equality against the live record cannot distinguish
+    # "the card carries the record's verdict" from "the card hardcodes the value this record
+    # happens to have" — a mutation that pinned `passFail: "PASS"` sailed through the assertion
+    # above. Feed a record that says something else and the card must say it too.
+    flipped = json.loads(json.dumps(rec))
+    flipped["result"]["pass_fail"] = "FAIL"
+    flipped["result"]["ratio"] = 1.11
+    moved = _BUILD._current_state(flipped)
+    assert moved["passFail"] == "FAIL" and moved["ratio"] == pytest.approx(1.11, abs=0.005), (
+        "the card does not follow the record — these numbers are being produced, not transported")
+    # the ceiling is DERIVED — the spot at which (base−spot)/(spot−bear) equals the bar — so it is
+    # checked by its arithmetic, which a value literal never did
+    per = r["per_scenario"]
+    expected = ((per["base"]["value_per_share"] + r["bar"] * per["bear"]["value_per_share"])
+                / (1.0 + r["bar"]))
+    assert s["ceiling2to1"] == pytest.approx(expected, abs=0.02), (
+        "ceiling2to1 is not the spot at which reward:risk falls to the bar")
     # the underwrite date is the RECORD's own — SMPL was reissued 2026-07-27, so a frozen
     # literal here would pin the pre-supersession vintage forever
-    assert s["spot"] == 10.53 and s["spotSource"]
+    assert s["spot"] == pytest.approx(rec["spot"], abs=0.005) and s["spotSource"]
     assert s["underwriteDate"] == rec["underwrite_date"]
 
 

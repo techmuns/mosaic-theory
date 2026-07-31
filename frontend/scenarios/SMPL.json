@@ -164,10 +164,10 @@
   },
   {
    "key": "diluted_shares",
-   "value": 93.677801,
+   "value": 88.460545,
    "unit": "M shares",
-   "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
-   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+   "basis": "The filer reports NO dilutive difference for 2026-03-01\u21922026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
   },
   {
    "key": "ltm_revenue",
@@ -198,7 +198,7 @@
    "margin": 0.1,
    "multiple": 7.0,
    "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020, 9.58%); the multiple at the trough of the trading range (prior low 6.11x). METHOD \u2014 bear-state evidence: declining packaged-food comparables with clean income statements trade at 6.08x (INGR) to 8.57x (LW) on the lease-inclusive basis, so the recorded 7.0x sits inside the observed state while the market prices the name below it. Against the 14% normal the 10% margin retains 71%, milder than the weakest survivor's 63%; a retention-consistent bear near 8.8% still reads about 3.0 to 1. No quarter this fiscal year fell below the worst clean year.",
-   "valuePerShare": 6.95,
+   "valuePerShare": 7.36,
    "opIncome": 118.0,
    "ebitda": 139.4,
    "ev": 976.0,
@@ -212,7 +212,7 @@
    "margin": 0.14,
    "multiple": 12.5,
    "reason": "Revenue is consensus FY26E of 1,334, below management's reinstated $1.345-1.355B guide, so the base is conservative against their own path. METHOD \u2014 the normal margin is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14% the business recovers most \u2014 not all \u2014 of its historical profitability. The multiple sits below the 17.9x median of the 8.55-year range (35 quarterly closes); 12.5x is the 14th percentile, a durable discount for the unresolved category question.",
-   "valuePerShare": 24.24,
+   "valuePerShare": 25.67,
    "opIncome": 186.2,
    "ebitda": 207.6,
    "ev": 2595.4,
@@ -226,7 +226,7 @@
    "margin": 0.165,
    "multiple": 16.0,
    "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best clean year (17.35%); the multiple moves toward but stays below the 17.85x median of the trading history (16.0x, about the 29th percentile).",
-   "valuePerShare": 40.21,
+   "valuePerShare": 42.59,
    "opIncome": 234.3,
    "ebitda": 255.7,
    "ev": 4091.7,
@@ -235,15 +235,15 @@
    "normFcf": 160.9
   }
  ],
- "reward": 13.71,
- "risk": 3.58,
- "ratio": 3.83,
+ "reward": 15.14,
+ "risk": 3.17,
+ "ratio": 4.78,
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "PASS",
  "currentState": {
   "status": "watch",
-  "ratio": 3.83,
+  "ratio": 4.78,
   "bar": 2.0,
   "passFail": "PASS",
   "spot": 10.53,
@@ -254,7 +254,7 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 12.72
+  "ceiling2to1": 13.47
  },
  "supersedes": "SMPL-2026-07-21",
  "verdict": {
