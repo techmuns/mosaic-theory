@@ -561,6 +561,28 @@ the wrong names and let the real one through.
 Same shape as *`financial_summary.as_of` is an Estimates stamp, not a Financials one* — the name
 predicted the wrong workbook, and only the source_ref settled it.
 
+## A fix for a class is where that class recurs
+
+*(operator, 2026-07-31 — third instance, recorded as a pattern rather than a third incident)*
+
+> **Re-read any fix asking whether it commits the defect it names — BEFORE the tests, because a test
+> written by the same understanding inherits it.**
+
+Three, all found in review rather than by the author:
+
+* `refresh_record` froze the `basis` while moving the value — leaving "diluted weighted-average
+  (latest 10-Q)" over a number that is neither — inside the writer built to remove mislabelled
+  denominators;
+* `current_guide` gave IT's fabricated boilerplate a decision surface while fixing the guidance
+  surface;
+* the period tie-break shipped a cumulative-vs-quarter selector inside the work correcting
+  share-count basis.
+
+**Why it recurs.** A fix touches exactly the code that reasons about the flawed concept, so the
+flawed reasoning is the nearest thing to hand — and the author is in "I have understood this" mode
+precisely where scepticism is cheapest to skip. It belongs in the review pass, not in a doc nobody
+re-reads at the moment of writing.
+
 ## When one change moves a committed number for two reasons, the decomposition goes in the record
 
 *(operator, 2026-07-31)*
