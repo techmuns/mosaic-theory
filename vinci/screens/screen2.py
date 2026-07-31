@@ -68,7 +68,16 @@ def gate_g3_multiple_floor(rec: DataRecord, th: Screen2Thresholds) -> tuple[Gate
         f = rec.fundamentals.pe_pctile_vs_history
         label = "P/E"
     if not f.is_evaluable or f.value is None:
-        return GateResult.UNKNOWN, "no multiple-vs-history (XBRL absent / negative earnings)"
+        # NOT_EVALUATED, NEVER A SILENT PASS. G3 returns UNKNOWN here and the runner admits the
+        # name anyway, so **186 of the 281 in the 2026-07-29 pool were never valued at all** and
+        # every one of them passed. UNKNOWN maps to NOT_EVALUATED in retention, so the row now
+        # records that the name could not be assessed rather than leaving it indistinguishable
+        # from one the gate judged and admitted.
+        #
+        # THE REASON CARRIES THE CAUSE, forwarded from the field rather than restated: nothing
+        # tagged (a DATA gap), negative economics throughout (an ANSWER about the business), or a
+        # history below the floor (a TIMING state). A reader acts differently on each.
+        return GateResult.UNKNOWN, (f.note or "no multiple-vs-history")
     if f.value <= th.multiple_floor_pctile:
         return GateResult.PASS, f"{label} at {f.value:.0%}ile of trailing range (≤ floor)"
     return GateResult.FAIL, f"{label} at {f.value:.0%}ile — not near its floor"

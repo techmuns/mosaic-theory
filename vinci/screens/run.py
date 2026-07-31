@@ -36,6 +36,7 @@ from vinci.screens.screen2 import (
     evaluate_screen2,
     gate_g1_drawdown,
     gate_g2_idiosyncratic,
+    gate_g3_multiple_floor,
 )
 from vinci.store import Store
 from vinci.universe import benchmark_identity
@@ -137,8 +138,18 @@ def screen_universe(
         if cand is not None:
             store.save_candidate(cand)
             candidates.append(cand)
-        # G3 + distress ran inside evaluate_screen2; its verdict is the row's third gate
-        gates["g3_and_distress"] = GateOutcome(
+        # THE GATE'S OWN RESULT, not the admission decision (2026-07-31). The row previously
+        # recorded PASS whenever a candidate was produced — so a name G3 could not value was
+        # written down as PASSED-G3, which is the silent pass one layer along from the gate's.
+        # 186 of the 281 in the 2026-07-29 pool were never valued and every one read PASS.
+        #
+        # ADMISSION IS RECORDED SEPARATELY because routing is not decided here: the runner still
+        # admits an unvalued name, and the row now says the gate did not evaluate it. Whoever
+        # chooses the routing can count both from the same rows.
+        g3, g3_why = gate_g3_multiple_floor(full, th)
+        gates["g3_multiple_floor"] = GateOutcome(
+            outcome=outcome_from_gate(g3), reason=g3_why)
+        gates["admitted"] = GateOutcome(
             outcome=(Outcome.PASS if cand is not None else Outcome.FAIL),
             reason=("admitted to the candidate set" if cand is not None
                     else "rejected by the multiple floor or a distress signal"))
