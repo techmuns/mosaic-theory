@@ -4029,6 +4029,42 @@ is the fund's stated edge, and this is the one blind spot nothing measures. Same
 stamp with the screen PR, basis (does membership actually move?) its own item. **READ FIRST: how
 stale are the universe caps in fact** — if current, the item collapses to a stamp.
 
+**S4a. RETENTION — THE DESIGN, settled 2026-07-31 so the next session builds rather than designs.**
+Recorded ahead of code, per the durable-write-first rule.
+- **SHAPE.** `data/snapshots/screen_runs/<run_id>.jsonl`, append-only, `run_id` = the reference date
+  + a monotonic suffix so two runs on one date cannot collide. Never overwritten —
+  `candidate_records.jsonl` being rewritten each run is what made the 2026-07-27 bound luck rather
+  than method.
+- **TWO GRAINS, because "every name" and "one row per candidate" are NOT the same set** (review
+  finding — S4 said the first, the first cut of this design said the second; they differ by 1,482
+  names). **Both are retained:**
+  - **CANDIDATE rows (≈318/run), full** — every gate input with its own stamp, per-gate outcome.
+  - **UNIVERSE rows (≈1,800/run), thin** — ticker, the stage that dropped it, the reason, and the
+    one input that decided it.
+  **WHY THE UNIVERSE PASS CANNOT BE DROPPED:** a name filtered at the universe stage is also a
+  DISCARDED name, and the whole premise is that a screen discarding names that later outperform has
+  negative alpha. Retaining candidates only would make the universe filter unmeasurable by
+  construction — and **S3 is exactly a universe-stage defect** (a falsely-stamped market cap decides
+  band membership), so candidate-grain retention would leave the deepest of the five items with no
+  evidence trail at all. SIZING, so this is a decision and not a surprise: ~430KB/run, ≈22MB/year
+  weekly, JSONL and compressible — acceptable for a private repo, and re-check if the universe grows.
+- **ROW.** `{ticker, run_id, reference_date, gate_inputs: {...each with its own as_of...},
+  per_gate: {g1: PASS|FAIL|NOT_EVALUATED, g2: …}, outcome, not_evaluated_reason}`. **Gate inputs are
+  stored with their OWN stamps**, not the run's — the `relative_return` frontier work is precisely
+  why (a gate input claiming the reference date while its data stopped earlier is what made the
+  benchmark incident invisible).
+- **THREE OUTCOMES, NOT TWO.** `PASS` / `FAIL` / **`NOT_EVALUATED`** with its reason (item 22 on the
+  screen path): a name whose window was start-truncated could not be assessed and must never look
+  like one that was assessed and rejected. This is S1's split-on-cause landing in the data model.
+- **WHY CALIBRATION, NOT FORENSICS.** The reject set is the population for measuring whether the
+  gates select for return at all. A screen discarding names that later outperform has NEGATIVE alpha
+  and nothing in the current design would show it — survivors-only retention can only ever confirm.
+- **THE GUARDRAIL THAT BINDS HERE.** Retention is READ-ONLY evidence: no threshold, weight or gate
+  may ever be set from it (validate forward, never tune on outcomes). The rows exist to FALSIFY the
+  screen, never to fit it — a fitted gate is the replicable signal this fund is not.
+- **BUILD ORDER INSIDE THE PIECE:** writer + schema + round-trip pin → wire the screen to emit BOTH
+  grains → one real run → then the hold lifts only after piece three.
+
 **S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the
 shape). Immutable, timestamped, append-only; every name with its gate INPUTS and PER-GATE OUTCOME,
 not just survivors. **A screen discarding names that later outperform has negative alpha and
@@ -4093,6 +4129,32 @@ unchanged. FUBO is correct accounting (a loss makes dilution antidilutive); SMPL
 filer's tagging and are NOT self-evidently right for a profitable name. The page must say *the
 filer reports no dilutive difference in this period*, never leave a reader to infer we checked and
 found none — item 22's visible-absence rule applied to the denominator.
+
+**D14. THE MATERIALIZING-WRITE ACCEPTED RISK HAS ITS FIRST LIVE INSTANCE — and its falsifier did
+NOT fire.** #284's re-render of MVST added **79 schema-default keys, 0 changed, 0 removed** — the
+exact event the 2026-07-27 acceptance predicted ("the NEXT programmatic write of a migrated record
+will materialize `role: null / leg: null / excluded: false` on every untagged reference"). The
+falsifier is "if a materializing write ever changes a VALUE (not just adds a null key), the
+acceptance is void and the write path gets a byte-preserving mode" — **verified key-by-key: nothing
+changed, nothing was removed, so the acceptance stands.** Recorded as the instance the queued
+**`migrated` third-state** item exists to describe, now live rather than hypothetical: MVST's
+`extraction_version` claims one shape while its structure is another, and no field says so.
+Instance noted against the item; NOT built.
+
+**D15. A FIX FOR A CLASS IS WHERE THAT CLASS RECURS — third instance, recorded as a pattern**
+(operator, 2026-07-31). `refresh_record` froze the `basis` while moving the value, which would have
+left "diluted weighted-average (latest 10-Q)" over a number that is neither weighted nor an
+average — **the mislabelled-denominator defect, inside the writer built to remove it.** Prior two:
+`current_guide` gave IT's fabricated boilerplate a decision surface while fixing the guidance
+surface; the period tie-break shipped a cumulative-vs-quarter selector inside the work correcting
+share-count basis. **Why it recurs:** a fix touches exactly the code that reasons about the flawed
+concept, so the flawed reasoning is nearest to hand; and the author is in "I have understood this"
+mode precisely where scepticism is cheapest to skip. **THE CHECK, on any fix:** re-read the fix
+asking whether it commits the defect it names — before the tests, because a test written by the
+same understanding inherits it. Add to the review pass, not to a doc nobody re-reads.
+(Companion instance the same day: the `ratio == 3.83` pin was the TEST-LAYER RULE case caught by
+its OWN sibling assertion, and the first rewrite still let a `passFail: "PASS"` hardcode through —
+**two attempts to get a pin that tests transport rather than coincidence.**)
 
 **D13. `diluted_shares` NOW MEANS TWO DIFFERENT THINGS IN TWO ARTIFACTS** (review finding on #284,
 QUEUED — not fixed here). After item 24 the **record's** `facts.diluted_shares` is a valuation-date
