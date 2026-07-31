@@ -4062,8 +4062,31 @@ Recorded ahead of code, per the durable-write-first rule.
 - **THE GUARDRAIL THAT BINDS HERE.** Retention is READ-ONLY evidence: no threshold, weight or gate
   may ever be set from it (validate forward, never tune on outcomes). The rows exist to FALSIFY the
   screen, never to fit it — a fitted gate is the replicable signal this fund is not.
+- **THE READ-ONLY RULE, IN ITS OPERABLE FORM** (operator 2026-07-31, replacing "no threshold may
+  ever be set from it" — right in intent, unenforceable in fact, since any redesign is informed by
+  something):
+  > **Retention may FALSIFY a design. Any parameter chosen after looking at it must be validated
+  > FORWARD, on runs retention had not recorded when the choice was made.**
+  Permits *"the screen's rejections have positive alpha, so the design is wrong."* Forbids *"tune
+  the threshold to what would have worked."* And it is CHECKABLE, which the first form was not: a
+  parameter change carries the date it was made and the runs it was tested on.
+- **BOTH GRAINS STAMP THE CONFIGURATION, not only the inputs** — gate thresholds, benchmark
+  identity and lookback on candidate rows; the band rule and its cap threshold on universe rows.
+  Without it, comparing two runs compares two different screens and nothing says so: if G2's ceiling
+  moves off −15%, every earlier row silently means something else. **The record must say what TEST
+  was applied, not only what went into it** — the stamp rule (a stamp belongs to what it names)
+  applied to the screen's own parameters.
+- **BOTH GRAINS MUST BE JOINABLE TO OUTCOMES** — ticker + run date against the price store, for THIN
+  rows as much as full ones. Calibration only pays if a discarded name's later return is
+  recoverable, and the universe rows are where it matters most: that is the filter nothing has ever
+  measured. Verify the join on the first real run rather than assuming it.
 - **BUILD ORDER INSIDE THE PIECE:** writer + schema + round-trip pin → wire the screen to emit BOTH
-  grains → one real run → then the hold lifts only after piece three.
+  grains → one real run, on which the outcome-join is verified → then the hold lifts only after
+  piece three.
+- **SCALE OF WHAT WAS UNMEASURED:** 1,482 of 1,800 names are filtered at the universe stage against
+  318 reaching the screen. **The biggest filter in the funnel discards 82% of the universe and had
+  no evidence trail** — which is why `universe.py` (S3) was called the deepest of the five, and why
+  candidate-only retention would have left it unmeasurable by construction.
 
 **S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the
 shape). Immutable, timestamped, append-only; every name with its gate INPUTS and PER-GATE OUTCOME,
@@ -4173,6 +4196,34 @@ a basis string on all eleven committed anchors — its own artifact pass, not a 
 `max(points_for_tag(...))` rather than the pipeline's own `_edgar_shares_outstanding` — two paths to
 one quantity, the twin-drift shape. Measured 7 of 7 on the committed names: **identical**. No value
 is wrong; the module should still be fed by the pipeline function when it is wired into assembly.
+
+**D16. THE #283 NETWORK BLOCK FAILED ON A CLOCK — MAIN WENT RED ON AN UNCHANGED COMMIT.** The
+`offline_edgar` fixture raised `AssertionError` on any attempted fetch. Correct for a SILENT live
+call; wrong for the case that actually occurred — a cached companyfacts entry aged past its TTL
+mid-session, so the client wanted to re-fetch and three corpus pins reddened on a commit that had
+been green forty minutes earlier. **A cache-warmth condition became a broken build.** The cold-cache
+guard counts entries, but it cannot see an entry that exists and has expired, so the warmth check
+passed and the block fired. **FIXED: the block now `pytest.skip`s with a stated reason** — it still
+stops the fetch, still says why, and no longer depends on a clock. *A guard that fails on a clock is
+a guard that gets disabled.* (Second time in two PRs that this fixture's own guard needed
+correcting — first `is_dir()` on a directory the client creates, now TTL. D15 applies to it.)
+**PROCESS FAILURE ALONGSIDE IT, recorded because it is the more dangerous one:** the commit ran
+`pytest ... | tail -1 && git commit && git push`, and `tail` exits 0 regardless — so a RED suite
+pushed. The gate must be its own command whose exit status is read, never piped into a chain.
+
+**D17. ACCEPTED RISK, opened by D16'"'"'s own fix (review finding on #286).** Making the network block
+`skip` rather than `fail` is right — a TTL must not red main — but it moves the corpus pins BACK
+toward the shape #283 removed: they can now stop running and say so only in a skip line. Cold cache,
+expired cache, or a resolver change all yield "3 skipped", and a suite that reports 1394 passed
+reads as verified. **The coverage of `test_the_overlay_serves_every_committed_name_and_none_falls_back`,
+the anchor-divergence pin and the record-period pin is CONTINGENT ON CACHE WARMTH.** Distinct from
+the original defect in two ways that matter — the skip fires only on an attempted CONNECTION (not on
+any exception), and its reason names the remedy — but the failure mode "the pin silently stopped
+running" is genuinely re-opened. **ACCEPTED, not fixed**, because the alternative (fail on a cold
+cache) reddens every fresh checkout and CI, which #283 verified in a cleanroom. **FALSIFIER: if a
+real defect ever ships while these three pins are skipping, the acceptance is void** and the pins
+move to a committed fixture of the eleven names'"'"' companyfacts subsets, which removes the cache
+dependency entirely. Cheap and pre-designed; not built now because nothing has failed yet.
 
 **D12. THE THREE PRE-BUILD CHECKS (2026-07-31).**
 1. **NO OTHER `except → skip` PINS.** AST scan of the whole suite (not grep — an except handler
