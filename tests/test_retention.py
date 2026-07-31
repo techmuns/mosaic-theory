@@ -784,7 +784,9 @@ def test_the_reason_taxonomy_is_exhaustive_no_inline_fourth() -> None:
               and isinstance(n.value.value, str)
               and any(isinstance(t, ast.Name) and t.id == "why" for t in n.targets)]
     assert not inline, f"a reason is an inline literal, outside the taxonomy: {inline}"
-    assert len(set(asm.G3_REASONS)) == 4, asm.G3_REASONS
+    # five since the EPS bound added G3_EPS_TOO_OLD — the pin caught the taxonomy growing,
+    # which is what it is for
+    assert len(set(asm.G3_REASONS)) == 5, asm.G3_REASONS
     for r in asm.G3_REASONS:
         assert r.strip(), "an empty reason is not a reason"
 
@@ -868,3 +870,112 @@ def test_the_committed_run_still_reads_after_the_field_was_removed() -> None:
     rows = read_rows("2026-07-29-01", snapshots_dir=get_config().snapshots_dir)
     univ = [r for r in rows if r.grain == "universe"]
     assert len(univ) > 5_000, f"only {len(univ)} universe rows read back"
+
+
+# --- the EPS reach-back: valuing a company on pre-loss earnings ----------------------------------
+
+
+def _eps(rows: list[tuple[str, str, float]]) -> list:
+    """(period_end, filed, value) -> annual ConceptPoints."""
+    from vinci.edgar.concepts import ConceptPoint
+    return [ConceptPoint(concept="eps_diluted", tag="EarningsPerShareDiluted", unit="USD/shares",
+                         value=v, period_start=dt.date.fromisoformat(pe).replace(
+                             year=dt.date.fromisoformat(pe).year - 1),
+                         period_end=dt.date.fromisoformat(pe), filed=dt.date.fromisoformat(f),
+                         fy=None, fp="FY", form="10-K", accession=None)
+            for pe, f, v in rows]
+
+
+EPS_REF = dt.date(2026, 7, 29)
+#: The defect's shape: profitable through 2021, loss-making since. The unbounded reader reaches
+#: back to the 2021 figure and prices the company on earnings it no longer reports.
+PRE_LOSS = _eps([("2021-12-31", "2022-02-20", 3.10),
+                 ("2022-12-31", "2023-02-20", -1.40),
+                 ("2025-12-31", "2026-02-20", -2.05)])
+
+
+def test_the_red_a_pre_loss_eps_is_out_of_range() -> None:
+    """THE RED. `annual_eps_as_of` takes the latest POSITIVE annual figure, so a name loss-making
+    for years is valued on pre-loss earnings — measured p90 4.8 years, max 16.6. The 2021 figure is
+    1,671 days past its period end at the reference date, well beyond one filing cycle."""
+    from vinci.screens.assemble import MAX_EPS_AGE_DAYS, annual_eps_as_of
+
+    assert annual_eps_as_of(PRE_LOSS, EPS_REF, max_age_days=10**6) == 3.10, "fixture is wrong"
+    assert annual_eps_as_of(PRE_LOSS, EPS_REF) is None, (
+        f"the {MAX_EPS_AGE_DAYS}d bound did not refuse a 1,671-day-old figure")
+
+
+def test_the_bound_clears_a_late_filer_and_refuses_the_next_period_back() -> None:
+    """DERIVED FROM THE FILING CADENCE, both directions. 470 = 365 annual period + 90 statutory
+    10-K deadline + 15 NT extension; the next-older annual figure sits at 730d, so the bound must
+    sit strictly between and cannot be reached by a filer who is merely late."""
+    from vinci.screens.assemble import MAX_EPS_AGE_DAYS, annual_eps_as_of
+
+    assert MAX_EPS_AGE_DAYS == 470
+    assert MAX_EPS_AGE_DAYS == 365 + 105, "the derivation no longer adds up"
+    assert MAX_EPS_AGE_DAYS < 730, "the bound reaches the next annual period — it cannot"
+    # a maximally late filer: FY ended 365d ago, filed 90d late, +15d extension
+    late = _eps([((EPS_REF - dt.timedelta(days=MAX_EPS_AGE_DAYS)).isoformat(),
+                  (EPS_REF - dt.timedelta(days=30)).isoformat(), 1.25)])
+    assert annual_eps_as_of(late, EPS_REF) == 1.25, "a filer inside the statutory window refused"
+    older = _eps([((EPS_REF - dt.timedelta(days=MAX_EPS_AGE_DAYS + 1)).isoformat(),
+                   (EPS_REF - dt.timedelta(days=30)).isoformat(), 1.25)])
+    assert annual_eps_as_of(older, EPS_REF) is None
+
+
+def test_out_of_range_is_not_evaluated_and_names_its_own_cause() -> None:
+    """NOT_EVALUATED, never PASS or FAIL — and distinct from `G3_NEGATIVE_ECONOMICS`. That name has
+    NEVER earned anything; this one HAS, but the last positive year is too far back to describe the
+    business now. They resolve differently: one needs a different valuation basis, the other needs
+    the company to file again."""
+    from vinci.schemas.market import PriceBar
+    from vinci.screens.assemble import (
+        G3_EPS_TOO_OLD,
+        G3_NEGATIVE_ECONOMICS,
+        pe_current_and_percentile,
+    )
+
+    bars = [PriceBar(internal_id="X", bar_date=EPS_REF, open=9.0, high=9.0, low=9.0, close=9.0,
+                     volume=1.0, source="t")]
+    pe, pctile = pe_current_and_percentile(bars, PRE_LOSS, reference_date=EPS_REF)
+    assert pe.value is None and pctile.value is None
+    assert pe.note == G3_EPS_TOO_OLD, pe.note
+    assert G3_EPS_TOO_OLD != G3_NEGATIVE_ECONOMICS
+
+    # a name that never earned anything keeps the OTHER reason
+    never = _eps([("2025-12-31", "2026-02-20", -2.05)])
+    pe2, _ = pe_current_and_percentile(bars, never, reference_date=EPS_REF)
+    assert pe2.note == G3_NEGATIVE_ECONOMICS, pe2.note
+
+
+def test_the_bound_lives_in_the_shared_reader_so_both_consumers_get_it() -> None:
+    """TWO CONSUMERS: `enrich_with_fundamentals` (G3) and `cli.py`'s `_pc_valuation` peer-cohort
+    command, both reaching `annual_eps_as_of` through `pe_current_and_percentile`. Bounding at the
+    gate alone would have left the peer-cohort command valuing names on sixteen-year-old earnings.
+
+    Pinned on the DEFAULT: neither caller can opt out by omission, and no call site may widen it."""
+    import inspect
+
+    from vinci.screens import assemble as asm
+
+    sig = inspect.signature(asm.annual_eps_as_of)
+    assert sig.parameters["max_age_days"].default == asm.MAX_EPS_AGE_DAYS, (
+        "the bound is no longer the default — a caller that omits it reaches back forever")
+    # no production call site may pass a wider age; the only widened calls are the cause-split
+    # probe inside pe_current_and_percentile (which asks 'did a positive figure EXIST at all')
+    # STRUCTURAL, not the call's source text (review finding — a hard-matched literal is the
+    # brittleness this session has removed twice already). Parse the module: every call that
+    # widens the bound must pass the explicit `None` sentinel, and there may be exactly one —
+    # the cause-split probe asking "did a positive figure exist AT ALL".
+    import ast
+
+    tree = ast.parse(inspect.getsource(asm))
+    widened = [n for n in ast.walk(tree)
+               if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+               and n.func.id == "annual_eps_as_of"
+               and any(k.arg == "max_age_days" for k in n.keywords)]
+    assert len(widened) == 1, f"{len(widened)} call sites override the bound; expected 1"
+    kw = next(k for k in widened[0].keywords if k.arg == "max_age_days")
+    assert isinstance(kw.value, ast.Constant) and kw.value.value is None, (
+        "the unbounded sentinel is not the explicit `None` — a magic number here is a bound "
+        "a reader cannot check")

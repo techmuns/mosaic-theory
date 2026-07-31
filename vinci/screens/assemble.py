@@ -53,6 +53,13 @@ G3_NEGATIVE_ECONOMICS = (
     "inputs tagged but economics negative throughout — never a positive annual EPS. This is an "
     "answer about the business, not a gap in the data")
 G3_SHORT_HISTORY = "history below the floor — too short to judge a trailing range"
+#: SEPARATE from G3_NEGATIVE_ECONOMICS: that name has never earned anything, this one HAS but the
+#: last positive year is too far back to describe the business now. Separate because they resolve
+#: differently — one needs a different valuation basis, the other needs the company to file again.
+G3_EPS_TOO_OLD = (
+    "the last positive annual EPS is older than one filing cycle — a more recent annual figure "
+    "exists and is negative, so valuing on the older one prices a business that no longer reports "
+    "those earnings")
 #: Zero names on the 2026-07-29 run and structurally near-unreachable (a name reaching G3 cleared
 #: G1 and G2 on price), but NAMED rather than left an inline literal: an un-named reason is one the
 #: taxonomy does not know about, so it escapes both the exhaustiveness pin and the population count.
@@ -60,12 +67,49 @@ G3_NO_PRICE = "no price at the reference date"
 
 #: Every reason G3 can emit. The pin asserts the emitted set is exactly this — a fourth reason
 #: added inline (as `G3_NO_PRICE` was) is a cause with no count and no label anyone reads.
-G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE)
+G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE, G3_EPS_TOO_OLD)
 
 
-def annual_eps_as_of(points: list[ConceptPoint], d: date) -> float | None:
-    """Latest *positive* annual diluted EPS known on/before ``d`` (point-in-time); None if none."""
-    cand = [p for p in points if p.is_annual and p.filed <= d and p.value > 0]
+#: How far past its period end an annual EPS may be and still describe the CURRENT business.
+#:
+#: DERIVED FROM THE FILING CADENCE, not from the population — the population is a continuous tail
+#: (p50 210d, p90 1,763d, max 6,054d across the 412 names reaching G3) with no separation to read a
+#: bound off. The cadence has one:
+#:
+#:     365d  the annual reporting period itself (measured p50 gap between annual points: 365d)
+#:   +  90d  the latest statutory 10-K deadline (non-accelerated filers; 60d large-accelerated,
+#:           75d accelerated — measured p50 57d, p90 78d, p95 89d on periods ending >= 2022, which
+#:           matches the SEC schedule exactly)
+#:   +  15d  the NT 10-K extension a late filer is entitled to
+#:   = 470d
+#:
+#: The NEXT-OLDER annual figure sits at least one more period back — 730d — so the bound has 260
+#: days of margin and cannot be reached by a filer who is merely late. Past it, the reader has
+#: skipped a more recent annual figure, and the only reason to skip one is that it was NEGATIVE:
+#: this function takes the latest POSITIVE point, so an unbounded reach-back values a company on
+#: pre-loss earnings. Measured before the bound: p90 4.8 years, max 16.6 years.
+MAX_EPS_AGE_DAYS = 470
+
+
+def annual_eps_as_of(points: list[ConceptPoint], d: date,
+                     *, max_age_days: int | None = MAX_EPS_AGE_DAYS) -> float | None:
+    """Latest *positive* annual diluted EPS known on/before ``d``, within ``max_age_days`` of its
+    period end. None if none qualifies.
+
+    THE BOUND LIVES HERE, IN THE SHARED READER, not at the gate. There are two consumers —
+    `enrich_with_fundamentals` (G3) and `cli.py`'s `_pc_valuation` peer-cohort command — and both
+    reach `annual_eps_as_of` through `pe_current_and_percentile`. Bounding at the gate alone would
+    have left the peer-cohort command valuing names on sixteen-year-old earnings, so the default is
+    applied at the source and neither caller can opt out by omission.
+    """
+    # ``None`` means UNBOUNDED, and it is spelled that way on purpose (review finding). The first
+    # cut used ``max_age_days=10**6`` as the sentinel — a magic number a reader has to decode, and
+    # one a pin then hard-matched as source text. The only caller that wants it is the cause-split
+    # probe below, asking "did a positive figure exist AT ALL", which is a different question from
+    # "is one current"; naming that distinction is worth more than saving a branch.
+    cand = [p for p in points
+            if p.is_annual and p.filed <= d and p.value > 0
+            and (max_age_days is None or (d - p.period_end).days <= max_age_days)]
     if not cand:
         return None
     return max(cand, key=lambda p: (p.period_end, p.filed)).value
@@ -94,6 +138,9 @@ def pe_current_and_percentile(
             why = G3_NO_INPUT
         elif cur_price is None:
             why = G3_NO_PRICE
+        elif annual_eps_as_of(annual_eps, reference_date, max_age_days=None) is not None:
+            # a positive figure EXISTS but is out of range — distinct from never having earned one
+            why = G3_EPS_TOO_OLD
         else:
             why = G3_NEGATIVE_ECONOMICS
         u: DataField[float] = DataField.unknown(
