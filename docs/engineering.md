@@ -72,9 +72,21 @@ and is likewise superseded: **the agent opens a PR and STOPS.** The cadence belo
 
 Five record-only PRs is **the review cadence, not a requirement**. Three rules:
 
-1. **No record-only PRs.** #239/#240/#242/#243/#244 each recorded decisions about work done
-   elsewhere. The record rides in the PR that implements what it records. **One PR per item.**
-   (#244 is the last of the class, and says so.)
+1. **No NARRATING record-only PRs — but two kinds are legitimate.** #239/#240/#242/#243/#244 each
+   recorded decisions about work done elsewhere, after the fact. That class is closed: the record
+   rides in the PR that implements what it records. **One PR per item.**
+   **AMENDED 2026-07-31**, because the rule as written was already false on main — #281 and #285 are
+   both record-only and both were asked for. Three cases, and only the first is forbidden:
+   - **NARRATION** (forbidden) — the work shipped elsewhere and could have carried its own record.
+   - **DURABLE-WRITE-FIRST** (required) — a decision settled in conversation, recorded *before* the
+     build it governs, so a session that ends mid-queue does not lose it. This is the operator's
+     standing instruction and it OUTRANKS the batching rule; #281's four screen-path items and
+     #285's retention design are this.
+   - **REVIEW FINDINGS ON AN ALREADY-MERGED PR** (unavoidable) — produced *after* the merge, so
+     there is no PR left to ride in. #285's D14/D15 are this.
+   A rule the repo is already violating is worse than no rule: it trains the reader to discount the
+   handbook. When practice and the rule diverge, amend the rule or change the practice — never leave
+   both standing.
 2. **Batch by RISK, not by size.** Mechanical and independent — a parser rewrite, a disclosure
    addition, a detector baseline, a file re-sequencing — go in **one** PR. Guards and policy go
    **solo**. Focused review has caught three real things on this run (two gate omissions, one

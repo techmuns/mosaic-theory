@@ -4031,10 +4031,23 @@ stale are the universe caps in fact** — if current, the item collapses to a st
 
 **S4a. RETENTION — THE DESIGN, settled 2026-07-31 so the next session builds rather than designs.**
 Recorded ahead of code, per the durable-write-first rule.
-- **SHAPE.** `data/snapshots/screen_runs/<run_id>.jsonl`, append-only, one row per CANDIDATE (not
-  per survivor), `run_id` = the reference date + a monotonic suffix so two runs on one date cannot
-  collide. Never overwritten — `candidate_records.jsonl` being rewritten each run is what made the
-  2026-07-27 bound luck rather than method.
+- **SHAPE.** `data/snapshots/screen_runs/<run_id>.jsonl`, append-only, `run_id` = the reference date
+  + a monotonic suffix so two runs on one date cannot collide. Never overwritten —
+  `candidate_records.jsonl` being rewritten each run is what made the 2026-07-27 bound luck rather
+  than method.
+- **TWO GRAINS, because "every name" and "one row per candidate" are NOT the same set** (review
+  finding — S4 said the first, the first cut of this design said the second; they differ by 1,482
+  names). **Both are retained:**
+  - **CANDIDATE rows (≈318/run), full** — every gate input with its own stamp, per-gate outcome.
+  - **UNIVERSE rows (≈1,800/run), thin** — ticker, the stage that dropped it, the reason, and the
+    one input that decided it.
+  **WHY THE UNIVERSE PASS CANNOT BE DROPPED:** a name filtered at the universe stage is also a
+  DISCARDED name, and the whole premise is that a screen discarding names that later outperform has
+  negative alpha. Retaining candidates only would make the universe filter unmeasurable by
+  construction — and **S3 is exactly a universe-stage defect** (a falsely-stamped market cap decides
+  band membership), so candidate-grain retention would leave the deepest of the five items with no
+  evidence trail at all. SIZING, so this is a decision and not a surprise: ~430KB/run, ≈22MB/year
+  weekly, JSONL and compressible — acceptable for a private repo, and re-check if the universe grows.
 - **ROW.** `{ticker, run_id, reference_date, gate_inputs: {...each with its own as_of...},
   per_gate: {g1: PASS|FAIL|NOT_EVALUATED, g2: …}, outcome, not_evaluated_reason}`. **Gate inputs are
   stored with their OWN stamps**, not the run's — the `relative_return` frontier work is precisely
@@ -4049,8 +4062,8 @@ Recorded ahead of code, per the durable-write-first rule.
 - **THE GUARDRAIL THAT BINDS HERE.** Retention is READ-ONLY evidence: no threshold, weight or gate
   may ever be set from it (validate forward, never tune on outcomes). The rows exist to FALSIFY the
   screen, never to fit it — a fitted gate is the replicable signal this fund is not.
-- **BUILD ORDER INSIDE THE PIECE:** writer + schema + round-trip pin → wire the screen to emit →
-  one real run → then the hold lifts only after piece three.
+- **BUILD ORDER INSIDE THE PIECE:** writer + schema + round-trip pin → wire the screen to emit BOTH
+  grains → one real run → then the hold lifts only after piece three.
 
 **S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the
 shape). Immutable, timestamped, append-only; every name with its gate INPUTS and PER-GATE OUTCOME,
