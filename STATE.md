@@ -4039,6 +4039,77 @@ the 2026-07-27 bound was possible only because it survived. The CROSS-SECTIONAL 
 (two or three finalists inside ONE theme rather than one per theme) waits behind the hold, and it
 is what stands between the platform and the variant view's cross-sectional form.
 
+**SHARE-DENOMINATOR ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Fourth session
+running where the durable write was the thing at risk. **THREE OF THE FOUR ITEMS THE OPERATOR
+DICTATED ARE CORRECTED HERE, because the read that produced them was wrong** — it searched
+`edgar/concepts.py` alone, found no weighted-average tag in the `shares` list, and concluded none
+was extracted anywhere. `concepts.py` is not the only reader. What is recorded is the measurement,
+not the dictation.
+
+**D1. THE EXTRACTION GAP IS HALF THE SIZE IT WAS REPORTED AS — diluted IS extracted; basic
+weighted-average is the only missing leg.** `anchor.py:67,396` reads
+`WeightedAverageNumberOfDilutedSharesOutstanding` straight off `companyfacts` via
+`_latest_point`/`points_for_tag`, which take an ARBITRARY tag — so no extraction pipeline is
+involved and adding a tag is one line, not a layer. MEASURED 11 of 11 dossier names: cover-page
+outstanding, basic WA and diluted WA **all three resolve on every name**, basic under the standard
+`WeightedAverageNumberOfSharesOutstandingBasic`. No name is unservable. (Rule already recorded in
+memory and violated anyway: *verify existence before denying — one keyword search is not a search*.)
+
+**D2. `facts.diluted_shares` IS NOT UNVERIFIED — it agrees with the machine extraction on 7 of 7
+records, to the digit.** AORT/EPAM/IT/MVST/NCNO/SMPL/WERN all match `_latest_point`'s value exactly
+(+0.00%). It is analyst-entered but machine-derived, it is inside `REFRESHABLE_FACTS`, and
+`ciq_balance.extract` independently reads `Weighted Avg. Diluted Shares Out.` off the CIQ Financials
+workbook as a vendor bridge. The field has a path and a cross-check; what it lacked was a CORRECT
+PERIOD — see D3.
+
+**D3. THE REAL DEFECT, FOUND BY THE CROSS-CHECK: `_latest_point` RETURNS A CUMULATIVE PERIOD, NOT
+THE QUARTER ITS DOCSTRING PROMISES.** A 10-Q tags the discrete quarter AND the year-to-date span
+with the SAME `period_end` and the SAME `filed`, so `max(pts, key=(period_end, filed))` breaks the
+tie arbitrarily. **MEASURED — 4 of 11 names get a cumulative span:** SMPL a 272-day (nine-month)
+figure **+4.16%** above its quarter (93,677,801 vs 89,940,680), FUBO 181-day −2.17%, BRBR 181-day
++1.02%, CNXC 181-day +0.35%. The other seven land on a true ~89-day quarter and are unaffected.
+**SMPL'S COMMITTED RECORD CARRIES THE FALSE BASIS STRING** — `"diluted weighted-average (latest
+10-Q)"` on a nine-month average — which is item 24's own defect class (a denominator whose stated
+basis is not what it is) sitting inside the field item 24 was about to swap. DIRECTION: SMPL is
+buying back, so the cumulative average is HIGHER than the current quarter and per-share value is
+understated. **This is a prerequisite, not a side-finding: swapping the denominator on top of a
+mis-periodised input just moves the error.**
+
+**D4. THE TWO OVERLAY FORMS ARE INDISTINGUISHABLE — MEASURED, so the choice is not an analytic
+question.** additive `basic_out + (dil_wa − basic_wa)` vs multiplicative
+`basic_out × (dil_wa ÷ basic_wa)`, both legs taken from the SAME reported period: **widest spread
+across the fleet is MVST at +0.033%; no name exceeds 0.1%.** The operator's expectation that they
+diverge where the count has moved (SMPL buying back, MVST issuing) did NOT materialise, and the
+algebra says why — the spread is the dilution delta times the fractional gap between outstanding
+and the period's basic average, and that second term is ≤0.24% everywhere. **PICK: ADDITIVE**, on
+robustness rather than fit — its assumption is stated in the units the instruments actually exist
+in (a COUNT of options/RSUs), and it degrades safely where the multiplicative form divides by a
+small or zero basic average. **BOTH LEGS MUST COME FROM ONE PERIOD** — two independent
+`_latest_point` calls can straddle a quarter and a YTD span and the delta would then be nonsense.
+
+**D5. THREE NAMES HAVE A ZERO DILUTION DELTA AND THAT MUST PRINT, not silently no-op.** FUBO, SMPL
+and VITL tag basic == diluted for the latest quarter, so the overlay returns the outstanding count
+unchanged. FUBO is correct accounting (a loss makes dilution antidilutive); SMPL and VITL are the
+filer's tagging and are NOT self-evidently right for a profitable name. The page must say *the
+filer reports no dilutive difference in this period*, never leave a reader to infer we checked and
+found none — item 22's visible-absence rule applied to the denominator.
+
+**D6. FUBO'S `shares_out` IS PRE-REVERSE-SPLIT AND A YEAR STALE — the 11.65× CIQ divergence now has
+its cause.** Its `EntityCommonStockSharesOutstanding` is dated **2025-07-31** while every other
+name's is 2026; the weighted-average count fell 349,096,793 → 30,715,279 between the Dec-2025 and
+Mar-2026 quarters. So the committed `shares_out` of 342,433,118 is a pre-split count and CIQ's
+29.4M was right. `reconcile_cap` catches the divergence (`market_cap` comes from CIQ and implies
+~30.8M shares against a `shares_out` of 342.4M) — the guard works; the FIELD is wrong, and the
+cover-page tag is the reason. **The overlay does not fix this**: its `basic_out` leg is that same
+stale cover-page fact. A staleness rule on the cover-page point is a separate, required piece.
+
+**D7. THE BASIC-BASIS FLEET REWARD:RISK NUMBERS ARE VOID.** SMPL 3.83→4.78, EPAM 5.27→6.68,
+IT 1.29→1.54, NCNO −0.71→−0.71, AORT −0.67→−0.66, MVST −0.33→−0.23 all carry the dropped-dilution
+error, and **"no name crosses 2:1" is PROVISIONAL** until the corrected run. MVST rising rather
+than falling is what exposed the conflation and is the name to watch: with dilution retained
+(15.92% on the latest quarter, by far the fleet's largest) it must FALL. If it does not, the basis
+still is not held.
+
 **PRICE-PATH RULINGS — RECORDED 2026-07-30, ahead of the build (operator).** These were settled in
 review and exist nowhere else; recording them is the first commit of the work, not its last.
 1. **NO OFFSET ON THE SHARES COLUMN.** A price's vintage is a CLOSE, a share count's is a FILING.
@@ -4059,6 +4130,11 @@ review and exist nowhere else; recording them is the first commit of the work, n
    confirms our `shares_out` on **10 of 11 names within 0.1%** (ratios 0.9993–1.0011), FUBO the sole
    exception at 11.65×. That is the multi-name study item 24 was waiting on. CAVEAT TO CARRY: CIQ's
    count is printed to 0.1M granularity, so it is a CROSS-CHECK, never an authoritative source.
+   **AMENDED 2026-07-31 (operator) — THIS EVIDENCE COVERS THE WRONG FIELD.** It validates
+   `shares_out`, the BASIC cover-page count. The denominator item 24 moves TO is the DILUTED count,
+   which this study never touched; the diluted field's own cross-check is D2 above (7 of 7 against
+   the machine extraction), and it is that check which surfaced D3. FUBO's 11.65× is not an
+   outlier to be carried as unexplained either — D6 gives its cause.
 5. **TWO SOURCES HAVE NO FRESHNESS MEASUREMENT AT ALL** — the **price store** and the **Financials
    workbook**. Everything else carries an as-of. IT's 6% divergence was not a code defect: it was
    the refresh command not having been run, and nothing measures that. Until a guard exists,
