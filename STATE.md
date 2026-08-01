@@ -4030,7 +4030,7 @@ stamp with the screen PR, basis (does membership actually move?) its own item. *
 stale are the universe caps in fact** — if current, the item collapses to a stamp.
 
 **S10. BATCH A — THE TWO RECOVERABLE VINTAGE STAMPS (2026-07-31).** From the enumeration of every
-stamp that can differ from its value'''s vintage, these two had a vintage the code still held:
+stamp that can differ from its value's vintage, these two had a vintage the code still held:
 1. **P/E and its percentile** stamped `reference_date` while the EPS behind them is an annual period
    typically ~210d old (bounded at 470 by #298). A P/E is price ÷ earnings and its two COLUMNS have
    different vintages; the run-date stamp named the fresher one and hid the older. Now stamped with
@@ -4040,12 +4040,12 @@ stamp that can differ from its value'''s vintage, these two had a vintage the co
    is now labelled beside the value. `window_facts` gained `anchor_before` rather than a second
    implementation: a RETURN needs a start price so it anchors at/before the window start, an
    EXTREMUM is a max over the bars INSIDE it — the two differ by exactly one bar, which is a flag on
-   one function, not a fork (#294'''s rule, and this class recurs on the fix after it).
+   one function, not a fork (#294's rule, and this class recurs on the fix after it).
 
 **NO VALUE MOVED — and no PAGE changed either.** Re-rendering all eleven dossiers from committed
 JSON moved one file, FUBO, and its diff is entirely schema-default backfill (`material`,
-`filed: null`, `extraction_version: null`) — the same class as MVST'''s 79 keys, not this batch. It
-was reverted. **The labels reach the JSON but not the rendered page:** the dossier'''s P/E is
+`filed: null`, `extraction_version: null`) — the same class as MVST's 79 keys, not this batch. It
+was reverted. **The labels reach the JSON but not the rendered page:** the dossier's P/E is
 CIQ-sourced (confirmed a fourth time), and `render.py:2207` prints the 52-week range as values only,
 never the note. `_sourced` does carry the note into `Sourced.note`, so a RE-ASSEMBLY would land it in
 the machine-complete tier. Under the three-tier rule that is the right tier; it is reported plainly
@@ -4058,12 +4058,54 @@ the VALUE and needed `assert cur_pt is not None` to satisfy the type — a bare 
 path, which `python -O` STRIPS, turning a loud explained refusal into an AttributeError. Branching
 on the POINT narrows naturally; pinned by an AST scan so a reintroduced assert is caught anywhere in
 the function. **`features.py:333` carries the same bare assert from #294 — flagged, not fixed here,
-to hold Batch A'''s scope.**
+to hold Batch A's scope.**
 
 **STILL OPEN — Batches B and C.** B: `shares_outstanding_by_cik` merges five quarterly frames into a
-flat dict and DISCARDS which frame supplied each CIK, so the universe cap'''s 120–485d age is not
-recoverable without changing that reader (three other callers). C: `RefPoint` has no vintage field
-and `ScenarioRecord.spot` is a bare float — audit **P3 pt1 and P4 pt2 remain OPEN**.
+flat dict and DISCARDS which frame supplied each CIK, so the universe cap's 120–485d age is not
+recoverable without changing that reader (three other callers). C: `RefPoint.vintage` SHIPPED (S10) but binds
+forward only — the 70 unstamped committed references need analyst source material, so **P3 pt1 remains
+OPEN and does not close on code**. `ScenarioRecord.spot` is still a bare float — **P4 pt2 remains OPEN**.
+
+**S10. `RefPoint.vintage` — BINDS FORWARD, built 2026-08-01. P3 pt1 DOES NOT CLOSE ON CODE.**
+A reference's `source` names WHERE a value came from and never WHEN: `CIQ Estimates->Trends`,
+`EDGAR RevenueFromContractWithCustomerExcludingAssessedTax`, `EDGAR OperatingIncomeLoss / revenue`
+name a source and a concept, no period. Census over **all 119 committed references** (7 records):
+**49 (41%) carry a date/period token in `source`; 70 (59%) carry none.**
+
+`RefPoint.vintage: str | None` added, gated by `VINTAGE_REQUIRED_FROM = "1.4"` on the record's OWN
+`schema_version` — the `BASIS_REQUIRED_FROM` precedent. `SCHEMA_VERSION` 1.3 -> 1.4. Free text, not
+a `date`: the honest answer is a fiscal period (`FY2025`) at least as often as a day, and typing it
+as a `date` would make an analyst invent one.
+
+**THE 70 ARE NOT BACKFILLED, and this is the entry that says why.** Their vintage is not in the
+record and is not recoverable from it — it lives in the analyst's source material (the CIQ export
+date, the filing period behind each concept). A backfill is a manual pass over 119 references
+against that material: an OPERATOR DECISION, not a queued build. So the field stops the next
+reference from being unstamped and repairs none of the ones that already are — **audit P3 pt1
+stays OPEN and does not close on code.** All 7 committed records verified at schema 1.3, i.e.
+below the gate, so nothing in the tree is silently in violation; a pin walks them and reddens the
+day one is bumped to 1.4 without its references being stamped, which is the day the backfill
+stops being optional.
+
+MUTATIONS, both directions (a forward-binding rule that also fires backward is an unauthorised
+migration; one that fires in neither is decoration): gate removed -> RED; gate stripped of its
+version key so it fires retroactively -> RED. Whitespace-only vintage refused.
+
+**INCIDENT (this build, in the guard shipped for this exact class).** `test_record_hygiene`'s
+`QUOTE_ESCAPE` documented itself as a regex "over that shape so a variant nobody has seen yet is
+still caught" — it was an alternation of TWO LITERALS. It ran green over **six** three-apostrophe
+possessives sitting in this file (the backslash form of the POSIX escape, with its backslash eaten).
+NAMED IN WORDS, NOT WRITTEN: the guard catches the idiom, so the record that documents the incident
+cannot spell it — the cost this guard's own note predicted for the speculative heredoc pattern,
+now paid for real by the pattern that earned its place. Third shape added on observation,
+tree re-scanned clean, and the comment corrected to describe what the pattern does. INVARIANT: the
+pattern now enumerates three; the note no longer claims a generality it lacks.
+
+**NOT DONE — the spot-divergence measurement.** The seven `spot_source` strings name three fetch
+routes (per-symbol `daily_bars`, `grouped_daily`, a store read), so the seven spots are not
+strictly comparable. Measuring the divergence per name, and what it does to each reward:risk
+(IT sits at 1.52 against a 2:1 bar), was the second half of this task and was NOT reached.
+Unblocked — it is a read, no decision pending.
 
 **S9. ROUTING STATES ITS POLICY — built 2026-07-31, solo. DEFAULT UNCHANGED.**
 The gates record NOT_EVALUATED; the ROUTER ignored it. Four forward/admit points, derived:
