@@ -30,11 +30,18 @@ import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
-#: THE IDIOM, not three sightings of it. `'\''` and `'"'"'` are the two ways a POSIX shell escapes
-#: an apostrophe inside a single-quoted string, and neither can occur in English prose: both require
-#: a quote character immediately adjacent to a quote character. Written as a regex over that shape
-#: so a variant nobody has seen yet is still caught.
-QUOTE_ESCAPE = re.compile(r"""'\\''|'"'"'""")
+#: THE IDIOM. `'\''` and `'"'"'` are the two ways a POSIX shell escapes an apostrophe
+#: inside a single-quoted string, and `'''` is what either degrades to when the escape is
+#: half-eaten. None can occur in English prose: all three put a quote against a quote.
+#:
+#: THE THIRD SHAPE WAS ADDED THE DAY IT LEAKED (2026-08-01), and the first cut had already
+#: claimed to cover it — the old note said the regex was written over that SHAPE, so that a
+#: variant nobody had seen yet would still be caught. It was not. It ALTERNATED TWO LITERALS,
+#: and six '''s possessives sat in STATE.md while this guard ran green over them. A comment
+#: asserting a generality the pattern does not have is worse than no comment: it stops the
+#: next reader from looking. The literals are still literals; what changed is that the note
+#: now says so, and the enumeration is now three.
+QUOTE_ESCAPE = re.compile(r"""'\\''|'"'"'|'{3}""")
 #: ONE PATTERN, because one is what was OBSERVED (review finding). The first cut also scanned for
 #: heredoc sentinels — a shape that has never leaked here, added on the theory it might. That is
 #: the speculative-build rule broken inside a hygiene guard, and it carried a real cost: a handbook
