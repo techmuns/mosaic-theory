@@ -321,6 +321,61 @@ def manifest_path(run_id: str, snapshots_dir: Path) -> Path:
     return retention_dir(snapshots_dir) / f"{run_id}.manifest.json"
 
 
+#: The per-gate key whose OUTCOME conflates two different decisions. Before the gates were split,
+#: one key carried both the G3 multiple-floor verdict AND the distress/routing decision: its FAIL
+#: reason reads "rejected by the multiple floor OR a distress signal". From those rows you cannot
+#: recover WHICH — so they measure routing, not the gate.
+CONFLATED_GATE_KEY = "g3_and_distress"
+
+#: The successor keys. A run carrying these recorded the two decisions separately.
+SPLIT_GATE_KEYS = ("g3_multiple_floor", "admitted")
+
+
+def caveat_path(run_id: str, snapshots_dir: Path) -> Path:
+    """A SEPARATE, ADDITIVE file — never the manifest.
+
+    The manifest is write-once by design (`write_manifest`), because rewriting it would silently
+    re-label every row already filed under that run. A caveat discovered AFTER a run is exactly
+    the thing that must not be smuggled into it. So the caveat rides beside the run as its own
+    file: the run stays immutable and the warning still reaches whoever opens the rows.
+    """
+    if not _RUN_ID.match(run_id):
+        raise ValueError(f"run_id {run_id!r} is not <YYYY-MM-DD>-<NN>")
+    return retention_dir(snapshots_dir) / f"{run_id}.caveat.json"
+
+
+def runs_with_conflated_gate(snapshots_dir: Path) -> list[str]:
+    """Every run whose rows carry :data:`CONFLATED_GATE_KEY`, DERIVED BY SCANNING, never listed.
+
+    A hardcoded pair would go stale the moment a third such run appeared — and the check that
+    matters is "is every affected run marked", which a list cannot answer about a run it does not
+    contain.
+    """
+    d = retention_dir(snapshots_dir)
+    found: list[str] = []
+    for path in sorted(d.glob("*.jsonl")) if d.is_dir() else []:
+        if not _RUN_ID.match(path.stem):
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if CONFLATED_GATE_KEY in (row.get("per_gate") or {}):
+                found.append(path.stem)
+                break
+    return found
+
+
+def read_caveat(run_id: str, snapshots_dir: Path) -> dict[str, Any] | None:
+    """The caveat filed against a run, or None. Callers reading a run's rows for gate-level
+    conclusions must check this — the rows themselves cannot tell you they are unfit."""
+    path = caveat_path(run_id, snapshots_dir)
+    if not path.is_file():
+        return None
+    loaded: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return loaded
+
+
 def write_manifest(manifest: RunManifest, *, snapshots_dir: Path) -> Path:
     """Write a run's manifest ONCE. Refuses to overwrite — a run's configuration is not editable.
 

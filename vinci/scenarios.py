@@ -86,6 +86,39 @@ FIELDED_REFS_FROM = "1.3"
 # DECISION, not a queued build — so **P3 pt1 does not close on code.** The field stops the next
 # reference from being unstamped; it does not repair the ones that already are.
 VINTAGE_REQUIRED_FROM = "1.4"
+#: WHICH SCHEMA INTRODUCED EACH REFERENCE FIELD — the write side of the forward-binding gates.
+#:
+#: THE DEFECT (#302, measured): `write_record` uses `model_dump_json` with no field filtering, so
+#: adding `vintage` meant the NEXT write of the 7 committed 1.3 records would emit **119
+#: `"vintage": null` keys** — one per reference — burying any real change in default noise.
+#:
+#: WHY NOT `exclude_none`. That is VALUE-driven: it drops a field because the value is null. It
+#: would strip every null across all seven records (`role`, `leg`, `excluded_reason`), a far larger
+#: diff than the one it fixes, and it CANNOT DROP `excluded: False` — a materialized default that
+#: is not None. It also destroys the ability to record "we looked and there is none" on a record
+#: whose schema HAS the field. The criterion is not *is it null*, it is *does this field exist in
+#: this record's schema*.
+#:
+#: WHY NOT A `migrated` STATE. That is a diagnosis — a label saying stamp and structure disagree.
+#: It describes the damage after the fact; it does not stop the 119 keys.
+#:
+#: SO: VERSION-SCOPED SERIALIZATION. A record is written with exactly the fields its OWN declared
+#: `schema_version` knows about. `vinci/dossier/extraction_version.py` already makes this argument
+#: about itself — it normalises `""` and `None` to one state because *"unstamped" and "I did not
+#: look" are different states*. `"vintage": null` on a 1.3 record asserts WE LOOKED AND THERE IS
+#: NONE; the truth is THIS RECORD PREDATES THE QUESTION. Only the declared version separates them.
+#:
+#: DECLARE EVERY VERSIONED FIELD, not just the one that hurt. A writer that version-scopes ONE
+#: field while claiming to version-scope is the #302 hygiene-guard defect exactly — a mechanism
+#: asserting a generality it does not have. The 1.3 entries are exercised by the 1.2 pin below,
+#: not dead weight.
+REF_FIELDS_INTRODUCED_IN: dict[str, str] = {
+    "role": FIELDED_REFS_FROM,             # 1.3 — the machine copy of what the label used to say
+    "leg": FIELDED_REFS_FROM,              # 1.3
+    "excluded": FIELDED_REFS_FROM,         # 1.3 — a BOOL: `exclude_none` could never drop it
+    "excluded_reason": FIELDED_REFS_FROM,  # 1.3
+    "vintage": VINTAGE_REQUIRED_FROM,      # 1.4 — WHEN the value is from
+}
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -879,6 +912,26 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
         warnings.warn(f"{rec.ticker}: " + "; ".join(notes), AdmissibilityWarning, stacklevel=3)
 
 
+def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
+    """The record as a dict carrying ONLY the reference fields its declared schema knows about.
+
+    Public behaviour, private name: every consumer goes through :func:`write_record`. Drops rather
+    than nulls, because an ABSENT key and a null key say different things — see
+    :data:`REF_FIELDS_INTRODUCED_IN` for why that distinction is the whole point.
+
+    A version this code cannot parse (`_schema_ver` -> ``(0,)``) keeps NOTHING versioned, which is
+    the conservative direction: an unreadable stamp must not be treated as "latest".
+    """
+    out: dict[str, Any] = rec.model_dump(mode="json")
+    ver = _schema_ver(rec.schema_version)
+    for axis in (out.get("assumptions") or {}).values():
+        for ref in axis.get("references") or []:
+            for field, introduced in REF_FIELDS_INTRODUCED_IN.items():
+                if ver < _schema_ver(introduced):
+                    ref.pop(field, None)
+    return out
+
+
 def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads.
 
@@ -902,7 +955,10 @@ def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
             ProseRegisterWarning,
             stacklevel=2,
         )
-    path.write_text(rec.model_dump_json(indent=2) + "\n")
+    # ensure_ascii=False: pydantic writes raw UTF-8, and the records are full of ×, ÷ and −.
+    # Defaulting to True re-escapes every one of them across all seven files — caught by the
+    # byte-level corpus pin, NOT by the parsed-dict compare, which called it identical.
+    path.write_text(json.dumps(_version_scoped(rec), indent=2, ensure_ascii=False) + "\n")
     return path
 
 
@@ -1161,5 +1217,8 @@ def write_archived(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     d = archive_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{archive_key(rec)}.json"
-    path.write_text(rec.model_dump_json(indent=2) + "\n")
+    # ensure_ascii=False: pydantic writes raw UTF-8, and the records are full of ×, ÷ and −.
+    # Defaulting to True re-escapes every one of them across all seven files — caught by the
+    # byte-level corpus pin, NOT by the parsed-dict compare, which called it identical.
+    path.write_text(json.dumps(_version_scoped(rec), indent=2, ensure_ascii=False) + "\n")
     return path

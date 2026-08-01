@@ -1,0 +1,34 @@
+{
+  "run_id": "2026-07-29-01",
+  "filed_against": "2026-07-29-01.jsonl",
+  "why_not_in_the_manifest": "The manifest is write-once by design \u2014 rewriting it would silently re-label every row already filed under this run. A caveat found after the run is exactly what must not be smuggled into it, so it rides beside the run as its own file.",
+  "conflated_key": "g3_and_distress",
+  "rows_carrying_it": 423,
+  "outcomes": {
+    "FAIL": 128,
+    "PASS": 295
+  },
+  "observed_reasons": [
+    "admitted to the candidate set",
+    "rejected by the multiple floor or a distress signal"
+  ],
+  "what_it_records": "ROUTING, not the gate. The FAIL reason reads 'rejected by the multiple floor or a distress signal' \u2014 one key for two decisions, so a FAIL row does not say which one rejected the name.",
+  "these_rows_CAN_be_used_for": [
+    "the admitted/rejected split at the END of the screen (the routing outcome itself)",
+    "counting how many candidates reached the G3 stage at all",
+    "G1 and G2 gate analysis \u2014 those keys are unaffected by this conflation"
+  ],
+  "these_rows_CANNOT_be_used_for": [
+    "any G3 multiple-floor hit rate or threshold calibration",
+    "distinguishing a multiple-floor rejection from a distress rejection",
+    "any per-gate FAIL attribution at the G3 stage",
+    "comparison against a later run's g3_multiple_floor counts \u2014 different populations"
+  ],
+  "superseded_by": {
+    "keys": [
+      "g3_multiple_floor",
+      "admitted"
+    ],
+    "note": "Runs carrying these recorded the two decisions separately; use those for gate-level questions."
+  }
+}

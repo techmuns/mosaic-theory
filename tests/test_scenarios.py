@@ -996,3 +996,86 @@ def test_every_committed_record_predates_the_vintage_rule(tmp_path: Path) -> Non
             f"{f.name} is at schema {rec['schema_version']} — at or past "
             f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage")
     assert seen == 7, f"expected the 7 committed records, walked {seen}"
+
+
+def _ref_keys(payload: dict[str, object], axis: str = "revenue") -> set[str]:
+    """The key set of the first reference on ``axis``, as WRITTEN (not as modelled)."""
+    axes = payload["assumptions"]
+    assert isinstance(axes, dict)
+    return set(axes[axis]["references"][0])            # type: ignore[index,arg-type]
+
+
+def test_a_record_writes_only_the_reference_fields_its_own_schema_knows(tmp_path: Path) -> None:
+    """VERSION-SCOPED SERIALIZATION. `write_record` emitted every model field regardless of the
+    record's version, so #302's `vintage` would have put 119 `"vintage": null` keys across the 7
+    committed 1.3 records — real changes buried in default noise.
+
+    THREE VERSIONS, ONE RECORD, walking the map: a 1.2 record predates all four 1.3 reference
+    fields AND `vintage`; a 1.3 record has the four and predates `vintage`; a 1.4 record has all
+    five. Absence is the assertion — a null would say "we looked and there is none" about a
+    question the record predates."""
+    ref = sc.RefPoint(label="own-history median", value=7.45, unit="%", source="EDGAR",
+                      role="median", vintage="FY2025")
+    base = _rec(assumptions={
+        "revenue": sc.AssumptionDerivation(method="m", references=[ref]),
+        "margin": sc.AssumptionDerivation(method="m"),
+        "multiple": sc.AssumptionDerivation(method="m"),
+    })
+    v13 = {"role", "leg", "excluded", "excluded_reason"}
+
+    def written(version: str) -> set[str]:
+        rec = base.model_copy(update={"schema_version": version})
+        return _ref_keys(json.loads(sc.write_record(rec, root=tmp_path).read_text()))
+
+    always = {"label", "value", "unit", "source"}
+    k12, k13, k14 = written("1.2"), written("1.3"), written("1.4")
+
+    assert k12 == always, f"a 1.2 record predates every versioned field, got {sorted(k12)}"
+    assert k13 == always | v13, f"a 1.3 record has the four and not vintage, got {sorted(k13)}"
+    assert k14 == always | v13 | {"vintage"}, f"a 1.4 record has all five, got {sorted(k14)}"
+
+    # THE ORDERING IS THE POINT, stated as a chain rather than three loose facts.
+    assert k12 < k13 < k14, "each schema is a strict superset of the one before"
+
+    # `excluded` is a BOOL defaulting to False — `exclude_none` could never have dropped it, which
+    # is why the criterion is the version and not the value.
+    assert "excluded" not in k12 and json.loads(
+        sc.write_record(base.model_copy(update={"schema_version": "1.3"}),
+                        root=tmp_path).read_text())["assumptions"]["revenue"]["references"][0][
+        "excluded"] is False, "the 1.3 record keeps excluded=False; the 1.2 record drops the key"
+
+
+def test_an_unparseable_schema_version_keeps_nothing_versioned(tmp_path: Path) -> None:
+    """`_schema_ver` returns (0,) on anything it cannot parse. A stamp we cannot read must NOT be
+    treated as "latest" — the conservative direction is to write the smallest honest record, not
+    to assume the newest shape. Hand-edited records make a junk version reachable."""
+    ref = sc.RefPoint(label="l", value=1.0, unit="%", source="s", role="median", vintage="FY2025")
+    rec = _rec(assumptions={
+        "revenue": sc.AssumptionDerivation(method="m", references=[ref]),
+        "margin": sc.AssumptionDerivation(method="m"),
+        "multiple": sc.AssumptionDerivation(method="m"),
+    }).model_copy(update={"schema_version": "not-a-version"})
+    assert _ref_keys(json.loads(sc.write_record(rec, root=tmp_path).read_text())) == {
+        "label", "value", "unit", "source"}
+
+
+def test_the_seven_committed_records_round_trip_byte_identical(tmp_path: Path) -> None:
+    """THE CORPUS RUN, not a synthetic. #302's hygiene guard passed its mutation and ran green over
+    six live violations because the mutation used a shape it already knew — so this asserts on the
+    REAL committed records: re-writing each one changes NOTHING. It is the check that would have
+    caught the 119 nulls, and it reddens on the next schema field that forgets to declare itself
+    in REF_FIELDS_INTRODUCED_IN."""
+    root = Path(__file__).resolve().parents[1] / "scenarios"
+    seen = 0
+    for f in sorted(root.glob("*.json")):
+        if f.name.startswith("_"):
+            continue
+        seen += 1
+        before = f.read_text()
+        rec = sc.read_record(f.stem, root=root.parent)   # records_dir() appends "scenarios"
+        after = sc.write_record(rec, root=tmp_path).read_text()
+        assert before == after, (
+            f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
+            "next real diff is unreadable. If a field was just added, declare it in "
+            "REF_FIELDS_INTRODUCED_IN.")
+    assert seen == 7, f"expected the 7 committed records, walked {seen}"
