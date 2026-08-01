@@ -22,6 +22,7 @@ import pytest
 from pydantic import ValidationError
 
 from vinci.schemas.candidate import GateResult
+from vinci.schemas.envelope import DataField, SourceTier
 from vinci.screens.retention import (
     CONFLATED_GATE_KEY,
     SPLIT_GATE_KEYS,
@@ -1225,3 +1226,116 @@ def test_every_run_with_the_conflated_gate_key_carries_a_caveat() -> None:
         if set(SPLIT_GATE_KEYS) <= keys:
             assert read_caveat(f.stem, snap) is None, (
                 f"{f.stem} recorded the gates separately and must not carry the caveat")
+
+
+def _field(value: float | None = None, as_of: dt.date | None = None,
+           source: str = "EOD", note: str | None = None) -> DataField[float]:
+    """A REAL `DataField`, never a duck-typed stand-in.
+
+    The first cut of these tests used a hand-rolled stub with four attributes, and that stub is
+    what let `_stamped` ship reading `getattr(f, "value", None)` — the TEST SHAPE drove the
+    production signature, which is backwards, and it turned a renamed attribute into a silent
+    None instead of a crash. Using the real model also buys the coverage contract for free:
+    PRESENT must carry both a value and an as_of, UNKNOWN must carry neither."""
+    if value is None:
+        return DataField[float].unknown(source=source, tier=SourceTier.DERIVED, note=note)
+    assert as_of is not None, "a PRESENT DataField must carry an as_of — the model refuses it"
+    return DataField[float].present(value, as_of=as_of, source=source,
+                                    tier=SourceTier.DERIVED, note=note)
+
+
+class _Rec:
+    def __init__(self, prices: object, fundamentals: object) -> None:
+        self.prices, self.fundamentals = prices, fundamentals
+
+
+class _NS:
+    def __init__(self, **kw: object) -> None:
+        self.__dict__.update(kw)
+
+
+def _g3_rec(pe: DataField[float], ev: DataField[float] | None = None) -> _Rec:
+    return _Rec(prices=_NS(drawdown_from_high=_field(-0.42, dt.date(2026, 7, 29), "EOD"),
+                           rel_ret_vs_market=_field(-0.21, dt.date(2026, 7, 29), "EOD"),
+                           last=_field(11.5, dt.date(2026, 7, 29), "EOD")),
+                fundamentals=_NS(ev_ebitda_pctile_vs_history=ev or _field(note="deferred"),
+                                 pe_pctile_vs_history=pe))
+
+
+def test_a_g3_row_carries_the_number_the_gate_decided_on() -> None:
+    """G3'S INPUTS WERE MISSING FROM THE ROW. `gate_inputs` carried drawdown_from_high, last and
+    rel_ret_vs_market — all price, all G1/G2. G3 is the VALUATION gate and none of its inputs were
+    recorded, so a row said what G3 decided and why but never the number it decided on. Retention
+    exists to falsify the screen; for G3 it could not.
+
+    BOTH G3 inputs are recorded, not just the winner: `gate_g3_multiple_floor` prefers EV/EBITDA
+    and falls back to P/E, so a row carrying only the one used cannot say WHY it was used."""
+    from vinci.screens import run as _run
+
+    gi = _run._gate_inputs(
+        _g3_rec(_field(0.0008, dt.date(2025, 12, 31), "EDGAR", "1254 P/E observations over 1825d")),
+        [], window_start={})
+    assert set(gi) == {"drawdown_from_high", "rel_ret_vs_market", "last",
+                       "ev_ebitda_pctile_vs_history", "pe_pctile_vs_history"}, (
+        f"a G3 input is missing from the row: {sorted(gi)}")
+    pe = gi["pe_pctile_vs_history"]
+    assert pe.value == 0.0008 and pe.source == "EDGAR"
+    assert pe.note and "1254 P/E observations" in pe.note
+
+
+def test_a_g3_input_is_stamped_with_its_own_period_never_the_run_date() -> None:
+    """THE STAMP IS THE POINT. `pe_pctile_vs_history` is stamped with the EPS PERIOD END — on a
+    real 2026-07-29 record that is 2025-12-31, **210 days older than the run**. A row stamping it
+    with the reference date would claim a freshness the number does not have, which is precisely
+    the shape that let a stale benchmark pass for a current one.
+
+    Asserted as a RELATION (the field's own stamp, and strictly older than the run), not as a
+    literal date, so it pins the rule rather than one observation."""
+    from vinci.screens import run as _run
+
+    run_date, eps_period = dt.date(2026, 7, 29), dt.date(2025, 12, 31)
+    gi = _run._gate_inputs(_g3_rec(_field(0.26, eps_period, "EDGAR", "basis")), [], window_start={})
+    got = gi["pe_pctile_vs_history"].as_of
+    assert got == eps_period, f"the input must carry its OWN stamp, got {got}"
+    assert got is not None and got < run_date, (
+        "a valuation input stamped with the run date claims a freshness it does not have — the "
+        f"EPS period is {(run_date - got).days}d older")
+    # The price inputs still carry theirs — one helper, and it did not flatten them onto one date.
+    assert gi["last"].as_of == run_date
+
+
+def test_a_not_evaluated_g3_row_still_says_why() -> None:
+    """282 of the 413 names that reached G3 in the -03 run were NOT_EVALUATED. Their input is
+    written ANYWAY — value None, NO stamp, `note` carrying the cause — because "the gate could not
+    see this" is the finding, not an absence to skip. A present value without a stamp is refused
+    by StampedInput; an absent one with a note is exactly the honest shape."""
+    from vinci.screens import run as _run
+
+    for cause in ("no valuation input tagged — no diluted EPS in the filing history",
+                  "inputs tagged but economics negative throughout — never a positive annual EPS",
+                  "the last positive annual EPS is older than one filing cycle",
+                  "history below the floor — too short to judge a trailing range"):
+        gi = _run._gate_inputs(_g3_rec(_field(None, None, "EDGAR", cause)), [], window_start={})
+        f = gi["pe_pctile_vs_history"]
+        assert f.value is None and f.as_of is None, "an absent value must carry no stamp"
+        assert f.note == cause, "the cause must survive onto the input, not only the gate's reason"
+
+
+def test_every_gate_input_goes_through_the_one_stamping_helper() -> None:
+    """STRUCTURAL. Two conversions from DataField to StampedInput would drift, and the one that
+    drifted would be the one nobody re-read — the divergent-parser class. `_gate_inputs` builds
+    every entry through `_stamped`, and the field lists are data, so adding an input cannot
+    bypass it."""
+    import ast
+    import inspect
+
+    from vinci.screens import run as _run
+
+    tree = ast.parse(inspect.getsource(_run._gate_inputs).lstrip())
+    constructed = [n for n in ast.walk(tree)
+                   if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+                   and n.func.id == "StampedInput"]
+    assert not constructed, (
+        "_gate_inputs builds a StampedInput directly — route it through _stamped")
+    assert _run._G3_INPUTS == ("ev_ebitda_pctile_vs_history", "pe_pctile_vs_history"), (
+        "the G3 inputs are declared in the gate's own preference order — EV/EBITDA then P/E")
