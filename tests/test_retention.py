@@ -1092,3 +1092,85 @@ def test_the_manifest_and_the_run_cannot_state_different_policies(tmp_path: path
     m = read_manifest("2026-07-29-01", snapshots_dir=tmp_path)
     assert m is not None and m.routing_policy is RoutingPolicy.CARRY
     assert m.routing_policy is not RoutingPolicy.DROP, "the two values must be distinguishable"
+
+
+# --- Batch A: stamps whose vintage was recoverable and unstated ----------------------------------
+
+
+def test_the_pe_is_stamped_with_its_eps_period_not_the_run_date() -> None:
+    """A P/E is price ÷ earnings and its two columns have DIFFERENT vintages: the price is the
+    reference date, the EPS an annual period typically ~210d old. Stamping the run date named the
+    fresher column and hid the older one — a stamp belongs to a COLUMN, not a block."""
+    from vinci.schemas.market import PriceBar
+    from vinci.screens.assemble import pe_current_and_percentile
+
+    eps = _eps([("2025-12-31", "2026-02-20", 2.00)])
+    bars = [PriceBar(internal_id="X", bar_date=EPS_REF, open=20.0, high=20.0, low=20.0,
+                     close=20.0, volume=1.0, source="t")]
+    pe, _ = pe_current_and_percentile(bars, eps, reference_date=EPS_REF)
+    assert pe.value == 10.0, "the VALUE must not move — this is a stamp fix"
+    assert pe.as_of == dt.date(2025, 12, 31), f"stamped {pe.as_of}, not the EPS period"
+    assert pe.as_of != EPS_REF, "the stamp still claims the run date"
+    note = pe.note or ""
+    assert "period ending 2025-12-31" in note and "210d old" in note, note
+    assert "filed 2026-02-20" in note, note
+
+
+def test_the_52_week_extremum_labels_the_window_it_covers() -> None:
+    """`as_of` is correct as "known at" but says nothing about what the extremum COVERS, so a
+    52-week high drawn from a truncated series read exactly like one drawn from a full year —
+    INHD's covers ~10.5 months."""
+    from vinci.eod.features import compute_price_features
+
+    bars = _bars([("2025-08-01", 40.0), ("2026-01-15", 30.0), ("2026-07-29", 12.0)])
+    f = compute_price_features(bars, reference_date=G1_REF, staleness_days=5)
+    assert f.high_52w.value == 40.0 and f.low_52w.value == 12.0, "a VALUE moved on a stamp fix"
+    for fld in (f.high_52w, f.low_52w):
+        note = fld.note or ""
+        assert "52-week window" in note and "spans" in note and "bars" in note, note
+
+
+def test_the_extremum_window_uses_the_shared_helper_with_the_other_anchor() -> None:
+    """ONE IMPLEMENTATION (#294), extended rather than forked. A return needs a START PRICE so it
+    anchors on the bar at/before the window start; an extremum is a max over the bars INSIDE the
+    window and has no start price to reach back for. The two differ by exactly one bar, which is a
+    flag on the one function — not a second one."""
+    import ast
+    import inspect
+
+    from vinci.eod import features as ft
+
+    assert "anchor_before" in inspect.signature(ft.window_facts).parameters
+    src = inspect.getsource(ft.compute_price_features)
+    tree = ast.parse(src.lstrip())
+    assert not [n for n in ast.walk(tree)
+                if isinstance(n, ast.FunctionDef) and n.name == "window_facts"], (
+        "compute_price_features defines its own window_facts")
+    assert "window_facts(bars, start=w_start, end=as_of, anchor_before=False)" in src
+
+    bars = _bars([("2026-01-01", 10.0), ("2026-04-01", 9.0), ("2026-07-29", 8.0)])
+    ret_anchor = ft.window_facts(bars, start=dt.date(2026, 4, 1), end=dt.date(2026, 7, 29))
+    ext_anchor = ft.window_facts(bars, start=dt.date(2026, 4, 2), end=dt.date(2026, 7, 29),
+                                 anchor_before=False)
+    assert ret_anchor == (119, 2), ret_anchor       # reaches back to the 04-01 bar
+    assert ext_anchor == (0, 1), ext_anchor         # only the bars inside [04-02, 07-29]
+
+
+def test_no_production_path_narrows_a_type_with_a_bare_assert() -> None:
+    """REVIEW FINDING. `pe_current_and_percentile` branched on the VALUE and then needed
+    `assert cur_pt is not None` to satisfy the type — a bare assert in a production path, which
+    `python -O` STRIPS. Under optimisation the refusal became an AttributeError: a crash instead of
+    the loud, explained failure this repo requires.
+
+    Branching on the point itself narrows naturally. Pinned by parsing, so a reintroduced assert
+    is caught wherever in the function it sits."""
+    import ast
+    import inspect
+
+    from vinci.screens.assemble import pe_current_and_percentile
+
+    tree = ast.parse(inspect.getsource(pe_current_and_percentile).lstrip())
+    asserts = [n for n in ast.walk(tree) if isinstance(n, ast.Assert)]
+    assert not asserts, (
+        f"{len(asserts)} bare assert(s) narrow a type in a production path — `python -O` strips "
+        "them and the guarded branch becomes a crash")
