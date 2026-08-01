@@ -57,7 +57,8 @@ def _unknown(note: str) -> DataField[float]:
 MAX_ANCHOR_LAG_DAYS = 10
 
 
-def window_facts(bars: list[PriceBar], *, start: date, end: date) -> tuple[int, int] | None:
+def window_facts(bars: list[PriceBar], *, start: date, end: date,
+                 anchor_before: bool = True) -> tuple[int, int] | None:
     """(span_days, bar_count) for the window a return over ``[start, end]`` ACTUALLY covered.
 
     ONE IMPLEMENTATION, called by both the field that reports the number and the retention row that
@@ -65,13 +66,25 @@ def window_facts(bars: list[PriceBar], *, start: date, end: date) -> tuple[int, 
     `screens.run`. They agreed, but two computations of one quantity is the twin-drift class this
     repo keeps finding, and the risk was never string-parsing, it was duplication).
 
-    Anchored on the bar the return STARTED from — the latest at or before ``start`` — so a hole in
-    the series shows up as a span wider than the target instead of being invisible.
+    ``anchor_before=True`` (the default) anchors on the bar the return STARTED from — the latest at
+    or before ``start`` — so a hole in the series shows up as a span wider than the target instead
+    of being invisible. That is the right anchor for a RETURN, which needs a start price.
+
+    ``anchor_before=False`` measures the window ``[start, end]`` itself. That is the right anchor
+    for an EXTREMUM — a 52-week high is a max over the bars INSIDE the window, and there is no
+    start price to reach back for. The flag lives here rather than in a second function because one
+    quantity deserves one implementation (#294), and the two anchors differ by exactly one bar.
     """
-    prior = [b for b in bars if b.bar_date <= start]
-    if not prior:
-        return None
-    a = prior[-1].bar_date
+    if anchor_before:
+        prior = [b for b in bars if b.bar_date <= start]
+        if not prior:
+            return None
+        a = prior[-1].bar_date
+    else:
+        inside = [b for b in bars if start <= b.bar_date <= end]
+        if not inside:
+            return None
+        a = inside[0].bar_date
     return (end - a).days, sum(1 for b in bars if a <= b.bar_date <= end)
 
 
@@ -133,8 +146,16 @@ def compute_price_features(
         window = [b for b in bars if b.bar_date >= w_start]
         hi = max(b.high for b in window)
         lo = min(b.low for b in window)
-        high_52w = _eod(hi, as_of)
-        low_52w = _eod(lo, as_of)
+        # THE STAMP NAMES THE LAST BAR; THE VALUE IS A MAX OVER 365 DAYS (2026-07-31). `as_of` is
+        # correct as "known at" but says nothing about what the extremum covers, so a 52-week high
+        # drawn from a truncated series read exactly like one drawn from a full year — INHD's
+        # covers ~10.5 months. The window is now labelled beside the value; a stamp belongs to what
+        # it names.
+        wf = window_facts(bars, start=w_start, end=as_of, anchor_before=False)
+        win = (f"52-week window {w_start.isoformat()}→{as_of.isoformat()}: spans {wf[0]}d over "
+               f"{wf[1]} bars" if wf else "52-week window not resolvable")
+        high_52w = _eod(hi, as_of).model_copy(update={"note": win})
+        low_52w = _eod(lo, as_of).model_copy(update={"note": win})
         # THE RATIO FIELDS REACH BACK FOR `latest` AND CLAIM TO BE CURRENT (2026-07-31).
         #
         # `drawdown_from_high` is what G1 gates on, and it is `latest.close / hi - 1` — so a name

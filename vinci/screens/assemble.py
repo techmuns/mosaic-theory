@@ -91,6 +91,22 @@ G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE,
 MAX_EPS_AGE_DAYS = 470
 
 
+def annual_eps_point_as_of(points: list[ConceptPoint], d: date,
+                           *, max_age_days: int | None = MAX_EPS_AGE_DAYS) -> ConceptPoint | None:
+    """The POINT behind :func:`annual_eps_as_of` — same selection, the whole fact.
+
+    Callers that only need the number keep using `annual_eps_as_of`; a caller that must STAMP the
+    number needs the point's ``period_end``, and returning a bare float made that unrecoverable.
+    One selection, two views — never two selections.
+    """
+    cand = [p for p in points
+            if p.is_annual and p.filed <= d and p.value > 0
+            and (max_age_days is None or (d - p.period_end).days <= max_age_days)]
+    if not cand:
+        return None
+    return max(cand, key=lambda p: (p.period_end, p.filed))
+
+
 def annual_eps_as_of(points: list[ConceptPoint], d: date,
                      *, max_age_days: int | None = MAX_EPS_AGE_DAYS) -> float | None:
     """Latest *positive* annual diluted EPS known on/before ``d``, within ``max_age_days`` of its
@@ -107,12 +123,8 @@ def annual_eps_as_of(points: list[ConceptPoint], d: date,
     # one a pin then hard-matched as source text. The only caller that wants it is the cause-split
     # probe below, asking "did a positive figure exist AT ALL", which is a different question from
     # "is one current"; naming that distinction is worth more than saving a branch.
-    cand = [p for p in points
-            if p.is_annual and p.filed <= d and p.value > 0
-            and (max_age_days is None or (d - p.period_end).days <= max_age_days)]
-    if not cand:
-        return None
-    return max(cand, key=lambda p: (p.period_end, p.filed)).value
+    pt = annual_eps_point_as_of(points, d, max_age_days=max_age_days)
+    return pt.value if pt else None
 
 
 def pe_current_and_percentile(
@@ -127,7 +139,8 @@ def pe_current_and_percentile(
     The percentile defers to UNKNOWN unless ≥ ``min_points`` P/E observations exist in the trailing
     window — a too-short range cannot reliably establish "at floor"."""
     bars = sorted(price_bars, key=lambda b: b.bar_date)
-    cur_eps = annual_eps_as_of(annual_eps, reference_date)
+    cur_pt = annual_eps_point_as_of(annual_eps, reference_date)
+    cur_eps = cur_pt.value if cur_pt else None
     cur_price = _close_on_or_before(bars, reference_date)
     if cur_eps is None or cur_price is None:
         # THE CAUSE, NOT JUST THE ABSENCE. "no positive EPS/price" collapsed two states G3 must
@@ -148,7 +161,16 @@ def pe_current_and_percentile(
         )
         return u, u
     cur_pe = cur_price / cur_eps
-    pe_df = DataField.present(cur_pe, as_of=reference_date, source="EDGAR", tier=SourceTier.DERIVED)
+    # THE STAMP IS THE EPS PERIOD, NOT THE RUN DATE (2026-07-31). A P/E is price ÷ earnings and its
+    # two columns have different vintages: the price is the reference date, the EPS is an annual
+    # period typically ~210d old (bounded at 470 by the reach-back guard). Stamping the run date
+    # named the fresher column and hid the older one — a stamp belongs to a COLUMN, not a block.
+    assert cur_pt is not None
+    eps_age = (reference_date - cur_pt.period_end).days
+    basis = (f"price {reference_date.isoformat()} ÷ annual diluted EPS for the period ending "
+             f"{cur_pt.period_end.isoformat()} ({eps_age}d old, filed {cur_pt.filed.isoformat()})")
+    pe_df = DataField.present(cur_pe, as_of=cur_pt.period_end, source="EDGAR",
+                              tier=SourceTier.DERIVED, note=basis)
 
     start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
     hist: list[float] = []
@@ -165,8 +187,12 @@ def pe_current_and_percentile(
         )
         return pe_df, pctile_u
     pctile = sum(1 for x in hist if x <= cur_pe) / len(hist)
+    # The percentile compares TODAY's P/E to a trailing range of P/Es, every one of which carries
+    # the same EPS-vintage lag — so its as-of is the EPS period too, and the note says what the
+    # range covers rather than leaving "reference_date" to imply a same-day range.
     pctile_df = DataField.present(
-        pctile, as_of=reference_date, source="EDGAR", tier=SourceTier.DERIVED
+        pctile, as_of=cur_pt.period_end, source="EDGAR", tier=SourceTier.DERIVED,
+        note=(f"{len(hist)} P/E observations over {_PE_WINDOW_DAYS}d; {basis}"),
     )
     return pe_df, pctile_df
 
