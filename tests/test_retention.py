@@ -1154,3 +1154,23 @@ def test_the_extremum_window_uses_the_shared_helper_with_the_other_anchor() -> N
                                  anchor_before=False)
     assert ret_anchor == (119, 2), ret_anchor       # reaches back to the 04-01 bar
     assert ext_anchor == (0, 1), ext_anchor         # only the bars inside [04-02, 07-29]
+
+
+def test_no_production_path_narrows_a_type_with_a_bare_assert() -> None:
+    """REVIEW FINDING. `pe_current_and_percentile` branched on the VALUE and then needed
+    `assert cur_pt is not None` to satisfy the type — a bare assert in a production path, which
+    `python -O` STRIPS. Under optimisation the refusal became an AttributeError: a crash instead of
+    the loud, explained failure this repo requires.
+
+    Branching on the point itself narrows naturally. Pinned by parsing, so a reintroduced assert
+    is caught wherever in the function it sits."""
+    import ast
+    import inspect
+
+    from vinci.screens.assemble import pe_current_and_percentile
+
+    tree = ast.parse(inspect.getsource(pe_current_and_percentile).lstrip())
+    asserts = [n for n in ast.walk(tree) if isinstance(n, ast.Assert)]
+    assert not asserts, (
+        f"{len(asserts)} bare assert(s) narrow a type in a production path — `python -O` strips "
+        "them and the guarded branch becomes a crash")

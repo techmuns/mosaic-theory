@@ -4051,6 +4051,15 @@ never the note. `_sourced` does carry the note into `Sourced.note`, so a RE-ASSE
 the machine-complete tier. Under the three-tier rule that is the right tier; it is reported plainly
 rather than claimed as a page improvement.
 
+**REVIEW FINDINGS ON BATCH A.** (a) The stamp change is SAFE downstream — both consumers of
+`fundamentals.pe` (`mechanical.py:778, 869`) read `.value`/`.is_known` and never `.as_of`, so moving
+the stamp from the run date to the EPS period trips no staleness gate. (b) The first cut branched on
+the VALUE and needed `assert cur_pt is not None` to satisfy the type — a bare assert in a production
+path, which `python -O` STRIPS, turning a loud explained refusal into an AttributeError. Branching
+on the POINT narrows naturally; pinned by an AST scan so a reintroduced assert is caught anywhere in
+the function. **`features.py:333` carries the same bare assert from #294 — flagged, not fixed here,
+to hold Batch A'''s scope.**
+
 **STILL OPEN — Batches B and C.** B: `shares_outstanding_by_cik` merges five quarterly frames into a
 flat dict and DISCARDS which frame supplied each CIK, so the universe cap'''s 120–485d age is not
 recoverable without changing that reader (three other callers). C: `RefPoint` has no vintage field

@@ -140,9 +140,12 @@ def pe_current_and_percentile(
     window — a too-short range cannot reliably establish "at floor"."""
     bars = sorted(price_bars, key=lambda b: b.bar_date)
     cur_pt = annual_eps_point_as_of(annual_eps, reference_date)
-    cur_eps = cur_pt.value if cur_pt else None
     cur_price = _close_on_or_before(bars, reference_date)
-    if cur_eps is None or cur_price is None:
+    # NARROW ON THE POINT, NOT THE VALUE (review finding). The first cut branched on `cur_eps` and
+    # then needed `assert cur_pt is not None` to satisfy the type — a bare assert in a production
+    # path, which `python -O` STRIPS, turning a loud explained refusal into an AttributeError.
+    # Branching on the point itself narrows naturally and needs no assert.
+    if cur_pt is None or cur_price is None:
         # THE CAUSE, NOT JUST THE ABSENCE. "no positive EPS/price" collapsed two states G3 must
         # tell apart: a filer that has NEVER tagged diluted EPS (nothing to value with) and one
         # that tags it every year and has simply never earned a positive number (a real answer
@@ -160,12 +163,11 @@ def pe_current_and_percentile(
             source="EDGAR", tier=SourceTier.DERIVED, note=why
         )
         return u, u
-    cur_pe = cur_price / cur_eps
+    cur_pe = cur_price / cur_pt.value
     # THE STAMP IS THE EPS PERIOD, NOT THE RUN DATE (2026-07-31). A P/E is price ÷ earnings and its
     # two columns have different vintages: the price is the reference date, the EPS is an annual
     # period typically ~210d old (bounded at 470 by the reach-back guard). Stamping the run date
     # named the fresher column and hid the older one — a stamp belongs to a COLUMN, not a block.
-    assert cur_pt is not None
     eps_age = (reference_date - cur_pt.period_end).days
     basis = (f"price {reference_date.isoformat()} ÷ annual diluted EPS for the period ending "
              f"{cur_pt.period_end.isoformat()} ({eps_age}d old, filed {cur_pt.filed.isoformat()})")
