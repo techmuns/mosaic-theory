@@ -4187,6 +4187,30 @@ fires (1.4 record loses its vintage); `vintage` dropped from the map (an undecla
 `ensure_ascii` back to default; only `-01` marked; a caveat stating the wrong population; the
 scan returning nothing.
 
+**REVIEW FINDING (#303) — THE MECHANISM COMMITTED ITS OWN DEFECT ONE LEVEL UP.** The first cut
+version-scoped REFERENCES only, while its comment claimed the record was written with "exactly the
+fields its OWN declared `schema_version` knows about". Re-writing the committed **schema-1.2**
+archive record materialised **`"notes": []` on all three axes** — the exact class the mechanism
+exists to stop, inside the fix for that class (D15, fourth instance).
+
+**WHY THE CORPUS RUN MISSED IT, and this is the reusable lesson.** The pin walked
+`scenarios/*.json` — **all seven at 1.3**. *A version-scoping check run against records that all
+share one version cannot fail.* The only record below the gates lives in `scenarios/archive/`, and
+`write_archived` — the second write site, changed in the same commit — had **zero test coverage**.
+Fixed: `AXIS_FIELDS_INTRODUCED_IN` (notes at 1.3); the pin now walks the archive and ASSERTS it
+stays below the gates, so if the archive is ever re-stamped the pin says version-scoping has lost
+its only real exercise rather than passing silently. `ratified`/`ratified_by` are deliberately NOT
+in the map — the 1.2 record already carries both, checked against the committed record.
+
+Three more mutations, all RED: axis scoping removed; `notes` dropped from the map; `ratified`
+wrongly added (OVER-scoping — the pin catches both directions).
+
+**NOT FIXED, recorded (scope).** `runs_with_conflated_gate` reads an unaffected run's file in full
+before concluding it is unaffected — fine at 3 runs, linear in run count. And **nothing forces a
+caveat to be read**: `read_rows` returns rows with no signal that a caveat is filed against them.
+The brief specified a separate additive file, not read-time enforcement, so that stays a follow-up
+rather than an unasked scope expansion.
+
 **S9. ROUTING STATES ITS POLICY — built 2026-07-31, solo. DEFAULT UNCHANGED.**
 The gates record NOT_EVALUATED; the ROUTER ignored it. Four forward/admit points, derived:
 

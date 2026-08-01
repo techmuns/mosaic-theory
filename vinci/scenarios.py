@@ -119,6 +119,21 @@ REF_FIELDS_INTRODUCED_IN: dict[str, str] = {
     "excluded_reason": FIELDED_REFS_FROM,  # 1.3
     "vintage": VINTAGE_REQUIRED_FROM,      # 1.4 — WHEN the value is from
 }
+#: The same rule one level up, on the AXIS. Found in review of the PR that added the reference map:
+#: the committed 1.2 archive record re-wrote with `"notes": []` materialised on all three axes —
+#: THE DEFECT THIS MECHANISM EXISTS TO STOP, surviving one level above where the fix was applied,
+#: while the comment above claimed the record was written with "exactly the fields its OWN declared
+#: schema_version knows about". It was not; it version-scoped references only.
+#:
+#: It went unseen because the corpus pin walked `scenarios/*.json` — all seven at 1.3 — and skipped
+#: `scenarios/archive/`, where the ONLY schema-1.2 record lives. A version-scoping check run purely
+#: against records that all share one version cannot fail. The pin now walks the archive too.
+#:
+#: `ratified` / `ratified_by` are NOT here: the 1.2 record already carries both, so they predate the
+#: gate and must keep being written. Checked against the committed record, not assumed.
+AXIS_FIELDS_INTRODUCED_IN: dict[str, str] = {
+    "notes": FIELDED_REFS_FROM,            # 1.3 — dated findings about this axis
+}
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -913,7 +928,10 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
 
 
 def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
-    """The record as a dict carrying ONLY the reference fields its declared schema knows about.
+    """The record as a dict carrying only the fields its declared schema knows about — at BOTH
+    levels the schema has versioned so far: the axis (:data:`AXIS_FIELDS_INTRODUCED_IN`) and the
+    reference (:data:`REF_FIELDS_INTRODUCED_IN`). Scoping one level while claiming to scope the
+    record is what shipped `"notes": []` onto a 1.2 archive record in review.
 
     Public behaviour, private name: every consumer goes through :func:`write_record`. Drops rather
     than nulls, because an ABSENT key and a null key say different things — see
@@ -925,6 +943,9 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     out: dict[str, Any] = rec.model_dump(mode="json")
     ver = _schema_ver(rec.schema_version)
     for axis in (out.get("assumptions") or {}).values():
+        for field, introduced in AXIS_FIELDS_INTRODUCED_IN.items():
+            if ver < _schema_ver(introduced):
+                axis.pop(field, None)
         for ref in axis.get("references") or []:
             for field, introduced in REF_FIELDS_INTRODUCED_IN.items():
                 if ver < _schema_ver(introduced):

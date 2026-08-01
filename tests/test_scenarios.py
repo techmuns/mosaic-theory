@@ -1077,5 +1077,23 @@ def test_the_seven_committed_records_round_trip_byte_identical(tmp_path: Path) -
         assert before == after, (
             f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
             "next real diff is unreadable. If a field was just added, declare it in "
-            "REF_FIELDS_INTRODUCED_IN.")
+            "REF_FIELDS_INTRODUCED_IN or AXIS_FIELDS_INTRODUCED_IN.")
     assert seen == 7, f"expected the 7 committed records, walked {seen}"
+
+    # THE ARCHIVE IS THE ONLY RECORD BELOW 1.3, and therefore the only one that exercises
+    # version-scoping AT ALL: seven records that share a version cannot fail a version check.
+    # Walking `scenarios/*.json` alone passed while `write_archived` materialised `"notes": []`
+    # on all three axes of the 1.2 record — found in review, not by this pin's first cut.
+    archived = 0
+    for f in sorted((root / "archive").glob("*.json")):
+        archived += 1
+        before = f.read_text()
+        rec = sc.ScenarioRecord.model_validate_json(before)
+        assert sc._schema_ver(rec.schema_version) < sc._schema_ver(sc.FIELDED_REFS_FROM), (
+            f"{f.name} is at schema {rec.schema_version} — this pin's value is that the archive "
+            "holds a record BELOW the gates; if it no longer does, version-scoping is untested "
+            "against any real record and needs a new source of one")
+        assert before == sc.write_archived(rec, root=tmp_path).read_text(), (
+            f"archive/{f.name} does not round-trip — `write_archived` promises the same "
+            "serialization as `write_record`, so both are version-scoped or neither is")
+    assert archived == 1, f"expected 1 archived record, walked {archived}"
