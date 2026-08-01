@@ -41,6 +41,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: asserting a generality the pattern does not have is worse than no comment: it stops the
 #: next reader from looking. The literals are still literals; what changed is that the note
 #: now says so, and the enumeration is now three.
+#:
+#: NOTE FOR WHOEVER WIDENS `_committed_docs()`: this file spells all three shapes, and
+#: survives only because the corpus is `.md`. Widen it to `.py` and this module reddens
+#: on its own documentation. STATE.md hit exactly that and had to name the idiom in
+#: words instead — the cost the heredoc note below predicted, now paid twice.
 QUOTE_ESCAPE = re.compile(r"""'\\''|'"'"'|'{3}""")
 #: ONE PATTERN, because one is what was OBSERVED (review finding). The first cut also scanned for
 #: heredoc sentinels — a shape that has never leaked here, added on the theory it might. That is

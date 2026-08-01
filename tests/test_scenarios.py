@@ -216,8 +216,10 @@ def test_scenario_card_emits_derivations_and_omits_them_for_legacy_records() -> 
     assert [a["axis"] for a in card["assumptions"]] == ["revenue", "margin", "multiple"]
     margin = next(a for a in card["assumptions"] if a["axis"] == "margin")
     ref = margin["references"][0]
+    # EXHAUSTIVE by design — it is what caught the 1.4 `vintage` reaching the card, so keep it a
+    # whole-dict compare and never relax it to a subset. (raw pass-through, no _rd)
     assert ref == {"label": "own-history median operating margin", "value": 7.45,
-                   "unit": "%", "source": "EDGAR margin_anchor"}   # raw pass-through, no _rd
+                   "unit": "%", "source": "EDGAR margin_anchor", "vintage": "FY2025"}
     legacy = {k: v for k, v in rec.items() if k not in ("assumptions", "recipe_formula")}
     lcard = build._scenario_card(legacy)
     assert "assumptions" not in lcard and "recipeFormula" not in lcard

@@ -4089,7 +4089,25 @@ stops being optional.
 
 MUTATIONS, both directions (a forward-binding rule that also fires backward is an unauthorised
 migration; one that fires in neither is decoration): gate removed -> RED; gate stripped of its
-version key so it fires retroactively -> RED. Whitespace-only vintage refused.
+version key so it fires retroactively -> RED. Whitespace-only vintage refused. Raising
+`FIELDED_REFS_FROM` above 1.4 also reddens — the vintage check sits inside `require_fielded_refs`
+and rides its early return, so the coupling is pinned rather than merely noted.
+
+**ARTIFACT DRIFT — MEASURED, and the first cut of this entry under-reported it.** `write_record`
+uses `model_dump_json` with no `exclude_none`, so the NEXT re-render of the 7 committed records
+writes **119 new `"vintage": null` keys**, one per reference (AORT 24, MVST 21, NCNO 16, IT 15,
+SMPL 15, EPAM 14, WERN 14). `schema_version` correctly stays 1.3 on all seven, so the gate does
+not fire and the writes succeed. The nulls are the honest record — "this reference has no vintage"
+stated rather than implied — but the diff is real and belongs here, not discovered at the next
+artifact pass. The **seal is unaffected**: `vinci/seal.py` digests the rationale text only, never
+the record body.
+
+**REVIEW FINDING (#302), FIXED IN-PR — the field would have been invisible to the human.**
+`frontend/build.py`'s reference builder is an explicit key ALLOWLIST, so a stamped `vintage` was
+dropped on the way to the card: required by the backend, unreachable by the reader. A provenance
+field the human never sees is not provenance. Now rides the card in the allowlist's own idiom —
+emitted only when set, so all 7 committed 1.3 records stay byte-identical (verified by re-running
+`frontend/build.py`: empty diff). Pinned both ways, and the fix mutates RED.
 
 **INCIDENT (this build, in the guard shipped for this exact class).** `test_record_hygiene`'s
 `QUOTE_ESCAPE` documented itself as a regex "over that shape so a variant nobody has seen yet is
