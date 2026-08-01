@@ -23,6 +23,8 @@ from pydantic import ValidationError
 
 from vinci.schemas.candidate import GateResult
 from vinci.screens.retention import (
+    CONFLATED_GATE_KEY,
+    SPLIT_GATE_KEYS,
     BandConfig,
     CandidateRow,
     GateOutcome,
@@ -35,10 +37,12 @@ from vinci.screens.retention import (
     list_runs,
     next_run_id,
     outcome_from_gate,
+    read_caveat,
     read_manifest,
     read_rows,
     rollup,
     run_path,
+    runs_with_conflated_gate,
     write_manifest,
 )
 
@@ -1174,3 +1178,50 @@ def test_no_production_path_narrows_a_type_with_a_bare_assert() -> None:
     assert not asserts, (
         f"{len(asserts)} bare assert(s) narrow a type in a production path — `python -O` strips "
         "them and the guarded branch becomes a crash")
+
+
+def test_every_run_with_the_conflated_gate_key_carries_a_caveat() -> None:
+    """ITEM 2. Before the gates were split, one per-gate key carried both the G3 multiple-floor
+    verdict and the distress/routing decision — its FAIL reason reads "rejected by the multiple
+    floor OR a distress signal", so the rows measure ROUTING, not the gate. Two committed runs
+    carry it (423 rows and 412), and the rows cannot say so themselves.
+
+    THE CAVEAT IS A SEPARATE FILE, never the manifest: the manifest is write-once because
+    rewriting it would silently re-label every row filed under that run, and a caveat discovered
+    afterwards is exactly what must not be smuggled in.
+
+    DERIVED, NOT LISTED — the affected runs come from scanning the rows, so marking only one of
+    two reddens, and a THIRD such run reddens the day it lands rather than the day someone
+    remembers this file exists."""
+    snap = ROOT / "data" / "snapshots"
+    affected = runs_with_conflated_gate(snap)
+    assert affected, (
+        "the scan found NO run carrying the conflated key — either the committed runs are missing "
+        "or the scan is broken; a check that finds nothing in a known-affected corpus is a bug, "
+        "not a clean bill of health")
+
+    unmarked = [r for r in affected if read_caveat(r, snap) is None]
+    assert not unmarked, f"runs carrying {CONFLATED_GATE_KEY} with no caveat: {unmarked}"
+
+    for run_id in affected:
+        c = read_caveat(run_id, snap)
+        assert c is not None
+        rows = [json.loads(ln) for ln in
+                run_path(run_id, snap).read_text().splitlines() if ln.strip()]
+        actual = sum(1 for r in rows
+                     if CONFLATED_GATE_KEY in (r.get("per_gate") or {}))
+        assert c["rows_carrying_it"] == actual, (
+            f"{run_id}: caveat claims {c['rows_carrying_it']} rows, the file has {actual} — a "
+            "caveat stating the wrong population is worse than none")
+        assert c["conflated_key"] == CONFLATED_GATE_KEY
+        # The point of the file: what the rows may and may not be used for, both stated.
+        assert c["these_rows_CAN_be_used_for"] and c["these_rows_CANNOT_be_used_for"]
+
+    # A run recording the SPLIT keys must NOT be marked — the caveat names a real defect, not a
+    # blanket disclaimer on every run.
+    for f in sorted((snap / "screen_runs").glob("*.jsonl")):
+        rows = [json.loads(ln) for ln in f.read_text().splitlines() if ln.strip()]
+        keys = {k for r in rows for k in (r.get("per_gate") or {})}
+        if set(SPLIT_GATE_KEYS) <= keys:
+            assert read_caveat(f.stem, snap) is None, (
+                f"{f.stem} recorded the gates separately and must not carry the caveat")
