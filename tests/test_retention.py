@@ -22,6 +22,7 @@ import pytest
 from pydantic import ValidationError
 
 from vinci.schemas.candidate import GateResult
+from vinci.schemas.envelope import DataField, SourceTier
 from vinci.screens.retention import (
     CONFLATED_GATE_KEY,
     SPLIT_GATE_KEYS,
@@ -1227,12 +1228,20 @@ def test_every_run_with_the_conflated_gate_key_carries_a_caveat() -> None:
                 f"{f.stem} recorded the gates separately and must not carry the caveat")
 
 
-class _Field:
-    """A minimal DataField stand-in — `_stamped` reads value/as_of/source/note by attribute."""
+def _field(value: float | None = None, as_of: dt.date | None = None,
+           source: str = "EOD", note: str | None = None) -> DataField[float]:
+    """A REAL `DataField`, never a duck-typed stand-in.
 
-    def __init__(self, value: object = None, as_of: dt.date | None = None,
-                 source: str | None = None, note: str | None = None) -> None:
-        self.value, self.as_of, self.source, self.note = value, as_of, source, note
+    The first cut of these tests used a hand-rolled stub with four attributes, and that stub is
+    what let `_stamped` ship reading `getattr(f, "value", None)` — the TEST SHAPE drove the
+    production signature, which is backwards, and it turned a renamed attribute into a silent
+    None instead of a crash. Using the real model also buys the coverage contract for free:
+    PRESENT must carry both a value and an as_of, UNKNOWN must carry neither."""
+    if value is None:
+        return DataField[float].unknown(source=source, tier=SourceTier.DERIVED, note=note)
+    assert as_of is not None, "a PRESENT DataField must carry an as_of — the model refuses it"
+    return DataField[float].present(value, as_of=as_of, source=source,
+                                    tier=SourceTier.DERIVED, note=note)
 
 
 class _Rec:
@@ -1245,11 +1254,11 @@ class _NS:
         self.__dict__.update(kw)
 
 
-def _g3_rec(pe: _Field, ev: _Field | None = None) -> _Rec:
-    return _Rec(prices=_NS(drawdown_from_high=_Field(-0.42, dt.date(2026, 7, 29), "EOD"),
-                           rel_ret_vs_market=_Field(-0.21, dt.date(2026, 7, 29), "EOD"),
-                           last=_Field(11.5, dt.date(2026, 7, 29), "EOD")),
-                fundamentals=_NS(ev_ebitda_pctile_vs_history=ev or _Field(note="deferred"),
+def _g3_rec(pe: DataField[float], ev: DataField[float] | None = None) -> _Rec:
+    return _Rec(prices=_NS(drawdown_from_high=_field(-0.42, dt.date(2026, 7, 29), "EOD"),
+                           rel_ret_vs_market=_field(-0.21, dt.date(2026, 7, 29), "EOD"),
+                           last=_field(11.5, dt.date(2026, 7, 29), "EOD")),
+                fundamentals=_NS(ev_ebitda_pctile_vs_history=ev or _field(note="deferred"),
                                  pe_pctile_vs_history=pe))
 
 
@@ -1264,7 +1273,7 @@ def test_a_g3_row_carries_the_number_the_gate_decided_on() -> None:
     from vinci.screens import run as _run
 
     gi = _run._gate_inputs(
-        _g3_rec(_Field(0.0008, dt.date(2025, 12, 31), "EDGAR", "1254 P/E observations over 1825d")),
+        _g3_rec(_field(0.0008, dt.date(2025, 12, 31), "EDGAR", "1254 P/E observations over 1825d")),
         [], window_start={})
     assert set(gi) == {"drawdown_from_high", "rel_ret_vs_market", "last",
                        "ev_ebitda_pctile_vs_history", "pe_pctile_vs_history"}, (
@@ -1285,7 +1294,7 @@ def test_a_g3_input_is_stamped_with_its_own_period_never_the_run_date() -> None:
     from vinci.screens import run as _run
 
     run_date, eps_period = dt.date(2026, 7, 29), dt.date(2025, 12, 31)
-    gi = _run._gate_inputs(_g3_rec(_Field(0.26, eps_period, "EDGAR", "basis")), [], window_start={})
+    gi = _run._gate_inputs(_g3_rec(_field(0.26, eps_period, "EDGAR", "basis")), [], window_start={})
     got = gi["pe_pctile_vs_history"].as_of
     assert got == eps_period, f"the input must carry its OWN stamp, got {got}"
     assert got is not None and got < run_date, (
@@ -1306,7 +1315,7 @@ def test_a_not_evaluated_g3_row_still_says_why() -> None:
                   "inputs tagged but economics negative throughout — never a positive annual EPS",
                   "the last positive annual EPS is older than one filing cycle",
                   "history below the floor — too short to judge a trailing range"):
-        gi = _run._gate_inputs(_g3_rec(_Field(None, None, "EDGAR", cause)), [], window_start={})
+        gi = _run._gate_inputs(_g3_rec(_field(None, None, "EDGAR", cause)), [], window_start={})
         f = gi["pe_pctile_vs_history"]
         assert f.value is None and f.as_of is None, "an absent value must carry no stamp"
         assert f.note == cause, "the cause must survive onto the input, not only the gate's reason"

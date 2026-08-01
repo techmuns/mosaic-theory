@@ -10,12 +10,14 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
 from vinci.eod.features import YEAR_DAYS, window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult, RoutingPolicy
+from vinci.schemas.envelope import DataField
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
@@ -206,7 +208,7 @@ _PRICE_INPUTS = ("drawdown_from_high", "rel_ret_vs_market", "last")
 _G3_INPUTS = ("ev_ebitda_pctile_vs_history", "pe_pctile_vs_history")
 
 
-def _stamped(f: object, *, default_source: str,
+def _stamped(f: DataField[Any], *, default_source: str,
              span: tuple[int, int] | None = None) -> StampedInput:
     """ONE conversion from a `DataField` to a `StampedInput`, shared by every gate's inputs.
 
@@ -215,12 +217,18 @@ def _stamped(f: object, *, default_source: str,
     EPS PERIOD END (typically ~210d before the run, bounded at 470 by the reach-back guard), so a
     row stamping it "today" would claim a freshness the number does not have. The stale-benchmark
     incident was exactly this shape on a price field.
+
+    TYPED, AND THE ATTRIBUTES ARE READ DIRECTLY — never `getattr(f, "value", None)`. Review of the
+    first cut caught that: a defaulting getattr turns a renamed or mistyped attribute into a silent
+    `None`, which here would write "the gate could not see this" onto EVERY row — a fabricated
+    NOT_EVALUATED across the whole corpus, inside the rows that exist to BE the evidence. Fail
+    loud. (The first cut used getattr only because the test fixtures were duck-typed: the test
+    shape had driven the production signature, which is backwards. The fixtures are real
+    `DataField`s now.)
     """
-    value = getattr(f, "value", None)
-    as_of = getattr(f, "as_of", None)
     return StampedInput(
-        value=value, as_of=as_of if value is not None else None,
-        source=getattr(f, "source", None) or default_source, note=getattr(f, "note", None),
+        value=f.value, as_of=f.as_of if f.value is not None else None,
+        source=f.source or default_source, note=f.note,
         span_days=span[0] if span else None, observations=span[1] if span else None)
 
 

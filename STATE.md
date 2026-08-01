@@ -4192,6 +4192,31 @@ rather than reconstructed.
 the G3 block dropped entirely (the pre-build state); NOT_EVALUATED inputs skipped by a
 value-is-None guard; the preference order reversed.
 
+**REVIEW FINDING (#305) — THE TEST SHAPE HAD DRIVEN THE PRODUCTION SIGNATURE.** The first cut typed
+`_stamped(f: object)` and read `getattr(f, "value", None)`. It did so ONLY because the test fixtures
+were a hand-rolled four-attribute stub rather than a real `DataField` — the fixture's shape dictated
+the production contract, which is backwards. **Consequence had it shipped:** a renamed or mistyped
+attribute becomes a silent `None`, writing "the gate could not see this" onto EVERY row — a
+fabricated NOT_EVALUATED across the whole corpus, inside the rows that exist to BE the evidence.
+Fail-quiet in the worst possible place, against the fail-loud rule.
+
+**AND THE TYPE CHECKER CANNOT SEE IT — measured, both ways:**
+
+| written as | `mypy --strict` |
+|---|---|
+| `getattr(f, "valu", None)` | **Success: no issues found** |
+| `f.valu` | **error: "DataField[Any]" has no attribute "valu"; maybe "value"?** |
+
+So a defaulting `getattr` on a typed model does not merely read loosely — it REMOVES the attribute
+from static checking entirely, moving the error from compile time to "caught only if a test happens
+to cover that field". Fixed: `_stamped(f: DataField[Any])` with direct attribute access, and the
+fixtures now build real `DataField`s (which also buys the coverage contract — PRESENT must carry
+both value and as_of, UNKNOWN neither). All five mutations re-run RED against the tightened code.
+
+**RULE: a defaulting `getattr` on a TYPED object is an un-typing operation.** Use it only where the
+container genuinely may not have the attribute (`getattr(rec, "fundamentals", None)` — `rec` is
+untyped at that boundary); never to read a field off a model whose type is known.
+
 **S12. THE SPOT DIVERGENCE IS ZERO — measured 2026-08-01, three routes x seven names. NULL RESULT,
 RECORDED SO IT IS NOT RE-LITIGATED.**
 
