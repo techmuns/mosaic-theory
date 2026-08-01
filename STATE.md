@@ -4029,6 +4029,36 @@ is the fund's stated edge, and this is the one blind spot nothing measures. Same
 stamp with the screen PR, basis (does membership actually move?) its own item. **READ FIRST: how
 stale are the universe caps in fact** — if current, the item collapses to a stamp.
 
+**S9. ROUTING STATES ITS POLICY — built 2026-07-31, solo. DEFAULT UNCHANGED.**
+The gates record NOT_EVALUATED; the ROUTER ignored it. Four forward/admit points, derived:
+
+| # | point | reads |
+|---|---|---|
+| 1 | `run.py` G1 forward — `if g1 is not PASS: continue` | **the gate's result** (PASS required) |
+| 2 | `run.py` G2 forward — `if g2 is FAIL: continue` | **merely "not FAIL"** — UNKNOWN forwarded |
+| 3 | `screen2.evaluate_screen2` admit — `FAIL not in results and G1 is PASS` | **mixed**: G1 explicit, G2/G3 "not FAIL" |
+| 4 | the row's `admitted` field | records the outcome, decides nothing |
+
+**ONE SETTING, TWO VALUES:** `RoutingPolicy.CARRY` / `.DROP`, threaded through points 2 and 3.
+**CARRY is the DEFAULT and is today's behaviour exactly**, so the `-03` run reproduces. It lives in
+`vinci/schemas/candidate.py` beside `GateResult` — a leaf both modules already import, so no cycle.
+**The manifest records it** (`RunManifest.routing_policy`, defaulted to CARRY so a manifest written
+before the field reads as what that run actually did): a pool count means nothing without it.
+
+**THE POOL UNDER EACH POLICY** (population: the 1,780 of run 2026-07-29-03):
+CARRY **331** · DROP **49** · DROP removes **282** — 279 at G3, **3 at G2**.
+
+**THE 3 G2 NAMES ARE OPI, ARIS AND MRLN** — the same three out-of-range start anchors #294 bounded.
+The bound made G2 say "could not judge"; the router forwarded them to G3 anyway and admitted all
+three. Under DROP they stop at G2. That closes the loop the anchor bound opened.
+
+**AND THE THEME ARCHIVE PROTECTED NOTHING** (rides with this PR). `candidate_themes.jsonl` — the
+only committed cluster file — was overwritten **before** the immutable snapshot was written, and
+`data/scan_history/` was git-ignored, so "a monthly sweep must never clobber the prior harvest"
+described an intent the sequence did not implement. Now: **archive first, pointer last**,
+`--no-scan-history` with a write **REFUSED**, and the directory tracked (derived from public EOD +
+EDGAR SIC; no licensed content). **Detection was NOT run.**
+
 **S8. THE EPS REACH-BACK IS BOUNDED — built 2026-07-31, solo (guard).** `annual_eps_as_of` took
 the latest POSITIVE annual figure with no age limit, so a name loss-making for years was valued on
 pre-loss earnings — measured p90 **4.8 years**, max **16.6 years**.

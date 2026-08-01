@@ -15,7 +15,7 @@ from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
 from vinci.eod.features import YEAR_DAYS, window_facts
 from vinci.progress import ProgressFn, ProgressReporter
-from vinci.schemas.candidate import CandidateRecord, GateResult
+from vinci.schemas.candidate import CandidateRecord, GateResult, RoutingPolicy
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
@@ -55,6 +55,7 @@ def screen_universe(
     progress: ProgressFn | None = None,
     retain_run_id: str | None = None,
     retain_dir: Path | None = None,
+    policy: RoutingPolicy = RoutingPolicy.CARRY,
 ) -> tuple[list[CandidateRecord], dict[str, int]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
 
@@ -127,14 +128,18 @@ def screen_universe(
             continue
         g2, g2_why = gate_g2_idiosyncratic(rec, th)
         gates["g2_idiosyncratic"] = GateOutcome(outcome=outcome_from_gate(g2), reason=g2_why)
-        if g2 is GateResult.FAIL:
+        # THE SECOND FORWARD POINT, and it read "not FAIL" — so a G2 that returned UNKNOWN sent the
+        # name on to G3. Three names did exactly that on the 2026-07-29 run, reaching a stage only
+        # 410 had passed. Under DROP the forward requires an actual PASS.
+        if g2 is GateResult.FAIL or (policy is RoutingPolicy.DROP and g2 is not GateResult.PASS):
             _keep(s.ticker, rec, gates, bars)
             continue
         g1_survivors += 1
         full = enrich_with_fundamentals(
             rec, edgar=edgar, price_bars=bars, reference_date=reference_date
         )
-        cand = evaluate_screen2(full, screen_run_at=run_at, thresholds=th)
+        cand = evaluate_screen2(full, screen_run_at=run_at, thresholds=th,
+                                policy=policy)
         if cand is not None:
             store.save_candidate(cand)
             candidates.append(cand)

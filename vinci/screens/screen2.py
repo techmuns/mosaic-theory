@@ -21,7 +21,13 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from vinci.schemas.candidate import CandidateRecord, GateResult, TriageBand, derive_unknown_gates
+from vinci.schemas.candidate import (
+    CandidateRecord,
+    GateResult,
+    RoutingPolicy,
+    TriageBand,
+    derive_unknown_gates,
+)
 from vinci.schemas.data_record import DataRecord
 
 TWIN = "terminal decline"
@@ -113,8 +119,14 @@ def evaluate_screen2(
     *,
     screen_run_at: datetime,
     thresholds: Screen2Thresholds | None = None,
+    policy: RoutingPolicy = RoutingPolicy.CARRY,
 ) -> CandidateRecord | None:
-    """Evaluate Screen 2 on a data-record. Returns a candidate-record iff admitted, else None."""
+    """Evaluate Screen 2 on a data-record. Returns a candidate-record iff admitted, else None.
+
+    ``policy`` decides what happens to a name NO GATE COULD ASSESS. ``CARRY`` (the default) is
+    today's behaviour exactly — the admit test reads "not FAIL", so a gate returning UNKNOWN admits.
+    ``DROP`` requires every gate to have actually PASSED.
+    """
     th = thresholds or Screen2Thresholds()
     results: dict[str, GateResult] = {}
     detail: dict[str, str] = {}
@@ -125,7 +137,14 @@ def evaluate_screen2(
     ):
         results[name], detail[name] = fn(rec, th)
 
-    admitted = GateResult.FAIL not in results.values() and results["G1_drawdown"] is GateResult.PASS
+    # THE ADMIT TEST, AND WHAT IT READS. G1 is checked for PASS explicitly; G2 and G3 are merely
+    # "not FAIL", so a gate that returned UNKNOWN — could not judge — admitted the name. Under
+    # DROP the test requires every gate to have actually PASSED.
+    if policy is RoutingPolicy.DROP:
+        admitted = all(r is GateResult.PASS for r in results.values())
+    else:
+        admitted = (GateResult.FAIL not in results.values()
+                    and results["G1_drawdown"] is GateResult.PASS)
     if not admitted:
         return None
 

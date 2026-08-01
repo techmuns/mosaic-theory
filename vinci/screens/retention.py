@@ -55,7 +55,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field, TypeAdapter
 
-from vinci.schemas.candidate import GateResult
+from vinci.schemas.candidate import GateResult, RoutingPolicy
 
 #: Where a run's rows live. Under ``data/snapshots/`` because that path is committed (the rest of
 #: ``data/`` is git-ignored) — retention is durable evidence or it is nothing.
@@ -182,6 +182,11 @@ class RunManifest(BaseModel, frozen=True):
     reference_date: date
     screen: ScreenConfig
     band: BandConfig
+    #: WHICH ROUTING POLICY THIS RUN USED. A pool count means nothing without it — 331 and 49 are
+    #: the same screen under different routing. Defaults to ``CARRY`` because that is what every
+    #: run before the setting existed actually did, so an older manifest reads as what it was
+    #: rather than as unknown.
+    routing_policy: RoutingPolicy = RoutingPolicy.CARRY
     stages: tuple[str, ...] = ()   # the drop stages this run could emit, in funnel order
 
     def model_post_init(self, _ctx: Any) -> None:
