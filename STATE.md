@@ -4125,6 +4125,57 @@ strictly comparable. Measuring the divergence per name, and what it does to each
 (IT sits at 1.52 against a 2:1 bar), was the second half of this task and was NOT reached.
 Unblocked — it is a read, no decision pending.
 
+**S12. THE SPOT DIVERGENCE IS ZERO — measured 2026-08-01, three routes x seven names. NULL RESULT,
+RECORDED SO IT IS NOT RE-LITIGATED.**
+
+The seven `spot_source` strings name three fetch routes, so the seven spots were not known to be
+comparable. Each name fetched on ITS OWN spot date by all three:
+
+| name | date | committed | `daily_bars` | `grouped_daily` | store |
+|---|---|---|---|---|---|
+| AORT | 2026-07-20 | 25.37 | 25.37 | 25.37 | 25.37 |
+| EPAM | 2026-07-20 | 89.40 | 89.40 | 89.40 | 89.40 |
+| IT | 2026-07-17 | 140.19 | 140.19 | 140.19 | 140.19 |
+| MVST | 2026-07-21 | 0.9188 | 0.9188 | 0.9188 | 0.9188 |
+| NCNO | 2026-07-20 | 17.93 | 17.93 | 17.93 | 17.93 |
+| SMPL | 2026-07-22 | 10.53 | 10.53 | 10.53 | 10.53 |
+| WERN | 2026-07-17 | 46.04 | 46.04 | 46.04 | 46.04 |
+
+**Every difference is exactly 0.00**, so every reward:risk is unchanged under every route and **no
+name crosses the 2:1 bar under any route** — no route moves any spot at all.
+
+**THE INSTRUMENT WAS VERIFIED ABLE TO MOVE** before the null was accepted (the standing rule: a
+check finding nothing in a large corpus is suspicious, not reassuring). `grouped_daily` returned
+**12,388 symbols** — a whole-market snapshot — against `daily_bars`' single bar, so they are
+genuinely different endpoints; and across adjacent trading days AORT reads **25.06 / 25.37 / 24.94**
+on all three routes. A divergence would have shown.
+
+**STRUCTURAL FINDING — THERE ARE TWO INDEPENDENT SOURCES, NOT THREE.** Every store row's `source`
+column reads **`polygon-grouped`** on all seven names: the store is a CACHED COPY of the grouped
+route, not a third opinion. The real comparison is per-symbol aggregates vs grouped daily, and those
+agree exactly. **Consequence for the canonical-route decision (still the operator's):** choosing
+"the store" is choosing grouped-daily with a staleness risk attached, not choosing a distinct
+source.
+
+**SENSITIVITY — how much divergence it would have taken to matter.** The concern was that a small
+denominator move is not automatically immaterial. Measured, spot that would put each name AT its
+2:1 bar:
+
+| name | ratio | spot at bar | move needed |
+|---|---|---|---|
+| **IT** | **1.52** | 130.72 | **-6.76%** (-$9.47) |
+| EPAM | 6.34 | 111.62 | +24.86% |
+| SMPL | 4.78 | 13.47 | +27.88% |
+| WERN | -0.35 | 22.96 | -50.12% |
+| NCNO | -0.72 | 5.50 | -69.30% |
+| AORT | -0.67 | 5.51 | -78.29% |
+| MVST | -0.33 | 0.17 | -81.79% |
+
+**IT was the right name to worry about** — the only one where a realistic divergence could have
+flipped the verdict, with a whole tolerance of $9.47. Every other name needs a 25%+ move. Observed
+divergence: $0.00. The concern is closed on evidence, not on assumption. **Measure-only: no fetch
+path was changed and no spot was rewritten.**
+
 **S11. VERSION-SCOPED WRITE + THE CONFLATED-GATE CAVEAT — built 2026-08-01. ITEM 1 DROPPED.**
 
 **ITEM 1 (the `migrated` third state) WAS DROPPED — its premise did not hold.** The brief said
@@ -4570,6 +4621,19 @@ changed, nothing was removed, so the acceptance stands.** Recorded as the instan
 **`migrated` third-state** item exists to describe, now live rather than hypothetical: MVST's
 `extraction_version` claims one shape while its structure is another, and no field says so.
 Instance noted against the item; NOT built.
+
+**D20. `git checkout --` DOES NOT REVERT AN UNTRACKED FILE — the recorded revert idiom has a hole**
+(2026-08-01). The standing rule from the `git stash` incident is *"never stash; use
+`git checkout -- <file>`"*. That works only for a TRACKED file. During #303 a mutation edited a
+newly-created, not-yet-added caveat artifact; `git checkout --` returned success having done
+nothing, and the mutated value (a caveat claiming 412 rows for a 423-row run) survived into the
+full-suite run — where the test caught it, which is the only reason it was noticed.
+
+**THE RULE, CORRECTED:** `git checkout -- <file>` reverts a TRACKED file. For a file not yet in the
+index there is nothing to revert TO — the fix is to regenerate it from its source of truth, or
+`git clean` it if it should not exist. **The tell is silent success**: `checkout` on an untracked
+path does not error, so the failure mode is a no-op that reads as a revert. Same shape as D16 (a
+gate whose exit status is swallowed by a pipe) — *a command that cannot fail is not a safeguard.*
 
 **D15. A FIX FOR A CLASS IS WHERE THAT CLASS RECURS — third instance, recorded as a pattern**
 (operator, 2026-07-31). `refresh_record` froze the `basis` while moving the value, which would have
