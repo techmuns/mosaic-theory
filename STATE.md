@@ -4045,6 +4045,12 @@ The gates record NOT_EVALUATED; the ROUTER ignored it. Four forward/admit points
 **The manifest records it** (`RunManifest.routing_policy`, defaulted to CARRY so a manifest written
 before the field reads as what that run actually did): a pool count means nothing without it.
 
+**AND THE MANIFEST IS BOUND TO THE RUN (review finding).** `routing_policy` was recorded on the
+manifest AND passed to the runner with NOTHING binding them, so a run could execute under DROP while
+its own record said CARRY — the record stating something the run did not do, which is exactly what
+the manifest was added to prevent. `screen_universe` now refuses when the manifest on disk records a
+different policy, and the policy travels in the returned stats so a count is never quoted without it.
+
 **THE POOL UNDER EACH POLICY** (population: the 1,780 of run 2026-07-29-03):
 CARRY **331** · DROP **49** · DROP removes **282** — 279 at G3, **3 at G2**.
 

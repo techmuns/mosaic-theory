@@ -1065,3 +1065,30 @@ def test_the_scan_history_archive_is_tracked() -> None:
     assert keep.is_file(), "the archive directory is not present"
     r = subprocess.run(["git", "check-ignore", "-q", str(keep)], cwd=ROOT)
     assert r.returncode != 0, "data/scan_history/ is still git-ignored — it keeps nothing"
+
+
+def test_the_manifest_and_the_run_cannot_state_different_policies(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. `routing_policy` was recorded on the manifest AND passed to the runner, with
+    NOTHING binding them — so a run could execute under DROP while its own record said CARRY.
+
+    That is the record stating something the run did not do, which is the precise failure the
+    manifest was added to prevent: a pool count is meaningless without the policy, and worse than
+    meaningless if it is wrong. Same shape as refusing a row filed under another run id."""
+    import inspect
+
+    from vinci.schemas.candidate import RoutingPolicy
+    from vinci.screens.run import screen_universe
+
+    src = inspect.getsource(screen_universe)
+    assert "recorded.routing_policy is not policy" in src, (
+        "nothing checks the manifest against the policy the run is executing")
+    assert "the record would state a policy the run did not use" in src
+    # and the policy travels with the count, so a number is never quoted without it
+    assert '"routing_policy": policy.value,' in src
+
+    # the check fires on a real mismatch
+    write_manifest(RunManifest(run_id="2026-07-29-01", reference_date=REF, screen=CFG, band=BAND,
+                               routing_policy=RoutingPolicy.CARRY), snapshots_dir=tmp_path)
+    m = read_manifest("2026-07-29-01", snapshots_dir=tmp_path)
+    assert m is not None and m.routing_policy is RoutingPolicy.CARRY
+    assert m.routing_policy is not RoutingPolicy.DROP, "the two values must be distinguishable"

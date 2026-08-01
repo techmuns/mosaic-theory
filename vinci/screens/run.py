@@ -29,6 +29,7 @@ from vinci.screens.retention import (
     StampedInput,
     append_rows,
     outcome_from_gate,
+    read_manifest,
     rollup,
 )
 from vinci.screens.screen2 import (
@@ -56,7 +57,7 @@ def screen_universe(
     retain_run_id: str | None = None,
     retain_dir: Path | None = None,
     policy: RoutingPolicy = RoutingPolicy.CARRY,
-) -> tuple[list[CandidateRecord], dict[str, int]]:
+) -> tuple[list[CandidateRecord], dict[str, int | str]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
 
     RETENTION (``retain_run_id`` + ``retain_dir``, both or neither). Every name the screen TOUCHES
@@ -75,6 +76,18 @@ def screen_universe(
         raise ValueError(
             "retain_run_id and retain_dir must be given together — one without the other builds "
             "retention rows and discards them while reporting them as retained")
+    # THE MANIFEST MUST AGREE WITH THE RUN (review finding). `routing_policy` was recorded on the
+    # manifest and passed to this function, with NOTHING binding them — so a run could execute under
+    # DROP while its own record said CARRY. That is the record stating something the run did not do,
+    # which is the precise failure the manifest was added to prevent: a pool count is meaningless
+    # without the policy, and worse than meaningless if the policy is wrong.
+    if retain_run_id is not None and retain_dir is not None:
+        recorded = read_manifest(retain_run_id, retain_dir)
+        if recorded is not None and recorded.routing_policy is not policy:
+            raise ValueError(
+                f"manifest for {retain_run_id} records routing_policy="
+                f"{recorded.routing_policy.value!r} but the run is executing "
+                f"{policy.value!r} — the record would state a policy the run did not use")
     th = thresholds or Screen2Thresholds()
     # Screen the cap-band universe membership (not every security ever stored). Fall back to all
     # non-benchmark securities when no universe snapshot exists yet (e.g. a small test seed).
@@ -164,14 +177,19 @@ def screen_universe(
     if retain_run_id is not None and retain_dir is not None:
         written = append_rows(retained, run_id=retain_run_id, snapshots_dir=retain_dir)
 
-    return candidates, {
+    stats: dict[str, int | str] = {
         "universe": len(universe),
         "g1_g2_survivors": g1_survivors,
         "candidates": len(candidates),
         # WHAT WAS WRITTEN, not what was built — the stat a caller trusts must be the one the
         # writer returned, or it reports evidence that does not exist on disk.
         "retained_candidate_rows": written,
+        # THE POLICY TRAVELS WITH THE COUNT. 331 and 49 are the same screen under different
+        # routing, so a caller that reports `candidates` without it reports a number nobody can
+        # interpret.
+        "routing_policy": policy.value,
     }
+    return candidates, stats
 
 
 def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: dict[str, date]
