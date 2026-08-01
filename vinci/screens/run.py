@@ -192,26 +192,70 @@ def screen_universe(
     return candidates, stats
 
 
+#: The G1/G2 price inputs. Windowed, so each also carries span_days + observations.
+_PRICE_INPUTS = ("drawdown_from_high", "rel_ret_vs_market", "last")
+
+#: THE G3 INPUTS — the valuation gate's, on `rec.fundamentals`. Recorded in G3'S OWN PREFERENCE
+#: ORDER, and BOTH are recorded even though the gate decides on one: `gate_g3_multiple_floor`
+#: tries EV/EBITDA and falls back to P/E, so a row carrying only the winner cannot say WHY that
+#: one was used. Both present is what makes the fallback legible after the fact.
+#:
+#: WITHOUT THESE THE ROW SAID WHAT G3 DECIDED AND WHY, BUT NOT THE NUMBER IT DECIDED ON — so for
+#: the valuation gate, retention could not do the one thing it exists for: falsify the screen.
+#: G1 and G2 were falsifiable from their rows since the grain shipped; G3 was not.
+_G3_INPUTS = ("ev_ebitda_pctile_vs_history", "pe_pctile_vs_history")
+
+
+def _stamped(f: object, *, default_source: str,
+             span: tuple[int, int] | None = None) -> StampedInput:
+    """ONE conversion from a `DataField` to a `StampedInput`, shared by every gate's inputs.
+
+    The `as_of` is DROPPED when the value is absent and KEPT whenever it is present — never
+    replaced by the run date. That is the whole point: `pe_pctile_vs_history` is stamped with the
+    EPS PERIOD END (typically ~210d before the run, bounded at 470 by the reach-back guard), so a
+    row stamping it "today" would claim a freshness the number does not have. The stale-benchmark
+    incident was exactly this shape on a price field.
+    """
+    value = getattr(f, "value", None)
+    as_of = getattr(f, "as_of", None)
+    return StampedInput(
+        value=value, as_of=as_of if value is not None else None,
+        source=getattr(f, "source", None) or default_source, note=getattr(f, "note", None),
+        span_days=span[0] if span else None, observations=span[1] if span else None)
+
+
 def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: dict[str, date]
                  ) -> dict[str, StampedInput]:
     """The gate inputs with THEIR OWN stamps — never the run's.
 
     A gate input claiming the reference date while its data stopped days earlier is exactly what
     made the benchmark incident invisible, so the field's own ``as_of`` and ``note`` travel with it.
+
+    Covers G1/G2 (price) AND G3 (valuation). An UNKNOWN input is still written — value None, no
+    stamp, `note` carrying the cause — because "the gate could not see this" is the finding for
+    282 of the 413 names that reached G3, not an absence to skip.
     """
     prices = getattr(rec, "prices", None)
     out: dict[str, StampedInput] = {}
-    for name in ("drawdown_from_high", "rel_ret_vs_market", "last"):
+    for name in _PRICE_INPUTS:
         f = getattr(prices, name, None)
         if f is None:
             continue
         start = window_start.get(name)
         win = (window_facts(bars, start=start, end=f.as_of)
                if start is not None and f.value is not None and f.as_of is not None else None)
-        out[name] = StampedInput(
-            value=f.value, as_of=f.as_of if f.value is not None else None,
-            source=f.source or "EOD", note=f.note,
-            span_days=win[0] if win else None, observations=win[1] if win else None)
+        out[name] = _stamped(f, default_source="EOD", span=win)
+
+    fundamentals = getattr(rec, "fundamentals", None)
+    for name in _G3_INPUTS:
+        f = getattr(fundamentals, name, None)
+        if f is None:
+            continue
+        # No span/observations: the percentile's window (1825d) and its point count live in the
+        # field's NOTE as prose, and the structured values do not reach here. Parsing them back
+        # out would be the display-string re-parse this repo bans — left absent and said so,
+        # rather than reconstructed.
+        out[name] = _stamped(f, default_source="EDGAR")
     return out
 
 
