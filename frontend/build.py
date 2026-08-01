@@ -314,6 +314,12 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
              # MVST by array order). Emitted only when set — legacy refs stay byte-identical.
              "references": [{"label": p["label"], "value": p["value"], "unit": p["unit"],
                              "source": p["source"],
+                             # (schema 1.4) the vintage rides too, or the field the backend now
+                             # REQUIRES would exist only in the backend: `source` says where a
+                             # value came from, `vintage` says when, and the human reads the card.
+                             # Emitted only when set, so the 7 committed 1.3 records — none of
+                             # which carry one — stay byte-identical.
+                             **({"vintage": p["vintage"]} if p.get("vintage") else {}),
                              **({"role": p["role"]} if p.get("role") else {}),
                              **({"leg": p["leg"]} if p.get("leg") else {}),
                              **({"excluded": True,

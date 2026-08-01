@@ -195,7 +195,8 @@ def _minimal(**over: object) -> sc.ScenarioRecord:
         "assumptions": {
             axis: sc.AssumptionDerivation(
                 method="legs set against the reported history",
-                references=[sc.RefPoint(label="FY2025", value=1.0, unit="$M", source="10-K")],
+                references=[sc.RefPoint(label="FY2025", value=1.0, unit="$M", source="10-K",
+                                        vintage="FY2025")],
             )
             for axis in ("revenue", "margin", "multiple")
         },

@@ -100,3 +100,31 @@ def test_closed_position_emits_the_closed_block_and_open_stays_byte_identical() 
         if not e.get("event"):
             joined[e["entry_id"]] = dict(e)
     assert "V-X" in joined and "C-X" not in joined, "close rows never become positions"
+
+
+def test_a_stamped_vintage_reaches_the_card_and_an_unstamped_one_emits_nothing() -> None:
+    """REVIEW FINDING (#302). The backend REQUIRES `vintage` from schema 1.4, and the card's
+    reference builder is an explicit key ALLOWLIST — so the field was stamped in
+    `scenarios/<T>.json` and silently dropped on the way to the human. A provenance field the
+    reader never sees is not provenance; `source` says WHERE, `vintage` says WHEN, and the whole
+    point is that the human can check the period without opening the JSON.
+
+    BOTH WAYS, the allowlist's own idiom: stamped rides, unstamped emits NO key at all, so the
+    7 committed 1.3 records — none of which carry a vintage — stay byte-identical."""
+    def _rec(refs: list[dict[str, object]]) -> dict[str, object]:
+        return {"ticker": "XYZ", "recipe_id": "R1", "recipe_desc": "d",
+                "multiple_basis": "EV/EBITDA", "underwrite_date": "2026-07-01", "analyst": "a",
+                "spot": 9.0, "spot_source": "s", "facts": {}, "scenarios": {}, "result": {},
+                "verdict": {"status": "watch"},
+                "assumptions": {"margin": {"method": "m", "references": refs}}}
+
+    base = {"label": "own-history median", "value": 7.45, "unit": "%", "source": "EDGAR"}
+    stamped = _BUILD._scenario_card(_rec([{**base, "vintage": "FY2025"}]))
+    ref = stamped["assumptions"][0]["references"][0]
+    assert ref["vintage"] == "FY2025", "a stamped vintage must reach the card"
+    assert ref["source"] == "EDGAR", "and must not displace the source it complements"
+
+    bare = _BUILD._scenario_card(_rec([dict(base)]))
+    assert "vintage" not in bare["assumptions"][0]["references"][0], (
+        "an unstamped reference must emit NO vintage key — the degrade is silence, never a null, "
+        "or every committed 1.3 card re-renders with a diff")

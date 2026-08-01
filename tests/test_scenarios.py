@@ -38,7 +38,8 @@ def _rec(**over: object) -> sc.ScenarioRecord:
             "revenue": sc.AssumptionDerivation(method="legs set against reported history"),
             "margin": sc.AssumptionDerivation(method="modeled off the own-history median anchor",
                 references=[sc.RefPoint(label="own-history median operating margin",
-                                        value=7.45, unit="%", source="EDGAR margin_anchor")]),
+                                        value=7.45, unit="%", source="EDGAR margin_anchor",
+                                        vintage="FY2025")]),
             "multiple": sc.AssumptionDerivation(method="chosen against the own-history band"),
         },
     }
@@ -215,8 +216,10 @@ def test_scenario_card_emits_derivations_and_omits_them_for_legacy_records() -> 
     assert [a["axis"] for a in card["assumptions"]] == ["revenue", "margin", "multiple"]
     margin = next(a for a in card["assumptions"] if a["axis"] == "margin")
     ref = margin["references"][0]
+    # EXHAUSTIVE by design — it is what caught the 1.4 `vintage` reaching the card, so keep it a
+    # whole-dict compare and never relax it to a subset. (raw pass-through, no _rd)
     assert ref == {"label": "own-history median operating margin", "value": 7.45,
-                   "unit": "%", "source": "EDGAR margin_anchor"}   # raw pass-through, no _rd
+                   "unit": "%", "source": "EDGAR margin_anchor", "vintage": "FY2025"}
     legacy = {k: v for k, v in rec.items() if k not in ("assumptions", "recipe_formula")}
     lcard = build._scenario_card(legacy)
     assert "assumptions" not in lcard and "recipeFormula" not in lcard
@@ -890,11 +893,11 @@ def test_13_gate_narrowings_stay_legal() -> None:
     "trough") are legal label prose because the ROLE field is the machine copy, not a ban."""
     fine = [
         sc.RefPoint(label="street operating margin, FY2026 - stated, not derived",
-                    value=6.93, unit="%", source="s"),
+                    value=6.93, unit="%", source="s", vintage="FY2026"),
         sc.RefPoint(label="this company's trailing median", value=17.85, unit="x", source="s",
-                    role="median"),
+                    role="median", vintage="FY2021-FY2025"),
         sc.RefPoint(label="FY2020 worst clean year", value=9.58, unit="%", source="s",
-                    role="trough", leg="bear"),
+                    role="trough", leg="bear", vintage="FY2020"),
     ]
     rec = _rec(assumptions={
         "revenue": sc.AssumptionDerivation(method="m"),
@@ -932,3 +935,64 @@ def test_13_every_committed_record_passes_the_gate_and_carries_the_migration() -
         "unit carried a second value)")
     assert sum(1 for r in smpl.references if r.unit == ":1") == 2, (
         "the two entry-boundary cells must be honest references")
+
+
+def test_a_new_reference_without_a_vintage_is_refused_and_a_committed_one_is_not(
+        tmp_path: Path) -> None:
+    """P3 pt1: a `source` names WHERE a value came from and never WHEN — "CIQ Estimates->Trends",
+    "EDGAR OperatingIncomeLoss / revenue". From 1.4 a reference must state its vintage.
+
+    BINDS FORWARD. The census found 70 of 119 committed references carry no period token at all,
+    and the period is not recoverable FROM THE RECORD — it lives in the analyst's source material.
+    So the gate keys on the record's OWN schema_version (the BASIS_REQUIRED_FROM precedent): a 1.3
+    record stays writable unstamped forever, a 1.4 record cannot be written without one. This
+    pins BOTH directions, because a forward-binding rule that also fires backward is a migration
+    nobody authorised, and one that fires in neither direction is decoration."""
+    unstamped = sc.RefPoint(label="own-history median", value=7.45, unit="%", source="EDGAR")
+    assert unstamped.vintage is None, "the field must stay OPTIONAL on the model — legacy is legal"
+
+    # NEW record (defaults to the current SCHEMA_VERSION): refused, and the message says WHEN.
+    with pytest.raises(ValueError, match="no vintage"):
+        sc.write_record(_rec(assumptions={
+            "revenue": sc.AssumptionDerivation(method="m", references=[unstamped]),
+            "margin": sc.AssumptionDerivation(method="m"),
+            "multiple": sc.AssumptionDerivation(method="m"),
+        }), root=tmp_path)
+
+    # Same reference, same axes, on a record that predates the rule: writes clean.
+    legacy = _rec(assumptions={
+        "revenue": sc.AssumptionDerivation(method="m", references=[unstamped]),
+        "margin": sc.AssumptionDerivation(method="m"),
+        "multiple": sc.AssumptionDerivation(method="m"),
+    })
+    legacy = legacy.model_copy(update={"schema_version": "1.3"})
+    sc.write_record(legacy, root=tmp_path)
+
+    # Whitespace is not a vintage — the empty-ish forms a hurried stamp actually takes.
+    for blank in ("", "   "):
+        with pytest.raises(ValueError, match="no vintage"):
+            sc.write_record(_rec(assumptions={
+                "revenue": sc.AssumptionDerivation(method="m", references=[
+                    unstamped.model_copy(update={"vintage": blank})]),
+                "margin": sc.AssumptionDerivation(method="m"),
+                "multiple": sc.AssumptionDerivation(method="m"),
+            }), root=tmp_path)
+
+
+def test_every_committed_record_predates_the_vintage_rule(tmp_path: Path) -> None:
+    """The 70 unstamped references are NOT backfilled — P3 pt1 does not close on code. This pin
+    is the reason that is safe: all seven committed records sit below VINTAGE_REQUIRED_FROM, so
+    nothing in the tree is silently in violation. It reddens the day someone bumps a record's
+    schema_version without stamping its references — which is exactly when the backfill stops
+    being optional."""
+    root = Path(__file__).resolve().parents[1] / "scenarios"
+    seen = 0
+    for f in sorted(root.glob("*.json")):
+        if f.name.startswith("_"):
+            continue
+        rec = json.loads(f.read_text())
+        seen += 1
+        assert sc._schema_ver(rec["schema_version"]) < sc._schema_ver(sc.VINTAGE_REQUIRED_FROM), (
+            f"{f.name} is at schema {rec['schema_version']} — at or past "
+            f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage")
+    assert seen == 7, f"expected the 7 committed records, walked {seen}"

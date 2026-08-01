@@ -37,7 +37,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from vinci.dossier.midcycle import BAR, R1_FORMULA
 from vinci.prose_lint import ProseRegisterWarning, lint_record
 
-SCHEMA_VERSION = "1.3"
+SCHEMA_VERSION = "1.4"
 
 # WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
 # is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
@@ -75,6 +75,17 @@ REF_UNITS = frozenset({"%", "x", "$M", "$/share", ":1", "years", "% of revenue",
 # fields and stay writable — the rule binds forward, never retroactively (BASIS_REQUIRED_FROM
 # precedent).
 FIELDED_REFS_FROM = "1.3"
+# From 1.4 a reference must state WHEN its value is from. A `source` names the source and the
+# concept — "CIQ Estimates->Trends", "EDGAR OperatingIncomeLoss / revenue" — and 70 of the 119
+# committed references carry no period at all, so the cite answers WHERE and never WHEN. That is
+# audit P3 pt1: a provenance label naming the wrong object.
+#
+# BINDS FORWARD, and the 70 are NOT backfilled. Their vintage is not in the record and not
+# recoverable from it: it lives in the analyst's source material (the CIQ export date, the filing
+# period behind each concept). Backfilling is a manual pass over 119 references and an OPERATOR
+# DECISION, not a queued build — so **P3 pt1 does not close on code.** The field stops the next
+# reference from being unstamped; it does not repair the ones that already are.
+VINTAGE_REQUIRED_FROM = "1.4"
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -127,6 +138,11 @@ class RefPoint(BaseModel):
     value: float
     unit: str                      # from REF_UNITS on 1.3 records ("%" | "x" | "$M" | …)
     source: str                    # the filing/tag/run that produced the value
+    #: WHEN the value is from — the period it describes, not when it was fetched. Free text
+    #: because the answer is a fiscal period as often as a date ("FY2025", "Q1 2026", "2026-07-20"),
+    #: and forcing a `date` would make an analyst invent a day for a year. Required from 1.4
+    #: (:data:`VINTAGE_REQUIRED_FROM`); None stays legal forever on legacy records.
+    vintage: str | None = None
     role: str | None = None        # REF_ROLES member; None = untagged (legal forever on legacy)
     leg: Literal["bear", "base", "bull"] | None = None   # which case this anchors; None = context
     excluded: bool = False         # recorded but NOT used — renders dimmed, never selected
@@ -829,6 +845,11 @@ def require_fielded_refs(rec: ScenarioRecord) -> None:
             if _EXCLUSION_IN_LABEL.search(r.label):
                 problems.append(f"{where}: label {r.label!r} carries an exclusion as prose — "
                                 "use excluded=True + excluded_reason")
+            if (_schema_ver(rec.schema_version) >= _schema_ver(VINTAGE_REQUIRED_FROM)
+                    and not (r.vintage or "").strip()):
+                problems.append(
+                    f"{where}: no vintage — `source` names WHERE the value came from and never "
+                    "WHEN. State the period it describes (a fiscal period or a date)")
             if r.unit not in REF_UNITS:
                 problems.append(f"{where}: unit {r.unit!r} is not one of {sorted(REF_UNITS)} — "
                                 "a unit is a unit; a finding belongs in the axis notes")
