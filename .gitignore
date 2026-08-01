@@ -36,6 +36,7 @@ data/dossiers/*/llm_call.log
 # how the book was marked on each date — a spread nobody can re-read is not evidence. Small,
 # diff-able, no licensed workbook content.
 !data/monitor/
+!data/scan_history/
 
 # Frontend — generated mirrors from frontend/build.py. frontend/snapshots/ stays ignored (regenerate
 # via build.py). frontend/dossiers/ IS committed — the pre-built DERIVED dossier.json the authed
@@ -52,7 +53,10 @@ data/forward/
 
 # scan-history archive (themes-exposure) — timestamped scan snapshots + manifest. DATA, never
 # committed (already covered by data/*; explicit here for fail-closed clarity).
-data/scan_history/
+# data/scan_history/ is TRACKED (2026-07-31): it is the immutable archive standing
+# behind candidate_themes.jsonl, and while it was ignored the 'never clobber the
+# prior harvest' guarantee protected nothing — the only committed cluster file had
+# no keeper. Derived from public EOD prices + EDGAR SIC; no licensed content.
 
 # earliness-assay v0 harness runtime outputs — derived, LOCAL-only (already covered by data/*;
 # explicit for fail-closed clarity). Cards, the efts velocity cache, and the quarter-snapshot archive.

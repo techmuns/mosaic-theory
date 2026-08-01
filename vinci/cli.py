@@ -1470,10 +1470,18 @@ def _cmd_themes(args: argparse.Namespace) -> int:
     print(render_result(result, top=args.top))
     dumped = [t.model_dump(mode="json") for t in result.candidate_themes]  # ONE dump — the "latest"
     # pointer and the scan-history snapshot share these bytes (mirrors exposure's --out ≡ snapshot).
-    if not args.no_write:
-        out = cfg.snapshots_dir / "candidate_themes.jsonl"  # "latest" pointer (same bytes)
-        out.write_text("\n".join(json.dumps(r) for r in dumped))
-        print(f"\nwrote {out} ({len(dumped)} admissible candidate themes)")
+    #
+    # ARCHIVE FIRST, POINTER SECOND (2026-07-31). The order was the other way round, so the
+    # "latest" pointer — the ONLY committed cluster file — was overwritten BEFORE the immutable
+    # snapshot was secured. A failing archive write, or `--no-scan-history`, left the prior harvest
+    # destroyed and nothing keeping it: the "must never clobber" comment described an intent the
+    # sequence did not implement. Overwriting the pointer without an archive is now REFUSED.
+    if not args.no_write and args.no_scan_history:
+        raise SystemExit(
+            "REFUSED: --no-scan-history would overwrite candidate_themes.jsonl — the only "
+            "committed cluster file — with no immutable snapshot kept. Pass --no-write to print "
+            "only, or allow the archive.")
+    snap_path = None
     if not args.no_scan_history:  # ALWAYS-ON timestamped archive — a monthly sweep must never
         # clobber the prior harvest; the delta/monitor diffs against these immutable snapshots.
         import subprocess
@@ -1496,6 +1504,12 @@ def _cmd_themes(args: argparse.Namespace) -> int:
             tier_field=None)
         print(f"scan-history snapshot → {snap_path}")
         print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
+    # POINTER LAST — only once the immutable snapshot is on disk. `record_snapshot` propagates any
+    # write error loudly, so reaching here means the prior harvest is preserved.
+    if not args.no_write:
+        out = cfg.snapshots_dir / "candidate_themes.jsonl"  # "latest" pointer (same bytes)
+        out.write_text("\n".join(json.dumps(r) for r in dumped))
+        print(f"\nwrote {out} ({len(dumped)} admissible candidate themes)")
     return 0
 
 

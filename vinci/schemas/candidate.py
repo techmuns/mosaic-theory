@@ -27,6 +27,23 @@ class GateResult(enum.StrEnum):
     UNKNOWN = "UNKNOWN"
 
 
+class RoutingPolicy(enum.StrEnum):
+    """What the ROUTER does with a name no gate could assess. One setting, two values.
+
+    The gates already record NOT_EVALUATED; this is the separate question of whether such a name
+    enters the candidate set. On the 2026-07-29 run **282 of the 331 admitted had a G3 the screen
+    could not evaluate**, and 3 more were forwarded past a G2 that returned NOT_EVALUATED — so the
+    router was admitting on "not FAIL" while the gates said "could not judge".
+
+    ``CARRY`` is the DEFAULT and is today's behaviour exactly, so a run reproduces byte-for-byte.
+    Making it a named setting does not change what the screen does; it makes what the screen does
+    STATEABLE, and a pool count meaningless without it is now recorded beside the count.
+    """
+
+    CARRY = "carry_not_evaluated"
+    DROP = "drop_not_evaluated"
+
+
 class TriageBand(enum.StrEnum):
     """Coarse triage band to size the shortlist to depth's throughput. Never a continuous score."""
 

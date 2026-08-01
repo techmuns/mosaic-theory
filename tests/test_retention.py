@@ -979,3 +979,116 @@ def test_the_bound_lives_in_the_shared_reader_so_both_consumers_get_it() -> None
     assert isinstance(kw.value, ast.Constant) and kw.value.value is None, (
         "the unbounded sentinel is not the explicit `None` — a magic number here is a bound "
         "a reader cannot check")
+
+
+# --- routing must state its policy ----------------------------------------------------------------
+
+
+def test_the_policy_exists_with_two_values_and_carry_is_the_default() -> None:
+    """ONE SETTING, TWO VALUES. The gates already record NOT_EVALUATED; this is the separate
+    question of whether such a name enters the candidate set. CARRY is today's behaviour exactly,
+    so the -03 run reproduces — making it a named setting changes nothing about what the screen
+    does, it makes what the screen does STATEABLE."""
+    import inspect
+
+    from vinci.schemas.candidate import RoutingPolicy
+    from vinci.screens.run import screen_universe
+    from vinci.screens.screen2 import evaluate_screen2
+
+    assert [p.value for p in RoutingPolicy] == ["carry_not_evaluated", "drop_not_evaluated"]
+    for fn in (evaluate_screen2, screen_universe):
+        d = inspect.signature(fn).parameters["policy"].default
+        assert d is RoutingPolicy.CARRY, f"{fn.__name__} default is {d!r}, not CARRY"
+
+
+def test_drop_refuses_to_forward_or_admit_a_gate_that_could_not_judge() -> None:
+    """BOTH "not FAIL" POINTS. G2's forward read `g2 is FAIL` — so a G2 returning UNKNOWN sent the
+    name on to G3 (3 names did on the 2026-07-29 run). And the admit test read
+    `FAIL not in results` — so a G3 that could not value admitted (282 of the 331).
+
+    Under DROP each requires an actual PASS. Pinned on the SOURCE of both, since the two live in
+    different modules and a fix to one would otherwise look complete."""
+    import inspect
+
+    from vinci.screens.run import screen_universe
+    from vinci.screens.screen2 import evaluate_screen2
+
+    fwd = inspect.getsource(screen_universe)
+    assert ("if g2 is GateResult.FAIL or (policy is RoutingPolicy.DROP "
+            "and g2 is not GateResult.PASS):") in fwd, "the G2 forward ignores the policy"
+    adm = inspect.getsource(evaluate_screen2)
+    assert "if policy is RoutingPolicy.DROP:" in adm, "the admit test ignores the policy"
+    assert "all(r is GateResult.PASS for r in results.values())" in adm, (
+        "DROP must require every gate to have actually PASSED, not merely not-FAILed")
+
+
+def test_the_manifest_records_which_policy_the_run_used() -> None:
+    """A POOL COUNT MEANS NOTHING WITHOUT IT — 331 and 49 are the same screen under different
+    routing. Defaulted to CARRY so a manifest written before the field reads as what that run
+    actually did, rather than as unknown."""
+    from vinci.schemas.candidate import RoutingPolicy
+    from vinci.screens.retention import RunManifest
+
+    assert "routing_policy" in RunManifest.model_fields
+    m = RunManifest(run_id="2026-07-29-09", reference_date=REF, screen=CFG, band=BAND)
+    assert m.routing_policy is RoutingPolicy.CARRY
+    moved = RunManifest(run_id="2026-07-29-09", reference_date=REF, screen=CFG, band=BAND,
+                        routing_policy=RoutingPolicy.DROP)
+    assert moved.routing_policy is RoutingPolicy.DROP
+    assert "routing_policy" in moved.model_dump_json(), "the policy is not serialised"
+
+
+def test_detection_refuses_to_overwrite_the_pointer_without_an_archive() -> None:
+    """THE ARCHIVE PROTECTED NOTHING. `candidate_themes.jsonl` — the only committed cluster file —
+    was overwritten BEFORE the immutable snapshot was written, and `data/scan_history/` was
+    git-ignored, so "a monthly sweep must never clobber the prior harvest" described an intent the
+    sequence did not implement.
+
+    Archive first, pointer last, and `--no-scan-history` with a write is refused outright."""
+    import inspect
+
+    from vinci import cli
+
+    src = inspect.getsource(cli._cmd_themes)
+    assert "if not args.no_write and args.no_scan_history:" in src
+    assert "REFUSED:" in src and "no immutable snapshot kept" in src
+    # ORDER: the archive call must precede the pointer write
+    assert src.index("record_snapshot(") < src.index('"candidate_themes.jsonl"'), (
+        "the pointer is still written before the snapshot is secured")
+
+
+def test_the_scan_history_archive_is_tracked() -> None:
+    """It was git-ignored, so the archive standing behind the pointer kept nothing."""
+    import subprocess
+
+    keep = ROOT / "data" / "scan_history" / "README.md"
+    assert keep.is_file(), "the archive directory is not present"
+    r = subprocess.run(["git", "check-ignore", "-q", str(keep)], cwd=ROOT)
+    assert r.returncode != 0, "data/scan_history/ is still git-ignored — it keeps nothing"
+
+
+def test_the_manifest_and_the_run_cannot_state_different_policies(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. `routing_policy` was recorded on the manifest AND passed to the runner, with
+    NOTHING binding them — so a run could execute under DROP while its own record said CARRY.
+
+    That is the record stating something the run did not do, which is the precise failure the
+    manifest was added to prevent: a pool count is meaningless without the policy, and worse than
+    meaningless if it is wrong. Same shape as refusing a row filed under another run id."""
+    import inspect
+
+    from vinci.schemas.candidate import RoutingPolicy
+    from vinci.screens.run import screen_universe
+
+    src = inspect.getsource(screen_universe)
+    assert "recorded.routing_policy is not policy" in src, (
+        "nothing checks the manifest against the policy the run is executing")
+    assert "the record would state a policy the run did not use" in src
+    # and the policy travels with the count, so a number is never quoted without it
+    assert '"routing_policy": policy.value,' in src
+
+    # the check fires on a real mismatch
+    write_manifest(RunManifest(run_id="2026-07-29-01", reference_date=REF, screen=CFG, band=BAND,
+                               routing_policy=RoutingPolicy.CARRY), snapshots_dir=tmp_path)
+    m = read_manifest("2026-07-29-01", snapshots_dir=tmp_path)
+    assert m is not None and m.routing_policy is RoutingPolicy.CARRY
+    assert m.routing_policy is not RoutingPolicy.DROP, "the two values must be distinguishable"
