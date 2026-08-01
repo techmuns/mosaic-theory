@@ -4622,18 +4622,34 @@ changed, nothing was removed, so the acceptance stands.** Recorded as the instan
 `extraction_version` claims one shape while its structure is another, and no field says so.
 Instance noted against the item; NOT built.
 
-**D20. `git checkout --` DOES NOT REVERT AN UNTRACKED FILE — the recorded revert idiom has a hole**
-(2026-08-01). The standing rule from the `git stash` incident is *"never stash; use
-`git checkout -- <file>`"*. That works only for a TRACKED file. During #303 a mutation edited a
-newly-created, not-yet-added caveat artifact; `git checkout --` returned success having done
-nothing, and the mutated value (a caveat claiming 412 rows for a 423-row run) survived into the
-full-suite run — where the test caught it, which is the only reason it was noticed.
+**D20. I SUPPRESSED A LOUD FAILURE AND THEN RECORDED GIT'S BEHAVIOUR AS THE BUG**
+(2026-08-01; the first cut of this entry was wrong and the correction IS the entry).
 
-**THE RULE, CORRECTED:** `git checkout -- <file>` reverts a TRACKED file. For a file not yet in the
-index there is nothing to revert TO — the fix is to regenerate it from its source of truth, or
-`git clean` it if it should not exist. **The tell is silent success**: `checkout` on an untracked
-path does not error, so the failure mode is a no-op that reads as a revert. Same shape as D16 (a
-gate whose exit status is swallowed by a pipe) — *a command that cannot fail is not a safeguard.*
+During #303 a mutation edited a newly-created, not-yet-added caveat artifact, and the revert did not
+revert: the mutated value (a caveat claiming 412 rows for a 423-row run) survived into the full-suite
+run, where the test caught it. **The first cut of this entry blamed `git checkout --`, claiming it
+"returned success having done nothing" on an untracked path.** That is FALSE, and review caught it by
+running the case in a scratch repo rather than trusting the write-up:
+
+    $ git checkout -- untracked.txt
+    error: pathspec 'untracked.txt' did not match any file(s) known to git
+    $ echo $?
+    1
+
+**Git failed loudly and correctly. The command that silenced it was mine:**
+`git checkout -- <path> 2>/dev/null || true` — `2>/dev/null` hid the message and `|| true` ate the
+exit code. So the hazard is NOT the revert idiom, which is reliable; it is the reflexive
+`2>/dev/null || true` tail added to make a cleanup step "not fail". **D16 is the same class** (a gate
+whose exit status is swallowed by a pipe), and this is its second instance: *a command that cannot
+fail is not a safeguard.*
+
+**THE CORRECTION MATTERS MORE THAN THE INCIDENT.** As first written, this entry would have taught a
+future reader to distrust `git checkout --` (loud, dependable) instead of distrusting `|| true` (the
+actual defect) — a wrong diagnosis in the authoritative record, which is worse than no record. Same
+shape as #302's guard comment asserting a generality its pattern did not have. **The operational
+rule stands unchanged and is still `git checkout -- <file>`, never `git stash`**; what is banned is
+appending `2>/dev/null || true` to it. For a file not yet in the index there is nothing to revert TO
+— regenerate it from its source of truth, or `git clean` it.
 
 **D15. A FIX FOR A CLASS IS WHERE THAT CLASS RECURS — third instance, recorded as a pattern**
 (operator, 2026-07-31). `refresh_record` froze the `basis` while moving the value, which would have
