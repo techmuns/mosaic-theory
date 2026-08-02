@@ -4067,7 +4067,8 @@ forward only — the 70 unstamped committed references need analyst source mater
 OPEN and does not close on code**. `ScenarioRecord.spot` is still a bare float — **P4 pt2 remains OPEN**.
 
 **S15. `RefPoint.vintage` — BINDS FORWARD, built 2026-08-01. P3 pt1 DOES NOT CLOSE ON CODE.**
-*(Renumbered from S10 on 2026-08-01: #302 reused a number already held by Batch A, above. The OLDER entry keeps S10 — renumbering it would break existing citations — so the interloper moved. Found by enumerating the record for a handoff, which is the only reason a duplicate identifier surfaces at all.)*
+*(Renumbered from S10 on 2026-08-01: #302 reused a number already held by Batch A, above. The OLDER entry keeps S10 — renumbering it would break existing citations — so the interloper moved. Found by enumerating the record for a handoff, which is the only reason a duplicate identifier surfaces at all.*
+*CITATION SWEEP RUN BEFORE THE RENUMBER MERGED, across three surfaces: tracked files (zero hits outside this file), all commit messages (zero), and **300 GitHub PR bodies plus every comment on #299–#306**. **ONE stale citation exists and it is OUTSIDE the repo: PR #302's body says "STATE.md §S10" and means THIS entry, now S15.** It is left as written — a merged PR body is a record of what was said at the time — and corrected here instead, because the record is what a handoff reads. #304 cites S12 and is unaffected.)*
 A reference's `source` names WHERE a value came from and never WHEN: `CIQ Estimates->Trends`,
 `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax`, `EDGAR OperatingIncomeLoss / revenue`
 name a source and a concept, no period. Census over **all 119 committed references** (7 records):
