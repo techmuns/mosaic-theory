@@ -2,6 +2,28 @@
 
 _July 27, 2026 · extraction unstamped_
 
+> ## ⚠ KNOWN-WRONG — do not read the figures on this page as current
+>
+> Each item is KNOWN-FALSE, not unknown. A gap is a number we do not have; an error is a number we have and can demonstrate is wrong. This page carries errors, and a reader who treats them as staleness will underestimate them.
+>
+> **1. The share count is PRE-REVERSE-SPLIT.** `stock_info.shares_out` predates the combination, so every per-share figure and the market cap derived from it are wrong by the split factor.
+>     *A stale share count drifts by buybacks. This one is wrong by a corporate action that reprices every per-share line on the page.*
+>
+> **2. G3 never valued this name.** The dossier carries no multiple-floor verdict. FUBO's admission is not a valuation judgment and must not be read as one.
+>     *Absence of a verdict reads as a passed verdict unless said out loud — item 22's visible-absence rule.*
+>
+> **3. The P/E caveat is text this code no longer produces.** `caveats[4]` asserts the multiple rests on normalized/adjusted earnings. The current code refuses to pick a denominator: it names both candidates and states that the displayed basis does not say which.
+>     *The sentence makes a claim about the denominator that the inputs do not support. It is wrong, not old.*
+>
+> **4. The same caveat contains a grammar defect: "EDGAR P/E 13.1x rest on".** Singular subject, plural verb — the verb was hardcoded while the pronoun switched on the number of multiples shown.
+>     *Cosmetic in isolation, but it is the visible marker that this page predates the fix — and it sits inside the sentence whose claim is also wrong.*
+>
+> **5. The document describes the PRE-COMBINATION entity throughout.** Assembled 2026-07-10 and containing no Hulu, no noncontrolling interest, no Newco, no Class B, and no reverse split — none of the structure that now defines the issuer.
+>     *This is not an out-of-date page about the same company. It is an accurate page about a company that no longer exists in that form.*
+>
+> **Clears when:** A post-combination re-assembly exists. Until then this file stands and `dossier.json` stays sealed.
+>
+
 # Brief — first cut
 
 ## At a glance

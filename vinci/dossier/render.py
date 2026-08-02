@@ -9,14 +9,17 @@ from __future__ import annotations
 
 import contextvars
 import functools
+import json
 import math
 import re
 from collections import Counter
 from collections.abc import Callable
 from datetime import UTC, date, datetime
 from itertools import groupby
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
+from vinci.config import get_config
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import stamp_detail, stamp_label
@@ -3076,6 +3079,49 @@ def _argument_lines(d: Dossier, *, dev: bool) -> list[str]:
     return out
 
 
+#: THE SIDECAR THAT MARKS A SEALED RECORD AS KNOWN-WRONG. Read from a file BESIDE `dossier.json`,
+#: never from the record: FUBO's standing rule seals the record until a post-combination
+#: re-assembly exists, and the marker must not become a way around that. A rendered view is not
+#: the record, so the block is printed; the record itself stays untouched.
+#:
+#: TOP OF THE PAGE, before the brief. A reader who reaches the numbers first has already been
+#: misled — the whole point is the distinction between a GAP (a number we lack) and an ERROR (a
+#: number we have and can demonstrate is wrong), and only the second needs to arrive first.
+KNOWN_WRONG_FILE = "known_wrong.json"
+
+
+def _known_wrong_lines(ticker: str, root: Path | None = None) -> list[str]:
+    """The known-wrong banner, or nothing. Absent file == nothing rendered, which is the normal
+    case for every name but FUBO."""
+    base = root or (get_config().data_dir / "dossiers")
+    path = Path(base) / ticker.upper() / KNOWN_WRONG_FILE
+    if not path.is_file():
+        return []
+    try:
+        doc = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return []
+    items = doc.get("items") or []
+    if not items:
+        return []
+    out = [
+        "> ## ⚠ KNOWN-WRONG — do not read the figures on this page as current",
+        ">",
+        f"> {doc.get('the_distinction', '')}",
+        ">",
+    ]
+    for i, it in enumerate(items, start=1):
+        out.append(f"> **{i}. {it.get('claim', '')}** {it.get('known_false', '')}")
+        if it.get("not_merely_stale"):
+            out.append(f">     *{it['not_merely_stale']}*")
+        out.append(">")
+    if doc.get("clears_when"):
+        out.append(f"> **Clears when:** {doc['clears_when']}")
+        out.append(">")
+    out.append("")
+    return out
+
+
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
                     card: ScenarioRecord | None = None) -> str:
@@ -3104,6 +3150,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         f"_{d.assembled_at:%B %-d, %Y} · extraction {stamp_label(d.extraction_version)}_",
         "",
     ]
+    # BEFORE the brief: a known-wrong marker has to reach the reader before the numbers do.
+    out += _known_wrong_lines(d.ticker)
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
