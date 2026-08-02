@@ -4062,11 +4062,12 @@ to hold Batch A's scope.**
 
 **STILL OPEN — Batches B and C.** B: `shares_outstanding_by_cik` merges five quarterly frames into a
 flat dict and DISCARDS which frame supplied each CIK, so the universe cap's 120–485d age is not
-recoverable without changing that reader (three other callers). C: `RefPoint.vintage` SHIPPED (S10) but binds
+recoverable without changing that reader (three other callers). C: `RefPoint.vintage` SHIPPED (S15) but binds
 forward only — the 70 unstamped committed references need analyst source material, so **P3 pt1 remains
 OPEN and does not close on code**. `ScenarioRecord.spot` is still a bare float — **P4 pt2 remains OPEN**.
 
-**S10. `RefPoint.vintage` — BINDS FORWARD, built 2026-08-01. P3 pt1 DOES NOT CLOSE ON CODE.**
+**S15. `RefPoint.vintage` — BINDS FORWARD, built 2026-08-01. P3 pt1 DOES NOT CLOSE ON CODE.**
+*(Renumbered from S10 on 2026-08-01: #302 reused a number already held by Batch A, above. The OLDER entry keeps S10 — renumbering it would break existing citations — so the interloper moved. Found by enumerating the record for a handoff, which is the only reason a duplicate identifier surfaces at all.)*
 A reference's `source` names WHERE a value came from and never WHEN: `CIQ Estimates->Trends`,
 `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax`, `EDGAR OperatingIncomeLoss / revenue`
 name a source and a concept, no period. Census over **all 119 committed references** (7 records):
@@ -4124,6 +4125,55 @@ routes (per-symbol `daily_bars`, `grouped_daily`, a store read), so the seven sp
 strictly comparable. Measuring the divergence per name, and what it does to each reward:risk
 (IT sits at 1.52 against a 2:1 bar), was the second half of this task and was NOT reached.
 Unblocked — it is a read, no decision pending.
+
+**S14. THE `getattr` SWEEP — 66 SITES IN THE CLASS, AND THE RULE'S OWN LIMIT FOUND. NOTHING FIXED.**
+(2026-08-01; D15 says run the check where the class recurs, so it was run.)
+
+AST sweep of `vinci/`: **82 defaulting `getattr(obj, name, default)` calls**, of which **75 name a
+constant attribute** (7 are genuinely dynamic — f-string or loop-variable names). Each of the 75 was
+mechanically rewritten to direct attribute access in a scratch copy and the whole package
+type-checked ONCE:
+
+| outcome of rewriting to `obj.attr` | sites |
+|---|---|
+| **mypy-clean — the object is typed and the attribute exists** | **66** |
+| mypy errors (`attr-defined` / `union-attr`) — NOT the class | 9 |
+
+The 9 that error are the legitimate uses, and they are legitimate for three different reasons:
+`themes/exposure.py:584` (`BaseException.status_code` — genuinely dynamic on an HTTP exception
+subclass); `screens/run.py:246,257` (`rec: object` — an untyped boundary, exactly as #305 recorded);
+`render.py:585,2053,2072` (`X | None` — the getattr is standing in for a None-guard, which is a
+RESTRUCTURE, not a swap).
+
+The 66 by file: render.py 21 · assemble.py 16 · synthesis.py 9 · cli.py 7 · materiality.py 6 ·
+mechanical.py 4 · freshness.py 1 · graph/llm.py 1 · themes/classify.py 1.
+By default: 40 `None` · 9 `[]` · 8 `False` · 4 `''` · 2 `True` · 1 each `'assemble'`, `'$M'`,
+`'EV/EBITDA'`.
+
+**NOTHING WAS FIXED, AND THIS IS WHY — the sweep falsified its own screening test.**
+"Rewrites mypy-clean" looked like a proof that the default is dead code. It is not. Measured:
+
+    a: argparse.Namespace
+    mypy --strict on `a.show_proposal`  ->  Success: no issues found
+    runtime `ns.show_proposal`          ->  AttributeError: 'Namespace' object has no attribute …
+
+typeshed gives `argparse.Namespace` a `__getattr__(self, name: str) -> Any`, so **mypy accepts ANY
+attribute on it** — and `cli.py`'s 7 sites are all `getattr(args, …)`, where the default is doing
+REAL work because different subparsers set different attributes. Swapping those ships an
+`AttributeError` into the CLI.
+
+**SO THE RULE FROM #305 NARROWS.** *A defaulting `getattr` on a typed model is an un-typing
+operation* — TRUE, and it still holds for models that DECLARE their fields. It does NOT hold for
+types with a permissive `__getattr__`, where mypy's silence means nothing. **The sound test is not
+mypy: it is whether the attribute is a declared field on the object's model** (`model_fields` for a
+pydantic model), which is verifiable at runtime rather than inferred. Establishing that per-site
+across 66 sites is real work with real crash risk in the renderer, and it is not a mechanical
+sweep — so it is REPORTED, not attempted, and the count above is the worklist.
+
+**INVARIANT: none shipped.** No guard was added, because the sound discriminator (declared-field
+membership) is not yet expressible as a lint without the per-site type resolution this entry defers.
+Recorded as accepted risk with its worklist rather than closed with a check that would repeat the
+mypy mistake one level up.
 
 **S13. G3'S GATE INPUTS REACH THE RETENTION ROW — built 2026-08-01. NO RE-RUN; the -03 run stands.**
 
@@ -4713,6 +4763,83 @@ changed, nothing was removed, so the acceptance stands.** Recorded as the instan
 **`migrated` third-state** item exists to describe, now live rather than hypothetical: MVST's
 `extraction_version` claims one shape while its structure is another, and no field says so.
 Instance noted against the item; NOT built.
+
+**D21. PROSE-AS-DATA — a structured fact stored as rendered text, so nothing can compare it.**
+(named 2026-08-01, after the third instance in one week.)
+
+**THE CLASS.** A value that is structurally a datum — a date, a count, a window length, a period —
+is written into a human-readable STRING and never stored beside it as a field. The string renders
+correctly, so nothing looks wrong; but every consumer that needs the datum must re-derive it by
+parsing prose, and two consumers parsing the same prose is the divergent-parser bug this repo
+already banned at the display layer (`$1,101.80M` read as `1`). **The tell: you can read the value
+but you cannot compare it.**
+
+**THE THREE INSTANCES, all correctly left unparsed:**
+- **`spot_source`** — `"Polygon AORT close 2026-07-20 (live at underwrite)"`. The spot's DATE is in
+  there; `ScenarioRecord.spot` is a bare float with no `spot_as_of`. Seven records, 7/7 carry a
+  date in the string, 0/7 as a field.
+- **`pe_pctile_vs_history.note`** — `"1254 P/E observations over 1825d; …"`. The window length and
+  the observation COUNT are both structured facts (`_PE_WINDOW_DAYS`, `len(hist)`) that exist as
+  variables at write time and reach the record only as prose. #305 left `span_days`/`observations`
+  absent on the G3 inputs rather than parse them back out — correct, and it is why the row cannot
+  say how deep the range was.
+- **`RefPoint.source`** — 49 of 119 committed references carry a period token inside the source
+  string; 70 carry none. #302 added `vintage` as a FIELD binding forward and refused to backfill by
+  parsing the 49, because a parse would manufacture confidence about which token is the period.
+
+**THE FIX SHAPE — EXTRACT AT WRITE TIME, STRUCTURED, REFUSE DISAGREEMENT.** The producer already
+HAS the datum as a value (it is what it formatted the string from), so:
+1. **Store the field beside the string, never instead of it** — the prose stays; readers get both.
+2. **Populate it at WRITE time from the same variable that formatted the string** — never by a
+   later re-parse. A re-parse is a second implementation of the formatter, running backwards.
+3. **Refuse disagreement**: if both are present and the field contradicts the string, RAISE. That is
+   what makes the pair self-checking rather than two facts that can drift.
+4. **Bind forward, never backfill by parsing** (the `BASIS_REQUIRED_FROM` / `VINTAGE_REQUIRED_FROM`
+   precedent). Historic strings whose datum is unrecoverable stay unstamped and SAY so.
+
+**RECOGNITION RULE for the next one:** if a string in a record contains a number, a date, or a
+period that any consumer would ever want to sort, filter, or compare on — it is prose-as-data, and
+the field belongs beside it. **Do not ask whether the string is parseable; ask whether the producer
+had the value.** It always did.
+
+**D22. ONE CLASS, NOT FOUR COINCIDENCES: THE SUITE IS UNVERIFIED EVIDENCE.**
+(2026-08-01, after the fourth instance in one week.)
+
+Production is mutation-tested — every guard this week was proved able to go RED. **The suite itself
+is not.** Mutation testing proves a test CAN fail; **it never proves the test would fail on the
+defect that actually occurs.** All four instances are that one gap, and their surface differences
+are what made them look like four problems:
+
+| # | what the test did | face |
+|---|---|---|
+| #280 | fixture raised on a cache entry aged past TTL — a hole in the fixture, not the code | false RED |
+| #294 | the pin asserted on CALL TEXT, so a legitimate rename reddened it | false RED |
+| #302 | the hygiene guard's regex was narrower than its own comment claimed; it ran green over **six live violations in STATE.md** | false GREEN |
+| #305 | the fixture was a duck-typed stub, and its shape DICTATED the production signature (`getattr(f, "value", None)`) | the test **caused** the defect |
+
+**WHY IT IS ONE CLASS.** In each, the test was trusted as evidence ABOUT production while nothing
+checked the test against reality. #302 is the purest form: its mutation PASSED because the mutation
+used a shape the guard already knew — a self-consistent instrument agreeing with itself while the
+corpus it was pointed at held six violations. #305 is the sharpest: the fixture did not merely fail
+to catch the defect, it SUPPLIED it.
+
+**THE COUNTER-MEASURE ALREADY EXISTS AND IS APPLIED INCONSISTENTLY** (operator, 2026-08-01):
+*"run any new check against the existing corpus, not only a synthetic mutation — a new check finding
+nothing in a large corpus is suspicious, not reassuring."* Applied in #303 it immediately caught two
+things a synthetic never would: the `ensure_ascii` mangling that a parsed-dict compare called
+identical, and the 1.2 archive record that the version-scoping pin had never walked.
+
+**THE RULE, THREE PARTS:**
+1. **CORPUS BEFORE SYNTHETIC.** Every new check runs against the live committed corpus before it is
+   believed. A check that finds nothing there is suspect until you have shown it CAN find something.
+2. **MUTATE WITH A SHAPE THE INSTRUMENT DOES NOT ALREADY KNOW.** A mutation drawn from the guard's
+   own pattern list tests the list, not the guard.
+3. **FIXTURES ARE BUILT FROM THE REAL TYPE.** Never a hand-rolled stub with the attributes the test
+   happens to need — that is how a fixture's shape becomes a production signature.
+
+**NOT SHIPPED AS A MACHINE CHECK, and that is the accepted risk**: parts 1–3 are review discipline,
+not lintable. The INVARIANT RULE is satisfied by recording it here as consciously accepted, with the
+four instances as the evidence that the discipline is what fails, not the tooling.
 
 **D20. I SUPPRESSED A LOUD FAILURE AND THEN RECORDED GIT'S BEHAVIOUR AS THE BUG**
 (2026-08-01; the first cut of this entry was wrong and the correction IS the entry).
