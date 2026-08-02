@@ -4188,6 +4188,23 @@ every item asserts a number is false, so the marked page cannot look valid. Each
 "stale" underestimates them by a corporate action. **MUTATIONS, all RED:** marker absent · present
 but not rendered · an item dropped · `dossier.json` modified (asserted against git, not intent).
 
+**REVIEW FINDING (#308) — THE MARKER COULD VANISH SILENTLY.** The first cut caught `OSError`/
+`ValueError` around the file read and returned no lines, so a corrupt or empty `known_wrong.json`
+made the banner DISAPPEAR while the file sat there looking like the page was marked. Measured, all
+three ways: malformed JSON, `items: []`, and a missing `items` key each rendered the page CLEAN.
+**That is the worst available failure for a warning** — the page then looks valid, which is the
+exact state the standing rule exists to prevent, reached through the mechanism built to prevent it.
+
+**ABSENT and BROKEN are different states.** Absent is silence and correct (the other ten names).
+Broken is a warning that failed, and rendering past it is the harm. Now RAISES on both, with the
+message naming the fix ("fix or delete the file; never render past it"). Same distinction as
+`extraction_version`'s `""`-vs-`None` normalisation and D21's gap-vs-error: *a thing that could not
+be read is not a thing that was not there.* Mutation — revert to swallow-and-return-`[]` -> RED.
+
+**FLEET BYTE-IDENTITY re-verified after both the renderer change and the fix: all 11 dossiers
+render byte-identical to their committed `.md`** (FUBO including its new banner). The renderer
+gained a call and changed nothing for the ten without a marker.
+
 **S16. THREE OPERATOR DECISIONS RECORDED, and the reads that closed two of them (2026-08-01).**
 
 - **ROUTING: CARRY.** *Decided by the density measurement, not by preference.* DROP leaves **49

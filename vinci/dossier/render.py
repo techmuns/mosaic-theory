@@ -3095,15 +3095,27 @@ def _known_wrong_lines(ticker: str, root: Path | None = None) -> list[str]:
     case for every name but FUBO."""
     base = root or (get_config().data_dir / "dossiers")
     path = Path(base) / ticker.upper() / KNOWN_WRONG_FILE
+    # ABSENT is the normal case — ten of eleven names have no marker, and silence is correct.
     if not path.is_file():
         return []
+    # PRESENT-BUT-UNUSABLE IS NOT SILENCE. Review finding: the first cut caught OSError and
+    # ValueError and returned [], so a corrupt or empty marker made the banner VANISH while it sat
+    # looking like the page was marked. That is the worst available failure for a warning — the
+    # page renders CLEAN and looks valid, which is the exact state FUBO's standing rule exists to
+    # prevent. A marker that cannot be read is a BROKEN WARNING, not an absent one; the two are
+    # different states and only one of them is safe to render through.
     try:
         doc = json.loads(path.read_text())
-    except (OSError, ValueError):
-        return []
+    except (OSError, ValueError) as exc:
+        raise ValueError(
+            f"{path} exists but cannot be read ({exc}) — a known-wrong marker that fails to "
+            "render leaves the page looking valid. Fix or delete the file; never render past it."
+        ) from exc
     items = doc.get("items") or []
     if not items:
-        return []
+        raise ValueError(
+            f"{path} exists but names no items — an empty marker renders nothing and reads as "
+            "'this page is fine'. Delete the file if the page is fine.")
     out = [
         "> ## ⚠ KNOWN-WRONG — do not read the figures on this page as current",
         ">",

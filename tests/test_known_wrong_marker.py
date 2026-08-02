@@ -89,3 +89,30 @@ def test_the_sealed_record_itself_is_untouched() -> None:
         "data/dossiers/FUBO/dossier.json was modified — FUBO's standing rule seals it until a "
         "post-combination re-assembly exists, and the marker is a sidecar precisely so that "
         "stays true")
+
+
+def test_a_broken_marker_fails_loud_instead_of_vanishing() -> None:
+    """REVIEW FINDING (#308). The first cut swallowed OSError/ValueError and returned no lines, so
+    a corrupt or empty marker made the banner DISAPPEAR while the file sat there looking like the
+    page was marked. The page then renders CLEAN and looks valid — the exact state FUBO's standing
+    rule exists to prevent, reached through the mechanism built to prevent it.
+
+    ABSENT and BROKEN are different states. Absent is silence and correct (ten names). Broken is a
+    warning that failed, and rendering past it is the harm."""
+    import pytest
+
+    from vinci.dossier.render import _known_wrong_lines
+
+    original = MARKER.read_text()
+    try:
+        for bad, _why in (("{ not json", "malformed"),
+                         ('{"ticker":"FUBO","items":[]}', "empty items"),
+                         ('{"ticker":"FUBO"}', "no items key")):
+            MARKER.write_text(bad)
+            with pytest.raises(ValueError, match="known-wrong|names no items|cannot be read"):
+                _known_wrong_lines("FUBO")
+    finally:
+        MARKER.write_text(original)
+
+    # ABSENT still renders nothing — the fix must not turn silence into an error for the ten.
+    assert _known_wrong_lines("SMPL") == []
