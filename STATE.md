@@ -4159,6 +4159,16 @@ names whose data I had already read — established that the failure is real and
 D22 again: neither of the first two runs was checked against a case with a known answer, and the
 implausibility of 0.2% is the only reason the first was not reported as a finding.
 
+**THE CHAIN LOGIC WAS VALIDATED IN REVIEW — the positive control that cuts 1-3 never ran.**
+Every earlier check tested whether the instrument REJECTED things; none tested whether it
+could ACCEPT. On synthetic known-answer inputs: four clean consecutive quarters -> ACCEPTED;
+three quarters -> rejected `fewer-than-4`; a hole in the middle (the real Q4 shape) ->
+rejected `gap-in-quarters`; a duplicate `period_end` variant -> ACCEPTED, so the de-dup does
+not manufacture a false negative. **Only with that control does 2-of-1,780 become a finding
+rather than a fourth unvalidated number.** The two operator mutations are satisfied by the
+same controls: a window shorter than four quarters is refused, and quarters that do not chain
+are refused rather than silently mixed.
+
 **THE PATH THAT WOULD WORK, NOT BUILT AND NOT PROPOSED AS QUEUED: YTD DIFFERENCING.**
 Q4 = FY - 9M, Q3 = 9M - H1, Q2 = H1 - Q1. That reconstructs discrete quarters arithmetically from
 what filers DO tag, and it is a materially different build from the one scoped here — it carries
