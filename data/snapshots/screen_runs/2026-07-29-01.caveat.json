@@ -12,7 +12,7 @@
     "admitted to the candidate set",
     "rejected by the multiple floor or a distress signal"
   ],
-  "what_it_records": "ROUTING, not the gate. The FAIL reason reads 'rejected by the multiple floor or a distress signal' \u2014 one key for two decisions, so a FAIL row does not say which one rejected the name.",
+  "what_it_records": "ROUTING, not the gate. The FAIL reason reads 'rejected by the multiple floor or a distress signal' \u2014 one key for two decisions, so a FAIL row does not say which one rejected the name. SEPARATELY, this run also has a POPULATION SKEW \u2014 see population_skew.",
   "these_rows_CAN_be_used_for": [
     "the admitted/rejected split at the END of the screen (the routing outcome itself)",
     "counting how many candidates reached the G3 stage at all",
@@ -30,5 +30,30 @@
       "admitted"
     ],
     "note": "Runs carrying these recorded the two decisions separately; use those for gate-level questions."
+  },
+  "population_skew": {
+    "what": "The screen ran the PREVIOUS universe while this run's grain recorded the CURRENT one.",
+    "measured": {
+      "candidates_screened": 1800,
+      "candidate_set_is_identical_to": "the 2026-07-06 universe snapshot (1800 members)",
+      "universe_snapshot_written_this_run": "2026-07-29 (1780 members)",
+      "tickers_carrying_rows_in_BOTH_grains": 72,
+      "overlap_by_drop_stage": {
+        "out_of_band": 52,
+        "below_adv_floor": 11,
+        "unknown_type": 7,
+        "unknown_sic": 1,
+        "no_shares": 1
+      }
+    },
+    "mechanism": "`screen_universe` reads `store.latest_universe(reference_date)` \u2014 the most recent snapshot AT OR BEFORE the date. Nothing binds that to a `build_universe` run in the same session, and `build_universe` is a separate CLI command. This run read 2026-07-06 while the build wrote 2026-07-29.",
+    "NOT_the_mechanism": "An earlier note said this run took `screen_universe`'s no-snapshot `iter_securities()` fallback. That was an INFERENCE and it is false: the candidate set is set-identical to the 07-06 snapshot, and all 72 overlap names were 07-06 members. Corrected here so the wrong mechanism does not outlive the right count.",
+    "consequence": "72 tickers carry contradictory rows \u2014 screened as candidates while recorded as universe drops. ANY CALIBRATION FROM THIS RUN IS OVER A POPULATION THE SCREEN DID NOT SERVE: the 1800 includes names that were out of band on the run's own reference date.",
+    "these_rows_CANNOT_additionally_be_used_for": [
+      "any rate, base rate or distribution over 'the universe' \u2014 the denominator is the prior universe, not this run's",
+      "comparison of candidate counts against -02/-03, which screened 1780",
+      "gate analysis on the 72 overlap tickers in either direction"
+    ],
+    "unaffected": "2026-07-29-02 and -03 both screened exactly 1780, matching their snapshot."
   }
 }

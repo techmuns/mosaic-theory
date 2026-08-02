@@ -48,6 +48,13 @@ verdict placement.
 - **Hold scope.** Make only the change asked. No refactoring adjacent code, no "clean up while I'm
   here." Find something else wrong → report it, don't fix it silently. Scope creep is how a
   verified-green module acquires a new bug.
+- **CORPUS BEFORE SYNTHETIC.** Run every new check against the LIVE COMMITTED CORPUS before
+  believing it — a check that finds nothing there is SUSPECT until you have shown it can find
+  something. A mutation drawn from the guard's own pattern list tests the list, not the guard
+  (#302's hygiene guard passed its mutation while running green over six live violations), and
+  a fixture hand-rolled to the shape the test needs will dictate the production signature
+  (#305). Fixtures are built from the REAL type. *(D22 — the suite is unverified evidence;
+  production is mutation-tested and the suite is not.)*
 - **Verify by showing real runs, not asserting.** "Tests pass" is not verification. Run it on real
   data, show the output, and demonstrate the **non-trivial / previously-broken** case specifically —
   not the easy case that was never in doubt. (The lookahead fix is the template.)
