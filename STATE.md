@@ -4930,6 +4930,10 @@ exit code. So the hazard is NOT the revert idiom, which is reliable; it is the r
 whose exit status is swallowed by a pipe), and this is its second instance: *a command that cannot
 fail is not a safeguard.*
 
+**SECOND FACE, SAME RULE — AND IT BIT TWICE DURING THE REVIEW THAT RECORDED IT** (2026-08-01, #307). On a TRACKED file `git checkout -- <file>` reverts to **HEAD**, not to *before my mutation*. Mid-review I widened a lint's regex, mutation-tested it, and restored with `git checkout --` — discarding the UNCOMMITTED widening and silently reinstating the narrow version; `git status` then read clean, so the loss looked like success. Re-applied, then **lost the same way a second time**: the command block that appended this very paragraph also ran two `git checkout -- STATE.md` mutation-restores after it, which reverted the paragraph along with the mutations.
+
+**THE RULE BOTH FACES SHARE: `git checkout --` restores HEAD, so it is a mutation-restore ONLY when the pre-mutation state IS HEAD.** Untracked file -> it errors and reverts nothing (face one). Uncommitted edit -> it succeeds and reverts too much (face two). **The safe idiom is `cp file /tmp/bak` before mutating and `cp` back after, or commit first** — which is what this session did for every `vinci/` mutation and failed to do for the one file it was editing at the time.
+
 **THE CORRECTION MATTERS MORE THAN THE INCIDENT.** As first written, this entry would have taught a
 future reader to distrust `git checkout --` (loud, dependable) instead of distrusting `|| true` (the
 actual defect) — a wrong diagnosis in the authoritative record, which is worse than no record. Same

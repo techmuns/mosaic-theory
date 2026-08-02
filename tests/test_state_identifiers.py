@@ -30,17 +30,21 @@ STATE = ROOT / "STATE.md"
 #: missed it in the first enumeration this file exists to replace.
 HEADING = re.compile(r"\*\*([SD])(\d+)\.\s")
 
-#: A REFERENCE. Every form the record actually uses, enumerated from the file rather than imagined:
-#: `(S15)`, `(D15,`, `STATE S3`, `S3's`, `see D3`, `D16's`. NOT a bare `S3` in running prose — that
-#: matches section numbers, ticker fragments and dates, and a guard with false positives gets
-#: disabled. Under-matching here is safe: it only means a reference form is unchecked, never that a
-#: real one is wrongly flagged.
-REFERENCE = re.compile(
-    r"\((?P<a>[SD]\d+)[),;]"          # (S15)  (D15,  (D15;
-    r"|STATE §?\s?(?P<b>[SD]\d+)"     # STATE S3 / STATE §S3
-    r"|(?P<c>[SD]\d+)'s\b"            # S3's / D16's
-    r"|see (?P<d>[SD]\d+)"            # see D3
-)
+#: A REFERENCE — ANY `S<n>`/`D<n>` token. Deliberately BROAD, and the breadth is MEASURED, not
+#: assumed: over the current STATE.md it matches **100 occurrences across 38 distinct tokens and
+#: every one resolves to an existing entry — zero false positives.**
+#:
+#: THE FIRST CUT WAS NARROW AND THAT WAS THE #302 DEFECT AGAIN. It enumerated only the bracketed /
+#: possessive / `see` / `STATE §` forms, justified by a false-positive risk that was never
+#: measured — the same speculative narrowing that made the hygiene guard blind to six live
+#: violations. Sensitivity-tested per form: the narrow pattern CAUGHT `(S99)`, `(S99,`,
+#: `STATE S99`, `S99's`, `see S99` and MISSED `S99 records…`, `as S99 established`, `per S99` —
+#: blind to the most natural way to write a citation, for a benefit that does not exist here.
+#:
+#: If a legitimate non-reference token ever appears (a product code, an axis label), this reds and
+#: an exclusion gets added ON THE EVIDENCE. Loud first, narrowed on a real instance — never the
+#: reverse.
+REFERENCE = re.compile(r"\b([SD]\d{1,3})\b")
 
 
 def _headings(text: str) -> list[str]:
@@ -48,10 +52,7 @@ def _headings(text: str) -> list[str]:
 
 
 def _references(text: str) -> set[str]:
-    out = set()
-    for m in REFERENCE.finditer(text):
-        out.add(next(g for g in m.groups() if g))
-    return out
+    return set(REFERENCE.findall(text))
 
 
 def test_every_state_identifier_is_unique() -> None:
@@ -102,10 +103,26 @@ def test_the_lint_reds_on_the_real_historical_collision() -> None:
         "empty the lint cannot detect the defect it was built for")
 
 
-def test_the_reference_pattern_matches_the_forms_the_record_actually_uses() -> None:
-    """The matcher is enumerated from the file, so it must keep matching what the file contains.
-    Pins the FORMS, not a count — the record grows, and a count would redden on every entry."""
+def test_the_reference_pattern_catches_bare_prose_citations_too() -> None:
+    """THE REVIEW FIX. The first cut enumerated bracketed/possessive/`see`/`STATE §` forms and
+    missed bare prose — the most natural way to write a citation — on an UNMEASURED false-positive
+    risk. Measured, that risk is zero on this corpus, so the pattern is broad and this pins the
+    forms the narrow one dropped."""
     assert _references("(S15) and (D15, and STATE S3 and S3's and see D3 and D16's") == {
         "S15", "D15", "S3", "D3", "D16"}
-    # Deliberately NOT matched: bare prose numbers, which is why the guard stays usable.
-    assert _references("the S3 stage and D1 tranche") == set()
+    assert _references("S99 records the thing; as D98 established; per S97") == {
+        "S99", "D98", "S97"}, "bare-prose citations must be checked — they were the blind spot"
+    assert _references("no identifiers here, 2026-07-29, 10-K, $300M") == set(), (
+        "dates, form types and dollar amounts must not read as identifiers")
+
+
+def test_the_broad_pattern_has_no_false_positives_on_the_committed_record() -> None:
+    """CORPUS BEFORE SYNTHETIC, applied to the widening itself. The pattern is only safe to keep
+    broad while every token it finds resolves — asserted against the live file rather than assumed.
+    If this reds, the fix is an exclusion justified by the token that forced it, never a quiet
+    re-narrowing."""
+    text = STATE.read_text()
+    unresolved = sorted(_references(text) - set(_headings(text)))
+    assert not unresolved, (
+        f"tokens matched but not resolvable: {unresolved} — either a dangling citation, or a "
+        "non-reference token that needs an exclusion recorded with the instance that forced it")
