@@ -371,8 +371,8 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **Maturity wall** · vs the 2026-07-06 reference:
   - due 2030: $25.0M
   - undated (floor — no panel maturity): $118.7M — Long Term Debt - Other $0.0M, Operating Lease Liabilities $118.7M
-  - _reconciliation: itemized $143.7M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** leases 122.9; total principal 287.9; total debt 287.9 (latest quarter) ($M) [44]
+  - _reconciliation: itemized $143.7M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** leases 122.9; total principal 287.9; total debt 287.9 (latest quarter) ($M) [44]
 - **Covenants — Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Base Rate + Applicable Margin (Base Rate spread 0.000%–1.000%); or Adjusted Eurocurrency Rate + Applicable Margin (Euro…
   - **Maturity:** October 21, 2026 · October 21, 2026 (Expiration Date), subject to extension

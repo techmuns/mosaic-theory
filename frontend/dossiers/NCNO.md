@@ -360,8 +360,8 @@ _+8 more broker-days in JSON_
   - due 2029: $213.5M
   - due 2034: $14.0M
   - undated (floor — no panel maturity): $51.2M — Financing Obligations - Lease $51.2M
-  - _reconciliation: itemized $278.7M (panel A 2026 filed Mar-31-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** term loans 200.0; leases 63.9; total principal 327.4; total debt 326.7 (latest quarter) ($M) [44]
+  - _reconciliation: itemized $278.7M (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** term loans 200.0; leases 63.9; total principal 327.4; total debt 326.7 (latest quarter) ($M) [44]
 - **Covenants — Senior Secured Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 2.00% · Term SOFR Loans: Term SOFR plus the Applicable Rate; Base Rate Loans and Swingline Loans: Base Rate plus the Applicable…
   - **Maturity:** October 28, 2029 · October 28, 2029

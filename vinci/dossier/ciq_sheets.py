@@ -742,9 +742,33 @@ def _cs_col_date(header: Any) -> tuple[int, int, int] | None:
     return (int(m.group(3)), _CS_MONTHS[m.group(1)], int(m.group(2))) if m else None
 
 
+def _cs_col_label(header: Any) -> str:
+    """The period a Capital-Structure column NAMES, taken from the column itself.
+
+    Whitespace-normalised and otherwise verbatim — never a frequency this code inferred. The header
+    already carries the period ("FY 2025 (12 months)", "3 months Mar-31-2026"), so the reader can
+    look the figure up in the export under the same name the export uses."""
+    return " ".join(str(header).split())
+
+
 def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
-    """(E1) Capital-Structure-Summary aggregates (latest quarter) + the term-loan QoQ movement — the
-    reconciliation anchor: the itemized detail is panel-dated, the total debt is latest-quarter."""
+    """(E1) Capital-Structure-Summary aggregates + the term-loan movement between the last two
+    period columns — the reconciliation anchor: the itemized detail is panel-dated, the aggregates
+    are stamped with the period column they were actually read from.
+
+    THE PERIOD LABELS ARE DERIVED FROM THE COLUMNS, NEVER ASSERTED (audit R3, fixed 2026-08-03).
+    This function used to stamp the movement "QoQ" and the total "(latest quarter)" as string
+    constants while opening the sheet with `freq="annual"` — so an ANNUAL step was labelled
+    quarter-over-quarter. On SMPL that printed `term loans 397.0 (249.1→397.0 QoQ)`, making a
+    financing event that predates the window look like it happened last quarter. An annual step
+    cannot be a quarter-over-quarter move WHATEVER the two values are, so the defect needed no
+    workbook read to establish — only a reading of which sheet was opened.
+
+    The correction is not a better constant: it is to stop asserting a frequency at all and print
+    the two columns' OWN names, which is what a reader can verify against the export. Note the shape
+    this sat in — the ordering guard below refuses to stamp a provenance it cannot prove, and
+    fifteen lines later the code asserted a frequency it could not prove. The guard checked the
+    ORDER premise and never the PERIOD premise."""
     try:
         s = bundle.sheet("financials", "Capital Structure Summary", freq="annual")
     except CiqUnavailableError:
@@ -772,12 +796,23 @@ def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
         i = _find_row_prefix(s, prefix)
         return clean_num(s[i][col]) if i is not None and col < len(s[i]) else None
 
+    # THE LABELS COME FROM HERE, not from a constant. `latest` stamps the aggregates; `prior` names
+    # the other end of the term-loan step, so the span is visible instead of asserted.
+    latest = _cs_col_label(hdrs[-1][vcols[-1]])
+    prior = _cs_col_label(hdrs[-1][vcols[-2]]) if len(vcols) > 1 else ""
+
     parts: list[str] = []
     tl = at("Total Term Loans", vcols[-1])
     tlp = at("Total Term Loans", vcols[-2]) if len(vcols) > 1 else None
     if tl is not None:
-        qoq = f" ({tlp:,.1f}→{tl:,.1f} QoQ)" if tlp is not None else ""
-        parts.append(f"term loans {tl:,.1f}{qoq}")
+        # Both endpoints named. When a header carries no usable name the wording falls back to
+        # POSITION ("prior column"), which the ascending-order guard above has established — never
+        # to a frequency, which nothing here has established.
+        move = ""
+        if tlp is not None:
+            lo, hi = prior or "prior column", latest or "latest column"
+            move = f" ({lo} {tlp:,.1f} → {hi} {tl:,.1f})"
+        parts.append(f"term loans {tl:,.1f}{move}")
     for prefix, disp in (("Total Senior Bonds", "senior bonds"), ("Total Lease", "leases"),
                          ("Total Principal Due", "total principal")):
         v = at(prefix, vcols[-1])
@@ -785,7 +820,7 @@ def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
             parts.append(f"{disp} {v:,.1f}")
     td = at("Total Debt Outstanding", vcols[-1]) or at("Total Debt", vcols[-1])
     if td is not None:
-        parts.append(f"total debt {td:,.1f} (latest quarter)")
+        parts.append(f"total debt {td:,.1f} ({latest or 'latest column'})")
     if not parts:
         return Sourced.unknown(note="Capital Structure Summary: no aggregates parsed")
     return Sourced.present(

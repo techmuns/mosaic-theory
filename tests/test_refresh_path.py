@@ -38,6 +38,68 @@ def _pre_schema() -> set[str]:
     return out
 
 
+def _sealed() -> list[str]:
+    return sorted(d.parent.name for d in DOSS.glob("*/dossier.json")
+                  if (d.parent / "known_wrong.json").exists())
+
+
+@pytest.mark.skipif(not DOSS.is_dir(), reason="no committed dossiers")
+def test_a_sealed_record_re_renders_its_page_but_never_its_record(tmp_path: pathlib.Path) -> None:
+    """THE SEAL FREEZES FIGURES, NOT THE RENDERER (2026-08-04).
+
+    `known_wrong.json` refuses a refresh so a page saying "do not trust these figures" cannot be
+    made to look freshly computed. Applied to re-RENDERING it did something else: FUBO — the one
+    name that CANNOT re-assemble — became unreachable by every writer, so the R3 label fix turned
+    this repo's own render-drift pin RED on it with no path to green. A seal satisfiable only by
+    re-assembly, on a name that cannot re-assemble, is a permanent red.
+
+    POSITIVE: a no-transform call re-renders `dossier.md` and leaves `dossier.json` BYTE-IDENTICAL.
+    NEGATIVE: a transform — an actual data refresh — still RAISES, which is the seal's real job.
+    """
+    sealed = _sealed()
+    assert sealed, "no sealed name in the corpus — this pin has nothing to drive"
+    name = sealed[0]
+    folder = tmp_path / name
+    folder.mkdir()
+    for f in ("dossier.json", "known_wrong.json", "dossier.md"):
+        shutil.copy(DOSS / name / f, folder / f)
+    copy = folder / "dossier.json"
+    record_before = copy.read_bytes()
+    stale = "stale page — the renderer has moved on\n"
+
+    # THE SIDECAR BESIDE THE RECORD IS THE SOURCE — proven, not assumed. The first cut of this test
+    # copied FUBO into tmp and asserted nothing about the banner; `render_markdown` read the
+    # CONFIGURED tree, which happens to hold FUBO's real marker, so the page looked right for a
+    # reason unrelated to the isolated copy. A marker whose text exists ONLY here cannot be
+    # satisfied that way: if the render still reads the configured tree, SENTINEL is absent.
+    sentinel = "SENTINEL-a1b2c3 — this text exists only in the isolated copy"
+    marker = json.loads((folder / "known_wrong.json").read_text())
+    marker["items"] = [{"claim": sentinel, "known_false": "pinned by the isolation test"}]
+    (folder / "known_wrong.json").write_text(json.dumps(marker, indent=2))
+
+    (folder / "dossier.md").write_text(stale)
+    assert refresh_dossier(copy) is True, "a sealed record's page did not re-render"
+    assert copy.read_bytes() == record_before, (
+        "the SEALED record itself was rewritten — the re-render path must never touch the JSON")
+    page = (folder / "dossier.md").read_text()
+    assert page != stale
+    assert "KNOWN-WRONG" in page, (
+        "the regenerated page lost its known-wrong banner — a sealed record rendered CLEAN, which "
+        "is the exact state the seal exists to prevent")
+    assert sentinel in page, (
+        "the banner rendered, but NOT from the sidecar beside the record — the marker text came "
+        "from the configured tree, so the seal decision (path-relative) and the banner (config-"
+        "relative) have two different sources of truth")
+
+    # and a second call is a no-op, so the pass does not churn the page on every run
+    assert refresh_dossier(copy) is False, "re-rendering an up-to-date sealed page reported a move"
+
+    # NEGATIVE: the seal still refuses a real refresh.
+    with pytest.raises(RefreshRefusedError, match="SEALED"):
+        refresh_dossier(copy, transform=lambda m: m)
+    assert copy.read_bytes() == record_before
+
+
 # --- the round-trip, which is the whole guarantee ------------------------------------------------
 
 

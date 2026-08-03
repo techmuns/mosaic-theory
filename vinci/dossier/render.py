@@ -948,8 +948,8 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     itemized = sum(i.principal_musd or 0.0 for i in inst.value)
     out.append(
         f"  - _reconciliation: itemized {_musd(itemized)} (panel {cs.detail_as_of}) vs the "
-        f"latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ "
-        "movement in the aggregates line._"
+        f"aggregates below — the gap is unitemized / newer term loans; read the term-loan movement "
+        "in the aggregates line, which names the period columns it spans._"
     )
     return out
 
@@ -1174,7 +1174,10 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
     else:
         out.append(_fact("Capital structure (instruments)", inst))
     out += _maturity_wall_lines(cs, reference_date)
-    out.append(_fact("Capital-structure aggregates (latest quarter)", cs.summary))
+    # NO PERIOD IN THE LABEL (audit R3). The value stamps itself with the column it was read from,
+    # so a fixed "(latest quarter)" here could only ever contradict it — as it did on SMPL, where
+    # both the label and the value called an annual step a quarter.
+    out.append(_fact("Capital-structure aggregates", cs.summary))
     # (P3/FIX-3) the VERBATIM resolution at the maturity 8-K, when captured (the 8-K pointer list
     # itself is provenance → appendix). A pre-P3 dossier.json has no field → nothing.
     mat_ev = getattr(cs, "maturity_event", None)
@@ -3357,7 +3360,8 @@ def _known_wrong_lines(ticker: str, root: Path | None = None) -> list[str]:
 
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
-                    card: ScenarioRecord | None = None) -> str:
+                    card: ScenarioRecord | None = None,
+                    dossiers_root: Path | None = None) -> str:
     """(D1 · re-ordered 2026-07-27) DECISION order. Analysis reads: what broke → business quality
     → the argument → catalyst calendar → valuation → peer comps → operating trajectory → the street
     → leverage & survival → analyst caveats. The old "mechanical layer" wrapper (a grouping by who
@@ -3384,7 +3388,16 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         "",
     ]
     # BEFORE the brief: a known-wrong marker has to reach the reader before the numbers do.
-    out += _known_wrong_lines(d.ticker)
+    # THE BANNER MUST COME FROM BESIDE THE RECORD BEING RENDERED, not from the configured tree.
+    # `refresh_dossier` decides a record is SEALED from `path.parent/known_wrong.json` — a
+    # PATH-relative fact — while this lookup defaulted to `get_config().data_dir/dossiers`, a
+    # CONFIG-relative one. Two sources of truth for one fact: rendering a sealed dossier in another
+    # checkout, a staging tree or a temp copy would decide "sealed" from the sidecar beside it and
+    # then render the banner from somewhere else — dropping it when the configured tree has no
+    # marker for that ticker, or worse, pasting an UNRELATED name's marker onto the page. That is
+    # the FUBO defect exactly (banner in one artifact, absent from the served one), re-created by
+    # the fix meant to serve it. Every writer passes the root it is writing into.
+    out += _known_wrong_lines(d.ticker, dossiers_root)
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
