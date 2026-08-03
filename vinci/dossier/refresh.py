@@ -240,7 +240,17 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     from vinci.dossier.schemas import Dossier
 
     model = Dossier.model_validate(doc)
-    new_json = model.model_dump_json(indent=2)
+    # VERSION-SCOPED WRITE, the #303 principle applied to the dossier. `consensus_levels` is
+    # optional-with-None, so a plain dump writes `"consensus_levels": null` into all eleven
+    # committed artifacts and a NO-OP refresh stops being byte-identical — the 119-null-keys
+    # defect in a new place. Omitted when None, which also keeps ABSENT meaning "not refreshed"
+    # rather than "the street has no view". Dropped by KEY, not by value: a name that HAS levels
+    # writes them.
+    payload = json.loads(model.model_dump_json())
+    cc = (payload.get("mechanical") or {}).get("consensus_context")
+    if isinstance(cc, dict) and cc.get("consensus_levels") is None:
+        cc.pop("consensus_levels", None)
+    new_json = json.dumps(payload, indent=2, ensure_ascii=False)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker))
     md_path = path.with_name("dossier.md")
     old_md = md_path.read_text() if md_path.exists() else None
