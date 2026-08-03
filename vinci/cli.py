@@ -331,10 +331,22 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     # this very command: SMPL's 2026-08-03 re-assembly wrote `data/dossiers/SMPL/` while the served
     # `frontend/dossiers/SMPL.md` stayed the older page. That is FUBO's missing-banner shape, which
     # #319 byte-pinned so it goes RED rather than silently serving stale — but red-after-the-fact is
-    # a worse guarantee than not needing the pin. `refresh_fleet` already does this; the two write
-    # paths must not differ about whether the human's surface gets updated.
-    # ONLY WHEN SOMETHING WAS WRITTEN: a run that assembled nothing has nothing to mirror, and
-    # rebuilding on a refusal would publish the OLD page as though it were fresh.
+    # a worse guarantee than not needing the pin.
+    #
+    # THE MIRROR IS A WHOLE-TREE REBUILD, AND THAT IS CORRECT — corrected claim (review of #325).
+    # The first cut gated this on `if dossiers:` and said the gate stopped "publishing the OLD page
+    # as though it were fresh". It does no such thing in a MIXED cohort: one name assembling and
+    # another refusing still rebuilds the entire tree. The gate only skips a pointless rebuild when
+    # NOTHING was written; claiming more of it was the declared-vs-enforced class again.
+    #
+    # NEITHER PARTIAL NOR SKIPPED MIRRORING IS THE FIX, and #319's own invariant is why: it asserts
+    # EVERY `frontend/dossiers/<T>.md` is byte-identical to its source, so copying only the
+    # successful names — or skipping on any error — strands whichever page had drifted, which is
+    # the FUBO defect this call exists to prevent. And a refusal WRITES NOTHING, so a refused
+    # name's mirror copy is byte-identical to what it already served (verified: matching sha256 on
+    # data/ vs frontend/ for every committed name). The republish is a no-op, not a stale publish.
+    #
+    # WHAT WAS ACTUALLY MISSING is below: a partial failure must not exit 0.
     if dossiers:
         from vinci.dossier.refresh import mirror_to_frontend
 
@@ -348,7 +360,13 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
                               scenario_specs=args.scenario or [], reasons=reasons)
         if rc != 0:
             return rc
-    return 0
+    # A PARTIAL FAILURE MUST NOT EXIT 0. This printed `errors` and returned success, so any caller
+    # keying on the exit status read a refused assembly as a completed one — and it bit immediately:
+    # the reroll harness written for THIS task read exit 0 as convergence and stopped after a single
+    # refused build. D16's shape at the process boundary.
+    # The per-name report stays: a batch still tells you WHICH names failed rather than dying on the
+    # first. What changes is that the process no longer claims success while reporting failure.
+    return 1 if errors else 0
 
 
 def _parse_scenario(spec: str) -> tuple[str, dict[str, float]]:

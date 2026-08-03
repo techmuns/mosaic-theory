@@ -7686,6 +7686,27 @@ street's" — on the converted basis, part of it IS a view difference). Left in 
 compute those names is the operator's call, and MVST is refused twice over on coverage anyway
 (price-implied-only, one estimate), so **only AORT and NCNO turn on the convention.**
 
+**REVIEW OF #325 — `if dossiers:` GUARDED ONLY THE ALL-FAILED CASE, AND MY COMMENT CLAIMED MORE
+THAN IT DID (2026-08-03).** In a MIXED cohort — one name assembles, another hits the now-working
+refusal — the mirror still rebuilds the WHOLE tree, so the gate does not "stop the old page being
+published as fresh". Claiming it did is the declared-vs-enforced class, again, in a comment.
+**BUT NEITHER OF THE PROPOSED FIXES IS RIGHT, AND #319'S OWN INVARIANT IS WHY.** It asserts EVERY
+`frontend/dossiers/<T>.md` is byte-identical to its source — so mirroring only the successful names,
+or skipping on any error, **strands whichever page had drifted**, which is the FUBO defect the call
+exists to prevent. And a refusal WRITES NOTHING: measured, `data/` and `frontend/` sha256s match on
+every committed name, so a refused name's mirror copy is a **no-op, not a stale publish**. The
+whole-tree rebuild stays, now with the reason written down instead of an overclaim.
+**THE REAL BUG WAS THE EXIT CODE, AND IT HAD ALREADY BITTEN.** `_cmd_dossier` printed `errors` and
+returned 0, so a caller keying on exit status read a refused assembly as a completed one — which is
+exactly how the reroll harness for the SMPL task stopped after a single refused build and reported
+convergence. **D16's shape at the process boundary.** Now `return 1 if errors else 0`; the per-name
+report stays, so a batch still says WHICH names failed rather than dying on the first. Verified no
+workflow or script consumes that exit status.
+**MIXED-COHORT TESTS SHIPPED — the case the old guard missed** (`test_dossier_cli_partial_failure`,
+5 pins). Both mutations CAUGHT: reverting to `return 0` on errors, and skipping the mirror when any
+name fails. The second is pinned as DELIBERATE rather than incidental — a mixed cohort must still
+mirror, or the name that DID assemble goes stale on the served surface.
+
 **SMPL RE-ASSEMBLY — 2026-08-03. THE TASK FOUND THAT ITS OWN ACCEPTANCE GUARD HAD NEVER FIRED.**
 **19c WAS ORDERED BEFORE ITS OWN INPUT.** `uncited_material_figures` ran at `assemble.py:433` while
 `_mark_material` — which sets the `material=True` flags the guard FILTERS ON — ran at `:450`. So it
