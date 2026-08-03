@@ -203,7 +203,7 @@ def route_for(cell: dict[str, object]) -> tuple[str, dict[str, object]]:
     return Route.FULL, why
 
 
-def shape_label(revenue_ratio: float, margin_ratio: float, multiple_ratio: float) -> str:
+def shape_label(*, revenue_ratio: float, margin_ratio: float, multiple_ratio: float) -> str:
     """Which ratio carries the gap. A FUNCTION of the three, never a separate judgement.
 
     `multiple-dominant` is the uncomfortable one — it says the view rests on re-rating rather than
@@ -215,3 +215,67 @@ def shape_label(revenue_ratio: float, margin_ratio: float, multiple_ratio: float
     if lead == "multiple" and dist["multiple"] > 2 * max(dist["earnings"], dist["timing-duration"]):
         return "multiple-dominant"
     return lead
+
+
+_RATIO_KEYS = ("revenue_ratio", "margin_ratio", "multiple_ratio")
+
+
+def _ratios(d: dict[str, float]) -> dict[str, float]:
+    """The three ratios out of a `decompose` result, BY NAME, refusing a partial one.
+
+    A missing key would default-or-crash somewhere downstream; refusing here names the caller's
+    mistake at the point it is made."""
+    missing = [k for k in _RATIO_KEYS if k not in d]
+    if missing:
+        raise KeyError(f"shape label needs {missing} — pass the `decompose` result, not a subset")
+    return {k: d[k] for k in _RATIO_KEYS}
+
+
+def adjacent_year(levels: dict[str, list[dict[str, object]]], anchor: str) -> str | None:
+    """The next forward year after ``anchor`` where BOTH metrics resolve, or None.
+
+    WHY AN ADJACENT YEAR AT ALL. The shape label is the uncomfortable output — `multiple-dominant`
+    says the view rests on re-rating rather than on the business — so it must not be movable by
+    choosing a year. Computing it twice is the only way to show it is not.
+
+    CNXC IS THE MINIMUM CASE: exactly `['2026', '2027']` on both metrics, so there is exactly one
+    alternative. A name with one forward year has NO adjacent year and returns None — which is a
+    real state (the label stands unchecked) and must not be confused with "the labels agree".
+    """
+    have = {m: {str(c["fy"]) for c in cells} for m, cells in levels.items()}
+    if not {"Revenue", "EBITDA"} <= set(have):
+        return None
+    later = sorted((y for y in have["Revenue"] & have["EBITDA"] if int(y) > int(anchor)), key=int)
+    return later[0] if later else None
+
+
+def labels_across_years(at_anchor: dict[str, float],
+                        at_adjacent: dict[str, float] | None) -> dict[str, object]:
+    """Both shape labels, and whether they agree.
+
+    TAKES THE `decompose` RESULT BY NAME, never three positional floats. Review of the first cut:
+    a margin<->multiple swap silently turned `multiple-dominant` into `earnings` — the
+    uncomfortable label becoming the comfortable one, with no error and no way to notice. Three
+    interchangeable floats in a tuple is the address-by-position class this repo already ruled on
+    (item 33's .rtf parser, the customers/suppliers selection), and the caller ALREADY HAS the
+    names because `decompose` returns them.
+
+    PERSISTS BOTH WHEN THEY DISAGREE. A single label chosen from the year that produced it is a
+    label chosen by whoever picked the year; carrying both makes the choice visible instead. When
+    there is no adjacent year the label is marked UNCHECKED rather than agreed — absent evidence
+    and confirming evidence are different states, and only one of them earns confidence.
+    """
+    anchor_label = shape_label(**_ratios(at_anchor))
+    if at_adjacent is None:
+        return {"anchor": anchor_label, "adjacent": None, "agree": None,
+                "note": "no adjacent forward year — the label is unchecked, not confirmed"}
+    adjacent_label = shape_label(**_ratios(at_adjacent))
+    agree = anchor_label == adjacent_label
+    return {
+        "anchor": anchor_label,
+        "adjacent": adjacent_label,
+        "agree": agree,
+        "note": ("both years give the same shape" if agree else
+                 f"the shape MOVES between years — {anchor_label} at the anchor, "
+                 f"{adjacent_label} adjacent; neither is the answer on its own"),
+    }
