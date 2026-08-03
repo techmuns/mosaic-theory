@@ -7663,6 +7663,35 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**REVIEW OF #320 — THE STATED MECHANISM IS WRONG, THE ASKED-FOR TEST IS RIGHT, AND WRITING IT
+FOUND THAT THE REVIEWER'S OWN SUGGESTED FIX WOULD HAVE BEEN UNDETECTABLE (2026-08-03).**
+**THE CLAIM:** `ev_gap_transform` reads `implied_valuation.market_cap`, which "`ImpliedValuation`
+does not have", so a second refresh gets `cap=None` and rewrites every scenario-backed record as
+`not-computed`. **DISPROVED, two ways:** `ImpliedValuation.market_cap: Sourced[float]` is a DECLARED
+REQUIRED field (`schemas.py:639`), and the value is present at 909.4 in SMPL's artifact **written by
+the very pass under review**. A dropped field would have shown there first.
+**AND THE SUGGESTED FIX WOULD HAVE BEEN A REGRESSION.** `stock_info.as_of` differs from
+`comps_as_of` on **10 of 11 names** — MVST by 14 days (2026-07-08 vs 2026-06-24). The gap's
+`net_debt` (peer_grid) and its persisted `tev_as_of` (`comps_as_of`) both come off the COMPS
+workbook, so reading the STOCK panel's cap would put it under a comps-panel stamp — the
+`financial_summary.as_of` defect, in the block whose docstring cites that defect.
+**BUT THE ASKED-FOR TEST WAS MISSING AND IS NOW SHIPPED** (`test_ev_gap_transform_idempotent.py`,
+10 pins): re-run `refresh_dossier(transform=ev_gap_transform)` on a real dossier in tmp, TWICE, and
+assert the gap stays computed with the same ratios, vintages and label. Nothing in the persistence
+file could catch that class — those pins read what was written ONCE. Mutation: reading a field the
+model drops (the review's exact scenario) → **CAUGHT**.
+**THE FINDING THE TEST PRODUCED, and it is worth more than the fix: SWAPPING TO
+`stock_info.market_cap` PASSES EVERY BEHAVIOURAL TEST.** The two caps agree on all 11 names, so the
+substitution moves no number today and the false stamp would surface only on the first name where
+they diverge — long after the change. **The review's own suggestion was therefore unverifiable by
+any output-level check.** Closed with a STRUCTURAL pin on the source (#310's precedent, where three
+behavioural attempts could not redden): mutation with the pin → **CAUGHT**. A deliberate basis
+change now has to move the STAMP too, and argue with a test.
+**PRE-EXISTING, SURFACED NOT FIXED:** `recompute_derived` strikes TEV from `stock_info.market_cap`
++ peer_grid `net_debt` — a stock-panel cap plus a comps-panel net debt, i.e. a MIXED-BASIS TEV
+that predates A2b. The two caps agreeing is what hides it. Pinned (`test_the_two_market_caps_agree`)
+so the day they diverge is loud rather than silent.
+
 **A2b PERSISTENCE — BUILT 2026-08-03. THE FORM IS IN `mech.ev_gap` ON 10 OF 11 NAMES, AND THE
 INSIDER LINE RODE THE SAME PASS.**
 **WHAT LANDS.** `build_ev_gap` → route (three-ratio / two-ratio / price-implied-only) · the three
