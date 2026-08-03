@@ -12499,11 +12499,25 @@ momentum bucket — unresolved.
 **VINTAGE GAP, and it bounds every count: the clusters are as-of 2026-06-17, the candidates 07-29.**
 Six weeks. A name that became a candidate after 06-17 cannot appear in any cluster, so **≥2 counts
 are a FLOOR, not a census.**
-**THE FINDING THAT MATTERS FOR THE PICK — the theme route does not sidestep G3, it runs into it.**
-`G3_multiple_floor` is **UNKNOWN for all 32 (100%)** against an **85.2% base rate across all 331**
-(282 UNKNOWN / 49 PASS) — the multi-candidate themes are WORSE than the population. **Total gap is
-computable for ZERO of them**, because the gap needs a TEV off the CIQ comps panel and **the bundle
-intersection is empty**.
+**THE FINDING THAT MATTERS FOR THE PICK — as a SCREENING matter the theme route does not sidestep
+G3, it runs into it.** `G3_multiple_floor` is **UNKNOWN for all 32 (100%)** against an **85.2% base
+rate across all 331** (282 UNKNOWN / 49 PASS) — the multi-candidate themes are WORSE than the
+population.
+**BUT G3 IS NOT AN INPUT TO THE GAP, and my first cut said it was** *(corrected on review)*.
+`build_ev_gap` takes `levels, leg, tev, net_debt, shares, tev_as_of, consensus_as_of` — **no G3** —
+and `G3_multiple_floor` appears NOWHERE in `ev_gap.py` or `assemble.py`; the docstring is explicit
+that even the consensus side is optional (*"absent levels … does NOT mean no total"*). Claiming a
+name *"needs a G3 resolution before a gap exists"* **promotes a policy gate into a mechanical one**
+and overstates what the code enforces.
+**THE TWO MECHANICAL PREREQUISITES, both absent for all 32: a TEV** (CIQ comps panel → needs a
+bundle) **and OUR OWN BASE LEG** (a scenario record). Measured: the 32 intersect the 14 bundles in
+NOTHING and the **7** committed scenario records in NOTHING. Separate the three kinds — mechanical
+(no TEV, no leg), policy (*do not advance an unresolved-G3 candidate*), and depth (the **19** with no
+EDGAR anchor, which R1 does not reach either).
+**AND A STANDING QUESTION ANSWERED IN PASSING: only 7 scenario records exist at all, against 14 CIQ
+bundles — so 7 of 14 bundle-holders have no own leg.** Of the eleven dossiers **six carry a record**
+(AORT, EPAM, IT, MVST, NCNO, SMPL), confirming the long-standing "6 of 11" note by measurement;
+WERN carries one with a bundle but no dossier.
 **AND THE BUNDLE SET IS 14, NOT ELEVEN** — `data/manual/ciq/` also holds **CPB, PENG and WERN**,
 which carry bundles with no dossier. None of the 32 has one.
 **TWO STRUCTURAL FACTS, measured not inferred.** (1) **20 of the 32 are foreign private issuers** —

@@ -42,9 +42,11 @@ bucket*. That note is unresolved for T002.
 (282 UNKNOWN / 49 PASS), the multi-candidate themes are **worse than the population, not better**.
 Bands across all 331: A 171 · B 82 · C 78.
 
-**Total gap is computable for ZERO of the 32.** The gap needs a TEV struck from the CIQ comps panel
-plus our own leg; neither exists without a bundle, and none of these names has one. This is not a
-gap in the read — it is the state of the record.
+**Total gap is computable for ZERO of the 32 — for two MECHANICAL reasons, neither of them G3.** The
+total needs a **TEV** (struck from the CIQ comps panel, so it needs a bundle) and **our own base leg**
+(a scenario record). The 32 have **none of either**: zero bundles, zero scenario records. `G3` is a
+screening gate and is **not** an input to `build_ev_gap` — see §5. This is not a gap in the read; it
+is the state of the record.
 
 **CIQ bundles: 14 on disk — and it is not the eleven.** `data/manual/ciq/` holds AORT, BRBR, CNXC,
 **CPB**, EPAM, FUBO, IT, MVST, NCNO, **PENG**, SMPL, VITL, VRRM, **WERN**. Three names —
@@ -131,10 +133,39 @@ derivation (`_total_revenue_series` → `margin_anchor`) over cached companyfact
 
 ---
 
-## 5. What this says about the G3 backlog
+## 5. What this says about the G3 backlog — and what G3 does NOT block
 
-The parked screen path's valuation branch is **85.2% of all candidates unvalued**, and this read
-finds that number is **not** diluted inside the multi-candidate themes — it is **100%** there. So the
-theme route does not sidestep G3; it runs straight into it. Combined with an empty bundle
-intersection, **every one of the 32 needs both a CIQ bundle and a G3 resolution before a gap exists**,
-and for the 19 with no EDGAR anchor the R1 path does not reach them either.
+**The screening picture.** The parked screen path's valuation branch is **85.2% of all candidates
+unvalued**, and that number is **not** diluted inside the multi-candidate themes — it is **100%**
+there. As a *screening* matter the theme route does not sidestep G3; it runs straight into it.
+
+**BUT G3 IS NOT AN INPUT TO THE GAP, and the first cut of this section said it was.**
+*(Corrected on review.)* `build_ev_gap` takes `levels, leg, tev, net_debt, shares, tev_as_of,
+consensus_as_of` — **no G3**, and the identifier `G3_multiple_floor` appears nowhere in
+`vinci/dossier/ev_gap.py` or `vinci/dossier/assemble.py`. The function's own docstring is explicit
+that even the *consensus* side is optional and decides only the decomposition: *"absent levels …
+does NOT mean no total."* So `G3=UNKNOWN` does not prevent a gap from being computed. Saying it does
+overstates what the code enforces, by promoting a policy gate into a mechanical one.
+
+**The two mechanical prerequisites for a TOTAL gap, and both are absent for all 32:**
+
+| prerequisite | supplied by | present for the 32 |
+|---|---|---:|
+| **TEV** (+ net debt, shares for the bridge) | the CIQ comps panel → needs a bundle | **0 / 32** |
+| **our own base leg** | a scenario record | **0 / 32** |
+
+Measured: the 32 intersect the 14 CIQ bundles in **nothing**, and intersect the **7** committed
+scenario records (AORT, EPAM, IT, MVST, NCNO, SMPL, WERN) in **nothing**.
+
+**So the honest statement of the blockers, separated by kind:**
+- **Mechanical** — no TEV and no own leg. Either alone is sufficient to make the total gap
+  uncomputable, and both are missing.
+- **Policy / screening** — *do not advance an unresolved-G3 candidate*. That is a rule about which
+  names should proceed, not about which numbers can be produced.
+- **Depth** — for the **19 with no EDGAR anchor**, the R1 path does not reach them either, which is a
+  third and separate constraint.
+
+**A related measurement that falls out of the same read:** only **7 scenario records exist at all**,
+against **14 CIQ bundles** — so even among names that already have a bundle, **7 of 14 have no own
+leg**. Of the eleven dossiers, **six carry a scenario record** (AORT, EPAM, IT, MVST, NCNO, SMPL);
+WERN carries one with a bundle but no dossier.
