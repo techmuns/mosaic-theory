@@ -338,3 +338,154 @@ open. The information-regression trio is BOTH.
 
 Of the **seven** name-level findings: **one BOTH** (N7), **one queued and blocked** (N2), **five untriaged
 and open** (N1, N3, N4, N5, N6).
+
+---
+
+## F. The tail, dispositioned — 2026-08-03
+
+§C above **identified** the tail; it never **dispositioned** it. This section does, item by item, measured
+against current code and the SMPL page **as re-assembled 2026-08-03** (`#325`/`#326`) — so every line
+number below is fresh, not carried over from §C.
+
+**Three of the eight need a RULING, not a fix.** They are marked ⚖ and restated as questions in
+STATE §Next-steps.
+
+### §C — the three retractions, re-read for surviving instructions
+
+| item | what survives the retraction | live? | disposition |
+|---|---|---|---|
+| **R1** | *"at entry one stress cell already failed (1.92:1); on the re-set 14% normal **both** now fail"* | rendered in full | **CLOSED** |
+| **R2** | *"what remains is only the mixed-basis issue in setting the 14% normal"* | — | **NOT A SEPARATE ITEM** — see below |
+| **R3** | *"**Correct the label**; the debt build is not new"* | `md:400` | **OPEN — fix, no ruling** |
+
+**R1 — closed, and the page is better than the audit required.** `md:467–470` renders **both** boundary
+cells (A `1.96:1`, B `1.73:1`), both bases, and states the consequence in words: *"on the re-set 14%
+normal they read ≈1.96 / ≈1.73 — below the bar."* No instruction survived the retraction; the audit said
+the dossier stated this accurately and it still does.
+
+**R2 is not a fifth item — it is §D's item, cross-referenced.** Its residue sentence forwards explicitly
+(*"the mixed-basis issue in setting the 14% normal (P10-adjacent, see below)"*), and **"P10" does not
+exist** — the report has P1–P9, so the pointer resolves to §D's note and nowhere else. Anyone counting
+§C's residue and §D's note as two open items **double-counts one finding.** Disposed as one, under §D.
+
+**R3 — still live, and the mechanism is a frequency the sheet does not have.**
+`md:400` reads `term loans 397.0 (249.1→397.0 QoQ)`. `vinci/dossier/ciq_sheets.py:747` opens
+`Capital Structure Summary` with **`freq="annual"`**, then `:778–779` compares `vcols[-2]` → `vcols[-1]`
+and hard-codes the string **`QoQ`**. Two adjacent *annual* columns, labelled quarter-over-quarter. That
+is **established from the code alone**: an annual-to-annual step cannot be a quarter-over-quarter move,
+whatever the two values happen to be. That is the whole finding, and it needs no workbook read.
+
+**The audit's corroborating series is REPORTED, not re-measured here** — it puts term loans at
+**396.7 (Nov-25) → 396.9 (Feb-26) → 397.0 (May-26)**, flat across the real quarters, and 249.1 at the
+FY2025 year-end panel; on those figures the printed "QoQ" spans ~three quarters and a fiscal-year
+boundary. Marked as the audit's because verifying it means opening the licensed workbook, which this
+document does not do. *(Kept separate deliberately: restating a source's claim as one's own measurement
+is the defect corrected in §D below, and the same document should not commit it twice.)* What the
+**artifact** independently shows is that 249.1 is also the principal of a single tranche — the Barclays
+term loan, `md:523`, due 2030 — so the printed pair sets a tranche-sized figure against a total.
+
+**And the correct label is already computed and thrown away.** Ten lines above, `_cs_col_date(hdrs[-1][j])`
+parses each column's date — solely to refuse when the columns are not in ascending order. The dates that
+would name the two periods honestly are in hand at `:764` and discarded by `:779`. That is the
+**called-result-discarded** rung, and it sits directly beneath a comment refusing to stamp
+*"(latest quarter)"* on an unasserted convention — the function declines to assert a provenance it cannot
+prove, then asserts a frequency it cannot prove, fifteen lines later.
+*No ruling needed: name the two periods instead of asserting a frequency.*
+
+### §D — the mixed-basis margin item ⚖ **RULING**
+
+**What it says.** *"The base-margin derivation averages two different bases — the 15.51% median is
+GAAP-inclusive of unusuals, while the '~13.8% trailing' is CIQ clean EBIT. On the anchor basis LTM is
+−17.05%. The resulting 14% happens to be defensible, but the stated derivation does not hold together."*
+
+**Live, and one degree worse than the report knew.** `md:57` and `md:446` still state the derivation. The
+two ends are not merely different bases — **they are different KINDS of value**:
+
+- **15.51%** is computed and sourced — endnote `[53]`: `EDGAR companyfacts OperatingIncomeLoss /
+  RevenueFromContractWithCustomer… FY2019-FY2025, FY2025 ex the $60.9M impairment`. GAAP operating
+  income with **only one named impairment removed**, i.e. inclusive of every other unusual item.
+- **~13.8%** appears **once, in the METHOD prose, with no endnote and no field.** Nothing in the
+  artifact binds it to anything.
+
+**THE BASIS OF THE 13.8% END IS UNKNOWN, AND ESTABLISHING IT IS PART OF THE RULING.**
+*(Corrected on review 2026-08-03 — the first cut of this section called it an "analyst-written CIQ-basis
+figure" on the strength of §D's own sentence, having just demonstrated that the artifact carries no such
+link. Restating the auditor's claim as a measurement is the error this whole render exists to avoid, and
+it pre-biases a ruling that asks the operator to CHOOSE between bases.)*
+
+What can actually be shown:
+
+| | |
+|---|---|
+| Nearest numeric match in the artifact | `mechanical.valuation.own_history[0].implied_ebit_margin` = **0.138933** |
+| How that is derived | `TEV/LTM Revenue ÷ TEV/LTM EBIT` off ONE column of the CIQ **Multiples** sheet (`band_guards.py:96–98`), source `…SMPL Financials_Quarterly.xls`, as-of **2026-07-23** |
+| Match quality | **0.06pp** — suggestive, and NOT a binding: no endnote connects them, and 13.89% rounds to 13.9, so *"about 13.8%"* reads as a truncation or as a different vintage |
+| Is it "clean"? | **UNESTABLISHED.** The derivation inherits **CIQ's own EBIT definition**; no code in this repo asserts that definition excludes unusuals. The page says "clean"; the code never does. |
+| A decoy that must not be mistaken for it | the only literal `13.8` elsewhere in the JSON is `13.837177` — the **2025-03-31 EV/EBITDA close**, a multiple, not a margin |
+
+**What IS established is the size of the choice.** On the same trailing period the two candidate bases do
+not merely differ — GAAP LTM operating margin is **negative** (the −$391.9M writedown sits inside GAAP
+operating income; LTM net income is −$199M), while the CIQ-implied LTM EBIT margin is **+13.89%**. The
+audit puts the GAAP figure at −17.05%; whatever the exact value, **the basis choice moves the trailing
+anchor by roughly thirty percentage points**, and the stated derivation takes the flattering side without
+naming which side it is on. The brief contract already governs this — *a derived pin value must name the
+source LAYER of every component; a pin reachable only by MIXING layers is MALFORMED* — and it was never
+pointed here.
+
+**Why this is a ruling and not a fix:** the anchor is analyst judgment, not a computed field, so no guard
+can set it. **And the resolution has three parts in order, not two** — the first is now the sourcing:
+1. **Establish what ~13.8% is** and bind it to a `source_ref` (or retire it). If it is
+   `implied_ebit_margin`, say so on the page; if it is something else, the something else has no record.
+2. **Then decide the basis** the anchor is defined on — GAAP-incl-unusuals at both ends, CIQ EBIT at
+   both ends, or the interpolation abandoned — which cannot be decided before (1).
+3. **Then code enforces it.** It cannot make the choice, and it cannot enforce against an unsourced end.
+
+### §G — the four untriaged of seven
+
+| item | what it says | live? | disposition |
+|---|---|---|---|
+| **FINRA short interest** | dossier figure primary-sourced, *"not independently re-verified"* | richer than at audit | **CLOSED — obsolete as written** |
+| **Circana category data** | the +10% figure is management-sourced, *"verified as reported, not independently"* | `md:91/150/172` | ⚖ **OPEN — narrow ruling** |
+| **Q4 FY26 buyback quantum** | unknown; *"determines year-end net debt and share count"* | `md:153` | **OPEN — not actionable** |
+| **Twin outcomes** | Central Garden & Pet, e.l.f. Beauty unverified | **see below** | ⚖ **OPEN — structurally uncloseable as written** |
+
+**FINRA short interest — closed, because it was never a repo defect.** It records that *the auditor* did
+not re-verify a figure the report itself calls primary-sourced. Nothing to fix. The surface has since
+grown past the audit's snapshot: `md:549` carries a four-point series with settle dates, direction, %
+of shares out, and days-to-cover, endnoted `[67]` to FINRA consolidated short interest with the ADV
+divisor stated. Re-verifying a primary source against itself is not work.
+
+**Circana — the page has partly closed this on its own, and the residue is N1's.** All three renderings now
+**attribute** rather than assert: *"Management frames the problem as execution-driven within a growing
+category — purposeful nutrition grew 10% …"*. The figure is no longer stated as independent fact, which
+was the audit's actual complaint. The ruling that remains is narrow and general: **may a
+management-sourced, un-independently-verified figure carry a thesis leg?** It is load-bearing for N1 —
+N1's entire argument is that the category grew while the company shrank — so the answer governs N1, not
+this line.
+
+**Q4 buyback quantum — open, and correctly so.** No code or judgment closes it; it resolves when SMPL
+prints Q4 FY26 (October). Recording it as OPEN with an external unblock date is the whole disposition.
+
+**Twin outcomes — and this one re-opened itself while the audit was being dispositioned.**
+§C reasoned that the item was stale because *"neither name is in SMPL's twin set any more"*, and predicted
+the mechanism: *"twins are LLM-composed and re-draw on every assembly, so twin verification cannot be a
+one-time task by construction."* **The 2026-08-03 re-assembly confirmed the prediction the same day:**
+
+```
+BEFORE  Medifast · The Hain Celestial Group · BellRing Brands · Utz Brands       · WW International
+AFTER   Medifast · BellRing Brands · The Hain Celestial Group · e.l.f. Beauty    · WW International
+```
+
+**`e.l.f. Beauty` — one of the exact two names the audit could not verify — is back**, carrying
+`(LLM-claimed — verify)`; `Utz Brands` silently left. Nothing about SMPL changed; the set re-drew.
+
+**And it fails in the other direction too.** The audit **independently verified Medifast's terminal
+outcome** (Q1 2026 revenue −34.3%, coaches −44.9%, FY26 guide $270–300M). Six days later the page still
+prints **`Medifast — went terminal (LLM-claimed — verify)`**. Human verification did not travel into the
+artifact, so it will be re-requested on every assembly, forever.
+
+**Why this is a ruling:** verifying the two named twins closes nothing, because the set is not stable and
+the verification has nowhere to live. The decision is the mechanism — **does a verified outcome become a
+field that travels with the twin (making the set partly sticky), or does the twin block stay disposable
+and stop carrying outcome claims at all?** Either is coherent; the current state is neither, and it
+launders an LLM claim and a human verification into the same rendered sentence.
