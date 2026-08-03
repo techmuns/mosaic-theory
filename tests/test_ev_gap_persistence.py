@@ -82,6 +82,13 @@ def test_a_computed_form_carries_its_ratios_and_both_shape_labels(ticker: str) -
     assert g is not None
     if g["status"] != "computed":
         return
+    # TWO COMPUTED SHAPES SINCE THE R2 REVISION. A decomposed name carries all four ratios and a
+    # label; a suppressed one carries the TOTAL ONLY and NO label — the total needs no consensus,
+    # and a label would rank three ratios that were never struck.
+    if (g.get("decomposition") or {}).get("status") == "suppressed":
+        assert set(g["ratios"]) == {"ev_gap"}
+        assert g["shape"] is None
+        return
     assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
     shape = g["shape"]
     assert shape["anchor"], "a computed form with no anchor label"
@@ -110,35 +117,33 @@ def test_the_identity_holds_in_the_written_artifact(ticker: str) -> None:
     if g["status"] != "computed":
         return
     r = g["ratios"]
+    if set(r) == {"ev_gap"}:          # suppressed: a total with no factors to multiply
+        return
     product = r["revenue_ratio"] * r["margin_ratio"] * r["multiple_ratio"]
     assert product == pytest.approx(r["ev_gap"], rel=1e-9)
 
 
-def test_a_ratio_recipe_refuses_by_naming_the_convention_not_the_absence() -> None:
-    """THE R2 CASE, and the message matters as much as the refusal. AORT/MVST/NCNO store D&A as a
-    RATIO OF REVENUE; converting it at the anchor is the reserved analyst decision (operator,
-    2026-07-30: "it moves committed numbers and is a decision, not a build"). "No D&A available"
-    would send a reader looking for a number that is already in the record."""
+def test_a_ratio_recipe_states_its_total_and_suppresses_only_the_decomposition() -> None:
+    """REVISED 2026-08-03 (operator). This test previously asserted a REFUSAL, and the refusal was
+    over-broad: `our_EV / TEV` uses our leg and the market's price, so the TOTAL needs no consensus
+    and was computable the whole time. Only the MARGIN comparison is horizon-mixed.
+
+    Suppressing both withheld a clean statement because a different one was unavailable — and a
+    test asserting the refusal held that in place, the same way #321's pin held the fabricated
+    blend."""
     ratio_recipes = [t for t in WRITTEN
-                     # A dict `.get` DEFAULT never fires when the key exists carrying None, and
-                     # `d_and_a_convention` is written as None for every name without a record.
                      if str((gap(t) or {}).get("d_and_a_convention") or "").startswith("ratio")]
     if not ratio_recipes:
         pytest.skip("no committed R2 record in the corpus")
     for t in ratio_recipes:
         g = gap(t)
-        assert g is not None and g["status"] == "not-computed"
-        # THE REASON IS A HORIZON MISMATCH A READER CAN JUDGE, not a recipe name they can only look
-        # up. Measured across the three R2 names: our TERMINAL margin against the NEAR-TERM
-        # consensus at the anchor runs 9.5% vs 19.4% (AORT), 12.6% vs 27.1% (NCNO), 6.0% vs 14.0%
-        # (MVST) — roughly half on every one, so the ratio would measure the distance between two
-        # horizons rather than between our view and the street's.
-        assert "TERMINAL" in g["reason"] and "NEAR-TERM" in g["reason"], (
-            f"{t}: the refusal does not state the HORIZON mismatch — {g['reason']!r}")
-        assert "two horizons" in g["reason"]
-        # …and it still says the number is PRESENT rather than missing, so nobody goes looking.
-        assert "ratio of revenue" in g["reason"].lower()
-        assert "analyst decision" in g["reason"]
+        assert g is not None and g["status"] == "computed", f"{t}: the total gap is withheld"
+        assert isinstance(g["ratios"]["ev_gap"], float)
+        d = g["decomposition"]
+        assert d["status"] == "suppressed" and d["reason"]
+        # THE MARGINS AS FIGURES, never a ratio — the ratio is the thing being refused.
+        assert isinstance((d["margins"] or {})["ours"], float)
+        assert "margin_ratio" not in g["ratios"]
 
 
 def test_the_builder_always_returns_a_status_even_with_nothing_to_work_with() -> None:

@@ -32,6 +32,9 @@ class EvGapInputs:
     tev: float
     net_debt: float
     shares: float
+    #: R2's convention: D&A as a SHARE OF REVENUE. Either form converts OUR leg; only one of them
+    #: exists on any given record. LAST, because a defaulted field cannot precede undefaulted ones.
+    d_and_a_ratio: float | None = None
 
 
 def our_ebitda(i: EvGapInputs) -> float:
@@ -51,11 +54,35 @@ def our_ebitda(i: EvGapInputs) -> float:
         return i.revenue * i.margin
     if i.margin_basis != "operating":
         raise BasisMismatchError(f"unknown margin basis {i.margin_basis!r}")
-    if i.d_and_a is None:
-        raise BasisMismatchError(
-            "the recipe stores an OPERATING margin against an EV/EBITDA multiple and no D&A is "
-            "available to convert it — the margin ratio would divide EBIT-margin by EBITDA-margin")
-    return i.revenue * i.margin + i.d_and_a
+    if i.d_and_a is not None:
+        return i.revenue * i.margin + i.d_and_a
+    # A D&A RATIO CONVERTS OUR OWN LEG, AND CROSSES NO HORIZON. `revenue x ratio` is our revenue
+    # against our own stated D&A share — every term struck on one basis. The reserved analyst
+    # decision was never this: it is whether our TERMINAL margin may be compared to a NEAR-TERM
+    # consensus margin, which is a question about the DECOMPOSITION, not about our own EBITDA.
+    # Conflating the two suppressed a total gap that needs no consensus at all (operator, revised).
+    if i.d_and_a_ratio is not None:
+        return i.revenue * (i.margin + i.d_and_a_ratio)
+    raise BasisMismatchError(
+        "the recipe stores an OPERATING margin against an EV/EBITDA multiple and no D&A — neither "
+        "an absolute nor a ratio — is available to convert it")
+
+
+def total_gap(leg: dict[str, object], *, tev: float) -> float:
+    """`our_EV / TEV` — OUR leg against the MARKET's price, and nothing else.
+
+    NO CONSENSUS ENTERS THIS. That is the whole point of separating it (operator, revised
+    2026-08-03): the decomposition needs a consensus margin struck on a comparable horizon, and the
+    TOTAL does not. Suppressing both because one is unavailable withheld a statement that was
+    always computable — AORT 0.94, NCNO 0.85, MVST 1.61 were measurable the entire time.
+    """
+    i = EvGapInputs(
+        revenue=float(leg["revenue"]), margin=float(leg["margin"]),      # type: ignore[arg-type]
+        margin_basis=str(leg["margin_basis"]), multiple=float(leg["multiple"]),  # type: ignore[arg-type]
+        multiple_basis=str(leg["multiple_basis"]),
+        d_and_a=leg.get("d_and_a"), d_and_a_ratio=leg.get("d_and_a_ratio"),  # type: ignore[arg-type]
+        consensus_revenue=1.0, consensus_ebitda=1.0, tev=tev, net_debt=0.0, shares=1.0)
+    return our_ebitda(i) * float(leg["multiple"]) / tev   # type: ignore[arg-type]
 
 
 def decompose(i: EvGapInputs) -> dict[str, float]:
@@ -317,6 +344,81 @@ def _decompose_at(levels: dict[str, list[dict[str, object]]], fy: str,
         tev=tev, net_debt=net_debt, shares=shares))
 
 
+def _margin_figures(levels: dict[str, list[dict[str, object]]], leg: dict[str, object],
+                    anchor: str) -> dict[str, object] | None:
+    """Our EBITDA margin and the street's, AS FIGURES SIDE BY SIDE — never divided.
+
+    THE RATIO IS THE THING BEING REFUSED, not the numbers. `14.4% vs 19.4%` lets a reader see the
+    distance and judge how much of it is horizon; `0.74` presents that same distance as if its
+    cause were settled. Showing the figures is strictly more information than showing the ratio.
+    """
+    rev_c, eb_c = _cell(levels, "Revenue", anchor), _cell(levels, "EBITDA", anchor)
+    if rev_c is None or eb_c is None:
+        return None
+    cm, cr = eb_c.get("median"), rev_c.get("median")
+    if not isinstance(cm, (int, float)) or not isinstance(cr, (int, float)) or not cr:
+        return None
+    ours = float(leg["margin"]) + float(leg.get("d_and_a_ratio") or 0.0)  # type: ignore[arg-type]
+    return {"ours": ours, "consensus": cm / cr, "basis": "EBITDA margin, ours converted from the "
+            "recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor"}
+
+
+def _price_implied_only(out: dict[str, object],
+                        levels: dict[str, list[dict[str, object]]], leg: dict[str, object],
+                        anchor: str, *, tev: float, net_debt: float,
+                        shares: float) -> dict[str, object]:
+    """A stated TOTAL gap with the decomposition suppressed, and its reason named.
+
+    NO SHAPE LABEL. The label ranks the three ratios; with no decomposition there is nothing to
+    rank, and emitting one would assert an attribution the numbers do not support.
+
+    TWO DIFFERENT REASONS, NEVER MERGED. Where the CONSENSUS SIDE already routed this name away
+    (thin coverage), that is the binding reason and the horizon text would be FALSE — MVST reads
+    `2/2` and `1/1`, below the floor, and its margin question never arises. Where coverage is fine,
+    the reason is the horizon mix. Recording one reason for both would put a false sentence on one
+    of the pages.
+    """
+    ratios = {"ev_gap": total_gap(leg, tev=tev)}
+    routes = out.get("routes")
+    routes = routes if isinstance(routes, dict) else {}
+
+    def route_of(metric: str) -> str:
+        r = routes.get(metric)
+        return str(r.get("route") or "") if isinstance(r, dict) else ""
+
+    ebitda_route, rev_route = route_of("EBITDA"), route_of("Revenue")
+    thin = Route.PRICE_IMPLIED_ONLY in (ebitda_route, rev_route)
+    if thin:
+        why = ("consensus coverage at this anchor is below the floor, so no consensus-side "
+               "comparison is struck — the total gap stands on our leg and the market price alone")
+    else:
+        why = ("our margin is a TERMINAL-state assumption and the consensus at this anchor is a "
+               "NEAR-TERM forecast; a margin RATIO would mix a view difference with a horizon "
+               "difference in unknown proportion, so the two margins are shown as figures instead")
+    ebitda = our_ebitda(EvGapInputs(
+        revenue=float(leg["revenue"]), margin=float(leg["margin"]),        # type: ignore[arg-type]
+        margin_basis=str(leg["margin_basis"]), multiple=float(leg["multiple"]),  # type: ignore[arg-type]
+        multiple_basis=str(leg["multiple_basis"]),
+        d_and_a=leg.get("d_and_a"), d_and_a_ratio=leg.get("d_and_a_ratio"),  # type: ignore[arg-type]
+        consensus_revenue=1.0, consensus_ebitda=1.0, tev=tev, net_debt=net_debt, shares=shares))
+    return {
+        **out,
+        "status": "computed",
+        "form": Route.PRICE_IMPLIED_ONLY,
+        "ratios": ratios,
+        "at_adjacent": None,
+        "shape": None,                       # nothing to rank
+        "decomposition": {"status": "suppressed", "reason": why,
+                          "margins": _margin_figures(levels, leg, anchor)},
+        "bridge": {"tev": tev, "net_debt": net_debt, "shares": shares,
+                   "our_ev": ebitda * float(leg["multiple"]),             # type: ignore[arg-type]
+                   "our_ebitda": ebitda, "market_multiple": None},
+        "consensus": {m: {k: (c or {}).get(k) for k in ("median", "std_dev", "estimates")}
+                      for m in ("Revenue", "EBITDA")
+                      if (c := _cell(levels, m, anchor)) is not None},
+    }
+
+
 def build_ev_gap(
     levels: dict[str, list[dict[str, object]]] | None,
     leg: dict[str, object] | None,
@@ -389,29 +491,16 @@ def build_ev_gap(
         return {**out, "status": "not-computed",
                 "reason": f"share count is {shares:g} — not a usable denominator, so no per-share "
                           "bridge can be struck (present, but not positive)"}
+    # THE DECOMPOSITION IS HORIZON-MIXED ON R2 RECORDS — but the TOTAL is not, so they are decided
+    # separately. A margin ratio of 0.74 mixing a view difference and a horizon difference in
+    # unknown proportion is uninterpretable, and no caveat rescues it; the total gap is a clean
+    # statement about our leg against the market's price.
+    if leg.get("d_and_a") is None and leg.get("d_and_a_ratio") is not None:
+        return _price_implied_only(out, levels, leg, anchor, tev=tev, net_debt=net_debt,
+                                   shares=shares)
     try:
         at_anchor = _decompose_at(levels, anchor, leg, tev, net_debt, shares)
     except BasisMismatchError as exc:
-        # NAME THE CONVENTION, NEVER "no D&A". `our_ebitda`'s message is written for a data gap,
-        # and for an R2 record that reading is wrong in a way that invites the wrong fix: the D&A
-        # is not missing, it is stated as a RATIO OF REVENUE, and converting it at the anchor is a
-        # reserved analyst decision that moves committed numbers. "Absent" would send a reader
-        # looking for a number that is already there.
-        if leg.get("d_and_a") is None and leg.get("d_and_a_ratio") is not None:
-            # STATED AS A HORIZON MISMATCH, NOT AS "the R2 recipe" — a reader can judge the first
-            # and can only look up the second. MEASURED on the three R2 names: our TERMINAL margin
-            # against the NEAR-TERM consensus at the anchor runs AORT 9.5% vs 19.4%, NCNO 12.6% vs
-            # 27.1%, MVST 6.0% vs 14.0% — roughly half, on every one. The margin ratio would be
-            # measuring the distance between two HORIZONS, not between our view and the street's,
-            # and the revenue ratios (1.31 / 1.17 / 1.91) say the same thing from the other side.
-            # So the refusal is not caution about a missing number; it is that the comparison as
-            # struck would answer a different question.
-            return {**out, "status": "not-computed", "reason": (
-                "our margin here is a TERMINAL-state assumption while the consensus at this anchor "
-                f"is NEAR-TERM — the ratio would measure the gap between two horizons, not between "
-                f"our view and the street's. (D&A is stated as a ratio of revenue, "
-                f"{leg['d_and_a_ratio']}, so it is present rather than missing; converting it at "
-                "the anchor year is the open analyst decision on D&A convention.)")}
         return {**out, "status": "not-computed", "reason": str(exc)}
     if at_anchor is None:
         return {**out, "status": "not-computed", "reason": "consensus medians absent at the anchor"}

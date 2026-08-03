@@ -563,7 +563,7 @@
       "d_and_a_convention": "ratio of revenue (R2, terminal)",
       "anchor_fy": "2026",
       "adjacent_fy": "2027",
-      "form": "three-ratio",
+      "form": "price-implied-only",
       "routes": {
         "Revenue": {
           "route": "three-ratio",
@@ -582,8 +582,41 @@
           "reason": "7 estimates"
         }
       },
-      "status": "not-computed",
-      "reason": "our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.048961, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.)"
+      "status": "computed",
+      "ratios": {
+        "ev_gap": 0.939572480342821
+      },
+      "at_adjacent": null,
+      "shape": null,
+      "decomposition": {
+        "status": "suppressed",
+        "reason": "our margin is a TERMINAL-state assumption and the consensus at this anchor is a NEAR-TERM forecast; a margin RATIO would mix a view difference with a horizon difference in unknown proportion, so the two margins are shown as figures instead",
+        "margins": {
+          "ours": 0.143961,
+          "consensus": 0.19430451321065076,
+          "basis": "EBITDA margin, ours converted from the recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor"
+        }
+      },
+      "bridge": {
+        "tev": 1271.8000000000002,
+        "net_debt": 202.4,
+        "shares": 50.20035,
+        "our_ev": 1194.9482805,
+        "our_ebitda": 91.9190985,
+        "market_multiple": null
+      },
+      "consensus": {
+        "Revenue": {
+          "median": 486.35,
+          "std_dev": 4.93096,
+          "estimates": "8/8"
+        },
+        "EBITDA": {
+          "median": 94.5,
+          "std_dev": 1.958,
+          "estimates": "7/7"
+        }
+      }
     },
     "peer_comps": {
       "peer_set": {

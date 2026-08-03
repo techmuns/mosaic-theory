@@ -2621,6 +2621,29 @@ function evGap(g) {
   // `dataTable` rows are {label, cells} and EVERY cell is escapeHtml'd, so markup in a cell would
   // print literally. The product row is distinguished by `cls` — the same "name-row" the B1 grids
   // use for the subject — rather than by inline bold.
+  // THE TOTAL GAP NEEDS NO CONSENSUS — twin of render.py. Where the DECOMPOSITION is suppressed
+  // the total still stands, so the block states it and says what is missing rather than
+  // withholding both. Margins print as FIGURES, never divided: "14.4% vs 19.4%" lets the reader
+  // judge how much of the distance is horizon; "0.74x" presents that as though it were settled.
+  const decomp = g.decomposition || {};
+  if (decomp.status === "suppressed") {
+    const mg = decomp.margins || {};
+    let sup = `<p class="ds-note"><b>Total gap:</b> <b>${ratio(r.ev_gap)}</b> — our EV against the `
+      + `market's TEV. No consensus enters this figure.</p>`
+      + `<p class="ds-note"><b>Decomposition suppressed:</b> ${escapeHtml(String(decomp.reason || ""))}</p>`;
+    if (typeof mg.ours === "number" && typeof mg.consensus === "number") {
+      sup += `<p class="ds-note"><i>Our EBITDA margin <b>${(mg.ours * 100).toFixed(1)}%</b> vs `
+        + `consensus <b>${(mg.consensus * 100).toFixed(1)}%</b> at FY${escapeHtml(String(g.anchor_fy))}`
+        + ` — shown as figures, NOT divided: ${escapeHtml(String(mg.basis || ""))}</i></p>`;
+    }
+    // NO SHAPE LINE — the label ranks three ratios and none were struck.
+    return sec(H, "Our leg against the market price; the decomposition is not comparable here.",
+      `<p class="ds-note">Anchor FY${escapeHtml(String(g.anchor_fy))} · consensus as-of `
+      + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · TEV as-of `
+      + `${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))} · form ${escapeHtml(String(g.form))}</p>`
+      + sup + evGapTail(g, br, consAsOf));
+  }
+
   const rows = [
     { label: "revenue", cells: [ratio(r.revenue_ratio), evGapSigma(cons.Revenue)] },
     { label: "EBITDA margin", cells: [ratio(r.margin_ratio), evGapSigma(cons.EBITDA)] },
@@ -2650,6 +2673,14 @@ function evGap(g) {
   // POSITIVE shares, not merely numeric — the md twin's guard. A legacy artifact carrying
   // `shares: 0` must DROP the bridge line, not divide by zero. (JS would print "Infinity" rather
   // than throw, which is worse: a number on the page that reads as a value.)
+  body += evGapTail(g, br, consAsOf);
+  return sec(H, "Our committed base leg against the street, as three ratios whose product is the gap.", body);
+}
+
+// The bridge, the dispersions and the D&A convention — shared by BOTH branches, so a decomposed
+// and a suppressed block cannot drift about how they report the same three things.
+function evGapTail(g, br, consAsOf) {
+  let body = "";
   if (["our_ev", "net_debt", "shares", "tev"].every((k) => typeof br[k] === "number")
       && br.shares > 0) {
     const eq = br.our_ev - br.net_debt;
@@ -2657,8 +2688,9 @@ function evGap(g) {
       { maximumFractionDigits: 0 })}M − net debt $${br.net_debt.toLocaleString(undefined,
       { maximumFractionDigits: 0 })}M = equity $${eq.toLocaleString(undefined,
       { maximumFractionDigits: 0 })}M ÷ ${br.shares.toFixed(3)}M sh = <b>$${(eq / br.shares).toFixed(2)}`
-      + `/sh</b> — against TEV $${br.tev.toLocaleString(undefined, { maximumFractionDigits: 0 })}M `
-      + `(as-of ${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))}).</p>`;
+      // The as-of clause lives on the header line, not here — `vin` is scoped to evGap, and
+      // repeating the stamp in the tail is what made this function reach outside itself.
+      + `/sh</b> — against TEV $${br.tev.toLocaleString(undefined, { maximumFractionDigits: 0 })}M.</p>`;
   }
   for (const metric of ["Revenue", "EBITDA"]) {
     const d = ((g.routes || {})[metric] || {}).dispersion;
@@ -2672,7 +2704,7 @@ function evGap(g) {
       + `recipes differ and the reconciliation is an open analyst question, so it is stated rather `
       + `than assumed.</i></p>`;
   }
-  return sec(H, "Our committed base leg against the street, as three ratios whose product is the gap.", body);
+  return body;
 }
 
 function valuation(v) {

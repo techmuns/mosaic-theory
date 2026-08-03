@@ -216,7 +216,20 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 ### The EV gap — our base case vs the street
 
-_No gap is struck for this name: our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.071043, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.). The consensus side alone still routes to **three-ratio** at FY2027, so the form is known even though the comparison is not._
+_Anchor FY2027 · consensus as-of ≥2026-07-22 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-07-20 · form price-implied-only_
+
+- **Total gap:** **0.85x** — our EV against the market's TEV. No consensus enters this figure.
+
+- **Decomposition suppressed:** our margin is a TERMINAL-state assumption and the consensus at this anchor is a NEAR-TERM forecast; a margin RATIO would mix a view difference with a horizon difference in unknown proportion, so the two margins are shown as figures instead
+
+  - _Our EBITDA margin **19.7%** vs consensus **27.1%** at FY2027 — shown as figures, NOT divided: EBITDA margin, ours converted from the recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor_
+
+- **Bridge:** our EV $1,859M − net debt $224M = equity $1,635M ÷ 110.509M sh = **$14.80/sh** — against TEV $2,179M.
+
+  - _Revenue dispersion 0.7% (high−low ÷ |median|, FY2027, as-of ≥2026-07-22)_
+  - _EBITDA dispersion 2.2% (high−low ÷ |median|, FY2027, as-of ≥2026-07-22)_
+
+  - _D&A convention: ratio of revenue (R2, terminal) — the two recipes differ and the reconciliation is an open analyst question, so it is stated rather than assumed._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 27.8x as-of 2026-07-17 — trailing range 25.8–221.1x (median 82.9x) over 10 closes → 10%ile → near-floor; P/LTM EPS 154.3x [17]
