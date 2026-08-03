@@ -164,3 +164,67 @@ def test_a_floor_dated_consensus_vintage_is_carried_verbatim() -> None:
 
     floors = [t for t in WRITTEN if cons(t).startswith("≥")]
     assert floors, "no floor-dated consensus vintage survived the write — the ≥ was flattened"
+
+
+# --- THE TOTAL IS NEVER GATED ON CONSENSUS (review of #323) ------------------------------------
+
+R2_LEG = {"revenue": 1000.0, "margin": 0.10, "margin_basis": "operating", "multiple": 10.0,
+          "multiple_basis": "EV/EBITDA", "d_and_a": None, "d_and_a_ratio": 0.05,
+          "d_and_a_convention": "ratio of revenue (R2, terminal)"}
+R1_LEG = {**R2_LEG, "d_and_a": 50.0, "d_and_a_ratio": None,
+          "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)"}
+#: Revenue at FY2026, EBITDA at FY2028 — both present, NO year in common, so no anchor exists.
+NO_COMMON_ANCHOR = {
+    "Revenue": [{"fy": "2026", "median": 900.0, "high": 950.0, "low": 880.0, "estimates": "8/8"}],
+    "EBITDA": [{"fy": "2028", "median": 140.0, "high": 150.0, "low": 130.0, "estimates": "8/8"}]}
+
+
+@pytest.mark.parametrize("leg", [R2_LEG, R1_LEG], ids=["r2-ratio", "r1-absolute"])
+@pytest.mark.parametrize("levels", [None, {}, NO_COMMON_ANCHOR],
+                         ids=["no-levels", "empty-levels", "no-common-anchor"])
+def test_the_total_survives_an_absent_or_unanchorable_consensus(leg: dict, levels: dict) -> None:
+    """THE SAME CONFLATION, ONE LEVEL UP — and the first fix moved it rather than removing it.
+
+    `total_gap` reads OUR leg and TEV and nothing else, so a name whose consensus export is absent
+    or has no common anchor still has a computable total. The first cut returned `not-computed`
+    before the leg was even looked at, which withheld exactly the statement this design exists to
+    state. Both leg shapes, because the defect was in the CONTROL FLOW, not in the R2 branch.
+    """
+    g = build_ev_gap(levels, leg, tev=1500.0, net_debt=200.0, shares=50.0,
+                     tev_as_of="2026-07-24", consensus_as_of="2026-07-21")
+    assert g["status"] == "computed", f"the total was withheld: {g.get('reason')!r}"
+    assert g["ratios"]["ev_gap"] == pytest.approx(1.0)
+    assert set(g["ratios"]) == {"ev_gap"}
+    assert g["shape"] is None, "a shape label with no decomposition to rank"
+    d = g["decomposition"]
+    assert d["status"] == "suppressed"
+    assert "the total gap stands on our leg and the market price alone" in d["reason"]
+
+
+def test_an_absent_consensus_is_a_different_reason_from_thin_coverage() -> None:
+    """"Coverage below the floor" implies a consensus was READ and found thin. With no consensus at
+    all that sentence is false — a third state, named separately."""
+    g = build_ev_gap(None, R2_LEG, tev=1500.0, net_debt=200.0, shares=50.0,
+                     tev_as_of=None, consensus_as_of=None)
+    why = g["decomposition"]["reason"]
+    assert "no consensus levels are persisted" in why
+    assert "below the floor" not in why and "TERMINAL" not in why
+
+
+def test_a_leg_that_cannot_convert_is_still_refused() -> None:
+    """NEGATIVE CONTROL. Removing the consensus gate must not make everything computable: a leg
+    with NEITHER an absolute D&A nor a ratio cannot produce our EBITDA at all, and that is a real
+    refusal rather than a suppression."""
+    broken = {**R2_LEG, "d_and_a": None, "d_and_a_ratio": None}
+    g = build_ev_gap(None, broken, tev=1500.0, net_debt=200.0, shares=50.0,
+                     tev_as_of=None, consensus_as_of=None)
+    assert g["status"] == "not-computed"
+    assert "neither an absolute nor a ratio" in g["reason"]
+
+
+def test_no_leg_and_no_consensus_says_so_rather_than_naming_only_one() -> None:
+    """Both halves missing is its own state; reporting "the route is known" would be false."""
+    g = build_ev_gap(None, None, tev=None, net_debt=None, shares=None,
+                     tev_as_of=None, consensus_as_of=None)
+    assert g["status"] == "not-computed"
+    assert "neither side of the comparison exists" in g["reason"]

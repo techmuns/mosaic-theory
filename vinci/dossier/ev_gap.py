@@ -365,8 +365,8 @@ def _margin_figures(levels: dict[str, list[dict[str, object]]], leg: dict[str, o
 
 def _price_implied_only(out: dict[str, object],
                         levels: dict[str, list[dict[str, object]]], leg: dict[str, object],
-                        anchor: str, *, tev: float, net_debt: float,
-                        shares: float) -> dict[str, object]:
+                        anchor: str, *, tev: float, net_debt: float, shares: float,
+                        reason_override: str | None = None) -> dict[str, object]:
     """A stated TOTAL gap with the decomposition suppressed, and its reason named.
 
     NO SHAPE LABEL. The label ranks the three ratios; with no decomposition there is nothing to
@@ -379,6 +379,12 @@ def _price_implied_only(out: dict[str, object],
     of the pages.
     """
     ratios = {"ev_gap": total_gap(leg, tev=tev)}
+    if reason_override:
+        # THE CONSENSUS SIDE IS ABSENT ENTIRELY — a THIRD reason, distinct from thin coverage and
+        # from a horizon mix. Naming it separately matters: "coverage below the floor" implies a
+        # consensus was read and found thin, which would be false here.
+        return _emit_price_implied(out, levels, leg, anchor, tev=tev, net_debt=net_debt,
+                                   shares=shares, ratios=ratios, why=reason_override)
     routes = out.get("routes")
     routes = routes if isinstance(routes, dict) else {}
 
@@ -387,6 +393,7 @@ def _price_implied_only(out: dict[str, object],
         return str(r.get("route") or "") if isinstance(r, dict) else ""
 
     ebitda_route, rev_route = route_of("EBITDA"), route_of("Revenue")
+
     thin = Route.PRICE_IMPLIED_ONLY in (ebitda_route, rev_route)
     if thin:
         why = ("consensus coverage at this anchor is below the floor, so no consensus-side "
@@ -395,12 +402,26 @@ def _price_implied_only(out: dict[str, object],
         why = ("our margin is a TERMINAL-state assumption and the consensus at this anchor is a "
                "NEAR-TERM forecast; a margin RATIO would mix a view difference with a horizon "
                "difference in unknown proportion, so the two margins are shown as figures instead")
+    return _emit_price_implied(out, levels, leg, anchor, tev=tev, net_debt=net_debt,
+                               shares=shares, ratios=ratios, why=why)
+
+
+def _emit_price_implied(out: dict[str, object],
+                        levels: dict[str, list[dict[str, object]]], leg: dict[str, object],
+                        anchor: str, *, tev: float, net_debt: float, shares: float,
+                        ratios: dict[str, float], why: str) -> dict[str, object]:
+    """ONE construction for every price-implied-only emission, whatever the reason.
+
+    Three reasons reach here — thin coverage, a horizon mix, and no consensus at all — and they
+    must differ ONLY in the sentence. Building the payload three times is how two of them quietly
+    stop carrying the same fields."""
     ebitda = our_ebitda(EvGapInputs(
         revenue=float(leg["revenue"]), margin=float(leg["margin"]),        # type: ignore[arg-type]
         margin_basis=str(leg["margin_basis"]), multiple=float(leg["multiple"]),  # type: ignore[arg-type]
         multiple_basis=str(leg["multiple_basis"]),
-        d_and_a=leg.get("d_and_a"), d_and_a_ratio=leg.get("d_and_a_ratio"),  # type: ignore[arg-type]
-        consensus_revenue=1.0, consensus_ebitda=1.0, tev=tev, net_debt=net_debt, shares=shares))
+        d_and_a=leg.get("d_and_a"),                                       # type: ignore[arg-type]
+        consensus_revenue=1.0, consensus_ebitda=1.0, tev=tev, net_debt=net_debt, shares=shares,
+        d_and_a_ratio=leg.get("d_and_a_ratio")))                          # type: ignore[arg-type]
     return {
         **out,
         "status": "computed",
@@ -409,14 +430,15 @@ def _price_implied_only(out: dict[str, object],
         "at_adjacent": None,
         "shape": None,                       # nothing to rank
         "decomposition": {"status": "suppressed", "reason": why,
-                          "margins": _margin_figures(levels, leg, anchor)},
+                          "margins": _margin_figures(levels, leg, anchor) if anchor else None},
         "bridge": {"tev": tev, "net_debt": net_debt, "shares": shares,
                    "our_ev": ebitda * float(leg["multiple"]),             # type: ignore[arg-type]
                    "our_ebitda": ebitda, "market_multiple": None},
         "consensus": {m: {k: (c or {}).get(k) for k in ("median", "std_dev", "estimates")}
                       for m in ("Revenue", "EBITDA")
-                      if (c := _cell(levels, m, anchor)) is not None},
+                      if anchor and (c := _cell(levels, m, anchor)) is not None},
     }
+
 
 
 def build_ev_gap(
@@ -456,45 +478,62 @@ def build_ev_gap(
     def nope(reason: str) -> dict[str, object]:
         return {**out, "status": "not-computed", "reason": reason}
 
-    if not levels:
-        return nope("no consensus levels on this name — run the consensus refresh first")
-    anchor = anchor_year(levels)
-    if anchor is None:
-        return nope("no forward year resolves BOTH Revenue and EBITDA — no year to strike a "
-                    "ratio at")
-
-    # ROUTE FIRST, and on the CONSENSUS SIDE ALONE, so it is decidable for every name — including
-    # the five with no scenario record. Only the EMISSION needs a leg.
+    # THE CONSENSUS SIDE IS OPTIONAL AND DECIDES ONLY THE DECOMPOSITION. Absent levels or no common
+    # anchor means no ROUTE and no ratios — it does NOT mean no total. The first cut returned here,
+    # before the leg was even looked at, which is the SAME conflation this function was rewritten to
+    # remove, moved one level up: `total_gap` reads our leg and TEV and nothing else, so gating it
+    # on a consensus export withholds a statement that was always computable (review of #323).
+    anchor = anchor_year(levels) if levels else None
     routes: dict[str, object] = {}
-    worst = Route.FULL
-    for metric in ("Revenue", "EBITDA"):
-        cell = _cell(levels, metric, anchor)
-        r, why = route_for(cell or {})
-        routes[metric] = {"route": r, **why}
-        if _ROUTE_RANK[r] < _ROUTE_RANK[worst]:
-            worst = r
-    out |= {"anchor_fy": anchor, "adjacent_fy": adjacent_year(levels, anchor),
-            "form": worst, "routes": routes}
+    worst: str | None = None
+    if levels and anchor is not None:
+        worst = Route.FULL
+        for metric in ("Revenue", "EBITDA"):
+            cell = _cell(levels, metric, anchor)
+            r, why = route_for(cell or {})
+            routes[metric] = {"route": r, **why}
+            if _ROUTE_RANK[r] < _ROUTE_RANK[worst]:
+                worst = r
+        out |= {"anchor_fy": anchor, "adjacent_fy": adjacent_year(levels, anchor),
+                "form": worst, "routes": routes}
 
+    # OUR SIDE. Everything the TOTAL needs, and it needs nothing else.
     if leg is None:
-        return {**out, "status": "not-computed",
-                "reason": "no scenario record for this name — the route is known, the gap is not"}
+        return nope("no scenario record for this name — "
+                    + ("the route is known, the gap is not" if worst
+                       else "and no consensus either, so neither side of the comparison exists"))
     for name, v in (("tev", tev), ("net_debt", net_debt), ("shares", shares)):
         if v is None:
-            return {**out, "status": "not-computed", "reason": f"{name} unavailable"}
+            return nope(f"{name} unavailable")
     # SHARES MUST BE POSITIVE, and `is None` was not that check. `decompose` never divides by it,
     # so a 0 or negative count still persisted a `computed` gap — and BOTH renderers then evaluate
-    # `equity / shares`, so a malformed record does not degrade the block, it takes down the whole
-    # page. A number that is present and unusable is not the same as a number that is absent.
+    # `equity / shares`, so a malformed record does not degrade the block, it takes down the page.
     assert tev is not None and net_debt is not None and shares is not None
     if shares <= 0:
-        return {**out, "status": "not-computed",
-                "reason": f"share count is {shares:g} — not a usable denominator, so no per-share "
-                          "bridge can be struck (present, but not positive)"}
+        return nope(f"share count is {shares:g} — not a usable denominator, so no per-share "
+                    "bridge can be struck (present, but not positive)")
+    try:
+        total_gap(leg, tev=tev)          # proves our leg converts before anything is claimed
+    except BasisMismatchError as exc:
+        return nope(str(exc))
+
+    # NO USABLE CONSENSUS -> the TOTAL still stands; only the decomposition is suppressed, with the
+    # reason naming which half is missing rather than reporting the whole block as uncomputed.
+    if levels is None or anchor is None:
+        # NOT `why` — the route loop above binds that name to a dict, and reusing it re-typed the
+        # variable. mypy caught it; a dynamically-typed twin would have shipped a dict into a
+        # sentence.
+        absent = ("no consensus levels are persisted for this name" if not levels else
+                  "no forward year resolves BOTH Revenue and EBITDA, so there is no anchor to "
+                  "strike a ratio at")
+        return _price_implied_only(out, levels or {}, leg, anchor or "", tev=tev,
+                                   net_debt=net_debt, shares=shares, reason_override=(
+                                       f"{absent} — the total gap stands on our leg and the market "
+                                       "price alone, which need no consensus"))
+
     # THE DECOMPOSITION IS HORIZON-MIXED ON R2 RECORDS — but the TOTAL is not, so they are decided
     # separately. A margin ratio of 0.74 mixing a view difference and a horizon difference in
-    # unknown proportion is uninterpretable, and no caveat rescues it; the total gap is a clean
-    # statement about our leg against the market's price.
+    # unknown proportion is uninterpretable, and no caveat rescues it.
     if leg.get("d_and_a") is None and leg.get("d_and_a_ratio") is not None:
         return _price_implied_only(out, levels, leg, anchor, tev=tev, net_debt=net_debt,
                                    shares=shares)
