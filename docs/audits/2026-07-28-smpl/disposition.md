@@ -372,9 +372,17 @@ exist** — the report has P1–P9, so the pointer resolves to §D's note and no
 `md:400` reads `term loans 397.0 (249.1→397.0 QoQ)`. `vinci/dossier/ciq_sheets.py:747` opens
 `Capital Structure Summary` with **`freq="annual"`**, then `:778–779` compares `vcols[-2]` → `vcols[-1]`
 and hard-codes the string **`QoQ`**. Two adjacent *annual* columns, labelled quarter-over-quarter. That
-reproduces the audit's numbers exactly: term loans were **396.7 (Nov-25) → 396.9 (Feb-26) → 397.0
-(May-26)** — flat across the real quarters — while 249.1 is the FY2025 year-end value, so the printed
-"QoQ" move spans roughly **three quarters and a fiscal-year boundary**.
+is **established from the code alone**: an annual-to-annual step cannot be a quarter-over-quarter move,
+whatever the two values happen to be. That is the whole finding, and it needs no workbook read.
+
+**The audit's corroborating series is REPORTED, not re-measured here** — it puts term loans at
+**396.7 (Nov-25) → 396.9 (Feb-26) → 397.0 (May-26)**, flat across the real quarters, and 249.1 at the
+FY2025 year-end panel; on those figures the printed "QoQ" spans ~three quarters and a fiscal-year
+boundary. Marked as the audit's because verifying it means opening the licensed workbook, which this
+document does not do. *(Kept separate deliberately: restating a source's claim as one's own measurement
+is the defect corrected in §D below, and the same document should not commit it twice.)* What the
+**artifact** independently shows is that 249.1 is also the principal of a single tranche — the Barclays
+term loan, `md:523`, due 2030 — so the printed pair sets a tranche-sized figure against a total.
 
 **And the correct label is already computed and thrown away.** Ten lines above, `_cs_col_date(hdrs[-1][j])`
 parses each column's date — solely to refuse when the columns are not in ascending order. The dates that
