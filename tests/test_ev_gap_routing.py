@@ -105,11 +105,14 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
 
 def test_smpl_is_multiple_dominant_from_the_ratios_alone() -> None:
     """The label is a FUNCTION of the three ratios, never a separate judgement."""
-    assert shape_label(0.9839, 0.9463, 2.2589) == "multiple-dominant"
-    assert shape_label(1.02, 1.60, 1.05) == "earnings"
-    assert shape_label(1.55, 1.02, 1.03) == "timing-duration"
+    def lab(r: float, m: float, x: float) -> str:
+        return shape_label(revenue_ratio=r, margin_ratio=m, multiple_ratio=x)
+
+    assert lab(0.9839, 0.9463, 2.2589) == "multiple-dominant"
+    assert lab(1.02, 1.60, 1.05) == "earnings"
+    assert lab(1.55, 1.02, 1.03) == "timing-duration"
     # NOT dominant: the multiple leads but not by 2x the others.
-    assert shape_label(1.20, 1.05, 1.35) == "multiple"
+    assert lab(1.20, 1.05, 1.35) == "multiple"
 
 
 def test_the_basis_conversion_still_refuses_under_routing() -> None:
@@ -172,7 +175,8 @@ def test_a_missing_adjacent_year_reads_unchecked_never_agreed() -> None:
     UNCHECKED — reporting `agree=True` there would manufacture confirmation from silence."""
     from vinci.dossier.ev_gap import labels_across_years
 
-    only = labels_across_years((0.9839, 0.9463, 2.2589), None)
+    only = labels_across_years(
+        {"revenue_ratio": 0.9839, "margin_ratio": 0.9463, "multiple_ratio": 2.2589}, None)
     assert only["anchor"] == "multiple-dominant"
     assert only["adjacent"] is None
     assert only["agree"] is None, "no adjacent year must not read as agreement"
@@ -184,12 +188,16 @@ def test_both_labels_persist_when_the_shape_moves_between_years() -> None:
     are carried, so the choice is visible rather than made silently by whoever picked the year."""
     from vinci.dossier.ev_gap import labels_across_years
 
-    moved = labels_across_years((0.9839, 0.9463, 2.2589), (1.02, 1.60, 1.05))
+    moved = labels_across_years(
+        {"revenue_ratio": 0.9839, "margin_ratio": 0.9463, "multiple_ratio": 2.2589},
+        {"revenue_ratio": 1.02, "margin_ratio": 1.60, "multiple_ratio": 1.05})
     assert moved["anchor"] == "multiple-dominant" and moved["adjacent"] == "earnings"
     assert moved["agree"] is False
     assert "MOVES" in str(moved["note"])
 
-    steady = labels_across_years((0.9839, 0.9463, 2.2589), (0.98, 0.95, 2.20))
+    steady = labels_across_years(
+        {"revenue_ratio": 0.9839, "margin_ratio": 0.9463, "multiple_ratio": 2.2589},
+        {"revenue_ratio": 0.98, "margin_ratio": 0.95, "multiple_ratio": 2.20})
     assert steady["agree"] is True and steady["adjacent"] == "multiple-dominant"
 
 
@@ -216,10 +224,25 @@ def test_smpl_holds_multiple_dominant_at_its_adjacent_year_on_real_consensus() -
     nxt = decompose(EvGapInputs(**{**SMPL.__dict__,
                                    "consensus_revenue": float(nxt_rev["median"]),
                                    "consensus_ebitda": float(nxt_eb["median"])}))
-    got = labels_across_years(
-        (base["revenue_ratio"], base["margin_ratio"], base["multiple_ratio"]),
-        (nxt["revenue_ratio"], nxt["margin_ratio"], nxt["multiple_ratio"]))
+    # BY NAME — the whole `decompose` result, so no reordering is expressible at the call site.
+    got = labels_across_years(base, nxt)
     assert got["anchor"] == "multiple-dominant"
     assert got["agree"] is True, (
         f"SMPL's shape moved to {got['adjacent']} at FY{adj} — if the audit's label depends on the "
         "year chosen, that is the finding and it must be reported, not averaged away")
+
+
+def test_a_swapped_ratio_is_not_expressible_at_the_call_site() -> None:
+    """REVIEW FINDING (#316). The first cut took three positional floats, and a margin<->multiple
+    swap silently turned `multiple-dominant` into `earnings` — the UNCOMFORTABLE label becoming
+    the comfortable one, with no error. Three interchangeable floats is the address-by-position
+    class this repo already ruled on, and the caller already had the names.
+
+    Keyword-only now, so the swap cannot be written; and a partial dict is refused by name rather
+    than defaulting somewhere downstream."""
+    from vinci.dossier.ev_gap import labels_across_years, shape_label
+
+    with pytest.raises(TypeError):
+        shape_label(0.98, 0.95, 2.26)                     # type: ignore[misc]
+    with pytest.raises(KeyError, match="margin_ratio"):
+        labels_across_years({"revenue_ratio": 1.0, "multiple_ratio": 1.0}, None)
