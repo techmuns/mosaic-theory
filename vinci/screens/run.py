@@ -121,7 +121,7 @@ def screen_universe(
     win_start = {"rel_ret_vs_market": reference_date - timedelta(days=DECLINE_WINDOW_DAYS),
                  "drawdown_from_high": reference_date - timedelta(days=YEAR_DAYS)}
 
-    def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome],
+    def _keep(sec_ticker: str, sec_iid: str, rec: object, gates: dict[str, GateOutcome],
               name_bars: list[PriceBar]) -> None:
         if retain_run_id is None:
             return
@@ -130,7 +130,7 @@ def screen_universe(
             outcome=rollup(gates),
             gate_inputs=_gate_inputs(rec, name_bars, window_start=win_start), per_gate=gates,
             not_evaluated_reason=_first_unrun(gates),
-            deciding_cap=_deciding_cap(caps, getattr(rec, "internal_id", None), universe_as_of)))
+            deciding_cap=_deciding_cap(caps, sec_iid, universe_as_of)))
 
     for i, s in enumerate(universe, start=1):
         reporter.tick(i, suffix=f"{g1_survivors} enriched")
@@ -143,7 +143,7 @@ def screen_universe(
         g1, g1_why = gate_g1_drawdown(rec, th)
         gates = {"g1_drawdown": GateOutcome(outcome=outcome_from_gate(g1), reason=g1_why)}
         if g1 is not GateResult.PASS:
-            _keep(s.ticker, rec, gates, bars)
+            _keep(s.ticker, s.internal_id, rec, gates, bars)
             continue
         g2, g2_why = gate_g2_idiosyncratic(rec, th)
         gates["g2_idiosyncratic"] = GateOutcome(outcome=outcome_from_gate(g2), reason=g2_why)
@@ -151,7 +151,7 @@ def screen_universe(
         # name on to G3. Three names did exactly that on the 2026-07-29 run, reaching a stage only
         # 410 had passed. Under DROP the forward requires an actual PASS.
         if g2 is GateResult.FAIL or (policy is RoutingPolicy.DROP and g2 is not GateResult.PASS):
-            _keep(s.ticker, rec, gates, bars)
+            _keep(s.ticker, s.internal_id, rec, gates, bars)
             continue
         g1_survivors += 1
         full = enrich_with_fundamentals(
@@ -177,7 +177,7 @@ def screen_universe(
             outcome=(Outcome.PASS if cand is not None else Outcome.FAIL),
             reason=("admitted to the candidate set" if cand is not None
                     else "rejected by the multiple floor or a distress signal"))
-        _keep(s.ticker, full, gates, bars)
+        _keep(s.ticker, s.internal_id, full, gates, bars)
 
     written = 0
     if retain_run_id is not None and retain_dir is not None:

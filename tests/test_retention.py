@@ -1406,3 +1406,69 @@ def test_a_candidate_row_carries_the_cap_that_admitted_it() -> None:
     assert row.deciding_cap is not None and row.deciding_cap.value == 5_000_000_000.0
     back = CandidateRow.model_validate_json(row.model_dump_json())
     assert back.deciding_cap is not None and back.deciding_cap.as_of == dt.date(2026, 7, 6)
+
+
+def test_the_cap_actually_reaches_the_row_through_the_real_key() -> None:
+    """REVIEW FINDING (#310). The first cut read the internal_id as
+    `getattr(rec, "internal_id", None)` — and `DataRecord` HAS NO SUCH FIELD (it carries
+    `identity.internal_id`). So the lookup returned None for every name, `_deciding_cap` returned
+    None every time, and **the whole build was a no-op in production**: the field existed, the
+    helper passed its unit test, and nothing ever populated it.
+
+    It failed SILENTLY because a defaulting `getattr` on an untyped object turns a wrong attribute
+    name into None instead of an error — the S14 class, committed in the build immediately after
+    the sweep that counted 66 instances of it.
+
+    THIS PIN IS AN INTEGRATION PIN ON PURPOSE. The helper was already tested with a synthetic dict
+    and stayed green through the defect; what was never exercised was whether the key the caller
+    passes matches the key the map is built from. That is D22 a third time in one build, so the
+    assertion is on the JOIN, not on either side of it."""
+    from vinci.schemas.data_record import Identity
+    from vinci.screens import run as _run
+
+    iid = "SEC-0000001750-AIR"
+    ident = Identity.model_construct(internal_id=iid, ticker="AIR")
+    # The map is keyed the way `Store.universe_caps` keys it: by internal_id.
+    caps = {iid: 5_384_081_887.2}
+
+    # THE JOIN: the caller's key must find the map's entry. `identity.internal_id`, never `rec`.
+    got = _run._deciding_cap(caps, ident.internal_id, dt.date(2026, 7, 29))
+    assert got is not None, "the caller's key does not match the map — the cap never reaches a row"
+    assert got.value == 5_384_081_887.2
+
+    # And the defect's exact shape stays refused: DataRecord has no top-level internal_id, so a
+    # lookup through it must not silently yield None-and-carry-on.
+    from vinci.schemas.candidate import DataRecord
+    assert "internal_id" not in DataRecord.model_fields, (
+        "DataRecord gained a top-level internal_id — re-check the join; this pin assumes the id "
+        "lives on `identity` and is threaded explicitly by the caller")
+
+
+def test_the_caller_threads_the_id_and_never_guesses_it_off_the_record() -> None:
+    """THE PIN THAT ACTUALLY REDDENS ON THE DEFECT. The integration pin above asserts the join is
+    correct given the right key; it stayed GREEN when the caller was reverted to
+    `getattr(rec, "internal_id", None)`, because a synthetic Identity cannot see how the CALLER
+    obtains its key. A full `screen_universe` run is not available in a unit test, so the check is
+    STRUCTURAL: the id must be threaded as a parameter, never read off the untyped `rec`.
+
+    Third instance in one build of a test that could not fail on the defect that would occur, and
+    the reason this one is written differently."""
+    import ast
+    import inspect
+
+    from vinci.screens import run as _run
+
+    src = inspect.getsource(_run.screen_universe)
+    tree = ast.parse(src.lstrip())
+    bad = [n for n in ast.walk(tree)
+           if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "getattr"
+           and len(n.args) >= 2 and isinstance(n.args[1], ast.Constant)
+           and n.args[1].value == "internal_id"]
+    assert not bad, (
+        "screen_universe reads `internal_id` via getattr — DataRecord has no such field, so this "
+        "silently yields None and the deciding cap never reaches a row. Thread it from the "
+        "Identity the caller already holds.")
+    assert "sec_iid" in {a.arg for a in
+                         next(n for n in ast.walk(tree)
+                              if isinstance(n, ast.FunctionDef) and n.name == "_keep").args.args}, (
+        "_keep no longer takes the internal_id explicitly — the cap join depends on it")
