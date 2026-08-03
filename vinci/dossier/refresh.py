@@ -201,6 +201,25 @@ def consensus_transform(ticker: str) -> Transform:
     return _apply
 
 
+def _rerender_only(path: Path) -> bool:
+    """Re-render ``dossier.md`` from the STORED record, leaving ``dossier.json`` untouched.
+
+    The sealed-name path. Reads, validates and renders — it never recomputes derived values and
+    never writes the JSON, so a sealed record's figures cannot move through here. True when the
+    page moved, matching :func:`refresh_dossier`'s contract."""
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+
+    model = Dossier.model_validate(json.loads(path.read_text()))
+    md_path = path.with_name("dossier.md")
+    new_md = render_markdown(model, card=_read_scenario_card(model.ticker))
+    if md_path.exists() and md_path.read_text() == new_md:
+        return False
+    md_path.write_text(new_md)
+    return True
+
+
 def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     """Refresh one committed dossier IN PLACE, preserving its synthesis. True when anything moved.
 
@@ -224,10 +243,21 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     # runs the pass remembering. Keyed on the sidecar's presence, so a name that acquires one is
     # sealed without anyone editing this file.
     if (path.parent / "known_wrong.json").exists():
-        raise RefreshRefusedError(
-            f"{path.parent.name}: this record is SEALED by its own known_wrong.json — refreshing "
-            "it would make a page that says 'do not trust these figures' look freshly computed. "
-            "It clears when a re-assembly exists, not when a transform runs.")
+        if transform is not None:
+            raise RefreshRefusedError(
+                f"{path.parent.name}: this record is SEALED by its own known_wrong.json — "
+                "refreshing it would make a page that says 'do not trust these figures' look "
+                "freshly computed. It clears when a re-assembly exists, not when a transform runs.")
+        # SEALED FREEZES THE FIGURES; IT DOES NOT STOP THE PAGE TRACKING THE RENDERER.
+        # The refusal above states what the seal is FOR — a refreshed page "looks freshly
+        # computed" — and a pure re-render makes nothing look fresh: `dossier.json` is never
+        # written, every figure and the known-wrong banner stay byte-identical, and only wording
+        # the RENDERER owns can move. Refusing it left FUBO's committed page rendered by a renderer
+        # that no longer exists: the R3 label fix (2026-08-04) turned this repo's own render-drift
+        # pin RED on FUBO with no path to green, because the only writer refused the one name that
+        # cannot re-assemble. A seal satisfiable only by re-assembly, on a name that cannot
+        # re-assemble, is a permanent red.
+        return _rerender_only(path)
     doc = json.loads(path.read_text())
     before = doc.get("mechanical") or {}
     staged = transform(json.loads(json.dumps(before))) if transform else before

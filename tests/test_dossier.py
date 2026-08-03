@@ -1055,7 +1055,9 @@ def test_capital_structure_ciq_parses_instruments_and_summary() -> None:
     """(E1) The latest per-fiscal-period panel parses by header LABEL: the \\xa0 float header is
     normalised (SOFR shows), serials decode to ISO, '-' is undated (None, never a fabricated date),
     Secured=='Yes'→True and the Convertible column's 'Convertible'/'No' string maps to the bool. The
-    Summary aggregates carry the term-loan QoQ movement + the latest-quarter total debt."""
+    Summary aggregates carry the term-loan movement + the total debt, each stamped with the PERIOD
+    COLUMN it was read from (audit R3) — never a frequency this code inferred. See
+    `test_the_period_label_is_derived_from_the_columns_not_asserted` for why."""
     bundle = _fin_bundle(
         {"Capital Structure Details": _CS_DETAILS, "Capital Structure Summary": _CS_SUMMARY},
         freq="annual")
@@ -1073,8 +1075,16 @@ def test_capital_structure_ciq_parses_instruments_and_summary() -> None:
     assert notes.maturity_date is None  # '-' is undated, NOT a fabricated date
     assert notes.secured is False
     s = summary.value or ""
-    assert "term loans 215.2" in s and "131.3→215.2 QoQ" in s
-    assert "total debt 326.0 (latest quarter)" in s and s.endswith("($M)")
+    # THE FIXTURE IS THE POINT: its columns are "FY 2024 (12 months)" / "FY 2025 (12 months)" — two
+    # ANNUAL periods. The previous version of this assertion demanded the output say "QoQ" and
+    # "(latest quarter)" against exactly that data, so the pin encoded the defect as the expected
+    # behaviour and would have stayed green through any re-run. Now the label must come from the
+    # columns themselves.
+    assert "term loans 215.2" in s
+    assert "FY 2024 (12 months) 131.3 → FY 2025 (12 months) 215.2" in s, s
+    assert "total debt 326.0 (FY 2025 (12 months))" in s and s.endswith("($M)"), s
+    assert "QoQ" not in s and "quarter" not in s, (
+        f"an annual sheet was labelled with a quarterly frequency again: {s!r}")
 
 
 def _inst(

@@ -350,8 +350,8 @@ _8 undated / later aggregate line item(s) in the appendix panel_
   - due 2028: $537.0M
   - due 2030: $0.0M
   - undated (floor — no panel maturity): $5,013.8M — 6.600% Senior Notes Due 2028 $800.0M, 6.650% Senior Notes Due 2026 $800.0M, 6.850% Senior Notes Due 2033 $550.0M, Credit Facility - Term Loan… $1,965.6M, Operating Lease $898.2M, Other Loans –
-  - _reconciliation: itemized $5,550.8M (panel A 2025 filed Jan-28-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** term loans 1,837.5 (1,965.6→1,837.5 QoQ); senior bonds 2,150.0; leases 919.4; total principal 5,519.4; total debt 5,504.3 (latest quarter) ($M) [45]
+  - _reconciliation: itemized $5,550.8M (panel A 2025 filed Jan-28-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** term loans 1,837.5 (1,965.6→1,837.5 QoQ); senior bonds 2,150.0; leases 919.4; total principal 5,519.4; total debt 5,504.3 (latest quarter) ($M) [45]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event
 - **Covenants — Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Rate to be established per series pursuant to Section 3.01; base indenture does not state a numeric rate. Interest comp…

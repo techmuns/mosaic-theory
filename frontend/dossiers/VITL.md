@@ -342,8 +342,8 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **Maturity wall** · vs the 2026-07-06 reference:
   - due 2029: $0.0M
   - undated (floor — no panel maturity): $53.5M — Finance Lease Liabilities $10.8M, Operating Lease Liabilities $42.7M
-  - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [46]
+  - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [46]
 
 ### Filing cross-checks — going concern · leverage basis
 

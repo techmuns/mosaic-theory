@@ -323,8 +323,8 @@ _+4 more broker-days in JSON_
 - **Maturity wall** · vs the 2026-07-06 reference:
   - due 2030: $1,090.0M
   - undated (floor — no panel maturity): $29.5M — Operating Lease Liabilities $29.5M
-  - _reconciliation: itemized $1,119.5M (panel A 2025 filed Nov-18-2025) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** senior bonds 840.0; total principal 1,227.3; total debt 1,222.3 (latest quarter) ($M) [46]
+  - _reconciliation: itemized $1,119.5M (panel A 2025 filed Nov-18-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** senior bonds 840.0; total principal 1,227.3; total debt 1,222.3 (latest quarter) ($M) [46]
 - **Covenants — Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans
   - **Events of default:** Repricing Event within 6 months after Amendment No. 2 Effective Date: 1.00% prepayment premium on the aggregate princip…

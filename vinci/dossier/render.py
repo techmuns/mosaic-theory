@@ -948,8 +948,8 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     itemized = sum(i.principal_musd or 0.0 for i in inst.value)
     out.append(
         f"  - _reconciliation: itemized {_musd(itemized)} (panel {cs.detail_as_of}) vs the "
-        f"latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ "
-        "movement in the aggregates line._"
+        f"aggregates below — the gap is unitemized / newer term loans; read the term-loan movement "
+        "in the aggregates line, which names the period columns it spans._"
     )
     return out
 
@@ -1174,7 +1174,10 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
     else:
         out.append(_fact("Capital structure (instruments)", inst))
     out += _maturity_wall_lines(cs, reference_date)
-    out.append(_fact("Capital-structure aggregates (latest quarter)", cs.summary))
+    # NO PERIOD IN THE LABEL (audit R3). The value stamps itself with the column it was read from,
+    # so a fixed "(latest quarter)" here could only ever contradict it — as it did on SMPL, where
+    # both the label and the value called an annual step a quarter.
+    out.append(_fact("Capital-structure aggregates", cs.summary))
     # (P3/FIX-3) the VERBATIM resolution at the maturity 8-K, when captured (the 8-K pointer list
     # itself is provenance → appendix). A pre-P3 dossier.json has no field → nothing.
     mat_ev = getattr(cs, "maturity_event", None)

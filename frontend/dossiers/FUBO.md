@@ -346,8 +346,8 @@ _3 undated / later aggregate line item(s) in the appendix panel_
   - due 2029: $177.5M
   - due 2031: $145.0M
   - undated (floor — no panel maturity): $33.1M — Operating Lease Liabilities $33.1M
-  - _reconciliation: itemized $356.1M (panel Q2 2026 filed May-06-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** senior bonds 323.0; leases 33.1; total principal 356.1; total debt 408.2 (latest quarter) ($M) [42]
+  - _reconciliation: itemized $356.1M (panel Q2 2026 filed May-06-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+- **Capital-structure aggregates:** senior bonds 323.0; leases 33.1; total principal 356.1; total debt 408.2 (latest quarter) ($M) [42]
 
 ### Filing cross-checks — going concern · leverage basis
 

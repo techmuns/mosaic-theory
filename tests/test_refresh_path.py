@@ -38,6 +38,50 @@ def _pre_schema() -> set[str]:
     return out
 
 
+def _sealed() -> list[str]:
+    return sorted(d.parent.name for d in DOSS.glob("*/dossier.json")
+                  if (d.parent / "known_wrong.json").exists())
+
+
+@pytest.mark.skipif(not DOSS.is_dir(), reason="no committed dossiers")
+def test_a_sealed_record_re_renders_its_page_but_never_its_record(tmp_path: pathlib.Path) -> None:
+    """THE SEAL FREEZES FIGURES, NOT THE RENDERER (2026-08-04).
+
+    `known_wrong.json` refuses a refresh so a page saying "do not trust these figures" cannot be
+    made to look freshly computed. Applied to re-RENDERING it did something else: FUBO — the one
+    name that CANNOT re-assemble — became unreachable by every writer, so the R3 label fix turned
+    this repo's own render-drift pin RED on it with no path to green. A seal satisfiable only by
+    re-assembly, on a name that cannot re-assemble, is a permanent red.
+
+    POSITIVE: a no-transform call re-renders `dossier.md` and leaves `dossier.json` BYTE-IDENTICAL.
+    NEGATIVE: a transform — an actual data refresh — still RAISES, which is the seal's real job.
+    """
+    sealed = _sealed()
+    assert sealed, "no sealed name in the corpus — this pin has nothing to drive"
+    name = sealed[0]
+    folder = tmp_path / name
+    folder.mkdir()
+    for f in ("dossier.json", "known_wrong.json", "dossier.md"):
+        shutil.copy(DOSS / name / f, folder / f)
+    copy = folder / "dossier.json"
+    record_before = copy.read_bytes()
+    stale = "stale page — the renderer has moved on\n"
+
+    (folder / "dossier.md").write_text(stale)
+    assert refresh_dossier(copy) is True, "a sealed record's page did not re-render"
+    assert copy.read_bytes() == record_before, (
+        "the SEALED record itself was rewritten — the re-render path must never touch the JSON")
+    assert (folder / "dossier.md").read_text() != stale
+
+    # and a second call is a no-op, so the pass does not churn the page on every run
+    assert refresh_dossier(copy) is False, "re-rendering an up-to-date sealed page reported a move"
+
+    # NEGATIVE: the seal still refuses a real refresh.
+    with pytest.raises(RefreshRefusedError, match="SEALED"):
+        refresh_dossier(copy, transform=lambda m: m)
+    assert copy.read_bytes() == record_before
+
+
 # --- the round-trip, which is the whole guarantee ------------------------------------------------
 
 
