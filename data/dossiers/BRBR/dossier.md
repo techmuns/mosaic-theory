@@ -171,7 +171,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 8.8x vs peer median 6.9x (+28%); P/E 10.6x vs peer median 22.9x (-54%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-07-29 · multiples as-of 2026-07-28 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-07-28 (BLENDED: market cap 2026-07-28 + net debt 2026-07-29; the older leads because it bounds the pair) · multiples as-of 2026-07-28 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [29]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -185,6 +185,10 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 - **Consensus path anchors (EBITDA):** FY26E $319.0M · FY27E $327.9M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $2339.1M · FY27E $2423.1M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
+
+### The EV gap — our base case vs the street
+
+_No gap is struck for this name: no scenario record for this name — the route is known, the gap is not. The consensus side alone still routes to **three-ratio** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.2x as-of 2026-07-17 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 9.4x [15]

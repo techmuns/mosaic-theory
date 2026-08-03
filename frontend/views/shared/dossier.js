@@ -754,6 +754,7 @@ function analysisTier(d, m, card) {
     + synthesis(d.synthesis, m)                         // the argument
     + catalystCalendar(m, card)                         // when reality votes on it
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
+    + evGap(m.ev_gap)                                   // (A2) our leg vs the street
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
     + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause, m.primary_source)  // the street
@@ -2570,6 +2571,104 @@ function impliedExpectations(ie) {
     ${ie.vintage_coherent ? "" : `<div class="muted" style="font-size:11px; margin-top:4px;">⚠ ${escapeHtml(ie.coherence_note || "")}</div>`}
     ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}</div></div>`;
   return intro + table + readsAgainst + anchors;  // (K4) reads-against between the table and the anchors
+}
+
+// (A2) THE EV GAP — TWIN OF render.py `_ev_gap_lines`. Three states, three sentences, never an
+// empty block: `null`/absent = the refresh has not reached this name; status "not-computed" = it
+// ran and could not strike a gap, and says why; "computed" renders the decomposition.
+const EV_GAP_CAUTION_MAX = 5;
+
+function evGapPct(x, base, when) {
+  if (typeof x !== "number") return "UNKNOWN";
+  return `${(x * 100).toFixed(1)}% (${base}, ${when || "date unstated"})`;
+}
+
+function evGapSigma(cell) {
+  // SIGMA WITH ITS n OR NOTHING. MVST's EBITDA high == low == median on ONE estimate reads 0.0%,
+  // which a reader takes for agreement when it means nobody to disagree.
+  const c = cell || {};
+  const raw = c.estimates;
+  const n = typeof raw === "string" && raw.includes("/") && /^\d+$/.test(raw.split("/")[0].trim())
+    ? Number(raw.split("/")[0].trim()) : null;
+  if (typeof c.std_dev !== "number" || n === null) return "—";
+  return `sigma ${c.std_dev.toFixed(2)} on n=${n}${n <= EV_GAP_CAUTION_MAX ? " · thin" : ""}`;
+}
+
+function evGap(g) {
+  const H = "The EV gap — our base case vs the street";
+  if (!g || typeof g !== "object") {
+    return sec(H, "Not yet computed.",
+      `<p class="ds-note">Not yet computed for this name — the mechanical refresh that writes it `
+      + `has not run here. This is a MISSING REFRESH, not a finding: nothing has been measured and `
+      + `nothing is being withheld.</p>`);
+  }
+  const vin = g.vintages || {};
+  if (g.status !== "computed") {
+    const form = g.form
+      ? ` The consensus side alone still routes to <b>${escapeHtml(g.form)}</b> at FY${escapeHtml(String(g.anchor_fy))}, `
+        + `so the form is known even though the comparison is not.`
+      : "";
+    return sec(H, "No gap struck.",
+      `<p class="ds-note">No gap is struck for this name: ${escapeHtml(String(g.reason || "no reason recorded"))}.${form}</p>`);
+  }
+  const r = g.ratios || {}, br = g.bridge || {}, cons = g.consensus || {}, shape = g.shape || {};
+  const ratio = (x) => (typeof x === "number" ? `${x.toFixed(2)}x` : "UNKNOWN");
+  // THE FLOOR MARKER IS THE UNICODE ≥ AND MUST SURVIVE — stripping it asserts a precision the
+  // export cannot attest.
+  const consAsOf = String(vin.consensus_as_of || "UNKNOWN");
+  const floorNote = /^\s*(≥|>=)/.test(consAsOf)
+    ? " (a FLOOR — the export states no as-of, so the true date is on or after this)" : "";
+  // `dataTable` rows are {label, cells} and EVERY cell is escapeHtml'd, so markup in a cell would
+  // print literally. The product row is distinguished by `cls` — the same "name-row" the B1 grids
+  // use for the subject — rather than by inline bold.
+  const rows = [
+    { label: "revenue", cells: [ratio(r.revenue_ratio), evGapSigma(cons.Revenue)] },
+    { label: "EBITDA margin", cells: [ratio(r.margin_ratio), evGapSigma(cons.EBITDA)] },
+    { label: "exit multiple",
+      cells: [ratio(r.multiple_ratio),
+        typeof br.market_multiple === "number"
+          ? `street ${br.market_multiple.toFixed(2)}x at FY${g.anchor_fy}` : "—"] },
+    { label: "product = the EV gap", cells: [ratio(r.ev_gap), ""], cls: "name-row" },
+  ];
+  let body = `<p class="ds-note">Anchor FY${escapeHtml(String(g.anchor_fy))} · consensus as-of `
+    + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · TEV as-of ${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))} · `
+    + `form ${escapeHtml(String(g.form))}</p>`
+    + dataTable("The gap, decomposed (ours / consensus, at the anchor year)", null,
+        ["ratio", "consensus dispersion"], rows,
+        "the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an "
+        + "attribution of cause");
+  // `agree` is TRISTATE: null means no adjacent year existed to check against — absent evidence,
+  // which must not read as confirmation.
+  const chk = shape.agree === true
+    ? `and FY${escapeHtml(String(g.adjacent_fy))} gives the same shape — the label does not move with the year`
+    : shape.agree === false
+      ? `but FY${escapeHtml(String(g.adjacent_fy))} gives <b>${escapeHtml(String(shape.adjacent))}</b> — the shape MOVES `
+        + `between years, so neither is the answer on its own`
+      : "with NO adjacent forward year to check it against — unchecked, not confirmed";
+  body += `<p class="ds-note"><b>Shape:</b> <b>${escapeHtml(String(shape.anchor))}</b> at `
+    + `FY${escapeHtml(String(g.anchor_fy))}, ${chk}.</p>`;
+  if (["our_ev", "net_debt", "shares", "tev"].every((k) => typeof br[k] === "number")) {
+    const eq = br.our_ev - br.net_debt;
+    body += `<p class="ds-note"><b>Bridge:</b> our EV $${br.our_ev.toLocaleString(undefined,
+      { maximumFractionDigits: 0 })}M − net debt $${br.net_debt.toLocaleString(undefined,
+      { maximumFractionDigits: 0 })}M = equity $${eq.toLocaleString(undefined,
+      { maximumFractionDigits: 0 })}M ÷ ${br.shares.toFixed(3)}M sh = <b>$${(eq / br.shares).toFixed(2)}`
+      + `/sh</b> — against TEV $${br.tev.toLocaleString(undefined, { maximumFractionDigits: 0 })}M `
+      + `(as-of ${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))}).</p>`;
+  }
+  for (const metric of ["Revenue", "EBITDA"]) {
+    const d = ((g.routes || {})[metric] || {}).dispersion;
+    if (typeof d === "number") {
+      body += `<p class="ds-note"><i>${metric} dispersion `
+        + `${escapeHtml(evGapPct(d, "high−low ÷ |median|", `FY${g.anchor_fy}, as-of ${consAsOf}`))}</i></p>`;
+    }
+  }
+  if (g.d_and_a_convention) {
+    body += `<p class="ds-note"><i>D&amp;A convention: ${escapeHtml(String(g.d_and_a_convention))} — the two `
+      + `recipes differ and the reconciliation is an open analyst question, so it is stated rather `
+      + `than assumed.</i></p>`;
+  }
+  return sec(H, "Our committed base leg against the street, as three ratios whose product is the gap.", body);
 }
 
 function valuation(v) {

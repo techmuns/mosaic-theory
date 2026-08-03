@@ -210,7 +210,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 18.4x vs peer median 24.6x (-25%); P/E 91.4x vs peer median 30.7x (+198%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-06-25 · multiples as-of 2026-06-30 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-07-28 (BLENDED: market cap 2026-07-28 + net debt 2026-07-30; the older leads because it bounds the pair) · multiples as-of 2026-06-30 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [33]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -225,6 +225,10 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Consensus path anchors (EBITDA):** FY26E $94.3M · FY27E $115.5M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $486.2M · FY27E $539.8M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
   - _⚠ multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 $77.9M vs direct $94.3M, residual 0.174 > 0.10)_
+
+### The EV gap — our base case vs the street
+
+_No gap is struck for this name: our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.048961, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.). The consensus side alone still routes to **three-ratio** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 20.6x as-of 2026-07-17 — trailing range 18.8–75.4x (median 32.1x) over 42 closes → 7%ile → near-floor; P/LTM EPS 104.0x [15]

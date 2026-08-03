@@ -1332,20 +1332,59 @@ def _gate_shortref(gate: str) -> str:
             if "HETEROGENEOUS" in (gate or "") else (gate or ""))
 
 
-def _implied_expectations_lines(v: Any) -> list[str]:
+def _tev_stamp(stated: str, cap_as_of: str | None, net_debt_as_of: str | None) -> str:
+    """The TEV's as-of, printed as the TWO panels it is actually struck from when they differ.
+
+    `recompute_derived` builds TEV from a STOCK-panel market cap plus a COMPS-panel net debt.
+    `stock_info.as_of` differs from the comps as-of on 10 of 11 committed names — MVST by 14 days —
+    so one date over that number is a false provenance stamp on a blended value. When both are
+    known and disagree the OLDER leads (it bounds the freshness of the pair) and the blend is
+    named; otherwise the stated stamp stands unchanged."""
+    if not cap_as_of or not net_debt_as_of or cap_as_of == net_debt_as_of:
+        return stated
+    older = min(cap_as_of, net_debt_as_of)
+    return (f"{older} (BLENDED: market cap {cap_as_of} + net debt {net_debt_as_of}; the older "
+            "leads because it bounds the pair)")
+
+
+def _stock_as_of(m: MechanicalLayer) -> str | None:
+    """The STOCK panel's own as-of — the vintage of the market cap inside the derived TEV."""
+    si = getattr(m, "stock_info", None)
+    a = getattr(si, "as_of", None) if si is not None else None
+    val = getattr(a, "value", a)
+    return str(val) if val else None
+
+
+def _implied_expectations_lines(v: Any, *, cap_as_of: str | None = None,
+                                net_debt_as_of: str | None = None) -> list[str]:
     """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
     fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
-    BESIDE — never differenced (no %, gap, upside, or implied price/equity). The heterogeneity gate
-    is cited SHORT on the header (verbatim once, at Peer comps — H3); both pricing as-ofs are
-    stamped; a vintage-mismatch caveat renders when the pricing-vintages diverge (G5)."""
+    BESIDE. The heterogeneity gate is cited SHORT on the header (verbatim once, at Peer comps —
+    H3); a vintage-mismatch caveat renders when the pricing-vintages diverge (G5).
+
+    THE NEVER-DIFFERENCED RULE STILL BINDS HERE AND NO LONGER BINDS THE SECTION (A2, 2026-08-03).
+    This block juxtaposes and does not subtract — that has not changed. What changed is that the
+    section now also carries `_ev_gap_lines`, which DOES state a ratio between our leg and the
+    street. The distinction is not squeamishness about arithmetic: THIS table inverts a PRICE, so
+    differencing it against consensus would produce an implied upside — a verdict in numbers, which
+    the machine does not author. The EV gap divides OUR OWN COMMITTED LEG by consensus and
+    reconciles by identity, so it is a decomposition of a stated position, not a conclusion about
+    what the price should be. Same section, two different objects; the old docstring said the rule
+    covered the section and now it says what it actually covers.
+
+    THE TEV STAMP IS TWO-PANEL AND SAYS SO. `recompute_derived` strikes TEV as
+    `stock_info.market_cap + peer_grid.net_debt` — a STOCK-panel cap plus a COMPS-panel net debt —
+    so a single `tev_as_of` over it stamps one panel's date on a two-panel number, which is the
+    `financial_summary.as_of` defect. Both dates print when they are known and differ."""
     ie = getattr(v, "implied_expectations", None)
     if ie is None:
         return []
     out = [
         f"- **What the current price implies (at stated multiples)** — "  # (K4) human-facing rename
         f"{_gate_shortref(ie.heterogeneity_gate)}",
-        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of} · † at the name's "
-        "own multiple the implied level is consensus by identity_",
+        f"  - _TEV as-of {_tev_stamp(ie.tev_as_of, cap_as_of, net_debt_as_of)} · multiples as-of "
+        f"{ie.multiples_as_of} · † at the name's own multiple the implied level is consensus by "
+        "identity_",
     ]
     # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
     # blank header for the label, so each row must have len(cols)+1 cells: [label, multiple, level].
@@ -2996,6 +3035,155 @@ def _trajectory_section_lines(m: MechanicalLayer) -> list[str]:
     return out
 
 
+#: Coverage caution band — 3 <= n < 6 is thin but usable, so the count renders WITH a caution
+#: rather than the route being narrowed. Mirrors `ev_gap.CAUTION_ESTIMATES`; the two are asserted
+#: equal by test rather than shared by import, because the renderer must not depend on the compute
+#: module (the twin JS has no import to share).
+_EV_GAP_CAUTION_MAX = 5
+
+
+def _pct_stated(x: float | None, *, base: str, when: str | None) -> str:
+    """A percentage that STATES ITS BASE AND ITS DATE, or says it cannot.
+
+    A bare "4.3%" is unreadable: percent of what, measured when. Both travel with the number here
+    rather than in a caption a reader has to hunt for."""
+    if x is None:
+        return "UNKNOWN"
+    stamp = f", {when}" if when else ", date unstated"
+    return f"{x:.1%} ({base}{stamp})"
+
+
+def _sigma_cell(cell: dict[str, Any]) -> str:
+    """Sigma WITH ITS n, or NOTHING — never sigma alone.
+
+    THE MVST TRAP IN PRINT: its EBITDA high == low == median on ONE estimate, so dispersion reads
+    0.0%, which a reader takes for maximum agreement when it means there was nobody to disagree.
+    The count is what tells those apart, so a sigma whose n is unknown does not render at all.
+    """
+    sd, raw = cell.get("std_dev"), cell.get("estimates")
+    n = _estimate_head(raw)
+    if sd is None or n is None:
+        return "—"
+    caution = " · thin" if n <= _EV_GAP_CAUTION_MAX else ""
+    return f"sigma {sd:,.2f} on n={n}{caution}"
+
+
+def _estimate_head(raw: object) -> int | None:
+    """CIQ's raw pair (`9/11`) -> 9. Never re-labelled "broker count"; only read."""
+    if not isinstance(raw, str) or "/" not in raw:
+        return None
+    head = raw.split("/", 1)[0].strip()
+    return int(head) if head.isdigit() else None
+
+
+def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
+    """(A2) THE EV GAP — our base case against the street, as three ratios whose product IS the gap.
+
+    THREE STATES, THREE SENTENCES, NEVER AN EMPTY BLOCK. `None` means the refresh has not reached
+    this name; `status="not-computed"` means it ran and could not strike a gap, and says why;
+    `computed` renders the decomposition. The render ships on deploy while the refresh lags, so a
+    block that simply vanished would leave a page silently missing a section — the two-speed defect
+    #319 taught, which is why the compute layer returns a status for every path instead of omitting.
+
+    NOT AN ATTRIBUTION. The three ratios are stated and their product reconciles by identity;
+    nothing here says which ratio "explains" the gap. The shape LABEL is a deterministic function of
+    the three, printed with whether the adjacent year agrees — because the uncomfortable label
+    (`multiple-dominant`: the view rests on re-rating, not on the business) must not be movable by
+    choosing a year.
+    """
+    g = getattr(m, "ev_gap", None)
+    if not isinstance(g, dict):
+        return ["### The EV gap — our base case vs the street", "",
+                "_Not yet computed for this name — the mechanical refresh that writes it has not "
+                "run here. This is a MISSING REFRESH, not a finding: nothing has been measured "
+                "and nothing is being withheld._", ""]
+    v = g.get("vintages") or {}
+    cons_as_of, tev_as_of = v.get("consensus_as_of"), v.get("tev_as_of")
+    head = ["### The EV gap — our base case vs the street", ""]
+    if g.get("status") != "computed":
+        why = str(g.get("reason") or "no reason recorded")
+        form = g.get("form")
+        line = f"_No gap is struck for this name: {why}._"
+        if form:
+            line = (f"_No gap is struck for this name: {why}. The consensus side alone still "
+                    f"routes to **{form}** at FY{g.get('anchor_fy')}, so the form is known even "
+                    "though the comparison is not._")
+        return [*head, line, ""]
+
+    r, br, cons = g["ratios"], g.get("bridge") or {}, g.get("consensus") or {}
+    anchor, adj = g.get("anchor_fy"), g.get("adjacent_fy")
+    shape = g.get("shape") or {}
+    # THE CONSENSUS VINTAGE IS A FLOOR AND PRINTS AS ONE. SMPL's estimates export carries no
+    # As-Of header, so its date is ">=". Stripping the marker would assert a precision the
+    # workbook cannot attest — the operator's brief said "the 07-30 export"; the export says
+    # "on or after 2026-07-21", and only the second is defensible on the page.
+    # THE MARKER IS THE UNICODE ≥, not ">=" — the first cut checked ASCII and the note silently
+    # never rendered, which is the same class as the value it guards: a precision claim nobody
+    # could see was missing.
+    floor_note = (" (a FLOOR — the export states no as-of, so the true date is on or after this)"
+                  if isinstance(cons_as_of, str) and cons_as_of.lstrip().startswith(("≥", ">="))
+                  else "")
+    out = [*head,
+           f"_Anchor FY{anchor} · consensus as-of {cons_as_of or 'UNKNOWN'}{floor_note} · "
+           f"TEV as-of {tev_as_of or 'UNKNOWN'} · form {g.get('form')}_", ""]
+
+    def ratio(x: float | None) -> str:
+        return f"{x:.2f}x" if isinstance(x, (int, float)) else "UNKNOWN"
+
+    rows = [
+        ["revenue", ratio(r.get("revenue_ratio")),
+         _sigma_cell(cons.get("Revenue") or {})],
+        ["EBITDA margin", ratio(r.get("margin_ratio")),
+         _sigma_cell(cons.get("EBITDA") or {})],
+        ["exit multiple", ratio(r.get("multiple_ratio")),
+         (f"street {br['market_multiple']:.2f}x at FY{anchor}"
+          if isinstance(br.get("market_multiple"), (int, float)) else "—")],
+        ["**product = the EV gap**", f"**{ratio(r.get('ev_gap'))}**", ""],
+    ]
+    out += _table("The gap, decomposed (ours / consensus, at the anchor year)",
+                  None, ["ratio", "consensus dispersion"], rows,
+                  note="the three ratios multiply to the gap by IDENTITY — this is a "
+                       "decomposition, never an attribution of cause",
+                  num_cols=frozenset({1}))
+
+    # THE SHAPE, WITH ITS CROSS-YEAR CHECK. `agree` is TRISTATE: None means there was no adjacent
+    # forward year to check against, which is absent evidence and must not read as confirmation.
+    agree = shape.get("agree")
+    if agree is True:
+        chk = f"and FY{adj} gives the same shape — the label does not move with the year"
+    elif agree is False:
+        chk = (f"but FY{adj} gives **{shape.get('adjacent')}** — the shape MOVES between years, "
+               "so neither is the answer on its own")
+    else:
+        chk = "with NO adjacent forward year to check it against — unchecked, not confirmed"
+    out += [f"- **Shape:** **{shape.get('anchor')}** at FY{anchor}, {chk}.", ""]
+
+    # THE BRIDGE TO PER SHARE, so the gap is not a floating ratio. Every leg is the PERSISTED
+    # value, never re-struck here — a second definition of TEV in the renderer is what #320's
+    # review pinned against.
+    if all(isinstance(br.get(k), (int, float)) for k in ("our_ev", "net_debt", "shares", "tev")):
+        eq = br["our_ev"] - br["net_debt"]
+        out += [
+            f"- **Bridge:** our EV ${br['our_ev']:,.0f}M − net debt ${br['net_debt']:,.0f}M "
+            f"= equity ${eq:,.0f}M ÷ {br['shares']:,.3f}M sh = **${eq / br['shares']:,.2f}/sh** "
+            f"— against TEV ${br['tev']:,.0f}M (as-of {tev_as_of or 'UNKNOWN'}).", ""]
+
+    for metric in ("Revenue", "EBITDA"):
+        route = (g.get("routes") or {}).get(metric) or {}
+        disp = route.get("dispersion")
+        if isinstance(disp, (int, float)):
+            when = f"FY{anchor}, as-of {cons_as_of}"
+            out.append(f"  - _{metric} dispersion "
+                       f"{_pct_stated(disp, base='high−low ÷ |median|', when=when)}_")
+    if out and out[-1].startswith("  - _"):
+        out.append("")
+    if g.get("d_and_a_convention"):
+        out += [f"  - _D&A convention: {g['d_and_a_convention']} — the two recipes differ and the "
+                "reconciliation is an open analyst question, so it is stated rather than assumed._",
+                ""]
+    return out
+
+
 def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     """(D1·§4) "Valuation & own-history" — the cross-sectional read (the edge) first, then implied
     expectations, then the own-history reads; the mid-cycle underwrite block closes it when a
@@ -3008,7 +3196,15 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     # edge) and BEFORE the own-history reads.
     out.append("## Valuation & own-history")
     out.append(_fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional))
-    out += _implied_expectations_lines(m.valuation)
+    out += _implied_expectations_lines(
+        m.valuation,
+        cap_as_of=_stock_as_of(m),
+        net_debt_as_of=((getattr(m, "ev_gap", None) or {}).get("vintages") or {}).get("tev_as_of")
+        if isinstance(getattr(m, "ev_gap", None), dict) else None)
+    # (A2) THE EV GAP sits directly after the price-implied levels: those state what the price
+    # implies at each multiple, this states what OUR base case implies against the street. Same
+    # question from the two sides, so they read together.
+    out += _ev_gap_lines(m)
     # (declutter P1) the bare P/E and EV/EBITDA fact rows are GONE: both numbers already render
     # inside tables that carry their context (the peer grid; the dated range line below), and the
     # two sheets disagree by vintage (P/E 14.1 vs the comps grid's 13) — two values of one ratio

@@ -390,10 +390,20 @@ def build_ev_gap(
         # reserved analyst decision that moves committed numbers. "Absent" would send a reader
         # looking for a number that is already there.
         if leg.get("d_and_a") is None and leg.get("d_and_a_ratio") is not None:
+            # STATED AS A HORIZON MISMATCH, NOT AS "the R2 recipe" — a reader can judge the first
+            # and can only look up the second. MEASURED on the three R2 names: our TERMINAL margin
+            # against the NEAR-TERM consensus at the anchor runs AORT 9.5% vs 19.4%, NCNO 12.6% vs
+            # 27.1%, MVST 6.0% vs 14.0% — roughly half, on every one. The margin ratio would be
+            # measuring the distance between two HORIZONS, not between our view and the street's,
+            # and the revenue ratios (1.31 / 1.17 / 1.91) say the same thing from the other side.
+            # So the refusal is not caution about a missing number; it is that the comparison as
+            # struck would answer a different question.
             return {**out, "status": "not-computed", "reason": (
-                f"this record states D&A as a RATIO OF REVENUE ({leg['d_and_a_ratio']}), the R2 "
-                "terminal convention — not absent, but converting it at the anchor year is the "
-                "open analyst decision on D&A convention, so no gap is struck here")}
+                "our margin here is a TERMINAL-state assumption while the consensus at this anchor "
+                f"is NEAR-TERM — the ratio would measure the gap between two horizons, not between "
+                f"our view and the street's. (D&A is stated as a ratio of revenue, "
+                f"{leg['d_and_a_ratio']}, so it is present rather than missing; converting it at "
+                "the anchor year is the open analyst decision on D&A convention.)")}
         return {**out, "status": "not-computed", "reason": str(exc)}
     if at_anchor is None:
         return {**out, "status": "not-computed", "reason": "consensus medians absent at the anchor"}
@@ -411,4 +421,16 @@ def build_ev_gap(
         "at_adjacent": ({k: at_adjacent[k] for k in (*_RATIO_KEYS, "ev_gap")}
                         if at_adjacent else None),
         "shape": labels_across_years(at_anchor, at_adjacent),
+        # THE BRIDGE, PERSISTED RATHER THAN RE-DERIVED BY THE RENDER. The render needs TEV, net debt
+        # and shares to carry the gap to a per-share number — and re-striking TEV there would put a
+        # SECOND definition of it in the tree, which is exactly what #320's review pinned. Computed
+        # once, here, where the vintage stamp is decided beside it.
+        "bridge": {k: at_anchor[k] for k in
+                   ("tev", "net_debt", "shares", "our_ev", "our_ebitda", "market_multiple")},
+        # THE CONSENSUS CELLS THE RATIOS DIVIDE BY, so the render can print sigma WITH ITS n — and
+        # print neither when n is absent. A dispersion without its count is the MVST trap in print:
+        # 0.0% reads as maximum agreement when it means nobody to disagree.
+        "consensus": {m: {k: (c or {}).get(k) for k in ("median", "std_dev", "estimates")}
+                      for m in ("Revenue", "EBITDA")
+                      if (c := _cell(levels, m, anchor)) is not None},
     }

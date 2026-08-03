@@ -439,3 +439,36 @@ def chain(*transforms: Transform) -> Transform:
             mech = t(mech)
         return mech
     return _apply
+
+
+def mirror_to_frontend() -> None:
+    """Re-run the frontend mirror — the LAST step of any pass that touches `data/dossiers`.
+
+    WIRED IN BECAUSE A MANUAL STEP IN THE DELIVERY PATH IS ONE FORGETTING FROM A STALE PAGE, and
+    the repo has the receipt: FUBO's `dossier.md` carried a 22-line "⚠ KNOWN-WRONG — do not read
+    the figures on this page as current" banner while `frontend/dossiers/FUBO.md` — **the page
+    actually served** — did not. The suite compared only the SET of mirrored names, so the warning
+    could go missing and stay missing.
+
+    #319's byte-identity pin made forgetting LOUD; this makes it unnecessary. Both stay: the pin
+    still catches a mirror written by some other route.
+
+    Imported inside the function — `frontend/build.py` is a script at the repo root, not part of
+    the `vinci` package, so a module-scope import would couple the library to the build tree.
+    """
+    import importlib.util
+    import sys
+
+    # CWD, the same root  uses. Every caller already runs from the repo root (the
+    # CLI, the pass, the suite), and inventing a second root convention here would be the
+    # duplicate-definition class in path form.
+    script = Path.cwd() / "frontend" / "build.py"
+    if not script.exists():                      # a checkout without the frontend tree is legal
+        return
+    spec = importlib.util.spec_from_file_location("_vinci_frontend_build", script)
+    if spec is None or spec.loader is None:      # pragma: no cover - import machinery
+        raise RuntimeError(f"cannot load the frontend mirror from {script}")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    mod.main([])

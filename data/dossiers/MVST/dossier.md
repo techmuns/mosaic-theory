@@ -205,7 +205,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 11.1x vs peer median 14.5x (-23%); P/E NM vs peer median 39 [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-06-24 · multiples as-of 2026-05-15 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-06-24 (BLENDED: market cap 2026-07-08 + net debt 2026-06-24; the older leads because it bounds the pair) · multiples as-of 2026-05-15 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [28]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -219,6 +219,10 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 - **Consensus path anchors (EBITDA):** FY26E $62.1M · FY27E $147.7M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $444.4M · FY27E $591.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
+
+### The EV gap — our base case vs the street
+
+_No gap is struck for this name: our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.08941, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.). The consensus side alone still routes to **price-implied-only** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 9.0x as-of 2026-07-17 — trailing range 10.0–66.9x (median 19.3x) over 6 closes → LOW-CONFIDENCE (6 closes < 8q ≈2y) — floor read unreliable [15]

@@ -198,7 +198,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 7.5x vs peer median 10.8x (-31%); P/E 13x vs peer median 16.4x (-21%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-06-25 · multiples as-of 2026-07-27 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-07-28 (BLENDED: market cap 2026-07-28 + net debt 2026-07-30; the older leads because it bounds the pair) · multiples as-of 2026-07-27 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [26]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -213,6 +213,30 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Consensus path anchors (EBITDA):** FY26E $1574.0M · FY27E $1640.1M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $6426.3M · FY27E $6706.2M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
   - _⚠ multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 $1283.7M vs direct $1574.0M, residual 0.184 > 0.10)_
+
+### The EV gap — our base case vs the street
+
+_Anchor FY2026 · consensus as-of ≥2026-07-27 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-07-30 · form three-ratio_
+
+- **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
+
+|  | ratio | consensus dispersion |
+|---|---|---:|
+| revenue | 1.00x | sigma 23.56 on n=14 |
+| EBITDA margin | 0.87x | sigma 20.63 on n=12 |
+| exit multiple | 1.88x | street 6.64x at FY2026 |
+| **product = the EV gap** | **1.65x** |  |
+
+_the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an attribution of cause_
+
+- **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
+
+- **Bridge:** our EV $17,157M − net debt $1,688M = equity $15,469M ÷ 67.121M sh = **$230.46/sh** — against TEV $10,423M (as-of 2026-07-30).
+
+  - _Revenue dispersion 1.4% (high−low ÷ |median|, FY2026, as-of ≥2026-07-27)_
+  - _EBITDA dispersion 5.2% (high−low ÷ |median|, FY2026, as-of ≥2026-07-27)_
+
+  - _D&A convention: fixed $M anchor (R1, mid-cycle) — the two recipes differ and the reconciliation is an open analyst question, so it is stated rather than assumed._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.0x as-of 2026-07-17 — trailing range 7.5–37.8x (median 23.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 13.9x [15]
