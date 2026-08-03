@@ -7686,6 +7686,32 @@ street's" — on the converted basis, part of it IS a view difference). Left in 
 compute those names is the operator's call, and MVST is refused twice over on coverage anyway
 (price-implied-only, one estimate), so **only AORT and NCNO turn on the convention.**
 
+**REVIEW OF #322 — `EdgeBasis.needs` WAS DEAD METADATA, AND THE GATE PASSED EXACTLY WHAT IT WAS
+WRITTEN TO STOP (2026-08-03).** Every basis declared what evidence it requires; nothing read the
+field. So `--edge-basis watchlist` with no note SUCCEEDED and sealed *"No variant; watchlist,
+awaiting a named observation"* — **a label naming no observation, a promise the row does not keep.**
+Same class as the dead `mirror_to_frontend`: a declaration that reads like a contract and enforces
+nothing. A whitespace note even appended a dangling `· `.
+**FIXED: `needs` IS ENFORCED via an explicit `note_required` field.** Five of the six require a
+non-blank note stating exactly what `needs` says; **only `variant-expectation` is exempt, because
+its evidence is the PERSISTED GAP the machine already holds** — demanding a note there would make
+the human retype a number the row can read, and a retyped number can disagree. Pinned so a seventh
+basis cannot inherit silence by omission.
+**PLACEHOLDERS REFUSED LIKE BLANKS** (`n/a`, `TBD`, `-`, `?`, whitespace) — the Form-4
+"See Remarks" rule: a placeholder that satisfies a check is worse than a blank, because the blank
+at least fails loudly.
+**A DATELESS EVENT TRIGGER IS MARKED, NOT REFUSED.** `needs` is "a named date OR trigger" and only
+the date half is machine-checkable; refusing a dateless trigger would push the analyst to invent a
+date — the failure the escape options exist to prevent. So the row reads
+*"event or structural — trigger stated, NO DATE given · index deletion at rebalance"*: the absence
+is legible instead of assumed away.
+**SHOWN RUN, real CLI:** bare `--edge-basis watchlist` → **REFUSED**, naming what is needed; with
+`--edge-note "awaiting FQ3 gross margin above 24%"` → **LOGGED**.
+**A CONSTRUCTOR HAZARD FOUND WHILE FIXING IT:** inserting a field ahead of `note` silently re-bound
+every positional prose argument into the new slot. All six are now keyworded, so field order cannot
+re-bind again — the address-by-position class, in a dataclass.
+Gate: ruff + `mypy --strict` clean · full suite green.
+
 **A4 — THE EDGE-BASIS GATE, BUILT 2026-08-03. `vinci/edge_basis.py`, wired into
 `cli._cmd_log_verdict` BEFORE the ledger write.** No verdict without one of six bases picked
 explicitly. **SILENCE REFUSED, AGREEMENT ALLOWED** — five of the six say "no variant" out loud and

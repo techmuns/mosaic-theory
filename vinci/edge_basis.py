@@ -21,6 +21,7 @@ which basis is right, and it cannot infer one. That line is the same one `verdic
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -37,6 +38,13 @@ class EdgeBasis:
     label: str
     requires_variant: bool          # does this option assert a variant expectation?
     needs: str                      # what the human must supply alongside it
+    #: Is `needs` satisfied by a TYPED NOTE the human writes, or by evidence the gate checks
+    #: itself? Only `variant-expectation` is the latter — its `needs` is the persisted EV gap, and
+    #: demanding a note there would ask the human to retype a number the machine already holds.
+    #: DECLARED AS A FIELD BECAUSE `needs` WAS PREVIOUSLY DEAD METADATA: it read like a contract and
+    #: enforced nothing, so `--edge-basis watchlist` sealed "awaiting a named observation" while
+    #: naming none — the label made a promise the row did not keep (review of #322).
+    note_required: bool = True
     note: str = ""
 
 
@@ -48,38 +56,47 @@ EDGE_BASES: tuple[EdgeBasis, ...] = (
         "variant-expectation", "Variant expectation stated", True,
         "a stated total EV gap (the three-ratio decomposition, or the gap alone where the "
         "decomposition is routed away)",
-        "The only option that claims we forecast something the street does not. It REQUIRES the "
-        "ratios, because a variant expectation nobody can size is a mood."),
+        note_required=False,
+        note="The only option that claims we forecast something the street does not. It REQUIRES "
+             "the ratios, because a variant expectation nobody can size is a mood."),
     EdgeBasis(
         "valuation-asymmetry", "No variant; valuation asymmetry at this price", False,
         "the reward:risk grid at the entry price",
-        "We agree with consensus and think the PRICE is wrong about it. A legitimate edge and a "
-        "different one."),
+        note="We agree with consensus and think the PRICE is wrong about it. A legitimate edge, "
+             "and a different one."),
     EdgeBasis(
         "distribution", "No variant; the distribution, not the central case", False,
         "which tail, and why the market is mispricing it",
-        "The central case may be consensus while the spread of outcomes is not."),
+        note="The central case may be consensus while the spread of outcomes is not."),
     EdgeBasis(
         "event-structural", "No variant; event or structural", False,
         "a named date or trigger",
-        "A catalyst, a forced seller, an index event. Must name WHEN, or it is a hope."),
+        note="A catalyst, a forced seller, an index event. Must name WHEN, or it is a hope."),
     EdgeBasis(
         "watchlist", "No variant; watchlist, awaiting a named observation", False,
         "the observation being waited for",
-        "Honest not-yet. Refusing this option would push every undecided name into a fabricated "
-        "variant, which is the failure this gate exists to prevent."),
+        note="Honest not-yet. Refusing this option would push every undecided name into a "
+             "fabricated variant, which is the failure this gate exists to prevent."),
     EdgeBasis(
         "variant-vs-cross-section", "Variant vs the cross-section", True,
         "the cross-sectional claim, in the analyst's own words",
-        "A SLOT ONLY until A5 exists. Renders as ANALYST-ASSERTED, MACHINE VERIFICATION PENDING — "
-        "the machine cannot check a cross-sectional claim yet, and a slot that pretended otherwise "
-        "would be the false-confirmation defect."),
+        note="A SLOT ONLY until A5 exists. Renders as ANALYST-ASSERTED, MACHINE VERIFICATION "
+             "PENDING — the machine cannot check a cross-sectional claim yet, and a slot that "
+             "pretended otherwise would be the false-confirmation defect."),
 )
 
 BASIS_BY_KEY: dict[str, EdgeBasis] = {b.key: b for b in EDGE_BASES}
 
 #: Rendered beside option 6 wherever it appears, until A5 can verify a cross-sectional claim.
 PENDING_MARK = "analyst-asserted, machine verification pending"
+
+#: Notes that are technically non-blank and say nothing. Refused for the same reason `officerTitle`
+#: refuses "See Remarks": a placeholder that satisfies a check is worse than a blank, because the
+#: blank at least fails loudly.
+_PLACEHOLDER_NOTES = frozenset({"-", "--", "n/a", "na", "none", "tbd", "todo", "?", ".", "x"})
+
+#: A date-shaped token — an ISO date or a bare four-digit year.
+_DATEISH = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|20\d{2}|[12]?[0-9Q]Q\s?20\d{2})\b", re.I)
 
 
 def _gap_statement(ev_gap: Any) -> tuple[bool, str]:
@@ -130,6 +147,18 @@ def require_edge_basis(basis_key: str | None, *, ev_gap: Any, note: str | None =
         raise EdgeBasisError(
             f"unknown edge basis {basis_key!r} — choose one of {sorted(BASIS_BY_KEY)}")
 
+    # `needs` IS NOW ENFORCED. It described a contract and checked nothing, so every no-variant
+    # option sealed a bare label: "awaiting a named observation" with no observation, "event or
+    # structural" with no date. That is precisely the non-actionable edge this gate exists to
+    # refuse — the gate was passing exactly what it was written to stop.
+    clean = (note or "").strip()
+    if basis.note_required and (not clean or clean.lower().strip(" .") in _PLACEHOLDER_NOTES):
+        raise EdgeBasisError(
+            f"edge basis {basis.key!r} requires --edge-note stating {basis.needs}. "
+            f"Given: {note!r}. The label alone ({basis.label!r}) asserts that evidence exists "
+            "without recording it — a claim nobody can check later is the same defect as no claim, "
+            "with the appearance of one.")
+
     if basis.key == "variant-expectation":
         ok, how = _gap_statement(ev_gap)
         if not ok:
@@ -145,6 +174,13 @@ def require_edge_basis(basis_key: str | None, *, ev_gap: Any, note: str | None =
     else:
         line = basis.label
 
-    if note:
-        line += f" · {note.strip()}"
+    # EVENT/STRUCTURAL ASKS FOR "a named date OR trigger", and only the date half is machine-
+    # checkable. Refusing a dateless trigger would push the analyst to invent a date — the same
+    # failure the variant option's escapes exist to prevent — so the absence is MADE VISIBLE
+    # instead: the row says the date is missing rather than letting the reader assume one.
+    if basis.key == "event-structural" and not _DATEISH.search(clean):
+        line += " — trigger stated, NO DATE given"
+
+    if clean:
+        line += f" · {clean}"
     return line
