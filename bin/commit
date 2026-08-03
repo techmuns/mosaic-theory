@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# GATE-THEN-COMMIT. Runs the full offline gate and commits ONLY on exit 0.
+#
+# WHY THIS EXISTS: three red pushes in one session, each the same shape — the gate ran, gave a
+# correct signal, and the commit was chained into the same invocation so it ran regardless. D16
+# ("any command whose exit status is consumed by a pipe is not a gate") was cited three times and
+# violated three times. A rule that fails three times is a note, not a rule; this makes the
+# habitual behaviour correct by construction instead.
+#
+#   bin/commit -m "message"      # or any git-commit args
+set -euo pipefail
+VENV="${VENV:-/Users/work/Documents/GitHub/mosaic-theory/.venv/bin/python}"
+cd "$(git rev-parse --show-toplevel)"
+
+echo "── ruff ────────────────────────────────────────────"
+"$VENV" -m ruff check vinci tests frontend
+echo "── mypy --strict (vinci) ───────────────────────────"
+"$VENV" -m mypy --strict vinci
+echo "── pytest -m 'not network' ─────────────────────────"
+# NOT piped. A pipe would consume the exit status and re-create the very defect this file closes.
+find . -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null || true
+"$VENV" -m pytest -m "not network" -p no:warnings --tb=short -q
+
+echo "── gate green; committing ──────────────────────────"
+git commit "$@"

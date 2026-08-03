@@ -36,7 +36,11 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
     shutil.copy(src, work)
     shutil.copy(src.with_name("dossier.md"), tmp_path / "dossier.md")
 
-    assert refresh_dossier(work, transform=consensus_transform(ticker)) is True
+    # NOT `is True`. The first cut asserted the refresh CHANGED something, which encoded
+    # "before the fleet pass" as an invariant — and the fleet pass then made it false. What
+    # matters is that the levels are IN the artifact, whether this write put them there or a
+    # previous one did. The read-back is the assertion; `changed` is an implementation detail.
+    refresh_dossier(work, transform=consensus_transform(ticker))
 
     # THE ARTIFACT, not the transform's return value.
     written = json.loads(work.read_text())
@@ -59,7 +63,10 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
 def test_an_unrefreshed_dossier_reads_as_none_not_empty(tmp_path) -> None:  # type: ignore[no-untyped-def]
     """`None` means NOT REFRESHED; `[]` would mean THE STREET HAS NO VIEW. Different claims, and
     the committed eleven are all in the first state until the fleet pass runs."""
-    src = ROOT / "data" / "dossiers" / "AORT" / "dossier.json"
+    # FUBO, not AORT. AORT received the fleet pass; FUBO is sealed by its standing rule and is
+    # therefore the ONLY name still in the unrefreshed state — which also makes it the only name
+    # exercising omit-when-None on the write path.
+    src = ROOT / "data" / "dossiers" / "FUBO" / "dossier.json"
     model = Dossier.model_validate_json(src.read_text())
     assert model.mechanical.consensus_context.consensus_levels is None
 
@@ -88,3 +95,32 @@ def test_a_broken_bundle_fails_loud_and_a_missing_one_skips(tmp_path, monkeypatc
     monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(_corrupt))
     with pytest.raises(ValueError, match="truncated"):
         consensus_transform("NOPE")(mech)
+
+
+def test_every_dossier_carries_levels_except_the_standing_rule_exemptions() -> None:
+    """EXEMPTIONS, NOT A ROSTER. A hardcoded list of ten lets a FUTURE name's absence pass
+    silently — the roster would still be ten and still be green. Keyed on the reason instead, so
+    a new dossier is in scope the day it lands and FUBO self-clears if its rule ever lifts.
+
+    MVST IS CARRIED, DELIBERATELY. Its consensus is `2/2` on Revenue and `1/1` on EBITDA — thinly
+    covered DATA, not absence. The extraction layer records; the render layer judges. Treating
+    thin coverage as missing would delete the evidence that coverage is thin."""
+    import json
+
+    #: WHY each name is exempt — never a bare list. FUBO's record is sealed by its standing rule
+    #: (STATE.md 2026-07-22) until a post-combination re-assembly exists, so it cannot receive A1.
+    exempt = {"FUBO": "standing rule: no record written until a post-combination re-assembly"}
+
+    missing = []
+    for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        t = f.parent.name
+        cc = json.loads(f.read_text())["mechanical"].get("consensus_context") or {}
+        has = bool(cc.get("consensus_levels"))
+        if t in exempt:
+            assert not has, f"{t} carries levels but is exempt ({exempt[t]}) — the rule was broken"
+            continue
+        if not has:
+            missing.append(t)
+    assert not missing, (
+        f"dossiers without consensus_levels and without an exemption: {missing} — either the "
+        "fleet pass missed them, or they need an exemption recorded WITH ITS REASON")

@@ -944,6 +944,76 @@
       "benchmark_basis": "cap-band: $5.2B @ 2026-07-06 → mid ($4–25B) → MDY"
     },
     "consensus_context": {
+      "consensus_levels": {
+        "Revenue": [
+          {
+            "fy": "2026",
+            "median": 5722.993,
+            "high": 5765.06275,
+            "low": 5674.613,
+            "std_dev": 22.62865,
+            "estimates": "19/19"
+          },
+          {
+            "fy": "2027",
+            "median": 6041.0,
+            "high": 6180.0,
+            "low": 5944.099,
+            "std_dev": 53.63739,
+            "estimates": "19/19"
+          },
+          {
+            "fy": "2028",
+            "median": 6438.3,
+            "high": 6671.39959,
+            "low": 6279.44,
+            "std_dev": 105.67807,
+            "estimates": "11/11"
+          },
+          {
+            "fy": "2029",
+            "median": 6616.0,
+            "high": 6616.0,
+            "low": 6616.0,
+            "std_dev": 0.0,
+            "estimates": "1/1"
+          },
+          {
+            "fy": "2030",
+            "median": 6881.0,
+            "high": 6881.0,
+            "low": 6881.0,
+            "std_dev": 0.0,
+            "estimates": "1/1"
+          }
+        ],
+        "EBITDA": [
+          {
+            "fy": "2026",
+            "median": 950.09945,
+            "high": 957.13,
+            "low": 940.36059,
+            "std_dev": 4.9859,
+            "estimates": "7/12"
+          },
+          {
+            "fy": "2027",
+            "median": 1022.27668,
+            "high": 1064.05053,
+            "low": 1007.241,
+            "std_dev": 17.9425,
+            "estimates": "7/12"
+          },
+          {
+            "fy": "2028",
+            "median": 1105.849,
+            "high": 1179.93991,
+            "low": 1063.9719,
+            "std_dev": 42.50874,
+            "estimates": "4/7"
+          }
+        ]
+      },
       "eps_trend": {
         "value": "EPS (GAAP) FY 2026: 0↑/4↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",

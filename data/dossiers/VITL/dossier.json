@@ -840,6 +840,60 @@
       "benchmark_basis": "cap-band: $0.5B @ 2026-07-06 → small (<$4B) → IWM"
     },
     "consensus_context": {
+      "consensus_levels": {
+        "Revenue": [
+          {
+            "fy": "2026",
+            "median": 774.6,
+            "high": 789.7,
+            "low": 764.6,
+            "std_dev": 6.92849,
+            "estimates": "9/10"
+          },
+          {
+            "fy": "2027",
+            "median": 838.35,
+            "high": 987.0,
+            "low": 798.7,
+            "std_dev": 51.22862,
+            "estimates": "10/10"
+          },
+          {
+            "fy": "2028",
+            "median": 946.4,
+            "high": 946.4,
+            "low": 946.4,
+            "std_dev": 0.0,
+            "estimates": "1/1"
+          }
+        ],
+        "EBITDA": [
+          {
+            "fy": "2026",
+            "median": 3.3,
+            "high": 9.018,
+            "low": 0.315,
+            "std_dev": 2.43698,
+            "estimates": "9/10"
+          },
+          {
+            "fy": "2027",
+            "median": 50.5,
+            "high": 64.9,
+            "low": 10.061,
+            "std_dev": 16.42679,
+            "estimates": "9/10"
+          },
+          {
+            "fy": "2028",
+            "median": 74.0,
+            "high": 85.0,
+            "low": 63.0,
+            "std_dev": 11.0,
+            "estimates": "2/2"
+          }
+        ]
+      },
       "eps_trend": {
         "value": "EPS (GAAP) FY 2026: 0↑/1↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
