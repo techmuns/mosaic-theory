@@ -456,6 +456,23 @@ def assemble_one(
             flags += contradiction_flags(synthesis, mech)
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
+    # (A2) THE EV GAP — ASSEMBLY MUST PRODUCE IT, or a re-assembly DROPS it.
+    #
+    # REVIEW OF #324: the first cut PINNED the asymmetry instead of closing it — a test that passes
+    # while a fresh assembly writes `ev_gap: null` and reddens only once somebody fixes it. That is
+    # a tombstone, not a guard: it offers no protection to the queued SMPL re-assembly, which is
+    # the exact event it described.
+    #
+    # RECOMPUTED, NOT CARRIED FORWARD. Copying the committed value across an assembly would put a
+    # gap struck on OLD cap/net-debt/consensus beside NEW ones — the frozen-beside-live defect this
+    # repo has already ruled on. THE SAME TRANSFORM the refresh path uses runs here on the FRESH
+    # mech, so there is ONE definition and the two write paths cannot disagree by construction —
+    # which is what `test_consensus_parity` now asserts as a VALUE comparison.
+    from vinci.dossier.refresh import ev_gap_transform
+    from vinci.dossier.schemas import MechanicalLayer
+
+    mech = MechanicalLayer.model_validate(
+        ev_gap_transform(ticker)(mech.model_dump(mode="json")))
     llm_log = "\n\n".join(lg for lg in logs if lg)
     # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
     # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
