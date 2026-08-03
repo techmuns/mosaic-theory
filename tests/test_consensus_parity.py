@@ -167,8 +167,19 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
 
     assert after is not None, f"{ticker}: a re-assembly would DROP the persisted gap"
     assert after["status"] == "computed"
+    # THE RATIOS ARE THE GAP, and they are environment-independent: struck from the STORED mech and
+    # the committed record, with no workbook read. This half of the claim holds everywhere.
     assert after["ratios"] == pytest.approx(before["ratios"]), (
         f"{ticker}: the re-assembled gap differs from the committed one")
+
+    # THE VINTAGES DEPEND ON THE LICENSED EXPORT, and CI caught this — green here, red there, for
+    # the THIRD time from that class. `consensus_as_of` is read off the estimates workbook, and the
+    # fixture deliberately strips `ev_gap` (that is what assembly hands over), so there is no prior
+    # stamp to carry forward either. Without the bundle the correct answer is None.
+    # NOT A LIVE CONCERN, and the distinction is why this is conditioned rather than dropped: a
+    # real assembly cannot run without the bundle, so the None branch is reachable only from a test.
+    if not LocalFolderStore.from_config(get_config()).files(ticker):
+        pytest.skip(f"licensed CIQ bundle for {ticker} unavailable — vintages unverifiable here")
     assert after["vintages"] == before["vintages"]
 
 

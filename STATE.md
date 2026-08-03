@@ -7715,6 +7715,14 @@ nothing** — it offered the queued SMPL re-assembly exactly no cover from the e
 so both write paths run the SAME builder and cannot disagree by construction. **RECOMPUTED, NEVER
 CARRIED FORWARD** — copying the committed gap across an assembly would put one struck on old
 cap/net-debt/consensus beside new ones, the frozen-beside-live defect.
+**AND CI CAUGHT A THIRD LOCAL-GREEN DEFECT FROM THE LICENSED-EXPORT-ABSENT CLASS.** The new test
+strips `ev_gap` (that is what assembly hands over), so with no bundle there is neither a workbook
+to read `consensus_as_of` from NOR a prior stamp to carry forward — correct answer None, and the
+vintage comparison went red in CI while passing here. **Split by what each half depends on:** the
+RATIOS are struck from the stored mech and the committed record and are asserted EVERYWHERE
+(mutation-verified in CI's own condition); the VINTAGES depend on the export and are asserted only
+where it exists. Not a live concern — a real assembly cannot run without the bundle — which is why
+it is conditioned rather than dropped.
 **AND THE FIRST REPLACEMENT PIN WAS ALSO WRONG, caught by its own mutation:** it searched the
 assembly source for the NAME `ev_gap_transform`, and deleting the two lines that apply it left the
 `import` behind — **the pin passed on a build that had stopped calling it.** An import is not a
