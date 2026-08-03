@@ -12476,6 +12476,61 @@ verify)`. **Verification has nowhere to live, so it is re-requested on every ass
 
 **THE THREE RULINGS WERE GIVEN 2026-08-04. Recorded here as the decisions of record; the pending
 statements below are kept for the reasoning that produced them.**
+**§D SOURCING STEP — DISCHARGED 2026-08-04. THE FIGURE IS UNFINDABLE AS A STORED VALUE, AND THE
+OPERATOR'S OWN SUSPICION IS CONFIRMED: it was their working, not the repo's.**
+**Searched by OBJECT, not by label** (the `13.8`/`N1`/`CHRO` lesson): every numeric in margin range
+across `dossier.json` AND `frontend/scenarios/SMPL.json`, whatever it was named. **`~13.8%` exists
+at exactly ONE place in the repo — `scenarios[1].reason`, the base leg's free-text analyst prose.**
+Not a reference, not a field, no unit, no source. The margin axis carries FIVE references
+(15.45 / 15.51 / 9.58 / 17.35 / 15.01) and **none is ~13.8**. The axis `method` sentence does not
+contain the number either — only the leg reason does, which is why the rendered brief (`md:57`)
+shows it and the anchor card (`md:446`) does not.
+**But its intended OBJECT is identifiable from its own description** — *"the trailing clean margin
+through the third quarter"* = LTM through FQ3 FY2026 (ended May-30-2026) — and the repo produces
+TWO routes to that object, which disagree.
+
+**THE CANDIDATE BASES THE REPO CAN ACTUALLY PRODUCE (recomputed offline from cached EDGAR facts +
+the committed artifact — measured, not read off a label):**
+
+| candidate | value | window | accounting basis | basis ASSERTED or INHERITED? |
+|---|---|---|---|---|
+| `anchor.margin.value` | **15.4481%** | 8 FY (FY2018–FY2025) | EDGAR `OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax` | **ASSERTS** — a `basis` field (*"operating margin (EBIT / revenue)"*), both tags named in `source`, `anchor_years: 8`. **Verified MEDIAN, exact to 4dp** |
+| ref[1] *"7yr clean median (FY2025 adjusted)"* | **15.51%** | 7 FY (FY2019–FY2025) | same EDGAR tags, FY2025 adjusted ex the $60.9M impairment | **STATES** its derivation in `source` but is **NOT a repo-computed field**. **Verified MEDIAN of the last 7 FY = 15.5107%** |
+| `own_history[0].implied_ebit_margin` | **13.8933%** | trailing, as-of 2026-07-23 | CIQ Multiples: `TEV/LTM Revenue ÷ TEV/LTM EBIT` | **INHERITS** — CIQ's EBIT definition; nothing in this repo asserts it excludes unusuals |
+| `quality.margin_trend` LTM route | **12.8845%** | LTM to May-30-2026 | CIQ Income Statement absolutes: EBITDA 217 / revenue 1,392 = 15.5891%, less implied D&A 2.7046% | **INHERITS** |
+
+**THREE THINGS THAT MATTER FOR THE CHOICE, and none was visible before this pass:**
+1. **The two CIQ routes to the SAME trailing object differ by 1.01pp** (13.89% vs 12.88%). *"The
+   trailing margin"* is not one number even inside CIQ — a ruling that picks "the CIQ trailing
+   figure" has to say WHICH.
+2. **The FY2025 adjustment does not move the 7yr median at all** — 15.5110% raw and 15.5110%
+   adjusted, because the median is the 4th of 7 either way. The *"(FY2025 adjusted)"* qualifier on
+   that reference is doing no arithmetic work. **And 15.511% is FY2024's margin exactly**, the
+   middle observation.
+3. **The CIQ figures demonstrably exclude the WRITEDOWN** — CIQ LTM EBITDA is +217 on 1,392 revenue
+   while trailing GAAP operating income is negative, since the −$391.9M sits inside GAAP operating
+   income. That is evidence about the writedown SPECIFICALLY. It is **not** evidence of "clean" in
+   the ex-all-unusuals sense the page claims.
+
+**A COINCIDENCE NAMED SO IT CANNOT BECOME PROVENANCE (the `13.837177` lesson, and this one is
+sharper): FY2019's operating margin is 13.875% — 0.075pp from "about 13.8%", CLOSER than the
+trailing candidate at 0.093pp.** A numeric-proximity argument would therefore pick FY2019 — a
+fiscal year seven years back, which flatly contradicts *"trailing … through the third quarter"*.
+**The number matched and the description did not.** Listed as a decoy, never as a candidate.
+
+**RE-STRIKING THE MARGIN IS A DECISION-PATH CHANGE — flagged, not done.** `scenarios.py:752–754`:
+`reward = base − spot` and `ratio = reward / risk` are computed from `per["base"].value_per_share`,
+which the base margin sets. Moving it moves reward:risk and therefore the 2:1 bar. **That needs a
+real shown run before merge, not a records fix.**
+
+**CORRECTION TO MY OWN EARLIER FRAMING, per the operator:** the thirty-point GAAP-vs-CIQ spread is
+evidence the two SOURCES differ in basis — **not** the range of plausible normalized margins, and
+trailing GAAP-with-the-writedown is **context, not a candidate basis** for a normalized margin. On
+the base target the candidates give ~$25.46 (13.89%) and ~$28.51 (15.51%) against the current
+$25.67 — about 12%, with 14% near the conservative end. **So "takes the flattering side" does not
+hold, and it is withdrawn. The defect is that the derivation is UNSTATED, not that it is aggressive.**
+
+**THE RULING AS ORIGINALLY POSED (kept for the reasoning):**
 - **§D — SOURCING FIRST.** *"Bind ~13.8% to a source or declare it unfindable. Only once it's bound
   is the basis mine to choose."* The `own_history[0].implied_ebit_margin = 0.138933` candidate is a
   0.06pp match that nothing binds, and **whether CIQ's EBIT definition excludes unusuals is asserted
