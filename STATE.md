@@ -7676,11 +7676,18 @@ page; **P4 pt2 is the mirror — closed on the page with no guard behind it** (S
 `Spot $10.53 (entry-vintage — frozen at underwrite 2026-07-27)` beside a separately-stamped live
 `CMP $10.22 (2026-07-24)`; nothing prevents the false stamp returning). A single "closed" column can
 express neither.
-**SCORE, DERIVED NOT RESTATED** (the retired-score-line rule applies to this too — it lives in the
-render's per-item rows, not as a number to keep in sync): of the thirteen platform failures, **6 BOTH ·
-1 code-only · 1 artifact-only · 4 open · 1 not-a-defect**; P6's suppliers half is an unseparated
-fourteenth and is open. Of the seven name-level findings, **1 BOTH (N7) · 1 queued-and-blocked (N2) ·
-5 untriaged**.
+**SCORE: NOT HERE. `disposition.md` §E, derived from its own per-item rows — this file carries NO
+aggregate, by rule.** The retired-score-line rule (2026-08-01) binds this entry as much as the one it
+replaced: a count restated away from the rows it summarises is a count that will drift from them.
+**AND THIS PARAGRAPH IS THE PROOF — REVIEW FINDING ON #317, and it is mine.** The first cut headed
+itself *"SCORE, DERIVED NOT RESTATED"* and then restated the whole score, four lines under a sentence
+saying it must not be. **The render exists because a count kept in prose had been wrong four times,
+and its own STATE record opened a fifth copy of that count in the same PR.** Not a slip of wording:
+restating is easy precisely because a summary reads as harmless, which is why the remedy is REMOVAL
+rather than a lint. That is the precedent this repo already set on 2026-08-01 — the score line was
+deleted, not guarded — so no check ships here; the rule holds by there being nowhere else the number
+lives. **FOR THE NEXT SESSION: the urge to paste the totals back into this entry IS the failure mode.
+Follow the pointer.**
 **ARTIFACT EXCEPTIONS, NAMED RATHER THAN NETTED:** **FUBO** (sealed, assembled 07-27 — the only page
 carrying 19a's pre-fix caveat, and its own `known_wrong.json` names that item) and **MVST** (assembled
 07-10, since re-serialised not re-assembled). **MVST'S `material` KEY IS A SCHEMA DEFAULT, NOT A

@@ -314,10 +314,22 @@ column cannot express either, which is why the four states are the render rather
 
 ---
 
-## E. Score
+## E. Score — and this is the ONLY place it exists
 
-Derived from the per-item rows above, not carried as a number — the previous score line was retired
-2026-08-01 for drifting, and this one would drift the same way if restated anywhere else.
+**Do not copy these totals anywhere.** Not into STATE, not into a PR body, not into a handoff. The
+previous score line was retired 2026-08-01 for drifting; a count restated away from the rows it
+summarises will drift from them, and the drift is invisible because a total looks like a fact rather
+than a derivation.
+
+Every count below **names the items behind it**, so it can be checked against §A and §B in one pass.
+That is what makes it a reading of this document rather than a second source — and it is exactly the
+property a copy loses. Re-derive it here; never carry it out.
+
+**This warning is written from a failure, not a principle.** The first cut of this PR's STATE record
+was headed *"SCORE, DERIVED NOT RESTATED"* and then restated the whole score four lines later — a
+fifth prose copy of the number whose four previous copies are the reason this render was commissioned.
+Caught in review of #317 and removed. The wording above was not strong enough to stop its own author
+in the same PR, which is why it now reads as a prohibition rather than an observation.
 
 Of the **thirteen** platform failures: **six BOTH** (P1 pt1, P5 pt1, P5 pt2, P6 routing, P7 pt1, P7 pt2),
 **one CODE-only** (P1 pt2), **one ARTIFACT-only** (P4 pt2), **four OPEN** (P2, P3 pt1, P3 pt2, P4 pt1),
