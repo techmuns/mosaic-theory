@@ -475,7 +475,8 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
         _card = _read_rec(d2.ticker)
     except FileNotFoundError:
         _card = None
-    (ddir / "dossier.md").write_text(render_markdown(d2, card=_card))
+    (ddir / "dossier.md").write_text(
+        render_markdown(d2, card=_card, dossiers_root=ddir.parent))
     print(f"  midcycle attached → {ddir} (anchors"
           f"{' + scenario grid + ratio' if priced else ' only'})")
     return 0

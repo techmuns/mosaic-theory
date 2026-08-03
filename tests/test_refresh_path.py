@@ -67,11 +67,29 @@ def test_a_sealed_record_re_renders_its_page_but_never_its_record(tmp_path: path
     record_before = copy.read_bytes()
     stale = "stale page — the renderer has moved on\n"
 
+    # THE SIDECAR BESIDE THE RECORD IS THE SOURCE — proven, not assumed. The first cut of this test
+    # copied FUBO into tmp and asserted nothing about the banner; `render_markdown` read the
+    # CONFIGURED tree, which happens to hold FUBO's real marker, so the page looked right for a
+    # reason unrelated to the isolated copy. A marker whose text exists ONLY here cannot be
+    # satisfied that way: if the render still reads the configured tree, SENTINEL is absent.
+    sentinel = "SENTINEL-a1b2c3 — this text exists only in the isolated copy"
+    marker = json.loads((folder / "known_wrong.json").read_text())
+    marker["items"] = [{"claim": sentinel, "known_false": "pinned by the isolation test"}]
+    (folder / "known_wrong.json").write_text(json.dumps(marker, indent=2))
+
     (folder / "dossier.md").write_text(stale)
     assert refresh_dossier(copy) is True, "a sealed record's page did not re-render"
     assert copy.read_bytes() == record_before, (
         "the SEALED record itself was rewritten — the re-render path must never touch the JSON")
-    assert (folder / "dossier.md").read_text() != stale
+    page = (folder / "dossier.md").read_text()
+    assert page != stale
+    assert "KNOWN-WRONG" in page, (
+        "the regenerated page lost its known-wrong banner — a sealed record rendered CLEAN, which "
+        "is the exact state the seal exists to prevent")
+    assert sentinel in page, (
+        "the banner rendered, but NOT from the sidecar beside the record — the marker text came "
+        "from the configured tree, so the seal decision (path-relative) and the banner (config-"
+        "relative) have two different sources of truth")
 
     # and a second call is a no-op, so the pass does not churn the page on every run
     assert refresh_dossier(copy) is False, "re-rendering an up-to-date sealed page reported a move"

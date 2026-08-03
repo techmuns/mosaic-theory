@@ -213,7 +213,8 @@ def _rerender_only(path: Path) -> bool:
 
     model = Dossier.model_validate(json.loads(path.read_text()))
     md_path = path.with_name("dossier.md")
-    new_md = render_markdown(model, card=_read_scenario_card(model.ticker))
+    new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
+                             dossiers_root=path.parent.parent)
     if md_path.exists() and md_path.read_text() == new_md:
         return False
     md_path.write_text(new_md)
@@ -294,7 +295,8 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     if isinstance(cc, dict) and cc.get("consensus_levels") is None:
         cc.pop("consensus_levels", None)
     new_json = json.dumps(payload, indent=2, ensure_ascii=False)
-    new_md = render_markdown(model, card=_read_scenario_card(model.ticker))
+    new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
+                             dossiers_root=path.parent.parent)
     md_path = path.with_name("dossier.md")
     old_md = md_path.read_text() if md_path.exists() else None
     changed = new_json != path.read_text() or (old_md is not None and new_md != old_md)

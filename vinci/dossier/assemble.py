@@ -184,7 +184,8 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
     (folder / "dossier.md").write_text(
-        render_markdown(dossier, card=_read_scenario_card(dossier.ticker)))
+        render_markdown(dossier, card=_read_scenario_card(dossier.ticker),
+                        dossiers_root=folder.parent))
     (folder / "llm_call.log").write_text(llm_log or "(no LLM call — synthesis skipped)")
     return folder
 

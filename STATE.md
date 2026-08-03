@@ -12556,6 +12556,25 @@ never written** (verified byte-identical, banner intact); a `transform` — an a
 still RAISES. Pinned both polarities, and both mutations CAUGHT (seal broken / re-render inert).
 **The shape: a guard whose only satisfying action was impossible for the name it guarded.**
 
+**AND THE FIX RE-CREATED THE DEFECT IT SERVED — caught on review, one layer down.** The seal DECISION
+is PATH-relative (`path.parent/known_wrong.json`); the banner RENDER was CONFIG-relative
+(`_known_wrong_lines` defaulted to `get_config().data_dir/dossiers`) because `render_markdown` had
+no root at all. **Two sources of truth for one fact.** Re-rendering a sealed dossier in another
+checkout, a staging tree or a temp copy would decide *sealed* from the sidecar beside it and then
+render the banner from somewhere else — **dropping it when the configured tree has no marker for
+that ticker, or pasting an UNRELATED name's marker onto the page.** That is the FUBO defect exactly
+(banner present in one artifact, absent from the one served), re-created by the fix meant to serve
+it. `render_markdown` now takes `dossiers_root` and every writer passes the root it is writing into
+(assemble, the midcycle CLI writer, both refresh paths). *(`cli.py`'s peek builds its path from
+config itself, so it is unambiguous and unchanged.)*
+**AND MY PIN MASKED IT, for the reason the operator named:** it copied FUBO to a temp dir and
+asserted nothing about the banner — the render read the CONFIGURED tree, which holds FUBO's real
+marker, so the page looked right for a reason unrelated to the isolated copy. Now the isolated
+sidecar carries a SENTINEL string that exists nowhere else, so a config-tree read cannot satisfy it.
+**Both mutations CAUGHT, including the reported bug itself** (render ignores the passed root).
+**The lesson is the session's recurring one in a new place: a test whose subject and whose oracle
+come from different trees proves nothing about either.**
+
 **RIDER DECLINED AS NOT-A-LINE, with the blocker named (operator condition: "if it's a line").**
 Marking SMPL's base margin as an unsourced derivation has the right home already — `AxisNote`
 (`scenarios.py:230`), *"a dated analyst FINDING about one assumption axis"*, which exists BECAUSE of

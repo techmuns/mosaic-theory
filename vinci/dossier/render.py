@@ -3360,7 +3360,8 @@ def _known_wrong_lines(ticker: str, root: Path | None = None) -> list[str]:
 
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
-                    card: ScenarioRecord | None = None) -> str:
+                    card: ScenarioRecord | None = None,
+                    dossiers_root: Path | None = None) -> str:
     """(D1 · re-ordered 2026-07-27) DECISION order. Analysis reads: what broke → business quality
     → the argument → catalyst calendar → valuation → peer comps → operating trajectory → the street
     → leverage & survival → analyst caveats. The old "mechanical layer" wrapper (a grouping by who
@@ -3387,7 +3388,16 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         "",
     ]
     # BEFORE the brief: a known-wrong marker has to reach the reader before the numbers do.
-    out += _known_wrong_lines(d.ticker)
+    # THE BANNER MUST COME FROM BESIDE THE RECORD BEING RENDERED, not from the configured tree.
+    # `refresh_dossier` decides a record is SEALED from `path.parent/known_wrong.json` — a
+    # PATH-relative fact — while this lookup defaulted to `get_config().data_dir/dossiers`, a
+    # CONFIG-relative one. Two sources of truth for one fact: rendering a sealed dossier in another
+    # checkout, a staging tree or a temp copy would decide "sealed" from the sidecar beside it and
+    # then render the banner from somewhere else — dropping it when the configured tree has no
+    # marker for that ticker, or worse, pasting an UNRELATED name's marker onto the page. That is
+    # the FUBO defect exactly (banner in one artifact, absent from the served one), re-created by
+    # the fix meant to serve it. Every writer passes the root it is writing into.
+    out += _known_wrong_lines(d.ticker, dossiers_root)
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
