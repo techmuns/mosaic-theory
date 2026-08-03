@@ -7751,12 +7751,31 @@ material row). Recorded, not chosen.
 (unsatisfiable, as five rolls showed); not per-ROW (satisfied by citing $60.9M beside a row showing
 −392, which IS the original audit defect). **The asymmetry is the reason:** citing 60.9 without
 391.9 understates the charge by 6.4×; citing 391.9 without 60.9 misleads nobody, because the
-component is contained in the total. **KNOWN LIMIT, accepted:** a row whose LARGEST value is old
-and whose RECENT value is small demands a stale event and stays silent on the current one. No such
-row exists in the eleven; if one appears the keying is wrong for it. **The original defect is the
-acceptance pin** — a synthesis citing only −60.9 must still refuse, on a FROZEN fixture (the
-committed artifact now passes, so it cannot carry the pin). Six pins added; three alternative
-keyings (per-VALUE, per-ROW, smallest-value) mutation-checked and **all CAUGHT**.
+component is contained in the total. **The original defect is the acceptance pin** — a synthesis
+citing only −60.9 must still refuse, on a FROZEN fixture (the committed artifact now passes, so it
+cannot carry the pin). Six pins added; three alternative keyings (per-VALUE, per-ROW,
+smallest-value) mutation-checked and **all CAUGHT**.
+
+**AMENDED THE SAME DAY, ON REVIEW — AND THE OPERATOR'S OBJECTION IS THE INTERESTING PART.** I had
+recorded a KNOWN LIMIT and shipped it as an accepted pass: a row whose LARGEST value is old and
+whose RECENT value is small demands the stale event and stays silent on the current one, with a
+test (`test_the_known_limit_is_a_limit_not_a_bug`) codifying exactly that. **The containment
+argument that justified largest-only — "60.9 is a COMPONENT of 391.9" — is a fact about SMPL, not a
+fact the ROW carries, while `max()` applies to every row.** Two UNRELATED impairments in different
+periods (an old $500M, a current $25M) break it, and **a materiality guard is the one place a known
+hole must not ship as accepted risk.** RULING: demand the LARGEST material value **and** the LATEST
+ACTUAL one. **Satisfiability survives because the demand is keyed by VALUE, not by cell** — where
+the largest figure IS the latest, the two collapse into one citation, which is the entire live
+corpus (SMPL −391.9, CNXC −1,523.3). **Measured after the amendment: 0 of 11 refuse**, so it costs
+nothing today and refuses precisely the shape that motivated it; no re-assembly needed.
+**Largest-only is now itself a mutation the suite CATCHES** (4/4 caught: largest-only, latest-only,
+per-VALUE, smallest-value). **The "latest actual = last non-forecast column" assumption is pinned
+structurally rather than commented** — `test_actual_columns_precede_estimate_columns` asserts every
+committed summary's `is_estimate` mask is non-decreasing across the corpus.
+**THE GENERAL LESSON, and it is the session's shape again: a rule was justified by a relationship
+that was TRUE OF THE EXAMPLE and ABSENT FROM THE DATA.** Face validity on one name is not face
+validity on the corpus — the check is whether the DATA carries the relation the rule assumes, not
+whether the relation happens to hold where you looked.
 **RE-MEASURED AFTER THE FIX, on the eleven committed artifacts: still 1 of 11 — SMPL alone,
 demanding −391.9.** Nothing new refuses; the change can only shrink the demand and did.
 **SMPL THEN CONVERGED ON ATTEMPT 1** (bound was 5). The non-convergence above was a property of the

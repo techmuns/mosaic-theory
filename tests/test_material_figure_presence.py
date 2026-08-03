@@ -386,11 +386,15 @@ def test_the_original_audit_defect_still_refuses() -> None:
     assert _uncited("A $60.9M non-cash Atkins impairment drove the FY25 loss.")
 
 
-def test_citing_the_largest_alone_is_enough() -> None:
-    """THE ASYMMETRY, AND ITS REASON. Citing 60.9 without 391.9 UNDERSTATES by 6.4x; citing 391.9
-    without 60.9 misleads nobody, because 60.9 is a COMPONENT of it. The harm runs one way, so the
-    rule does too — and this is what makes the guard satisfiable at all."""
+def test_citing_the_largest_alone_is_enough_when_it_is_also_the_latest() -> None:
+    """WHY THE GUARD IS SATISFIABLE AT ALL — and note the qualifier, which is load-bearing.
+
+    On SMPL's row the largest material figure (LTM −391.9) IS the latest actual, so the two demands
+    collapse to ONE citation. It is NOT a general licence to cite only the biggest number: where the
+    largest is stale, `test_a_stale_largest_does_not_excuse_the_current_period` requires both.
+    """
     assert _uncited("Management wrote down $391.9M of brand assets over the trailing year.") == []
+    assert _uncited("A $60.9M FY25 impairment; $391.9M written down LTM.") == []
 
 
 def test_citing_both_is_also_enough() -> None:
@@ -413,16 +417,41 @@ def test_a_figure_below_the_floor_is_never_demanded() -> None:
     assert out == [], out
 
 
-def test_the_known_limit_is_a_limit_not_a_bug() -> None:
-    """RECORDED RATHER THAN DISCOVERED (operator). A row whose LARGEST value is OLD and whose
-    RECENT value is small demands the stale event and lets the current one pass unmentioned.
-
-    NOT LIVE on today's corpus — SMPL's and CNXC's largest values are both current — and pinned so
-    the behaviour is a documented edge rather than a surprise. If a real name ever takes this shape,
-    the keying needs a recency term and this test is where that argument starts.
+def test_a_stale_largest_does_not_excuse_the_current_period() -> None:
+    """THE AMENDMENT (operator, on review of #326). Largest-only was justified by containment —
+    "60.9 is a component of 391.9" — but that is a fact about SMPL, not one the ROW carries, while
+    `max()` applies to every row. Two UNRELATED impairments in different periods is the shape that
+    breaks it, and letting the CURRENT one pass unmentioned is a silent omission in a materiality
+    guard. Both ends are demanded; neither alone suffices.
     """
     ann = _Ann([_Row("Asset Writedown ($M)", [-500.0, -25.0], material=True)], ["FY22", "LTM"])
-    assert _uncited("A $25M writedown this year.", ann), "the stale-largest limit changed"
-    assert _uncited("A $500M writedown back in FY22.", ann) == [], (
-        "citing the old, larger figure satisfies the guard while the CURRENT $25M goes unmentioned "
-        "— this is the known limit, not a regression")
+    stale_only = _uncited("A $500M writedown back in FY22.", ann)
+    assert any("-25.0" in f for f in stale_only), (
+        f"citing only the OLD, larger charge must not satisfy the guard — the current period would "
+        f"go unmentioned, which is what this amendment closes; got {stale_only}")
+    assert any("-500.0" in f for f in _uncited("A $25M writedown this year.", ann))
+    assert _uncited("A $500M FY22 writedown and $25M more this year.", ann) == []
+
+
+def test_actual_columns_precede_estimate_columns() -> None:
+    """THE ASSUMPTION THE AMENDMENT RESTS ON, checked rather than commented. "Latest actual" is read
+    as the last non-forecast column, which is only the latest if columns run oldest -> newest with
+    estimates last. Structural and phrasing-independent, so it is safe on the LIVING corpus."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    checked = 0
+    for p in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
+        doc = json.loads(p.read_text())
+        fs = ((doc.get("mechanical") or {}).get("financial_summary") or {}).get("annual") or {}
+        ann = fs.get("value")
+        if not ann:
+            continue
+        mask = ann.get("is_estimate") or []
+        assert mask == sorted(mask), (
+            f"{p.parent.name}: an ACTUAL column follows an ESTIMATE column ({ann.get('columns')}), "
+            f"so 'the last non-forecast column' is no longer the latest actual and the "
+            f"material-figure guard would demand the wrong period")
+        checked += 1
+    assert checked >= 11, f"expected the full corpus, saw {checked}"

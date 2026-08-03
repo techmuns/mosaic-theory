@@ -1145,15 +1145,22 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
         # value so the refusal names a number rather than a grid position, and so the count is a
         # count of FIGURES rather than of cells.
         seen: dict[float, list[str]] = {}
+        # THE LATEST ACTUAL MATERIAL VALUE. Columns run OLDEST -> NEWEST with every estimate column
+        # last — verified across all eleven committed summaries, not assumed, and pinned
+        # structurally by `test_actual_columns_precede_estimate_columns`. So the last write here
+        # is the most recent ACTUAL: forecast columns `continue` above it and never overwrite it.
+        latest: float | None = None
         for i, v in enumerate(getattr(r, "values", []) or []):
             if not isinstance(v, (int, float)) or abs(v) < MATERIAL_FIGURE_FLOOR_MUSD:
                 continue
             if is_forecast(i):
                 continue
             seen.setdefault(float(v), []).append(cols[i] if i < len(cols) else str(i))
-        if not seen:
+            latest = float(v)
+        if not seen or latest is None:
             continue
-        # THE LARGEST VALUE IN THE ROW, AND ONLY THAT (operator ruling 2026-08-03).
+        # THE LARGEST MATERIAL VALUE **AND** THE LATEST ACTUAL ONE.
+        # (Operator ruling 2026-08-03; AMENDED ON REVIEW the same day — see the last paragraph.)
         #
         # PER-VALUE WAS UNSATISFIABLE, demonstrated: five independent rolls on SMPL each cited ONE
         # of `Asset Writedown` FY25 −60.9 and LTM −391.9, never both — because they are ONE EVENT at
@@ -1163,18 +1170,23 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
         # PER-ROW WOULD PASS THE ORIGINAL DEFECT: citing $60.9M beside a row showing −392 is exactly
         # the audit's P1, and a rule satisfied by ANY figure on the row accepts it.
         #
-        # THE ASYMMETRY HAS A REASON, and it is why the rule is asymmetric too: citing 60.9 without
-        # 391.9 UNDERSTATES the event by 6.4x; citing 391.9 without 60.9 misleads nobody, because
-        # 60.9 is a component of it. The harm runs one way.
+        # LARGEST-ONLY WAS ALSO WRONG, AND THIS IS THE AMENDMENT. The argument for it was that
+        # citing 391.9 without 60.9 misleads nobody "because 60.9 is a COMPONENT of it" — but that
+        # containment is a fact about SMPL, NOT a fact the row carries, while `max()` applies to
+        # every row. Where the two figures are UNRELATED events in different periods (an old $500M
+        # impairment, an unrelated current $25M one), largest-only lets the CURRENT period go
+        # unmentioned — a silent omission in a MATERIALITY guard, which is the one place a known
+        # hole must not ship. Demanding the latest actual as well closes it WITHOUT inventing a
+        # roll-up relationship the data does not represent.
         #
-        # KNOWN LIMIT, recorded rather than discovered: a row whose LARGEST value is old and whose
-        # RECENT value is small would demand citation of a stale event while letting the current one
-        # pass unmentioned. Not live on today's corpus — SMPL's and CNXC's largest values are both
-        # current — and stated here so the next person meets it as a documented edge rather than a
-        # surprise.
+        # SATISFIABILITY IS PRESERVED because the demand is keyed by VALUE, not by cell: when the
+        # largest figure IS the latest one the two demands collapse into a single citation. That is
+        # the live corpus — SMPL's −391.9 and CNXC's −1,523.3 are each both largest and latest — so
+        # this costs nothing today and refuses exactly the case that motivated the amendment.
         biggest = max(seen, key=abs)
-        if not _figure_cited(prose, biggest):
-            out.append(f"{r.label} {'/'.join(seen[biggest])} = {biggest:,.1f}")
+        for v in [biggest] if biggest == latest else [biggest, latest]:
+            if not _figure_cited(prose, v):
+                out.append(f"{r.label} {'/'.join(seen[v])} = {v:,.1f}")
     return out
 
 
