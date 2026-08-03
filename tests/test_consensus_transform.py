@@ -62,3 +62,29 @@ def test_an_unrefreshed_dossier_reads_as_none_not_empty(tmp_path) -> None:  # ty
     src = ROOT / "data" / "dossiers" / "AORT" / "dossier.json"
     model = Dossier.model_validate_json(src.read_text())
     assert model.mechanical.consensus_context.consensus_levels is None
+
+
+def test_a_broken_bundle_fails_loud_and_a_missing_one_skips(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """REVIEW FINDING (#312). The first cut caught bare `Exception` around the bundle load and
+    returned `mech` unchanged for ANY failure — so a CORRUPT export made the fleet pass report
+    success while silently injecting nothing. Nothing renders `consensus_levels` until A2, so that
+    silence would have been invisible: #308's vanishing-marker defect in a new place.
+
+    ABSENT and BROKEN are different states. Missing export -> skip. Anything else -> propagate."""
+    import vinci.dossier.ciq as ciq_mod
+    from vinci.dossier.refresh import consensus_transform
+
+    mech = {"consensus_context": {"consensus_levels": None}}
+
+    def _missing(*_a: object, **_k: object) -> object:
+        raise FileNotFoundError("no export for this name")
+
+    monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(_missing))
+    assert consensus_transform("NOPE")(mech) == mech, "a missing export must skip silently"
+
+    def _corrupt(*_a: object, **_k: object) -> object:
+        raise ValueError("workbook is truncated")
+
+    monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(_corrupt))
+    with pytest.raises(ValueError, match="truncated"):
+        consensus_transform("NOPE")(mech)

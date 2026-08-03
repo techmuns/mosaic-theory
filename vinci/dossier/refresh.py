@@ -171,19 +171,24 @@ def consensus_transform(ticker: str) -> Transform:
     from vinci.dossier.manual_store import LocalFolderStore
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        # ABSENT AND BROKEN ARE DIFFERENT STATES. A name with no CIQ export legitimately skips;
+        # a name whose export is CORRUPT must fail loud. The first cut caught bare `Exception`
+        # and returned `mech` for both — and since nothing renders `consensus_levels` until A2, a
+        # corrupt bundle would have made the fleet pass report success while silently injecting
+        # nothing. That is #308's vanishing-marker defect in a new place: a warning that fails is
+        # not a warning that was not needed.
         try:
             bundle = CiqBundle.from_files(
                 ticker, LocalFolderStore.from_config(get_config()).files(ticker))
-        except Exception:                                 # noqa: BLE001 - no bundle, no injection
-            return mech
+        except (FileNotFoundError, CiqUnavailableError):
+            return mech                                    # no export for this name — skip, silent
         if consensus_block(bundle) is None:
             return mech
         levels: dict[str, list[dict[str, Any]]] = {}
         for metric in CONSENSUS_METRICS:
-            try:
-                cells = consensus_rows(bundle, metric=metric)
-            except CiqUnavailableError:
-                raise                                     # LOW <= MEDIAN <= HIGH refusal propagates
+            # A `Low <= Median <= High` refusal PROPAGATES — not caught here. The bare re-raise
+            # the first cut wrapped this in was dead code that read as if it did something.
+            cells = consensus_rows(bundle, metric=metric)
             if cells:
                 levels[metric] = [
                     {"fy": c.fy, "median": c.median, "high": c.high, "low": c.low,
