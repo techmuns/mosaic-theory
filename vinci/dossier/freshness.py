@@ -241,6 +241,18 @@ CONSENSUS_PANELS: frozenset[str] = frozenset({
     "catalyst_path.as_of",
     "financial_summary.as_of",
     "valuation.implied_expectations.multiples_as_of",
+    # (A2b) The EV-gap's CONSENSUS vintage — the street's to revise, so it prints and never gates.
+    # Its sibling `ev_gap.vintages.tev_as_of` is deliberately NOT here: the TEV comes off the comps
+    # workbook, which is OURS to re-export, so it gates like every other export panel.
+    #
+    # ADDED AFTER IT SILENTLY RE-BROKE THE SPLIT. This list is an ALLOWLIST and everything else
+    # defaults to the GATING class, so persisting a consensus date under a new key put MVST's
+    # `≥2026-05-15` back in front of the export gate — 56d against the 45d ceiling — and refused it
+    # for exactly the condition the 2026-07-30 staleness split had just stopped refusing it for:
+    # "no analyst had revised it", which no operator action clears. Default-to-gating is the safe
+    # direction, but it means a new consensus-dated field re-conflates the split unless it is
+    # classified here. `test_freshness` now asserts every dated key is consciously classified.
+    "ev_gap.vintages.consensus_as_of",
 })
 
 

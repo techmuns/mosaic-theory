@@ -3423,10 +3423,13 @@ function positioning(m) {
   const cp = (m || {}).catalyst_path;
   if (!cp) return "";
   const rows = (cp.insider_activity
-      // TWIN OF render.py — the horizon stays in the label until the VALUE carries its own.
-      // Review finding on #319: dropping it while the committed value still reads
-      // `sells 0 (net +90.0K sh)` left the served page stating no horizon at all.
-      ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "")
+      // TWIN OF render.py — the label carries the horizon only when the VALUE does not. A fixed
+      // answer is impossible: refreshed values state their own window, while FUBO's record is
+      // SEALED and its value can never be refreshed, so a hardcoded "(Form 4)" would strand that
+      // page with no horizon at all — the #319 regression.
+      ? fact(String(cp.insider_activity.value || "").includes("in the last ")
+             ? "Insider activity (Form 4)" : "Insider activity (Form 4, 6m)",
+             cp.insider_activity, fmtInsider) : "")
     + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
   return rows ? sec("Ownership & positioning",
     "Who is buying, selling and short — counts and dates only.", rows) : "";

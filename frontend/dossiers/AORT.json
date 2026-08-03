@@ -555,6 +555,36 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-30",
+        "consensus_as_of": "≥2026-06-30"
+      },
+      "d_and_a_convention": "ratio of revenue (R2, terminal)",
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "8/8",
+          "n": 8,
+          "dispersion": 0.028991467050478097,
+          "caution": false,
+          "reason": "8 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "7/7",
+          "n": 7,
+          "dispersion": 0.0582010582010582,
+          "caution": false,
+          "reason": "7 estimates"
+        }
+      },
+      "status": "not-computed",
+      "reason": "this record states D&A as a RATIO OF REVENUE (0.048961), the R2 terminal convention — not absent, but converting it at the anchor year is the open analyst decision on D&A convention, so no gap is struck here"
+    },
     "peer_comps": {
       "peer_set": {
         "value": "10 peers — AtriCure $1.4B — engages in the development, manufacture, and sale of devices for surgical ablation of cardiac tissue, exclusion of the left atrial appendage (United States); LeMaitre Vascular $2.1B — develops, manufactures, and markets medical devices and implants used in the field of vascular surgery in the Americas, Europe, the Middle Esat, Africa (United States); Edwards Lifesciences Corporation $51.6B — provides products and technologies to treat advanced cardiovascular diseases in the United States, Europe, Japan, and internationally. (United States); AngioDynamics $540M — designs, manufactures, and sells medical, surgical, and diagnostic devices for the use in treating peripheral vascular disease (United States); Japan Lifeline Co. $547M — engages in manufacturing and sale of medical device in Japan. (Japan); Boston Scientific Corporation $66.1B — develops, manufactures, and markets medical devices for use in various interventional medical specialties worldwide. (United States); CVRx $137M — engages in developing, manufacturing, and commercializing neuromodulation solutions for patients with cardiovascular diseases in the United States, Germany (United States); PROCEPT BioRobotics Corporation $1.2B — develops transformative solutions in urology in the United States and internationally. (United States); Accuray Incorporated $39M — engages in the design, development, manufacture, and sale of radiosurgery and radiation therapy systems for the treatment of tumors in the United States (United States); APT Medical Inc. $3.9B — engages in the research and development, production, and sale of cardiovascular interventional medical devices in China. (China) | the name: $1.1B",
@@ -3815,8 +3845,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 27 (net -177.0K sh) · grants 19 · last 2026-06-15 · other J×2/M×2",
-        "source_ref": "EDGAR Form 4 (latest 0001628280-26-043059; 28 in 6m)",
+        "value": "Open-market buys 0 · sells 27 (7 insiders, $5.89M) — in the last 182 days · last purchase $0.04M, director, 2025-03-05 (~17mo ago) · last sale $0.29M, SVP, Regulatory and Quality, 2026-06-11 (~2mo ago) · largest sale $1.75M, President & CEO, 2025-03-06 (~17mo ago) · grants 85 · last filing 2026-06-15 · other G×3/J×2/M×26",
+        "source_ref": "EDGAR Form 4 (latest 0001628280-26-043059; 166 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

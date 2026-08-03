@@ -603,6 +603,53 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-24",
+        "consensus_as_of": "≥2026-07-21"
+      },
+      "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "9/11",
+          "n": 9,
+          "dispersion": 0.008877709550935859,
+          "caution": false,
+          "reason": "9 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "10/10",
+          "n": 10,
+          "dispersion": 0.046738206278026884,
+          "caution": false,
+          "reason": "10 estimates"
+        }
+      },
+      "status": "computed",
+      "ratios": {
+        "revenue_ratio": 0.983946141895391,
+        "margin_ratio": 0.9462720344583434,
+        "multiple_ratio": 2.2589141004862237,
+        "ev_gap": 2.103231361426256
+      },
+      "at_adjacent": {
+        "revenue_ratio": 1.0350272924634674,
+        "margin_ratio": 0.9093383247912519,
+        "multiple_ratio": 2.2346512358184762,
+        "ev_gap": 2.103231361426256
+      },
+      "shape": {
+        "anchor": "multiple-dominant",
+        "adjacent": "multiple-dominant",
+        "agree": true,
+        "note": "both years give the same shape"
+      }
+    },
     "peer_comps": {
       "peer_set": {
         "value": "10 peers — Utz Brands $1.2B — manufactures branded salty snacks in the United States. (United States); J&J Snack Foods Corp. $1.4B — manufactures, markets, and distributes nutritional snack food and beverages to the food service and retail supermarket industries in the United States, Mexico (United States); The Hain Celestial Group $49M — manufactures, markets, and sells organic and natural products in the United States, United Kingdom, Europe, and internationally. (United States); The Campbell's Company $6.4B — manufactures and markets food and beverage products in the United States and internationally. (United States); The Marzetti Company $2.9B — engages in manufacturing and marketing of specialty food products for the retail and foodservice channels in the United States. (United States); BellRing Brands $1.5B — provides various nutrition products in the United States. (United States); Conagra Brands $6.9B — operates as a branded consumer packaged goods food company primarily in the United States. (United States); Freshpet $2.8B — manufactures, distributes, and markets natural fresh meals and treats for dogs and cats in the United States, Canada, and Europe. (United States); The Kraft Heinz Company $30.1B — manufactures and markets food and beverage products in North America and internationally. (United States); John B. Sanfilippo & Son $939M — distributes tree nuts and peanuts in the United States. (United States) | the name: $909M",
@@ -3934,8 +3981,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 2 · sells 0 (net +90.0K sh) · grants 12 · last 2026-07-24 · other F×2/G×2",
-        "source_ref": "EDGAR Form 4 (latest 0002076611-26-000003; 18 in 6m)",
+        "value": "Open-market buys 2 (2 insiders, $1.11M) · sells 0 — in the last 182 days · last purchase $0.12M, director, 2026-05-14 (~3mo ago) · largest purchase $0.99M, director, 2026-04-23 (~3mo ago) · last sale $0.11M, VP, Controller and CAO, 2025-11-11 (~9mo ago) · largest sale $8.06M, director, 2024-11-07 (~21mo ago) · grants 78 · last filing 2026-07-24 · other F×31/G×5/J×1/M×7",
+        "source_ref": "EDGAR Form 4 (latest 0002076611-26-000003; 110 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

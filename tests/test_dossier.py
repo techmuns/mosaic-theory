@@ -9371,7 +9371,9 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
     for t in names:
         md = (src / t / "dossier.md").read_text()
         assert "### Ownership & positioning" in md, f"{t}: md lost the positioning section"
-        assert "Insider activity (Form 4, 6m)" in md, f"{t}: md lost insider activity"
+        # EITHER FORM IS LEGAL — the label carries the horizon only when the value does not,
+        # so a refreshed name reads "(Form 4)" and a sealed one still reads "(Form 4, 6m)".
+        assert "Insider activity (Form 4" in md, f"{t}: md lost insider activity"
         # TIER: it must sit in the appendix, and NOT back in the street section it came from
         appendix = md.split("# Appendix", 1)
         assert len(appendix) == 2, f"{t}: no appendix tier in the md"

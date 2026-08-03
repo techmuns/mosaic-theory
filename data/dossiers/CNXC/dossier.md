@@ -486,7 +486,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [57]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 4 · sells 1 (net -5994.5K sh) · grants 17 · last 2026-07-09 · other filings 22 [58]
+- **Insider activity (Form 4):** Open-market buys 4 (2 insiders, $0.16M) · sells 1 (1 insider, $133.50M) — in the last 182 days · last purchase $0.02M, President and CEO, 2026-07-08 (~1mo ago) · largest purchase $0.08M, President and CEO, 2025-10-30 (~9mo ago) · last sale $133.50M, 10% owner, 2026-04-29 (~3mo ago) · grants 54 · last filing 2026-07-09 · other filings 83 [58]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 10.1M → 11.9M sh (+18.4%, rising) · 19.5% of shares out (EDGAR XBRL) · DTC 6.3d · recent: 2026-06-30 11.9M · 2026-06-15 10.1M · 2026-05-29 10.4M · 2026-05-15 10.5M [59]
 
 ### Assembly verification — filing vs panel
@@ -564,7 +564,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 [55] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
 [56] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
 [57] `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`
-[58] `EDGAR Form 4 (latest 0001604279-26-000003; 36 in 6m)`
+[58] `EDGAR Form 4 (latest 0001604279-26-000003; 140 filings in the 1095d scanned; counts over 182d)`
 [59] `FINRA consolidated short interest (settle 2026-06-30); DTC = 11,905,838 short ÷ 1,890,557 screen 90d ADV`
 [60] `10-Q maturity wall vs CIQ capital panel (same window)`
 [61] `CIQ revenue guide vs release actual/outlook`

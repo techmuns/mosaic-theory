@@ -459,7 +459,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [56]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0 (net +6.0K sh) · grants 14 · last 2026-07-06 · other filings 2 [57]
+- **Insider activity (Form 4):** Open-market buys 2 (1 insider, $0.07M) · sells 0 — in the last 182 days · last purchase $0.04M, director, 2026-05-13 (~3mo ago) · largest purchase $65.82M, director, 2025-08-14 (~11mo ago) · last sale $0.12M, CHIEF GROWTH OFFICER, 2025-12-01 (~8mo ago) · largest sale $5.90M, director, 2025-02-14 (~17mo ago) · grants 51 · last filing 2026-07-31 · other filings 41 [57]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 15.8M → 17.7M sh (+11.8%, rising) · 15.2% of shares out (EDGAR XBRL) · DTC 3.1d · recent: 2026-06-30 17.7M · 2026-06-15 15.8M · 2026-05-29 11.9M · 2026-05-15 12.4M [25]
 
 ### Assembly verification — filing vs panel
@@ -536,6 +536,6 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [54] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
 [55] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
 [56] `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-[57] `EDGAR Form 4 (latest 0001628280-26-047386; 35 in 6m)`
+[57] `EDGAR Form 4 (latest 0001628280-26-051505; 161 filings in the 1095d scanned; counts over 182d)`
 [58] `10-Q maturity wall vs CIQ capital panel (same window)`
 [59] `CIQ revenue guide vs release actual/outlook`

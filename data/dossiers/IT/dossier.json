@@ -631,6 +631,53 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-30",
+        "consensus_as_of": "≥2026-07-27"
+      },
+      "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "14/14",
+          "n": 14,
+          "dispersion": 0.013844598273314149,
+          "caution": false,
+          "reason": "14 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "12/13",
+          "n": 12,
+          "dispersion": 0.05159881134100737,
+          "caution": false,
+          "reason": "12 estimates"
+        }
+      },
+      "status": "computed",
+      "ratios": {
+        "revenue_ratio": 1.0002333359259548,
+        "margin_ratio": 0.8744040436878893,
+        "multiple_ratio": 1.8819812872958916,
+        "ev_gap": 1.6459960281673924
+      },
+      "at_adjacent": {
+        "revenue_ratio": 0.9574549716372057,
+        "margin_ratio": 0.8665820274846925,
+        "multiple_ratio": 1.98381306723334,
+        "ev_gap": 1.6459960281673924
+      },
+      "shape": {
+        "anchor": "multiple-dominant",
+        "adjacent": "multiple-dominant",
+        "agree": true,
+        "note": "both years give the same shape"
+      }
+    },
     "peer_comps": {
       "peer_set": {
         "value": "10 peers — Equifax Inc. $18.8B — operates as a data, analytics, and technology company. (United States); Moody's Corporation $78.6B — operates as an integrated risk assessment firm in the United States, the rest of the Americas, Europe, the Middle East, Africa, and the Asia Pacific. (United States); TransUnion $13.1B — operates as a global consumer credit reporting agency that provides risk and information solutions. (United States); EPAM Systems $4.1B — provides digital platform engineering and software development services worldwide. (United States); Verisk Analytics $23.6B — engages in the provision of data analytics and technology solutions to the insurance industry in the United States and internationally. (United States); S&P Global Inc. $119.1B — provides benchmarks, data, analytics, and workflow solutions in the global capital, energy and commodity, and automotive markets. (United States); FactSet Research Systems Inc. $7.9B — operates as a financial digital platform and enterprise solutions provider for the investment community. (United States); Amdocs Limited $5.5B — provides software and services to communications, entertainment, media, and other service providers worldwide. (United States); Everforth $751M — provides information technology solutions for commercial and government sectors in the United States, Canada, and Europe. (United States); Cognizant Technology Solutions Corporation $19.6B — provides consulting and technology, and outsourcing services in North America, Europe, and internationally. (United States) | the name: $8.7B",
@@ -3882,8 +3929,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 1 · sells 0 (net +0.1K sh) · grants 0 · last 2026-07-06 · other F×46/G×6/J×34/M×56",
-        "source_ref": "EDGAR Form 4 (latest 0000749251-26-000239; 98 in 6m)",
+        "value": "Open-market buys 1 (1 insider, $0.01M) · sells 0 — in the last 182 days · last purchase $0.01M, SVP, Global Business Sales, 2026-02-05 (~6mo ago) · largest purchase $2.28M, director, 2025-12-10 (~8mo ago) · last sale $0.08M, EVP, Conferences, 2025-12-03 (~8mo ago) · largest sale $7.10M, Chairman and CEO, 2024-09-12 (~23mo ago) · grants 0 · last filing 2026-07-06 · other D×28/F×183/G×32/J×139/M×208",
+        "source_ref": "EDGAR Form 4 (latest 0000749251-26-000239; 472 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

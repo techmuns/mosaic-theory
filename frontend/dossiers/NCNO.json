@@ -348,6 +348,36 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-20",
+        "consensus_as_of": "≥2026-07-22"
+      },
+      "d_and_a_convention": "ratio of revenue (R2, terminal)",
+      "anchor_fy": "2027",
+      "adjacent_fy": "2028",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "13/13",
+          "n": 13,
+          "dispersion": 0.007129743009546237,
+          "caution": false,
+          "reason": "13 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "5/7",
+          "n": 5,
+          "dispersion": 0.02239908414424724,
+          "caution": true,
+          "reason": "5 estimates — thin, caution carried"
+        }
+      },
+      "status": "not-computed",
+      "reason": "this record states D&A as a RATIO OF REVENUE (0.071043), the R2 terminal convention — not absent, but converting it at the anchor year is the open analyst decision on D&A convention, so no gap is struck here"
+    },
     "peer_comps": {
       "peer_set": {
         "value": "9 peers — Alkami Technology $1.9B — provides a cloud-based digital sales and service platform for financial institutions in the United States. (United States); Q2 Holdings $3.4B — provides digital solutions to financial institutions, financial technology companies, FinTechs (United States); SPS Commerce $2.4B — provides cloud-based supply chain management solutions in the United States. (United States); Workiva Inc. $3.2B — provides cloud-based reporting solutions in the United States and internationally. (United States); Intapp $2.2B — provides AI-powered solutions in the United States, the United Kingdom, and internationally. (United States); PAR Technology Corporation $674M — provides omnichannel cloud-based software and hardware solutions for the restaurant and retail industries worldwide. (United States); Asana $1.8B — operates a work management software platform for individuals, team leads, and executives in the United States and internationally. (United States); Life360 $4.3B — operates a technology platform to locate people, pets, and things in North America, Europe, the Middle East, Africa, and internationally. (United States); Riskified Ltd. $753M — develops and offers an e-commerce risk intelligent platform that allows online merchants to create trusted relationships with consumers in the United States (United States) | the name: $2.0B",
@@ -3505,8 +3535,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other G×1/M×5",
-        "source_ref": "EDGAR Form 4 (latest 0001902733-26-000084; 32 in 6m)",
+        "value": "Open-market buys 0 · sells 22 (5 insiders, $4.34M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.14M, CEO & President, 2026-07-06 (~1mo ago) · largest sale $179.52M, director, 2024-04-01 (~28mo ago) · grants 45 · last filing 2026-07-08 · other G×3/J×15/M×19",
+        "source_ref": "EDGAR Form 4 (latest 0001902733-26-000084; 236 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

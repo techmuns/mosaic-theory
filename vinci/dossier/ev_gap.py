@@ -279,3 +279,136 @@ def labels_across_years(at_anchor: dict[str, float],
                  f"the shape MOVES between years — {anchor_label} at the anchor, "
                  f"{adjacent_label} adjacent; neither is the answer on its own"),
     }
+
+
+# --- PERSISTENCE: the resulting FORM, its shape labels, and both vintages -----------------------
+
+#: Route strictness, LOW to HIGH. A build routes on BOTH consensus metrics and takes the WEAKER of
+#: the two: revenue's coverage can be as thin as EBITDA's, and a `three-ratio` form struck on a
+#: one-estimate revenue median would be the same garbage the route exists to refuse — just entering
+#: through the numerator instead of the denominator.
+_ROUTE_RANK = {Route.PRICE_IMPLIED_ONLY: 0, Route.TWO_RATIO: 1, Route.FULL: 2}
+
+
+def _cell(levels: dict[str, list[dict[str, object]]], metric: str,
+          fy: str) -> dict[str, object] | None:
+    return next((c for c in levels.get(metric, []) if str(c.get("fy")) == fy), None)
+
+
+def _decompose_at(levels: dict[str, list[dict[str, object]]], fy: str,
+                  leg: dict[str, object], tev: float, net_debt: float,
+                  shares: float) -> dict[str, float] | None:
+    """`decompose` at one fiscal year, or None when either consensus metric is missing there."""
+    rev_c, eb_c = _cell(levels, "Revenue", fy), _cell(levels, "EBITDA", fy)
+    if rev_c is None or eb_c is None:
+        return None
+    for c in (rev_c, eb_c):
+        if not isinstance(c.get("median"), (int, float)) or not c["median"]:
+            return None
+    return decompose(EvGapInputs(
+        revenue=float(leg["revenue"]),          # type: ignore[arg-type]
+        margin=float(leg["margin"]),            # type: ignore[arg-type]
+        margin_basis=str(leg["margin_basis"]),
+        multiple=float(leg["multiple"]),        # type: ignore[arg-type]
+        multiple_basis=str(leg["multiple_basis"]),
+        d_and_a=leg.get("d_and_a"),             # type: ignore[arg-type]
+        consensus_revenue=float(rev_c["median"]),   # type: ignore[arg-type]
+        consensus_ebitda=float(eb_c["median"]),     # type: ignore[arg-type]
+        tev=tev, net_debt=net_debt, shares=shares))
+
+
+def build_ev_gap(
+    levels: dict[str, list[dict[str, object]]] | None,
+    leg: dict[str, object] | None,
+    *,
+    tev: float | None,
+    net_debt: float | None,
+    shares: float | None,
+    tev_as_of: str | None,
+    consensus_as_of: str | None,
+) -> dict[str, object]:
+    """(A2b persistence) The resulting FORM for one name — always a value, never an omission.
+
+    EVERY RETURN CARRIES `status`, AND THAT IS THE POINT. This lands render-first: the render ships
+    on deploy while the refresh that computes this lags, so an ABSENT block would leave eleven
+    pages showing an empty section with nothing saying why. `status="not-computed"` with a stated
+    `reason` is a claim a reader can act on; a missing key is not. Same two-speed lesson as the
+    insider horizon — a change that is right only after a later step must not look finished before
+    it.
+
+    BOTH VINTAGES, ALWAYS, EVEN WHEN THEY DISAGREE. The TEV comes off the comps workbook and the
+    consensus off the estimates workbook, and they are pulled on different days: SMPL reads comps
+    2026-07-24 against estimates `≥2026-07-21`. A single stamp over both would be the
+    `financial_summary.as_of` defect — one date over columns of two vintages. The `≥` is carried
+    VERBATIM: SMPL's estimates export has no As-Of header, so its date is a FLOOR, and flattening
+    it to a plain date would manufacture precision the workbook does not have.
+    """
+    out: dict[str, object] = {
+        "vintages": {"tev_as_of": tev_as_of, "consensus_as_of": consensus_as_of},
+        # PRINTED PER NAME WHILE THE QUESTION IS OPEN (operator ruling 2026-07-30). The two recipes
+        # use opposite D&A conventions and nothing reconciles them; A2's job is to make the
+        # difference VISIBLE, not to pick one.
+        "d_and_a_convention": (leg or {}).get("d_and_a_convention"),
+    }
+
+    def nope(reason: str) -> dict[str, object]:
+        return {**out, "status": "not-computed", "reason": reason}
+
+    if not levels:
+        return nope("no consensus levels on this name — run the consensus refresh first")
+    anchor = anchor_year(levels)
+    if anchor is None:
+        return nope("no forward year resolves BOTH Revenue and EBITDA — no year to strike a "
+                    "ratio at")
+
+    # ROUTE FIRST, and on the CONSENSUS SIDE ALONE, so it is decidable for every name — including
+    # the five with no scenario record. Only the EMISSION needs a leg.
+    routes: dict[str, object] = {}
+    worst = Route.FULL
+    for metric in ("Revenue", "EBITDA"):
+        cell = _cell(levels, metric, anchor)
+        r, why = route_for(cell or {})
+        routes[metric] = {"route": r, **why}
+        if _ROUTE_RANK[r] < _ROUTE_RANK[worst]:
+            worst = r
+    out |= {"anchor_fy": anchor, "adjacent_fy": adjacent_year(levels, anchor),
+            "form": worst, "routes": routes}
+
+    if leg is None:
+        return {**out, "status": "not-computed",
+                "reason": "no scenario record for this name — the route is known, the gap is not"}
+    for name, v in (("tev", tev), ("net_debt", net_debt), ("shares", shares)):
+        if v is None:
+            return {**out, "status": "not-computed", "reason": f"{name} unavailable"}
+    assert tev is not None and net_debt is not None and shares is not None
+    try:
+        at_anchor = _decompose_at(levels, anchor, leg, tev, net_debt, shares)
+    except BasisMismatchError as exc:
+        # NAME THE CONVENTION, NEVER "no D&A". `our_ebitda`'s message is written for a data gap,
+        # and for an R2 record that reading is wrong in a way that invites the wrong fix: the D&A
+        # is not missing, it is stated as a RATIO OF REVENUE, and converting it at the anchor is a
+        # reserved analyst decision that moves committed numbers. "Absent" would send a reader
+        # looking for a number that is already there.
+        if leg.get("d_and_a") is None and leg.get("d_and_a_ratio") is not None:
+            return {**out, "status": "not-computed", "reason": (
+                f"this record states D&A as a RATIO OF REVENUE ({leg['d_and_a_ratio']}), the R2 "
+                "terminal convention — not absent, but converting it at the anchor year is the "
+                "open analyst decision on D&A convention, so no gap is struck here")}
+        return {**out, "status": "not-computed", "reason": str(exc)}
+    if at_anchor is None:
+        return {**out, "status": "not-computed", "reason": "consensus medians absent at the anchor"}
+    adj_fy = out["adjacent_fy"]
+    at_adjacent = None
+    if isinstance(adj_fy, str):
+        try:
+            at_adjacent = _decompose_at(levels, adj_fy, leg, tev, net_debt, shares)
+        except BasisMismatchError:                 # the anchor stands; the CHECK is what is lost
+            at_adjacent = None
+    return {
+        **out,
+        "status": "computed",
+        "ratios": {k: at_anchor[k] for k in (*_RATIO_KEYS, "ev_gap")},
+        "at_adjacent": ({k: at_adjacent[k] for k in (*_RATIO_KEYS, "ev_gap")}
+                        if at_adjacent else None),
+        "shape": labels_across_years(at_anchor, at_adjacent),
+    }

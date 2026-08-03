@@ -527,12 +527,12 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [69]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [27]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 22 (5 insiders, $4.34M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.14M, CEO & President, 2026-07-06 (~1mo ago) · largest sale $179.52M, director, 2024-04-01 (~28mo ago) · grants 45 · last filing 2026-07-08 · other filings 37 [70]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.8d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [15]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [70]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 157.75–159.75 vs release 157.75–159.75 → cross-source VERIFIED [71]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [71]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 157.75–159.75 vs release 157.75–159.75 → cross-source VERIFIED [72]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 11:46 UTC
@@ -617,5 +617,6 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 [67] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-20`
 [68] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-20`
 [69] `CIQ transcript(s): nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf`
-[70] `10-Q maturity wall vs CIQ capital panel (same window)`
-[71] `CIQ revenue guide vs release actual/outlook`
+[70] `EDGAR Form 4 (latest 0001902733-26-000084; 236 filings in the 1095d scanned; counts over 182d)`
+[71] `10-Q maturity wall vs CIQ capital panel (same window)`
+[72] `CIQ revenue guide vs release actual/outlook`

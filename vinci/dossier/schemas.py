@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import enum
 from datetime import date, datetime
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -1022,6 +1022,20 @@ class MechanicalLayer(BaseModel):
     valuation: Valuation
     quality: Quality
     concentration: Concentration
+    #: (A2b) THE EV-GAP FORM — route, ratios, both shape labels, and BOTH panel vintages.
+    #:
+    #: A FREE-FORM dict rather than a typed model, and that is deliberate for exactly one release:
+    #: `build_ev_gap` returns a `status`-tagged shape whose branches differ (`not-computed` carries
+    #: a reason and no ratios), and freezing that into a model before the render exists would pin
+    #: a shape the render has not yet argued with. It is machine-complete in the JSON either way.
+    #: TYPE IT when A2's render lands and the consumed keys are known — recorded so this is a
+    #: decision with a trigger, not a shortcut that quietly becomes permanent.
+    #:
+    #: OPTIONAL WITH A None DEFAULT — forward-binding, the `consensus_levels` precedent. None means
+    #: NOT YET REFRESHED. It is NOT the same as the computed `status="not-computed"`, which means
+    #: the refresh RAN and could not strike a gap, and says why. The render must tell them apart:
+    #: one asks for a refresh, the other is a finished answer.
+    ev_gap: dict[str, Any] | None = None
     peer_comps: PeerComps  # comparable-company multiples + composition + deltas (consensus-resist)
     drawdown_cause: DrawdownCause
     idiosyncratic_vs_shared: IdiosyncraticVsShared
