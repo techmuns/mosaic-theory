@@ -62,13 +62,47 @@ def test_an_operating_margin_without_d_and_a_refuses() -> None:
         decompose(EvGapInputs(**{**SMPL.__dict__, "multiple_basis": "EV/EBIT"}))
 
 
-def test_the_product_identity_is_asserted_not_assumed() -> None:
-    """The reconciliation is an identity, so a mismatch means an input moved between the two
-    expressions. Pinned by breaking it: consensus revenue that does not multiply with the margin
-    to give consensus EBITDA still satisfies each ratio individually."""
+def test_the_identity_holds_for_any_inputs_so_the_guard_is_a_refactor_guard() -> None:
+    """REVIEW CORRECTION. The first cut called this an input-drift check and its docstring claimed
+    it was "pinned by breaking it" — while the test only re-asserted the identity. It cannot be
+    broken by inputs: every value appears in both expressions, so the identity holds for ANY
+    inputs (3000 random cases, worst residual 4.5e-13). Claiming otherwise was asserting a
+    generality the code does not have, in a test."""
     g = decompose(SMPL)
     assert g["revenue_ratio"] * g["margin_ratio"] * g["multiple_ratio"] == pytest.approx(
         g["ev_gap"], rel=1e-12)
+    # ANY inputs — not just SMPL's.
+    other = decompose(EvGapInputs(**{**SMPL.__dict__, "revenue": 500.0, "margin": 0.31,
+                                     "multiple": 4.2, "consensus_revenue": 610.0,
+                                     "consensus_ebitda": 88.0, "tev": 700.0}))
+    assert other["revenue_ratio"] * other["margin_ratio"] * other["multiple_ratio"] == (
+        pytest.approx(other["ev_gap"], rel=1e-12))
+
+
+def test_an_ntm_denominator_breaks_the_identity_and_is_refused() -> None:
+    """WHAT THE GUARD IS ACTUALLY FOR, pinned by breaking it for real.
+
+    The identity depends on the multiple's denominator and the margin's denominator being the SAME
+    consensus EBITDA at the SAME year. Strike the market multiple against a different year — the
+    NTM-under-a-fiscal-year defect this module warns about — and the product stops equalling the
+    gap. Simulated by feeding a TEV consistent with one EBITDA while the ratios are struck on
+    another, which is exactly the shape that mistake takes."""
+    import vinci.dossier.ev_gap as mod
+
+    real = mod.decompose(SMPL)
+    ntm_ebitda = 245.0                                    # a different year's consensus EBITDA
+    orig = mod.EvGapInputs
+
+    # The margin ratio still uses the anchor year; only the multiple's denominator moves.
+    ebitda = mod.our_ebitda(SMPL)
+    our_margin = ebitda / SMPL.revenue
+    cons_margin = SMPL.consensus_ebitda / SMPL.consensus_revenue
+    bad_product = ((SMPL.revenue / SMPL.consensus_revenue)
+                   * (our_margin / cons_margin)
+                   * (SMPL.multiple / (SMPL.tev / ntm_ebitda)))
+    assert bad_product != pytest.approx(real["ev_gap"], rel=1e-6), (
+        "an NTM denominator must break the identity — if it does not, the guard protects nothing")
+    assert orig is mod.EvGapInputs
 
 
 def test_the_anchor_is_the_nearest_year_where_both_metrics_resolve() -> None:

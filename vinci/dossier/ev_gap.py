@@ -61,12 +61,21 @@ def our_ebitda(i: EvGapInputs) -> float:
 def decompose(i: EvGapInputs) -> dict[str, float]:
     """The three ratios and the gap they multiply to.
 
-    THE PRODUCT IS AN IDENTITY, not a check that happens to pass:
+    THE PRODUCT IS AN IDENTITY:
         (rev/crev) x (mgn/cmgn) x (mult/cmult)
       = (rev x mgn x mult) / (crev x cmgn x (TEV/cebitda))
       = our_EV / TEV                                        because crev x cmgn == cebitda
-    so `ev_gap` is asserted against `our_ev / tev` rather than recomputed from it — a mismatch
-    means an input moved between the two expressions, which is exactly what the assertion is for.
+
+    WHAT THE ASSERTION BELOW ACTUALLY GUARDS — corrected in review. It does NOT catch "an input
+    moving between the two expressions": every input appears in both, so the identity holds for
+    ANY values and the check cannot fire (verified on 3000 random inputs, worst residual 4.5e-13).
+    Describing it as an input check was claiming a generality it does not have.
+
+    It is a REFACTOR guard, and a real one. The identity depends on `market_multiple` and
+    `consensus_margin` being struck from the SAME two consensus numbers at the SAME year. Change
+    the multiple's denominator to NTM — the defect this module's own docstring warns about — and
+    the product stops equalling the gap. The assertion is what turns that from a silently wrong
+    decomposition into a refusal, which is why it is pinned by a test that actually breaks it.
     """
     ebitda = our_ebitda(i)
     our_margin = ebitda / i.revenue
@@ -82,8 +91,9 @@ def decompose(i: EvGapInputs) -> dict[str, float]:
     product = revenue_ratio * margin_ratio * multiple_ratio
     if abs(product - ev_gap) > 1e-9 * max(1.0, abs(ev_gap)):
         raise ValueError(
-            f"the three ratios multiply to {product!r} but our_EV/TEV is {ev_gap!r} — an input "
-            "differs between the two expressions; the decomposition is not describing this gap")
+            f"the three ratios multiply to {product!r} but our_EV/TEV is {ev_gap!r} — the "
+            "multiple's denominator and the margin's denominator are no longer the same consensus "
+            "EBITDA at the same year, so these three ratios do not decompose this gap")
     return {
         "revenue_ratio": revenue_ratio,
         "margin_ratio": margin_ratio,
