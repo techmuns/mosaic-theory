@@ -7707,9 +7707,19 @@ the page reverts to "MISSING REFRESH".** SMPL's re-assembly is NEXT in the queue
 only three names carrying a decomposition, so re-assembling it today would silently drop the EV gap
 the last two builds existed to produce. The render would be honest about it — that is what the
 three-state design bought — but the number would be gone.
-**PINNED AS THE ASYMMETRY IT IS, not as desirable:** when assembly learns to produce `ev_gap` the
-test REDDENS and forces a real value-parity assertion to be written then, rather than after a
-divergence. Mutation-verified. The insider line's two paths are NAMED and deliberately NOT compared
+**~~PINNED AS THE ASYMMETRY IT IS~~ — THAT WAS A TOMBSTONE, NOT A GUARD (review of #324).** The
+pin passed happily while a fresh assembly wrote `ev_gap: null` and would have reddened only once
+somebody FIXED it. **A test that is green throughout the harm and red at the repair protects
+nothing** — it offered the queued SMPL re-assembly exactly no cover from the event it described.
+**CLOSED INSTEAD OF DOCUMENTED: assembly now applies `ev_gap_transform` to the freshly-built mech**,
+so both write paths run the SAME builder and cannot disagree by construction. **RECOMPUTED, NEVER
+CARRIED FORWARD** — copying the committed gap across an assembly would put one struck on old
+cap/net-debt/consensus beside new ones, the frozen-beside-live defect.
+**AND THE FIRST REPLACEMENT PIN WAS ALSO WRONG, caught by its own mutation:** it searched the
+assembly source for the NAME `ev_gap_transform`, and deleting the two lines that apply it left the
+`import` behind — **the pin passed on a build that had stopped calling it.** An import is not a
+call. Now an AST check that the transform's result is ASSIGNED BACK TO `mech`, which also catches
+the call-but-discard shape. Both mutations CAUGHT. The insider line's two paths are NAMED and deliberately NOT compared
 — refresh's fetches ~110 filings from EDGAR, and a value comparison would turn an offline parity
 test into a network one.
 **SCOPE IS STATED IN THE DOCSTRING** so a green run is not read as covering the layer: values

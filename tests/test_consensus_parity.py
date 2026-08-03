@@ -14,8 +14,8 @@ SCOPE, STATED SO A GREEN RUN IS NOT READ AS COVERING THE WHOLE LAYER. Three fiel
 write paths, and this file treats them differently BECAUSE THEY ARE IN DIFFERENT STATES:
 
   * `consensus_levels`  — both paths produce it; VALUES COMPARED (the original claim).
-  * `ev_gap`            — **ASSEMBLY DOES NOT PRODUCE IT AT ALL.** Pinned as the asymmetry it is,
-                          with its consequence: a re-assembly DROPS the field.
+  * `ev_gap`            — both paths NOW produce it, via the SAME transform; VALUES COMPARED,
+                          and the test fails on the LOSS rather than on its repair.
   * `insider_activity`  — both paths produce it, but refresh's path FETCHES FROM EDGAR, so a
                           value comparison here would be a network test. Named, not tested.
 
@@ -24,6 +24,9 @@ parity test covering one field, read as covering the layer, is worse than one th
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 
 from vinci.config import get_config
@@ -31,6 +34,8 @@ from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
 from vinci.dossier.mechanical import _consensus
 from vinci.dossier.refresh import consensus_transform
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _bundle(ticker: str) -> CiqBundle:
@@ -99,36 +104,72 @@ def test_assembly_and_refresh_write_identical_levels(ticker: str) -> None:
             f"  assembly={a[metric][:3]}\n  refresh ={r[metric][:3]}")
 
 
-# --- ev_gap: the two paths are NOT at parity, and that is the finding ---------------------------
+# --- ev_gap: VALUE PARITY, and it fails on the LOSS rather than on the fix -----------------------
 
-def test_assembly_does_not_produce_ev_gap_so_a_re_assembly_drops_it() -> None:
-    """THE ASYMMETRY, PINNED WITH ITS CONSEQUENCE.
+def test_assembly_produces_the_same_ev_gap_the_refresh_does() -> None:
+    """THE SAFETY TEST, POINTED THE RIGHT WAY (review of #324).
 
-    `ev_gap` is written ONLY by `refresh.ev_gap_transform`. `MechanicalLayer.ev_gap` defaults to
-    None and nothing in the assembly path sets it — so **a fresh assembly writes `ev_gap: null`**
-    and the page reverts to "MISSING REFRESH … nothing has been measured".
+    THE FIRST CUT WAS A TOMBSTONE. It asserted "assembly does not produce ev_gap" — passing
+    happily while a fresh assembly wrote `ev_gap: null`, and reddening only once somebody fixed
+    it. A test that is green throughout the harm and red at the repair protects nothing: it
+    offered the queued SMPL re-assembly exactly no cover from the event it described.
 
-    THIS IS LIVE AND IT IS NEXT IN THE QUEUE: SMPL's re-assembly is scheduled, SMPL is one of only
-    three names carrying a decomposition, and re-assembling it today would silently drop the EV gap
-    the last two builds existed to produce. The render would be HONEST about it — that is what the
-    three-state design bought — but the number would be gone.
-
-    PINNED AS THE CURRENT STATE, NOT AS DESIRABLE. When assembly learns to produce `ev_gap`, this
-    test REDDENS and forces a real value-parity assertion to be written in its place, which is
-    exactly the argument that should happen at that moment rather than after.
+    NOW ASSEMBLY RUNS THE SAME TRANSFORM on the freshly-built mech, so the two write paths cannot
+    disagree by construction — and this asserts it as a VALUE comparison rather than a structural
+    claim. RECOMPUTED, NEVER CARRIED FORWARD: copying the committed gap across an assembly would
+    put one struck on old cap/net-debt/consensus beside new ones, which is the frozen-beside-live
+    defect.
     """
+    import ast
     import inspect
 
-    from vinci.dossier import assemble
-    from vinci.dossier import mechanical as dm
-    from vinci.dossier.schemas import MechanicalLayer
+    from vinci.dossier import assemble as da
 
-    assert MechanicalLayer.model_fields["ev_gap"].default is None
-    for mod in (assemble, dm):
-        assert "ev_gap" not in inspect.getsource(mod), (
-            f"{mod.__name__} now references ev_gap — assembly may have learned to produce it. If "
-            "so, DELETE this test and assert value parity against ev_gap_transform instead; the "
-            "two paths must not be allowed to diverge silently the way consensus_levels could not.")
+    # THE CALL, AND ITS ASSIGNMENT BACK TO `mech` — not the NAME. Measured: deleting the two lines
+    # that apply the transform left the `from … import ev_gap_transform` line behind, and a pin
+    # that searched for the name passed on a build that had stopped calling it. An import is not a
+    # call, and a call whose result is discarded is not a write.
+    src = inspect.getsource(da)
+    tree = ast.parse(src)
+    applied = [
+        n for n in ast.walk(tree)
+        if isinstance(n, ast.Assign)
+        and any(isinstance(t, ast.Name) and t.id == "mech" for t in n.targets)
+        and "ev_gap_transform" in ast.dump(n.value)
+    ]
+    assert applied, (
+        "the assembly path no longer ASSIGNS the EV-gap transform's result to `mech` — a fresh "
+        "assembly will write ev_gap: null and SILENTLY DROP a persisted gap. That is the data "
+        "loss the queued SMPL re-assembly would cause, not a style point.")
+    # …and it must run BEFORE the Dossier is built, or it never reaches the artifact.
+    assert src.index("ev_gap_transform(") < src.index("dossier = Dossier("), (
+        "the EV-gap transform runs after the Dossier is constructed — too late to reach it")
+
+
+@pytest.mark.parametrize("ticker", ["SMPL", "EPAM", "IT"])
+def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
+    """THE LOSS ITSELF, DRIVEN. Rebuild the mech the way an assembly does — apply the transform to
+    a mech whose `ev_gap` has been STRIPPED, exactly as a fresh assembly hands it over — and assert
+    the value comes back identical to what is committed.
+
+    Named for the three names that carry a decomposition: these are the ones with something to
+    lose, and SMPL is the queued re-assembly.
+    """
+    from vinci.dossier.refresh import ev_gap_transform
+
+    committed = json.loads(
+        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())["mechanical"]
+    before = committed.get("ev_gap")
+    assert before and before.get("status") == "computed", "fixture precondition"
+
+    fresh = {**json.loads(json.dumps(committed)), "ev_gap": None}   # what assembly hands over
+    after = ev_gap_transform(ticker)(fresh)["ev_gap"]
+
+    assert after is not None, f"{ticker}: a re-assembly would DROP the persisted gap"
+    assert after["status"] == "computed"
+    assert after["ratios"] == pytest.approx(before["ratios"]), (
+        f"{ticker}: the re-assembled gap differs from the committed one")
+    assert after["vintages"] == before["vintages"]
 
 
 def test_the_insider_line_has_two_write_paths_and_this_file_does_not_compare_them() -> None:
