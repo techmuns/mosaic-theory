@@ -3423,6 +3423,9 @@ function positioning(m) {
   const cp = (m || {}).catalyst_path;
   if (!cp) return "";
   const rows = (cp.insider_activity
+      // TWIN OF render.py — the horizon stays in the label until the VALUE carries its own.
+      // Review finding on #319: dropping it while the committed value still reads
+      // `sells 0 (net +90.0K sh)` left the served page stating no horizon at all.
       ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "")
     + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
   return rows ? sec("Ownership & positioning",

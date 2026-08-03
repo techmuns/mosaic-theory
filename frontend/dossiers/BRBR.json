@@ -869,6 +869,92 @@
       "benchmark_basis": "cap-band: $1.6B @ 2026-07-06 → small (<$4B) → IWM"
     },
     "consensus_context": {
+      "consensus_levels": {
+        "Revenue": [
+          {
+            "fy": "2026",
+            "median": 2331.0,
+            "high": 2373.27801,
+            "low": 2325.0,
+            "std_dev": 15.09249,
+            "estimates": "13/13"
+          },
+          {
+            "fy": "2027",
+            "median": 2418.6,
+            "high": 2476.0,
+            "low": 2375.7,
+            "std_dev": 32.17577,
+            "estimates": "13/13"
+          },
+          {
+            "fy": "2028",
+            "median": 2520.80434,
+            "high": 2618.0,
+            "low": 2484.0,
+            "std_dev": 44.44167,
+            "estimates": "7/7"
+          },
+          {
+            "fy": "2029",
+            "median": 2537.24783,
+            "high": 2583.0,
+            "low": 2491.49566,
+            "std_dev": 45.75217,
+            "estimates": "2/2"
+          },
+          {
+            "fy": "2030",
+            "median": 2592.85496,
+            "high": 2682.0,
+            "low": 2503.70991,
+            "std_dev": 89.14504,
+            "estimates": "2/2"
+          }
+        ],
+        "EBITDA": [
+          {
+            "fy": "2026",
+            "median": 319.25,
+            "high": 327.0,
+            "low": 306.0,
+            "std_dev": 5.3065,
+            "estimates": "12/12"
+          },
+          {
+            "fy": "2027",
+            "median": 325.45,
+            "high": 350.0,
+            "low": 313.0,
+            "std_dev": 11.55102,
+            "estimates": "12/12"
+          },
+          {
+            "fy": "2028",
+            "median": 346.20446,
+            "high": 368.0,
+            "low": 323.9107,
+            "std_dev": 17.79236,
+            "estimates": "6/6"
+          },
+          {
+            "fy": "2029",
+            "median": 355.08228,
+            "high": 386.0,
+            "low": 324.16456,
+            "std_dev": 30.91772,
+            "estimates": "2/2"
+          },
+          {
+            "fy": "2030",
+            "median": 368.26474,
+            "high": 412.0,
+            "low": 324.52948,
+            "std_dev": 43.73526,
+            "estimates": "2/2"
+          }
+        ]
+      },
       "eps_trend": {
         "value": "EPS (GAAP) FY 2026: 1↑/0↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",

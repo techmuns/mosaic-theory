@@ -1484,6 +1484,14 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
         return []
     rows = []
     if cp.insider_activity is not None:
+        # THE HORIZON STAYS IN THE LABEL UNTIL THE VALUE CARRIES ITS OWN. Review finding on #319,
+        # and it was a strict regression on the SERVED page: this label was changed to "(Form 4)"
+        # while the committed value still reads `sells 0 (net +90.0K sh)` — so the deployed line
+        # stated NO horizon at all, where before the label supplied it. A stale artifact's label is
+        # the only horizon it has.
+        # THE DECIDING TEST: "6m" is true of the OLD value AND of the NEW value's 182-day count
+        # window, so keeping it is correct in BOTH states; removing it is correct only after a
+        # re-assembly. A change that is right only after a later step ships WITH that step.
         rows.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity, _fmt_insider))
     if cp.short_interest is not None:
         rows.append(_fact("Short interest (FINRA)", cp.short_interest))

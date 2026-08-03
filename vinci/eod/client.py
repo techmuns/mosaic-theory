@@ -207,7 +207,21 @@ class PolygonEodClient(EodClient):
 
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
         url = _GROUPED.format(day=day.isoformat())
-        # immutable once the day has closed → cache forever
+        # A CLOSED DAY'S BARS ARE NOT IMMUTABLE, AND THE 24h TTL IS WHY THIS IS CORRECT. The
+        # comment here used to read "immutable once the day has closed → cache forever" while the
+        # code passed `_ONE_DAY`; `netcache` honours that TTL, so the comment described a policy
+        # the code did not implement — and following it would have BROKEN working code.
+        # `adjusted=true` returns prices restated to the CURRENT split factor, so a bar cached
+        # before a split and never re-fetched would be stranded on the old basis permanently. The
+        # expiry is what lets the weekly refresh re-pull its rolling 1825d window
+        # (`screens/run.py`) and overwrite every bar in it via `INSERT OR REPLACE`. Verified on
+        # FUBO's ~1-for-11 reverse split: its 2021 closes read ~$312 against the ~$28 it actually
+        # traded at, i.e. the whole stored history sits on the post-split basis, and no 11x step
+        # exists anywhere in the series.
+        # THE BOUND, stated because nothing enforces it: bars OLDER than that rolling window are
+        # never re-fetched by any automated path, so a store deeper than 1825d could hold
+        # pre-split bars indefinitely. Measured 2026-08-03 — 0 securities sit more than 30d beyond
+        # the window, so the hazard is bounded today, not designed out.
         try:
             raw = self._http.get_json(url, ttl_seconds=_ONE_DAY, params={"adjusted": "true"})
         except HttpError as exc:
