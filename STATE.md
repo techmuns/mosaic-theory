@@ -7686,6 +7686,36 @@ street's" — on the converted basis, part of it IS a view difference). Left in 
 compute those names is the operator's call, and MVST is refused twice over on coverage anyway
 (price-implied-only, one estimate), so **only AORT and NCNO turn on the convention.**
 
+**CALL-SITE PARITY LANDED — AND EXTENDING IT FOUND THAT ASSEMBLY DROPS `ev_gap` (2026-08-03).**
+`tests/test_consensus_parity.py` sat on an orphan branch, **never PR'd**, 33 commits behind. Read
+before deciding: it still passes on current main, skips cleanly with no licensed CIQ, and **both
+mutations redden** (a dropped cell; the estimate pair re-labelled as a count) — so it measures
+rather than decorates. It closes the residual the CPB assembly-vs-refresh diff **structurally could
+not reach**: CPB has no CIQ bundle, and no name can exercise both halves because the set with
+bundles and the set with dossiers ARE THE SAME ELEVEN. *Structural is an argument, not a
+measurement* — kept verbatim in the docstring.
+**THE SKIP GUARD WAS THE FOURTH INSTANCE of the guard-that-cannot-fire pattern** (item 1's
+completeness gate · the absence-reason guard · #310's no-op `getattr` · `test_consensus_rows` in
+#318). `except Exception: pytest.skip` never fired — `files()` returns `[]` without raising — so
+the file passed in CI only because a SECOND skip caught it downstream. **Working by accident is not
+working**; conditioned on the file list, per the house convention.
+**THE OPERATOR'S CHECK FOUND A LIVE DEFECT, AND IT THREATENS THE NEXT QUEUED TASK.** The test was
+written when `consensus_levels` was the only field with two write paths; there are now three.
+**`ev_gap` IS WRITTEN ONLY BY `refresh.ev_gap_transform` — ASSEMBLY NEVER SETS IT.** The field
+defaults to None and no assembly path touches it, so **a fresh assembly writes `ev_gap: null` and
+the page reverts to "MISSING REFRESH".** SMPL's re-assembly is NEXT in the queue and SMPL is one of
+only three names carrying a decomposition, so re-assembling it today would silently drop the EV gap
+the last two builds existed to produce. The render would be honest about it — that is what the
+three-state design bought — but the number would be gone.
+**PINNED AS THE ASYMMETRY IT IS, not as desirable:** when assembly learns to produce `ev_gap` the
+test REDDENS and forces a real value-parity assertion to be written then, rather than after a
+divergence. Mutation-verified. The insider line's two paths are NAMED and deliberately NOT compared
+— refresh's fetches ~110 filings from EDGAR, and a value comparison would turn an offline parity
+test into a network one.
+**SCOPE IS STATED IN THE DOCSTRING** so a green run is not read as covering the layer: values
+compared for one field, asymmetry pinned for the second, omission named for the third.
+Gate: ruff + `mypy --strict` clean · full suite green · CI-condition run: 2 passed, 5 skipped.
+
 **REVIEW OF #323 — I MOVED THE CONFLATION INSTEAD OF REMOVING IT (2026-08-03).** The PR said the
 total gap never needed consensus and then kept gating it on consensus one level up: `build_ev_gap`
 returned for `not levels` and for `anchor is None` **before the leg was looked at**, so a
