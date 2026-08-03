@@ -525,7 +525,7 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [67]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 6 · sells 0 (net +0.5K sh) · grants 18 · last 2026-05-22 · other filings 36 [68]
+- **Insider activity (Form 4):** Open-market buys 6 · sells 0 (net +0.5K sh) · grants 18 · last 2026-05-22 · other filings 36 [68]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 10.3M → 11.3M sh (+9.5%, rising) · 21.6% of shares out (EDGAR XBRL) · DTC 5.7d · recent: 2026-06-30 11.3M · 2026-06-15 10.3M · 2026-05-29 9.6M · 2026-05-15 9.3M [24]
 
 ### Assembly verification — filing vs panel

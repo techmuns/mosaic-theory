@@ -453,7 +453,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 13 · sells 5 (net -4.4K sh) · grants 21 · last 2026-06-12 · other filings 20 [56]
+- **Insider activity (Form 4):** Open-market buys 13 · sells 5 (net -4.4K sh) · grants 21 · last 2026-06-12 · other filings 20 [56]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.5d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M [57]
 
 ### Assembly verification — filing vs panel

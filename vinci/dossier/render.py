@@ -1484,7 +1484,10 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
         return []
     rows = []
     if cp.insider_activity is not None:
-        rows.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity, _fmt_insider))
+        # NO HORIZON IN THE LABEL. The value now carries TWO — a stated 182d count window and a
+        # stated 3y last-occurrence scan — so a fixed "6m" here would contradict the line beneath
+        # it. A window belongs on the number it qualifies, not on the row heading.
+        rows.append(_fact("Insider activity (Form 4)", cp.insider_activity, _fmt_insider))
     if cp.short_interest is not None:
         rows.append(_fact("Short interest (FINRA)", cp.short_interest))
     return ["### Ownership & positioning", *rows, ""] if rows else []

@@ -16,7 +16,7 @@ import time
 import xml.etree.ElementTree as ET
 from collections.abc import Sequence
 from datetime import date, timedelta
-from typing import Any, TypeVar
+from typing import Any, NamedTuple, TypeVar
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
@@ -1422,11 +1422,48 @@ def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
 # LABELED — never silently dropped (that would misstate the counts). Counts + dates only.
 _OPEN_MARKET_CODES = ("P", "S")
 
+#: The COUNT window — unchanged at 182d, because it is not wrong: recent open-market buying after a
+#: drawdown is the informative signal for an overshoot screen. It is now STATED on the face of the
+#: value, since "sells 0" and "sells 0 in the last 182 days" are different claims.
+_INSIDER_WINDOW_DAYS = 182
+#: The LAST-OCCURRENCE scan. Not "window-free" — EDGAR's `recent` submissions feed is itself
+#: bounded — so the horizon is printed with the answer, and an absence reads "no sale in the 3y
+#: scanned" rather than a bare "none". 3y clears the SMPL case (its selling episode is ~21 months
+#: back) with margin, at ~2 HTTP calls per filing against a cached, paced client.
+_INSIDER_SCAN_DAYS = 1095
 
-def _form4_codes(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, float]]:
-    """The (code, shares) of every non-derivative transaction in ONE Form 4 — parsed from the raw
-    ownership XML (never the xsl-styled view). Returns [] when the filing has no non-deriv table
-    or its doc can't be fetched (fail-soft per filing; the block still assembles from the rest)."""
+
+class Form4Line(NamedTuple):
+    """ONE non-derivative Form 4 transaction, with everything a window-free read needs.
+
+    CARRIES ITS OWN DATE, PRICE AND PERSON because a windowed COUNT mostly reports the window: for a
+    sparse series the informative statement is *when the last one was*, not how many fell inside an
+    arbitrary 182 days. `who` is the reporting owner's CIK, never the printed name — the same
+    person is spelled inconsistently across filings ("SCALZO JOSEPH" vs "Scalzo Joseph E."), so a
+    name-keyed count of PEOPLE would over-report.
+    """
+
+    code: str
+    shares: float
+    price: float
+    on: date | None
+    who: str
+    role: str
+
+    @property
+    def usd(self) -> float | None:
+        """Dollar value, or None when the filing states no price. A `G` (gift) or `A` (grant)
+        carries shares at no price; multiplying by a defaulted 0.0 would report a real transfer as
+        a $0 event, which reads as *nothing happened*."""
+        return self.shares * self.price if self.price else None
+
+
+def _form4_codes(
+    http: CachedHttp, cik: str, accession: str, filed: date | None = None
+) -> list[Form4Line]:
+    """Every non-derivative transaction in ONE Form 4 — parsed from the raw ownership XML (never
+    the xsl-styled view). Returns [] when the filing has no non-deriv table or its doc can't be
+    fetched (fail-soft per filing; the block still assembles from the rest)."""
     accn = accession.replace("-", "")
     try:
         idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=accn), ttl_seconds=None)
@@ -1445,55 +1482,176 @@ def _form4_codes(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, 
         root = ET.fromstring(raw)
     except (HttpError, ET.ParseError, ValueError):
         return []
-    out: list[tuple[str, float]] = []
+    owner = root.find(".//reportingOwner")
+    rel = owner.find("reportingOwnerRelationship") if owner is not None else None
+
+    def owner_text(node: ET.Element | None, path: str) -> str:
+        return (node.findtext(path) or "").strip() if node is not None else ""
+
+    who = owner_text(owner, "reportingOwnerId/rptOwnerCik")
+    # ROLE, in decision-relevance order. `officerTitle` is FREE TEXT and EDGAR's own placeholder
+    # "See Remarks" appears in it — AORT printed `last buy $0.26M, See Remarks, …` on the first
+    # real run, machine dialect reaching the page. A placeholder is not a role, so it falls through.
+    # `isTenPercentOwner` is separated from the generic "insider" because it changes what a large
+    # sale MEANS: CNXC's 6,000,000 sh @ $22.25 = $133.5M on 2026-04-29 is a block holder
+    # distributing, which a reader must not confuse with management selling.
+    title = owner_text(rel, "officerTitle")
+    if title.lower().strip(" .") in ("see remarks", "see remark", "n/a", "na", "-", ""):
+        title = ""
+    role = title or (
+        "director" if owner_text(rel, "isDirector") in ("1", "true")
+        else "10% owner" if owner_text(rel, "isTenPercentOwner") in ("1", "true")
+        else "insider")
+    out: list[Form4Line] = []
     for t in root.findall(".//nonDerivativeTransaction"):
         code = (t.findtext(".//transactionCoding/transactionCode") or "").strip()
         sh = t.findtext(".//transactionAmounts/transactionShares/value")
+        px = t.findtext(".//transactionAmounts/transactionPricePerShare/value")
+        raw_on = (t.findtext(".//transactionDate/value") or "").strip()
+        try:
+            on = date.fromisoformat(raw_on) if raw_on else None
+        except ValueError:                       # pragma: no cover - malformed filing
+            on = None
+        # FALL BACK TO THE FILING DATE — a dateless transaction must NEVER VANISH. The first cut
+        # filtered the window on `on is not None`, and a real fixture whose `S` line carries no
+        # `<transactionDate>` silently became `sells 0`: a sale disappearing from the count, in the
+        # flattering direction, inside the change written to stop exactly that. Section 16 requires
+        # filing within two business days, so the filing date bounds the transaction date tightly
+        # enough for a 182-day window and a "~Nmo ago".
+        on = on or filed
         if code:
-            out.append((code, float(sh) if sh else 0.0))
+            out.append(Form4Line(code, float(sh) if sh else 0.0, float(px) if px else 0.0,
+                                 on, who or accession, role))
     return out
 
 
 def _insider_activity(
     edgar: EdgarClient, http: CachedHttp, cik: str | None, reference_date: date
 ) -> Sourced[str]:
-    """(F1) Trailing-6m insider activity from EDGAR Form 4 — open-market P/S counts + net P−S
-    shares, routine comp codes (A/M/F) tallied separately, any other code labeled. Counts and dates
-    ONLY (no interpretation), source-bound to the latest Form 4 accession; fail-loud UNKNOWN when
-    none are on file."""
+    """(F1) Insider activity from EDGAR Form 4 — open-market P/S counts over a STATED window, plus
+    the LAST buy and LAST sale over a longer stated scan. Counts and dates ONLY (no
+    interpretation), source-bound to the latest accession; fail-loud UNKNOWN when none are on file.
+
+    TWO HORIZONS, BOTH PRINTED, AND THAT IS THE POINT. The 182-day window is not wrong — it showed
+    $1.11M of buying by two insiders after a crash, which is the informative signal for an
+    overshoot screen. What it cannot say is that the same people sold $24.7M twenty-one months
+    earlier, and **the omission ran in the flattering direction**: the page showed the buying and
+    hid the selling. A windowed count on a sparse series mostly reports the window, so the last
+    occurrence is reported ALONGSIDE it — window-free, and comparable across names in a way a
+    windowed count is not.
+
+    NEVER NETTED. `P` and `S` are reported as separate sides with their own counts, people and
+    dollars. Netting $1.1M of buying against $12.4M of selling yields −$11.3M, which is less
+    informative than the $1.1M alone — it destroys the informative half with the noisy half. The
+    old form printed exactly that net; it was latent rather than live only because no sale fell
+    inside the window.
+
+    `F` (shares withheld for tax on vesting) IS NOT A SALE and never enters the sell side — it is a
+    withholding event with no decision in it. Measured on SMPL: F is $1.24M against $24.72M of real
+    sales, ~5% of dispositions, so the contamination is small AND excluded.
+    """
     if not cik:
         return Sourced.unknown(note="no CIK for Form 4 lookup")
     try:
         filings = edgar.recent_filings(
-            cik, forms=("4",), since=reference_date - timedelta(days=182))
+            cik, forms=("4",), since=reference_date - timedelta(days=_INSIDER_SCAN_DAYS))
     except HttpError as exc:
         return Sourced.unknown(note=f"EDGAR Form 4 fetch failed: {exc}")
     if not filings:
-        return Sourced.unknown(note="no Form 4 filings in the trailing 6m")
-    counts: dict[str, int] = {}
-    net = 0.0
+        return Sourced.unknown(
+            note=f"no Form 4 filings in the {_INSIDER_SCAN_DAYS // 365}y scanned")
+    lines: list[Form4Line] = []
     for f in filings:
-        for code, sh in _form4_codes(http, cik, f.accession):
-            counts[code] = counts.get(code, 0) + 1
-            if code == "P":
-                net += sh
-            elif code == "S":
-                net -= sh
-    p, s = counts.get("P", 0), counts.get("S", 0)
-    last = max(f.filing_date for f in filings)
-    # (H5) PLAIN LABELS, sign-descriptors only (counts + net + dates) — no interpretive language.
-    # 'grants' = the A (award/grant) code; option-exercise (M) / tax-withheld (F) / conversions (C)
-    # etc. are preserved compactly under 'other' so nothing is silently dropped.
-    line = (f"Open-market buys {p} · sells {s} (net {net / 1000:+.1f}K sh) · "
-            f"grants {counts.get('A', 0)} · last {last.isoformat()}")
+        lines.extend(_form4_codes(http, cik, f.accession, f.filing_date))
+    return Sourced.present(
+        compose_insider_line(lines, reference_date=reference_date,
+                             last_filing=max(f.filing_date for f in filings)),
+        source_ref=(f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} filings in "
+                    f"the {_INSIDER_SCAN_DAYS}d scanned; counts over {_INSIDER_WINDOW_DAYS}d)"))
+
+
+def compose_insider_line(
+    lines: list[Form4Line], *, reference_date: date, last_filing: date
+) -> str:
+    """The insider line, as a PURE function of parsed Form 4 rows.
+
+    SPLIT OUT SO IT IS TESTABLE WITHOUT EDGAR. `_insider_activity` is a network path, so pinning
+    its behaviour previously meant either a hand-rolled stub (the house rule forbids it: fixtures
+    are built from the REAL type) or no pin at all. Every rule this line encodes — the window is
+    stated, the sides are never netted, absence carries its horizon, the largest is reported when
+    it is not the last — is a behaviour a reader depends on, so each gets a red.
+    """
+    win_start = reference_date - timedelta(days=_INSIDER_WINDOW_DAYS)
+    win = [ln for ln in lines if ln.on is not None and ln.on >= win_start]
+
+    def side(code: str) -> str:
+        """One side of the window, NEVER netted against the other. $1.1M of buying against $12.4M
+        of selling nets to −$11.3M, which is LESS informative than the $1.1M alone: netting
+        destroys the informative half with the noisy half. Counts and PEOPLE travel with the
+        dollars — one insider selling $12M is a different fact from six selling $2M."""
+        rows = [ln for ln in win if ln.code == code]
+        if not rows:
+            return "0"
+        usd = sum(x for ln in rows if (x := ln.usd) is not None)
+        people = len({ln.who for ln in rows})
+        return (f"{len(rows)} ({people} insider{'s' if people != 1 else ''}"
+                + (f", ${usd / 1e6:.2f}M)" if usd else ")"))
+
+    def _amount(ln: Form4Line) -> str:
+        return f"${ln.usd / 1e6:.2f}M, " if ln.usd else ""
+
+    def _event(ln: Form4Line, label: str) -> str:
+        assert ln.on is not None
+        months = round((reference_date - ln.on).days / 30.44)
+        return f"{label} {_amount(ln)}{ln.role}, {ln.on.isoformat()} (~{months}mo ago)"
+
+    def occurrences(code: str, label: str) -> str:
+        """THE LAST AND THE LARGEST — the statements a windowed count cannot make. For a sparse
+        series a count mostly reports the WINDOW: SMPL's "sells 0" is true of 182 days and false of
+        21 months, and the omission runs in the flattering direction.
+
+        BOTH, BECAUSE THE FIRST REAL RUN PROVED "LAST" ALONE REPRODUCES THE DEFECT. SMPL's most
+        recent sale is $0.11M nine months back; printing only that states a trivial last sale and
+        implies it is all there is, while the $24.7M episode 21 months back stays hidden — a
+        smaller number in the SAME flattering direction as the count it replaced. The largest is
+        omitted only when it IS the last, so the common case stays one clause.
+
+        Absence carries its horizon — "no sale in the 3y scanned", never a bare "none", because
+        this scan is bounded (EDGAR's `recent` feed is finite) and an unqualified absence would be
+        the visible-absence rule broken by the fix written to honour it."""
+        rows = [ln for ln in lines if ln.code == code and ln.on is not None]
+        if not rows:
+            return f"no {label} in the {_INSIDER_SCAN_DAYS // 365}y scanned"
+        latest = max(rows, key=lambda r: r.on or date.min)
+        out = _event(latest, f"last {label}")
+        biggest = max(rows, key=lambda r: r.usd or 0.0)
+        # SUPPRESSED WHEN IT RENDERS THE SAME. AORT's two largest buys differ by cents and both
+        # print "$0.26M", so the second clause repeated a number the reader cannot tell apart —
+        # noise dressed as a finding. Compared at the PRECISION SHOWN, not the underlying float.
+        if biggest is not latest and _amount(biggest) != _amount(latest):
+            out += f" · largest {label} " + _event(biggest, "").lstrip()
+        return out
+
+    counts: dict[str, int] = {}
+    for ln in lines:
+        counts[ln.code] = counts.get(ln.code, 0) + 1
+    # (H5) PLAIN LABELS, sign-descriptors only — no interpretive language. THE WINDOW IS STATED ON
+    # THE FACE OF EVERY COUNT THAT KEEPS ONE: "sells 0" and "sells 0 in the last 182 days" are
+    # different claims, and only the second is one a reader can act on. 'grants' = the A code;
+    # option-exercise (M) / tax-withheld (F) / conversions (C) stay under 'other', which MUST
+    # REMAIN LAST — `render._fmt_insider` matches it with a `$`-anchored regex and silently leaves
+    # raw machine dialect on the page if anything follows it.
+    line = (f"Open-market buys {side('P')} · sells {side('S')} "
+            f"— in the last {_INSIDER_WINDOW_DAYS} days · "
+            f"{occurrences('P', 'purchase')} · {occurrences('S', 'sale')} · "
+            f"grants {counts.get('A', 0)} · last filing {last_filing}")
     other = "/".join(
         f"{c}×{n}" for c, n in sorted(counts.items())
         if c not in _OPEN_MARKET_CODES and c != "A" and n
     )
     if other:
         line += f" · other {other}"
-    return Sourced.present(
-        line, source_ref=f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} in 6m)")
+    return line
 
 
 def _short_interest(

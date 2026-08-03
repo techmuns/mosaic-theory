@@ -450,7 +450,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [52]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 2 (net -311.4K sh) · grants 0 · last 2026-07-13 · other filings 2 [53]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 2 (net -311.4K sh) · grants 0 · last 2026-07-13 · other filings 2 [53]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 6.9M → 7.0M sh (+1.2%, rising) · 2.0% of shares out (EDGAR XBRL) · DTC 4.7d · recent: 2026-06-30 7.0M · 2026-06-15 6.9M · 2026-05-29 7.0M · 2026-05-15 7.3M [54]
 
 ### Assembly verification — filing vs panel

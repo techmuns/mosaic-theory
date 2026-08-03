@@ -459,7 +459,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [56]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0 (net +6.0K sh) · grants 14 · last 2026-07-06 · other filings 2 [57]
+- **Insider activity (Form 4):** Open-market buys 2 · sells 0 (net +6.0K sh) · grants 14 · last 2026-07-06 · other filings 2 [57]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 15.8M → 17.7M sh (+11.8%, rising) · 15.2% of shares out (EDGAR XBRL) · DTC 3.1d · recent: 2026-06-30 17.7M · 2026-06-15 15.8M · 2026-05-29 11.9M · 2026-05-15 12.4M [25]
 
 ### Assembly verification — filing vs panel

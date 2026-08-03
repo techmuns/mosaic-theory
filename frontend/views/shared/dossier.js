@@ -3423,7 +3423,11 @@ function positioning(m) {
   const cp = (m || {}).catalyst_path;
   if (!cp) return "";
   const rows = (cp.insider_activity
-      ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "")
+      // NO HORIZON IN THE LABEL — TWIN OF render.py. The value now carries TWO stated horizons
+      // (a 182d count window and a 3y last-occurrence scan), so a fixed "6m" here contradicts the
+      // line beneath it. Changed with its md twin: this label was hardcoded in BOTH surfaces, so
+      // fixing one alone is the twin-drift the parity pins exist to catch.
+      ? fact("Insider activity (Form 4)", cp.insider_activity, fmtInsider) : "")
     + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
   return rows ? sec("Ownership & positioning",
     "Who is buying, selling and short — counts and dates only.", rows) : "";

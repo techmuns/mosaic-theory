@@ -2806,9 +2806,18 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
         "0001760689", date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    # buys 1 · sells 1 · net (1000 − 6403)/1000 = -5.4K · grants A×1 · last 2026-06-12 · other C×1
-    assert got.value == ("Open-market buys 1 · sells 1 (net -5.4K sh) · grants 1 · "
-                         "last 2026-06-12 · other C×1")
+    # THE NET IS GONE, ON PURPOSE. ΣP − ΣS destroys the informative half with the noisy half; the
+    # two sides now carry their own counts, people and (where the filing states a price) dollars.
+    # THIS FIXTURE'S `S` LINE HAS NO `<transactionDate>`, and that is why it is kept verbatim: the
+    # first cut of the windowed read filtered on a parsed date and turned `sells 1` into `sells 0`
+    # — a sale vanishing from the count, in the flattering direction, inside the change written to
+    # stop exactly that. It now falls back to the FILING date (Section 16: within two business
+    # days), so nothing is dropped. No dollars appear because the fixture states no price — a
+    # priced-at-zero transaction would read as "nothing happened".
+    assert got.value == (
+        "Open-market buys 1 (1 insider) · sells 1 (1 insider) — in the last 182 days · "
+        "last purchase insider, 2026-06-10 (~1mo ago) · last sale insider, 2026-06-12 (~1mo ago) · "
+        "grants 1 · last filing 2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
@@ -9362,7 +9371,9 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
     for t in names:
         md = (src / t / "dossier.md").read_text()
         assert "### Ownership & positioning" in md, f"{t}: md lost the positioning section"
-        assert "Insider activity (Form 4, 6m)" in md, f"{t}: md lost insider activity"
+        # THE HORIZON LEFT THE LABEL and moved onto the value, where it qualifies the number
+        # it belongs to. Both twins hardcoded this string, so both moved together.
+        assert "Insider activity (Form 4)" in md, f"{t}: md lost insider activity"
         # TIER: it must sit in the appendix, and NOT back in the street section it came from
         appendix = md.split("# Appendix", 1)
         assert len(appendix) == 2, f"{t}: no appendix tier in the md"
