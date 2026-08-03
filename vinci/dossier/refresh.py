@@ -148,6 +148,58 @@ def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+#: The metrics A1 persists. Both verified 11/11 against values that distinguish the consensus
+#: block from its twin; a third metric must be re-checked PER NAME (the block-membership evidence
+#: is SMPL-only).
+CONSENSUS_METRICS = ("Revenue", "EBITDA")
+
+
+def consensus_transform(ticker: str) -> Transform:
+    """(A1) A `refresh_dossier` transform injecting forward-year consensus levels.
+
+    THE BLOCK IS RESOLVED ONCE PER NAME and passed to both metric reads. Re-resolving it per
+    metric is the coupling #311 removed one level down — and resolving once also makes the
+    double-sheet-read question moot rather than needing a cache.
+
+    Absent bundle, absent block, or a metric that does not resolve leaves the field UNTOUCHED
+    rather than writing an empty list: `None` means NOT REFRESHED and `[]` would mean THE STREET
+    HAS NO VIEW, which are different claims.
+    """
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import consensus_block, consensus_rows
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except Exception:                                 # noqa: BLE001 - no bundle, no injection
+            return mech
+        if consensus_block(bundle) is None:
+            return mech
+        levels: dict[str, list[dict[str, Any]]] = {}
+        for metric in CONSENSUS_METRICS:
+            try:
+                cells = consensus_rows(bundle, metric=metric)
+            except CiqUnavailableError:
+                raise                                     # LOW <= MEDIAN <= HIGH refusal propagates
+            if cells:
+                levels[metric] = [
+                    {"fy": c.fy, "median": c.median, "high": c.high, "low": c.low,
+                     "std_dev": c.std_dev, "estimates": c.estimates} for c in cells]
+        if not levels:
+            return mech
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        cc = out.get("consensus_context")
+        if not isinstance(cc, dict):
+            return mech
+        cc["consensus_levels"] = levels
+        return out
+
+    return _apply
+
+
 def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     """Refresh one committed dossier IN PLACE, preserving its synthesis. True when anything moved.
 
