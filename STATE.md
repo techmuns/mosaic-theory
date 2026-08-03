@@ -7686,6 +7686,111 @@ street's" — on the converted basis, part of it IS a view difference). Left in 
 compute those names is the operator's call, and MVST is refused twice over on coverage anyway
 (price-implied-only, one estimate), so **only AORT and NCNO turn on the convention.**
 
+**REVIEW OF #325 — `if dossiers:` GUARDED ONLY THE ALL-FAILED CASE, AND MY COMMENT CLAIMED MORE
+THAN IT DID (2026-08-03).** In a MIXED cohort — one name assembles, another hits the now-working
+refusal — the mirror still rebuilds the WHOLE tree, so the gate does not "stop the old page being
+published as fresh". Claiming it did is the declared-vs-enforced class, again, in a comment.
+**BUT NEITHER OF THE PROPOSED FIXES IS RIGHT, AND #319'S OWN INVARIANT IS WHY.** It asserts EVERY
+`frontend/dossiers/<T>.md` is byte-identical to its source — so mirroring only the successful names,
+or skipping on any error, **strands whichever page had drifted**, which is the FUBO defect the call
+exists to prevent. And a refusal WRITES NOTHING: measured, `data/` and `frontend/` sha256s match on
+every committed name, so a refused name's mirror copy is a **no-op, not a stale publish**. The
+whole-tree rebuild stays, now with the reason written down instead of an overclaim.
+**THE REAL BUG WAS THE EXIT CODE, AND IT HAD ALREADY BITTEN.** `_cmd_dossier` printed `errors` and
+returned 0, so a caller keying on exit status read a refused assembly as a completed one — which is
+exactly how the reroll harness for the SMPL task stopped after a single refused build and reported
+convergence. **D16's shape at the process boundary.** Now `return 1 if errors else 0`; the per-name
+report stays, so a batch still says WHICH names failed rather than dying on the first. Verified no
+workflow or script consumes that exit status.
+**MIXED-COHORT TESTS SHIPPED — the case the old guard missed** (`test_dossier_cli_partial_failure`,
+5 pins). Both mutations CAUGHT: reverting to `return 0` on errors, and skipping the mirror when any
+name fails. The second is pinned as DELIBERATE rather than incidental — a mixed cohort must still
+mirror, or the name that DID assemble goes stale on the served surface.
+
+**SMPL RE-ASSEMBLY — 2026-08-03. THE TASK FOUND THAT ITS OWN ACCEPTANCE GUARD HAD NEVER FIRED.**
+**19c WAS ORDERED BEFORE ITS OWN INPUT.** `uncited_material_figures` ran at `assemble.py:433` while
+`_mark_material` — which sets the `material=True` flags the guard FILTERS ON — ran at `:450`. So it
+read a table with ZERO material rows, found nothing, and returned `[]` on every build since it
+shipped (`315bfe7`, 2026-07-30). MEASURED, not inferred: at the old position SMPL's table has **0**
+material rows and the guard returns `[]`; after `_mark_material` it has **1** and returns
+`Asset Writedown ($M) LTM = -391.9`.
+**ITS UNIT PINS PASSED THROUGHOUT BECAUSE THEY CONSTRUCT ROWS WITH `material=True`** — the fixture
+supplied the exact state production never reached. That is the sharpest form of the ladder the
+operator named: *defined-never-called → declared-never-read → called-never-fires →
+imported-never-called → called-result-discarded* — and now **ordered-before-its-input**, which sits
+under all of them because the call happens, the result is used, and the INPUT is empty.
+**THIS CORRECTS #317, WHICH I RECORDED WRONGLY.** I reported that SMPL's committed page "violates a
+shipped fail-loud guard" and that "current code cannot reproduce SMPL's committed page." Both false:
+current code reproduces it EXACTLY, because the guard could not fire. The first re-assembly today
+converged on attempt 1 and wrote a page still omitting −391.9 — the proof.
+**FIXED** (guard moved after `_mark_material`) and pinned twice: an AST ordering check, plus a
+behavioural pin driven off the COMMITTED artifact rather than a constructed row — because a
+constructed row is precisely what hid it.
+
+**AND WITH THE GUARD LIVE, SMPL CANNOT BE ASSEMBLED. 5 rerolls, 5 refusals, and the pattern is a
+DIAGNOSIS rather than bad luck:**
+· attempt 1 cited −391.9, missed −60.9 · 2 cited −60.9, missed −391.9 · 3 cited −60.9, missed −391.9
+· 4 cited −391.9, missed −60.9 · 5 cited −60.9, missed −391.9. **NON-CONVERGENT.**
+**EACH ROLL STATES EXACTLY ONE OF THE TWO.** Not a missing input: both values appear in the mech
+dump the LLM receives. Not a matcher defect: `_figure_cited` accepts `$60.9M`, `60.9 million`,
+`$61M` and rejects the false `$1,392M of revenue`.
+**THE CAUSE IS THE GUARD'S KEYING, AND ITS OWN DOCSTRING NAMES THE SHAPE IT WAS DESIGNED FOR:**
+*"a charge commonly repeats across columns — CNXC's −1,523.3 appears in both FY25 and LTM — and
+citing it once satisfies the reader for both."* **CNXC's two material cells hold the SAME value**, so
+one citation covers both. **SMPL's hold TWO DIFFERENT values for ONE event** —
+`LTM 391.9 = YTD FY26 331.0 + FY25 Q4 60.9`, a period total and its own component — so value-keying
+turns one event into two independent demands that natural prose does not satisfy.
+**BLAST RADIUS MEASURED: 1 of 11.** Only SMPL and CNXC carry material rows; CNXC passes. The other
+nine have no material row, so the guard demands nothing.
+**AND THE COMMITTED PAGE FAILS THE SAME GUARD**, so SMPL is now blocked in both directions: it
+cannot be re-assembled, and its current artifact would not pass. **THIS IS A GUARD-DESIGN DECISION
+FOR THE OPERATOR, NOT A BUILD** — per-VALUE keying vs per-ROW (satisfied by citing any figure on a
+material row). Recorded, not chosen.
+
+**TWO SMALLER FINDINGS FROM THE SAME RUN.**
+(1) **`vinci dossier` EXITS 0 ON A PER-NAME FAILURE** — correct for a batch (one bad name should not
+fail ten), and my first reroll harness read exit 0 as convergence and stopped after a single refused
+build. The signal is the `N done · M error(s)` report, not the exit status. D16's shape in a harness.
+(2) **ASSEMBLY DID NOT MIRROR, DEMONSTRATED LIVE.** The 15:44 re-assembly wrote
+`data/dossiers/SMPL/` while `frontend/dossiers/SMPL.md` stayed the older page — FUBO's
+missing-banner shape, reproduced by accident. `mirror_to_frontend()` is now called from the dossier
+CLI too, **gated on `if dossiers:`** so a refused run cannot republish the old page as fresh.
+
+**THE SYNTHESIS IS BLIND TO `ev_gap`, AND ONLY STATEMENT ORDER PROTECTED IT.** `synthesize` dumps
+the WHOLE mechanical layer to the LLM (`model_dump(exclude={"primary_source"})`), so a transform
+moved above it would feed `shape: multiple-dominant` straight into the prose — and the A2 comparison
+would silently become a test of whether the model can copy. Pinned: the gap is computed AFTER the
+synthesis, the premise (whole-mech dump) is asserted so the ordering pin cannot read as arbitrary,
+and no committed synthesis may use the shape vocabulary.
+
+**THE GAP DID NOT MOVE, as predicted:** `0.9839 / 0.9463 / 2.2589 / 2.1032` identical across the
+re-assembly — TEV is struck from the comps cap, not `price × shares`. **`tev_as_of` moved
+2026-07-24 → 2026-07-23 and that is a CORRECTION, not an input change:** the old artifact's
+`source_ref` carries the pre-correction format (`as-of 2026-07-24`), i.e. the EXPORT stamp used as
+the data date; the new one resolves to the last actual data bar. `comps_as_of` still reads
+2026-07-24 and no workbook was re-exported.
+
+**THE 15:44 ROLL IS THE DEFECT VERBATIM, WHICH VALIDATES THE GUARD EVEN THOUGH IT CANNOT BE MET.**
+Its bear point [4]: *"a $60.9M Atkins impairment (FY25) followed by further OWYN/Atkins brand-asset
+writedowns driving a -$199M LTM net loss"* — the LTM figure described QUALITATIVELY and never
+stated. That is the 2026-07-30 shape the guard's own docstring cites, reproduced on a fresh roll.
+The guard is RIGHT to refuse it; it simply demands a second figure the prose will not carry.
+**ARTIFACT DECISION: SMPL RESTORED TO `origin/main`.** The 15:44 build was produced while the guard
+was blind and the live guard refuses it; committing it would ship a page the code rejects. This
+branch carries the CODE FIX AND PINS ONLY — no artifact moved.
+
+**AND THE ANSWER TO THE QUESTION THE RE-ASSEMBLY WAS RUN FOR: THE BLIND SYNTHESIS *MATCHES*
+`multiple-dominant`.** Written with no sight of `ev_gap` (pinned), the fresh roll argues:
+· bull [0] — *"the de-rate is idiosyncratic and violent — SMPL fell -59% over 12 months while its
+  small-cap benchmark rose +36% … not a slow-bleed secular fade"*
+· bull [1] — *"absolute EBITDA … rose from $67M (FY17) to a $262M FY25 peak and sits at $217M LTM,
+  so the headline 'margin compression' is a level that remains near record scale, not a collapse"*
+**Together those are the multiple-dominant case in prose: the price fell while the earnings did
+not.** The arithmetic says the same thing — `revenue 0.98 × margin 0.95 × multiple 2.26` — with the
+gap concentrated entirely in the multiple. **The audit's original conclusion, reproduced
+independently by a synthesis that could not see it.** That is the strongest evidence to date that
+the decomposition is measuring something real rather than restating its own inputs.
+
 **CALL-SITE PARITY LANDED — AND EXTENDING IT FOUND THAT ASSEMBLY DROPS `ev_gap` (2026-08-03).**
 `tests/test_consensus_parity.py` sat on an orphan branch, **never PR'd**, 33 commits behind. Read
 before deciding: it still passes on current main, skips cleanly with no licensed CIQ, and **both

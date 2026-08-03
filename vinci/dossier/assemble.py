@@ -426,17 +426,6 @@ def assemble_one(
         # A null synthesis from a CONFIGURED client is a failed build — refuse the write BEFORE
         # `_write` below. Rationale and the 07-22/07-30 incidents: `_require_synthesis`.
         synthesis = _require_synthesis(synthesis, ticker=ticker, flags=synth_flags)
-        # (item 19c) A MATERIAL figure the synthesis prose never states — REFUSE, do not flag.
-        # SMPL's bear case was right on 07-29 and wrong on 07-30 from identical inputs, so
-        # synthesis correctness is STOCHASTIC and a flag would just move the judgement to a human
-        # on every run. Refusing means the bad roll FAILS and is re-rolled; the good one ships.
-        if (uncited := uncited_material_figures(synthesis, mech)):
-            raise DossierAssemblyError(
-                f"{ticker}: the synthesis never states {len(uncited)} MATERIAL figure(s) its own "
-                f"financial summary shows — {'; '.join(uncited)}. A reader meets the number in the "
-                "argument, not the table, so an argument that omits it reads as though the item "
-                "did not happen (SMPL 2026-07-30 cited a $249M charge as if it were a $391.9M "
-                "writedown). Re-run: synthesis varies between runs.")
         # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
@@ -448,6 +437,28 @@ def assemble_one(
         # 43% of market cap, absent from every tier, while the bear case argued from a figure 5.3x
         # smaller. A warning here would have been read past on exactly the day it mattered.
         mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
+        # (item 19c) A MATERIAL figure the synthesis prose never states — REFUSE, do not flag.
+        # SMPL's bear case was right on 07-29 and wrong on 07-30 from identical inputs, so
+        # synthesis correctness is STOCHASTIC and a flag would just move the judgement to a human
+        # on every run. Refusing means the bad roll FAILS and is re-rolled; the good one ships.
+        #
+        # MOVED HERE 2026-08-03, AND IT HAD NEVER FIRED BEFORE. It sat ABOVE `_mark_material`, so it
+        # read a table on which NO row carried `material=True` — `uncited_material_figures` skips
+        # unflagged rows, found nothing to check, and returned `[]` on every build since it shipped.
+        # MEASURED, not inferred: at the old position SMPL's table has 0 material rows and the guard
+        # returns `[]`; after `_mark_material` it has 1 and returns `Asset Writedown ($M) LTM =
+        # -391.9`. Its unit pins passed throughout because they CONSTRUCT rows with `material=True`
+        # — the fixture supplied the state production never reached.
+        # THIS ALSO CORRECTS #317: SMPL's committed page did not "violate a shipped guard while
+        # current code could not reproduce it". Current code reproduces it exactly — the guard was
+        # ordered before its own input.
+        if (uncited := uncited_material_figures(synthesis, mech)):
+            raise DossierAssemblyError(
+                f"{ticker}: the synthesis never states {len(uncited)} MATERIAL figure(s) its own "
+                f"financial summary shows — {'; '.join(uncited)}. A reader meets the number in the "
+                "argument, not the table, so an argument that omits it reads as though the item "
+                "did not happen (SMPL 2026-07-30 cited a $249M charge as if it were a $391.9M "
+                "writedown). Re-run: synthesis varies between runs.")
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
         _freshness_check(mech, ticker=ticker, built_at=built_at.date())
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
