@@ -1339,3 +1339,70 @@ def test_every_gate_input_goes_through_the_one_stamping_helper() -> None:
         "_gate_inputs builds a StampedInput directly — route it through _stamped")
     assert _run._G3_INPUTS == ("ev_ebitda_pctile_vs_history", "pe_pctile_vs_history"), (
         "the G3 inputs are declared in the gate's own preference order — EV/EBITDA then P/E")
+
+
+def test_the_manifest_can_state_which_population_was_judged() -> None:
+    """THE `-01` SKEW, made recordable. That run screened the 2026-07-06 universe (1,800 members)
+    while `build_universe` wrote the 2026-07-29 one (1,780), and 72 tickers got rows in BOTH
+    grains. Nothing in the manifest said which population the gates ran over, so the skew left NO
+    TRACE — `-02`/`-03` agreeing with their snapshot is same-day coincidence, not a fix.
+
+    FORWARD-BINDING: optional, because the three committed manifests predate it and must stay
+    readable. None means "this run did not say", which is honest — it must never be back-filled
+    with a guess about which snapshot was live."""
+    m = RunManifest(run_id="2026-07-29-04", reference_date=dt.date(2026, 7, 29),
+                    screen=CFG, band=BAND, universe_as_of=dt.date(2026, 7, 6))
+    assert m.universe_as_of == dt.date(2026, 7, 6)
+    assert m.universe_as_of != m.reference_date, (
+        "the whole point is that the population's vintage can differ from the run's date")
+    assert RunManifest(run_id="2026-07-29-05", reference_date=dt.date(2026, 7, 29),
+                       screen=CFG, band=BAND).universe_as_of is None
+
+
+def test_the_committed_manifests_predate_the_stamp_and_stay_readable() -> None:
+    """CORPUS BEFORE SYNTHETIC. The three runs on disk have no `universe_as_of`; they must load,
+    and they must read as UNSTATED rather than as a date nobody recorded."""
+    snap = ROOT / "data" / "snapshots"
+    seen = 0
+    for run_id in ("2026-07-29-01", "2026-07-29-02", "2026-07-29-03"):
+        man = read_manifest(run_id, snap)
+        assert man is not None, f"{run_id} manifest no longer loads"
+        assert man.universe_as_of is None, (
+            f"{run_id} gained a universe_as_of — it was not recorded at run time and must not be "
+            "back-filled; a guessed population is worse than an absent one")
+        seen += 1
+    assert seen == 3
+
+
+def test_a_candidate_row_carries_the_cap_that_admitted_it() -> None:
+    """S3'S BLIND SPOT IN ITS ABSENT FORM. All 331 pool candidates of the `-03` run carry
+    `market_cap: null ("needs shares")` while the universe that admitted them was cap-banded
+    2,371 -> 1,800 on exactly that number — the input that decided the population, missing from
+    the record of the decision.
+
+    STAMPED WITH THE SNAPSHOT'S DATE, never the run's: the universe cap is
+    `Polygon close x EDGAR XBRL shares`, so it carries a vintage that is not the run's."""
+    from vinci.screens import run as _run
+
+    caps = {"SEC-1-X": 5_000_000_000.0}
+    got = _run._deciding_cap(caps, "SEC-1-X", dt.date(2026, 7, 6))
+    assert got is not None and got.value == 5_000_000_000.0
+    assert got.as_of == dt.date(2026, 7, 6), "the cap carries the SNAPSHOT's date, not the run's"
+    assert "EDGAR XBRL shares" in got.source
+
+    # NO SNAPSHOT -> no cap decided anything. Inventing one is the fabrication this records against.
+    assert _run._deciding_cap(caps, "SEC-1-X", None) is None
+    assert _run._deciding_cap({}, "SEC-1-X", dt.date(2026, 7, 6)) is None
+    assert _run._deciding_cap(caps, None, dt.date(2026, 7, 6)) is None
+
+    # THE FIELD MUST BE ON THE ROW, not merely computable. First cut pinned only the helper, so
+    # deleting `deciding_cap` from CandidateRow left the suite GREEN — the value was derived and
+    # then had nowhere to go. Round-tripped, because a field that does not survive the write is
+    # the same absence with extra steps.
+    row = CandidateRow(ticker="XYZ", run_id="2026-07-29-04", reference_date=dt.date(2026, 7, 29),
+                       outcome=Outcome.PASS, gate_inputs={},
+                       per_gate={"g1_drawdown": GateOutcome(outcome=Outcome.PASS, reason="r")},
+                       deciding_cap=got)
+    assert row.deciding_cap is not None and row.deciding_cap.value == 5_000_000_000.0
+    back = CandidateRow.model_validate_json(row.model_dump_json())
+    assert back.deciding_cap is not None and back.deciding_cap.as_of == dt.date(2026, 7, 6)

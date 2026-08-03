@@ -187,6 +187,26 @@ class RunManifest(BaseModel, frozen=True):
     #: run before the setting existed actually did, so an older manifest reads as what it was
     #: rather than as unknown.
     routing_policy: RoutingPolicy = RoutingPolicy.CARRY
+    #: WHICH POPULATION THIS RUN JUDGED — the `as_of` of the universe snapshot the screen read.
+    #:
+    #: THE DEFECT IT CLOSES, measured: run `2026-07-29-01` screened the **2026-07-06** universe
+    #: (1,800 members, set-identical to that snapshot) while `build_universe` wrote the
+    #: **2026-07-29** one (1,780). 72 tickers ended up with rows in BOTH grains — screened as
+    #: candidates, recorded as universe drops. Nothing in the manifest said which population the
+    #: gates ran over, so the skew left NO TRACE: `-02` and `-03` matching their snapshot is
+    #: same-day coincidence, not a fix.
+    #:
+    #: `screen_universe` reads `store.latest_universe(reference_date)` — *the most recent snapshot
+    #: at or before the date* — and nothing binds that to a `build_universe` run in the same
+    #: session (the build is a separate CLI subcommand). So the skew stays POSSIBLE; what changes
+    #: here is that it stops being INVISIBLE. Every run without this stamp is permanently
+    #: unattributable, which is why it is a stamp rather than a guard: a guard could not repair
+    #: the three runs already on disk, and a stamp at least stops the fourth joining them.
+    #:
+    #: Optional because the three committed manifests predate it and must stay readable —
+    #: forward-binding, the `BASIS_REQUIRED_FROM` precedent. None means "this run did not say",
+    #: which is honest; it must never be back-filled with a guess about which snapshot was live.
+    universe_as_of: date | None = None
     stages: tuple[str, ...] = ()   # the drop stages this run could emit, in funnel order
 
     def model_post_init(self, _ctx: Any) -> None:
@@ -234,6 +254,18 @@ class CandidateRow(_Row, frozen=True):
     not_evaluated_reason: str | None = None
     gate_inputs: dict[str, StampedInput]
     per_gate: dict[str, GateOutcome]
+    #: THE CAP THAT DECIDED MEMBERSHIP — the input that put this name in front of the gates.
+    #:
+    #: Measured on the `-03` run: **all 331 pool candidates carry `market_cap: null` with the note
+    #: "needs shares"**, while the universe that admitted them was cap-banded 2,371 -> 1,800 on
+    #: exactly that number. The input that decided the population is absent from the record of the
+    #: decision — S3's blind spot in its ABSENT form rather than its false-stamp form, which is
+    #: harder to see because nothing looks wrong.
+    #:
+    #: Stamped, not bare: the universe cap is `Polygon close x EDGAR XBRL shares`, so it carries a
+    #: date that is NOT the run's and a source that names both halves. A bare float here would be
+    #: the stale-benchmark shape again.
+    deciding_cap: StampedInput | None = None
 
     def model_post_init(self, _ctx: Any) -> None:
         """THE AGGREGATE MUST AGREE WITH ITS DETAIL (review finding).

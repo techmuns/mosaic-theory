@@ -208,6 +208,29 @@ class Store:
         ).fetchall()
         return [r["internal_id"] for r in rows]
 
+    def latest_universe_as_of(self, on_or_before: date) -> date | None:
+        """WHICH universe snapshot `latest_universe` would read — the population's own date.
+
+        Split out because the members alone cannot say WHEN they were selected, and a run that
+        records its members without their vintage is unattributable: `2026-07-29-01` screened the
+        2026-07-06 snapshot while the build wrote 2026-07-29, and nothing on disk said so.
+        Returns None when no snapshot exists at/before the date, which is a real state (the
+        `iter_securities` fallback) and must not read as a date.
+        """
+        row = self._conn.execute(
+            "SELECT MAX(as_of) m FROM universe_snapshot WHERE as_of <= ? AND in_universe = 1",
+            (_iso(on_or_before),),
+        ).fetchone()
+        if row is None or row["m"] is None:
+            return None
+        return date.fromisoformat(row["m"])
+
+    def universe_caps(self, as_of: date) -> dict[str, float]:
+        """{internal_id: market_cap} for one snapshot — the input that decided membership."""
+        return {r["internal_id"]: r["market_cap"] for r in self._conn.execute(
+            "SELECT internal_id, market_cap FROM universe_snapshot "
+            "WHERE as_of = ? AND in_universe = 1 AND market_cap IS NOT NULL", (_iso(as_of),))}
+
     def latest_universe(self, on_or_before: date) -> list[str]:
         """In-universe internal_ids from the most recent universe snapshot at/before a date."""
         row = self._conn.execute(
