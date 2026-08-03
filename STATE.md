@@ -7663,6 +7663,47 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**THE GATE IS NOW ENFORCED WHERE A REVIEWER CAN SEE IT — `.github/workflows/gate.yml`, 2026-08-03
+(review finding on #318).** The reviewer's point: every PR body carried *"ruff clean · mypy --strict
+clean · full offline suite green"* while **the only check on the PR was the Cloudflare deploy**, so
+the claim was unfalsifiable at review time. That is this repo's own rule — *verify by showing real
+runs, not asserting* — pointed at its own process. `bin/commit` closed the AUTHOR's version of this
+hole (D16, after three red pushes); it never closed the REVIEWER's, because a local run reaches them
+only as pasted text.
+**MEASURED BEFORE BUILDING, on a committed-files-only tree (`git archive HEAD` — no
+`data/manual/ciq/`, no `vinci.db`, no `.env`): a naive gate would have been PERMANENTLY RED.** ruff
+clean, mypy clean, **pytest 12 FAILED — every one in `tests/test_consensus_rows.py`.** A permanent
+red is the precise condition that makes *"some tests fail"* the normal state, which is how the three
+red pushes got past a gate that was working correctly.
+**THE BLOCKER WAS MINE, AND IT IS A GUARD THAT COULD NOT FIRE — the fourth instance of that class.**
+`_bundle` skipped inside `except Exception`, and **nothing raises**: with the licensed CIQ absent
+`files()` returns `[]` without raising, `CiqBundle.from_files` accepts an empty list, and
+`consensus_rows` swallows `CiqUnavailableError` and returns `[]`. Same shape as item 1's completeness
+gate, the absence-reason guard naming the wrong object, and #310's no-op `getattr` wiring.
+**AND THE FAILURES WERE THE LESS INTERESTING HALF: 11 TESTS IN THAT FILE PASSED VACUOUSLY.** The
+range check loops `for c in cells` over an empty list and asserts nothing, so a clean runner reported
+**11 green tests that checked nothing** — the hollow-test class, live and unnoticed.
+**FIX: condition the skip on the FILE LIST, which is the convention every sibling already used**
+(`test_no_backfill.py`, `test_segment_absence_and_relationship_route.py`: *"licensed CIQ bundle for X
+unavailable (never committed)"*). This file was the outlier; nothing new was invented.
+**VERIFIED BOTH DIRECTIONS** (the offline-fixture precedent): clean tree BEFORE → *12 failed, 11
+passed (vacuous)*; clean tree AFTER → **23 skipped, honest**; this worktree WITH the licensed export
+→ **23 passed, unchanged**.
+**THE CI RUN IS THE EVIDENCE, not a claim about it** — run `30809566256`, all three steps green:
+`All checks passed!` · `Success: no issues found in 117 source files` · **`1515 passed, 49 skipped,
+13 deselected`, 0 failed.**
+**`fetch-depth: 0` IS LOAD-BEARING, and verified rather than assumed:** `test_state_identifiers.py`
+validates the S/D lint against the REAL historical collision at `c112f25` and skips when that commit
+is unreachable — measured, **5 passed with history vs 4 passed / 1 skipped without**. At GitHub's
+default depth-1 the test guarding STATE.md would silently skip on every PR that edits STATE.md,
+which is this entry's own defect class shipped into the fix for it.
+**IT IS A FLOOR, NOT A REPLACEMENT — do not read a green PR as a full gate.** The runner cannot have
+the licensed CIQ workbooks, the working store, or any key (security non-negotiable; the workflow
+references NO secrets), so the CIQ-bound extraction pins — A1's fleet baseline among them — run
+**only** where the export exists. **`bin/commit` stays mandatory before a push.** One gate, two
+places: the workflow runs the same three commands in the same order, and a change to either must
+change both.
+
 **TWO READS — 2026-08-03 (operator-directed, read-only; NOTHING FIXED). Both were hypotheses about
 "a number that doesn't say what it covers." ONE CONFIRMED AND IS BIGGER THAN SCOPED; ONE DOES NOT
 EXIST.** Recorded together because the pair is the lesson: a first pass is a hypothesis whichever way
