@@ -12474,8 +12474,52 @@ left. Nothing about SMPL changed. And it fails the other way too: the audit INDE
 Medifast's terminal outcome, and the page still prints `Medifast — went terminal (LLM-claimed —
 verify)`. **Verification has nowhere to live, so it is re-requested on every assembly.**
 
+**§D RULED 2026-08-04 — OPERATOR ACTION, NO NUMBER MOVES.**
+> **The base margin is stated as an ANCHOR PLUS A NAMED ADJUSTMENT, never as an average.**
+
+Anchor: **15.4481%** — the repo-computed 8-FY median, the one candidate that ASSERTS its basis in a
+field. The current **14.0%** is a **1.45pp haircut**: state it with its reason and the number stays.
+**The anchor choice is nearly free** — 15.4481% against ref[1]'s 15.51% is **0.06pp**, and this pass
+showed ref[1]'s *"(FY2025 adjusted)"* qualifier moves its median by **0.0000pp**. **The haircut is
+the entire analytical content, and it is the analyst's to state.** Apply via `scenario-supersede`
+once the analyst gives the text. **No shown run — nothing moves**, so this is not the decision-path
+change that re-striking would have been.
+
 **THE THREE RULINGS WERE GIVEN 2026-08-04. Recorded here as the decisions of record; the pending
 statements below are kept for the reasoning that produced them.**
+**THE THEME-COHORT READ — RUN 2026-08-04, full render in `docs/audits/2026-08-04-theme-cohort-read.md`.**
+The A5 blocker was a read nobody had run. From the 2026-07-29 output (**331 candidates**) against the
+**35** committed theme clusters — **no new screen run**, since `RunManifest` is still unpopulated and a
+fresh run would be unattributable.
+**SIX of 35 clusters hold ≥2 candidates, covering 32 names** (5 clusters hold exactly one, 24 hold
+none): T002 gold/silver **16**, T008 uranium **5**, T014 coal **3**, T023 quantum **3**, T037 solar
+**3**, T022 cannabis **2**. All six pass admissibility; **T002 is the loosest** (coherence 0.385,
+2 sectors / 5 SICs) and its own `shared_note` demands the analyst name the driver or reject it as a
+momentum bucket — unresolved.
+**VINTAGE GAP, and it bounds every count: the clusters are as-of 2026-06-17, the candidates 07-29.**
+Six weeks. A name that became a candidate after 06-17 cannot appear in any cluster, so **≥2 counts
+are a FLOOR, not a census.**
+**THE FINDING THAT MATTERS FOR THE PICK — the theme route does not sidestep G3, it runs into it.**
+`G3_multiple_floor` is **UNKNOWN for all 32 (100%)** against an **85.2% base rate across all 331**
+(282 UNKNOWN / 49 PASS) — the multi-candidate themes are WORSE than the population. **Total gap is
+computable for ZERO of them**, because the gap needs a TEV off the CIQ comps panel and **the bundle
+intersection is empty**.
+**AND THE BUNDLE SET IS 14, NOT ELEVEN** — `data/manual/ciq/` also holds **CPB, PENG and WERN**,
+which carry bundles with no dossier. None of the 32 has one.
+**TWO STRUCTURAL FACTS, measured not inferred.** (1) **20 of the 32 are foreign private issuers** —
+only 12 file a 10-K; the rest file 20-F/40-F only. All 32 read `country: US`, which is LISTING VENUE,
+so a country filter on the candidate record does not surface this — the filing FORM does. (2)
+**Running the production anchor derivation over cached companyfacts, a margin computes for only 13 of
+32** — **all 16 of T002 produce nothing** (no us-gaap total-revenue tag on IFRS filers), and 7 of the
+13 return negative or near-zero medians (QUBT −7,330%, RGTI −734%, QBTS −725%, CGC −214%, UUUU −119%,
+TLRY −52%, URG +0.99%). Six return a positive multi-year median (BTU, AMR, CNR, CSIQ, DQ, JKS) —
+**recorded as what the pipeline can produce, NOT as a shortlist.**
+**FISCAL-YEAR MISMATCH, the thing to know when picking rather than when building A5:** T014, T023 and
+T037 are internally clean (all Dec-31). **T008's UEC ends Jul-31 against four Dec-31 mates — five
+months**, the largest inside any theme. **T022 is the only theme where NO two members share a
+year-end** (TLRY May-31, CGC Mar-31). T002 is 14×Dec-31 with NG at Nov-30 and SVM at Mar-31.
+**REPORT ONLY — no name recommended; the cohort pick is the operator's and the analyst's.**
+
 **§D SOURCING STEP — DISCHARGED 2026-08-04. THE FIGURE IS UNFINDABLE AS A STORED VALUE, AND THE
 OPERATOR'S OWN SUSPICION IS CONFIRMED: it was their working, not the repo's.**
 **Searched by OBJECT, not by label** (the `13.8`/`N1`/`CHRO` lesson): every numeric in margin range
