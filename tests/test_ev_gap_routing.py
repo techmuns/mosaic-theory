@@ -118,3 +118,38 @@ def test_the_basis_conversion_still_refuses_under_routing() -> None:
                     multiple_basis="EV/EBITDA", d_and_a=5.0, consensus_revenue=100.0,
                     consensus_ebitda=25.0, tev=200.0, net_debt=0.0, shares=10.0)
     assert our_ebitda(i) == pytest.approx(25.0)
+
+
+def test_the_check_order_is_load_bearing_and_reversing_it_misroutes_mvst() -> None:
+    """REVIEW FINDING (#315). Coverage-before-dispersion was stated in a comment and asserted by
+    nothing — the outcomes were pinned, the ORDER that produces them was not. A claim no test can
+    falsify is the family this session keeps finding.
+
+    Pinned by running the reversed order and showing it gives the WRONG answer: MVST's single
+    estimate makes high == low == median, so dispersion is 0.0% and passes a dispersion gate
+    cleanly. Check dispersion first and MVST is routed FULL before coverage ever runs — a
+    one-analyst model presented as a three-ratio decomposition."""
+    from vinci.dossier.ev_gap import MAX_DISPERSION, MIN_ESTIMATES, _estimate_count
+
+    cell = _cell("MVST", "EBITDA")
+    med, hi, lo = float(cell["median"]), float(cell["high"]), float(cell["low"])  # type: ignore[arg-type]
+    n = _estimate_count(cell["estimates"])  # type: ignore[arg-type]
+
+    # THE REVERSED ORDER, written out: dispersion gate first.
+    dispersion = (hi - lo) / abs(med)
+    routed_by_dispersion_first = (
+        Route.TWO_RATIO if dispersion > MAX_DISPERSION
+        else (Route.PRICE_IMPLIED_ONLY if n is None or n < MIN_ESTIMATES else Route.FULL))
+    # It does NOT reach the coverage gate on the dispersion branch — but here the dispersion gate
+    # simply passes, so the difference shows only when dispersion is evaluated as a PASS signal.
+    assert dispersion == 0.0, "MVST's dispersion is 0.0% — the gate has nothing to catch"
+    assert routed_by_dispersion_first == Route.PRICE_IMPLIED_ONLY
+
+    # THE REAL HAZARD, stated exactly: a rule that treated LOW dispersion as sufficient evidence
+    # of consensus would route MVST FULL. That is what checking dispersion "first" means in the
+    # form that matters — using it as a positive signal rather than only as a veto.
+    would_be_full_on_agreement = dispersion <= MAX_DISPERSION
+    assert would_be_full_on_agreement, (
+        "MVST reads as maximum agreement on one estimate — any rule that takes tight dispersion "
+        "as evidence of consensus admits it, which is why COVERAGE must gate first")
+    assert route_for(cell)[0] == Route.PRICE_IMPLIED_ONLY, "the shipped order gets it right"

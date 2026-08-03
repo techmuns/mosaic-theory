@@ -168,6 +168,18 @@ PR (CLAUDE.md: coin-time translation).
   **freeze** = the frozen theme source artifact that must reproduce byte-identical.
 - **mirror** — the committed `frontend/` copy of data snapshots the static dashboard serves
   (`frontend/build.py`); an artifact pass is incomplete until source AND mirror are synced.
+- **`git checkout origin/main` MEANS `origin/main` AS OF YOUR LAST FETCH.** Fourth multi-session
+  hazard, after the stale stash, the half-applied edit and the concurrent writes. Branching from
+  a stale ref silently gives you a tree WITHOUT the work you just merged: an append to a file
+  that did not exist yet created it fresh and dropped everything the previous PR added. **Fetch
+  before branching**, and treat a missing symbol in a file you just extended as a stale-base
+  symptom before debugging the edit.
+- **GATE ORDER IS LOAD-BEARING WHEN A CHEAP CHECK CAN LOOK LIKE A PASS.** Coverage must gate
+  before dispersion: one estimate makes high == low == median, so dispersion reads 0.0% —
+  MAXIMUM AGREEMENT where there is nobody to disagree. Any rule taking tight dispersion as
+  evidence of consensus admits a one-analyst model. **Where two gates could both fire, the one
+  whose PASS is meaningless on thin data goes second** — and the order needs a test, not a
+  comment, because an order stated in prose is a claim nothing can falsify.
 - **A SEARCH IS AN ORDERING DEPENDENCY.** The rule that correctness must not depend on external
   ordering — assert it or select by value — covers SEARCHES, not just sequences: **taking the
   FIRST pattern match makes document layout load-bearing exactly as `[0]` makes sequence order
