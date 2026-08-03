@@ -7747,6 +7747,69 @@ cannot be re-assembled, and its current artifact would not pass. **THIS IS A GUA
 FOR THE OPERATOR, NOT A BUILD** — per-VALUE keying vs per-ROW (satisfied by citing any figure on a
 material row). Recorded, not chosen.
 
+**RESOLVED 2026-08-03 — OPERATOR RULING: KEY ON THE LARGEST VALUE IN THE ROW.** Not per-VALUE
+(unsatisfiable, as five rolls showed); not per-ROW (satisfied by citing $60.9M beside a row showing
+−392, which IS the original audit defect). **The asymmetry is the reason:** citing 60.9 without
+391.9 understates the charge by 6.4×; citing 391.9 without 60.9 misleads nobody, because the
+component is contained in the total. **The original defect is the acceptance pin** — a synthesis
+citing only −60.9 must still refuse, on a FROZEN fixture (the committed artifact now passes, so it
+cannot carry the pin). Six pins added; three alternative keyings (per-VALUE, per-ROW,
+smallest-value) mutation-checked and **all CAUGHT**.
+
+**AMENDED THE SAME DAY, ON REVIEW — AND THE OPERATOR'S OBJECTION IS THE INTERESTING PART.** I had
+recorded a KNOWN LIMIT and shipped it as an accepted pass: a row whose LARGEST value is old and
+whose RECENT value is small demands the stale event and stays silent on the current one, with a
+test (`test_the_known_limit_is_a_limit_not_a_bug`) codifying exactly that. **The containment
+argument that justified largest-only — "60.9 is a COMPONENT of 391.9" — is a fact about SMPL, not a
+fact the ROW carries, while `max()` applies to every row.** Two UNRELATED impairments in different
+periods (an old $500M, a current $25M) break it, and **a materiality guard is the one place a known
+hole must not ship as accepted risk.** RULING: demand the LARGEST material value **and** the LATEST
+ACTUAL one. **Satisfiability survives because the demand is keyed by VALUE, not by cell** — where
+the largest figure IS the latest, the two collapse into one citation, which is the entire live
+corpus (SMPL −391.9, CNXC −1,523.3). **Measured after the amendment: 0 of 11 refuse**, so it costs
+nothing today and refuses precisely the shape that motivated it; no re-assembly needed.
+**Largest-only is now itself a mutation the suite CATCHES** (4/4 caught: largest-only, latest-only,
+per-VALUE, smallest-value). **The "latest actual = last non-forecast column" assumption is pinned
+structurally rather than commented** — `test_actual_columns_precede_estimate_columns` asserts every
+committed summary's `is_estimate` mask is non-decreasing across the corpus.
+**THE GENERAL LESSON, and it is the session's shape again: a rule was justified by a relationship
+that was TRUE OF THE EXAMPLE and ABSENT FROM THE DATA.** Face validity on one name is not face
+validity on the corpus — the check is whether the DATA carries the relation the rule assumes, not
+whether the relation happens to hold where you looked.
+**RE-MEASURED AFTER THE FIX, on the eleven committed artifacts: still 1 of 11 — SMPL alone,
+demanding −391.9.** Nothing new refuses; the change can only shrink the demand and did.
+**SMPL THEN CONVERGED ON ATTEMPT 1** (bound was 5). The non-convergence above was a property of the
+keying, not of the name — the same brief that failed five times in a row passed first try once the
+guard stopped demanding a total AND its own component. **The new bear point states the figure the
+old one omitted:** old *"impairments on acquired brand assets"* — no number at all; new *"GAAP
+results turned deeply negative on a $391.9M asset writedown (Atkins/OWYN impairment), driving LTM
+net income to −$199M"*. That single sentence is what the whole guard was for.
+**THE GAP DID NOT MOVE:** `0.9839 / 0.9463 / 2.2589 / 2.1032`, shape `multiple-dominant` at both
+FY2026 and FY2027 — identical across a fresh synthesis, as it must be, since no gap input is
+LLM-written.
+**AND THE BLIND SYNTHESIS MATCHES THE SHAPE WITHOUT BEING TOLD IT** — bear[2] reaches
+`multiple-dominant` in prose (*the multiple collapsed alongside collapsing forward EBITDA*, trailing
+5.3x at the 0th percentile of its own 8.5-year range) and bull[8] poses the same leg as the
+question (NTM TEV/EBITDA 5.65 vs peer 8.72 — *residual overshoot rather than earned*). **The one
+TENSION worth carrying:** the synthesis's decisive_question litigates the EARNINGS base (*does the
+takeaway decline permanently reset it*), while the arithmetic says our revenue and margin
+assumptions sit within 2% and 5% of the street's — the entire 2.10x rides on the exit multiple
+being 2.26× the street's. Not a contradiction; the decisive question is aimed at the leg where we
+and the market AGREE. That is exactly the cross-check A2 was built to expose, and it is the first
+time it has been run against a synthesis that could not see the answer.
+
+**AND A METHOD DEFECT IN MY OWN MEASUREMENT HARNESS, worth the same rung as the rest.** The
+mutation harness rewrote `synthesis.py`, ran pytest, then restored the source and asserted
+`reverted: True` — **comparing SOURCE while Python executed BYTECODE.** The final revert left a
+`__pycache__` entry from the smallest-value mutation, and the next six test runs loaded it: the
+suite reported 6 failures against code that was not in the tree, and the debug output
+(`FY25 = -60.9`) was precisely `min(seen, key=abs)`. **The first across-eleven measurement was taken
+under that stale bytecode and has been re-run clean** (same answer, 1 of 11 — but that was luck, not
+method). `bin/commit` already clears `__pycache__`, so the shipped gate was never exposed; the
+exposure is ad-hoc harnesses only. **Standing rule: a harness that mutates source clears
+`__pycache__` on revert — otherwise "reverted" is source-true and execution-false.** Same class as
+the tree-vs-index defect: verified one artifact, executed another.
+
 **TWO SMALLER FINDINGS FROM THE SAME RUN.**
 (1) **`vinci dossier` EXITS 0 ON A PER-NAME FAILURE** — correct for a batch (one bad name should not
 fail ten), and my first reroll harness read exit 0 as convergence and stopped after a single refused
