@@ -6529,7 +6529,24 @@ screen cohort.**
       (3 red). Pins in `tests/test_pe_basis_cause_claim.py`; the artifacts still carry the old
       sentence until the next artifact pass.
     - **19b — ABSENCE REASONS (audit P9). BUILT 2026-07-29, this build.** See below.
-    - **19c — SYNTHESIS/DATA AGREEMENT (audit P1 pt 2).** A method sentence's stated relation must
+    - **19c — SYNTHESIS/DATA AGREEMENT (audit P1 pt 2). STATUS CORRECTED 2026-08-03 by the
+      disposition render — the "OPEN" below was stale, and the artifact is worse than stale.**
+      19c held TWO claims under one letter. **The material-figure half SHIPPED** (`315bfe7`,
+      2026-07-30): `uncited_material_figures` (`synthesis.py:1108`) wired to **RAISE** at
+      `assemble.py:433`, pinned `tests/test_material_figure_presence.py`. **The method-sentence half
+      is item 29 / P3 pt 2** and remains open — recorded UNCLOSEABLE BY CODE, since the leg is
+      analyst data.
+      **AND THE GUARD'S OWN ACCEPTANCE CASE VIOLATES IT.** Run over all 11 committed dossiers
+      through the real `Dossier` model: **SMPL `WOULD REFUSE → Asset Writedown ($M) LTM = -391.9`;
+      the other ten CLEAN.** SMPL's synthesis never states the figure — the only near-match is
+      `$1,392M` of REVENUE, which `_figure_cited`'s negative lookbehind correctly rejects (the exact
+      false citation its docstring says it was tightened to prevent). The guard raises
+      unconditionally on the assembly path and `315bfe7` IS an ancestor of the artifact commit, so
+      **current code cannot reproduce SMPL's committed page.** The refresh path is NOT the hole:
+      `moved_cited_claims` enforces a narrower contract (a material figure that MOVED and that the
+      prose CITES) and never covered 19c. **Closes by re-assembling SMPL** — the guard will refuse
+      until the roll cites the figure, which is the mechanism working as designed.
+      ORIGINAL TEXT, kept: A method sentence's stated relation must
       hold against the legs it describes (bull 1,420 vs LTM 1,392). **OPEN**; its live test case is
       SMPL's writedown row carrying −61 and −392 side by side. Overlaps item 29, which types the
       bull-leg constraint so the check becomes arithmetic rather than parsing.
@@ -7078,8 +7095,17 @@ sample: **the source was authoritative and the excerpt was not.**
     that vocabulary, so the gate now detects the DEFECT — a company name in the relationship slot —
     rather than encoding a guess about the vocabulary.
 
-24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
-    IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 —
+24. **ANALYST-DECISION BUCKET — HEADLINE CORRECTED 2026-08-03 (disposition render): (a) SHIPPED
+    2026-07-31, (b) STILL BLOCKED. The "Item stays BLOCKED" below was true of the whole item for
+    three days and of half of it thereafter.** (a) closed via `afc4b08` (diluted shares OUTSTANDING
+    as the per-share denominator, delivered through `refresh_record`) + `04d5936` (all seven records
+    moved; SMPL 93.678M → 88.461M, r:r 3.83 → 4.78; no name crosses 2:1) — **and it is recorded as
+    closed at §"WRITTEN 2026-07-31 (item 24 closed)", 1,700+ lines EARLIER in this same file than
+    this entry.** Two statements about one item, in one document, disagreeing — the drift class the
+    score line was retired for, this time inside a queue entry rather than beside one. **(b) — the
+    REGIME TEST — is audit N2 and is genuinely still blocked** pending a ratified policy line.
+    ORIGINAL HEADLINE, kept: ~~BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
+    IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.~~ (queued 2026-07-28 —
     DECISIONS, not builds; the machine proposes neither.) (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
     outstanding (~88.5M) vs guided ~90M for FORWARD per-share values while the company retires
     ~11.7% of its equity — the auditor sizes the difference at ~$1.00–1.50/sh of understatement.
@@ -7367,6 +7393,57 @@ RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-on
 42. **WERN HAS NO DOSSIER** — `data/dossiers/` covers 11 names, not WERN; its band provenance lives
     only in the scenario record's `assumptions`.
 
+**AUDIT-DISPOSITION TO-DOS — 2026-08-03. LABELLED `DR-n`, NOT NUMBERED INTO THE QUEUE, DELIBERATELY:**
+this file already records that its LIVE QUEUE carries **two colliding number series** (16–27 resolve to
+two different meanings depending on which occurrence a reader hits) and the topology fix is itself
+queued. Adding six more bare integers to a list whose numbering is a known open defect would widen the
+exact problem the render was written to stop. They take queue numbers when the topology work lands.
+
+DR-1. **RE-ASSEMBLE SMPL — closes 19c's artifact half** (disposition render 2026-08-03). Its committed
+    page violates the shipped guard: `uncited_material_figures` reads
+    `Asset Writedown ($M) LTM = -391.9` as uncited, 1 of 11. The guard RAISES, so the build refuses
+    until a roll cites the figure — which is the mechanism working. **Not a re-render:** the
+    synthesis is what must change. Do it under 16b's acceptance conditions.
+DR-2. **N1, N3, N4, N5, N6 — FIVE AUDIT FINDINGS WITH NO QUEUE HOME** (disposition render 2026-08-03;
+    content transcribed in `docs/audits/2026-07-28-smpl/disposition.md` §B so a triage decision needs
+    no re-read of the report). Each needs a disposition, not necessarily a build:
+    **N5 is the cheapest** — the surprise record renders the ANNUAL GAAP series only ("FY2025 −36%")
+    while the last three quarters beat normalized EPS +8.3/+12.5/+20.0%; it is a second read off a
+    sheet already being opened, not a judgment.
+    **N3 is now checkable** — base 1,330 vs `consensus_levels` FY2028 median 1,339.5 (7 est, 07-30);
+    home is the two-clocks note, and A1 supplies the comparison.
+    **N4** — bear multiple 7.0x sits above the 5.34x the market pays, sixty lines from the page's own
+    `0%ile → near-floor`; neither references the other.
+    **N1** — the thesis frames category decline while the page's own bear point [5] states
+    company-specific share loss. Re-specification, or an explicit ruling that the two coexist.
+    **N6** — three parts (unreported 2026-04-21 leadership change · insider window · buybacks vs OCF).
+    **SPLIT N6(b) OUT AS A PLATFORM ITEM**: the six-month insider window turns a net seller into a net
+    buyer with the window unstated, on every name whose insiders sold longer ago than that.
+DR-3. **THREE UNTRIAGED RESIDUES FROM THE AUDIT'S NON-DEFECT SECTIONS** (disposition render 2026-08-03).
+    (a) **R3's surviving instruction** — the retraction ends *"Correct the label"* on
+    `(249.1→397.0 QoQ)`, still live at SMPL `dossier.md:377`; a three-quarter-old financing event
+    rendered as current. **A finding inside a retraction reads as retracted** — §C holds three and
+    none were re-read for surviving instructions. (b) **§D's mixed-basis margin derivation** — the
+    15.51% median is GAAP-inclusive of unusuals while the "~13.8% trailing" is CIQ clean EBIT; on the
+    anchor basis LTM is −17.05%. Filed by the audit as "worth a decision"; never decided. It is a
+    MIXED-BASIS DERIVED VALUE, which the brief contract already rules on — the rule existed and was
+    never pointed at it. (c) **§G's four open unknowns** — FINRA short interest, Circana's
+    management-sourced +10% (load-bearing for N1), Q4 FY26 buyback quantum (two scenario inputs), and
+    twins.
+DR-4. **TWIN VERIFICATION MUST TRAVEL WITH THE TWIN, OR IT RE-OPENS EVERY ASSEMBLY** (disposition
+    render 2026-08-03). Twins are LLM-composed and re-draw on each run: the two §G left unverified
+    (Central Garden & Pet, e.l.f. Beauty) are **no longer in SMPL's twin set at all**, and the
+    current five — Medifast, Hain, BellRing, **Utz**, **WW International** — include two the audit
+    never saw. A one-time verification pass cannot hold. Either the verified outcome becomes a FIELD
+    on the twin record, or the "[LLM-suggested, unverified]" label is the permanent honest state and
+    should say so.
+DR-5. **ONLY 6 OF 11 DOSSIERS CARRY SCENARIO RECORDS** (operator, carried across five sessions
+    unrecorded until now). AORT, EPAM, IT, MVST, NCNO, SMPL have records; BRBR, CNXC, FUBO, VITL,
+    VRRM do not. **Consequence for A2:** the EV-gap statement reaches six names and five render
+    empty — which is the correct behaviour, not a bug, but it must be a stated expectation before the
+    render ships rather than a surprise when five cards come back blank. Same population drives the
+    covenant-basis three-state branch (5 no-record names take the legacy line by design).
+
 43. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
     memo answers the review with what was verified, what was refuted, what changed, and what the
     exit realized. Everything it needs is now committed.
@@ -7585,6 +7662,66 @@ and no snake_case survives on the card side (this is the general guard: it catch
 field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
+**DISPOSITION RENDER — 2026-08-03 (operator-directed, its own session after being dropped from five
+prompts as a rider). `docs/audits/2026-07-28-smpl/disposition.md` — every P and N item, four-state,
+MEASURED against code and the committed artifacts rather than read out of this file.** The operator's
+count had been wrong four times, each time answered from tracking; the render is therefore a reading of
+the repo, and STATE was used only to find candidate homes. **THREE ENTRIES HERE WERE CONTRADICTED BY
+MEASUREMENT** and are corrected in place above: queue item **24** (headline said BLOCKED; (a) shipped
+2026-07-31), item **19c** (said OPEN; shipped `315bfe7`), and a state nothing recorded — **SMPL's
+committed dossier violates the shipped 19c guard** (1 of 11; the other ten clean).
+**THE FOUR STATES EXIST BECAUSE INSTANCES RUN BOTH WAYS.** 19a is closed in code and open on FUBO's
+page; **P4 pt2 is the mirror — closed on the page with no guard behind it** (SMPL now prints
+`Spot $10.53 (entry-vintage — frozen at underwrite 2026-07-27)` beside a separately-stamped live
+`CMP $10.22 (2026-07-24)`; nothing prevents the false stamp returning). A single "closed" column can
+express neither.
+**SCORE: NOT HERE. `disposition.md` §E, derived from its own per-item rows — this file carries NO
+aggregate, by rule.** The retired-score-line rule (2026-08-01) binds this entry as much as the one it
+replaced: a count restated away from the rows it summarises is a count that will drift from them.
+**AND THIS PARAGRAPH IS THE PROOF — REVIEW FINDING ON #317, and it is mine.** The first cut headed
+itself *"SCORE, DERIVED NOT RESTATED"* and then restated the whole score, four lines under a sentence
+saying it must not be. **The render exists because a count kept in prose had been wrong four times,
+and its own STATE record opened a fifth copy of that count in the same PR.** Not a slip of wording:
+restating is easy precisely because a summary reads as harmless, which is why the remedy is REMOVAL
+rather than a lint. That is the precedent this repo already set on 2026-08-01 — the score line was
+deleted, not guarded — so no check ships here; the rule holds by there being nowhere else the number
+lives. **FOR THE NEXT SESSION: the urge to paste the totals back into this entry IS the failure mode.
+Follow the pointer.**
+**ARTIFACT EXCEPTIONS, NAMED RATHER THAN NETTED:** **FUBO** (sealed, assembled 07-27 — the only page
+carrying 19a's pre-fix caveat, and its own `known_wrong.json` names that item) and **MVST** (assembled
+07-10, since re-serialised not re-assembled). **MVST'S `material` KEY IS A SCHEMA DEFAULT, NOT A
+MEASUREMENT** — all 11 rows carry it as `false` from `04d5936`'s model round-trip, so a key-presence
+probe scores MVST closed on P1 pt1 when nothing evaluated it. That is the shape of the counting error
+this render exists to stop.
+**NEVER TRIAGED AT ALL — the part tracking could not have known about.** (1) **N1, N3, N4, N5, N6** have
+NO entry in this file, by content search as well as label (label search alone is false comfort: `N1`
+collides with an unrelated concession-clause note, `CHRO` returns 12 substring hits and 0 real ones).
+N2 appears once, parenthetically, inside item 24(b). (2) **R3's actionable residue** — the retraction
+retracts the $148M QoQ claim and then instructs *"Correct the label"* on `(249.1→397.0 QoQ)`, which is
+still live on SMPL. **A finding inside a retraction reads as retracted**; §C holds three and nobody
+re-read them for surviving instructions. (3) **§D's methodological item** — the mixed-basis margin
+derivation, explicitly filed as "not yet classified as a defect but worth a decision", never classified.
+It is a MIXED-BASIS DERIVED VALUE, the class the brief contract already rules on — the rule existed and
+was never pointed at it. (4) **§G — four of seven untriaged**: FINRA short interest, Circana's
+management-sourced +10% (load-bearing for N1), Q4 FY26 buyback quantum, and twins.
+**N1'S EVIDENCE IS ALREADY ON THE PAGE, ARGUING AGAINST THE PAGE'S OWN THESIS.** The thesis reads
+"the sell-off has overshot [category decline]" while bear point [5] reads "the category itself grew 10%
+while the company shrank … a company-specific share loss management concedes is execution-driven."
+Not a missing-data problem — the synthesis and the thesis disagree in print.
+**TWO FINDINGS THAT CHANGE WHERE AN ITEM BELONGS.** (i) **N6(b) is a PLATFORM defect wearing a
+name-level label:** the insider window is fixed at SIX MONTHS, and that window is what turns a net
+seller into a net buyer (~$12.36M of selling outside it, ~$1.1M of buying inside, net reported positive
+with the window unstated). It reads the same on every name whose insiders sold more than six months ago,
+so it belongs beside P1–P9. (ii) **TWIN VERIFICATION CANNOT BE A ONE-TIME TASK BY CONSTRUCTION** —
+twins are LLM-composed and re-draw on every assembly. The two names §G left unverified (Central Garden
+& Pet, e.l.f. Beauty) are no longer in SMPL's twin set at all; the current five are Medifast, Hain,
+BellRing, **Utz** and **WW International**, the last two never audited. Either the verified outcome
+travels with the twin as a FIELD, or every re-assembly silently re-opens the question.
+**N3 IS NOW CHECKABLE, AND A1 IS WHY.** The audit measured base 1,330 against consensus FY2028 1,331.0
+on the 07-24 vintage. `consensus_levels` on the 07-30 export reads **FY2028 median 1,339.5 on 7
+estimates** — 0.7% from the base. The finding survives a vintage change, and the duration mismatch is
+now a comparison code can make.
 
 **AUDIT-OF-RECORD + ACCEPTANCE POLICY + THE ITEM-1 INGESTION DEPENDENCY (2026-07-28,
 operator-directed).** Three changes, none of them a defect fix — REMEDIATION STATUS IS STILL ZERO
