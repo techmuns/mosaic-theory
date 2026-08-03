@@ -9371,9 +9371,7 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
     for t in names:
         md = (src / t / "dossier.md").read_text()
         assert "### Ownership & positioning" in md, f"{t}: md lost the positioning section"
-        # THE HORIZON LEFT THE LABEL and moved onto the value, where it qualifies the number
-        # it belongs to. Both twins hardcoded this string, so both moved together.
-        assert "Insider activity (Form 4)" in md, f"{t}: md lost insider activity"
+        assert "Insider activity (Form 4, 6m)" in md, f"{t}: md lost insider activity"
         # TIER: it must sit in the appendix, and NOT back in the street section it came from
         appendix = md.split("# Appendix", 1)
         assert len(appendix) == 2, f"{t}: no appendix tier in the md"

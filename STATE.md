@@ -7663,6 +7663,38 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**REVIEW OF #319 — I SHIPPED THE HALF THAT MADE THE SERVED PAGE WORSE, HAVING WRITTEN THE NOTE
+EXPLAINING WHY THE HALVES WERE DIFFERENT. TWO INVARIANTS SHIPPED (2026-08-03).**
+**THE FINDING.** The insider LABEL is render-only (deploys immediately); the insider VALUE is
+mechanical (needs a re-assembly). #319 removed `6m` from the label because the value was about to
+state its own window — so between the two, the deployed line read
+`Insider activity (Form 4): … sells 0 (net +90.0K sh)` — **NO HORIZON ANYWHERE**, where the label
+had supplied one before. Verified against the artifact, not reasoned: `main` renders
+`(Form 4, 6m): … sells 0 (net +90.0K sh)`; the branch rendered `(Form 4): … sells 0 (net +90.0K sh)`.
+**A strict regression on the served surface, in the flattering direction, inside the PR written to
+stop exactly that** — and the delivery-path note in my own PR body described the split that caused
+it. Naming a hazard is not the same as not walking into it.
+**THE DECIDING TEST, worth keeping as a rule: `6m` is true of the OLD value AND of the NEW value's
+182-day count window, so KEEPING it is correct in both states while REMOVING it is correct only
+after a re-assembly. A change that is right only after a later step ships WITH that step.** Label
+reverted on BOTH twins (it was hardcoded in `render.py` and `dossier.js` alike) and the artifacts
+re-rendered, so every served `.md` is byte-identical to main again.
+**INCIDENT 2, FOUND WHILE FIXING INCIDENT 1 AND MORE SERIOUS THAN IT: FUBO'S KNOWN-WRONG BANNER WAS
+MISSING FROM THE WEB MIRROR.** `data/dossiers/FUBO/dossier.md` carried the 22-line
+*"⚠ KNOWN-WRONG — do not read the figures on this page as current"* block; **`frontend/dossiers/
+FUBO.md` — the page actually served — did not.** That sidecar exists precisely so FUBO "cannot LOOK
+VALID while resting on a wrong share base", and **on the web it looked valid.** Pre-existing on
+main; surfaced by running `frontend/build.py`, not caused by this build. The suite compared only
+the SET of mirrored names, never the bytes, which is why a safety banner could go missing and stay
+missing.
+**INVARIANT RULE SATISFIED — `tests/test_served_surface_invariants.py`, 4 pins, both incidents
+mutation-verified as CAUGHT:** (i) every committed insider line states a horizon in EITHER the
+label or the value — deliberately permissive about WHERE, because the artifacts legitimately lag
+the code, but never about NEITHER; its negative pin uses the REAL failing string #319 shipped;
+(ii) every `frontend/dossiers/<T>.md` is BYTE-IDENTICAL to its `data/` source; (iii) conditional —
+IF a name declares a `known_wrong.json` THEN both surfaces carry its banner (conditional so it
+cannot rot when FUBO clears).
+
 **TWO CHECKS, THEN THE LAST-OCCURRENCE BUILD — 2026-08-03 (operator). BOTH CHECKS CAME BACK
 "NOT A BUG", AND BOTH WERE WORTH RUNNING.**
 

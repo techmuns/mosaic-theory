@@ -527,7 +527,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [69]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [27]
+- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [27]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.8d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [15]
 
 ### Assembly verification — filing vs panel

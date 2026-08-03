@@ -522,7 +522,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [59]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 1 · sells 0 (net +0.1K sh) · grants 0 · last 2026-07-06 · other filings 142 [60]
+- **Insider activity (Form 4, 6m):** Open-market buys 1 · sells 0 (net +0.1K sh) · grants 0 · last 2026-07-06 · other filings 142 [60]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 12.5M → 12.0M sh (-4.1%, falling) · 17.8% of shares out (EDGAR XBRL) · DTC 7.5d · recent: 2026-06-30 12.0M · 2026-06-15 12.5M · 2026-05-29 12.2M · 2026-05-15 11.7M [61]
 
 ### Assembly verification — filing vs panel

@@ -625,7 +625,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [75]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 27 (net -177.0K sh) · grants 19 · last 2026-06-15 · other filings 4 [76]
+- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 27 (net -177.0K sh) · grants 19 · last 2026-06-15 · other filings 4 [76]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 1.9M → 2.2M sh (+15.4%, rising) · 4.5% of shares out (EDGAR XBRL) · DTC 2.7d · recent: 2026-06-30 2.2M · 2026-06-15 1.9M · 2026-05-29 1.9M · 2026-05-15 1.9M [77]
 
 ### Assembly verification — filing vs panel

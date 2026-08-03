@@ -486,7 +486,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [57]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 4 · sells 1 (net -5994.5K sh) · grants 17 · last 2026-07-09 · other filings 22 [58]
+- **Insider activity (Form 4, 6m):** Open-market buys 4 · sells 1 (net -5994.5K sh) · grants 17 · last 2026-07-09 · other filings 22 [58]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 10.1M → 11.9M sh (+18.4%, rising) · 19.5% of shares out (EDGAR XBRL) · DTC 6.3d · recent: 2026-06-30 11.9M · 2026-06-15 10.1M · 2026-05-29 10.4M · 2026-05-15 10.5M [59]
 
 ### Assembly verification — filing vs panel
