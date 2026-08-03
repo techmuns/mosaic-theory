@@ -351,9 +351,36 @@ class StockPerformance(BaseModel):
     model_config = {"frozen": True}
 
 
+class ConsensusLevel(BaseModel, frozen=True):
+    """(A1) One metric x one forward fiscal year, as the street reported it.
+
+    RAW PAIR. `estimates` is CIQ's own `9/11` — never re-labelled "broker count", because the two
+    numbers are not one number and the second is not derivable from the first. Ragged within a
+    single name (SMPL 9/11 at FY2026, 11/11 at FY2027), which is why it is persisted PER CELL.
+    """
+
+    fy: str
+    median: float
+    high: float
+    low: float
+    std_dev: float | None = None
+    estimates: str | None = None
+
+
 class ConsensusContext(BaseModel):
     """Light consensus context (CIQ Estimates) — context for 'am I non-consensus', not a driver."""
 
+    #: (A1) STRUCTURED forward-year consensus, per metric — `{"Revenue": [...], "EBITDA": [...]}`.
+    #:
+    #: OPTIONAL WITH A None DEFAULT, and that is FORCED rather than chosen: `ConsensusContext` is
+    #: non-optional on `MechanicalLayer`, so a required field here would break the load of all
+    #: eleven committed dossiers. Forward-binding, the same shape as `RunManifest.universe_as_of`
+    #: and `RefPoint.vintage`. None means NOT YET REFRESHED, not "no consensus exists" — the two
+    #: are told apart by the fleet pin, not by this field.
+    #:
+    #: NOTHING RENDERS THIS UNTIL A2. It is machine-complete in the JSON and invisible on the page,
+    #: which is stated here so it is not rediscovered as a gap.
+    consensus_levels: dict[str, list[ConsensusLevel]] | None = None
     eps_trend: Sourced[str]
     revenue_trend: Sourced[str]
     revision_history: Sourced[str]

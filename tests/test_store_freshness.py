@@ -57,27 +57,47 @@ def test_a_weekend_or_holiday_gap_is_not_stale() -> None:
     assert stale_names({"A": "2026-07-29", "B": over}) == {"B": MAX_STORE_LAG_DAYS + 1}
 
 
-def test_the_tolerance_matches_the_stores_own_observed_gaps() -> None:
-    """The constant is DERIVED. If the committed store ever exhibits a gap larger than the
-    tolerance, the tolerance is wrong — and this reds rather than the guard firing spuriously on
-    every name after a long holiday."""
+def test_the_tolerance_matches_the_market_calendars_own_observed_gaps() -> None:
+    """The constant is DERIVED — from the MARKET CALENDAR, not from every name in the store.
+
+    THE POPULATION WAS WRONG AND THE TEST WAS PERMANENTLY RED. It took the worst consecutive gap
+    across EVERY name, which includes per-name HALTS and dormant listings — DFNS alone shows a
+    1628d gap — and those are exactly what a staleness tolerance must screen OUT. Deriving the
+    threshold from the population it screens out is the same error STATE records against the
+    anchor bound: *"the 5-9d tail is per-name HALTS — the very thing the bound refuses"*.
+
+    THE BENCHMARKS ARE THE CALENDAR. IWM and MDY agree EXACTLY (4d worst gap, 1274 bars each),
+    and that agreement is what makes them a calendar rather than two opinions — a per-name series
+    cannot be checked against itself. `MAX_STORE_LAG_DAYS = 4` matches it to the day.
+
+    WHY THIS MATTERED BEYOND ITSELF: while it was red, "some tests fail" was the normal state, and
+    a genuine regression (a no-op refresh losing byte-identity) was pushed under cover of it. A
+    permanently red test signals in neither direction — it is a broken instrument, not a warning.
+    """
     db = ROOT / "data" / "vinci.db"
     if not db.exists():
         pytest.skip("no local store in this worktree")
     import sqlite3
 
     c = sqlite3.connect(db)
-    worst = 0
-    for (iid,) in c.execute("select distinct internal_id from prices"):
+    worst_by_bench: dict[str, int] = {}
+    for bench in ("IWM", "MDY"):
         ds = [dt.date.fromisoformat(r[0]) for r in c.execute(
-            "select bar_date from prices where internal_id=? order by bar_date", (iid,))]
-        for a, b in zip(ds, ds[1:], strict=False):
-            worst = max(worst, (b - a).days)
-    if worst == 0:
-        pytest.skip("store has no consecutive bars to measure")
+            "select bar_date from prices p join securities s on s.internal_id = p.internal_id "
+            "where s.ticker = ? order by bar_date", (bench,))]
+        if len(ds) < 2:
+            continue
+        worst_by_bench[bench] = max((b - a).days for a, b in zip(ds, ds[1:], strict=False))
+    if not worst_by_bench:
+        pytest.skip("no benchmark series in this store to derive the calendar from")
+    # THE TWO MUST AGREE. If they diverge, neither is the calendar and the derivation is void.
+    assert len(set(worst_by_bench.values())) == 1, (
+        f"the benchmarks disagree on the calendar {worst_by_bench} — a tolerance derived from "
+        "either alone would be an opinion, not a calendar")
+    worst = next(iter(worst_by_bench.values()))
     assert worst <= MAX_STORE_LAG_DAYS, (
-        f"the store exhibits a {worst}d gap but the tolerance is {MAX_STORE_LAG_DAYS}d — every "
-        "name would read stale after that gap. Re-derive the constant from the distribution.")
+        f"the market calendar exhibits a {worst}d gap but the tolerance is {MAX_STORE_LAG_DAYS}d "
+        "— every name would read stale after that gap. Re-derive the constant.")
 
 
 # --- the fleet against today ------------------------------------------------------------------
