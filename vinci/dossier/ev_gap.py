@@ -120,3 +120,98 @@ def anchor_year(levels: dict[str, list[dict[str, object]]]) -> str | None:
         return None
     both = have["Revenue"] & have["EBITDA"]
     return min(both, key=int) if both else None
+
+# --- A2b: routing, decided on the CONSENSUS SIDE ALONE -----------------------------------------
+#
+# TWO RULES, AND EACH HAS A LIVE COUNTEREXAMPLE TO THE OTHER. This is what gets simplified away
+# later, so the numbers are here:
+#
+#   VITL FY2026 — coverage 9/10 (fine), EBITDA median 3.300 on high 9.018 / low 0.315.
+#     Dispersion 263.7%. Consensus margin 0.4260%, so a 10% our-margin gives r_margin 23.47x and
+#     r_mult collapses by the same factor — while the product reconciles EXACTLY, because the
+#     identity holds for any inputs. THE EXACT RECONCILIATION IS WHY THE GARBAGE IS NOT CAUGHT.
+#     A coverage-only rule passes VITL straight through.
+#
+#   MVST FY2026 — EBITDA 62.078 on high == low == median, one estimate. Dispersion 0.0%, which
+#     reads as MAXIMUM AGREEMENT where there is nobody to disagree. Coverage 1/1.
+#     A dispersion-only rule passes MVST straight through.
+#
+# Neither rule alone is sufficient. Both thresholds are FACE-VALIDITY choices, never tuned on
+# outcomes: 3 estimates is the smallest number for which a median is not just a midpoint of two,
+# and 50% separates VITL's 263.7% from CNXC's 4.3% by more than an order of magnitude either side.
+MIN_ESTIMATES = 3
+MAX_DISPERSION = 0.50
+
+#: 3-5 estimates is thin but usable — the count is CARRIED so the render can caution, rather than
+#: the route being narrowed. NCNO sits here at 5/7 on EBITDA.
+CAUTION_ESTIMATES = 5
+
+
+class Route:
+    """What form the gap statement may take for one metric at one year."""
+
+    FULL = "three-ratio"
+    TWO_RATIO = "two-ratio"                # revenue + EV/Revenue; margin stated as a path
+    PRICE_IMPLIED_ONLY = "price-implied-only"
+
+
+def _estimate_count(raw: str | None) -> int | None:
+    """The first half of CIQ's raw pair (`9/11` -> 9). Never re-labelled; only read."""
+    if not raw or "/" not in raw:
+        return None
+    head = raw.split("/", 1)[0].strip()
+    return int(head) if head.isdigit() else None
+
+
+def route_for(cell: dict[str, object]) -> tuple[str, dict[str, object]]:
+    """(A2b) The route for ONE consensus cell, and why — from the consensus data ALONE.
+
+    OUR LEG NEVER ENTERS THIS. Coverage and dispersion are properties of what the street reported,
+    so routing is decidable for every name including the five with no scenario record. That is the
+    correct decomposition rather than a workaround: `route_for` is testable on all eleven, and only
+    the emission of the gap statement needs a leg.
+
+    COVERAGE IS CHECKED BEFORE DISPERSION, because a single estimate has no dispersion to measure
+    and its 0.0% would otherwise read as agreement.
+    """
+    n = _estimate_count(cell.get("estimates"))            # type: ignore[arg-type]
+    why: dict[str, object] = {"estimates": cell.get("estimates"), "n": n}
+    if n is None or n < MIN_ESTIMATES:
+        why["reason"] = (
+            f"{n if n is not None else 'unknown'} estimate(s) — below {MIN_ESTIMATES}; a median "
+            "over so few is one analyst's model, and its dispersion reads as agreement because "
+            "there is nobody to disagree")
+        return Route.PRICE_IMPLIED_ONLY, why
+
+    med, hi, lo = (cell.get("median"), cell.get("high"), cell.get("low"))
+    if not isinstance(med, (int, float)) or not med:
+        why["reason"] = "no usable median"
+        return Route.PRICE_IMPLIED_ONLY, why
+    if isinstance(hi, (int, float)) and isinstance(lo, (int, float)):
+        dispersion = (hi - lo) / abs(med)
+        why["dispersion"] = dispersion
+        if dispersion > MAX_DISPERSION:
+            why["reason"] = (
+                f"dispersion {dispersion:.1%} exceeds {MAX_DISPERSION:.0%} — the margin ratio "
+                "divides by a denominator the street does not agree on, and the reconciliation "
+                "stays exact while the decomposition stops meaning anything")
+            return Route.TWO_RATIO, why
+
+    why["caution"] = n <= CAUTION_ESTIMATES
+    thin = " — thin, caution carried" if n <= CAUTION_ESTIMATES else ""
+    why["reason"] = f"{n} estimates{thin}"
+    return Route.FULL, why
+
+
+def shape_label(revenue_ratio: float, margin_ratio: float, multiple_ratio: float) -> str:
+    """Which ratio carries the gap. A FUNCTION of the three, never a separate judgement.
+
+    `multiple-dominant` is the uncomfortable one — it says the view rests on re-rating rather than
+    on the business — so it is defined by distance from the others, not by a bare threshold.
+    """
+    dist = {"earnings": abs(margin_ratio - 1.0), "timing-duration": abs(revenue_ratio - 1.0),
+            "multiple": abs(multiple_ratio - 1.0)}
+    lead = max(dist, key=lambda k: dist[k])
+    if lead == "multiple" and dist["multiple"] > 2 * max(dist["earnings"], dist["timing-duration"]):
+        return "multiple-dominant"
+    return lead
