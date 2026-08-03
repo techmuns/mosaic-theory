@@ -1151,9 +1151,30 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
             if is_forecast(i):
                 continue
             seen.setdefault(float(v), []).append(cols[i] if i < len(cols) else str(i))
-        for v, periods in seen.items():
-            if not _figure_cited(prose, v):
-                out.append(f"{r.label} {'/'.join(periods)} = {v:,.1f}")
+        if not seen:
+            continue
+        # THE LARGEST VALUE IN THE ROW, AND ONLY THAT (operator ruling 2026-08-03).
+        #
+        # PER-VALUE WAS UNSATISFIABLE, demonstrated: five independent rolls on SMPL each cited ONE
+        # of `Asset Writedown` FY25 −60.9 and LTM −391.9, never both — because they are ONE EVENT at
+        # two horizons (LTM 391.9 = YTD FY26 331.0 + FY25 Q4 60.9) and an analyst narrates one. The
+        # old keying turned that into two independent demands and blocked the name entirely.
+        #
+        # PER-ROW WOULD PASS THE ORIGINAL DEFECT: citing $60.9M beside a row showing −392 is exactly
+        # the audit's P1, and a rule satisfied by ANY figure on the row accepts it.
+        #
+        # THE ASYMMETRY HAS A REASON, and it is why the rule is asymmetric too: citing 60.9 without
+        # 391.9 UNDERSTATES the event by 6.4x; citing 391.9 without 60.9 misleads nobody, because
+        # 60.9 is a component of it. The harm runs one way.
+        #
+        # KNOWN LIMIT, recorded rather than discovered: a row whose LARGEST value is old and whose
+        # RECENT value is small would demand citation of a stale event while letting the current one
+        # pass unmentioned. Not live on today's corpus — SMPL's and CNXC's largest values are both
+        # current — and stated here so the next person meets it as a documented edge rather than a
+        # surprise.
+        biggest = max(seen, key=abs)
+        if not _figure_cited(prose, biggest):
+            out.append(f"{r.label} {'/'.join(seen[biggest])} = {biggest:,.1f}")
     return out
 
 

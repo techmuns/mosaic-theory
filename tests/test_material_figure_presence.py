@@ -328,25 +328,101 @@ def test_the_guard_runs_after_the_flags_it_reads() -> None:
         "green while omitting its own -$391.9M writedown.")
 
 
+#: FROZEN. The shape the 2026-07-30 page actually shipped: a bear point arguing impairment while
+#: naming NO figure. Frozen because the committed synthesis was REPAIRED on 2026-08-03 and now
+#: cites $391.9M — driving this off the living page made the assertion VACUOUS (`[]` with the flags
+#: stripped and `[]` with them applied), so a test written to prove the guard can fire would have
+#: passed while proving nothing. TEST-LAYER RULE: a value-level pin lives on a frozen fixture,
+#: never on the re-drawn artifact.
+_PRE_REPAIR_PROSE = (
+    "GAAP earnings have crossed to loss driven by impairments on acquired brand assets — "
+    "evidence the OWYN/Atkins asset values are being written down."
+)
+
+
 def test_the_guard_fires_on_the_real_committed_shape() -> None:
-    """BEHAVIOURAL COMPANION to the ordering pin — driven off the COMMITTED artifact rather than a
-    constructed row, because a constructed row is exactly what hid the defect."""
+    """BEHAVIOURAL COMPANION to the ordering pin. The MECHANICAL side stays LIVE — read from the
+    committed artifact and flagged by `_mark_material` itself, because a constructed row is exactly
+    what hid the defect and `_mark_material` is the function whose ordering was wrong. Only the
+    prose is frozen."""
     import json
     from pathlib import Path
 
     from vinci.dossier.assemble import _mark_material
-    from vinci.dossier.schemas import Dossier, MechanicalLayer
+    from vinci.dossier.schemas import MechanicalLayer
 
     root = Path(__file__).resolve().parents[1]
     doc = json.loads((root / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
-    d = Dossier.model_validate(doc)
     stripped = json.loads(json.dumps(doc["mechanical"]))
     for r in stripped["financial_summary"]["annual"]["value"]["rows"]:
         r["material"] = False                    # the state the assembler hands over
     unflagged = MechanicalLayer.model_validate(stripped)
-    assert uncited_material_figures(d.synthesis, unflagged) == [], (
+    synth = _Synth(_PRE_REPAIR_PROSE)
+    assert uncited_material_figures(synth, unflagged) == [], (
         "precondition: with no rows flagged the guard is blind — this is the defect, pinned so "
         "the ordering test above cannot be read as arbitrary")
-    assert uncited_material_figures(d.synthesis, _mark_material(unflagged)), (
-        "with the flags applied the guard must see SMPL's writedown; if this is empty the "
-        "synthesis now cites it and the fixture needs a name that does not")
+    fired = uncited_material_figures(synth, _mark_material(unflagged))
+    assert fired, (
+        "with the flags applied the guard must see SMPL's writedown against prose that names no "
+        "figure; empty here means the committed financial summary lost its material row")
+    assert any("391.9" in f for f in fired), fired
+
+
+# --- LARGEST-VALUE KEYING (operator ruling 2026-08-03) -----------------------------------------
+
+#: SMPL's real row: one event at two horizons. LTM 391.9 = YTD FY26 331.0 + FY25 Q4 60.9.
+_SMPL_ROW = _Row("Asset Writedown ($M)", [None, -3.0, -60.9, -391.9], material=True)
+_SMPL_ANN = _Ann([_SMPL_ROW], ["FY23", "FY24", "FY25", "LTM"])
+
+
+def _uncited(prose: str, ann=_SMPL_ANN) -> list[str]:
+    return uncited_material_figures(_Synth(prose), _Mech(ann))
+
+
+def test_the_original_audit_defect_still_refuses() -> None:
+    """THE ACCEPTANCE CASE, and it had never been tested against production state. Citing only the
+    $60.9M FY25 impairment beside a row showing −392 IS audit P1 — the bear case arguing from a
+    figure 5.3x smaller than the event. A per-ROW rule would accept this; largest-value does not."""
+    assert _uncited("A $60.9M non-cash Atkins impairment drove the FY25 loss.")
+
+
+def test_citing_the_largest_alone_is_enough() -> None:
+    """THE ASYMMETRY, AND ITS REASON. Citing 60.9 without 391.9 UNDERSTATES by 6.4x; citing 391.9
+    without 60.9 misleads nobody, because 60.9 is a COMPONENT of it. The harm runs one way, so the
+    rule does too — and this is what makes the guard satisfiable at all."""
+    assert _uncited("Management wrote down $391.9M of brand assets over the trailing year.") == []
+
+
+def test_citing_both_is_also_enough() -> None:
+    assert _uncited("A $60.9M FY25 Atkins impairment, part of $391.9M written down LTM.") == []
+
+
+def test_a_repeated_charge_still_needs_one_citation() -> None:
+    """CNXC'S SHAPE — the same value in two columns. It passed before and must keep passing: one
+    citation covers both cells because there is only one number."""
+    ann = _Ann([_Row("Impairment of Goodwill ($M)", [None, -1523.3, -1523.3], material=True)],
+               ["FY24", "FY25", "LTM"])
+    assert _uncited("A $1,523.3M goodwill impairment.", ann) == []
+    assert _uncited("Goodwill was written down.", ann)
+
+
+def test_a_figure_below_the_floor_is_never_demanded() -> None:
+    """The −3.0 cell must not become the demanded figure just because it is the only other one."""
+    ann = _Ann([_Row("Asset Writedown ($M)", [-3.0, -391.9], material=True)], ["FY23", "LTM"])
+    out = _uncited("Management wrote down $391.9M.", ann)
+    assert out == [], out
+
+
+def test_the_known_limit_is_a_limit_not_a_bug() -> None:
+    """RECORDED RATHER THAN DISCOVERED (operator). A row whose LARGEST value is OLD and whose
+    RECENT value is small demands the stale event and lets the current one pass unmentioned.
+
+    NOT LIVE on today's corpus — SMPL's and CNXC's largest values are both current — and pinned so
+    the behaviour is a documented edge rather than a surprise. If a real name ever takes this shape,
+    the keying needs a recency term and this test is where that argument starts.
+    """
+    ann = _Ann([_Row("Asset Writedown ($M)", [-500.0, -25.0], material=True)], ["FY22", "LTM"])
+    assert _uncited("A $25M writedown this year.", ann), "the stale-largest limit changed"
+    assert _uncited("A $500M writedown back in FY22.", ann) == [], (
+        "citing the old, larger figure satisfies the guard while the CURRENT $25M goes unmentioned "
+        "— this is the known limit, not a regression")
