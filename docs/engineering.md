@@ -168,6 +168,17 @@ PR (CLAUDE.md: coin-time translation).
   **freeze** = the frozen theme source artifact that must reproduce byte-identical.
 - **mirror** — the committed `frontend/` copy of data snapshots the static dashboard serves
   (`frontend/build.py`); an artifact pass is incomplete until source AND mirror are synced.
+- **A SEARCH IS AN ORDERING DEPENDENCY.** The rule that correctness must not depend on external
+  ordering — assert it or select by value — covers SEARCHES, not just sequences: **taking the
+  FIRST pattern match makes document layout load-bearing exactly as `[0]` makes sequence order
+  load-bearing.** `next(i for i, r in enumerate(rows) if …)` is `rows[0]` with extra steps.
+  Enumerate every match and select by a VALUE the document states about itself. (Three
+  instances in one session: a 40-row read of a 574-row sheet, `rows[:30]`, and the first of
+  three identically-titled blocks. Each concluded ABSENCE from a partial search.)
+- **MAP A NEW SOURCE COMPLETELY IN ONE PASS, RECORD THE MAP, THEN BUILD FROM IT.** Discovery
+  and construction are different jobs and must not share a prompt. A1 cost SIX turns because
+  it was data archaeology framed as a build: the design was settled, which hid that the SOURCE
+  was not. Four of those turns were probe errors, each one a partial map treated as complete.
 - **re-assemble vs re-render** — re-assemble = full pipeline re-run INCLUDING the LLM synthesis
   (facts + framing both move); re-render = deterministic md/web redraw from committed JSON (no
   LLM, framing frozen). Operationally different — always say which.
