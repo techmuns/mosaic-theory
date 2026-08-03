@@ -7687,6 +7687,21 @@ they diverge — long after the change. **The review's own suggestion was theref
 any output-level check.** Closed with a STRUCTURAL pin on the source (#310's precedent, where three
 behavioural attempts could not redden): mutation with the pin → **CAUGHT**. A deliberate basis
 change now has to move the STAMP too, and argue with a test.
+**AND CI CAUGHT A REAL DEFECT THE LOCAL GATE COULD NOT — the first thing `gate.yml` has found
+that `bin/commit` cannot.** The idempotency test went RED in CI and GREEN here, because this
+worktree HAS the licensed CIQ exports and CI never can. Cause: with the bundle absent,
+`ev_gap_transform` wrote **`None` over both vintages** while leaving the gap itself computed — so
+**running the pass on any machine without the workbooks would silently strip the provenance off
+every dossier**, a number keeping its value while losing the thing that says what it describes.
+**FIXED IN THE BEHAVIOUR, NOT THE ASSERTION:** prior vintages are carried forward, and a readable
+bundle that cannot date itself also keeps the prior stamp — "this export states no as-of" is a
+different fact from "we never had one", and only the second justifies erasing a record. Same
+principle `insider_transform` already states. Verified by reproducing CI's condition locally
+(`git archive` with no `data/manual/ciq`): 10 passed; mutation with the carry-forward removed →
+**CAUGHT**. **This is the CI asymmetry paying off in the direction nobody predicted:** the note
+said CI is a floor that cannot see the CIQ-bound pins — it turns out CI sees a class the local
+gate structurally cannot, namely everything that depends on the licensed export being ABSENT.
+
 **PRE-EXISTING, SURFACED NOT FIXED:** `recompute_derived` strikes TEV from `stock_info.market_cap`
 + peer_grid `net_debt` — a stock-panel cap plus a comps-panel net debt, i.e. a MIXED-BASIS TEV
 that predates A2b. The two caps agreeing is what hides it. Pinned (`test_the_two_market_caps_agree`)

@@ -299,7 +299,17 @@ def ev_gap_transform(ticker: str) -> Transform:
         out: dict[str, Any] = json.loads(json.dumps(mech))
         levels = ((out.get("consensus_context") or {}).get("consensus_levels")) or None
 
-        tev_as_of = consensus_as_of = None
+        # CARRY THE PRIOR VINTAGES FORWARD — a refresh must never ERASE provenance it cannot
+        # re-read. The licensed CIQ workbooks are git-ignored and absent from CI and from any
+        # machine without the export, so the first cut wrote `None` over both stamps whenever the
+        # bundle was missing: running the pass anywhere without the workbooks would have silently
+        # stripped the vintages off every dossier while leaving the gap itself computed — a number
+        # keeping its value while losing the thing that says what it describes.
+        # CI CAUGHT THIS, not the local gate, because this worktree HAS the exports. Same principle
+        # `insider_transform` already states: a fetch that cannot run leaves the field alone.
+        prior = (out.get("ev_gap") or {}).get("vintages") or {}
+        tev_as_of = prior.get("tev_as_of")
+        consensus_as_of = prior.get("consensus_as_of")
         try:
             bundle = CiqBundle.from_files(
                 ticker, LocalFolderStore.from_config(get_config()).files(ticker))
@@ -310,8 +320,11 @@ def ev_gap_transform(ticker: str) -> Transform:
             # VERBATIM, floor marker and all. SMPL's estimates export carries no As-Of header, so
             # its date is a FLOOR ("≥2026-07-21"); flattening that to a plain date would
             # manufacture precision the workbook does not have.
-            tev_as_of = c.value if c.status is SourceStatus.PRESENT else None
-            consensus_as_of = e.value if e.status is SourceStatus.PRESENT else None
+            # A READABLE BUNDLE THAT CANNOT DATE ITSELF also keeps the prior stamp rather than
+            # blanking it: "this export states no as-of" is a different fact from "we never had
+            # one", and only the second justifies erasing what is already recorded.
+            tev_as_of = c.value if c.status is SourceStatus.PRESENT else tev_as_of
+            consensus_as_of = e.value if e.status is SourceStatus.PRESENT else consensus_as_of
 
         cap = ((out.get("implied_valuation") or {}).get("market_cap") or {}).get("value")
         grid = ((out.get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
