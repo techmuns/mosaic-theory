@@ -10,6 +10,7 @@ the memo's §Artifact Manifest specifies.
 | [`ic-memo.md`](ic-memo.md) | Full Investment Committee audit and stress test — 13 sections plus scoring, the audit trail, the erratum | **The audit finding of record, the decision sequence, the evidence dashboard** |
 | [`defect-report.md`](defect-report.md) | Nine platform + seven name-level defects, each with root cause, fix and acceptance test | **The engineering queue** (STATE.md §Next-steps items 1, 17–24) |
 | [`independent-dossier.md`](independent-dossier.md) | Thesis rebuilt on corrected methodology — brand-level sum-of-parts, cross-section multiples, time-value discipline | **The investment view and entry conditions** |
+| [`disposition.md`](disposition.md) | Every P and N item with a four-state disposition (code / artifact / both / open), measured against code and the committed artifacts 2026-08-03 | **What is actually closed.** Supersedes any count carried in STATE prose |
 
 ## The audited artifact has since MOVED — what changed, and what did not
 
@@ -20,6 +21,8 @@ mention. Recorded here so that is not a surprise.
 | date | change to the committed `dossier.md` | affects a finding? |
 |---|---|---|
 | 2026-07-28 (#245, queue item 26a) | Two lines added — the header date now reads `· extraction unstamped`, and Record & reproduce gains an `Extraction:` row | **No** |
+| 2026-07-30 (`c757a08`) | **SMPL RE-ASSEMBLED** — the hold below was lifted once items 17/18/19b/20/21/28 shipped | **Yes — see [`disposition.md`](disposition.md)** |
+| 2026-07-31 (`04d5936`) | Per-share denominator moved to diluted OUTSTANDING; SMPL 93.678M → 88.461M, r:r 3.83 → 4.78 | **Yes — P7 pt2 closed** |
 
 **A RE-RENDER, NOT A RE-ASSEMBLY.** No extraction ran, no network was touched, no synthesis was
 re-generated and `dossier.json` did not change — the render gained an extraction-version stamp and
@@ -27,10 +30,18 @@ all 11 committed dossiers were re-rendered from their existing JSON to keep them
 the renderer. SMPL's reads **"unstamped — assembled before extraction versions were declared;
 vintage unknown"**, which is the truthful state of an artifact built before the stamp existed.
 
-**Every defect in this audit is still open on the artifact.** SMPL is deliberately NOT re-assembled
-(four of its five acceptance checks still fail, pending queue items 1, 18 and 22), so the numbers,
-the prose and the missing $391.9M writedown are exactly as the audit found them. When SMPL IS
-re-assembled, this table gets the row that matters.
+**~~Every defect in this audit is still open on the artifact.~~ SUPERSEDED 2026-08-03 — SMPL was
+re-assembled 2026-07-30 and the statement above no longer holds.** It is struck rather than deleted
+because it stood on the page for six days after it stopped being true, which is the drift this
+folder now guards against: a status sentence in prose ages silently while the thing it describes
+moves. **[`disposition.md`](disposition.md) is the current answer**, measured per item rather than
+asserted, and it is where this table's "row that matters" now lives.
+
+The original text, for the record: *SMPL is deliberately NOT re-assembled (four of its five
+acceptance checks still fail, pending queue items 1, 18 and 22), so the numbers, the prose and the
+missing $391.9M writedown are exactly as the audit found them.* Of those, the $391.9M writedown now
+**is** on the page as a flagged material row — and the synthesis still never states it, which is a
+different and narrower defect than the one this sentence described.
 
 ## Precedence on valuation — READ BEFORE QUOTING A RATIO
 
