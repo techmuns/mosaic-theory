@@ -12487,6 +12487,78 @@ change that re-striking would have been.
 
 **THE THREE RULINGS WERE GIVEN 2026-08-04. Recorded here as the decisions of record; the pending
 statements below are kept for the reasoning that produced them.**
+**THE COHORT-PARTNER READ — 2026-08-04, full render in `docs/audits/2026-08-04-cohort-partner-read.md`.
+REPORT ONLY; no assembly, no build, no name recommended.**
+**CORRELATED-SHOCK RISK ON THE SOURCING ROUTE — A HYPOTHESIS WITH A REQUIRED CHECK, not a proved
+property** *(corrected on review of #331; my first cut said "by construction")*. **What the selection
+rule establishes:** each constituent independently passed a **drawdown gate** (≤ −30% from the 52w
+high) and the cluster establishes **business similarity** via residualized co-movement over 365 days.
+**What it does NOT establish: that those drawdowns share ONE causal event** — residual co-movement is
+equally consistent with a persistent correlated FACTOR carrying no single event, or with several
+IDIOSYNCRATIC events falling inside the same year and grouping. Treating the correlated-shock reading
+as proved would discount the whole sourcing route on an inference the rule cannot support.
+**REQUIREMENT: run an EVENT/DATE ALIGNMENT CHECK before calling any cohort common-shock.** The data
+is on disk — each candidate record carries a typed, dated `trigger_reason`.
+**THE CHECK, RUN: THREE OF SIX ALIGN, TWO SCATTER, ONE IS UNTESTABLE.** Aligned on ONE date — **T002
+gold/silver 15 of 16 on 2026-01-30**, **T023 quantum all three on 2026-02-05**, **T022 cannabis both
+on 2026-04-23**. Scattered — **T008 uranium THREE dates spanning 4 months** (02-04 / 03-16 / 06-05),
+**T037 solar THREE spanning 2 months** (02-27 / 04-16 / 04-29). Untestable — **T014 coal**, 2 of 3
+being undated price-drop triggers. **So the reading is TRUE FOR SOME THEMES AND FALSE FOR OTHERS,
+which is precisely why it must be checked per cohort rather than assumed from the route.**
+**AND IT LANDS OPPOSITE TO THE INTUITION ABOUT T002** — the mixed-taxonomy cluster (2 sectors, 5
+SICs, coherence 0.385, whose own `shared_note` warns of a driver-less momentum bucket) is the **MOST**
+date-aligned of the six. Loose taxonomy did not predict scattered events.
+**ONE CAVEAT THE CHECK CANNOT RESOLVE:** a shared DATE is evidence of a common MOVE; the label
+`earnings_gap_down` attributing it to EARNINGS for fifteen issuers on one day is **not** established
+by that field and is implausible on its face — confirming it needs per-name filing dates. **Read the
+date alignment; do not read the attribution.**
+BRBR does NOT come from this route at all; it comes from the book, and its relation to SMPL is
+product-market (protein snacking), so the correlated-shock question does not arise for it.
+**BRBR's FY-END VERIFIED FROM ANNUAL DURATION FACTS: Sep-30, a FIXED month-end** (one value across
+1,325 facts). **SMPL is 52/53-week and DRIFTS** (Aug-31/29/25/28/27 across years), FY2025 ending
+Aug-30-2025 → **offset ≈31 days, and not constant.** *(CPB sits ≈27 days the other side.)*
+**CORRECTION TO THE FRAMING: that is NOT tighter than anything in the theme read** — T014, T023 and
+T037 are internally ZERO-offset (all Dec-31). The true claim is narrower: **BRBR/SMPL is the tightest
+alignment among REACHABLE pairings**, those three themes being blocked on bundles, legs and anchors
+whatever their calendars.
+**BRBR IS ONE ANALYST RECORD FROM A DECOMPOSED GAP, AND THE ARTIFACT SAYS SO IN ITS OWN WORDS:**
+`form: three-ratio`, `status: not-computed`, `reason: "no scenario record for this name — the route
+is known, the gap is not"`. **Every MECHANICAL input already exists** — `d_and_a` 18.6, `net_debt`
+1,181.9, `diluted_shares` 116,277,850. The analyst supplies only the judgment: three legs
+(revenue/margin/multiple + a schema-enforced non-blank `reason`, `bear_basis` on bear,
+`margin_basis`) and the per-axis `method` sentences. `tier`/`survival_input`/`years_to_terminal` are
+R2-only and stay None.
+**CONSENSUS SUPPORTS THE DECOMPOSITION, better than SMPL's:** Revenue **13/13** disp 2.07%, EBITDA
+**12/12** disp 6.58%, no caution (SMPL: 9/11 and 10/10). **SHARED ANCHOR FY2026 AND ADJACENT FY2027**,
+so the two decompositions compare on one horizon with no year adjustment. BRBR's forward span runs
+FY2026→FY2030 against SMPL's →FY2033, but the tail years carry 1–2 estimates and neither anchor
+depends on them.
+**R1 FITS** (`recipe_hint R1_midcycle_margin_evebitda`, `applicable: True`) — **the gap decomposes**,
+it does not route to price-implied-only.
+**AND THE R2 SET IS CONFIRMED YOUR WAY, WITH ONE DISCREPANCY.** The R2 marker in a committed record
+is **`tier`** (None on R1): **AORT B · MVST B · NCNO A** are the three R2 records; EPAM/IT/SMPL/WERN
+are None. **But AORT's DOSSIER hint reads `R1_midcycle_margin_evebitda`, `applicable: True`, while
+its RECORD is R2** — hint and record disagree for that one name; the record governs.
+**BRBR IS NOT ALONE — THREE dossiers are one underwrite from a computed gap**, all `three-ratio` +
+`not-computed` with the identical reason: **BRBR** (13/13, 12/12, no caution), **VRRM** (8/8, 6/6, no
+caution), **CNXC** (3/3, 3/3, **caution carried on both legs**). VITL routes `two-ratio` (EBITDA
+dispersion 263.7% past the 50% ceiling); FUBO has no recipe.
+**CPB, THE FALLBACK:** 52/53-week ending late Jul/early Aug; CIK 0000016732. **Bundle KIND-FOR-KIND
+identical to BRBR's** — all nine kinds plus two transcripts (Q2 Mar-11, Q3 Jun-08 2026). **That is a
+bundle-completeness INFERENCE, not a demonstration** — no assembly was run, so nothing proves the
+extractors succeed on Campbell's exports. Everything downstream (recipe, consensus_levels, anchor,
+route) is unknown until it assembles: **CPB needs an assembly AND then the same analyst record BRBR
+needs.**
+**EPAM + IT ARE ALREADY A COHORT MECHANICALLY — zero further work.** Gaps **2.0196 / 1.6460**, both
+`multiple-dominant` at anchor AND adjacent (agree=True), both anchor **FY2026**. **Both revenue
+ratios ≈1.00** (1.0012 / 1.0002) — our top line and the street's agree on each, so the disagreement
+is the multiple on both, with margin secondary (EPAM 0.76, IT 0.87).
+**PEER OVERLAP, MEASURED: raw 6 of 12 each, but that COUNTS EACH OTHER AND THE SYNTHETIC `Peer
+median` ROW. Genuine third-party overlap is THREE — CTSH, DOX, EFOR.** EPAM's remainder is IT
+services/engineering (ACN, GLOB, DXC, SOP + two non-US rows); IT's is information services/ratings
+(EFX, FDS, MCO, SPGI, TRU, VRSK). **A usable pair on horizon, shape and completeness; a weak one on
+comparability** — they intersect only at the IT-services tail of Gartner's set.
+
 **THE THEME-COHORT READ — RUN 2026-08-04, full render in `docs/audits/2026-08-04-theme-cohort-read.md`.**
 The A5 blocker was a read nobody had run. From the 2026-07-29 output (**331 candidates**) against the
 **35** committed theme clusters — **no new screen run**, since `RunManifest` is still unpopulated and a
