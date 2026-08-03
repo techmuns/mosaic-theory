@@ -31,6 +31,7 @@ from vinci.dossier.schemas import (
     CohortMember,
     Concentration,
     ConsensusContext,
+    ConsensusLevel,
     CovenantPointer,
     DrawdownCause,
     FilingRef,
@@ -1305,7 +1306,14 @@ def _concentration(bundle: CiqBundle) -> Concentration:
 
 
 def _consensus(bundle: CiqBundle) -> ConsensusContext:
+    # (A1) STRUCTURED forward-year levels ride the same block the prose fields come from. Wired
+    # HERE as well as in the refresh transform, through ONE builder: without it the first name
+    # underwritten after A1 would carry no consensus data and A2 would render nothing for it.
+    levels = {m: [ConsensusLevel(fy=c.fy, median=c.median, high=c.high, low=c.low,
+                                 std_dev=c.std_dev, estimates=c.estimates) for c in cells]
+              for m, cells in ciq_sheets.consensus_levels(bundle).items()}
     return ConsensusContext(
+        consensus_levels=levels or None,
         eps_trend=ciq_sheets.eps_revisions(bundle),
         revenue_trend=ciq_sheets.revenue_revisions(bundle),
         revision_history=ciq_sheets.consensus_view(bundle),

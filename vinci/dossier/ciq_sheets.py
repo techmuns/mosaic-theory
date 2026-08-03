@@ -1825,6 +1825,33 @@ def consensus_rows(bundle: CiqBundle, *, metric: str) -> list[ConsensusCell]:
     return out
 
 
+#: The metrics A1 persists. Both verified 11/11 against values that distinguish the consensus
+#: block from its twin. A third metric must be re-checked PER NAME — the block-membership evidence
+#: is SMPL-only.
+CONSENSUS_METRICS = ("Revenue", "EBITDA")
+
+
+def consensus_levels(bundle: CiqBundle) -> dict[str, list[ConsensusCell]]:
+    """(A1) Forward-year consensus for every persisted metric — THE ONE BUILDER.
+
+    Assembly and refresh both call this. Two call sites building the same structure is the
+    twin-drift class, and here it would be silent: nothing renders `consensus_levels` until A2, so
+    a divergence would show up as a name whose numbers depend on which path last wrote it.
+
+    The block is resolved ONCE and reused across metrics. Metrics that do not resolve are OMITTED,
+    never written as `[]` — absent means "not extracted", empty would mean "the street has no
+    view", and those are different claims.
+    """
+    if consensus_block(bundle) is None:
+        return {}
+    out: dict[str, list[ConsensusCell]] = {}
+    for metric in CONSENSUS_METRICS:
+        cells = consensus_rows(bundle, metric=metric)     # range refusal propagates
+        if cells:
+            out[metric] = cells
+    return out
+
+
 def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
     """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
     e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the

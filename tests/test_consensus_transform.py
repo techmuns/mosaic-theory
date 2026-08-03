@@ -88,3 +88,32 @@ def test_a_broken_bundle_fails_loud_and_a_missing_one_skips(tmp_path, monkeypatc
     monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(_corrupt))
     with pytest.raises(ValueError, match="truncated"):
         consensus_transform("NOPE")(mech)
+
+
+def test_every_dossier_carries_levels_except_the_standing_rule_exemptions() -> None:
+    """EXEMPTIONS, NOT A ROSTER. A hardcoded list of ten lets a FUTURE name's absence pass
+    silently — the roster would still be ten and still be green. Keyed on the reason instead, so
+    a new dossier is in scope the day it lands and FUBO self-clears if its rule ever lifts.
+
+    MVST IS CARRIED, DELIBERATELY. Its consensus is `2/2` on Revenue and `1/1` on EBITDA — thinly
+    covered DATA, not absence. The extraction layer records; the render layer judges. Treating
+    thin coverage as missing would delete the evidence that coverage is thin."""
+    import json
+
+    #: WHY each name is exempt — never a bare list. FUBO's record is sealed by its standing rule
+    #: (STATE.md 2026-07-22) until a post-combination re-assembly exists, so it cannot receive A1.
+    EXEMPT = {"FUBO": "standing rule: no record written until a post-combination re-assembly"}
+
+    missing = []
+    for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        t = f.parent.name
+        cc = json.loads(f.read_text())["mechanical"].get("consensus_context") or {}
+        has = bool(cc.get("consensus_levels"))
+        if t in EXEMPT:
+            assert not has, f"{t} carries levels but is exempt ({EXEMPT[t]}) — the rule was broken"
+            continue
+        if not has:
+            missing.append(t)
+    assert not missing, (
+        f"dossiers without consensus_levels and without an exemption: {missing} — either the "
+        "fleet pass missed them, or they need an exemption recorded WITH ITS REASON")
