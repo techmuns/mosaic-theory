@@ -39,6 +39,12 @@ _QUOTED = re.compile(r"""["']([^"'\n]{1,60})["']""")
 #: the sorted member tuple. Curating one down (27b) means DELETING its line here — which is the
 #: whole point: the baseline can only ever shrink, and shrinking it is a diff someone reviews.
 BASELINE: frozenset[tuple[str, ...]] = frozenset({
+    # (A2, 2026-08-03) The EV-gap BRIDGE keys, guarded before rendering in both twins. Genuinely
+    # unavoidable: the JS cannot import the Python constant, and the alternative — rendering the
+    # bridge without checking its legs — puts "undefined" on the page, which is #176's defect.
+    # Accepted rather than removed, and small enough that a drift shows as a missing bridge line
+    # on ONE twin, which the parity pins already catch.
+    ('net_debt', 'our_ev', 'shares', 'tev'),
     ('%ile', 'cheap', 'discount', 'ev/ebitda', 'expensive', 'multiple', 'p/e', 'percentile',
      're-rate', 'relative', 'rerate', 'underperform', 'valuation', 'vs iwm'),
     ('Apr', 'Aug', 'Dec', 'Feb', 'Jan', 'Jul', 'Jun', 'Mar', 'May', 'Nov', 'Oct', 'Sep'),

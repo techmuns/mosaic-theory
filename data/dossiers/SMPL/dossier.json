@@ -648,6 +648,26 @@
         "adjacent": "multiple-dominant",
         "agree": true,
         "note": "both years give the same shape"
+      },
+      "bridge": {
+        "tev": 1234.0,
+        "net_debt": 324.6,
+        "shares": 88.460545,
+        "our_ev": 2595.3875000000003,
+        "our_ebitda": 207.63100000000003,
+        "market_multiple": 5.533632286995516
+      },
+      "consensus": {
+        "Revenue": {
+          "median": 1351.7,
+          "std_dev": 3.62466,
+          "estimates": "9/11"
+        },
+        "EBITDA": {
+          "median": 223.0,
+          "std_dev": 2.79505,
+          "estimates": "10/10"
+        }
       }
     },
     "peer_comps": {

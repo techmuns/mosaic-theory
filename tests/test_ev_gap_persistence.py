@@ -128,7 +128,16 @@ def test_a_ratio_recipe_refuses_by_naming_the_convention_not_the_absence() -> No
     for t in ratio_recipes:
         g = gap(t)
         assert g is not None and g["status"] == "not-computed"
-        assert "RATIO OF REVENUE" in g["reason"], f"{t}: refusal does not name the convention"
+        # THE REASON IS A HORIZON MISMATCH A READER CAN JUDGE, not a recipe name they can only look
+        # up. Measured across the three R2 names: our TERMINAL margin against the NEAR-TERM
+        # consensus at the anchor runs 9.5% vs 19.4% (AORT), 12.6% vs 27.1% (NCNO), 6.0% vs 14.0%
+        # (MVST) — roughly half on every one, so the ratio would measure the distance between two
+        # horizons rather than between our view and the street's.
+        assert "TERMINAL" in g["reason"] and "NEAR-TERM" in g["reason"], (
+            f"{t}: the refusal does not state the HORIZON mismatch — {g['reason']!r}")
+        assert "two horizons" in g["reason"]
+        # …and it still says the number is PRESENT rather than missing, so nobody goes looking.
+        assert "ratio of revenue" in g["reason"].lower()
         assert "analyst decision" in g["reason"]
 
 

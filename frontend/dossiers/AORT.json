@@ -557,7 +557,7 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-07-30",
+        "tev_as_of": "2026-06-25",
         "consensus_as_of": "≥2026-06-30"
       },
       "d_and_a_convention": "ratio of revenue (R2, terminal)",
@@ -583,7 +583,7 @@
         }
       },
       "status": "not-computed",
-      "reason": "this record states D&A as a RATIO OF REVENUE (0.048961), the R2 terminal convention — not absent, but converting it at the anchor year is the open analyst decision on D&A convention, so no gap is struck here"
+      "reason": "our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.048961, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.)"
     },
     "peer_comps": {
       "peer_set": {

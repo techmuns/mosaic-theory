@@ -633,7 +633,7 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-07-30",
+        "tev_as_of": "2026-06-25",
         "consensus_as_of": "≥2026-07-27"
       },
       "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
@@ -676,6 +676,26 @@
         "adjacent": "multiple-dominant",
         "agree": true,
         "note": "both years give the same shape"
+      },
+      "bridge": {
+        "tev": 10423.400000000001,
+        "net_debt": 1688.2,
+        "shares": 67.120889,
+        "our_ev": 17156.875,
+        "our_ebitda": 1372.55,
+        "market_multiple": 6.641936391387034
+      },
+      "consensus": {
+        "Revenue": {
+          "median": 6428.5,
+          "std_dev": 23.56282,
+          "estimates": "14/14"
+        },
+        "EBITDA": {
+          "median": 1569.3315,
+          "std_dev": 20.62887,
+          "estimates": "12/13"
+        }
       }
     },
     "peer_comps": {

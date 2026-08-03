@@ -229,6 +229,30 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Consensus path anchors (EBITDA):** FY26E $222.1M · FY27E $220.9M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $1351.8M · FY27E $1284.6M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
+### The EV gap — our base case vs the street
+
+_Anchor FY2026 · consensus as-of ≥2026-07-21 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-07-24 · form three-ratio_
+
+- **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
+
+|  | ratio | consensus dispersion |
+|---|---|---:|
+| revenue | 0.98x | sigma 3.62 on n=9 |
+| EBITDA margin | 0.95x | sigma 2.80 on n=10 |
+| exit multiple | 2.26x | street 5.53x at FY2026 |
+| **product = the EV gap** | **2.10x** |  |
+
+_the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an attribution of cause_
+
+- **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
+
+- **Bridge:** our EV $2,595M − net debt $325M = equity $2,271M ÷ 88.461M sh = **$25.67/sh** — against TEV $1,234M (as-of 2026-07-24).
+
+  - _Revenue dispersion 0.9% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
+  - _EBITDA dispersion 4.7% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
+
+  - _D&A convention: fixed $M anchor (R1, mid-cycle) — the two recipes differ and the reconciliation is an open analyst question, so it is stated rather than assumed._
+
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 5.3x as-of 2026-07-23 — trailing range 6.1–28.9x (median 17.9x) over 35 closes → 0%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [14]
 

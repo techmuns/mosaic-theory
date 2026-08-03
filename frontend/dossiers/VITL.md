@@ -197,6 +197,10 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Consensus path anchors (Revenue):** FY26E $775.3M · FY27E $848.6M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
   - _⚠ multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 $2.8M vs direct $3.4M, residual 0.180 > 0.10)_
 
+### The EV gap — our base case vs the street
+
+_No gap is struck for this name: no scenario record for this name — the route is known, the gap is not. The consensus side alone still routes to **two-ratio** at FY2026, so the form is known even though the comparison is not._
+
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 1.5x as-of 2026-07-17 — trailing range 1.3–172.5x (median 4.2x) over 24 closes → 8%ile → near-floor; P/LTM EPS 12.9x [16]
 

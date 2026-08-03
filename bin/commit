@@ -8,9 +8,29 @@
 # habitual behaviour correct by construction instead.
 #
 #   bin/commit -m "message"      # or any git-commit args
+#
+# AND THE SECOND HOLE, FOUND 2026-08-03 THE SAME WAY: this script verified the WORKING TREE and
+# committed the INDEX. On #321 a test fix was edited but never `git add`ed, so the gate ran green
+# on the fixed file while the commit captured the stale staged copy — CI then failed on an
+# assertion message that existed nowhere in the working tree. The gate gave a correct signal about
+# code that was not the code being committed, which is D16's shape one level up.
+# THE FIX IS A PRECONDITION, not more discipline: refuse when the tree and the index disagree.
 set -euo pipefail
 VENV="${VENV:-/Users/work/Documents/GitHub/mosaic-theory/.venv/bin/python}"
 cd "$(git rev-parse --show-toplevel)"
+
+# WHAT IS TESTED MUST BE WHAT IS COMMITTED. Unstaged edits to tracked files, or untracked
+# non-ignored files, mean the gate is about to certify something the commit will not contain.
+unstaged="$(git diff --name-only)"
+untracked="$(git ls-files --others --exclude-standard)"
+if [ -n "$unstaged$untracked" ]; then
+  echo "── REFUSED: the working tree is not what would be committed ──" >&2
+  [ -n "$unstaged" ]  && { echo "  unstaged changes:" >&2; echo "$unstaged"  | sed 's/^/    /' >&2; }
+  [ -n "$untracked" ] && { echo "  untracked files:"  >&2; echo "$untracked" | sed 's/^/    /' >&2; }
+  echo "  The gate tests the TREE and git commits the INDEX; committing now would certify code" >&2
+  echo "  the commit does not contain. Run 'git add -A' (or stage deliberately) and re-run." >&2
+  exit 1
+fi
 
 echo "── ruff ────────────────────────────────────────────"
 "$VENV" -m ruff check vinci tests frontend
