@@ -1782,8 +1782,14 @@ def consensus_rows(bundle: CiqBundle, *, metric: str) -> list[ConsensusCell]:
     if blk is None:
         return []
     rows = bundle.sheet("estimates", "Consensus")
-    # From the block's start onward — the block's own containment is the unindented-row rule
-    # below, not a precomputed extent.
+    # From the block's start onward. KNOWN LIMITATION, reviewed and deliberately left: this search
+    # is UNBOUNDED, so a metric ABSENT from the consensus block would be found in a LATER block and
+    # read against THIS block's fiscal-year header — wrong numbers under right years, silently.
+    # Not currently reachable: every metric on the sheet has its first unindented title inside the
+    # consensus block (measured). A bound was attempted twice and regressed Revenue to 1/11 both
+    # times — the block's internal structure is not yet mapped well enough to place one, which is
+    # the map-the-source-first rule pointing at its own unfinished business. The baseline test
+    # catches any regression here in one run; do not add a bound without re-running it.
     title = next((i for i in range(blk.start, len(rows))
                   if rows[i] and str(rows[i][0]).strip() == metric
                   and str(rows[i][0]) == str(rows[i][0]).lstrip()), None)
