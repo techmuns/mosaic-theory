@@ -1614,6 +1614,217 @@ def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
     )
 
 
+#: The statistical sub-rows of a Consensus metric block, BY LABEL. Never by offset: if one export
+#: omits `Std. Dev.` for a metric, every positional read below it shifts onto the wrong row — the
+#: class that broke item 33's `.rtf` parser and the customers/suppliers selection.
+_CONSENSUS_STAT_ROWS = ("Median", "High", "Low", "Std. Dev.", "No. of Estimates")
+
+
+def _stat_num(v: object) -> float | None:
+    """A Consensus cell as a number, or None. Sheet cells arrive as STRINGS; CIQ writes absence as
+    a bare dash and negatives in parentheses, and neither is a number."""
+    t = str(v or "").strip().replace(",", "")
+    if not t or t == "-":
+        return None
+    if t.startswith("(") and t.endswith(")"):
+        t = "-" + t[1:-1]
+    try:
+        return float(t)
+    except ValueError:
+        return None
+
+
+class ConsensusCell(NamedTuple):
+    """One metric x one fiscal year, as the street reported it.
+
+    `estimates` is the RAW PAIR (`7/8`) — never re-labelled "broker count", because CIQ's two
+    numbers are not one number and the second is not derivable from the first.
+    """
+
+    fy: str
+    median: float
+    high: float
+    low: float
+    std_dev: float | None
+    estimates: str | None
+    is_forward: bool
+
+
+def _market_summary_current_year(rows: Rows, metric: str) -> float | None:
+    """The sheet's own bare `Current Year` figure for a metric, from the Market Summary block.
+
+    Used to IDENTIFY which annual block is consensus, because the two carry identical section
+    titles and different numbers. This value is the sheet agreeing with itself; the block that
+    matches it is the one the sheet means by "consensus"."""
+    for r in rows[:60]:
+        cells = [str(c).strip() for c in r]
+        if metric in cells:
+            k = cells.index(metric)
+            for c in cells[k + 1:]:
+                v = _stat_num(c)
+                if v is not None:
+                    return _stat_num(cells[k + 2]) if k + 2 < len(cells) else v
+    return None
+
+
+def _consensus_fy_header(rows: Rows, title_row: int) -> tuple[int, list[str]] | None:
+    """The fiscal-year header ABOVE a metric title — searched upward by SHAPE, not by offset.
+
+    A header is the nearest preceding row whose trailing cells are year-like. Bounded to a short
+    look-back so a metric with no header of its own cannot silently borrow another block's.
+    """
+    for i in range(title_row - 1, max(title_row - 5, -1), -1):
+        cells = [str(c).strip() for c in rows[i]]
+        years = [c for c in cells[1:] if c and c.replace(".0", "").isdigit()]
+        if len(years) >= 2:
+            return i, cells
+    return None
+
+
+_CURRENT_FY = re.compile(r"Current Fiscal Year End:\s*\w+-\d+-(\d{4})")
+
+#: The metric whose Market-Summary value identifies the consensus block. Revenue resolves on all
+#: eleven names; the block is then read for ANY metric, so a metric absent from the Market Summary
+#: still reads. Identity is a property of the BLOCK, never of the metric inside it.
+_BLOCK_PROBE_METRIC = "Revenue"
+
+
+def _declared_current_fy(rows: Rows) -> int | None:
+    """The current fiscal year, READ FROM THE SHEET's own banner rather than derived.
+
+    `Current Fiscal Year End: Aug-31-2026` states it. The first cut inferred forward-ness from
+    whether the title row carried an actual — sound, but a stated fact beats a derived one."""
+    for r in rows[:40]:
+        m = _CURRENT_FY.search(str(r[0]) if r else "")
+        if m:
+            return int(m.group(1))
+    return None
+
+
+class ConsensusBlock(NamedTuple):
+    """The identified consensus block: WHICH block, and the axes to read it by.
+
+    NO EXTENT. A block-span computation was added here and took Revenue from 11 names to 1: the
+    fiscal-year header sits immediately above the metric title, so "the next header after the
+    block's header" landed before the block's own stats and truncated it. Containment was never
+    broken — `consensus_rows` reads sub-rows until the next UNINDENTED row, which is the block's
+    real boundary. Only IDENTITY needed splitting out; bounds did not.
+    """
+
+    header_cells: list[str]
+    start: int
+    current_fy: int
+
+
+def consensus_block(bundle: CiqBundle) -> ConsensusBlock | None:
+    """Identify the consensus block ONCE, by value — then read any metric inside it.
+
+    SMPL carries THREE unindented `Revenue` titles: two annual bases and one quarterly. Their
+    section titles are BYTE-IDENTICAL (`Company Level (USD)` on both annuals), so no label can
+    separate them — but their numbers differ (FY2026 Revenue 1351.75 vs 1324.66). The block whose
+    current-FY figure equals the sheet's own Market-Summary "Current Year" cell is the one the
+    sheet means by consensus. **The TEST is encoded, not its answer**, so a re-export that moves
+    the rows still resolves.
+
+    IDENTITY IS PER-BLOCK, NOT PER-METRIC. Resolving it separately for each metric made EBITDA's
+    identification depend on finding EBITDA in the Market Summary, whose layout differs from
+    Revenue's — and EBITDA returned nothing on all eleven names as a result. The block holds
+    Revenue at one row and EBITDA eleven rows later; it is one block either way.
+    """
+    try:
+        rows = bundle.sheet("estimates", "Consensus")
+    except CiqUnavailableError:
+        return None
+    current_fy = _declared_current_fy(rows)
+    if current_fy is None:
+        return None
+    want = _market_summary_current_year(rows, _BLOCK_PROBE_METRIC)
+    if want is None:
+        return None
+    # EVERY matching title, never the first — taking the first pattern match makes document
+    # layout load-bearing exactly as `[0]` makes sequence order load-bearing.
+    titles = [i for i, r in enumerate(rows)
+              if r and str(r[0]).strip() == _BLOCK_PROBE_METRIC
+              and str(r[0]) == str(r[0]).lstrip()]
+    for cand in titles:
+        hdr = _consensus_fy_header(rows, cand)
+        if hdr is None:
+            continue
+        _, cells = hdr
+        col = next((k for k, c in enumerate(cells)
+                    if str(c).strip().replace(".0", "") == str(current_fy)), None)
+        if col is None:
+            continue
+        probe = _stat_num(rows[cand][col] if col < len(rows[cand]) else "")
+        if probe is None or abs(probe - want) >= 0.01:
+            continue
+        return ConsensusBlock(header_cells=cells, start=cand, current_fy=current_fy)
+    return None
+
+
+
+def consensus_rows(bundle: CiqBundle, *, metric: str) -> list[ConsensusCell]:
+    """(A1) Forward-year consensus cells for ``metric``, read from the identified block.
+
+    LABEL-ADDRESSED ON BOTH AXES: the metric by its unindented title WITHIN the block, its stats by
+    sub-row label, the fiscal year by the header's own value. A partial export drops the cells it
+    lacks and shifts nothing.
+
+    FORWARD ONLY, and forward is STATED: FY >= the banner's declared current fiscal year. A closed
+    year carries a post-hoc estimate beside its actual — SMPL's 2017 reads Median 394.47 on `2/2`
+    with Std. Dev. 0.22, two analysts on a year that had already happened.
+
+    LOW <= MEDIAN <= HIGH OR REFUSE — the ONLY check available on the consensus side, because the
+    three-ratio product cancels consensus out entirely. Raises rather than dropping the cell: a
+    silently missing year reads as "the street has no view", which is a different and false claim.
+    """
+    blk = consensus_block(bundle)
+    if blk is None:
+        return []
+    rows = bundle.sheet("estimates", "Consensus")
+    # From the block's start onward. KNOWN LIMITATION, reviewed and deliberately left: this search
+    # is UNBOUNDED, so a metric ABSENT from the consensus block would be found in a LATER block and
+    # read against THIS block's fiscal-year header — wrong numbers under right years, silently.
+    # Not currently reachable: every metric on the sheet has its first unindented title inside the
+    # consensus block (measured). A bound was attempted twice and regressed Revenue to 1/11 both
+    # times — the block's internal structure is not yet mapped well enough to place one, which is
+    # the map-the-source-first rule pointing at its own unfinished business. The baseline test
+    # catches any regression here in one run; do not add a bound without re-running it.
+    title = next((i for i in range(blk.start, len(rows))
+                  if rows[i] and str(rows[i][0]).strip() == metric
+                  and str(rows[i][0]) == str(rows[i][0]).lstrip()), None)
+    if title is None:
+        return []
+    stats: dict[str, list[str]] = {}
+    for i in range(title + 1, len(rows)):
+        cell0 = str(rows[i][0]) if rows[i] else ""
+        if cell0 and cell0 == cell0.lstrip():
+            break
+        if cell0.strip() in _CONSENSUS_STAT_ROWS:
+            stats[cell0.strip()] = [str(c).strip() for c in rows[i]]
+    if not {"Median", "High", "Low"} <= set(stats):
+        return []
+    out: list[ConsensusCell] = []
+    for col, fy in enumerate(blk.header_cells):
+        year = str(fy).strip().replace(".0", "")
+        if col == 0 or not year.isdigit() or int(year) < blk.current_fy:
+            continue
+        cell = {k: (v[col] if col < len(v) else "") for k, v in stats.items()}
+        med = _stat_num(cell.get("Median"))
+        hi, lo = _stat_num(cell.get("High")), _stat_num(cell.get("Low"))
+        if med is None or hi is None or lo is None:
+            continue
+        if not lo <= med <= hi:
+            raise CiqUnavailableError(
+                f"{bundle.ticker} {metric} FY{year}: consensus range is incoherent (low {lo} <= "
+                f"median {med} <= high {hi} does not hold) — the three-ratio product cancels "
+                "consensus out, so nothing downstream would catch this")
+        out.append(ConsensusCell(
+            fy=year, median=med, high=hi, low=lo, std_dev=_stat_num(cell.get("Std. Dev.")),
+            estimates=(cell.get("No. of Estimates") or None) or None, is_forward=True))
+    return out
+
+
 def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
     """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
     e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the
