@@ -1332,31 +1332,16 @@ def _gate_shortref(gate: str) -> str:
             if "HETEROGENEOUS" in (gate or "") else (gate or ""))
 
 
-def _tev_stamp(stated: str, cap_as_of: str | None, net_debt_as_of: str | None) -> str:
-    """The TEV's as-of, printed as the TWO panels it is actually struck from when they differ.
-
-    `recompute_derived` builds TEV from a STOCK-panel market cap plus a COMPS-panel net debt.
-    `stock_info.as_of` differs from the comps as-of on 10 of 11 committed names — MVST by 14 days —
-    so one date over that number is a false provenance stamp on a blended value. When both are
-    known and disagree the OLDER leads (it bounds the freshness of the pair) and the blend is
-    named; otherwise the stated stamp stands unchanged."""
-    if not cap_as_of or not net_debt_as_of or cap_as_of == net_debt_as_of:
-        return stated
-    older = min(cap_as_of, net_debt_as_of)
-    return (f"{older} (BLENDED: market cap {cap_as_of} + net debt {net_debt_as_of}; the older "
-            "leads because it bounds the pair)")
+# THE TWO-PANEL TEV STAMP IS GONE, AND THE DEFECT IT GUARDED DOES NOT EXIST (review of #321).
+# `_tev_stamp`/`_stock_as_of` printed "BLENDED: market cap <stock_info.as_of> + net debt <comps>",
+# which was wrong twice over: `stock_info.as_of` is the EOD PRICE date, not the cap's vintage, and
+# the cap itself comes off the SAME CIQ Comparable Analysis panel as net debt on all 11 committed
+# names — NCNO's cap and net debt are both 2026-07-20, so the page labelled a single-vintage TEV
+# as blended. It manufactured the false provenance stamp it claimed to prevent.
+# The #320 record's "mixed-basis TEV" finding rested on the same mistake and is corrected in STATE.
 
 
-def _stock_as_of(m: MechanicalLayer) -> str | None:
-    """The STOCK panel's own as-of — the vintage of the market cap inside the derived TEV."""
-    si = getattr(m, "stock_info", None)
-    a = getattr(si, "as_of", None) if si is not None else None
-    val = getattr(a, "value", a)
-    return str(val) if val else None
-
-
-def _implied_expectations_lines(v: Any, *, cap_as_of: str | None = None,
-                                net_debt_as_of: str | None = None) -> list[str]:
+def _implied_expectations_lines(v: Any) -> list[str]:
     """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
     fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
     BESIDE. The heterogeneity gate is cited SHORT on the header (verbatim once, at Peer comps —
@@ -1372,19 +1357,20 @@ def _implied_expectations_lines(v: Any, *, cap_as_of: str | None = None,
     what the price should be. Same section, two different objects; the old docstring said the rule
     covered the section and now it says what it actually covers.
 
-    THE TEV STAMP IS TWO-PANEL AND SAYS SO. `recompute_derived` strikes TEV as
-    `stock_info.market_cap + peer_grid.net_debt` — a STOCK-panel cap plus a COMPS-panel net debt —
-    so a single `tev_as_of` over it stamps one panel's date on a two-panel number, which is the
-    `financial_summary.as_of` defect. Both dates print when they are known and differ."""
+    THE TEV STAMP IS SINGLE-PANEL AND CORRECT AS STATED. `recompute_derived` strikes TEV from
+    `stock_info.market_cap + peer_grid.net_debt`, and BOTH come off the CIQ Comparable Analysis
+    panel — verified on all 11 committed names, where the cap's own as-of equals the stored
+    `tev_as_of` every time. A "blended" caveat here was briefly added and REMOVED: it read
+    `stock_info.as_of`, which is the EOD PRICE date, and so invented a two-panel claim about a
+    one-panel number."""
     ie = getattr(v, "implied_expectations", None)
     if ie is None:
         return []
     out = [
         f"- **What the current price implies (at stated multiples)** — "  # (K4) human-facing rename
         f"{_gate_shortref(ie.heterogeneity_gate)}",
-        f"  - _TEV as-of {_tev_stamp(ie.tev_as_of, cap_as_of, net_debt_as_of)} · multiples as-of "
-        f"{ie.multiples_as_of} · † at the name's own multiple the implied level is consensus by "
-        "identity_",
+        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of} · † at the name's "
+        "own multiple the implied level is consensus by identity_",
     ]
     # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
     # blank header for the label, so each row must have len(cols)+1 cells: [label, multiple, level].
@@ -3161,7 +3147,11 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
     # THE BRIDGE TO PER SHARE, so the gap is not a floating ratio. Every leg is the PERSISTED
     # value, never re-struck here — a second definition of TEV in the renderer is what #320's
     # review pinned against.
-    if all(isinstance(br.get(k), (int, float)) for k in ("our_ev", "net_debt", "shares", "tev")):
+    # POSITIVE shares, not merely numeric. `build_ev_gap` now refuses a non-positive count before
+    # persisting, so this is the second line: a legacy artifact written before that guard must
+    # OMIT the bridge line rather than raise ZeroDivisionError and take the whole page with it.
+    if (all(isinstance(br.get(k), (int, float)) for k in ("our_ev", "net_debt", "shares", "tev"))
+            and br["shares"] > 0):
         eq = br["our_ev"] - br["net_debt"]
         out += [
             f"- **Bridge:** our EV ${br['our_ev']:,.0f}M − net debt ${br['net_debt']:,.0f}M "
@@ -3196,11 +3186,7 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     # edge) and BEFORE the own-history reads.
     out.append("## Valuation & own-history")
     out.append(_fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional))
-    out += _implied_expectations_lines(
-        m.valuation,
-        cap_as_of=_stock_as_of(m),
-        net_debt_as_of=((getattr(m, "ev_gap", None) or {}).get("vintages") or {}).get("tev_as_of")
-        if isinstance(getattr(m, "ev_gap", None), dict) else None)
+    out += _implied_expectations_lines(m.valuation)
     # (A2) THE EV GAP sits directly after the price-implied levels: those state what the price
     # implies at each multiple, this states what OUR base case implies against the street. Same
     # question from the two sides, so they read together.

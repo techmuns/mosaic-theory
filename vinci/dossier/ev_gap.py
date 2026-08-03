@@ -380,7 +380,15 @@ def build_ev_gap(
     for name, v in (("tev", tev), ("net_debt", net_debt), ("shares", shares)):
         if v is None:
             return {**out, "status": "not-computed", "reason": f"{name} unavailable"}
+    # SHARES MUST BE POSITIVE, and `is None` was not that check. `decompose` never divides by it,
+    # so a 0 or negative count still persisted a `computed` gap — and BOTH renderers then evaluate
+    # `equity / shares`, so a malformed record does not degrade the block, it takes down the whole
+    # page. A number that is present and unusable is not the same as a number that is absent.
     assert tev is not None and net_debt is not None and shares is not None
+    if shares <= 0:
+        return {**out, "status": "not-computed",
+                "reason": f"share count is {shares:g} — not a usable denominator, so no per-share "
+                          "bridge can be struck (present, but not positive)"}
     try:
         at_anchor = _decompose_at(levels, anchor, leg, tev, net_debt, shares)
     except BasisMismatchError as exc:

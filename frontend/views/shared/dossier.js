@@ -2647,7 +2647,11 @@ function evGap(g) {
       : "with NO adjacent forward year to check it against — unchecked, not confirmed";
   body += `<p class="ds-note"><b>Shape:</b> <b>${escapeHtml(String(shape.anchor))}</b> at `
     + `FY${escapeHtml(String(g.anchor_fy))}, ${chk}.</p>`;
-  if (["our_ev", "net_debt", "shares", "tev"].every((k) => typeof br[k] === "number")) {
+  // POSITIVE shares, not merely numeric — the md twin's guard. A legacy artifact carrying
+  // `shares: 0` must DROP the bridge line, not divide by zero. (JS would print "Infinity" rather
+  // than throw, which is worse: a number on the page that reads as a value.)
+  if (["our_ev", "net_debt", "shares", "tev"].every((k) => typeof br[k] === "number")
+      && br.shares > 0) {
     const eq = br.our_ev - br.net_debt;
     body += `<p class="ds-note"><b>Bridge:</b> our EV $${br.our_ev.toLocaleString(undefined,
       { maximumFractionDigits: 0 })}M − net debt $${br.net_debt.toLocaleString(undefined,

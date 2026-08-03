@@ -92,22 +92,24 @@ def test_every_dispersion_percentage_states_its_base_and_date(folder: Path) -> N
             assert "as-of" in line, f"{folder.name}: dispersion without its date"
 
 
-def test_the_two_panel_tev_stamp_names_both_dates() -> None:
-    """THE MIXED-BASIS TEV. `recompute_derived` strikes it from a STOCK-panel cap plus a
-    COMPS-panel net debt, so one date over it is a false stamp. NCNO's two panels are 8 days
-    apart; the page must name both and lead with the older."""
-    md = (ROOT / "data" / "dossiers" / "NCNO" / "dossier.md").read_text()
-    stamp = next(ln for ln in md.splitlines() if "TEV as-of" in ln)
-    assert "BLENDED" in stamp, "a two-panel TEV printed under a single date"
-    assert "market cap" in stamp and "net debt" in stamp, "the blend does not name its two legs"
+def test_the_tev_stamp_is_a_single_date_because_the_tev_is_single_panel() -> None:
+    """REPLACES a pin that asserted the OPPOSITE, and asserting it is what let the defect ship.
 
-
-def test_a_single_panel_tev_is_not_labelled_blended() -> None:
-    """NEGATIVE. SMPL's two panels agree, so the stamp must stay plain — a caveat that fires
-    everywhere is one nobody reads."""
-    md = (ROOT / "data" / "dossiers" / "SMPL" / "dossier.md").read_text()
-    stamp = next(ln for ln in md.splitlines() if "TEV as-of" in ln)
-    assert "BLENDED" not in stamp
+    The old test demanded NCNO print "BLENDED: market cap 2026-07-28 + net debt 2026-07-20". Both
+    of NCNO's TEV legs come off the CIQ Comparable Analysis panel at 2026-07-20; 2026-07-28 is
+    `stock_info.as_of`, the EOD PRICE date. So the pin was holding a fabricated two-panel claim in
+    place about a one-panel number — a test can enforce a defect as easily as a property, and this
+    one did.
+    """
+    for ticker in ("NCNO", "SMPL", "AORT", "IT", "VITL"):
+        md = (ROOT / "data" / "dossiers" / ticker / "dossier.md").read_text()
+        # THE STAMP LINE, not any line mentioning TEV. AORT already carries a REAL vintage-
+        # coherence caveat ("TEV as-of (2026-06-25) is vintage-incoherent with multiple pricing
+        # (2026-06-30)") — which is the existing machinery doing this correctly, off the STORED
+        # dates, and is further evidence the blend was an invention rather than a gap.
+        stamp = next(ln for ln in md.splitlines() if ln.lstrip().startswith("- _TEV as-of"))
+        assert "BLENDED" not in stamp, f"{ticker}: a single-panel TEV labelled blended — {stamp}"
+        assert "TEV as-of 20" in stamp, f"{ticker}: the TEV stamp lost its date — {stamp}"
 
 
 def test_the_render_never_restrikes_tev_itself() -> None:

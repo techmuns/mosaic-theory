@@ -557,7 +557,7 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-07-30",
+        "tev_as_of": "2026-06-25",
         "consensus_as_of": "≥2026-06-30"
       },
       "d_and_a_convention": "ratio of revenue (R2, terminal)",

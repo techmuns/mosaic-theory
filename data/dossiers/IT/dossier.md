@@ -198,7 +198,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 7.5x vs peer median 10.8x (-31%); P/E 13x vs peer median 16.4x (-21%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-07-28 (BLENDED: market cap 2026-07-28 + net debt 2026-07-30; the older leads because it bounds the pair) · multiples as-of 2026-07-27 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-06-25 · multiples as-of 2026-07-27 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [26]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -216,7 +216,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 ### The EV gap — our base case vs the street
 
-_Anchor FY2026 · consensus as-of ≥2026-07-27 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-07-30 · form three-ratio_
+_Anchor FY2026 · consensus as-of ≥2026-07-27 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-06-25 · form three-ratio_
 
 - **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
 
@@ -231,7 +231,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
 
-- **Bridge:** our EV $17,157M − net debt $1,688M = equity $15,469M ÷ 67.121M sh = **$230.46/sh** — against TEV $10,423M (as-of 2026-07-30).
+- **Bridge:** our EV $17,157M − net debt $1,688M = equity $15,469M ÷ 67.121M sh = **$230.46/sh** — against TEV $10,423M (as-of 2026-06-25).
 
   - _Revenue dispersion 1.4% (high−low ÷ |median|, FY2026, as-of ≥2026-07-27)_
   - _EBITDA dispersion 5.2% (high−low ÷ |median|, FY2026, as-of ≥2026-07-27)_

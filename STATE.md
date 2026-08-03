@@ -7753,10 +7753,28 @@ principle `insider_transform` already states. Verified by reproducing CI's condi
 said CI is a floor that cannot see the CIQ-bound pins — it turns out CI sees a class the local
 gate structurally cannot, namely everything that depends on the licensed export being ABSENT.
 
-**PRE-EXISTING, SURFACED NOT FIXED:** `recompute_derived` strikes TEV from `stock_info.market_cap`
-+ peer_grid `net_debt` — a stock-panel cap plus a comps-panel net debt, i.e. a MIXED-BASIS TEV
-that predates A2b. The two caps agreeing is what hides it. Pinned (`test_the_two_market_caps_agree`)
-so the day they diverge is loud rather than silent.
+**~~PRE-EXISTING, SURFACED NOT FIXED: a MIXED-BASIS TEV~~ — RETRACTED 2026-08-03 (review of #321).
+THE CLAIM WAS WRONG AND I MADE IT TWICE.** `stock_info.market_cap` is NOT a stock-panel figure: its
+`source_ref` reads *"CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest)"* on
+**all 11 committed names** — the SAME panel as peer_grid `net_debt`. So `recompute_derived`'s TEV is
+SINGLE-basis and always was, and "the two caps agreeing is what hides it" had the causation
+backwards: they agree because they are the same number from the same panel.
+**THE COST OF THE WRONG CLAIM WAS A REAL DEFECT SHIPPED ON TOP OF IT.** A2's render acted on it and
+printed *"BLENDED: market cap 2026-07-28 + net debt 2026-07-20"* on NCNO — using `stock_info.as_of`,
+which is the **EOD PRICE date**, as if it were the cap's vintage. NCNO's cap and net debt are both
+2026-07-20; the page labelled a single-vintage TEV as blended. **A fabricated provenance caveat, in
+the block written to prevent fabricated provenance.** `_tev_stamp` and `_stock_as_of` are deleted
+and their return is pinned structurally.
+**AND THE SAME READ EXPOSED A REAL ONE the wrong claim was standing in front of:**
+`ev_gap.vintages.tev_as_of` re-read `comps_as_of` off the CURRENT bundle while the cap and net debt
+it stamps are the STORED ones — so AORT/IT/VITL carried a **2026-07-30 stamp on figures extracted
+2026-06-25**, 35 days of false provenance. Fixed to read the stored
+`implied_expectations.tev_as_of`, which is the TEV's own vintage and matches the stored cap's as-of
+on all 11. **The lesson is the one the operator drew from the undetectable-swap finding: a value's
+BASIS needs pinning, not just its output** — both caps agreed, so nothing behavioural could have
+caught either error.
+`test_the_two_market_caps_agree` stays: it is still true and still worth knowing, just not evidence
+of what it was recorded as evidence for.
 
 **A2b PERSISTENCE — BUILT 2026-08-03. THE FORM IS IN `mech.ev_gap` ON 10 OF 11 NAMES, AND THE
 INSIDER LINE RODE THE SAME PASS.**

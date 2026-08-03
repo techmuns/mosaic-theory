@@ -199,7 +199,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 27.8x vs peer median 98.1x (-72%); P/E 154.3x vs peer median 39.1x (+294%) [18]
 - **What the current price implies (at stated multiples)** — market caps span $674M–$4.3B (6x); the name is $2.0B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.
-  - _TEV as-of 2026-07-20 (BLENDED: market cap 2026-07-28 + net debt 2026-07-20; the older leads because it bounds the pair) · multiples as-of 2026-07-22 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV as-of 2026-07-20 · multiples as-of 2026-07-22 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [30]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |

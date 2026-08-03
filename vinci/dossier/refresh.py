@@ -290,7 +290,7 @@ def ev_gap_transform(ticker: str) -> Transform:
     """
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
-    from vinci.dossier.ciq_sheets import comps_as_of, estimates_as_of
+    from vinci.dossier.ciq_sheets import estimates_as_of
     from vinci.dossier.ev_gap import build_ev_gap
     from vinci.dossier.manual_store import LocalFolderStore
     from vinci.dossier.schemas import SourceStatus
@@ -307,8 +307,18 @@ def ev_gap_transform(ticker: str) -> Transform:
         # keeping its value while losing the thing that says what it describes.
         # CI CAUGHT THIS, not the local gate, because this worktree HAS the exports. Same principle
         # `insider_transform` already states: a fetch that cannot run leaves the field alone.
+        # THE TEV STAMP DESCRIBES THE STORED NUMBERS, and comes from where they came from.
+        # REVIEW OF #321 caught the first cut re-reading `comps_as_of` off the CURRENT bundle while
+        # the cap and net debt it stamps are the STORED ones — so AORT/IT/VITL got a 2026-07-30
+        # stamp on figures extracted 2026-06-25, 35 days of false provenance, which is precisely
+        # the class this block claims to guard. `implied_expectations.tev_as_of` is a STRUCTURED
+        # stored field carrying the TEV's own vintage, and it matches the stored cap's as-of on all
+        # 11 committed names.
+        ie_stored = ((out.get("valuation") or {}).get("implied_expectations") or {})
+        ie_stored = (ie_stored.get("value")
+                     if isinstance(ie_stored, dict) and "value" in ie_stored else ie_stored)
         prior = (out.get("ev_gap") or {}).get("vintages") or {}
-        tev_as_of = prior.get("tev_as_of")
+        tev_as_of = (ie_stored or {}).get("tev_as_of") or prior.get("tev_as_of")
         consensus_as_of = prior.get("consensus_as_of")
         try:
             bundle = CiqBundle.from_files(
@@ -316,14 +326,15 @@ def ev_gap_transform(ticker: str) -> Transform:
         except (FileNotFoundError, CiqUnavailableError):
             bundle = None
         if bundle is not None:
-            c, e = comps_as_of(bundle), estimates_as_of(bundle)
+            e = estimates_as_of(bundle)
             # VERBATIM, floor marker and all. SMPL's estimates export carries no As-Of header, so
             # its date is a FLOOR ("≥2026-07-21"); flattening that to a plain date would
             # manufacture precision the workbook does not have.
             # A READABLE BUNDLE THAT CANNOT DATE ITSELF also keeps the prior stamp rather than
             # blanking it: "this export states no as-of" is a different fact from "we never had
             # one", and only the second justifies erasing what is already recorded.
-            tev_as_of = c.value if c.status is SourceStatus.PRESENT else tev_as_of
+            # ONLY THE CONSENSUS VINTAGE comes off the bundle. The TEV's does NOT: its numbers are
+            # stored, so a freshly-read workbook date would describe a different extraction.
             consensus_as_of = e.value if e.status is SourceStatus.PRESENT else consensus_as_of
 
         cap = ((out.get("implied_valuation") or {}).get("market_cap") or {}).get("value")
@@ -472,3 +483,41 @@ def mirror_to_frontend() -> None:
     sys.modules[spec.name] = mod
     spec.loader.exec_module(mod)
     mod.main([])
+
+
+def refresh_fleet(
+    root: Path | None = None, *, transform_for: Callable[[str], Transform] | None = None,
+) -> dict[str, list[str]]:
+    """Refresh every committed dossier, then mirror to the frontend ONCE. The pass orchestrator.
+
+    THIS IS WHERE `mirror_to_frontend` IS CALLED, and the review of #321 is why it exists: the
+    function was defined and never invoked, so the "wired in" claim was false and the
+    `data/dossiers` -> `frontend/dossiers` drift it was meant to close stayed open. A helper nobody
+    calls is not a fix; it is a fix-shaped object.
+
+    ONCE, AFTER ALL OF THEM — not per dossier. The mirror rebuilds the whole `frontend/` tree from
+    every source each time, so calling it per name would do N passes to produce the state the last
+    one produces anyway, and would leave the tree briefly reflecting a half-refreshed fleet.
+
+    SEALED NAMES ARE REPORTED, NOT SWALLOWED. `refresh_dossier` refuses a record carrying a
+    `known_wrong.json`; that refusal is a RESULT of the pass, so it comes back in the summary
+    rather than vanishing into a log line.
+    """
+    base = (root or Path.cwd()) / "data" / "dossiers"
+    out: dict[str, list[str]] = {"moved": [], "unchanged": [], "refused": []}
+    for folder in sorted(base.iterdir()) if base.is_dir() else []:
+        path = folder / "dossier.json"
+        if not path.exists():
+            continue
+        try:
+            changed = refresh_dossier(
+                path, transform=transform_for(folder.name) if transform_for else None)
+        except RefreshRefusedError:
+            out["refused"].append(folder.name)
+            continue
+        out["moved" if changed else "unchanged"].append(folder.name)
+    # UNCONDITIONAL. Even a pass that moved nothing re-mirrors: the mirror can be stale from a
+    # PREVIOUS pass that forgot, and refusing to fix that because this pass was a no-op would make
+    # the guarantee depend on which run you happened to notice it in.
+    mirror_to_frontend()
+    return out
