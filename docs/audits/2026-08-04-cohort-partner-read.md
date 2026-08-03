@@ -5,20 +5,55 @@ committed artifacts and cached EDGAR facts.
 
 ---
 
-## 0. The strategic property of the route, recorded first
+## 0. Correlated-shock RISK on the sourcing route — a hypothesis, and the check that tests it
 
-**The screen selects on drawdown. So a theme holding several fallen names is, by construction, a
-theme with a COMMON SHOCK.** The six multi-candidate themes from the 2026-08-04 theme read — gold &
-silver, uranium, coal, quantum, solar, cannabis — are not six independent discoveries; they are six
-sectors that fell together.
+**Stated as a risk, not a proved property** *(corrected on review; the first cut said "by
+construction")*.
 
-**A cross-sectional cohort sourced from the screen therefore selects for correlated-shock sectors.**
-That is a property of the sourcing route, not a defect in any candidate: the cohort's members will
-tend to share the shock that made them candidates, which is precisely the confound a cross-sectional
-comparison is supposed to remove. Recorded so the cohort pick is made knowing it.
+**What the selection rule actually establishes:** the screen establishes that each constituent
+independently passed a **drawdown-based gate** (`G1_drawdown` PASS, ≤ −30% from the 52w high), and
+the cluster establishes **business similarity** — residualized co-movement over a 365-day window
+(`residual_basis: market+sector+size+vol`, with breadth, coherence and persistence tests).
 
-**BRBR does not come from that route** — it comes from the existing book, and its relation to SMPL is
-a product-market one (protein snacking) rather than a shared drawdown.
+**What it does NOT establish: that those drawdowns share ONE causal event.** Residual co-movement
+over a year is equally consistent with a persistent correlated *factor* (a metal price, a rate
+regime) carrying no single event, or with **several idiosyncratic events that happen to fall inside
+the same year and the same business grouping**. Presenting the correlated-shock reading as proved by
+the selection rule would discount the whole sourcing route on an inference the rule cannot support.
+
+**So the requirement: before any cohort is called common-shock, run an EVENT/DATE ALIGNMENT CHECK.**
+The data is already on disk — each candidate record carries a typed, dated `trigger_reason`
+(e.g. *"earnings_gap_down on 2026-02-05 + drawdown −71.7% ≤ −30%"*).
+
+### The check, run over the six multi-candidate themes
+
+| theme | distinct trigger dates | span | reading |
+|---|---:|---|---|
+| **T002** gold & silver (16) | **1** — 2026-01-30 for **15 of 16** | — | **aligned** (1 undated price-drop trigger) |
+| **T023** quantum (3) | **1** — 2026-02-05 for all three | — | **aligned** |
+| **T022** cannabis (2) | **1** — 2026-04-23 for both | — | **aligned** |
+| **T008** uranium (5) | **3** — 02-04, 03-16, 06-05 | **4 months** | **scattered** (+1 undated) |
+| **T037** solar (3) | **3** — 02-27, 04-16, 04-29 | **2 months** | **scattered** |
+| **T014** coal (3) | **1** dated; 2 are undated price-drop triggers | — | **untestable** |
+
+**Three of six align on a single date; two scatter; one cannot be tested.** So the correlated-shock
+reading is **real for some themes and false for others** — which is exactly why it has to be checked
+per cohort rather than assumed from the route.
+
+**And it lands opposite to the intuition about T002.** The mixed-taxonomy cluster — two sectors, five
+SICs, coherence 0.385, the one whose own `shared_note` warns it may be a driver-less momentum
+bucket — is the **most** date-aligned of the six, at 15 of 16 names on one day. Loose taxonomy did
+not predict scattered events.
+
+**One caveat the check cannot resolve, and it should not be read past.** A shared *date* is evidence
+of a common *move*. The label `earnings_gap_down` attributing that move to **earnings** for fifteen
+different issuers on a single day is **not** established by this field, and is implausible on its
+face — confirming it would need the per-name filing dates. **Read the date alignment; do not read the
+attribution.**
+
+**BRBR does not come from this route at all** — it comes from the existing book, and its relation to
+SMPL is product-market (protein snacking) rather than a shared drawdown, so the correlated-shock
+question does not arise for it.
 
 ---
 

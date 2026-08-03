@@ -12489,14 +12489,31 @@ change that re-striking would have been.
 statements below are kept for the reasoning that produced them.**
 **THE COHORT-PARTNER READ — 2026-08-04, full render in `docs/audits/2026-08-04-cohort-partner-read.md`.
 REPORT ONLY; no assembly, no build, no name recommended.**
-**A PROPERTY OF THE SOURCING ROUTE, recorded because it governs every cohort drawn this way: THE
-SCREEN SELECTS ON DRAWDOWN, so a theme holding several fallen names is BY CONSTRUCTION a theme with a
-COMMON SHOCK.** The six multi-candidate themes (gold/silver, uranium, coal, quantum, solar, cannabis)
-are not six independent discoveries — they are six sectors that fell together. **A cross-sectional
-cohort sourced from the screen therefore SELECTS FOR CORRELATED-SHOCK SECTORS** — the members share
-the shock that made them candidates, which is exactly the confound a cross-sectional comparison
-exists to remove. BRBR does NOT come from that route; it comes from the book, and its relation to
-SMPL is product-market (protein snacking), not a shared drawdown.
+**CORRELATED-SHOCK RISK ON THE SOURCING ROUTE — A HYPOTHESIS WITH A REQUIRED CHECK, not a proved
+property** *(corrected on review of #331; my first cut said "by construction")*. **What the selection
+rule establishes:** each constituent independently passed a **drawdown gate** (≤ −30% from the 52w
+high) and the cluster establishes **business similarity** via residualized co-movement over 365 days.
+**What it does NOT establish: that those drawdowns share ONE causal event** — residual co-movement is
+equally consistent with a persistent correlated FACTOR carrying no single event, or with several
+IDIOSYNCRATIC events falling inside the same year and grouping. Treating the correlated-shock reading
+as proved would discount the whole sourcing route on an inference the rule cannot support.
+**REQUIREMENT: run an EVENT/DATE ALIGNMENT CHECK before calling any cohort common-shock.** The data
+is on disk — each candidate record carries a typed, dated `trigger_reason`.
+**THE CHECK, RUN: THREE OF SIX ALIGN, TWO SCATTER, ONE IS UNTESTABLE.** Aligned on ONE date — **T002
+gold/silver 15 of 16 on 2026-01-30**, **T023 quantum all three on 2026-02-05**, **T022 cannabis both
+on 2026-04-23**. Scattered — **T008 uranium THREE dates spanning 4 months** (02-04 / 03-16 / 06-05),
+**T037 solar THREE spanning 2 months** (02-27 / 04-16 / 04-29). Untestable — **T014 coal**, 2 of 3
+being undated price-drop triggers. **So the reading is TRUE FOR SOME THEMES AND FALSE FOR OTHERS,
+which is precisely why it must be checked per cohort rather than assumed from the route.**
+**AND IT LANDS OPPOSITE TO THE INTUITION ABOUT T002** — the mixed-taxonomy cluster (2 sectors, 5
+SICs, coherence 0.385, whose own `shared_note` warns of a driver-less momentum bucket) is the **MOST**
+date-aligned of the six. Loose taxonomy did not predict scattered events.
+**ONE CAVEAT THE CHECK CANNOT RESOLVE:** a shared DATE is evidence of a common MOVE; the label
+`earnings_gap_down` attributing it to EARNINGS for fifteen issuers on one day is **not** established
+by that field and is implausible on its face — confirming it needs per-name filing dates. **Read the
+date alignment; do not read the attribution.**
+BRBR does NOT come from this route at all; it comes from the book, and its relation to SMPL is
+product-market (protein snacking), so the correlated-shock question does not arise for it.
 **BRBR's FY-END VERIFIED FROM ANNUAL DURATION FACTS: Sep-30, a FIXED month-end** (one value across
 1,325 facts). **SMPL is 52/53-week and DRIFTS** (Aug-31/29/25/28/27 across years), FY2025 ending
 Aug-30-2025 → **offset ≈31 days, and not constant.** *(CPB sits ≈27 days the other side.)*
