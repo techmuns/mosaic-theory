@@ -12475,12 +12475,22 @@ Medifast's terminal outcome, and the page still prints `Medifast — went termin
 verify)`. **Verification has nowhere to live, so it is re-requested on every assembly.**
 
 **THREE OPERATOR RULINGS PENDING (they are decisions, not builds — no guard can set any of them):**
-- **§D — the base-margin anchor's basis.** The interpolation runs from **15.51%**, computed and cited
-  (`[53]`, EDGAR `OperatingIncomeLoss`, GAAP inclusive of every unusual but the one named impairment)
-  to **~13.8%**, which appears ONCE in METHOD prose with **no endnote and no field** — no code computes
-  it. "Clean" means something different at each end. DECIDE: which basis defines the anchor (GAAP-incl
-  at both ends / CIQ clean EBIT at both ends / abandon the interpolation), and whether the un-sourced
-  end must acquire a `source_ref` before it can be load-bearing. Code enforces the choice after.
+- **§D — the base-margin anchor's basis. SOURCING IS THE FIRST PART OF THE RULING, NOT A RIDER.** The
+  interpolation runs from **15.51%**, computed and cited (`[53]`, EDGAR `OperatingIncomeLoss`, GAAP
+  inclusive of every unusual but the one named impairment) to **~13.8%**, which appears ONCE in METHOD
+  prose with **no endnote and no field**. **The 13.8% end's basis is UNKNOWN** — the nearest match is
+  `own_history[0].implied_ebit_margin = 0.138933` (`TEV/LTM Revenue ÷ TEV/LTM EBIT` off the CIQ
+  Multiples sheet, as-of 2026-07-23), a **0.06pp** match that nothing binds, and whether CIQ's EBIT
+  definition is ex-unusuals is asserted nowhere in this repo. The page says "clean"; the code never
+  does. DECIDE IN ORDER: (1) establish what ~13.8% is and bind it to a `source_ref`, or retire it;
+  (2) then which basis defines the anchor — this cannot be decided before (1); (3) then code enforces.
+  **The size of the choice IS established:** on the same trailing period GAAP operating margin is
+  NEGATIVE (the −$391.9M writedown sits inside it; LTM net income −$199M) against a CIQ-implied
+  +13.89% — the basis moves the trailing anchor by ~30 points, and the derivation takes the flattering
+  side without naming which side it is on.
+  *(Corrected on review of #327: the first cut called 13.8% an "analyst-written CIQ-basis figure" —
+  restating the AUDIT's claim as a measurement immediately after proving the artifact carries no such
+  link, which pre-biases a ruling that asks the operator to choose between those very bases.)*
 - **Twins — the mechanism, not the two names.** DECIDE: does a verified outcome become a FIELD that
   travels with the twin (making the set partly sticky), or does the twin block stop carrying outcome
   claims at all? Current state is neither, and it launders an LLM claim and a human verification into

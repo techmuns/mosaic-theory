@@ -396,18 +396,41 @@ two ends are not merely different bases — **they are different KINDS of value*
 - **15.51%** is computed and sourced — endnote `[53]`: `EDGAR companyfacts OperatingIncomeLoss /
   RevenueFromContractWithCustomer… FY2019-FY2025, FY2025 ex the $60.9M impairment`. GAAP operating
   income with **only one named impairment removed**, i.e. inclusive of every other unusual item.
-- **~13.8%** appears **once, in the METHOD prose, with no endnote and no field.** Three literal `13.8`
-  occurrences in the whole JSON, none of them a value — no code computes it.
+- **~13.8%** appears **once, in the METHOD prose, with no endnote and no field.** Nothing in the
+  artifact binds it to anything.
 
-So the interpolation runs from a cited GAAP-basis computation to an **uncited, analyst-written CIQ-basis
-figure**, and the word **"clean" means something different at each end.** The brief contract already has
-the governing rule — *a derived pin value must name the source LAYER of every component; a pin reachable
-only by MIXING layers is MALFORMED* — and it was never pointed here.
+**THE BASIS OF THE 13.8% END IS UNKNOWN, AND ESTABLISHING IT IS PART OF THE RULING.**
+*(Corrected on review 2026-08-03 — the first cut of this section called it an "analyst-written CIQ-basis
+figure" on the strength of §D's own sentence, having just demonstrated that the artifact carries no such
+link. Restating the auditor's claim as a measurement is the error this whole render exists to avoid, and
+it pre-biases a ruling that asks the operator to CHOOSE between bases.)*
+
+What can actually be shown:
+
+| | |
+|---|---|
+| Nearest numeric match in the artifact | `mechanical.valuation.own_history[0].implied_ebit_margin` = **0.138933** |
+| How that is derived | `TEV/LTM Revenue ÷ TEV/LTM EBIT` off ONE column of the CIQ **Multiples** sheet (`band_guards.py:96–98`), source `…SMPL Financials_Quarterly.xls`, as-of **2026-07-23** |
+| Match quality | **0.06pp** — suggestive, and NOT a binding: no endnote connects them, and 13.89% rounds to 13.9, so *"about 13.8%"* reads as a truncation or as a different vintage |
+| Is it "clean"? | **UNESTABLISHED.** The derivation inherits **CIQ's own EBIT definition**; no code in this repo asserts that definition excludes unusuals. The page says "clean"; the code never does. |
+| A decoy that must not be mistaken for it | the only literal `13.8` elsewhere in the JSON is `13.837177` — the **2025-03-31 EV/EBITDA close**, a multiple, not a margin |
+
+**What IS established is the size of the choice.** On the same trailing period the two candidate bases do
+not merely differ — GAAP LTM operating margin is **negative** (the −$391.9M writedown sits inside GAAP
+operating income; LTM net income is −$199M), while the CIQ-implied LTM EBIT margin is **+13.89%**. The
+audit puts the GAAP figure at −17.05%; whatever the exact value, **the basis choice moves the trailing
+anchor by roughly thirty percentage points**, and the stated derivation takes the flattering side without
+naming which side it is on. The brief contract already governs this — *a derived pin value must name the
+source LAYER of every component; a pin reachable only by MIXING layers is MALFORMED* — and it was never
+pointed here.
 
 **Why this is a ruling and not a fix:** the anchor is analyst judgment, not a computed field, so no guard
-can set it. The decision is which basis the anchor is defined on — GAAP-incl-unusuals at both ends, CIQ
-clean EBIT at both ends, or the interpolation abandoned — and whether the un-sourced end must acquire a
-`source_ref` before it can be load-bearing. Code can then enforce the choice; it cannot make it.
+can set it. **And the resolution has three parts in order, not two** — the first is now the sourcing:
+1. **Establish what ~13.8% is** and bind it to a `source_ref` (or retire it). If it is
+   `implied_ebit_margin`, say so on the page; if it is something else, the something else has no record.
+2. **Then decide the basis** the anchor is defined on — GAAP-incl-unusuals at both ends, CIQ EBIT at
+   both ends, or the interpolation abandoned — which cannot be decided before (1).
+3. **Then code enforces it.** It cannot make the choice, and it cannot enforce against an unsourced end.
 
 ### §G — the four untriaged of seven
 
