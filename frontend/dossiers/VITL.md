@@ -453,7 +453,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 13 · sells 5 (net -4.4K sh) · grants 21 · last 2026-06-12 · other filings 20 [56]
+- **Insider activity (Form 4):** Open-market buys 13 (12 insiders, $0.61M) · sells 3 (1 insider, $0.96M) — in the last 182 days · last purchase $0.02M, Chief People Officer, 2026-05-19 (~2mo ago) · largest purchase $0.10M, Chief Supply Chain Officer, 2026-05-14 (~3mo ago) · last sale $0.41M, 10% owner, 2026-03-02 (~5mo ago) · largest sale $188.51M, EXECUTIVE CHAIRPERSON, 2024-04-05 (~28mo ago) · grants 76 · last filing 2026-06-12 · other filings 132 [56]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.5d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M [57]
 
 ### Assembly verification — filing vs panel
@@ -529,7 +529,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [53] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-29`
 [54] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-29`
 [55] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`
-[56] `EDGAR Form 4 (latest 0001193125-26-269633; 42 in 6m)`
+[56] `EDGAR Form 4 (latest 0001193125-26-269633; 235 filings in the 1095d scanned; counts over 182d)`
 [57] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,412,289 short ÷ 3,025,106 screen 90d ADV`
 [58] `10-Q maturity wall vs CIQ capital panel (same window)`
 [59] `CIQ revenue guide vs release actual/outlook`

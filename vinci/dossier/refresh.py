@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -214,7 +215,19 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     derived rebuild — the seam B1 plugs into. Absent, this is a pure no-op round-trip, which is
     exactly what the round-trip pin drives.
 
-    Raises :class:`RefreshRefusedError` when a moved figure is one the stored prose cites."""
+    Raises :class:`RefreshRefusedError` when a moved figure is one the stored prose cites, or when
+    the name's record is SEALED."""
+    # A SEALED RECORD IS NOT REFRESHABLE. FUBO's `known_wrong.json` states the rule in its own
+    # words — "`dossier.json` is untouched … it stays sealed" until a post-combination re-assembly
+    # exists — and the A2b pass wrote `ev_gap` straight into it anyway. The seal test caught it,
+    # which is the guard working; this makes the WRITE PATH refuse instead of relying on whoever
+    # runs the pass remembering. Keyed on the sidecar's presence, so a name that acquires one is
+    # sealed without anyone editing this file.
+    if (path.parent / "known_wrong.json").exists():
+        raise RefreshRefusedError(
+            f"{path.parent.name}: this record is SEALED by its own known_wrong.json — refreshing "
+            "it would make a page that says 'do not trust these figures' look freshly computed. "
+            "It clears when a re-assembly exists, not when a transform runs.")
     doc = json.loads(path.read_text())
     before = doc.get("mechanical") or {}
     staged = transform(json.loads(json.dumps(before))) if transform else before
@@ -259,3 +272,170 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
         path.write_text(new_json)
         md_path.write_text(new_md)
     return changed
+
+
+def ev_gap_transform(ticker: str) -> Transform:
+    """(A2b) A `refresh_dossier` transform writing the EV-gap FORM into `mech.ev_gap`.
+
+    ALWAYS WRITES, and that is the difference from `consensus_transform`. Consensus levels leave
+    the field UNTOUCHED when absent, because `None` there means NOT REFRESHED and `[]` would claim
+    the street has no view. Here the two states are told apart INSIDE the value: `None` still means
+    not refreshed, while a written `status="not-computed"` with a stated reason means the refresh
+    RAN and could not strike a gap. A render that shows an empty block instead of one of those two
+    sentences is the two-speed defect the insider horizon just taught.
+
+    OUR LEG IS THE `base` SCENARIO. The gap is "what our base case implies against what the street
+    implies", so bear/bull would be answering a different question; a record without a `base` leg
+    is a not-computed with a reason, never a silent substitution.
+    """
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import comps_as_of, estimates_as_of
+    from vinci.dossier.ev_gap import build_ev_gap
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import SourceStatus
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        levels = ((out.get("consensus_context") or {}).get("consensus_levels")) or None
+
+        # CARRY THE PRIOR VINTAGES FORWARD — a refresh must never ERASE provenance it cannot
+        # re-read. The licensed CIQ workbooks are git-ignored and absent from CI and from any
+        # machine without the export, so the first cut wrote `None` over both stamps whenever the
+        # bundle was missing: running the pass anywhere without the workbooks would have silently
+        # stripped the vintages off every dossier while leaving the gap itself computed — a number
+        # keeping its value while losing the thing that says what it describes.
+        # CI CAUGHT THIS, not the local gate, because this worktree HAS the exports. Same principle
+        # `insider_transform` already states: a fetch that cannot run leaves the field alone.
+        prior = (out.get("ev_gap") or {}).get("vintages") or {}
+        tev_as_of = prior.get("tev_as_of")
+        consensus_as_of = prior.get("consensus_as_of")
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            bundle = None
+        if bundle is not None:
+            c, e = comps_as_of(bundle), estimates_as_of(bundle)
+            # VERBATIM, floor marker and all. SMPL's estimates export carries no As-Of header, so
+            # its date is a FLOOR ("≥2026-07-21"); flattening that to a plain date would
+            # manufacture precision the workbook does not have.
+            # A READABLE BUNDLE THAT CANNOT DATE ITSELF also keeps the prior stamp rather than
+            # blanking it: "this export states no as-of" is a different fact from "we never had
+            # one", and only the second justifies erasing what is already recorded.
+            tev_as_of = c.value if c.status is SourceStatus.PRESENT else tev_as_of
+            consensus_as_of = e.value if e.status is SourceStatus.PRESENT else consensus_as_of
+
+        cap = ((out.get("implied_valuation") or {}).get("market_cap") or {}).get("value")
+        grid = ((out.get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
+        self_row = next((r for r in grid if r.get("is_name")), None)
+        nd = self_row.get("net_debt") if self_row else None
+        # TEV IS STRUCK FROM THE SAME PANEL AS ITS VINTAGE. Both come off the comps workbook, so
+        # the stamp describes the numbers rather than sitting near them.
+        tev = (float(cap) + float(nd)) if isinstance(cap, (int, float)) and isinstance(
+            nd, (int, float)) else None
+
+        leg = _base_leg(ticker)
+        out["ev_gap"] = build_ev_gap(
+            levels, leg,
+            tev=tev, net_debt=float(nd) if isinstance(nd, (int, float)) else None,
+            shares=(leg or {}).get("shares"),
+            tev_as_of=tev_as_of, consensus_as_of=consensus_as_of)
+        return out
+
+    return _apply
+
+
+def _base_leg(ticker: str) -> dict[str, Any] | None:
+    """The `base` scenario leg plus the facts the decomposition needs, or None.
+
+    READS THE RECORD THROUGH `vinci.scenarios.read_record` — the SAME reader the renderer and
+    `assemble` use, so there is one definition of "the record" rather than a second path that can
+    drift from it. Imported inside the function because `vinci.scenarios` imports
+    `vinci.dossier.midcycle`; a module-scope import would cycle (the reason `_read_scenario_card`
+    gives for the same move).
+
+    ABSENT is normal — most names are never underwritten — and degrades to None, which
+    `build_ev_gap` turns into a stated `not-computed`. A record that EXISTS but will not parse
+    PROPAGATES: swallowing it would write "no scenario record" onto a name that has one.
+    """
+    from vinci.scenarios import read_record
+
+    try:
+        rec = read_record(ticker)
+    except FileNotFoundError:
+        return None
+    base = rec.scenarios.get("base")
+    if base is None:
+        return None
+
+    def fact(name: str) -> float | None:
+        f = rec.facts.get(name)
+        return float(f.value) if f is not None and isinstance(f.value, (int, float)) else None
+
+    return {
+        "revenue": base.revenue, "margin": base.margin, "multiple": base.multiple,
+        # R1 RECORDS STORE AN OPERATING MARGIN — SMPL's 0.14 against a 12.5x EV/EBITDA multiple is
+        # the case `our_ebitda` exists for. Stated as a constant rather than inferred from the
+        # number's size, which would be a guess dressed as a lookup; a future recipe storing an
+        # EBITDA margin must set this from `recipe_id`, and `our_ebitda` REFUSES rather than
+        # silently dividing EBIT-margin by EBITDA-margin if it is wrong.
+        "margin_basis": "operating",
+        "multiple_basis": rec.multiple_basis,
+        "d_and_a": fact("d_and_a"),
+        "shares": fact("diluted_shares"),
+        # THE D&A CONVENTION, CARRIED SO A2 CAN PRINT IT (operator ruling 2026-07-30). R1 stores a
+        # FIXED $M anchor; R2 stores a RATIO OF REVENUE. They are not a contradiction but a horizon
+        # difference — R1 is mid-cycle where a fixed asset base is right, R2 terminal where D&A
+        # converges to maintenance capex as a share of revenue. Converting R2's ratio at the anchor
+        # is the RESERVED ANALYST DECISION ("it moves committed numbers and is a decision, not a
+        # build"), so it is surfaced here and never applied here.
+        "d_and_a_convention": ("fixed $M anchor (R1, mid-cycle)" if fact("d_and_a") is not None
+                               else "ratio of revenue (R2, terminal)"
+                               if fact("d_and_a_ratio") is not None else None),
+        "d_and_a_ratio": fact("d_and_a_ratio"),
+        "recipe_id": rec.recipe_id,
+    }
+
+
+def insider_transform(ticker: str, cik: str | None, reference_date: date) -> Transform:
+    """Re-fetch the Form 4 insider line so the VALUE states its own horizon.
+
+    RIDES THE SAME PASS AS `ev_gap_transform`, deliberately. Both write the mechanical layer, and
+    the render that drops "6m" from the label ships on deploy — so if the value lagged, the served
+    page would state no horizon at all. That is the #319 regression exactly, and running the two
+    transforms together is what makes the label change safe rather than merely intended.
+
+    A FAILED FETCH LEAVES THE FIELD ALONE. Overwriting a good line with an UNKNOWN because EDGAR
+    was briefly unreachable would trade a correct disclosure for a blank one.
+    """
+    from vinci.dossier.mechanical import _insider_activity
+    from vinci.dossier.schemas import SourceStatus
+    from vinci.edgar.client import EdgarClient
+    from vinci.sec import build_sec_http
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        cp = mech.get("catalyst_path")
+        if not isinstance(cp, dict) or not cik:
+            return mech
+        got = _insider_activity(
+            EdgarClient.from_config(), build_sec_http(), cik, reference_date)
+        if got.status is not SourceStatus.PRESENT:
+            return mech
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        out["catalyst_path"]["insider_activity"] = json.loads(got.model_dump_json())
+        return out
+
+    return _apply
+
+
+def chain(*transforms: Transform) -> Transform:
+    """Apply transforms left to right — ONE pass, so a name is written once rather than N times.
+
+    Sequential rather than merged because they read each other's output: nothing does today, but a
+    merge would make the order invisible on the day something does."""
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        for t in transforms:
+            mech = t(mech)
+        return mech
+    return _apply

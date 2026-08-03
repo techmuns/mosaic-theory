@@ -499,6 +499,36 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-29",
+        "consensus_as_of": "≥2026-07-06"
+      },
+      "d_and_a_convention": null,
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "3/3",
+          "n": 3,
+          "dispersion": 0.007517347340607694,
+          "caution": true,
+          "reason": "3 estimates — thin, caution carried"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "3/3",
+          "n": 3,
+          "dispersion": 0.04268768792545254,
+          "caution": true,
+          "reason": "3 estimates — thin, caution carried"
+        }
+      },
+      "status": "not-computed",
+      "reason": "no scenario record for this name — the route is known, the gap is not"
+    },
     "peer_comps": {
       "peer_set": {
         "value": "10 peers — ExlService Holdings $4.7B — operates as a data and artificial intelligence (“AI”) company in the North America, the United Kingdom, Europe, and internationally. (United States); Fiserv $28.9B — provides payments and financial services technology solutions in the United States, Europe, the Middle East and Africa, Latin America, the Asia-Pacific (United States); Teleperformance SE $4.0B — operates as a digital business services company in France and internationally. (France); Cognizant Technology Solutions Corporation $23.8B — provides consulting and technology, and outsourcing services in North America, Europe, and internationally. (United States); TaskUs $568M — provides outsourced digital services for companies in Philippines, the United States, India, and internationally. (United States); ADT Inc. $5.3B — provides security, interactive, and smart home solutions in the United States. (United States); Wipro Limited $18.8B — operates as an information technology (IT), consulting, and business process services company worldwide. (560035    India); Genpact Limited $5.9B — provides business process outsourcing and information technology services in India, the rest of Asia, North and Latin America, and Europe. (Hamilton  HM 12   ); TTEC Holdings $119M — operates as a customer experience (CX) company that designs, builds, and operates technology-enabled customer experiences across live interaction channels. (United States); IBEX Limited $480M — provides end-to-end technology-enabled customer lifecycle experience solutions in the United States and internationally. (United States) | the name: $1.6B",
@@ -1898,8 +1928,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 4 · sells 1 (net -5994.5K sh) · grants 17 · last 2026-07-09 · other F×22",
-        "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 36 in 6m)",
+        "value": "Open-market buys 4 (2 insiders, $0.16M) · sells 1 (1 insider, $133.50M) — in the last 182 days · last purchase $0.02M, President and CEO, 2026-07-08 (~1mo ago) · largest purchase $0.08M, President and CEO, 2025-10-30 (~9mo ago) · last sale $133.50M, 10% owner, 2026-04-29 (~3mo ago) · grants 54 · last filing 2026-07-09 · other F×76/G×1/M×6",
+        "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 140 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

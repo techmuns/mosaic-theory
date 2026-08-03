@@ -393,3 +393,46 @@ def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> Non
         pytest.skip(
             f"vacuous: no committed dossier is assembled on/after {GATE_FIXED_ON}, so this "
             "invariant covers nothing yet — it begins covering names as the fleet re-assembles")
+
+
+#: Every dated panel key the committed fleet actually carries, each consciously classified.
+#: EXPORT = ours to re-pull, so it GATES. CONSENSUS = the street's to revise, so it prints.
+_CLASSIFIED_PANEL_KEYS = {
+    "catalyst_path.as_of": "consensus",
+    "financial_summary.as_of": "consensus",
+    "valuation.implied_expectations.multiples_as_of": "consensus",
+    "ev_gap.vintages.consensus_as_of": "consensus",
+    "ev_gap.vintages.tev_as_of": "export",
+    # FOUND BY THIS GUARD ON ITS FIRST RUN — both pre-existing, and the silent default was CORRECT
+    # for both, which is the useful result: the gating default is safe, it simply was not asserted.
+    # `stock_info.as_of` is the price/cap stamp and `…implied_expectations.tev_as_of` the comps
+    # TEV; both are OURS to re-pull, so both gate.
+    "stock_info.as_of": "export",
+    "valuation.implied_expectations.tev_as_of": "export",
+}
+
+
+def test_every_dated_panel_key_is_consciously_classified() -> None:
+    """THE TRAP THIS CLOSES, and it caught me rather than being imagined. `CONSENSUS_PANELS` is an
+    ALLOWLIST: anything not in it falls into the GATING class by default. Persisting A2b's
+    `ev_gap.vintages.consensus_as_of` therefore put MVST's `≥2026-05-15` back in front of the
+    export gate — 56d against a 45d ceiling — and refused the build for "no analyst has revised
+    it", which is exactly the condition the 2026-07-30 staleness split had just stopped refusing
+    for, and which no operator action clears.
+
+    Default-to-gating is the SAFE direction and is not being changed. What was missing is that the
+    default was silent: a new dated field joined the gating class with nobody deciding it should.
+    This asserts the inventory, so the next one argues with a test.
+    """
+    seen: set[str] = set()
+    for mech in _fleet().values():
+        seen |= {k for k, _ in fr.panel_dates(mech)}
+    unclassified = seen - set(_CLASSIFIED_PANEL_KEYS)
+    assert not unclassified, (
+        f"dated panel key(s) {sorted(unclassified)} default to the GATING class with nobody "
+        f"deciding they should. Classify each: add to freshness.CONSENSUS_PANELS if it is the "
+        f"street's to revise, and to _CLASSIFIED_PANEL_KEYS either way.")
+    # …and the classification here must AGREE with the module's, or this inventory is decoration.
+    for key, kind in _CLASSIFIED_PANEL_KEYS.items():
+        assert ((key in fr.CONSENSUS_PANELS) is (kind == "consensus")), (
+            f"{key}: this file calls it {kind}, freshness.CONSENSUS_PANELS disagrees")

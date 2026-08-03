@@ -643,6 +643,53 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-29",
+        "consensus_as_of": "≥2026-07-27"
+      },
+      "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "19/19",
+          "n": 19,
+          "dispersion": 0.015804623559735224,
+          "caution": false,
+          "reason": "19 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "7/12",
+          "n": 7,
+          "dispersion": 0.017650162832953953,
+          "caution": false,
+          "reason": "7 estimates"
+        }
+      },
+      "status": "computed",
+      "ratios": {
+        "revenue_ratio": 1.0012243593518286,
+        "margin_ratio": 0.7636807266384581,
+        "multiple_ratio": 2.6413369047883815,
+        "ev_gap": 2.019607788626204
+      },
+      "at_adjacent": {
+        "revenue_ratio": 0.9485184572090714,
+        "margin_ratio": 0.7492005095906168,
+        "multiple_ratio": 2.841994195227187,
+        "ev_gap": 2.019607788626204
+      },
+      "shape": {
+        "anchor": "multiple-dominant",
+        "adjacent": "multiple-dominant",
+        "agree": true,
+        "note": "both years give the same shape"
+      }
+    },
     "peer_comps": {
       "peer_set": {
         "value": "10 peers — Cognizant Technology Solutions Corporation $23.8B — provides consulting and technology, and outsourcing services in North America, Europe, and internationally. (United States); Amdocs Limited $5.8B — provides software and services to communications, entertainment, media, and other service providers worldwide. (United States); DXC Technology Company $1.8B — provides information technology services and solutions in the United States, the United Kingdom, the Rest of Europe, Australia, and internationally. (United States); Globant S.A. $1.5B — provides technology services in the United States, rest of North America, Latin America, Europe, and internationally. (Luxembourg); Sopra Steria Group SA $3.6B — provides consulting, digital, and software development services in France and internationally. (France); Everforth $953M — provides information technology solutions for commercial and government sectors in the United States, Canada, and Europe. (United States); Nomura Research Institute $18.1B — engages in the provision of consulting, financial information technology (IT) solutions, Industrial IT solutions (Japan); Gartner $10.4B — provides business and technology insights to support decision-making and performance on an organization’s mission-critical priorities in the United States (United States); Accenture plc $100.8B — provides strategy and consulting, industry X, song, and technology and operation services in the Americas, Europe, the Middle East, Africa (D02 P820  Ireland); iSoftStone Information Technology $5.4B — provides information technology services in China and internationally. (China) | the name: $5.2B",
@@ -3868,8 +3915,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 6 · sells 0 (net +0.5K sh) · grants 18 · last 2026-05-22 · other F×35/M×1",
-        "source_ref": "EDGAR Form 4 (latest 0001355666-26-000002; 25 in 6m)",
+        "value": "Open-market buys 6 (6 insiders, $0.04M) · sells 0 — in the last 182 days · last purchase $0.01M, CEO, President, Director, 2026-04-30 (~3mo ago) · last sale $1.03M, SVP/Co-Head of Global Business, 2025-12-10 (~8mo ago) · largest sale $5.69M, CEO, President, Chairman, 2024-03-14 (~29mo ago) · grants 58 · last filing 2026-05-22 · other F×122/G×17/M×14",
+        "source_ref": "EDGAR Form 4 (latest 0001355666-26-000002; 118 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

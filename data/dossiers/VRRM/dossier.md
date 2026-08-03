@@ -471,7 +471,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [62]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 0 (net +0.0K sh) · grants 4 · last 2026-06-18 · other filings 44 [63]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 0 — in the last 182 days · no purchase in the 3y scanned · last sale $0.15M, director, 2025-05-21 (~14mo ago) · largest sale $3.12M, President and CEO, 2023-11-14 (~32mo ago) · grants 10 · last filing 2026-06-18 · other filings 138 [63]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 7.7M → 11.1M sh (+42.8%, rising) · 7.3% of shares out (EDGAR XBRL) · DTC 1.6d · recent: 2026-06-30 11.1M · 2026-06-15 7.7M · 2026-05-29 5.0M · 2026-05-15 3.4M [64]
 
 ### Assembly verification — filing vs panel
@@ -554,7 +554,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [60] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
 [61] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
 [62] `CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf`
-[63] `EDGAR Form 4 (latest 0001123292-26-000914; 24 in 6m)`
+[63] `EDGAR Form 4 (latest 0001123292-26-000914; 80 filings in the 1095d scanned; counts over 182d)`
 [64] `FINRA consolidated short interest (settle 2026-06-30); DTC = 11,053,056 short ÷ 6,856,243 screen 90d ADV`
 [65] `10-Q maturity wall vs CIQ capital panel (same window)`
 [66] `CIQ revenue guide vs release actual/outlook`

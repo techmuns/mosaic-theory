@@ -601,7 +601,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [68]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 7 (net -121.0K sh) · grants 20 · last 2026-06-12 · other filings 1 [69]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 4 (3 insiders, $0.13M) — in the last 182 days · last purchase $0.02M, Chief Financial Officer, 2023-08-22 (~35mo ago) · last sale $0.01M, Chief Technology Officer, 2026-06-10 (~2mo ago) · largest sale $1.30M, director, 2023-11-14 (~32mo ago) · grants 52 · last filing 2026-06-12 · other filings 5 [69]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 21.4M → 26.3M sh (+22.9%, rising) · 7.9% of shares out (EDGAR XBRL) · DTC 5.8d · recent: 2026-06-15 26.3M · 2026-05-29 21.4M · 2026-05-15 21.6M · 2026-04-30 21.2M [70]
 
 ### Assembly verification — filing vs panel
@@ -690,7 +690,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 [66] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
 [67] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
 [68] `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-[69] `EDGAR Form 4 (latest 0000947871-26-000620; 18 in 6m)`
+[69] `EDGAR Form 4 (latest 0000947871-26-000620; 49 filings in the 1095d scanned; counts over 182d)`
 [70] `FINRA consolidated short interest (settle 2026-06-15); DTC = 26,323,600 short ÷ 4,571,432 screen 90d ADV`
 [71] `10-Q maturity wall vs CIQ capital panel (same window)`
 [72] `CIQ revenue guide vs release actual/outlook`

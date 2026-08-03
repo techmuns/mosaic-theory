@@ -528,7 +528,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [66]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0 (net +90.0K sh) · grants 12 · last 2026-07-24 · other filings 4 [67]
+- **Insider activity (Form 4):** Open-market buys 2 (2 insiders, $1.11M) · sells 0 — in the last 182 days · last purchase $0.12M, director, 2026-05-14 (~3mo ago) · largest purchase $0.99M, director, 2026-04-23 (~3mo ago) · last sale $0.11M, VP, Controller and CAO, 2025-11-11 (~9mo ago) · largest sale $8.06M, director, 2024-11-07 (~21mo ago) · grants 78 · last filing 2026-07-24 · other filings 44 [67]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 6.5M → 7.2M sh (+11.1%, rising) · 8.2% of shares out (EDGAR XBRL) · DTC 3.0d · recent: 2026-06-30 7.2M · 2026-06-15 6.5M · 2026-05-29 6.7M · 2026-05-15 6.4M [68]
 
 ### Assembly verification — filing vs panel
@@ -615,7 +615,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [64] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-24`
 [65] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-24`
 [66] `CIQ transcript(s): The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf`
-[67] `EDGAR Form 4 (latest 0002076611-26-000003; 18 in 6m)`
+[67] `EDGAR Form 4 (latest 0002076611-26-000003; 110 filings in the 1095d scanned; counts over 182d)`
 [68] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,211,389 short ÷ 2,430,660 screen 90d ADV`
 [69] `10-Q maturity wall vs CIQ capital panel (same window)`
 [70] `CIQ revenue guide vs release actual/outlook`

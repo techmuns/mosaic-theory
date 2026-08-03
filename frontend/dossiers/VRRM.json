@@ -467,6 +467,36 @@
         "note": null
       }
     },
+    "ev_gap": {
+      "vintages": {
+        "tev_as_of": "2026-07-29",
+        "consensus_as_of": "≥2026-07-13"
+      },
+      "d_and_a_convention": null,
+      "anchor_fy": "2026",
+      "adjacent_fy": "2027",
+      "form": "three-ratio",
+      "routes": {
+        "Revenue": {
+          "route": "three-ratio",
+          "estimates": "8/8",
+          "n": 8,
+          "dispersion": 0.014280867332217015,
+          "caution": false,
+          "reason": "8 estimates"
+        },
+        "EBITDA": {
+          "route": "three-ratio",
+          "estimates": "6/7",
+          "n": 6,
+          "dispersion": 0.009989080539818928,
+          "caution": false,
+          "reason": "6 estimates"
+        }
+      },
+      "status": "not-computed",
+      "reason": "no scenario record for this name — the route is known, the gap is not"
+    },
     "peer_comps": {
       "peer_set": {
         "value": "7 peers — TaskUs $568M — provides outsourced digital services for companies in Philippines, the United States, India, and internationally. (United States); Tyler Technologies $14.1B — provides integrated software and technology management solutions for the public sector in the United States. (United States); ExlService Holdings $4.7B — operates as a data and artificial intelligence (“AI”) company in the North America, the United Kingdom, Europe, and internationally. (United States); SS&C Technologies Holdings $18.8B — provides software products and software-enabled services to financial services and healthcare industries in the Americas, Europe, the Middle East, Africa (United States); Broadridge Financial Solutions $18.3B — provides investor communications and technology-driven solutions for the financial services industry in the United States and internationally. (United States); Concentrix Corporation $1.6B — designs, builds, and runs integrated customer experience (CX) solutions worldwide. (United States); Genpact Limited $5.9B — provides business process outsourcing and information technology services in India, the rest of Asia, North and Latin America, and Europe. (Hamilton  HM 12   ) | the name: $635M",
@@ -3726,8 +3756,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 0 (net +0.0K sh) · grants 4 · last 2026-06-18 · other F×21/M×23",
-        "source_ref": "EDGAR Form 4 (latest 0001123292-26-000914; 24 in 6m)",
+        "value": "Open-market buys 0 · sells 0 — in the last 182 days · no purchase in the 3y scanned · last sale $0.15M, director, 2025-05-21 (~14mo ago) · largest sale $3.12M, President and CEO, 2023-11-14 (~32mo ago) · grants 10 · last filing 2026-06-18 · other F×62/M×76",
+        "source_ref": "EDGAR Form 4 (latest 0001123292-26-000914; 80 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },

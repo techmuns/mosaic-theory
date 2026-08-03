@@ -1484,15 +1484,17 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
         return []
     rows = []
     if cp.insider_activity is not None:
-        # THE HORIZON STAYS IN THE LABEL UNTIL THE VALUE CARRIES ITS OWN. Review finding on #319,
-        # and it was a strict regression on the SERVED page: this label was changed to "(Form 4)"
-        # while the committed value still reads `sells 0 (net +90.0K sh)` — so the deployed line
-        # stated NO horizon at all, where before the label supplied it. A stale artifact's label is
-        # the only horizon it has.
-        # THE DECIDING TEST: "6m" is true of the OLD value AND of the NEW value's 182-day count
-        # window, so keeping it is correct in BOTH states; removing it is correct only after a
-        # re-assembly. A change that is right only after a later step ships WITH that step.
-        rows.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity, _fmt_insider))
+        # THE LABEL CARRIES THE HORIZON ONLY WHEN THE VALUE DOES NOT — derived, never chosen.
+        # #319 removed "6m" from this label while the committed value still read
+        # `sells 0 (net +90.0K sh)`, leaving the served page with NO horizon at all. Reverting was
+        # correct then and would be wrong now that refreshed values state their own window; and
+        # FUBO makes a fixed answer impossible either way — its record is SEALED, so its value can
+        # never be refreshed, and a hardcoded "(Form 4)" would strand exactly that page.
+        # Reading the value settles all three cases and cannot drift out of step with it.
+        _horizon_in_value = "in the last " in str(cp.insider_activity.value or "")
+        rows.append(_fact("Insider activity (Form 4)" if _horizon_in_value
+                          else "Insider activity (Form 4, 6m)",
+                          cp.insider_activity, _fmt_insider))
     if cp.short_interest is not None:
         rows.append(_fact("Short interest (FINRA)", cp.short_interest))
     return ["### Ownership & positioning", *rows, ""] if rows else []

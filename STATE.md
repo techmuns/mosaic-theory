@@ -7663,6 +7663,108 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**REVIEW OF #320 — THE STATED MECHANISM IS WRONG, THE ASKED-FOR TEST IS RIGHT, AND WRITING IT
+FOUND THAT THE REVIEWER'S OWN SUGGESTED FIX WOULD HAVE BEEN UNDETECTABLE (2026-08-03).**
+**THE CLAIM:** `ev_gap_transform` reads `implied_valuation.market_cap`, which "`ImpliedValuation`
+does not have", so a second refresh gets `cap=None` and rewrites every scenario-backed record as
+`not-computed`. **DISPROVED, two ways:** `ImpliedValuation.market_cap: Sourced[float]` is a DECLARED
+REQUIRED field (`schemas.py:639`), and the value is present at 909.4 in SMPL's artifact **written by
+the very pass under review**. A dropped field would have shown there first.
+**AND THE SUGGESTED FIX WOULD HAVE BEEN A REGRESSION.** `stock_info.as_of` differs from
+`comps_as_of` on **10 of 11 names** — MVST by 14 days (2026-07-08 vs 2026-06-24). The gap's
+`net_debt` (peer_grid) and its persisted `tev_as_of` (`comps_as_of`) both come off the COMPS
+workbook, so reading the STOCK panel's cap would put it under a comps-panel stamp — the
+`financial_summary.as_of` defect, in the block whose docstring cites that defect.
+**BUT THE ASKED-FOR TEST WAS MISSING AND IS NOW SHIPPED** (`test_ev_gap_transform_idempotent.py`,
+10 pins): re-run `refresh_dossier(transform=ev_gap_transform)` on a real dossier in tmp, TWICE, and
+assert the gap stays computed with the same ratios, vintages and label. Nothing in the persistence
+file could catch that class — those pins read what was written ONCE. Mutation: reading a field the
+model drops (the review's exact scenario) → **CAUGHT**.
+**THE FINDING THE TEST PRODUCED, and it is worth more than the fix: SWAPPING TO
+`stock_info.market_cap` PASSES EVERY BEHAVIOURAL TEST.** The two caps agree on all 11 names, so the
+substitution moves no number today and the false stamp would surface only on the first name where
+they diverge — long after the change. **The review's own suggestion was therefore unverifiable by
+any output-level check.** Closed with a STRUCTURAL pin on the source (#310's precedent, where three
+behavioural attempts could not redden): mutation with the pin → **CAUGHT**. A deliberate basis
+change now has to move the STAMP too, and argue with a test.
+**AND CI CAUGHT A REAL DEFECT THE LOCAL GATE COULD NOT — the first thing `gate.yml` has found
+that `bin/commit` cannot.** The idempotency test went RED in CI and GREEN here, because this
+worktree HAS the licensed CIQ exports and CI never can. Cause: with the bundle absent,
+`ev_gap_transform` wrote **`None` over both vintages** while leaving the gap itself computed — so
+**running the pass on any machine without the workbooks would silently strip the provenance off
+every dossier**, a number keeping its value while losing the thing that says what it describes.
+**FIXED IN THE BEHAVIOUR, NOT THE ASSERTION:** prior vintages are carried forward, and a readable
+bundle that cannot date itself also keeps the prior stamp — "this export states no as-of" is a
+different fact from "we never had one", and only the second justifies erasing a record. Same
+principle `insider_transform` already states. Verified by reproducing CI's condition locally
+(`git archive` with no `data/manual/ciq`): 10 passed; mutation with the carry-forward removed →
+**CAUGHT**. **This is the CI asymmetry paying off in the direction nobody predicted:** the note
+said CI is a floor that cannot see the CIQ-bound pins — it turns out CI sees a class the local
+gate structurally cannot, namely everything that depends on the licensed export being ABSENT.
+
+**PRE-EXISTING, SURFACED NOT FIXED:** `recompute_derived` strikes TEV from `stock_info.market_cap`
++ peer_grid `net_debt` — a stock-panel cap plus a comps-panel net debt, i.e. a MIXED-BASIS TEV
+that predates A2b. The two caps agreeing is what hides it. Pinned (`test_the_two_market_caps_agree`)
+so the day they diverge is loud rather than silent.
+
+**A2b PERSISTENCE — BUILT 2026-08-03. THE FORM IS IN `mech.ev_gap` ON 10 OF 11 NAMES, AND THE
+INSIDER LINE RODE THE SAME PASS.**
+**WHAT LANDS.** `build_ev_gap` → route (three-ratio / two-ratio / price-implied-only) · the three
+ratios + the gap · BOTH shape labels with a TRISTATE `agree` · BOTH vintages · the D&A convention.
+Written through `refresh_dossier` (synthesis preserved) by `chain(ev_gap_transform,
+insider_transform)` — ONE pass, because the render that drops "6m" ships on deploy while the value
+lags, and running them apart is the #319 regression by construction.
+**THE FLEET.** **3 computed** — SMPL `0.98 × 0.95 × 2.26 = 2.10` (the A2a acceptance target,
+reproduced through the persistence path), EPAM `1.00 × 0.76 × 2.64 = 2.02`, IT
+`1.00 × 0.87 × 1.88 = 1.65`. **All three `multiple-dominant`, all three agreeing across years** —
+the uncomfortable label, and it does not move with the year on any name that can compute it.
+**8 not-computed, every one with a stated reason:** 4 no scenario record (BRBR, CNXC, VITL, VRRM) ·
+**3 R2 records (AORT, MVST, NCNO)** · 1 no consensus levels (FUBO, sealed).
+**THE R2 SPLIT IS RECIPE-SHAPED, AND THE REFUSAL NAMES THE CONVENTION RATHER THAN AN ABSENCE.**
+Only the three R1 records carry an absolute `d_and_a`; R2 carries `d_and_a_ratio`. Per the operator
+ruling (2026-07-30) converting that at the anchor is the RESERVED ANALYST DECISION — "it moves
+committed numbers and is a decision, not a build" — so A2 **prints the convention per name** and
+refuses with *"states D&A as a RATIO OF REVENUE … the open analyst decision"*. "No D&A available"
+would have sent a reader looking for a number the record already holds.
+**THE OPERATOR'S CONSENSUS VINTAGE IS MORE PRECISE THAN THE EXPORT CAN ATTEST.** The brief said
+"consensus from the 07-30 export"; `estimates_as_of` reads **`≥2026-07-21`** for SMPL — a FLOOR,
+because its Estimates workbook carries no As-Of header. Persisted VERBATIM with the `≥`. TEV reads
+**2026-07-24** as stated. Both come from structured readers (`comps_as_of` / `estimates_as_of`),
+never a regex over a rendered `source_ref`.
+**THREE THINGS THE GATE CAUGHT, all mine, none visible without it.**
+(1) **I WROTE THROUGH FUBO'S SEAL.** `known_wrong.json` says `dossier.json` stays untouched until a
+re-assembly exists; the pass wrote `ev_gap` into it. Reverted, and **`refresh_dossier` now REFUSES
+a name carrying the sidecar** — keyed on its presence, so a name that acquires one is sealed
+without editing that file.
+(2) **MY NEW CONSENSUS VINTAGE SILENTLY RE-BROKE THE 07-30 STALENESS SPLIT.** `CONSENSUS_PANELS` is
+an ALLOWLIST and everything else defaults to the GATING class, so `ev_gap.vintages.consensus_as_of`
+put MVST's `≥2026-05-15` back in front of the export gate — 56d against the 45d ceiling — refusing
+the build for "no analyst has revised it", **the exact condition the split had just stopped refusing
+for and which no operator action clears.** Classified; `tev_as_of` correctly stays in the gating
+class (the comps book is ours to re-export). **INVARIANT SHIPPED:** every dated panel key must be
+consciously classified — and it found **two more on its first run** (`stock_info.as_of`,
+`valuation.implied_expectations.tev_as_of`), both pre-existing, both where the silent default was
+already CORRECT. The default is safe; it simply was not asserted.
+(3) **FUBO MADE A FIXED LABEL IMPOSSIBLE, and the fix is better than the one I set out to make.**
+Its record is sealed, so its VALUE can never be refreshed — a hardcoded `(Form 4)` would strand
+that page with no horizon at all, which is #319 again. **The label is now DERIVED from the value on
+both twins:** it carries "6m" only when the value does not state its own window. Refreshed pages
+read `(Form 4) … in the last 182 days`; FUBO reads `(Form 4, 6m) … (net -311.4K sh)`. Neither can
+lack a horizon, and the two can never drift out of step because one is computed from the other.
+**RENDER'S TWO-SPEED PROBLEM IS DESIGNED OUT, not deferred.** Every return from `build_ev_gap`
+carries `status` — so the render has a sentence for the intermediate state instead of an empty
+block. `None` (never refreshed) and `status="not-computed"` (refreshed, could not compute, here is
+why) are DIFFERENT and the render must tell them apart.
+**TESTED THROUGH THE WRITTEN ARTIFACT** (`tests/test_ev_gap_persistence.py`, 14 pins incl. the
+identity re-checked on what was WRITTEN, the seal in both directions, and the `≥` surviving the
+write) — because six pure functions had no production caller and #316's positional swap survived
+unit tests handing the function the same wrong order a caller would.
+**FRONTEND BUILD IS STILL A SEPARATE STEP.** `refresh_dossier` writes `data/dossiers/*` only;
+`frontend/build.py` is run by hand. Since #319 byte-pinned the mirror, forgetting it now turns the
+suite RED instead of silently serving a stale page — **loud, not automatic.** Worth wiring into the
+pass; recorded rather than done.
+Gate: ruff + `mypy --strict` clean · **1630 passed, 3 skipped**.
+
 **REVIEW OF #319 — I SHIPPED THE HALF THAT MADE THE SERVED PAGE WORSE, HAVING WRITTEN THE NOTE
 EXPLAINING WHY THE HALVES WERE DIFFERENT. TWO INVARIANTS SHIPPED (2026-08-03).**
 **THE FINDING.** The insider LABEL is render-only (deploys immediately); the insider VALUE is
