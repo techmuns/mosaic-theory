@@ -4127,6 +4127,50 @@ strictly comparable. Measuring the divergence per name, and what it does to each
 (IT sits at 1.52 against a 2:1 bar), was the second half of this task and was NOT reached.
 Unblocked — it is a read, no decision pending.
 
+**S19. THE RETENTION HOLD IS CLOSED, AND THE UNIVERSE SNAPSHOT IS NOW STAMPABLE (2026-08-01).**
+
+**THE HOLD IS CLOSED — its purpose was served, and leaving it ambiguous while three runs happened
+was the actual risk.** It existed to prevent evidence destruction before retention landed.
+Retention landed in #293; `data/snapshots/candidate_records.jsonl` carries **13 commits** of
+history; the runs themselves became tracked in #301 (they had existed only in one worktree).
+Nothing it guarded is still exposed. **FUBO's separate standing rule stays ON** — no
+post-combination re-assembly exists and the entity-gate build has no record.
+
+**BUILT: `RunManifest.universe_as_of` + `CandidateRow.deciding_cap`.**
+- **WHICH POPULATION WAS JUDGED.** `-01` screened the **2026-07-06** universe (1,800, set-identical
+  to that snapshot) while `build_universe` wrote **2026-07-29** (1,780); 72 tickers hold rows in
+  BOTH grains. The manifest recorded run_id, reference_date, screen, band, routing_policy and
+  stages — everything except the population. **Every run without the stamp is permanently
+  unattributable**, so this went first: a guard cannot repair the three runs on disk, a stamp
+  stops the fourth joining them. Forward-binding; the three committed manifests read `None` =
+  *this run did not say*, and must never be back-filled with a guess.
+- **THE CAP THAT DECIDED MEMBERSHIP.** All 331 pool candidates carried `market_cap: null ("needs
+  shares")` while the universe that admitted them was cap-banded 2,371 -> 1,800 on that number —
+  **S3's blind spot in its ABSENT form**, harder to see than a false stamp because nothing looks
+  wrong. Now a `StampedInput` carrying the SNAPSHOT's date, never the run's.
+- `Store.latest_universe_as_of` / `universe_caps` expose the vintage the members alone cannot state.
+
+**MUTATIONS, all RED** (M2 needed a second pass): cap stamped with the run date · `deciding_cap`
+dropped from the row · `universe_as_of` back-filled with `reference_date`. **M2 first returned
+GREEN** — the pin exercised the `_deciding_cap` helper and never asserted the field was ON the row,
+so the value was computed and had nowhere to go. D22 exactly: the test could not fail on the defect
+that would actually occur. Fixed with a round-trip assertion.
+
+**THE 89 EPS-TOO-OLD REFUSALS ARE CORRECT — the alias defect does not manufacture them.**
+Overlap between the 89 candidates reading *"last positive annual EPS is older than one filing
+cycle"* and the alias-affected names: **0**. #298's bound is firing on real staleness, not on an
+extraction artifact. (The 99-name alias defect stands on its own; 3 of its names are `eps_diluted`
+and cannot be valued by G3 at all.)
+
+**WHY THE UNIVERSE GRAIN APPEARS ONLY IN `-01`:** `build_universe` is a separate CLI subcommand and
+emits the thin grain only when it RUNS. It ran once; the screen ran three times. So **the two
+grains rarely co-occur** — the thin grain accumulates per universe rebuild, not per screen run, and
+`-02`/`-03` are candidate-only for that reason rather than through any loss.
+
+**VRRM's 123-DAY PANEL IS A CONSENSUS PANEL, NOT AN EXPORT ONE:** `EV/EBITDA (TEV/LTM) 8.5x as-of
+2026-03-31 — trailing range 10.4-23.2x over 19 closes`. Consensus staleness PRINTS and does not
+gate, so the gate is not being bypassed; the age is disclosed, which is the designed behaviour.
+
 **S18. LTM GAAP EBITDA FROM EDGAR QUARTERLIES — MEASURED, NOT BUILT. COVERAGE 2 of 1,780 (0.1%),
 AND THE CAUSE IS STRUCTURAL (2026-08-01).**
 
@@ -7686,7 +7730,7 @@ OPERATOR'S COUNT OF 13 IS CORRECT; TWO OF THEIR HOMES ARE NOT.**
 | P9 | 1 | sheet-shape reason → 19 |
 
 **THIRTEEN distinct failures described as nine.** The denominator was wrong, which made every
-completion figure wrong. **CORRECTED SCORE: 2 of 13 closed** (P1's absence half, P5's staleness
+completion figure wrong. **SCORE LINE RETIRED 2026-08-01 — A RECORDED COUNT DRIFTS.** This entry said `2 of 13 closed` and stayed at 2 while at least item 28 / P7 pt1 and P5's basis-mislabel half closed; a handoff meanwhile carried `9`. **Neither was authoritative because the count lived in PROSE, not in the items.** Same lesson as universe-from-demand and the fleet assertion: derive, never restate. **THE SCORE IS NOW WHATEVER THE PER-ITEM DISPOSITIONS SAY** — each of the thirteen carries its own status in the table above and in its queue item; there is no separate number to keep in sync, because a number kept in sync by hand is a number that will not be.
 half) — the same work, honestly denominated.
 **CORRECTION 1 — P3's second part is NOT homeless.** Item 19 already names it VERBATIM: "a method
 sentence's stated relation must hold against the legs it describes (bull 1,420 claimed 'just under
