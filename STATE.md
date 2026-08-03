@@ -12485,12 +12485,33 @@ Not a reference, not a field, no unit, no source. The margin axis carries FIVE r
 (15.45 / 15.51 / 9.58 / 17.35 / 15.01) and **none is ~13.8**. The axis `method` sentence does not
 contain the number either — only the leg reason does, which is why the rendered brief (`md:57`)
 shows it and the anchor card (`md:446`) does not.
-**But its intended OBJECT is identifiable from its own description** — *"the trailing clean margin
-through the third quarter"* = LTM through FQ3 FY2026 (ended May-30-2026) — and the repo produces
-TWO routes to that object, which disagree.
+**WHAT THE PROSE MEANT IS A HYPOTHESIS, NOT A FINDING — and the first cut of this entry got that
+wrong** *(corrected on review of #329)*. It read *"the trailing clean margin through the third
+quarter"* as **= LTM through FQ3 FY2026** and then called two CIQ calculations *"two routes to the
+SAME object"* — **which silently supplies the very binding this entry had just proved is missing.**
+Proving a figure is unbound and then identifying it by reading is the same substitution one level
+up, and it is the third time this session.
+
+**THE PROSE FIXES NONE OF THE THREE THINGS a binding needs:**
+- **the WINDOW** — *"trailing … through the third quarter"* admits LTM-to-FQ3 **and** YTD-FY26-to-Q3.
+  Both are live windows for this very name; the audit's own reconciliation uses *"YTD FY26 $331.0M"*
+  beside the LTM total, so the ambiguity is real here rather than theoretical. No fiscal year is
+  named either.
+- **the DEFINITION OF "CLEAN"** — ex-writedown, ex-all-unusuals, CIQ's own convention, or an analyst
+  adjustment. Undefined, and these give different numbers.
+- **the LINE** — EBIT, or EBITDA less D&A. The two candidates below differ in CONSTRUCTION, not
+  merely in value.
+
+**SO: the CIQ figures are CANDIDATE INTERPRETATIONS, not recoveries.** They are listed below because
+they are what the repo can produce for a trailing margin — **not** because either is what the prose
+meant, which remains unknown and unrecoverable from the record.
+**BINDING REQUIREMENT, RETAINED: neither CIQ route may inform the margin choice until it carries an
+explicit source AND basis of its own.** Adopting one because it is close to an unbound number would
+launder the missing derivation into an apparent one — the exact failure §D exists to name.
 
 **THE CANDIDATE BASES THE REPO CAN ACTUALLY PRODUCE (recomputed offline from cached EDGAR facts +
-the committed artifact — measured, not read off a label):**
+the committed artifact — measured, not read off a label). The VALUES and BASES below are measured;
+any claim that one of them is what the prose meant is NOT — see the hypothesis note above:**
 
 | candidate | value | window | accounting basis | basis ASSERTED or INHERITED? |
 |---|---|---|---|---|
@@ -12500,9 +12521,10 @@ the committed artifact — measured, not read off a label):**
 | `quality.margin_trend` LTM route | **12.8845%** | LTM to May-30-2026 | CIQ Income Statement absolutes: EBITDA 217 / revenue 1,392 = 15.5891%, less implied D&A 2.7046% | **INHERITS** |
 
 **THREE THINGS THAT MATTER FOR THE CHOICE, and none was visible before this pass:**
-1. **The two CIQ routes to the SAME trailing object differ by 1.01pp** (13.89% vs 12.88%). *"The
-   trailing margin"* is not one number even inside CIQ — a ruling that picks "the CIQ trailing
-   figure" has to say WHICH.
+1. **Two CIQ constructions of a trailing EBIT-basis margin differ by 1.01pp** (13.89% vs 12.88%) —
+   stated as a fact about the repo's OWN figures, independent of what the prose meant. *"The CIQ
+   trailing margin"* is not one number, so a ruling naming it has to say WHICH construction, on
+   which line, over which window.
 2. **The FY2025 adjustment does not move the 7yr median at all** — 15.5110% raw and 15.5110%
    adjusted, because the median is the 4th of 7 either way. The *"(FY2025 adjusted)"* qualifier on
    that reference is doing no arithmetic work. **And 15.511% is FY2024's margin exactly**, the
