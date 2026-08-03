@@ -19,6 +19,7 @@ from typing import Any
 from vinci.config import Config, get_config, load_local_env
 from vinci.dossier.verdict import derive_proposal
 from vinci.edgar import EdgarClient
+from vinci.edge_basis import EDGE_BASES, EdgeBasisError, require_edge_basis
 from vinci.eod import (
     PolygonEodClient,
     compute_price_features,
@@ -910,6 +911,22 @@ def _sealed_proposal(
     return prop.action, prop.lean, assembled
 
 
+def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
+    """The COMMITTED dossier's persisted EV gap, or None.
+
+    READS THE ARTIFACT, NEVER RECOMPUTES. The gate asks what the human could point at when they
+    decided; a fresh extraction would answer a different question and could pass a verdict the
+    evidence on the page did not support. Absent/unreadable is a normal state (most names have no
+    dossier) and degrades to None, which the gate turns into a NAMED refusal for option 1 and
+    leaves irrelevant for the other five.
+    """
+    path = cfg.data_dir / "dossiers" / ticker.upper() / "dossier.json"
+    try:
+        return (json.loads(path.read_text()).get("mechanical") or {}).get("ev_gap")
+    except (OSError, ValueError):
+        return None
+
+
 def _cmd_log_verdict(args: argparse.Namespace) -> int:
     """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price and
     sealing the machine's proposal (from the committed dossier) + the confirm/override disposition
@@ -924,17 +941,34 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 raise LedgerError(
                     f"no candidate {args.candidate_id!r} in the store (run the screen first)"
                 )
-            mp, ml, stamp = _sealed_proposal(cfg, cand.data_record.identity.ticker)
+            # (A4) THE EDGE-BASIS GATE, BEFORE the ledger write. The ledger is APPEND-ONLY, so a
+            # verdict that reaches it cannot be un-logged — the gate has to refuse here or not at
+            # all. It reads the COMMITTED dossier's persisted gap rather than recomputing: the
+            # question is what the human could point at when they decided, not what a fresh
+            # extraction would say afterwards.
+            ticker = cand.data_record.identity.ticker
+            edge_line = require_edge_basis(
+                getattr(args, "edge_basis", None),
+                ev_gap=_committed_ev_gap(cfg, ticker),
+                note=getattr(args, "edge_note", None))
+            mp, ml, stamp = _sealed_proposal(cfg, ticker)
             entry = log_verdict(
                 store, resolver=resolver, candidate_id=args.candidate_id,
                 verdict=Verdict(args.verdict),
-                twin_call=args.twin, thesis=args.thesis, kill_criteria=args.kill,
+                twin_call=args.twin,
+                # SEALED INTO THE THESIS because the ledger row is append-only and has no field for
+                # it yet. Prefixed so it is machine-findable later without parsing prose, and so a
+                # reader meets the edge claim BEFORE the argument for it.
+                thesis=f"[edge: {edge_line}] {args.thesis}", kill_criteria=args.kill,
                 horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
                 decided_at=datetime.now(), reference_date=ref,
                 staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
                 machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
                 revealed_pre_verdict=getattr(args, "saw_proposal", False),
             )
+        except EdgeBasisError as exc:
+            print(f"REFUSED — no verdict without a stated edge basis:\n{exc}")
+            return 1
         except LedgerError as exc:
             print(f"could not log verdict: {exc}")
             return 1
@@ -2616,6 +2650,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_log.add_argument("--confidence", required=True, choices=[c.value for c in Confidence])
     p_log.add_argument("--benchmark", default="IWM", help="scoring benchmark (default: IWM)")
     p_log.add_argument("--ref", help="decision/entry-price date YYYY-MM-DD (default: today)")
+    p_log.add_argument(
+        "--edge-basis", dest="edge_basis", choices=[b.key for b in EDGE_BASES],
+        help="(A4, REQUIRED) what the edge IS. Silence is refused; AGREEMENT IS ALLOWED — five of "
+             "the six say 'no variant' out loud and are fully valid verdicts. Not `required=True` "
+             "so the refusal can EXPLAIN itself: argparse would print a bare usage line, and the "
+             "whole point is that the human sees the five honest alternatives.",
+    )
+    p_log.add_argument(
+        "--edge-note", dest="edge_note",
+        help="what the chosen basis requires (the tail, the trigger and its date, the observation "
+             "being waited for, the cross-sectional claim). Sealed beside the basis.",
+    )
     p_log.add_argument(
         "--saw-proposal", action="store_true", dest="saw_proposal",
         help="self-report: you peeked at the machine proposal (dossier --show-proposal) BEFORE "

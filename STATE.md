@@ -7663,6 +7663,91 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**THE R2 CHECK — NEITHER HYPOTHESIS WINS CLEANLY, AND MINE WAS MEASURED ON THE WRONG BASIS
+(2026-08-03, operator-directed; report only, nothing built).** The operator asked whether the R2
+wedge is HORIZON distance or simply an UNCONVERTED operating margin compared against a consensus
+EBITDA margin. Measured, `margin + d_and_a_ratio` against consensus at each name's anchor:
+| name | ours (op) | +D&A/rev | = EBITDA | consensus | raw gap | CONVERTED |
+|---|---:|---:|---:|---:|---:|---:|
+| SMPL (R1, calibration) | 14.0% | 1.61% | 15.6% | 16.5% | 2.5pp | **0.9pp** |
+| AORT | 9.5% | 4.90% | 14.4% | 19.4% | 9.9pp | **5.0pp** |
+| NCNO | 12.6% | 7.10% | 19.7% | 27.1% | 14.5pp | **7.4pp** |
+| MVST | 6.0% | 8.94% | 14.9% | 14.0% | 8.0pp | **−1.0pp** |
+**MVST LANDS AT CONSENSUS — converted, the wedge is GONE (−1.0pp), so the horizon reason is FALSE
+on that page.** AORT and NCNO HALVE but keep 5.0pp and 7.4pp, which is still 5–8× SMPL's 0.9pp
+calibration residual — so something beyond D&A survives on those two, but far less than claimed.
+**MY "ROUGHLY HALF ON EVERY ONE" WAS COMPUTED ON THE UNCONVERTED MARGIN**, which is the operator's
+own point arriving a third time: I compared two quantities on different bases and attributed 100%
+of the difference to a cause I had not tested against the obvious alternative. Same shape as
+endorsing the mixed-basis claim without checking the panel.
+**CONSEQUENCE FOR THE LIVE PAGES: the refusal text is now known to be wrong on MVST and overstated
+on AORT/NCNO** ("the ratio would measure the gap between two horizons, not between our view and the
+street's" — on the converted basis, part of it IS a view difference). Left in place: whether to
+compute those names is the operator's call, and MVST is refused twice over on coverage anyway
+(price-implied-only, one estimate), so **only AORT and NCNO turn on the convention.**
+
+**REVIEW OF #322 — `EdgeBasis.needs` WAS DEAD METADATA, AND THE GATE PASSED EXACTLY WHAT IT WAS
+WRITTEN TO STOP (2026-08-03).** Every basis declared what evidence it requires; nothing read the
+field. So `--edge-basis watchlist` with no note SUCCEEDED and sealed *"No variant; watchlist,
+awaiting a named observation"* — **a label naming no observation, a promise the row does not keep.**
+Same class as the dead `mirror_to_frontend`: a declaration that reads like a contract and enforces
+nothing. A whitespace note even appended a dangling `· `.
+**FIXED: `needs` IS ENFORCED via an explicit `note_required` field.** Five of the six require a
+non-blank note stating exactly what `needs` says; **only `variant-expectation` is exempt, because
+its evidence is the PERSISTED GAP the machine already holds** — demanding a note there would make
+the human retype a number the row can read, and a retyped number can disagree. Pinned so a seventh
+basis cannot inherit silence by omission.
+**PLACEHOLDERS REFUSED LIKE BLANKS** (`n/a`, `TBD`, `-`, `?`, whitespace) — the Form-4
+"See Remarks" rule: a placeholder that satisfies a check is worse than a blank, because the blank
+at least fails loudly.
+**A DATELESS EVENT TRIGGER IS MARKED, NOT REFUSED.** `needs` is "a named date OR trigger" and only
+the date half is machine-checkable; refusing a dateless trigger would push the analyst to invent a
+date — the failure the escape options exist to prevent. So the row reads
+*"event or structural — trigger stated, NO DATE given · index deletion at rebalance"*: the absence
+is legible instead of assumed away.
+**SHOWN RUN, real CLI:** bare `--edge-basis watchlist` → **REFUSED**, naming what is needed; with
+`--edge-note "awaiting FQ3 gross margin above 24%"` → **LOGGED**.
+**A CONSTRUCTOR HAZARD FOUND WHILE FIXING IT:** inserting a field ahead of `note` silently re-bound
+every positional prose argument into the new slot. All six are now keyworded, so field order cannot
+re-bind again — the address-by-position class, in a dataclass.
+Gate: ruff + `mypy --strict` clean · full suite green.
+
+**A4 — THE EDGE-BASIS GATE, BUILT 2026-08-03. `vinci/edge_basis.py`, wired into
+`cli._cmd_log_verdict` BEFORE the ledger write.** No verdict without one of six bases picked
+explicitly. **SILENCE REFUSED, AGREEMENT ALLOWED** — five of the six say "no variant" out loud and
+are fully valid, because a gate that accepted only a variant claim would manufacture views to fill
+a field, and **a fabricated gap is worse than an honest none**: it survives into the ledger, the
+spread and every retrospective wearing the same shape as a real one.
+**THE ESCAPES ARE THE MAJORITY PATH, NOT A COURTESY: 8 of 11 committed names cannot state a variant
+today** (5 no record, 3 R2). The refusal message therefore LISTS the five alternatives — a bare
+refusal would teach the operator to type `variant-expectation` and invent a number, which is the
+defect the gate exists to prevent, manufactured by the gate.
+**OPTION 1 IS SATISFIED BY A STATED TOTAL GAP**; where routing sends the decomposition away the
+line reads *"total gap 1.42x — attribution suppressed: coverage n=3, form two-ratio"*. **Option 6
+is a SLOT ONLY**, rendering *"analyst-asserted, machine verification pending"* until A5 exists — a
+slot that read as verified would be false confirmation, worse than not offering it.
+**SHOWN RUN ON THE REAL DECISION PATH** (scratch DB copy; the real ledger is untouched):
+· silence → REFUSED, listing all six · `variant-expectation` on a name with no gap → REFUSED,
+naming the alternatives · `variant-expectation` on SMPL → **"Variant expectation stated — total gap
+2.10x, decomposed"** · `valuation-asymmetry` on AAUC → **LOGGED**, and read back out of the
+append-only row: `[edge: No variant; valuation asymmetry at this price · reward:risk 3.1:1 at
+12.40]`.
+**SEALED INTO THE THESIS** with an `[edge: …]` prefix — the ledger row has no field for it yet, and
+a prefix is machine-findable later without parsing prose. **THE GATE READS THE COMMITTED ARTIFACT,
+never a fresh computation**: the question is what the human could POINT AT when they decided, and a
+recompute could pass a verdict the page in front of them did not support. Both pinned structurally.
+Gate: ruff + `mypy --strict` clean (118 files) · **1733 passed, 3 skipped**.
+
+**PIN THE BASIS, NOT JUST THE OUTPUT — GENERAL FORM, 2026-08-03 (operator).** Three instances now
+where two values AGREED and no behavioural test could have caught the error: (1) #320's proposed
+market-cap swap — both caps agree, so the substitution moved no number and the false stamp would
+surface only on the first name where they diverged; (2) #321's fabricated blend — `stock_info.as_of`
+vs the cap's real vintage, agreeing often enough to look right; (3) the R2 wedge above — an
+operating margin compared to an EBITDA margin, where both are "margins" and neither the type system
+nor any assertion notices. **THE RULE: when a value's BASIS is a choice, pin the choice — a
+structural pin on the source, or an assertion that names the basis — because an output-level test
+can only catch a basis error on the day the two bases happen to disagree.**
+
 **A2 RENDER — BUILT 2026-08-03, BOTH TWINS. PREVIEW-GATED: PR OPEN, NOT MERGED.**
 **COVERAGE, PLAINLY: THE GAP STATEMENT REACHES 3 OF 11** — SMPL, EPAM, IT. The other eight carry a
 STATED reason, not a blank. That is the honest headline, written here so no later summary has to
