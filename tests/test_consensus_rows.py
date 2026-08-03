@@ -35,11 +35,28 @@ REVENUE_BASELINE = {
 
 
 def _bundle(ticker: str) -> CiqBundle:
+    """The name's CIQ bundle, or SKIP when the licensed export is not on this machine.
+
+    THE SKIP IS CONDITIONED ON THE FILE LIST, NOT ON AN EXCEPTION — and the first cut had it the
+    other way, which made it a guard that COULD NOT FIRE. Measured, not reasoned: with
+    `data/manual/ciq/` absent, `files()` returns `[]` WITHOUT raising, `CiqBundle.from_files`
+    accepts an empty list, and `consensus_rows` swallows `CiqUnavailableError` and returns `[]` —
+    so the except-handler never ran and all 12 tests here FAILED on a machine that simply lacks a
+    licensed workbook it may never have. Same shape as item 1's completeness gate and the #310
+    wiring: a guard written for a condition that never reaches it.
+
+    Every sibling already does it this way (`test_no_backfill.py`, `test_segment_absence_and_
+    relationship_route.py` — *"licensed CIQ bundle … unavailable (never committed)"*). This file was
+    the outlier, and that outlier is what kept the offline suite off CI: the raw CIQ workbooks are
+    git-ignored by a security non-negotiable and can never be in a runner.
+    """
+    files = LocalFolderStore.from_config(get_config()).files(ticker)
+    if not files:
+        pytest.skip(f"licensed CIQ bundle for {ticker} unavailable (never committed)")
     try:
-        files = LocalFolderStore.from_config(get_config()).files(ticker)
         return CiqBundle.from_files(ticker, files)
     except Exception as exc:                              # pragma: no cover - env-dependent
-        pytest.skip(f"{ticker}: CIQ bundle unavailable ({type(exc).__name__})")
+        pytest.skip(f"{ticker}: CIQ bundle unreadable ({type(exc).__name__})")
 
 
 @pytest.mark.parametrize("ticker", sorted(REVENUE_BASELINE))

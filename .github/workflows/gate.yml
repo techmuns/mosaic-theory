@@ -1,0 +1,62 @@
+name: gate
+
+# THE OFFLINE GATE, ENFORCED WHERE A REVIEWER CAN SEE IT.
+#
+# WHY THIS EXISTS: the gate already existed as `bin/commit` (ruff + mypy --strict + pytest), but it
+# ran on the AUTHOR's machine and reached the reviewer only as a claim pasted into a PR body. This
+# repo's own rule is "verify by showing real runs, not asserting" — a green line in a description is
+# an assertion. A docs-only PR could carry the same sentence while failing the real gate and nothing
+# would contradict it. Review finding on #318.
+#
+# THE SAME COMMANDS `bin/commit` RUNS, in the same order, so there is one gate and not two that can
+# drift. If you change one, change the other.
+#
+# WHAT THIS RUNNER DOES NOT HAVE, deliberately: the licensed CIQ workbooks (`data/manual/ciq/`), the
+# working SQLite store (`data/vinci.db`), and any API key. Those are git-ignored by a security
+# non-negotiable and MUST NOT be reconstructed here — no secrets are referenced by this file. Tests
+# needing them SKIP with a stated reason, which is the house convention (`test_no_backfill.py`).
+# Measured on a committed-files-only tree: 1,513 pass, 51 skip, 0 fail.
+#
+# SO THIS IS A FLOOR, NOT A REPLACEMENT. The CIQ-bound extraction pins run only where the licensed
+# export exists, which means `bin/commit` stays mandatory before a push — CI cannot see those.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency: # a force-push supersedes its own in-flight run rather than queueing behind it
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # FULL HISTORY, not the default depth-1: `test_state_identifiers.py` validates the S/D
+          # identifier lint against a REAL historical collision (commit c112f25) and skips itself
+          # when that commit is unreachable. At depth 1 the test guarding STATE.md would silently
+          # skip on every PR that edits STATE.md — a gate that cannot fire, which is the defect
+          # class this whole PR is about.
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      # Each step is its own `run` so a red names WHICH check failed in the job summary, rather
+      # than one opaque script. Never piped — a pipe consumes the exit status (D16).
+      - name: ruff
+        run: python -m ruff check vinci tests frontend
+      - name: mypy --strict
+        run: python -m mypy --strict vinci
+      - name: pytest (offline)
+        run: python -m pytest -m "not network" -p no:warnings --tb=short
