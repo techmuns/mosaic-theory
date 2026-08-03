@@ -12460,6 +12460,56 @@ never reads it. Extractor change → its own PR with real-run cost verification,
   INDIRECT cap — then pin whichever with a parity case. Author's call (you wrote both the ledger tie and
   the build.py full-rank).
 
+**THE 2026-07-28 SMPL AUDIT IS NOW FULLY DISPOSITIONED (2026-08-03).** The tail §C did not cover —
+§C's three retractions, §D's methodological item, four of §G's seven — is rendered in
+`docs/audits/2026-07-28-smpl/disposition.md` **§F**, measured against the page as re-assembled
+2026-08-03. Two structural results from the pass itself:
+**(1) §C's R2 is NOT a separate item — it forwards to §D's note, and its pointer "(P10-adjacent)" names
+a defect that does not exist** (the report has P1–P9). Counting R2's residue and §D's note separately
+double-counts one finding.
+**(2) The twin item RE-OPENED ITSELF during the disposition.** §C had reasoned it stale because neither
+unverified name was in SMPL's twin set any more, and predicted the mechanism; the 2026-08-03
+re-assembly put **`e.l.f. Beauty` — one of the two — straight back in**, while `Utz Brands` silently
+left. Nothing about SMPL changed. And it fails the other way too: the audit INDEPENDENTLY VERIFIED
+Medifast's terminal outcome, and the page still prints `Medifast — went terminal (LLM-claimed —
+verify)`. **Verification has nowhere to live, so it is re-requested on every assembly.**
+
+**THREE OPERATOR RULINGS PENDING (they are decisions, not builds — no guard can set any of them):**
+- **§D — the base-margin anchor's basis.** The interpolation runs from **15.51%**, computed and cited
+  (`[53]`, EDGAR `OperatingIncomeLoss`, GAAP inclusive of every unusual but the one named impairment)
+  to **~13.8%**, which appears ONCE in METHOD prose with **no endnote and no field** — no code computes
+  it. "Clean" means something different at each end. DECIDE: which basis defines the anchor (GAAP-incl
+  at both ends / CIQ clean EBIT at both ends / abandon the interpolation), and whether the un-sourced
+  end must acquire a `source_ref` before it can be load-bearing. Code enforces the choice after.
+- **Twins — the mechanism, not the two names.** DECIDE: does a verified outcome become a FIELD that
+  travels with the twin (making the set partly sticky), or does the twin block stop carrying outcome
+  claims at all? Current state is neither, and it launders an LLM claim and a human verification into
+  the same rendered sentence.
+- **Circana (narrow, and it governs N1 rather than itself).** May a management-sourced,
+  un-independently-verified figure carry a thesis leg? The page now ATTRIBUTES rather than asserts
+  ("Management frames the problem as execution-driven within a growing category — purposeful nutrition
+  grew 10% …"), which was the audit's actual complaint; the +10% is load-bearing for N1's whole argument.
+
+**ONE FIX QUEUED FROM THE SAME PASS (no ruling needed) — R3's surviving instruction.**
+`md:400` still reads `term loans 397.0 (249.1→397.0 QoQ)`. `ciq_sheets.py:747` opens
+`Capital Structure Summary` with **`freq="annual"`**, then `:778–779` compares two adjacent ANNUAL
+columns and hard-codes the string `QoQ` — the printed move spans ~three quarters and a fiscal-year
+boundary (term loans were 396.7 → 396.9 → 397.0, flat, across the real quarters). **The correct label
+is already computed and discarded:** `_cs_col_date` parses each column's date at `:764`, uses it only
+for the ascending-order refusal, and throws it away. *Called-result-discarded*, sitting directly below
+a comment that refuses to stamp "(latest quarter)" on an unasserted convention — the function declines
+a provenance it cannot prove, then asserts a frequency it cannot prove, fifteen lines later. FIX: name
+the two periods instead of asserting a frequency.
+
+**WATCH ITEM — 19c's amended rule is behaviour-pinned but NOT satisfiability-pinned (2026-08-03).**
+The amended guard demands the largest material figure AND the latest actual one. **0 of 11 refuse today
+only because those two coincide on every live row** (SMPL −391.9, CNXC −1,523.3), so the DIVERGENT case
+— where they differ and the rule demands TWO citations — has never been exercised against a real LLM.
+Mutation tests pin the BEHAVIOUR (4/4 caught); nothing pins SATISFIABILITY, and SMPL's five consecutive
+refusals are the standing proof that a rule satisfiable in theory can be unsatisfiable in practice.
+Falsifier: the first name whose material row has a stale largest value and a distinct current one. If it
+cannot converge within the reroll bound, the demand — not the roll — is what to revisit.
+
 ## 6. Open items carried from the fossils (live, not being worked now)
 
 - **Regulatory/counsel** — HK SFC Type 9 (**blocks running real LP money**; longest calendar lead),
