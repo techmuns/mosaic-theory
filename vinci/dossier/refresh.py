@@ -395,6 +395,9 @@ def _base_leg(ticker: str) -> dict[str, Any] | None:
         "multiple_basis": rec.multiple_basis,
         "d_and_a": fact("d_and_a"),
         "shares": fact("diluted_shares"),
+        # CARRIED SO THE TOTAL GAP CAN BE STRUCK. Converting OUR OWN D&A share crosses no horizon;
+        # only the comparison to a near-term consensus margin does, and that is suppressed
+        # separately (operator, revised 2026-08-03).
         # THE D&A CONVENTION, CARRIED SO A2 CAN PRINT IT (operator ruling 2026-07-30). R1 stores a
         # FIXED $M anchor; R2 stores a RATIO OF REVENUE. They are not a contradiction but a horizon
         # difference — R1 is mid-cycle where a fixed asset base is right, R2 terminal where D&A

@@ -50,6 +50,10 @@ def test_each_state_gets_its_own_sentence(folder: Path) -> None:
     elif g["status"] == "not-computed":
         assert "No gap is struck" in body
         assert str(g["reason"])[:40] in body, f"{folder.name}: the reason is not on the page"
+    elif (g.get("decomposition") or {}).get("status") == "suppressed":
+        # COMPUTED, BUT ONLY THE TOTAL. A fourth reading the first cut did not have: the total gap
+        # needs no consensus, so it is stated while the decomposition is not.
+        assert "Total gap:" in body and "Decomposition suppressed:" in body
     else:
         assert "product = the EV gap" in body
 
@@ -119,3 +123,74 @@ def test_the_render_never_restrikes_tev_itself() -> None:
     src = (ROOT / "vinci" / "dossier" / "render.py").read_text()
     body = src[src.index("def _ev_gap_lines"):src.index("def _valuation_section_lines")]
     assert "market_cap" not in body, "the EV-gap renderer reads a cap — it must read `bridge`"
+
+
+# --- THE TOTAL GAP NEEDS NO CONSENSUS (operator's revised R2 ruling, 2026-08-03) ---------------
+
+def _gapj(t: str) -> dict:
+    doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+    return (doc.get("mechanical") or {}).get("ev_gap") or {}
+
+
+TOTAL = sorted(f.name for f in DOSSIERS if _gapj(f.name).get("status") == "computed")
+DECOMPOSED = sorted(t for t in TOTAL if _gapj(t).get("form") == "three-ratio")
+SUPPRESSED = sorted(t for t in TOTAL if (_gapj(t).get("decomposition") or {}).get("status")
+                    == "suppressed")
+
+
+def test_two_coverages_are_different_claims_and_both_are_recorded() -> None:
+    """TOTAL GAP 6 OF 11, DECOMPOSITION 3 OF 11. One number would hide the difference: a name whose
+    total is known and whose attribution is not is in a different state from one where neither is,
+    and the gate at `log_verdict` treats them differently — option 1 is satisfied by the TOTAL."""
+    assert len(TOTAL) == 6, f"total-gap coverage moved: {TOTAL}"
+    assert len(DECOMPOSED) == 3, f"decomposition coverage moved: {DECOMPOSED}"
+    assert DECOMPOSED == ["EPAM", "IT", "SMPL"]
+    assert SUPPRESSED == ["AORT", "MVST", "NCNO"]
+
+
+@pytest.mark.parametrize("ticker", ["AORT", "MVST", "NCNO"])
+def test_a_suppressed_name_states_its_total_and_carries_no_shape_label(ticker: str) -> None:
+    """THE TOTAL IS COMPUTABLE WITHOUT CONSENSUS and was being withheld with the decomposition.
+    NO SHAPE LABEL: the label ranks three ratios, none were struck, and printing one would assert
+    an attribution the numbers do not support."""
+    g = _gapj(ticker)
+    assert g["form"] == "price-implied-only"
+    assert isinstance(g["ratios"]["ev_gap"], float)
+    assert set(g["ratios"]) == {"ev_gap"}, "a suppressed name carries partial ratios"
+    assert g["shape"] is None, f"{ticker} carries a shape label with nothing to rank"
+    body = block(ROOT / "data" / "dossiers" / ticker)
+    assert "Total gap:" in body and "No consensus enters this figure" in body
+    assert "Shape:" not in body
+
+
+def test_mvst_reads_a_coverage_reason_and_the_others_read_horizon() -> None:
+    """TWO REASONS, NEVER MERGED. MVST's consensus is `2/2` and `1/1` — below the floor — so the
+    binding reason is COVERAGE and the horizon sentence would be FALSE on that page. Recording one
+    reason for all three would put a false claim on one of them."""
+    mvst = (_gapj("MVST")["decomposition"])["reason"]
+    assert "coverage" in mvst and "TERMINAL" not in mvst
+    for t in ("AORT", "NCNO"):
+        why = (_gapj(t)["decomposition"])["reason"]
+        assert "TERMINAL" in why and "NEAR-TERM" in why
+
+
+@pytest.mark.parametrize("ticker", ["AORT", "NCNO", "MVST"])
+def test_the_two_margins_print_as_figures_and_are_never_divided(ticker: str) -> None:
+    """`14.4% vs 19.4%` lets the reader see the distance and judge how much is horizon; `0.74x`
+    presents that distance as though its cause were settled. The figures are strictly more
+    information than the ratio they replace."""
+    body = block(ROOT / "data" / "dossiers" / ticker)
+    assert "shown as figures, NOT divided" in body
+    m = (_gapj(ticker)["decomposition"])["margins"]
+    assert isinstance(m["ours"], float) and isinstance(m["consensus"], float)
+    assert "margin_ratio" not in _gapj(ticker)["ratios"]
+
+
+@pytest.mark.parametrize("ticker", ["SMPL", "EPAM", "IT"])
+def test_the_decomposed_names_are_unchanged_and_still_multiple_dominant(ticker: str) -> None:
+    """THE CONTROL. The revision must not move the three names that were already right."""
+    g = _gapj(ticker)
+    assert g["form"] == "three-ratio"
+    assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
+    assert g["shape"]["anchor"] == "multiple-dominant"
+    assert "**multiple-dominant** at" in block(ROOT / "data" / "dossiers" / ticker)

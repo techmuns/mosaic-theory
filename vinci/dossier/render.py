@@ -3116,6 +3116,30 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
     def ratio(x: float | None) -> str:
         return f"{x:.2f}x" if isinstance(x, (int, float)) else "UNKNOWN"
 
+    # THE TOTAL GAP NEEDS NO CONSENSUS — `our_EV / TEV` is our leg against the market's price. Where
+    # the DECOMPOSITION is suppressed the total still stands, so the block states it and says what
+    # is missing, rather than withholding both. Suppressing a computable statement because a
+    # different one is unavailable is what the first cut did to AORT/NCNO/MVST.
+    decomp = g.get("decomposition") or {}
+    if decomp.get("status") == "suppressed":
+        out += [f"- **Total gap:** **{ratio(r.get('ev_gap'))}** — our EV against the market's TEV. "
+                "No consensus enters this figure.", ""]
+        out += [f"- **Decomposition suppressed:** {decomp.get('reason')}", ""]
+        # NOT `m` — that is this function's MechanicalLayer parameter, and rebinding it silently
+        # re-typed everything below. Caught by mypy; a dynamically-typed twin would not have.
+        mg = decomp.get("margins") or {}
+        if isinstance(mg.get("ours"), float) and isinstance(mg.get("consensus"), float):
+            # FIGURES, NEVER A RATIO. `14.4% vs 19.4%` lets the reader see the distance and judge
+            # how much of it is horizon; `0.74x` presents that distance as though its cause were
+            # settled. The figures are strictly more information than the ratio they replace.
+            out += [f"  - _Our EBITDA margin **{mg['ours']:.1%}** vs consensus "
+                    f"**{mg['consensus']:.1%}** at FY{anchor} — shown as figures, NOT divided: "
+                    f"{mg.get('basis')}_", ""]
+        # NO SHAPE LINE. The label ranks three ratios; with none struck there is nothing to rank,
+        # and printing one would assert an attribution the numbers do not support.
+        out += _ev_gap_tail(g, br, cons, anchor, cons_as_of)
+        return out
+
     rows = [
         ["revenue", ratio(r.get("revenue_ratio")),
          _sigma_cell(cons.get("Revenue") or {})],
@@ -3144,20 +3168,25 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
         chk = "with NO adjacent forward year to check it against — unchecked, not confirmed"
     out += [f"- **Shape:** **{shape.get('anchor')}** at FY{anchor}, {chk}.", ""]
 
-    # THE BRIDGE TO PER SHARE, so the gap is not a floating ratio. Every leg is the PERSISTED
-    # value, never re-struck here — a second definition of TEV in the renderer is what #320's
-    # review pinned against.
-    # POSITIVE shares, not merely numeric. `build_ev_gap` now refuses a non-positive count before
-    # persisting, so this is the second line: a legacy artifact written before that guard must
-    # OMIT the bridge line rather than raise ZeroDivisionError and take the whole page with it.
+    out += _ev_gap_tail(g, br, cons, anchor, cons_as_of)
+    return out
+
+
+def _ev_gap_tail(g: dict[str, Any], br: dict[str, Any], cons: dict[str, Any],
+                 anchor: object, cons_as_of: object) -> list[str]:
+    """The bridge, the dispersions and the D&A convention — shared by BOTH branches.
+
+    ONE DEFINITION, because a decomposed and a suppressed block must not drift about how they
+    report the same three things."""
+    out: list[str] = []
+    # POSITIVE shares, not merely numeric — see `build_ev_gap`'s own refusal.
     if (all(isinstance(br.get(k), (int, float)) for k in ("our_ev", "net_debt", "shares", "tev"))
             and br["shares"] > 0):
         eq = br["our_ev"] - br["net_debt"]
         out += [
             f"- **Bridge:** our EV ${br['our_ev']:,.0f}M − net debt ${br['net_debt']:,.0f}M "
             f"= equity ${eq:,.0f}M ÷ {br['shares']:,.3f}M sh = **${eq / br['shares']:,.2f}/sh** "
-            f"— against TEV ${br['tev']:,.0f}M (as-of {tev_as_of or 'UNKNOWN'}).", ""]
-
+            f"— against TEV ${br['tev']:,.0f}M.", ""]
     for metric in ("Revenue", "EBITDA"):
         route = (g.get("routes") or {}).get(metric) or {}
         disp = route.get("dispersion")

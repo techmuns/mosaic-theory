@@ -343,8 +343,41 @@
           "reason": "1 estimate(s) — below 3; a median over so few is one analyst's model, and its dispersion reads as agreement because there is nobody to disagree"
         }
       },
-      "status": "not-computed",
-      "reason": "our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.08941, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.)"
+      "status": "computed",
+      "ratios": {
+        "ev_gap": 1.6104143659711074
+      },
+      "at_adjacent": null,
+      "shape": null,
+      "decomposition": {
+        "status": "suppressed",
+        "reason": "consensus coverage at this anchor is below the floor, so no consensus-side comparison is struck — the total gap stands on our leg and the market price alone",
+        "margins": {
+          "ours": 0.14941,
+          "consensus": 0.13968522558383129,
+          "basis": "EBITDA margin, ours converted from the recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor"
+        }
+      },
+      "bridge": {
+        "tev": 623.0,
+        "net_debt": 199.9,
+        "shares": 386.069384,
+        "our_ev": 1003.28815,
+        "our_ebitda": 126.99849999999999,
+        "market_multiple": null
+      },
+      "consensus": {
+        "Revenue": {
+          "median": 444.4135,
+          "std_dev": 5.5865,
+          "estimates": "2/2"
+        },
+        "EBITDA": {
+          "median": 62.078,
+          "std_dev": 0.0,
+          "estimates": "1/1"
+        }
+      }
     },
     "peer_comps": {
       "peer_set": {

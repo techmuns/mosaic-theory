@@ -222,7 +222,17 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 ### The EV gap — our base case vs the street
 
-_No gap is struck for this name: our margin here is a TERMINAL-state assumption while the consensus at this anchor is NEAR-TERM — the ratio would measure the gap between two horizons, not between our view and the street's. (D&A is stated as a ratio of revenue, 0.08941, so it is present rather than missing; converting it at the anchor year is the open analyst decision on D&A convention.). The consensus side alone still routes to **price-implied-only** at FY2026, so the form is known even though the comparison is not._
+_Anchor FY2026 · consensus as-of ≥2026-05-15 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-06-24 · form price-implied-only_
+
+- **Total gap:** **1.61x** — our EV against the market's TEV. No consensus enters this figure.
+
+- **Decomposition suppressed:** consensus coverage at this anchor is below the floor, so no consensus-side comparison is struck — the total gap stands on our leg and the market price alone
+
+  - _Our EBITDA margin **14.9%** vs consensus **14.0%** at FY2026 — shown as figures, NOT divided: EBITDA margin, ours converted from the recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor_
+
+- **Bridge:** our EV $1,003M − net debt $200M = equity $803M ÷ 386.069M sh = **$2.08/sh** — against TEV $623M.
+
+  - _D&A convention: ratio of revenue (R2, terminal) — the two recipes differ and the reconciliation is an open analyst question, so it is stated rather than assumed._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 9.0x as-of 2026-07-17 — trailing range 10.0–66.9x (median 19.3x) over 6 closes → LOW-CONFIDENCE (6 closes < 8q ≈2y) — floor read unreliable [15]

@@ -58,7 +58,8 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # numbers move would pass a status-only check and be worse: a wrong figure reads as a right one.
     assert after["ratios"] == pytest.approx(before["ratios"])
     assert after["vintages"] == before["vintages"]
-    assert after["shape"]["anchor"] == before["shape"]["anchor"]
+    # SHAPE IS None where the decomposition is suppressed — nothing to rank, so nothing to label.
+    assert (after["shape"] or {}).get("anchor") == (before["shape"] or {}).get("anchor")
 
     # AND A THIRD, because "stable after one re-run" and "stable" are different claims — an
     # alternating write would pass the check above on every even pass.

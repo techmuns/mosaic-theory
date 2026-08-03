@@ -246,7 +246,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
 
-- **Bridge:** our EV $2,595M − net debt $325M = equity $2,271M ÷ 88.461M sh = **$25.67/sh** — against TEV $1,234M (as-of 2026-07-24).
+- **Bridge:** our EV $2,595M − net debt $325M = equity $2,271M ÷ 88.461M sh = **$25.67/sh** — against TEV $1,234M.
 
   - _Revenue dispersion 0.9% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
   - _EBITDA dispersion 4.7% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
