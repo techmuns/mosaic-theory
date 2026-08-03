@@ -59,7 +59,7 @@ def screen_universe(
     retain_run_id: str | None = None,
     retain_dir: Path | None = None,
     policy: RoutingPolicy = RoutingPolicy.CARRY,
-) -> tuple[list[CandidateRecord], dict[str, int | str]]:
+) -> tuple[list[CandidateRecord], dict[str, int | str | None]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
 
     RETENTION (``retain_run_id`` + ``retain_dir``, both or neither). Every name the screen TOUCHES
@@ -93,6 +93,9 @@ def screen_universe(
     th = thresholds or Screen2Thresholds()
     # Screen the cap-band universe membership (not every security ever stored). Fall back to all
     # non-benchmark securities when no universe snapshot exists yet (e.g. a small test seed).
+    # THE POPULATION'S OWN VINTAGE, read BEFORE the members so the two cannot disagree.
+    universe_as_of = store.latest_universe_as_of(reference_date)
+    caps = store.universe_caps(universe_as_of) if universe_as_of else {}
     ids = store.latest_universe(reference_date)
     if ids:
         universe = [s for iid in ids if (s := store.get_security(iid)) is not None]
@@ -118,7 +121,7 @@ def screen_universe(
     win_start = {"rel_ret_vs_market": reference_date - timedelta(days=DECLINE_WINDOW_DAYS),
                  "drawdown_from_high": reference_date - timedelta(days=YEAR_DAYS)}
 
-    def _keep(sec_ticker: str, rec: object, gates: dict[str, GateOutcome],
+    def _keep(sec_ticker: str, sec_iid: str, rec: object, gates: dict[str, GateOutcome],
               name_bars: list[PriceBar]) -> None:
         if retain_run_id is None:
             return
@@ -126,7 +129,8 @@ def screen_universe(
             ticker=sec_ticker, run_id=retain_run_id, reference_date=reference_date,
             outcome=rollup(gates),
             gate_inputs=_gate_inputs(rec, name_bars, window_start=win_start), per_gate=gates,
-            not_evaluated_reason=_first_unrun(gates)))
+            not_evaluated_reason=_first_unrun(gates),
+            deciding_cap=_deciding_cap(caps, sec_iid, universe_as_of)))
 
     for i, s in enumerate(universe, start=1):
         reporter.tick(i, suffix=f"{g1_survivors} enriched")
@@ -139,7 +143,7 @@ def screen_universe(
         g1, g1_why = gate_g1_drawdown(rec, th)
         gates = {"g1_drawdown": GateOutcome(outcome=outcome_from_gate(g1), reason=g1_why)}
         if g1 is not GateResult.PASS:
-            _keep(s.ticker, rec, gates, bars)
+            _keep(s.ticker, s.internal_id, rec, gates, bars)
             continue
         g2, g2_why = gate_g2_idiosyncratic(rec, th)
         gates["g2_idiosyncratic"] = GateOutcome(outcome=outcome_from_gate(g2), reason=g2_why)
@@ -147,7 +151,7 @@ def screen_universe(
         # name on to G3. Three names did exactly that on the 2026-07-29 run, reaching a stage only
         # 410 had passed. Under DROP the forward requires an actual PASS.
         if g2 is GateResult.FAIL or (policy is RoutingPolicy.DROP and g2 is not GateResult.PASS):
-            _keep(s.ticker, rec, gates, bars)
+            _keep(s.ticker, s.internal_id, rec, gates, bars)
             continue
         g1_survivors += 1
         full = enrich_with_fundamentals(
@@ -173,13 +177,13 @@ def screen_universe(
             outcome=(Outcome.PASS if cand is not None else Outcome.FAIL),
             reason=("admitted to the candidate set" if cand is not None
                     else "rejected by the multiple floor or a distress signal"))
-        _keep(s.ticker, full, gates, bars)
+        _keep(s.ticker, s.internal_id, full, gates, bars)
 
     written = 0
     if retain_run_id is not None and retain_dir is not None:
         written = append_rows(retained, run_id=retain_run_id, snapshots_dir=retain_dir)
 
-    stats: dict[str, int | str] = {
+    stats: dict[str, int | str | None] = {
         "universe": len(universe),
         "g1_g2_survivors": g1_survivors,
         "candidates": len(candidates),
@@ -190,6 +194,7 @@ def screen_universe(
         # routing, so a caller that reports `candidates` without it reports a number nobody can
         # interpret.
         "routing_policy": policy.value,
+        "universe_as_of": universe_as_of.isoformat() if universe_as_of else None,
     }
     return candidates, stats
 
@@ -265,6 +270,25 @@ def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: dict[str, d
         # rather than reconstructed.
         out[name] = _stamped(f, default_source="EDGAR")
     return out
+
+
+def _deciding_cap(caps: dict[str, float], internal_id: str | None,
+                  as_of: date | None) -> StampedInput | None:
+    """The cap that admitted this name, stamped with the SNAPSHOT's date — never the run's.
+
+    All 331 candidates of the `-03` pool carried `market_cap: null ("needs shares")` while the
+    universe that admitted them was cap-banded on exactly that number. The input that decided the
+    population was absent from the record of the decision. Absent when the run took the
+    no-snapshot fallback: no snapshot, no cap that decided anything, and inventing one would be
+    the fabrication this records against.
+    """
+    if internal_id is None or as_of is None:
+        return None
+    cap = caps.get(internal_id)
+    if cap is None:
+        return None
+    return StampedInput(value=cap, as_of=as_of, source="Polygon close x EDGAR XBRL shares",
+                        note="the universe snapshot's cap — what decided band membership")
 
 
 def _first_unrun(gates: dict[str, GateOutcome]) -> str | None:
