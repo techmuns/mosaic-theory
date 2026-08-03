@@ -327,6 +327,18 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             print(f"      ⚠ {c}")
     for e in errors:
         print(f"  ERROR {e}")
+    # MIRROR WHAT WAS WRITTEN. Assembly is a DELIVERY PATH and it did not mirror — demonstrated on
+    # this very command: SMPL's 2026-08-03 re-assembly wrote `data/dossiers/SMPL/` while the served
+    # `frontend/dossiers/SMPL.md` stayed the older page. That is FUBO's missing-banner shape, which
+    # #319 byte-pinned so it goes RED rather than silently serving stale — but red-after-the-fact is
+    # a worse guarantee than not needing the pin. `refresh_fleet` already does this; the two write
+    # paths must not differ about whether the human's surface gets updated.
+    # ONLY WHEN SOMETHING WAS WRITTEN: a run that assembled nothing has nothing to mirror, and
+    # rebuilding on a refusal would publish the OLD page as though it were fresh.
+    if dossiers:
+        from vinci.dossier.refresh import mirror_to_frontend
+
+        mirror_to_frontend()
     # (mid-cycle) single --ticker with --peers/--scenario → compute + attach the mid-cycle block
     if args.ticker and (getattr(args, "peers", None) or getattr(args, "scenario", None)):
         reasons = {n: getattr(args, f"reason_{n}") for n in ("bear", "base", "bull")

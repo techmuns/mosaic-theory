@@ -298,3 +298,55 @@ def test_the_guard_is_wired_as_a_refusal_before_the_write() -> None:
     assert "raise DossierAssemblyError" in src[call:call + 700], (
         "the guard must REFUSE, not flag — a flag re-delegates the judgement to a human")
     assert call < src.index("_write(dossier"), "the refusal must precede the artifact write"
+
+
+def test_the_guard_runs_after_the_flags_it_reads() -> None:
+    """IT HAD NEVER FIRED. The guard sat ABOVE `_mark_material`, so it read a table on which no row
+    carried `material=True` — `uncited_material_figures` skips unflagged rows, so it found nothing
+    to check and returned `[]` on every build since it shipped.
+
+    THE PINS IN THIS FILE PASSED THROUGHOUT, because they CONSTRUCT rows with `material=True`: the
+    fixture supplied the exact state production never reached. That is the sharpest form of the
+    ladder — a unit test can hand a function an input the caller never produces, and no amount of
+    green says the caller does.
+
+    ORDER IS THE WHOLE GUARANTEE HERE, so order is what gets pinned.
+    """
+    import ast
+    import inspect
+
+    from vinci.dossier import assemble as da
+
+    tree = ast.parse(inspect.getsource(da))
+    calls = {name: min(n.lineno for n in ast.walk(tree)
+                       if isinstance(n, ast.Call) and name in ast.dump(n))
+             for name in ("_mark_material", "uncited_material_figures")}
+    assert calls["_mark_material"] < calls["uncited_material_figures"], (
+        f"`uncited_material_figures` (line {calls['uncited_material_figures']}) runs BEFORE "
+        f"`_mark_material` (line {calls['_mark_material']}) — so it reads a table with no material "
+        "rows, finds nothing, and CANNOT FIRE. That is how it shipped, and how SMPL re-assembled "
+        "green while omitting its own -$391.9M writedown.")
+
+
+def test_the_guard_fires_on_the_real_committed_shape() -> None:
+    """BEHAVIOURAL COMPANION to the ordering pin — driven off the COMMITTED artifact rather than a
+    constructed row, because a constructed row is exactly what hid the defect."""
+    import json
+    from pathlib import Path
+
+    from vinci.dossier.assemble import _mark_material
+    from vinci.dossier.schemas import Dossier, MechanicalLayer
+
+    root = Path(__file__).resolve().parents[1]
+    doc = json.loads((root / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    d = Dossier.model_validate(doc)
+    stripped = json.loads(json.dumps(doc["mechanical"]))
+    for r in stripped["financial_summary"]["annual"]["value"]["rows"]:
+        r["material"] = False                    # the state the assembler hands over
+    unflagged = MechanicalLayer.model_validate(stripped)
+    assert uncited_material_figures(d.synthesis, unflagged) == [], (
+        "precondition: with no rows flagged the guard is blind — this is the defect, pinned so "
+        "the ordering test above cannot be read as arbitrary")
+    assert uncited_material_figures(d.synthesis, _mark_material(unflagged)), (
+        "with the flags applied the guard must see SMPL's writedown; if this is empty the "
+        "synthesis now cites it and the fixture needs a name that does not")
