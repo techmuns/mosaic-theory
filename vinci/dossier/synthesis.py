@@ -855,6 +855,36 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
     return "\n".join(out)
 
 
+def newest_guidance_date(ps: PrimarySource) -> Any:
+    """The latest ``filed`` among GUIDANCE-BEARING releases, or ``None`` when none is dated.
+
+    Computed over ALL releases, never a display window: the digest shows only the four most recent,
+    and keying supersession off that window would mark a stale guide CURRENT the moment a fifth
+    release carried the newest one. Nothing asserts that ``releases`` arrives newest-first.
+    """
+    dated = [r.filed for r in ps.releases if r.guidance and r.filed]
+    return max(dated) if dated else None
+
+
+def guidance_vintage_mark(filed: Any, newest: Any) -> str:
+    """The vintage suffix for ONE guidance line — the single derivation both consumers share.
+
+    TWO CONSUMERS, ONE DERIVATION, DELIBERATELY. The LLM brief got this marking on 2026-08-04 and
+    the analyst's `scenario-propose` template did not — it read `drawdown_cause.revised_guidance`
+    instead and printed APRIL's superseded numbers under the label "current guidance", which is the
+    same defect (P2) wearing the decision aid's clothes. Two places deriving "which guide is
+    current" from two different fields is how that happened; one helper is how it stops.
+
+    Marks the LINE, never a block: a section header scopes over the reported actuals beneath it.
+    """
+    if filed is None:
+        return " [VINTAGE UNDATED — no filing date; do not read as current]"
+    if newest is None or filed == newest:
+        return f" [CURRENT GUIDE, filed {filed}]"
+    return (f" [SUPERSEDED — filed {filed}, replaced by the guide filed {newest}; "
+            "this guide is history, not the current outlook]")
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -912,8 +942,7 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     #
     # DATES ONLY, no heuristic and no ranking. A release whose `filed` is absent cannot be ordered,
     # so it is labelled UNDATED rather than assumed current or stale — MVST and FUBO are that case.
-    _dated = [r.filed for r in ps.releases if r.guidance and r.filed]
-    _newest = max(_dated) if _dated else None
+    _newest = newest_guidance_date(ps)
     for r in recent:
         # THE MARK GOES ON THE GUIDANCE LINE, NOT ON A BLOCK HEADER — and the first cut of this
         # change got that wrong in a way that would have done real harm. A section header reading
@@ -923,13 +952,7 @@ def _primary_source_digest(ps: PrimarySource) -> str:
         # including the very figure 19c forces the synthesis to cite. It also bled across the
         # next guidance-less release, which emits no header of its own. A per-line mark has no
         # scope to creep and nothing to bleed into.
-        if r.filed is None:
-            _v = " [VINTAGE UNDATED — no filing date; do not read as current]"
-        elif _newest is None or r.filed == _newest:
-            _v = f" [CURRENT GUIDE, filed {r.filed}]"
-        else:
-            _v = (f" [SUPERSEDED — filed {r.filed}, replaced by the guide filed {_newest}; "
-                  "this guide is history, not the current outlook]")
+        _v = guidance_vintage_mark(r.filed, _newest)
         for g in r.guidance:
             v = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
             out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
