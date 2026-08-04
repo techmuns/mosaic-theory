@@ -324,3 +324,13 @@ def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
     for axis, a in asm.items():
         assert "computed anchor" not in a["method"], (axis, a["method"])
         assert "median" in a["method"], (axis, a["method"])
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_shares_fact_labels_its_unit_as_millions() -> None:
+    """`resolve_shares` returns MILLIONS and the first cut labelled the fact "shares" — a unit
+    label disagreeing with its own value, which is `percentile`-as-`p25` one field over. SMPL's
+    committed record says "M shares" for exactly this reason."""
+    from vinci.dossier.propose import build_template
+    f = build_template(_doc("BRBR"))["facts"]["diluted_shares"]
+    assert f["unit"] == "M shares" and 100 < f["value"] < 200, f

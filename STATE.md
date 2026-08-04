@@ -12491,6 +12491,62 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**THE TIER-B ROW CAP IS DROPPING DECISION-RELEVANT DRIVERS ACROSS THE FLEET — REPORTED, NOT FIXED
+(2026-08-04). RELEVANCE CANNOT BE DERIVED WHERE THE CAP FIRES, so no ranking was invented.**
+**WHAT THE CAP IS:** `driver_extract.py:39` `_MAX_ROWS = 12`, checked at `:157` **inside the loop
+over the LLM's emitted drivers** — so it selects by ARRIVAL ORDER. First-hit-wins applied to row
+selection.
+**ITS STATED REASON IS HALF FALSE.** The comment reads *"depth-stage cost/space bound"*. `_MAX_ROWS`
+appears ONLY in the response loop and **the system prompt never tells the LLM to emit at most 12** —
+so every dropped row was **already generated and already paid for**. The cap saves **zero** LLM cost;
+it is purely a space bound, and the cost half of the justification does not hold as implemented.
+**IT ALSO CONTRADICTS A STATED DESIGN RULE.** DESIGN RULE v2: *"`dossier.json` is machine-complete —
+every extracted fact stays in it."* The cap DELETES extracted facts from the machine-complete layer.
+**BLAST RADIUS, MEASURED: 113 rows dropped across 10 of the 11 names** — IT **28**, BRBR **17**,
+VRRM 15, AORT 14, SMPL 12, CNXC 9, FUBO 8, VITL 5, NCNO 4, EPAM 1, MVST 0 (no transcript).
+**AND THE CAP BINDS UNIVERSALLY, NOT OCCASIONALLY: every one of the ten transcript names keeps
+EXACTLY 12 transcript rows.** Not one lands under the cap. This is not a BRBR anomaly — it is the
+steady state of the fleet.
+**AND ON BRBR IT DROPPED THE ROW THE UNDERWRITE TURNS ON.** Its decisive question is whether the
+margin collapse is structural, and **`adjusted gross margin` is among the 17 dropped** — along with
+buy rate, % of category volume on promotion, Premier shake volumes/price-mix, club channel share and
+advertising as % of sales. Kept in their place, purely because they arrived earlier: *"single bottle
+sales = more than doubled"* and *"wellness category growth = grew 7%"*.
+*(CORRECTED ON SELF-REVIEW: the first cut also cited two near-contentless `pricing action` rows
+valued "price increases"/"pricing actions" as displacing better ones. They are sourced to 8-K
+EX-99.1, i.e. the ANCHORED path, and the cap governs transcript rows only — they never competed for
+a slot. The comparison stands on the twelve transcript rows alone.)*
+**WHY NO RANKING WAS BUILT — the ordering makes it impossible.** `extract_transcript_drivers` runs at
+`assemble.py:413`; `synthesize` runs at `:422`. **The decisive question does not exist when the cap
+fires** — it is produced NINE LINES LATER. Ranking by relevance-to-the-decisive-question cannot be
+done at extraction, and anything I could rank on there (keyword match, digit density, kind priority)
+would be an INVENTED SCORING HEURISTIC, which the brief forbade. **So it is reported and stopped.**
+**THE SHAPE OF THE FIX, for the operator to rule on:** the rows are already generated and paid for,
+and the machine-complete layer is where they belong — so the bound should MOVE, not shrink or grow.
+Keep every extracted row in `dossier.json`; apply any bound at the RENDER tier, where the decisive
+question exists and relevance is derivable. That is a re-ordering, not a heuristic.
+*(TWO NUANCES FOR WHOEVER BUILDS IT, the second corrected on self-review. (a) A metric can appear
+both kept and dropped — the transcript SLICE spans two earnings calls, so the LLM emits the same
+metric twice and the later instance hits the cap. (b) `extract_transcript_drivers` is called ONCE
+per assembly (`assemble.py:413`), NOT per transcript — the first cut claimed a per-call cap. BRBR
+and VITL carry 14 Tier-B-KIND rows because **two of theirs come from the anchored 8-K path**, which
+the cap does not govern; their transcript count is 12 like everyone else's.)*
+
+**UNIT/LABEL DEFECTS — the one-name-two-meanings class, now three instances recorded together.**
+(1) **`percentile` printed as `p25`** — `own_history.percentile` is WHERE CURRENT SITS (BRBR 0.037 →
+3.7th), not a 25th-percentile LEVEL; the first cut of the evidence block put a RANK where a LEVEL
+belongs. Caught in self-review of #334, fixed.
+(2) **`"shares"` labelling a value in MILLIONS** — my own `build_template` emitted
+`{"value": 116.27785, "unit": "shares"}` while SMPL's committed record correctly says **`"M shares"`**.
+A unit label that disagrees with its own value. Fixed and pinned.
+(3) **`{axis}_basis` colliding with `ScenarioInput.margin_basis`** (which EARNINGS LINE, not
+provenance) — renamed `{axis}_derivation` in #333.
+**The through-line: a label is load-bearing exactly when a reader cannot tell from the value which
+quantity it is.** All three passed every type check and every test.
+
+**RIDER SHIPPED: `test_brief_render_batch_a.py` iterated `DOSSIERS` without filtering to
+directories**, so a Finder `.DS_Store` reddened the suite on any Mac. One line, guarded.
+
 **THE BRBR REVENUE GATE — CLEAR, MEASURED 2026-08-04. Nothing reads a single year.** Exactly ONE
 BRBR field reads EDGAR revenue: `anchor.margin`, sourced `OperatingIncomeLoss / Revenues` over
 **8 FY** via `midcycle`'s longest-coverage pick. `consensus_levels`, the gap's revenue ratio and the

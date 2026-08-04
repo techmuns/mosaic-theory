@@ -130,6 +130,8 @@ def test_recorded_input_precision_is_not_rounded_away() -> None:
 def test_a_name_without_a_record_gains_no_scenario_block() -> None:
     """Byte-identity for un-underwritten names: absent card → no section at all, unchanged."""
     for d in sorted(DOSSIERS.iterdir()):
+        if not d.is_dir():          # a Finder .DS_Store here reddened this on every Mac
+            continue
         if (SCENARIOS / f"{d.name}.json").exists():
             continue
         md = render_markdown(Dossier.model_validate(json.loads((d / "dossier.json").read_text())))
