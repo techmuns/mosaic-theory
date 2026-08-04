@@ -374,3 +374,31 @@ def test_the_forward_peer_leg_is_in_the_template_whatever_a_roll_cites() -> None
     assert "NTM TEV/EBITDA" in mult and "NTM P/E" in mult, mult[:300]
     assert "TEV/EBITDA:" in mult, "the LTM peer row is gone"
     assert "disagree in SIGN" in mult, "the LTM-vs-NTM warning is gone"
+
+
+def test_the_template_never_truncates_a_driver_value() -> None:
+    """A BOUND THAT BUYS NOTHING STILL DROPS THINGS — the row cap's argument one scale down. The
+    template's driver block once truncated values at 130 chars, copied from the LLM digest where the
+    cap bounds *input*. A template is a file the ANALYST reads: no token budget, so the cap bought
+    nothing. Measured across the fleet before removal: 11 of 242 values exceeded it and TWO carried
+    a figure in the tail the kept head did not."""
+    import json as _json
+    import pathlib as _pl
+
+    from vinci.dossier.propose import build_template
+    for folder in sorted((DOSS).glob("*/dossier.json")):
+        doc = _json.loads(_pl.Path(folder).read_text())
+        rows = ((doc.get("mechanical") or {}).get("operating_drivers") or {}).get("rows") or []
+        if not rows:
+            continue
+        try:
+            ev = build_template(doc)["_evidence"]
+        except Exception:                       # a name the proposer refuses is out of scope here
+            continue
+        blob = "\n".join(ev["revenue"])
+        for r in rows:
+            val = str(r.get("value") or "")
+            if val:
+                assert val in blob, (
+                    f"{folder.parent.name}: driver value truncated in the template — {val[:60]!r}")
+        assert "…" not in blob, f"{folder.parent.name}: an ellipsis means a value was cut"
