@@ -12489,6 +12489,53 @@ change that re-striking would have been.
 statements below are kept for the reasoning that produced them.**
 **THE COHORT-PARTNER READ — 2026-08-04, full render in `docs/audits/2026-08-04-cohort-partner-read.md`.
 REPORT ONLY; no assembly, no build, no name recommended.**
+**COHORT DECIDED 2026-08-04: SMPL + BRBR.**
+
+**`scenario-create` — STEP 1 REPORTED, STEP 2 NOT BUILT. The stop condition fired.** Full render in
+`docs/audits/2026-08-04-scenario-create-derivability.md`. **The underwrite is the critical path and
+has NO writer** — `scenario-refresh`/`scenario-supersede` both need an existing record, `write_record()`
+has zero callers, every record was hand-authored — so the one place analyst judgment enters bypasses
+every guard.
+**SIX OF THE NINE NUMBERS HAVE A DEFENSIBLE, SOURCE-BOUND DEFAULT; THREE DO NOT.** Defaultable:
+**margin × 3** (min / median / max of the EDGAR per-FY operating-margin series), **multiple bear**
+(`own_history.low`) and **multiple base** (`own_history.median`), **revenue base**
+(`consensus_levels` median at the anchor FY). **NOT defaultable: revenue BEAR, revenue BULL,
+multiple BULL.**
+**AND THE OBVIOUS SUBSTITUTE IS MEASURABLY WRONG, which is why this stops rather than improvises.**
+`consensus_levels` carries low/median/high, so a low/high default LOOKS available. SMPL's FY2026
+consensus range is **1,345.0–1,357.0 — 0.9% wide** — against a committed bear of **1,180.0**.
+Defaulting bear revenue to the consensus low would propose a bear **14.0% too generous**, in the leg
+that sets the risk denominator and therefore reward:risk. **The reason is structural: consensus
+dispersion measures DISAGREEMENT AMONG FORECASTERS, not the downside scenario** — eleven analysts
+modelling one guidance agree within 1%; a bear models a world none of them forecasts. Substituting
+one for the other would understate risk on every name, in the direction that flatters. For the bull
+multiple, SMPL chose **16.00x — BELOW its own trailing median of 17.85x** — so neither `p75` nor
+`high` reflects the practice and no principled anchor exists.
+**A 6-of-9 PROPOSER (defaults six, REFUSES on three) invents nothing and is buildable** — shape
+recorded in §4 of the render, including `RefPoint.vintage` inheritance, the tier check refusing on a
+dossier/record disagreement (AORT is a live case day one), and refuse-never-default on a missing leg.
+**Whether that clears "a proposer that invents a number is worse than a form" is the operator's call.**
+**R2 is the same or worse**: its terminal year sits beyond any consensus row, so even the base-revenue
+anchor R1 gets has no R2 counterpart.
+
+**RIDER — SMPL'S FROZEN REFERENCES: THE STATIC ONES ALL REPRODUCE, THE LIVE ONES ALL MOVED.**
+Reproduce exactly: FY2025 reported revenue 1,450.9 · **all five MARGIN references** (15.4481 /
+15.5107 / 9.5788 / 17.3494 / 15.0103) · trading-range low 6.1094 · trailing median 17.8514.
+Moved: **LTM revenue 1,416.208 → 1,392.235** (−23.97) · **consensus FY26E 1,334.0 → 1,351.7** (+17.70)
+· **current multiple 5.65 → 5.34** (−0.31). **None is stamped, so you cannot tell whether the three
+that moved were right when struck — P3 pt1's cost, demonstrated rather than argued.**
+**THE MARGIN REFERENCES ARE THE ONES §D IS ABOUT, AND THEY ALL REPRODUCE: the 14% rests on sound
+inputs, so §D is PURELY A DISCLOSURE DEFECT, not a decision-path finding.** The build was not stopped
+by the rider; it was stopped by the three undefaultable cells.
+**SMPL IS NOT ALIAS-AFFECTED — measured, not looked up:** its ASC-606 tag holds 8 FY (2019–2026), the
+longest AND the first alias, so first-hit and longest-coverage agree; `_total_revenue_series` returns
+`conflicts: []`.
+**BUT BRBR IS THE WERN SHAPE, AND BRBR IS NOW THE COHORT PARTNER.** Its ASC-606 tag holds **ONE** FY
+(2026) while `Revenues` holds **seven** (2020–2026). `midcycle` picks longest-coverage so BRBR's
+committed anchor is correct (`OperatingIncomeLoss / Revenues`, 8 FY median = 16.0404%) — **the
+exposure is the SHARED extractor, still first-hit-wins, which would read BRBR's revenue as a single
+year.** The latent issue recorded at PR #149 now has a name on the critical path.
+
 **CORRELATED-SHOCK RISK ON THE SOURCING ROUTE — A HYPOTHESIS WITH A REQUIRED CHECK, not a proved
 property** *(corrected on review of #331; my first cut said "by construction")*. **What the selection
 rule establishes:** each constituent independently passed a **drawdown gate** (≤ −30% from the 52w
