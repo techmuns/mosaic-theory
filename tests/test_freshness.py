@@ -232,6 +232,23 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     # picked up the 2026-07-24 close, matching the 2026-07-24 comps vintage, and now implies
     # $10.28 against a $10.22 spot — +0.6%. **$10.28 is exactly the figure the audit's own P4
     # cross-check computed**, so C16 is resolved on the first name re-assembled since it was found.
+    #
+    # **SMPL LEFT `reconciled` ON 2026-08-04, AND THE PIN THAT FORBADE IT RESTED ON A FALSE
+    # PREMISE.** That pin read "losing this is a regression in price SELECTION, not a data change
+    # to absorb" — so it was checked against the selection code rather than absorbed. There is no
+    # vintage alignment to regress: `_stock_info` sets `price = feats.last`, the store's last
+    # close, and nothing anywhere aligns it to the comps export. The 2026-07-29 agreement was the
+    # store frontier happening to sit five days from the 2026-07-24 panel, not a property the code
+    # maintains. The store then advanced to 2026-08-03 and SMPL closed 11.32 against a FROZEN
+    # 909.4 cap → −9.2%, outside the 2% tolerance. Cap didn't move; the market did.
+    #
+    # So the assertion below is now the invariant that is actually TRUE and worth guarding: the
+    # reconcile path must keep a live instance (BRBR/CNXC/EPAM/VRRM do), exactly mirroring the
+    # `assert drifting` guard beneath it. Both buckets stay populated, so neither path can quietly
+    # stop being exercised — which is what the SMPL pin was reaching for and what it could not
+    # deliver by naming ONE name whose membership no code controls. Every name's spot drifts from
+    # its cap as the frontier advances past the CIQ export; a per-name pin re-reds on every price
+    # refresh and teaches the reader to absorb it, which is the failure mode it warned against.
     reconciled, drifting = set(), set()
     for name in quiet:
         mech = _fleet()[name]
@@ -241,10 +258,11 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
         (reconciled if abs(r.gap) <= fr.RECONCILE_TOLERANCE else drifting).add(name)
 
     assert reconciled | drifting == quiet, "a quiet name fell into neither bucket"
-    assert "SMPL" in reconciled, (
-        f"SMPL no longer reconciles (reconciled={sorted(reconciled)}) — it did after its "
-        "2026-07-29 re-assembly, and losing that is a regression in price selection, not a data "
-        "change to absorb")
+    assert reconciled, (
+        "NO name reconciles cap against spot — every dossier now carries a cap and a spot that "
+        "disagree by more than the tolerance, so the reconcile path has no live instance and this "
+        "test stops proving it works. That is not ordinary drift: check whether the CIQ comps "
+        "panel is stale fleet-wide, or whether shares/cap extraction broke.")
     assert drifting, (
         "EVERY name now reconciles — genuinely the goal, but then clause (e)'s vintage labelling "
         "has no live instance and this test stops proving the drift path works. Move the drift "
