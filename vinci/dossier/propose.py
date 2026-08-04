@@ -327,7 +327,13 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
     # margin — the RAW per-FY series, because "clean" is the judgment the machine cannot make
     mt = _get(doc, "mechanical", "quality", "margin_trend")
     if isinstance(mt, dict) and mt.get("value"):
-        ev["margin"].append(f"margin trend (CIQ): {str(mt['value'])[:600]}")
+        # BASIS LABELLED IN THE LINE. This is the ONE EBITDA figure in a block whose anchor, raw
+        # series and requested leg are all EBIT — and with SMPL's D&A at ~2.7% of revenue a 16%
+        # EBITDA LTM sits deceptively close to a 15.4481% EBIT anchor. This is the axis SS-D
+        # happened on; an unlabelled basis is how two numbers get averaged into one.
+        ev["margin"].append(
+            f"margin trend (CIQ) — **EBITDA basis**, NOT the EBIT margin this leg asks for: "
+            f"{str(mt['value'])[:600]}")
     mg = _get(doc, "anchor", "margin") or {}
     if mg.get("value") is not None:
         ev["margin"].append(

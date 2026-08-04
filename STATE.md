@@ -12491,6 +12491,56 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**TWO LIVE FALSE CLAIMS ON SMPL'S COMMITTED PAGE (2026-08-04). RECORDED, NOT REROLLED — a reroll to
+fix two sentences would risk the twelve recovered brand-level citations.**
+Five verdict-bearing synthesis points were checked figure-by-figure against the Q3 transcript and
+the results 8-Ks. **Three verify exactly; two are wrong; BOTH WRONG ONES ARE BEAR POINTS AND BOTH
+OVERSTATE THE BEAR.**
+· **bear[1] ✓** — Atkins net sales −24.6%, retail takeaway −23.9% vs −23.4% prior, household
+  penetration 8.5% down 220bps. All four verbatim, and the subject is Atkins throughout.
+· **bull[4] ✓** — Quest household penetration +120bps to 20.5%, net sales +1.1%. Both verbatim,
+  subject is Quest.
+· **bull[7] ✓** — adj EBITDA $57.0M cites 8-K `-000021` (July) and matches its reconciliation block;
+  the transcript's $57.2M is the same figure unrounded. Both are the company's own.
+· **bear[6] ✗ WRONG SUBJECT.** It reads *"a mid-teens price increase is being forced"*. The
+  transcript says **high-single-digit FOUR TIMES** about the September action; **"mid-teens" occurs
+  ONCE and is the CHIPS BRAND'S GROWTH RATE** (*"a $0.5 billion brand… growing in the mid-teens"*).
+  A real number attached to the wrong subject — and bull[6] states the correct figure, so the page
+  contradicts itself.
+· **bear[3] ✗ WRONG VINTAGE — THIS IS AUDIT DEFECT P2, STILL LIVE.** It states the FY26 guide as
+  *net sales −10% to −7%, adj EBITDA −22% to −19%, gross margin −300–350bps* and cites 8-K
+  **`-000010`, the APRIL (Q2) filing**. The **CURRENT** guide from the Q3 call and 8-K `-000021` is
+  **net sales −7% to −6%, adj EBITDA −21% to −19%, gross margin ROUGHLY −375bps.** All three
+  figures are superseded. **And bull[7] cites `-000021` while bear[3] cites `-000010`, so ONE
+  SYNTHESIS ARGUES FROM TWO GUIDANCE VINTAGES** — precisely what the 2026-07-28 audit recorded as
+  P2, unfixed and now inside the points a verdict is being formed on.
+**THE ASYMMETRY IS THE FINDING: both defects make the bear look worse than the evidence supports.**
+bear[3] overstates the sales cut (−10% vs −7%) while UNDERSTATING the margin cut (300–350 vs 375),
+and bear[6] triples the price action. A reader forming a verdict from this page is reading a
+harsher case than the filings state.
+**AND THE STRUCTURAL POINT: bear[6] surfaced ONLY because it contradicted bull[6].** A wrong point
+with no internal contradiction would not have surfaced at all — **driver rows carry
+quote-in-transcript and digit-trace validation; synthesis points carry NEITHER.** That asymmetry is
+why this check had to be manual, and it is unclosed.
+
+**`scenario-create` NOW REFUSES A NAME THAT ALREADY HAS A RECORD.** `write_record` is an
+unconditional `path.write_text`, so a create on SMPL would have DESTROYED the live record and
+skipped archive-and-reissue — the supersession chain is unreconstructable once gone. **REFUSES
+rather than routing** (a create that silently becomes a supersede is a surprise on a destructive
+path, and `scenario-propose` emits a template that LOOKS like it feeds this command); the refusal
+names `scenario-supersede` and states that its `--payload` is a COMPLETE record, not the template.
+Both directions pinned.
+**AND THE GUARDS ARE ON THE WRONG PATH — REPORTED, NOT FIXED.** `scenario-supersede` runs
+**`ScenarioRecord.model_validate_json` and NOTHING ELSE** — no `validate_legs`, no `propose_anchors`,
+no `check_tier_agreement`. **So a supersede can move a margin with no stated reason: §D is
+reintroduced through the path the analyst actually uses**, while the anchor/deviation guards sit on
+`scenario-create`, the path that by definition has no live record to fix. SMPL's pending action is a
+supersede.
+**RIDER SHIPPED: the template's margin trend is now labelled `**EBITDA basis**, NOT the EBIT margin
+this leg asks for`** — the one EBITDA figure among an EBIT anchor, an EBIT raw series and an EBIT
+leg, where D&A at ~2.7% of revenue makes 16% sit deceptively close to 15.4481%. The axis §D
+happened on.
+
 **THE CAP-REMOVAL TEST RAN ON SMPL AND THE PREDICTION HELD (2026-08-04).**
 **BRBR WAS THE WRONG SUBJECT AND WAS STOPPED FIRST:** its dossier's own catalyst calendar put the
 next results print at **2026-08-04 — the day of the test** (cadence: median 91d over 27 results

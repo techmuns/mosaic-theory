@@ -1080,6 +1080,19 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
     if str(tpl.get("ticker", "")).upper() != t:
         print(f"REFUSED: template is for {tpl.get('ticker')!r}, not {t}")
         return 1
+    # CREATE NEVER OVERWRITES. `write_record` is an unconditional `path.write_text`, so without
+    # this a create on a name that already has a record would DESTROY it and bypass
+    # archive-and-reissue entirely — the supersession chain (`_amendment_index`, the archived
+    # `<TICKER>-<date>`) is the record of what a verdict replaced, and it cannot be reconstructed.
+    # REFUSE, DO NOT ROUTE: a create that silently becomes a supersede is a surprise on a
+    # destructive path, and `scenario-propose` emits a template that LOOKS like it feeds this
+    # command. Name the other command and its requirement so the refusal is actionable.
+    if (sc.records_dir() / f"{t}.json").exists():
+        print(f"REFUSED: {t} already has a committed record. `scenario-create` never overwrites — "
+              "that would destroy it and skip archive-and-reissue. Use `scenario-supersede "
+              f"{t} --payload <full-record.json>`, which archives the outgoing record and links "
+              "the two. Note its payload is a COMPLETE ScenarioRecord, not this template.")
+        return 1
     try:
         doc = _dossier_doc(t)
         check_tier_agreement(doc, str(tpl.get("recipe_id") or ""))
