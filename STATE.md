@@ -12491,6 +12491,71 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**THE CAP-REMOVAL TEST RAN ON SMPL AND THE PREDICTION HELD (2026-08-04).**
+**BRBR WAS THE WRONG SUBJECT AND WAS STOPPED FIRST:** its dossier's own catalyst calendar put the
+next results print at **2026-08-04 — the day of the test** (cadence: median 91d over 27 results
+8-Ks, last print 2026-05-05), **confirmed by 8-K ITEM CODES rather than by date arithmetic** — the
+2026-05-05 filing carries item **2.02** (Results of Operations) while the two since (06-24, 07-08)
+carry 5.02/7.01/8.01 only. Re-assembling would have produced a dossier superseded within days, and
+that print IS the named observation a watchlist verdict waits on.
+**SMPL's TRANSCRIPT WAS VERIFIED CURRENT before starting** — the bundle holds
+`Q3 2026 Earnings Call, Jul 09, 2026`, matching the latest results 8-K (2026-07-09, item 2.02).
+**HELD CONSTANT: no EOD refresh.** Price frontier stayed **2026-07-29** through the run, so the cap
+removal was the only variable and any difference is attributable.
+**ROWS: 12 → 24 transcript rows recovered; capped-flags 12 → 0.**
+**THE GAP DID NOT MOVE, exactly as it must:** `0.9839 / 0.9463 / 2.2589 / 2.1032`,
+multiple-dominant, identical vintages. Nothing but the cap changed.
+**THE PREDICTION — do the new points cite brand-level consumption/penetration the old ones did
+not? — IS ANSWERED YES, and with the exact metrics the cap had removed:**
+· BULL gained **Quest household penetration up 120bps YoY to 20.5%** and **Quest chips consumption
+  +17%, milkshakes ~50%** — `Quest household penetration`, `Quest chips consumption` and
+  `Quest milkshake segment consumption` were all DROPPED ROWS.
+· BEAR gained **Atkins retail takeaway −23.9% vs −23.4% prior quarter** and **Atkins household
+  penetration 8.5%, down 220bps**, plus **OWYN takeaway −1.3%** — `Atkins retail takeaway`,
+  `Atkins total brand household penetration` and `OWYN retail takeaway` were all DROPPED ROWS.
+Counts: bull 1→2 and bear 2→4 points citing brand-level consumption or penetration; totals 9→10
+bull and 8→9 bear.
+**BUT "NOT THINNER" WAS A COUNT, NOT A READING, AND THE REVIEW FOUND A REAL REGRESSION.** The OLD
+bull carried the **FORWARD** peer comparison — *"on a forward basis SMPL trades below the peer median
+on every line (**NTM TEV/EBITDA 5.65 vs 8.72; NTM P/E 6.12 vs 13.08**)"*. **All four NTM figures are
+absent from the new synthesis**, whose bull[3] argues instead from the **TRAILING** 5.3x vs peer 7.8x.
+**AND THE CAVEAT WENT WITH THEM:** the OLD bear[2] explicitly warned *"this is trailing-only with no
+forward basis, so it cannot itself distinguish cheap-overshoot from cheap-terminal"* — neither
+"trailing-only" nor "forward basis" appears anywhere in the new points. **So the new bull argues from
+a trailing multiple that the old synthesis had specifically flagged as insufficient on its own.**
+**THE DATA IS NOT LOST, ONLY THE CITATION IS:** NTM TEV/EBITDA 5.65 vs peer 8.72 still renders five
+times in the valuation tables, so a reader can find it — but the ARGUMENT no longer rests on it.
+Also dropped from the bull: OWYN's +3.6% growth (OWYN now appears only as a negative — losing
+distribution, takeaway −1.3%).
+**ATTRIBUTION IS NOT ESTABLISHED and both readings are live:** a larger brief may crowd valuation
+detail out of a fixed output budget (which would make it cap-caused and connect to the unchecked
+output bound), or it is ordinary reroll variance in emphasis. One roll cannot separate them.
+**JUDGMENT: NOT REVERTED.** The six recovered brand-level citations are exactly what the fix was for
+and they serve the decisive question directly; the loss is one argumentative leg whose data still
+renders. **But the trade is real and is recorded as a trade, not as a clean win.**
+**THE DECISIVE QUESTION SHARPENED** from *"…structural erosion (led by Atkins) that permanently
+resets the earnings base"* to *"…structural erosion of the **Atkins/OWYN base that the growing Quest
+engine cannot offset** (value trap)"* — the brand-level split now names which engine offsets which.
+**19c NEVER REFUSED** (it accepted `~$392M of LTM asset writedowns` — scale-tolerant), and the run
+converged on attempt 2 of 5.
+**qa_flags 13 → 1**: the twelve cap flags are gone; the survivor is the pre-existing
+*"no anchored pattern matched — EX-99.1 pricing/KPI"*. Four caveats, all carried over.
+
+**ATTEMPT 1 FAILED, AND IT WAS NOT 19c — RECORDED BECAUSE MY OWN HARNESS MISLABELLED IT.**
+The failure was *"synthesis tool returned incomplete output — missing required field(s)
+['bear_points','twin_reference_cases','decisive_question','key_unknowns'] (likely truncated)"*, and
+the assembler REFUSED TO WRITE rather than null a committed synthesis (the AORT-2026-07-30 guard
+working). **My reroll harness printed "(19c refused)" for it** — it assumes every failure is the
+material-figure guard. Same mislabel class as the rest of this session.
+**CAUSE NOT ESTABLISHED, and the honest position is that one sample proves nothing:** the HARD
+truncation guard (`llm.py:62`, `stop_reason == "max_tokens"`, `max_tokens=16384`) did **NOT** fire —
+the message was synthesis.py's own inference from missing fields. Attempt 2 converged on the same
+enlarged brief, so it did not repeat.
+**AND A GAP IN MY OWN PRE-CHANGE CHECK, corrected:** asked whether the brief was bounded, I verified
+the INPUT assembly (no cap on the `user` string, digest iterates all rows) and reported *"nothing
+downstream absorbs the change"*. **I never checked the OUTPUT bound.** One exists — 16,384 tokens.
+It is not implicated here on the evidence, but the check as I stated it was incomplete.
+
 **THE TIER-B ROW CAP IS REMOVED (2026-08-04 ruling). EVERY EXTRACTED ROW NOW STAYS.**
 No relevance ranking replaces it — none is derivable, at either stage, and inventing one was
 forbidden. Takes effect **on the next assembly**: committed dossiers keep their capped rows until
