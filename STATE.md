@@ -12517,17 +12517,26 @@ everything if no criterion is derivable there either. **Measured: none is.**
 (*"CIQ Estimates→Trends (current vs 12m ago)"*), not a pointer to an `operating_drivers` row.
 Nothing records which rows the synthesis actually used, so "rank by what the synthesis cited" is not
 available.
-**(2) THE ONLY REMAINING SIGNAL IS WORD OVERLAP — AND IT FAILS ON THE CASE THAT MOTIVATED THE FIX.**
-BRBR's decisive question asks whether *"the collapse in **profitability**"* is temporary or
-structural. Overlap with the dropped rows: **`adjusted gross margin` → NONE**; `buy rate` → NONE;
-`club channel share of sales` → NONE; `advertising investment as % of sales` → NONE. Overlap with
-KEPT rows: `wellness category growth` → **`category`**; `RTD shakes category growth` → **`category`**.
-**So word-overlap would rank the kept rows ABOVE `adjusted gross margin` — it makes the defect
-WORSE, not better.** The question says "profitability"; the row says "margin". A row is relevant
-without sharing vocabulary, exactly as the brief warned, and here that is measured rather than
-argued.
-**CONCLUSION: keep every extracted row in `dossier.json` (which DESIGN RULE v2 already requires) and
-render all of them. No score is invented at render any more than at extraction.**
+**(2) THE ONLY REMAINING SIGNAL IS WORD OVERLAP — AND ITS ANSWER FLIPS ON AN UNRATIFIED CHOICE.**
+*(CORRECTED ON SELF-REVIEW: the first cut claimed overlap FAILS on the motivating case and makes the
+defect WORSE. That holds ONLY against the `question` string alone, and REVERSES once the window
+widens — I measured the narrowest possible reading and generalised from it.)*
+Against **`question` alone** (~300 chars, *"the collapse in **profitability**"*): `adjusted gross
+margin` → **NONE**, while kept rows `wellness category growth` and `RTD shakes category growth`
+overlap on `category`. Overlap would bury the decisive row.
+Against the **WHOLE `decisive_question` block** (2,022 chars — question + evidence_for +
+evidence_against, which is what a render-tier implementation would naturally read): `adjusted gross
+margin` → **`adjusted`+`gross`+`margin`, a three-word full match and the strongest of any row**,
+while the KEPT `market share` scores **ZERO**. Overlap would have SAVED it.
+**THE SAME CRITERION, ON THE SAME NAME, GIVES OPPOSITE ANSWERS DEPENDING ON WHICH TEXT WINDOW IS
+CHOSEN — AND NOBODY HAS RATIFIED THAT CHOICE. That is not a criterion, it is a knob**, and picking
+its setting is exactly the heuristic-invention the brief forbids. The refutation does not survive;
+the objection to it does, on stronger ground.
+**CONCLUSION UNCHANGED, REASONING CORRECTED: keep every extracted row in `dossier.json` (which
+DESIGN RULE v2 already requires) and render all of them.** Not because overlap was empirically
+refuted — it was not — but because **no USAGE linkage exists** (1), and every text-similarity score
+available instead depends on unratified scoping choices whose answers reverse. No score is invented
+at render any more than at extraction.
 
 **RECORDED FROM THE SMOKE TEST (labelled not-a-real-underwrite; bear and bull were arbitrary, this
 combination was not):** BRBR's own anchor revenue **2,331.0** and anchor margin **16.0404%** with the
