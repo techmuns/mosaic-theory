@@ -63,7 +63,14 @@ def _diverges(rec: sc.ScenarioRecord) -> bool:
         return False
     computed = [c for c in (rec.result.ratio, rec.verdict.ratio_at_entry) if c is not None]
     if not computed:
-        return False                                  # nothing to check against — never invent one
+        return False        # FAIL-OPEN, and deliberately: with no computed ratio there is nothing
+        # to compare against and refusing would invent one. The path is kept VISIBLE by
+        # `test_every_record_has_a_computed_ratio_so_the_fail_open_path_stays_shut`, so a record
+        # that loses its ratio cannot quietly buy an exemption from this guard.
+    # MAGNITUDE-ONLY PROSE IS A LATENT FALSE POSITIVE, recorded rather than pre-solved: four records
+    # carry a NEGATIVE computed ratio (AORT -0.67, MVST -0.33, NCNO -0.72, WERN -0.35), and a
+    # rationale writing "0.7:1" for -0.67 would read as drift. None of them cites a ratio today, so
+    # the case is theoretical; if one appears, the fix is to compare magnitudes, not to widen _TOL.
     return any(all(abs(float(n) - float(c)) > _TOL for c in computed) for n in cited)
 
 
@@ -110,3 +117,18 @@ def test_the_exemption_names_only_names_that_exist_and_actually_diverge() -> Non
     for t in RATIONALE_RATIO_AWAITING_SUPERSEDE:
         assert t in records, f"exempted {t!r} has no committed record"
         assert _diverges(records[t]), f"exempted {t!r} no longer diverges — drop it and fix STATE"
+
+
+def test_every_record_has_a_computed_ratio_so_the_fail_open_path_stays_shut() -> None:
+    """`_diverges` fails open when a record computes no ratio — correct (there is nothing to compare
+    against) but silent. This keeps the path VISIBLE: today every record computes one, so the
+    fail-open branch is never taken, and a record that loses its ratio reddens here rather than
+    quietly slipping the guard."""
+    records = sc.all_records()
+    if not records:
+        pytest.skip("no committed records")
+    missing = {t for t, r in records.items()
+               if r.result.ratio is None and r.verdict.ratio_at_entry is None}
+    assert not missing, (
+        f"{sorted(missing)} compute no ratio, so the drift guard cannot check their prose — it "
+        "fails OPEN for them. Either the record is incomplete or the guard needs a second basis.")
