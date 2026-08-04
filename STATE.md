@@ -12491,6 +12491,50 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**THE THESIS TEXT IS IN THE RECORD, NOT THE SYNTHESIS — SO A RE-ASSEMBLY WILL NOT FIX IT
+(measured 2026-08-04). OPERATOR ACTION: it needs `scenario-supersede`.**
+SMPL's *"Thesis — our rationale"* paragraph is `verdict.rationale` in `scenarios/SMPL.json` —
+**sealed analyst text**. `dossier.json` carries **ZERO** occurrences of the string; the dossier
+RENDERS it from the record at render time. **Guidance that it would self-correct on re-assembly was
+wrong.**
+**THE DRIFT, ON ONE PAGE, ELEVEN LINES APART:** `dossier.md:8` computes
+**`Reward : risk 4.78 : 1`** while `:19` reads *"the grid reads **3.8 to 1** against our 2:1 bar"* —
+**present tense, no amendment tag, no date.** 3.83 was the pre-item-24 ratio; the denominator swap
+moved it to 4.78 and the prose did not follow.
+**NOTHING GUARDS IT.** `moved_cited_claims` covers MATERIAL FINANCIAL-SUMMARY figures, not the
+ratio; 19c demands material rows be stated, it never compares a cited ratio to the computed one;
+`prose_lint` checks register and length only; no test pins prose-against-header agreement.
+**BLAST RADIUS: ONE LIVE INSTANCE.** Swept all seven records for a prose ratio disagreeing with the
+computed one. **IT is a FALSE POSITIVE** — its `6.7:1 / 1.90:1 / 5.8:1` are a DATED AMENDMENT CHAIN
+in a closed record (*"[amended 2026-07-22: position closed…]"*), each ratio tagged to its moment,
+which is a history and not a stale claim. **SMPL-2026-07-21 is the ARCHIVED record**, frozen by
+design. **SMPL alone is live.**
+
+**RENDER-TIER RELEVANCE: THERE IS NO CRITERION. THE ANSWER IS RENDER ALL ROWS.**
+The ruling was to move the row cap to render, where the decisive question exists — and to render
+everything if no criterion is derivable there either. **Measured: none is.**
+**(1) NO USAGE LINKAGE EXISTS.** A synthesis point's `source_ref` is a FREE-TEXT SOURCE NAME
+(*"CIQ Estimates→Trends (current vs 12m ago)"*), not a pointer to an `operating_drivers` row.
+Nothing records which rows the synthesis actually used, so "rank by what the synthesis cited" is not
+available.
+**(2) THE ONLY REMAINING SIGNAL IS WORD OVERLAP — AND IT FAILS ON THE CASE THAT MOTIVATED THE FIX.**
+BRBR's decisive question asks whether *"the collapse in **profitability**"* is temporary or
+structural. Overlap with the dropped rows: **`adjusted gross margin` → NONE**; `buy rate` → NONE;
+`club channel share of sales` → NONE; `advertising investment as % of sales` → NONE. Overlap with
+KEPT rows: `wellness category growth` → **`category`**; `RTD shakes category growth` → **`category`**.
+**So word-overlap would rank the kept rows ABOVE `adjusted gross margin` — it makes the defect
+WORSE, not better.** The question says "profitability"; the row says "margin". A row is relevant
+without sharing vocabulary, exactly as the brief warned, and here that is measured rather than
+argued.
+**CONCLUSION: keep every extracted row in `dossier.json` (which DESIGN RULE v2 already requires) and
+render all of them. No score is invented at render any more than at extraction.**
+
+**RECORDED FROM THE SMOKE TEST (labelled not-a-real-underwrite; bear and bull were arbitrary, this
+combination was not):** BRBR's own anchor revenue **2,331.0** and anchor margin **16.0404%** with the
+**peer LTM median multiple of 6.9x** gives a base of **$13.13 against a spot of $13.66**.
+**A generous margin plus the peer multiple lands BELOW today's price** — the cleanest statement of
+BellRing's problem, and it uses only computed anchors plus the peer cross-section.
+
 **THE TIER-B ROW CAP IS DROPPING DECISION-RELEVANT DRIVERS ACROSS THE FLEET — REPORTED, NOT FIXED
 (2026-08-04). RELEVANCE CANNOT BE DERIVED WHERE THE CAP FIRES, so no ranking was invented.**
 **WHAT THE CAP IS:** `driver_extract.py:39` `_MAX_ROWS = 12`, checked at `:157` **inside the loop
