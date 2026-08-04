@@ -12503,14 +12503,19 @@ it is purely a space bound, and the cost half of the justification does not hold
 **IT ALSO CONTRADICTS A STATED DESIGN RULE.** DESIGN RULE v2: *"`dossier.json` is machine-complete —
 every extracted fact stays in it."* The cap DELETES extracted facts from the machine-complete layer.
 **BLAST RADIUS, MEASURED: 113 rows dropped across 10 of the 11 names** — IT **28**, BRBR **17**,
-VRRM 15, AORT 14, SMPL 12, CNXC 9, FUBO 8, VITL 5, NCNO 4, EPAM 1, MVST 0 (no transcript). **This is
-not a BRBR anomaly; the cap binds on every name that has a transcript.**
+VRRM 15, AORT 14, SMPL 12, CNXC 9, FUBO 8, VITL 5, NCNO 4, EPAM 1, MVST 0 (no transcript).
+**AND THE CAP BINDS UNIVERSALLY, NOT OCCASIONALLY: every one of the ten transcript names keeps
+EXACTLY 12 transcript rows.** Not one lands under the cap. This is not a BRBR anomaly — it is the
+steady state of the fleet.
 **AND ON BRBR IT DROPPED THE ROW THE UNDERWRITE TURNS ON.** Its decisive question is whether the
 margin collapse is structural, and **`adjusted gross margin` is among the 17 dropped** — along with
 buy rate, % of category volume on promotion, Premier shake volumes/price-mix, club channel share and
 advertising as % of sales. Kept in their place, purely because they arrived earlier: *"single bottle
-sales = more than doubled"*, *"wellness category growth = grew 7%"*, and two near-contentless
-`pricing action` rows valued *"price increases"* and *"pricing actions"*.
+sales = more than doubled"* and *"wellness category growth = grew 7%"*.
+*(CORRECTED ON SELF-REVIEW: the first cut also cited two near-contentless `pricing action` rows
+valued "price increases"/"pricing actions" as displacing better ones. They are sourced to 8-K
+EX-99.1, i.e. the ANCHORED path, and the cap governs transcript rows only — they never competed for
+a slot. The comparison stands on the twelve transcript rows alone.)*
 **WHY NO RANKING WAS BUILT — the ordering makes it impossible.** `extract_transcript_drivers` runs at
 `assemble.py:413`; `synthesize` runs at `:422`. **The decisive question does not exist when the cap
 fires** — it is produced NINE LINES LATER. Ranking by relevance-to-the-decisive-question cannot be
@@ -12520,9 +12525,12 @@ would be an INVENTED SCORING HEURISTIC, which the brief forbade. **So it is repo
 and the machine-complete layer is where they belong — so the bound should MOVE, not shrink or grow.
 Keep every extracted row in `dossier.json`; apply any bound at the RENDER tier, where the decisive
 question exists and relevance is derivable. That is a re-ordering, not a heuristic.
-*(One nuance for whoever builds it: a metric can be both kept and dropped — BRBR has two transcripts,
-each capped separately, so `consumption outside of club` is kept from one call and dropped from the
-other. The cap is per-call, which is why BRBR and VITL carry 14 Tier-B rows rather than 12.)*
+*(TWO NUANCES FOR WHOEVER BUILDS IT, the second corrected on self-review. (a) A metric can appear
+both kept and dropped — the transcript SLICE spans two earnings calls, so the LLM emits the same
+metric twice and the later instance hits the cap. (b) `extract_transcript_drivers` is called ONCE
+per assembly (`assemble.py:413`), NOT per transcript — the first cut claimed a per-call cap. BRBR
+and VITL carry 14 Tier-B-KIND rows because **two of theirs come from the anchored 8-K path**, which
+the cap does not govern; their transcript count is 12 like everyone else's.)*
 
 **UNIT/LABEL DEFECTS — the one-name-two-meanings class, now three instances recorded together.**
 (1) **`percentile` printed as `p25`** — `own_history.percentile` is WHERE CURRENT SITS (BRBR 0.037 →
