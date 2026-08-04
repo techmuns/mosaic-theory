@@ -33,7 +33,7 @@ FuboTV Inc. operates as a live TV streaming platform company in the United State
 **Strongly-bearish** — idiosyncratic -83% relative collapse, across-the-board FY26 estimate cuts crossing zero, and unfunded cash burn with opaque leverage.
 - **Segments:** Streaming Business — single segment [1]
 - **Geography:** United States — single geography [2]
-- **Snapshot:** NYSE · CMP $8.33 (2026-07-24) · cap $256M (2026-06-12) · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 [3]
+- **Snapshot:** NYSE · CMP $8.33 (2026-07-24) · cap $256M · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Does the Hulu Live combination convert scaled revenue into durable, self-funding adjusted-EBITDA/FCF (an overshoot), or does structural cash burn, subscriber attrition and content-supplier loss make the profitability inflection unreachable before the cash runs down (a value trap)?**

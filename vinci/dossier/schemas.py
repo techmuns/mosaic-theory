@@ -1012,6 +1012,13 @@ class StockInfo(BaseModel):
     book_value_ps: Sourced[float]  # book value / share — CIQ Balance Sheet
     market_cap: Sourced[float]     # market cap in $M — CIQ (from the implied-val bridge)
     as_of: date | None = None      # the EOD price's as-of date (the latest bar used)
+    #: The CAP's OWN vintage — the comps workbook as-of, NOT the price's. Structured so the
+    #: Snapshot's clause-(e) label binds to the cap's real date rather than a neighbouring panel's
+    #: (O3): the vintage used to live only inside `market_cap.source_ref`, which left the renderer
+    #: nothing to bind to, so it was wired to `implied_expectations.multiples_as_of` — a DIFFERENT
+    #: panel, wrong on 11 of 11 names. Optional because committed dossiers predate the field and
+    #: must stay readable; absent → the label prints NO cap date rather than a wrong one.
+    market_cap_as_of: date | None = None
 
     model_config = {"frozen": True}
 

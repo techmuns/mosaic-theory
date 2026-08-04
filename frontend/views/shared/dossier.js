@@ -1314,8 +1314,14 @@ function briefSnapshot(d, m) {
   // on all 11 committed dossiers they disagree. An unlabelled cap beside a live price reads
   // as one moment when it is two. Twin of _brief_snapshot() in render.py.
   if (ok(si.market_cap)) {
-    const capAsOf = String((((m || {}).valuation || {}).implied_expectations
-      || {}).multiples_as_of || "").slice(0, 10);
+    // THE CAP'S OWN as-of, NOT A NEIGHBOUR'S (O3, 2026-08-04). This read
+    // `valuation.implied_expectations.multiples_as_of` — the MULTIPLES panel, a different sheet.
+    // Wrong on 11 of 11 committed names; IT rendered a cap as-of 2026-06-25 as 2026-07-27, five
+    // weeks shown as three days. The label exists to disclose the gap between a frozen cap and a
+    // live price, so naming the wrong object concealed exactly what it was there to reveal.
+    // NO DATE beats a WRONG date: a dossier assembled before `market_cap_as_of` existed states no
+    // cap vintage rather than borrowing a neighbour's.
+    const capAsOf = String(si.market_cap_as_of || "").slice(0, 10);
     const siAsOf = String(si.as_of || "").slice(0, 10);
     const vint = capAsOf && capAsOf !== siAsOf ? ` (${escapeHtml(capAsOf)})` : "";
     push("Market cap", fmtCap(si.market_cap.value) + vint);

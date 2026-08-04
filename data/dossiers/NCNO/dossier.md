@@ -29,7 +29,7 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 nCino, Inc., a software-as-a-service company, provides software solutions to financial institutions in the United States, the United Kingdom, and internationally.
 - **Segments:** Software & Programming — single segment [1]
 - **Geography:** United States 78%; United Kingdom 12%; Other 10% [2]
-- **Snapshot:** Nasdaq · CMP $18.51 (2026-07-28) · cap $2.0B (2026-07-22) · 52-wk $13.80–$33.92 · shares 109.6M · book value/sh $8.92 [3]
+- **Snapshot:** Nasdaq · CMP $18.51 (2026-07-28) · cap $2.0B · 52-wk $13.80–$33.92 · shares 109.6M · book value/sh $8.92 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the recent EBITDA/margin inflection the start of a durable, compounding profit ramp (overshoot to be re-rated) or a shallow turn that stalls as revenue growth keeps decelerating (earned value-trap discount)?**

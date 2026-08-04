@@ -2759,6 +2759,10 @@ def _stock_info(
         book_value_ps=ciq_sheets.book_value_per_share(bundle),
         market_cap=market_cap,
         as_of=feats.last.as_of,
+        # The CAP's own vintage, from the SAME derivation that stamps its source_ref (O3). Two
+        # dates sit on the Snapshot line — a live close and a frozen panel — and until now only
+        # the price's was structured, so the clause-(e) label borrowed a neighbouring panel's.
+        market_cap_as_of=ciq_sheets.comps_as_of_date(bundle)[0],
     )
 
 

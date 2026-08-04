@@ -29,7 +29,7 @@ WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base c
 Artivion, Inc. manufactures, processes, and distributes medical devices and implantable human tissues worldwide.
 - **Segments:** Products 78%; Preservation Services 22% [1]
 - **Geography:** North America 50%; Europe The Middle East and Africa 34%; Asia Pacific 10%; Latin America 5% [2]
-- **Snapshot:** NYSE · CMP $27.01 (2026-07-28) · cap $1.1B (2026-06-30) · 52-wk $19.16–$48.25 · shares 48.5M · book value/sh $9.29 [3]
+- **Snapshot:** NYSE · CMP $27.01 (2026-07-28) · cap $1.1B · 52-wk $19.16–$48.25 · shares 48.5M · book value/sh $9.29 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the sharp de-rate a temporary overshoot around a lowered 2026 guide and a contained On-X recall — with On-X/stent-graft/tissue growth and NEXUS restoring the EBITDA trajectory — or the start of an earned, terminal re-rate as recall, leverage and negative LTM FCF impair the franchise?**

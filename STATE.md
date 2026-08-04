@@ -4072,7 +4072,38 @@ recorded by #340 survives on the converging attempt and is lost on the ones wort
 of three on the 2026-08-04 SMPL roll). One-line move; not done here because it is code, and this
 was an artifact pass.
 
-**O3. THE CAP'S CLAUSE-(e) VINTAGE LABEL NAMES ANOTHER PANEL'S DATE — 11 of 11 names.**
+**O3 — FIXED 2026-08-04 in code; clause (e) is now UNMET rather than FALSE until each name
+re-assembles.** `comps_as_of_date` is extracted as the ONE derivation — `comps_as_of` renders it,
+`_comps_asof_suffix` stamps that onto every comps `source_ref`, and the new
+`StockInfo.market_cap_as_of` carries the value; both twins (`render.py`, `dossier.js`) read the
+field, and `_brief_snapshot`'s third parameter — the wiring that carried `multiples_as_of` — is
+GONE, so the wrong panel cannot be passed back in. **All ten false dates are removed** (BRBR never
+rendered one: its neighbour date happened to equal its price date). Verified by mutation: reverting
+both twins to the old wiring reddens 3 pins.
+- **THE COMMITTED DOSSIERS NOW SHOW NO CAP DATE, AND THAT IS THE DELIBERATE END STATE OF THIS PR.**
+  `market_cap_as_of` is populated at ASSEMBLY; every committed dossier predates it, so the label
+  falls silent rather than borrowing. **A backfill was considered and REFUSED as unsound:** the
+  correct vintage for a committed cap is the one it was struck at, and the live workbooks have
+  since been re-exported — AORT's committed cap is as-of `2026-06-25` against a workbook now
+  reading `2026-07-30`, IT the same, VITL `2026-06-29` → `2026-07-30`. Backfilling from today's
+  workbook would restamp three caps with dates 30–35 days newer than the values they label, which
+  is the O3 defect rebuilt by hand. The only in-artifact copy of the true vintage is the
+  `source_ref` STRING, and parsing it is the thing this fix exists to avoid.
+- **OPERATOR CONSEQUENCE:** an unlabelled cap is a disclosure GAP; a mislabelled one is a FALSE
+  STATEMENT. This trades the second for the first, knowingly. Each name recovers its real label the
+  next time it is assembled — no separate action needed, but until then clause (e) has no live
+  instance on the fleet.
+- **Schema migration:** `market_cap_as_of: null` added to the 9 post-schema dossiers so a no-op
+  refresh stays byte-identical (`test_a_noop_refresh_is_byte_identical`). FUBO and MVST are SKIPPED
+  by derivation, not by name — they carry no `extraction_version`, so a model round-trip would
+  back-fill a dozen unrelated defaulted keys (`ev_gap`, `material`, `current_guide`, `filed`).
+  Each migrated file was diffed key-by-key against its original: the new key is the ONLY change.
+- *Verified:* 1881 passed, 3 skipped; ruff + `mypy --strict` clean. Web preview on IT confirms
+  `Market cap $8.7B` with no date today and `$8.7B (2026-06-25)` once the field is populated; the
+  Snapshot sits outside any `<details>`, so the collapsed and print/force-open tiers are the same
+  surface (checked, not assumed).
+
+**O3 (ORIGINAL REPORT). THE CAP'S CLAUSE-(e) VINTAGE LABEL NAMES ANOTHER PANEL'S DATE — 11 of 11.**
 `render.py:2668` passes `valuation.implied_expectations.multiples_as_of` into
 `_brief_snapshot(cap_as_of=…)`, so the snapshot renders `cap $909M (2026-07-21)` while the cap's own
 `source_ref` reads `as-of 2026-07-24`. Clause (e) exists so a frozen value beside a live one is
