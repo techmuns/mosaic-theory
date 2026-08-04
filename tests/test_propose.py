@@ -108,10 +108,11 @@ def test_the_committed_smpl_base_margin_is_refused_which_is_the_whole_point() ->
     anchor of 15.4481% that is a −1.45pp deviation, and the writer now refuses it unless the
     adjustment is stated. The ruling moved into the write path, where it binds every author."""
     ancs = propose_anchors(_doc("SMPL"))
-    problems = validate_legs(_legs(base={"revenue": 1330.0, "margin": 14.0, "multiple": 12.5}),
+    # SCHEMA UNITS — ScenarioInput.margin is a decimal fraction, so the committed 14.0% is 0.14.
+    problems = validate_legs(_legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5}),
                              ancs)
     hit = [p for p in problems if p.startswith("base.margin")]
-    assert hit and "15.4481" in hit[0] and "-1.4481" in hit[0], problems
+    assert hit and "15.4481" in hit[0] and "-0.014481" in hit[0], problems
     assert "§D" in hit[0]
 
 
@@ -121,11 +122,12 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
     analyst who says why may sit anywhere, and one who takes the anchor states nothing."""
     ancs = propose_anchors(_doc("SMPL"))
     m = next(a for a in ancs if a.axis == "margin")
-    stated = _legs(base={"revenue": 1330.0, "margin": 14.0, "multiple": 12.5,
+    stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
     assert not [p for p in validate_legs(stated, ancs) if p.startswith("base.margin")]
-    at_anchor = _legs(base={"revenue": 1351.7, "margin": m.value, "multiple": 17.8514})
+    at_anchor = _legs(base={"revenue": 1351.7, "margin": m.schema_value,
+                            "multiple": 17.8514})
     assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.")]
 
 
@@ -133,8 +135,10 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
 def test_an_unanchored_leg_must_state_a_basis_and_a_missing_leg_is_never_defaulted() -> None:
     ancs = propose_anchors(_doc("SMPL"))
     bare = validate_legs(_legs(), ancs)
-    assert any(p.startswith("bear.revenue") and "must state its basis" in p for p in bare), bare
-    with_basis = _legs(bear={"revenue_basis": "b", "margin_basis": "EBIT", "multiple_basis": "m"})
+    assert any(p.startswith("bear.revenue") and "revenue_derivation" in p
+               for p in bare), bare
+    with_basis = _legs(bear={"revenue_derivation": "b", "margin_derivation": "d",
+                             "multiple_derivation": "m"})
     assert not [p for p in validate_legs(with_basis, ancs) if p.startswith("bear.")]
 
     dropped = _legs()
@@ -146,7 +150,7 @@ def test_an_unanchored_leg_must_state_a_basis_and_a_missing_leg_is_never_default
 def test_a_supplied_none_is_refused_with_the_reason_it_was_not_proposed() -> None:
     """ABSENT is not zero and not "use the anchor" — it is refused, and the refusal repeats why the
     cell has no proposal so the analyst is not sent to look it up."""
-    ancs = [Anchor("margin", "base", 15.0, "%", "median", "l", "s", "v")]
+    ancs = [Anchor("margin", "base", 15.0, "%", 0.15, "median", "l", "s", "v")]
     out = validate_legs(_legs(bear={"margin": None}), ancs)
     assert any(p.startswith("bear.margin is required and absent") and "judgment" in p
                for p in out), out
@@ -170,3 +174,46 @@ def test_a_dossier_record_recipe_disagreement_refuses_and_aort_is_the_live_case(
     with pytest.raises(ProposalRefusedError, match="R2_NEEDED"):
         check_tier_agreement({"anchor": {"recipe_hint": "R2_NEEDED"}},
                              "R1_midcycle_margin_evebitda")
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_margin_anchor_is_compared_in_schema_units_not_display_units() -> None:
+    """TWO UNITS, TWO FIELDS — caught in self-review of this PR. `ScenarioInput.margin` is a DECIMAL
+    FRACTION (SMPL's committed legs are 0.1 / 0.14 / 0.165) while a `RefPoint` displays a margin as
+    `15.4481` + `"%"`. A single field would compare a supplied 0.14 against 15.4481 and report a
+    99% deviation on a leg that matches its anchor EXACTLY — display formatting made load-bearing,
+    which is the rule this repo already has."""
+    m = next(a for a in propose_anchors(_doc("SMPL")) if a.axis == "margin")
+    assert m.unit == "%" and abs(m.value - 15.4481) < 1e-4, m       # display
+    assert abs(m.schema_value - 0.154481) < 1e-6, m                  # what a leg is compared to
+    assert m.as_refpoint().value == m.value
+
+    ancs = [m]
+    at_anchor = _legs(base={"margin": m.schema_value})               # schema units == no deviation
+    assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.margin")]
+    display_units = _legs(base={"margin": m.value})                  # 15.4481 IS a real deviation
+    assert [p for p in validate_legs(display_units, ancs) if p.startswith("base.margin")]
+
+
+def test_a_zero_anchor_does_not_silently_accept_everything() -> None:
+    """The relative-drift fallback used to read `0.0` for a zero anchor, so ANY supplied value
+    passed. A zero anchor is pathological, and silently accepting is the wrong failure."""
+    ancs = [Anchor("margin", "base", 0.0, "%", 0.0, "median", "l", "s", "v")]
+    assert [p for p in validate_legs(_legs(base={"margin": 9.9}), ancs)
+            if p.startswith("base.margin")]
+    assert not [p for p in validate_legs(_legs(base={"margin": 0.0}), ancs)
+                if p.startswith("base.margin")]
+
+
+def test_applicable_false_is_a_disagreement_and_vitl_is_the_second_live_case() -> None:
+    """VITL, MISSED BY THE FIRST CUT. It carries `recipe_hint: R1_midcycle_margin_evebitda` with
+    `applicable: False` — the dossier declining that recipe for this name (EBITDA dispersion 263.7%,
+    so it routes two-ratio). Checking only the hint STRING waved it through."""
+    if (DOSS / "VITL").is_dir():
+        vitl = _doc("VITL")
+        assert (vitl.get("anchor") or {}).get("applicable") is False, (
+            "VITL is no longer applicable=False — re-check this live case")
+        with pytest.raises(ProposalRefusedError, match="applicable=False"):
+            check_tier_agreement(vitl, "R1_midcycle_margin_evebitda")
+    check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda",
+                                     "applicable": True}}, "R1_midcycle_margin_evebitda")

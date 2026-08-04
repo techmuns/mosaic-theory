@@ -12530,7 +12530,20 @@ absence of which is why SMPL's five references could not be dated); **refusal on
 recipe disagreement — AORT is live on day one** (hint `R1_midcycle…` `applicable: True` against a
 record that is R2); **refuse-never-default on a missing leg**; and every refusal repeats WHY the cell
 had no proposal rather than only that it is absent.
-**4/4 mutations CAUGHT** — deviation-without-reason accepted, basis no longer required, missing leg
+**FOUR DEFECTS IN MY OWN MODULE, CAUGHT IN SELF-REVIEW OF #333 (no reviewer comments; the audit found them):**
+(1) **UNIT MISMATCH — the worst of them.** `ScenarioInput.margin` is a DECIMAL FRACTION (SMPL's legs
+are 0.1/0.14/0.165) while a `RefPoint` displays a margin as `15.4481` + `"%"`. The first cut carried
+ONE value, so a supplied 0.14 was compared against 15.4481 — a 99% deviation reported on a leg that
+matches its anchor EXACTLY. `Anchor` now carries `value`/`unit` for display AND `schema_value` for
+comparison. **Display formatting made load-bearing, which is a rule this repo already has.**
+(2) **`anchor.applicable` was never read, and VITL is a SECOND live case beside AORT** — hint
+`R1_midcycle_margin_evebitda` with `applicable: False` (EBITDA dispersion 263.7% → routes two-ratio).
+Checking only the hint STRING waved through a record on a recipe the dossier had declined.
+(3) **`{axis}_basis` collided with `ScenarioInput.margin_basis`** (EBIT|EBITDA — WHICH LINE, not
+where the number came from), so `"EBIT"` would have satisfied a provenance requirement it does not
+answer. Renamed `{axis}_derivation`. One name, two meanings — the recurring class.
+(4) **A zero anchor made the relative-drift fallback read 0.0**, silently accepting any value.
+**7/7 mutations CAUGHT** — deviation-without-reason accepted, basis no longer required, missing leg
 skipped, and margin-bear acquiring a min default.
 **A NEW RECORD IS A GENUINELY NEW OBJECT, not an append:** `write_record` writes
 `scenarios/<TICKER>.json` and the append-only path is `refresh_log`; supersession (archive-and-reissue

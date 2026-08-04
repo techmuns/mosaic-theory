@@ -88,8 +88,14 @@ class Anchor:
 
     axis: str
     leg: str
+    #: DISPLAY units — what the `RefPoint` renders (`15.4481` + `"%"`), per REF_UNITS.
     value: float
     unit: str
+    #: SCHEMA units — what `ScenarioInput` actually stores, and the ONLY value compared against a
+    #: supplied leg. `margin` is a DECIMAL FRACTION there (0.14) while it displays as 14.0%, so a
+    #: single field would compare 0.14 against 15.4481 and report a 99% deviation on a leg that
+    #: matches its anchor exactly. Two units, two fields — the display form is never load-bearing.
+    schema_value: float
     role: str
     label: str
     source: str
@@ -123,7 +129,8 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
     row = next((r for r in rows if str(r.get("fy")) == str(fy)), None)
     if row and isinstance(row.get("median"), (int, float)):
         as_of = _get(doc, "mechanical", "ev_gap", "vintages", "consensus_as_of") or f"FY{fy}"
-        out.append(Anchor("revenue", "base", float(row["median"]), "$M", "consensus",
+        out.append(Anchor("revenue", "base", float(row["median"]), "$M",
+                          float(row["median"]), "consensus",
                           f"consensus FY{fy} revenue median",
                           f"CIQ Estimates→consensus_levels Revenue FY{fy} "
                           f"(median of {row.get('estimates')} estimates)", str(as_of)))
@@ -131,7 +138,8 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
     # margin base — `anchor.margin`, the ONE candidate that asserts its own basis in a field.
     mg = _get(doc, "anchor", "margin")
     if isinstance(mg, dict) and isinstance(mg.get("value"), (int, float)):
-        out.append(Anchor("margin", "base", round(float(mg["value"]) * 100, 4), "%", "median",
+        out.append(Anchor("margin", "base", round(float(mg["value"]) * 100, 4), "%",
+                          float(mg["value"]), "median",
                           f"operating-margin median over {mg.get('anchor_years')} FY",
                           str(mg.get("source")), f"{mg.get('anchor_years')} FY through the "
                           "latest reported fiscal year"))
@@ -140,7 +148,8 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
     # though it sits in the same object: see UNPROPOSED_REASON.
     oh = (_get(doc, "mechanical", "valuation", "own_history", "value") or [None])[0]
     if isinstance(oh, dict) and isinstance(oh.get("median"), (int, float)):
-        out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x", "median",
+        out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x",
+                          float(oh["median"]), "median",
                           f"{oh.get('metric')} trailing median",
                           f"valuation.own_history {oh.get('metric')} "
                           f"({oh.get('n_closes')} closes, {oh.get('source_file')})",
@@ -156,7 +165,17 @@ def check_tier_agreement(doc: dict[str, Any], recipe_id: str) -> None:
     disagreement that nobody is told about is how a record acquires the wrong arithmetic silently,
     so the write stops and the human resolves it.
     """
+    # `applicable: False` IS a disagreement, and missing it left a second live case unguarded.
+    # VITL carries `recipe_hint: R1_midcycle_margin_evebitda` with `applicable: False` — the
+    # dossier saying this recipe does NOT apply to this name (its EBITDA dispersion is 263.7%, so
+    # the margin ratio is suppressed and it routes two-ratio). Checking only the hint STRING would
+    # wave an R1 record through on a name the dossier has already declined to underwrite that way.
     hint = _get(doc, "anchor", "recipe_hint")
+    if _get(doc, "anchor", "applicable") is False and hint and hint != "R2_NEEDED":
+        raise ProposalRefusedError(
+            f"{doc.get('ticker')}: the dossier carries recipe hint {hint!r} but marks it "
+            "applicable=False — writing a record on a recipe the dossier says does not apply is "
+            "the disagreement this guard exists for. Resolve it before writing.")
     if not hint or hint in ("unknown", "R2_NEEDED"):
         if hint == "R2_NEEDED" and not recipe_id.startswith("R2"):
             raise ProposalRefusedError(
@@ -195,18 +214,26 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) ->
             a = by.get((axis, leg))
             if a is None:
                 # unanchored/contaminable: the number stands on a stated BASIS instead
-                if not str(s.get(f"{axis}_basis") or "").strip():
+                # `{axis}_derivation`, NOT `{axis}_basis`: `ScenarioInput.margin_basis` already
+                # exists and means WHICH EARNINGS LINE (EBIT|EBITDA), not where the number came
+                # from. Reusing that name would let "EBIT" satisfy a provenance requirement it
+                # does not answer — one name, two meanings, which is the defect class this repo
+                # keeps paying for.
+                if not str(s.get(f"{axis}_derivation") or "").strip():
                     problems.append(
-                        f"{leg}.{axis} has no anchor, so it must state its basis "
-                        f"({axis}_basis) — a number with neither an anchor nor a basis cannot "
-                        "be reviewed")
+                        f"{leg}.{axis} has no anchor, so it must state where it came from "
+                        f"({axis}_derivation) — a number with neither an anchor nor a stated "
+                        "derivation cannot be reviewed")
                 continue
             # anchored: equal to the anchor, or an explicit adjustment with its reason
+            # COMPARED IN SCHEMA UNITS. `a.value`/`a.unit` are the display pair; comparing a
+            # supplied 0.14 against a displayed 15.4481 would flag every matching margin leg.
             val = float(s[axis])
-            drift = abs(val - a.value) / abs(a.value) if a.value else 0.0
+            ref = a.schema_value
+            drift = abs(val - ref) / abs(ref) if ref else (0.0 if val == ref else float("inf"))
             if drift > DEVIATION_TOL and not str(s.get(f"{axis}_adjustment") or "").strip():
                 problems.append(
                     f"{leg}.{axis} = {val:g} deviates from its anchor {a.value:g}{a.unit} by "
-                    f"{val - a.value:+g} and states no reason — set {axis}_adjustment. "
+                    f"{val - ref:+g} and states no reason — set {axis}_adjustment. "
                     "(This is the §D defect: an averaged number whose derivation is unstated.)")
     return problems
