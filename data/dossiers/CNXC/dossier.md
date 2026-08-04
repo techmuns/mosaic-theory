@@ -11,7 +11,7 @@ Concentrix Corporation designs, builds, and runs integrated customer experience 
 **Mixed** — a self-funding, guidance-meeting, near-floor-multiple business against a goodwill-impaired, 4.1x-levered, hard-de-rating consensus with an earned peer discount.
 - **Segments:** Software & Programming — single segment [1]
 - **Geography:** Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3% [2]
-- **Snapshot:** Nasdaq · CMP $25.41 (2026-07-28) · cap $1.6B (2026-07-06) · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $44.38 [3]
+- **Snapshot:** Nasdaq · CMP $25.41 (2026-07-28) · cap $1.6B · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $44.38 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the accretive-mix shift toward AI/complex work real enough to re-accelerate revenue and margin fast enough to de-lever the $5.2B debt stack before it becomes the dominant fact — or is the goodwill impairment plus earned peer-discount telling the truer story of structural erosion?**

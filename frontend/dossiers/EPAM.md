@@ -17,7 +17,7 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 **Mixed** — a still-growing, net-cash franchise de-rated to trough multiples, but one-sided negative revisions and management-flagged demand softness keep the terminal case live.
 - **Segments:** Americas 58%; Europe 42% [1]
 - **Geography:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
-- **Snapshot:** NYSE · CMP $100.40 (2026-07-28) · cap $5.2B (2026-07-27) · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
+- **Snapshot:** NYSE · CMP $100.40 (2026-07-28) · cap $5.2B · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the sharp de-rating an overshoot on a still-growing, net-cash franchise (mean-revert), or an earned repricing to a permanently lower-growth, lower-margin AI-disrupted services model (value trap)?**

@@ -10,7 +10,7 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Segments:** Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [1]
 - **Geography:** United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [2]
 - **Customer concentration:** top customer 15% (from 15%) of revenue [3]
-- **Snapshot:** Nasdaq · CMP $4.18 (2026-07-28) · cap $635M (2026-07-13) · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
+- **Snapshot:** Nasdaq · CMP $4.18 (2026-07-28) · cap $635M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Is the Avis termination a one-time revenue hole that a growing Government Solutions book plus cost cuts can grow through (overshoot), or the first crack in a broader Commercial Services / contract-pricing erosion that permanently resets earnings power lower (value trap)?**

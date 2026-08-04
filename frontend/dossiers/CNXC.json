@@ -3660,7 +3660,8 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-28"
+      "as_of": "2026-07-28",
+      "market_cap_as_of": null
     },
     "stock_performance": {
       "points": [
