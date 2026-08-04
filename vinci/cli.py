@@ -1019,6 +1019,110 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     return 0
 
 
+def _dossier_doc(ticker: str) -> dict[str, object]:
+    path = get_config().data_dir / "dossiers" / ticker.upper() / "dossier.json"
+    if not path.exists():
+        raise FileNotFoundError(f"no committed dossier for {ticker.upper()} — assemble it first")
+    return json.loads(path.read_text())  # type: ignore[no-any-return]
+
+
+def _cmd_scenario_propose(args: argparse.Namespace) -> int:
+    """Emit the underwrite template — anchors pre-filled, refusals carrying their evidence.
+
+    A FILE rather than a prompt flow, because a reviewable, diffable artifact is what a handful of
+    underwrites a quarter needs. This command NEVER writes a record; it writes a draft the analyst
+    fills in and `scenario-create` validates."""
+    from vinci.dossier.propose import ProposalRefusedError, build_template
+
+    t = args.ticker.upper()
+    try:
+        doc = _dossier_doc(t)
+        tpl = build_template(doc)
+    except (FileNotFoundError, ProposalRefusedError) as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+    out = Path(args.out) if args.out else Path(f"{t}-underwrite.json")
+    out.write_text(json.dumps(tpl, indent=2, ensure_ascii=False) + "\n")
+    scen: dict[str, Any] = tpl["scenarios"]
+    filled = sum(1 for c in scen.values()
+                 for a in ("revenue", "margin", "multiple") if c.get(a) is not None)
+    print(f"=== scenario-propose {t} -> {out} ===")
+    print(f"  {filled} of 9 pre-filled from computed anchors; {9 - filled} required from you")
+    print(f"  recipe: {tpl['recipe_id']}   spot: {tpl['spot']}")
+    print("  every empty cell states why it has no anchor; `_evidence` carries the dossier's own "
+          "frame for each axis")
+    return 0
+
+
+def _cmd_scenario_create(args: argparse.Namespace) -> int:
+    """Validate a filled template and WRITE the record — the create path that did not exist.
+
+    `validate_legs` -> `run_recipe` -> `write_record`. Every guard already pinned applies: an
+    anchored cell moved without a stated adjustment is refused, an unanchored cell with no stated
+    derivation is refused, a missing leg is refused rather than defaulted, and a dossier/record
+    recipe disagreement stops the write."""
+    import vinci.scenarios as sc
+    from vinci.dossier.propose import (
+        ProposalRefusedError,
+        check_tier_agreement,
+        legs_from_template,
+        propose_anchors,
+        validate_legs,
+    )
+
+    t = args.ticker.upper()
+    src = Path(args.from_file)
+    if not src.exists():
+        print(f"no template at {src}")
+        return 1
+    tpl = json.loads(src.read_text())
+    if str(tpl.get("ticker", "")).upper() != t:
+        print(f"REFUSED: template is for {tpl.get('ticker')!r}, not {t}")
+        return 1
+    try:
+        doc = _dossier_doc(t)
+        check_tier_agreement(doc, str(tpl.get("recipe_id") or ""))
+    except (FileNotFoundError, ProposalRefusedError) as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+
+    problems = validate_legs(legs_from_template(tpl), propose_anchors(doc))
+    if problems:
+        print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
+        for p in problems:
+            print(f"  - {p}")
+        return 1
+
+    legs = legs_from_template(tpl)
+    try:
+        rec = sc.ScenarioRecord(
+            ticker=t, recipe_id=str(tpl["recipe_id"]), recipe_desc=str(tpl.get("recipe_desc") or
+                                                                       tpl["recipe_id"]),
+            multiple_basis=str(tpl["multiple_basis"]),
+            underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
+            spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
+            facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
+            scenarios={leg: sc.ScenarioInput(
+                revenue=float(c["revenue"]), margin=float(c["margin"]),
+                multiple=float(c["multiple"]), reason=str(c.get("reason") or ""),
+                bear_basis=(c.get("bear_basis") or None),
+                margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
+        )
+        rec = sc.run_recipe(rec)
+        path = sc.write_record(rec)
+    except (ValueError, KeyError, TypeError) as exc:
+        print(f"REFUSED: {type(exc).__name__}: {exc}")
+        return 1
+    print(f"=== scenario-create {t} -> {path} ===")
+    r = rec.result
+    for leg in ("bear", "base", "bull"):
+        o = r.per_scenario.get(leg)
+        if o:
+            print(f"  {leg:5} value/share ${o.value_per_share:,.2f}")
+    print(f"  reward {r.reward} · risk {r.risk} · ratio {r.ratio} · bar {r.bar} -> {r.pass_fail}")
+    return 0
+
+
 def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
     """THE path for changing a record's MACHINE inputs (record legibility, 2026-07-27).
 
@@ -2719,6 +2823,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_sr.add_argument("--dry-run", action="store_true", dest="dry_run",
                       help="print what would change and write nothing")
     p_sr.set_defaults(func=_cmd_scenario_refresh)
+
+    p_sp = sub.add_parser(
+        "scenario-propose",
+        help="emit an underwrite template: 3 anchors pre-filled, 6 refused with their evidence")
+    p_sp.add_argument("ticker")
+    p_sp.add_argument("--out", help="output path (default <TICKER>-underwrite.json)")
+    p_sp.set_defaults(func=_cmd_scenario_propose)
+
+    p_sc = sub.add_parser(
+        "scenario-create",
+        help="validate a filled template and write the record (validate -> run_recipe -> write)")
+    p_sc.add_argument("ticker")
+    p_sc.add_argument("--from", dest="from_file", required=True, help="the filled template")
+    p_sc.set_defaults(func=_cmd_scenario_create)
+
 
     p_ss = sub.add_parser(
         "scenario-supersede",

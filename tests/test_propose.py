@@ -217,3 +217,74 @@ def test_applicable_false_is_a_disagreement_and_vitl_is_the_second_live_case() -
             check_tier_agreement(vitl, "R1_midcycle_margin_evebitda")
     check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda",
                                      "applicable": True}}, "R1_midcycle_margin_evebitda")
+
+
+# --- the template + the create path --------------------------------------------------------------
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_template_prefills_three_and_leaves_six_empty_with_their_reasons() -> None:
+    from vinci.dossier.propose import build_template, legs_from_template
+    tpl = build_template(_doc("BRBR"))
+    legs = legs_from_template(tpl)
+    filled = [(lg, ax) for lg in LEGS for ax in AXES if legs[lg][ax] is not None]
+    assert sorted(filled) == sorted((lg, ax) for ax, lg in ANCHORED), filled
+    for ax, lg in ANCHORED:
+        assert tpl["scenarios"][lg][f"_{ax}_anchor"].strip(), (ax, lg)
+    for lg in LEGS:
+        for ax in AXES:
+            if (ax, lg) not in set(ANCHORED):
+                assert tpl["scenarios"][lg][f"_{ax}_why_no_anchor"] == UNPROPOSED_REASON[(ax, lg)]
+    # commentary is stripped before validation, so a '_' key can never be read as an input
+    assert not any(k.startswith("_") for cell in legs.values() for k in cell)
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_template_carries_the_peer_row_beside_the_own_history_band() -> None:
+    """THE MISTAKE THIS BLOCK EXISTS TO PREVENT (operator, working BellRing by hand): anchoring on
+    own history, taking a haircut, calling it conservative — while the name trades at a PREMIUM to
+    the peer median. BRBR is the live case: LTM TEV/EBITDA 8.8 against a peer median of 6.9."""
+    from vinci.dossier.propose import build_template
+    mult = build_template(_doc("BRBR"))["_evidence"]["multiple"]
+    assert any("own history" in x for x in mult)
+    peer = next(x for x in mult if "PEER CROSS-SECTION" in x)
+    assert "TEV/EBITDA" in peer and "NTM TEV/EBITDA" in peer, peer
+    assert "Median" in peer and "Low" in peer and "High" in peer, peer
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_own_history_line_names_a_rank_not_a_percentile_level() -> None:
+    """`own_history.percentile` is WHERE CURRENT SITS (BRBR: 0.037 → 3.7th), not a 25th-percentile
+    LEVEL. The first cut printed it as `p25`, putting a 0.037 rank where a multiple belongs."""
+    from vinci.dossier.propose import build_template
+    line = build_template(_doc("BRBR"))["_evidence"]["multiple"][0]
+    assert "pctile of its own range" in line and "p25 0.03" not in line, line
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_no_evidence_line_is_empty() -> None:
+    """`startswith("revenue")` also matched "Revenue YoY" and emitted a blank arc — evidence nobody
+    can read is noise in a block whose only purpose is to be read."""
+    from vinci.dossier.propose import build_template
+    for axis, lines in build_template(_doc("BRBR"))["_evidence"].items():
+        for line in lines:
+            assert line.strip() and not line.rstrip().endswith(":"), (axis, line)
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() -> None:
+    """ITEM 24: the denominator is diluted outstanding AT THE VALUATION DATE, and NEITHER dossier
+    field is that — one is diluted-but-averaged, the other at-a-date-but-basic. The create path
+    takes the point-in-time count, SAYS what it is and is not, and refuses a structural gap."""
+    from vinci.dossier.propose import SHARE_DISAGREEMENT_TOL, resolve_shares
+    val, basis, source = resolve_shares(_doc("BRBR"))
+    assert abs(val - 116.27785) < 1e-5, val          # MILLIONS, the ScenarioRecord.facts unit
+    assert "point-in-time" in basis and "BASIC" in basis and "do not assume it" in basis
+    assert "117,500,000" in basis and "1.05%" in basis, basis
+
+    far = {"ticker": "X", "mechanical": {"stock_info": {"shares_out": {"value": 100e6}}},
+           "anchor": {"diluted_shares": {"value": 100e6 * (1 + SHARE_DISAGREEMENT_TOL + 0.01)}}}
+    with pytest.raises(ProposalRefusedError, match="disagree"):
+        resolve_shares(far)
+    with pytest.raises(ProposalRefusedError, match="absent or non-positive"):
+        resolve_shares({"ticker": "X", "mechanical": {"stock_info": {"shares_out": {"value": 0}}}})
