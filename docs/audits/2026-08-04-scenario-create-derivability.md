@@ -1,9 +1,9 @@
 # `scenario-create` — what a proposer can default, and what it cannot
 
-**Step 1 report. STEP 2 NOT BUILT — the stop condition fired.** Three of the nine numbers have no
-defensible default, and the operator's rule is explicit: *a proposer that invents a number is worse
-than a form.* Which three, and the measured evidence that the plausible-looking substitute is wrong,
-are below.
+**Step 1 report. STEP 2 NOT BUILT — the stop condition fired.** **Only four of the nine numbers have
+a safe default; two more are computable but contaminable; three have none at all.** The operator's
+rule is explicit: *a proposer that invents a number is worse than a form.* The measured evidence —
+including the case where a plausible-looking substitute is wrong by 14% — is below.
 
 **The rider ran first because it could have stopped everything. It did not — see §3.**
 
@@ -23,14 +23,39 @@ three already sit in every dossier.
 | bear · revenue | **1,180.0** | — | **none** | **—** |
 | base · revenue | 1,330.0 | 1,351.7 | `consensus_levels.Revenue` FY2026 median | **−1.6%** |
 | bull · revenue | **1,420.0** | — | **none** | **—** |
-| bear · margin | 10.00% | **9.5788%** | min of the EDGAR per-FY operating-margin series (FY2020) | +0.42pp |
+| bear · margin | 10.00% | 9.5788% ⚠ | raw min of the EDGAR per-FY series (FY2020) — **contaminable, see below** | +0.42pp |
 | base · margin | 14.00% | **15.4481%** | `anchor.margin.value` — median over 8 FY | **−1.45pp** |
-| bull · margin | 16.50% | **17.3494%** | max of the same series (FY2022) | −0.85pp |
+| bull · margin | 16.50% | 17.3494% ⚠ | raw max of the same series (FY2022) — **contaminable** | −0.85pp |
 | bear · multiple | 7.00x | **6.1094x** | `own_history.low` — trading-range low | +0.89x |
 | base · multiple | 12.50x | **17.8514x** | `own_history.median` — trailing median | **−5.35x** |
 | bull · multiple | **16.00x** | — | **none established** | **—** |
 
-**Six of nine have a defensible, source-bound default. Three do not.**
+**FOUR of nine have a SAFE default** (revenue base, margin base, multiple bear, multiple base).
+**TWO are computable but CONTAMINABLE** (margin bear, margin bull). **THREE have no default at all**
+(revenue bear, revenue bull, multiple bull).
+
+### The margin min/max are not safe defaults, and SMPL's next re-underwrite proves it
+
+*(Found in self-review of this PR; the first cut counted six.)* The record's bear and bull margins are
+labelled **"worst / best CLEAN year"**, and today the raw min and max happen to equal them
+(9.579 ≡ 9.58, 17.349 ≡ 17.35). **That coincidence is luck, not robustness.**
+
+The same record's FY2025 reference is **15.0103% against a raw 10.8129% — a +4.1974pp adjustment.**
+So the series demonstrably contains years where raw ≠ clean; FY2020's raw simply happens to sit below
+FY2025's contaminated raw, so the min lands on the right year anyway.
+
+**SMPL's FY2026 carries the −$391.9M writedown.** Adding a single such year to the series:
+
+| statistic | today | with one writedown year | move |
+|---|---:|---:|---:|
+| **min** | 9.579% | **−17.050%** | **−26.63pp** |
+| median | 15.4480% | 15.3850% | **−0.063pp** |
+| max | 17.349% | 17.349% | 0.00pp |
+
+**A raw-min default would propose a NEGATIVE bear margin on the very next re-underwrite.** The median
+absorbs one bad year; **the min and max ARE the statistic a one-off defines.** Cleaning the series is
+judgment — the record made that judgment for FY2025 and did not need it for FY2020 — so a proposer
+defaulting to raw min/max would be labelling an unadjusted extreme as "clean".
 
 **R2** differs only in what the numbers mean — terminal-year revenue, terminal EBIT margin, exit
 multiple, plus a per-leg `years_to_terminal` and a `tier`. **The derivability picture is the same or
@@ -118,17 +143,20 @@ Recorded in STATE as a live item now that BRBR is on the critical path.
 
 Not built, per the stop condition. Stating the shape so the decision is a decision:
 
-- **Six axes default** to their computed anchor with `source_ref` carried through; any deviation is
+- **Four axes default** to their computed anchor with `source_ref` carried through; any deviation is
   an explicit adjustment carrying its reason, and a deviation without a reason is **refused**. That
   makes §D structurally impossible — 14% can only be written as *anchor 15.4481%, −1.45pp, reason
   stated*.
 - **Three cells (revenue bear, revenue bull, multiple bull) are REQUIRED INPUTS with no proposal.**
   The writer refuses without them rather than defaulting.
+- **Two cells (margin bear, margin bull) could be proposed ONLY behind a cleanliness test** — a raw
+  min/max is safe only while no year in the window carries a one-off, which SMPL's FY2026 breaks.
+  Proposing them unguarded is the failure mode this whole design exists to prevent.
 - Also enforced, as briefed: `RefPoint.vintage` inherited on every emitted reference (which is what
   would have prevented this rider from being necessary); the recipe tier checked against the dossier
   hint with a **refusal on disagreement** — AORT already disagrees, so that guard has a live case on
   day one; and **refuse, never default, on a missing leg**.
 
-**A 6-of-9 proposer does not invent anything** — it defaults what is derivable and refuses what is
+**A 4-of-9 proposer does not invent anything** — it defaults what is derivable and refuses what is
 not. Whether that clears the bar set by *"a proposer that invents a number is worse than a form"* is
 the operator's call, not mine, which is why this stops here.

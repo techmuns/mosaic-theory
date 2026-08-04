@@ -12496,11 +12496,20 @@ REPORT ONLY; no assembly, no build, no name recommended.**
 has NO writer** — `scenario-refresh`/`scenario-supersede` both need an existing record, `write_record()`
 has zero callers, every record was hand-authored — so the one place analyst judgment enters bypasses
 every guard.
-**SIX OF THE NINE NUMBERS HAVE A DEFENSIBLE, SOURCE-BOUND DEFAULT; THREE DO NOT.** Defaultable:
-**margin × 3** (min / median / max of the EDGAR per-FY operating-margin series), **multiple bear**
-(`own_history.low`) and **multiple base** (`own_history.median`), **revenue base**
-(`consensus_levels` median at the anchor FY). **NOT defaultable: revenue BEAR, revenue BULL,
-multiple BULL.**
+**FOUR OF THE NINE HAVE A SAFE DEFAULT; TWO ARE COMPUTABLE BUT CONTAMINABLE; THREE HAVE NONE.**
+SAFE: **revenue base** (`consensus_levels` median at the anchor FY), **margin base**
+(`anchor.margin.value`, 8-FY median), **multiple bear** (`own_history.low`), **multiple base**
+(`own_history.median`). **NO DEFAULT AT ALL: revenue BEAR, revenue BULL, multiple BULL.**
+**CONTAMINABLE — margin BEAR and BULL, and I counted them safe in the first cut; caught in my own
+review of #332.** The record labels them *"worst / best CLEAN year"* and today the RAW min/max happen
+to equal them (9.579≡9.58, 17.349≡17.35) — **luck, not robustness.** The same record's FY2025
+reference is **15.0103% against a raw 10.8129%, a +4.1974pp adjustment**, so the series demonstrably
+contains years where raw ≠ clean; FY2020 simply sits below FY2025's contaminated raw. **SMPL's FY2026
+carries the −$391.9M writedown**, and adding one such year moves **min −26.63pp (9.579% → −17.050%)
+while the median moves −0.063pp**. **A raw-min default would propose a NEGATIVE bear margin on the
+very next re-underwrite.** The median absorbs one bad year; **min/max ARE the statistic a one-off
+defines.** Cleaning is judgment, so an unguarded min/max default would label an unadjusted extreme
+"clean". They could be proposed only behind a cleanliness test.
 **AND THE OBVIOUS SUBSTITUTE IS MEASURABLY WRONG, which is why this stops rather than improvises.**
 `consensus_levels` carries low/median/high, so a low/high default LOOKS available. SMPL's FY2026
 consensus range is **1,345.0–1,357.0 — 0.9% wide** — against a committed bear of **1,180.0**.
@@ -12511,7 +12520,7 @@ modelling one guidance agree within 1%; a bear models a world none of them forec
 one for the other would understate risk on every name, in the direction that flatters. For the bull
 multiple, SMPL chose **16.00x — BELOW its own trailing median of 17.85x** — so neither `p75` nor
 `high` reflects the practice and no principled anchor exists.
-**A 6-of-9 PROPOSER (defaults six, REFUSES on three) invents nothing and is buildable** — shape
+**A 4-of-9 PROPOSER (defaults four, REFUSES on three, gates the two contaminable ones) invents nothing and is buildable** — shape
 recorded in §4 of the render, including `RefPoint.vintage` inheritance, the tier check refusing on a
 dossier/record disagreement (AORT is a live case day one), and refuse-never-default on a missing leg.
 **Whether that clears "a proposer that invents a number is worse than a form" is the operator's call.**
