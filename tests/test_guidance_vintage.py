@@ -36,13 +36,14 @@ def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
     """THE ORIGINAL DEFECT, pinned on the name it happened to. April's guide must still appear —
     dropping it would lose the cut sequence — and must be marked superseded by July's."""
     lines = _digest("SMPL").splitlines()
-    cur = [i for i, x in enumerate(lines) if x.startswith("--- CURRENT GUIDE (filed 2026-07-09)")]
-    sup = [i for i, x in enumerate(lines) if x.startswith("--- SUPERSEDED (filed 2026-04-09")]
+    cur = [x for x in lines if "[CURRENT GUIDE, filed 2026-07-09]" in x]
+    sup = [x for x in lines if "[SUPERSEDED — filed 2026-04-09" in x]
     assert cur and sup, lines[:12]
+    assert all(x.startswith("guidance ") for x in cur + sup), "a mark landed off a guidance line"
     blob = "\n".join(lines)
     assert "1345.0–1355.0" in blob and "1310.0–1350.0" in blob, "a guide was DROPPED, not marked"
     assert "replaced by the guide filed 2026-07-09" in blob
-    assert "NOT the company's current outlook" in blob
+    assert "history, not the current outlook" in blob
 
 
 def test_exactly_one_current_marker_per_name_and_the_rest_superseded() -> None:
@@ -58,17 +59,21 @@ def test_exactly_one_current_marker_per_name_and_the_rest_superseded() -> None:
         if ps is None or not any(r.guidance for r in ps.releases):
             continue
         lines = _digest(t).splitlines()
-        cur = [x for x in lines if x.startswith("--- CURRENT GUIDE")]
+        cur = [x for x in lines if "[CURRENT GUIDE," in x]
         dated = [r.filed for r in ps.releases if r.guidance and r.filed]
         # every guidance release undated -> none may claim current
         if not dated:
             assert not cur, f"{t}: a CURRENT marker on undated releases — {cur}"
             assert any("VINTAGE UNDATED" in x for x in lines), t
             continue
-        assert len(cur) <= 1, f"{t}: {len(cur)} CURRENT markers — {cur}"
+        # ONE CURRENT VINTAGE, not one current LINE: the mark is per guidance ITEM, so a release
+        # stating four metrics yields four CURRENT marks and that is correct. What must be unique
+        # is the DATE they carry. (The first cut asserted a line count, which was only true while
+        # the mark was a per-release header — an assertion outliving the shape it described.)
         assert cur, f"{t}: guidance is dated but nothing is marked current"
-        assert str(max(dated)) in cur[0], (
-            f"{t}: current marker is not the newest filing — {cur[0]}")
+        stamps = {x.split("[CURRENT GUIDE, filed ")[1].split("]")[0] for x in cur}
+        assert stamps == {str(max(dated))}, (
+            f"{t}: current marks carry {sorted(stamps)}, newest filing is {max(dated)}")
 
 
 @pytest.mark.skipif(not (DOSS / "MVST").is_dir(), reason="no committed MVST")
@@ -77,10 +82,12 @@ def test_an_undated_release_is_labelled_not_guessed() -> None:
     neither can be ranked. Labelled UNDATED rather than assumed current or assumed stale — a guess
     either way would be the defect this file exists to close, wearing a different hat."""
     lines = _digest("MVST").splitlines()
-    assert not any(x.startswith("--- CURRENT GUIDE") for x in lines), lines[:10]
-    assert not any(x.startswith("--- SUPERSEDED") for x in lines), lines[:10]
+    assert not any("[CURRENT GUIDE," in x for x in lines), lines[:10]
+    assert not any("[SUPERSEDED" in x for x in lines), lines[:10]
     und = [x for x in lines if "VINTAGE UNDATED" in x]
-    assert und and "do not read it as current" in und[0], und
+    assert und and "do not read as current" in und[0], und
+    assert all(x.startswith("guidance ") for x in und), (
+        "the undated mark landed off a guidance line")
 
 
 def test_supersession_is_computed_over_all_releases_not_the_shown_window() -> None:
@@ -114,8 +121,32 @@ def test_supersession_is_computed_over_all_releases_not_the_shown_window() -> No
                        self_funding=_u, wall_coherence=_u, basis_triangulation=_u,
                        guide_verification=_u)
     lines = _primary_source_digest(ps).splitlines()
-    cur = [x for x in lines if x.startswith("--- CURRENT GUIDE")]
+    cur = [x for x in lines if "[CURRENT GUIDE," in x]
     assert cur == [], (
         "a release inside the shown window was marked CURRENT while a NEWER guide sits outside it "
         f"— supersession is being computed over the window, not all releases: {cur}")
-    assert all("2026-01-05" in x for x in lines if x.startswith("--- SUPERSEDED")), lines
+    assert all("2026-01-05" in x for x in lines if "[SUPERSEDED" in x), lines
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
+    """THE DEFECT THE FIRST CUT SHIPPED, now pinned. The mark began life as a section header —
+    `--- SUPERSEDED … history, NOT the company's current outlook ---` — which visually scoped over
+    EVERYTHING beneath it. On SMPL that was April's guidance (correct) plus the Q2, Q1 and FY2025
+    REPORTED ACTUALS and the $60.9M Atkins impairment: facts, none of them superseded, and the
+    impairment is the very figure 19c FORCES the synthesis to cite. It also bled into the next
+    guidance-less release, which emits no header of its own.
+
+    A per-line mark has no scope to creep and nothing to bleed into. Reconciliations, one-offs and
+    event impacts must carry NO vintage mark at all."""
+    marks = ("[CURRENT GUIDE,", "[SUPERSEDED", "VINTAGE UNDATED")
+    for line in _digest("SMPL").splitlines():
+        if any(m in line for m in marks):
+            assert line.startswith("guidance "), (
+                f"a vintage mark landed on a non-guidance line — a reported actual is not "
+                f"superseded: {line[:130]}")
+    blob = _digest("SMPL")
+    imp = [x for x in blob.splitlines() if "60.9M" in x]
+    assert imp, "SMPL's $60.9M impairment left the digest"
+    assert not any(m in x for x in imp for m in marks), (
+        f"the impairment 19c forces the synthesis to cite is marked as stale: {imp}")

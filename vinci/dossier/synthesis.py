@@ -915,19 +915,24 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     _dated = [r.filed for r in ps.releases if r.guidance and r.filed]
     _newest = max(_dated) if _dated else None
     for r in recent:
-        if r.guidance:
-            if r.filed is None:
-                _mark = ("VINTAGE UNDATED — this release states no filing date, so it cannot "
-                         "be ordered against the others; do not read it as current")
-            elif r.filed == _newest:
-                _mark = f"CURRENT GUIDE (filed {r.filed})"
-            else:
-                _mark = (f"SUPERSEDED (filed {r.filed}; replaced by the guide filed {_newest}) — "
-                         "history, NOT the company's current outlook")
-            out.append(f"--- {_mark} ---")
+        # THE MARK GOES ON THE GUIDANCE LINE, NOT ON A BLOCK HEADER — and the first cut of this
+        # change got that wrong in a way that would have done real harm. A section header reading
+        # "SUPERSEDED … history, NOT the company's current outlook" visually scoped over
+        # EVERYTHING that followed it: on SMPL that was April's guidance (correct) AND the Q2/Q1/
+        # FY2025 REPORTED ACTUALS and the $60.9M Atkins impairment (all facts, none superseded) —
+        # including the very figure 19c forces the synthesis to cite. It also bled across the
+        # next guidance-less release, which emits no header of its own. A per-line mark has no
+        # scope to creep and nothing to bleed into.
+        if r.filed is None:
+            _v = " [VINTAGE UNDATED — no filing date; do not read as current]"
+        elif _newest is None or r.filed == _newest:
+            _v = f" [CURRENT GUIDE, filed {r.filed}]"
+        else:
+            _v = (f" [SUPERSEDED — filed {r.filed}, replaced by the guide filed {_newest}; "
+                  "this guide is history, not the current outlook]")
         for g in r.guidance:
             v = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
-            out.append(f"guidance ({g.metric} {g.period}): {v} → {g.source_ref}")
+            out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
         for rv in r.reconciliation:
             out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value} → {rv.source_ref}")
         for oo in r.one_offs:

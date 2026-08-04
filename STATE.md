@@ -12518,7 +12518,18 @@ across 2 names** (MVST 3 — `adjusted net income`/`adjusted eps`/`adjusted ebit
 appearing **three times** — and FUBO 1). `event_impacts` shows **zero** collisions today; `one_offs`
 are description-keyed and were not measured on the same key. **So the fix is bounded but not
 complete**, and the residue is recorded rather than swept in.
-3 mutations CAUGHT (marker dropped · undated assumed current · supersession keyed off the window).
+**AND THE FIRST CUT OF THIS FIX SHIPPED A WORSE DEFECT THAN THE ONE IT CLOSED — caught in review.**
+The mark began as a per-release SECTION HEADER, `--- SUPERSEDED … history, NOT the company's current
+outlook ---`, which **visually scoped over everything beneath it**. On SMPL that was April's guidance
+(correct) **plus the Q2, Q1 and FY2025 REPORTED ACTUALS and the $60.9M Atkins impairment** — facts,
+none superseded, and **the impairment is the very figure 19c FORCES the synthesis to cite.** It also
+**bled into the next guidance-less release**, which emits no header of its own. **A header telling
+the model that reported actuals are stale history is a larger error than the unordered guidance it
+replaced.** Fixed by marking the LINE, not the block: a per-line mark has no scope to creep and
+nothing to bleed into, and reconciliations, one-offs and event impacts now carry no vintage mark at
+all — pinned.
+4 mutations CAUGHT (mark dropped · undated assumed current · supersession keyed off the window ·
+the mark moved back onto a block header).
 **The third needed a SYNTHETIC pin and the reason is recorded in the test:** on today's corpus every
 name's newest guidance release already falls inside `releases[:4]`, so the corpus provably cannot
 drive that property — and nothing asserts `releases` arrives newest-first.
