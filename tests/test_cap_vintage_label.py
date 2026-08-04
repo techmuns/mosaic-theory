@@ -24,6 +24,7 @@ import datetime as dt
 import re
 from pathlib import Path
 
+import vinci.dossier.ciq as ciq
 import vinci.dossier.render as dr
 import vinci.dossier.schemas as ds
 
@@ -123,6 +124,45 @@ def test_the_string_is_rendered_from_the_structured_date_not_beside_it() -> None
         "is how the string and the field start disagreeing")
     assert "_scan_asof_header" not in code and "_sidecar_as_of" not in code, (
         "comps_as_of re-derives the date itself instead of rendering the shared derivation")
+
+
+def test_assembly_actually_writes_the_field() -> None:
+    """THE PIN THIS FILE WAS MISSING, and its absence was the dangerous kind.
+
+    Every other pin here checks an END of the chain — the extractor exposes a date, the renderers
+    read a field. NOTHING checked the step that CONNECTS them. Delete
+    `market_cap_as_of=...` from `_stock_info` and all six other pins stay green, because every
+    committed dossier carries the field as null and no e2e can tell a broken writer from a name
+    that simply has not been re-assembled yet.
+
+    That indistinguishability is the whole risk: this PR deliberately puts the entire fleet into
+    the not-yet-re-assembled state, so a silently dead writer would look exactly like the expected
+    condition — for as long as it took to notice no name ever regained its label.
+
+    Real call, minimal stubs: `cik=None` short-circuits EDGAR, an empty price history leaves the
+    EOD fields UNKNOWN, and the comps sheet carries the one thing under test — an As-Of header."""
+    import types
+
+    from vinci.dossier import mechanical as mech
+
+    p = Path("/fake/Comps.xls")
+    wb = ciq.CiqWorkbook(kind="comps", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq="annual")
+    bundle = ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: {
+        "Financial Data": [["As-Of Date:", "2026-06-25"], [], ["Ticker", "Name"]]}})
+
+    record = types.SimpleNamespace(
+        identity=types.SimpleNamespace(internal_id="X", eod_symbol="X", cik=None))
+    store = types.SimpleNamespace(get_price_history=lambda _iid: [])
+
+    si = mech._stock_info(
+        record, store, types.SimpleNamespace(), bundle,  # type: ignore[arg-type]
+        dt.date(2026, 8, 3), _P(909.4, source_ref="CIQ"), today=dt.date(2026, 8, 3))
+
+    assert si.market_cap_as_of == dt.date(2026, 6, 25), (
+        f"assembly did not carry the cap's vintage onto StockInfo (got {si.market_cap_as_of!r}) — "
+        "the extractor exposes it and both renderers read it, but the writer between them is dead, "
+        "which is indistinguishable from 'not re-assembled yet' on every committed dossier")
+    assert si.market_cap_as_of != si.as_of, "the fixture must keep the two dates distinguishable"
 
 
 def test_the_web_twin_reads_the_same_field() -> None:
