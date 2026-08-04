@@ -36,7 +36,29 @@ from vinci.graph.llm import LlmClient, LlmError
 # and EVENT (CIQ Key Developments) are ANCHORED tiers, never asked of the LLM here.
 _LLM_KINDS = frozenset({"leading_indicator", "pricing_action", "pass_through_structure",
                         "competitive_position"})
-_MAX_ROWS = 12  # depth-stage cost/space bound; the excess is flagged, never silently dropped
+# NO ROW CAP (operator ruling 2026-08-04). There WAS a `_MAX_ROWS = 12`, applied here in the loop
+# over the LLM's emitted drivers — so it selected by ARRIVAL ORDER, and it bound on EVERY name with
+# a transcript: all ten kept exactly 12 and 113 rows were dropped fleet-wide (IT 28, BRBR 17).
+#
+# THREE THINGS KILLED IT.
+# (1) It saved NOTHING. The system prompt never told the model to emit at most 12, so every dropped
+#     row was already generated and already paid for; the cap discarded a response we had bought.
+# (2) It deleted extracted facts from the layer DESIGN RULE v2 calls MACHINE-COMPLETE.
+# (3) It dropped the rows the underwrite turns on. SMPL lost EVERY brand-level consumption and
+#     penetration metric — Quest takeaway, Quest household penetration, Quest bar/chips, Atkins
+#     takeaway, Atkins penetration, OWYN both — while its kill criterion is "Quest revenue growth
+#     ≤ 0% for two consecutive quarters", its bear point cites Atkins' falling household
+#     penetration, and its bull rests on Quest carrying growth. THE PAGE CITED EVIDENCE THE CAP HAD
+#     REMOVED FROM THE ARTIFACT. BRBR lost `adjusted gross margin`, the number its own decisive
+#     question turns on.
+#
+# AND NO RELEVANCE RANKING REPLACES IT, deliberately. At extraction the decisive question does not
+# exist yet (`synthesize` runs nine lines after this call). At render it does, but no USAGE linkage
+# exists — a synthesis point's `source_ref` is a free-text source name, not a row pointer — and the
+# only alternative, text overlap, REVERSES on the choice of window: measured on BRBR, `adjusted
+# gross margin` scores NONE against the `question` string and a three-word full match against the
+# whole `decisive_question` block. A criterion whose answer flips on an unratified scoping choice is
+# a knob, not a criterion. So: keep every row, render every row, invent no score.
 
 _SYSTEM = (
     "You extract STATED operating drivers from a company's earnings-call transcript for a human "
@@ -153,9 +175,6 @@ def extract_transcript_drivers(
             continue
         if not metric or not value or not quote:
             flags.append("operating-drivers: Tier-B row dropped — missing metric/value/quote")
-            continue
-        if len(rows) >= _MAX_ROWS:
-            flags.append(f"operating-drivers: Tier-B rows capped at {_MAX_ROWS} — {metric} dropped")
             continue
         quote_norm = _norm(quote)
         if quote_norm not in slice_norm:  # UPGRADE (i): a paraphrased/fabricated quote → drop

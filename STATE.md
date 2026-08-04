@@ -12491,6 +12491,48 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**THE TIER-B ROW CAP IS REMOVED (2026-08-04 ruling). EVERY EXTRACTED ROW NOW STAYS.**
+No relevance ranking replaces it — none is derivable, at either stage, and inventing one was
+forbidden. Takes effect **on the next assembly**: committed dossiers keep their capped rows until
+re-assembled, so the fleet counts below are the state that clears.
+**THE TWO PRE-CHANGE CHECKS, both measured before touching anything:**
+**(a) THE BRIEF READS THE ROWS — TWICE.** They appear in the full `mech` dump (`facts` JSON,
+155k–248k chars) **and** in a dedicated `_operating_drivers_digest` (2.9k–6.3k chars), which the
+system prompt tells the model to GROUND every operating bull/bear point in. So the cap was starving
+the synthesis, not only the page. Today the brief gets **16–30 rows** per name.
+**(b) THE BRIEF IS NOT BOUNDED, so removing one cap triggers no other.** The digest iterates ALL
+rows with only a 130-char per-VALUE truncation; the assembled `user` string has no cap and goes
+straight to `llm.extract`. **Nothing downstream absorbs the change** — the failure I was told to
+check for is absent.
+**AND THE DELTA IS A ROUNDING ERROR.** Worst case is IT: **+4,592 chars on a 227,125-char facts
+block, +2.0%.** Fleet average ~2.5k added chars. The cap was never buying anything measurable.
+**SMPL IS THE STRONGEST CASE AND IS RECORDED AS SUCH:** its twelve dropped rows are EVERY
+brand-level consumption and penetration metric — Quest retail takeaway, Quest household penetration,
+Quest bar and chips consumption, Atkins retail takeaway, Atkins household penetration, OWYN both —
+while **its kill criterion is stated on Quest revenue growth**, **its bear point cites Atkins'
+falling household penetration**, and **its bull rests on Quest carrying growth**. **THE PAGE CITED
+EVIDENCE THE CAP HAD REMOVED FROM THE ARTIFACT.** BRBR's case is the same shape one row wide:
+`adjusted gross margin`, the number its own decisive question turns on.
+**Fleet state that clears on re-assembly: 113 rows — IT 28, BRBR 17, VRRM 15, AORT 14, SMPL 12,
+CNXC 9, FUBO 8, VITL 5, NCNO 4, EPAM 1, MVST 0.** The pin is INVERTED — `test_tier_b_rows_are_never_capped`
+drives the real extractor with 20 valid rows and asserts 20 out, no `capped` flag, and that the
+constant is gone. Mutation (silently restoring a `>= 12` bound): **CAUGHT**.
+
+**PROSE-VS-COMPUTED RATIO DRIFT IS NOW GUARDED — SHIPPED GREEN, WITH SMPL ON A SELF-CLEARING
+EXEMPTION.** `tests/test_rationale_ratio_drift.py`. A ratio stated in `verdict.rationale` must be one
+the record computes (`result.ratio` / `ratio_at_entry`), the 2:1 bar excluded.
+**THE ESCAPE IS COPIED FROM IT, NOT INVENTED.** IT cites `6.7:1`, `1.90:1` and `5.8:1` — all stale
+against its computed 1.52 — and is CORRECT, because they sit in a DATED amendment chain on a closed
+record (*"[amended 2026-07-22: position closed…]"*), each tagged to its moment. **The rule: an
+UNDATED present-tense ratio must match; a DATED history need not.** IT is pinned as the passing case,
+and the pin strips the date and asserts the same text then FAILS — so the guard cannot be keying on
+anything but the dating.
+**SMPL sits in `RATIONALE_RATIO_AWAITING_SUPERSEDE` with its reason**, on the
+`ANCHORS_AWAITING_BACKFILL` exact-set shape: **main stays green, the guard binds on every other
+name, and when the supersede lands SMPL stops diverging and the test REDDENS** — so STATE must be
+updated rather than the exemption quietly rotting. A third pin refuses an exemption naming a name
+that does not exist or no longer diverges. Mutation (guard stops detecting drift): **CAUGHT**.
+
 **THE THESIS TEXT IS IN THE RECORD, NOT THE SYNTHESIS — SO A RE-ASSEMBLY WILL NOT FIX IT
 (measured 2026-08-04). OPERATOR ACTION: it needs `scenario-supersede`.**
 SMPL's *"Thesis — our rationale"* paragraph is `verdict.rationale` in `scenarios/SMPL.json` —
