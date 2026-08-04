@@ -2991,6 +2991,58 @@ Each line: *what it does* — *verified how*.
     its own reasoning; the next genuinely pre-profit name uses it. **No record has ever been written
     on this basis**, so it is shipped-and-UNEXERCISED: the first real use must re-verify the
     arithmetic against a hand computation rather than trust the pins alone.
+- **SMPL re-assembled on the fresh price (2026-08-04) — and P2 is NOT closed in the synthesis.**
+  Store refreshed to `2026-08-03` for all eleven names + IWM/MDY/SPY/QQQ; SMPL re-assembled with
+  #342's superseded-guidance marking live in the brief. Converged on attempt 3 (attempt 1 returned
+  incomplete output, attempt 2 was refused by **19c** on an uncited `Asset Writedown ($M) LTM
+  = -391.9`). Landed: `price 10.25 → 11.32`, `as_of 2026-07-29 → 2026-08-03`. Held exactly as
+  predicted: the gap did **not** move (`revenue 0.9839 · margin 0.9463 · multiple 2.2589 ·
+  ev_gap 2.1032`, `multiple-dominant`, vintages unchanged) — TEV is struck from the CIQ comps
+  panel, not from price, and nothing reads price into it. Fixed: **bear[6]'s "mid-teens" price
+  increase is gone** (the live false claim recorded under #341); the replacement `bull[2]` states
+  the correct high-single-digit figure. Counts: bull 10 → 8, bear 9 → 11 (19 → 19), driver rows
+  37 → 38 — **not thinner**, so it stands rather than reverts.
+  - **THE MARKING DID NOT CHANGE THE SYNTHESIS, BECAUSE IT MARKED A PATH THE MODEL WAS NOT
+    READING.** `bear[1]` still asserts APRIL's guide in the present tense — *"Management guided FY26
+    revenue to -10% to -7% YoY and adjusted EBITDA to -22% to -19% YoY"* — and **July's guide
+    (1345–1355 / 220–225) is cited NOWHERE** in the new synthesis. The path is provable, not
+    inferred: those percentages exist **only** in `drawdown_cause.revised_guidance`'s verbatim text
+    (the structured `primary_source` guidance carries absolute `$M` ranges and **zero** occurrences
+    of `-22`/`-19`), and `bear[1]`'s `source_ref` is that field's format — `EDGAR 8-K … Ex-99.1 —
+    https://…` — not the digest's `8-K … EX-99.1`. Cause: `synthesis.py:979` dumps
+    `mech.model_dump(exclude={"primary_source"})`, so `primary_source` is swapped for the **marked**
+    digest while **`drawdown_cause` goes into the raw facts dump unmarked**, carrying April's
+    numbers verbatim. #342 marked one of two paths. **This is the same defect #343 fixed in the
+    `scenario-propose` template** (which also read `drawdown_cause.revised_guidance`), now shown to
+    be live in the brief as well — the field is BY DESIGN the drawdown-moment guide
+    (`mechanical.py:2470`), i.e. correctly historical but unlabelled as history. **NEEDS A RULING:**
+    mark it via the shared `guidance_vintage_mark`, exclude it from the dump the way
+    `primary_source` is, or tell the synthesis what the field means. Not built — the choice is not
+    mine.
+  - **SMPL LEFT `reconciled` IN THE FRESHNESS GATE, AND THE PIN FORBIDDING THAT RESTED ON A FALSE
+    PREMISE.** `test_the_guards_fail_the_four_names_they_should_and_no_others_e2e` pinned
+    `"SMPL" in reconciled` with the note *"a regression in price selection, not a data change to
+    absorb"* — so it was checked against the selection code rather than absorbed. **There is no
+    vintage alignment to regress:** `_stock_info` sets `price = feats.last` (the store's last close)
+    and nothing aligns it to the comps export. The 2026-07-29 agreement was the store frontier
+    happening to sit five days from the 2026-07-24 panel. Measured: spot `11.32` vs implied
+    `909.4M / 88.46M = 10.2803` → **−9.18%**, outside the 2% tolerance; **the cap did not move, the
+    market did**. Ordinary drift is a *rendering* obligation (clause (e)), not a failure, and the
+    page discharges it — the snapshot dates both (`CMP $11.32 (2026-08-03) · cap $909M`). The pin
+    was replaced by the invariant that is actually true: **`reconciled` must keep a live instance**
+    (BRBR/CNXC/EPAM/VRRM), mirroring the existing `assert drifting`, so neither bucket can quietly
+    stop being exercised. A per-name pin re-reds on every price refresh and teaches the reader to
+    absorb it — the exact failure mode it warned against.
+  - **Two new `qa_flags` are FALSE POSITIVES of the DIRECTIONAL-language check**, not a guardrail
+    breach: `bull[7]` describes a director's open-market **buy** (an insider transaction) and
+    `bear[10]` reports sell-side **conviction** / a 4-**Buy** split (analyst ratings). Both describe
+    others' actions; neither is the machine concluding. Recorded, not suppressed.
+  - **`llm_call.log` loses the `=== USAGE ===` block on every REFUSED attempt** — the log is written
+    at `assemble.py:189`, inside the block that only runs after the refusal check at `:326`, so the
+    two 19c/incomplete attempts above recorded no usage. Reported, not fixed (one-line move, but it
+    is a code change outside this artifact pass).
+  - *Verified:* full offline suite on the freshly-committed artifacts — 1875 passed, 3 skipped;
+    ruff + `mypy --strict` clean (ARTIFACT-PASS RULE).
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3986,6 +4038,25 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
+
+**OPERATOR ACTIONS — RECORDED 2026-08-04, arising from the SMPL re-assembly (see §2).**
+
+**O1. RULING NEEDED — `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.**
+#342 marked `primary_source` in the brief; the 2026-08-04 SMPL roll shows the model reading the
+OTHER path and asserting APRIL's superseded guide in the present tense at `bear[1]`, with July's
+guide cited nowhere. `synthesis.py:979` excludes `primary_source` from the facts dump and swaps in
+the marked digest, but `drawdown_cause` goes in **raw and unmarked**. The field is correctly
+historical by design (`mechanical.py:2470` — the drawdown-moment guide); it is simply not labelled
+as history. **Three candidate fixes, operator's call, none built:** (a) mark it through the shared
+`guidance_vintage_mark`; (b) exclude it from the dump as `primary_source` already is; (c) state the
+field's meaning to the synthesis. **This is the SAME defect #343 fixed in the `scenario-propose`
+template** — one derivation, two consumers, and the brief is the consumer still on the wrong field.
+
+**O2. `llm_call.log` discards `=== USAGE ===` on every REFUSED attempt.** Written at
+`assemble.py:189`, inside the block reached only after the refusal check at `:326` — so the usage
+recorded by #340 survives on the converging attempt and is lost on the ones worth diagnosing (two
+of three on the 2026-08-04 SMPL roll). One-line move; not done here because it is code, and this
+was an artifact pass.
 
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
