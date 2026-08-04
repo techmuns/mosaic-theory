@@ -12514,7 +12514,25 @@ not? — IS ANSWERED YES, and with the exact metrics the cap had removed:**
   penetration 8.5%, down 220bps**, plus **OWYN takeaway −1.3%** — `Atkins retail takeaway`,
   `Atkins total brand household penetration` and `OWYN retail takeaway` were all DROPPED ROWS.
 Counts: bull 1→2 and bear 2→4 points citing brand-level consumption or penetration; totals 9→10
-bull and 8→9 bear. **Not thinner — more points, and more specific ones.** No revert.
+bull and 8→9 bear.
+**BUT "NOT THINNER" WAS A COUNT, NOT A READING, AND THE REVIEW FOUND A REAL REGRESSION.** The OLD
+bull carried the **FORWARD** peer comparison — *"on a forward basis SMPL trades below the peer median
+on every line (**NTM TEV/EBITDA 5.65 vs 8.72; NTM P/E 6.12 vs 13.08**)"*. **All four NTM figures are
+absent from the new synthesis**, whose bull[3] argues instead from the **TRAILING** 5.3x vs peer 7.8x.
+**AND THE CAVEAT WENT WITH THEM:** the OLD bear[2] explicitly warned *"this is trailing-only with no
+forward basis, so it cannot itself distinguish cheap-overshoot from cheap-terminal"* — neither
+"trailing-only" nor "forward basis" appears anywhere in the new points. **So the new bull argues from
+a trailing multiple that the old synthesis had specifically flagged as insufficient on its own.**
+**THE DATA IS NOT LOST, ONLY THE CITATION IS:** NTM TEV/EBITDA 5.65 vs peer 8.72 still renders five
+times in the valuation tables, so a reader can find it — but the ARGUMENT no longer rests on it.
+Also dropped from the bull: OWYN's +3.6% growth (OWYN now appears only as a negative — losing
+distribution, takeaway −1.3%).
+**ATTRIBUTION IS NOT ESTABLISHED and both readings are live:** a larger brief may crowd valuation
+detail out of a fixed output budget (which would make it cap-caused and connect to the unchecked
+output bound), or it is ordinary reroll variance in emphasis. One roll cannot separate them.
+**JUDGMENT: NOT REVERTED.** The six recovered brand-level citations are exactly what the fix was for
+and they serve the decisive question directly; the loss is one argumentative leg whose data still
+renders. **But the trade is real and is recorded as a trade, not as a clean win.**
 **THE DECISIVE QUESTION SHARPENED** from *"…structural erosion (led by Atkins) that permanently
 resets the earnings base"* to *"…structural erosion of the **Atkins/OWYN base that the growing Quest
 engine cannot offset** (value trap)"* — the brand-level split now names which engine offsets which.
