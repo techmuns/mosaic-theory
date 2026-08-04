@@ -40,6 +40,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from vinci.dossier.schemas import PrimarySource
+from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
 from vinci.scenarios import RefPoint
 
 #: A supplied leg value further than this from its anchor is a DEVIATION and must state why.
@@ -333,9 +335,6 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
     # Both now derive the vintage from ONE shared helper, so they cannot drift apart again. Every
     # guide is shown — mark, never drop; the cut sequence is itself evidence — and each carries
     # its own vintage, so no line is silently promoted to "current".
-    from vinci.dossier.schemas import PrimarySource
-    from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
-
     ps_raw = _get(doc, "mechanical", "primary_source")
     if isinstance(ps_raw, dict):
         ps = PrimarySource.model_validate(ps_raw)

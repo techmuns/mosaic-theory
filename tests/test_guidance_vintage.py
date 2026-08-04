@@ -33,16 +33,40 @@ def _digest(t: str) -> str:
 
 @pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
-    """THE ORIGINAL DEFECT, pinned on the name it happened to. April's guide must still appear —
-    dropping it would lose the cut sequence — and must be marked superseded by July's."""
+    """THE ORIGINAL DEFECT, pinned on the name it happened to. The older guide must still appear —
+    dropping it would lose the cut sequence — and must be marked superseded by the newest.
+
+    DATES AND VALUES ARE DERIVED FROM THE RECORD, NEVER TYPED IN. The first cut hardcoded
+    `2026-07-09`, `2026-04-09`, `1345.0–1355.0` and `1310.0–1350.0` against `data/dossiers/SMPL`
+    — a LIVING artifact. Those literals are not wrong today; they are SCHEDULED to rot, because
+    SMPL's next print lands a new 8-K, `filed 2026-07-09` stops being current, and the test reddens
+    on a routine data event rather than on a defect (TEST-LAYER RULE: a value-level pin belongs on
+    a frozen fixture, never on the re-drawn artifact). Reading the two dates and their guide values
+    off `primary_source` keeps the defect coverage identical — a guide was marked, not dropped —
+    while surviving every future guide."""
+    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    ps = d.mechanical.primary_source
+    assert ps is not None
+    dated = sorted({r.filed for r in ps.releases if r.guidance and r.filed})
+    assert len(dated) >= 2, (
+        "SMPL no longer carries two dated guidance-bearing releases — this test needs a "
+        "supersession to observe; re-point it at a name that has one")
+    newest, older = dated[-1], dated[0]
+
+    def _vals(on: object) -> set[str]:
+        return {f"{g.low}–{g.high}" for r in ps.releases if r.filed == on
+                for g in (r.guidance or []) if not g.qualitative}
+
     lines = _digest("SMPL").splitlines()
-    cur = [x for x in lines if "[CURRENT GUIDE, filed 2026-07-09]" in x]
-    sup = [x for x in lines if "[SUPERSEDED — filed 2026-04-09" in x]
+    cur = [x for x in lines if f"[CURRENT GUIDE, filed {newest}]" in x]
+    sup = [x for x in lines if f"[SUPERSEDED — filed {older}" in x]
     assert cur and sup, lines[:12]
     assert all(x.startswith("guidance ") for x in cur + sup), "a mark landed off a guidance line"
     blob = "\n".join(lines)
-    assert "1345.0–1355.0" in blob and "1310.0–1350.0" in blob, "a guide was DROPPED, not marked"
-    assert "replaced by the guide filed 2026-07-09" in blob
+    for label, want in (("newest", _vals(newest)), ("older", _vals(older))):
+        missing = {v for v in want if v not in blob}
+        assert not missing, f"a {label} guide was DROPPED, not marked: {sorted(missing)}"
+    assert f"replaced by the guide filed {newest}" in blob
     assert "history, not the current outlook" in blob
 
 
@@ -182,8 +206,21 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
     assert marks(tmpl) == marks(brief), (
         f"template and brief disagree on guidance vintages — template {sorted(marks(tmpl))}, "
         f"brief {sorted(marks(brief))}; they must share one derivation")
+    # Derived, not typed in — same reason as the acceptance case above: hardcoding the July/April
+    # figures schedules this to redden on SMPL's next print rather than on a defect.
+    ps = Dossier.model_validate(doc).mechanical.primary_source
+    assert ps is not None
+    dated = sorted({r.filed for r in ps.releases if r.guidance and r.filed})
+    assert len(dated) >= 2, "SMPL no longer shows a supersession — re-point this test"
     blob = " ".join(tmpl)
-    assert "1345.0–1355.0" in blob and "[CURRENT GUIDE, filed 2026-07-09]" in blob, blob[:200]
-    assert "1310.0–1350.0" in blob, "April's guide was DROPPED from the template, not marked"
+    assert f"[CURRENT GUIDE, filed {dated[-1]}]" in blob, blob[:200]
+    for on, why in ((dated[-1], "the current guide"), (dated[0], "the older guide")):
+        for rel in (x for x in ps.releases if x.filed == on):
+            for g in rel.guidance or []:
+                if g.qualitative:
+                    continue
+                assert f"{g.low}–{g.high}" in blob, (
+                    f"{why} ({on}) value {g.low}–{g.high} is missing from the template — "
+                    "dropped rather than marked")
     assert "current guidance:" not in " ".join(build_template(doc)["_evidence"]["revenue"]), (
         "the old unmarked 'current guidance:' line is back")
