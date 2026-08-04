@@ -434,3 +434,48 @@ def legs_from_template(tpl: dict[str, Any]) -> dict[str, dict[str, Any]]:
     for leg, cell in (tpl.get("scenarios") or {}).items():
         out[leg] = {k: v for k, v in cell.items() if not k.startswith(COMMENTARY_PREFIX)}
     return out
+
+
+def assumptions_from(doc: dict[str, Any],
+                     legs: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """The per-axis `AssumptionDerivation` payload — where the record's PROVENANCE actually lives.
+
+    WITHOUT THIS THE WHOLE DESIGN LEAKS, and the first cut of `scenario-create` leaked it. The
+    template shows each anchor's source and vintage in a `_`-prefixed commentary key, and
+    `legs_from_template` strips those before validation; `ScenarioInput` has nowhere to put a
+    `source_ref` either. So the write validated the analyst's adjustments and derivations, confirmed
+    every number was accounted for — and then persisted a record containing NONE of it.
+    `Anchor.as_refpoint()` had zero production callers: defined, never called.
+
+    A record written that way passes every guard while carrying LESS provenance than the
+    hand-authored records this path was built to replace. That is worse than no tool.
+
+    So: each axis gets its anchor as a source- and vintage-bearing `RefPoint`, and a `method`
+    sentence assembled from what the analyst actually said on each leg. The method is required
+    non-blank by the schema, and here it is composed only of analyst words — never invented.
+    """
+    by = {(a.axis, a.leg): a for a in propose_anchors(doc)}
+    out: dict[str, dict[str, Any]] = {}
+    for axis in AXES:
+        said: list[str] = []
+        for leg in LEGS:
+            cell = legs.get(leg) or {}
+            if (axis, leg) in by:
+                adj = str(cell.get(f"{axis}_adjustment") or "").strip()
+                # NAME THE STATISTIC IN WORDS, not the house label: the prose linter flags
+                # "anchor" as a house token ("state the claim, not the house label"), and it is
+                # right — a reader wants "at the eight-year operating-margin median", not a word
+                # that means something only inside this repo. Analyst words are never edited; this
+                # is the sentence the MACHINE composes, so it is the machine's to get right.
+                a = by[(axis, leg)]
+                said.append(f"{leg}: {adj}" if adj else f"{leg}: at the {a.label}")
+            else:
+                drv = str(cell.get(f"{axis}_derivation") or "").strip()
+                if drv:
+                    said.append(f"{leg}: {drv}")
+        refs = [a.as_refpoint().model_dump() for (ax, _lg), a in by.items() if ax == axis]
+        out[axis] = {
+            "method": " · ".join(said) or f"{axis}: stated per leg in the leg reasons.",
+            "references": refs,
+        }
+    return out

@@ -1064,6 +1064,7 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
     import vinci.scenarios as sc
     from vinci.dossier.propose import (
         ProposalRefusedError,
+        assumptions_from,
         check_tier_agreement,
         legs_from_template,
         propose_anchors,
@@ -1107,6 +1108,13 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 multiple=float(c["multiple"]), reason=str(c.get("reason") or ""),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
+            # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
+            # schema-1.4 record whose assumptions do not cover all three axes, so a create path
+            # that built the record first could never write at all.
+            assumptions={ax: sc.AssumptionDerivation(
+                method=a["method"],
+                references=[sc.RefPoint(**r) for r in a["references"]])
+                for ax, a in assumptions_from(doc, legs).items()},
         )
         rec = sc.run_recipe(rec)
         path = sc.write_record(rec)

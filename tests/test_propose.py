@@ -288,3 +288,39 @@ def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() ->
         resolve_shares(far)
     with pytest.raises(ProposalRefusedError, match="absent or non-positive"):
         resolve_shares({"ticker": "X", "mechanical": {"stock_info": {"shares_out": {"value": 0}}}})
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
+    """THE LEAK THIS CLOSES, caught in self-review of #334. `Anchor.as_refpoint()` had ZERO
+    production callers — defined, never called — and the create path built no `assumptions` at all,
+    so every anchor's source and vintage, and every adjustment/derivation the analyst stated, was
+    validated and then dropped on the floor.
+
+    (`ScenarioRecord` refuses a 1.4 record whose assumptions miss an axis, so the path was BROKEN
+    rather than silently lossy — but a create path that cannot write is not a create path.)"""
+    from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
+    doc = _doc("BRBR")
+    legs = legs_from_template(build_template(doc))
+    asm = assumptions_from(doc, legs)
+    assert set(asm) == set(AXES)
+    for axis, a in asm.items():
+        assert a["method"].strip(), axis
+        refs = a["references"]
+        assert len(refs) == 1, (axis, refs)               # one anchored (base) cell per axis
+        r = refs[0]
+        assert r["source"].strip() and r["vintage"] and r["leg"] == "base", (axis, r)
+        assert r["role"] in {"median", "consensus"}, r
+
+
+@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
+def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
+    """The prose linter flags "anchor" as a house token — *state the claim, not the house label* —
+    and it is right. Analyst words are never edited; this sentence is the MACHINE's, so it is the
+    machine's to get right."""
+    from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
+    doc = _doc("BRBR")
+    asm = assumptions_from(doc, legs_from_template(build_template(doc)))
+    for axis, a in asm.items():
+        assert "computed anchor" not in a["method"], (axis, a["method"])
+        assert "median" in a["method"], (axis, a["method"])
