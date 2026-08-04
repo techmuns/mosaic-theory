@@ -12514,10 +12514,18 @@ OVERSTATE THE BEAR.**
   figures are superseded. **And bull[7] cites `-000021` while bear[3] cites `-000010`, so ONE
   SYNTHESIS ARGUES FROM TWO GUIDANCE VINTAGES** — precisely what the 2026-07-28 audit recorded as
   P2, unfixed and now inside the points a verdict is being formed on.
-**THE ASYMMETRY IS THE FINDING: both defects make the bear look worse than the evidence supports.**
-bear[3] overstates the sales cut (−10% vs −7%) while UNDERSTATING the margin cut (300–350 vs 375),
-and bear[6] triples the price action. A reader forming a verdict from this page is reading a
-harsher case than the filings state.
+**THE DIRECTION, STATED PRECISELY — and my first cut overstated it.** I wrote *"both defects make
+the bear look worse"* and then, one clause later, noted bear[3] understating the margin cut. That is
+a contradiction inside one sentence: a headline generalising over a MIXED result.
+**bear[6] is unambiguous** — it roughly triples the price action, so the bear reads harsher.
+**bear[3] is wrong in BOTH directions**, figure by figure: net sales −10% to −7% against an actual
+−7% to −6% is **deeper across the range** (harsher); adj EBITDA −22% to −19% against −21% to −19% is
+**1pp deeper at the floor, identical at the ceiling** (marginally harsher); gross margin 300–350bps
+against roughly 375bps is **25–75bps SHALLOWER** (softer). **Two figures overstate the bear, one
+understates it.**
+**So the honest claim is not a direction but a vintage: bear[3] is not biased, it is STALE** — every
+figure is April's, and a superseded guide is wrong in whatever direction the update happened to
+move. A reader forming a verdict from this page is reading numbers the company has since replaced.
 **AND THE STRUCTURAL POINT: bear[6] surfaced ONLY because it contradicted bull[6].** A wrong point
 with no internal contradiction would not have surfaced at all — **driver rows carry
 quote-in-transcript and digit-trace validation; synthesis points carry NEITHER.** That asymmetry is
