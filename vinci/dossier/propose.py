@@ -320,9 +320,35 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
                  if v is not None]
         if pairs:
             ev["revenue"].append("reported/estimated revenue arc: " + " → ".join(pairs))
-    g = _get(doc, "mechanical", "drawdown_cause", "revised_guidance")
-    if isinstance(g, dict) and g.get("value"):
-        ev["revenue"].append(f"current guidance: {str(g['value'])[:300]}")
+    # GUIDANCE COMES FROM `primary_source`, WHICH KNOWS WHICH GUIDE IS CURRENT.
+    #
+    # It used to read `drawdown_cause.revised_guidance` and print whatever that held under the
+    # label "current guidance". On SMPL that field holds the APRIL release, so the template told
+    # the analyst — on the page they set six numbers from — that the current outlook was
+    # "$1.31 to $1.35 billion, or -10% to -7%" and "300 to 350 basis points". The July guide is
+    # $1.345–1.355B, -7% to -6%, roughly -375bps. That is audit defect P2 in the DECISION AID
+    # rather than the prose, and it survived the 2026-08-04 fix because that fix went to the LLM
+    # brief while this read a different field entirely.
+    #
+    # Both now derive the vintage from ONE shared helper, so they cannot drift apart again. Every
+    # guide is shown — mark, never drop; the cut sequence is itself evidence — and each carries
+    # its own vintage, so no line is silently promoted to "current".
+    from vinci.dossier.schemas import PrimarySource
+    from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
+
+    ps_raw = _get(doc, "mechanical", "primary_source")
+    if isinstance(ps_raw, dict):
+        ps = PrimarySource.model_validate(ps_raw)
+        newest = newest_guidance_date(ps)
+        for r in ps.releases:
+            if not r.guidance:
+                continue
+            mark = guidance_vintage_mark(r.filed, newest)
+            for g in r.guidance:
+                val = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
+                ev["revenue"].append(
+                    f"guidance ({g.metric} {g.period}): {val} {g.unit or ''}".rstrip()
+                    + f"{mark} → {g.source_ref}")
 
     # margin — the RAW per-FY series, because "clean" is the judgment the machine cannot make
     mt = _get(doc, "mechanical", "quality", "margin_trend")

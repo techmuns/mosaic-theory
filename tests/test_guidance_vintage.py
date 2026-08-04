@@ -150,3 +150,40 @@ def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
     assert imp, "SMPL's $60.9M impairment left the digest"
     assert not any(m in x for x in imp for m in marks), (
         f"the impairment 19c forces the synthesis to cite is marked as stale: {imp}")
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
+    """P2 IN THE DECISION AID, closed. The template read `drawdown_cause.revised_guidance` and
+    printed whatever it held under the label "current guidance". On SMPL that field holds the APRIL
+    release, so the page the analyst sets six numbers from asserted the current outlook was
+    "$1.31 to $1.35 billion, or −10% to −7%" and "300 to 350 basis points" — when July's guide is
+    $1.345–1.355B, −7% to −6%, roughly −375bps.
+
+    It survived the 2026-08-04 brief fix because that fix went to `primary_source` while this read a
+    different field. BOTH now derive the vintage from one shared helper, so they cannot drift again:
+    this test asserts the template's marks MATCH the brief's, rather than asserting a literal.
+    """
+    from vinci.dossier.propose import build_template
+    doc = json.loads((DOSS / "SMPL" / "dossier.json").read_text())
+    tmpl = [x for x in build_template(doc)["_evidence"]["revenue"]
+            if x.startswith("guidance (")]
+    brief = [x for x in _digest("SMPL").splitlines() if x.startswith("guidance (")]
+    assert tmpl and brief
+
+    def marks(lines: list[str]) -> set[str]:
+        out = set()
+        for x in lines:
+            for m in ("[CURRENT GUIDE, filed ", "[SUPERSEDED — filed ", "[VINTAGE UNDATED"):
+                if m in x:
+                    out.add(x.split(m)[1].split("]")[0].split(",")[0].split(" ")[0])
+        return out
+
+    assert marks(tmpl) == marks(brief), (
+        f"template and brief disagree on guidance vintages — template {sorted(marks(tmpl))}, "
+        f"brief {sorted(marks(brief))}; they must share one derivation")
+    blob = " ".join(tmpl)
+    assert "1345.0–1355.0" in blob and "[CURRENT GUIDE, filed 2026-07-09]" in blob, blob[:200]
+    assert "1310.0–1350.0" in blob, "April's guide was DROPPED from the template, not marked"
+    assert "current guidance:" not in " ".join(build_template(doc)["_evidence"]["revenue"]), (
+        "the old unmarked 'current guidance:' line is back")
