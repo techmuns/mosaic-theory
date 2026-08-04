@@ -380,7 +380,10 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     shares, sh_basis, sh_source = resolve_shares(doc)
     ev = evidence_for(doc)
 
-    facts: dict[str, Any] = {"diluted_shares": {"value": shares, "unit": "shares",
+    # "M shares", NOT "shares": `resolve_shares` returns MILLIONS (SMPL's committed record says
+    # "M shares" for the same reason). A unit label that disagrees with its own value is the
+    # `percentile`-as-`p25` class one field over.
+    facts: dict[str, Any] = {"diluted_shares": {"value": shares, "unit": "M shares",
                                                 "basis": sh_basis, "source": sh_source}}
     for key, unit in (("d_and_a", "$M"), ("net_debt", "$M")):
         f = _get(doc, "anchor", key)
