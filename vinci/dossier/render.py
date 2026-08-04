@@ -2217,8 +2217,7 @@ def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
     return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
 
 
-def _brief_snapshot(exchange: str | None, si: StockInfo | None,
-                    cap_as_of: object = None) -> list[str]:
+def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
     """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
     value/sh — the linear-markdown mirror of the web key-figures table (CIK moved to Record &
     reproduce: an identifier, not a decision figure). Fail-honest:
@@ -2238,8 +2237,17 @@ def _brief_snapshot(exchange: str | None, si: StockInfo | None,
             # EOD store. On all 11 committed dossiers those disagree — SMPL least at -2.4%, FUBO
             # worst at -91% — so an unlabelled cap sitting beside a live price reads as though the
             # two describe the same moment. They do not. Label the older one with its own vintage.
-            cap_iso = (cap_as_of.isoformat() if hasattr(cap_as_of, "isoformat")
-                       else str(cap_as_of or ""))[:10]
+            #
+            # THE CAP'S OWN as-of, NOT A NEIGHBOUR'S (O3, 2026-08-04). This read `cap_as_of`, which
+            # the sole caller fed from `implied_expectations.multiples_as_of` — the MULTIPLES panel.
+            # Wrong on 11 of 11: IT rendered a cap as-of 2026-06-25 as 2026-07-27, five weeks shown
+            # as three days. The label exists to disclose the gap between a frozen cap and a live
+            # price, and naming the wrong object concealed precisely that. `market_cap_as_of` is now
+            # carried structurally from the same derivation that stamps the cap's source_ref.
+            #
+            # NO DATE beats a WRONG date: a dossier assembled before the field existed has no cap
+            # vintage to state, so it prints none rather than falling back to the neighbour.
+            cap_iso = si.market_cap_as_of.isoformat() if si.market_cap_as_of is not None else ""
             si_iso = si.as_of.isoformat() if si.as_of is not None else ""
             cap_v = f" ({cap_iso})" if cap_iso and cap_iso != si_iso else ""
             parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}")
@@ -2664,9 +2672,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     cc = _customer_concentration(m)
     if cc is not None:
         out.append(cc)
-    ie = getattr(m.valuation, "implied_expectations", None)
-    snap = _brief_snapshot(d.exchange, m.stock_info,
-                           getattr(ie, "multiples_as_of", None) if ie else None)
+    snap = _brief_snapshot(d.exchange, m.stock_info)
     if snap:
         out += snap
     # (buy-side cover) THE CRUX closes the cover — the decisive question ONLY, plus an honest

@@ -3005,25 +3005,53 @@ def _sidecar_as_of(bundle: CiqBundle) -> date | None:
     return None
 
 
+def comps_as_of_date(bundle: CiqBundle) -> tuple[date | None, bool]:
+    """THE ONE DERIVATION of the comps workbook's as-of: ``(date, operator_attested)``.
+
+    STRUCTURED FIRST, STRING SECOND — and the direction is the whole point. `comps_as_of` renders
+    this, `_comps_asof_suffix` stamps the rendering onto every comps `source_ref`, and
+    `StockInfo.market_cap_as_of` carries the value itself. All three read from HERE; nothing
+    re-parses the rendered suffix to recover a date.
+
+    WHY IT WAS EXTRACTED (O3, 2026-08-04). The cap's vintage existed ONLY inside its `source_ref`
+    string, so the Snapshot's clause-(e) label had nothing structured to bind to and was wired to
+    `implied_expectations.multiples_as_of` — a DIFFERENT panel — instead. That rendered a wrong
+    date on 11 of 11 committed names; IT showed a cap as-of 2026-06-25 as 2026-07-27, five weeks
+    presented as three days. A stamp naming the wrong object is worse than no stamp: it conceals
+    exactly what it exists to disclose. Recovering the date by regex over the suffix would have
+    been the second parser of one display string — so the extractor exposes it instead.
+    """
+    try:
+        rows = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError:
+        return None, False
+    d = _scan_asof_header(rows)
+    if d is not None:
+        return d, False
+    sc = _sidecar_as_of(bundle)
+    if sc is not None:
+        return sc, True
+    return None, False
+
+
 def comps_as_of(bundle: CiqBundle) -> Sourced[str]:
     """The comps workbook's as-of — an EXPLICIT 'As-Of Date:' header (present on every sheet; MVST
     decodes to 2026-06-24), else the operator AS_OF sidecar (attested), else UNKNOWN. Header present
-    → plain as-of (the A.1 discipline)."""
+    → plain as-of (the A.1 discipline). RENDERS `comps_as_of_date`; never derives independently."""
     try:
-        rows = bundle.sheet("comps", "Financial Data")
+        bundle.sheet("comps", "Financial Data")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
-    d = _scan_asof_header(rows)
-    if d is not None:
+    d, attested = comps_as_of_date(bundle)
+    if d is None:
+        return Sourced.unknown(note="no As-Of header or AS_OF sidecar for the comps workbook")
+    if attested:
         return Sourced.present(
-            d.isoformat(), source_ref="CIQ Comparable Analysis 'As-Of Date' header (workbook as-of)"
+            d.isoformat(), source_ref="operator AS_OF sidecar", note="operator-attested"
         )
-    sc = _sidecar_as_of(bundle)
-    if sc is not None:
-        return Sourced.present(
-            sc.isoformat(), source_ref="operator AS_OF sidecar", note="operator-attested"
-        )
-    return Sourced.unknown(note="no As-Of header or AS_OF sidecar for the comps workbook")
+    return Sourced.present(
+        d.isoformat(), source_ref="CIQ Comparable Analysis 'As-Of Date' header (workbook as-of)"
+    )
 
 
 def _comps_asof_suffix(bundle: CiqBundle) -> str:
