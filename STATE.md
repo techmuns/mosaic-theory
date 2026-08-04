@@ -3027,12 +3027,26 @@ Each line: *what it does* — *verified how*.
     and nothing aligns it to the comps export. The 2026-07-29 agreement was the store frontier
     happening to sit five days from the 2026-07-24 panel. Measured: spot `11.32` vs implied
     `909.4M / 88.46M = 10.2803` → **−9.18%**, outside the 2% tolerance; **the cap did not move, the
-    market did**. Ordinary drift is a *rendering* obligation (clause (e)), not a failure, and the
-    page discharges it — the snapshot dates both (`CMP $11.32 (2026-08-03) · cap $909M`). The pin
+    market did**. Ordinary drift is a *rendering* obligation (clause (e)), not a failure. The pin
     was replaced by the invariant that is actually true: **`reconciled` must keep a live instance**
     (BRBR/CNXC/EPAM/VRRM), mirroring the existing `assert drifting`, so neither bucket can quietly
     stop being exercised. A per-name pin re-reds on every price refresh and teaches the reader to
     absorb it — the exact failure mode it warned against.
+    - **CORRECTION (review of #343) — I CLAIMED THE PAGE DISCHARGES CLAUSE (e). IT DOES NOT.** The
+      commit message and the first draft of this entry said *"the page discharges it — the snapshot
+      dates both"*. The snapshot does print a date beside the cap, and **that date is the wrong
+      panel's.** `render.py:2668` feeds `_brief_snapshot(cap_as_of=...)` from
+      `valuation.implied_expectations.multiples_as_of` — the MULTIPLES panel — while the cap's own
+      vintage lives only inside its `source_ref` (`… Market Capitalization Latest · as-of …`).
+      **Wrong on 11 of 11 committed names.** Worst is **IT: labelled `2026-07-27` for a cap actually
+      as-of `2026-06-25`** — a five-week-old cap presented as three days old, the label concealing
+      precisely what it exists to disclose. SMPL: labelled `2026-07-21`, actually `2026-07-24`.
+      This is **pre-existing, not introduced here**, but #343 makes it load-bearing: SMPL's cap-vs-
+      spot divergence went from 0.3% (invisible) to 9.2%, and this label is the reader's only
+      defence. **NOT FIXED HERE, and the reason is a rule, not reluctance:** there is no structured
+      cap as-of anywhere in `stock_info` — the only copy is inside the `source_ref` string, so a fix
+      by regex would be the second divergent parser of one display string, the bug class CLAUDE.md
+      names by name. The extractor must expose the structured value first. Recorded as **O3**.
   - **Two new `qa_flags` are FALSE POSITIVES of the DIRECTIONAL-language check**, not a guardrail
     breach: `bull[7]` describes a director's open-market **buy** (an insider transaction) and
     `bear[10]` reports sell-side **conviction** / a 4-**Buy** split (analyst ratings). Both describe
@@ -4057,6 +4071,19 @@ template** — one derivation, two consumers, and the brief is the consumer stil
 recorded by #340 survives on the converging attempt and is lost on the ones worth diagnosing (two
 of three on the 2026-08-04 SMPL roll). One-line move; not done here because it is code, and this
 was an artifact pass.
+
+**O3. THE CAP'S CLAUSE-(e) VINTAGE LABEL NAMES ANOTHER PANEL'S DATE — 11 of 11 names.**
+`render.py:2668` passes `valuation.implied_expectations.multiples_as_of` into
+`_brief_snapshot(cap_as_of=…)`, so the snapshot renders `cap $909M (2026-07-21)` while the cap's own
+`source_ref` reads `as-of 2026-07-24`. Clause (e) exists so a frozen value beside a live one is
+marked *with its vintage*; this marks it with a different panel's. **IT is the worst case — label
+`2026-07-27`, cap actually `2026-06-25`** (five weeks presented as three days). The label is the
+only thing discharging clause (e) — `reconcile_cap`'s result is used solely as a gate
+(`assemble.py:253`) and is never stored or rendered — so when it is wrong, nothing else covers it.
+**Blocked on an extractor change:** no structured cap as-of exists; the vintage is only inside the
+`source_ref` string, and parsing it there would be the divergent-string-parse bug class. The fix is
+to have the CIQ cap extractor expose its as-of as a structured value, then bind the label to it.
+Newly urgent because SMPL's cap-vs-spot divergence is now 9.2%, not 0.3%.
 
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
