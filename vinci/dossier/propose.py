@@ -353,11 +353,45 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
             f"{oh.get('n_closes')} closes over {oh.get('window_span_years')}y")
     tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
     if isinstance(tm, dict) and tm.get("value"):
-        ev["multiple"].append(f"PEER CROSS-SECTION — {tm['value']}")
+        ev["multiple"].append(f"PEER CROSS-SECTION (LTM **and** NTM) — {tm['value']}")
         ev["multiple"].append(
-            "READ THE PEER ROW BESIDE THE OWN-HISTORY BAND. An own-history anchor with a haircut "
-            "can still sit at a PREMIUM to the peer median, and the LTM and NTM bases can "
-            "disagree in sign. Neither number alone tells you where the multiple sits.")
+            "READ THE PEER ROW BESIDE THE OWN-HISTORY "
+            "BAND, AND READ NTM BESIDE LTM. An own-history "
+            "anchor with a haircut can still sit at a PREMIUM to the peer median, and the LTM and "
+            "NTM bases can disagree in SIGN — BRBR is the live case (LTM 8.8 vs peer 6.9, a "
+            "premium; NTM 8.65 vs peer 9.44, a discount). Neither number alone tells you where the "
+            "multiple sits, and a synthesis roll can "
+            "drop the forward leg without saying so: SMPL's "
+            "2026-08-04 re-assembly did exactly that, arguing from trailing 5.3x while the "
+            "previous roll had warned trailing-only 'cannot distinguish overshoot from terminal'."
+            " The template carries both so the analyst does not depend on what a roll happened to "
+            "cite.")
+
+    # --- THE OPERATING DRIVERS, UNSPLIT AND UNDER EVERY AXIS ------------------------------------
+    # The rows the analyst is setting six numbers against were, until 2026-08-04, capped out of the
+    # artifact entirely; they are now kept in full. They belong in the template because the page
+    # having them is not the same as the ANALYST having them at the judgment.
+    #
+    # WHY THEY ARE NOT SPLIT BY AXIS, and why that is not laziness: `kind` describes the NATURE OF
+    # THE STATEMENT, not the valuation axis it informs. Measured on SMPL's own rows — `attribution`
+    # rows are all EXPENSE lines (operating expenses, S&M, G&A), which inform MARGIN and not
+    # revenue; `pricing_action` ("price increase across most of portfolio") moves revenue AND margin
+    # together; and `leading_indicator` is defined as a unit-volume/KPI run-rate, which is
+    # revenue-shaped on SMPL today but was `adjusted gross margin` on BRBR. **No mapping is
+    # derivable from the field**, and inventing a classifier here is the same move refused at
+    # extraction and at render. So: the full set under each axis, and the analyst reads.
+    rows = _get(doc, "mechanical", "operating_drivers", "rows") or []
+    if rows:
+        head = (f"OPERATING DRIVERS ({len(rows)} rows, unsplit — `kind` states what KIND of "
+                "claim a row is, not which axis it informs, so no axis mapping is derivable "
+                "from it and none was invented)")
+        lines = [head]
+        for r in rows:
+            val = str(r.get("value") or "")
+            val = val if len(val) <= 130 else val[:127].rstrip() + "…"
+            lines.append(f"  [{r.get('kind')}] {r.get('metric')}: {val} → {r.get('source_ref')}")
+        for axis in AXES:
+            ev[axis].extend(lines)
     return ev
 
 
