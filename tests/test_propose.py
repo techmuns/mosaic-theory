@@ -402,3 +402,57 @@ def test_the_template_never_truncates_a_driver_value() -> None:
                 assert val in blob, (
                     f"{folder.parent.name}: driver value truncated in the template — {val[:60]!r}")
         assert "…" not in blob, f"{folder.parent.name}: an ellipsis means a value was cut"
+
+
+def test_scenario_create_refuses_a_name_that_already_has_a_record(tmp_path, monkeypatch) -> None:
+    """A CREATE MUST NEVER OVERWRITE. `write_record` is an unconditional `path.write_text`, so
+    without this guard `scenario-create SMPL` would DESTROY the live record and skip
+    archive-and-reissue — and the supersession chain (`_amendment_index`, the archived
+    `<TICKER>-<date>`) is the record of what a verdict replaced, unreconstructable once gone.
+
+    REFUSES rather than routing: a create that silently becomes a supersede is a surprise on a
+    destructive path, and `scenario-propose` emits a template that LOOKS like it feeds this command.
+    BOTH DIRECTIONS pinned — refuses when a record exists, proceeds past this check when none does.
+    """
+    import argparse
+    import json as _json
+
+    import vinci.scenarios as sc
+    from vinci.cli import _cmd_scenario_create
+
+    recs = tmp_path / "scenarios"
+    recs.mkdir()
+    monkeypatch.setattr(sc, "records_dir", lambda root=None: recs)
+    tpl = tmp_path / "t.json"
+    tpl.write_text(_json.dumps({"ticker": "ZZZZ", "recipe_id": "R1_midcycle_margin_evebitda"}))
+    args = argparse.Namespace(ticker="ZZZZ", from_file=str(tpl))
+
+    # NEGATIVE — a record exists: refused, and the refusal names the other command.
+    (recs / "ZZZZ.json").write_text("{}")
+    out: list[str] = []
+    monkeypatch.setattr("builtins.print", lambda *a, **k: out.append(" ".join(map(str, a))))
+    assert _cmd_scenario_create(args) == 1
+    msg = " ".join(out)
+    assert "already has a committed record" in msg and "scenario-supersede" in msg, msg
+    assert "--payload" in msg, "the refusal does not state what supersede needs"
+    assert (recs / "ZZZZ.json").read_text() == "{}", "the existing record was touched"
+
+    # POSITIVE — no record: the guard lets it through (it then fails later, on the absent dossier,
+    # which is a DIFFERENT refusal and proves this check is not what stopped it).
+    (recs / "ZZZZ.json").unlink()
+    out.clear()
+    assert _cmd_scenario_create(args) == 1
+    assert "already has a committed record" not in " ".join(out), out
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_margin_trend_is_labelled_ebitda_against_an_ebit_leg() -> None:
+    """THE ONE EBITDA FIGURE IN AN EBIT BLOCK. The anchor is `OperatingIncomeLoss / Revenue`, the
+    raw series is EBIT, and R1's leg is an operating margin — but the CIQ trend is an EBITDA series.
+    With SMPL's D&A at ~2.7% of revenue, 16% EBITDA LTM sits deceptively close to a 15.4481% EBIT
+    anchor. This is the axis §D happened on, and an unlabelled basis is how two numbers get averaged
+    into one."""
+    from vinci.dossier.propose import build_template
+    line = next(x for x in build_template(_doc("SMPL"))["_evidence"]["margin"]
+                if x.startswith("margin trend"))
+    assert "EBITDA basis" in line and "NOT the EBIT margin" in line, line
