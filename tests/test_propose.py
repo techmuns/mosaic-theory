@@ -334,3 +334,71 @@ def test_the_shares_fact_labels_its_unit_as_millions() -> None:
     from vinci.dossier.propose import build_template
     f = build_template(_doc("BRBR"))["facts"]["diluted_shares"]
     assert f["unit"] == "M shares" and 100 < f["value"] < 200, f
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_template_carries_the_operating_drivers_under_every_axis() -> None:
+    """THE ROWS THE ANALYST SETS SIX NUMBERS AGAINST. Until 2026-08-04 the cap deleted them from the
+    artifact; recovering them put them on the PAGE, but the page having them is not the analyst
+    having them at the judgment. The template is where the judgment happens.
+
+    UNSPLIT, and that is the finding rather than laziness: `kind` states what KIND of claim a row
+    is, not which axis it informs. Measured — `attribution` rows are all EXPENSE lines (margin, not
+    revenue), `pricing_action` moves revenue AND margin together, and `leading_indicator` is a
+    unit/KPI run-rate that is revenue-shaped on SMPL but was `adjusted gross margin` on BRBR. No
+    mapping is derivable, so none was invented; the full set goes under each axis.
+    """
+    from vinci.dossier.propose import build_template
+    doc = _doc("SMPL")
+    ev = build_template(doc)["_evidence"]
+    rows = ((doc["mechanical"].get("operating_drivers") or {}).get("rows")) or []
+    assert rows, "SMPL has no driver rows — re-pin this"
+    for axis in AXES:
+        head = [ln for ln in ev[axis] if ln.startswith("OPERATING DRIVERS")]
+        assert head, f"{axis} carries no driver block"
+        assert f"{len(rows)} rows" in head[0], head[0]
+        assert "no axis mapping is derivable" in head[0]
+        emitted = [ln for ln in ev[axis] if ln.startswith("  [")]
+        assert len(emitted) == len(rows), (axis, len(emitted), len(rows))
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_forward_peer_leg_is_in_the_template_whatever_a_roll_cites() -> None:
+    """THE REROLL DEMONSTRATED THE NEED. SMPL's 2026-08-04 re-assembly dropped the FORWARD peer
+    comparison from its synthesis (NTM TEV/EBITDA 5.65 vs 8.72, NTM P/E 6.12 vs 13.08 all vanished)
+    and argued from trailing 5.3x — the very basis the PREVIOUS roll had warned 'cannot itself
+    distinguish cheap-overshoot from cheap-terminal'. The data never left the page; the ARGUMENT
+    did. The template carries both bases so the analyst does not depend on what a roll cited."""
+    from vinci.dossier.propose import build_template
+    mult = " ".join(build_template(_doc("SMPL"))["_evidence"]["multiple"])
+    assert "NTM TEV/EBITDA" in mult and "NTM P/E" in mult, mult[:300]
+    assert "TEV/EBITDA:" in mult, "the LTM peer row is gone"
+    assert "disagree in SIGN" in mult, "the LTM-vs-NTM warning is gone"
+
+
+def test_the_template_never_truncates_a_driver_value() -> None:
+    """A BOUND THAT BUYS NOTHING STILL DROPS THINGS — the row cap's argument one scale down. The
+    template's driver block once truncated values at 130 chars, copied from the LLM digest where the
+    cap bounds *input*. A template is a file the ANALYST reads: no token budget, so the cap bought
+    nothing. Measured across the fleet before removal: 11 of 242 values exceeded it and TWO carried
+    a figure in the tail the kept head did not."""
+    import json as _json
+    import pathlib as _pl
+
+    from vinci.dossier.propose import build_template
+    for folder in sorted((DOSS).glob("*/dossier.json")):
+        doc = _json.loads(_pl.Path(folder).read_text())
+        rows = ((doc.get("mechanical") or {}).get("operating_drivers") or {}).get("rows") or []
+        if not rows:
+            continue
+        try:
+            ev = build_template(doc)["_evidence"]
+        except Exception:                       # a name the proposer refuses is out of scope here
+            continue
+        blob = "\n".join(ev["revenue"])
+        for r in rows:
+            val = str(r.get("value") or "")
+            if val:
+                assert val in blob, (
+                    f"{folder.parent.name}: driver value truncated in the template — {val[:60]!r}")
+        assert "…" not in blob, f"{folder.parent.name}: an ellipsis means a value was cut"
