@@ -12491,6 +12491,49 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**SUPERSEDED GUIDANCE IS NOW MARKED IN THE BRIEF (2026-08-04). P2 CAME BACK THROUGH THE BRIEF, NOT
+THE EXTRACTOR.** #254 fixed the extractor and the mechanical layer was right the whole time — the
+record's base method cites *"management's reinstated $1.345–1.355B guide"* and `current_guide` names
+the July 8-K. **Nothing carried that into the digest.** `_primary_source_digest` emitted every
+release's guidance as `guidance (metric period): low–high → source_ref` with **NO DATE AND NO
+ORDER**, so July's `net sales 2026: 1,345–1,355` sat beside April's `1,310–1,350` as equals and the
+synthesis argued the FY26 guide from April. **Five releases, two guidance statements, no ordering
+signal.**
+**FIXED BY MARKING, NOT DROPPING** — the guidance history IS a bear point (SMPL's three-step cut
+sequence), so superseded releases stay and merely stop looking current. **Dates only, no heuristic,
+no ranking:** the latest guidance-bearing `filed` is CURRENT, earlier ones are
+*SUPERSEDED (filed X; replaced by the guide filed Y) — history, NOT the company's current outlook*.
+**Computed over ALL releases, not the four the digest shows**, so a fifth carrying the newest guide
+cannot leave a stale one marked current.
+**UNORDERABLE IS LABELLED, NOT GUESSED:** MVST's and FUBO's guidance releases carry no `filed` date,
+so they render *VINTAGE UNDATED … do not read it as current* rather than being assumed either way.
+**REPORT 1 — 9 OF 11 NAMES CARRY MORE THAN ONE GUIDANCE-BEARING RELEASE, and SMPL's two is the LOW
+end.** NCNO **5** · AORT, CNXC, VRRM **4** · EPAM, VITL **3** · BRBR, MVST, SMPL **2** · FUBO 1 ·
+IT 0. **Fleet-wide, and the names most exposed were never the one that failed.** Measured as
+same-(metric, period) collisions inside the shown window: **15 colliding guidance keys across 8
+names** — VRRM alone has 5, with `adjusted ebitda next-fy` appearing **four times**.
+**REPORT 2 — GUIDANCE IS NOT THE ONLY UNORDERED-VERSION CASE. NAMED, NOT FIXED.** The same release
+loop emits four kinds with the same undated shape, and **`reconciliation` collides too: 4 keys
+across 2 names** (MVST 3 — `adjusted net income`/`adjusted eps`/`adjusted ebitda` for 2024 each
+appearing **three times** — and FUBO 1). `event_impacts` shows **zero** collisions today; `one_offs`
+are description-keyed and were not measured on the same key. **So the fix is bounded but not
+complete**, and the residue is recorded rather than swept in.
+**AND THE FIRST CUT OF THIS FIX SHIPPED A WORSE DEFECT THAN THE ONE IT CLOSED — caught in review.**
+The mark began as a per-release SECTION HEADER, `--- SUPERSEDED … history, NOT the company's current
+outlook ---`, which **visually scoped over everything beneath it**. On SMPL that was April's guidance
+(correct) **plus the Q2, Q1 and FY2025 REPORTED ACTUALS and the $60.9M Atkins impairment** — facts,
+none superseded, and **the impairment is the very figure 19c FORCES the synthesis to cite.** It also
+**bled into the next guidance-less release**, which emits no header of its own. **A header telling
+the model that reported actuals are stale history is a larger error than the unordered guidance it
+replaced.** Fixed by marking the LINE, not the block: a per-line mark has no scope to creep and
+nothing to bleed into, and reconciliations, one-offs and event impacts now carry no vintage mark at
+all — pinned.
+4 mutations CAUGHT (mark dropped · undated assumed current · supersession keyed off the window ·
+the mark moved back onto a block header).
+**The third needed a SYNTHETIC pin and the reason is recorded in the test:** on today's corpus every
+name's newest guidance release already falls inside `releases[:4]`, so the corpus provably cannot
+drive that property — and nothing asserts `releases` arrives newest-first.
+
 **TWO LIVE FALSE CLAIMS ON SMPL'S COMMITTED PAGE (2026-08-04). RECORDED, NOT REROLLED — a reroll to
 fix two sentences would risk the twelve recovered brand-level citations.**
 Five verdict-bearing synthesis points were checked figure-by-figure against the Q3 transcript and
