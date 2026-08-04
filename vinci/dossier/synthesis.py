@@ -897,7 +897,34 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     if len(ps.releases) > len(recent):
         out.append(f"(note: {len(ps.releases) - len(recent)} older release(s) omitted from the "
                    "digest — the four most recent are shown; full set in the JSON)")
+    # WHICH GUIDE IS CURRENT — derived from the filing dates, which are already known.
+    #
+    # WHY: the digest emitted every release's guidance as `guidance (metric period): low–high →
+    # source_ref`, with NO DATE AND NO ORDER. On SMPL that put July's `net sales 2026: 1,345–1,355`
+    # and April's `1,310–1,350` side by side as equals, and the synthesis argued the FY26 guide from
+    # the APRIL filing — audit defect P2, returning through the brief after the extractor was
+    # fixed. The mechanical layer was right the whole time; `current_guide` even names the July 8-K.
+    # Nothing carried that into the digest. 9 of 11 names carry more than one guidance-bearing
+    # release (NCNO five, AORT/CNXC/VRRM four), so SMPL was among the LEAST exposed.
+    #
+    # MARK, NEVER DROP: the guidance history IS a bear point — SMPL's three-step cut sequence is
+    # evidence — so superseded releases stay in the digest and merely stop looking current.
+    #
+    # DATES ONLY, no heuristic and no ranking. A release whose `filed` is absent cannot be ordered,
+    # so it is labelled UNDATED rather than assumed current or stale — MVST and FUBO are that case.
+    _dated = [r.filed for r in ps.releases if r.guidance and r.filed]
+    _newest = max(_dated) if _dated else None
     for r in recent:
+        if r.guidance:
+            if r.filed is None:
+                _mark = ("VINTAGE UNDATED — this release states no filing date, so it cannot "
+                         "be ordered against the others; do not read it as current")
+            elif r.filed == _newest:
+                _mark = f"CURRENT GUIDE (filed {r.filed})"
+            else:
+                _mark = (f"SUPERSEDED (filed {r.filed}; replaced by the guide filed {_newest}) — "
+                         "history, NOT the company's current outlook")
+            out.append(f"--- {_mark} ---")
         for g in r.guidance:
             v = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
             out.append(f"guidance ({g.metric} {g.period}): {v} → {g.source_ref}")
