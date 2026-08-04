@@ -215,3 +215,52 @@ def test_judge_edges_counts_only_real_supply_chain() -> None:
     assert rep["real_edges"] == 1
     assert rep["evidence_precision"] == round(1 / 3, 3)
     assert rep["by_class"] == {"real_supply_chain": 1, "competitor": 1, "bio_or_governance": 1}
+
+
+# --- token usage (the 2026-08-04 rider) ---------------------------------------------------------
+
+
+class _UsageMsg:
+    """A minimal Anthropic message: one tool_use block plus a usage record."""
+
+    def __init__(self, stop_reason: str = "tool_use") -> None:
+        self.stop_reason = stop_reason
+        self.usage = type("U", (), {"input_tokens": 1234, "output_tokens": 567})()
+        self.content = [type("B", (), {"type": "tool_use", "input": {"ok": True}})()]
+
+
+def _client(msg: object) -> object:
+    from vinci.graph.llm import AnthropicLlmClient
+    c = AnthropicLlmClient.__new__(AnthropicLlmClient)
+    c._model, c._max_tokens, c._last_usage = "m", 16384, None      # type: ignore[attr-defined]
+    c._client = type("C", (), {"messages": type("M", (), {         # type: ignore[attr-defined]
+        "create": staticmethod(lambda **kw: msg)})()})()
+    return c
+
+
+def test_the_client_records_token_usage() -> None:
+    """THE RIDER. Nothing measured actual tokens, so cost was unmeasured and the 2026-08-04
+    crowding question had to be answered by counting log characters and dividing by a GUESSED
+    chars-per-token. Worse, `synthesis.py` reports "(likely truncated)" from MISSING FIELDS alone —
+    an inference — and on SMPL it said so about a response using a fifth of its budget."""
+    c = _client(_UsageMsg())
+    assert c.last_usage is None                                    # type: ignore[attr-defined]
+    c.extract(system="s", user="u", tool={"name": "t"})            # type: ignore[attr-defined]
+    assert c.last_usage == {                                       # type: ignore[attr-defined]
+        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384}
+
+
+def test_usage_is_recorded_even_when_the_call_raises() -> None:
+    """THE PROPERTY THE FIRST CUT CLAIMED AND DID NOT PIN. Usage is written BEFORE the truncation
+    guard, because the FAILING call is the one whose token count you most want — a count recorded
+    only on success would be missing in exactly the case that prompted the rider."""
+    import pytest as _pytest
+
+    from vinci.graph.llm import LlmError
+    c = _client(_UsageMsg(stop_reason="max_tokens"))
+    with _pytest.raises(LlmError, match="truncated"):
+        c.extract(system="s", user="u", tool={"name": "t"})         # type: ignore[attr-defined]
+    assert c.last_usage == {                                        # type: ignore[attr-defined]
+        "input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384}, (
+        "usage was lost on the raising path — recorded after the guard instead of before it")
+

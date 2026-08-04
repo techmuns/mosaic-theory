@@ -947,6 +947,11 @@ def synthesize(
     except LlmError as exc:
         log_parts += ["", "=== ERROR ===", str(exc)]
         return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)
+    # USAGE IN THE LOG, so "(likely truncated)" below can be CHECKED instead of believed. On
+    # SMPL 2026-08-04 that message was emitted about a response using a fifth of its budget.
+    _u = getattr(llm, "last_usage", None)
+    if _u:
+        log_parts += ["", "=== USAGE ===", json.dumps(_u)]
     log_parts += ["", "=== RAW OUTPUT ===", json.dumps(raw, indent=2, default=str)]
     # a missing STRUCTURAL field means a truncated response — mark the synthesis UNAVAILABLE rather
     # than silently defaulting to a blank. evidence_balance is excluded: its absence is a contract
