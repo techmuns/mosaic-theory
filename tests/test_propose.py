@@ -402,3 +402,34 @@ def test_the_template_never_truncates_a_driver_value() -> None:
                 assert val in blob, (
                     f"{folder.parent.name}: driver value truncated in the template — {val[:60]!r}")
         assert "…" not in blob, f"{folder.parent.name}: an ellipsis means a value was cut"
+
+
+def test_the_llm_client_records_token_usage() -> None:
+    """THE RIDER (2026-08-04). Nothing measured actual tokens, so cost was unmeasured and the
+    crowding question had to be answered by counting log characters and dividing by a guessed
+    chars-per-token. Worse, `synthesis.py` reports "(likely truncated)" from MISSING FIELDS alone —
+    an inference — and on SMPL it said so about a response using a fifth of its budget.
+
+    Usage is recorded BEFORE any raise, so the failing call (the one whose count matters most) is
+    still measurable."""
+    from vinci.graph.llm import AnthropicLlmClient
+
+    class _Usage:
+        input_tokens, output_tokens = 1234, 567
+
+    class _Block:
+        type = "tool_use"
+        input = {"ok": True}
+
+    class _Msg:
+        stop_reason = "tool_use"
+        content = [_Block()]
+        usage = _Usage()
+
+    c = AnthropicLlmClient.__new__(AnthropicLlmClient)
+    c._model, c._max_tokens, c._last_usage = "m", 16384, None      # type: ignore[attr-defined]
+    c._client = type("C", (), {"messages": type("M", (), {           # type: ignore[attr-defined]
+        "create": staticmethod(lambda **kw: _Msg())})()})()
+    assert c.last_usage is None                                      # before any call
+    c.extract(system="s", user="u", tool={"name": "t"})
+    assert c.last_usage == {"input_tokens": 1234, "output_tokens": 567, "max_tokens": 16384}
