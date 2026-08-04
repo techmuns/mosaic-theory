@@ -237,3 +237,245 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) ->
                     f"{val - ref:+g} and states no reason — set {axis}_adjustment. "
                     "(This is the §D defect: an averaged number whose derivation is unstated.)")
     return problems
+
+
+# --- the shares denominator, settled rather than picked silently --------------------------------
+
+#: Two share counts sit in every dossier and NEITHER is what item 24 ruled the denominator must be
+#: (diluted outstanding AT THE VALUATION DATE): `anchor.diluted_shares` is DILUTED but a
+#: WEIGHTED AVERAGE over a period, and `stock_info.shares_out` is AT A DATE but the BASIC count.
+#: A weighted average over a quarter and a point-in-time count differ by roughly the buyback pace,
+#: so a small gap is expected and a large one is structural — a conversion, a raise, a split — which
+#: is an analyst's problem, not a rounding one. 2% separates the two cases.
+SHARE_DISAGREEMENT_TOL = 0.02
+
+
+def resolve_shares(doc: dict[str, Any]) -> tuple[float, str, str]:
+    """The per-share denominator, as (value_in_MILLIONS, basis, source) — never picked silently.
+
+    TAKES `stock_info.shares_out` — the POINT-IN-TIME count — because item 24 ruled the denominator
+    is measured at the valuation date, and a weighted average is measured over a period. That is the
+    convention SMPL's committed record already follows (88.460545, its `stock_info.shares_out`,
+    against an `anchor.diluted_shares` of 89.94M).
+
+    RETURNS THE BASIS SAYING WHAT IT IS AND WHAT IT IS NOT, because the taken value is the BASIC
+    outstanding count and the ruling asks for the DILUTED one: they coincide only when the filer
+    reports no dilutive difference, which is a fact about the filing and not an assumption this code
+    may make. REFUSES when the two counts disagree beyond `SHARE_DISAGREEMENT_TOL`.
+
+    NOTE THE UNIT: `ScenarioRecord.facts["diluted_shares"]` is in MILLIONS (SMPL's is 88.460545)
+    while the dossier stores 88,460,545. Converted here, once, rather than at each call site.
+    """
+    out = _get(doc, "mechanical", "stock_info", "shares_out", "value")
+    wavg = _get(doc, "anchor", "diluted_shares", "value")
+    if not isinstance(out, (int, float)) or out <= 0:
+        raise ProposalRefusedError(
+            f"{doc.get('ticker')}: stock_info.shares_out is absent or non-positive — the per-share "
+            "denominator cannot be defaulted, and a scenario value per share computed on a guessed "
+            "share count is not a number")
+    basis = ("point-in-time shares outstanding at the valuation date (item 24: the denominator is "
+             "measured AT the date, not averaged over a period). This is the BASIC outstanding "
+             "count; it equals the diluted denominator only where the filer reports no dilutive "
+             "difference — state that from the filing, do not assume it.")
+    if isinstance(wavg, (int, float)) and wavg > 0:
+        gap = abs(wavg - out) / out
+        if gap > SHARE_DISAGREEMENT_TOL:
+            raise ProposalRefusedError(
+                f"{doc.get('ticker')}: the two share counts disagree by {gap:.2%} — "
+                f"stock_info.shares_out {out:,.0f} against anchor.diluted_shares {wavg:,.0f} "
+                f"(diluted weighted-average). Beyond {SHARE_DISAGREEMENT_TOL:.0%} that is a "
+                "structural change (a conversion, a raise, a split), not the buyback pace. Resolve "
+                "which count belongs in the denominator before writing a value per share.")
+        basis += (f" The filer's diluted weighted average is {wavg:,.0f} — {gap:.2%} away.")
+    return round(out / 1e6, 6), basis, "EDGAR XBRL shares outstanding (via committed dossier)"
+
+
+# --- the evidence each refused cell needs, carried from the dossier ------------------------------
+
+
+def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
+    """What the analyst needs in front of them for the six cells the machine will not propose.
+
+    A line reading "bear revenue: required" is a FORM. The evidence is already in the dossier, and
+    withholding it means the analyst goes and finds it by hand — which is where an unanchored number
+    acquires an unstated derivation. Keyed by axis, since bear and bull read the same frame.
+    """
+    ev: dict[str, list[str]] = {"revenue": [], "margin": [], "multiple": []}
+
+    # revenue — the consensus frame with its n and dispersion, LTM, guidance, and the reported arc
+    for r in _get(doc, "mechanical", "consensus_context", "consensus_levels", "Revenue") or []:
+        ev["revenue"].append(
+            f"consensus FY{r.get('fy')}: median {r.get('median')} · low {r.get('low')} · "
+            f"high {r.get('high')} · n {r.get('estimates')} · sd {r.get('std_dev')}")
+    fs = _get(doc, "mechanical", "financial_summary", "annual", "value") or {}
+    cols = fs.get("columns") or []
+    for row in fs.get("rows") or []:
+        # THE LEVEL ROW ONLY. `startswith("revenue")` also matches "Revenue YoY"/"Revenue QoQ",
+        # which emitted a second, EMPTY arc line — evidence nobody can read is noise in a block
+        # whose purpose is to be read.
+        label = str(row.get("label", "")).strip().lower()
+        if label.split(" (")[0] not in ("revenue", "total revenue"):
+            continue
+        pairs = [f"{c} {v}" for c, v in zip(cols, row.get("values") or [], strict=False)
+                 if v is not None]
+        if pairs:
+            ev["revenue"].append("reported/estimated revenue arc: " + " → ".join(pairs))
+    g = _get(doc, "mechanical", "drawdown_cause", "revised_guidance")
+    if isinstance(g, dict) and g.get("value"):
+        ev["revenue"].append(f"current guidance: {str(g['value'])[:300]}")
+
+    # margin — the RAW per-FY series, because "clean" is the judgment the machine cannot make
+    mt = _get(doc, "mechanical", "quality", "margin_trend")
+    if isinstance(mt, dict) and mt.get("value"):
+        ev["margin"].append(f"margin trend (CIQ): {str(mt['value'])[:600]}")
+    mg = _get(doc, "anchor", "margin") or {}
+    if mg.get("value") is not None:
+        ev["margin"].append(
+            f"anchor median {float(mg['value']) * 100:.4f}% over {mg.get('anchor_years')} FY — "
+            f"{mg.get('source')}")
+    ev["margin"].append("RAW per-FY operating margins are EDGAR OperatingIncomeLoss ÷ total "
+                        "revenue; a year carrying a one-off is NOT clean, and deciding which years "
+                        "are clean is the judgment this cell exists for.")
+
+    # multiple — the own-history band AND the peer row, side by side. Anchoring on own history
+    # alone is how a name reads conservative while trading at a premium to its peers.
+    oh = (_get(doc, "mechanical", "valuation", "own_history", "value") or [None])[0]
+    if isinstance(oh, dict):
+        # `percentile` is WHERE CURRENT SITS in its own range — not a 25th-percentile LEVEL. The
+        # first cut of this line labelled it `p25`, which would have put a 0.037 rank where a
+        # multiple belongs: one name, two meanings, in a block whose whole job is to be read.
+        pct = oh.get("percentile")
+        rank = f"{float(pct) * 100:.1f}th pctile of its own range" if isinstance(
+            pct, (int, float)) else "rank unknown"
+        ev["multiple"].append(
+            f"own history {oh.get('metric')}: current {oh.get('current')} ({rank}) · "
+            f"low {oh.get('low')} · median {oh.get('median')} · high {oh.get('high')} · "
+            f"{oh.get('n_closes')} closes over {oh.get('window_span_years')}y")
+    tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
+    if isinstance(tm, dict) and tm.get("value"):
+        ev["multiple"].append(f"PEER CROSS-SECTION — {tm['value']}")
+        ev["multiple"].append(
+            "READ THE PEER ROW BESIDE THE OWN-HISTORY BAND. An own-history anchor with a haircut "
+            "can still sit at a PREMIUM to the peer median, and the LTM and NTM bases can "
+            "disagree in sign. Neither number alone tells you where the multiple sits.")
+    return ev
+
+
+# --- the template, and reading one back ---------------------------------------------------------
+
+#: Keys the template carries for the analyst's benefit and `scenario-create` ignores. Underscore
+#: marks them, so a reviewer reading the diff can see at a glance what is input and what is context.
+COMMENTARY_PREFIX = "_"
+
+
+def build_template(doc: dict[str, Any]) -> dict[str, Any]:
+    """The emitted underwrite template: anchors pre-filled, refusals carrying their evidence.
+
+    A FILE, not a prompt — reviewable and diffable, which is what a handful of underwrites a quarter
+    actually needs. The three anchored cells arrive with their `source_ref` and `vintage`; the six
+    refused ones arrive EMPTY with the reason they are empty and the dossier evidence beside them.
+    """
+    ticker = str(doc.get("ticker") or "")
+    ancs = {(a.axis, a.leg): a for a in propose_anchors(doc)}
+    shares, sh_basis, sh_source = resolve_shares(doc)
+    ev = evidence_for(doc)
+
+    facts: dict[str, Any] = {"diluted_shares": {"value": shares, "unit": "shares",
+                                                "basis": sh_basis, "source": sh_source}}
+    for key, unit in (("d_and_a", "$M"), ("net_debt", "$M")):
+        f = _get(doc, "anchor", key)
+        if isinstance(f, dict) and f.get("value") is not None:
+            facts[key] = {"value": f["value"], "unit": f.get("unit") or unit,
+                          "basis": f.get("basis") or "", "source": f.get("source") or ""}
+
+    scenarios: dict[str, Any] = {}
+    for leg in LEGS:
+        cell: dict[str, Any] = {}
+        for axis in AXES:
+            a = ancs.get((axis, leg))
+            if a is not None:
+                cell[axis] = a.schema_value
+                cell[f"{COMMENTARY_PREFIX}{axis}_anchor"] = (
+                    f"{a.value:g}{a.unit} — {a.label} · {a.source} · vintage {a.vintage}")
+                cell[f"{axis}_adjustment"] = ""      # only needed if the value is moved
+            else:
+                cell[axis] = None
+                cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = UNPROPOSED_REASON[(axis, leg)]
+                cell[f"{axis}_derivation"] = ""      # REQUIRED — where this number came from
+        cell["reason"] = ""
+        if leg == "bear":
+            cell["bear_basis"] = ""                  # own-history | bear-state-comps | peer-… |…
+        cell["margin_basis"] = ""                    # EBIT | EBITDA — WHICH LINE, not provenance
+        scenarios[leg] = cell
+
+    return {
+        "ticker": ticker,
+        "recipe_id": _get(doc, "anchor", "recipe_hint"),
+        "multiple_basis": "EV/EBITDA",
+        "underwrite_date": "",
+        "analyst": "",
+        "spot": _get(doc, "mechanical", "stock_info", "price", "value"),
+        "spot_source": _get(doc, "mechanical", "stock_info", "price", "source_ref"),
+        "facts": facts,
+        "scenarios": scenarios,
+        f"{COMMENTARY_PREFIX}evidence": ev,
+        f"{COMMENTARY_PREFIX}note": (
+            "Three cells are pre-filled from computed anchors and carry their source and vintage; "
+            "move one and you must state the adjustment. Six are EMPTY by design — each says "
+            "why it "
+            "has no anchor, and the evidence block carries what the dossier already knows. Keys "
+            "beginning '_' are commentary and are ignored on create."),
+    }
+
+
+def legs_from_template(tpl: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """The supplied legs, with commentary keys stripped — what `validate_legs` consumes."""
+    out: dict[str, dict[str, Any]] = {}
+    for leg, cell in (tpl.get("scenarios") or {}).items():
+        out[leg] = {k: v for k, v in cell.items() if not k.startswith(COMMENTARY_PREFIX)}
+    return out
+
+
+def assumptions_from(doc: dict[str, Any],
+                     legs: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """The per-axis `AssumptionDerivation` payload — where the record's PROVENANCE actually lives.
+
+    WITHOUT THIS THE WHOLE DESIGN LEAKS, and the first cut of `scenario-create` leaked it. The
+    template shows each anchor's source and vintage in a `_`-prefixed commentary key, and
+    `legs_from_template` strips those before validation; `ScenarioInput` has nowhere to put a
+    `source_ref` either. So the write validated the analyst's adjustments and derivations, confirmed
+    every number was accounted for — and then persisted a record containing NONE of it.
+    `Anchor.as_refpoint()` had zero production callers: defined, never called.
+
+    A record written that way passes every guard while carrying LESS provenance than the
+    hand-authored records this path was built to replace. That is worse than no tool.
+
+    So: each axis gets its anchor as a source- and vintage-bearing `RefPoint`, and a `method`
+    sentence assembled from what the analyst actually said on each leg. The method is required
+    non-blank by the schema, and here it is composed only of analyst words — never invented.
+    """
+    by = {(a.axis, a.leg): a for a in propose_anchors(doc)}
+    out: dict[str, dict[str, Any]] = {}
+    for axis in AXES:
+        said: list[str] = []
+        for leg in LEGS:
+            cell = legs.get(leg) or {}
+            if (axis, leg) in by:
+                adj = str(cell.get(f"{axis}_adjustment") or "").strip()
+                # NAME THE STATISTIC IN WORDS, not the house label: the prose linter flags
+                # "anchor" as a house token ("state the claim, not the house label"), and it is
+                # right — a reader wants "at the eight-year operating-margin median", not a word
+                # that means something only inside this repo. Analyst words are never edited; this
+                # is the sentence the MACHINE composes, so it is the machine's to get right.
+                a = by[(axis, leg)]
+                said.append(f"{leg}: {adj}" if adj else f"{leg}: at the {a.label}")
+            else:
+                drv = str(cell.get(f"{axis}_derivation") or "").strip()
+                if drv:
+                    said.append(f"{leg}: {drv}")
+        refs = [a.as_refpoint().model_dump() for (ax, _lg), a in by.items() if ax == axis]
+        out[axis] = {
+            "method": " · ".join(said) or f"{axis}: stated per leg in the leg reasons.",
+            "references": refs,
+        }
+    return out
