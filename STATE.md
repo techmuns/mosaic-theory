@@ -12491,6 +12491,51 @@ statements below are kept for the reasoning that produced them.**
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
+**THE BRBR REVENUE GATE — CLEAR, MEASURED 2026-08-04. Nothing reads a single year.** Exactly ONE
+BRBR field reads EDGAR revenue: `anchor.margin`, sourced `OperatingIncomeLoss / Revenues` over
+**8 FY** via `midcycle`'s longest-coverage pick. `consensus_levels`, the gap's revenue ratio and the
+brief are all **CIQ-sourced** — `margin_trend`, `free_cash_flow` and `financial_summary.annual` all
+carry CIQ source_refs, so the EDGAR fallback never fired.
+**AND THE SHARED EXTRACTOR'S BEHAVIOUR ON BRBR IS ABSENCE, NOT A WRONG NUMBER:**
+`extract_points(facts, "revenue")` returns **ZERO** annual points for BRBR (first-hit picks the
+ASC-606 tag, which holds only the incomplete FY2026) — so `EdgarFundamentals` would read revenue as
+UNKNOWN, fail-loud, rather than as a truncated series. **That is materially less severe than WERN's
+4-of-18**, and it only arises at all when CIQ fundamentals are EMPTY, which BRBR's are not.
+**So the underwrite is not gated. The shared-extractor fix stays queued** — it could move anchors on
+the revenue-affected names, which is a decision-path change wanting its own measurement.
+
+**AND THE MULTIPLE ANCHORS ARE THE SAME CLASS, as suspected — so it is 3 SAFE / 3 CONTAMINABLE /
+3 UNANCHORED.** `own_history.low` is a min-statistic: **dropping its single defining close moves the
+low +0.77x against the median's +0.21x**. The contamination CHANNEL differs, though — a
+writedown-collapsed EBITDA *spikes* a multiple (denominator shrinks), so it inflates `high` (which
+would double) and not `low`; what pushes `low` down is a price collapse without an EBITDA collapse,
+which is exactly SMPL's present state (current 5.34 BELOW the historical low 6.11).
+**THE RESULT IS CLEAN AND PRINCIPLED: the safe anchors are EXACTLY THE MEDIANS** — revenue base
+(consensus median), margin base (8-FY median), multiple base (own-history median). **Every
+extreme-statistic anchor is contaminable; the unanchored cells have no statistic at all.**
+
+**`scenario-create` BUILT (`vinci/dossier/propose.py`) — the underwrite finally has a writer.**
+Until now `scenario-refresh`/`scenario-supersede` both required an existing record and
+`write_record()` had ZERO callers, so every record was hand-authored and the one place analyst
+judgment enters bypassed every guard.
+**IT PROPOSES 3 AND REFUSES 6 — and the count does not decide the design.** The invariant holds on
+all nine: **every number either derives from an anchor carrying its `source_ref` + `vintage`, or
+states its basis — and both are refused if absent.**
+**§D IS NOW STRUCTURALLY IMPOSSIBLE, demonstrated on the real record:** SMPL's committed base margin
+is refused with *"base.margin = 14 deviates from its anchor 15.4481% by -1.4481 and states no
+reason"*. Stating the adjustment clears it; taking the anchor needs nothing. **The ruling moved into
+the write path, where it binds every author.**
+Also enforced: **`RefPoint.vintage` inherited from the dossier**, never stamped as "today" (the
+absence of which is why SMPL's five references could not be dated); **refusal on a dossier/record
+recipe disagreement — AORT is live on day one** (hint `R1_midcycle…` `applicable: True` against a
+record that is R2); **refuse-never-default on a missing leg**; and every refusal repeats WHY the cell
+had no proposal rather than only that it is absent.
+**4/4 mutations CAUGHT** — deviation-without-reason accepted, basis no longer required, missing leg
+skipped, and margin-bear acquiring a min default.
+**A NEW RECORD IS A GENUINELY NEW OBJECT, not an append:** `write_record` writes
+`scenarios/<TICKER>.json` and the append-only path is `refresh_log`; supersession (archive-and-reissue
+under `<TICKER>-<date>`) is a separate act, so creating never mutates an existing record.
+
 **`scenario-create` — STEP 1 REPORTED, STEP 2 NOT BUILT. The stop condition fired.** Full render in
 `docs/audits/2026-08-04-scenario-create-derivability.md`. **The underwrite is the critical path and
 has NO writer** — `scenario-refresh`/`scenario-supersede` both need an existing record, `write_record()`
