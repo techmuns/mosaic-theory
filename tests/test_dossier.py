@@ -2378,17 +2378,29 @@ def test_tier_b_llm_error_and_absent_slice_fail_loud() -> None:
     assert rows2 == [] and any("LLM error" in f for f in flags2)
 
 
-def test_tier_b_row_cap_flags_excess() -> None:
-    """(PR-B Tier B ⊖) The row cap bounds cost/space — the excess is FLAGGED, never silently cut."""
-    from vinci.dossier.driver_extract import _MAX_ROWS, extract_transcript_drivers
+def test_tier_b_rows_are_never_capped() -> None:
+    """(operator ruling 2026-08-04) THE CAP IS GONE, and this pin is inverted from the one that
+    asserted it. `_MAX_ROWS = 12` selected by ARRIVAL ORDER and bound on every name with a
+    transcript — all ten kept exactly 12, 113 rows dropped fleet-wide.
+
+    It saved nothing (the prompt never bounded the model's output, so every dropped row was already
+    paid for), it deleted facts from the layer DESIGN RULE v2 calls machine-complete, and it dropped
+    the rows the underwrite turns on: SMPL lost every brand-level consumption and penetration metric
+    while its kill criterion is stated on Quest revenue growth and its bear point cites Atkins'
+    household penetration. The page cited evidence the cap had removed from the artifact.
+
+    Drives the real extractor, not a constant: 20 valid rows in → 20 rows out, no `capped` flag."""
+    from vinci.dossier.driver_extract import extract_transcript_drivers
     one = {"kind": "leading_indicator", "metric": "shipments", "value": "266 megawatt hours",
            "quote": "We shipped approximately 266 megawatt hours in the quarter, up 16% "
                     "year over year."}
-    payload = {"drivers": [dict(one) for _ in range(_MAX_ROWS + 3)]}
+    payload = {"drivers": [dict(one) for _ in range(20)]}
     rows, flags, _ = extract_transcript_drivers(
         _TB_SLICE, llm=_TBFakeLlm(payload), ticker="X", name="X")
-    assert len(rows) == _MAX_ROWS
-    assert sum("capped" in f for f in flags) == 3  # the 3 excess rows each flagged
+    assert len(rows) == 20, f"rows were dropped: {len(rows)}"
+    assert not any("capped" in f for f in flags), flags
+    import vinci.dossier.driver_extract as de
+    assert not hasattr(de, "_MAX_ROWS"), "the cap constant is back"
 
 
 def test_dossier_top_redesign_no_duplication_static() -> None:
