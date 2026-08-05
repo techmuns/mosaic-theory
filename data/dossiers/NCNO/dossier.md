@@ -5,7 +5,7 @@ _July 30, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $8.09 (-54.9% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $-9.84 · **Risk** $13.72 · **Reward : risk** -0.72 : 1 (bar 2 : 1)
+**Target (base)** $8.09 (-54.9% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $-9.84 · **Risk** $13.72 · **Reward : risk** -0.72 : 1 (bar 2 : 1) · **Base IRR** -5.7% (floor 15%, 4y) · **Gate** FAIL (both tests)
 
 _Spot source: Polygon NCNO close 2026-07-20 (live at underwrite)_
 

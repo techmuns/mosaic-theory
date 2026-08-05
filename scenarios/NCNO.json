@@ -357,7 +357,13 @@
     "ratio": -0.716834436147727,
     "ratio_undefined": null,
     "bar": 2.0,
-    "pass_fail": "FAIL"
+    "pass_fail": "FAIL",
+    "horizon_years": 4.0,
+    "irr": -0.057359272871863265,
+    "irr_undefined": null,
+    "irr_floor": 0.15,
+    "irr_pass_fail": "FAIL",
+    "gate": "FAIL"
   },
   "verdict": {
     "status": "watch",

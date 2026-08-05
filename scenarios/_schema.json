@@ -359,6 +359,81 @@
           ],
           "default": null,
           "title": "Pass Fail"
+        },
+        "horizon_years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon Years"
+        },
+        "irr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Irr"
+        },
+        "irr_undefined": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Irr Undefined"
+        },
+        "irr_floor": {
+          "default": 0.15,
+          "title": "Irr Floor",
+          "type": "number"
+        },
+        "irr_pass_fail": {
+          "anyOf": [
+            {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "UNDEFINED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Irr Pass Fail"
+        },
+        "gate": {
+          "anyOf": [
+            {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "UNDEFINED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate"
         }
       },
       "title": "Result",

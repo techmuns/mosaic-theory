@@ -5,7 +5,7 @@ _August 4, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $25.67 (+143.8% vs entry-vintage spot) · **Spot** $10.53 (entry-vintage — frozen at underwrite 2026-07-27) · **Reward** $15.14 · **Risk** $3.17 · **Reward : risk** 4.78 : 1 (bar 2 : 1)
+**Target (base)** $25.67 (+143.8% vs entry-vintage spot) · **Spot** $10.53 (entry-vintage — frozen at underwrite 2026-07-27) · **Reward** $15.14 · **Risk** $3.17 · **Reward : risk** 4.78 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** UNDEFINED (both tests)
 
 _Spot source: Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)_
 

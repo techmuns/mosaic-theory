@@ -322,7 +322,13 @@
     "ratio": 4.782339777993572,
     "ratio_undefined": null,
     "bar": 2.0,
-    "pass_fail": "PASS"
+    "pass_fail": "PASS",
+    "horizon_years": null,
+    "irr": null,
+    "irr_undefined": "no horizon stated — an IRR needs a realisation date",
+    "irr_floor": 0.15,
+    "irr_pass_fail": "UNDEFINED",
+    "gate": "UNDEFINED"
   },
   "verdict": {
     "status": "watch",
