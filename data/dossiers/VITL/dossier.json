@@ -529,6 +529,12 @@
           "reason": "dispersion 263.7% exceeds 50% — the margin ratio divides by a denominator the street does not agree on, and the reconciliation stays exact while the decomposition stops meaning anything"
         }
       },
+      "leg_basis": {
+        "leg_fy": null,
+        "anchor_fy": "2026",
+        "state": "unstated",
+        "note": "the record does not state which fiscal year its base leg is struck at, so the split across revenue/margin/multiple is reported on FY2026's basis and cannot be verified against the leg. The TOTAL gap is unaffected — it carries no year."
+      },
       "status": "not-computed",
       "reason": "no scenario record for this name — the route is known, the gap is not"
     },

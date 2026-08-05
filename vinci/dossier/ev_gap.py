@@ -135,6 +135,56 @@ def decompose(i: EvGapInputs) -> dict[str, float]:
     }
 
 
+#: The three states a leg's fiscal year can be in relative to the year the gap decomposes on.
+LEG_BASIS_STATES = ("agrees", "disagrees", "unstated")
+
+
+def leg_basis(leg: dict[str, object] | None, anchor: str | None) -> dict[str, object]:
+    """Whether the leg is struck at the year the decomposition uses.
+
+    States: ``agrees`` / ``disagrees`` / ``unstated``.
+
+    WHY THIS IS NOT ABOUT THE TOTAL. `ev_gap = our_EV / TEV`, and neither term carries a year: our
+    EBITDA and multiple come from the leg, TEV from the comps panel. **The total is
+    anchor-independent** — measured on SMPL, 1.6711 struck at FY2026 and 1.6711 struck at FY2028.
+    What moves is the ATTRIBUTION: the same gap splits differently across revenue/margin/multiple,
+    so the driver the page names as dominant can change while the number does not. That is what a
+    reader acts on, and it is what this flags.
+
+    ALL THREE RATIOS ARE STRUCK AT `anchor`, which is why the year belongs to the LEG rather than to
+    its revenue: `revenue_ratio` divides by consensus revenue there, `margin_ratio` by consensus
+    EBITDA÷revenue there, and `multiple_ratio` by `TEV ÷ consensus EBITDA` there — "the market's
+    multiple ON THE ANCHOR YEAR". `EvGapInputs.revenue` has always been commented "our leg's revenue
+    at the anchor"; this makes that assumption checkable instead of assumed.
+
+    UNSTATED IS NOT DISAGREEING, and the two must render differently. Every record committed before
+    2026-08-05 predates `leg_fy`, so `unstated` means "this record never said" — unverifiable, not
+    wrong. A record cannot be faulted for lacking a field that did not exist when it was written.
+    Collapsing the two would make the flag useless on exactly the records it exists for.
+    """
+    fy = (leg or {}).get("leg_fy")
+    fy = str(fy) if fy not in (None, "") else None
+    if anchor is None:
+        return {"leg_fy": fy, "anchor_fy": None, "state": "unstated",
+                "note": "no anchor year — the decomposition is not struck at all"}
+    if fy is None:
+        return {"leg_fy": None, "anchor_fy": anchor, "state": "unstated",
+                "note": (
+                    "the record does not state which fiscal year its base leg is struck "
+                    f"at, so the split across revenue/margin/multiple is reported on "
+                    f"FY{anchor}'s basis and cannot be verified against the leg. The "
+                    "TOTAL gap is unaffected — it carries no year.")}
+    if fy == str(anchor):
+        return {"leg_fy": fy, "anchor_fy": anchor, "state": "agrees", "note": None}
+    return {"leg_fy": fy, "anchor_fy": anchor, "state": "disagrees",
+            "note": (
+                f"the base leg is struck at FY{fy} and the decomposition at FY{anchor}, "
+                "so the split across revenue/margin/multiple — and the shape label drawn "
+                "from it — describes a comparison the leg does not make. The TOTAL gap is "
+                f"unaffected. Re-read the attribution on FY{fy}, or state why FY{anchor} "
+                "is the right basis.")}
+
+
 def anchor_year(levels: dict[str, list[dict[str, object]]]) -> str | None:
     """The nearest forward year where BOTH metrics resolve.
 
@@ -495,7 +545,8 @@ def build_ev_gap(
             if _ROUTE_RANK[r] < _ROUTE_RANK[worst]:
                 worst = r
         out |= {"anchor_fy": anchor, "adjacent_fy": adjacent_year(levels, anchor),
-                "form": worst, "routes": routes}
+                "form": worst, "routes": routes,
+                "leg_basis": leg_basis(leg, anchor)}
 
     # OUR SIDE. Everything the TOTAL needs, and it needs nothing else.
     if leg is None:

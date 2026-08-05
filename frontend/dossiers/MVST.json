@@ -343,6 +343,12 @@
           "reason": "1 estimate(s) — below 3; a median over so few is one analyst's model, and its dispersion reads as agreement because there is nobody to disagree"
         }
       },
+      "leg_basis": {
+        "leg_fy": null,
+        "anchor_fy": "2026",
+        "state": "unstated",
+        "note": "the record does not state which fiscal year its base leg is struck at, so the split across revenue/margin/multiple is reported on FY2026's basis and cannot be verified against the leg. The TOTAL gap is unaffected — it carries no year."
+      },
       "status": "computed",
       "ratios": {
         "ev_gap": 1.6104143659711074
@@ -3526,7 +3532,8 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-08"
+      "as_of": "2026-07-08",
+      "market_cap_as_of": null
     },
     "stock_performance": {
       "points": [

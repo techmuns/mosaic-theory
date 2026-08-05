@@ -425,6 +425,10 @@ def _base_leg(ticker: str) -> dict[str, Any] | None:
         # silently dividing EBIT-margin by EBITDA-margin if it is wrong.
         "margin_basis": "operating",
         "multiple_basis": rec.multiple_basis,
+        # THE YEAR THE LEG IS STRUCK AT, carried so `build_ev_gap` can check it against the year it
+        # decomposes on. None on every record written before 2026-08-05 — UNSTATED, which is a
+        # different state from disagreeing and is reported as one.
+        "leg_fy": base.leg_fy,
         "d_and_a": fact("d_and_a"),
         "shares": fact("diluted_shares"),
         # CARRIED SO THE TOTAL GAP CAN BE STRUCK. Converting OUR OWN D&A share crosses no horizon;

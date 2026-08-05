@@ -3190,6 +3190,19 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
     else:
         chk = "with NO adjacent forward year to check it against — unchecked, not confirmed"
     out += [f"- **Shape:** **{shape.get('anchor')}** at FY{anchor}, {chk}.", ""]
+    # THE BASIS CAVEAT RIDES WITH THE SHAPE, because the shape is what it qualifies. The TOTAL gap
+    # carries no year and is unaffected; the ATTRIBUTION is struck at the anchor, so a leg struck
+    # elsewhere makes this label describe a comparison the leg does not make. UNSTATED and
+    # DISAGREEING render as different sentences — collapsing them would make the caveat useless on
+    # precisely the records it exists for, every one of which predates the field.
+    lb = g.get("leg_basis") or {}
+    if lb.get("state") == "disagrees":
+        out += [f"  ⚠ **The label is struck on FY{lb.get('anchor_fy')}, but the underwrite's base "
+                f"leg is FY{lb.get('leg_fy')}.** {lb.get('note')}", ""]
+    elif lb.get("state") == "unstated":
+        out += [f"  _The record does not state which fiscal year its base leg is struck at, so "
+                f"this label is reported on FY{lb.get('anchor_fy')}'s basis and is unverified "
+                "against the leg. The total gap above carries no year and is unaffected._", ""]
 
     out += _ev_gap_tail(g, br, cons, anchor, cons_as_of)
     return out
