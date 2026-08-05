@@ -90,7 +90,7 @@ def _rd(x: Any, places: int) -> Any:
     return round(x, places) if isinstance(x, (int, float)) and not isinstance(x, bool) else x
 
 
-def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
+def _ledger_join() -> dict[str, list[dict[str, Any]]]:
     """The committed decision ledger, keyed by ticker — the DECISION row of record, with its
     close attached when the position has been closed.
 
@@ -136,7 +136,36 @@ def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
             "reason": e.get("reason"),
             "closeEntryId": e.get("entry_id"),
         }
-    return {str(e.get("ticker", "")).upper(): e for e in by_entry.values()}
+    # ONE TICKER CAN HOLD MORE THAN ONE POSITION, and this collapse used to be decided by FILE
+    # ORDER — the identical defect the docstring above records as fixed for the decision/close
+    # PAIR, still open one level up for two DECISION rows. It could not fire until 2026-08-05:
+    # SMPL closed its 2026-07-06 position and opened another on 2026-07-29, so the comprehension
+    # `{ticker: e for e in ...}` had two candidates and silently kept whichever came last. It also
+    # took the ARCHIVED record's card down with it — `_ledger_for_record` could no longer see the
+    # row the 2026-07-21 record owns, so the served archived card lost its position entirely.
+    #
+    # ALL of them are kept now, newest last. `_ledger_by_ticker` still answers "the position of
+    # record" (the newest), because that is what a live card states; `_ledger_rows_by_ticker`
+    # exposes the full list so ownership-by-tenure can find a superseded record's own row.
+    out: dict[str, list[dict[str, Any]]] = {}
+    for e in by_entry.values():
+        out.setdefault(str(e.get("ticker", "")).upper(), []).append(e)
+    for lst in out.values():
+        lst.sort(key=lambda e: str(e.get("decided_at") or ""))
+    return out
+
+
+def _ledger_rows_by_ticker() -> dict[str, list[dict[str, Any]]]:
+    """Every decision row per ticker, oldest first — the index ownership-by-tenure needs."""
+    return _ledger_join()
+
+
+def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
+    """The POSITION OF RECORD per ticker — the newest decision row, with its close attached."""
+    # By `decided_at`, never by list position: a positional read would depend on the
+    # caller's sort holding, and the annual-table guard rightly refuses that shape here.
+    return {t: max(rows, key=lambda e: str(e.get("decided_at") or ""))
+            for t, rows in _ledger_join().items() if rows}
 
 
 def _amendment_index() -> dict[str, list[dict[str, Any]]]:
@@ -183,7 +212,20 @@ def _ledger_for_record(
     decision cannot have justified it. Records with no supersession are unaffected — there is only
     one record, so it is trivially the latest at-or-before.
     """
-    led = (ledger or {}).get(str(rec.get("ticker", "")).upper())
+    # ACCEPTS EITHER INDEX. `_ledger_by_ticker` gives ONE row per ticker (the position of record);
+    # `_ledger_rows_by_ticker` gives them all. Since 2026-08-05 a ticker can hold a CLOSED position
+    # and a later OPEN one, and the SUPERSEDED record owns the older of the two — so when the full
+    # list is available each candidate is tested and the newest eligible one is returned. Given a
+    # single-row index the behaviour is exactly as before.
+    t_up = str(rec.get("ticker", "")).upper()
+    found = (ledger or {}).get(t_up)
+    if isinstance(found, list):
+        for cand in reversed(found):
+            owned = _ledger_for_record(rec, {t_up: cand})
+            if owned is not None:
+                return owned
+        return None
+    led = found
     if not led:
         return None
     decided = str(led.get("decided_at") or "")[:10]
@@ -450,7 +492,7 @@ def _scenario_cards() -> dict[str, dict[str, Any]]:
     d = ROOT / "scenarios"
     if not d.is_dir():
         return {}
-    ledger = _ledger_by_ticker()
+    ledger = _ledger_rows_by_ticker()
     out: dict[str, dict[str, Any]] = {}
     for p in sorted(d.glob("*.json")):
         if p.name.startswith("_"):          # _schema.json and friends are not records

@@ -309,10 +309,18 @@ def test_supersession_did_not_touch_the_ledger() -> None:
     forward spread must be identical before and after — supersession cannot launder a track."""
     led = (ROOT / "data" / "snapshots" / "decision_ledger.jsonl").read_text().splitlines()
     rows = [json.loads(x) for x in led if x.strip()]
-    smpl = [r for r in rows if r["ticker"] == "SMPL"]
-    assert len(smpl) == 2, "SMPL still has exactly its decision row + its close row"
-    assert {r["entry_id"] for r in smpl} == {
-        "V-SMPL-screen2-20260706", "C-SMPL-screen2-20260706"}
+    smpl = {r["entry_id"] for r in rows if r["ticker"] == "SMPL"}
+    # THE ORIGINAL PAIR IS INTACT — that is the claim, and it is not a row COUNT. The first cut
+    # asserted `len(smpl) == 2`, true only while SMPL held no later position; the 2026-08-05
+    # verdict added a third row and reddened this on a deliberate act no supersession performed.
+    # A supersession cannot launder a track by REMOVING or MUTATING what is already there; a
+    # separate, later log-verdict is free to append. Both survive here.
+    assert {"V-SMPL-screen2-20260706", "C-SMPL-screen2-20260706"} <= smpl, (
+        "the 2026-07 decision/close pair left the ledger — a supersession must never remove a "
+        "row; the forward spread has to be identical before and after")
+    orig = [r for r in rows if r["entry_id"] == "V-SMPL-screen2-20260706"][0]
+    assert orig["entry_price"] == 10.92 and orig["verdict"] == "BUY", (
+        "the sealed decision row was mutated — supersession is a RECORD event, not a transaction")
 
 
 # --- what the RENDERED PAGE showed (2026-07-27, found by looking) ------------------------------
@@ -352,13 +360,24 @@ def test_a_reissued_record_does_not_inherit_the_ledger_row_it_never_made() -> No
     headlined that BUY, and the SAME row displayed on two records.
 
     RULE: a record owns the row only if the row was decided during its tenure."""
-    ledger = _BUILD._ledger_by_ticker()
+    ledger = _BUILD._ledger_rows_by_ticker()
     live = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
     arch = json.loads((ROOT / "scenarios" / "archive" / "SMPL-2026-07-21.json").read_text())
-    assert _BUILD._ledger_for_record(live, ledger) is None, (
-        "the reissued record post-dates the decision — it cannot own that ledger row")
     owned = _BUILD._ledger_for_record(arch, ledger)
-    assert owned and owned["entry_id"] == "V-SMPL-screen2-20260706"
+    assert owned and owned["entry_id"] == "V-SMPL-screen2-20260706", (
+        "the 2026-07-21 record lost the row decided during ITS tenure")
+    # THE RULE NOW HAS A POSITIVE CASE, which is strictly stronger. The first cut asserted the live
+    # record owns NOTHING — true only while every SMPL decision pre-dated it. The 2026-08-05
+    # reissue had a verdict logged against it the same day, so it legitimately owns THAT row, and
+    # a bare `is None` reddened on the rule working. Ownership is tenure in both directions.
+    live_owned = _BUILD._ledger_for_record(live, ledger)
+    assert (live_owned or {}).get("entry_id") != "V-SMPL-screen2-20260706", (
+        "the reissued record claimed a row decided before it existed — the supersession bug")
+    if live_owned is not None:
+        assert live_owned["decided_at"][:10] >= live["underwrite_date"], (
+            f"the live record owns {live_owned['entry_id']} decided "
+            f"{live_owned['decided_at'][:10]} against an underwrite dated "
+            f"{live['underwrite_date']} — a record cannot own a row that pre-dates it")
     # a never-superseded name is unaffected: one record, it owns its row
     it = json.loads((ROOT / "scenarios" / "IT.json").read_text())
     assert (_BUILD._ledger_for_record(it, ledger) or {}).get("entry_id") == "V-IT-screen2-20260706"

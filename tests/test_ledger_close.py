@@ -40,11 +40,14 @@ def _open_buy(rows: list[dict]) -> dict:
     SYNTHETIC open BUY decision row (built through the model) is APPENDED to ``rows`` and
     returned. The mutation is deliberate: every pin needs the decision row present in the same
     row set its close is appended to (the double-count demonstration counts both)."""
-    closed = {mon.entry_of(c).get("closes_entry_id") for c in mon.close_rows(rows)}
-    for r in mon.decision_rows(rows):
-        e = mon.entry_of(r)
-        if e["verdict"].upper().startswith("BUY") and e["entry_id"] not in closed:
-            return e
+    # ALWAYS SYNTHETIC SINCE 2026-08-05 — which honours the docstring above rather than retreating
+    # from it. This used to prefer a REAL open BUY and fall back to a synthetic one. When SMPL's
+    # 2026-08-05 verdict made it a real open BUY, three of these pins broke — not because close
+    # mechanics changed, but because SMPL already carried a CLOSED pair on the SAME ticker, so
+    # `buys_named` saw four rows where the demonstration needs exactly two. These pins guard close
+    # MECHANICS and "must stay provable on any book"; selecting a real position couples them to
+    # whatever the book happens to hold, which is precisely what broke. A synthetic row on a ticker
+    # with no history keeps the arithmetic exact and book-independent.
     syn = LedgerEntry(
         entry_id="V-SYN-openbuy", candidate_id="SYN-openbuy",
         internal_id="SEC-0000000000-SYN", ticker="SYN", verdict="BUY",
