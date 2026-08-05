@@ -144,9 +144,12 @@ def _ledger_join() -> dict[str, list[dict[str, Any]]]:
     # took the ARCHIVED record's card down with it — `_ledger_for_record` could no longer see the
     # row the 2026-07-21 record owns, so the served archived card lost its position entirely.
     #
-    # ALL of them are kept now, newest last. `_ledger_by_ticker` still answers "the position of
-    # record" (the newest), because that is what a live card states; `_ledger_rows_by_ticker`
-    # exposes the full list so ownership-by-tenure can find a superseded record's own row.
+    # ALL of them are kept, newest last, and `_ledger_for_record` selects by TENURE from the
+    # full list — a superseded record finds its own row, a live one finds the row decided
+    # during its own tenure. Nothing collapses to one-row-per-ticker any more: that collapse
+    # WAS the defect, and a "position of record" helper built on it survived only because two
+    # tests called it. Keeping every row also restores the twin claim to a direct equality —
+    # the join resolves exactly the closed pairs `pair_closes` does, with nothing restricted.
     out: dict[str, list[dict[str, Any]]] = {}
     for e in by_entry.values():
         out.setdefault(str(e.get("ticker", "")).upper(), []).append(e)
@@ -158,14 +161,6 @@ def _ledger_join() -> dict[str, list[dict[str, Any]]]:
 def _ledger_rows_by_ticker() -> dict[str, list[dict[str, Any]]]:
     """Every decision row per ticker, oldest first — the index ownership-by-tenure needs."""
     return _ledger_join()
-
-
-def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
-    """The POSITION OF RECORD per ticker — the newest decision row, with its close attached."""
-    # By `decided_at`, never by list position: a positional read would depend on the
-    # caller's sort holding, and the annual-table guard rightly refuses that shape here.
-    return {t: max(rows, key=lambda e: str(e.get("decided_at") or ""))
-            for t, rows in _ledger_join().items() if rows}
 
 
 def _amendment_index() -> dict[str, list[dict[str, Any]]]:
@@ -212,11 +207,10 @@ def _ledger_for_record(
     decision cannot have justified it. Records with no supersession are unaffected — there is only
     one record, so it is trivially the latest at-or-before.
     """
-    # ACCEPTS EITHER INDEX. `_ledger_by_ticker` gives ONE row per ticker (the position of record);
-    # `_ledger_rows_by_ticker` gives them all. Since 2026-08-05 a ticker can hold a CLOSED position
-    # and a later OPEN one, and the SUPERSEDED record owns the older of the two — so when the full
-    # list is available each candidate is tested and the newest eligible one is returned. Given a
-    # single-row index the behaviour is exactly as before.
+    # A TICKER CAN HOLD MORE THAN ONE POSITION since 2026-08-05 — SMPL closed its 2026-07-06 one
+    # and opened another on 2026-07-29 — so the index is a LIST per ticker and each candidate is
+    # tested against this record's tenure, newest first. A single row is still accepted, because
+    # the tenure rule below is written for one and this stays its own base case.
     t_up = str(rec.get("ticker", "")).upper()
     found = (ledger or {}).get(t_up)
     if isinstance(found, list):

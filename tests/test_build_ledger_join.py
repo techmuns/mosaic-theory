@@ -48,34 +48,30 @@ def test_twin_agrees_with_pair_closes_on_the_committed_ledger() -> None:
     """THE TWIN PIN. The stdlib join must resolve exactly the same closed positions — and the same
     exit prices — as `vinci.monitor.pair_closes`, on the real committed ledger."""
     rows = _rows()
-    # SAME BASIS ON BOTH SIDES. `pair_closes` enumerates every closed PAIR in the book; the twin
-    # reports each ticker's CURRENT position and whether THAT one is closed. The two coincided only
-    # while a ticker held at most one position. SMPL's 2026-08-05 verdict — opened after its
-    # 2026-07-06 position had already closed — made them legitimately disagree: the old pair is
-    # still closed, the ticker's current position is open. Comparing raw sets would report twin
-    # drift where nothing drifted, so the backend side is restricted to the entry that IS each
-    # ticker's current position. The twin claim — same pairing, same exit prices — is untouched.
-    twin_rows = _BUILD._ledger_by_ticker()
-    current = {t: str(v.get("entry_id")) for t, v in twin_rows.items()}
-    backend = {p["ticker"]: round(float(p["exit_price"]), 2) for p in mon.pair_closes(rows)
-               if str(p.get("entry_id")) == current.get(p["ticker"])}
-    twin = {t: v["_closed"]["exitPrice"] for t, v in twin_rows.items() if v.get("_closed")}
+    # DIRECT EQUALITY over EVERY closed pair, on the joiner production actually runs. An earlier
+    # cut of this pin restricted the backend side to each ticker's CURRENT position — a workaround
+    # for a join that collapsed to one row per ticker and therefore could not see a superseded
+    # pair. The join keeps every decision row now, so both sides enumerate the same set and the
+    # restriction is gone. It was compensating for discarded information, which is the weaker
+    # thing a pin can do.
+    twin = {}
+    for t, entries in _BUILD._ledger_join().items():
+        for e in entries:
+            if e.get("_closed"):
+                twin[t] = e["_closed"]["exitPrice"]
+    backend = {p["ticker"]: round(float(p["exit_price"]), 2) for p in mon.pair_closes(rows)}
     assert twin == backend, f"twin diverged from pair_closes: {twin} != {backend}"
-    # ...and the restriction only ever DROPS superseded pairs, never invents one
-    assert {p["ticker"] for p in mon.pair_closes(rows)} >= set(backend), (
-        "the restriction invented a closed pair that pair_closes does not report")
 
 
 def test_the_card_anchors_on_the_decision_row_never_the_close() -> None:
     """A closed ticker resolves to its DECISION row (V-), never its close (C-) — the exact drift
     that put a close-row id on IT's card while file order happened to favour it."""
-    joined = _BUILD._ledger_by_ticker()
-    closed = {t for t, v in joined.items() if v.get("_closed")}
+    closed = [e for entries in _BUILD._ledger_join().values() for e in entries if e.get("_closed")]
     assert closed, "the committed ledger holds at least one closed position (IT, SMPL)"
-    for t in closed:
-        assert str(joined[t]["entry_id"]).startswith("V-"), joined[t]["entry_id"]
-        assert joined[t].get("event") is None, "a decision row carries no event"
-        assert str(joined[t]["_closed"]["closeEntryId"]).startswith("C-")
+    for e in closed:
+        assert str(e["entry_id"]).startswith("V-"), e["entry_id"]
+        assert e.get("event") is None, "a decision row carries no event"
+        assert str(e["_closed"]["closeEntryId"]).startswith("C-")
 
 
 def test_closed_position_emits_the_closed_block_and_open_stays_byte_identical() -> None:
