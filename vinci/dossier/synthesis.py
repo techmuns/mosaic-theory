@@ -885,6 +885,48 @@ def guidance_vintage_mark(filed: Any, newest: Any) -> str:
             "this guide is history, not the current outlook]")
 
 
+_ACCESSION = re.compile(r"(\d{10}-\d{2}-\d{6})")
+
+
+def _mark_drawdown_guidance(dumped: dict[str, Any], ps: PrimarySource | None) -> None:
+    """(O1) Mark `drawdown_cause.revised_guidance` with its vintage, in place.
+
+    THE SECOND PATH. #342 marked the `primary_source` digest and the 2026-08-04 SMPL roll then
+    argued the FY26 guide from APRIL anyway — because the model was reading a DIFFERENT field.
+    `synthesize` excludes `primary_source` from the facts dump and swaps in the marked digest, but
+    `drawdown_cause` goes into that dump RAW, carrying the drawdown-moment guide's verbatim text
+    with no indication that a newer guide exists. On SMPL that text is April's, and it is the
+    source of the false bear point: `bear[1]`'s `-22% to -19%` appears ONLY here, never in the
+    structured guidance.
+
+    The field is CORRECTLY historical — `mechanical._revised_guidance` walks the DRAWDOWN 8-Ks and
+    answers "what did management say at the gap". It was simply unlabelled as history. So this
+    marks rather than drops: the cut sequence is itself evidence, and the same
+    `guidance_vintage_mark` both other consumers use states which guide is current.
+
+    The filing DATE is not on the field — only its accession is — so it is matched back to the
+    release that carries one. No date ⇒ the UNDATED mark, never a guess.
+    """
+    dc = dumped.get("drawdown_cause")
+    rg = (dc or {}).get("revised_guidance")
+    if not isinstance(rg, dict) or not rg.get("value"):
+        return
+    filed = None
+    acc = _ACCESSION.search(str(rg.get("source_ref") or ""))
+    if acc is not None and ps is not None:
+        for r in ps.releases:
+            if acc.group(1) in str(r.source_ref or ""):
+                filed = r.filed
+                break
+    mark = guidance_vintage_mark(filed, newest_guidance_date(ps) if ps is not None else None)
+    # THE MARK LEADS, it does not trail. This field is a multi-line verbatim outlook block, so a
+    # mark appended at the end is read AFTER the numbers it qualifies — and being read after the
+    # numbers is exactly how April's guide became a bear point. The digest can mark inline because
+    # each guidance line IS one line; a paragraph has only one position that warns before the
+    # numbers are consumed, and it is the front.
+    rg["value"] = f"{mark.strip()}\n{rg['value']}"
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -976,7 +1018,9 @@ def synthesize(
     # (RC-1 C) the raw primary_source (releases/filing) carries VERBATIMS — provenance, not input.
     # Exclude it from the dump and feed the curated term→value→source_ref digest instead. Its
     # source_refs still live in `mech`, so a cited primary-source ref traces through validation.
-    facts = json.dumps(mech.model_dump(exclude={"primary_source"}), indent=2, default=str)
+    _dumped = mech.model_dump(exclude={"primary_source"})
+    _mark_drawdown_guidance(_dumped, mech.primary_source)
+    facts = json.dumps(_dumped, indent=2, default=str)
     user = (
         f"Name: {name} ({ticker}). The ONLY facts you may use — each carries a source_ref to copy "
         f"verbatim when you cite it:\n\n{facts}"
