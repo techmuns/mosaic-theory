@@ -328,6 +328,69 @@ _GUIDE_PCT = re.compile(
     r"([\d.]+)\s*%\s*(?:to|and|[-–—])\s*([\d.]+)\s*%",
     re.I,
 )
+# --- CHANGE-BASIS GUIDES (2026-08-05) -----------------------------------------------------------
+# A guide can state a LEVEL the metric reaches or a CHANGE from the prior period, and until now
+# only the first was expressible. Ten of seventeen dropped clauses across four names were changes:
+# SMPL alone guides gross margin as a basis-point decline in every release, which is the metric its
+# own kill criteria test. The metric ALLOWLIST was never the problem — `gross margin` has always
+# been in it; the SHAPE was.
+#
+# FOUR SHAPES, each with a live example, and the plural is not cosmetic: `gross\s+margin` followed
+# by `\s*` cannot consume the `s` in "Gross margins", so SMPL's guide failed to match on the noun
+# alone before any of the rest mattered.
+#
+#   "Gross marginS expected to decline between 300 and 350 basis points"   two-sided, bps
+#   "Gross marginS expected to decline approximately 375 basis points"     one-sided, bps
+#   "Net sales expected to range between -2% and +2% year-over-year"       two-sided, signed %
+#   "Adjusted EBITDA expected to increase 4% to 5%"                        two-sided, % change
+#
+# THE DIRECTION WORD CARRIES THE SIGN, and it must: "decline 375 bps" stored as +375 is the same
+# 100x-class error as storing it as a level. `_DECLINE` words negate; `_RISE` words do not.
+_METRIC_ALT = (r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+               r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margins?")
+_DIRECTION = r"(?P<dir>decline|decrease|contract|improve|increase|expand|grow|rise)"
+_DECLINE = {"decline", "decrease", "contract"}
+# a CHANGE range: "…decline between 300 and 350 basis points" / "…increase 4% to 5%"
+_GUIDE_CHANGE_RANGE = re.compile(
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
+    r"(?:by\s+)?(?:in\s+a\s+range\s+of\s+|in\s+the\s+range\s+of\s+|between\s+)?"
+    r"(?P<low>[\d,.]+)\s*(?P<lowunit>%|basis\s+points|bps)?\s*(?:to|and|[-–—])\s*"
+    r"(?P<high>[\d,.]+)\s*(?P<unitword>%|basis\s+points|bps)",
+    re.I,
+)
+# a SINGLE-POINT change: "…decline approximately 375 basis points" / "…decline by ~200 bps"
+_GUIDE_CHANGE_POINT = re.compile(
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
+    r"(?:by\s+)?(?:approximately|about|roughly|~)?\s*"
+    r"(?P<low>[\d,.]+)\s*(?P<unitword>%|basis\s+points|bps)",
+    re.I,
+)
+# a SIGNED two-sided change: "expected to range between -2% and +2% year-over-year". No direction
+# word — the signs carry it — so this cannot share the pattern above.
+_GUIDE_CHANGE_SIGNED = re.compile(
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    r"(?:expected\s+to\s+range\s+between|to\s+range\s+between|expected\s+to\s+be\s+between)\s+"
+    r"(?P<low>[+-][\d,.]+)\s*(?P<lowunit>%)\s*(?:to|and|[-–—])\s*"
+    r"(?P<high>[+-][\d,.]+)\s*(?P<unitword>%)",
+    re.I,
+)
+
+
+def _change_unit(word: str | None) -> str:
+    """`bps` for a basis-point guide, `%` otherwise — never the `$M` default, which is what a
+    change guide stored under the level vocabulary would silently claim."""
+    w = (word or "").strip().lower()
+    return "bps" if w in ("basis points", "bps") else "%"
+
+
+def _signed(value: float, direction: str | None) -> float:
+    """A decline is NEGATIVE. Storing "decline 375 bps" as +375 is the same class of error as
+    storing it as a level — the number would read as an expansion."""
+    return -abs(value) if (direction or "").lower() in _DECLINE else value
+
+
 _OUTLOOK = re.compile(
     r"(20\d\d\s+outlook|financial\s+outlook|revised\s+(?:its\s+|full[- ]year\s+)?(?:financial\s+)?"
     r"outlook|(?:full[- ]year\s+)?guidance\s+for\s+20\d\d)",
@@ -463,6 +526,34 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             low=lo, high=hi, unit="%", qualitative=False,
             verbatim=vb, source_ref=src,
         ))
+    # CHANGE-BASIS GUIDES, AFTER the level patterns and gated on `seen`, so a metric that stated a
+    # LEVEL keeps it: a level is the stronger statement and a release that gives both (SMPL gives
+    # net sales as a level AND gross margin as a change) must not have the level overwritten. The
+    # three patterns run most-specific first — a two-sided range before a single point, or
+    # "between 300 and 350" would match the point pattern on "300" alone and drop the high end.
+    for pat, two_sided in ((_GUIDE_CHANGE_SIGNED, True), (_GUIDE_CHANGE_RANGE, True),
+                           (_GUIDE_CHANGE_POINT, False)):
+        for m in pat.finditer(text):
+            metric = _guide_metric(m["metric"])
+            if metric in seen:
+                continue
+            lo = _money(m["low"])
+            hi = _money(m["high"]) if two_sided else lo
+            if lo is None or hi is None:
+                continue
+            unit = _change_unit(m.groupdict().get("unitword"))
+            direction = m.groupdict().get("dir")
+            lo, hi = _signed(lo, direction), _signed(hi, direction)
+            if lo > hi:                      # a decline range reverses: -350..-300, not -300..-350
+                lo, hi = hi, lo
+            vb = _verbatim(text, m.start(), m.end())
+            seen.add(metric)
+            out.append(GuidanceItem(
+                metric=metric, period=_period_for(text, m.start(), m.end(), vb),
+                low=lo, high=hi, unit=unit, basis="change", qualitative=False,
+                verbatim=vb, source_ref=src,
+            ))
+
     # QUALITATIVE-only: an outlook section that names revenue but carries NO number in its window.
     om = _OUTLOOK.search(text)
     if om and "revenue" not in seen:

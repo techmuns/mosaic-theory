@@ -5378,6 +5378,7 @@
               "low": 4.0,
               "high": 6.5,
               "unit": "%",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "For the full year, EPAM now expects the year-over-year revenue growth rate to be in the range of 4.0% to 6.5%",
               "source_ref": "8-K 0001352010-26-000026 EX-99.1"
@@ -5415,6 +5416,7 @@
               "low": 4.5,
               "high": 7.5,
               "unit": "%",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "The Company expects the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%",
               "source_ref": "8-K 0001352010-26-000010 EX-99.1"
@@ -5452,6 +5454,7 @@
               "low": 5430.0,
               "high": 5445.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Based on the strength of organic constant currency revenue growth and updates to our foreign exchange rate assumptions, the Company raises its expected revenues to be in the range of $5.430 billion to",
               "source_ref": "8-K 0001352010-25-000053 EX-99.1"

@@ -860,6 +860,19 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
 
 
+# THE SAME HORIZON-BASIS PROBLEM IS SOLVED TWO WAYS HERE, DELIBERATELY. Do not unify them.
+#
+#   R2 REFUSES the comparison — `_emit_price_implied`, "our margin is a TERMINAL-state assumption
+#      and the consensus at this anchor is a NEAR-TERM forecast". Its mismatch is STRUCTURAL: a
+#      terminal margin is never struck at a near-term consensus year, on any R2 record, ever.
+#   R1 FLAGS it — `leg_basis`, `agrees`/`disagrees`/`unstated`. Its mismatch is OCCASIONAL: the
+#      proposer strikes the base leg AT the anchor by construction, so it arises only when an
+#      analyst overrides the year (SMPL's 18-month thesis reading FY2028).
+#
+# Structural earns a refusal; occasional earns a flag. Unifying them breaks whichever way it goes:
+# making R1 refuse would reject records that should only carry a caveat, and making R2 flag would
+# have it emit a margin ratio it correctly declines to compute — a view difference and a horizon
+# difference mixed in unknown proportion, which is the number the refusal exists to withhold.
 def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[str]:
     """The stated-basis requirement at the WRITE boundary — empty when satisfied.
 

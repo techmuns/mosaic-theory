@@ -5727,6 +5727,7 @@
               "low": 480.0,
               "high": 496.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "2026 Financial Outlook Artivion has lowered its expectations for revenue for the full year 2026 and now expects revenue to be in the range of $480 to $496 million",
               "source_ref": "8-K 0001628280-26-032097 EX-99.1"
@@ -5737,6 +5738,7 @@
               "low": 100.0,
               "high": 107.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "adjusted EBITDA in the range of $100 to $107 million",
               "source_ref": "8-K 0001628280-26-032097 EX-99.1"
@@ -5774,6 +5776,7 @@
               "low": 486.0,
               "high": 504.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Page 2 of 13 2026 Financial Outlooks Artivion expects revenues for the full year 2026 to be in the range of $486 to $504 million",
               "source_ref": "8-K 0001628280-26-007674 EX-99.1"
@@ -5784,6 +5787,7 @@
               "low": 105.0,
               "high": 110.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "adjusted EBITDA in the range of $105 to $110 million",
               "source_ref": "8-K 0001628280-26-007674 EX-99.1"
@@ -5813,6 +5817,7 @@
               "low": 439.0,
               "high": 445.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "The Company expects reported revenues to be in the range of $439 to $445 million",
               "source_ref": "8-K 0001628280-25-050164 EX-99.1"
@@ -5823,6 +5828,7 @@
               "low": 88.0,
               "high": 91.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "The Company expects adjusted EBITDA to be in the range of $88 to $91 million",
               "source_ref": "8-K 0001628280-25-050164 EX-99.1"
@@ -5860,6 +5866,7 @@
               "low": 435.0,
               "high": 443.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "The Company expects reported revenues to be in the range of $435 to $443 million",
               "source_ref": "8-K 0001628280-25-038873 EX-99.1"
@@ -5870,6 +5877,7 @@
               "low": 86.0,
               "high": 91.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "The Company expects adjusted EBITDA to be in the range of $86 to $91 million",
               "source_ref": "8-K 0001628280-25-038873 EX-99.1"
