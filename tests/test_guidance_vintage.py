@@ -268,3 +268,54 @@ def test_the_drawdown_mark_is_undated_rather_than_guessed_when_no_release_matche
     _mark_drawdown_guidance(dumped, None)
     v = dumped["drawdown_cause"]["revised_guidance"]["value"]
     assert "VINTAGE UNDATED" in v and "do not read as current" in v, v
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_mark_reaches_the_prompt_synthesize_actually_builds() -> None:
+    """THE CALL SITE, not the helper — and this file needed it because the first cut of the pin
+    above called `_mark_drawdown_guidance` ITSELF.
+
+    Deleting the one line in `synthesize` that applies it left every other test in this file GREEN,
+    measured. That is the #345 defect exactly — the extractor exposes a value, a consumer reads it,
+    and nothing checks the step between — repeated one PR after it was found and named. It is worth
+    the fake client to close, because the failure is silent: an unmarked brief looks identical to a
+    marked one from anywhere except the prompt.
+
+    So this asserts on the STRING THE MODEL RECEIVES, obtained by running `synthesize` with a
+    client that captures its `user` payload."""
+    from typing import Any
+
+    from vinci.dossier.synthesis import synthesize
+    from vinci.graph.llm import LlmClient
+
+    class _Capture(LlmClient):
+        def __init__(self) -> None:
+            self.user: str | None = None
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            self.user = user
+            return {}                     # incomplete -> synthesize returns None, which is fine
+
+        @property
+        def model(self) -> str:
+            return "capture"
+
+    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    ps = d.mechanical.primary_source
+    assert ps is not None
+    cap = _Capture()
+    synthesize(d.mechanical, llm=cap, ticker="SMPL", name="Simply Good Foods")
+    assert cap.user, "synthesize built no user prompt"
+
+    newest = max(r.filed for r in ps.releases if r.guidance and r.filed)
+    assert f"replaced by the guide filed {newest}" in cap.user, (
+        "the drawdown-moment guide reaches the model UNMARKED — `_mark_drawdown_guidance` is "
+        "defined but never applied, which is invisible from every other test in this file")
+    # and it must LEAD the block, so the vintage is read before the numbers it qualifies
+    body = cap.user[cap.user.index("revised_guidance"):][:1400]
+    mark_at = body.find("SUPERSEDED")
+    pct_at = body.find("-10% to -7%")
+    if pct_at != -1:
+        assert mark_at != -1 and mark_at < pct_at, (
+            "the mark trails the numbers it qualifies — a reader meets April's guide first, which "
+            "is how it became a bear point")

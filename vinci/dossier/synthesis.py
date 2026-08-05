@@ -919,7 +919,12 @@ def _mark_drawdown_guidance(dumped: dict[str, Any], ps: PrimarySource | None) ->
                 filed = r.filed
                 break
     mark = guidance_vintage_mark(filed, newest_guidance_date(ps) if ps is not None else None)
-    rg["value"] = f"{rg['value']}\n{mark.strip()}"
+    # THE MARK LEADS, it does not trail. This field is a multi-line verbatim outlook block, so a
+    # mark appended at the end is read AFTER the numbers it qualifies — and being read after the
+    # numbers is exactly how April's guide became a bear point. The digest can mark inline because
+    # each guidance line IS one line; a paragraph has only one position that warns before the
+    # numbers are consumed, and it is the front.
+    rg["value"] = f"{mark.strip()}\n{rg['value']}"
 
 
 def _primary_source_digest(ps: PrimarySource) -> str:
