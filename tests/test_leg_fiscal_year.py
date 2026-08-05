@@ -63,9 +63,8 @@ def test_the_write_guard_refuses_only_an_unexplained_disagreement() -> None:
     that already carries "WHY this deviates from the anchor"."""
     rec = sc.read_record("SMPL", root=ROOT)
 
-    def with_base(**over: object) -> sc.ScenarioRecord:
-        return rec.model_copy(update={"scenarios": {
-            **rec.scenarios, "base": rec.scenarios["base"].model_copy(update=over)}})
+    def with_base(**over: object) -> sc.ScenarioInput:
+        return rec.scenarios["base"].model_copy(update=over)
 
     assert sc.leg_fy_problems(with_base(leg_fy="2026"), "2026") == []
     assert sc.leg_fy_problems(with_base(leg_fy=None), "2026") == [], (
@@ -133,3 +132,34 @@ def test_the_total_gap_does_not_move_with_the_year_but_the_split_does() -> None:
         "is either a real regression or the caveat's central claim is wrong")
     assert got["2026"]["revenue_ratio"] != pytest.approx(got["2028"]["revenue_ratio"], rel=1e-6), (
         "the SPLIT did not move between years — then there is nothing for this flag to warn about")
+
+
+def test_both_write_paths_call_the_guard_and_the_template_can_state_the_year() -> None:
+    """THE CALL SITES, not the helper — the rule this session has had to learn twice.
+
+    The first cut wired `leg_fy_problems` into `scenario-supersede` ONLY. `scenario-create` had no
+    template cell for the field, never read it, and never checked it — so a record created through
+    the normal path could only ever read "unstated", permanently. Declared and readable but not
+    WRITABLE from its own writer is the same class as a helper nothing calls, and every test in
+    this file passed while it was true.
+
+    Asserted on the SOURCE of both commands, and on the TEMPLATE a real dossier produces."""
+    import inspect
+
+    from vinci import cli
+    from vinci.dossier.propose import build_template
+
+    for fn in (cli._cmd_scenario_create, cli._cmd_scenario_supersede):
+        src = inspect.getsource(fn)
+        assert "leg_fy_problems" in src, (
+            f"{fn.__name__} does not run the leg-year guard — the field is enforced on one write "
+            "path and not the other, so the unguarded one is the one an analyst will use")
+
+    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    base = build_template(doc)["scenarios"]["base"]
+    assert "leg_fy" in base, "the template has no cell for the leg year — it cannot be stated"
+    anchor = ((doc["mechanical"].get("ev_gap") or {}).get("anchor_fy"))
+    assert base["leg_fy"] == str(anchor), (
+        f"the template proposes leg_fy={base['leg_fy']!r} against an anchor of {anchor!r}; it must "
+        "state the year `propose_anchors` actually struck the revenue at, or the default is a "
+        "guess rather than a statement")

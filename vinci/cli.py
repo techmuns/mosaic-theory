@@ -1112,6 +1112,18 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             "base-case IRR floor AND a stated horizon, and without a realisation date no IRR "
             "exists to test. State it in years (1.5 = 18 months); it is never defaulted, because "
             "a guessed horizon sets the return the record is then graded on."]
+    # THE LEG-YEAR GUARD ON THIS PATH TOO. It was wired into `scenario-supersede` only, which left
+    # the field unreachable from the path that CREATES records: no template cell, never read, never
+    # enforced — so a created record could only ever read "unstated". Declared and readable but not
+    # writable from its own writer is the same class as a helper nothing calls.
+    _mech = doc.get("mechanical")
+    _gap = (_mech.get("ev_gap") if isinstance(_mech, dict) else None) or {}
+    _anchor_fy = _gap.get("anchor_fy") if isinstance(_gap, dict) else None
+    if _base.get("revenue") is not None and _base.get("multiple") is not None:
+        problems = problems + sc.leg_fy_problems(sc.ScenarioInput(
+            revenue=float(_base["revenue"]), margin=_base.get("margin"),
+            multiple=float(_base["multiple"]), reason=str(_base.get("reason") or ""),
+            leg_fy=(str(_base["leg_fy"]) if _base.get("leg_fy") else None)), _anchor_fy)
     if problems:
         print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
         for p in problems:
@@ -1134,6 +1146,9 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 # the analyst left it empty
                 years_to_terminal=(float(c["years_to_terminal"])
                                    if c.get("years_to_terminal") is not None else None),
+                # carried from the template, which pre-fills it with the gap's anchor year —
+                # the year `propose_anchors` actually struck the revenue at
+                leg_fy=(str(c["leg_fy"]) if c.get("leg_fy") else None),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
@@ -1276,7 +1291,8 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
     # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
     _anchor_fy = ((doc or {}).get("mechanical") or {}).get("ev_gap") or {}
-    problems += sc.leg_fy_problems(incoming, _anchor_fy.get("anchor_fy"))
+    problems += sc.leg_fy_problems(
+        (incoming.scenarios or {}).get("base"), _anchor_fy.get("anchor_fy"))
     if problems:
         print(f"=== scenario-supersede {t_up}: REFUSED ({len(problems)}) ===")
         for p in problems:

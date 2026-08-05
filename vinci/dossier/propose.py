@@ -516,6 +516,14 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
             # turns a multiple into a return: proposing one would be the machine setting the IRR
             # it is about to be tested on. Same refusal class as the other six empty cells.
             cell["years_to_terminal"] = None
+            # THE LEG'S FISCAL YEAR, and this one IS proposed — because the proposer already knows
+            # the answer. `propose_anchors` takes the base revenue from the consensus median AT
+            # `ev_gap.anchor_fy`, so a template-built record is struck at that year BY
+            # CONSTRUCTION. Pre-filling it states what the proposal already did rather than
+            # guessing; leaving it blank would make every created record read "unstated" forever,
+            # which is the state the flag exists to reduce. An analyst who moves the revenue to
+            # another year moves this with it — and then `leg_fy_problems` asks them to say why.
+            cell["leg_fy"] = str(_get(doc, "mechanical", "ev_gap", "anchor_fy") or "") or None
             cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = (
                 "no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
                 "the catalyst path, and a default here would set the IRR the record is graded on. "

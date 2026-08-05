@@ -860,7 +860,7 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
 
 
-def leg_fy_problems(rec: ScenarioRecord, anchor_fy: str | None) -> list[str]:
+def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[str]:
     """The stated-basis requirement at the WRITE boundary — empty when satisfied.
 
     REFUSES ONLY A STATED DISAGREEMENT, and only an unexplained one. Three states, three answers:
@@ -876,11 +876,14 @@ def leg_fy_problems(rec: ScenarioRecord, anchor_fy: str | None) -> list[str]:
       reads FY2028 against an FY2026 anchor deliberately. What is not legitimate is doing it
       silently, because the shape label the reader acts on is drawn from the anchor's basis.
 
+    TAKES THE BASE LEG, not the record: `scenario-create` validates BEFORE it has a record, and
+    building a throwaway one to read a single field off it made the create call site clumsier
+    than the check it was running.
+
     NOT called by `run_recipe`: a guard added after a record was written must never make that
     record unrecomputable — see the note in `run_recipe` for why that placement blinds the drift
     invariant on the only open position.
     """
-    base = (rec.scenarios or {}).get("base")
     if base is None or base.leg_fy is None or anchor_fy is None:
         return []
     if str(base.leg_fy) == str(anchor_fy):
