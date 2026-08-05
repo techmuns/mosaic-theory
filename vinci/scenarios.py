@@ -154,6 +154,15 @@ AXIS_FIELDS_INTRODUCED_IN: dict[str, str] = {
 #: read is not a datum but the record of whether the computation happened at all.
 GATE_FIELDS: tuple[str, ...] = (
     "horizon_years", "irr", "irr_undefined", "irr_floor", "irr_pass_fail", "gate")
+
+#: THE FOURTH LEVEL — the LEG. `leg_fy` (2026-08-05) is analyst-supplied, so the version mechanism
+#: would normally be the right tool. It is not needed: unlike `irr_floor`, which materialises as
+#: 0.15 on every record that touches the model, `leg_fy` has NO default to materialise. Absent-key
+#: and `None` say the same thing here — *this record never stated a year* — so dropping the key
+#: when it is None keeps every committed record, live and archived, byte-identical, and a record
+#: that DOES state a year carries it. No schema bump, and therefore no collision with the 1.4
+#: fielded-reference rule the committed records cannot yet satisfy.
+LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy",)
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -332,6 +341,18 @@ class ScenarioInput(BaseModel):
     # the field and must stay writable.
     bear_basis: str | None = None      # own-history | bear-state-comps | peer-reference | analyst
     margin_basis: str | None = None    # EBIT | EBITDA
+    #: (2026-08-05) THE FISCAL YEAR THIS LEG IS STRUCK AT — e.g. "2028". On the LEG, not on
+    #: revenue: `ev_gap` strikes ALL THREE ratios at one year (`revenue_ratio` against consensus
+    #: revenue, `margin_ratio` against consensus EBITDA÷revenue, `multiple_ratio` against
+    #: TEV÷consensus EBITDA — "the market's multiple ON THE ANCHOR YEAR"), so a year that describes
+    #: revenue alone would leave the other two mis-based. `EvGapInputs.revenue` is already
+    #: commented "our leg's revenue at the anchor"; this is that assumption made checkable.
+    #:
+    #: OPTIONAL, AND UNSTATED IS NOT DISAGREEING. Every committed record predates the field, so
+    #: None means "this record never said", which `ev_gap` renders differently from a stated year
+    #: that conflicts with the anchor. A record cannot be faulted for lacking a field that did not
+    #: exist when it was written.
+    leg_fy: str | None = None
 
     @field_validator("bear_basis")
     @classmethod
@@ -839,6 +860,40 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
 
 
+def leg_fy_problems(rec: ScenarioRecord, anchor_fy: str | None) -> list[str]:
+    """The stated-basis requirement at the WRITE boundary — empty when satisfied.
+
+    REFUSES ONLY A STATED DISAGREEMENT, and only an unexplained one. Three states, three answers:
+
+    * **agrees** — nothing to say.
+    * **unstated** — NOT refused. Every committed record predates `leg_fy`, and refusing here would
+      make the field impossible to adopt: the first record to state it would be the only one that
+      could ever be written. `build_ev_gap` flags it instead, which is where an unverifiable
+      attribution belongs.
+    * **disagrees** — refused UNLESS the leg says why, through the same `reason` field that already
+      carries "WHY this deviates from the anchor". Striking a leg at a different year than the
+      decomposition is exactly such a deviation, and it is legitimate — SMPL's 18-month thesis
+      reads FY2028 against an FY2026 anchor deliberately. What is not legitimate is doing it
+      silently, because the shape label the reader acts on is drawn from the anchor's basis.
+
+    NOT called by `run_recipe`: a guard added after a record was written must never make that
+    record unrecomputable — see the note in `run_recipe` for why that placement blinds the drift
+    invariant on the only open position.
+    """
+    base = (rec.scenarios or {}).get("base")
+    if base is None or base.leg_fy is None or anchor_fy is None:
+        return []
+    if str(base.leg_fy) == str(anchor_fy):
+        return []
+    if (base.reason or "").strip():
+        return []
+    return [f"base.leg_fy = FY{base.leg_fy} but the EV-gap decomposes at FY{anchor_fy}, and the "
+            "leg states no reason. The TOTAL gap is unaffected — it carries no year — but the "
+            "split across revenue/margin/multiple, and the shape label drawn from it, are struck "
+            f"on FY{anchor_fy}. State in `reason` why the leg sits at FY{base.leg_fy}, the same "
+            "way any other deviation from an anchor is stated."]
+
+
 def horizon_problems(rec: ScenarioRecord) -> list[str]:
     """The stated-horizon requirement, as `validate_legs` returns problems — empty when satisfied.
 
@@ -1104,6 +1159,11 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     if (out.get("result") or {}).get("gate") is None:
         for field in GATE_FIELDS:
             (out.get("result") or {}).pop(field, None)
+    # the leg level: a leg that states no fiscal year carries no key for one
+    for _leg in (out.get("scenarios") or {}).values():
+        for field in LEG_FIELDS_DROPPED_WHEN_NONE:
+            if _leg.get(field) is None:
+                _leg.pop(field, None)
     for axis in (out.get("assumptions") or {}).values():
         for field, introduced in AXIS_FIELDS_INTRODUCED_IN.items():
             if ver < _schema_ver(introduced):

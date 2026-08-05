@@ -1258,6 +1258,7 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
 
     t_up = incoming.ticker.upper()
     anchors: list[Any] = []
+    doc: dict[str, Any] | None = None
     try:
         doc = _dossier_doc(t_up)
         check_tier_agreement(doc, incoming.recipe_id)
@@ -1271,6 +1272,11 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         return 2
     problems = validate_legs(record_legs_for_validation(incoming), anchors)
     problems += sc.horizon_problems(incoming)     # no new record lands without a realisation date
+    # ...and none lands struck at a year the decomposition does not use, unexplained. `doc` is
+    # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
+    # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
+    _anchor_fy = ((doc or {}).get("mechanical") or {}).get("ev_gap") or {}
+    problems += sc.leg_fy_problems(incoming, _anchor_fy.get("anchor_fy"))
     if problems:
         print(f"=== scenario-supersede {t_up}: REFUSED ({len(problems)}) ===")
         for p in problems:

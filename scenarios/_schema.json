@@ -501,6 +501,18 @@
           ],
           "default": null,
           "title": "Margin Basis"
+        },
+        "leg_fy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leg Fy"
         }
       },
       "required": [

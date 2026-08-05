@@ -2676,6 +2676,21 @@ function evGap(g) {
       : "with NO adjacent forward year to check it against — unchecked, not confirmed";
   body += `<p class="ds-note"><b>Shape:</b> <b>${escapeHtml(String(shape.anchor))}</b> at `
     + `FY${escapeHtml(String(g.anchor_fy))}, ${chk}.</p>`;
+  // THE BASIS CAVEAT RIDES WITH THE SHAPE — twin of render.py. The TOTAL gap carries no year and
+  // is unaffected; the ATTRIBUTION is struck at the anchor, so a leg struck elsewhere makes this
+  // label describe a comparison the leg does not make. UNSTATED and DISAGREEING are different
+  // sentences: every committed record predates the field, so collapsing them would make the
+  // caveat useless on exactly the records it exists for.
+  const lb = g.leg_basis || {};
+  if (lb.state === "disagrees") {
+    body += `<p class="ds-note ds-warn"><b>The label is struck on FY${escapeHtml(String(lb.anchor_fy))}, `
+      + `but the underwrite's base leg is FY${escapeHtml(String(lb.leg_fy))}.</b> `
+      + `${escapeHtml(String(lb.note || ""))}</p>`;
+  } else if (lb.state === "unstated") {
+    body += `<p class="ds-note"><i>The record does not state which fiscal year its base leg is `
+      + `struck at, so this label is reported on FY${escapeHtml(String(lb.anchor_fy))}'s basis and `
+      + `is unverified against the leg. The total gap above carries no year and is unaffected.</i></p>`;
+  }
   // POSITIVE shares, not merely numeric — the md twin's guard. A legacy artifact carrying
   // `shares: 0` must DROP the bridge line, not divide by zero. (JS would print "Infinity" rather
   // than throw, which is worse: a number on the page that reads as a value.)
