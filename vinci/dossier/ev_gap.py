@@ -135,6 +135,19 @@ def decompose(i: EvGapInputs) -> dict[str, float]:
     }
 
 
+#: THE SAME HORIZON-BASIS PROBLEM IS SOLVED TWO WAYS HERE, DELIBERATELY. Do not unify them.
+#:
+#:   R2 REFUSES the comparison — `_emit_price_implied`, "our margin is a TERMINAL-state assumption
+#:      and the consensus at this anchor is a NEAR-TERM forecast". Its mismatch is STRUCTURAL: a
+#:      terminal margin is never struck at a near-term consensus year, on any R2 record, ever.
+#:   R1 FLAGS it — `leg_basis`, `agrees`/`disagrees`/`unstated`. Its mismatch is OCCASIONAL: the
+#:      proposer strikes the base leg AT the anchor by construction, so it arises only when an
+#:      analyst overrides the year (SMPL's 18-month thesis reading FY2028).
+#:
+#: Structural earns a refusal; occasional earns a flag. Unifying them breaks whichever way it goes:
+#: making R1 refuse would reject records that should only carry a caveat, and making R2 flag would
+#: have it emit a margin ratio it correctly declines to compute — a view difference and a horizon
+#: difference mixed in unknown proportion, which is the number the refusal exists to withhold.
 #: The three states a leg's fiscal year can be in relative to the year the gap decomposes on.
 LEG_BASIS_STATES = ("agrees", "disagrees", "unstated")
 
@@ -389,6 +402,13 @@ def _decompose_at(levels: dict[str, list[dict[str, object]]], fy: str,
         multiple=float(leg["multiple"]),        # type: ignore[arg-type]
         multiple_basis=str(leg["multiple_basis"]),
         d_and_a=leg.get("d_and_a"),             # type: ignore[arg-type]
+        # FORWARDED (2026-08-05). `total_gap` and `_emit_price_implied` both pass this; this call
+        # site alone dropped it, so a leg carrying a D&A RATIO instead of an absolute — every R2
+        # record does — raised BasisMismatchError here even though `our_ebitda` can convert it.
+        # Latent today because R2 routes to price-implied before reaching this, and no R1 leg
+        # carries a ratio: measured, every committed decomposition is byte-identical after the
+        # change. It bites the moment an R2 name is routed three-ratio.
+        d_and_a_ratio=leg.get("d_and_a_ratio"),  # type: ignore[arg-type]
         consensus_revenue=float(rev_c["median"]),   # type: ignore[arg-type]
         consensus_ebitda=float(eb_c["median"]),     # type: ignore[arg-type]
         tev=tev, net_debt=net_debt, shares=shares))

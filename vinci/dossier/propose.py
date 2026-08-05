@@ -377,7 +377,14 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
                 continue
             mark = guidance_vintage_mark(r.filed, newest)
             for g in r.guidance:
-                val = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
+                if g.qualitative:
+                    val = "QUALITATIVE (no number stated)"
+                elif getattr(g, "basis", "level") == "change":
+                    # labelled, for the same reason the brief labels it: an analyst reading
+                    # "-350–-300" beside a "%" unit reads a margin, not a movement
+                    val = f"CHANGE of {g.low}–{g.high}"
+                else:
+                    val = f"{g.low}–{g.high}"
                 ev["revenue"].append(
                     f"guidance ({g.metric} {g.period}): {val} {g.unit or ''}".rstrip()
                     + f"{mark} → {g.source_ref}")

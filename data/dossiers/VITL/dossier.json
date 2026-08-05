@@ -4747,6 +4747,7 @@
               "low": 775.0,
               "high": 800.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Net revenue of $775 million to $800 million",
               "source_ref": "8-K 0001193125-26-210294 EX-99.1"
@@ -4757,6 +4758,7 @@
               "low": 0.0,
               "high": 10.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Adjusted EBITDA of $0 to $10 million",
               "source_ref": "8-K 0001193125-26-210294 EX-99.1"
@@ -4794,6 +4796,7 @@
               "low": 900.0,
               "high": 920.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Net revenue of $900 million to $920 million",
               "source_ref": "8-K 0001193125-26-073373 EX-99.1"
@@ -4804,6 +4807,7 @@
               "low": 105.0,
               "high": 115.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Adjusted EBITDA of $105 million to $115 million",
               "source_ref": "8-K 0001193125-26-073373 EX-99.1"
@@ -4877,6 +4881,7 @@
               "low": null,
               "high": null,
               "unit": "$M",
+              "basis": "level",
               "qualitative": true,
               "verbatim": "Fiscal 2025 Outlook Thilo Wrede, Vital Farms’ Chief Financial Officer, commented: \"We are raising our net revenue and Adjusted EBITDA guidance for fiscal 2025, reflecting the strong performance of our",
               "source_ref": "8-K 0000950170-25-104561 EX-99.1"

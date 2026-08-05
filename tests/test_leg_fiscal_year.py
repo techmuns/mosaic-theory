@@ -163,3 +163,44 @@ def test_both_write_paths_call_the_guard_and_the_template_can_state_the_year() -
         f"the template proposes leg_fy={base['leg_fy']!r} against an anchor of {anchor!r}; it must "
         "state the year `propose_anchors` actually struck the revenue at, or the default is a "
         "guess rather than a statement")
+
+
+def test_every_scenario_input_field_is_settable_from_the_template() -> None:
+    """THE CLASS, MADE CHECKABLE — three instances this session, each caught only by self-review.
+
+    A field the analyst is meant to supply must be reachable from `build_template`, or it is
+    declared and readable but not WRITABLE from the path that creates records. `leg_fy` shipped in
+    exactly that state: the fleet read `unstated 10` and nothing looked wrong, because that is also
+    the correct reading when no record has stated one. A silent, permanent default.
+
+    **SETTABLE FROM *SOME* LEG, NEVER FROM EVERY LEG — and this is the design, not a weakening.**
+    Three fields are legitimately leg-specific: `years_to_terminal` and `leg_fy` are base-only (a
+    horizon and a fiscal year belong to the case being valued, not to the downside sketch), and
+    `bear_basis` is bear-only by definition. A per-leg assertion would fire three false positives
+    on day one and would be "fixed" by exempting them — which is a pin narrowing its comparison
+    until it passes, the shape this repo has already paid for. If you tighten this, you will delete
+    the reason it works.
+
+    The exemption list is EMPTY today. It is written as an exact set so a new field cannot be
+    quietly excused: adding one to the model without a template cell reddens this, and adding it
+    HERE requires stating why in the same breath."""
+    import vinci.scenarios as _sc
+    from vinci.dossier.propose import build_template
+
+    #: Fields legitimately absent from every template cell, each with its reason. EMPTY — kept as a
+    #: declared set so an addition is a deliberate, explained act rather than a quiet one.
+    exempt: dict[str, str] = {}
+
+    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    cells = build_template(doc)["scenarios"]
+    assert cells, "the template produced no legs — this sweep would check nothing"
+
+    missing = {f for f in _sc.ScenarioInput.model_fields
+               if not any(f in cell for cell in cells.values())} - set(exempt)
+    assert not missing, (
+        f"{sorted(missing)} exist on ScenarioInput but no template cell can set them, so a record "
+        "created through `scenario-create` can never carry them — declared and readable but not "
+        "writable from its own writer. Add a cell in `build_template`, or add the field "
+        "to `exempt` with the reason it belongs there.")
+    stale = set(exempt) - set(_sc.ScenarioInput.model_fields)
+    assert not stale, f"`exempt` names {sorted(stale)}, which are not fields — a stale licence"

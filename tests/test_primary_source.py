@@ -62,9 +62,13 @@ def test_ltm_adj_ebitda_refuses_misperiodized_fy() -> None:
 
 def test_release_revenue_guide_prefers_most_recent() -> None:
     """The guide-verify cross-source input = the most-recent release's revenue guide; a qualitative
-    outlook (MVST FY25) yields (None, None, True), a numeric revised guide yields the range."""
-    assert mech._release_revenue_guide([rp.parse_release(_FY25, source_ref="fy")]) == (None, None,
-                                                                                       True)
+    outlook (MVST FY25) yields (None, None, True), a numeric revised guide yields the range.
+
+    THE FOURTH ELEMENT IS THE BASIS (2026-08-05). A release can guide revenue as a CHANGE, and
+    handing (low, high) onward without saying which kind they are is how -2..+2 reaches a
+    comparison against a 1,345..1,355 level guide."""
+    assert mech._release_revenue_guide(
+        [rp.parse_release(_FY25, source_ref="fy")]) == (None, None, True, "level")
 
 _MVST_PANEL = [
     ps.PanelInstrument("Convertible Bond", 41.7, date(2027, 1, 31)),

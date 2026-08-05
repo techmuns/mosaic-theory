@@ -169,6 +169,7 @@ def guide_verification(
     release_qualitative: bool = False,
     release_low: float | None = None,
     release_high: float | None = None,
+    release_basis: str = "level",
 ) -> str:
     """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO requires BOTH: CIQ
     guide ≈ prior-FY actual (0.1% relative, source-rounding) AND the release gives NO corroborating
@@ -176,6 +177,19 @@ def guide_verification(
     not confirm. Cross-source VERIFIED when the CIQ and release ranges match; else a mismatch."""
     if ciq_low is None:
         return f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked"
+    # CROSS-BASIS: REFUSE, NEVER DERIVE (2026-08-05). CIQ guides a LEVEL; a release can guide a
+    # CHANGE ("net sales expected to range between -2% and +2% year-over-year"). Comparing -2..+2
+    # against 1,345..1,355 is meaningless, and the tempting fix — derive a level from the prior
+    # period — CROSSES SOURCES MID-CHECK: the prior-year figure lives in a CIQ series whose gross
+    # margin need not share the filer's definition, so a filing-derived guide would be verified
+    # against a vendor-derived base. That is the operating-vs-EBITDA lesson applied to a base we
+    # would be manufacturing. Refusing loses no verification: before this the change guide was
+    # dropped entirely, so "not cross-checked" is strictly more than the nothing it replaces.
+    if release_basis == "change" and release_low is not None:
+        return (f"guide verification ({metric}): CIQ guides a LEVEL ({ciq_low}–{ciq_high}) and the "
+                f"release guides a CHANGE ({release_low}–{release_high}) — NOT CROSS-CHECKED. "
+                "Deriving a level from the prior period would compare a filing-derived guide "
+                "against a vendor-derived base; the two need not share a definition.")
     # VENDOR-ECHO — TWO CONJUNCTS: (1) CIQ guide ≈ prior-FY actual within source-rounding (0.1% rel;
     # the release rounds $427.516→$427.5, so relative not absolute-3dp); AND (2) the release states
     # NO number for this metric (release_low is None) or only a QUALITATIVE outlook. A numeric

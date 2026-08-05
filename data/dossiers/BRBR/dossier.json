@@ -5138,6 +5138,7 @@
               "low": 2325.0,
               "high": 2365.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion",
               "source_ref": "8-K 0001628280-26-030115 EX-99.1"
@@ -5176,6 +5177,7 @@
               "low": 2410.0,
               "high": 2460.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion",
               "source_ref": "8-K 0001628280-26-004789 EX-99.1"

@@ -996,7 +996,14 @@ def _primary_source_digest(ps: PrimarySource) -> str:
         # scope to creep and nothing to bleed into.
         _v = guidance_vintage_mark(r.filed, _newest)
         for g in r.guidance:
-            v = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
+            # A CHANGE IS LABELLED AS ONE. "-350–-300 bps" printed like a level reads as a gross
+            # margin of -350%, which is the 100x error this basis field exists to prevent.
+            if g.qualitative:
+                v = "QUALITATIVE (no number stated)"
+            elif getattr(g, "basis", "level") == "change":
+                v = f"CHANGE of {g.low}–{g.high} {g.unit} vs the prior period"
+            else:
+                v = f"{g.low}–{g.high}"
             out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
         for rv in r.reconciliation:
             out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value} → {rv.source_ref}")

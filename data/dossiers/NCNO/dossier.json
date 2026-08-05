@@ -4796,6 +4796,7 @@
               "low": 157.75,
               "high": 159.75,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Total revenues between $157.75 million and $159.75 million",
               "source_ref": "8-K 0001902733-26-000064 EX-99.1"
@@ -4806,6 +4807,7 @@
               "low": 135.0,
               "high": 140.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Free Cash Flow between $135.0 million and $140.0 million",
               "source_ref": "8-K 0001902733-26-000064 EX-99.1"
@@ -4828,6 +4830,7 @@
               "low": 154.5,
               "high": 156.5,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Total revenues between $154.5 million and $156.5 million",
               "source_ref": "8-K 0001902733-26-000019 EX-99.1"
@@ -4838,6 +4841,7 @@
               "low": 132.0,
               "high": 137.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Free Cash Flow between $132.0 million and $137.0 million",
               "source_ref": "8-K 0001902733-26-000019 EX-99.1"
@@ -4872,6 +4876,7 @@
               "low": 146.75,
               "high": 148.25,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Total revenues between $146.75 million and $148.25 million",
               "source_ref": "8-K 0001902733-25-000130 EX-99.1"
@@ -4894,6 +4899,7 @@
               "low": 146.0,
               "high": 148.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Total revenues between $146.0 million and $148.0 million",
               "source_ref": "8-K 0001902733-25-000105 EX-99.1"
@@ -4916,6 +4922,7 @@
               "low": 142.0,
               "high": 144.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Total revenues between $142.0 million and $144.0 million",
               "source_ref": "8-K 0001902733-25-000074 EX-99.1"

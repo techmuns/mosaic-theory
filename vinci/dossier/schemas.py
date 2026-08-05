@@ -720,7 +720,16 @@ class FinancialSummary(BaseModel):
 # The unit vocabulary a guidance range may be stated in. "$M" is the default because most guides
 # are dollar amounts in millions; "$/sh" exists because per-share guides are NOT, and the absence
 # of this member is what let adjusted EPS render in millions (2026-07-29).
-GUIDANCE_UNITS: frozenset[str] = frozenset({"$M", "%", "$/sh"})
+GUIDANCE_UNITS: frozenset[str] = frozenset({"$M", "%", "$/sh", "bps"})
+
+#: WHAT THE NUMBERS ARE — a LEVEL the metric will reach, or a CHANGE from the prior period.
+#: A guide of "$1.345–1.355 billion" and a guide of "decline approximately 375 basis points" are
+#: not the same KIND of quantity, and until 2026-08-05 the model could only express the first: ten
+#: of seventeen dropped clauses across four names were changes. Capturing them without this field
+#: would have stored SMPL's "decline between 300 and 350 basis points" as low=300 high=350 unit="%"
+#: — a gross margin of 300-350%, a 100x error in a decision figure, in a parser already fixed twice
+#: for exactly that class.
+GUIDANCE_BASES: frozenset[str] = frozenset({"level", "change"})
 
 
 class GuidanceItem(BaseModel):
@@ -745,11 +754,22 @@ class GuidanceItem(BaseModel):
     # Validated against a closed set, on the BEAR_BASES precedent: an unlisted unit is not
     # formattable, so it is added deliberately rather than arriving through a typo.
     unit: str = "$M"
+    #: LEVEL (the value the metric reaches) or CHANGE (the movement from the prior period). Defaults
+    #: to "level", which is what every guide captured before 2026-08-05 was, so committed dossiers
+    #: keep their meaning. A CHANGE carries a signed value: "decline 375bps" is low=high=-375.
+    basis: str = "level"
     qualitative: bool  # True ⇒ named in the outlook with NO number (fail-loud honest, not a guess)
     verbatim: str  # the outlook sentence, ≤200c
     source_ref: str  # accession + exhibit
 
     model_config = {"frozen": True}
+
+    @field_validator("basis")
+    @classmethod
+    def _basis_known(cls, v: str) -> str:
+        if v not in GUIDANCE_BASES:
+            raise ValueError(f"guidance basis {v!r} is not one of {sorted(GUIDANCE_BASES)}")
+        return v
 
     @field_validator("unit")
     @classmethod

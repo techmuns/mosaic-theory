@@ -3184,6 +3184,7 @@
               "low": 2465.0,
               "high": 2490.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Third quarter reported revenue of $2.465 billion to $2.490 billion",
               "source_ref": "8-K 0001803599-26-000133 EX-99.1"
@@ -3237,6 +3238,7 @@
               "low": 2460.0,
               "high": 2485.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Second quarter reported revenue of $2.460 billion to $2.485 billion",
               "source_ref": "8-K 0001803599-26-000084 EX-99.1"
@@ -3302,6 +3304,7 @@
               "low": 2475.0,
               "high": 2500.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "First quarter reported revenue of $2.475 billion to $2.500 billion",
               "source_ref": "8-K 0001803599-26-000003 EX-99.1"
@@ -3355,6 +3358,7 @@
               "low": 2525.0,
               "high": 2550.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Fourth quarter reported revenue of $2.525 billion to $2.550 billion",
               "source_ref": "8-K 0001803599-25-000143 EX-99.1"

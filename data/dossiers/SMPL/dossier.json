@@ -5064,6 +5064,7 @@
               "low": 1345.0,
               "high": 1355.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Net sales expected to range between $1.345 and $1.355 billion",
               "source_ref": "8-K 0001702744-26-000021 EX-99.1"
@@ -5074,6 +5075,7 @@
               "low": 220.0,
               "high": 225.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Adjusted EBITDA expected to range between $220 and $225 million",
               "source_ref": "8-K 0001702744-26-000021 EX-99.1"
@@ -5126,6 +5128,7 @@
               "low": 1310.0,
               "high": 1350.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Net sales expected to range between $1.31 and $1.35 billion",
               "source_ref": "8-K 0001702744-26-000010 EX-99.1"
@@ -5136,6 +5139,7 @@
               "low": 217.0,
               "high": 225.0,
               "unit": "$M",
+              "basis": "level",
               "qualitative": false,
               "verbatim": "Adjusted EBITDA expected to range between $217 and $225 million",
               "source_ref": "8-K 0001702744-26-000010 EX-99.1"
