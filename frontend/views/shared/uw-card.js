@@ -135,6 +135,31 @@ function ratioCell(c) {
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 
+// THE SECOND TEST, its own cell beside the ratio (2026-08-05). The house convention is nominal
+// 2:1 AND a base-case IRR floor AND a stated horizon; both must pass and IRR NEVER REPLACES
+// ASYMMETRY, so it renders as a PEER of the ratio rather than a footnote under it.
+//
+// A record with no horizon renders UNDEFINED WITH ITS REASON rather than rendering nothing: an
+// absent IRR line is indistinguishable from one that passed, and every R1 record committed before
+// this convention is exactly that case. The horizon prints WITH the rate — a return without the
+// period it is earned over is not a number a reader can act on, which is the same error the
+// R2 PV/nominal split exists to prevent.
+function irrCell(c) {
+  const open = headlineState(c) !== "target";
+  if (typeof c.irr !== "number") {
+    if (!c.irrUndefined) return "";                  // pre-convention record: no cell at all
+    return statCell("Base IRR", `<span class="pill unresolved">UNDEFINED</span>`,
+      escapeHtml(c.irrUndefined), { txt: true });
+  }
+  const badge = open && c.irrPassFail
+    ? ` <span class="pill ${c.irrPassFail === "PASS" ? "buy" : "avoid"} uw-mini">${escapeHtml(c.irrPassFail)}</span>`
+    : "";
+  const sub = (typeof c.irrFloor === "number"
+    ? `vs the ${(c.irrFloor * 100).toFixed(0)}% floor` : `floor ${DASH}`)
+    + (typeof c.horizonYears === "number" ? ` · over ${c.horizonYears}y` : "");
+  return statCell("Base IRR", (c.irr * 100).toFixed(1) + "%" + badge, sub);
+}
+
 // --- MASTHEAD ------------------------------------------------------------------------------------
 // One stat cell: uppercase micro-label / large tabular value / one line of context. `txt` drops the
 // value to prose scale (the method cell), `tone` colours it (neg on a downside).
@@ -281,6 +306,7 @@ function masthead(c, showTicker, { eyebrow = true } = {}) {
     <div class="uw-statband">
       ${headlineCell(c)}
       ${ratioCell(c)}
+      ${irrCell(c)}
       ${entryCell(c)}
       ${downsideCell(c)}
       ${methodCell(c)}

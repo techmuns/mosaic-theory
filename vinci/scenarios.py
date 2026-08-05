@@ -134,6 +134,26 @@ REF_FIELDS_INTRODUCED_IN: dict[str, str] = {
 AXIS_FIELDS_INTRODUCED_IN: dict[str, str] = {
     "notes": FIELDED_REFS_FROM,            # 1.3 — dated findings about this axis
 }
+#: THE THIRD LEVEL — the `result` block — scoped by WHETHER THE GATE RAN, not by schema version.
+#: A 1.2 archive record re-serialised with `"gate": null` would assert WE GRADED THIS AND GOT
+#: NOTHING when the truth is THIS RECORD PREDATES THE GATE: the identical defect the axis level was
+#: added to close, one level further down, and caught by the same archive round-trip pin.
+#:
+#: SCHEMA-VERSION SCOPING WAS TRIED FIRST AND DOES NOT FIT — recorded because it looks like the
+#: obvious answer. Introducing these at "1.5" means a record must DECLARE 1.5 to carry them, and
+#: bumping the seven committed records to 1.5 trips `require_fielded_refs` — the 1.4 rule that
+#: every reference states a vintage, which they cannot satisfy until the backfill already queued.
+#: Version-scoping would therefore have stripped the gate off every live record: computed,
+#: rendered, and silently not stored.
+#:
+#: The distinction the version mechanism protects is "predates the question" vs "we looked and
+#: found none", and for ANALYST-SUPPLIED fields only the declared version separates those.
+#: `result` is MACHINE-DERIVED and recomputed in full on every run, so the marker is in the data:
+#: a `gate` of None means the gate never ran on this record. Value-driven scoping is normally the
+#: wrong instinct (see the `exclude_none` note above); it is right here because the value being
+#: read is not a datum but the record of whether the computation happened at all.
+GATE_FIELDS: tuple[str, ...] = (
+    "horizon_years", "irr", "irr_undefined", "irr_floor", "irr_pass_fail", "gate")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -415,6 +435,47 @@ class SurvivalInput(BaseModel):
     latest_period_fcf: float | None = None  # $M — drives the sign-contradiction warning
 
 
+#: The base-case annualised IRR a record must clear, alongside — never instead of — the 2:1 bar.
+#: Fund-wide and operator-ratified, the `BAR`/`HURDLE` pattern: a per-name floor would be the
+#: easiest possible place to manufacture a pass. NOT tuned on outcomes; no code path reads a
+#: forward return when setting it.
+IRR_FLOOR = 0.15
+
+
+def annualised_irr(nominal_value: float, spot: float, years: float) -> tuple[float | None, str]:
+    """``(value/spot)^(1/years) - 1`` — or ``(None, why)``. Never a fabricated rate.
+
+    NOMINAL IN, ALWAYS. On R2 the leg's `value_per_share` is ALREADY a PV discounted at `HURDLE`,
+    so feeding it here would discount twice and report a return net of the very charge the IRR
+    exists to measure against. `base_irr` picks `value_terminal` on R2 and `value_per_share` on R1
+    for that reason — both nominal, both compared against the price paid today.
+
+    A NEGATIVE base value has no real annualised rate (a fractional power of a negative number),
+    and it is a genuine state — MVST/AORT/NCNO all carry negative computed ratios — so it returns
+    a stated reason rather than a complex number or a silent zero.
+    """
+    if years is None or years <= 0:
+        return None, "no horizon stated — an IRR needs a realisation date"
+    if spot <= 0:
+        return None, f"spot {spot} is not a positive price"
+    if nominal_value <= 0:
+        return None, (f"base value {nominal_value:,.4f} is not positive — no real annualised "
+                      "rate exists; the asymmetry test is the only one that applies")
+    return (nominal_value / spot) ** (1.0 / years) - 1.0, ""
+
+
+def base_irr(res: Result, spot: float, years: float | None) -> tuple[float | None, str]:
+    """The record's base-case IRR: the NOMINAL base value against spot over the stated horizon."""
+    base = res.per_scenario.get("base")
+    if base is None:
+        return None, "no base leg — nothing to compute a return on"
+    if years is None:
+        return None, "no horizon stated — an IRR needs a realisation date"
+    # R2 stores the undiscounted terminal number beside the PV; R1's value IS nominal.
+    nominal = base.value_terminal if base.value_terminal is not None else base.value_per_share
+    return annualised_irr(nominal, spot, years)
+
+
 class Result(BaseModel):
     """Filled by the run. ``pass_fail`` records the bar test honestly — a FAIL is a result."""
 
@@ -428,6 +489,23 @@ class Result(BaseModel):
     ratio_undefined: str | None = None     # set when the risk leg is degenerate
     bar: float = BAR
     pass_fail: Literal["PASS", "FAIL", "UNDEFINED"] | None = None
+
+    # --- THE SECOND TEST (2026-08-05) ---------------------------------------------------------
+    # House convention: NOMINAL 2:1 **and** a base-case IRR floor **and** a stated horizon. Both
+    # tests must pass and IRR NEVER REPLACES ASYMMETRY — a 40% IRR on a 1.2:1 spread is a levered
+    # bet, not a cheap one, and the bar exists to refuse exactly that.
+    #
+    # `pass_fail` KEEPS ITS OLD MEANING — the ratio-vs-bar test, unchanged, so no committed record
+    # is silently reclassified by this field changing under it. The conjunction is `gate`.
+    horizon_years: float | None = None     # the BASE leg's stated horizon (years)
+    irr: float | None = None               # annualised, on the NOMINAL base value (see `base_irr`)
+    irr_undefined: str | None = None       # why it could not be computed — never a silent None
+    irr_floor: float = IRR_FLOOR
+    irr_pass_fail: Literal["PASS", "FAIL", "UNDEFINED"] | None = None
+    #: BOTH TESTS. PASS only when the ratio clears the bar AND the IRR clears its floor; UNDEFINED
+    #: when either is undefined, because a gate that reads PASS on a half-computed record is worse
+    #: than one that admits it does not know.
+    gate: Literal["PASS", "FAIL", "UNDEFINED"] | None = None
 
 
 class Verdict(BaseModel):
@@ -755,7 +833,58 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
                      ratio_undefined=rr.undefined, bar=BAR, survival=sb, hurdle=tmod.HURDLE,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
+    # R2 already requires `years_to_terminal` on every leg, so its IRR computes immediately —
+    # off `value_terminal`, the UNDISCOUNTED number, never the PV the ratio uses.
+    res = _with_irr_gate(res, rec)
     return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
+
+
+def horizon_problems(rec: ScenarioRecord) -> list[str]:
+    """The stated-horizon requirement, as `validate_legs` returns problems — empty when satisfied.
+
+    CALLED BY THE WRITE PATHS (`scenario-create`, `scenario-supersede`), never by `run_recipe`:
+    see the note in `run_recipe` for why refusing on recomputation would blind the coherence
+    invariant over the four committed R1 records that predate this convention.
+
+    R2 needs no entry here — it already refuses a leg without `years_to_terminal` inside
+    `_run_r2`, because there the horizon drives the discount and the dilution as well as the IRR.
+    """
+    base = (rec.scenarios or {}).get("base")
+    if base is None:
+        return []                       # the missing-leg problem is `validate_legs`', not this one
+    if base.years_to_terminal is None:
+        return [f"base.years_to_terminal is required — the house convention is nominal {BAR:g}:1 "
+                f"AND a base-case IRR floor of {IRR_FLOOR:.0%} AND a stated horizon, and without a "
+                "realisation date no IRR exists to test. State it in years (1.5 = 18 months). Not "
+                "defaulted: a guessed horizon sets the return."]
+    if base.years_to_terminal <= 0:
+        return [f"base.years_to_terminal = {base.years_to_terminal} must be > 0"]
+    return []
+
+
+def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
+    """Stamp the horizon, the base IRR and the CONJUNCTION onto a computed Result.
+
+    ONE implementation for both recipes, deliberately: R1 and R2 already diverge on what
+    `value_per_share` means, and letting each compute its own gate is how the two would come to
+    disagree about what passing means. `base_irr` handles the nominal/PV difference; everything
+    downstream of it is identical.
+    """
+    base_leg = rec.scenarios.get("base")
+    years = base_leg.years_to_terminal if base_leg is not None else None
+    irr, why = base_irr(res, rec.spot, years)
+    irr_pf: Literal["PASS", "FAIL", "UNDEFINED"] = (
+        "UNDEFINED" if irr is None else ("PASS" if irr >= IRR_FLOOR else "FAIL"))
+    # BOTH, and UNDEFINED is contagious: a gate that reads PASS while half of it could not be
+    # computed is worse than one that says it does not know.
+    gate: Literal["PASS", "FAIL", "UNDEFINED"]
+    if res.pass_fail is None or res.pass_fail == "UNDEFINED" or irr_pf == "UNDEFINED":
+        gate = "UNDEFINED"
+    else:
+        gate = "PASS" if (res.pass_fail == "PASS" and irr_pf == "PASS") else "FAIL"
+    return res.model_copy(update={
+        "horizon_years": years, "irr": irr, "irr_undefined": why or None,
+        "irr_floor": IRR_FLOOR, "irr_pass_fail": irr_pf, "gate": gate})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -794,6 +923,28 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     interest = rec.facts["cash_interest"].value if "cash_interest" in rec.facts else None
     tax_rate = rec.facts["cash_tax_rate"].value if "cash_tax_rate" in rec.facts else None
 
+    # THE HORIZON IS NOW READ ON R1 (2026-08-05). `years_to_terminal` has always sat on the SHARED
+    # `ScenarioInput`, and until now R1 neither read it nor refused it — a record could carry
+    # `years_to_terminal: 4.0` beside `result.per_scenario.base.years: null` and be
+    # self-contradictory on disk. It is read below, NOT as a discount: R1 stays undiscounted and
+    # the 2:1 bar stays nominal. The horizon exists so the base case has a realisation date and
+    # therefore an IRR.
+    #
+    # THE REFUSAL LIVES AT THE WRITE BOUNDARY, NOT HERE, and the placement was chosen after
+    # MEASURING the alternative. Refusing inside `run_recipe` breaks
+    # `test_every_committed_record_result_matches_its_own_facts` — the coherence invariant that
+    # re-runs the recipe over every committed record to prove its stored `result` still matches its
+    # own facts, shipped after PR #189 where two records had facts amended under an unchanged
+    # result and NOTHING was red. Four committed R1 records carry no horizon, so refusing here
+    # takes that guard dark on 4 of 7 records: it would stop detecting silent divergence in exactly
+    # the place divergence has already happened once. A new convention is not worth blinding the
+    # check that catches corrupted state.
+    #
+    # So recomputation stays possible and honest — the IRR reads UNDEFINED WITH ITS REASON and
+    # `gate` reads UNDEFINED, visibly failing the new convention rather than silently passing it —
+    # while `scenario-create` and `scenario-supersede` refuse outright. Nothing NEW can land
+    # without a horizon; that is where no-grandfathering binds, and it binds on the paths an
+    # analyst actually writes through.
     per: dict[str, ScenarioOutcome] = {}
     for name, s in rec.scenarios.items():
         # R1 IS a margin recipe — mid-cycle margin × own-history multiple. `margin` became
@@ -808,7 +959,10 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
                               cash_interest=interest, cash_tax_rate=tax_rate)
         per[name] = ScenarioOutcome(value_per_share=v.vps, op_income=v.op_income, ebitda=v.ebitda,
                                     ev=v.ev, equity=v.equity, ev_ebit=v.ev_ebit,
-                                    norm_fcf=v.norm_fcf)
+                                    norm_fcf=v.norm_fcf,
+                                    # the leg's own horizon, so `years` stops being R2-only and a
+                                    # stated horizon can no longer sit beside a null one
+                                    years=s.years_to_terminal)
     res = Result(per_scenario=per, bar=BAR)
     if "base" in per and "bear" in per:
         rr = mc.reward_risk(base_vps=per["base"].value_per_share,
@@ -817,6 +971,7 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
                      ratio_undefined=rr.undefined, bar=BAR,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
+    res = _with_irr_gate(res, rec)
     # stamp result + the formula (machine assembly, like multiple_basis — never judgment)
     return rec.model_copy(update={"result": res, "recipe_formula": list(R1_FORMULA)})
 
@@ -928,10 +1083,12 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
 
 
 def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
-    """The record as a dict carrying only the fields its declared schema knows about — at BOTH
-    levels the schema has versioned so far: the axis (:data:`AXIS_FIELDS_INTRODUCED_IN`) and the
-    reference (:data:`REF_FIELDS_INTRODUCED_IN`). Scoping one level while claiming to scope the
-    record is what shipped `"notes": []` onto a 1.2 archive record in review.
+    """The record as a dict carrying only the fields its declared schema knows about — at ALL THREE
+    levels the schema has versioned so far: the result (:data:`RESULT_FIELDS_INTRODUCED_IN`), the
+    axis (:data:`AXIS_FIELDS_INTRODUCED_IN`) and the reference (:data:`REF_FIELDS_INTRODUCED_IN`).
+    Scoping one level while claiming to scope the record is what shipped `"notes": []` onto a 1.2
+    archive record in review — and then, at the result level, what the IRR gate would have shipped
+    as `"gate": null` onto the same record. Same defect, third level, caught by the same pin.
 
     Public behaviour, private name: every consumer goes through :func:`write_record`. Drops rather
     than nulls, because an ABSENT key and a null key say different things — see
@@ -942,6 +1099,11 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     """
     out: dict[str, Any] = rec.model_dump(mode="json")
     ver = _schema_ver(rec.schema_version)
+    # the result level: a record whose gate never ran carries NO gate keys, so an archived
+    # pre-convention record round-trips byte-identically instead of gaining six nulls
+    if (out.get("result") or {}).get("gate") is None:
+        for field in GATE_FIELDS:
+            (out.get("result") or {}).pop(field, None)
     for axis in (out.get("assumptions") or {}).values():
         for field, introduced in AXIS_FIELDS_INTRODUCED_IN.items():
             if ver < _schema_ver(introduced):

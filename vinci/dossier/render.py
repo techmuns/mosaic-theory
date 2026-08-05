@@ -2422,6 +2422,20 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         strip.append(f"**Reward : risk** {r.ratio:,.2f} : 1 (bar {r.bar:g} : 1)")
     elif r.ratio_undefined:
         strip.append("**Reward : risk** UNDEFINED")
+    # (2026-08-05) THE SECOND TEST, BESIDE THE FIRST — not below it, not in the appendix. The house
+    # convention is nominal 2:1 AND a base-case IRR floor AND a stated horizon; an IRR that renders
+    # somewhere else reads as a diagnostic, and this one is a GATE. A record with no horizon says
+    # so rather than omitting the line, because a silently absent IRR is indistinguishable from one
+    # that passed. `horizon_years` is printed with it: the return is meaningless without the period
+    # it is earned over, and printing a rate beside no date is how a 5-year story gets compared
+    # against a price paid today (the same error the R2 PV/nominal split exists to prevent).
+    if getattr(r, "irr", None) is not None:
+        yrs = f", {r.horizon_years:g}y" if r.horizon_years else ""
+        strip.append(f"**Base IRR** {r.irr:.1%} (floor {r.irr_floor:.0%}{yrs})")
+    elif getattr(r, "irr_undefined", None):
+        strip.append(f"**Base IRR** UNDEFINED — {r.irr_undefined}")
+    if getattr(r, "gate", None):
+        strip.append(f"**Gate** {r.gate} (both tests)")
     out += [" · ".join(strip), ""]
     # (item 1e) THE SPOT'S PROVENANCE, verbatim — the only place the price's OWN date reaches a
     # print reader. The web has carried it since the masthead redesign, as the `[S1]` cite beside

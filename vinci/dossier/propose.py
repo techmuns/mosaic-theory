@@ -241,6 +241,39 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) ->
     return problems
 
 
+def record_legs_for_validation(rec: Any) -> dict[str, dict[str, Any]]:
+    """A committed `ScenarioRecord`'s legs in the shape `validate_legs` reads.
+
+    WHY AN ADAPTER RATHER THAN A DIRECT CALL. `validate_legs` was written for the TEMPLATE, whose
+    provenance lives in per-cell `{axis}_derivation` / `{axis}_adjustment` keys. A `ScenarioRecord`
+    has no such fields and structurally cannot: its provenance is `assumptions[axis]` (a stated
+    `method` plus `references`) and its per-leg deviation reason is `ScenarioInput.reason`, whose
+    own docstring is *"WHY this deviates from the anchor — required, never blank"*. Feeding a record
+    straight in refuses ALL SEVEN committed records on nine phantom "must state where it came from"
+    problems — measured, not predicted. That is not a guard finding defects, it is a shape mismatch.
+
+    THE MAPPING, and it is faithful in one direction and COARSER in the other:
+      * `{axis}_derivation`  <- `assumptions[axis].method`   (per AXIS — the record's own unit)
+      * `{axis}_adjustment`  <- `ScenarioInput.reason`       (per LEG  — the record's own unit)
+
+    **The coarseness is real and is not hidden.** The template demands a reason per (axis, leg)
+    CELL; a record states one reason per LEG, so a leg whose `reason` explains its revenue move but
+    not its multiple move passes here and would not pass `scenario-create`. This closes the §D hole
+    — a bare number with no stated derivation — without pretending to be cell-level parity.
+    """
+    out: dict[str, dict[str, Any]] = {}
+    assumptions = getattr(rec, "assumptions", None) or {}
+    for leg, s in (rec.scenarios or {}).items():
+        d: dict[str, Any] = {"revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
+                             "reason": s.reason}
+        for axis in AXES:
+            ad = assumptions.get(axis)
+            d[f"{axis}_derivation"] = (getattr(ad, "method", "") or "") if ad else ""
+            d[f"{axis}_adjustment"] = s.reason or ""
+        out[leg] = d
+    return out
+
+
 # --- the shares denominator, settled rather than picked silently --------------------------------
 
 #: Two share counts sit in every dossier and NEITHER is what item 24 ruled the denominator must be
@@ -477,6 +510,16 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
                 cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = UNPROPOSED_REASON[(axis, leg)]
                 cell[f"{axis}_derivation"] = ""      # REQUIRED — where this number came from
         cell["reason"] = ""
+        if leg == "base":
+            # THE HORIZON — required, never proposed (2026-08-05). The convention is nominal 2:1
+            # AND a base-case IRR floor AND a stated horizon, and the horizon is the input that
+            # turns a multiple into a return: proposing one would be the machine setting the IRR
+            # it is about to be tested on. Same refusal class as the other six empty cells.
+            cell["years_to_terminal"] = None
+            cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = (
+                "no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
+                "the catalyst path, and a default here would set the IRR the record is graded on. "
+                "State it in years: 1.5 = 18 months.")
         if leg == "bear":
             cell["bear_basis"] = ""                  # own-history | bear-state-comps | peer-… |…
         cell["margin_basis"] = ""                    # EBIT | EBITDA — WHICH LINE, not provenance

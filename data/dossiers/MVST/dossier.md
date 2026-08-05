@@ -5,7 +5,7 @@ _July 10, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $0.60 (-34.7% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
+**Target (base)** $0.60 (-34.7% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1) · **Base IRR** 3.4% (floor 15%, 4y) · **Gate** FAIL (both tests)
 
 _Spot source: Polygon MVST close 2026-07-21 (live at underwrite)_
 

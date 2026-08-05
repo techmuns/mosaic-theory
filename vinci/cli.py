@@ -1101,6 +1101,17 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         return 1
 
     problems = validate_legs(legs_from_template(tpl), propose_anchors(doc))
+    # THE HORIZON, checked on the TEMPLATE rather than after construction: `ScenarioInput` accepts
+    # `years_to_terminal=None` (R2 legacy records need it nullable), so a record built first would
+    # validate and only fail later — the analyst deserves it in the same refusal list as everything
+    # else, on one pass rather than round the loop again.
+    _base = (legs_from_template(tpl).get("base") or {})
+    if _base.get("years_to_terminal") is None:
+        problems = problems + [
+            "base.years_to_terminal is required — the house convention is nominal 2:1 AND a "
+            "base-case IRR floor AND a stated horizon, and without a realisation date no IRR "
+            "exists to test. State it in years (1.5 = 18 months); it is never defaulted, because "
+            "a guessed horizon sets the return the record is then graded on."]
     if problems:
         print(f"=== scenario-create {t}: REFUSED ({len(problems)}) ===")
         for p in problems:
@@ -1119,6 +1130,10 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             scenarios={leg: sc.ScenarioInput(
                 revenue=float(c["revenue"]), margin=float(c["margin"]),
                 multiple=float(c["multiple"]), reason=str(c.get("reason") or ""),
+                # carried from the template, never defaulted — `horizon_problems` refuses below if
+                # the analyst left it empty
+                years_to_terminal=(float(c["years_to_terminal"])
+                                   if c.get("years_to_terminal") is not None else None),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
@@ -1219,6 +1234,47 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         incoming = sc.ScenarioRecord.model_validate_json(Path(args.payload).read_text())
     except (OSError, ValueError) as exc:
         print(f"payload unreadable / invalid against the schema: {exc}")
+        return 2
+
+    # THE ANCHOR/DERIVATION GUARDS, WHICH THIS PATH DID NOT RUN (2026-08-05). Until now supersede
+    # did schema validation and NOTHING else — no anchors, no deviation reasons, no tier check —
+    # while every one of those guards sat on `scenario-create`, which by definition has no live
+    # record to fix. So the §D defect (a bare averaged number whose derivation is unstated) was
+    # reintroducible through the one path an analyst actually uses on a live name.
+    #
+    # ANCHORS MAY LEGITIMATELY BE UNAVAILABLE, and that is NOT forced into a refusal: a record can
+    # outlive its dossier (WERN is the live case — a committed record with no `data/dossiers/WERN`),
+    # and a closed record amending history is exactly the shape that has no current dossier to
+    # anchor against. In that case the anchored checks CANNOT run, so they are skipped and SAID SO
+    # LOUDLY rather than silently passing — the derivation requirement still binds, because it is
+    # a property of the record and needs no dossier at all.
+    from vinci.dossier.propose import (
+        ProposalRefusedError,
+        check_tier_agreement,
+        propose_anchors,
+        record_legs_for_validation,
+        validate_legs,
+    )
+
+    t_up = incoming.ticker.upper()
+    anchors: list[Any] = []
+    try:
+        doc = _dossier_doc(t_up)
+        check_tier_agreement(doc, incoming.recipe_id)
+        anchors = propose_anchors(doc)
+    except FileNotFoundError:
+        print(f"  ⚠ no committed dossier for {t_up} — anchor + deviation checks NOT RUN. The "
+              "derivation requirement still applies; the numbers themselves are unchecked against "
+              "any anchor.")
+    except ProposalRefusedError as exc:
+        print(f"REFUSED: {exc}")
+        return 2
+    problems = validate_legs(record_legs_for_validation(incoming), anchors)
+    problems += sc.horizon_problems(incoming)     # no new record lands without a realisation date
+    if problems:
+        print(f"=== scenario-supersede {t_up}: REFUSED ({len(problems)}) ===")
+        for p in problems:
+            print(f"  - {p}")
         return 2
 
     # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:

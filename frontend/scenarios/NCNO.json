@@ -262,6 +262,11 @@
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "FAIL",
+ "irr": -0.0574,
+ "irrFloor": 0.15,
+ "irrPassFail": "FAIL",
+ "horizonYears": 4.0,
+ "gate": "FAIL",
  "currentState": {
   "status": "watch",
   "ratio": -0.72,
