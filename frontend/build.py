@@ -90,7 +90,7 @@ def _rd(x: Any, places: int) -> Any:
     return round(x, places) if isinstance(x, (int, float)) and not isinstance(x, bool) else x
 
 
-def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
+def _ledger_join() -> dict[str, list[dict[str, Any]]]:
     """The committed decision ledger, keyed by ticker — the DECISION row of record, with its
     close attached when the position has been closed.
 
@@ -136,7 +136,31 @@ def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
             "reason": e.get("reason"),
             "closeEntryId": e.get("entry_id"),
         }
-    return {str(e.get("ticker", "")).upper(): e for e in by_entry.values()}
+    # ONE TICKER CAN HOLD MORE THAN ONE POSITION, and this collapse used to be decided by FILE
+    # ORDER — the identical defect the docstring above records as fixed for the decision/close
+    # PAIR, still open one level up for two DECISION rows. It could not fire until 2026-08-05:
+    # SMPL closed its 2026-07-06 position and opened another on 2026-07-29, so the comprehension
+    # `{ticker: e for e in ...}` had two candidates and silently kept whichever came last. It also
+    # took the ARCHIVED record's card down with it — `_ledger_for_record` could no longer see the
+    # row the 2026-07-21 record owns, so the served archived card lost its position entirely.
+    #
+    # ALL of them are kept, newest last, and `_ledger_for_record` selects by TENURE from the
+    # full list — a superseded record finds its own row, a live one finds the row decided
+    # during its own tenure. Nothing collapses to one-row-per-ticker any more: that collapse
+    # WAS the defect, and a "position of record" helper built on it survived only because two
+    # tests called it. Keeping every row also restores the twin claim to a direct equality —
+    # the join resolves exactly the closed pairs `pair_closes` does, with nothing restricted.
+    out: dict[str, list[dict[str, Any]]] = {}
+    for e in by_entry.values():
+        out.setdefault(str(e.get("ticker", "")).upper(), []).append(e)
+    for lst in out.values():
+        lst.sort(key=lambda e: str(e.get("decided_at") or ""))
+    return out
+
+
+def _ledger_rows_by_ticker() -> dict[str, list[dict[str, Any]]]:
+    """Every decision row per ticker, oldest first — the index ownership-by-tenure needs."""
+    return _ledger_join()
 
 
 def _amendment_index() -> dict[str, list[dict[str, Any]]]:
@@ -183,7 +207,19 @@ def _ledger_for_record(
     decision cannot have justified it. Records with no supersession are unaffected — there is only
     one record, so it is trivially the latest at-or-before.
     """
-    led = (ledger or {}).get(str(rec.get("ticker", "")).upper())
+    # A TICKER CAN HOLD MORE THAN ONE POSITION since 2026-08-05 — SMPL closed its 2026-07-06 one
+    # and opened another on 2026-07-29 — so the index is a LIST per ticker and each candidate is
+    # tested against this record's tenure, newest first. A single row is still accepted, because
+    # the tenure rule below is written for one and this stays its own base case.
+    t_up = str(rec.get("ticker", "")).upper()
+    found = (ledger or {}).get(t_up)
+    if isinstance(found, list):
+        for cand in reversed(found):
+            owned = _ledger_for_record(rec, {t_up: cand})
+            if owned is not None:
+                return owned
+        return None
+    led = found
     if not led:
         return None
     decided = str(led.get("decided_at") or "")[:10]
@@ -450,7 +486,7 @@ def _scenario_cards() -> dict[str, dict[str, Any]]:
     d = ROOT / "scenarios"
     if not d.is_dir():
         return {}
-    ledger = _ledger_by_ticker()
+    ledger = _ledger_rows_by_ticker()
     out: dict[str, dict[str, Any]] = {}
     for p in sorted(d.glob("*.json")):
         if p.name.startswith("_"):          # _schema.json and friends are not records

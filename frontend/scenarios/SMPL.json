@@ -281,5 +281,12 @@
   ],
   "avoidPriced": false,
   "avoidPricedNote": null
+ },
+ "ledger": {
+  "verdict": "BUY",
+  "entryId": "V-SMPL-screen2-20260729",
+  "entryPrice": 11.33,
+  "entryPriceAsOf": "2026-08-04",
+  "decidedAt": "2026-08-05T14:59:29.311031"
  }
 }
