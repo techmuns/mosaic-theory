@@ -582,6 +582,12 @@
           "reason": "7 estimates"
         }
       },
+      "leg_basis": {
+        "leg_fy": null,
+        "anchor_fy": "2026",
+        "state": "unstated",
+        "note": "the record does not state which fiscal year its base leg is struck at, so the split across revenue/margin/multiple is reported on FY2026's basis and cannot be verified against the leg. The TOTAL gap is unaffected — it carries no year."
+      },
       "status": "computed",
       "ratios": {
         "ev_gap": 0.939572480342821
