@@ -1103,16 +1103,23 @@ def test_the_seven_committed_records_round_trip_byte_identical(tmp_path: Path) -
     # version-scoping AT ALL: seven records that share a version cannot fail a version check.
     # Walking `scenarios/*.json` alone passed while `write_archived` materialised `"notes": []`
     # on all three axes of the 1.2 record — found in review, not by this pin's first cut.
-    archived = 0
+    archived, below_gate = 0, 0
     for f in sorted((root / "archive").glob("*.json")):
         archived += 1
         before = f.read_text()
         rec = sc.ScenarioRecord.model_validate_json(before)
-        assert sc._schema_ver(rec.schema_version) < sc._schema_ver(sc.FIELDED_REFS_FROM), (
-            f"{f.name} is at schema {rec.schema_version} — this pin's value is that the archive "
-            "holds a record BELOW the gates; if it no longer does, version-scoping is untested "
-            "against any real record and needs a new source of one")
+        if sc._schema_ver(rec.schema_version) < sc._schema_ver(sc.FIELDED_REFS_FROM):
+            below_gate += 1
         assert before == sc.write_archived(rec, root=tmp_path).read_text(), (
             f"archive/{f.name} does not round-trip — `write_archived` promises the same "
             "serialization as `write_record`, so both are version-scoped or neither is")
-    assert archived == 1, f"expected 1 archived record, walked {archived}"
+    # AT LEAST ONE below the gate — not EVERY one, and not exactly one record in the archive.
+    # The first cut asserted both, which held only while a single record sat there; the 2026-08-05
+    # SMPL supersession archived a SECOND (at 1.3) and reddened this on a legitimate event. The
+    # stated value is untouched — a real sub-1.3 record still exercises version-scoping, and the
+    # archive only ever grows — so the assertion now says what it always meant.
+    assert archived, "the archive is empty — every claim below it is vacuous"
+    assert below_gate, (
+        f"none of the {archived} archived record(s) sits below schema {sc.FIELDED_REFS_FROM} — "
+        "this pin's value is that the archive holds a record BELOW the gates; without one, "
+        "version-scoping is untested against any real record and needs a new source of one")

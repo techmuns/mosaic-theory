@@ -1,0 +1,374 @@
+{
+  "schema_version": "1.3",
+  "ticker": "SMPL",
+  "recipe_id": "R1_midcycle_margin_evebitda",
+  "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+  "recipe_formula": [
+    "EBIT = revenue × op margin",
+    "EBITDA = EBIT + D&A",
+    "EV = EBITDA × exit multiple (EV/EBITDA)",
+    "equity = EV − net debt",
+    "value/share = equity ÷ diluted shares"
+  ],
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-27",
+  "analyst": "nogods404",
+  "spot": 10.53,
+  "spot_source": "Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)",
+  "facts": {
+    "d_and_a": {
+      "value": 21.431,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "EDGAR companyfacts dep_amort (combined) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "net_debt": {
+      "value": 324.582,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "diluted_shares": {
+      "value": 88.460545,
+      "unit": "M shares",
+      "basis": "The filer reports NO dilutive difference for 2026-03-01→2026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    "ltm_revenue": {
+      "value": 1392.235,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "cash_interest": {
+      "value": 23.249,
+      "unit": "$M",
+      "basis": "FY2025 non-operating interest expense (FCF cross-check only)",
+      "source": "EDGAR companyfacts InterestExpenseNonoperating FY2025"
+    },
+    "cash_tax_rate": {
+      "value": 0.2376,
+      "unit": "rate",
+      "basis": "FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share)",
+      "source": "EDGAR companyfacts IncomeTaxExpenseBenefit 32.289 / pre-tax 135.903 (FY2025)"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 1180.0,
+      "margin": 0.1,
+      "multiple": 7.0,
+      "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020, 9.58%); the multiple at the trough of the trading range (prior low 6.11x). METHOD — bear-state evidence: declining packaged-food comparables with clean income statements trade at 6.08x (INGR) to 8.57x (LW) on the lease-inclusive basis, so the recorded 7.0x sits inside the observed state while the market prices the name below it. Against the 14% normal the 10% margin retains 71%, milder than the weakest survivor's 63%; a retention-consistent bear near 8.8% still reads about 3.0 to 1. No quarter this fiscal year fell below the worst clean year.",
+      "years_to_terminal": null,
+      "bear_basis": "own-history",
+      "margin_basis": "EBIT"
+    },
+    "base": {
+      "revenue": 1330.0,
+      "margin": 0.14,
+      "multiple": 12.5,
+      "reason": "Revenue is consensus FY26E of 1,334, below management's reinstated $1.345-1.355B guide, so the base is conservative against their own path. METHOD — the normal margin is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14% the business recovers most — not all — of its historical profitability. The multiple sits below the 17.9x median of the 8.55-year range (35 quarterly closes); 12.5x is the 14th percentile, a durable discount for the unresolved category question.",
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
+    },
+    "bull": {
+      "revenue": 1420.0,
+      "margin": 0.165,
+      "multiple": 16.0,
+      "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best clean year (17.35%); the multiple moves toward but stays below the 17.85x median of the trading history (16.0x, about the 29th percentile).",
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
+    }
+  },
+  "assumptions": {
+    "revenue": {
+      "method": "Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E, bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular decline case.",
+      "references": [
+        {
+          "label": "FY2025 reported revenue",
+          "value": 1450.9,
+          "unit": "$M",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "LTM revenue",
+          "value": 1416.208,
+          "unit": "$M",
+          "source": "committed dossier anchor block (#158/#160/#162-verified)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "consensus FY26E revenue",
+          "value": 1334.0,
+          "unit": "$M",
+          "source": "committed dossier financial_summary (E cols = consensus)",
+          "role": "consensus",
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
+        }
+      ],
+      "notes": [],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-27"
+    },
+    "margin": {
+      "method": "The normal margin is set between the seven-year clean median and the trailing clean margin through the third quarter, nearer the trailing figure, treating part of this year's gross-margin reset as structural. The bear leg takes the worst clean year; the bull leg sits between the median and the best clean year.",
+      "references": [
+        {
+          "label": "screening median (naive, 8 FY)",
+          "value": 15.45,
+          "unit": "%",
+          "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value",
+          "role": "median",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "7yr clean median (FY2025 adjusted)",
+          "value": 15.51,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment",
+          "role": "median",
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "FY2020 worst clean year",
+          "value": 9.58,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)",
+          "role": "trough",
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "FY2022 best clean year",
+          "value": 17.35,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)",
+          "role": "peak",
+          "leg": "bull",
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "FY2025 adjusted ex $60.9M impairment",
+          "value": 15.01,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        }
+      ],
+      "notes": [],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-27"
+    },
+    "multiple": {
+      "method": "Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question earns a durable discount rather than a cyclical one. The bear leg is cross-checked against businesses observed IN the declining state.",
+      "references": [
+        {
+          "label": "this company's trading-range low",
+          "value": 6.11,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "band_low",
+          "leg": "bear",
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "this company's trailing 25th percentile",
+          "value": 15.2,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "percentile",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "this company's trailing median",
+          "value": 17.85,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "median",
+          "leg": "base",
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "this company's trailing 75th percentile",
+          "value": 20.88,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "percentile",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "current multiple (0th pctile)",
+          "value": 5.65,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "current",
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "entry-boundary cell A (1,100 × 8% × 6.0x)",
+          "value": 1.96,
+          "unit": ":1",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        },
+        {
+          "label": "entry-boundary cell B (1,050 × 7% × 6.0x)",
+          "value": 1.73,
+          "unit": ":1",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+          "role": null,
+          "leg": null,
+          "excluded": false,
+          "excluded_reason": null
+        }
+      ],
+      "notes": [
+        {
+          "text": "entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
+          "date": "2026-07-26",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+        }
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-27"
+    }
+  },
+  "gate_adjudication": null,
+  "tier": null,
+  "survival_input": null,
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 7.364130528474588,
+        "op_income": 118.0,
+        "ebitda": 139.431,
+        "ev": 976.017,
+        "equity": 651.4350000000001,
+        "ev_ebit": 8.271330508474577,
+        "norm_fcf": 72.23816240000001,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      },
+      "base": {
+        "value_per_share": 25.670263505611462,
+        "op_income": 186.20000000000002,
+        "ebitda": 207.63100000000003,
+        "ev": 2595.3875000000003,
+        "equity": 2270.8055000000004,
+        "ev_ebit": 13.938708378088078,
+        "norm_fcf": 124.23384240000001,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      },
+      "bull": {
+        "value_per_share": 42.58524520734075,
+        "op_income": 234.3,
+        "ebitda": 255.73100000000002,
+        "ev": 4091.6960000000004,
+        "equity": 3767.1140000000005,
+        "ev_ebit": 17.463491250533504,
+        "norm_fcf": 160.9052824,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      }
+    },
+    "survival": null,
+    "hurdle": null,
+    "reward": 15.140263505611463,
+    "risk": 3.1658694715254114,
+    "ratio": 4.782339777993572,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "PASS",
+    "horizon_years": null,
+    "irr": null,
+    "irr_undefined": "no horizon stated — an IRR needs a realisation date",
+    "irr_floor": 0.15,
+    "irr_pass_fail": "UNDEFINED",
+    "gate": "UNDEFINED"
+  },
+  "verdict": {
+    "status": "watch",
+    "recorded": "2026-07-27",
+    "rationale": "WATCH at $10.53 — not held. The market prices this business below the cheapest multiple in its own trading history, on the view that GLP-1 drugs permanently shrink the snacking category. Our judgment is that the sell-off has overshot. The third quarter confirmed real damage — gross margin down four points and large write-downs — and we now treat part of that as permanent, at a 14% normal margin. Even so the grid reads 3.8 to 1 against our 2:1 bar, with cash generation near thirteen percent of market value. The case fails if the growth engine stalls two more quarters or October cuts guidance — Quest printed +1%, the open question; the October report is the next evidence.",
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
+    "reunderwrite_triggers": [
+      "Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.",
+      "FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.",
+      "Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)"
+    ],
+    "dated_triggers": [
+      {
+        "trigger": "September portfolio-wide price increase fails to stick (elasticity / share loss)",
+        "deadline": "2027-01-07",
+        "basis": "second print after the September action — the Q1-FY27 print reveals elasticity; operator-confirmed 2026-07-24"
+      }
+    ],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": false,
+    "avoid_priced_note": null
+  },
+  "refresh_log": [
+    {
+      "field": "facts.diluted_shares",
+      "old": "93.677801",
+      "new": "88.460545",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    },
+    {
+      "field": "facts.diluted_shares.basis",
+      "old": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
+      "new": "The filer reports NO dilutive difference for 2026-03-01→2026-05-30 (basic and diluted weighted averages are equal at 89,940,680), so the diluted denominator equals the basic outstanding count of 88,460,545. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "date": "2026-07-31",
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+    }
+  ],
+  "supersedes": "SMPL-2026-07-21",
+  "superseded_by": "SMPL-2026-08-05"
+}

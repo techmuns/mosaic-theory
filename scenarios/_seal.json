@@ -23,6 +23,10 @@
     "chars": 748,
     "sha256": "245011700a5326be29cf69b8cbab12a170dc33d184c2c230ccbbba761060085e"
   },
+  "SMPL-2026-07-27": {
+    "chars": 678,
+    "sha256": "d621bcff69591daf774cea1001e0d1837d3b6d56ebe6386c5c1c854c3c8168f3"
+  },
   "WERN": {
     "chars": 344,
     "sha256": "2e0e0f549c7002a523a5a4a0da07f0f80aa2bffe5ebb470d588494f8187d940c"

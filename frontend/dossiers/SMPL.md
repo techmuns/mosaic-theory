@@ -5,18 +5,13 @@ _August 4, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $25.67 (+143.8% vs entry-vintage spot) · **Spot** $10.53 (entry-vintage — frozen at underwrite 2026-07-27) · **Reward** $15.14 · **Risk** $3.17 · **Reward : risk** 4.78 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** UNDEFINED (both tests)
+**Target (base)** $19.64 (+73.4% vs entry-vintage spot) · **Spot** $11.33 (entry-vintage — frozen at underwrite 2026-08-05) · **Reward** $8.31 · **Risk** $3.97 · **Reward : risk** 2.10 : 1 (bar 2 : 1) · **Base IRR** 44.3% (floor 15%, 1.5y) · **Gate** PASS (both tests)
 
-_Spot source: Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)_
+_Spot source: EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)_
 
-**Underwrite disposition:** WATCH (2026-07-27) — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** PENDING_ANALYST (2026-07-27) — _the BUY/AVOID verdict of record is the ledger's_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
-
-### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-27); the live close is in Snapshot, above._
-
-WATCH at $10.53 — not held. The market prices this business below the cheapest multiple in its own trading history, on the view that GLP-1 drugs permanently shrink the snacking category. Our judgment is that the sell-off has overshot. The third quarter confirmed real damage — gross margin down four points and large write-downs — and we now treat part of that as permanent, at a 14% normal margin. Even so the grid reads 3.8 to 1 against our 2:1 bar, with cash generation near thirteen percent of market value. The case fails if the growth engine stalls two more quarters or October cuts guidance — Quest printed +1%, the open question; the October report is the next evidence.
 
 ### What would reopen this name
 
@@ -27,6 +22,7 @@ WATCH at $10.53 — not held. The market prices this business below the cheapest
 > ⚠ **Verify before the verdict:** EDGAR P/E 10.0x does not rest on LTM GAAP earnings; Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
+**Mixed** — a real guidance-cut and unarrested top-line/Atkins decline offset by strong solvency, category growth, and a pricing lever.
 - **Segments:** Branded Nutritional Foods and Snacking Products — single segment [1]
 - **Geography:** North America 98%; International 2% [2]
 - **Snapshot:** Nasdaq · CMP $11.32 (2026-08-03) · cap $909M · 52-wk $9.88–$34.19 · shares 88.5M · book value/sh $16.03 [3]
@@ -49,13 +45,13 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 1,180 | 10.0% | 7x | $7.36 | -30.1% |
-| base | 1,330 | 14.0% | 12.5x | $25.67 | +143.8% |
-| bull | 1,420 | 16.5% | 16x | $42.59 | +304.4% |
+| bear | 1,200 | 13.0% | 5.5x | $7.36 | -35.0% |
+| base | 1,340 | 15.5% | 9x | $19.64 | +73.4% |
+| bull | 1,410 | 17.0% | 12x | $31.75 | +180.3% |
 
-- **bear** — Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020, 9.58%); the multiple at the trough of the trading range (prior low 6.11x). METHOD — bear-state evidence: declining packaged-food comparables with clean income statements trade at 6.08x (INGR) to 8.57x (LW) on the lease-inclusive basis, so the recorded 7.0x sits inside the observed state while the market prices the name below it. Against the 14% normal the 10% margin retains 71%, milder than the weakest survivor's 63%; a retention-consistent bear near 8.8% still reads about 3.0 to 1. No quarter this fiscal year fell below the worst clean year.
-- **base** — Revenue is consensus FY26E of 1,334, below management's reinstated $1.345-1.355B guide, so the base is conservative against their own path. METHOD — the normal margin is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14% the business recovers most — not all — of its historical profitability. The multiple sits below the 17.9x median of the 8.55-year range (35 quarterly closes); 12.5x is the 14th percentile, a durable discount for the unresolved category question.
-- **bull** — The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best clean year (17.35%); the multiple moves toward but stays below the 17.85x median of the trading history (16.0x, about the 29th percentile).
+- **bear** — Revenue 1,200 approximates the lowest FY2027 forecast on the street, 1,203.2 — a downside taken from the bottom of the analyst distribution rather than invented. Margin 13.0% sits roughly 0.9pp below the trailing twelve-month margin: further deterioration on top of what has already happened. The 5.5x multiple is below the lowest close in the company's own eight-and-a-half-year trading range, 6.11x, and is deliberately not 5.0x — pushing it lower would count the same deterioration twice, once in the revenue and margin legs and again in the multiple.
+- **base** — Revenue 1,340 is the median FY2028 street forecast, read at the eighteen-month horizon this record states rather than at the nearest fiscal year. Margin 15.5% matches the median operating margin of the last eight fiscal years, 15.45%, and the street agrees forward: FY2027 consensus is about 15.5% and FY2028 implies 15.7%. The 9.0x multiple is roughly half the 17.85x median close of the company's own trading history, because that history spans a growth era the business has left; it stood at 9.54x as recently as September 2025, and comparable companies trade at 8.72x on next-twelve-month earnings.
+- **bull** — Revenue 1,410 is the highest FY2028 street forecast. Margin 17.0% is held below the 17.18% the business actually earned in FY2024, so the upside leg claims only a margin already demonstrated rather than an extrapolation. The 12.0x multiple sits near the 12.89x that the most expensive comparable company trades at on next-twelve-month earnings, so the re-rating is bounded by what peers fetch today.
 
 **Scenario inputs** — every value in the grid recomputes from these.
 
@@ -238,16 +234,16 @@ _Anchor FY2026 · consensus as-of ≥2026-07-21 (a FLOOR — the export states n
 
 |  | ratio | consensus dispersion |
 |---|---|---:|
-| revenue | 0.98x | sigma 3.62 on n=9 |
-| EBITDA margin | 0.95x | sigma 2.80 on n=10 |
-| exit multiple | 2.26x | street 5.53x at FY2026 |
-| **product = the EV gap** | **2.10x** |  |
+| revenue | 0.99x | sigma 3.62 on n=9 |
+| EBITDA margin | 1.04x | sigma 2.80 on n=10 |
+| exit multiple | 1.63x | street 5.53x at FY2026 |
+| **product = the EV gap** | **1.67x** |  |
 
 _the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an attribution of cause_
 
 - **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
 
-- **Bridge:** our EV $2,595M − net debt $325M = equity $2,271M ÷ 88.461M sh = **$25.67/sh** — against TEV $1,234M.
+- **Bridge:** our EV $2,062M − net debt $325M = equity $1,738M ÷ 88.461M sh = **$19.64/sh** — against TEV $1,234M.
 
   - _Revenue dispersion 0.9% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
   - _EBITDA dispersion 4.7% (high−low ÷ |median|, FY2026, as-of ≥2026-07-21)_
@@ -430,9 +426,9 @@ _2 to verify._
 
 _Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
 
-### Revenue · ratified 2026-07-27
+### Revenue · ratified 2026-08-05
 
-Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E, bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular decline case.
+All three legs are read off the street's forecast distribution AT THIS RECORD'S EIGHTEEN-MONTH HORIZON rather than at the nearest fiscal year: base 1,340 is the median FY2028 estimate, bull 1,410 the highest, and bear 1,200 approximates the lowest FY2027 estimate of 1,203.2. Taking all three from one distribution keeps a single horizon across the legs. The computed default of 1,351.7 is the FY2026 median and therefore describes a different moment, which is why base sits below it.
 
 | reference | value |
 | --- | ---: |
@@ -440,9 +436,9 @@ Legs are set off the consensus path and the trailing-twelve-month base rather th
 | LTM revenue | $1,416.208M [51] |
 | consensus FY26E revenue `base` | $1,334M [52] |
 
-### Margin · ratified 2026-07-27
+### Margin · ratified 2026-08-05
 
-The normal margin is set between the seven-year clean median and the trailing clean margin through the third quarter, nearer the trailing figure, treating part of this year's gross-margin reset as structural. The bear leg takes the worst clean year; the bull leg sits between the median and the best clean year.
+Base 15.5% matches the median operating margin of the last eight fiscal years, 15.45%, and is corroborated forward rather than extrapolated from a depressed present — the street carries about 15.5% for FY2027 and an implied 15.7% for FY2028. Bear 13.0% is roughly 0.9pp below the trailing twelve-month margin: deterioration from a level already impaired. Bull 17.0% is held below the 17.18% actually earned in FY2024, so the upside claims only what the business has already done. Stated on operating income, not EBITDA.
 
 | reference | value |
 | --- | ---: |
@@ -452,9 +448,9 @@ The normal margin is set between the seven-year clean median and the trailing cl
 | FY2022 best clean year `bull` | 17.35% [56] |
 | FY2025 adjusted ex $60.9M impairment | 15.01% [57] |
 
-### Multiple · ratified 2026-07-27
+### Multiple · ratified 2026-08-05
 
-Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question earns a durable discount rather than a cyclical one. The bear leg is cross-checked against businesses observed IN the declining state.
+Base 9.0x is roughly half the 17.85x median close of the company's own eight-and-a-half-year trading history, and that gap IS the judgment: the history spans a growth era the business has left, so a median drawn across it describes a company that no longer exists. The leg follows the company's own de-rating instead — it traded at 9.54x as recently as September 2025 — and is cross-checked against the 8.72x median that comparable companies fetch on next-twelve-month earnings, which it sits slightly above. Bear 5.5x is below the 6.11x lowest close in that same history, deliberately not 5.0x, because a lower multiple would count deterioration the revenue and margin legs already carry. Bull 12.0x is near the 12.89x the most expensive comparable fetches.
 
 | reference | value |
 | --- | ---: |
