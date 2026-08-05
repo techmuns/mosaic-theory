@@ -870,8 +870,8 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     disagree about what passing means. `base_irr` handles the nominal/PV difference; everything
     downstream of it is identical.
     """
-    years = (rec.scenarios.get("base") or ScenarioInput(
-        revenue=0.0, multiple=0.0, reason="")).years_to_terminal
+    base_leg = rec.scenarios.get("base")
+    years = base_leg.years_to_terminal if base_leg is not None else None
     irr, why = base_irr(res, rec.spot, years)
     irr_pf: Literal["PASS", "FAIL", "UNDEFINED"] = (
         "UNDEFINED" if irr is None else ("PASS" if irr >= IRR_FLOOR else "FAIL"))

@@ -829,6 +829,25 @@ def test_every_committed_record_result_matches_its_own_facts() -> None:
                 and fresh.result.ratio is not None):
             assert payload["result"]["ratio"] == pytest.approx(fresh.result.ratio, abs=1e-6), (
                 f"{path.stem}: stored ratio diverges from its own facts")
+        # THE GATE FIELDS ARE STORED DERIVED STATE TOO, so they fall under the same invariant
+        # (added 2026-08-05, in review). Covering only `value_per_share` and `ratio` left a REAL
+        # hole, not a theoretical one: on an R1 record the horizon drives nothing else — R1 is
+        # undiscounted — so moving `years_to_terminal` without re-running moves the IRR and
+        # nothing this sweep compared. Demonstrated on SMPL: graded at 1.5y then re-pointed at
+        # 6.0y, the record stored 81.13% against its own facts computing 16.01% and this test
+        # passed GREEN. Past 6.5y the same edit flips the gate PASS -> FAIL while the stored
+        # record still reads PASS. That is the #189 defect — stored derived state drifting under
+        # moved inputs, invisible because no consumer re-derives on read — on the newest field.
+        for field in ("horizon_years", "irr", "irr_pass_fail", "gate"):
+            if field not in payload["result"]:
+                continue                  # predates the gate — the archive scoping drops these
+            stored_v, fresh_v = payload["result"][field], getattr(fresh.result, field)
+            ok = (stored_v == pytest.approx(fresh_v, abs=1e-9)
+                  if isinstance(stored_v, float) and isinstance(fresh_v, float)
+                  else stored_v == fresh_v)
+            assert ok, (
+                f"{path.stem}: stored {field}={stored_v!r} but its own facts compute {fresh_v!r} "
+                "— the record was written without persisting the recompute")
     assert checked, (
         "no committed record carries a stored result — this coherence sweep examined ZERO records "
         "and would pass however far the stored numbers had drifted. Unlike its siblings the claim "
