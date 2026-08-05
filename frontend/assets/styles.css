@@ -626,9 +626,26 @@ table.data.vs-table { width: 100%; }
 .uw-mast-pills { display: flex; gap: 7px; flex-wrap: wrap; align-items: baseline; }
 .uw-vlab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-3); font-weight: 600; }
-.uw-statband { display: grid; grid-template-columns: repeat(5, 1fr);
+/* SIX columns since 2026-08-05, not five: the base-case IRR joined the band as a PEER of the
+   reward:risk cell when the convention became nominal 2:1 AND an IRR floor AND a stated horizon.
+   Both are gates, so both sit at valuation-number scale; demoting the IRR to a sub-line under the
+   ratio would render it as a diagnostic, which is exactly what it stopped being. The v1 objection
+   to a 6th cell still stands and is ANSWERED rather than ignored — the cell count and the grid
+   move TOGETHER, so Method never drops to a ragged second row. `irrCell` returns "" on a
+   pre-convention record and an empty grid child collapses to a zero-width column, so those cards
+   read as five rather than showing a labelled blank. */
+.uw-statband { display: grid; grid-template-columns: 1.25fr repeat(5, 1fr);
   border-bottom: 1px solid var(--line); }
-.uw-stat { padding: 9px 13px; border-left: 1px solid var(--line); min-width: 0; }
+/* THE LEAD COLUMN IS WIDER, AND THE PILL DROPS BELOW ITS NUMBER — both forced by the 6th cell and
+   both MEASURED in preview rather than guessed. Six valuation-scale numbers do not fit six equal
+   columns at 16.5px mono: `$186.76 +108.9%` (EPAM's headline) needed 147px against 130, and
+   `-0.67 : 1 FAIL` overflowed its cell by 8px, spilling the pill across the next cell's border.
+   Widening the lead track alone just moved the overflow into the ratio cell. The combination that
+   fits EVERY committed record on one row — checked across all seven — is a 1.25fr lead, 10px
+   side padding, and the status pill on its own line. Shrinking the type was the alternative and
+   was rejected: the band's whole job is to read as valuation numbers. */
+.uw-stat { padding: 9px 10px; border-left: 1px solid var(--line); min-width: 0; }
+.uw-stat-val .uw-mini { display: block; margin-top: 3px; width: fit-content; }
 .uw-stat:first-child { border-left: 0; }
 .uw-stat-lead { background: var(--accent-bg); border-radius: 6px 0 0 6px; }
 .uw-stat-lead.base { background: var(--conditional-bg); }

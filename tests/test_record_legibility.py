@@ -369,18 +369,38 @@ def test_close_rows_are_not_positions_in_the_js_ledger_loader() -> None:
     assert "realizedReturn" in body, "realized return is derived here, never stored"
 
 
-def test_at_a_glance_v2_keeps_five_cells_and_ranks_by_fact_class() -> None:
-    """v1 proposed a 6th stat cell for `next evidence`. Wrong twice: `.uw-statband` is
-    repeat(5,1fr), so a 6th cell drops Method to a ragged second row; and a DATE at the 16.5px
+def test_at_a_glance_v2_cell_count_matches_its_grid_and_ranks_by_fact_class() -> None:
+    """v1 proposed a 6th stat cell for `next evidence`. Wrong twice: `.uw-statband` was
+    repeat(5,1fr), so a 6th cell dropped Method to a ragged second row; and a DATE at the 16.5px
     mono of `.uw-stat-val` reads with a valuation number's authority. Dates belong in the
     pre-existing `.uw-mast-foot` (11.2px ink-3), and the status caption is a CAPTION — prose never
-    sits between the title and the numbers."""
+    sits between the title and the numbers.
+
+    **THE BAND IS SIX CELLS SINCE 2026-08-05** — the base-case IRR joined it as a PEER of the
+    reward:risk cell when the convention became nominal 2:1 AND an IRR floor AND a stated horizon.
+    v1's objection was never "five is sacred", it was "cells and columns must not disagree", so
+    that is what this pins now: the count and the grid are asserted AGAINST EACH OTHER rather than
+    against a constant. Add a seventh cell without widening the grid and this reddens exactly as it
+    did for v1; move both together and it stays green — which is the contract that was always
+    meant. The date rule is untouched and still pinned below: an IRR is a RATE, and rates are what
+    this band is for."""
+    import re as _re
     css = (ROOT / "frontend" / "assets" / "styles.css").read_text()
-    assert "repeat(5, 1fr)" in css, "the band contract is five columns"
+    m = _re.search(r"\.uw-statband \{[^}]*?grid-template-columns:([^;]+);", css, _re.S)
+    assert m, ".uw-statband lost its explicit column template"
+    # COUNT TRACKS, not a `repeat(N)` literal: the lead column is wider than the rest
+    # (`1.25fr repeat(5, 1fr)`), so a regex keyed on `repeat(` alone would read 5 and silently
+    # stop matching the six cells it exists to compare against.
+    columns = 0
+    for tok in _re.findall(r"repeat\([^)]*\)|\S+", m.group(1).strip()):
+        rep = _re.match(r"repeat\((\d+),", tok)
+        columns += int(rep.group(1)) if rep else 1
     card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
     band = card[card.index('<div class="uw-statband">'):]
     band = band[:band.index("</div>")]
-    assert band.count("Cell(c)") == 5, f"the band must render exactly 5 cells, got: {band}"
+    assert band.count("Cell(c)") == columns, (
+        f"the band renders {band.count('Cell(c)')} cells into a {columns}-column grid — they must "
+        f"move together or Method drops to a ragged second row (the v1 defect): {band}")
     # the promoted fields landed in their correct slots
     foot = card[card.index("function mastheadFoot"):]
     foot = foot[:foot.index("\n}")]

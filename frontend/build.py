@@ -371,6 +371,15 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         "reward": _rd(r.get("reward"), 2), "risk": _rd(r.get("risk"), 2),
         "ratio": _rd(r.get("ratio"), 2), "bar": r.get("bar"),
         "ratioUndefined": r.get("ratio_undefined"), "passFail": r.get("pass_fail"),
+        # THE SECOND TEST (2026-08-05): nominal 2:1 AND a base-case IRR floor AND a stated horizon.
+        # OMITTED when absent — the `gateAdjudication` precedent below — so records written before
+        # the convention stay byte-identical instead of gaining a wall of nulls.
+        **({"irr": _rd(r.get("irr"), 4)} if r.get("irr") is not None else {}),
+        **({"irrUndefined": r.get("irr_undefined")} if r.get("irr_undefined") else {}),
+        **({"irrFloor": r.get("irr_floor")} if r.get("irr_floor") is not None else {}),
+        **({"irrPassFail": r.get("irr_pass_fail")} if r.get("irr_pass_fail") else {}),
+        **({"horizonYears": r.get("horizon_years")} if r.get("horizon_years") is not None else {}),
+        **({"gate": r.get("gate")} if r.get("gate") else {}),
         # gate_adjudication: a machine gate the human consciously overrode. OMITTED when absent so
         # records that never hit a gate stay byte-identical.
         **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),
