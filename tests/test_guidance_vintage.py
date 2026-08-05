@@ -224,3 +224,47 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
                     "dropped rather than marked")
     assert "current guidance:" not in " ".join(build_template(doc)["_evidence"]["revenue"]), (
         "the old unmarked 'current guidance:' line is back")
+
+
+@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
+def test_the_drawdown_moment_guide_is_marked_too_o1() -> None:
+    """THE SECOND PATH, closed. #342 marked the `primary_source` digest and the 2026-08-04 SMPL
+    roll argued the FY26 guide from APRIL anyway — because the model was reading a DIFFERENT field.
+
+    `synthesize` excludes `primary_source` from the facts dump and swaps in the marked digest,
+    while `drawdown_cause` goes into that dump RAW. On SMPL it carries April's verbatim outlook,
+    and `bear[1]`'s `-22% to -19%` appears ONLY there — never in the structured guidance. So the
+    brief was marked on one of two paths, which is why marking changed nothing.
+
+    Asserted on the DUMP the model actually receives, not on the helper: the defect was that a
+    correct helper was never applied to this field, and a test that called the helper directly
+    would have passed throughout."""
+    from vinci.dossier.synthesis import _mark_drawdown_guidance
+    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    ps = d.mechanical.primary_source
+    assert ps is not None
+    dumped = d.mechanical.model_dump(exclude={"primary_source"})
+    raw = ((dumped.get("drawdown_cause") or {}).get("revised_guidance") or {}).get("value")
+    assert raw, "SMPL's drawdown_cause carries no revised_guidance — re-point this test"
+    assert not any(m in str(raw) for m in ("CURRENT GUIDE", "SUPERSEDED", "VINTAGE UNDATED")), (
+        "the raw dump is already marked — this test can no longer show the mark being applied")
+
+    _mark_drawdown_guidance(dumped, ps)
+    marked = str(((dumped["drawdown_cause"]) or {})["revised_guidance"]["value"])
+    newest = max(r.filed for r in ps.releases if r.guidance and r.filed)
+    assert f"replaced by the guide filed {newest}" in marked, marked[-200:]
+    assert "history, not the current outlook" in marked
+    # MARK, NEVER DROP — the cut sequence is evidence, and the verbatim outlook must survive intact
+    assert str(raw) in marked, "the guide's own text was altered rather than annotated"
+
+
+def test_the_drawdown_mark_is_undated_rather_than_guessed_when_no_release_matches() -> None:
+    """FAIL HONEST. The filing DATE is not on `revised_guidance` — only its accession is — so it is
+    matched back to the release carrying one. No match ⇒ UNDATED, never a guessed vintage."""
+    from vinci.dossier.synthesis import _mark_drawdown_guidance
+    dumped = {"drawdown_cause": {"revised_guidance": {
+        "value": "Outlook: net sales of $1 to $2 billion",
+        "source_ref": "EDGAR 8-K 9999999999-99-999999 Ex-99.1"}}}
+    _mark_drawdown_guidance(dumped, None)
+    v = dumped["drawdown_cause"]["revised_guidance"]["value"]
+    assert "VINTAGE UNDATED" in v and "do not read as current" in v, v
