@@ -632,16 +632,16 @@
       },
       "status": "computed",
       "ratios": {
-        "revenue_ratio": 0.983946141895391,
-        "margin_ratio": 0.9462720344583434,
-        "multiple_ratio": 2.2589141004862237,
-        "ev_gap": 2.103231361426256
+        "revenue_ratio": 0.9913442331878375,
+        "margin_ratio": 1.036464670035473,
+        "multiple_ratio": 1.626418152350081,
+        "ev_gap": 1.6711337115072935
       },
       "at_adjacent": {
-        "revenue_ratio": 1.0350272924634674,
-        "margin_ratio": 0.9093383247912519,
-        "multiple_ratio": 2.2346512358184762,
-        "ev_gap": 2.103231361426256
+        "revenue_ratio": 1.0428094525571778,
+        "margin_ratio": 0.9960106739230334,
+        "multiple_ratio": 1.608948889789303,
+        "ev_gap": 1.6711337115072935
       },
       "shape": {
         "anchor": "multiple-dominant",
@@ -653,8 +653,8 @@
         "tev": 1234.0,
         "net_debt": 324.6,
         "shares": 88.460545,
-        "our_ev": 2595.3875000000003,
-        "our_ebitda": 207.63100000000003,
+        "our_ev": 2062.179,
+        "our_ebitda": 229.131,
         "market_multiple": 5.533632286995516
       },
       "consensus": {

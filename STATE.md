@@ -3057,6 +3057,41 @@ Each line: *what it does* — *verified how*.
     is a code change outside this artifact pass).
   - *Verified:* full offline suite on the freshly-committed artifacts — 1875 passed, 3 skipped;
     ruff + `mypy --strict` clean (ARTIFACT-PASS RULE).
+- **SMPL superseded 2026-08-05 at the 2026-08-04 close — and the EV-gap decomposition now MIXES
+  HORIZONS. Accepted risk, recorded with its falsifier.** The reissued record is bear
+  1,200/13.0%/5.5× · base 1,340/15.5%/9.0× · bull 1,410/17.0%/12.0× over 18 months at spot 11.33:
+  ratio **2.0952 PASS**, IRR **44.32% PASS**, gate **PASS**, entry limit **$11.4559**.
+  - **THE MISMATCH.** `ev_gap.revenue_ratio` is the base leg divided by consensus AT
+    `ev_gap.anchor_fy`, and that anchor is **FY2026** while the new base revenue is the **FY2028**
+    consensus median, read at the record's 18-month horizon. Confirmed arithmetically, not
+    inferred: persisted `revenue_ratio = 0.991344` and `1340 / 1351.7 (FY2026) = 0.991344` to six
+    places. Like-for-like at FY2028 it would be `1340 / 1339.5 = 1.000373`, so the gap reads
+    **1.6711 where an FY2028 basis gives 1.6864** — 0.9%. Small in magnitude; the defect is that
+    the page states an FY2026 anchor over an 18-month thesis.
+  - **WHY IT IS ACCEPTED RATHER THAN GUARDED.** `build_ev_gap` picks `anchor_fy` from the DOSSIER,
+    never from the record, so it silently compares across horizons the moment a base leg is struck
+    at a different fiscal year. Until this supersede every base leg sat at the gap's anchor year
+    (the previous SMPL base of 1,330 was explicitly "consensus FY26E"), so nothing had triggered
+    it. **A machine check is not cleanly available**: the record has NO structured field for which
+    fiscal year its base revenue is on — it lives in `assumptions.revenue.method` prose and in a
+    `RefPoint` label, and keying a guard off either would be the display-string parse this repo
+    refuses. So this is recorded, not pinned.
+  - **FALSIFIER / unlock:** give `ScenarioInput` (or the revenue assumption) a structured
+    `revenue_fy`, then have `build_ev_gap` either use it as the anchor or REFUSE when it disagrees
+    with `anchor_fy`. At that point this becomes a guard and this entry is deleted. **This is the
+    SIXTH instance of the basis class** — after operating-vs-EBITDA margin, LTM-vs-NTM multiples,
+    weighted-average-vs-outstanding shares, nominal-vs-PV values, and change-vs-level guidance.
+    Here the basis is the HORIZON.
+  - Two side-findings: the **prose-register lint is a hard gate on committed records** and caught
+    10 house-token flags on the first attempt (reverted and re-run as ONE supersession rather than
+    stacking a same-day second archive entry); and **`recompute_derived` does NOT rebuild
+    `ev_gap`** — it never reads the scenario record, so a leg change needs `ev_gap_transform`
+    explicitly. `RATIONALE_RATIO_AWAITING_SUPERSEDE` cleared itself to `set()` exactly as its own
+    note predicted.
+  - **The ledger verdict is NOT logged.** `log-verdict` validates `candidate_id` against the store
+    and `SMPL-screen2-20260706` — the id on both existing SMPL ledger rows — no longer exists; the
+    2026-07-29 screen replaced it with `SMPL-screen2-20260729`. A different candidate lineage on an
+    append-only ledger, so it waits on the operator.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

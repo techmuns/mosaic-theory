@@ -43,10 +43,15 @@ _TOL = 0.05
 #: when the supersede lands SMPL stops diverging and this test REDDENS, forcing STATE to be updated;
 #: if a NEW name drifts it reddens too.
 #:
-#: SMPL — `verdict.rationale` states 3.8:1 against a computed 4.78:1. Sealed record text, so a
-#: re-assembly cannot fix it (`dossier.json` carries ZERO occurrences of the string; the page
-#: renders it from the record). Clears via `scenario-supersede`.
-RATIONALE_RATIO_AWAITING_SUPERSEDE: set[str] = {"SMPL"}
+#: **EMPTY SINCE 2026-08-05 — THE EXEMPTION CLEARED ITSELF, EXACTLY AS DESIGNED.** SMPL's
+#: `verdict.rationale` stated 3.8:1 against a computed 4.78:1: sealed record text a re-assembly
+#: could not touch, because the page renders it from the record and `dossier.json` carries zero
+#: occurrences of the string. The note here said *"clears via `scenario-supersede`"*, and the
+#: supersede of 2026-08-05 reissued the record with a pending verdict and no rationale, so the
+#: divergence is gone. The exact-set assertion then went RED on a name that no longer diverges,
+#: which is what forced this edit — a stale licence could not sit here unnoticed. An empty set is
+#: the right end state: any NEW divergence now reddens with nothing to hide behind.
+RATIONALE_RATIO_AWAITING_SUPERSEDE: set[str] = set()
 
 
 def _cited_ratios(rationale: str) -> set[str]:

@@ -276,8 +276,15 @@ def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -
     assert sc.archive_key(arch) == key
     # the reissue is CLEAN: no amendment tags carried over into the new sealed text
     assert seal.amendments(live.verdict.rationale or "") == []
-    # ...and the archived record keeps every one of them
-    assert len(seal.amendments(arch.verdict.rationale or "")) == 3
+    # ...AND NO ARCHIVED RECORD EVER LOSES ITS AMENDMENTS. Asserted on the record that HAS them
+    # rather than on whatever `live.supersedes` happens to point at: the 2026-08-05 supersession
+    # archived SMPL-2026-07-27, itself a clean reissue carrying zero, so a bare `== 3` against the
+    # newest archive reddened on a legitimate event while saying nothing about preservation. The
+    # 1.2 record is the one that accumulated three, and it is the one worth watching.
+    assert len(seal.amendments(
+        sc.read_archived("SMPL-2026-07-21", root=ROOT).verdict.rationale or "")) == 3, (
+        "SMPL-2026-07-21 lost amendment tags from its sealed rationale — an archived record is "
+        "history and is never edited")
 
 
 def test_supersede_refuses_a_live_position_and_a_one_way_link() -> None:

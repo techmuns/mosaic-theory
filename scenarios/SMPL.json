@@ -11,10 +11,10 @@
     "value/share = equity ÷ diluted shares"
   ],
   "multiple_basis": "EV/EBITDA",
-  "underwrite_date": "2026-07-27",
+  "underwrite_date": "2026-08-05",
   "analyst": "nogods404",
-  "spot": 10.53,
-  "spot_source": "Polygon daily aggregate close 2026-07-22 (store; latest bar at reissue)",
+  "spot": 11.33,
+  "spot_source": "EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)",
   "facts": {
     "d_and_a": {
       "value": 21.431,
@@ -55,36 +55,36 @@
   },
   "scenarios": {
     "bear": {
-      "revenue": 1180.0,
-      "margin": 0.1,
-      "multiple": 7.0,
-      "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020, 9.58%); the multiple at the trough of the trading range (prior low 6.11x). METHOD — bear-state evidence: declining packaged-food comparables with clean income statements trade at 6.08x (INGR) to 8.57x (LW) on the lease-inclusive basis, so the recorded 7.0x sits inside the observed state while the market prices the name below it. Against the 14% normal the 10% margin retains 71%, milder than the weakest survivor's 63%; a retention-consistent bear near 8.8% still reads about 3.0 to 1. No quarter this fiscal year fell below the worst clean year.",
+      "revenue": 1200.0,
+      "margin": 0.13,
+      "multiple": 5.5,
+      "reason": "Revenue 1,200 approximates the lowest FY2027 forecast on the street, 1,203.2 — a downside taken from the bottom of the analyst distribution rather than invented. Margin 13.0% sits roughly 0.9pp below the trailing twelve-month margin: further deterioration on top of what has already happened. The 5.5x multiple is below the lowest close in the company's own eight-and-a-half-year trading range, 6.11x, and is deliberately not 5.0x — pushing it lower would count the same deterioration twice, once in the revenue and margin legs and again in the multiple.",
       "years_to_terminal": null,
       "bear_basis": "own-history",
       "margin_basis": "EBIT"
     },
     "base": {
-      "revenue": 1330.0,
-      "margin": 0.14,
-      "multiple": 12.5,
-      "reason": "Revenue is consensus FY26E of 1,334, below management's reinstated $1.345-1.355B guide, so the base is conservative against their own path. METHOD — the normal margin is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14% the business recovers most — not all — of its historical profitability. The multiple sits below the 17.9x median of the 8.55-year range (35 quarterly closes); 12.5x is the 14th percentile, a durable discount for the unresolved category question.",
-      "years_to_terminal": null,
+      "revenue": 1340.0,
+      "margin": 0.155,
+      "multiple": 9.0,
+      "reason": "Revenue 1,340 is the median FY2028 street forecast, read at the eighteen-month horizon this record states rather than at the nearest fiscal year. Margin 15.5% matches the median operating margin of the last eight fiscal years, 15.45%, and the street agrees forward: FY2027 consensus is about 15.5% and FY2028 implies 15.7%. The 9.0x multiple is roughly half the 17.85x median close of the company's own trading history, because that history spans a growth era the business has left; it stood at 9.54x as recently as September 2025, and comparable companies trade at 8.72x on next-twelve-month earnings.",
+      "years_to_terminal": 1.5,
       "bear_basis": null,
-      "margin_basis": null
+      "margin_basis": "EBIT"
     },
     "bull": {
-      "revenue": 1420.0,
-      "margin": 0.165,
-      "multiple": 16.0,
-      "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best clean year (17.35%); the multiple moves toward but stays below the 17.85x median of the trading history (16.0x, about the 29th percentile).",
+      "revenue": 1410.0,
+      "margin": 0.17,
+      "multiple": 12.0,
+      "reason": "Revenue 1,410 is the highest FY2028 street forecast. Margin 17.0% is held below the 17.18% the business actually earned in FY2024, so the upside leg claims only a margin already demonstrated rather than an extrapolation. The 12.0x multiple sits near the 12.89x that the most expensive comparable company trades at on next-twelve-month earnings, so the re-rating is bounded by what peers fetch today.",
       "years_to_terminal": null,
       "bear_basis": null,
-      "margin_basis": null
+      "margin_basis": "EBIT"
     }
   },
   "assumptions": {
     "revenue": {
-      "method": "Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E, bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular decline case.",
+      "method": "All three legs are read off the street's forecast distribution AT THIS RECORD'S EIGHTEEN-MONTH HORIZON rather than at the nearest fiscal year: base 1,340 is the median FY2028 estimate, bull 1,410 the highest, and bear 1,200 approximates the lowest FY2027 estimate of 1,203.2. Taking all three from one distribution keeps a single horizon across the legs. The computed default of 1,351.7 is the FY2026 median and therefore describes a different moment, which is why base sits below it.",
       "references": [
         {
           "label": "FY2025 reported revenue",
@@ -119,10 +119,10 @@
       ],
       "notes": [],
       "ratified_by": "analyst",
-      "ratified": "2026-07-27"
+      "ratified": "2026-08-05"
     },
     "margin": {
-      "method": "The normal margin is set between the seven-year clean median and the trailing clean margin through the third quarter, nearer the trailing figure, treating part of this year's gross-margin reset as structural. The bear leg takes the worst clean year; the bull leg sits between the median and the best clean year.",
+      "method": "Base 15.5% matches the median operating margin of the last eight fiscal years, 15.45%, and is corroborated forward rather than extrapolated from a depressed present — the street carries about 15.5% for FY2027 and an implied 15.7% for FY2028. Bear 13.0% is roughly 0.9pp below the trailing twelve-month margin: deterioration from a level already impaired. Bull 17.0% is held below the 17.18% actually earned in FY2024, so the upside claims only what the business has already done. Stated on operating income, not EBITDA.",
       "references": [
         {
           "label": "screening median (naive, 8 FY)",
@@ -177,10 +177,10 @@
       ],
       "notes": [],
       "ratified_by": "analyst",
-      "ratified": "2026-07-27"
+      "ratified": "2026-08-05"
     },
     "multiple": {
-      "method": "Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question earns a durable discount rather than a cyclical one. The bear leg is cross-checked against businesses observed IN the declining state.",
+      "method": "Base 9.0x is roughly half the 17.85x median close of the company's own eight-and-a-half-year trading history, and that gap IS the judgment: the history spans a growth era the business has left, so a median drawn across it describes a company that no longer exists. The leg follows the company's own de-rating instead — it traded at 9.54x as recently as September 2025 — and is cross-checked against the 8.72x median that comparable companies fetch on next-twelve-month earnings, which it sits slightly above. Bear 5.5x is below the 6.11x lowest close in that same history, deliberately not 5.0x, because a lower multiple would count deterioration the revenue and margin legs already carry. Bull 12.0x is near the 12.89x the most expensive comparable fetches.",
       "references": [
         {
           "label": "this company's trading-range low",
@@ -261,7 +261,7 @@
         }
       ],
       "ratified_by": "analyst",
-      "ratified": "2026-07-27"
+      "ratified": "2026-08-05"
     }
   },
   "gate_adjudication": null,
@@ -270,13 +270,13 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 7.364130528474588,
-        "op_income": 118.0,
-        "ebitda": 139.431,
-        "ev": 976.017,
-        "equity": 651.4350000000001,
-        "ev_ebit": 8.271330508474577,
-        "norm_fcf": 72.23816240000001,
+        "value_per_share": 7.362474422919282,
+        "op_income": 156.0,
+        "ebitda": 177.431,
+        "ev": 975.8705000000001,
+        "equity": 651.2885000000001,
+        "ev_ebit": 6.255580128205129,
+        "norm_fcf": 101.2093624,
         "years": null,
         "d_and_a_t": null,
         "net_debt_t": null,
@@ -285,14 +285,14 @@
         "hurdle": null
       },
       "base": {
-        "value_per_share": 25.670263505611462,
-        "op_income": 186.20000000000002,
-        "ebitda": 207.63100000000003,
-        "ev": 2595.3875000000003,
-        "equity": 2270.8055000000004,
-        "ev_ebit": 13.938708378088078,
-        "norm_fcf": 124.23384240000001,
-        "years": null,
+        "value_per_share": 19.64262146474454,
+        "op_income": 207.7,
+        "ebitda": 229.131,
+        "ev": 2062.179,
+        "equity": 1737.5970000000002,
+        "ev_ebit": 9.928642272508426,
+        "norm_fcf": 140.6254424,
+        "years": 1.5,
         "d_and_a_t": null,
         "net_debt_t": null,
         "shares_t": null,
@@ -300,13 +300,13 @@
         "hurdle": null
       },
       "bull": {
-        "value_per_share": 42.58524520734075,
-        "op_income": 234.3,
-        "ebitda": 255.73100000000002,
-        "ev": 4091.6960000000004,
-        "equity": 3767.1140000000005,
-        "ev_ebit": 17.463491250533504,
-        "norm_fcf": 160.9052824,
+        "value_per_share": 31.75415661298492,
+        "op_income": 239.70000000000002,
+        "ebitda": 261.13100000000003,
+        "ev": 3133.572,
+        "equity": 2808.9900000000002,
+        "ev_ebit": 13.072891113892364,
+        "norm_fcf": 165.0222424,
         "years": null,
         "d_and_a_t": null,
         "net_debt_t": null,
@@ -317,23 +317,23 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 15.140263505611463,
-    "risk": 3.1658694715254114,
-    "ratio": 4.782339777993572,
+    "reward": 8.31262146474454,
+    "risk": 3.9675255770807185,
+    "ratio": 2.0951651862723257,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "PASS",
-    "horizon_years": null,
-    "irr": null,
-    "irr_undefined": "no horizon stated — an IRR needs a realisation date",
+    "horizon_years": 1.5,
+    "irr": 0.4431551549805395,
+    "irr_undefined": null,
     "irr_floor": 0.15,
-    "irr_pass_fail": "UNDEFINED",
-    "gate": "UNDEFINED"
+    "irr_pass_fail": "PASS",
+    "gate": "PASS"
   },
   "verdict": {
-    "status": "watch",
+    "status": "pending_analyst",
     "recorded": "2026-07-27",
-    "rationale": "WATCH at $10.53 — not held. The market prices this business below the cheapest multiple in its own trading history, on the view that GLP-1 drugs permanently shrink the snacking category. Our judgment is that the sell-off has overshot. The third quarter confirmed real damage — gross margin down four points and large write-downs — and we now treat part of that as permanent, at a 14% normal margin. Even so the grid reads 3.8 to 1 against our 2:1 bar, with cash generation near thirteen percent of market value. The case fails if the growth engine stalls two more quarters or October cuts guidance — Quest printed +1%, the open question; the October report is the next evidence.",
+    "rationale": "",
     "rationale_plain": null,
     "rationale_plain_recorded": null,
     "reunderwrite_triggers": [
@@ -369,6 +369,6 @@
       "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     }
   ],
-  "supersedes": "SMPL-2026-07-21",
+  "supersedes": "SMPL-2026-07-27",
   "superseded_by": null
 }
