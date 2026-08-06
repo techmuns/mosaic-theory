@@ -92,9 +92,44 @@ class Finalist:
         return self.standalone
 
 
-def _ref_of(row: dict[str, Any]) -> date:
+def _ref_of(row: dict[str, Any], *, fallback: date) -> date:
+    """The row's screen-run date, or ``fallback`` when it has none.
+
+    **NO DEFAULT, deliberately** — the `panel_age(kind=…)` precedent. The fallback used to be
+    ``date.today()`` and that is the bug this signature exists to make unrepeatable: a maintained
+    name loses its queue row, silently takes a WALL-CLOCK stamp, and the same inputs then produce a
+    different dossier every day. Every caller now names what it falls back to.
+    """
     sra = row.get("screen_run_at")
-    return date.fromisoformat(str(sra)[:10]) if sra else date.today()
+    return date.fromisoformat(str(sra)[:10]) if sra else fallback
+
+
+def _fleet_reference_date(cfg: Config) -> date:
+    """The as-of a name with no queue row is assembled at — the FLEET's, never the clock.
+
+    A DATE STAMPED ON AN ARTIFACT MUST NAME A MOMENT THE DATA REACHES. Wall-clock fails that three
+    ways at once: it is irreproducible (identical inputs, a different artifact tomorrow — the
+    property temperature-0 protects, broken without a test that would notice), it silently moves
+    every relative-return window the page quotes, and it can land BEYOND the store frontier and
+    still pass a five-day staleness check because the check compares against the same clock.
+
+    Order: the newest screen run's own reference_date — so a maintained name sits on the SAME as-of
+    as every candidate name and the two routes agree by construction rather than by luck — then the
+    store's last bar. Both name a moment the data reaches. If neither exists there is no honest
+    answer and this raises; it never guesses.
+    """
+    manifests = sorted((cfg.snapshots_dir / "screen_runs").glob("*.manifest.json"), reverse=True)
+    for path in manifests:
+        ref = json.loads(path.read_text()).get("reference_date")
+        if ref:
+            return date.fromisoformat(str(ref)[:10])
+    with Store(cfg.db_path) as store:
+        frontier = store.price_frontier()
+    if frontier is not None:
+        return frontier
+    raise DossierAssemblyError(
+        "no screen-run manifest and no price bars — nothing names an as-of the data actually "
+        "reaches, and a wall-clock stamp would make the artifact irreproducible")
 
 
 def _cap_of(row: dict[str, Any]) -> float | None:
@@ -198,7 +233,7 @@ def _finalist(
     assembled while `--top 20` silently dropped IT at rank 5 — the name the path exists for. A
     half-fix is worse than the symmetric failure it replaced, because it looks like it works.
     """
-    ref = _ref_of(row or {})
+    ref = _ref_of(row or {}, fallback=_fleet_reference_date(cfg))
     rank = int(row["rank"]) if row and row.get("rank") is not None else None
     cap = _cap_of(row) if row else None
     if rec is not None:

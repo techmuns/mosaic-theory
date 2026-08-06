@@ -97,6 +97,67 @@ def test_the_cohort_path_maintains_the_same_names_as_the_ticker_path() -> None:
         "assemble with nothing on the page saying it is outside the candidate set")
 
 
+def test_the_wall_clock_is_unreachable_from_the_reference_date() -> None:
+    """A DATE STAMPED ON AN ARTIFACT MUST NAME A MOMENT THE DATA REACHES.
+
+    `_ref_of` used to fall back to `date.today()`. Harmless while every name had a queue row —
+    and a live defect the moment one does not, which is exactly the state the maintenance path
+    creates. It fails three ways at once: the artifact becomes IRREPRODUCIBLE (identical inputs,
+    a different dossier tomorrow — the property temperature-0 protects, broken with no test that
+    would notice); every relative-return window the page quotes moves silently; and the stamp can
+    land BEYOND the store frontier and still pass a 5-day staleness check, because that check
+    compares against the same clock.
+
+    Asserted on the SOURCE as well as the behaviour: the behaviour test alone would pass on any
+    day the fleet as-of happened to equal today."""
+    import datetime as dt
+    import inspect
+
+    src = inspect.getsource(asm)
+    # AST, not text: a `date.today()` inside a docstring explaining why it is forbidden must not
+    # trip the guard that forbids it. This scans CALLS — the executable shape, not the prose.
+    import ast
+    clock = [f"{n.lineno}: {ast.unparse(n)}" for n in ast.walk(ast.parse(src))
+             if isinstance(n, ast.Call) and ast.unparse(n.func).endswith(
+                 ("date.today", "datetime.today", "datetime.utcnow"))]
+    assert not clock, (
+        f"assemble.py still reaches the wall clock for a date: {clock}. A stamp must name a moment "
+        "the data reaches, never the moment the build ran. (`datetime.now(UTC)` for `built_at` is "
+        "a BUILD INSTANT and is deliberately not matched here — it records when, not as-of what.)")
+    assert "_ref_of(row or {}, fallback=" in src, "the fallback is not stated at the call site"
+
+    cfg = _cfg()
+    fleet = asm._fleet_reference_date(cfg)
+    assert isinstance(fleet, dt.date)
+    # it must name a REAL moment — the newest screen run, or the store's last bar
+    manifests = sorted((cfg.snapshots_dir / "screen_runs").glob("*.manifest.json"), reverse=True)
+    stamped = {dt.date.fromisoformat(str(json.loads(p.read_text())["reference_date"])[:10])
+               for p in manifests}
+    from vinci.store import Store
+    with Store(cfg.db_path) as store:
+        frontier = store.price_frontier()
+    assert fleet in stamped or fleet == frontier, (
+        f"the fleet as-of {fleet} is neither a screen run's reference_date {sorted(stamped)} nor "
+        f"the store frontier {frontier} — it names no moment the data reaches")
+    # and it must never outrun the data, which is what the wall clock did
+    assert frontier is None or fleet <= frontier, (
+        f"the fleet as-of {fleet} is AFTER the store's last bar {frontier}; a 5-day staleness "
+        "window would still call that fresh, which is how the wall-clock bug hid")
+
+
+def test_a_row_without_a_screen_run_takes_the_fleet_date_not_the_clock() -> None:
+    """THE UNIT, with the row absent — the case the maintenance path creates and the only case the
+    old fallback ever fired on."""
+    import datetime as dt
+
+    fleet = asm._fleet_reference_date(_cfg())
+    assert asm._ref_of({}, fallback=fleet) == fleet
+    assert asm._ref_of({}, fallback=fleet) != dt.date.today() or fleet == dt.date.today()
+    # a row that HAS a screen run still wins — the fallback must not override real provenance
+    assert asm._ref_of({"screen_run_at": "2026-07-06T00:00:00"},
+                       fallback=fleet) == dt.date(2026, 7, 6)
+
+
 def test_an_unmaintained_name_is_still_refused() -> None:
     """THE NEGATIVE. The path opens for names the fund already carries — NOT for anything absent
     from the candidate set. Without this the guard is 'assemble whatever you are asked for', which
