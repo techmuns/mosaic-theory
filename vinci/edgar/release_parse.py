@@ -521,9 +521,22 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             continue
         seen.add(metric)
         vb = _verbatim(text, m.start(), m.end())
+        # `basis="change"`, and the pattern is what makes that SAFE rather than a guess:
+        # `_GUIDE_PCT` requires the literal `growth rate` within 60 chars of the metric, so every
+        # match is a rate of change BY CONSTRUCTION. A `%` figure alone would be ambiguous — "gross
+        # margin expected to be 29% to 30%" is a LEVEL in percent — but that sentence cannot reach
+        # here, because it says no "growth rate".
+        #
+        # WHAT THE WRONG LABEL COST. EPAM's `revenue` carried BOTH `4.0–6.5 %` and
+        # `5430.0–5445.0 $M`, both stamped "level". PR 2's cross-basis refusal is gated on
+        # `release_basis == "change"`, so it never fired, and `guide_verification` compared a
+        # QUARTERLY LEVEL IN $M against a FULL-YEAR GROWTH RATE IN PERCENT:
+        #     "guide verification (revenue): CIQ 1400.0–1415.0 vs release 4.0–6.5 → MISMATCH flag"
+        # The synthesis then wrote a bear point on that MISMATCH — a fabricated signal reaching the
+        # decision surface. PR 2 fixed the COMPARE; the label is what let a change through it.
         out.append(GuidanceItem(
             metric=metric, period=_period_for(text, m.start(), m.end(), vb),
-            low=lo, high=hi, unit="%", qualitative=False,
+            low=lo, high=hi, unit="%", basis="change", qualitative=False,
             verbatim=vb, source_ref=src,
         ))
     # CHANGE-BASIS GUIDES, AFTER the level patterns and gated on `seen`, so a metric that stated a

@@ -130,6 +130,111 @@ def test_both_consumers_label_a_change_rather_than_printing_it_like_a_level() ->
     assert "CHANGE of -350.0–-300.0" in line, line
 
 
+#: Committed guides whose verbatim is a GROWTH-RATE sentence but whose stored basis is still
+#: "level" — extracted before this fix and awaiting their name's re-assembly. The
+#: `ANCHORS_AWAITING_BACKFILL` precedent: recorded so the artifacts are TRACKED rather than
+#: described, so re-assembling EPAM shrinks this to empty rather than leaving a silent gap.
+GUIDES_AWAITING_REASSEMBLY = {("EPAM", "2026-05-07"), ("EPAM", "2026-02-19")}
+
+
+def test_a_growth_rate_is_a_change_because_the_pattern_says_so_not_because_it_is_a_percent(
+) -> None:
+    """THE DISCRIMINATOR IS IN THE PATTERN, which is what makes the label safe rather than a guess.
+
+    A bare `%` figure is genuinely ambiguous — "gross margin expected to be 29% to 30%" is a LEVEL
+    in percent. `_GUIDE_PCT` cannot match that sentence: it requires the literal `growth rate`
+    within 60 characters of the metric. So every match is a rate of change BY CONSTRUCTION, and
+    labelling the whole path "change" cannot mislabel a level.
+
+    Pinned on the PATTERN, not just the output: if the `growth rate` requirement were relaxed, the
+    blanket label would silently start converting percent LEVELS into changes, and the output pins
+    below would still pass."""
+    import vinci.edgar.release_parse as rp
+
+    assert "growth" in rp._GUIDE_PCT.pattern, (
+        "`_GUIDE_PCT` no longer requires 'growth rate', so its blanket basis='change' is no longer "
+        "sound — a percent LEVEL could now reach it and be relabelled a change")
+    assert rp._GUIDE_PCT.search("Gross margin expected to be in the range of 29% to 30%") is None, (
+        "a percent LEVEL reached the growth-rate path — it would be stored as a change")
+    assert rp._GUIDE_PCT.search(
+        "the year-over-year revenue growth rate to be in the range of 4.0% to 6.5%") is not None
+
+
+@pytest.mark.parametrize(
+    ("sentence", "low", "high"),
+    [
+        # EPAM 2026-05-07 8-K 0001352010-26-000026 EX-99.1 — the guide that manufactured the flag
+        ("For the full year, EPAM now expects the year-over-year revenue growth rate to be in "
+         "the range of 4.0% to 6.5%", 4.0, 6.5),
+        # EPAM 2026-02-19 8-K 0001352010-26-000010 EX-99.1
+        ("The Company expects the year-over-year revenue growth rate to be in the range of "
+         "4.5% to 7.5%", 4.5, 7.5),
+    ],
+)
+def test_the_filed_growth_rate_sentences_store_as_a_change(
+        sentence: str, low: float, high: float) -> None:
+    """FROZEN FIXTURES, quoted verbatim from filed 8-Ks — filing text is immutable, so these are
+    value pins that cannot rot."""
+    g = _one(sentence)
+    assert (g.metric, g.low, g.high, g.unit, g.basis) == ("revenue", low, high, "%", "change")
+    assert not g.qualitative
+
+
+def test_the_refusal_now_fires_where_a_false_mismatch_was_manufactured() -> None:
+    """THE WHOLE POINT, end to end on EPAM's REAL numbers.
+
+    Before: `guide verification (revenue): CIQ 1400.0–1415.0 vs release 4.0–6.5 → MISMATCH flag` —
+    a QUARTERLY LEVEL IN $M against a FULL-YEAR GROWTH RATE IN PERCENT, and the synthesis wrote a
+    bear point on it. PR 2 built the refusal but gated it on `release_basis == "change"`, and the
+    label said "level", so it never fired. The compare was fixed; the label is what let a change
+    through it."""
+    out = guide_verification("revenue", 1400.0, 1415.0,
+                             release_low=4.0, release_high=6.5, release_basis="change")
+    assert "NOT CROSS-CHECKED" in out and "MISMATCH" not in out, (
+        f"the false MISMATCH survives: {out}")
+    assert "LEVEL" in out and "CHANGE" in out
+
+
+def test_a_dollar_level_is_untouched_by_the_growth_rate_label() -> None:
+    """THE NEGATIVE. A guide stated as a LEVEL in dollars must stay a level — the growth-rate path
+    must not widen into 'anything near the word growth'. EPAM's own November release states a $M
+    level in a sentence that CONTAINS the word "growth" ("the strength of organic constant currency
+    revenue growth … raises its outlook to $5,430 to $5,445 million"), which is exactly the sentence
+    a phrase-sniffing implementation would have mislabelled."""
+    g = _one("Net sales expected to range between $1.345 and $1.355 billion")
+    assert (g.unit, g.basis) == ("$M", "level")
+    assert g.low == 1345.0
+
+
+def test_no_committed_guide_is_a_growth_rate_still_stored_as_a_level() -> None:
+    """THE CORPUS, with the known-stale set recorded rather than assumed away.
+
+    Every committed guide predates this fix, so the two EPAM growth-rate guides still read "level"
+    until EPAM re-assembles. Recording them is the `ANCHORS_AWAITING_BACKFILL` precedent: the
+    artifacts are TRACKED, so re-assembling EPAM shrinks this to empty and a NEW name arriving in
+    this state reds the pin instead of passing unnoticed."""
+    import json
+    import pathlib
+
+    import vinci.edgar.release_parse as rp
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    stale: set[tuple[str, str]] = set()
+    checked = 0
+    for p in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
+        ps = (json.loads(p.read_text())["mechanical"].get("primary_source")) or {}
+        for r in ps.get("releases") or []:
+            for g in r.get("guidance") or []:
+                checked += 1
+                if g.get("basis") == "level" and rp._GUIDE_PCT.search(g.get("verbatim") or ""):
+                    stale.add((p.parent.name, str(r.get("filed"))))
+    assert checked, "no committed guidance reached this sweep — it checked nothing"
+    assert stale == GUIDES_AWAITING_REASSEMBLY, (
+        f"growth-rate guides still stored as a level: {sorted(stale)}, recorded: "
+        f"{sorted(GUIDES_AWAITING_REASSEMBLY)}. If a name re-assembled, shrink the set; if a NEW "
+        "one appeared, a change is being cross-checked against a level somewhere.")
+
+
 def test_the_basis_vocabulary_is_closed_and_bps_is_a_legal_unit() -> None:
     """A basis outside the set is refused at construction, the `GUIDANCE_UNITS` precedent: an
     unlisted value cannot be formatted, and a value claiming the wrong one is worse than absent."""
