@@ -427,6 +427,18 @@ _CLASSIFIED_PANEL_KEYS = {
     # TEV; both are OURS to re-pull, so both gate.
     "stock_info.as_of": "export",
     "valuation.implied_expectations.tev_as_of": "export",
+    # FOUND BY THIS GUARD ON EPAM's 2026-08-05 re-assembly — the FIRST committed dossier to carry
+    # it, so the guard fired the moment O3's structured cap as-of reached an artifact rather than
+    # after a fleet had quietly adopted the gating default.
+    #
+    # CLASSIFIED BY THE source_ref ITS OWN NODE CARRIES, per CONSENSUS_PANELS' own rule that
+    # membership is MEASURED, not assumed. It shares a NAMESPACE with `stock_info.as_of` and
+    # nothing else: that key stamps the EOD store, while EPAM's `market_cap` reads
+    # "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of
+    # 2026-07-29" — the SAME panel `ev_gap.vintages.tev_as_of` parses, which is its real sibling
+    # and is already "export". A CIQ export is ours to re-pull on our own schedule, never the
+    # street's to revise, so it GATES. Not added to CONSENSUS_PANELS.
+    "stock_info.market_cap_as_of": "export",
 }
 
 
