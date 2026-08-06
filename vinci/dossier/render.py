@@ -2347,6 +2347,87 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     return out
 
 
+def _capital_allocation(m: MechanicalLayer) -> list[str]:
+    """Capital created or destroyed, rendered BESIDE the writedown rather than in its own section.
+
+    THE READER'S QUESTION IS "HOW MUCH MORE CAN THEY WRITE DOWN", and that needs the charge and
+    the remaining balance ADJACENT. The Financial-snapshot table already surfaces the writedown row
+    (it is flagged `material`), so this block follows it directly — split apart they are two facts
+    on one page rather than one argument.
+
+    IT MUST NOT READ THE SAME ON A NAME THAT HAS IMPAIRED AND ONE THAT NEVER HAS. SMPL carries a
+    charge and a balance; EPAM carries $1.59bn of balance and no charge in four and thirteen years,
+    and THAT STALENESS IS THE FINDING — it has never written any of it down. So a name with no
+    charge says so in words, naming how old its last tags are, rather than printing a `$0.0M` that
+    reads as a measurement of this period.
+
+    EVERY CAVEAT TRAVELS ONTO THE SURFACE, not just into the JSON: the buyback average is labelled
+    a fiscal-period average WITH ITS WINDOW, a PERIOD MISMATCH names both spans, and `brand_split`
+    prints as a stated gap so the aggregate never reads as complete.
+    """
+    ca = m.capital_allocation
+    if ca is None:
+        return []
+    out: list[str] = ["", "**Capital allocation — created or destroyed**", ""]
+
+    gw, intang = ca.goodwill, ca.intangibles
+    if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
+        left = sum(x.value or 0.0 for x in (gw, intang) if x.status is SourceStatus.PRESENT)
+        both = ("goodwill + intangibles"
+                if gw.status is SourceStatus.PRESENT and intang.status is SourceStatus.PRESENT
+                else ("goodwill" if gw.status is SourceStatus.PRESENT else "intangibles"))
+        src = gw if gw.status is SourceStatus.PRESENT else intang
+        out.append(f"- **Impairment headroom — {both} remaining:** ${left:,.1f}M"
+                   f"{_cite(src.source_ref)}")
+    out.append(_fact("Goodwill", gw, lambda v: f"${v:,.1f}M"))
+    out.append(_fact("Intangibles (net)", intang, lambda v: f"${v:,.1f}M"))
+
+    # A STALE charge is NOT a current one. The extractor marks it (it holds both dates); this
+    # renderer only reads the mark — reconstructing the comparison from a `source_ref` string here
+    # would be the divergent-string-parse class.
+    charges = (("Goodwill impairment", ca.goodwill_impairment),
+               ("Intangible impairment", ca.intangible_impairment))
+    live = [(lbl, f) for lbl, f in charges
+            if f.status is SourceStatus.PRESENT and f.value
+            and not str(f.note or "").startswith("STALE")]
+    if live:
+        out += [_fact(lbl, f, lambda v: f"${v:,.1f}M") for lbl, f in live]
+    else:
+        stale = [f for _, f in charges if str(f.note or "").startswith("STALE")]
+        tail = (_clean_note(str(stale[0].note)).split("STALE — ")[-1]) if stale else (
+            "the filer records no impairment under any tag tried")
+        out.append("- **Impairment:** _NONE IN THE CURRENT PERIOD_ — " + tail)
+
+    out.append(_fact("Buyback — cash", ca.buyback_cash, lambda v: f"${v:,.1f}M"))
+    out.append(_fact("Buyback — shares repurchased", ca.buyback_shares, lambda v: f"{v:,.0f}"))
+    # `_fact` prints a note only when the fact is ABSENT, so a PERIOD MISMATCH on two PRESENT
+    # values would be silently dropped — EPAM states cash over 89 days and shares over 364, and
+    # printed adjacent they invite exactly the division the average-price guard refuses. Surfaced
+    # once, under the pair it describes.
+    pair_note = ca.buyback_cash.note or ca.buyback_shares.note or ""
+    if "PERIOD MISMATCH" in pair_note:
+        out.append("  - ⚠ **PERIOD MISMATCH** — "
+                   + _clean_note(pair_note.split("PERIOD MISMATCH —")[-1].strip()))
+    avg = ca.buyback_avg_price
+    if avg.status is SourceStatus.PRESENT:
+        window = str(avg.source_ref).split("(")[-1].rstrip(")")
+        line = (f"- **Buyback — average cost/share:** ${avg.value:,.2f} — **fiscal-period average "
+                f"over {window}; NOT a purchase price** and not evidence of when they bought"
+                f"{_cite(avg.source_ref)}")
+        if "PERIOD MISMATCH" in (avg.note or ""):
+            line += ("\n  - ⚠ **PERIOD MISMATCH** — "
+                     + _clean_note(str(avg.note).split("PERIOD MISMATCH —")[-1].strip()))
+        out.append(line)
+    else:
+        out.append(_fact("Buyback — average cost/share", avg))
+
+    out.append(_fact("Acquisition consideration", ca.acquisition_consideration,
+                     lambda v: f"${v:,.1f}M"))
+    gap = _clean_note(str(ca.brand_split.note)).removeprefix("NOT AVAILABLE FROM XBRL — ")
+    out.append(f"- **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — {gap}")
+    return out
+
+
 def _machine_read_md(eb: str) -> str:
     """The machine's evidence read as markdown: the lean word (before the em-dash) bold + Sentence-
     cased, then its rationale verbatim. Mirrors the web teaser's machineReadHtml minus the direction
@@ -2768,6 +2849,10 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
     out.append("## Financial snapshot")
     out += _brief_financials(m)
+    # BESIDE THE WRITEDOWN, deliberately. The snapshot's `material` rows carry the impairment
+    # CHARGE; the block below carries what is LEFT to impair. The reader's question spans both, so
+    # a separate section would make them two facts on one page instead of one argument.
+    out += _capital_allocation(m)
     if (m.return_ratios is None or m.return_ratios.status is not SourceStatus.PRESENT) \
             and m.key_ratios is not None:
         out.append(_fact("Key ratios (latest)", m.key_ratios))

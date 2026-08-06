@@ -238,3 +238,57 @@ def test_a_failed_fetch_leaves_the_block_absent_not_a_block_of_stated_absences()
 
     # …and a name with NO cik is the same case, not a filing full of nothing
     assert "capital_allocation" not in rf.capital_allocation_transform(None)({})
+
+
+def test_the_block_reads_differently_on_a_name_that_impaired_and_one_that_never_has() -> None:
+    """THE LAYOUT TEST. If the block reads the same on SMPL (a live charge) and EPAM ($1.59bn never
+    written down), it is not telling the reader the thing they came for.
+
+    The first cut FAILED this: EPAM printed "Goodwill impairment: $0.7M" from FY2022 beside a
+    2026-03-31 balance, which reads as a measurement of the current period. The staleness IS the
+    finding — so the extractor marks it (it holds both dates) and the render says so in words.
+
+    AND THE STALE RULE IS TRAILING-TWELVE-MONTHS, not a calendar-year compare. The year rule was
+    too blunt by exactly the amount that matters: IT's $150.0M FY2025 charge ends 2025-12-31
+    against a 2026-06-30 balance — six months apart, different years — and was SUPPRESSED off the
+    page entirely."""
+    from vinci.dossier.render import _capital_allocation
+    from vinci.dossier.schemas import MechanicalLayer
+
+    def block(t: str) -> str:
+        import json
+        doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+        m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
+            update={"capital_allocation": build_capital_allocation(_facts(t))})
+        return "\n".join(_capital_allocation(m))
+
+    smpl, epam, it = block("SMPL"), block("EPAM"), block("IT")
+    assert "Intangible impairment" in smpl and "NONE IN THE CURRENT PERIOD" not in smpl
+    assert "NONE IN THE CURRENT PERIOD" in epam, "a name that never impaired reads as one that did"
+    assert "years before the balance" in epam, "the staleness is not quantified"
+    # IT impaired RECENTLY — six months is inside the balance's trailing year, so it must PRINT
+    assert "Goodwill impairment" in it and "150.0" in it, (
+        "IT's $150.0M FY2025 charge was suppressed — the stale rule is comparing calendar years "
+        "rather than trailing twelve months")
+    assert "NONE IN THE CURRENT PERIOD" not in it
+    assert smpl != epam != it, "three names, three shapes"
+
+
+def test_every_caveat_reaches_the_surface_not_just_the_json() -> None:
+    """CAVEATS TRAVEL ONTO THE PAGE. `_fact` prints a note only when the fact is ABSENT, so a
+    PERIOD MISMATCH on two PRESENT values is silently dropped — EPAM states buyback cash over 89
+    days and its share count over 364, and printed adjacent they invite the exact division the
+    average-price guard refuses."""
+    import json
+
+    from vinci.dossier.render import _capital_allocation
+    from vinci.dossier.schemas import MechanicalLayer
+    doc = json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+    m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
+        update={"capital_allocation": build_capital_allocation(_facts("EPAM"))})
+    page = "\n".join(_capital_allocation(m))
+    assert page.count("PERIOD MISMATCH") == 2, (
+        "both mismatches must surface: the average vs cash, AND cash vs the share count")
+    assert "NOT a purchase price" in page and "not evidence of when they bought" in page
+    assert "NOT AVAILABLE FROM XBRL" in page and "10-K impairment note" in page
+    assert page.count("NOT AVAILABLE FROM XBRL") == 1, "the stated gap is doubled"

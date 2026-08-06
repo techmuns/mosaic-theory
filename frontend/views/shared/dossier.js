@@ -1581,6 +1581,59 @@ function briefWindow(v) {
   return { idx, hidden: Math.max(0, actual.length - _BRIEF_FY) };
 }
 
+// --- capital allocation: created or destroyed. Twin: render._capital_allocation --------------
+// BESIDE THE WRITEDOWN, not a separate card. The snapshot's `material` rows carry the impairment
+// CHARGE; this carries what is LEFT to impair, and the reader's question spans both.
+// It must NOT read the same on a name that has impaired and one that never has: SMPL shows a live
+// charge, EPAM $1.59bn never written down. The STALE mark is computed in the extractor (it holds
+// both dates); this renderer only reads it — recomputing here would be two readers of one rule.
+function capitalAllocation(m) {
+  const ca = m.capital_allocation;
+  if (!ca) return "";
+  const usd = (v) => escapeHtml(`$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
+  const cnt = (v) => escapeHtml(Number(v).toLocaleString("en-US"));
+  const pres = (f) => f && f.status === "present" && f.value != null;
+  const out = [];
+  if (pres(ca.goodwill) || pres(ca.intangibles)) {
+    const left = (pres(ca.goodwill) ? ca.goodwill.value : 0) + (pres(ca.intangibles) ? ca.intangibles.value : 0);
+    const both = pres(ca.goodwill) && pres(ca.intangibles) ? "goodwill + intangibles" : (pres(ca.goodwill) ? "goodwill" : "intangibles");
+    const src = pres(ca.goodwill) ? ca.goodwill : ca.intangibles;
+    out.push(`<div class="fact"><div class="fact-label">Impairment headroom — ${escapeHtml(both)} remaining</div><div class="fact-val hi">${usd(left)}${citeMark(src.source_ref)}</div></div>`);
+  }
+  out.push(fact("Goodwill", ca.goodwill, usd));
+  out.push(fact("Intangibles (net)", ca.intangibles, usd));
+  const charges = [["Goodwill impairment", ca.goodwill_impairment], ["Intangible impairment", ca.intangible_impairment]];
+  const live = charges.filter(([, f]) => pres(f) && f.value && !String(f.note || "").startsWith("STALE"));
+  if (live.length) {
+    live.forEach(([lab, f]) => out.push(fact(lab, f, usd)));
+  } else {
+    const stale = charges.map(([, f]) => f).find((f) => String(f && f.note || "").startsWith("STALE"));
+    const tail = stale ? String(stale.note).split("STALE — ").pop() : "the filer records no impairment under any tag tried";
+    out.push(`<div class="fact"><div class="fact-label">Impairment</div><div class="fact-val muted"><span class="pill unresolved">NONE IN THE CURRENT PERIOD</span> ${escapeHtml(tail)}</div></div>`);
+  }
+  out.push(fact("Buyback — cash", ca.buyback_cash, usd));
+  out.push(fact("Buyback — shares repurchased", ca.buyback_shares, cnt));
+  // `fact()` shows a note only when the value is ABSENT, so a PERIOD MISMATCH on two PRESENT
+  // values would vanish — EPAM states cash over 89 days and its share count over 364.
+  const pairNote = String((ca.buyback_cash || {}).note || (ca.buyback_shares || {}).note || "");
+  if (pairNote.includes("PERIOD MISMATCH")) {
+    out.push(`<div class="fact-caveat">⚠ <b>PERIOD MISMATCH</b> — ${escapeHtml(pairNote.split("PERIOD MISMATCH —").pop().trim())}</div>`);
+  }
+  const avg = ca.buyback_avg_price;
+  if (pres(avg)) {
+    const win = String(avg.source_ref).split("(").pop().replace(/\)$/, "");
+    const mm = String(avg.note || "").includes("PERIOD MISMATCH")
+      ? `<div class="fact-caveat">⚠ <b>PERIOD MISMATCH</b> — ${escapeHtml(String(avg.note).split("PERIOD MISMATCH —").pop().trim())}</div>` : "";
+    out.push(`<div class="fact"><div class="fact-label">Buyback — average cost/share</div><div class="fact-val">$${escapeHtml(Number(avg.value).toFixed(2))}${citeMark(avg.source_ref)}<div class="fact-caveat"><b>fiscal-period average over ${escapeHtml(win)}; NOT a purchase price</b> and not evidence of when they bought</div>${mm}</div></div>`);
+  } else {
+    out.push(fact("Buyback — average cost/share", avg));
+  }
+  out.push(fact("Acquisition consideration", ca.acquisition_consideration, usd));
+  const gap = String((ca.brand_split || {}).note || "").replace(/^NOT AVAILABLE FROM XBRL — /, "");
+  out.push(`<div class="fact"><div class="fact-label">Per-brand split</div><div class="fact-val muted"><span class="pill unresolved">NOT AVAILABLE FROM XBRL</span> ${escapeHtml(gap)}</div></div>`);
+  return `<div class="ds-sub"><div class="ds-subtitle">Capital allocation — created or destroyed</div>${out.join("")}</div>`;
+}
+
 function financialSnapshot(m) {
   const fsa = (m.financial_summary || {}).annual;
   if (!fsa || fsa.status !== "present" || !fsa.value) return "";
@@ -1612,7 +1665,7 @@ function financialSnapshot(m) {
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
-    ${citeMark(fsa.source_ref)}${more}${ratios}</div>`;
+    ${citeMark(fsa.source_ref)}${more}${capitalAllocation(m)}${ratios}</div>`;
 }
 
 // 6 — VALUATION: cross-sectional read (the edge) + comparability gate + the implied-value REFERENCE
