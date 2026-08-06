@@ -68,6 +68,35 @@ def test_a_maintained_name_assembles_without_a_candidate_record() -> None:
     assert fin.data_record.prices.adv_90d_shares.value, "no 90d ADV — the liquidity denominator"
 
 
+def test_the_cohort_path_maintains_the_same_names_as_the_ticker_path() -> None:
+    """BOTH CALLERS, not one. The first cut taught only the `--ticker` branch, so `--ticker IT`
+    assembled while `--top 20` silently dropped IT at rank 5 — the exact name the path exists for.
+    That asymmetry is worse than the symmetric failure it replaced, because a cohort run would have
+    reported success while omitting the name.
+
+    Asserted through `load_finalists` itself: a maintained orphan inside the queue's top-N must
+    appear in the cohort result, not merely be reachable one at a time."""
+    cfg = _cfg()
+    t = _a_maintained_orphan()
+    queue = [json.loads(x) for x in
+             (cfg.snapshots_dir / "ranked_queue.jsonl").read_text().splitlines() if x.strip()]
+    queue.sort(key=lambda r: int(r.get("rank", 1_000_000)))
+    tickers = [r.get("ticker") for r in queue]
+    if t not in tickers:
+        pytest.skip(f"{t} has no ranked-queue row, so the cohort loop never reaches it")
+    depth = tickers.index(t) + 1
+
+    got = {f.data_record.identity.ticker for f in asm.load_finalists(cfg, top=depth)}
+    assert t in got, (
+        f"{t} sits at queue position {depth} and is maintained, but the cohort path omitted it — "
+        "`--ticker` and `--top` disagree about which names the fund can still assemble")
+    fin = next(f for f in asm.load_finalists(cfg, top=depth)
+               if f.data_record.identity.ticker == t)
+    assert fin.record is None and fin.screen_status, (
+        "the cohort path produced a Finalist without the maintenance caveat — the name would "
+        "assemble with nothing on the page saying it is outside the candidate set")
+
+
 def test_an_unmaintained_name_is_still_refused() -> None:
     """THE NEGATIVE. The path opens for names the fund already carries — NOT for anything absent
     from the candidate set. Without this the guard is 'assemble whatever you are asked for', which

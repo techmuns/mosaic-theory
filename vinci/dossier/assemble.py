@@ -188,6 +188,38 @@ def _standalone_record(cfg: Config, ticker: str, reference_date: date) -> DataRe
         staleness_days=cfg.price_staleness_days)
 
 
+def _finalist(
+    cfg: Config, ticker: str, rec: CandidateRecord | None, row: dict[str, Any] | None
+) -> Finalist | None:
+    """One Finalist by either route, or None when the name is neither a candidate nor maintained.
+
+    ONE construction for BOTH callers. `--ticker` and the cohort loop reached the same decision by
+    two copies, and the first cut of this path only taught the `--ticker` one: `--ticker IT`
+    assembled while `--top 20` silently dropped IT at rank 5 — the name the path exists for. A
+    half-fix is worse than the symmetric failure it replaced, because it looks like it works.
+    """
+    ref = _ref_of(row or {})
+    rank = int(row["rank"]) if row and row.get("rank") is not None else None
+    cap = _cap_of(row) if row else None
+    if rec is not None:
+        return Finalist(rec, rank, ref, cap)
+    # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a name we
+    # already hold a dossier or an underwrite on has to stay refreshable.
+    why = _maintenance_reason(cfg, ticker)
+    if why is None:
+        return None
+    verdict = _last_screen_verdict(cfg, ticker)
+    said = (f"last evaluated {verdict[0]}: {verdict[1]}" if verdict
+            else "no screen run on file has evaluated it")
+    return Finalist(
+        None, rank, ref, cap,
+        standalone=_standalone_record(cfg, ticker, ref),
+        screen_status=(
+            f"NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries {why}. The cap "
+            f"band decides where the fund HUNTS, not what it may hold or follow, so absence from "
+            f"it is not a rejection — read the verdict, not the absence: {said}."))
+
+
 def load_finalists(
     cfg: Config, *, top: int | None = None, ticker: str | None = None
 ) -> list[Finalist]:
@@ -208,35 +240,20 @@ def load_finalists(
         t = ticker.upper()
         row = next((r for r in queue if r.get("ticker") == t), None)
         rec = by_ticker.get(t) or (by_cid.get(str(row["candidate_id"])) if row else None)
-        if rec is None:
-            # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a
-            # name we already hold a dossier or an underwrite on has to stay refreshable.
-            why = _maintenance_reason(cfg, t)
-            if why is None:
-                raise LookupError(
-                    f"{t} not in candidate_records.jsonl and not maintained (no committed dossier, "
-                    f"no underwrite record) — run screen then rank first")
-            ref = _ref_of(row or {})
-            verdict = _last_screen_verdict(cfg, t)
-            said = (f"last evaluated {verdict[0]}: {verdict[1]}" if verdict
-                    else "no screen run on file has evaluated it")
-            return [Finalist(
-                None, int(row["rank"]) if row else None, ref, _cap_of(row) if row else None,
-                standalone=_standalone_record(cfg, t, ref),
-                screen_status=(
-                    f"NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries {why}. "
-                    f"The cap band decides where the fund HUNTS, not what it may hold or follow, "
-                    f"so absence from it is not a rejection — read the verdict, not the absence: "
-                    f"{said}."))]
-        return [Finalist(rec, int(row["rank"]) if row else None, _ref_of(row or {}),
-                         _cap_of(row) if row else None)]
+        fin = _finalist(cfg, t, rec, row)
+        if fin is None:
+            raise LookupError(
+                f"{t} not in candidate_records.jsonl and not maintained (no committed dossier, "
+                f"no underwrite record) — run screen then rank first")
+        return [fin]
 
     out: list[Finalist] = []
     for r in queue[: top or len(queue)]:
-        rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(str(r.get("ticker")))
-        if rec is not None:
-            out.append(Finalist(rec, int(r["rank"]) if "rank" in r else None,
-                                 _ref_of(r), _cap_of(r)))
+        t = str(r.get("ticker"))
+        rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(t)
+        fin = _finalist(cfg, t, rec, r)
+        if fin is not None:
+            out.append(fin)
     return out
 
 
