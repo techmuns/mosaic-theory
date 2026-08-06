@@ -1631,7 +1631,11 @@ function capitalAllocation(m) {
   out.push(fact("Acquisition consideration", ca.acquisition_consideration, usd));
   const gap = String((ca.brand_split || {}).note || "").replace(/^NOT AVAILABLE FROM XBRL — /, "");
   out.push(`<div class="fact"><div class="fact-label">Per-brand split</div><div class="fact-val muted"><span class="pill unresolved">NOT AVAILABLE FROM XBRL</span> ${escapeHtml(gap)}</div></div>`);
-  return `<div class="ds-sub"><div class="ds-subtitle">Capital allocation — created or destroyed</div>${out.join("")}</div>`;
+  // HOUSE SUBTITLE SHAPE, not an invented one. `.ds-sub` is a MARGIN UTILITY applied to a
+  // `subtitle muted` line (see `sec()` above); the first cut used it as a wrapper and invented a
+  // `.ds-subtitle` that has zero rules in styles.css — the block would have rendered unstyled on
+  // the web while the markdown preview looked correct.
+  return `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${out.join("")}`;
 }
 
 function financialSnapshot(m) {
