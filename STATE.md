@@ -4105,7 +4105,49 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
 
+**FLEET AS-OF IS SPLIT — READ THIS BEFORE ANY CROSS-SECTIONAL COMPARISON (2026-08-06).**
+The names do **NOT** share a reference date. `ranked_queue.jsonl` stamps every one of its 331 rows
+`2026-07-29`, but a dossier's `reference_date` is stamped **AT ASSEMBLY**, so only names
+re-assembled since the rank re-run carry it:
+
+| `reference_date` | names |
+|---|---|
+| **2026-07-29** | EPAM, IT — the only two |
+| **2026-07-06** | AORT, BRBR, CNXC, FUBO, MVST, NCNO, **SMPL**, VITL, VRRM — nine |
+
+**THE QUEUE STAMPS THE FLEET; THE DOSSIER STAMPS AT ASSEMBLY, AND CONFLATING THEM IS THE ERROR
+THIS ENTRY EXISTS TO PREVENT.** It was made in this session — the queue was checked, read as the
+fleet's as-of, and "all eleven now sit on one as-of" was reported to the operator. Nine did not.
+
+**RULING (operator, 2026-08-06): NO SWEEP.** Re-assemble on demand, when a name is being worked.
+Nine re-assemblies are nine variance events and no decision moves — the legs live in the scenario
+records, not the dossiers, so a fresher reference date restates the analysis without changing a
+verdict. **SMPL is excluded outright**: its record is sealed, its verdict logged, and the IC memo
+CITES ITS SYNTHESIS — a re-roll would orphan those citations against bear points that no longer
+exist. It gets fresh data at the October print regardless.
+
+**WHAT THE SPLIT BINDS.** Cross-sectional work — anything comparing names against each other on a
+price-derived field — needs a common as-of it does not have. A second computed gap is required
+first; until then, assume nothing about a shared date.
+
 **OPERATOR ACTIONS — RECORDED 2026-08-04, arising from the SMPL re-assembly (see §2).**
+
+**O4 — SETTLED, NOT PENDING: WERN FAILS ON ITS OWN NUMBERS AND A HORIZON CHANGES NOTHING
+(recorded 2026-08-06).** WERN has been carried as "failing without a horizon", which reads as an
+underwrite awaiting one field. It is not. Measured on the committed record at spot $46.04:
+
+    legs   bear 16.59 · base 35.71 · bull 48.85
+    reward -10.33   risk 29.45   ratio -0.3509   bar 2.0   FAIL
+
+**THE REWARD IS NEGATIVE — the base case sits $10.33 BELOW spot.** The name is worth less on its
+own underwrite than the market pays. So the missing horizon is not what fails it: stating one
+would leave `ratio -0.35` against a 2.0 bar and add an IRR that is negative for the same reason.
+`gate` reads UNDEFINED only because `irr_undefined` is contagious, which makes the record LOOK
+incomplete when it is decided. **No horizon is owed and none should be sought** — the ratio test
+already answered. WERN also has **no dossier** (the only underwrite record without one).
+
+**Not "pending a field" — settled AVOID on the numbers.** Recorded so it stops appearing in
+queues as unblocked work.
 
 **O1. RULING NEEDED — `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.**
 #342 marked `primary_source` in the brief; the 2026-08-04 SMPL roll shows the model reading the
