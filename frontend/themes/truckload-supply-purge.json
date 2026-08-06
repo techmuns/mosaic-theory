@@ -739,7 +739,7 @@
     "irrUndefined": "no horizon stated \u2014 an IRR needs a realisation date",
     "irrFloor": 0.15,
     "irrPassFail": "UNDEFINED",
-    "gate": "UNDEFINED",
+    "gate": "FAIL",
     "currentState": {
      "status": "watch",
      "ratio": -0.35,

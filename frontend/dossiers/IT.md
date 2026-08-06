@@ -5,7 +5,7 @@ _August 6, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $230.46 (+64.4% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — frozen at underwrite 2026-07-20) · **Reward** $90.27 · **Risk** $59.35 · **Reward : risk** 1.52 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** UNDEFINED (both tests)
+**Target (base)** $230.46 (+64.4% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — frozen at underwrite 2026-07-20) · **Reward** $90.27 · **Risk** $59.35 · **Reward : risk** 1.52 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** FAIL (both tests)
 
 _Spot source: Polygon EOD grouped-daily close 2026-07-17 (live)_
 
