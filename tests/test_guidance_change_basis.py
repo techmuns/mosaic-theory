@@ -131,10 +131,13 @@ def test_both_consumers_label_a_change_rather_than_printing_it_like_a_level() ->
 
 
 #: Committed guides whose verbatim is a GROWTH-RATE sentence but whose stored basis is still
-#: "level" — extracted before this fix and awaiting their name's re-assembly. The
-#: `ANCHORS_AWAITING_BACKFILL` precedent: recorded so the artifacts are TRACKED rather than
-#: described, so re-assembling EPAM shrinks this to empty rather than leaving a silent gap.
-GUIDES_AWAITING_REASSEMBLY = {("EPAM", "2026-05-07"), ("EPAM", "2026-02-19")}
+#: "level" — extracted before the 2026-08-06 label fix and awaiting their name's re-assembly.
+#:
+#: **EMPTY.** It held EPAM's two guides for exactly one PR; re-assembling EPAM moved both to
+#: `basis="change"` and the set shrank, which is the `ANCHORS_AWAITING_BACKFILL` contract working:
+#: the artifacts are TRACKED rather than described. Kept as a declared set rather than deleted so
+#: a name arriving in this state is a deliberate, explained addition rather than a quiet one.
+GUIDES_AWAITING_REASSEMBLY: set[tuple[str, str]] = set()
 
 
 def test_a_growth_rate_is_a_change_because_the_pattern_says_so_not_because_it_is_a_percent(
