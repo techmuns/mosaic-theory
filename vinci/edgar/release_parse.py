@@ -519,8 +519,25 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         lo, hi = _money(m.group(2)), _money(m.group(3))
         if lo is None or hi is None or metric in seen:
             continue
-        seen.add(metric)
         vb = _verbatim(text, m.start(), m.end())
+        # A DECLINE WORD MAKES THE SIGN AMBIGUOUS ⇒ REFUSE, never guess — the BellRing precedent
+        # one loop up. "the revenue growth rate to decline in the range of 2% to 3%" reads two ways:
+        # the growth rate DECLINES TO +2..+3% (positive), or it declines BY 2..3% (negative). This
+        # pattern captures bare digits and would store +2.0..+3.0 either way.
+        #
+        # That only became load-bearing when this path started claiming `basis="change"`: a sign is
+        # what a change MEANS, and "a decline stored positive reads as an expansion" is the error
+        # class `test_guidance_change_basis` already exists to prevent. `_GUIDE_CHANGE_RANGE` reads
+        # the SAME word as unambiguously negative (`_DECLINE`), so accepting it positive here would
+        # put two parsers of one concept in contradiction — and this one runs FIRST and would
+        # shadow the other through `seen`. Refusing leaves the sentence to them, or to the reader.
+        if any(w in vb.lower() for w in _DECLINE):
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — a growth-rate range stated with a decline word: "
+                f"\"{vb[:150]}\" reads either as declining TO that range or BY it, and the two "
+                f"have opposite signs; verify against the filing ({src})")
+            continue
+        seen.add(metric)
         # `basis="change"`, and the pattern is what makes that SAFE rather than a guess:
         # `_GUIDE_PCT` requires the literal `growth rate` within 60 chars of the metric, so every
         # match is a rate of change BY CONSTRUCTION. A `%` figure alone would be ambiguous — "gross

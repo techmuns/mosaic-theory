@@ -195,6 +195,35 @@ def test_the_refusal_now_fires_where_a_false_mismatch_was_manufactured() -> None
     assert "LEVEL" in out and "CHANGE" in out
 
 
+def test_a_growth_rate_stated_with_a_decline_word_is_refused_not_stored_positive() -> None:
+    """THE SIGN HOLE THAT LABELLING THIS PATH A CHANGE OPENED.
+
+    "the revenue growth rate to decline in the range of 2% to 3%" reads two ways — the rate
+    declines TO +2..+3%, or it declines BY 2..3% — and the pattern captures bare digits, so it
+    would store +2.0..+3.0 either way. While the path said "level" that was merely wrong; once it
+    says "change" the sign is what the value MEANS, and "a decline stored positive reads as an
+    expansion" is the error class this file exists to prevent.
+
+    `_GUIDE_CHANGE_RANGE` reads the same word as unambiguously negative (`_DECLINE`). Accepting it
+    positive here would put two parsers of one concept in contradiction — and this one runs FIRST,
+    so it would shadow the other through `seen`. So: REFUSE, with the sentence attributed, the
+    BellRing shared-range precedent.
+
+    NOT LIVE — 0 committed guides match; this is the guard arriving before the instance."""
+    import vinci.edgar.release_parse as rp
+
+    notes: list[str] = []
+    got = rp._guidance(
+        "expects the revenue growth rate to decline in the range of 2% to 3%", "8-K X", notes)
+    assert got == [], (
+        f"a sign-ambiguous growth rate was stored anyway: {[(g.low, g.high) for g in got]}")
+    assert len(notes) == 1 and notes[0].startswith(rp.GUIDANCE_REFUSAL_PREFIX)
+    assert "opposite signs" in notes[0], "the refusal must say WHY, not merely refuse"
+    assert "2% to 3%" in notes[0], "the refusal must carry the sentence so a reader can resolve it"
+    # …and an unambiguous growth rate is still captured, so the guard is not a blanket refusal
+    assert _one("net sales growth rate of 3% to 5%").basis == "change"
+
+
 def test_a_dollar_level_is_untouched_by_the_growth_rate_label() -> None:
     """THE NEGATIVE. A guide stated as a LEVEL in dollars must stay a level — the growth-rate path
     must not widen into 'anything near the word growth'. EPAM's own November release states a $M
