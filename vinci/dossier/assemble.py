@@ -47,6 +47,7 @@ from vinci.labels import resolve_label
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
+from vinci.schemas.data_record import DataRecord
 from vinci.sec import build_sec_http
 from vinci.store import Store
 
@@ -66,10 +67,29 @@ class Finalist:
     when the CIQ cap is absent, so re-assembly can't silently reselect the index (the MDY→IWM
     drift)."""
 
-    record: CandidateRecord
+    record: CandidateRecord | None
     rank: int | None
     reference_date: date
     market_cap_screen: float | None = None
+    #: THE MAINTENANCE PATH. Set when the name has NO current candidate record — a data record
+    #: built from the resolver + the price store, never a hand-made `CandidateRecord` (that type
+    #: means "screen-admitted", and forging one would put a fabricated screen verdict under a name
+    #: about to be underwritten). Exactly one of `record`/`standalone` is set.
+    standalone: DataRecord | None = None
+    #: Why this name is outside the current candidate set, rendered as a MAIN-BODY caveat. None
+    #: for an ordinary screen candidate.
+    screen_status: str | None = None
+
+    @property
+    def data_record(self) -> DataRecord:
+        """The facts assembly reads, whichever route supplied them."""
+        if self.record is not None:
+            return self.record.data_record
+        if self.standalone is None:
+            raise DossierAssemblyError(
+                "Finalist has neither a candidate record nor a standalone data record — there is "
+                "nothing to assemble from")
+        return self.standalone
 
 
 def _ref_of(row: dict[str, Any]) -> date:
@@ -85,6 +105,119 @@ def _cap_of(row: dict[str, Any]) -> float | None:
     if isinstance(v, bool) or not isinstance(v, (int, float)):
         return None
     return float(v) if math.isfinite(v) and v > 0 else None
+
+
+def _last_screen_verdict(cfg: Config, ticker: str) -> tuple[str, str] | None:
+    """The newest screen run that actually EVALUATED ``ticker`` → (run_id, one-line outcome).
+
+    GROWN OUT AND FAILED MUST NEVER RENDER ALIKE. IT passed all three gates on 2026-07-29 and then
+    appreciated past the $10bn ceiling; a page that showed that the way it shows a rejection would
+    be the `unstated`-versus-`disagrees` mistake with a position on the other side of it. So this
+    reports the LAST REAL VERDICT and its gates — never the mere fact of absence, which is what a
+    caller would otherwise be left to infer.
+
+    Runs are scanned newest-first and the first one CARRYING THE TICKER wins: a later run that
+    never evaluated the name says nothing about it, and treating its silence as a verdict is the
+    same error one level up.
+    """
+    runs = sorted((cfg.snapshots_dir / "screen_runs").glob("*.jsonl"), reverse=True)
+    for path in runs:
+        for line in path.read_text().splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if row.get("ticker") != ticker or row.get("grain") != "candidate":
+                continue
+            gates = row.get("per_gate") or {}
+            detail = " · ".join(
+                f"{g} {(v or {}).get('outcome')}" for g, v in sorted(gates.items())) or "no gates"
+            return str(row.get("run_id")), f"{row.get('outcome')} ({detail})"
+    return None
+
+
+def _maintenance_reason(cfg: Config, ticker: str) -> str | None:
+    """Why this name is still MAINTAINED though it is not a current screen candidate — or None.
+
+    THE BAND ANSWERS WHERE WE HUNT, NOT WHAT WE MAY HOLD OR FOLLOW. Screen membership is an ENTRY
+    rule; a name we already carry a dossier or an underwrite on must stay refreshable or any
+    position that re-rates upward becomes un-maintainable — the defect bites a WINNER first.
+    """
+    if (cfg.data_dir / "dossiers" / ticker / "dossier.json").exists():
+        return "a committed dossier"
+    if _read_scenario_card(ticker) is not None:
+        return "an open underwrite record"
+    return None
+
+
+def _standalone_record(cfg: Config, ticker: str, reference_date: date) -> DataRecord:
+    """Build ``ticker``'s data record from the resolver + the price store, with no screen involved.
+
+    Uses ``build_data_record`` — the SAME constructor the screen's own path composes
+    (``build_price_record`` → ``enrich_with_fundamentals``), so a maintained name's facts are
+    assembled by one definition, not a second copy that can drift from it.
+    """
+    from vinci.monitor import BENCHMARK_SMALL
+    from vinci.screens import build_data_record
+    from vinci.universe import benchmark_identity
+
+    resolver = EntityResolver.from_config(cfg)
+    identity = resolver.resolve_ticker(ticker)
+    # The SCREEN's own default benchmark, so `rel_ret_vs_market` on this record means what it
+    # means on every candidate record. The dossier re-picks its cap-band benchmark downstream;
+    # this is the record-level input, not the page's comparison.
+    bench = benchmark_identity(BENCHMARK_SMALL)
+    with Store(cfg.db_path) as store:
+        bars = store.get_price_history(identity.internal_id)
+        bench_bars = store.get_price_history(bench.internal_id)
+    # TRUNCATE TO THE REFERENCE DATE — `compute_price_features` takes `bars[-1]` as "latest" and
+    # never filters; it uses `reference_date` only for staleness and window starts. The screen gets
+    # away with passing full history because at screen time the store frontier IS the reference
+    # date. Here it is not: IT's record would otherwise carry the 2026-08-04 close ($185.79) under
+    # a 2026-07-06 stamp — a record whose own vintage mark contradicts its value. Truncating makes
+    # a maintained name's record mean exactly what a candidate record at the same reference date
+    # means, which is the only way the two are comparable.
+    bars = [b for b in bars if b.bar_date <= reference_date]
+    bench_bars = [b for b in bench_bars if b.bar_date <= reference_date]
+    if not bars:
+        raise DossierAssemblyError(
+            f"{ticker}: no price history in the store — a maintained name still needs bars to "
+            f"build a data record; refresh EOD before re-assembling")
+    return build_data_record(
+        identity, price_bars=bars, benchmark_bars=bench_bars,
+        edgar=EdgarClient.from_config(cfg), reference_date=reference_date,
+        staleness_days=cfg.price_staleness_days)
+
+
+def _finalist(
+    cfg: Config, ticker: str, rec: CandidateRecord | None, row: dict[str, Any] | None
+) -> Finalist | None:
+    """One Finalist by either route, or None when the name is neither a candidate nor maintained.
+
+    ONE construction for BOTH callers. `--ticker` and the cohort loop reached the same decision by
+    two copies, and the first cut of this path only taught the `--ticker` one: `--ticker IT`
+    assembled while `--top 20` silently dropped IT at rank 5 — the name the path exists for. A
+    half-fix is worse than the symmetric failure it replaced, because it looks like it works.
+    """
+    ref = _ref_of(row or {})
+    rank = int(row["rank"]) if row and row.get("rank") is not None else None
+    cap = _cap_of(row) if row else None
+    if rec is not None:
+        return Finalist(rec, rank, ref, cap)
+    # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a name we
+    # already hold a dossier or an underwrite on has to stay refreshable.
+    why = _maintenance_reason(cfg, ticker)
+    if why is None:
+        return None
+    verdict = _last_screen_verdict(cfg, ticker)
+    said = (f"last evaluated {verdict[0]}: {verdict[1]}" if verdict
+            else "no screen run on file has evaluated it")
+    return Finalist(
+        None, rank, ref, cap,
+        standalone=_standalone_record(cfg, ticker, ref),
+        screen_status=(
+            f"NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries {why}. The cap "
+            f"band decides where the fund HUNTS, not what it may hold or follow, so absence from "
+            f"it is not a rejection — read the verdict, not the absence: {said}."))
 
 
 def load_finalists(
@@ -107,17 +240,20 @@ def load_finalists(
         t = ticker.upper()
         row = next((r for r in queue if r.get("ticker") == t), None)
         rec = by_ticker.get(t) or (by_cid.get(str(row["candidate_id"])) if row else None)
-        if rec is None:
-            raise LookupError(f"{t} not in candidate_records.jsonl — run screen then rank first")
-        return [Finalist(rec, int(row["rank"]) if row else None, _ref_of(row or {}),
-                         _cap_of(row) if row else None)]
+        fin = _finalist(cfg, t, rec, row)
+        if fin is None:
+            raise LookupError(
+                f"{t} not in candidate_records.jsonl and not maintained (no committed dossier, "
+                f"no underwrite record) — run screen then rank first")
+        return [fin]
 
     out: list[Finalist] = []
     for r in queue[: top or len(queue)]:
-        rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(str(r.get("ticker")))
-        if rec is not None:
-            out.append(Finalist(rec, int(r["rank"]) if "rank" in r else None,
-                                 _ref_of(r), _cap_of(r)))
+        t = str(r.get("ticker"))
+        rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(t)
+        fin = _finalist(cfg, t, rec, r)
+        if fin is not None:
+            out.append(fin)
     return out
 
 
@@ -346,7 +482,7 @@ def assemble_one(
     # guard and the artifact disagree about when the build ran — a small window, but this contract
     # exists so that the number a page reports is the number its own guard applied.
     built_at = datetime.now(UTC)
-    rec = fin.record.data_record
+    rec = fin.data_record
     ticker = rec.identity.ticker
     bundle = CiqBundle.from_files(ticker, manual.files(ticker))
     location = manual.location(ticker)
@@ -489,6 +625,12 @@ def assemble_one(
     # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
     # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
     caveats, qa_flags = dossier_flags.partition(flags)
+    # MAIN BODY, and LEADING. A reader who does not know this name sits outside the current
+    # candidate set will read every screen-relative number on the page as current. It leads for the
+    # same reason the vintage stamp does: read after the numbers, it no longer changes how they are
+    # read. Not a qa_flag — this is decision surface, not audit.
+    if fin.screen_status:
+        caveats.insert(0, fin.screen_status)
     # (anchor) the persisted R1 anchor — spot-independent, source-bound (vinci.dossier.anchor). Best
     # effort: any own-history gap or EDGAR error yields an INAPPLICABLE anchor with a reason,
     # never a crashed assembly (the dossier stands on its own; the anchor is committed triage
@@ -546,7 +688,7 @@ def assemble_cohort(
                 out_root=out_root, llm=llm,
             ), None
         except Exception as exc:  # noqa: BLE001 — one bad name must not crash the cohort batch
-            return None, f"{fin.record.data_record.identity.ticker}: {type(exc).__name__}: {exc}"
+            return None, f"{fin.data_record.identity.ticker}: {type(exc).__name__}: {exc}"
 
     dossiers: list[Dossier] = []
     errors: list[str] = []
