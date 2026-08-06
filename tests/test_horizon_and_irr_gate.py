@@ -95,7 +95,12 @@ def test_a_negative_base_has_no_rate_and_says_so_rather_than_returning_zero() ->
 @pytest.mark.parametrize(
     ("ratio_pf", "irr_ok", "want"),
     [("PASS", True, "PASS"), ("PASS", False, "FAIL"), ("FAIL", True, "FAIL"),
-     ("FAIL", False, "FAIL"), ("UNDEFINED", True, "UNDEFINED")])
+     ("FAIL", False, "FAIL"), ("UNDEFINED", True, "UNDEFINED"),
+     # THE MIRROR CASE (2026-08-06). A determinate IRR FAIL beside an unknown ratio is still a
+     # determinate FAIL — the same truth as the asymmetry side, and the row that would be missing
+     # if the rule had been written to special-case asymmetry alone. 0 committed records sit here,
+     # so this row is the only thing that exercises it.
+     ("UNDEFINED", False, "FAIL")])
 def test_the_gate_is_the_conjunction_and_undefined_is_contagious(
         ratio_pf: str, irr_ok: bool, want: str) -> None:
     """BOTH TESTS. The `PASS/False -> FAIL` row is the one that matters: it is the case where a
@@ -113,6 +118,38 @@ def test_the_gate_is_the_conjunction_and_undefined_is_contagious(
         **rec.scenarios,
         "base": rec.scenarios["base"].model_copy(update={"years_to_terminal": years})}})
     assert sc._with_irr_gate(res, rec).gate == want
+
+
+def test_a_failing_asymmetry_decides_the_gate_without_the_irr() -> None:
+    """THE SEPARATION (2026-08-06). BOTH DIRECTIONS, because only one of them changed.
+
+    * **Failing asymmetry + no horizon → FAIL.** The gate is an AND and an AND with a determinate
+      False is False. Contagion here was reporting DECIDED records as pending work: WERN's reward
+      is −10.33 (its base case sits BELOW spot) and its ratio −0.35 against a 2.0 bar, yet it read
+      UNDEFINED for want of a horizon that could not have rescued it — stating one adds an IRR
+      negative for the same reason. It sat in queues as an underwrite awaiting a field.
+    * **PASSING asymmetry + no horizon → still UNDEFINED.** That is where the answer genuinely IS
+      unknown, and it is the half that must NOT move. EPAM is the live instance: its committed
+      record passes asymmetry at 6.34, so its gate is correctly UNDEFINED, not FAIL.
+
+    COMPLETENESS IS NOT THE GATE'S ANSWER, and must survive the separation: the missing horizon
+    stays flagged through `irr_undefined` and `irr_pass_fail`, which is what the page renders."""
+    failing = _smpl_at(years=None).model_copy(update={"spot": 1_000.0})   # base far below spot
+    res = sc.run_recipe(failing).result
+    assert res.pass_fail == "FAIL" and res.irr_pass_fail == "UNDEFINED"
+    assert res.gate == "FAIL", (
+        "a record whose asymmetry already failed reads UNDEFINED — a decided record presented as "
+        "pending work, which is what this separation exists to stop")
+    # …and the deficiency is STILL flagged, just not as the gate's answer
+    assert res.irr is None and res.irr_undefined and "realisation date" in res.irr_undefined, (
+        "the missing horizon stopped being reported — the gate was short-circuited rather than "
+        "separated from completeness")
+
+    # the half that must NOT move
+    passing = sc.run_recipe(_smpl_at(years=None)).result
+    assert passing.pass_fail == "PASS" and passing.gate == "UNDEFINED", (
+        "a PASSING asymmetry with no horizon must stay UNDEFINED — that is genuine ignorance "
+        "about the decision, not a completeness gap")
 
 
 def test_a_record_with_no_horizon_still_computes_and_says_why_it_cannot_be_graded() -> None:

@@ -322,7 +322,7 @@
     "irr_undefined": "no horizon stated — an IRR needs a realisation date",
     "irr_floor": 0.15,
     "irr_pass_fail": "UNDEFINED",
-    "gate": "UNDEFINED"
+    "gate": "FAIL"
   },
   "verdict": {
     "status": "watch",

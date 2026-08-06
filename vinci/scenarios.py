@@ -946,13 +946,34 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     irr, why = base_irr(res, rec.spot, years)
     irr_pf: Literal["PASS", "FAIL", "UNDEFINED"] = (
         "UNDEFINED" if irr is None else ("PASS" if irr >= IRR_FLOOR else "FAIL"))
-    # BOTH, and UNDEFINED is contagious: a gate that reads PASS while half of it could not be
-    # computed is worse than one that says it does not know.
+    # THE GATE IS AN AND, AND AN AND WITH A DETERMINATE FALSE IS FALSE — it does not need the
+    # other side (2026-08-06). UNDEFINED stays contagious toward PASS, which is the direction that
+    # matters: a gate reading PASS while half of it could not be computed is worse than one saying
+    # it does not know. But contagion toward FAIL was reporting DECIDED records as pending work.
+    # WERN is the clearest case — reward −10.33 because its base case sits BELOW spot, ratio −0.35
+    # against a 2.0 bar — and it read UNDEFINED for want of a horizon that could not have rescued
+    # it: stating one would add an IRR negative for the same reason. It sat in queues as an
+    # underwrite awaiting a field.
+    #
+    # SEPARATION, NOT SHORT-CIRCUIT. The missing horizon is still a real deficiency and is still
+    # flagged: `irr_undefined` carries the reason, `irr_pass_fail` still reads UNDEFINED, and BOTH
+    # render independently of this field (`render.py` prints "Base IRR UNDEFINED — <why>" as its
+    # own strip line; the underwrite card mirrors both). What changes is only that the GATE — the
+    # investment test's ANSWER — stops inheriting a completeness gap as if it were ignorance about
+    # the decision.
+    #
+    # SYMMETRIC IN BOTH TERMS, deliberately. The brief named the failing ASYMMETRY; the same holds
+    # for a failing IRR beside an unknown ratio, and special-casing one would leave the identical
+    # defect standing in the mirror position. Measured: 0 records sit in that state today, so this
+    # is currently indistinguishable from the narrower rule — it is written this way because the
+    # narrower one would need code that deliberately DOESN'T handle the symmetric case.
     gate: Literal["PASS", "FAIL", "UNDEFINED"]
-    if res.pass_fail is None or res.pass_fail == "UNDEFINED" or irr_pf == "UNDEFINED":
+    if res.pass_fail == "FAIL" or irr_pf == "FAIL":
+        gate = "FAIL"
+    elif res.pass_fail is None or res.pass_fail == "UNDEFINED" or irr_pf == "UNDEFINED":
         gate = "UNDEFINED"
     else:
-        gate = "PASS" if (res.pass_fail == "PASS" and irr_pf == "PASS") else "FAIL"
+        gate = "PASS"
     return res.model_copy(update={
         "horizon_years": years, "irr": irr, "irr_undefined": why or None,
         "irr_floor": IRR_FLOOR, "irr_pass_fail": irr_pf, "gate": gate})
