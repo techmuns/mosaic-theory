@@ -125,6 +125,37 @@ def test_the_brand_split_is_a_stated_gap_on_every_name() -> None:
         assert "no XBRL axis" in bs.note and "10-K" in bs.note, bs.note
 
 
+def test_the_derivation_requires_both_legs_on_the_same_period() -> None:
+    """SAME PERIOD ON BOTH LEGS OR NOTHING — `_latest_dep_amort`'s rule, and the first cut broke it
+    while ASSERTING it: the note read "both legs are the same fiscal year" and nothing checked.
+
+    VITL divided **Q1-2026 cash ($20.0M) by a 2019 share count** and published **$7.01** as a
+    derived average — a seven-year straddle and a number that never existed. An assertion the code
+    does not enforce is worse than no assertion, because it tells the reader not to look.
+
+    Asserted over the CORPUS, not a fixture: the straddle was invisible until the live names ran."""
+    from vinci.dossier.capital_allocation import BUYBACK_CASH, BUYBACK_SHARES, _pick
+
+    checked = 0
+    for t in _names():
+        facts = _facts(t)
+        c, s = _pick(facts, BUYBACK_CASH, kind="flow"), _pick(facts, BUYBACK_SHARES, kind="flow")
+        avg = build_capital_allocation(facts).buyback_avg_price
+        if c is None or s is None or str(avg.source_ref or "").startswith("EDGAR"):
+            continue                      # no legs, or the filer's own direct tag answered
+        checked += 1
+        aligned = (c[0].period_start == s[0].period_start and c[0].period_end == s[0].period_end)
+        if aligned:
+            assert avg.value is not None and "verified on" in (avg.note or ""), (
+                f"{t}: aligned legs but no derivation — {avg.note}")
+        else:
+            assert avg.value is None and "DIFFERENT periods" in (avg.note or ""), (
+                f"{t}: derived an average across MISMATCHED periods — cash "
+                f"{c[0].period_start}→{c[0].period_end} vs shares "
+                f"{s[0].period_start}→{s[0].period_end}, value {avg.value}")
+    assert checked >= 3, f"only {checked} names exercised the derivation branch — near-vacuous"
+
+
 def test_the_derivation_is_refused_rather_than_imputed_from_one_leg() -> None:
     """FAIL LOUD, NEVER FABRICATE. Cash without a share count says nothing about price. An average
     invented from one leg would be a decision figure in the strict sense."""

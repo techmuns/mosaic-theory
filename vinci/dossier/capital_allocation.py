@@ -145,6 +145,7 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
     fabricated average here would be a decision figure in the strict sense.
     """
     shares_pt = _pick(facts, BUYBACK_SHARES, kind="flow")
+    cash_pt = _pick(facts, BUYBACK_CASH, kind="flow")
     cash = _money(facts, BUYBACK_CASH, "share-repurchase cash")
     shares = (
         Sourced.present(
@@ -155,7 +156,6 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                              f"— EDGAR XBRL companyfacts"))
 
     direct = _pick(facts, BUYBACK_AVG_PRICE, kind="flow")
-    cash_pt = _pick(facts, BUYBACK_CASH, kind="flow")
     # VINTAGE BEATS DIRECTNESS — `_latest_dep_amort`'s rule, and the same failure it was built for.
     # The filer's own average-price tag is preferred only while it is CURRENT: EPAM's last one is
     # Q1 **2023** ($283.69, on a stock now near $112) sitting beside Q1 **2026** repurchase cash.
@@ -183,17 +183,33 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
             round(p.value, 4),
             source_ref=f"EDGAR companyfacts {tag} ({_span(p)})",
             note=AVG_PRICE_BASIS + mismatch)
-    elif cash.value is not None and shares.value:
+    elif (cash_pt is not None and shares_pt is not None and cash.value is not None
+          and shares.value
+          and cash_pt[0].period_start == shares_pt[0].period_start
+          and cash_pt[0].period_end == shares_pt[0].period_end):
+        # SAME PERIOD ON BOTH LEGS OR NOTHING — `_latest_dep_amort`'s rule, and the first cut
+        # broke it while ASSERTING it: the note read "both legs are the same fiscal year" and the
+        # code never checked. VITL divided Q1-2026 cash ($20.0M) by a **2019** share count and
+        # published $7.01 as a derived average — a seven-year straddle, and a number that never
+        # existed. An assertion the code does not enforce is worse than no assertion, because it
+        # tells the reader not to look.
         avg = Sourced.present(
             round(cash.value * _USD_M / shares.value, 4),
             source_ref=f"DERIVED: {cash.source_ref} ÷ {shares.source_ref}",
-            note=f"{AVG_PRICE_BASIS}. DERIVED from cash ÷ shares — the filer states no "
-                 f"{BUYBACK_AVG_PRICE[0]}; both legs are the same fiscal year")
+            note=f"{AVG_PRICE_BASIS}. DERIVED as cash ÷ shares — the filer states no "
+                 f"{BUYBACK_AVG_PRICE[0]}; both legs verified on {_span(cash_pt[0])}")
     else:
-        missing = "cash" if cash.value is None else "share count"
+        if cash.value is None:
+            why = "the cash leg is absent"
+        elif not shares.value:
+            why = "the share-count leg is absent"
+        else:
+            why = (f"its legs cover DIFFERENT periods — cash {_span(cash_pt[0])} vs shares "  # type: ignore[index]
+                   f"{_span(shares_pt[0])} — and dividing one by the other would state an average "  # type: ignore[index]
+                   f"for a window neither covers")
         avg = Sourced.unknown(
-            note=f"no {BUYBACK_AVG_PRICE[0]} and the {missing} leg is absent, so an average would "
-                 f"be imputed rather than computed — refused (EDGAR XBRL companyfacts)")
+            note=f"no {BUYBACK_AVG_PRICE[0]} and {why}, so an average would be imputed rather "
+                 f"than computed — refused (EDGAR XBRL companyfacts)")
 
     return CapitalAllocation(
         goodwill=_money(facts, GOODWILL, "goodwill balance", kind="instant"),
