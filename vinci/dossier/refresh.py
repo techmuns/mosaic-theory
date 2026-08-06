@@ -294,6 +294,14 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     cc = (payload.get("mechanical") or {}).get("consensus_context")
     if isinstance(cc, dict) and cc.get("consensus_levels") is None:
         cc.pop("consensus_levels", None)
+    # SECOND INSTANCE OF THE SAME RULE, so it is worth naming: an optional-with-None field added
+    # AFTER the committed artifacts exist must be dropped when None, or a no-op refresh writes
+    # `"capital_allocation": null` into all nine and that key asserts WE COMPUTED THIS AND GOT
+    # NOTHING — when the truth is the dossier predates the field. The scenario archive's
+    # `GATE_FIELDS` scoping exists for the same sentence, one artifact over.
+    mech = payload.get("mechanical")
+    if isinstance(mech, dict) and mech.get("capital_allocation") is None:
+        mech.pop("capital_allocation", None)
     new_json = json.dumps(payload, indent=2, ensure_ascii=False)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
                              dossiers_root=path.parent.parent)

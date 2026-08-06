@@ -20,6 +20,7 @@ from typing import Any, NamedTuple, TypeVar
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
+from vinci.dossier.capital_allocation import build_capital_allocation
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
 from vinci.dossier.schemas import (
@@ -2867,6 +2868,11 @@ def assemble_mechanical(
         financial_summary=_financial_summary(bundle, implied_val),
         # E — structured capital structure (instruments + summary + maturity 8-Ks + pointers).
         capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
+        # Capital created or destroyed — EDGAR XBRL only. `build_capital_allocation` is total on a
+        # facts dict (every field degrades to UNKNOWN-with-reason), so an absent companyfacts
+        # yields a fully-stated block rather than a missing one.
+        capital_allocation=build_capital_allocation(
+            _companyfacts_or_none(edgar, record.identity.cik) or {}),
         management_commentary=ciq_sheets.management_commentary(bundle),
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)

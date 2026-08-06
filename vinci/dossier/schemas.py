@@ -1043,6 +1043,24 @@ class StockInfo(BaseModel):
     model_config = {"frozen": True}
 
 
+class CapitalAllocation(BaseModel):
+    """Capital created or destroyed — EDGAR XBRL only, each value naming the tag that answered."""
+
+    goodwill: Sourced[float]                    # $M, latest annual — impairment headroom
+    intangibles: Sourced[float]                 # $M, latest annual
+    goodwill_impairment: Sourced[float]         # $M, latest annual — what was already written off
+    intangible_impairment: Sourced[float]       # $M, latest annual
+    buyback_cash: Sourced[float]                # $M, latest annual
+    buyback_shares: Sourced[float]              # raw share count, latest annual
+    buyback_avg_price: Sourced[float]           # $/share — see AVG_PRICE_BASIS
+    acquisition_consideration: Sourced[float]   # $M, latest annual
+    #: ALWAYS a stated gap. The brand dimension is footnote prose with no XBRL axis, and an
+    #: aggregate impairment with no note reads as though the split were simply not interesting.
+    brand_split: Sourced[str]
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -1084,6 +1102,11 @@ class MechanicalLayer(BaseModel):
     # (E1) structured capital structure — instruments + aggregates + survival reads. Optional-with-
     # default for back-compat: old JSON falls back to Quality.liquidity_covenant_flags (the string).
     capital_structure: CapitalStructure | None = None
+    # Capital CREATED or DESTROYED — goodwill/intangibles remaining (impairment headroom), buyback
+    # economics, acquisition consideration. EDGAR XBRL only; every value names the tag that
+    # answered and every absence names the family tried. Optional-with-default for back-compat:
+    # committed dossiers predate it and must round-trip; a FRESH assembly always builds it.
+    capital_allocation: CapitalAllocation | None = None
     # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
     # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
     financial_summary: FinancialSummary | None = None
