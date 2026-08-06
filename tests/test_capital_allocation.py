@@ -202,3 +202,39 @@ def test_an_empty_facts_dict_yields_a_fully_stated_block_not_a_crash() -> None:
     for name, f in ca:
         assert f.value is None and f.note, name
     assert BUYBACK_AVG_PRICE[0] in (ca.buyback_avg_price.note or "")
+
+
+def test_a_failed_fetch_leaves_the_block_absent_not_a_block_of_stated_absences() -> None:
+    """A FETCH FAILURE IS NOT AN EMPTY FILING, and the first cut made them identical.
+
+    On an EDGAR error the transform collapsed to `{}`, so every field wrote "no goodwill balance
+    under Goodwill — EDGAR XBRL companyfacts": a sentence stating the FILER reports none, when the
+    truth is WE could not reach EDGAR. Two opposite facts in one sentence — `unstated` vs
+    `disagrees`, grown-out vs failed — and here the wrong reading is the reassuring one.
+
+    ABSENT already means NOT YET REFRESHED, which is exactly what a failed fetch leaves behind."""
+    import vinci.dossier.refresh as rf
+    from vinci.netcache import HttpError
+
+    class _Boom:
+        @staticmethod
+        def from_config() -> "_Boom":
+            return _Boom()
+
+        def companyfacts(self, cik: str) -> dict:
+            raise HttpError("EDGAR unreachable")
+
+    import vinci.edgar.client as ec
+    real = ec.EdgarClient
+    ec.EdgarClient = _Boom  # type: ignore[misc,assignment]
+    try:
+        out = rf.capital_allocation_transform("0001702744")({"stock_info": {"x": 1}})
+    finally:
+        ec.EdgarClient = real  # type: ignore[misc]
+    assert "capital_allocation" not in out, (
+        "a failed fetch wrote a block of stated absences — indistinguishable from a filer that "
+        "genuinely reports none")
+    assert out == {"stock_info": {"x": 1}}, "the transform mutated something else on failure"
+
+    # …and a name with NO cik is the same case, not a filing full of nothing
+    assert "capital_allocation" not in rf.capital_allocation_transform(None)({})

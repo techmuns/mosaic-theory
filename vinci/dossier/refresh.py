@@ -420,15 +420,25 @@ def capital_allocation_transform(cik: str | None) -> Transform:
     """
     from vinci.dossier.capital_allocation import build_capital_allocation
     from vinci.edgar.client import EdgarClient
+    from vinci.netcache import HttpError
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
-        facts: dict[str, Any] = {}
-        if cik:
-            try:
-                facts = EdgarClient.from_config().companyfacts(cik)
-            except Exception:  # noqa: BLE001 — a fetch failure yields a STATED block, never a crash
-                facts = {}
+        # A FETCH FAILURE IS NOT AN EMPTY FILING, and collapsing to `{}` made them identical. Every
+        # field would then read "no goodwill balance under Goodwill — EDGAR XBRL companyfacts",
+        # which states that the FILER reports none when the truth is that WE could not reach EDGAR.
+        # Two opposite facts wearing one sentence is the shape this repo keeps closing (`unstated`
+        # vs `disagrees`, grown-out vs failed), and here the wrong one is the reassuring one.
+        #
+        # So: write NOTHING. Absent already has a meaning — NOT YET REFRESHED — and that is exactly
+        # what a failed fetch leaves behind. `refresh_dossier` then sees no change and reports the
+        # name as unmoved, which is honest; re-running when EDGAR answers writes the block.
+        if not cik:
+            return out
+        try:
+            facts = EdgarClient.from_config().companyfacts(cik)
+        except (HttpError, KeyError, ValueError):   # `_companyfacts_or_none`'s own exception set
+            return out
         out["capital_allocation"] = json.loads(
             build_capital_allocation(facts).model_dump_json())
         return out
