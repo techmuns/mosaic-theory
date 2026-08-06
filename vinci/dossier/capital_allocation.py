@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from vinci.dossier.schemas import CapitalAllocation, Sourced
+from vinci.dossier.schemas import CapitalAllocation, Sourced, SourceStatus
 from vinci.edgar.concepts import ConceptPoint, latest_instant, points_for_tag
 
 _USD_M = 1_000_000.0
@@ -224,11 +224,51 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
             note=f"no {BUYBACK_AVG_PRICE[0]} and {why}, so an average would be imputed rather "
                  f"than computed — refused (EDGAR XBRL companyfacts)")
 
+    # DOES THE BUYBACK PAIR NAME ONE WINDOW? Cash and shares are separate facts with separate
+    # latest periods — EPAM states cash over **89 days** and shares over **364** — and printed
+    # adjacent they invite exactly the division the average-price guard already refuses. The three
+    # buyback lines must agree about their window or say they do not, on all three of them.
+    if (cash_pt is not None and shares_pt is not None
+            and (cash_pt[0].period_start != shares_pt[0].period_start
+                 or cash_pt[0].period_end != shares_pt[0].period_end)):
+        pair = (f" PERIOD MISMATCH — cash covers {_span(cash_pt[0])} and the share count covers "
+                f"{_span(shares_pt[0])}; they are not one window and must not be divided into "
+                f"each other")
+        cash = cash.model_copy(update={"note": (cash.note or "") + pair})
+        shares = shares.model_copy(update={"note": (shares.note or "") + pair})
+
+    # A CHARGE OLDER THAN THE BALANCE IT SITS BESIDE IS NOT A MEASUREMENT OF THIS PERIOD, and the
+    # render cannot tell without help: EPAM's goodwill impairment is $0.7M from **FY2022** against
+    # a balance as at **2026-03-31**, which printed beside SMPL's live 272-day charge read as the
+    # same kind of fact. The staleness IS the finding — EPAM has never written down $1.59bn — so it
+    # is flagged HERE, where both dates are structured, rather than reconstructed from a
+    # `source_ref` string in the renderer (the divergent-string-parse class).
+    bal = _pick(facts, GOODWILL, kind="instant") or _pick(facts, INTANGIBLES, kind="instant")
+    impairments = {}
+    for name, tags in (("goodwill_impairment", GOODWILL_IMPAIRMENT),
+                       ("intangible_impairment", INTANGIBLE_IMPAIRMENT)):
+        f = _money(facts, tags, name.replace("_", " "))
+        got = _pick(facts, tags, kind="flow")
+        # TRAILING TWELVE MONTHS, not a calendar-year comparison. The first cut asked whether the
+        # charge's year was LESS than the balance's, which is too blunt by exactly the amount that
+        # matters: IT's $150.0M FY2025 charge ends 2025-12-31 against a 2026-06-30 balance — six
+        # months apart, different years — and was suppressed off the page as "none in the current
+        # period". EPAM's is FOUR YEARS old. A charge inside the balance's trailing year is a
+        # current fact; one outside it is not.
+        if (f.status is SourceStatus.PRESENT and got is not None and bal is not None
+                and (bal[0].period_end - got[0].period_end).days > 366):
+            years = (bal[0].period_end - got[0].period_end).days / 365.25
+            f = f.model_copy(update={"note": (
+                f"STALE — the last such charge covers {_span(got[0])}, {years:.1f} years before "
+                f"the balance beside it ({_span(bal[0])}), so it measures no current period. "
+                f"Nothing has been written down since")})
+        impairments[name] = f
+
     return CapitalAllocation(
         goodwill=_money(facts, GOODWILL, "goodwill balance", kind="instant"),
         intangibles=_money(facts, INTANGIBLES, "intangible-asset balance", kind="instant"),
-        goodwill_impairment=_money(facts, GOODWILL_IMPAIRMENT, "goodwill impairment"),
-        intangible_impairment=_money(facts, INTANGIBLE_IMPAIRMENT, "intangible impairment"),
+        goodwill_impairment=impairments["goodwill_impairment"],
+        intangible_impairment=impairments["intangible_impairment"],
         buyback_cash=cash,
         buyback_shares=shares,
         buyback_avg_price=avg,

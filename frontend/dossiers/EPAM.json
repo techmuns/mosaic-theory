@@ -4483,6 +4483,62 @@
       },
       "maturity_event": null
     },
+    "capital_allocation": {
+      "goodwill": {
+        "value": 1204.577,
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-03-31)",
+        "status": "present",
+        "note": null
+      },
+      "intangibles": {
+        "value": 385.728,
+        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-03-31)",
+        "status": "present",
+        "note": null
+      },
+      "goodwill_impairment": {
+        "value": 0.686,
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2022-01-01→2022-12-31, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "intangible_impairment": {
+        "value": 0.0,
+        "source_ref": "EDGAR companyfacts ImpairmentOfIntangibleAssetsFinitelived (2013-01-01→2013-12-31, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_cash": {
+        "value": 323.98,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-03-31, 89d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_shares": {
+        "value": 3538000.0,
+        "source_ref": "EDGAR companyfacts TreasuryStockSharesAcquired (2025-01-01→2025-12-31, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_avg_price": {
+        "value": 283.69,
+        "source_ref": "EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2023-01-01→2023-03-31, 89d)",
+        "status": "present",
+        "note": "fiscal-period average across every repurchase in the period — NOT a purchase price and not evidence of timing; a period spanning a large price move averages opposite decisions into one number PERIOD MISMATCH — this average covers 2023-01-01→2023-03-31, 89d while the repurchase cash beside it covers 2026-01-01→2026-03-31, 89d; they are not two views of one window and must not be divided into each other"
+      },
+      "acquisition_consideration": {
+        "value": 912.158,
+        "source_ref": "EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2024-01-01→2024-12-31, 365d)",
+        "status": "present",
+        "note": null
+      },
+      "brand_split": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      }
+    },
     "financial_summary": {
       "annual": {
         "value": {

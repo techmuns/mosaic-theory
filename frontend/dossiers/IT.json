@@ -4490,6 +4490,62 @@
       },
       "maturity_event": null
     },
+    "capital_allocation": {
+      "goodwill": {
+        "value": 2738.631,
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-06-30)",
+        "status": "present",
+        "note": null
+      },
+      "intangibles": {
+        "value": 294.434,
+        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)",
+        "status": "present",
+        "note": null
+      },
+      "goodwill_impairment": {
+        "value": 150.0,
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2025-01-01→2025-12-31, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "intangible_impairment": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no intangible impairment under any of ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — EDGAR XBRL companyfacts"
+      },
+      "buyback_cash": {
+        "value": 1081.754,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_shares": {
+        "value": 6940428.0,
+        "source_ref": "EDGAR companyfacts TreasuryStockSharesAcquired (2026-01-01→2026-06-30, 180d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_avg_price": {
+        "value": 155.8627,
+        "source_ref": "DERIVED: EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d) ÷ EDGAR companyfacts TreasuryStockSharesAcquired (2026-01-01→2026-06-30, 180d)",
+        "status": "present",
+        "note": "fiscal-period average across every repurchase in the period — NOT a purchase price and not evidence of timing; a period spanning a large price move averages opposite decisions into one number. DERIVED as cash ÷ shares — the filer states no TreasuryStockAcquiredAverageCostPerShare; both legs verified on 2026-01-01→2026-06-30, 180d"
+      },
+      "acquisition_consideration": {
+        "value": 3653.028,
+        "source_ref": "EDGAR companyfacts BusinessCombinationConsiderationTransferred1 (2017-01-01→2017-12-31, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "brand_split": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      }
+    },
     "financial_summary": {
       "annual": {
         "value": {
