@@ -72,6 +72,33 @@ def test_an_acquisition_is_the_largest_positive_never_the_latest_residual() -> N
         assert v is None or v > 0, f"{t}: negative acquisition consideration {v}"
 
 
+def test_the_acquisition_is_the_largest_across_the_whole_family_not_the_first_tag() -> None:
+    """THE ONE KIND WHERE PREFERENCE ORDER IS THE WRONG RULE, caught on a name about to be
+    underwritten for being acquisitive.
+
+    Preference-first took the first tag carrying ANY data. EPAM states a **$7.0M**
+    `BusinessCombinationConsiderationTransferred1` from **2017** and a **$912.2M**
+    `PaymentsToAcquireBusinessesNetOfCashAcquired` from **2024** — so the block reported $7.0M, a
+    **130x understatement** of acquisition spend. "What did they pay" is a question about the whole
+    family; the tags are different definitions, which is why the winner is NAMED rather than
+    blended."""
+    ca = build_capital_allocation(_facts("EPAM"))
+    assert ca.acquisition_consideration.value == pytest.approx(912.2, rel=1e-3), (
+        f"EPAM's acquisition spend reads {ca.acquisition_consideration.value} — preference-first "
+        "picks the 2017 $7.0M tag over the 2024 $912.2M one")
+    # the property, over the corpus: no tag in the family holds a LARGER positive than the reported
+    from vinci.edgar.concepts import points_for_tag
+    for t in _names():
+        facts, got = _facts(t), build_capital_allocation(_facts(t)).acquisition_consideration
+        biggest = max((p.value for tag in ACQUISITION for p in points_for_tag(facts, tag)
+                       if p.value and p.value > 0), default=None)
+        if biggest is None:
+            assert got.value is None, f"{t}: reported {got.value} with no positive point anywhere"
+        else:
+            assert got.value == pytest.approx(biggest / 1e6, rel=1e-6), (
+                f"{t}: reported {got.value} but the family holds {biggest / 1e6}")
+
+
 def test_the_average_price_is_labelled_a_period_average_not_a_purchase_price() -> None:
     """SMPL's $18.29 spans a stock that fell from roughly $30 to $11. Buying at $30 in September
     and $12 in June are OPPOSITE judgements and one number hides both, so the caveat travels ON the

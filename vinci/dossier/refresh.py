@@ -397,6 +397,45 @@ def ev_gap_transform(ticker: str) -> Transform:
     return _apply
 
 
+def capital_allocation_transform(cik: str | None) -> Transform:
+    """A `refresh_dossier` transform writing `mech.capital_allocation` from EDGAR companyfacts.
+
+    WHY A TRANSFORM AND NOT A RE-ASSEMBLY. The block is DETERMINISTIC — one EDGAR read, no LLM —
+    while a full re-assembly also rerolls the synthesis. That is not a neutral cost: EPAM sits
+    **0.4% from the 2:1 bar** (base $186.76, bear $74.06 → clears at $111.63 against a $112.06
+    spot) and has already been rolled twice this week. Spending a variance event to land a
+    deterministic block is paying the wrong price, and `refresh_dossier` exists precisely so a
+    number can move under a KEPT synthesis.
+
+    The `ev_gap_transform` precedent settles the shape question: a transform may read from OUTSIDE
+    the stored JSON — that one opens CIQ workbooks off disk. This one calls EDGAR.
+
+    ALWAYS WRITES, the `ev_gap_transform` rule rather than `consensus_transform`'s: every field of
+    the block degrades to UNKNOWN-with-a-reason, so a written block always says something, and the
+    absent/`None` state keeps its distinct meaning of NOT YET REFRESHED.
+
+    NO REFUSAL RISK BY CONSTRUCTION: the block is a new key, so no committed synthesis can cite a
+    figure it moves — `moved_cited_claims` has nothing to find. That is a property of it being
+    additive, not a licence for the next transform.
+    """
+    from vinci.dossier.capital_allocation import build_capital_allocation
+    from vinci.edgar.client import EdgarClient
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        facts: dict[str, Any] = {}
+        if cik:
+            try:
+                facts = EdgarClient.from_config().companyfacts(cik)
+            except Exception:  # noqa: BLE001 — a fetch failure yields a STATED block, never a crash
+                facts = {}
+        out["capital_allocation"] = json.loads(
+            build_capital_allocation(facts).model_dump_json())
+        return out
+
+    return _apply
+
+
 def _base_leg(ticker: str) -> dict[str, Any] | None:
     """The `base` scenario leg plus the facts the decomposition needs, or None.
 
