@@ -282,6 +282,15 @@ class Store:
             for r in rows
         ]
 
+    def price_frontier(self) -> date | None:
+        """The newest bar date in the store, across every name — or None when there are no bars.
+
+        The last moment the price data actually REACHES. Used as an as-of of last resort, where the
+        alternative would be a wall-clock date that the data does not support.
+        """
+        row = self._conn.execute("SELECT MAX(bar_date) AS d FROM prices").fetchone()
+        return date.fromisoformat(row["d"]) if row and row["d"] else None
+
     def latest_close(
         self, internal_id: str, *, reference_date: date, staleness_days: int
     ) -> DataField[float]:
