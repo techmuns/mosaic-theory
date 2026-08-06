@@ -218,7 +218,7 @@ def test_a_failed_fetch_leaves_the_block_absent_not_a_block_of_stated_absences()
 
     class _Boom:
         @staticmethod
-        def from_config() -> "_Boom":
+        def from_config() -> _Boom:
             return _Boom()
 
         def companyfacts(self, cik: str) -> dict:
