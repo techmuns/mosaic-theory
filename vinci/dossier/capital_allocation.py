@@ -90,13 +90,26 @@ def _pick(facts: dict[str, Any], tags: tuple[str, ...], *,
       matters: SMPL carries **+280.4 (FY2024) and −280.4 (FY2025 restating the same period_end)**,
       so magnitude alone would coin-flip between an acquisition and its reversal.
     """
+    if kind == "largest":
+        # FAMILY-WIDE, NOT PREFERENCE-FIRST — the one kind where the ORDER is the wrong rule.
+        # "What did they pay" is a question about the whole family: EPAM states a $7.0M
+        # `…ConsiderationTransferred1` from **2017** and a $912.2M `PaymentsToAcquireBusinesses…`
+        # from **2024**, and taking the first tag with any data returned the 2017 figure — a 130x
+        # understatement of acquisition spend on a name underwritten for being acquisitive. The
+        # tags are different definitions (total consideration vs cash net of cash acquired), which
+        # is exactly why the winner is NAMED in the source_ref rather than blended.
+        best: tuple[ConceptPoint, str] | None = None
+        for tag in tags:
+            for x in points_for_tag(facts, tag):
+                if x.value is None or x.value <= 0:
+                    continue
+                if best is None or (x.value, x.period_end) > (best[0].value, best[0].period_end):
+                    best = (x, tag)
+        return best
     for tag in tags:
         pts = [x for x in points_for_tag(facts, tag) if x.value is not None]
         if kind == "instant":
             p = latest_instant([x for x in pts if x.is_instant])
-        elif kind == "largest":
-            pos = [x for x in pts if x.value > 0]
-            p = max(pos, key=lambda x: (x.value, x.period_end)) if pos else None
         else:
             flows = [x for x in pts if not x.is_instant and x.period_start is not None]
             end = max((x.period_end for x in flows), default=None)

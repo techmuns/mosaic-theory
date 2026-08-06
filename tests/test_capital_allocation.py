@@ -72,6 +72,33 @@ def test_an_acquisition_is_the_largest_positive_never_the_latest_residual() -> N
         assert v is None or v > 0, f"{t}: negative acquisition consideration {v}"
 
 
+def test_the_acquisition_is_the_largest_across_the_whole_family_not_the_first_tag() -> None:
+    """THE ONE KIND WHERE PREFERENCE ORDER IS THE WRONG RULE, caught on a name about to be
+    underwritten for being acquisitive.
+
+    Preference-first took the first tag carrying ANY data. EPAM states a **$7.0M**
+    `BusinessCombinationConsiderationTransferred1` from **2017** and a **$912.2M**
+    `PaymentsToAcquireBusinessesNetOfCashAcquired` from **2024** — so the block reported $7.0M, a
+    **130x understatement** of acquisition spend. "What did they pay" is a question about the whole
+    family; the tags are different definitions, which is why the winner is NAMED rather than
+    blended."""
+    ca = build_capital_allocation(_facts("EPAM"))
+    assert ca.acquisition_consideration.value == pytest.approx(912.2, rel=1e-3), (
+        f"EPAM's acquisition spend reads {ca.acquisition_consideration.value} — preference-first "
+        "picks the 2017 $7.0M tag over the 2024 $912.2M one")
+    # the property, over the corpus: no tag in the family holds a LARGER positive than the reported
+    from vinci.edgar.concepts import points_for_tag
+    for t in _names():
+        facts, got = _facts(t), build_capital_allocation(_facts(t)).acquisition_consideration
+        biggest = max((p.value for tag in ACQUISITION for p in points_for_tag(facts, tag)
+                       if p.value and p.value > 0), default=None)
+        if biggest is None:
+            assert got.value is None, f"{t}: reported {got.value} with no positive point anywhere"
+        else:
+            assert got.value == pytest.approx(biggest / 1e6, rel=1e-6), (
+                f"{t}: reported {got.value} but the family holds {biggest / 1e6}")
+
+
 def test_the_average_price_is_labelled_a_period_average_not_a_purchase_price() -> None:
     """SMPL's $18.29 spans a stock that fell from roughly $30 to $11. Buying at $30 in September
     and $12 in June are OPPOSITE judgements and one number hides both, so the caveat travels ON the
@@ -175,3 +202,39 @@ def test_an_empty_facts_dict_yields_a_fully_stated_block_not_a_crash() -> None:
     for name, f in ca:
         assert f.value is None and f.note, name
     assert BUYBACK_AVG_PRICE[0] in (ca.buyback_avg_price.note or "")
+
+
+def test_a_failed_fetch_leaves_the_block_absent_not_a_block_of_stated_absences() -> None:
+    """A FETCH FAILURE IS NOT AN EMPTY FILING, and the first cut made them identical.
+
+    On an EDGAR error the transform collapsed to `{}`, so every field wrote "no goodwill balance
+    under Goodwill — EDGAR XBRL companyfacts": a sentence stating the FILER reports none, when the
+    truth is WE could not reach EDGAR. Two opposite facts in one sentence — `unstated` vs
+    `disagrees`, grown-out vs failed — and here the wrong reading is the reassuring one.
+
+    ABSENT already means NOT YET REFRESHED, which is exactly what a failed fetch leaves behind."""
+    import vinci.dossier.refresh as rf
+    from vinci.netcache import HttpError
+
+    class _Boom:
+        @staticmethod
+        def from_config() -> _Boom:
+            return _Boom()
+
+        def companyfacts(self, cik: str) -> dict:
+            raise HttpError("EDGAR unreachable")
+
+    import vinci.edgar.client as ec
+    real = ec.EdgarClient
+    ec.EdgarClient = _Boom  # type: ignore[misc,assignment]
+    try:
+        out = rf.capital_allocation_transform("0001702744")({"stock_info": {"x": 1}})
+    finally:
+        ec.EdgarClient = real  # type: ignore[misc]
+    assert "capital_allocation" not in out, (
+        "a failed fetch wrote a block of stated absences — indistinguishable from a filer that "
+        "genuinely reports none")
+    assert out == {"stock_info": {"x": 1}}, "the transform mutated something else on failure"
+
+    # …and a name with NO cik is the same case, not a filing full of nothing
+    assert "capital_allocation" not in rf.capital_allocation_transform(None)({})
