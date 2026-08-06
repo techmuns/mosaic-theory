@@ -4127,27 +4127,12 @@ CITES ITS SYNTHESIS — a re-roll would orphan those citations against bear poin
 exist. It gets fresh data at the October print regardless.
 
 **WHAT THE SPLIT BINDS.** Cross-sectional work — anything comparing names against each other on a
-price-derived field — needs a common as-of it does not have. A second computed gap is required
-first; until then, assume nothing about a shared date.
+price-derived field (`stock_info.price`, drawdown, `rel_ret_vs_market`, any ratio struck against
+spot) — would be comparing two vintages **three weeks apart**. **Read each dossier's
+`reference_date`; never assume a shared one.** Facts sourced from EDGAR or a CIQ panel carry their
+own stamps and are unaffected — this binds the PRICE-DERIVED fields only.
 
 **OPERATOR ACTIONS — RECORDED 2026-08-04, arising from the SMPL re-assembly (see §2).**
-
-**O4 — SETTLED, NOT PENDING: WERN FAILS ON ITS OWN NUMBERS AND A HORIZON CHANGES NOTHING
-(recorded 2026-08-06).** WERN has been carried as "failing without a horizon", which reads as an
-underwrite awaiting one field. It is not. Measured on the committed record at spot $46.04:
-
-    legs   bear 16.59 · base 35.71 · bull 48.85
-    reward -10.33   risk 29.45   ratio -0.3509   bar 2.0   FAIL
-
-**THE REWARD IS NEGATIVE — the base case sits $10.33 BELOW spot.** The name is worth less on its
-own underwrite than the market pays. So the missing horizon is not what fails it: stating one
-would leave `ratio -0.35` against a 2.0 bar and add an IRR that is negative for the same reason.
-`gate` reads UNDEFINED only because `irr_undefined` is contagious, which makes the record LOOK
-incomplete when it is decided. **No horizon is owed and none should be sought** — the ratio test
-already answered. WERN also has **no dossier** (the only underwrite record without one).
-
-**Not "pending a field" — settled AVOID on the numbers.** Recorded so it stops appearing in
-queues as unblocked work.
 
 **O1. RULING NEEDED — `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.**
 #342 marked `primary_source` in the brief; the 2026-08-04 SMPL roll shows the model reading the
@@ -4209,6 +4194,25 @@ only thing discharging clause (e) — `reconcile_cap`'s result is used solely as
 `source_ref` string, and parsing it there would be the divergent-string-parse bug class. The fix is
 to have the CIQ cap extractor expose its as-of as a structured value, then bind the label to it.
 Newly urgent because SMPL's cap-vs-spot divergence is now 9.2%, not 0.3%.
+
+**OPERATOR ACTIONS — RECORDED 2026-08-06, arising from the rank re-run and the EPAM/IT re-assemblies.**
+
+**O4 — SETTLED, NOT PENDING: WERN FAILS ON ITS OWN NUMBERS AND A HORIZON CHANGES NOTHING
+(recorded 2026-08-06).** WERN has been carried as "failing without a horizon", which reads as an
+underwrite awaiting one field. It is not. Measured on the committed record at spot $46.04:
+
+    legs   bear 16.59 · base 35.71 · bull 48.85
+    reward -10.33   risk 29.45   ratio -0.3509   bar 2.0   FAIL
+
+**THE REWARD IS NEGATIVE — the base case sits $10.33 BELOW spot.** The name is worth less on its
+own underwrite than the market pays. So the missing horizon is not what fails it: stating one
+would leave `ratio -0.35` against a 2.0 bar and add an IRR that is negative for the same reason.
+`gate` reads UNDEFINED only because `irr_undefined` is contagious, which makes the record LOOK
+incomplete when it is decided. **No horizon is owed and none should be sought** — the ratio test
+already answered. WERN also has **no dossier** (the only underwrite record without one).
+
+**Not "pending a field" — settled AVOID on the numbers.** Recorded so it stops appearing in
+queues as unblocked work.
 
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
