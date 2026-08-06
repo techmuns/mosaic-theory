@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+from datetime import date as dt_date
 
 import pytest
 
@@ -151,11 +152,50 @@ def test_a_row_without_a_screen_run_takes_the_fleet_date_not_the_clock() -> None
     import datetime as dt
 
     fleet = asm._fleet_reference_date(_cfg())
-    assert asm._ref_of({}, fallback=fleet) == fleet
-    assert asm._ref_of({}, fallback=fleet) != dt.date.today() or fleet == dt.date.today()
+    assert asm._ref_of({}, fallback=lambda: fleet) == fleet
+    assert asm._ref_of({}, fallback=lambda: fleet) != dt.date.today() or fleet == dt.date.today()
     # a row that HAS a screen run still wins — the fallback must not override real provenance
     assert asm._ref_of({"screen_run_at": "2026-07-06T00:00:00"},
-                       fallback=fleet) == dt.date(2026, 7, 6)
+                       fallback=lambda: fleet) == dt.date(2026, 7, 6)
+
+
+def test_the_fallback_is_not_computed_when_it_is_not_used() -> None:
+    """LAZY, and the reason is correctness before cost.
+
+    The first cut passed the fallback by VALUE, so Python evaluated it on every row: measured at
+    275 calls for 0 uses, because every queue row carries a `screen_run_at`. The wasted work was
+    the smaller half — `_fleet_reference_date` RAISES on a store with no manifest and no bars, so
+    an eager argument made that raise reachable from rows that never needed the fallback. A
+    fallback's failure mode must not be able to break the path that does not take it.
+
+    Pinned by making the fallback EXPLODE: if it is evaluated when a row has a screen_run_at, this
+    test fails with that explosion rather than a subtle count mismatch."""
+    def boom() -> object:
+        raise AssertionError(
+            "the fallback was evaluated for a row that carries its own screen_run_at — it is being "
+            "passed by value, so a raising fallback can break rows that never use it")
+
+    assert asm._ref_of({"screen_run_at": "2026-07-06T00:00:00"},
+                       fallback=boom) == dt_date(2026, 7, 6)   # type: ignore[arg-type]
+
+    # …and a real end-to-end count over the whole queue, so this cannot pass on a one-row fluke
+    calls = 0
+    real = asm._fleet_reference_date
+
+    def counted(cfg: object) -> object:
+        nonlocal calls
+        calls += 1
+        return real(cfg)                                        # type: ignore[arg-type]
+
+    asm._fleet_reference_date = counted                         # type: ignore[assignment]
+    try:
+        fins = asm.load_finalists(_cfg(), top=None)
+    finally:
+        asm._fleet_reference_date = real                        # type: ignore[assignment]
+    maintained = sum(1 for f in fins if f.record is None)
+    assert calls <= maintained, (
+        f"_fleet_reference_date ran {calls} times for {maintained} name(s) that could need it — "
+        "the fallback is being computed for rows that already carry a screen_run_at")
 
 
 def test_an_unmaintained_name_is_still_refused() -> None:

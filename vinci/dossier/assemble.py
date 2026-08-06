@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -92,16 +93,23 @@ class Finalist:
         return self.standalone
 
 
-def _ref_of(row: dict[str, Any], *, fallback: date) -> date:
-    """The row's screen-run date, or ``fallback`` when it has none.
+def _ref_of(row: dict[str, Any], *, fallback: Callable[[], date]) -> date:
+    """The row's screen-run date, or ``fallback()`` when it has none.
 
     **NO DEFAULT, deliberately** — the `panel_age(kind=…)` precedent. The fallback used to be
     ``date.today()`` and that is the bug this signature exists to make unrepeatable: a maintained
     name loses its queue row, silently takes a WALL-CLOCK stamp, and the same inputs then produce a
     different dossier every day. Every caller now names what it falls back to.
+
+    **A CALLABLE, so the fallback is not COMPUTED when it is not USED.** Passing the value meant
+    Python evaluated it eagerly on every row — measured at 275 calls for 0 uses, since every queue
+    row carries a `screen_run_at`. Cost was the smaller half: `_fleet_reference_date` RAISES on a
+    store with no manifest and no bars, so an eager argument made that raise reachable from rows
+    that never needed the fallback at all. A fallback's failure mode must not be able to break the
+    path that does not take it.
     """
     sra = row.get("screen_run_at")
-    return date.fromisoformat(str(sra)[:10]) if sra else fallback
+    return date.fromisoformat(str(sra)[:10]) if sra else fallback()
 
 
 def _fleet_reference_date(cfg: Config) -> date:
@@ -118,11 +126,14 @@ def _fleet_reference_date(cfg: Config) -> date:
     store's last bar. Both name a moment the data reaches. If neither exists there is no honest
     answer and this raises; it never guesses.
     """
-    manifests = sorted((cfg.snapshots_dir / "screen_runs").glob("*.manifest.json"), reverse=True)
-    for path in manifests:
-        ref = json.loads(path.read_text()).get("reference_date")
-        if ref:
-            return date.fromisoformat(str(ref)[:10])
+    # THE LATEST reference_date, not the last FILENAME. Run ids sort lexicographically and today
+    # that happens to agree, but a re-run of an older date files a newer name — and "the fleet's
+    # as-of" is a property of the DATE the run judged, never of when its file was written.
+    stamped = [date.fromisoformat(str(ref)[:10])
+               for path in (cfg.snapshots_dir / "screen_runs").glob("*.manifest.json")
+               if (ref := json.loads(path.read_text()).get("reference_date"))]
+    if stamped:
+        return max(stamped)
     with Store(cfg.db_path) as store:
         frontier = store.price_frontier()
     if frontier is not None:
@@ -233,7 +244,7 @@ def _finalist(
     assembled while `--top 20` silently dropped IT at rank 5 — the name the path exists for. A
     half-fix is worse than the symmetric failure it replaced, because it looks like it works.
     """
-    ref = _ref_of(row or {}, fallback=_fleet_reference_date(cfg))
+    ref = _ref_of(row or {}, fallback=lambda: _fleet_reference_date(cfg))
     rank = int(row["rank"]) if row and row.get("rank") is not None else None
     cap = _cap_of(row) if row else None
     if rec is not None:
