@@ -427,6 +427,12 @@ _CLASSIFIED_PANEL_KEYS = {
     # TEV; both are OURS to re-pull, so both gate.
     "stock_info.as_of": "export",
     "valuation.implied_expectations.tev_as_of": "export",
+    # FOUND BY THIS GUARD ON EPAM's 2026-08-05 re-assembly — the FIRST committed dossier to carry
+    # it, so the guard fired the moment O3's structured cap as-of reached an artifact rather than
+    # after a fleet had quietly adopted the gating default. Same panel and same nature as its
+    # sibling `stock_info.as_of` two lines up: a market cap is EOD × XBRL shares, ours to re-export
+    # and never the street's to revise, so it GATES. Not added to CONSENSUS_PANELS.
+    "stock_info.market_cap_as_of": "export",
 }
 
 
