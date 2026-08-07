@@ -88,19 +88,52 @@ def test_cnxc_has_exactly_the_two_forward_years_the_adjacent_check_needs() -> No
         assert route_for(_cell("CNXC", "EBITDA", fy))[0] == Route.FULL
 
 
+#: Committed names that carry NO EBITDA consensus block, so routing has nothing to decide on. Each
+#: entry is a STATED exemption, never a tolerated gap: the pin below refuses any name that is not
+#: listed here, so a name silently losing its consensus extraction reds on the next run.
+#:
+#: FUBO: no EBITDA line in `consensus_levels` (Revenue only) — the street does not publish an EBITDA
+#: consensus for it, which is a property of the coverage, not of our extraction.
+UNROUTED_BY_DESIGN = frozenset({"FUBO"})
+
+
 def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
-    """ALL ELEVEN, on real data — routing needs no scenario record, which is why it is separable."""
-    got = {}
+    """THE WHOLE COMMITTED FLEET, on real data — routing needs no scenario record, which is why it
+    is separable.
+
+    THE MEMBERSHIP IS DERIVED, NOT COUNTED. This asserted `len(got) == 10`, which reds on a name
+    ARRIVING just as loudly as on a name silently losing its EBITDA consensus — the two failures
+    that must not look alike. It is the same defect the freshness pin one file over already named
+    and fixed for `age_fail`: "a hardcoded set would red on a WIN and read as a regression."
+    Growing the fleet is the intended direction of travel (out-of-band names the fund FOLLOWS
+    assemble into this same directory), so a count makes every addition look like a break.
+
+    What the count was really guarding is kept and sharpened: every committed name must route
+    UNLESS it is a stated exemption. That reds on the actual regression — a name dropping out of
+    coverage — while an arriving name that routes normally is silent.
+    """
+    got, unrouted = {}, set()
     for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         lv = (json.loads(f.read_text())["mechanical"]["consensus_context"] or {}).get(
             "consensus_levels")
         if not lv or "EBITDA" not in lv:
+            unrouted.add(f.parent.name)
             continue
         got[f.parent.name] = route_for(lv["EBITDA"][0])[0]
     assert got["VITL"] == Route.TWO_RATIO
     assert got["MVST"] == Route.PRICE_IMPLIED_ONLY
     assert got["SMPL"] == Route.FULL
-    assert len(got) == 10, f"expected the ten refreshed names, got {sorted(got)}"
+    assert unrouted <= UNROUTED_BY_DESIGN, (
+        f"{sorted(unrouted - UNROUTED_BY_DESIGN)} carry no EBITDA consensus block and are not "
+        f"stated exemptions — either the consensus extraction stopped resolving for them, or the "
+        f"street genuinely does not cover them and they belong in UNROUTED_BY_DESIGN with a reason")
+    # DELIBERATELY ONE-DIRECTIONAL — the converse was written, then removed. Asserting
+    # `UNROUTED_BY_DESIGN <= unrouted` too would make this an EQUALITY, so FUBO gaining EBITDA
+    # coverage (a WIN — the street starting to cover it) would red the suite and read as a
+    # regression. That is precisely the failure mode this pin was rewritten to remove, and catching
+    # a stale exemption is not worth re-introducing it. A stale entry is also self-limiting: it can
+    # only ever mask a future regression in the ONE name it names.
+    assert got, "no committed name routed — the corpus this runs on has gone empty"
 
 
 def test_smpl_is_multiple_dominant_from_the_ratios_alone() -> None:
