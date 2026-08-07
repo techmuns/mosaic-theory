@@ -10387,6 +10387,26 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
      ("Land the capital-allocation block without rerolling a synthesis"). The flags stay on the
      page for the human to read.
 
+   **TWO OPERATOR OBSERVATIONS ON THE COMMITTED PAGE, both real, both fixed (2026-08-07, PR #369).**
+   - **SPY had 4 bars, so every market-relative leg on a LARGE-cap page read UNKNOWN.** The band is
+     $300M–$10B, so `benchmark_for_cap` had only ever been asked for IWM/MDY (1278 bars each); SPY
+     accumulated 4 bars from monthly scoring upserts and was never backfilled. UBER is the FIRST
+     name to need it — a gap the band's own shape hid until a followed large-cap arrived. Backfilled
+     2021-07-01..2026-08-04 (1252 bars); the page now reads **market (SPY) 180d +5.4%, vs market
+     −16.5%**, where it read UNKNOWN before. **The machinery behaved correctly throughout**: the
+     field failed loud, named itself, and printed its own remedy ("run `vinci refresh SPY`"), and
+     the synthesis said the drawdown could not be split idiosyncratic-vs-shared. No guard is owed —
+     it already worked. **STANDING: a followed name above $25B needs SPY history; above $4B needs
+     MDY.** Both are one `refresh --aggs` and neither is committed (bars are git-ignored).
+   - **A followed name STOPPED STATING WHY once its dossier existed** — `_maintenance_reason` tested
+     the dossier key first, so the reason printed on the first assembly and never again; the caveat
+     degraded to "assembled because the name carries a committed dossier", which explains nothing.
+     Reordered, and the old pin REVERSED (see §2). The stability the old order claimed is kept in a
+     separate pin: dropping a follow entry still leaves the name maintained by its dossier.
+   - **`rel_ret_vs_market` is NOT a dossier field** — searched, absent from all 12 committed
+     artifacts. The surfaced values are `Market (SPY) 180d` / `vs market (180d)`, rendered from the
+     mechanical layer's cap-band benchmark. Recorded so the next search for it stops faster.
+
 2. **`scenario-propose` must stop crashing before any followed name can be underwritten.** See §2
    — `propose.py:517` raises `KeyError: ('margin', 'base')` on any name whose R1 anchor is
    inapplicable; **NCNO (underwritten) crashes identically**, so this is live today and not a
