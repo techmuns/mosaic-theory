@@ -252,16 +252,30 @@ def _maintenance_reason(cfg: Config, ticker: str) -> str | None:
     The third key extends the same sentence to its other half: a name the fund has chosen to FOLLOW
     is covered by "what we may hold or follow" just as a held one is, and it is the only key that
     can admit a name with no prior work behind it (see ``_follow_reason``).
+
+    THE FOLLOW KEY IS TESTED FIRST, AND THE ORDER WAS WRONG IN #365. The dossier key ran first, so
+    a followed name printed its stated reason on the FIRST assembly and then lost it on every one
+    after — the moment the artifact existed, the caveat degraded to "assembled because the name
+    carries a committed dossier", which explains nothing: it says the fund covers UBER because the
+    fund has a page on UBER. The operator's judgement about why a $139bn name sits outside a
+    $300M–$10B band simply stopped being printed. Found by re-assembling UBER once.
+
+    The original ordering was defended as stability — "deleting a follow entry never changes the
+    maintenance answer" — and that argument does not survive contact: BOTH keys return non-None, so
+    the order never decides whether the name is maintained, only which reason is stated. Removing a
+    follow entry still leaves the name maintained by its dossier; it just falls back to the weaker
+    sentence. So this ordering is strictly better — same decision, more informative answer — and
+    the most specific true reason wins, which is the rule everywhere else on the page.
     """
-    if (cfg.data_dir / "dossiers" / ticker / "dossier.json").exists():
-        return "a committed dossier"
-    if _read_scenario_card(ticker) is not None:
-        return "an open underwrite record"
     if (why := _follow_reason(cfg, ticker)) is not None:
         # `_finalist` renders "…carries {reason}. The cap band decides…", so a reason written as a
         # full sentence lands a doubled period in the caveat the human reads. Normalised HERE and
         # not in `_follow_reason`, which stays verbatim — the operator's text is source-bound.
         return f"an operator follow decision — {why.rstrip(' .')}"
+    if (cfg.data_dir / "dossiers" / ticker / "dossier.json").exists():
+        return "a committed dossier"
+    if _read_scenario_card(ticker) is not None:
+        return "an open underwrite record"
     return None
 
 
