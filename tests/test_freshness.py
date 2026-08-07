@@ -183,23 +183,32 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     without a per-name table showing where it fires, where it does not, and that not-firing is
     correct on each).
 
-    FIRES — BRBR 74d, MVST 56d, CNXC 53d, VRRM 48d: comps older than the ceiling, driving peer
-    multiples and
-    the cross-sectional leg. CNXC is the reason the ceiling is 45 and not 60: it was cleared under
-    16c this week on comps 49 days old.
-    QUIET — the other seven: ordinary drift, which is a RENDERING obligation (clause (e)), not a
-    build stop. Failing on drift would fail 11 of 11, which is a freeze wearing a guard's name.
-    FUBO fails on the SHARE BASIS rather than the age — its 45d lands exactly ON the ceiling and
-    passes it (`> 45`, not `>=`).
+    FIRES — the AGE leg currently refuses NOBODY. It once held BRBR 74d, MVST 56d, CNXC 53d and
+    VRRM 48d; every one cleared when the comps re-exports landed, which is the gate reporting a WIN.
+    The docstring said otherwise long after it stopped being true, so it is now written as what the
+    assertions actually check rather than as a name list that ages out of correctness: the ceiling
+    is 45 (CNXC is why it is not 60 — cleared under 16c on comps 49 days old), and `age_fail` must
+    equal the computed over-ceiling set whatever that set happens to be.
+    FIRES — the BASIS leg refuses FUBO, on the share basis rather than the age; its 45d lands
+    exactly ON the ceiling and passes it (`> 45`, not `>=`).
+    QUIET — everyone else: ordinary drift, which is a RENDERING obligation (clause (e)), not a
+    build stop. Failing on drift would fail the whole fleet, which is a freeze wearing a guard's
+    name.
+
+    NO SET IN HERE IS PINNED BY NAME any more — see the comments at each assertion. The fleet is
+    meant to GROW (out-of-band names the fund FOLLOWS assemble into the same directory), and a
+    roster pin reds on an arriving name exactly as loudly as on a broken guard.
     """
     age_fail, basis_fail, quiet = set(), set(), set()
-    over_ceiling = set()
+    over_ceiling, basis_break = set(), set()
     for name, mech in _fleet().items():
         recon = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
                                  shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
         age = fr.panel_age(mech, _assembled(name), kind="export")
         if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
             over_ceiling.add(name)
+        if recon is not None and recon.corporate_action:
+            basis_break.add(name)
         try:
             fr.check_freshness(age, recon, ticker=name)
             quiet.add(name)
@@ -211,20 +220,34 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     # and a hardcoded set would red on a WIN and read as a regression. (It was hardcoded to
     # {BRBR, MVST, CNXC} before the 2026-07-29 re-measure; VRRM joined at 48d.)
     assert age_fail == over_ceiling, (age_fail, over_ceiling)
-    assert basis_fail == {"FUBO"}, basis_fail
+    # THE SAME TREATMENT, FINALLY APPLIED TO THE BASIS LEG. This read `basis_fail == {"FUBO"}` —
+    # a hardcoded set sitting one line under the comment explaining why hardcoded sets are wrong.
+    # It reds on a name ARRIVING exactly as loudly as on the share-basis check breaking, and the
+    # fleet is meant to grow (out-of-band names the fund FOLLOWS assemble into the same directory).
+    # `corporate_action` is the computable predicate, so the relation can be stated instead:
+    # refuse exactly the names whose shares ratio sits on a whole number...
+    #
+    # ...MINUS the ones age already refused, because `check_freshness` tests the ceiling BEFORE the
+    # share basis, so a name failing BOTH lands in `age_fail`.
+    #
+    # THAT SUBTRACTION IS CORRECT BUT VACUOUS TODAY, and saying so is the point: `over_ceiling` is
+    # currently EMPTY (every comps re-export landed), so `basis_break & over_ceiling` is empty and
+    # no corpus state can exercise the precedence. A first draft of this claimed "flip the two
+    # blocks and this equality breaks" — MEASURED, and it does not; the mutation passes. The order
+    # is pinned on constructed inputs instead, in `test_age_is_refused_before_the_share_basis`,
+    # which is where a rule the live corpus cannot reach belongs.
+    assert basis_fail == basis_break - over_ceiling, (basis_fail, basis_break, over_ceiling)
+    assert basis_fail, (
+        "NO name fails on the share basis — the corporate-action refusal has no live instance and "
+        "this test stops proving it fires. Genuinely the goal (it means every committed cap and "
+        "share count share a basis), but move the refusal to a constructed fixture before deleting "
+        "this, the way the reconciled/drifting pair below is guarded.")
     assert quiet, "no name passes both guards — a gate that stops every build is a freeze"
-    # VRRM left this set in the 2026-07-29 re-measure (48d against its own build date), and
-    # CNXC/BRBR left it earlier on panel age. **All three RETURNED on 2026-07-30** when the
-    # Estimates + Comps re-exports landed and the fleet re-assembled — which is the assertion
-    # moving with a WIN, as its own note instructed, rather than being loosened. FUBO stays out on
-    # the 11.13x share basis and MVST cannot re-assemble at all (outside the screen cohort).
-    # **MVST JOINED 2026-07-30 ON THE STALENESS SPLIT — the only name the split moves.** Its 56d
-    # was CONSENSUS age (no analyst had revised it) against 16d of export age, so the gate was
-    # refusing it for a condition no operator action clears. It still DRIFTS (+17.6% cap-vs-spot),
-    # which is a labelling obligation under clause (e) rather than a refusal, and it still cannot
-    # be re-assembled, so the change is on paper until a screen re-admits it.
-    assert quiet == {"AORT", "BRBR", "CNXC", "EPAM", "IT", "MVST", "NCNO", "SMPL", "VITL",
-                     "VRRM"}, quiet
+    # The quiet SET is no longer pinned by name. It is exactly `fleet − age_fail − basis_fail` by
+    # construction, so with both refusal sets now derived, a literal membership list adds nothing
+    # but a roster pin — and reds on every arriving name. What the list was reaching for is proved
+    # below instead: each quiet name is quiet for a STATED reason (it RECONCILES or it DRIFTS), and
+    # both buckets must stay populated. That is the invariant, and it survives the fleet growing.
     # ...and each quiet name is quiet for a STATED reason — it either RECONCILES (the end state we
     # want) or merely DRIFTS (labelled, per clause (e)). The first cut asserted every quiet name
     # drifts, carrying the note "if a name now reconciles this is a WIN, but the assertion must
@@ -285,6 +308,32 @@ def test_the_ceiling_is_a_boundary_not_a_range() -> None:
                        days=fr.MAX_PANEL_AGE_DAYS + 1)
     with pytest.raises(fr.FreshnessError, match="ceiling"):
         fr.check_freshness(over, None, ticker="X")
+
+
+def test_age_is_refused_before_the_share_basis() -> None:
+    """WHICH refusal a doubly-broken build reports — pinned on CONSTRUCTED inputs, because the live
+    corpus cannot reach this state.
+
+    The e2e gate asserts `basis_fail == basis_break - over_ceiling`; that subtraction encodes this
+    precedence, but `over_ceiling` is empty today, so the corpus proves nothing about the order and
+    a mutation flipping the two blocks passes it. MEASURED, not assumed — the first draft of that
+    comment claimed the flip would break the equality and it does not.
+
+    The order is load-bearing for the reader: age is REMEDIABLE by a re-export, a share-basis break
+    is NOT ("a panel re-export will NOT resolve it"). A doubly-broken build reporting the basis
+    error first would send the operator to fix the thing that cannot be fixed that way.
+    """
+    over = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-16",
+                       days=fr.MAX_PANEL_AGE_DAYS + 1)
+    # ratio spot/implied ≈ 3 → reads as a split straddling the panels, exactly FUBO's shape
+    split = fr.reconcile_cap(cap_musd=100.0, shares=3e6, spot=100.0)
+    assert split is not None and split.corporate_action, "the fixture is not a basis break"
+
+    with pytest.raises(fr.FreshnessError, match="ceiling"):
+        fr.check_freshness(over, split, ticker="X")
+    # and each still fires alone, so the precedence is an ORDER, not one check masking the other
+    with pytest.raises(fr.FreshnessError, match="share basis"):
+        fr.check_freshness(None, split, ticker="X")
 
 
 def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
