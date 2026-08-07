@@ -10365,6 +10365,28 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    **This recurs for EVERY followed name**, which is the standing cost of the capability; if the
    roster grows as intended, deriving the roster instead of pinning it becomes the cheaper design.
 
+   **DONE 2026-08-07 (PR #368) — the first followed name is committed, and the pass cost NO test
+   changes at all.** That is the whole return on #366 and #367.
+   - (b) and (c) **did not move, because #366 had already removed the literals they were pinned
+     to.** `len(got) == 10` and `quiet == {…}` no longer exist; the derived forms absorbed a 12th
+     name silently. Predicted payoff, and it held.
+   - (a) stands as written: satisfied by `build_companyfacts_fixture.py UBER` (23 tags, 316 KB),
+     exactly as its own failure message instructs. Still a real per-name cost, still by design.
+   - **`build_price_fixture.py` DERIVED UBER on its own** (#367): committing the dossier made UBER
+     maintained, the script picked it up with no edit, and `test_every_maintained_name_has_
+     committed_price_bars` would have caught the omission had the run been skipped.
+   - **The re-assembly was NOT the parked copy.** The artifact built during #365 carried the
+     doubled-period caveat ("…outside it.."), fixed AFTER it was produced — committing the parked
+     file would have shipped the very defect the fix removed. Re-assemble, never re-use, once any
+     rendering input has changed.
+   - **STANDING COST per followed name, now measured:** one `followed.json` line, one
+     `refresh --aggs`, one assemble, two fixture regenerations. **No test edits.**
+   - **Committed with 3 qa flags, deliberately NOT re-rolled** — one drivers-coverage gap and two
+     UNCITED synthesis refs. The uncited-figure guard is working as designed; re-rolling to obtain
+     a cleaner synthesis would be selecting prose on outcome, the instinct #362 already refused
+     ("Land the capital-allocation block without rerolling a synthesis"). The flags stay on the
+     page for the human to read.
+
 2. **`scenario-propose` must stop crashing before any followed name can be underwritten.** See §2
    — `propose.py:517` raises `KeyError: ('margin', 'base')` on any name whose R1 anchor is
    inapplicable; **NCNO (underwritten) crashes identically**, so this is live today and not a
