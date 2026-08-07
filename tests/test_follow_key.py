@@ -185,20 +185,45 @@ def test_two_keys_differing_only_by_case_are_refused(tmp_path: pathlib.Path) -> 
 
 
 def test_the_prior_two_keys_are_unchanged(tmp_path: pathlib.Path) -> None:
-    """REGRESSION. The follow key is additive: a committed dossier still answers first, and it must
-    keep answering with no follow file present at all."""
+    """REGRESSION. The follow key is additive: a committed dossier still answers when NOTHING is
+    followed, and it must keep answering with no follow file present at all."""
     (tmp_path / "dossiers" / UNTOUCHED).mkdir(parents=True)
     (tmp_path / "dossiers" / UNTOUCHED / "dossier.json").write_text("{}")
     assert asm._maintenance_reason(_cfg(tmp_path), UNTOUCHED) == "a committed dossier"
 
 
-def test_a_committed_dossier_outranks_a_follow_entry(tmp_path: pathlib.Path) -> None:
-    """Precedence is stable: a name that has BOTH reports the dossier, so an operator deleting a
-    follow entry never changes the maintenance answer for a name already covered."""
-    cfg = _write(tmp_path, {UNTOUCHED: "also followed"})
+def test_a_follow_entry_outranks_a_committed_dossier(tmp_path: pathlib.Path) -> None:
+    """THIS PIN IS THE REVERSE OF WHAT #365 SHIPPED, AND #365 WAS WRONG.
+
+    The dossier key ran first, so a followed name printed its stated reason on the FIRST assembly
+    and lost it on every one after: the moment the artifact existed the caveat degraded to
+    "assembled because the name carries a committed dossier", which explains nothing — the fund
+    covers UBER because the fund has a page on UBER. The operator's judgement about why a $139bn
+    name sits outside a $300M–$10B band stopped being printed. Found by re-assembling UBER once.
+
+    The old ordering was defended as stability ("deleting a follow entry never changes the
+    maintenance answer"), and that argument does not survive contact: BOTH keys return non-None, so
+    the order never decides whether the name is MAINTAINED, only which reason is STATED. The
+    stability it claimed is preserved either way — see the test below."""
+    cfg = _write(tmp_path, {UNTOUCHED: "followed for the mobility read-across"})
     (tmp_path / "dossiers" / UNTOUCHED).mkdir(parents=True)
     (tmp_path / "dossiers" / UNTOUCHED / "dossier.json").write_text("{}")
-    assert asm._maintenance_reason(cfg, UNTOUCHED) == "a committed dossier"
+    why = asm._maintenance_reason(cfg, UNTOUCHED)
+    assert why is not None and "followed for the mobility read-across" in why, (
+        f"a followed name with a committed dossier reported {why!r} — the stated reason is the "
+        "whole point of requiring one, and it must survive the artifact existing")
+
+
+def test_removing_a_follow_entry_still_leaves_the_name_maintained(tmp_path: pathlib.Path) -> None:
+    """THE STABILITY THE OLD ORDERING CLAIMED, kept under the new one. Dropping the follow entry
+    falls back to the dossier key — the name never becomes un-maintainable, it only reverts to the
+    weaker sentence. That is why reordering costs nothing and buys the informative answer."""
+    (tmp_path / "dossiers" / UNTOUCHED).mkdir(parents=True)
+    (tmp_path / "dossiers" / UNTOUCHED / "dossier.json").write_text("{}")
+    cfg = _write(tmp_path, {UNTOUCHED: "followed"})
+    assert asm._maintenance_reason(cfg, UNTOUCHED) is not None
+    (tmp_path / "followed.json").unlink()                      # operator drops the entry
+    assert asm._maintenance_reason(_cfg(tmp_path), UNTOUCHED) == "a committed dossier"
 
 
 # ---------------------------------------------------------------- the LIVE committed file
