@@ -94,7 +94,7 @@ def test_cnxc_has_exactly_the_two_forward_years_the_adjacent_check_needs() -> No
 #:
 #: FUBO: no EBITDA line in `consensus_levels` (Revenue only) — the street does not publish an EBITDA
 #: consensus for it, which is a property of the coverage, not of our extraction.
-UNROUTED_BY_DESIGN = {"FUBO"}
+UNROUTED_BY_DESIGN = frozenset({"FUBO"})
 
 
 def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
@@ -127,6 +127,12 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
         f"{sorted(unrouted - UNROUTED_BY_DESIGN)} carry no EBITDA consensus block and are not "
         f"stated exemptions — either the consensus extraction stopped resolving for them, or the "
         f"street genuinely does not cover them and they belong in UNROUTED_BY_DESIGN with a reason")
+    # DELIBERATELY ONE-DIRECTIONAL — the converse was written, then removed. Asserting
+    # `UNROUTED_BY_DESIGN <= unrouted` too would make this an EQUALITY, so FUBO gaining EBITDA
+    # coverage (a WIN — the street starting to cover it) would red the suite and read as a
+    # regression. That is precisely the failure mode this pin was rewritten to remove, and catching
+    # a stale exemption is not worth re-introducing it. A stale entry is also self-limiting: it can
+    # only ever mask a future regression in the ONE name it names.
     assert got, "no committed name routed — the corpus this runs on has gone empty"
 
 
