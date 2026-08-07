@@ -9,6 +9,7 @@
     "MVST",
     "NCNO",
     "SMPL",
+    "UBER",
     "VITL",
     "VRRM"
   ],
@@ -58,6 +59,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "UBER": {
+      "industry": "Passenger Ground Transportation",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "VITL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -79,6 +85,7 @@
     "MVST": "strongly-bearish \u2014 stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
     "NCNO": "mixed \u2014 genuine positive EBITDA/FCF inflection and forward discount offset by decelerating growth, negative near-term revisions, and an unexplained idiosyncratic de-rating.",
     "SMPL": "mixed \u2014 a real guidance-cut and unarrested top-line/Atkins decline offset by strong solvency, category growth, and a pricing lever.",
+    "UBER": "strongly-bullish \u2014 rising absolute EBITDA, positive FCF and accelerating segment operating income sit under a near-floor trailing multiple; near-term GAAP-EPS step-down is the main offset.",
     "VITL": "mixed \u2014 a clean balance sheet and reversible price-gap mechanics offset an ~97% FY26 EBITDA collapse, cash burn, and weakening trial.",
     "VRRM": "mixed \u2014 a large, verified, structural Avis revenue loss offsets a genuinely cash-generative, self-funding, high-margin business trading at a floor multiple."
   }
