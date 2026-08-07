@@ -18,20 +18,86 @@ than the bare fact of absence.
 """
 from __future__ import annotations
 
+import functools
 import json
 import pathlib
+import tempfile
 from datetime import date as dt_date
 
 import pytest
 
 import vinci.dossier.assemble as asm
-from vinci.config import get_config
+from vinci.config import Config
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+PRICE_FIXTURES = ROOT / "tests" / "fixtures" / "prices"
+
+#: Everything under `data/` these pins legitimately read. Symlinked rather than copied so they run
+#: against the REAL committed artifacts; only the store is substituted.
+_LINKED = ("dossiers", "snapshots", "cache", "manual", "monitor", "followed.json",
+           "graph_coverage.json")
 
 
-def _cfg():
-    return get_config()
+@functools.lru_cache(maxsize=1)
+def _cfg() -> Config:
+    """A Config whose STORE is the committed price fixture and whose every other path is the real
+    repo.
+
+    WHY NOT `get_config()`, WHICH THIS USED TO BE. `data/vinci.db` is git-ignored and bulk prices
+    are deliberately never snapshotted, so on any fresh checkout — every CI run — the store is
+    EMPTY and `_standalone_record` raises "no price history" for every maintained name. These six
+    pins therefore passed on a developer's laptop and could not pass in CI: main ran RED for eleven
+    consecutive merges on exactly this (2026-08-06 `017b155` onward), and the failure said nothing
+    about the code it was supposedly guarding.
+
+    THE FIX IS THE ONE D17 ALREADY ESTABLISHED — commit the small slice the pins actually read
+    (`scripts/build_price_fixture.py`, mirroring `build_companfacts_fixture.py`) so the DB
+    dependency disappears. Prices are the ONLY thing substituted; dossiers, snapshots and the
+    resolver cache are symlinked, so these pins still read the real committed corpus.
+
+    THE STORE IS ALWAYS THE FIXTURE, on every machine. Falling back to a populated local DB when
+    one exists would make the pins mean something different on a laptop than in CI — which is the
+    property that let this defect live for eleven merges without anyone's local run noticing.
+    """
+    from vinci.schemas.market import PriceBar
+    from vinci.store import Store
+
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="vinci-maintenance-"))
+    for name in _LINKED:
+        src = ROOT / "data" / name
+        if src.exists():
+            (tmp / name).symlink_to(src)
+    cfg = Config(data_dir=tmp)
+    with Store(cfg.db_path) as store:
+        for f in sorted(PRICE_FIXTURES.glob("*.jsonl")):
+            store.write_prices([
+                PriceBar(**json.loads(line))
+                for line in f.read_text().splitlines() if line.strip()
+            ])
+    return cfg
+
+
+def _maintained_names() -> list[str]:
+    """Committed dossiers that are NOT current screen candidates — the maintenance-route set."""
+    cands = _candidate_tickers()
+    return [p.parent.name for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+            if p.parent.name not in cands]
+
+
+def test_every_maintained_name_has_committed_price_bars() -> None:
+    """THE FIXTURE TRACKS THE FLEET, and says so loudly when it stops.
+
+    A maintained name with no committed bars cannot be re-assembled in CI, and the failure it
+    produces ("no price history in the store") points at the store rather than at the missing
+    fixture — which is exactly how the eleven-merge red streak read. This pin names the remedy.
+    """
+    missing = [t for t in _maintained_names()
+               if not (PRICE_FIXTURES / f"{t}.jsonl").is_file()]
+    assert not missing, (
+        f"{missing} take the maintenance route but have no committed price bars, so they cannot be "
+        f"re-assembled on a checkout with no local DB. Run "
+        f"`python scripts/build_price_fixture.py` — in the SAME PR that makes the name maintained, "
+        f"so the fixture cannot drift from the fleet it serves.")
 
 
 def _candidate_tickers() -> set[str]:
