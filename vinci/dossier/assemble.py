@@ -181,17 +181,87 @@ def _last_screen_verdict(cfg: Config, ticker: str) -> tuple[str, str] | None:
     return None
 
 
+def _follow_reason(cfg: Config, ticker: str) -> str | None:
+    """The operator's stated reason for following ``ticker``, or None when it is not followed.
+
+    THE THIRD KEY, AND THE ONLY ONE THAT OPENS FROM OUTSIDE. The other two are consequences of work
+    already done — a dossier exists, an underwrite exists — so neither can admit a name the fund has
+    never touched. That is a BOOTSTRAP TRAP, not a safeguard: `scenario-propose`/`scenario-create`
+    both require a committed dossier (`cli._dossier_doc`), so the underwrite key cannot be minted
+    either. A large-cap the fund wants to follow was therefore unreachable by any supported route,
+    and the only way in was to forge the artifact a gate reads — an empty `dossier.json` satisfies
+    `.exists()`, which is precisely the fabricated-row move `_finalist` refuses on principle.
+
+    A REASON IS REQUIRED, AND THAT IS THE WHOLE POINT. Following a name is a judgement that the
+    band's answer does not apply here, so the judgement is written down where the artifact can quote
+    it: the reason travels into `screen_status` and prints in the dossier's main body, so the page
+    states out loud that it did not come through the front door and why. A bare ticker list would
+    admit names silently and re-create the band's own failure mode one level up.
+
+    FAIL-LOUD BOUNDARIES. An ABSENT file is the normal state (nothing is followed yet) → None. A
+    file that EXISTS but will not parse, or an entry whose reason is missing/blank/not a string, is
+    NOT normal — degrading either to None would silently drop a name the operator believes is
+    followed, and the failure would surface as an unrelated LookupError at assembly time.
+    """
+    path = cfg.data_dir / "followed.json"
+    if not path.exists():
+        return None  # nothing is followed — the majority case, not a failure
+    try:
+        doc = json.loads(path.read_text())
+    except ValueError as exc:
+        raise DossierAssemblyError(f"{path} is not valid JSON: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise DossierAssemblyError(
+            f"{path} must be a JSON object mapping TICKER → reason, got {type(doc).__name__}")
+    # CASE-FOLD, THEN REFUSE A COLLISION. `{"uber": …, "UBER": …}` folds to one key and the dict
+    # comprehension silently keeps whichever came last — so one of two stated reasons vanishes with
+    # nothing anywhere saying so, in the file whose entire job is to record WHY a name is covered.
+    # It is a plausible hand-edit (add a name, miss that it is already listed in another case), and
+    # a silently-dropped reason is the same class as the blank reason refused below.
+    entries: dict[str, Any] = {}
+    for k, v in doc.items():
+        key = str(k).upper()
+        if key in entries:
+            raise DossierAssemblyError(
+                f"{path}: {key} is listed more than once (keys differing only by case) — one of "
+                f"the stated reasons would be silently discarded. Merge them into a single entry.")
+        entries[key] = v
+    if ticker.upper() not in entries:
+        return None
+    reason = entries[ticker.upper()]
+    # STRIPPED OF THE PUNCTUATION THE CAVEAT NORMALISES AWAY, not merely of whitespace. `"..."` is
+    # truthy after `.strip()`, so it passed this guard and then `_maintenance_reason`'s
+    # `rstrip(' .')` emptied it — rendering "an operator follow decision — " with no reason after
+    # it. A guard must test the value its CONSUMER will see, or a downstream transform reopens it.
+    # (Same shape as the case-collision above: the check sat upstream of the thing that broke it.)
+    if not isinstance(reason, str) or not reason.strip(" .\t\r\n"):
+        raise DossierAssemblyError(
+            f"{path}: {ticker.upper()} is followed but carries no stated reason "
+            f"({reason!r}) — a follow decision without its reason is exactly the silent admission "
+            f"this file exists to prevent; write why the band does not apply to this name")
+    return reason.strip()
+
+
 def _maintenance_reason(cfg: Config, ticker: str) -> str | None:
     """Why this name is still MAINTAINED though it is not a current screen candidate — or None.
 
     THE BAND ANSWERS WHERE WE HUNT, NOT WHAT WE MAY HOLD OR FOLLOW. Screen membership is an ENTRY
     rule; a name we already carry a dossier or an underwrite on must stay refreshable or any
     position that re-rates upward becomes un-maintainable — the defect bites a WINNER first.
+
+    The third key extends the same sentence to its other half: a name the fund has chosen to FOLLOW
+    is covered by "what we may hold or follow" just as a held one is, and it is the only key that
+    can admit a name with no prior work behind it (see ``_follow_reason``).
     """
     if (cfg.data_dir / "dossiers" / ticker / "dossier.json").exists():
         return "a committed dossier"
     if _read_scenario_card(ticker) is not None:
         return "an open underwrite record"
+    if (why := _follow_reason(cfg, ticker)) is not None:
+        # `_finalist` renders "…carries {reason}. The cap band decides…", so a reason written as a
+        # full sentence lands a doubled period in the caveat the human reads. Normalised HERE and
+        # not in `_follow_reason`, which stays verbatim — the operator's text is source-bound.
+        return f"an operator follow decision — {why.rstrip(' .')}"
     return None
 
 

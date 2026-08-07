@@ -3140,6 +3140,50 @@ Each line: *what it does* — *verified how*.
     passed**. A new pin, `test_every_maintained_name_has_committed_price_bars`, fails loudly and
     NAMES the script when a name becomes maintained without bars — so the next followed name cannot
     re-open this hole silently.
+- **A name the fund FOLLOWS is assemblable though it never entered the band (2026-08-07, PR #365).**
+  `_maintenance_reason` gained a THIRD key, `data/followed.json` (TICKER → why the band does not
+  apply), beside the committed-dossier and open-underwrite keys.
+  - **THE HOLE IT CLOSES IS A BOOTSTRAP TRAP, not a missing feature.** Both prior keys are
+    CONSEQUENCES of work already done, so neither can admit a name the fund has never touched — and
+    the underwrite key cannot be minted either, because `scenario-propose`/`scenario-create` both
+    require a committed dossier (`cli._dossier_doc`). A large-cap the operator wants to cover was
+    reachable by **no supported route**; the only way in was to forge the artifact a gate reads (an
+    empty `dossier.json` satisfies `.exists()`), which is the fabricated-row move `_finalist`
+    refuses on principle.
+  - **The reason is required and is PRINTED.** It travels into `screen_status` and renders in the
+    dossier's main body, so the page states out loud that the name did not come through the front
+    door and why. A bare ticker LIST is refused by shape — that would rebuild the band's own silent
+    -admission failure one level up.
+  - **How verified — real run, not assertion.** UBER (~$150bn, against a $300M–$10B band; never
+    screened, no record, absent from the store entirely) backfilled via `refresh --aggs` in ONE
+    call — **1252 bars, 2021-08-09..2026-08-04**, features face-valid ($71.99 last, $102 52w high,
+    −29.4% drawdown, $1.44bn 90d ADV) — then **assembled with synthesis, 5 caveats, 1 qa flag**, the
+    follow reason rendering in its main-body caveat. Guard **mutation-tested** against three defect
+    shapes (key never admits / blank reason accepted / malformed JSON degrades to None); all three
+    go red, restored suite green. Gate: ruff + `mypy --strict vinci` clean, **1959 passed**.
+  - **A doubled period was found IN THE RENDERED ARTIFACT and fixed** — `_finalist` composes
+    "…carries {reason}. The cap band…", so a reason written as a sentence printed "…outside it..".
+    Normalised in `_maintenance_reason`, never in `_follow_reason` (the operator's text stays
+    verbatim/source-bound), and pinned at the `screen_status` layer rather than on the helper.
+  - **SCOPE — the capability ships ALONE; UBER's artifact does NOT.** Committing the dossier reddens
+    three roster-pinned tests (below), which is exactly what the ARTIFACT-PASS RULE predicts, so the
+    artifact + fixture + pin moves are a separate pass. `data/followed.json` is committed and
+    git-un-ignored (pattern (d), beside `graph_coverage.json`): it is hand-authored judgement,
+    neither derived nor licensed, and must be diffable.
+
+- **FOUND, NOT FIXED — `scenario-propose` CRASHES on any name whose R1 anchor is inapplicable
+  (2026-08-07).** `propose.py:517` indexes `UNPROPOSED_REASON[(axis, leg)]` directly while the
+  identical lookup at `:211` uses `.get()`; the table holds only bear/bull entries, so a missing
+  **base**-leg anchor raises `KeyError: ('margin', 'base')` instead of refusing with a reason.
+  - **Pre-existing and NOT UBER-specific — `NCNO` crashes identically**, and NCNO is an underwritten
+    name. Confirmed against the live corpus: FUBO/MVST/VITL/AORT refuse gracefully (share-count
+    disagreement), SMPL succeeds, UBER and NCNO crash. The follow-key diff never touches
+    `propose.py`.
+  - **The anchor layer was RIGHT to refuse** — UBER's `anchor.applicable=false`, reason *"no
+    positive operating margin over available history — needs revenue-anchored recipe"*. So the real
+    gap is that the underwrite template is R1-shaped and has no EV/Revenue path, which is the
+    capability PR #188 shipped and FUBO deferred. A `.get()` alone would only convert the crash into
+    a graceful refusal; it would not make an R2 name underwritable.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -10264,6 +10308,45 @@ directive is recomputed against the state the directive itself produces.**
 **in-chat** via PR #212; ledger shows **no open BUY** (`V-SMPL-…` closed by `C-SMPL-…` at 10.53).
 Provenance explained, not drifted — so the pass ran in amend-at-watch mode rather than the
 confirmed-record mode the directive first assumed.
+
+### OPERATOR TO-DOs — followed (out-of-band) names, opened 2026-08-07 by PR #365
+
+The follow key ships the CAPABILITY; three obligations follow from actually USING it. Ordered.
+
+1. **ARTIFACT PASS for UBER — carries three roster-pin moves with it.** UBER's `dossier.json` +
+   `frontend/dossiers/UBER.*` assembled clean and are held OUT of PR #365 on purpose: committing
+   them reds three tests that pin the fleet ROSTER by literal name and count. This is the
+   ARTIFACT-PASS RULE's own predicted case ("a re-assembled dossier can turn a pinned test red"),
+   so the artifact, the fixture and the pin moves belong to ONE pass that runs the suite before
+   pushing. The three:
+   (a) `tests/test_dilution_denominator.py` — needs `tests/fixtures/companyfacts/UBER.json`; it
+       fails BY DESIGN with its own instruction (`python scripts/build_companyfacts_fixture.py`,
+       in the SAME PR that assembles the name);
+   (b) `tests/test_ev_gap_routing.py:103` — `assert len(got) == 10`, a hardcoded fleet count;
+   (c) `tests/test_freshness.py:226` — `assert quiet == {…10 literal tickers…}`.
+   **(b) and (c) MOVE, they do not loosen** — the freshness pin's own note already sets that rule
+   ("the assertion must move with it rather than silently weaken"), so each gets a stated reason.
+   **This recurs for EVERY followed name**, which is the standing cost of the capability; if the
+   roster grows as intended, deriving the roster instead of pinning it becomes the cheaper design.
+
+2. **`scenario-propose` must stop crashing before any followed name can be underwritten.** See §2
+   — `propose.py:517` raises `KeyError: ('margin', 'base')` on any name whose R1 anchor is
+   inapplicable; **NCNO (underwritten) crashes identically**, so this is live today and not a
+   followed-names problem. Two layers, and the second is the real one: `.get()` converts the crash
+   into a graceful refusal, but the underwrite TEMPLATE is R1-shaped and has no EV/Revenue path, so
+   an R2 name still cannot be underwritten. PR #188 shipped the EV/Revenue basis in the engine and
+   FUBO deferred exercising it — a followed large-cap with no positive operating margin is the
+   natural first exercise.
+
+3. **DECIDED, NOT BUILT — followed names get `origin` on the ledger row and a SEPARATE spread.**
+   `log_verdict` refuses a name with no `CandidateRecord` (`store.get_candidate` → `LedgerError`),
+   so no followed name can reach the ledger yet. When that opens: ledger rows carry
+   `origin: screen | followed`, the **PRIMARY BUY−AVOID spread stays screen-origin ONLY**, and
+   followed names accumulate as a labelled parallel curve — the same shape as machine-proposal vs
+   human-final. **Why segmented:** the spread is the fund's proof and it measures the discriminator
+   ON THE $300M–$10B HUNTING GROUND; pooling mega-cap verdicts into it silently changes what the
+   number means. Append-only-safe as an optional field with a default (the `disposition`/`facts`
+   precedent). Operator decision 2026-08-07.
 
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 

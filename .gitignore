@@ -31,6 +31,11 @@ data/*
 !data/dossiers/
 data/dossiers/*/llm_call.log
 !data/graph_coverage.json
+# (d) data/followed.json — the operator's FOLLOW decisions (TICKER → why the cap band does not
+# apply to this name). Hand-authored judgement, neither derived nor licensed: it must be committed
+# and diffable, because it is the standing record of which out-of-band names the fund covers and
+# why, and the reason it carries is printed in each such dossier's own main body.
+!data/followed.json
 # Monitor: the dated book history + the benchmark assignments. DERIVED analysis (returns and
 # excess-vs-benchmark computed from the committed ledger and EOD closes), and the AUDIT TRAIL of
 # how the book was marked on each date — a spread nobody can re-read is not evidence. Small,
