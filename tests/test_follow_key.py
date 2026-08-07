@@ -165,6 +165,17 @@ def test_a_bare_ticker_list_is_refused(tmp_path: pathlib.Path) -> None:
         asm._maintenance_reason(cfg, UNTOUCHED)
 
 
+def test_two_keys_differing_only_by_case_are_refused(tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. The case-fold used a dict comprehension, so `{"uber": …, "UBER": …}` kept
+    whichever came last and DISCARDED the other stated reason silently — in the one file whose job
+    is to record WHY a name is covered. That is the blank-reason class reached by another door: an
+    admission whose stated judgement is gone. Plausible as a hand-edit (add a name, miss that it is
+    already listed in another case), so it fails loud rather than picking a winner."""
+    cfg = _write(tmp_path, {UNTOUCHED.lower(): "reason A", UNTOUCHED: "reason B"})
+    with pytest.raises(asm.DossierAssemblyError, match="listed more than once"):
+        asm._maintenance_reason(cfg, UNTOUCHED)
+
+
 # ---------------------------------------------------------------- the existing keys still hold
 
 

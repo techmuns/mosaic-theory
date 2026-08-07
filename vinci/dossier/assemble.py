@@ -213,7 +213,19 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
     if not isinstance(doc, dict):
         raise DossierAssemblyError(
             f"{path} must be a JSON object mapping TICKER → reason, got {type(doc).__name__}")
-    entries = {str(k).upper(): v for k, v in doc.items()}
+    # CASE-FOLD, THEN REFUSE A COLLISION. `{"uber": …, "UBER": …}` folds to one key and the dict
+    # comprehension silently keeps whichever came last — so one of two stated reasons vanishes with
+    # nothing anywhere saying so, in the file whose entire job is to record WHY a name is covered.
+    # It is a plausible hand-edit (add a name, miss that it is already listed in another case), and
+    # a silently-dropped reason is the same class as the blank reason refused below.
+    entries: dict[str, Any] = {}
+    for k, v in doc.items():
+        key = str(k).upper()
+        if key in entries:
+            raise DossierAssemblyError(
+                f"{path}: {key} is listed more than once (keys differing only by case) — one of "
+                f"the stated reasons would be silently discarded. Merge them into a single entry.")
+        entries[key] = v
     if ticker.upper() not in entries:
         return None
     reason = entries[ticker.upper()]
