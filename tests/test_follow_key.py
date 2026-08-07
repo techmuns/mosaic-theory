@@ -130,10 +130,15 @@ def test_a_name_absent_from_the_file_is_not_followed(tmp_path: pathlib.Path) -> 
     assert asm._maintenance_reason(cfg, UNTOUCHED) is None
 
 
-@pytest.mark.parametrize("reason", ["", "   ", "\n\t "])
+@pytest.mark.parametrize("reason", ["", "   ", "\n\t ", "...", " . ", ". . ."])
 def test_a_blank_reason_is_refused(tmp_path: pathlib.Path, reason: str) -> None:
     """THE FILE MUST NOT DEGENERATE INTO A BARE TICKER LIST. A blank reason is the shape that would
-    silently re-create the band's own failure mode — admission with no stated judgement."""
+    silently re-create the band's own failure mode — admission with no stated judgement.
+
+    THE PUNCTUATION-ONLY CASES ARE A REVIEW FINDING, not padding. `"..."` is truthy after
+    `.strip()`, so it cleared this guard and `_maintenance_reason`'s `rstrip(' .')` then emptied it
+    — the caveat rendered "an operator follow decision — " with no reason after it. The guard has
+    to test the value the CONSUMER sees; checking upstream of the normaliser left it reachable."""
     cfg = _write(tmp_path, {UNTOUCHED: reason})
     with pytest.raises(asm.DossierAssemblyError, match="no stated reason"):
         asm._maintenance_reason(cfg, UNTOUCHED)

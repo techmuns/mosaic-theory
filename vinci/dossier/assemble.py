@@ -229,7 +229,12 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
     if ticker.upper() not in entries:
         return None
     reason = entries[ticker.upper()]
-    if not isinstance(reason, str) or not reason.strip():
+    # STRIPPED OF THE PUNCTUATION THE CAVEAT NORMALISES AWAY, not merely of whitespace. `"..."` is
+    # truthy after `.strip()`, so it passed this guard and then `_maintenance_reason`'s
+    # `rstrip(' .')` emptied it — rendering "an operator follow decision — " with no reason after
+    # it. A guard must test the value its CONSUMER will see, or a downstream transform reopens it.
+    # (Same shape as the case-collision above: the check sat upstream of the thing that broke it.)
+    if not isinstance(reason, str) or not reason.strip(" .\t\r\n"):
         raise DossierAssemblyError(
             f"{path}: {ticker.upper()} is followed but carries no stated reason "
             f"({reason!r}) — a follow decision without its reason is exactly the silent admission "
