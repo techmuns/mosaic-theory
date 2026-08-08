@@ -4414,6 +4414,62 @@ already answered. WERN also has **no dossier** (the only underwrite record witho
 **Not "pending a field" — settled AVOID on the numbers.** Recorded so it stops appearing in
 queues as unblocked work.
 
+**MEMO-GAP DISPOSITIONS — RECORDED 2026-08-08, from the seven items the IC memo raised.**
+
+**M1 — DROPPED, NOT DEFERRED: TWIN RECOVERY DURATION IS NOT DERIVABLE, AND THE REASON IS
+STRUCTURAL.** The committee's first question is the timeline — *when does a de-rating like this
+reverse?* — and `twin_reference_cases` carries `name`, `outcome`, `distinguishing_fact`, `source`
+and **no time field**. BellRing recovered; over how many quarters is nowhere.
+
+**IT IS NOT ONE FIELD, AND THE RAW MATERIAL IS NOT THERE.** `own_history.series` holds 36 quarterly
+closes **for the SUBJECT**, not for the twin. A twin's span needs the TWIN's price history, and the
+twin is identified only by an **LLM-written company name** — no ticker, no CIK, no dates.
+
+Measured across the committed fleet: **48 distinct twin names, 19 loosely matching a security in
+the store** (a deliberately generous matcher, so the true figure is lower). The misses are
+structural rather than a matcher problem:
+
+  * **delisted or acquired** — Cardtronics, Endurance International Group, Chuy's Holdings;
+  * **outside the mid-cap universe BY CONSTRUCTION** — Accenture, Cognizant, DoorDash, Chewy,
+    Grab. A twin is *often* a larger company that already recovered;
+  * **not a security at all** — `"Atkins Nutritionals (pre-2017 legacy brand)"` is a BRAND.
+
+**THE CRITERION THAT MAKES A GOOD TWIN IS THE ONE THAT MAKES IT UNRESOLVABLE** (operator). A twin
+earns its place by being a larger, already-recovered, often-acquired comparable — which is exactly
+what puts it outside a mid-cap screen universe and outside a live price feed. Building it would
+need three new capabilities: name→security resolution (the resolver takes tickers), per-twin price
+history including delisted names, and a de-rating/recovery span detector.
+
+**CLOSED. Do not re-propose without new evidence that the identifier problem has changed** — the
+cost is not the blocker, the identifier is.
+
+**M2 — DEFERRED WITH ITS COST STATED: INSTITUTIONAL OWNERSHIP NEEDS A PIPELINE, NOT AN EXTRACTOR.**
+
+**THE QUESTION IS WELL-POSED, and that is recorded separately from the cost so the two are not
+confused.** The thesis is that the sell-off overshot; the strongest form of that is a
+**NON-FUNDAMENTAL SELLER** — an index deletion, a mandate breach, a forced exit. SMPL fell from
+roughly $30 to $10, a path that crosses mandate thresholds, and **nothing in the artifact can say
+whether anyone was forced out or whether a quality holder accumulated through it.** Three earlier
+arguments against it were wrong: *"at $1M AUM it doesn't constrain"* answers a CAPACITY question
+when the ask was about SIGNAL; a 45-day lag is not disqualifying against an 18-month horizon; and
+insider data is DIFFERENT information, not a cheaper version — two insiders with $1.11M tells you
+what two people did.
+
+**CIQ DOES NOT CARRY IT.** The canonical export manifest (`vinci dossier requirements`) is the
+authoritative set — four REQUIRED and four OPTIONAL exports — and **none is ownership or holders**.
+No 13F capability exists in the repo either. `render.py:599` already notes the gap in its own
+words: the section NAMED for ownership carried none.
+
+**AND 13F-HR HAS NO PER-ISSUER INDEX.** Holdings are filed FILER-side, so finding one issuer's
+holders means scanning every 13F-HR in a quarter — thousands — parsing the XML information tables
+and matching CUSIP. That is a crawl-parse-aggregate pipeline with its own storage, **not an
+extractor sitting beside the others**, and it is the largest of the seven memo items. It gates no
+decision today.
+
+**DEFERRED — unlock trigger: a second position exists, or an issuer-indexed holdings source
+appears.** Recorded with the question intact so the next reader inherits the argument and not just
+the price tag.
+
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
 benchmark produced PERMISSIVE ADMISSION — countable, because admitted names leave records (4 of
