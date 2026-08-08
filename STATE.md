@@ -3187,6 +3187,33 @@ Each line: *what it does* — *verified how*.
     gap is that the underwrite template is R1-shaped and has no EV/Revenue path, which is the
     capability PR #188 shipped and FUBO deferred. A `.get()` alone would only convert the crash into
     a graceful refusal; it would not make an R2 name underwritable.
+  - **FIXED 2026-08-08 (PR #372) — AND THE DIAGNOSIS CHANGED THE FIX.** The brief above proposed a
+    `.get()` with a composed fallback. **Measured, that is the wrong fix**: with only the fallback,
+    `scenario-propose NCNO` emits `2 of 9 pre-filled · recipe: R2_NEEDED` — a plausible, fillable
+    template stamped with a string that **is not a recipe id** (`RECIPE_R2` is
+    `R2_terminal_margin`), inviting an underwrite on a margin the revenue basis does not read. A
+    crash is bad; a plausible wrong template is worse, because it is actionable. So the fix REFUSES
+    at the top of `build_template`, quoting the dossier's own `reason` and `recipe_hint` rather
+    than composing a second wording. The `.get()` ships too, as the backstop one layer under it.
+  - **THE PROPOSE PATH HAD NO TIER AWARENESS AT ALL, which is the finding under the finding.**
+    `check_tier_agreement` knows this exact state and is wired into `scenario-create` and
+    `scenario-supersede` — **`_cmd_scenario_propose` never calls it**, and `KeyError` is not in the
+    exception set that command catches. The guard for this case existed and could not reach it.
+  - **THE REMEDY IS PER CAUSE — three live shapes refuse here, only one is about EV/Revenue.**
+    MVST/NCNO/UBER hint `R2_NEEDED` (no positive operating margin); **FUBO** hints `unknown` (own
+    -history multiple missing); **VITL** hints `R1_midcycle_margin_evebitda` while marked
+    inapplicable (own-history band failed a coherence guard). A single EV/Revenue remedy line
+    appended to all three would send two of them to fix something unrelated.
+  - **THE BRIEF'S SWEEP WAS STALE, and the refusal set is not stable.** It recorded
+    "FUBO/MVST/VITL/AORT refuse, SMPL succeeds". Re-measured on current main: **EPAM and IT now
+    refuse too** (share counts drift as prices and share counts update), so six refused and four
+    built. Any future brief quoting a refusal roster should re-measure rather than cite.
+  - **FOUND, NOT FIXED (downstream, scope) — `check_tier_agreement` PASSES a `recipe_id` of
+    `"R2_NEEDED"`**, because it tests `.startswith("R2")` and `"R2_NEEDED"` satisfies that while
+    being a HINT, not a recipe. The axes guard then leaves it unconstrained ("an unknown recipe_id
+    is unconstrained until it declares its axes"), so such a record would validate and only fail at
+    `run_recipe`. Unreachable via propose now that the template refuses, but a hand-written record
+    still reaches it.
 - **The fleet ROSTER is no longer pinned by name — the fleet can grow (2026-08-07, PR #366).** Two
   corpus pins asserted fleet membership as literals and reddened on any ARRIVING name as loudly as
   on a broken guard. Both now state the relation they were reaching for.
@@ -10477,6 +10504,21 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    an R2 name still cannot be underwritten. PR #188 shipped the EV/Revenue basis in the engine and
    FUBO deferred exercising it — a followed large-cap with no positive operating margin is the
    natural first exercise.
+
+   **LAYER 1 DONE 2026-08-08 (PR #372) — the crash is gone fleet-wide and NO name raises anything
+   but a stated refusal.** The fix is NOT the `.get()` this item proposed: measured, a fallback
+   alone emits a fillable template stamped `recipe: R2_NEEDED` for exactly the names that must not
+   be underwritten on R1. `build_template` now refuses at the top, quoting the dossier's own reason,
+   and the `.get()` ships underneath as a backstop. Full diagnosis in §2.
+
+   **LAYER 2 REMAINS OPEN AND IS NOW THE ONLY BLOCKER.** MVST, NCNO and UBER get a clear refusal
+   naming EV/Revenue, but still cannot be underwritten: the template emits R1 axes
+   (revenue/margin/multiple) and has no revenue-basis path, while `axes_for(recipe, basis)` already
+   drops the margin axis on `R2_FORMULA_REVENUE`. The build is a real design piece — the template
+   must read the record's basis and emit the right axes — and it is DECISION-PATH, so it wants an
+   operator brief rather than an inference from this one. Related: the operator's forward-multiple
+   question (2026-08-08) asks whether a THIRD recipe is needed at all; settle that before building
+   an EV/Revenue template, because the answers interact.
 
 3. **DECIDED, NOT BUILT — followed names get `origin` on the ledger row and a SEPARATE spread.**
    `log_verdict` refuses a name with no `CandidateRecord` (`store.get_candidate` → `LedgerError`),
