@@ -4861,6 +4861,129 @@
       },
       "maturity_event": null
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "AORT",
+          "is_subject": true,
+          "market_cap": 1069.4,
+          "acquired": 471.116,
+          "total_assets": 1071.934,
+          "pct_assets": 0.43950093942350926,
+          "pct_market_cap": 0.44054236020198234,
+          "note": null
+        },
+        {
+          "ticker": "BSX",
+          "is_subject": false,
+          "market_cap": 66083.4,
+          "acquired": 25558.0,
+          "total_assets": 45216.0,
+          "pct_assets": 0.5652423920736023,
+          "pct_market_cap": 0.38675370819298044,
+          "note": null
+        },
+        {
+          "ticker": "EW",
+          "is_subject": false,
+          "market_cap": 51626.2,
+          "acquired": 3333.8,
+          "total_assets": 13867.1,
+          "pct_assets": 0.2404107563946319,
+          "pct_market_cap": 0.06457573867532378,
+          "note": null
+        },
+        {
+          "ticker": "688617",
+          "is_subject": false,
+          "market_cap": 3905.1,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '688617'"
+        },
+        {
+          "ticker": "LMAT",
+          "is_subject": false,
+          "market_cap": 2108.0,
+          "acquired": 96.489,
+          "total_assets": 640.549,
+          "pct_assets": 0.15063484604612606,
+          "pct_market_cap": 0.045772770398481974,
+          "note": null
+        },
+        {
+          "ticker": "ATRC",
+          "is_subject": false,
+          "market_cap": 1432.1,
+          "acquired": 278.039,
+          "total_assets": 676.643,
+          "pct_assets": 0.41090944560129933,
+          "pct_market_cap": 0.19414775504503876,
+          "note": null
+        },
+        {
+          "ticker": "PRCT",
+          "is_subject": false,
+          "market_cap": 1186.8,
+          "acquired": null,
+          "total_assets": 479.352,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "7575",
+          "is_subject": false,
+          "market_cap": 546.8,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '7575'"
+        },
+        {
+          "ticker": "ANGO",
+          "is_subject": false,
+          "market_cap": 539.8,
+          "acquired": 67.209,
+          "total_assets": 267.163,
+          "pct_assets": 0.2515655236690709,
+          "pct_market_cap": 0.12450722489811043,
+          "note": null
+        },
+        {
+          "ticker": "CVRX",
+          "is_subject": false,
+          "market_cap": 136.8,
+          "acquired": null,
+          "total_assets": 92.283,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "ARAY",
+          "is_subject": false,
+          "market_cap": 39.3,
+          "acquired": 57.883,
+          "total_assets": 447.602,
+          "pct_assets": 0.12931801019655856,
+          "pct_market_cap": 1.472849872773537,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.43950093942350926,
+      "subject_pct_market_cap": 0.44054236020198234,
+      "median_all_assets": 0.24598814003185143,
+      "median_all_market_cap": 0.1593274899715746,
+      "median_large_assets": 0.3256601009979656,
+      "median_large_market_cap": 0.12936174686018126,
+      "n_all": 6,
+      "n_large": 4
+    },
     "financial_summary": {
       "annual": {
         "value": {

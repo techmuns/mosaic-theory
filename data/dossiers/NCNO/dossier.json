@@ -4053,6 +4053,119 @@
       },
       "maturity_event": null
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "NCNO",
+          "is_subject": true,
+          "market_cap": 1955.5,
+          "acquired": 1202.313,
+          "total_assets": 1607.83,
+          "pct_assets": 0.7477861465453438,
+          "pct_market_cap": 0.6148366146765534,
+          "note": null
+        },
+        {
+          "ticker": "360",
+          "is_subject": false,
+          "market_cap": 4287.7,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '360'"
+        },
+        {
+          "ticker": "QTWO",
+          "is_subject": false,
+          "market_cap": 3434.3,
+          "acquired": 586.315,
+          "total_assets": 968.418,
+          "pct_assets": 0.6054358758304782,
+          "pct_market_cap": 0.17072329150045135,
+          "note": null
+        },
+        {
+          "ticker": "WK",
+          "is_subject": false,
+          "market_cap": 3208.9,
+          "acquired": 227.184,
+          "total_assets": 1374.451,
+          "pct_assets": 0.16529072335063236,
+          "pct_market_cap": 0.0707980928043878,
+          "note": null
+        },
+        {
+          "ticker": "SPSC",
+          "is_subject": false,
+          "market_cap": 2408.0,
+          "acquired": 711.857,
+          "total_assets": 1125.429,
+          "pct_assets": 0.6325205765979017,
+          "pct_market_cap": 0.2956216777408638,
+          "note": null
+        },
+        {
+          "ticker": "INTA",
+          "is_subject": false,
+          "market_cap": 2241.8,
+          "acquired": 358.29,
+          "total_assets": 709.14,
+          "pct_assets": 0.5052457906760301,
+          "pct_market_cap": 0.15982246409135517,
+          "note": null
+        },
+        {
+          "ticker": "ALKT",
+          "is_subject": false,
+          "market_cap": 1916.7,
+          "acquired": 549.108,
+          "total_assets": 831.081,
+          "pct_assets": 0.6607153815332079,
+          "pct_market_cap": 0.28648614806699013,
+          "note": null
+        },
+        {
+          "ticker": "ASAN",
+          "is_subject": false,
+          "market_cap": 1772.6,
+          "acquired": null,
+          "total_assets": 805.512,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "RSKD",
+          "is_subject": false,
+          "market_cap": 753.3,
+          "acquired": null,
+          "total_assets": 410.571,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "PAR",
+          "is_subject": false,
+          "market_cap": 674.4,
+          "acquired": 1100.036,
+          "total_assets": 1369.872,
+          "pct_assets": 0.80302101218216,
+          "pct_market_cap": 1.6311328588374854,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.7477861465453438,
+      "subject_pct_market_cap": 0.6148366146765534,
+      "median_all_assets": 0.61897822621419,
+      "median_all_market_cap": 0.22860471978372074,
+      "median_large_assets": 0.6054358758304782,
+      "median_large_market_cap": 0.17072329150045135,
+      "n_all": 6,
+      "n_large": 5
+    },
     "financial_summary": {
       "annual": {
         "value": {

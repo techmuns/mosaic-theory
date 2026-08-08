@@ -4275,6 +4275,129 @@
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "SMPL",
+          "is_subject": true,
+          "market_cap": 909.4,
+          "acquired": 1508.857,
+          "total_assets": 2062.444,
+          "pct_assets": 0.7315868939956672,
+          "pct_market_cap": 1.6591785792830438,
+          "note": null
+        },
+        {
+          "ticker": "KHC",
+          "is_subject": false,
+          "market_cap": 30071.3,
+          "acquired": 52086.0,
+          "total_assets": 73065.0,
+          "pct_assets": 0.712872100184767,
+          "pct_market_cap": 1.732083415083485,
+          "note": null
+        },
+        {
+          "ticker": "CAG",
+          "is_subject": false,
+          "market_cap": 6877.0,
+          "acquired": 9950.0,
+          "total_assets": 17274.4,
+          "pct_assets": 0.5759968508312878,
+          "pct_market_cap": 1.4468518249236586,
+          "note": null
+        },
+        {
+          "ticker": "CPB",
+          "is_subject": false,
+          "market_cap": 6384.6,
+          "acquired": 9318.0,
+          "total_assets": 15142.0,
+          "pct_assets": 0.6153744551578392,
+          "pct_market_cap": 1.459449299877831,
+          "note": null
+        },
+        {
+          "ticker": "MZTI",
+          "is_subject": false,
+          "market_cap": 2921.9,
+          "acquired": 274.468,
+          "total_assets": 1356.055,
+          "pct_assets": 0.2024018199851776,
+          "pct_market_cap": 0.09393476847256922,
+          "note": null
+        },
+        {
+          "ticker": "FRPT",
+          "is_subject": false,
+          "market_cap": 2784.4,
+          "acquired": null,
+          "total_assets": 1812.415,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "BRBR",
+          "is_subject": false,
+          "market_cap": 1500.0,
+          "acquired": 178.1,
+          "total_assets": 1052.1,
+          "pct_assets": 0.16928048664575612,
+          "pct_market_cap": 0.11873333333333333,
+          "note": null
+        },
+        {
+          "ticker": "JJSF",
+          "is_subject": false,
+          "market_cap": 1427.9,
+          "acquired": 229.082,
+          "total_assets": 1355.885,
+          "pct_assets": 0.16895385670613658,
+          "pct_market_cap": 0.16043280341760627,
+          "note": null
+        },
+        {
+          "ticker": "UTZ",
+          "is_subject": false,
+          "market_cap": 1248.6,
+          "acquired": 1813.7,
+          "total_assets": 2775.5,
+          "pct_assets": 0.6534678436317781,
+          "pct_market_cap": 1.4525868973250042,
+          "note": null
+        },
+        {
+          "ticker": "JBSS",
+          "is_subject": false,
+          "market_cap": 939.4,
+          "acquired": 15.348,
+          "total_assets": 650.669,
+          "pct_assets": 0.02358803016587543,
+          "pct_market_cap": 0.016338088141366832,
+          "note": null
+        },
+        {
+          "ticker": "HAIN",
+          "is_subject": false,
+          "market_cap": 49.1,
+          "acquired": 466.583,
+          "total_assets": 1162.721,
+          "pct_assets": 0.40128543304885694,
+          "pct_market_cap": 9.502708757637475,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.7315868939956672,
+      "subject_pct_market_cap": 1.6591785792830438,
+      "median_all_assets": 0.40128543304885694,
+      "median_all_market_cap": 1.4468518249236586,
+      "median_large_assets": 0.5759968508312878,
+      "median_large_market_cap": 1.4468518249236586,
+      "n_all": 9,
+      "n_large": 7
+    },
     "financial_summary": {
       "annual": {
         "value": {

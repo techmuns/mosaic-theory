@@ -2328,6 +2328,109 @@
         "note": null
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "MVST",
+          "is_subject": true,
+          "market_cap": 423.1,
+          "acquired": 2.077,
+          "total_assets": 987.496,
+          "pct_assets": 0.002103299658935327,
+          "pct_market_cap": 0.0049090049633656345,
+          "note": null
+        },
+        {
+          "ticker": "300750",
+          "is_subject": false,
+          "market_cap": 274953.3,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '300750'"
+        },
+        {
+          "ticker": "CMI",
+          "is_subject": false,
+          "market_cap": 96461.3,
+          "acquired": 4390.0,
+          "total_assets": 35630.0,
+          "pct_assets": 0.123210777434746,
+          "pct_market_cap": 0.04551047933212594,
+          "note": null
+        },
+        {
+          "ticker": "6752",
+          "is_subject": false,
+          "market_cap": 64375.4,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '6752'"
+        },
+        {
+          "ticker": "A006400",
+          "is_subject": false,
+          "market_cap": 24844.5,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'A006400'"
+        },
+        {
+          "ticker": "BWA",
+          "is_subject": false,
+          "market_cap": 14464.7,
+          "acquired": 2402.0,
+          "total_assets": 13934.0,
+          "pct_assets": 0.17238409645471509,
+          "pct_market_cap": 0.16605944126044783,
+          "note": null
+        },
+        {
+          "ticker": "AMPX",
+          "is_subject": false,
+          "market_cap": 2038.3,
+          "acquired": null,
+          "total_assets": 149.183,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "LECN",
+          "is_subject": false,
+          "market_cap": 166.9,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'LECN'"
+        },
+        {
+          "ticker": "ALFOR",
+          "is_subject": false,
+          "market_cap": 34.1,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'ALFOR'"
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.002103299658935327,
+      "subject_pct_market_cap": 0.0049090049633656345,
+      "median_all_assets": 0.14779743694473055,
+      "median_all_market_cap": 0.10578496029628688,
+      "median_large_assets": 0.14779743694473055,
+      "median_large_market_cap": 0.10578496029628688,
+      "n_all": 2,
+      "n_large": 2
+    },
     "financial_summary": {
       "annual": {
         "value": {

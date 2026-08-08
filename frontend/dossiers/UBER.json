@@ -4219,6 +4219,119 @@
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "UBER",
+          "is_subject": true,
+          "market_cap": 139261.7,
+          "acquired": 10604.0,
+          "total_assets": 65801.0,
+          "pct_assets": 0.16115256607042447,
+          "pct_market_cap": 0.07614441012855652,
+          "note": null
+        },
+        {
+          "ticker": "DASH",
+          "is_subject": false,
+          "market_cap": 89809.2,
+          "acquired": 7500.0,
+          "total_assets": 19561.0,
+          "pct_assets": 0.3834159807780788,
+          "pct_market_cap": 0.08351037532903088,
+          "note": null
+        },
+        {
+          "ticker": "DIDI.Y",
+          "is_subject": false,
+          "market_cap": 15505.9,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'DIDI.Y'"
+        },
+        {
+          "ticker": "GRAB",
+          "is_subject": false,
+          "market_cap": 15255.5,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "LYFT",
+          "is_subject": false,
+          "market_cap": 6257.2,
+          "acquired": 641.652,
+          "total_assets": 9107.486,
+          "pct_assets": 0.07045325131435833,
+          "pct_market_cap": 0.10254618679281469,
+          "note": null
+        },
+        {
+          "ticker": "CAR",
+          "is_subject": false,
+          "market_cap": 4898.6,
+          "acquired": 1744.0,
+          "total_assets": 30603.0,
+          "pct_assets": 0.05698787700552233,
+          "pct_market_cap": 0.35602008737190216,
+          "note": null
+        },
+        {
+          "ticker": "HTZ",
+          "is_subject": false,
+          "market_cap": 492.6,
+          "acquired": 3909.0,
+          "total_assets": 23288.0,
+          "pct_assets": 0.16785468911027138,
+          "pct_market_cap": 7.9354445797807545,
+          "note": null
+        },
+        {
+          "ticker": "2640",
+          "is_subject": false,
+          "market_cap": 268.0,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '2640'"
+        },
+        {
+          "ticker": "9680",
+          "is_subject": false,
+          "market_cap": 216.0,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '9680'"
+        },
+        {
+          "ticker": "9082",
+          "is_subject": false,
+          "market_cap": 53.7,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '9082'"
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.16115256607042447,
+      "subject_pct_market_cap": 0.07614441012855652,
+      "median_all_assets": 0.11915397021231486,
+      "median_all_market_cap": 0.22928313708235842,
+      "median_large_assets": 0.07045325131435833,
+      "median_large_market_cap": 0.10254618679281469,
+      "n_all": 4,
+      "n_large": 3
+    },
     "financial_summary": {
       "annual": {
         "value": {
