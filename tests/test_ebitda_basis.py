@@ -115,6 +115,16 @@ def test_a_table_with_no_estimate_flags_is_not_checkable() -> None:
     assert not b.divergent and "not checkable" in b.note
 
 
+def test_an_absent_annual_table_is_not_checkable() -> None:
+    """REVIEW FINDING. `Sourced[FinTable].value` is None whenever the annual table is
+    UNKNOWN/MISSING, and a name whose financials did not resolve still gets a dossier — so None is
+    an EXPECTED input, not a defensive check. The first cut typed the parameter `Any`, so this case
+    was never surfaced and an un-resolved name would have read as "checked, nothing found"."""
+    b = read_basis(None)
+    assert not b.divergent and b.ratio is None
+    assert "no annual table" in b.note
+
+
 def test_a_column_missing_one_leg_is_skipped_not_zeroed() -> None:
     """A None EBIT must not read as EBITDA − 0 = all-of-EBITDA-is-D&A, which would drag the median
     and could flip a real divergence into apparent agreement."""
@@ -140,6 +150,46 @@ def test_every_branch_states_a_reason() -> None:
 
 
 # ---------------------------------------------------------------- the LIVE committed corpus
+
+
+def test_the_web_twin_exists_and_emits_only_real_css_classes() -> None:
+    """REVIEW FINDING — the markdown twin had a pin and the WEB twin had none, so `ebitdaBasisNote`
+    could be deleted and only the printed page would notice.
+
+    A CLASS THAT DOES NOT EXIST FAILS SILENTLY: the block renders unstyled rather than erroring, and
+    the markdown preview cannot show it because markdown has no classes. This build nearly shipped
+    exactly that — the first cut emitted `ds-caveat`, which has no rule anywhere; it was caught by
+    hand, which is precisely the thing a pin exists to stop relying on. Same shape and scope as
+    `test_capital_allocation`'s class pin, applied to the function this PR adds."""
+    import re
+
+    js = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    css = (ROOT / "frontend" / "assets" / "styles.css").read_text()
+    assert "function ebitdaBasisNote(m) {" in js, (
+        "the web twin is gone — the printed page would still carry the basis caveat while the "
+        "served page silently dropped it, which is the md↔web parity class")
+    assert "ebitdaBasisNote(m)" in js[js.index("function financialSnapshot(m) {"):], (
+        "ebitdaBasisNote is defined but financialSnapshot no longer calls it — a helper nobody "
+        "invokes is the shape a helper-level pin stays green through")
+
+    body = js[js.index("function ebitdaBasisNote(m) {"):]
+    body = body[:body.index("\nfunction ")]
+    emitted = {c for attr in re.findall(r'class="([^"$]+)"', body) for c in attr.split()}
+    assert emitted, "no classes found — the extraction is wrong, not the markup"
+    missing = sorted(c for c in emitted if not re.search(rf"\.{re.escape(c)}\b", css))
+    assert not missing, (
+        f"the web twin emits CSS classes with no rule in styles.css: {missing}. They fail "
+        "silently — the block renders unstyled and the markdown preview cannot show it.")
+
+
+def test_the_web_twin_gates_on_the_structured_flag_not_the_prose() -> None:
+    """Both renderers must read `divergent`, never sniff `note` — the display-formatting-is-never-
+    load-bearing rule. A twin keyed off the sentence drifts the moment the wording moves."""
+    js = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    body = js[js.index("function ebitdaBasisNote(m) {"):]
+    body = body[:body.index("\nfunction ")]
+    assert "divergent" in body, "the web twin does not read the structured flag"
+    assert "ebitda_basis" in body, "the web twin does not read the structured block"
 
 
 def test_the_committed_fleet_splits_into_flagged_and_clean() -> None:

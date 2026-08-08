@@ -21,7 +21,6 @@ from typing import Any, Generic, TypeVar
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from vinci.dossier.anchor import Anchor
-from vinci.dossier.ebitda_basis import EbitdaBasis
 from vinci.dossier.midcycle import MidCycle
 
 T = TypeVar("T")
@@ -695,6 +694,31 @@ class FinTable(BaseModel):
     # chart/table marks E cols as CONSENSUS (never the machine's forecast), not from the label
     # suffix (display formatting must not be load-bearing). Default [] round-trips a pre-P3 JSON.
     is_estimate: list[bool] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
+class EbitdaBasis(BaseModel):
+    """Implied D&A either side of the annual table's actual→estimate boundary, and whether the two
+    `EBITDA ($M)` readings agree.
+
+    STRUCTURED, with the display string ALONGSIDE the numbers rather than instead of them (the
+    display-formatting-is-never-load-bearing rule): both renderers gate on `divergent`/`ratio` and
+    neither parses `note`.
+
+    Lives HERE rather than beside its builder, matching `CapitalAllocation`: schemas own the shapes
+    and the builder module imports them. The first cut inverted that, which forced `read_basis` to
+    take `Any` and duck-type its way through a `FinTable` it could not name.
+    """
+
+    actual_implied_dna: float | None = None
+    estimate_implied_dna: float | None = None
+    ratio: float | None = None
+    #: True only OUTSIDE [FLAG_LOW, FLAG_HIGH] — a step no depreciation schedule produces.
+    divergent: bool = False
+    #: Why the answer is what it is, INCLUDING when it could not be computed. Never empty: "not
+    #: flagged" and "not checked" are different claims and a blank cannot distinguish them.
+    note: str = ""
 
     model_config = {"frozen": True}
 

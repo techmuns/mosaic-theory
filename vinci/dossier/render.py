@@ -23,7 +23,14 @@ from vinci.config import get_config
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import stamp_detail, stamp_label
-from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
+from vinci.dossier.schemas import (
+    Dossier,
+    FinancialSummary,
+    MechanicalLayer,
+    Sourced,
+    SourceStatus,
+    StockInfo,
+)
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
 
 if TYPE_CHECKING:  # typing only — a RUNTIME import would cycle (scenarios → dossier.midcycle)
@@ -1450,7 +1457,7 @@ def _fin_table_lines(label: str, s: Sourced[Any]) -> list[str]:
     return _table(label, s.source_ref, ft.columns, rows, ft.note)
 
 
-def _ebitda_basis_lines(fs: Any) -> list[str]:
+def _ebitda_basis_lines(fs: FinancialSummary) -> list[str]:
     """The actual-vs-estimate EBITDA basis read, as ONE line under the annual table.
 
     RENDERED ONLY WHEN THE ROWS DISAGREE. A consistent read is the expected state and printing it
@@ -1462,8 +1469,8 @@ def _ebitda_basis_lines(fs: Any) -> list[str]:
     caveat rendered by two copies is one edit away from saying two different things about the same
     table.
     """
-    b = getattr(fs, "ebitda_basis", None)
-    if b is None or not getattr(b, "divergent", False):
+    b = fs.ebitda_basis
+    if b is None or not b.divergent:
         return []
     return ["", f"> **EBITDA basis — the actual and estimate rows differ.** {b.note}", ""]
 

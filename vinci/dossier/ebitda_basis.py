@@ -27,9 +27,8 @@ reported un-flagged; CNXC/EPAM/SMPL/VRRM consistent.
 from __future__ import annotations
 
 import statistics
-from typing import Any
 
-from pydantic import BaseModel
+from vinci.dossier.schemas import EbitdaBasis, FinTable
 
 #: A step of this size or more at the actual→estimate boundary is definitional, not operating.
 FLAG_HIGH = 2.0
@@ -40,33 +39,15 @@ _EBITDA_ROW = "EBITDA ($M)"
 _EBIT_ROW = "EBIT ($M)"
 
 
-class EbitdaBasis(BaseModel):
-    """Implied D&A either side of the actual→estimate boundary, and whether they agree.
-
-    STRUCTURED, with the display string ALONGSIDE rather than instead of the numbers (the
-    display-formatting-is-never-load-bearing rule): a consumer reads `ratio`/`divergent`, never the
-    prose.
-    """
-
-    actual_implied_dna: float | None = None
-    estimate_implied_dna: float | None = None
-    ratio: float | None = None
-    #: True only outside [FLAG_LOW, FLAG_HIGH] — a step no depreciation schedule produces.
-    divergent: bool = False
-    #: Why the answer is what it is, INCLUDING when it could not be computed. Never empty.
-    note: str = ""
-
-    model_config = {"frozen": True}
-
-
-def _row(table: Any, label: str) -> list[Any]:
-    for r in getattr(table, "rows", []) or []:
-        if str(getattr(r, "label", "")).strip() == label:
-            return list(getattr(r, "values", []) or [])
+def _row(table: FinTable, label: str) -> list[float | None]:
+    for r in table.rows:
+        if r.label.strip() == label:
+            return list(r.values)
     return []
 
 
-def _implied(ebitda: list[Any], ebit: list[Any], flags: list[bool], *, want: bool) -> list[float]:
+def _implied(ebitda: list[float | None], ebit: list[float | None], flags: list[bool],
+             *, want: bool) -> list[float]:
     """EBITDA − EBIT for every column whose `is_estimate` matches ``want`` and where BOTH are
     present. A column missing either row is SKIPPED, never defaulted to zero — a zero would read as
     'no D&A' and drag the median toward agreement, hiding the very step this measures."""
@@ -77,20 +58,26 @@ def _implied(ebitda: list[Any], ebit: list[Any], flags: list[bool], *, want: boo
         if i >= len(ebitda) or i >= len(ebit):
             continue
         a, b = ebitda[i], ebit[i]
-        if isinstance(a, (int, float)) and isinstance(b, (int, float)) \
-                and not isinstance(a, bool) and not isinstance(b, bool):
+        if a is not None and b is not None:
             out.append(float(a) - float(b))
     return out
 
 
-def read_basis(table: Any) -> EbitdaBasis:
+def read_basis(table: FinTable | None) -> EbitdaBasis:
     """Compare implied D&A across the actual→estimate boundary of one annual table.
 
     Returns a populated `EbitdaBasis` with `note` explaining the outcome in every branch, including
     the ones that cannot be computed — an absent read must say WHY, because "no flag" and "could
     not check" are different claims and a reader cannot tell them apart from a blank.
+
+    ``None`` IS AN EXPECTED INPUT, not a defensive check: `Sourced[FinTable].value` is None whenever
+    the annual table is UNKNOWN/MISSING, and a name whose financials did not resolve still gets a
+    dossier. Typing this as a bare `FinTable` is what the first cut did — via `Any`, so the case was
+    never surfaced at all, and the un-resolved name would have read as "checked, nothing found".
     """
-    flags = list(getattr(table, "is_estimate", []) or [])
+    if table is None:
+        return EbitdaBasis(note="no annual table on this build — basis not checkable")
+    flags = list(table.is_estimate)
     ebitda, ebit = _row(table, _EBITDA_ROW), _row(table, _EBIT_ROW)
     if not flags:
         return EbitdaBasis(note="no per-column estimate flags on this table — basis not checkable")
