@@ -698,6 +698,31 @@ class FinTable(BaseModel):
     model_config = {"frozen": True}
 
 
+class EbitdaBasis(BaseModel):
+    """Implied D&A either side of the annual table's actual→estimate boundary, and whether the two
+    `EBITDA ($M)` readings agree.
+
+    STRUCTURED, with the display string ALONGSIDE the numbers rather than instead of them (the
+    display-formatting-is-never-load-bearing rule): both renderers gate on `divergent`/`ratio` and
+    neither parses `note`.
+
+    Lives HERE rather than beside its builder, matching `CapitalAllocation`: schemas own the shapes
+    and the builder module imports them. The first cut inverted that, which forced `read_basis` to
+    take `Any` and duck-type its way through a `FinTable` it could not name.
+    """
+
+    actual_implied_dna: float | None = None
+    estimate_implied_dna: float | None = None
+    ratio: float | None = None
+    #: True only OUTSIDE [FLAG_LOW, FLAG_HIGH] — a step no depreciation schedule produces.
+    divergent: bool = False
+    #: Why the answer is what it is, INCLUDING when it could not be computed. Never empty: "not
+    #: flagged" and "not checked" are different claims and a blank cannot distinguish them.
+    note: str = ""
+
+    model_config = {"frozen": True}
+
+
 class FinancialSummary(BaseModel):
     """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
     CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
@@ -710,6 +735,11 @@ class FinancialSummary(BaseModel):
     balance_sheet: Sourced[str]  # C3 — period-labelled posture block
     coherence: Sourced[str]  # C3 — BS cash/debt vs the implied-valuation bridge
     as_of: Sourced[str]  # the estimates as-of basis stamped on the E columns
+    #: Do the ACTUAL and ESTIMATE `EBITDA ($M)` rows of `annual` share a basis? DERIVED from that
+    #: table's own implied D&A (EBITDA − EBIT) either side of the boundary — never read off a label,
+    #: because the sheet does not carry one. See `vinci.dossier.ebitda_basis`. Optional and
+    #: defaulting to None so every already-committed dossier round-trips unchanged.
+    ebitda_basis: EbitdaBasis | None = None
 
     model_config = {"frozen": True}
 

@@ -302,6 +302,16 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     mech = payload.get("mechanical")
     if isinstance(mech, dict) and mech.get("capital_allocation") is None:
         mech.pop("capital_allocation", None)
+    # THIRD INSTANCE, and three is the number at which this stops being a coincidence: the next
+    # optional-with-None field added after the artifacts exist should be handled by a general
+    # drop-when-None sweep rather than a fourth hand-written stanza. Not generalised here because
+    # rewriting the two above is a change to working code inside a data-shaped PR — recorded in
+    # STATE instead, so the person who adds the fourth field has the argument in hand.
+    # `ebitda_basis` sits one level deeper than the other two (on `financial_summary`, since it is
+    # a property of THAT table), so the lookup is nested rather than a shared key list.
+    fsum = mech.get("financial_summary") if isinstance(mech, dict) else None
+    if isinstance(fsum, dict) and fsum.get("ebitda_basis") is None:
+        fsum.pop("ebitda_basis", None)
     new_json = json.dumps(payload, indent=2, ensure_ascii=False)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
                              dossiers_root=path.parent.parent)

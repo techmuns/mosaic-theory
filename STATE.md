@@ -3099,6 +3099,9 @@ Each line: *what it does* — *verified how*.
     becomes a guard and this entry is deleted. **This is the SIXTH instance of the basis class** —
     after operating-vs-EBITDA margin, LTM-vs-NTM multiples, weighted-average-vs-outstanding shares,
     nominal-vs-PV values, and change-vs-level guidance. Here the basis is the HORIZON.
+    **(A SEVENTH landed 2026-08-08 — GAAP-vs-adjusted EBITDA across the actual→estimate boundary of
+    the financial summary, PR #370. It is the first of the seven caught by MEASUREMENT across the
+    whole fleet rather than by noticing one name, and 7 of 11 names carry it.)**
   - Two side-findings: the **prose-register lint is a hard gate on committed records** and caught
     10 house-token flags on the first attempt (reverted and re-run as ONE supersession rather than
     stacking a same-day second archive entry); and **`recompute_derived` does NOT rebuild
@@ -3220,6 +3223,49 @@ Each line: *what it does* — *verified how*.
     the committed companyfacts fixture, which fails-not-skips BY DESIGN (D17), so a new name needs
     `scripts/build_companyfacts_fixture.py` run in the PR that assembles it. Verified working for
     UBER (23 tags, 316 KB). That cost is deliberate and was left alone.
+
+- **THE SEVENTH SIGHTING of the basis class, and the first one MEASURED FLEET-WIDE rather than
+  caught on one name (2026-08-08, PR #370).** The annual financial summary fuses CIQ Financials
+  ACTUALS with Estimates CONSENSUS into ONE table, so `EBITDA ($M)` reads left-to-right across a
+  boundary where the definition changes and nothing said so.
+  - **UBER is the proving case, verified against the PRIMARY SOURCE rather than assumed.** The
+    actual row equals EDGAR `OperatingIncomeLoss + DepreciationDepletionAndAmortization` to the
+    dollar for FY21–FY25 (−2,932 / −885 / 1,933 / 3,510 / 6,284 against CIQ's −2,932 / −885 /
+    1,933 / 3,536 / 6,312), so it is **GAAP EBITDA with SBC expensed**. The consensus row implies
+    **2,952 of D&A against 737** in the actuals — a gap that is Uber's ~1,826 of stock-based
+    compensation. Consensus EBITDA adds SBC back; consensus EBIT does not.
+  - **IT IS NOT A UBER QUIRK — 7 of 11 committed names carry a step.** VITL 5.38x, UBER 4.01x,
+    MVST 2.93x, AORT 2.65x, NCNO **0.25x** (its estimates add back LESS — the inverse case a
+    one-sided test would have reported as agreement, which is the `ratio >= 2` mistake #253 already
+    paid for once). IT 1.82x and BRBR 1.76x are reported un-flagged; CNXC/EPAM/SMPL/VRRM consistent.
+  - **DERIVED, NEVER TOLD.** The sheet does not state a basis, so none is read off a label and
+    nothing is hardcoded per name. The table carries BOTH `EBITDA ($M)` and `EBIT ($M)` for every
+    column, so `EBITDA − EBIT` is that column's IMPLIED D&A; depreciation does not step-change at
+    the forecast boundary, a definition does. Thresholds are FACE-VALIDITY (2.0x / 0.5x — a
+    doubling or halving is not an operating fact), never tuned, and the ratio is REPORTED between
+    them because the honest answer there is "here is the number, you judge".
+  - **How verified.** Guard mutation-tested against three defect shapes — one-sided test (the #253
+    shape), a missing column zeroed rather than skipped, and the boundary flipped to a strict
+    comparison; all three go red, restored green. Live-corpus pin asserts the fleet splits into
+    BOTH flagged and clean, so the check cannot go vacuous in either direction. Gate: ruff +
+    `mypy --strict vinci` clean, **1988 passed** (1984 with the DB and cache moved aside).
+  - **The twin was caught by an existing pin, not by review.** `test_a_noop_refresh_is_byte_
+    identical` reddened on nine names: the new optional field emitted `"ebitda_basis": null` into
+    artifacts that predate it. Handled by the rule refresh.py had **already named twice** — an
+    optional-with-None field added after the artifacts exist is dropped when None. **This is the
+    THIRD instance, and three is where it stops being a coincidence:** the next such field should
+    be handled by a general drop-when-None sweep rather than a fourth hand-written stanza. Not
+    generalised here (rewriting working code inside a data-shaped PR); recorded so whoever adds the
+    fourth has the argument in hand.
+  - **Both surfaces carry it** — `render._ebitda_basis_lines` and `dossier.js:ebitdaBasisNote`, one
+    definition per surface, printed ONLY when the rows disagree (a caveat shown on every name
+    trains the reader to skip it, which is how the flagged names would then be missed). The
+    structured `divergent`/`ratio` are what both renderers gate on; neither parses the prose.
+  - **OPERATOR TO-DO — the other six flagged names still render unlabelled.** Only UBER was
+    re-assembled here. The field is optional and absent on the rest, so their pages stay silent
+    about a step this now measures. `vinci.dossier.refresh` back-fills mechanical numbers under a
+    KEPT synthesis (the #362 path — "without rerolling a synthesis"), so the fleet can gain the
+    label without re-rolling eleven syntheses. Run it in the standing artifact pass.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

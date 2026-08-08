@@ -22,6 +22,7 @@ from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.capital_allocation import build_capital_allocation
 from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
 from vinci.dossier.schemas import (
     CapitalInstrument,
@@ -1393,12 +1394,16 @@ def _financial_summary(bundle: CiqBundle, implied: ImpliedValuation) -> Financia
     balance-sheet posture (C3), and the BS↔bridge coherence gate. Estimate columns inherit the
     catalyst as-of (header > sidecar > floor)."""
     asof = ciq_sheets.estimates_as_of(bundle)
+    annual = ciq_sheets.financial_summary_annual(bundle, as_of=asof.value)
     return FinancialSummary(
-        annual=ciq_sheets.financial_summary_annual(bundle, as_of=asof.value),
+        annual=annual,
         quarterly=ciq_sheets.financial_summary_quarterly(bundle),
         balance_sheet=ciq_sheets.balance_sheet_posture(bundle),
         coherence=_bs_bridge_coherence(bundle, implied),
         as_of=asof,
+        # DERIVED FROM THE TABLE JUST BUILT, not from a second extraction — the two EBITDA rows are
+        # only comparable if they came from the same assembly of the same columns.
+        ebitda_basis=read_ebitda_basis(annual.value),
     )
 
 
