@@ -456,3 +456,97 @@ def test_the_margin_trend_is_labelled_ebitda_against_an_ebit_leg() -> None:
     line = next(x for x in build_template(_doc("SMPL"))["_evidence"]["margin"]
                 if x.startswith("margin trend"))
     assert "EBITDA basis" in line and "NOT the EBIT margin" in line, line
+
+
+# --- the R2_NEEDED crash: a template must never be shaped for a recipe the dossier refused --------
+
+
+def _inapplicable(hint: str, reason: str) -> dict:
+    """A dossier whose anchor refused — the shape NCNO/UBER/MVST carry live."""
+    return {"ticker": "ZZZZ",
+            "anchor": {"applicable": False, "recipe_hint": hint, "reason": reason}}
+
+
+def test_an_inapplicable_anchor_refuses_instead_of_raising_keyerror() -> None:
+    """THE REGRESSION PIN, and it fails on the pre-fix code with the exact production error.
+
+    NCNO and UBER both carry `applicable=False` / `recipe_hint="R2_NEEDED"`, so `propose_anchors`
+    returns no `("margin","base")` anchor — revenue and multiple still resolve, margin alone does
+    not. `build_template` then indexed `UNPROPOSED_REASON[("margin","base")]`, a table holding only
+    bear/bull entries, and raised `KeyError: ('margin', 'base')`. `_cmd_scenario_propose` catches
+    `FileNotFoundError` and `ProposalRefusedError`; KeyError is neither, so it reached the user as a
+    traceback on an UNDERWRITTEN name."""
+    from vinci.dossier.propose import build_template
+
+    with pytest.raises(ProposalRefusedError, match="applicable=False"):
+        build_template(_inapplicable("R2_NEEDED", "no positive operating margin over history"))
+
+
+def test_the_refusal_points_at_ev_revenue_only_when_that_is_the_cause() -> None:
+    """THE REMEDY IS PER CAUSE. Three live shapes refuse here and only one is about the missing
+    revenue-basis path: MVST/NCNO/UBER hint `R2_NEEDED`; FUBO's anchor refused on a missing
+    own-history multiple (hint `unknown`); VITL's on a coherence guard while still hinting R1.
+    Telling FUBO and VITL to resolve an EV/Revenue recipe sends them to fix something unrelated."""
+    from vinci.dossier.propose import build_template
+
+    with pytest.raises(ProposalRefusedError, match="EV/Revenue basis exists"):
+        build_template(_inapplicable("R2_NEEDED", "no positive operating margin"))
+    for hint in ("unknown", "R1_midcycle_margin_evebitda"):
+        with pytest.raises(ProposalRefusedError) as exc:
+            build_template(_inapplicable(hint, "own-history multiple missing"))
+        assert "EV/Revenue" not in str(exc.value), (hint, str(exc.value))
+
+
+def test_the_refusal_quotes_the_dossiers_own_reason_and_hint() -> None:
+    """NOT RE-WORDED HERE. The dossier already states why the anchor refused; a second author for
+    one fact is how the two drift."""
+    from vinci.dossier.propose import build_template
+
+    with pytest.raises(ProposalRefusedError) as exc:
+        build_template(_inapplicable("R2_NEEDED", "no positive operating margin over history"))
+    assert "no positive operating margin over history" in str(exc.value)
+    assert "'R2_NEEDED'" in str(exc.value)
+
+
+def test_an_applicable_anchor_is_untouched_by_the_new_refusal() -> None:
+    """THE NEGATIVE PIN. A guard that refuses everything is a freeze — an anchor that APPLIES must
+    pass through, and `applicable` ABSENT (pre-field artifacts) must not read as False."""
+    from vinci.dossier.propose import _refuse_if_recipe_unresolved
+
+    _refuse_if_recipe_unresolved({"anchor": {"applicable": True}}, "ZZZZ")
+    _refuse_if_recipe_unresolved({"anchor": {}}, "ZZZZ")
+    _refuse_if_recipe_unresolved({}, "ZZZZ")
+
+
+def test_a_missing_base_axis_no_longer_crashes_the_cell_builder() -> None:
+    """DEFENCE IN DEPTH, one layer under the refusal. The refusal catches the KNOWN cause; this
+    covers a base axis going missing for some other reason, where a crash is never the right
+    answer. `UNPROPOSED_REASON` still has no base entries by design — base anchors are supposed to
+    exist — so the fallback names the axis and demands a derivation."""
+    from vinci.dossier.propose import UNPROPOSED_REASON
+
+    assert not [k for k in UNPROPOSED_REASON if k[1] == "base"], (
+        "a base entry appeared in UNPROPOSED_REASON — if base axes are now legitimately "
+        "unproposable, this test and the fallback both need rethinking")
+    assert UNPROPOSED_REASON.get(("margin", "base")) is None
+
+
+@pytest.mark.skipif(not DOSS.is_dir(), reason="no committed dossiers")
+def test_no_committed_name_crashes_the_template_builder() -> None:
+    """CORPUS BEFORE SYNTHETIC. The pins above run on constructed docs; this one runs on every
+    committed dossier, because the defect reached production on names that were already in the
+    fleet. Any outcome is acceptable EXCEPT an exception that is not a stated refusal."""
+    from vinci.dossier.propose import build_template
+
+    built, refused = [], []
+    for p in sorted(DOSS.glob("*/dossier.json")):
+        try:
+            build_template(json.loads(p.read_text()))
+            built.append(p.parent.name)
+        except ProposalRefusedError:
+            refused.append(p.parent.name)
+        except Exception as exc:  # noqa: BLE001 — that is the whole point of this pin
+            pytest.fail(f"{p.parent.name}: {type(exc).__name__}: {exc} — every failure here must "
+                        f"be a stated ProposalRefusedError, never a raw exception")
+    assert built, f"no committed name builds a template — refused={refused}"
+    assert refused, "no committed name refuses — the refusal path has gone vacuous"

@@ -479,6 +479,54 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
 COMMENTARY_PREFIX = "_"
 
 
+def _refuse_if_recipe_unresolved(doc: dict[str, Any], ticker: str) -> None:
+    """REFUSE before shaping a template the dossier has already said is the wrong shape.
+
+    WHAT WENT WRONG, and the crash was the SYMPTOM rather than the defect. NCNO and UBER both carry
+    `anchor.applicable=false` with `recipe_hint="R2_NEEDED"` and the reason *"no positive operating
+    margin over available history — needs revenue-anchored recipe"*. `propose_anchors` therefore
+    returns no `("margin","base")` anchor — revenue and multiple still resolve, margin alone does
+    not — and the template builder indexed `UNPROPOSED_REASON[("margin","base")]`, a table with only
+    bear/bull entries, so it raised `KeyError: ('margin', 'base')`.
+
+    A `.get()` FALLBACK WOULD HAVE BEEN THE WRONG FIX, and it was the first one proposed. It turns
+    the crash into an R1-shaped template — revenue/margin/multiple — for a name the dossier
+    explicitly marks as needing a revenue-anchored recipe. The analyst then fills in a margin the
+    recipe does not read and creates a record on the wrong tier. A crash is bad; a plausible wrong
+    template is worse, because it is actionable.
+
+    THE PROPOSE PATH HAD NO TIER AWARENESS AT ALL. `check_tier_agreement` exists and knows exactly
+    this state, but it is wired only into `scenario-create` and `scenario-supersede`;
+    `_cmd_scenario_propose` never calls it, and `KeyError` is not in the exception set that command
+    catches. So the guard for this case existed and could not reach it.
+
+    THE REASON IS THE DOSSIER'S OWN, never composed here. It already states why the anchor refused
+    and which recipe it needs; re-wording that at the refusal site would be a second author for one
+    fact.
+    """
+    if _get(doc, "anchor", "applicable") is not False:
+        return
+    hint = _get(doc, "anchor", "recipe_hint")
+    reason = str(_get(doc, "anchor", "reason") or "").strip()
+    # THE REMEDY IS PER CAUSE, because the three live causes are not one problem. Only R2_NEEDED is
+    # about the missing revenue-basis path — FUBO's anchor refused on a missing own-history
+    # multiple (hint `unknown`) and VITL's on a coherence guard while still hinting R1. Appending
+    # the EV/Revenue sentence to all three would send two of them to fix something unrelated, which
+    # is the wrong-remediation shape this repo keeps closing one artifact over.
+    remedy = (
+        "Resolve the recipe first: the EV/Revenue basis exists in the R2 engine (PR #188) but this "
+        "template has no path to it yet."
+        if hint == "R2_NEEDED" else
+        "Fix the condition the anchor names, or resolve the recipe, before underwriting this name."
+    )
+    raise ProposalRefusedError(
+        f"{ticker}: the dossier marks its anchor applicable=False"
+        + (f" with hint {hint!r}" if hint else "")
+        + (f" — {reason}" if reason else "")
+        + ". This template is R1-shaped (revenue/margin/multiple) and emitting it would invite an "
+        f"underwrite on a recipe the dossier says does not apply. {remedy}")
+
+
 def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     """The emitted underwrite template: anchors pre-filled, refusals carrying their evidence.
 
@@ -487,6 +535,7 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     refused ones arrive EMPTY with the reason they are empty and the dossier evidence beside them.
     """
     ticker = str(doc.get("ticker") or "")
+    _refuse_if_recipe_unresolved(doc, ticker)
     ancs = {(a.axis, a.leg): a for a in propose_anchors(doc)}
     shares, sh_basis, sh_source = resolve_shares(doc)
     ev = evidence_for(doc)
@@ -514,7 +563,17 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
                 cell[f"{axis}_adjustment"] = ""      # only needed if the value is moved
             else:
                 cell[axis] = None
-                cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = UNPROPOSED_REASON[(axis, leg)]
+                # `.get()` WITH A STATED FALLBACK, matching the same lookup at `validate_legs`.
+                # This was a bare index and the table holds only bear/bull entries, so a missing
+                # BASE anchor raised KeyError instead of writing a cell. The recipe refusal above
+                # now catches the known cause (an inapplicable anchor) far earlier — this is the
+                # backstop for a base axis that goes missing for some OTHER reason, where refusing
+                # the whole template would be too blunt but a crash is never the right answer.
+                cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = UNPROPOSED_REASON.get(
+                    (axis, leg),
+                    f"no anchor was computed for {leg}.{axis} and no standing reason is recorded "
+                    f"for that combination — state where this number comes from in "
+                    f"{axis}_derivation")
                 cell[f"{axis}_derivation"] = ""      # REQUIRED — where this number came from
         cell["reason"] = ""
         if leg == "base":
