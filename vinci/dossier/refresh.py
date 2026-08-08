@@ -221,6 +221,40 @@ def _rerender_only(path: Path) -> bool:
     return True
 
 
+#: Optional mechanical fields added AFTER the artifacts were committed. Each must be DROPPED when
+#: None, or a no-op refresh writes `"<key>": null` into every committed dossier and that key
+#: asserts WE COMPUTED THIS AND GOT NOTHING — when the truth is the dossier predates the field.
+#: ABSENT is the meaning: NOT YET REFRESHED.
+#:
+#: A LIST RATHER THAN A FOURTH LITERAL BRANCH, and #370 asked for exactly this: it wrote the third
+#: stanza by hand, declined to generalise inside a data-shaped PR, and left the argument "for the
+#: person who adds the fourth field". `peer_capital_intensity` is the fourth.
+#:
+#: THE GENERALISATION ALMOST ATE THE THIRD ONE. The first cut of this list replaced the whole block
+#: and silently dropped `ebitda_basis`, turning a green pin red — a refactor that removes a guard
+#: while claiming to consolidate it. The round-trip pin caught it, which is what it is for.
+#: `(parent field or "" for the mechanical root, key)`. `ebitda_basis` sits one level deeper than
+#: the others — it is a property of the financial-summary TABLE, not of the layer — which is why
+#: the parent is named per entry rather than assumed to be the root.
+_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
+    ("consensus_context", "consensus_levels"),
+    ("financial_summary", "ebitda_basis"),
+    ("", "capital_allocation"),
+    ("", "peer_capital_intensity"),
+)
+
+
+def _drop_absent_optional_keys(payload: dict[str, Any]) -> None:
+    """Remove optional-added-later mechanical keys that came back None. In place."""
+    mech = payload.get("mechanical")
+    if not isinstance(mech, dict):
+        return
+    for parent, key in _DROP_WHEN_NONE:
+        node = mech.get(parent) if parent else mech
+        if isinstance(node, dict) and key in node and node.get(key) is None:
+            node.pop(key, None)
+
+
 def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     """Refresh one committed dossier IN PLACE, preserving its synthesis. True when anything moved.
 
@@ -291,27 +325,7 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None) -> bool:
     # rather than "the street has no view". Dropped by KEY, not by value: a name that HAS levels
     # writes them.
     payload = json.loads(model.model_dump_json())
-    cc = (payload.get("mechanical") or {}).get("consensus_context")
-    if isinstance(cc, dict) and cc.get("consensus_levels") is None:
-        cc.pop("consensus_levels", None)
-    # SECOND INSTANCE OF THE SAME RULE, so it is worth naming: an optional-with-None field added
-    # AFTER the committed artifacts exist must be dropped when None, or a no-op refresh writes
-    # `"capital_allocation": null` into all nine and that key asserts WE COMPUTED THIS AND GOT
-    # NOTHING — when the truth is the dossier predates the field. The scenario archive's
-    # `GATE_FIELDS` scoping exists for the same sentence, one artifact over.
-    mech = payload.get("mechanical")
-    if isinstance(mech, dict) and mech.get("capital_allocation") is None:
-        mech.pop("capital_allocation", None)
-    # THIRD INSTANCE, and three is the number at which this stops being a coincidence: the next
-    # optional-with-None field added after the artifacts exist should be handled by a general
-    # drop-when-None sweep rather than a fourth hand-written stanza. Not generalised here because
-    # rewriting the two above is a change to working code inside a data-shaped PR — recorded in
-    # STATE instead, so the person who adds the fourth field has the argument in hand.
-    # `ebitda_basis` sits one level deeper than the other two (on `financial_summary`, since it is
-    # a property of THAT table), so the lookup is nested rather than a shared key list.
-    fsum = mech.get("financial_summary") if isinstance(mech, dict) else None
-    if isinstance(fsum, dict) and fsum.get("ebitda_basis") is None:
-        fsum.pop("ebitda_basis", None)
+    _drop_absent_optional_keys(payload)
     new_json = json.dumps(payload, indent=2, ensure_ascii=False)
     new_md = render_markdown(model, card=_read_scenario_card(model.ticker),
                              dossiers_root=path.parent.parent)

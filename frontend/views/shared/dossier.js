@@ -1587,6 +1587,35 @@ function briefWindow(v) {
 // It must NOT read the same on a name that has impaired and one that never has: SMPL shows a live
 // charge, EPAM $1.59bn never written down. The STALE mark is computed in the extractor (it holds
 // both dates); this renderer only reads it — recomputing here would be two readers of one rule.
+// --- peer acquired-asset intensity. Twin: render._peer_capital_intensity_lines ----------------
+// BOTH DENOMINATORS, assets first: that is the comparable property. Market cap moves with the
+// price, so a de-rated name shows a high ratio on unchanged accounting — reading it alone would
+// measure the very de-rating the thesis calls an overshoot.
+function peerCapitalIntensity(m) {
+  const pc = m.peer_capital_intensity;
+  if (!pc || !(pc.rows || []).length) return "";
+  const pct = (v) => (v == null ? "—" : `${(v * 100).toFixed(0)}%`);
+  const usd = (v) => (v == null ? "—" : Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 }));
+  const noted = pc.rows.some((r) => r.note);
+  const head = `<tr><th></th><th class="num">mcap $M</th><th class="num">acquired $M</th>`
+    + `<th class="num">assets $M</th><th class="num">% assets</th><th class="num">% mcap</th>`
+    + (noted ? "<th>why</th>" : "") + "</tr>";
+  const body = pc.rows.map((r) => {
+    const nm = r.is_subject ? `<b>${escapeHtml(r.ticker)}</b>` : escapeHtml(r.ticker);
+    return `<tr><td>${nm}</td><td class="num mono">${escapeHtml(usd(r.market_cap))}</td>`
+      + `<td class="num mono">${escapeHtml(usd(r.acquired))}</td>`
+      + `<td class="num mono">${escapeHtml(usd(r.total_assets))}</td>`
+      + `<td class="num mono">${escapeHtml(pct(r.pct_assets))}</td>`
+      + `<td class="num mono">${escapeHtml(pct(r.pct_market_cap))}</td>`
+      + (noted ? `<td>${escapeHtml(String(r.note || "").split(" — ")[0])}</td>` : "") + "</tr>";
+  }).join("");
+  return `<div class="fact"><div class="fact-label">Peer acquired-asset intensity — goodwill + intangibles</div>
+    <div class="fact-val"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table>
+    <div class="fact-caveat">Median — all peers (n=${pc.n_all}): ${escapeHtml(pct(pc.median_all_assets))} of assets · ${escapeHtml(pct(pc.median_all_market_cap))} of market cap<br>
+    Median — peers ≥ $${escapeHtml(usd(pc.size_floor))}M market cap (n=${pc.n_large}): ${escapeHtml(pct(pc.median_large_assets))} of assets · ${escapeHtml(pct(pc.median_large_market_cap))} of market cap<br>
+    <b>Read the ASSETS column for the peer judgement</b> — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting.</div></div></div>`;
+}
+
 function capitalAllocation(m) {
   const ca = m.capital_allocation;
   if (!ca) return "";
@@ -1635,6 +1664,7 @@ function capitalAllocation(m) {
   // `subtitle muted` line (see `sec()` above); the first cut used it as a wrapper and invented a
   // `.ds-subtitle` that has zero rules in styles.css — the block would have rendered unstyled on
   // the web while the markdown preview looked correct.
+  out.push(peerCapitalIntensity(m));
   return `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${out.join("")}`;
 }
 

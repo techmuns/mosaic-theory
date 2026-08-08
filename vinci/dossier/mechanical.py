@@ -20,7 +20,10 @@ from typing import Any, NamedTuple, TypeVar
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
-from vinci.dossier.capital_allocation import build_capital_allocation
+from vinci.dossier.capital_allocation import (
+    build_capital_allocation,
+    build_peer_capital_intensity,
+)
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
@@ -2776,6 +2779,22 @@ def _stock_info(
     )
 
 
+
+def _peer_capital_intensity(peers: Any, resolver: EntityResolver,
+                            edgar: EdgarClient) -> Any:
+    """The peer acquired-asset comparison, or None when the comps grid is absent.
+
+    NONE MEANS NOT BUILT, never "the peers carry nothing" — the grid is the only source of peer
+    tickers, so without it there is no set to compare against and a written block would be a claim
+    about peers we never looked at.
+    """
+    grid = getattr(getattr(peers, "peer_grid", None), "value", None)
+    if not grid:
+        return None
+    return build_peer_capital_intensity(
+        grid, resolve=resolver.resolve_ticker, companyfacts=edgar.companyfacts)
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -2878,6 +2897,9 @@ def assemble_mechanical(
         # yields a fully-stated block rather than a missing one.
         capital_allocation=build_capital_allocation(
             _companyfacts_or_none(edgar, record.identity.cik) or {}),
+        # Peer acquired-asset intensity. Needs the comps grid (only it carries peer TICKERS) plus
+        # one cached EDGAR call per peer; absent grid -> None, which keeps its NOT-BUILT meaning.
+        peer_capital_intensity=_peer_capital_intensity(peer_comps, resolver, edgar),
         management_commentary=ciq_sheets.management_commentary(bundle),
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)

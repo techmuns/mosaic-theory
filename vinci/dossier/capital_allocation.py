@@ -26,9 +26,16 @@ scopes, and the source_ref must say which.
 """
 from __future__ import annotations
 
+from statistics import median
 from typing import Any
 
-from vinci.dossier.schemas import CapitalAllocation, Sourced, SourceStatus
+from vinci.dossier.schemas import (
+    CapitalAllocation,
+    PeerCapitalIntensity,
+    PeerCapitalRow,
+    Sourced,
+    SourceStatus,
+)
 from vinci.edgar.concepts import ConceptPoint, latest_instant, points_for_tag
 
 _USD_M = 1_000_000.0
@@ -280,3 +287,98 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                  "footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate "
                  "above is complete only at the goodwill/intangible level"),
     )
+
+
+#: Market-cap floor ($M) for the "large peers" median. STATED, not hidden: SMPL's set spans $49M
+#: to $30.1bn, and a $49M distressed name's ratio-to-market-cap (HAIN, 950%) is a de-rating
+#: artifact rather than a statement about its balance sheet. The floor is face-validity, never
+#: tuned — it separates names whose balance sheets are comparable from ones whose are not.
+PEER_SIZE_FLOOR_MUSD = 1_000.0
+
+TOTAL_ASSETS = ("Assets",)
+
+
+def _acquired_and_assets(facts: dict[str, Any]) -> tuple[float | None, float | None]:
+    """(goodwill + intangibles, total assets) in $M — both latest INSTANTS, reusing `_pick`.
+
+    Returns ``(None, assets)`` when the filer reports NEITHER goodwill nor intangibles. That is a
+    real economic fact on this set — Freshpet is an organic grower and tags neither — and it is a
+    different sentence from "we could not fetch".
+    """
+    gw = _pick(facts, GOODWILL, kind="instant")
+    it = _pick(facts, INTANGIBLES, kind="instant")
+    assets = _pick(facts, TOTAL_ASSETS, kind="instant")
+    acquired = (((gw[0].value if gw else 0.0) + (it[0].value if it else 0.0)) / _USD_M
+                if (gw or it) else None)
+    return acquired, (assets[0].value / _USD_M if assets else None)
+
+
+def build_peer_capital_intensity(
+    grid: list[Any], *, resolve: Any, companyfacts: Any,
+    floor: float = PEER_SIZE_FLOOR_MUSD,
+) -> PeerCapitalIntensity:
+    """Acquired-asset intensity for the subject and every peer, on BOTH denominators.
+
+    THE PEER TICKERS COME FROM THE COMPS GRID, already parsed and committed — `PeerRow.ticker` and
+    `PeerRow.market_cap`. Nothing re-parses the workbook, so this cannot disagree with the grid the
+    page already shows. The CIQ comps panel itself carries NO goodwill and NO intangibles (checked
+    across all five sheets: the only book-adjacent column is `LTM Tangible Book Value/Share`, the
+    tangible version, per share, with no plain book value to subtract from), so the figures are
+    EDGAR's — one cached companyfacts call per peer.
+
+    THREE ABSENCES, THREE SENTENCES. `unresolved` (ticker → no CIK), `fetch-failed` (EDGAR
+    unreachable) and `no-tag` (the filer genuinely reports neither) are different facts, and the
+    reassuring one must never stand in for the alarming one — #362, where a failed fetch rendered
+    as "the filer reports none" on a name carrying $1.2bn.
+    """
+    rows: list[PeerCapitalRow] = []
+    subject: PeerCapitalRow | None = None
+    for pr in grid:
+        if getattr(pr, "is_median", False) or not getattr(pr, "ticker", ""):
+            continue
+        tk, mcap = pr.ticker, getattr(pr, "market_cap", None)
+        try:
+            cik = resolve(tk).cik
+        except Exception:                                        # noqa: BLE001
+            rows.append(PeerCapitalRow(
+                ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
+                note=f"unresolved — no CIK for {tk!r}"))
+            continue
+        try:
+            facts = companyfacts(cik)
+        except Exception:                                        # noqa: BLE001
+            rows.append(PeerCapitalRow(
+                ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
+                note="fetch-failed — EDGAR companyfacts unreachable; this is NOT a statement that "
+                     "the filer reports no goodwill"))
+            continue
+        acquired, assets = _acquired_and_assets(facts)
+        row = PeerCapitalRow(
+            ticker=tk, is_subject=bool(getattr(pr, "is_name", False)),
+            market_cap=mcap, acquired=acquired, total_assets=assets,
+            pct_assets=(acquired / assets) if (acquired and assets) else None,
+            pct_market_cap=(acquired / mcap) if (acquired and mcap) else None,
+            note=(None if acquired is not None else
+                  "no-tag — the filer reports neither goodwill nor intangibles (a real balance "
+                  "sheet, not a data gap)"))
+        if getattr(pr, "is_name", False):
+            subject = row
+        else:
+            rows.append(row)
+
+    def _med(xs: list[float]) -> float | None:
+        return median(xs) if xs else None
+
+    peers = [r for r in rows if r.pct_assets is not None and r.pct_market_cap is not None]
+    large = [r for r in peers if (r.market_cap or 0.0) >= floor]
+    return PeerCapitalIntensity(
+        rows=([subject] if subject else []) + rows, size_floor=floor,
+        subject_pct_assets=subject.pct_assets if subject else None,
+        subject_pct_market_cap=subject.pct_market_cap if subject else None,
+        median_all_assets=_med([r.pct_assets for r in peers if r.pct_assets is not None]),
+        median_all_market_cap=_med(
+            [r.pct_market_cap for r in peers if r.pct_market_cap is not None]),
+        median_large_assets=_med([r.pct_assets for r in large if r.pct_assets is not None]),
+        median_large_market_cap=_med(
+            [r.pct_market_cap for r in large if r.pct_market_cap is not None]),
+        n_all=len(peers), n_large=len(large))

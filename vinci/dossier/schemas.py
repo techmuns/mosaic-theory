@@ -1091,6 +1091,58 @@ class CapitalAllocation(BaseModel):
     model_config = {"frozen": True}
 
 
+class PeerCapitalRow(BaseModel):
+    """One peer's acquired-asset intensity, or a STATED reason it has none."""
+
+    ticker: str
+    #: The SUBJECT's own row. In the DATA rather than left to position: the markdown twin bolded
+    #: row 0 while the web twin read an `is_subject` field that did not exist, so the web never
+    #: marked it at all — and with no subject present, row 0 is a PEER that the markdown would have
+    #: bolded as if it were the name. Two positional conventions that can drift, replaced by one
+    #: fact both renderers read.
+    is_subject: bool = False
+    market_cap: float | None = None      # $M, from the CIQ comps grid
+    acquired: float | None = None        # $M, goodwill + intangibles (EDGAR, latest instant)
+    total_assets: float | None = None    # $M, EDGAR `Assets`, latest instant
+    pct_assets: float | None = None      # acquired / total assets
+    pct_market_cap: float | None = None  # acquired / market cap
+    #: WHY this row has no figures — and the three reasons are NOT the same fact.
+    #: "unresolved" (no CIK), "fetch-failed" (EDGAR unreachable) and "no-tag" (the filer genuinely
+    #: reports neither goodwill nor intangibles — Freshpet, an organic grower) must never collapse
+    #: into one sentence. #362 exactly: a failed fetch reading as "carries none" is the reassuring
+    #: wrong answer.
+    note: str | None = None
+
+    model_config = {"frozen": True}
+
+
+class PeerCapitalIntensity(BaseModel):
+    """How acquisitive this balance sheet is versus its peer set — on BOTH denominators.
+
+    TWO DENOMINATORS, AND THE CHOICE IS NOT COSMETIC. Against MARKET CAP a cheap stock shows a high
+    ratio on identical accounting, so SMPL's 166% is partly $1.5bn of goodwill and partly a market
+    cap that halved — using it alone would measure the de-rating the thesis argues is an overshoot.
+    Circular. Against TOTAL ASSETS it measures how acquisitive the balance sheet IS, which is the
+    property that is actually comparable. Market cap sizes the exposure; assets make the judgement.
+
+    AND THE MEDIAN IS GIVEN TWICE. The set spans $49M to $30.1bn: a $49M distressed name's ratio
+    says nothing about a $1bn one, and a median across that range inherits exactly the
+    heterogeneity this metric exists to settle."""
+
+    rows: list[PeerCapitalRow]
+    size_floor: float                    # $M market cap for the "large peers" median — STATED
+    subject_pct_assets: float | None = None
+    subject_pct_market_cap: float | None = None
+    median_all_assets: float | None = None
+    median_all_market_cap: float | None = None
+    median_large_assets: float | None = None
+    median_large_market_cap: float | None = None
+    n_all: int = 0
+    n_large: int = 0
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -1137,6 +1189,11 @@ class MechanicalLayer(BaseModel):
     # answered and every absence names the family tried. Optional-with-default for back-compat:
     # committed dossiers predate it and must round-trip; a FRESH assembly always builds it.
     capital_allocation: CapitalAllocation | None = None
+    # Peer acquired-asset intensity — the comparison that says whether the subject's
+    # goodwill+intangibles load is unusual for its sector or exactly what it looks like.
+    # Optional-with-default for back-compat; a FRESH assembly builds it when the comps
+    # grid is present (it needs peer tickers, which only that grid supplies).
+    peer_capital_intensity: PeerCapitalIntensity | None = None
     # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
     # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
     financial_summary: FinancialSummary | None = None
