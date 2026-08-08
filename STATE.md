@@ -4457,8 +4457,19 @@ what two people did.
 
 **CIQ DOES NOT CARRY IT.** The canonical export manifest (`vinci dossier requirements`) is the
 authoritative set — four REQUIRED and four OPTIONAL exports — and **none is ownership or holders**.
-No 13F capability exists in the repo either. `render.py:599` already notes the gap in its own
-words: the section NAMED for ownership carried none.
+No 13F capability exists in the repo either — searched for `13f` and `institutional owner` across
+`vinci/`, nothing. And `render.py` already notes the gap in its own words, in the
+content-relocation comment above the estimates-and-guidance section: *"the only actual OWNERSHIP
+content in the dossier while the section NAMED for ownership carried none"*. **Cited by its TEXT,
+not a line number** — the first draft of this entry said `render.py:599` and that line had already
+moved by the time the entry was reviewed, **in the same session**. A durable record does not get to
+use a positional reference.
+
+  *Observed while fixing it: STATE carries **65** `file.py:NNN` citations. This one is simply the
+  newest, and it rotted inside a single session — which is evidence about the other 64 rather than
+  about this entry. Not rewritten here (65 edits is not a docs fix), and not closed with a machine
+  check either: asserting a line still holds its content needs the content, which STATE does not
+  record. **Recorded as accepted risk** — quote the text when writing a new one.*
 
 **AND 13F-HR HAS NO PER-ISSUER INDEX.** Holdings are filed FILER-side, so finding one issuer's
 holders means scanning every 13F-HR in a quarter — thousands — parsing the XML information tables
