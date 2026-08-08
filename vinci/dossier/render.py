@@ -2455,6 +2455,59 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
                      lambda v: f"${v:,.1f}M"))
     gap = _clean_note(str(ca.brand_split.note)).removeprefix("NOT AVAILABLE FROM XBRL — ")
     out.append(f"- **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — {gap}")
+    # THE PEER COMPARISON SITS INSIDE THIS BLOCK, not beside it. "Is $1.5bn a lot?" is unanswerable
+    # from the balance alone, and a reader who has just met the number should not have to go
+    # looking for the only thing that scales it.
+    out += _peer_capital_intensity_lines(m)
+    return out
+
+
+
+def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
+    """Is this acquired-asset load unusual for the sector, or exactly what it looks like?
+
+    BOTH DENOMINATORS, and the order is the argument. Against TOTAL ASSETS first, because that is
+    the comparable property — how acquisitive the balance sheet IS. Against MARKET CAP second and
+    labelled, because a cheap stock shows a high ratio on identical accounting: SMPL's 166% is
+    partly $1.5bn of goodwill and partly a market cap that halved, so reading it alone would
+    measure the de-rating the thesis argues is an overshoot.
+
+    THE MEDIAN IS GIVEN TWICE — all peers, and peers above a STATED size floor. The set spans $49M
+    to $30.1bn and a $49M distressed name's ratio-to-market-cap (HAIN, 950%) is a de-rating
+    artifact, not a statement about its balance sheet.
+    """
+    pc = m.peer_capital_intensity
+    if pc is None or not pc.rows:
+        return []
+    def pct(v: float | None) -> str:
+        return "—" if v is None else f"{v * 100:.0f}%"
+
+    def usd(v: float | None) -> str:
+        return "—" if v is None else f"{v:,.0f}"
+    # The reason column exists ONLY when a row has one — an always-present empty column bolds to
+    # `****` on the subject row and reads as a missing value rather than an absent concept.
+    noted = any(r.note for r in pc.rows)
+    cols = (["mcap $M", "acquired $M", "assets $M", "% assets", "% mcap"]
+            + (["why"] if noted else []))
+    rows = [[r.ticker, usd(r.market_cap), usd(r.acquired), usd(r.total_assets),
+             pct(r.pct_assets), pct(r.pct_market_cap)]
+            + ([(r.note or "").split(" — ")[0]] if noted else [])
+            for r in pc.rows]
+    out = _table("Peer acquired-asset intensity — goodwill + intangibles",
+                 "EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from "
+                 "the CIQ comps grid",
+                 cols, rows, name_rows=frozenset({0}), num_cols=frozenset(range(5)))
+    out.append(
+        f"- **Median — all peers (n={pc.n_all}):** {pct(pc.median_all_assets)} of assets · "
+        f"{pct(pc.median_all_market_cap)} of market cap")
+    out.append(
+        f"- **Median — peers ≥ ${pc.size_floor:,.0f}M market cap (n={pc.n_large}):** "
+        f"{pct(pc.median_large_assets)} of assets · "
+        f"{pct(pc.median_large_market_cap)} of market cap")
+    out.append(
+        "- _Read the ASSETS column for the peer judgement — it measures how acquisitive the "
+        "balance sheet is. The market-cap column sizes the exposure but moves with the price, so "
+        "a de-rated name shows a high ratio on unchanged accounting._")
     return out
 
 
