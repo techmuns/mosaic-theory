@@ -2889,6 +2889,13 @@
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      },
+      "ebitda_basis": {
+        "actual_implied_dna": 20.69999999999999,
+        "estimate_implied_dna": 60.61,
+        "ratio": 2.9280193236714993,
+        "divergent": true,
+        "note": "the estimate columns imply 61 of D&A against 21 in the actuals (2.93x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
       }
     },
     "primary_source": {
@@ -2903,6 +2910,7 @@
               "low": null,
               "high": null,
               "unit": "$M",
+              "basis": "level",
               "qualitative": true,
               "verbatim": "2026 Outlook & Forward-Looking Information • While we continue to navigate evolving tariff structures and shifting geopolitical dynamics, we anticipate a recovery in delivery schedules and a steady re",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
@@ -2980,6 +2988,7 @@
               "low": null,
               "high": null,
               "unit": "$M",
+              "basis": "level",
               "qualitative": true,
               "verbatim": "2026 Outlook & Forward-Looking Information • While we are navigating evolving tariff structures and shifting regulatory and geopolitical events, we expect continued revenue growth in 2026 • We are tar",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"

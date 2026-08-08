@@ -5420,6 +5420,13 @@
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      },
+      "ebitda_basis": {
+        "actual_implied_dna": 85.42199999999997,
+        "estimate_implied_dna": 63.884999999999934,
+        "ratio": 0.7478752546182478,
+        "divergent": false,
+        "note": "implied D&A is 85 in the actuals and 64 in the estimates (0.75x) — consistent, so both EBITDA rows read as the same basis (EBIT + D&A)."
       }
     },
     "primary_source": {

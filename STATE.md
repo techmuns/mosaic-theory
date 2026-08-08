@@ -3261,11 +3261,27 @@ Each line: *what it does* — *verified how*.
     definition per surface, printed ONLY when the rows disagree (a caveat shown on every name
     trains the reader to skip it, which is how the flagged names would then be missed). The
     structured `divergent`/`ratio` are what both renderers gate on; neither parses the prose.
-  - **OPERATOR TO-DO — the other six flagged names still render unlabelled.** Only UBER was
-    re-assembled here. The field is optional and absent on the rest, so their pages stay silent
-    about a step this now measures. `vinci.dossier.refresh` back-fills mechanical numbers under a
-    KEPT synthesis (the #362 path — "without rerolling a synthesis"), so the fleet can gain the
-    label without re-rolling eleven syntheses. Run it in the standing artifact pass.
+  - **~~OPERATOR TO-DO — the other names still render unlabelled~~ — DONE 2026-08-08 (PR #371),
+    with ELEVEN SYNTHESES KEPT.** `ebitda_basis_transform` back-fills the block from the STORED
+    JSON alone — the purest transform yet (`ev_gap_transform` opens CIQ workbooks,
+    `capital_allocation_transform` calls EDGAR; this one reads nothing outside the artifact,
+    because the annual table already holds both rows and the flags). Every synthesis verified
+    byte-identical before and after; the back-fill is idempotent (a second run moves nothing).
+  - **CORRECTION TO THE COUNT ABOVE.** "7 of 11 carry a step" is right, but only **5 cross the
+    shipped 2.0x/0.5x thresholds and print a caveat** — VITL 5.38x, UBER 4.01x, MVST 2.93x, AORT
+    2.65x, NCNO 0.25x. IT 1.82x and BRBR 1.76x carry a real step and sit INSIDE the band, so they
+    are recorded in JSON and deliberately not printed. The earlier "7 of 11" came from an
+    exploratory 0.7–1.4 band, not the thresholds that shipped; both numbers are true of different
+    questions and the distinction is the one that matters when reading the fleet.
+  - **FUBO REFUSED, AND CORRECTLY.** It is SEALED by its own `known_wrong.json`: refreshing it
+    "would make a page that says 'do not trust these figures' look freshly computed". It clears
+    when a re-assembly exists, not when a transform runs — so FUBO alone carries no block, and
+    ABSENT keeps its meaning of NOT YET REFRESHED rather than acquiring a false clean bill.
+  - **THE DRY RUN MISSED THAT REFUSAL, and the reason is worth keeping.** The sandbox copied only
+    `dossier.json` + `dossier.md` into a temp dir, so `known_wrong.json` was not there and FUBO
+    refreshed happily in rehearsal before refusing on the real run. **A rehearsal that copies a
+    subset of the inputs does not rehearse the guards that read the rest.** Copy the whole folder,
+    or expect the guard to fire first in production.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
