@@ -192,6 +192,37 @@ def test_the_web_twin_gates_on_the_structured_flag_not_the_prose() -> None:
     assert "ebitda_basis" in body, "the web twin does not read the structured block"
 
 
+def test_the_transform_writes_the_block_from_the_stored_json_alone() -> None:
+    """THE BACK-FILL PATH. Six committed names carry a step and none of their pages said so;
+    re-assembling to land a DETERMINISTIC block would reroll six syntheses. This transform reads
+    NOTHING outside the artifact — the annual table already holds both rows and the flags."""
+    from vinci.dossier.refresh import ebitda_basis_transform
+
+    mech = {"financial_summary": {"annual": {"value": {
+        "columns": ["FY25", "FY26E"],
+        "rows": [{"label": "EBITDA ($M)", "cells": ["", ""], "values": [6312.0, 11396.0]},
+                 {"label": "EBIT ($M)", "cells": ["", ""], "values": [5565.0, 8522.0]}],
+        "is_estimate": [False, True]}}}}
+    out = ebitda_basis_transform()(mech)
+
+    b = out["financial_summary"]["ebitda_basis"]
+    assert b["divergent"] is True and b["ratio"] == pytest.approx(2874.0 / 747.0)
+    assert mech["financial_summary"].get("ebitda_basis") is None, (
+        "the transform mutated its input — `refresh_dossier` re-reads the original on refusal")
+
+
+def test_the_transform_always_writes_a_reason_even_when_it_cannot_compute() -> None:
+    """ABSENT means NOT YET REFRESHED and must keep that meaning, so a build the check cannot read
+    still gets a block that SAYS SO rather than no key at all."""
+    from vinci.dossier.refresh import ebitda_basis_transform
+
+    out = ebitda_basis_transform()({"financial_summary": {"annual": {"value": None}}})
+    b = out["financial_summary"]["ebitda_basis"]
+    assert b["divergent"] is False and b["note"].strip()
+    # ...and a build with no appendix at all is left completely alone
+    assert ebitda_basis_transform()({"stock_info": {"x": 1}}) == {"stock_info": {"x": 1}}
+
+
 def test_the_committed_fleet_splits_into_flagged_and_clean() -> None:
     """CORPUS BEFORE SYNTHETIC. The pins above run on constructed tables; this one runs on every
     committed dossier, so the check is proved able to FIND something and to stay quiet on names

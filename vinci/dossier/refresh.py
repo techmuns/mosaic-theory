@@ -456,6 +456,49 @@ def capital_allocation_transform(cik: str | None) -> Transform:
     return _apply
 
 
+def ebitda_basis_transform() -> Transform:
+    """A `refresh_dossier` transform writing `mech.financial_summary.ebitda_basis`.
+
+    THE PUREST TRANSFORM SO FAR, and that is the point: `ev_gap_transform` opens CIQ workbooks and
+    `capital_allocation_transform` calls EDGAR, but this one reads NOTHING outside the stored JSON.
+    The annual table already carries `EBITDA ($M)` and `EBIT ($M)` per column plus `is_estimate`,
+    so the implied-D&A comparison is a function of the artifact itself. Nothing can fail to fetch,
+    so unlike the capital-allocation transform there is no write-nothing branch to reason about.
+
+    WHY A TRANSFORM AND NOT A RE-ASSEMBLY, restated because the arithmetic changed: six committed
+    names carry an actual-vs-estimate EBITDA step and none of their pages says so. Re-assembling
+    them to land a DETERMINISTIC block would reroll six syntheses — six variance events spent on a
+    number that was already sitting in the file. `refresh_dossier` exists precisely so a value can
+    move under a KEPT synthesis.
+
+    ALWAYS WRITES (the `ev_gap_transform` / capital-allocation rule): `read_basis` states a reason
+    in every branch including the un-computable ones, so a written block always says something, and
+    ABSENT keeps its distinct meaning of NOT YET REFRESHED.
+
+    NO REFUSAL RISK BY CONSTRUCTION — the block is a new key, so no committed synthesis can cite a
+    figure it moves and `moved_cited_claims` has nothing to find. A property of being additive, not
+    a licence for the next transform.
+    """
+    from vinci.dossier.ebitda_basis import read_basis
+    from vinci.dossier.schemas import FinTable
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        fs = out.get("financial_summary")
+        if not isinstance(fs, dict):
+            return out          # no appendix on this build — nothing to describe
+        ann = fs.get("annual")
+        raw = ann.get("value") if isinstance(ann, dict) else None
+        # VALIDATED THROUGH THE REAL TYPE, never read as a bare dict: `read_basis` takes a FinTable
+        # and a hand-walked dict here would be a second reader of the same shape — the twin-drift
+        # class, one artifact over.
+        table = FinTable.model_validate(raw) if isinstance(raw, dict) else None
+        fs["ebitda_basis"] = json.loads(read_basis(table).model_dump_json())
+        return out
+
+    return _apply
+
+
 def _base_leg(ticker: str) -> dict[str, Any] | None:
     """The `base` scenario leg plus the facts the decomposition needs, or None.
 
