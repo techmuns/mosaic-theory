@@ -1638,6 +1638,18 @@ function capitalAllocation(m) {
   return `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${out.join("")}`;
 }
 
+// The actual-vs-estimate EBITDA basis read, printed ONLY when the two rows disagree — a consistent
+// read is the expected state and printing it everywhere trains the reader to skip the line, which
+// is how the flagged names would then be missed. Twin: render._ebitda_basis_lines. The FLAG is
+// computed once in the extractor (`ebitda_basis.divergent`); this renderer reads it and never
+// recomputes the threshold — the same discipline as `r.material` above.
+function ebitdaBasisNote(m) {
+  const b = (m.financial_summary || {}).ebitda_basis;
+  if (!b || b.divergent !== true || !b.note) return "";
+  return `<div class="fact-caveat">⚠ <b>EBITDA basis — the actual and estimate rows differ</b> — `
+    + `${escapeHtml(String(b.note))}</div>`;
+}
+
 function financialSnapshot(m) {
   const fsa = (m.financial_summary || {}).annual;
   if (!fsa || fsa.status !== "present" || !fsa.value) return "";
@@ -1669,6 +1681,7 @@ function financialSnapshot(m) {
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
+    ${ebitdaBasisNote(m)}
     ${citeMark(fsa.source_ref)}${more}${capitalAllocation(m)}${ratios}</div>`;
 }
 

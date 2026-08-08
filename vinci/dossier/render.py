@@ -1450,6 +1450,24 @@ def _fin_table_lines(label: str, s: Sourced[Any]) -> list[str]:
     return _table(label, s.source_ref, ft.columns, rows, ft.note)
 
 
+def _ebitda_basis_lines(fs: Any) -> list[str]:
+    """The actual-vs-estimate EBITDA basis read, as ONE line under the annual table.
+
+    RENDERED ONLY WHEN THE ROWS DISAGREE. A consistent read is the expected state and printing it
+    everywhere would train the reader to skip the line — which is exactly how the flagged names
+    would then be missed. The number is always in `dossier.json` regardless; this is the surface
+    that has to earn its space.
+
+    ONE DEFINITION, TWO CALL SITES (brief snapshot + appendix). The repo's twin-drift rule: the same
+    caveat rendered by two copies is one edit away from saying two different things about the same
+    table.
+    """
+    b = getattr(fs, "ebitda_basis", None)
+    if b is None or not getattr(b, "divergent", False):
+        return []
+    return ["", f"> **EBITDA basis — the actual and estimate rows differ.** {b.note}", ""]
+
+
 def _annual_with_fcf_label(s: Sourced[Any]) -> Sourced[Any]:
     """(D5b) Display-only: relabel the levered-FCF row + footnote it — the appendix FCF is CIQ's
     'Levered Free Cash Flow', NOT a CFO − capex derivation. No extractor change; the FinTable is
@@ -1480,6 +1498,7 @@ def _appendix_lines(m: MechanicalLayer) -> list[str]:
     out = ["", hdr, "### Annual — every exported fiscal year + LTM + consensus"]
     annual = _annual_with_fcf_label(fs.annual)  # D5b: FCF row relabeled + footnoted (display-only)
     out += _fin_table_lines("Annual financials ($M; E = consensus)", annual)
+    out += _ebitda_basis_lines(fs)
     out.append("### Quarterly — every exported quarter")
     out += _fin_table_lines("Quarterly financials", fs.quarterly)
     out += [
@@ -2344,6 +2363,10 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     if hidden > 0:
         out.append(f"_table shows the last {_BRIEF_FY} fiscal years · {hidden} earlier "
                    f"{'year is' if hidden == 1 else 'years are'} in the Appendix_")
+    # MAIN BODY, not an audit tier. This table puts an actual EBITDA column beside a consensus one,
+    # and on 7 of 11 committed names those two are not the same basis. A reader who meets the row
+    # without the label reads a definitional step as growth — which is the decision, not provenance.
+    out += _ebitda_basis_lines(fs)
     return out
 
 

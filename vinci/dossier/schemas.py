@@ -21,6 +21,7 @@ from typing import Any, Generic, TypeVar
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from vinci.dossier.anchor import Anchor
+from vinci.dossier.ebitda_basis import EbitdaBasis
 from vinci.dossier.midcycle import MidCycle
 
 T = TypeVar("T")
@@ -710,6 +711,11 @@ class FinancialSummary(BaseModel):
     balance_sheet: Sourced[str]  # C3 — period-labelled posture block
     coherence: Sourced[str]  # C3 — BS cash/debt vs the implied-valuation bridge
     as_of: Sourced[str]  # the estimates as-of basis stamped on the E columns
+    #: Do the ACTUAL and ESTIMATE `EBITDA ($M)` rows of `annual` share a basis? DERIVED from that
+    #: table's own implied D&A (EBITDA − EBIT) either side of the boundary — never read off a label,
+    #: because the sheet does not carry one. See `vinci.dossier.ebitda_basis`. Optional and
+    #: defaulting to None so every already-committed dossier round-trips unchanged.
+    ebitda_basis: EbitdaBasis | None = None
 
     model_config = {"frozen": True}
 
