@@ -5078,6 +5078,13 @@
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      },
+      "ebitda_basis": {
+        "actual_implied_dna": 737.0,
+        "estimate_implied_dna": 2952.085,
+        "ratio": 4.005542740841248,
+        "divergent": true,
+        "note": "the estimate columns imply 2,952 of D&A against 737 in the actuals (4.01x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
       }
     },
     "primary_source": {
@@ -5291,8 +5298,7 @@
         "note": null
       },
       "qa_flags": [
-        "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found",
-        "primary-source: 8-K 0001552781-25-000287 carries 8.01 but no EX-99.1 exhibit was found"
+        "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found"
       ]
     },
     "management_commentary": {
@@ -7952,7 +7958,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross bookings growth (year-on-year)",
+          "metric": "gross bookings growth",
           "period": "Q1 2026",
           "value": "up 21% year-on-year",
           "value_num": null,
@@ -8007,9 +8013,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "capital returned to shareholders through buybacks",
-          "period": "Q1 2026",
-          "value": "record $3 billion",
+          "metric": "capital returned to shareholders via buybacks",
+          "period": "this quarter",
+          "value": "a record $3 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "We also generated strong free cash flow and returned a record $3 billion to shareholders through buybacks this quarter.",
@@ -8020,7 +8026,7 @@
           "kind": "leading_indicator",
           "metric": "Uber One members",
           "period": "Q1 2026",
-          "value": "surpassed 50 million Uber One members",
+          "value": "surpassed 50 million",
           "value_num": null,
           "unit": null,
           "verbatim": "We've now surpassed 50 million Uber One members and 10 million drivers and couriers globally, both important milestones that reflect strong customer loyalty and expanding number of earner opportunities on our platform.",
@@ -8031,7 +8037,7 @@
           "kind": "leading_indicator",
           "metric": "drivers and couriers globally",
           "period": "Q1 2026",
-          "value": "10 million drivers and couriers globally",
+          "value": "10 million",
           "value_num": null,
           "unit": null,
           "verbatim": "We've now surpassed 50 million Uber One members and 10 million drivers and couriers globally, both important milestones that reflect strong customer loyalty and expanding number of earner opportunities on our platform.",
@@ -8042,7 +8048,7 @@
           "kind": "leading_indicator",
           "metric": "autonomous partners across Mobility and Delivery",
           "period": "Q1 2026",
-          "value": "more than 30 autonomous partners",
+          "value": "more than 30",
           "value_num": null,
           "unit": null,
           "verbatim": "We now have more than 30 autonomous partners across Mobility and Delivery and are scaling deployments globally.",
@@ -8061,21 +8067,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "airports share of Mobility gross bookings",
-          "period": "Q1 2026",
-          "value": "about 15% of our Mobility gross bookings",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "U.S. riders taking trips outside home city",
-          "period": "Q1 2026",
-          "value": "40% of, for example, our U.S. riders take trips outside of their home city",
+          "period": null,
+          "value": "about 15%",
           "value_num": null,
           "unit": null,
           "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
@@ -8084,7 +8079,18 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "trips happening outside users' home cities",
+          "metric": "share of U.S. riders taking trips outside home city",
+          "period": null,
+          "value": "40%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
+          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "trips outside users' home cities",
           "period": "last year",
           "value": "over 1.5 billion trips",
           "value_num": null,
@@ -8096,8 +8102,8 @@
         {
           "kind": "leading_indicator",
           "metric": "hotels available on Uber",
-          "period": "Q1 2026",
-          "value": "700,000 hotels available on Uber",
+          "period": null,
+          "value": "700,000 hotels",
           "value_num": null,
           "unit": null,
           "verbatim": "So now we've got 700,000 hotels available on Uber as we speak.",
@@ -8105,10 +8111,21 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "Uber One member spend",
+          "period": null,
+          "value": "spend 3x more",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "And obviously, you've seen kind of the momentum that we've had with Uber One with over 50 million members growing 50%. The retention rates are higher. They spend 3x more. It's a unique advantage that we have over our competition.",
+          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "Uber One member growth",
-          "period": "Q1 2026",
-          "value": "over 50 million members growing 50%",
+          "period": null,
+          "value": "growing 50%",
           "value_num": null,
           "unit": null,
           "verbatim": "And obviously, you've seen kind of the momentum that we've had with Uber One with over 50 million members growing 50%.",
@@ -8116,21 +8133,21 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Uber One member spend versus non-members",
-          "period": "Q1 2026",
-          "value": "They spend 3x more",
+          "kind": "pass_through_structure",
+          "metric": "insurance savings reinvested into consumer pricing",
+          "period": "this year",
+          "value": "hundreds of millions of dollars of savings",
           "value_num": null,
           "unit": null,
-          "verbatim": "The retention rates are higher. They spend 3x more. It's a unique advantage that we have over our competition.",
+          "verbatim": "And as we said at the end of last year, we expect to see hundreds of millions of dollars of savings in our insurance line this year, thanks to the great work our policy teams have done as well as the tech improvements we have implemented in the market.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "pricing_action",
-          "metric": "auto insurance renewals / rate improvement",
-          "period": "March",
-          "value": "went into effect in March, and we've seen continued improvement in rates",
+          "metric": "auto insurance renewal rates",
+          "period": "went into effect in March",
+          "value": "continued improvement in rates",
           "value_num": null,
           "unit": null,
           "verbatim": "In addition to that, we also had our auto insurance renewals that went into effect in March, and we've seen continued improvement in rates there, which is also -- with the improvement in the market conditions here for auto insurance, we have found opportunities to also offload more risk to third-party carriers.",
@@ -8138,10 +8155,21 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "cross-platform consumer growth versus overall consumer growth",
-          "period": "Q1 2026",
-          "value": "growing 1.5x faster",
+          "kind": "competitive_position",
+          "metric": "L.A. trip growth vs California and rest of country",
+          "period": null,
+          "value": "significantly better than California and the rest of the country",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "If you look at L.A., which is the market with the most significant insurance headwinds over the last few years, the trip growth trends there are significantly better than California and the rest of the country.",
+          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "cross-platform consumer growth vs overall",
+          "period": null,
+          "value": "growing 1.5x faster than the overall growth of consumers",
           "value_num": null,
           "unit": null,
           "verbatim": "The growth of cross-platform consumers is growing 1.5x faster than the overall growth of consumers.",
@@ -8149,20 +8177,9 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Uber One consumer spend versus others",
-          "period": "Q1 2026",
-          "value": "they spend 3x more than others",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We're locking in consumers with our Uber One membership, where they spend 3x more than others.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
-          "metric": "rides with AI-predicted destination",
-          "period": "Q1 2026",
+          "metric": "AI-predicted ride destinations",
+          "period": null,
           "value": "3/4 of the rides",
           "value_num": null,
           "unit": null,
@@ -8172,7 +8189,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross bookings growth (year-on-year)",
+          "metric": "gross bookings growth",
           "period": "Q2 2026",
           "value": "grew 22% year-on-year to more than $58 billion",
           "value_num": null,
@@ -8195,8 +8212,8 @@
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month free cash flow",
-          "period": "Q2 2026 (trailing 12-month)",
-          "value": "exceeding $10 billion for the first time in our history",
+          "period": "trailing 12-month",
+          "value": "exceeding $10 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
@@ -8205,9 +8222,20 @@
         },
         {
           "kind": "leading_indicator",
+          "metric": "markets reach after Delivery Hero acquisition",
+          "period": null,
+          "value": "nearly 100 markets",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The combination is going to expand our reach to nearly 100 markets and extend the proven strategy that has underpinned our growth for years by roughly doubling the number of markets where we can offer the full power of our platform across mobility and delivery.",
+          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
           "metric": "AV cities live",
           "period": "Q2 2026",
-          "value": "live in 7 cities, and we're on track to be live in 15 cities by year-end",
+          "value": "live in 7 cities",
           "value_num": null,
           "unit": null,
           "verbatim": "So to remind you, we're live in 7 cities, and we're on track to be live in 15 cities by year-end.",
@@ -8216,9 +8244,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "AV utilization (trips per vehicle per day)",
-          "period": "Q2 2026",
-          "value": "often mid- to high 20s, low 30s in terms of trips per vehicle per day",
+          "metric": "AV utilization per vehicle",
+          "period": null,
+          "value": "mid- to high 20s, low 30s in terms of trips per vehicle per day",
           "value_num": null,
           "unit": null,
           "verbatim": "And what we've seen is that launching with us as a partner with kind of the built-in kind of demand that we've got, we can drive very significant utilization per vehicle, often mid- to high 20s, low 30s in terms of trips per vehicle per day, which is quite substantial in terms of the needed monetization as it relates to these vehicles.",
@@ -8232,15 +8260,15 @@
           "value": "40% year-on-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "U4B, in particular, we saw 40% year-on-year growth.",
+          "verbatim": "U4B, in particular, we saw 40% year-on-year growth. Uber Health is growing even faster.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "sparse market penetration (U.S.)",
-          "period": "past 12 months",
-          "value": "less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%",
+          "metric": "sparse market penetration (eligible consumers used Uber in past 12 months)",
+          "period": null,
+          "value": "less than 10% in sparse markets vs over 50% in dense markets",
           "value_num": null,
           "unit": null,
           "verbatim": "And just for context, in the U.S., less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%.",
@@ -8249,23 +8277,23 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "consumers using both Rides and Eats",
-          "period": "Q2 2026",
-          "value": "only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users",
+          "metric": "cross-platform consumers using both Rides and Eats",
+          "period": null,
+          "value": "only 20% of our consumers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Third for us is cross-platform. And most of our cross-platform activity is -- has been historically our Rides to Eats, and I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
+          "verbatim": "I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "markets reach post Delivery Hero acquisition",
-          "period": "Q2 2026",
-          "value": "nearly 100 markets",
+          "metric": "cross-platform user growth vs single product users",
+          "period": null,
+          "value": "growing 1.5x faster than single product users",
           "value_num": null,
           "unit": null,
-          "verbatim": "The combination is going to expand our reach to nearly 100 markets and extend the proven strategy that has underpinned our growth for years by roughly doubling the number of markets where we can offer the full power of our platform across mobility and delivery.",
+          "verbatim": "I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8276,171 +8304,176 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — absolute EBITDA, $10B+ FCF and segment operating income all compounding while the multiple sits at own-history floor; genuine downward net-income revisions outweighed.",
+    "evidence_balance": "strongly-bullish — absolute EBITDA, gross bookings and FCF all compounding while the multiple sits at its own-history floor; GAAP-EPS softness is the lone genuine offset.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has risen every year from a -$885M trough in FY22 to $7,474M LTM Jun-30-2026, so the low 14% margin masks compounding profit scale rather than a margin decline.",
+        "claim": "Absolute EBITDA has risen from -885 in FY22 to 7,474 LTM Jun-30-2026 as the margin climbed from -3% to 14%, so the low reported margin is a growing-profit signal, not decline.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Revenue grew 12% YoY in Q2 2026, driven mechanically by a 24% increase in Gross Bookings — volume-led rather than price-driven.",
+        "claim": "Q2-2026 revenue rose $1.5 billion or 12% driven by a 24% increase in Gross Bookings, evidencing a live demand engine behind the top line.",
         "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "Delivery Segment Operating Income rose $289M or 38% in Q2 2026 on a 26% Gross Bookings increase plus $182M of higher advertising revenue — the once-loss-making segment now compounds profit.",
+        "claim": "Delivery Segment Operating Income rose $289 million or 38% in Q2-2026 on a 26% Gross-Bookings increase, showing the second segment inflecting to real profit.",
         "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "Mobility Segment Operating Income rose $486M or 28% in Q2 2026 on a 22% Mobility Gross Bookings increase led by trip volumes.",
+        "claim": "Mobility Segment Operating Income rose $486 million or 28% in Q2-2026 as Mobility Gross Bookings grew 22% on trip-volume gains, the core profit driver.",
         "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "The company is self-funding with LTM levered free cash flow of $7,238.8M and net-debt/EBITDA of just 1.2x, versus a peer median of 9.8x total-debt/EBITDA.",
+        "claim": "LTM free cash flow is $7,238.8M and positive, so the platform is self-funding rather than dependent on external capital.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM Press Release 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "Fundamentals run ahead of the peer median on the deltas the market pays for: EBITDA margin 14% vs 6%, revenue growth 17% vs 9%, leverage 1.9x vs 9.8x, LT EPS growth 32% vs 13% — posing whether the discount is RESIDUAL (overshoot) rather than EARNED.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Net-debt/EBITDA of 1.2x with 16.2x interest coverage is far below the peer-median leverage and self-funding, so this is not a distressed balance sheet.",
+        "source_ref": "CIQ Net Debt $9,340M [Press Release Q2 Jun-30-2026] ÷ CIQ EBITDA $7,474M [LTM Press Release 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "ROIC has climbed steadily from -4.9% in FY22 to 10.6% LTM, evidence of a genuine returns inflection rather than a one-off.",
+        "claim": "ROIC has climbed every year from -4.9% (FY22) to 10.6% LTM, a durable improvement in capital efficiency rather than a one-off.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The EBITDA guidance track record is 23/23 met, and the fresh FQ3 2026 adjusted-EBITDA guide of $2,860–$2,960M (filed 2026-08-05) is the current, unbeaten-cadence outlook.",
+        "claim": "On the name's OWN history the trailing EV/EBITDA sits at the floor — 19.2x vs a 12-close range of 20.5–113.8x (median 39.6x) — while EBITDA itself was rising, posing an overshoot rather than a fundamental break.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "cited": true
+      },
+      {
+        "claim": "Against peers the discount (EV/EBITDA 19.2x vs median 32.5x) sits beside SUPERIOR fundamentals — margin 14% vs 6%, rev growth 17% vs 9%, leverage 1.9x vs 9.8x — raising whether the gap is RESIDUAL (overshoot) not EARNED; the human judges, and the peer set is flagged heterogeneous.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The EBITDA-guidance track record is 23/23 met, with a fresh FQ3-2026 adjusted-EBITDA guide of $2,860–$2,960M filed 2026-08-05, indicating management is delivering to its numbers.",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
         "cited": true
       },
       {
-        "claim": "Consensus rates the name Buy (1.00) with a mean target of $101.61 vs a $71.99 close, and last-month GAAP-EPS revision breadth is 21 up / 3 down.",
+        "claim": "Q2-2026 gross bookings grew 22% year-on-year, the fourth consecutive quarter above 20%, with trailing-12-month FCF exceeding $10B for the first time — management posture of durable, self-funding growth.",
+        "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Consensus recommendation is Buy (1.00) with a mean target of $101.61 vs a $71.99 close, and EPS revisions ran 21↑/3↓ last month — sell-side breadth is positive, not deteriorating.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The drawdown is a gradual bleed with no discrete gap-down, and the name lagged SPY by ~16.5 points over 180d — an idiosyncratic de-rate, not a market-wide move.",
+        "claim": "A genuine counter-point: the stock fell ~11% over 180 days while SPY rose ~5.4% (a -16.5% relative gap), a real idiosyncratic de-rating — but OUTWEIGHED by rising absolute EBITDA (-885 FY22→7,474 LTM) and 22% gross-bookings growth.",
         "source_ref": "EOD UBER−SPY 180d to 2026-07-29 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "TEV/LTM EBITDA of 19.2x sits at the 0th percentile of its own ~3-year range (median 39.6x) — but this is TRAILING-ONLY with no forward basis, so alone it cannot separate a cheap-overshoot from a cheap-terminal read; it is a genuine de-rate signal outweighed by the still-rising absolute-EBITDA and FCF trajectory.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
-        "cited": true
-      },
-      {
-        "claim": "Consensus FY26 Net Income (Excl. Excep) has been cut ~25% over the trailing 12-month estimate path and GAAP net income ~14%, a genuine downward earnings-quality revision — outweighed by EBITDA estimates that rose +5% over the same window.",
+        "claim": "A genuine counter-point: FY26E GAAP net income of $6,351M is BELOW FY25 $10,053M and current-FY GAAP EPS has been cut ~8% (12m→latest), so headline earnings are guided lower — but this is partly a definitional/tax/one-off effect against consensus EBITDA revised UP +5%, not an operating-cash reversal.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "G&A expense rose $266M or 40% in Q2 2026, led by a $138M increase in legal-related accruals — a genuine cost-line pressure, though outweighed by the segment operating-income gains above it.",
+        "claim": "A genuine counter-point: G&A rose $266M or 40% in Q2-2026, chiefly a $138M increase in legal-related accruals, a cost line growing far faster than the 12% revenue print — but OUTWEIGHED by segment operating income up 28–38% and consolidated EBITDA still rising.",
         "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "Insiders sold $481.48M against only $21.60M of open-market buys over the trailing 182 days — a genuine negative signal, though the largest sale is a 10%-owner block rather than broad operating-management selling.",
-        "source_ref": "EDGAR Form 4 (latest 0001090355-26-000007; 340 filings in the 1095d scanned; counts over 182d)",
+        "claim": "A genuine counter-point: current ratio has fallen to 0.84x (net working capital -$2,342M), a below-1 liquidity read — but OUTWEIGHED by 1.2x net leverage, 16.2x coverage and positive LTM FCF that make near-term funding a non-issue.",
+        "source_ref": "CIQ Financials→Ratios (latest period)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Grab Holdings Limited",
+        "name": "Meta Platforms",
         "outcome": "recovered",
-        "distinguishing_fact": "Peer-set ride-hail/delivery superapp that crossed from EBITDA losses into positive operating leverage; a source-bound in-roster analogue for the loss-to-profit inflection Uber has already made.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "Sharp de-rating on spend/margin fears at a cash-generative platform whose core engagement kept compounding; multiple re-rated once profitable growth resumed — analogue for a growth platform mistaken for a value trap.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "DoorDash",
         "outcome": "recovered",
-        "distinguishing_fact": "In-roster delivery peer trading at a far richer multiple on thinner margins, illustrating how the market can pay up for a scaled platform inflecting to profit — the RESIDUAL-vs-EARNED discount question in one comparator.",
+        "distinguishing_fact": "Same industry peer that scaled a delivery-marketplace from losses to positive segment economics while the market doubted durability; roster peer trading at a far higher multiple on lower margin.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Meta Platforms",
+        "name": "Grab Holdings Limited",
         "outcome": "recovered",
-        "distinguishing_fact": "Large-cap platform that de-rated sharply on a spending/margin-scare narrative while absolute cash generation kept compounding, then re-rated as leverage reappeared — pattern analogue for a margin-optics overshoot.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Netflix",
-        "outcome": "recovered",
-        "distinguishing_fact": "Consumer-platform name that fell hard on a growth-deceleration scare while unit economics improved, then recovered as FCF turned durably positive — analogue for a bleed-not-gap de-rate on a still-growing franchise.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "Regional super-app peer whose EBITDA inflected positive after years of losses; on the roster at a materially higher trailing multiple despite thinner margin — an inflection-vs-doubt analogue.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Lyft",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster single-market ride-hail peer that never achieved the cross-platform scale or margin structure, a cautionary analogue if Uber's growth/AV optionality fails to compound — the value-trap side of the question.",
+        "distinguishing_fact": "Single-market ride-hail peer that stayed sub-scale and barely EBITDA-positive, illustrating the terminal path a mobility platform takes without cross-segment leverage or self-funding cash flow.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Wayfair",
+        "outcome": "went terminal",
+        "distinguishing_fact": "High-growth marketplace whose thin-margin economics and rising promotional/cost intensity eroded the profitability narrative — an analogue for what a persistently-rising cost line would mean if operating leverage stalls.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the drop from ~40x to 19.2x trailing EV/EBITDA a mean-revert overshoot on a franchise whose absolute EBITDA, FCF and segment operating income are still compounding, or an earned de-rate pricing a genuine deceleration/earnings-quality erosion the multiple has correctly begun to discount?",
+      "question": "Is the sharp de-rating an overshoot on a self-funding platform whose absolute profit and gross bookings keep compounding, or the market correctly pricing decelerating GAAP earnings and rising cost lines against a rich prior multiple?",
       "evidence_for": [
         {
-          "claim": "Gross Bookings grew 22% YoY to more than $58B in Q2 2026, a fourth consecutive quarter above 20% — the volume engine behind the still-rising EBITDA remains intact.",
+          "claim": "Gross bookings grew 22% year-on-year in Q2-2026 with trailing-12-month FCF exceeding $10B for the first time, the load-bearing driver on the overshoot side.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Trailing-12-month free cash flow exceeded $10B for the first time, growing non-GAAP EPS 35% YoY on operating leverage.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "claim": "Delivery Segment Operating Income rose $289M or 38% and Mobility rose $486M or 28% in Q2-2026 on 22–26% Gross-Bookings growth, evidencing operating leverage compounding.",
+          "source_ref": "10-Q 0001543151-26-000032",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA rose from $6,312M (FY25) to $7,474M LTM even as the margin % stayed low, showing the de-rate is not tracking a profit decline.",
+          "claim": "Absolute EBITDA rose to 7,474 LTM from 6,312 FY25 as margin expanded to 14%, so trailing profit is growing while the multiple sits at its own-history floor.",
           "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Consensus FY26 Net Income (Excl. Excep) has been cut ~25% over the trailing estimate path, a real earnings-quality deterioration behind the GAAP line.",
+          "claim": "FY26E GAAP net income of $6,351M is guided below FY25 $10,053M and current-FY GAAP EPS has been cut ~8%, the load-bearing driver on the terminal/mispricing-is-correct side.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "G&A rose 40% in Q2 2026 on a $138M jump in legal-related accruals, a cost-line pressure that can persist below the segment-margin story.",
-          "source_ref": "10-Q 0001543151-26-000032",
-          "cited": true
-        },
-        {
-          "claim": "Mobility revenue grew only 1% in Q2 2026 despite 22% Gross Bookings growth, partly on UK business-model changes — a take-rate/mix headwind the headline volume masks.",
+          "claim": "G&A grew 40% ($266M, of which $138M legal accruals) and S&M grew 25% in Q2-2026, cost lines outpacing the 12% revenue print and pressuring the leverage story.",
           "source_ref": "10-Q 0001543151-26-000032",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "TEV/LTM EBITDA at its 0th own-history percentile is TRAILING-ONLY with no forward basis in the guidance — cannot alone distinguish cheap-overshoot from cheap-terminal; forward NTM 11.89x sits below peer median 18.67x but the peer set is heterogeneous.",
-      "Peer set is flagged HETEROGENEOUS (market caps span $54M–$89.8B, 1672x; name is $139.3B) — every peer-median multiple is a confidence-gated input, not a clean benchmark; the discount cannot be read as clean overshoot or clean value-trap without adjusting for composition.",
-      "No company-adjusted LTM EBITDA and no covenant-basis leverage disclosed — net debt/adjusted-EBITDA and covenant headroom are UNKNOWN (an expected-disclosure gap, a bearish opacity to resolve).",
-      "Delivery Hero acquisition (‘nearly 100 markets’) is announced but its consideration, financing, and margin impact are not in the supplied facts — a material capital-allocation unknown.",
-      "Cause of the idiosyncratic ~16.5pt underperformance vs SPY is not identified — gradual bleed with no gap-down and no revised-guidance 8-K catalyst on file to anchor the de-rate to a specific event.",
-      "AV commercialization economics (utilization ‘mid-to-high 20s, low 30s trips/vehicle/day’) are early and small; the long-run monetization and capital intensity remain unquantified in the facts."
+      "Trailing EV/EBITDA (19.2x) is struck off the actual row while forward NTM (11.89x) is struck off an estimate row that adds back ~4x the D&A of actuals; the two are NOT the same basis, so the 0%ile-trailing floor is overshoot-vs-terminal-unresolved and belongs here, not as a directional point.",
+      "No company-adjusted LTM EBITDA and no covenant basis are disclosed, so net-debt/adjusted-EBITDA and covenant headroom are UNKNOWN — a missing expected disclosure, a bearish opacity risk.",
+      "The peer set is flagged HETEROGENEOUS (caps span $54M–$89.8B vs the name's $139.3B), so every peer multiple is a confidence-gated input, not a clean benchmark for judging earned-vs-residual discount.",
+      "The Delivery Hero acquisition (reach to ~100 markets) is management-stated but its consideration, financing and margin impact are not in the supplied facts — an unquantified capital-allocation event.",
+      "The $138M legal-related accrual driving Q2 G&A is unexplained as to recurrence — whether it is a one-off or a persistent cost line is unresolved.",
+      "Insider open-market activity is net-seller by dollars ($481M sold vs $22M bought over 182d); the motivation/context is not in the facts.",
+      "No revised-guidance 8-K catalyst or gap-down was detected — the drawdown was a gradual bleed with no single identified cause on the data-record."
     ]
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 8-K 0001552781-25-000287 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.3s fetch)",
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)",
     "Panel-freshness caveat — 1 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 1d: implied-TEV inputs as-of 2026-08-04. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-07T15:42:13.612892Z",
+  "assembled_at": "2026-08-08T04:30:35.065482Z",
   "extraction_version": "2026-07-28.1",
   "sector": "Unknown",
   "industry": {
@@ -8461,7 +8494,7 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-07T15:43:45.738057Z",
+    "computed_at": "2026-08-08T04:35:46.772494Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
