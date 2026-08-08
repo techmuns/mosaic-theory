@@ -76,6 +76,9 @@ _Bear case — the decline is real:_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 24 of D&A against 4 in the actuals (5.38x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+
+
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 1.5x as-of 2026-07-17 — trailing range 1.3–172.5x (median 4.2x) over 24 closes → 8%ile → near-floor; P/LTM EPS 12.9x [16]
 - **vs peers:** EV/EBITDA 1.2x vs peer median 7.2x (-83%); P/E 10.7x vs peer median 15.1x (-29%) [17]
@@ -406,6 +409,9 @@ _3 to verify._
 | FCF (levered, CIQ) | — | — | -11 | -1 | 1 | -18 | 30 | 39 | -23 | -54 | — | — |
 
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+
+
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 24 of D&A against 4 in the actuals (5.38x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 ### Quarterly — every exported quarter
 - **Quarterly financials** — [48]  <!-- ds-table -->

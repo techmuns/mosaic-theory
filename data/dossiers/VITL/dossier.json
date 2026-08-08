@@ -4733,6 +4733,13 @@
         "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
         "status": "present",
         "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      },
+      "ebitda_basis": {
+        "actual_implied_dna": 4.4905,
+        "estimate_implied_dna": 24.165000000000003,
+        "ratio": 5.381360650261664,
+        "divergent": true,
+        "note": "the estimate columns imply 24 of D&A against 4 in the actuals (5.38x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
       }
     },
     "primary_source": {

@@ -107,6 +107,9 @@ _Bear case — the decline is real:_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 6 of D&A against 22 in the actuals (0.25x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+
+
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 27.8x as-of 2026-07-17 — trailing range 25.8–221.1x (median 82.9x) over 10 closes → 10%ile → near-floor; P/LTM EPS 154.3x [17]
 - **vs peers:** EV/EBITDA 27.8x vs peer median 98.1x (-72%); P/E 154.3x vs peer median 39.1x (+294%) [18]
@@ -470,6 +473,9 @@ Four years to the terminal year. At three years the margin ramp would have to fi
 | FCF (levered, CIQ) | — | -6 | -5 | 28 | 36 | 21 | 82 | 99 | 145 | 139 | — | — |
 
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-22; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+
+
+> **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 6 of D&A against 22 in the actuals (0.25x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 ### Quarterly — every exported quarter
 - **Quarterly financials** — [61]  <!-- ds-table -->
