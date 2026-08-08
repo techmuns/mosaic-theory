@@ -2496,7 +2496,8 @@ def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
     out = _table("Peer acquired-asset intensity — goodwill + intangibles",
                  "EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from "
                  "the CIQ comps grid",
-                 cols, rows, name_rows=frozenset({0}), num_cols=frozenset(range(5)))
+                 cols, rows, num_cols=frozenset(range(5)),
+                 name_rows=frozenset(i for i, x in enumerate(pc.rows) if x.is_subject))
     out.append(
         f"- **Median — all peers (n={pc.n_all}):** {pct(pc.median_all_assets)} of assets · "
         f"{pct(pc.median_all_market_cap)} of market cap")

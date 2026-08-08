@@ -340,20 +340,22 @@ def build_peer_capital_intensity(
         try:
             cik = resolve(tk).cik
         except Exception:                                        # noqa: BLE001
-            rows.append(PeerCapitalRow(ticker=tk, market_cap=mcap,
-                                       note=f"unresolved — no CIK for {tk!r}"))
+            rows.append(PeerCapitalRow(
+                ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
+                note=f"unresolved — no CIK for {tk!r}"))
             continue
         try:
             facts = companyfacts(cik)
         except Exception:                                        # noqa: BLE001
             rows.append(PeerCapitalRow(
-                ticker=tk, market_cap=mcap,
+                ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
                 note="fetch-failed — EDGAR companyfacts unreachable; this is NOT a statement that "
                      "the filer reports no goodwill"))
             continue
         acquired, assets = _acquired_and_assets(facts)
         row = PeerCapitalRow(
-            ticker=tk, market_cap=mcap, acquired=acquired, total_assets=assets,
+            ticker=tk, is_subject=bool(getattr(pr, "is_name", False)),
+            market_cap=mcap, acquired=acquired, total_assets=assets,
             pct_assets=(acquired / assets) if (acquired and assets) else None,
             pct_market_cap=(acquired / mcap) if (acquired and mcap) else None,
             note=(None if acquired is not None else

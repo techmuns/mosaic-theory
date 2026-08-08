@@ -1095,6 +1095,12 @@ class PeerCapitalRow(BaseModel):
     """One peer's acquired-asset intensity, or a STATED reason it has none."""
 
     ticker: str
+    #: The SUBJECT's own row. In the DATA rather than left to position: the markdown twin bolded
+    #: row 0 while the web twin read an `is_subject` field that did not exist, so the web never
+    #: marked it at all — and with no subject present, row 0 is a PEER that the markdown would have
+    #: bolded as if it were the name. Two positional conventions that can drift, replaced by one
+    #: fact both renderers read.
+    is_subject: bool = False
     market_cap: float | None = None      # $M, from the CIQ comps grid
     acquired: float | None = None        # $M, goodwill + intangibles (EDGAR, latest instant)
     total_assets: float | None = None    # $M, EDGAR `Assets`, latest instant

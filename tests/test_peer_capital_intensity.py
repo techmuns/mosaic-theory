@@ -103,3 +103,37 @@ def test_the_subject_leads_the_rows() -> None:
     """The comparison is read against the subject, so it is row zero — not sorted into the pack."""
     pc = _built("SMPL")
     assert pc.rows and pc.rows[0].ticker == "SMPL"
+
+
+def test_both_twins_mark_the_subject_from_the_data_not_from_position() -> None:
+    """THE TWINS DISAGREED AND ONE NEVER FIRED. The markdown bolded row 0 positionally while the
+    web read an `is_subject` field that did not exist on the model — so the web never marked the
+    subject at all, and the markdown would have bolded a PEER whenever no subject row was present.
+
+    Two positional conventions that can drift, replaced by one fact both renderers read. Asserted
+    on the SOURCE of both twins, because the markdown bug only shows on a subject-less set and the
+    web bug shows nowhere at all — it silently renders unbolded."""
+    import inspect
+    import re
+
+    import vinci.dossier.render as rd
+
+    pc = _built("SMPL")
+    subj = [r for r in pc.rows if r.is_subject]
+    assert len(subj) == 1 and subj[0].ticker == "SMPL", [r.ticker for r in subj]
+
+    src = inspect.getsource(rd._peer_capital_intensity_lines)
+    assert "name_rows=frozenset({0})" not in src, (
+        "the markdown twin still bolds row 0 positionally — with no subject in the set that is a "
+        "peer wearing the subject's formatting")
+    assert "x.is_subject" in src
+
+    js = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    body = js[js.index("function peerCapitalIntensity(m) {"):]
+    body = body[:body.index("\nfunction ")]
+    assert "is_subject" in body, "the web twin does not read the subject marker"
+    # and it must read the field the model actually has — the `.ds-subtitle` lesson
+    fields = set(re.findall(r"r\.([a-z_]+)", body))
+    from vinci.dossier.schemas import PeerCapitalRow
+    unknown = fields - set(PeerCapitalRow.model_fields)
+    assert not unknown, f"the web twin reads fields absent from PeerCapitalRow: {sorted(unknown)}"
