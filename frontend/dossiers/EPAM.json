@@ -4539,6 +4539,129 @@
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "EPAM",
+          "is_subject": true,
+          "market_cap": 5245.3,
+          "acquired": 1576.017,
+          "total_assets": 4574.086,
+          "pct_assets": 0.3445534255368176,
+          "pct_market_cap": 0.30046269994089947,
+          "note": null
+        },
+        {
+          "ticker": "ACN",
+          "is_subject": false,
+          "market_cap": 100762.4,
+          "acquired": 27821.792,
+          "total_assets": 68806.561,
+          "pct_assets": 0.4043479516437393,
+          "pct_market_cap": 0.27611283574031587,
+          "note": null
+        },
+        {
+          "ticker": "CTSH",
+          "is_subject": false,
+          "market_cap": 23840.4,
+          "acquired": 9166.0,
+          "total_assets": 20500.0,
+          "pct_assets": 0.4471219512195122,
+          "pct_market_cap": 0.38447341487558934,
+          "note": null
+        },
+        {
+          "ticker": "4307",
+          "is_subject": false,
+          "market_cap": 18108.6,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '4307'"
+        },
+        {
+          "ticker": "IT",
+          "is_subject": false,
+          "market_cap": 10433.8,
+          "acquired": 3033.065,
+          "total_assets": 7193.674,
+          "pct_assets": 0.421629476120269,
+          "pct_market_cap": 0.2906961030497039,
+          "note": null
+        },
+        {
+          "ticker": "DOX",
+          "is_subject": false,
+          "market_cap": 5825.2,
+          "acquired": 3005.637,
+          "total_assets": 6386.142,
+          "pct_assets": 0.47064988532982827,
+          "pct_market_cap": 0.5159714687907712,
+          "note": null
+        },
+        {
+          "ticker": "301236",
+          "is_subject": false,
+          "market_cap": 5412.4,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '301236'"
+        },
+        {
+          "ticker": "SOP",
+          "is_subject": false,
+          "market_cap": 3640.5,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'SOP'"
+        },
+        {
+          "ticker": "DXC",
+          "is_subject": false,
+          "market_cap": 1761.8,
+          "acquired": 2045.0,
+          "total_assets": 12926.0,
+          "pct_assets": 0.15820826241683428,
+          "pct_market_cap": 1.1607446929276877,
+          "note": null
+        },
+        {
+          "ticker": "GLOB",
+          "is_subject": false,
+          "market_cap": 1516.0,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "EFOR",
+          "is_subject": false,
+          "market_cap": 953.3,
+          "acquired": 2876.0,
+          "total_assets": 4023.5,
+          "pct_assets": 0.7148005467876227,
+          "pct_market_cap": 3.016888702402182,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.3445534255368176,
+      "subject_pct_market_cap": 0.30046269994089947,
+      "median_all_assets": 0.4343757136698906,
+      "median_all_market_cap": 0.4502224418331803,
+      "median_large_assets": 0.421629476120269,
+      "median_large_market_cap": 0.38447341487558934,
+      "n_all": 6,
+      "n_large": 5
+    },
     "financial_summary": {
       "annual": {
         "value": {

@@ -4169,6 +4169,99 @@
       },
       "maturity_event": null
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "VRRM",
+          "is_subject": true,
+          "market_cap": 635.0,
+          "acquired": 775.511,
+          "total_assets": 1616.191,
+          "pct_assets": 0.479838707182505,
+          "pct_market_cap": 1.2212771653543306,
+          "note": null
+        },
+        {
+          "ticker": "SSNC",
+          "is_subject": false,
+          "market_cap": 18760.9,
+          "acquired": 13167.8,
+          "total_assets": 20608.6,
+          "pct_assets": 0.6389468474326252,
+          "pct_market_cap": 0.701874643540555,
+          "note": null
+        },
+        {
+          "ticker": "BR",
+          "is_subject": false,
+          "market_cap": 18294.8,
+          "acquired": 4987.7,
+          "total_assets": 8945.3,
+          "pct_assets": 0.5575777223793501,
+          "pct_market_cap": 0.2726293810263026,
+          "note": null
+        },
+        {
+          "ticker": "TYL",
+          "is_subject": false,
+          "market_cap": 14056.5,
+          "acquired": 3510.483,
+          "total_assets": 5813.576,
+          "pct_assets": 0.6038422822717033,
+          "pct_market_cap": 0.24974090278518835,
+          "note": null
+        },
+        {
+          "ticker": "G",
+          "is_subject": false,
+          "market_cap": 5866.6,
+          "acquired": 1842.135,
+          "total_assets": 5413.096,
+          "pct_assets": 0.34031079441413936,
+          "pct_market_cap": 0.3140038523165036,
+          "note": null
+        },
+        {
+          "ticker": "EXLS",
+          "is_subject": false,
+          "market_cap": 4664.5,
+          "acquired": 451.637,
+          "total_assets": 1676.379,
+          "pct_assets": 0.2694122271872888,
+          "pct_market_cap": 0.09682431128738343,
+          "note": null
+        },
+        {
+          "ticker": "CNXC",
+          "is_subject": false,
+          "market_cap": 1550.5,
+          "acquired": 5403.399,
+          "total_assets": 10512.847,
+          "pct_assets": 0.5139805611172692,
+          "pct_market_cap": 3.484939696871977,
+          "note": null
+        },
+        {
+          "ticker": "TASK",
+          "is_subject": false,
+          "market_cap": 567.8,
+          "acquired": 362.141,
+          "total_assets": 997.639,
+          "pct_assets": 0.36299803836858824,
+          "pct_market_cap": 0.6377967594223319,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.479838707182505,
+      "subject_pct_market_cap": 1.2212771653543306,
+      "median_all_assets": 0.5139805611172692,
+      "median_all_market_cap": 0.3140038523165036,
+      "median_large_assets": 0.5357791417483097,
+      "median_large_market_cap": 0.2933166166714031,
+      "n_all": 7,
+      "n_large": 6
+    },
     "financial_summary": {
       "annual": {
         "value": {

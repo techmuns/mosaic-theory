@@ -2370,6 +2370,129 @@
         "note": "(P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event"
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "CNXC",
+          "is_subject": true,
+          "market_cap": 1550.5,
+          "acquired": 5403.399,
+          "total_assets": 10512.847,
+          "pct_assets": 0.5139805611172692,
+          "pct_market_cap": 3.484939696871977,
+          "note": null
+        },
+        {
+          "ticker": "FISV",
+          "is_subject": false,
+          "market_cap": 28907.7,
+          "acquired": 39666.0,
+          "total_assets": 80886.0,
+          "pct_assets": 0.4903938876937913,
+          "pct_market_cap": 1.3721603586587656,
+          "note": null
+        },
+        {
+          "ticker": "CTSH",
+          "is_subject": false,
+          "market_cap": 23840.4,
+          "acquired": 9166.0,
+          "total_assets": 20500.0,
+          "pct_assets": 0.4471219512195122,
+          "pct_market_cap": 0.38447341487558934,
+          "note": null
+        },
+        {
+          "ticker": "507685",
+          "is_subject": false,
+          "market_cap": 18751.9,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for '507685'"
+        },
+        {
+          "ticker": "G",
+          "is_subject": false,
+          "market_cap": 5866.6,
+          "acquired": 1842.135,
+          "total_assets": 5413.096,
+          "pct_assets": 0.34031079441413936,
+          "pct_market_cap": 0.3140038523165036,
+          "note": null
+        },
+        {
+          "ticker": "ADT",
+          "is_subject": false,
+          "market_cap": 5323.4,
+          "acquired": 9798.275,
+          "total_assets": 15739.056,
+          "pct_assets": 0.6225452784461787,
+          "pct_market_cap": 1.8406046887327647,
+          "note": null
+        },
+        {
+          "ticker": "EXLS",
+          "is_subject": false,
+          "market_cap": 4664.5,
+          "acquired": 451.637,
+          "total_assets": 1676.379,
+          "pct_assets": 0.2694122271872888,
+          "pct_market_cap": 0.09682431128738343,
+          "note": null
+        },
+        {
+          "ticker": "TEP",
+          "is_subject": false,
+          "market_cap": 3975.2,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "unresolved — no CIK for 'TEP'"
+        },
+        {
+          "ticker": "TASK",
+          "is_subject": false,
+          "market_cap": 567.8,
+          "acquired": 362.141,
+          "total_assets": 997.639,
+          "pct_assets": 0.36299803836858824,
+          "pct_market_cap": 0.6377967594223319,
+          "note": null
+        },
+        {
+          "ticker": "IBEX",
+          "is_subject": false,
+          "market_cap": 480.3,
+          "acquired": 12.232,
+          "total_assets": 297.247,
+          "pct_assets": 0.04115096199457017,
+          "pct_market_cap": 0.025467416198209452,
+          "note": null
+        },
+        {
+          "ticker": "TTEC",
+          "is_subject": false,
+          "market_cap": 119.2,
+          "acquired": 501.873,
+          "total_assets": 1412.615,
+          "pct_assets": 0.355279393182148,
+          "pct_market_cap": 4.210343959731543,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.5139805611172692,
+      "subject_pct_market_cap": 3.484939696871977,
+      "median_all_assets": 0.35913871577536816,
+      "median_all_market_cap": 0.5111350871489606,
+      "median_large_assets": 0.4471219512195122,
+      "median_large_market_cap": 0.38447341487558934,
+      "n_all": 8,
+      "n_large": 5
+    },
     "financial_summary": {
       "annual": {
         "value": {

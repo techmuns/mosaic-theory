@@ -4328,6 +4328,129 @@
       },
       "maturity_event": null
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "BRBR",
+          "is_subject": true,
+          "market_cap": 1588.4,
+          "acquired": 178.1,
+          "total_assets": 1052.1,
+          "pct_assets": 0.16928048664575612,
+          "pct_market_cap": 0.11212540921682194,
+          "note": null
+        },
+        {
+          "ticker": "MDLZ",
+          "is_subject": false,
+          "market_cap": 80202.4,
+          "acquired": 43759.0,
+          "total_assets": 71122.0,
+          "pct_assets": 0.6152667247827677,
+          "pct_market_cap": 0.545607114001576,
+          "note": null
+        },
+        {
+          "ticker": "KVUE",
+          "is_subject": false,
+          "market_cap": 37920.2,
+          "acquired": 17671.0,
+          "total_assets": 26735.0,
+          "pct_assets": 0.6609687675331962,
+          "pct_market_cap": 0.46600492613435585,
+          "note": null
+        },
+        {
+          "ticker": "HSY",
+          "is_subject": false,
+          "market_cap": 37199.4,
+          "acquired": 5410.712,
+          "total_assets": 13973.052,
+          "pct_assets": 0.3872247809569449,
+          "pct_market_cap": 0.14545159330526838,
+          "note": null
+        },
+        {
+          "ticker": "SJM",
+          "is_subject": false,
+          "market_cap": 13150.6,
+          "acquired": 10888.7,
+          "total_assets": 16219.4,
+          "pct_assets": 0.6713380273006401,
+          "pct_market_cap": 0.8280002433349049,
+          "note": null
+        },
+        {
+          "ticker": "CAG",
+          "is_subject": false,
+          "market_cap": 7384.3,
+          "acquired": 9950.0,
+          "total_assets": 17274.4,
+          "pct_assets": 0.5759968508312878,
+          "pct_market_cap": 1.3474533808214726,
+          "note": null
+        },
+        {
+          "ticker": "CPB",
+          "is_subject": false,
+          "market_cap": 6802.1,
+          "acquired": 9318.0,
+          "total_assets": 15142.0,
+          "pct_assets": 0.6153744551578392,
+          "pct_market_cap": 1.3698710692286205,
+          "note": null
+        },
+        {
+          "ticker": "HLF",
+          "is_subject": false,
+          "market_cap": 1300.0,
+          "acquired": 459.1,
+          "total_assets": 2857.7,
+          "pct_assets": 0.16065367253385593,
+          "pct_market_cap": 0.35315384615384615,
+          "note": null
+        },
+        {
+          "ticker": "SMPL",
+          "is_subject": false,
+          "market_cap": 941.2,
+          "acquired": 1508.857,
+          "total_assets": 2062.444,
+          "pct_assets": 0.7315868939956672,
+          "pct_market_cap": 1.6031204844878877,
+          "note": null
+        },
+        {
+          "ticker": "USNA",
+          "is_subject": false,
+          "market_cap": 429.1,
+          "acquired": 267.028,
+          "total_assets": 738.966,
+          "pct_assets": 0.36135356701120214,
+          "pct_market_cap": 0.6222978326730366,
+          "note": null
+        },
+        {
+          "ticker": "NUS",
+          "is_subject": false,
+          "market_cap": 254.9,
+          "acquired": 122.915,
+          "total_assets": 1376.798,
+          "pct_assets": 0.08927598674605862,
+          "pct_market_cap": 0.4822087092977638,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.16928048664575612,
+      "subject_pct_market_cap": 0.11212540921682194,
+      "median_all_assets": 0.5956317878070277,
+      "median_all_market_cap": 0.5839524733373063,
+      "median_large_assets": 0.6152667247827677,
+      "median_large_market_cap": 0.545607114001576,
+      "n_all": 10,
+      "n_large": 7
+    },
     "financial_summary": {
       "annual": {
         "value": {

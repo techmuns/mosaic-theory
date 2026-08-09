@@ -2395,10 +2395,17 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
     a fiscal-period average WITH ITS WINDOW, a PERIOD MISMATCH names both spans, and `brand_split`
     prints as a stated gap so the aggregate never reads as complete.
     """
+    # GATED PER BLOCK, NOT ON THE FIRST ONE. The section holds TWO independent blocks — the
+    # subject's own balance, and the peer comparison — and an early return on `capital_allocation`
+    # meant seven names carried `peer_capital_intensity` in their JSON and showed NOTHING on the
+    # page. Only the four names that happen to have both rendered it, and those are exactly the
+    # four the first verification sampled: checking where it works cannot find this.
     ca = m.capital_allocation
-    if ca is None:
+    if ca is None and m.peer_capital_intensity is None:
         return []
     out: list[str] = ["", "**Capital allocation — created or destroyed**", ""]
+    if ca is None:
+        return out + _peer_capital_intensity_lines(m)
 
     gw, intang = ca.goodwill, ca.intangibles
     if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
@@ -2491,7 +2498,9 @@ def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
             + (["why"] if noted else []))
     rows = [[r.ticker, usd(r.market_cap), usd(r.acquired), usd(r.total_assets),
              pct(r.pct_assets), pct(r.pct_market_cap)]
-            + ([(r.note or "").split(" — ")[0]] if noted else [])
+            # "—" not "" — `name_rows` bolds every cell in the subject row, and an empty
+            # one renders as a bare `****` that reads as a missing value.
+            + ([(r.note or "—").split(" — ")[0]] if noted else [])
             for r in pc.rows]
     out = _table("Peer acquired-asset intensity — goodwill + intangibles",
                  "EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from "

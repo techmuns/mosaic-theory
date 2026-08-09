@@ -4004,6 +4004,129 @@
       "covenant_term_rows": null,
       "maturity_event": null
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "VITL",
+          "is_subject": true,
+          "market_cap": 479.5,
+          "acquired": 3.858,
+          "total_assets": 502.078,
+          "pct_assets": 0.007684065025752971,
+          "pct_market_cap": 0.008045881126173098,
+          "note": null
+        },
+        {
+          "ticker": "MDLZ",
+          "is_subject": false,
+          "market_cap": 78033.1,
+          "acquired": 43759.0,
+          "total_assets": 71122.0,
+          "pct_assets": 0.6152667247827677,
+          "pct_market_cap": 0.5607748506723429,
+          "note": null
+        },
+        {
+          "ticker": "KHC",
+          "is_subject": false,
+          "market_cap": 28102.9,
+          "acquired": 52086.0,
+          "total_assets": 73065.0,
+          "pct_assets": 0.712872100184767,
+          "pct_market_cap": 1.853403029580577,
+          "note": null
+        },
+        {
+          "ticker": "POST",
+          "is_subject": false,
+          "market_cap": 4052.3,
+          "acquired": 7620.3,
+          "total_assets": 12852.7,
+          "pct_assets": 0.5928948781189944,
+          "pct_market_cap": 1.880487624312119,
+          "note": null
+        },
+        {
+          "ticker": "CALM",
+          "is_subject": false,
+          "market_cap": 3801.0,
+          "acquired": 170.189,
+          "total_assets": 3107.57,
+          "pct_assets": 0.054765942521005154,
+          "pct_market_cap": 0.04477479610628782,
+          "note": null
+        },
+        {
+          "ticker": "FRPT",
+          "is_subject": false,
+          "market_cap": 2822.3,
+          "acquired": null,
+          "total_assets": 1812.415,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "BRBR",
+          "is_subject": false,
+          "market_cap": 1343.0,
+          "acquired": 178.1,
+          "total_assets": 1052.1,
+          "pct_assets": 0.16928048664575612,
+          "pct_market_cap": 0.13261355174981385,
+          "note": null
+        },
+        {
+          "ticker": "SMPL",
+          "is_subject": false,
+          "market_cap": 1181.8,
+          "acquired": 1508.857,
+          "total_assets": 2062.444,
+          "pct_assets": 0.7315868939956672,
+          "pct_market_cap": 1.2767447960737859,
+          "note": null
+        },
+        {
+          "ticker": "UTZ",
+          "is_subject": false,
+          "market_cap": 682.6,
+          "acquired": 1813.7,
+          "total_assets": 2775.5,
+          "pct_assets": 0.6534678436317781,
+          "pct_market_cap": 2.6570465865807207,
+          "note": null
+        },
+        {
+          "ticker": "OTLY",
+          "is_subject": false,
+          "market_cap": 281.0,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+        },
+        {
+          "ticker": "HAIN",
+          "is_subject": false,
+          "market_cap": 49.8,
+          "acquired": 466.583,
+          "total_assets": 1162.721,
+          "pct_assets": 0.40128543304885694,
+          "pct_market_cap": 9.36913654618474,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.007684065025752971,
+      "subject_pct_market_cap": 0.008045881126173098,
+      "median_all_assets": 0.604080801450881,
+      "median_all_market_cap": 1.5650739128271813,
+      "median_large_assets": 0.604080801450881,
+      "median_large_market_cap": 0.9187598233730644,
+      "n_all": 8,
+      "n_large": 6
+    },
     "financial_summary": {
       "annual": {
         "value": {

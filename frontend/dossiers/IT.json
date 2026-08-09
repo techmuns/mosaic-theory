@@ -4546,6 +4546,129 @@
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
     },
+    "peer_capital_intensity": {
+      "rows": [
+        {
+          "ticker": "IT",
+          "is_subject": true,
+          "market_cap": 11090.6,
+          "acquired": 3033.065,
+          "total_assets": 7193.674,
+          "pct_assets": 0.421629476120269,
+          "pct_market_cap": 0.2734806953636413,
+          "note": null
+        },
+        {
+          "ticker": "SPGI",
+          "is_subject": false,
+          "market_cap": 123699.0,
+          "acquired": 52334.0,
+          "total_assets": 60792.0,
+          "pct_assets": 0.8608698512962232,
+          "pct_market_cap": 0.42307536843466803,
+          "note": null
+        },
+        {
+          "ticker": "MCO",
+          "is_subject": false,
+          "market_cap": 83688.0,
+          "acquired": 8067.0,
+          "total_assets": 14675.0,
+          "pct_assets": 0.549710391822828,
+          "pct_market_cap": 0.09639374820762833,
+          "note": null
+        },
+        {
+          "ticker": "VRSK",
+          "is_subject": false,
+          "market_cap": 27742.8,
+          "acquired": 2192.1,
+          "total_assets": 4598.4,
+          "pct_assets": 0.47670929018789143,
+          "pct_market_cap": 0.07901509580864224,
+          "note": null
+        },
+        {
+          "ticker": "CTSH",
+          "is_subject": false,
+          "market_cap": 25211.4,
+          "acquired": 9166.0,
+          "total_assets": 20500.0,
+          "pct_assets": 0.4471219512195122,
+          "pct_market_cap": 0.363565688537725,
+          "note": null
+        },
+        {
+          "ticker": "EFX",
+          "is_subject": false,
+          "market_cap": 21975.5,
+          "acquired": 8017.0,
+          "total_assets": 11981.8,
+          "pct_assets": 0.6690981321671202,
+          "pct_market_cap": 0.3648153625628541,
+          "note": null
+        },
+        {
+          "ticker": "TRU",
+          "is_subject": false,
+          "market_cap": 16042.7,
+          "acquired": 9339.4,
+          "total_assets": 12047.3,
+          "pct_assets": 0.7752276443684477,
+          "pct_market_cap": 0.5821588635329464,
+          "note": null
+        },
+        {
+          "ticker": "FDS",
+          "is_subject": false,
+          "market_cap": 10030.9,
+          "acquired": 3151.795,
+          "total_assets": 4191.997,
+          "pct_assets": 0.7518600323425804,
+          "pct_market_cap": 0.31420859544009017,
+          "note": null
+        },
+        {
+          "ticker": "DOX",
+          "is_subject": false,
+          "market_cap": 6032.2,
+          "acquired": 3005.637,
+          "total_assets": 6386.142,
+          "pct_assets": 0.47064988532982827,
+          "pct_market_cap": 0.4982654752826498,
+          "note": null
+        },
+        {
+          "ticker": "EPAM",
+          "is_subject": false,
+          "market_cap": 5584.4,
+          "acquired": 1576.017,
+          "total_assets": 4574.086,
+          "pct_assets": 0.3445534255368176,
+          "pct_market_cap": 0.28221778525893565,
+          "note": null
+        },
+        {
+          "ticker": "EFOR",
+          "is_subject": false,
+          "market_cap": 959.8,
+          "acquired": 2876.0,
+          "total_assets": 4023.5,
+          "pct_assets": 0.7148005467876227,
+          "pct_market_cap": 2.996457595332361,
+          "note": null
+        }
+      ],
+      "size_floor": 1000.0,
+      "subject_pct_assets": 0.421629476120269,
+      "subject_pct_market_cap": 0.2734806953636413,
+      "median_all_assets": 0.6094042619949741,
+      "median_all_market_cap": 0.3641905255502895,
+      "median_large_assets": 0.549710391822828,
+      "median_large_market_cap": 0.363565688537725,
+      "n_all": 10,
+      "n_large": 9
+    },
     "financial_summary": {
       "annual": {
         "value": {

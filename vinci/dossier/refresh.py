@@ -470,6 +470,47 @@ def capital_allocation_transform(cik: str | None) -> Transform:
     return _apply
 
 
+
+def peer_capital_intensity_transform() -> Transform:
+    """A `refresh_dossier` transform writing `mech.peer_capital_intensity` from the STORED grid.
+
+    THE PEER SET COMES OUT OF THE ARTIFACT, not the workbook. `peer_comps.peer_grid` already holds
+    every peer's ticker and market cap, parsed and committed — so this reaches FUBO and MVST, which
+    cannot be re-assembled at all, and it cannot disagree with the grid the page already shows. The
+    goodwill/intangible/assets figures are EDGAR's: one cached companyfacts call per peer.
+
+    NO GRID -> WRITE NOTHING. Absent keeps its meaning of NOT YET REFRESHED, and a block written
+    without a peer set would be a claim about peers we never looked at.
+
+    A WHOLE-SET RESOLUTION FAILURE ALSO WRITES NOTHING, and that guard cannot live in the builder.
+    `build_peer_capital_intensity` is total by design: a peer that will not resolve gets a row
+    saying so, which is right for ONE bad ticker. But if NOT ONE of eleven resolves, the fact being
+    reported is that the resolver is unavailable — and eleven rows each reading "no CIK for 'UTZ'"
+    states something false about eleven companies. #362's rule at set scope: a systemic failure
+    must not be published as a per-item finding.
+    """
+    from vinci.dossier.capital_allocation import build_peer_capital_intensity
+    from vinci.dossier.schemas import PeerRow
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        raw = ((out.get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
+        if not raw:
+            return out
+        grid = [PeerRow.model_validate(r) for r in raw]
+        built = build_peer_capital_intensity(
+            grid, resolve=EntityResolver.from_config().resolve_ticker,
+            companyfacts=EdgarClient.from_config().companyfacts)
+        if built.rows and all(str(r.note or "").startswith("unresolved") for r in built.rows):
+            return out          # see the docstring: a systemic failure, not eleven facts
+        out["peer_capital_intensity"] = json.loads(built.model_dump_json())
+        return out
+
+    return _apply
+
+
 def ebitda_basis_transform() -> Transform:
     """A `refresh_dossier` transform writing `mech.financial_summary.ebitda_basis`.
 

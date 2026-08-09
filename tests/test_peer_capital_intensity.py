@@ -137,3 +137,49 @@ def test_both_twins_mark_the_subject_from_the_data_not_from_position() -> None:
     from vinci.dossier.schemas import PeerCapitalRow
     unknown = fields - set(PeerCapitalRow.model_fields)
     assert not unknown, f"the web twin reads fields absent from PeerCapitalRow: {sorted(unknown)}"
+
+
+def test_the_peer_table_renders_without_capital_allocation() -> None:
+    """[P1, operator] THE SECTION HOLDS TWO INDEPENDENT BLOCKS and was gated on the first one.
+
+    `_capital_allocation` early-returned when `capital_allocation` was None, so SEVEN names carried
+    `peer_capital_intensity` in their JSON and showed nothing on the page. Only the four names with
+    BOTH blocks rendered it — and those four are exactly what the original verification sampled.
+    **Checking where it works cannot find this.**
+
+    Asserted on the real corpus: every name whose JSON carries the block must show it on its page.
+    """
+    import json
+
+    from vinci.dossier.render import _capital_allocation
+    from vinci.dossier.schemas import MechanicalLayer
+
+    checked = without_ca = 0
+    for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        mech = json.loads(p.read_text())["mechanical"]
+        if not mech.get("peer_capital_intensity"):
+            continue
+        m = MechanicalLayer.model_validate(mech)
+        page = "\n".join(_capital_allocation(m))
+        checked += 1
+        without_ca += m.capital_allocation is None
+        assert "Peer acquired-asset intensity" in page, (
+            f"{p.parent.name}: carries peer_capital_intensity in JSON but the renderer emits "
+            f"nothing (capital_allocation="
+            f"{'absent' if m.capital_allocation is None else 'present'})")
+    assert checked, "no committed dossier carries the block — this sweep checked nothing"
+    assert without_ca, (
+        "every name with a peer block also has capital_allocation, so this pin cannot see the "
+        "defect it exists for — the corpus no longer exercises the independent path")
+
+
+def test_the_web_twin_is_gated_per_block_too() -> None:
+    """Both twins had the same early return. Asserted on the source, because the markdown fix
+    passing says nothing about the web one."""
+    js = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    body = js[js.index("function capitalAllocation(m) {"):]
+    body = body[:body.index("\nfunction ")]
+    assert 'if (!ca) return "";' not in body, (
+        "the web twin still returns early on capital_allocation — a name with only the peer block "
+        "renders nothing")
+    assert "peerCapitalIntensity(m)" in body
