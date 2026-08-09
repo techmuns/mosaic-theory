@@ -3500,12 +3500,14 @@ remnant + untested live core follow.
   **forward, not in hindsight.** Untested.
 
 **SLEEVE ARCHITECTURE — the edges become a REGISTRY, not a fork (decided 2026-08-08; build
-briefed, Phase 0 is this record).** The whole dossier pipeline is hard-bound to overshoot at eight
+briefed, Phase 0 is this record).** The whole dossier pipeline is hard-bound to overshoot at SEVEN
 surfaces — the synthesis prompt ("two readings of a sharply de-rated name"), the proposal mapping
-(`strongly-bearish → AVOID_TERMINAL`) in BOTH twins, the page headline ("What broke — and did it
-fall alone?"), the two-label `Verdict` enum, the spread math (exact-identity filters at 7 sites, so
-a third label would vanish from every curve SILENTLY), the R1-shaped underwrite template, and the
-ledger entry gate. That was correct while one edge existed. It stopped being correct the day a
+(`strongly-bearish → AVOID_TERMINAL`), the page headline ("What broke — and did it fall alone?"),
+the two-label `Verdict` enum, the spread math (exact-identity filters at **7 sites** — 6 in
+`scoring/metrics.py`, 1 in `scoring/harness.py` — so a third label would vanish from every curve
+SILENTLY), the R1-shaped underwrite template, and the ledger entry gate. **Seven surfaces but NINE
+code sites:** the proposal mapping and the page headline each exist in BOTH renderers
+(`verdict.py` ↔ `dossier.js`, `render.py` ↔ `dossier.js`) and must move together — the twin rule. That was correct while one edge existed. It stopped being correct the day a
 followed megacap was committed (UBER, PR #368): the machine now asks a de-rating question about a
 name that never de-rated, and its bearish twin label would record "terminal" on a compounder — a
 FALSE RECORD in an append-only ledger.
@@ -7642,6 +7644,27 @@ sample: **the source was authoritative and the excerpt was not.**
     that vocabulary, so the gate now detects the DEFECT — a company name in the relationship slot —
     rather than encoding a guess about the vocabulary.
 
+34. **SLEEVES — un-hardcode the overshoot framing (SERIES A; briefed 2026-08-08; §4 records
+    the decision).**
+    Phase 0 = this record + the glossary line + the followed-name INTAKE RUNBOOK (docs-only, ships
+    with this item). **Phase 1** (2 PRs): `vinci/sleeves.py` registry validated against a frozenset
+    (the `BEAR_BASES` precedent, never an Enum); `followed.json` migrates flat-string →
+    `{reason, sleeve}` and REFUSES a bare string or unknown sleeve; `Dossier.sleeve` defaults
+    `overshoot`; `LedgerEntry` gains `origin`/`sleeve` optional-with-default (the documented
+    append-only-safe precedent on that model) so a followed name can log a verdict AT ALL — today
+    `log_verdict` refuses it (`store.get_candidate` → `LedgerError`), which is the acceptance RED;
+    curves segment with the PRIMARY spread pinned IDENTICAL on the committed ledger. **Phase 2**
+    (4 PRs): `system_for(sleeve)`/`tool_for(sleeve)` replacing the single `_SYSTEM`+`SYNTHESIS_TOOL`
+    (overshoot output pinned BYTE-IDENTICAL on a frozen fixture); per-sleeve proposal mapping +
+    `Verdict.PASS` in both twins; per-sleeve page question/case labels (PREVIEW-gated, collapsed
+    AND print-expanded); e2e + artifact pass. **The pin that must MOVE, not loosen:**
+    `test_shelf_tag_prefers_the_logged_human_verdict` asserts `{v.value for v in Verdict} ==
+    {"BUY","AVOID_TERMINAL"}` and its own message says why — it moves WITH the display fix.
+    **The hazard it does NOT catch:** monitor/JS classify by BUY-PREFIX family (PASS → avoid leg)
+    while `scoring/metrics.py` uses EXACT identity, so a PASS row would land in NEITHER leg
+    silently — closed by the registry's per-sleeve avoid-label plus a new pin that every enum
+    member resolves into exactly one leg. Brief: `~/.claude/plans/fluffy-foraging-codd.md`.
+
 24. **ANALYST-DECISION BUCKET — HEADLINE CORRECTED 2026-08-03 (disposition render): (a) SHIPPED
     2026-07-31, (b) STILL BLOCKED. The "Item stays BLOCKED" below was true of the whole item for
     three days and of half of it thereafter.** (a) closed via `afc4b08` (diluted shares OUTSTANDING
@@ -8021,25 +8044,6 @@ DR-5. **ONLY 6 OF 11 DOSSIERS CARRY SCENARIO RECORDS** (operator, carried across
 48. **ENTITY GATE — NCI / SHARE-CLASS CHECK (gates any FUBO record).** The audit's entity check
     reads the diluted-vs-outstanding gap but has no NCI or multi-class detector beyond a text
     scan, and a pre-combination dossier defeats a text scan by construction.
-49. **SLEEVES — un-hardcode the overshoot framing (briefed 2026-08-08; §4 records the decision).**
-    Phase 0 = this record + the glossary line + the followed-name INTAKE RUNBOOK (docs-only, ships
-    with this item). **Phase 1** (2 PRs): `vinci/sleeves.py` registry validated against a frozenset
-    (the `BEAR_BASES` precedent, never an Enum); `followed.json` migrates flat-string →
-    `{reason, sleeve}` and REFUSES a bare string or unknown sleeve; `Dossier.sleeve` defaults
-    `overshoot`; `LedgerEntry` gains `origin`/`sleeve` optional-with-default (the documented
-    append-only-safe precedent on that model) so a followed name can log a verdict AT ALL — today
-    `log_verdict` refuses it (`store.get_candidate` → `LedgerError`), which is the acceptance RED;
-    curves segment with the PRIMARY spread pinned IDENTICAL on the committed ledger. **Phase 2**
-    (4 PRs): `system_for(sleeve)`/`tool_for(sleeve)` replacing the single `_SYSTEM`+`SYNTHESIS_TOOL`
-    (overshoot output pinned BYTE-IDENTICAL on a frozen fixture); per-sleeve proposal mapping +
-    `Verdict.PASS` in both twins; per-sleeve page question/case labels (PREVIEW-gated, collapsed
-    AND print-expanded); e2e + artifact pass. **The pin that must MOVE, not loosen:**
-    `test_shelf_tag_prefers_the_logged_human_verdict` asserts `{v.value for v in Verdict} ==
-    {"BUY","AVOID_TERMINAL"}` and its own message says why — it moves WITH the display fix.
-    **The hazard it does NOT catch:** monitor/JS classify by BUY-PREFIX family (PASS → avoid leg)
-    while `scoring/metrics.py` uses EXACT identity, so a PASS row would land in NEITHER leg
-    silently — closed by the registry's per-sleeve avoid-label plus a new pin that every enum
-    member resolves into exactly one leg. Brief: `~/.claude/plans/fluffy-foraging-codd.md`.
 
 **BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
 Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS

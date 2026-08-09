@@ -343,28 +343,57 @@ follow**, so absence from it is not a rejection. Cost is MEASURED, not estimated
 what PR #368 ran for UBER, and it needed **no test changes** (#366/#367 had already derived the
 fleet rosters that used to be pinned by literal name).
 
+All commands assume the Preamble's `$VENV` (the venv is NOT inside the worktrees — bare `python`
+is the 3.9 system one).
+
 1. **Add the follow entry** — `data/followed.json`, keyed by UPPERCASE ticker, with the operator's
-   stated REASON (required, and it prints in the dossier's main body: a follow decision without
-   its reason is the silent admission the file exists to prevent) **and its SLEEVE** (from Phase 1
-   on; `quality` for the megacap book). A blank/placeholder reason, a missing sleeve, or an unknown
-   sleeve is REFUSED at assembly.
-2. **Benchmark bars must exist for the name's cap band** — **>$25B needs SPY, >$4B needs MDY**
-   (`vinci refresh <SYM> --aggs`; bars are git-ignored, so this is per-worktree). Skipping it does
-   not crash: every market-relative leg reads UNKNOWN and the page says so. That is how UBER's
-   first build shipped — SPY had **4 bars**, because a $300M–$10B band had only ever asked for
-   IWM/MDY. *(Source: STATE.md §OPERATOR TO-DOs item 1.)*
+   stated REASON: required, and it prints in the dossier's main body (a follow decision without its
+   reason is the silent admission the file exists to prevent). **The file is a flat
+   `{TICKER: "reason"}` map TODAY**; queue item 34 (SERIES A) Phase 1 migrates it to
+   `{TICKER: {"reason": …, "sleeve": …}}` and refuses a bare string, a missing sleeve, or an unknown
+   one — **until that ships, write the plain string**, or the current parser rejects the entry.
+2. **Benchmark bars must exist for the name's cap band** — **>$25B needs SPY, >$4B needs MDY**:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m vinci.cli refresh SPY --aggs --start 2021-07-01 --end <today>
+   ```
+
+   `--start`/`--end` are REQUIRED (there is no default window); `--aggs` is the per-symbol
+   backfill for a NEW name — the default grouped-daily path is the whole-universe refresh. Bars are
+   git-ignored, so this is per-worktree. Skipping it does not crash: every market-relative leg
+   reads UNKNOWN and the page says so. That is how UBER's first build shipped — SPY had **4 bars**,
+   because a $300M–$10B band had only ever asked for IWM/MDY. *(Source: `refresh --help`; STATE.md
+   §OPERATOR TO-DOs item 1.)*
 3. **Pull the CIQ export** — REQUIRED before any quality-sleeve verdict: the priced-in exhibit
    (`implied_expectations`), the `ev_gap` and the consensus ladder are all CIQ-fed. Without it the
    dossier still assembles (CIQ sections MISSING + a 'pull CIQ' flag) but the sleeve's own question
-   is unanswerable.
-4. **Assemble** — `vinci dossier --ticker <T>`. The maintenance path builds the data record from
-   the resolver + price store with no screen involved, and the page leads with a caveat stating the
-   name is not a current screen candidate and why.
-5. **Regenerate the two fixtures** — `python scripts/build_companyfacts_fixture.py <T>` (its own
-   test failure message instructs this) and `scripts/build_price_fixture.py`, which DERIVES the new
-   name once the dossier is committed.
-6. **Artifact pass** — run the FULL offline suite green BEFORE pushing (`pytest -m "not network"`):
-   tests read the committed artifacts, so a re-assembled dossier can turn a pinned test red.
+   is unanswerable. **The raw workbooks land in `data/manual/ciq/` and are NEVER committed or
+   logged** — git-ignored regardless of repo privacy; only the DERIVED per-ticker `dossier.json`
+   is committable. *(Source: CLAUDE.md §Security & secrets.)*
+4. **Assemble** — the maintenance path builds the data record from the resolver + price store with
+   no screen involved, and the page leads with a caveat stating the name is not a current screen
+   candidate and why:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m vinci.cli dossier --ticker <T>
+   ```
+
+5. **Regenerate the two fixtures** — the first takes the ticker (its own test-failure message
+   instructs this); the second takes NO argument and DERIVES every maintained name once the
+   dossier is committed:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python scripts/build_companyfacts_fixture.py <T>
+   PYTHONPATH=$PWD $VENV/python scripts/build_price_fixture.py
+   ```
+
+6. **Artifact pass** — run the FULL offline suite green BEFORE pushing; tests read the committed
+   artifacts, so a re-assembled dossier can turn a pinned test red:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m pytest -m "not network"
+   ```
+
    *(Source: CLAUDE.md §ARTIFACT-PASS RULE.)*
 
 **Do NOT re-use a parked copy of an earlier build** — re-assemble whenever any rendering input has
