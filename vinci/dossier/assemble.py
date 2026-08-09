@@ -50,6 +50,7 @@ from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
 from vinci.schemas.data_record import DataRecord
 from vinci.sec import build_sec_http
+from vinci.sleeves import DEFAULT_SLEEVE, SLEEVES, UnknownSleeveError, require_sleeve
 from vinci.store import Store
 
 _S = TypeVar("_S")
@@ -80,6 +81,10 @@ class Finalist:
     #: Why this name is outside the current candidate set, rendered as a MAIN-BODY caveat. None
     #: for an ordinary screen candidate.
     screen_status: str | None = None
+    #: WHICH STRATEGY BOOK this name is judged under (`vinci/sleeves.py`). A screen candidate is
+    #: `overshoot` by construction — the screen finds overshoot setups; a followed name states its
+    #: own, and assembly refuses it unstated.
+    sleeve: str = DEFAULT_SLEEVE
 
     @property
     def data_record(self) -> DataRecord:
@@ -181,8 +186,16 @@ def _last_screen_verdict(cfg: Config, ticker: str) -> tuple[str, str] | None:
     return None
 
 
-def _follow_reason(cfg: Config, ticker: str) -> str | None:
-    """The operator's stated reason for following ``ticker``, or None when it is not followed.
+@dataclass(frozen=True)
+class FollowEntry:
+    """One operator follow decision: WHY the name is covered, and under WHICH strategy book."""
+
+    reason: str
+    sleeve: str
+
+
+def _follow_entry(cfg: Config, ticker: str) -> FollowEntry | None:
+    """The operator's follow decision for ``ticker`` — reason + sleeve — or None if not followed.
 
     THE THIRD KEY, AND THE ONLY ONE THAT OPENS FROM OUTSIDE. The other two are consequences of work
     already done — a dossier exists, an underwrite exists — so neither can admit a name the fund has
@@ -202,6 +215,14 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
     file that EXISTS but will not parse, or an entry whose reason is missing/blank/not a string, is
     NOT normal — degrading either to None would silently drop a name the operator believes is
     followed, and the failure would surface as an unrelated LookupError at assembly time.
+
+    THE SLEEVE IS REQUIRED, AND THE BARE-STRING FORM IS REFUSED OUTRIGHT (queue item 34, SERIES A).
+    The entry is ``{"reason": …, "sleeve": …}``; the pre-sleeve ``TICKER: "reason"`` shape raises
+    with the rewrite spelled out. Accepting BOTH would leave two parsers of one file and a silent
+    default for the older shape — and the default is the whole defect: an untagged followed name
+    inherits the OVERSHOOT framing, so a megacap gets asked what broke when nothing did. The follow
+    key is the one route that admits a name with no prior work behind it, so it is exactly where
+    the strategy must be stated out loud rather than inferred.
     """
     path = cfg.data_dir / "followed.json"
     if not path.exists():
@@ -212,7 +233,8 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
         raise DossierAssemblyError(f"{path} is not valid JSON: {exc}") from exc
     if not isinstance(doc, dict):
         raise DossierAssemblyError(
-            f"{path} must be a JSON object mapping TICKER → reason, got {type(doc).__name__}")
+            f"{path} must be a JSON object mapping TICKER → {{reason, sleeve}}, "
+            f"got {type(doc).__name__}")
     # CASE-FOLD, THEN REFUSE A COLLISION. `{"uber": …, "UBER": …}` folds to one key and the dict
     # comprehension silently keeps whichever came last — so one of two stated reasons vanishes with
     # nothing anywhere saying so, in the file whose entire job is to record WHY a name is covered.
@@ -228,7 +250,20 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
         entries[key] = v
     if ticker.upper() not in entries:
         return None
-    reason = entries[ticker.upper()]
+    entry = entries[ticker.upper()]
+    # THE OLD SHAPE RAISES WITH ITS REWRITE, never a silent upgrade. A bare string parsed as
+    # "reason, sleeve unstated" would re-open the exact hole this field closes.
+    if isinstance(entry, str):
+        raise DossierAssemblyError(
+            f"{path}: {ticker.upper()} uses the pre-sleeve form (a bare reason string). Every "
+            f"followed name now states WHICH STRATEGY BOOK it is judged under, because an untagged "
+            f'name inherits the overshoot framing. Rewrite as: {{"reason": {entry!r}, "sleeve": '
+            f'"<one of {sorted(SLEEVES)}>"}}')
+    if not isinstance(entry, dict):
+        raise DossierAssemblyError(
+            f"{path}: {ticker.upper()} must be an object with 'reason' and 'sleeve', got "
+            f"{type(entry).__name__}")
+    reason = entry.get("reason")
     # STRIPPED OF THE PUNCTUATION THE CAVEAT NORMALISES AWAY, not merely of whitespace. `"..."` is
     # truthy after `.strip()`, so it passed this guard and then `_maintenance_reason`'s
     # `rstrip(' .')` emptied it — rendering "an operator follow decision — " with no reason after
@@ -239,7 +274,21 @@ def _follow_reason(cfg: Config, ticker: str) -> str | None:
             f"{path}: {ticker.upper()} is followed but carries no stated reason "
             f"({reason!r}) — a follow decision without its reason is exactly the silent admission "
             f"this file exists to prevent; write why the band does not apply to this name")
-    return reason.strip()
+    # RE-RAISED AS THE TYPE THIS FUNCTION DOCUMENTS. Every other refusal here is a
+    # `DossierAssemblyError`, so letting a bare `UnknownSleeveError` escape would mean a caller
+    # catching the documented type silently misses exactly one failure mode. The chain is kept
+    # (`from exc`) so the specific cause is still readable in the traceback.
+    try:
+        sleeve = require_sleeve(entry.get("sleeve"), where=f"{path}: {ticker.upper()}")
+    except UnknownSleeveError as exc:
+        raise DossierAssemblyError(str(exc)) from exc
+    return FollowEntry(reason=reason.strip(), sleeve=sleeve)
+
+
+def _follow_reason(cfg: Config, ticker: str) -> str | None:
+    """The stated follow REASON alone — the caveat-facing half of :func:`_follow_entry`."""
+    entry = _follow_entry(cfg, ticker)
+    return entry.reason if entry is not None else None
 
 
 def _maintenance_reason(cfg: Config, ticker: str) -> str | None:
@@ -332,7 +381,31 @@ def _finalist(
     rank = int(row["rank"]) if row and row.get("rank") is not None else None
     cap = _cap_of(row) if row else None
     if rec is not None:
-        return Finalist(rec, rank, ref, cap)
+        # A SCREEN CANDIDATE IS `overshoot` BY CONSTRUCTION, not by default-because-unstated: the
+        # screen finds overshoot setups (`screens/screen2.py`). A name that came through the front
+        # door has already said which book it is in by the door it used.
+        #
+        # BUT BOTH DOORS CAN CLAIM THE SAME NAME, and then neither answer is safe to assume. A
+        # ticker deliberately listed in `followed.json` under one book can also appear in the
+        # ranked candidate set — it re-enters the band after a drawdown, or the operator follows a
+        # name the screen later admits. This branch runs FIRST, so before this guard the follow
+        # entry's stated sleeve AND its stated reason were both silently discarded and the name was
+        # assembled as overshoot: an explicit operator judgement overridden by an implicit one.
+        #
+        # REFUSED, NOT RESOLVED BY PRECEDENCE. Either order is defensible and both are guesses —
+        # "the screen wins" throws away a deliberate follow decision, "the follow wins" hides that
+        # the name now qualifies on its own. The operator holds the information needed to choose,
+        # so the build stops and names exactly which two records disagree.
+        followed = _follow_entry(cfg, ticker)
+        if followed is not None and followed.sleeve != DEFAULT_SLEEVE:
+            raise DossierAssemblyError(
+                f"{ticker} is BOTH a screen candidate and a followed name under sleeve "
+                f"{followed.sleeve!r} — the two routes disagree about which book it is judged "
+                f"under, and assembling either way silently discards the other's answer. Resolve "
+                f"it deliberately: drop the {ticker} entry from data/followed.json if the screen "
+                f"should now own the name, or keep the follow entry and exclude the name from the "
+                f"ranked queue. (Follow reason on file: {followed.reason!r}.)")
+        return Finalist(rec, rank, ref, cap, sleeve=DEFAULT_SLEEVE)
     # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a name we
     # already hold a dossier or an underwrite on has to stay refreshable.
     why = _maintenance_reason(cfg, ticker)
@@ -341,13 +414,18 @@ def _finalist(
     verdict = _last_screen_verdict(cfg, ticker)
     said = (f"last evaluated {verdict[0]}: {verdict[1]}" if verdict
             else "no screen run on file has evaluated it")
+    # A FOLLOWED name states its own sleeve; a name maintained only by a committed dossier or an
+    # open underwrite predates the tag, so it keeps the framing it was built under. Both are
+    # explicit — neither is this function guessing.
+    followed = _follow_entry(cfg, ticker)
     return Finalist(
         None, rank, ref, cap,
         standalone=_standalone_record(cfg, ticker, ref),
         screen_status=(
             f"NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries {why}. The cap "
             f"band decides where the fund HUNTS, not what it may hold or follow, so absence from "
-            f"it is not a rejection — read the verdict, not the absence: {said}."))
+            f"it is not a rejection — read the verdict, not the absence: {said}."),
+        sleeve=(followed.sleeve if followed is not None else DEFAULT_SLEEVE))
 
 
 def load_finalists(
@@ -774,7 +852,8 @@ def assemble_one(
                         reason=f"anchor computation failed: {type(exc).__name__}")
     dossier = Dossier(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
-        reference_date=fin.reference_date, rank=fin.rank, mechanical=mech, synthesis=synthesis,
+        reference_date=fin.reference_date, rank=fin.rank, sleeve=fin.sleeve,
+        mechanical=mech, synthesis=synthesis,
         caveats=caveats, qa_flags=qa_flags, anchor=anchor,
         # (teaser/company) SIC-derived sector/sub-industry + exchange + CIQ subject business desc —
         # assemble/inform context for the Brief teaser, never a gate/rank input.

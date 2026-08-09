@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.midcycle import MidCycle
+from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 
 T = TypeVar("T")
 
@@ -1291,6 +1292,16 @@ class Dossier(BaseModel):
     cik: str
     reference_date: date
     rank: int | None  # position in the ranked queue — ordering context, never a verdict on the name
+    # WHICH STRATEGY BOOK this name is judged under (`vinci/sleeves.py`; STATE.md §4 SLEEVE
+    # ARCHITECTURE). NOT a verdict and not a rank — it names the QUESTION the page answers, which
+    # is why an untagged megacap was being asked what broke when nothing had. Defaulted rather than
+    # required so every dossier committed before the tag existed still round-trips, and `overshoot`
+    # is the truthful answer for all of them: the screen is the only route those names had.
+    # VALIDATED ON THE MODEL, not only at the followed.json edge — the `bear_basis` precedent
+    # (`vinci/scenarios.py`). The value is PERSISTED and read back, so edge-only validation leaves
+    # every other writer free to put an unlisted strategy into a committed artifact; a reader would
+    # then meet a sleeve no registry row defines, and Phase 2 would have no framing to apply.
+    sleeve: str = DEFAULT_SLEEVE
     mechanical: MechanicalLayer
     synthesis: Synthesis | None  # None if CIQ/inputs too thin or the synthesis was skipped
     # Human-review flags split by audience (see vinci.dossier.flags): decision CAVEATS render in the
@@ -1328,5 +1339,21 @@ class Dossier(BaseModel):
     # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
     # the UI ignores it for now (data-only).
     anchor: Anchor | None = None
+
+    @field_validator("sleeve")
+    @classmethod
+    def _sleeve_known(cls, v: str) -> str:
+        """An unlisted strategy never reaches a committed artifact.
+
+        The followed-name edge validates too, but that is ONE writer. This is the model every
+        writer goes through, and the value is persisted and read back — so edge-only validation
+        would leave a reader meeting a sleeve no registry row defines, with no framing to apply.
+        Re-raised as ``ValueError`` so it surfaces as an ordinary pydantic validation error at the
+        boundary where the field is set, with the registry's own message (which names the
+        admissible set) kept intact."""
+        try:
+            return require_sleeve(v, where=f"{cls.__name__}.sleeve")
+        except UnknownSleeveError as exc:
+            raise ValueError(str(exc)) from exc
 
     model_config = {"frozen": True}
