@@ -847,3 +847,49 @@ def test_the_shelf_tags_only_the_non_default_book_and_never_in_colour() -> None:
             f"sleeveTag uses {banned!r} — the shelf would triage by strategy in COLOUR before a "
             f"single fact is read")
     assert "ds-lean" in body, "the tag lost the neutral class leanTag uses"
+
+
+def test_the_web_page_refuses_to_frame_an_unknown_sleeve_as_overshoot() -> None:
+    """REVIEW FINDING (#381). `sleeveCopy` fell back to overshoot copy for ANY value it did not
+    recognise, so a corrupt or stale artifact carrying an unknown sleeve was rendered asking the
+    de-rating question and labelling its cases as an overshoot — the exact misleading framing this
+    work removes, reached through the error path instead of the default one.
+
+    ABSENT AND UNKNOWN ARE DIFFERENT STATES. Missing is the legitimate legacy case (every dossier
+    committed before the tag, plus the sealed FUBO record) and truthfully reads as the default
+    book. A PRESENT unrecognised value is a defect and now says so — matching the fail-honest
+    handling `deriveProposal` already had.
+
+    EXECUTED, not grepped: the real resolver is lifted out of the module and run, so this asserts
+    what a browser would actually render rather than that some source text is present."""
+    import json
+    import re
+    import subprocess
+
+    js_path = SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js"
+    js = js_path.read_text()
+    parts = [
+        re.search(r'const DEFAULT_SLEEVE = "[^"]+";', js).group(0),
+        re.search(r"const SLEEVE_COPY = \{.*?\n\};", js, re.S).group(0),
+        "const escapeHtml = (x) => String(x);",
+        re.search(r"function sleeveCopy\(sleeve\) \{.*?\n\}", js, re.S).group(0),
+        "const out = {};",
+        "for (const v of [null, '', 'quality', 'momentum']) out[String(v)] = sleeveCopy(v);",
+        "console.log(JSON.stringify(out));",
+    ]
+    proc = subprocess.run(["node", "--input-type=module", "-e", "\n".join(parts)],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        pytest.skip(f"node unavailable or module changed shape: {proc.stderr[:120]}")
+    got = json.loads(proc.stdout)
+
+    overshoot_q = sl.BY_KEY[sl.DEFAULT_SLEEVE].drawdown_heading
+    assert got["null"]["drawdown"] == overshoot_q, "absent sleeve must read as the default book"
+    assert got[""]["drawdown"] == overshoot_q, "blank sleeve must read as the default book"
+    assert got["quality"]["drawdown"] == sl.BY_KEY["quality"].drawdown_heading
+    unknown = got["momentum"]
+    assert unknown.get("unknown") is True, "an unrecognised sleeve is not flagged as unknown"
+    assert unknown["drawdown"] != overshoot_q, (
+        "an UNRECOGNISED sleeve is rendered with the overshoot question — the page would ask what "
+        "broke about a name the client was told is a different book")
+    assert "momentum" in unknown["drawdown"], "the unknown state does not name the bad value"

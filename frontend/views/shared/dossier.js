@@ -1329,9 +1329,22 @@ const SLEEVE_COPY = {
              bull: "Bull case — the neglect is mechanical",
              bear: "Bear case — cheap for a reason" },
 };
+// ABSENT and UNKNOWN are different states and must not share a fallback (review #381, and the
+// same distinction deriveProposal already draws). MISSING is the legitimate legacy case — every
+// dossier committed before the tag, plus the sealed FUBO record — and reads as the default book,
+// which is truthful for all of them. A PRESENT but unrecognised value is a corrupt or stale
+// artifact, and answering it with overshoot copy would ask the de-rating question over a page the
+// client was told is something else: precisely the misleading framing this work exists to remove.
 function sleeveCopy(sleeve) {
-  const sl = sleeve || DEFAULT_SLEEVE;
-  return Object.hasOwn(SLEEVE_COPY, sl) ? SLEEVE_COPY[sl] : SLEEVE_COPY[DEFAULT_SLEEVE];
+  if (sleeve == null || sleeve === "") return SLEEVE_COPY[DEFAULT_SLEEVE];
+  if (Object.hasOwn(SLEEVE_COPY, sleeve)) return SLEEVE_COPY[sleeve];
+  const named = escapeHtml(String(sleeve));
+  return {
+    unknown: true,
+    drawdown: `Unrecognised strategy book '${named}' — this page cannot state its question`,
+    bull: `Case FOR (book '${named}' unrecognised)`,
+    bear: `Case AGAINST (book '${named}' unrecognised)`,
+  };
 }
 const KNOWN_LEANS = ["strongly-bearish", "strongly-bullish", "mixed"];
 const DEFAULT_SLEEVE = "overshoot";
