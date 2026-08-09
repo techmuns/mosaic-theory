@@ -232,6 +232,8 @@ async function _loadLedger() {
       };
     })
     .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
+  // (grouping lives in `groupOtherBooks` below — exported so a test can EXECUTE it against a
+  // followed-overshoot row rather than grep this file for a variable name.)
   // THE PROOF NUMBER IS SCREEN-ORIGIN ONLY, matching scoring/metrics.py and vinci monitor. The
   // gate widget below is labelled "the BUY−AVOID spread that must prove positive before capital
   // deploys" — pooling a followed megacap verdict into it would silently change what the number
@@ -239,14 +241,19 @@ async function _loadLedger() {
   const primary = entries.filter((e) => e.origin === "screen");
   // …and the other books are counted BESIDE it, never inside it, so a followed row is excluded
   // from the proof number without disappearing from the app entirely.
-  const bySleeve = {};
-  for (const e of entries) {
-    const k = e.sleeve || "overshoot";
-    const b = (bySleeve[k] ||= { logged: 0, resolved: 0, long: 0, short: 0 });
-    b.logged += 1;
-    if (e.resolved) b.resolved += 1;
-    if (isBuyVerdict(e.verdict)) b.long += 1; else b.short += 1;
-  }
+  //
+  // GROUPED ON (origin, sleeve) OVER THE NON-PRIMARY ROWS — not on the sleeve alone, and this is
+  // the distinction the first cut got wrong (review #382). What excludes a row from the proof
+  // number is its ORIGIN; the sleeve only says which book it belongs to. `followed.json`
+  // legitimately admits a followed name under the DEFAULT book (assemble.py refuses a
+  // screen/follow overlap only when the sleeve DIFFERS), so a followed-overshoot row keyed on
+  // "overshoot" merged into the screen majority's bucket — and the only consumer of this map
+  // drops the "overshoot" key. That row was therefore out of `primary`, invisible under "Other
+  // books", and chip-less on its own line: counted nowhere and labelled nothing, while the
+  // overview tile simultaneously announced "1 in other books". Keying on the pair makes the
+  // fold impossible, and each bucket carries both parts so the renderer can name the book
+  // without re-deriving them from the key string.
+  const otherBooks = groupOtherBooks(entries);
   return {
     counts: {
       logged: primary.length,
@@ -255,7 +262,7 @@ async function _loadLedger() {
       avoid: primary.filter((e) => !isBuyVerdict(e.verdict)).length,
       loggedAllBooks: entries.length,
     },
-    bySleeve,
+    otherBooks,
     entries,
   };
 }
@@ -302,6 +309,31 @@ export function verdictWord(verdict) {
 
 export function isBuyVerdict(v) {
   return String(v || "").toUpperCase().startsWith("BUY");
+}
+
+// The books counted BESIDE the primary composite — every ledger entry the screen-origin proof
+// number excludes, grouped so none of them can go uncounted.
+//
+// KEYED ON (origin, sleeve), NOT on the sleeve alone. What excludes a row is its ORIGIN; the
+// sleeve only says which book it is. `followed.json` legitimately admits a followed name under
+// the DEFAULT book — assemble.py refuses a screen/follow overlap only when the sleeve DIFFERS —
+// so keying on the sleeve merged a followed-overshoot row into the screen majority's bucket,
+// which the renderer then dropped as "the default book". The row was out of `primary`, absent
+// from "Other books" and chip-less, while the overview tile announced "1 in other books"
+// (review #382). Each bucket carries both parts so the renderer names the book without
+// re-parsing the key.
+export function groupOtherBooks(entries) {
+  const out = {};
+  for (const e of entries || []) {
+    if ((e.origin || "screen") === "screen") continue;  // in the composite; `counts` has it
+    const origin = e.origin, sleeve = e.sleeve || "overshoot";
+    const b = (out[`${origin}:${sleeve}`] ||=
+      { origin, sleeve, logged: 0, resolved: 0, long: 0, short: 0 });
+    b.logged += 1;
+    if (e.resolved) b.resolved += 1;
+    if (isBuyVerdict(e.verdict)) b.long += 1; else b.short += 1;
+  }
+  return out;
 }
 
 // getSpreadStatus() -> {

@@ -979,8 +979,10 @@ def test_the_web_gate_stat_is_screen_origin_and_the_books_are_counted_beside_it(
     assert body, "the screen-origin scoping of the gate counts is gone"
     assert 'e.origin === "screen"' in body.group(0), (
         "the gate counts no longer filter to screen-origin — the deployed proof number pools books")
-    assert "bySleeve" in body.group(0), (
-        "the other books are not counted beside it — a followed verdict would vanish from the app")
+    assert "groupOtherBooks(entries)" in body.group(0), (
+        "getLedger no longer groups the other books — a followed verdict would vanish from the "
+        "app entirely. (Call-site pin: the behaviour test below imports the helper directly and "
+        "would stay green if this call were deleted.)")
 
     # the display helper both views now share
     proc = subprocess.run(
@@ -993,3 +995,133 @@ def test_the_web_gate_stat_is_screen_origin_and_the_books_are_counted_beside_it(
         pytest.skip("node unavailable")
     assert json.loads(proc.stdout) == ["BUY", "AVOID", "PASS"], (
         "verdictWord no longer renders each label as itself (bar the documented AVOID shortening)")
+
+
+def test_a_followed_row_under_the_default_book_is_still_counted_as_its_own_book() -> None:
+    """REVIEW FINDING (#382) — the row that fell through every surface at once.
+
+    A FOLLOWED name may legitimately sit in the DEFAULT book: `followed.json` accepts
+    `sleeve: "overshoot"`, and `_finalist` refuses a screen/follow overlap only when the sleeve
+    DIFFERS. Such a row is excluded from `primary` by its ORIGIN — but the grouping keyed on the
+    SLEEVE, so it merged into the screen majority's `overshoot` bucket, which the renderer drops
+    as "the default book". Net: absent from the proof number, absent from "Other books", and
+    chip-less on its own line — counted nowhere and labelled nothing, while the overview tile
+    said "1 in other books". Origin and sleeve are orthogonal, and the code has to treat them so.
+
+    EXECUTED against the REAL module (node imports `snapshots.js` itself), not a regex-extracted
+    copy and not a source grep — the pin this replaces asserted a variable NAME appeared in the
+    file, which is precisely why the defect passed it. The call-site pin above covers the other
+    direction, since a helper test alone stays green if the caller stops calling it."""
+    import json
+    import subprocess
+
+    lib = SRC.parents[1] / "frontend" / "lib" / "snapshots.js"
+    rows = [
+        {"origin": "screen", "sleeve": "overshoot", "verdict": "BUY", "resolved": True},
+        {"origin": "followed", "sleeve": "overshoot", "verdict": "BUY", "resolved": False},
+        {"origin": "followed", "sleeve": "quality", "verdict": "PASS", "resolved": True},
+        {"verdict": "AVOID_TERMINAL", "resolved": True},  # legacy: untagged ⇒ screen/overshoot
+    ]
+    proc = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         f'const m = await import({json.dumps(str(lib))});'
+         f'console.log(JSON.stringify(m.groupOtherBooks({json.dumps(rows)})));'],
+        capture_output=True, text=True)
+    if proc.returncode != 0:
+        if "node" in proc.stderr.lower() and "not found" in proc.stderr.lower():
+            pytest.skip("node unavailable")
+        raise AssertionError(f"the real module failed to execute: {proc.stderr}")
+    books = json.loads(proc.stdout)
+
+    assert set(books) == {"followed:overshoot", "followed:quality"}, (
+        f"grouping is not on the (origin, sleeve) pair: {sorted(books)}")
+    fo = books["followed:overshoot"]
+    assert fo["logged"] == 1 and fo["long"] == 1, (
+        "the followed-overshoot row was folded into the screen majority and lost")
+    assert fo["origin"] == "followed" and fo["sleeve"] == "overshoot", (
+        "the bucket does not carry both parts, so the renderer cannot name the book")
+    # the screen row and the legacy untagged row stay OUT — they are the composite itself
+    assert sum(b["logged"] for b in books.values()) == 2, (
+        "a screen-origin row leaked into the other-books tally — it is already in `counts`")
+
+
+def test_the_resolved_fraction_never_mixes_two_populations() -> None:
+    """REVIEW FINDING (#382). `resolved_n` counts SCOPED (screen-origin) rows, and both renderers
+    divided it by the snapshot's TOTAL row count — so a book holding one screen row and one
+    followed row printed "resolved 1/2" where the honest reading is 1/1. A fraction whose halves
+    count different populations is not a fraction.
+
+    TWO renderers made the identical mistake independently, which is why the fix puts `scoped_n`
+    on the diagnostic instead of a filter in each caller."""
+    from vinci.monitor import MonitorSnapshot, PositionRow, compute_spread, render_table
+
+    def r(ticker: str, verdict: str, origin: str, sleeve: str) -> PositionRow:
+        return PositionRow(
+            ticker=ticker, verdict=verdict, sector=None, entry_price=100.0,
+            entry_date=date(2026, 1, 1), current_price=110.0, current_date=date(2026, 6, 1),
+            benchmark="IWM", benchmark_entry=100.0, benchmark_now=105.0,
+            position_return=0.10, benchmark_return=0.05, excess=0.05,
+            days_elapsed=151, horizon_days=90, horizon_date=date(2026, 4, 1), resolved=True,
+            origin=origin, sleeve=sleeve)
+
+    rows = [r("AAA", "BUY", "screen", "overshoot"), r("UUU", "PASS", "followed", "quality")]
+    spread = compute_spread(rows)
+    assert spread.resolved_n == 1 and spread.scoped_n == 1, (
+        f"scope disagrees with itself: resolved {spread.resolved_n}/{spread.scoped_n}")
+
+    text = render_table(MonitorSnapshot(as_of=date(2026, 6, 1), rows=rows, spread=spread))
+    assert "resolved 1/1" in text, (
+        f"the console prints a fraction across two populations:\n"
+        f"{[ln for ln in text.splitlines() if 'resolved' in ln]}")
+    assert "resolved 1/2" not in text
+
+    # LEGACY SNAPSHOT (no scoped_n): falls back to the row count, which is right for it — every
+    # row it holds is screen-origin, and a sealed snapshot is never rewritten.
+    legacy = MonitorSnapshot(as_of=date(2026, 6, 1), rows=rows[:1],
+                             spread=spread.model_copy(update={"scoped_n": 0}))
+    assert "resolved 1/1" in render_table(legacy)
+
+
+def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
+    """REVIEW FINDING (#382), the display half. The chip was gated on the SLEEVE, so a
+    followed-overshoot row rendered bare — reading as one of the screen majority while being
+    excluded from their spread. Its own tooltip already claimed "excluded from the screen-origin
+    spread", an ORIGIN claim on a SLEEVE test.
+
+    The rule that stays: a chip on every row is noise, so the screen-origin default book keeps
+    none — its absence carries the same information. EXECUTED (the arrow function is lifted from
+    the view and run), because a source grep is what let this through the first time."""
+    import json
+    import re
+    import subprocess
+
+    src = (SRC.parents[1] / "frontend" / "views" / "shared" / "decision-log.js").read_text()
+    fn = re.search(r"const sleeveChip = \(e\) => \{.*?\n  \};", src, re.S)
+    assert fn, "sleeveChip is gone or reshaped — re-point this pin at the chip's new home"
+    cases = [
+        {"origin": "screen", "sleeve": "overshoot"},    # the majority → no chip
+        {},                                             # legacy untagged → reads as the majority
+        {"origin": "followed", "sleeve": "overshoot"},  # THE DEFECT: must be chipped
+        {"origin": "followed", "sleeve": "quality"},
+    ]
+    proc = subprocess.run(
+        ["node", "--input-type=module", "-e", "\n".join([
+            "const escapeHtml = (s) => String(s);",
+            fn.group(0),
+            f"console.log(JSON.stringify({json.dumps(cases)}.map(sleeveChip)));"])],
+        capture_output=True, text=True)
+    if proc.returncode != 0:
+        if "not found" in proc.stderr.lower():
+            pytest.skip("node unavailable")
+        raise AssertionError(f"sleeveChip failed to execute: {proc.stderr}")
+    screen, legacy, followed_overshoot, followed_quality = json.loads(proc.stdout)
+
+    assert screen == "" and legacy == "", "the default screen book is tagged — noise on every row"
+    assert "followed" in followed_overshoot, (
+        "a followed row under the DEFAULT book renders bare, so it reads as one of the "
+        "screen-origin majority while being excluded from their spread")
+    assert "quality" in followed_quality
+    for chip in (followed_overshoot, followed_quality):
+        assert "ds-lean" in chip and "pill" not in chip, (
+            "the book must be neutral ink, never a coloured pill — a colour lets the eye triage "
+            "the log by book before reading anything")

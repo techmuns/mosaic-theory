@@ -125,6 +125,15 @@ class SpreadDiagnostic(BaseModel):
     avoid_mean_excess: float | None = None
     spread: float | None = None
     resolved_n: int = 0
+    # THE DENOMINATOR TRAVELS WITH THE NUMERATOR. ``resolved_n`` counts the SCOPED rows, so a
+    # renderer dividing it by the snapshot's total row count prints a fraction whose two halves
+    # measure different populations — "resolved 1/2" on a book holding one screen row and one
+    # followed row. BOTH renderers made exactly that mistake (review #382), and two independent
+    # callers getting it wrong the same way is the signal that the scope belongs in the model
+    # rather than in each caller's arithmetic. Legacy snapshots default to 0 and are never
+    # rewritten; the renderers fall back to the row count for them, which is what they meant
+    # when every row was screen-origin.
+    scoped_n: int = 0
     max_days_elapsed: int = 0
     sign_convention: str = AVOID_SIGN_NOTE
     caveat: str = SPREAD_CAVEAT
@@ -269,6 +278,7 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
         spread=(buy_mean - avoid_mean) if (buy_mean is not None and avoid_mean is not None)
         else None,
         resolved_n=sum(1 for r in scoped if r.resolved),
+        scoped_n=len(scoped),
         max_days_elapsed=max((r.days_elapsed for r in scoped), default=0),
         undefined_reason=reason,
     )
@@ -443,7 +453,11 @@ def render_table(snap: MonitorSnapshot) -> str:
         out.append(f"  BUY  n={s.buy_n} mean excess {s.buy_mean_excess * 100:+.2f} pp")
     if s.avoid_mean_excess is not None:
         out.append(f"  AVOID n={s.avoid_n} mean excess {s.avoid_mean_excess * 100:+.2f} pp")
-    out += [f"  resolved {s.resolved_n}/{len(snap.rows)} · max days elapsed {s.max_days_elapsed}",
+    # Denominator from the diagnostic, NOT from the row list: `resolved_n` counts scoped rows
+    # only. A legacy snapshot predating `scoped_n` reports 0 → fall back to the row count, which
+    # is exactly right for it (every row it holds is screen-origin).
+    scoped_n = s.scoped_n or len(snap.rows)
+    out += [f"  resolved {s.resolved_n}/{scoped_n} · max days elapsed {s.max_days_elapsed}",
             f"  {s.caveat}", f"  {s.sign_convention}"]
     if snap.freshness:
         out += ["", "FRESHNESS / TRIGGERS (machine flags; the human concludes)"]
