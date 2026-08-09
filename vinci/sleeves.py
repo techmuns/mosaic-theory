@@ -94,6 +94,18 @@ class Sleeve:
     #: The two case headings, as rendered on the Analysis tier and in the Brief.
     bull_label: str
     bear_label: str
+    #: The Brief's "what happened" section heading. Overshoot asks whether the name can SURVIVE —
+    #: the right question after a break, and a strange one to ask of a compounder.
+    survive_heading: str
+    #: The label on the drawdown READ row, and the subtitle under the section heading. Both said
+    #: "what broke" / "the event(s) that broke the name" beneath a heading that had already been
+    #: made per-book — the heading moved and its own contents did not.
+    read_label: str
+    drawdown_subtitle: str
+    #: The `log-verdict` help text the page offers for copy-paste. It named the overshoot twin and
+    #: the overshoot thesis on every page, including books that record neither.
+    twin_help: str
+    thesis_help: str
     #: False until the sleeve may appear on a DECISION-LEDGER row. `theme` validates in its own
     #: append-only ratification ledger; `neglect` is defined but dormant. A defined-but-inactive
     #: sleeve is deliberately NOT the same thing as an unknown one.
@@ -104,6 +116,13 @@ class Sleeve:
 SLEEVE_ROWS: tuple[Sleeve, ...] = (
     Sleeve(
         key="overshoot",
+        survive_heading="What happened — and can it survive?",
+        read_label="Read — what broke",
+        drawdown_subtitle="The event(s) that broke the name, then whether it fell alone "
+                          "(idiosyncratic) "
+                          "or with its graph cohort.",
+        twin_help="how the terminal-decline twin is ruled out",
+        thesis_help="the overshoot thesis (or AVOID rationale)",
         drawdown_heading="What broke — and did it fall alone?",
         bull_label="Bull case — the decline is overdone",
         bear_label="Bear case — the decline is real",
@@ -126,6 +145,12 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="quality",
+        survive_heading="What happened — and does it change the runway?",
+        read_label="Read — what moved",
+        drawdown_subtitle="The event(s) that moved the price, then whether it moved alone "
+                          "(idiosyncratic) or with its graph cohort.",
+        twin_help="how the fully-priced twin is ruled out",
+        thesis_help="the runway thesis (or PASS rationale)",
         drawdown_heading="What moved the price — and did it move alone?",
         bull_label="Bull case — the runway outlasts the price",
         bear_label="Bear case — the price already pays for it",
@@ -150,6 +175,13 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="theme",
+        survive_heading="What happened — and does the driver still hold?",
+        read_label="Read — what moved",
+        drawdown_subtitle="The event(s) that moved the basket, then whether the members moved "
+                          "together "
+                          "or apart.",
+        twin_help="how the momentum-bucket twin is ruled out",
+        thesis_help="the driver thesis (or not-ratified rationale)",
         drawdown_heading="What moved the basket — and did the members move together?",
         bull_label="Bull case — the driver is real and unpriced",
         bear_label="Bear case — momentum wearing a story",
@@ -177,6 +209,12 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="neglect",
+        survive_heading="What happened — and is anyone looking yet?",
+        read_label="Read — what moved",
+        drawdown_subtitle="The event(s) that moved the price, then whether it moved alone "
+                          "(idiosyncratic) or with its graph cohort.",
+        twin_help="how the value-trap twin is ruled out",
+        thesis_help="the neglect thesis (or AVOID rationale)",
         drawdown_heading="What moved the price — and did it move alone?",
         bull_label="Bull case — the neglect is mechanical",
         bear_label="Bear case — cheap for a reason",

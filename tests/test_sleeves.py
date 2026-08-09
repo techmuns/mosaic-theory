@@ -762,7 +762,13 @@ def test_the_js_page_copy_mirrors_the_python_registry() -> None:
     assert m, "the JS SLEEVE_COPY mirror is gone — the web page lost its per-book headings"
     body = m.group(1)
     for row in sl.SLEEVE_ROWS:
-        for field in (row.drawdown_heading, row.bull_label, row.bear_label):
+        # EVERY per-book string, not just the ones the first pass moved. The section HEADING went
+        # per-book while its own contents ("Read — what broke", the subtitle beneath it, the
+        # copy-paste CLI help) stayed hardcoded — a heading asking one book's question over another
+        # book's labels. Enumerating the fields is what stops the next addition being forgotten.
+        for field in (row.drawdown_heading, row.bull_label, row.bear_label,
+                      row.survive_heading, row.read_label, row.drawdown_subtitle,
+                      row.twin_help, row.thesis_help):
             assert field in body, (
                 f"{row.key}: the JS page copy is missing {field!r} — the md and web renderers "
                 f"would print different questions for the same book")

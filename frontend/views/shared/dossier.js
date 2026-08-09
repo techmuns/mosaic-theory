@@ -237,7 +237,7 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
-        ${loggedVerdict(verdict, tk, card.underwriteDate)}
+        ${loggedVerdict(verdict, tk, card.underwriteDate, { sleeve: card.sleeve })}
         ${assembleHelp()}` });
       return;
     }
@@ -921,7 +921,7 @@ function recordAndReproduce(d, verdict, card = null) {
     ${proc.length ? row("Assembly log", proc.map(escapeHtml).join("; ")) : ""}
     ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
       <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}
-    ${loggedVerdict(verdict, d.ticker, d.reference_date, { bare: true })}
+    ${loggedVerdict(verdict, d.ticker, d.reference_date, { bare: true, sleeve: d.sleeve })}
   </div>`;
 }
 
@@ -1307,16 +1307,36 @@ const LEDGER_VERDICTS = ["BUY", "AVOID_TERMINAL", "PASS"];   // mirrors the Verd
 const SLEEVE_COPY = {
   overshoot: { drawdown: "What broke — and did it fall alone?",
                bull: "Bull case — the decline is overdone",
-               bear: "Bear case — the decline is real" },
+               bear: "Bear case — the decline is real",
+             survive: "What happened — and can it survive?",
+             read: "Read — what broke",
+             subtitle: "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
+             twinHelp: "how the terminal-decline twin is ruled out",
+             thesisHelp: "the overshoot thesis (or AVOID rationale)" },
   quality: { drawdown: "What moved the price — and did it move alone?",
              bull: "Bull case — the runway outlasts the price",
-             bear: "Bear case — the price already pays for it" },
+             bear: "Bear case — the price already pays for it",
+             survive: "What happened — and does it change the runway?",
+             read: "Read — what moved",
+             subtitle: "The event(s) that moved the price, then whether it moved alone (idiosyncratic) or with its graph cohort.",
+             twinHelp: "how the fully-priced twin is ruled out",
+             thesisHelp: "the runway thesis (or PASS rationale)" },
   theme: { drawdown: "What moved the basket — and did the members move together?",
            bull: "Bull case — the driver is real and unpriced",
-           bear: "Bear case — momentum wearing a story" },
+           bear: "Bear case — momentum wearing a story",
+             survive: "What happened — and does the driver still hold?",
+             read: "Read — what moved",
+             subtitle: "The event(s) that moved the basket, then whether the members moved together or apart.",
+             twinHelp: "how the momentum-bucket twin is ruled out",
+             thesisHelp: "the driver thesis (or not-ratified rationale)" },
   neglect: { drawdown: "What moved the price — and did it move alone?",
              bull: "Bull case — the neglect is mechanical",
-             bear: "Bear case — cheap for a reason" },
+             bear: "Bear case — cheap for a reason",
+             survive: "What happened — and is anyone looking yet?",
+             read: "Read — what moved",
+             subtitle: "The event(s) that moved the price, then whether it moved alone (idiosyncratic) or with its graph cohort.",
+             twinHelp: "how the value-trap twin is ruled out",
+             thesisHelp: "the neglect thesis (or AVOID rationale)" },
 };
 // ABSENT and UNKNOWN are different states and must not share a fallback (review #381, and the
 // same distinction deriveProposal already draws). MISSING is the legitimate legacy case — every
@@ -2146,7 +2166,7 @@ function drawdownIdio(m, refDate, sleeve) {
   if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
   return sec(sleeveCopy(sleeve).drawdown,
-    "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
+    sleeveCopy(sleeve).subtitle,
     dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
 }
 
@@ -3910,7 +3930,7 @@ function synthesis(s, m, sleeve) {
   </div>`;
 }
 
-function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
+function loggedVerdict(v, ticker, refDate, { bare = false, sleeve } = {}) {
   const wrap = (inner) => bare
     ? `<div class="fact"><div class="fact-label">Verdict record</div><div class="fact-val">${inner}</div></div>`
     : inner;
@@ -3927,8 +3947,8 @@ function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
       <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
       <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
   --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; \\
-  --twin "how the terminal-decline twin is ruled out" \\
-  --thesis "the overshoot thesis (or AVOID rationale)" \\
+  --twin "${escapeHtml(sleeveCopy(sleeve).twinHelp)}" \\
+  --thesis "${escapeHtml(sleeveCopy(sleeve).thesisHelp)}" \\
   --kill "what would falsify it" \\
   --horizon-days 180 --confidence &lt;low|medium|high&gt;</code></pre>
       <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
