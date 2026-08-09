@@ -723,3 +723,75 @@ def test_a_dormant_sleeve_proposes_nothing_and_cannot_reach_the_ledger() -> None
     assert sl.BY_KEY["neglect"].verdicts == sl.BY_KEY["overshoot"].verdicts, (
         "neglect no longer shares overshoot's labels — this test's whole point was that identical "
         "labels are not an activation signal; re-check the gate if the registry changed")
+
+
+# ------------------------------------------------------------------ the PAGE side (PR-2c)
+
+
+def test_the_page_asks_each_books_own_question() -> None:
+    """THE DEFECT, AT THE SURFACE A READER MEETS. "What broke — and did it fall alone?" is the right
+    question for a name that broke and the WRONG one for a compounder that never did — a megacap
+    was being asked it because the heading was hardcoded.
+
+    THE SECTION IS UNCHANGED, only the heading: the gap-downs and the idiosyncratic-vs-shared split
+    are real facts about ANY name's price path. It was the heading that made a claim about the
+    name, which is why this is a copy change and not a data one."""
+    from vinci.dossier.render import _drawdown_idio_lines
+    from vinci.dossier.schemas import Dossier
+
+    committed = sorted((SRC.parents[1] / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this worktree")
+    mech = Dossier.model_validate_json(committed[0].read_text()).mechanical
+    for row in sl.SLEEVE_ROWS:
+        head = _drawdown_idio_lines(mech, sleeve=row.key)[0]
+        assert head == f"## {row.drawdown_heading}", (
+            f"{row.key}: the page asks {head!r}, not its own question")
+    # and the live book's heading is the exact pre-existing string
+    assert sl.BY_KEY["overshoot"].drawdown_heading == "What broke — and did it fall alone?"
+
+
+def test_the_js_page_copy_mirrors_the_python_registry() -> None:
+    """THE TWIN RULE on the page copy — the second genuine duplicate, pinned the same way as the
+    proposal legs: the expectation is DERIVED from the registry, so adding a sleeve reddens here
+    until the mirror is updated rather than letting the two renderers drift apart silently."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"const SLEEVE_COPY = \{(.*?)\n\};", js, re.S)
+    assert m, "the JS SLEEVE_COPY mirror is gone — the web page lost its per-book headings"
+    body = m.group(1)
+    for row in sl.SLEEVE_ROWS:
+        for field in (row.drawdown_heading, row.bull_label, row.bear_label):
+            assert field in body, (
+                f"{row.key}: the JS page copy is missing {field!r} — the md and web renderers "
+                f"would print different questions for the same book")
+    # the hardcoded overshoot strings must be GONE from the render paths
+    assert "the decline is overdone</div>" not in js, (
+        "a hardcoded case label survives in the JS — it would print over every other book")
+
+
+def test_every_committed_page_renders_under_its_own_book() -> None:
+    """E2E ON THE LIVING ARTIFACTS, phrasing-independent: each committed page must carry the
+    heading its OWN sleeve declares, and none of the others'. This is the pin that would have
+    caught a followed name inheriting the overshoot question — the exact live defect."""
+    from vinci.dossier.schemas import Dossier
+
+    root = SRC.parents[1] / "data" / "dossiers"
+    if not root.is_dir():
+        pytest.skip("no committed dossiers in this worktree")
+    seen = 0
+    for f in sorted(root.glob("*/dossier.json")):
+        md = (f.parent / "dossier.md")
+        if not md.exists():
+            continue
+        d = Dossier.model_validate_json(f.read_text())
+        row, text = sl.BY_KEY[d.sleeve], md.read_text()
+        assert f"## {row.drawdown_heading}" in text, (
+            f"{f.parent.name} ({d.sleeve}) does not ask its own book's question")
+        for other in sl.SLEEVE_ROWS:
+            if other.drawdown_heading != row.drawdown_heading:
+                assert f"## {other.drawdown_heading}" not in text, (
+                    f"{f.parent.name} ({d.sleeve}) carries {other.key}'s question")
+        seen += 1
+    assert seen, "no committed page was checked"

@@ -41,11 +41,11 @@ _no positive operating margin over available history — needs revenue-anchored 
 ## The case
 _(top points; the full argument is in Analysis)_
 
-_Bull case — the decline is overdone:_
+_Bull case — the runway outlasts the price:_
 - Q2-2026 revenue rose $1.5 billion or 12% driven by a 24% increase in Gross Bookings, evidencing a live demand engine behind the top line. [10]
 - Delivery Segment Operating Income rose $289 million or 38% in Q2-2026 on a 26% Gross-Bookings increase, showing the second segment inflecting to real profit. [10]
 - Mobility Segment Operating Income rose $486 million or 28% in Q2-2026 as Mobility Gross Bookings grew 22% on trip-volume gains, the core profit driver. [10]
-_Bear case — the decline is real:_
+_Bear case — the price already pays for it:_
 - A genuine counter-point: current ratio has fallen to 0.84x (net working capital -$2,342M), a below-1 liquidity read — but OUTWEIGHED by 1.2x net leverage, 16.2x coverage and positive LTM FCF that make near-term funding a non-issue. [11]
 - A genuine counter-point: G&A rose $266M or 40% in Q2-2026, chiefly a $138M increase in legal-related accruals, a cost line growing far faster than the 12% revenue print — but OUTWEIGHED by segment operating income up 28–38% and consolidated EBITDA still rising. [10]
 - A genuine counter-point: FY26E GAAP net income of $6,351M is BELOW FY25 $10,053M and current-FY GAAP EPS has been cut ~8% (12m→latest), so headline earnings are guided lower — but this is partly a definitional/tax/one-off effect against consensus EBITDA revised UP +5%, not an operating-cash reversal. [12]
@@ -107,7 +107,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 # Analysis — full dossier
 
-## What broke — and did it fall alone?
+## What moved the price — and did it move alone?
 - **Read — what broke:** gradual bleed — no discrete gap-down detected [4]
 - **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
 
@@ -127,7 +127,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 **Evidence balance:** strongly-bullish — absolute EBITDA, gross bookings and FCF all compounding while the multiple sits at its own-history floor; GAAP-EPS softness is the lone genuine offset.
 
-### Bull case — the decline is overdone
+### Bull case — the runway outlasts the price
 - Q2-2026 revenue rose $1.5 billion or 12% driven by a 24% increase in Gross Bookings, evidencing a live demand engine behind the top line. [10]
 - Delivery Segment Operating Income rose $289 million or 38% in Q2-2026 on a 26% Gross-Bookings increase, showing the second segment inflecting to real profit. [10]
 - Mobility Segment Operating Income rose $486 million or 28% in Q2-2026 as Mobility Gross Bookings grew 22% on trip-volume gains, the core profit driver. [10]
@@ -141,7 +141,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - ROIC has climbed every year from -4.9% (FY22) to 10.6% LTM, a durable improvement in capital efficiency rather than a one-off. [31]
 - On the name's OWN history the trailing EV/EBITDA sits at the floor — 19.2x vs a 12-close range of 20.5–113.8x (median 39.6x) — while EBITDA itself was rising, posing an overshoot rather than a fundamental break. [19]
 
-### Bear case — the decline is real
+### Bear case — the price already pays for it
 - A genuine counter-point: current ratio has fallen to 0.84x (net working capital -$2,342M), a below-1 liquidity read — but OUTWEIGHED by 1.2x net leverage, 16.2x coverage and positive LTM FCF that make near-term funding a non-issue. [11]
 - A genuine counter-point: G&A rose $266M or 40% in Q2-2026, chiefly a $138M increase in legal-related accruals, a cost line growing far faster than the 12% revenue print — but OUTWEIGHED by segment operating income up 28–38% and consolidated EBITDA still rising. [10]
 - A genuine counter-point: FY26E GAAP net income of $6,351M is BELOW FY25 $10,053M and current-FY GAAP EPS has been cut ~8% (12m→latest), so headline earnings are guided lower — but this is partly a definitional/tax/one-off effect against consensus EBITDA revised UP +5%, not an operating-cash reversal. [12]

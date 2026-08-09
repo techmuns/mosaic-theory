@@ -83,6 +83,17 @@ class Sleeve:
     both_cases: str
     #: The twin-reference-case outcome vocabulary ("recovered / went terminal.").
     twin_outcome: str
+    #: THE PAGE COPY the reader actually meets. Separate from `question` (the human-readable
+    #: statement of what the book asks, used in records and this registry's own documentation)
+    #: because the rendered HEADING has to be the exact live string for overshoot — the committed
+    #: fleet re-renders byte-identical only if these reproduce today's text character for character.
+    #: The drawdown section's heading. It asks what MOVED the price and whether the name moved
+    #: alone; the overshoot book words that as "what broke", which is wrong on a name that never
+    #: broke — the whole defect this build exists to remove.
+    drawdown_heading: str
+    #: The two case headings, as rendered on the Analysis tier and in the Brief.
+    bull_label: str
+    bear_label: str
     #: False until the sleeve may appear on a DECISION-LEDGER row. `theme` validates in its own
     #: append-only ratification ledger; `neglect` is defined but dormant. A defined-but-inactive
     #: sleeve is deliberately NOT the same thing as an unknown one.
@@ -93,6 +104,9 @@ class Sleeve:
 SLEEVE_ROWS: tuple[Sleeve, ...] = (
     Sleeve(
         key="overshoot",
+        drawdown_heading="What broke — and did it fall alone?",
+        bull_label="Bull case — the decline is overdone",
+        bear_label="Bear case — the decline is real",
         label="Overshot de-rating",
         bet="an exaggerated, TEMPORARY de-rating — price broke further than the business did, "
             "and a reversal is nameable",
@@ -112,6 +126,9 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="quality",
+        drawdown_heading="What moved the price — and did it move alone?",
+        bull_label="Bull case — the runway outlasts the price",
+        bear_label="Bear case — the price already pays for it",
         label="Durable compounder",
         bet="an expectations gap on DURATION — the reinvestment runway is longer or stronger "
             "than today's price assumes",
@@ -133,6 +150,9 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="theme",
+        drawdown_heading="What moved the basket — and did the members move together?",
+        bull_label="Bull case — the driver is real and unpriced",
+        bear_label="Bear case — momentum wearing a story",
         label="Thematic driver",
         bet="a real, nameable shared driver the market prices late or partially across a basket, "
             "and selection within that basket beats holding all of it",
@@ -157,6 +177,9 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
     ),
     Sleeve(
         key="neglect",
+        drawdown_heading="What moved the price — and did it move alone?",
+        bull_label="Bull case — the neglect is mechanical",
+        bear_label="Bear case — cheap for a reason",
         label="Orphaned quality",
         bet="a sound business starved of flow and attention, with a mechanism for the neglect "
             "to end",
