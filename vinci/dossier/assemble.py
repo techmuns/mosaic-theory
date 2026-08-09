@@ -765,6 +765,9 @@ def assemble_one(
                 mech = mech.model_copy(update={"operating_drivers": merged})
         synthesis, synth_flags, synth_log = synthesize(
             mech, llm=llm, ticker=ticker, name=rec.identity.name, transcript=transcript,
+            # THE FRAMING FOLLOWS THE BOOK. A screen candidate is overshoot by construction, so
+            # this is byte-identical to the prompt every committed dossier was built with.
+            sleeve=fin.sleeve,
         )
         flags += synth_flags
         logs.append(synth_log)
