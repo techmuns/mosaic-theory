@@ -9,10 +9,13 @@ from __future__ import annotations
 
 import ast
 import pathlib
+from datetime import date, datetime
+from pathlib import Path
 
 import pytest
 
 from vinci import sleeves as sl
+from vinci.schemas.market import PriceBar
 
 SRC = pathlib.Path(sl.__file__)
 
@@ -153,3 +156,307 @@ def test_the_registry_concludes_nothing_and_reads_no_returns() -> None:
         n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
     forbidden = {"forward_return", "forward_returns", "name_return", "excess_gross", "spread"}
     assert not (names & forbidden), f"registry reads outcome data: {sorted(names & forbidden)}"
+
+
+# ------------------------------------------------------------------ the LEDGER side (PR-1b)
+
+
+def test_a_legacy_ledger_row_reads_screen_and_overshoot() -> None:
+    """THE ADDITIVE-FIELD CONTRACT, on the fields that decide which curve a row lands in.
+
+    Every committed row predates these fields and carries None for both. Their truthful reading is
+    screen/overshoot — not a convenient default: `log_verdict` REFUSED any name without a
+    CandidateRecord, so no other route could reach this ledger at all, and overshoot was the only
+    strategy. Read through the helpers so a legacy row and a tagged row answer identically."""
+    import json
+    import pathlib
+
+    from vinci.schemas.ledger import LedgerEntry, origin_of, sleeve_of
+
+    p = pathlib.Path(__file__).resolve().parents[1] / "data/snapshots/decision_ledger.jsonl"
+    if not p.exists():
+        pytest.skip("no committed ledger in this worktree")
+    rows = [LedgerEntry.model_validate_json(json.loads(x)["payload"])
+            for x in p.read_text().splitlines() if x.strip()]
+    assert rows, "the committed ledger is empty — nothing to assert on"
+    for e in rows:
+        assert e.origin is None and e.sleeve is None, (
+            f"{e.entry_id} was BACKFILLED — a sealed row is never rewritten to satisfy a later "
+            f"schema; absent is the record of when it was logged")
+        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE
+
+
+@pytest.mark.parametrize(("field", "bad"), [
+    ("origin", "backdoor"), ("origin", ""), ("sleeve", "momentum"), ("sleeve", "OVERSHOOT")])
+def test_the_ledger_row_refuses_an_unlisted_origin_or_sleeve(field: str, bad: str) -> None:
+    """ABSENT is legal (legacy); PRESENT-BUT-UNKNOWN is a typo that would drop the row out of every
+    filtered curve without saying so — the silent-drop this segmentation exists to prevent."""
+    import json
+    import pathlib
+
+    from pydantic import ValidationError
+
+    from vinci.schemas.ledger import LedgerEntry
+
+    p = pathlib.Path(__file__).resolve().parents[1] / "data/snapshots/decision_ledger.jsonl"
+    if not p.exists():
+        pytest.skip("no committed ledger in this worktree")
+    base = json.loads(json.loads(p.read_text().splitlines()[0])["payload"])
+    with pytest.raises(ValidationError):
+        LedgerEntry.model_validate({**base, field: bad})
+
+
+def test_the_primary_spread_counts_screen_origin_only() -> None:
+    """THE OPERATOR'S 2026-08-07 DECISION, pinned as behaviour rather than prose.
+
+    The spread is the fund's proof and it measures the discriminator ON the $300M–$10B hunting
+    ground. A followed megacap verdict must not move it — pooling silently changes what the number
+    means. Built so the followed rows would CHANGE the answer if they counted, which is what makes
+    this a measurement rather than a restatement."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def score(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True,
+                            name_return=ret, bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen_only = [score("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+                   score("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    baseline = aggregate(screen_only, cost_bps=0, n_pending=0)
+    with_followed = aggregate(
+        [*screen_only, score("U", Verdict.BUY, 5.00, "followed", "quality")],
+        cost_bps=0, n_pending=0)
+
+    assert baseline.buy_avoid_spread == with_followed.buy_avoid_spread, (
+        "a FOLLOWED verdict moved the primary spread — the fund's proof number now measures "
+        "something other than the hunting ground it claims to measure")
+    assert with_followed.n_resolved_buy == baseline.n_resolved_buy, (
+        "the followed row was counted in the primary BUY leg")
+    assert "quality" in with_followed.by_sleeve, "the followed row vanished from every curve"
+    assert with_followed.by_sleeve["quality"].n_long == 1
+
+
+def test_each_sleeve_curve_uses_its_own_leg_labels() -> None:
+    """THE HAZARD THE EXACT-IDENTITY FILTERS COULD NOT SEE. `scoring` matched
+    `Verdict.AVOID_TERMINAL` by identity, so a verdict belonging to another book's vocabulary would
+    land in NEITHER leg and disappear from the report with nothing raised. The per-sleeve curve
+    reads its labels from the registry, and a verdict matching neither leg RAISES."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, spread_by_sleeve
+
+    rows = [VerdictScore(entry_id="A", ticker="A", verdict=Verdict.BUY, resolved=True,
+                         name_return=0.2, bench_return=0.0, sleeve="overshoot"),
+            VerdictScore(entry_id="B", ticker="B", verdict=Verdict.AVOID_TERMINAL, resolved=True,
+                         name_return=0.05, bench_return=0.0, sleeve="overshoot")]
+    out = spread_by_sleeve(rows)
+    assert out["overshoot"].spread == pytest.approx(0.15)
+
+    # AVOID_TERMINAL is not in quality's vocabulary — it must not be silently ignored.
+    with pytest.raises(ValueError, match="neither of its legs"):
+        spread_by_sleeve([VerdictScore(entry_id="U", ticker="U", verdict=Verdict.AVOID_TERMINAL,
+                                       resolved=True, name_return=0.1, bench_return=0.0,
+                                       sleeve="quality")])
+
+
+def test_pass_is_a_first_class_verdict_with_its_own_leg() -> None:
+    """PASS BROUGHT FORWARD INTO PR-1b (operator decision). Without it `quality` had a vocabulary
+    it could not record — a book able to log its long leg and not its short one accumulates a
+    one-sided curve, which is worse than no curve.
+
+    Pinned as BEHAVIOUR, not membership: the quality curve is BUY−PASS and the primary is unmoved
+    by either. A membership-only assertion is what the old shelf pin was, and it went red the
+    moment the enum grew rather than describing what must stay true."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    assert Verdict.PASS.value == "PASS"
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen = [s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+              s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    both = aggregate([*screen,
+                      s("U", Verdict.BUY, 0.40, "followed", "quality"),
+                      s("V", Verdict.PASS, 0.05, "followed", "quality")],
+                     cost_bps=0, n_pending=0)
+    assert both.buy_avoid_spread == aggregate(screen, cost_bps=0, n_pending=0).buy_avoid_spread, (
+        "a quality BUY/PASS pair moved the primary spread")
+    q = both.by_sleeve["quality"]
+    assert (q.n_long, q.n_short) == (1, 1), "the PASS row did not land in quality's short leg"
+    assert q.spread == pytest.approx(0.35)
+
+
+def test_a_verdict_outside_its_sleeve_is_refused_before_the_seal() -> None:
+    """REFUSED AT WRITE, NOT AT SCORE. The ledger is append-only, so a row recording another book's
+    label cannot be un-logged — and it would fall out of that book's curve without appearing
+    anywhere else. Both directions are pinned: PASS on the overshoot book is as wrong as
+    AVOID_TERMINAL on the quality book, and the second is the one that would write 'terminal
+    decline' against a durable compounder."""
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    _require_verdict_in_sleeve(Verdict.BUY, "quality")            # in-vocabulary: silent
+    _require_verdict_in_sleeve(Verdict.PASS, "quality")
+    _require_verdict_in_sleeve(Verdict.AVOID_TERMINAL, "overshoot")
+    _require_verdict_in_sleeve(Verdict.PASS, None)                # legacy/untagged row: unchanged
+
+    with pytest.raises(LedgerError, match="quality"):
+        _require_verdict_in_sleeve(Verdict.AVOID_TERMINAL, "quality")
+    with pytest.raises(LedgerError, match="overshoot"):
+        _require_verdict_in_sleeve(Verdict.PASS, "overshoot")
+
+
+def test_a_proposal_from_another_books_vocabulary_is_refused() -> None:
+    """THE SUBTLER HALF. `disposition` is stamped by comparing the human verdict to the sealed
+    machine proposal, so a proposal drawn from another book's vocabulary does not merely look odd
+    — it seals OVERRIDDEN onto a row where the two may well have agreed, and the override subset
+    is the most decision-relevant data the pivot produces.
+
+    The proposal mapping is still GLOBAL (strongly-bearish → AVOID_TERMINAL for every name); the
+    per-sleeve mapping lands in PR-2b. Until then a bearish-leaning quality name cannot be logged,
+    and refusing is the honest answer — the alternative is a disagreement statistic measuring a
+    vocabulary mismatch."""
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    _require_verdict_in_sleeve(Verdict.BUY, "quality", machine_proposal=Verdict.BUY)
+    _require_verdict_in_sleeve(Verdict.PASS, "quality", machine_proposal=Verdict.PASS)
+    _require_verdict_in_sleeve(Verdict.BUY, "quality", machine_proposal=None)   # no read: fine
+
+    with pytest.raises(LedgerError, match="machine proposal"):
+        _require_verdict_in_sleeve(Verdict.BUY, "quality",
+                                   machine_proposal=Verdict.AVOID_TERMINAL)
+
+
+def test_the_per_sleeve_curves_reach_the_markdown_a_reader_actually_gets() -> None:
+    """OPERATOR P1 ON #378, and it is the repo's own rule: a fix is satisfied at the SURFACE WHERE
+    THE HARM OCCURS. `by_sleeve` existed in `to_dict()` only, while BOTH default paths — `vinci
+    score` (cli) and `run_monthly`'s committed `scoring_report.md` (orchestrator) — emit ONLY the
+    markdown, with JSON opt-in. So a resolved followed verdict was correctly kept out of the
+    primary and then invisible to every reader: scored, recorded, and appearing nowhere. That is
+    worse than pooling it, because pooling at least shows up.
+
+    PINNED ON THE MARKDOWN, not on `to_dict()`, for exactly the reason the defect existed — a pin
+    on the machine tier would have passed throughout. Asserted on the STRUCTURED facts the row must
+    carry (its own leg labels and counts), never on the surrounding prose."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    md = aggregate([s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+                    s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot"),
+                    s("U", Verdict.BUY, 0.40, "followed", "quality"),
+                    s("V", Verdict.PASS, 0.05, "followed", "quality")],
+                   cost_bps=0, n_pending=0).to_markdown()
+
+    assert "quality" in md, (
+        "the quality book is absent from the report a reader is given — the followed verdict was "
+        "excluded from the primary and then shown nowhere at all")
+    assert "BUY−PASS" in md, "the quality curve does not state the legs it measures"
+    assert "BUY−AVOID_TERMINAL" in md, "the overshoot curve does not state the legs it measures"
+    # each book's counts must appear in ITS OWN row, not pooled
+    sleeve_rows = [ln for ln in md.splitlines() if ln.startswith("- **")]
+    assert any("quality" in ln and "+35.0%" in ln for ln in sleeve_rows), (
+        f"the quality spread is missing or wrong in the rendered rows: {sleeve_rows}")
+    assert any("overshoot" in ln and "+15.0%" in ln for ln in sleeve_rows), (
+        f"the overshoot row does not reproduce the primary: {sleeve_rows}")
+
+
+def test_the_primary_line_states_that_it_is_screen_origin_only() -> None:
+    """THE NUMBER'S MEANING NARROWED, so the report has to say so. `buy_avoid_spread` used to cover
+    every logged verdict; it now covers screen-origin overshoot only. A reader meeting an unlabelled
+    "primary spread" would carry forward the old meaning — the silent redefinition this
+    segmentation exists to prevent, arriving through the report instead of through the math."""
+    from vinci.scoring.metrics import aggregate
+
+    md = aggregate([], cost_bps=0, n_pending=0).to_markdown()
+    head = md.split("## ")[0]
+    assert "primary" in head.lower() and "creen-origin" in head, (
+        f"the primary spread does not state its scope:\n{head}")
+
+
+def test_every_primary_report_input_is_screen_scoped_not_just_the_spread() -> None:
+    """REVIEW FINDING (#378). `primary` correctly excluded followed rows from the SPREAD, but
+    `score_ledger` still built beta/alpha from every resolved BUY and `n_pending` from every row —
+    and the markdown prints all three under the same screen-scoped heading. So the first followed
+    quality BUY would have moved the reported primary beta/alpha, and a followed pending row would
+    have inflated the primary pending count.
+
+    THE SCOPE CLAIM HAS TO HOLD FOR EVERY INPUT THE HEADING COVERS, not just the number the fix
+    happened to start with — otherwise the report says "screen-origin ONLY" over figures that are
+    not. Asserted on `aggregate` (the boundary both paths cross) rather than on the harness, so it
+    holds however the caller assembles its inputs."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen = [s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+              s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    followed = s("U", Verdict.BUY, 5.00, "followed", "quality")
+
+    base = aggregate(screen, cost_bps=0, n_pending=0)
+    with_followed = aggregate([*screen, followed], cost_bps=0, n_pending=0)
+
+    # every PRIMARY figure the screen-scoped heading covers
+    for field in ("buy_avoid_spread", "n_resolved_buy", "n_resolved_avoid",
+                  "buy_mean_return", "avoid_mean_return", "buy_hit_rate",
+                  "buy_excess_gross", "buy_excess_net"):
+        assert getattr(base, field) == getattr(with_followed, field), (
+            f"a FOLLOWED row moved the primary figure {field!r} — the report's "
+            f"'screen-origin ONLY' claim does not hold for it")
+    # …and the row is not lost: it appears under its own book
+    assert with_followed.by_sleeve["quality"].n_long == 1
+
+
+def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -> None:
+    """REVIEW FINDING (#382), and a TEST-LAYER lesson about the fix above it.
+
+    ``score_ledger`` increments ``pending`` in TWO places: the unresolved-horizon filter at the
+    end (fixed with the sibling test above) and the earlier no-forward-price branch. That earlier
+    branch ``continue``s before the row is ever appended to ``scores`` — so it is the one path
+    that NO downstream origin filter can reach, and a followed name whose bars are not loaded yet
+    inflated the screen-only pending count through it.
+
+    THE PREVIOUS PIN COULD NOT HAVE CAUGHT THIS: it asserts on ``aggregate``, and ``n_pending`` is
+    an *input* to aggregate — already an int by the time that layer sees it. The count is only
+    ever wrong upstream, so this pin runs the real ``score_ledger`` over a real store (the layer
+    where the arithmetic happens), per the test-layer rule.
+
+    Both names deliberately have NO price bars at all: that is the branch under test."""
+    from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+    from vinci.scoring import score_ledger
+    from vinci.store import Store
+
+    entry_d = date(2026, 6, 1)
+
+    def row(ticker: str, iid: str, verdict: Verdict, origin: str, sleeve: str) -> LedgerEntry:
+        return LedgerEntry(
+            entry_id=f"V-{ticker}", candidate_id=f"{ticker}-c", internal_id=iid, ticker=ticker,
+            verdict=verdict, twin_call="t", entry_price=100.0, entry_price_as_of=entry_d,
+            thesis="t", kill_criteria="k", horizon_days=90, confidence=Confidence.MEDIUM,
+            decided_at=datetime.combine(entry_d, datetime.min.time()),
+            origin=origin, sleeve=sleeve)
+
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices([
+            PriceBar(internal_id="IDX-IWM", bar_date=d, open=c, high=c + 1, low=c - 1, close=c,
+                     volume=1e6, source="t")
+            for d, c in ((entry_d, 100.0), (date(2026, 6, 10), 101.0))
+        ])
+        # neither name has bars → both take the no-forward-price branch
+        store.append_ledger(row("AAA", "SEC-A", Verdict.BUY, "screen", "overshoot"))
+        store.append_ledger(row("UUU", "SEC-U", Verdict.BUY, "followed", "quality"))
+        scores, report = score_ledger(store, as_of=date(2026, 6, 10))
+
+    assert scores == []  # neither row could be scored — both hit the branch
+    assert report.n_pending == 1, (
+        "the FOLLOWED row was counted into the primary pending figure — the report prints it "
+        "under a heading that claims screen-origin ONLY")

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-from vinci.schemas.ledger import Verdict
+from vinci.schemas.ledger import ORIGIN_SCREEN, Verdict, origin_of, sleeve_of
 from vinci.schemas.market import PriceBar
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
@@ -66,7 +66,13 @@ def score_ledger(
         bench_entry = _close_on_or_before(bench_bars, entry_date)
         bench_exit = _close_on_or_before(bench_bars, scoring_date)
         if exit_price is None or bench_entry is None or bench_exit is None:
-            pending += 1  # no forward/benchmark price yet → cannot score
+            # No forward/benchmark price yet → cannot score. SCOPED HERE TOO, and this is the
+            # easier half to miss: the row never reaches ``scores``, so the origin filter below
+            # can never see it. A followed name whose bars are not loaded yet would land in the
+            # screen-only pending count through this branch alone — the one path that skips
+            # every later filter by construction (review #382).
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
             continue
 
         score = VerdictScore(
@@ -79,17 +85,31 @@ def score_ledger(
             sector=entry.sector,  # carried through for the per-sector spread read
             machine_proposal=entry.machine_proposal,  # sealed at log time (2026-07-13 pivot)
             disposition=entry.disposition,
+            # READ THROUGH THE HELPERS, never off the attribute: a legacy row carries None for
+            # both, and its truthful reading is screen/overshoot (no other route could reach the
+            # ledger when it was written). One definition, so the report cannot disagree with it.
+            origin=origin_of(entry),
+            sleeve=sleeve_of(entry),
         )
         scores.append(score)
-        # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression
-        if resolved and entry.verdict is Verdict.BUY:
+        # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression.
+        # SCREEN-ORIGIN ONLY, matching the primary spread this beta/alpha is printed BESIDE
+        # (review #378): the report puts them under the same screen-scoped heading, so a followed
+        # quality BUY pooling its daily returns in here would move a number the reader takes to
+        # describe the overshoot book. The scope claim has to hold for every primary input, not
+        # just for the spread itself.
+        if resolved and entry.verdict is Verdict.BUY and origin_of(entry) == ORIGIN_SCREEN:
             for d, r in _daily_returns(name_bars, entry_date, scoring_date):
                 if d in bench_daily:
                     book_rets.append(r)
                     bench_rets.append(bench_daily[d])
 
     resolved_scores = [s for s in scores if s.resolved]
-    pending += len([s for s in scores if not s.resolved])
+    # PENDING IS A PRIMARY-REPORT FIGURE and is scoped the same way, for the same reason: it is
+    # rendered on the line above the screen-only resolved counts, so a followed pending row would
+    # inflate a count the reader reads as the overshoot book's. Per-book pending belongs with the
+    # per-sleeve curves when there is a followed row to count.
+    pending += len([s for s in scores if not s.resolved and s.origin == ORIGIN_SCREEN])
     report = aggregate(
         resolved_scores,
         cost_bps=cost_bps,

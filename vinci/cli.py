@@ -41,7 +41,7 @@ from vinci.rank import (
     render_queue_markdown,
 )
 from vinci.resolver import EntityResolver, ResolutionError
-from vinci.schemas.ledger import Confidence, Verdict
+from vinci.schemas.ledger import ORIGIN_FOLLOWED, ORIGIN_SCREEN, Confidence, Verdict
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.store import Store
@@ -958,6 +958,29 @@ def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
         return None
 
 
+def _followed_identity(
+    cfg: Config, resolver: EntityResolver, ticker: str
+) -> tuple[Any | None, str | None]:
+    """``(identity, sleeve)`` for a FOLLOWED ticker, or ``(None, None)`` if it is not followed.
+
+    THE FOLLOW FILE IS THE ONLY ADMISSION KEY, and it is read through the SAME parser assembly uses
+    (`_follow_entry`) — a second reader of that file is how the two would drift on the day one of
+    them learned about a new field. A name absent from it gets no identity here, so the ledger door
+    stays shut for everything except a name the operator has deliberately written down WITH its
+    reason and its sleeve.
+
+    The SLEEVE comes from the follow entry, not from a CLI flag: the operator states the strategy
+    once, where the follow decision itself is recorded, and every artifact derives it from there.
+    A flag would let the ledger row and the dossier disagree about what question was being asked.
+    """
+    from vinci.dossier.assemble import _follow_entry
+
+    entry = _follow_entry(cfg, ticker.upper())
+    if entry is None:
+        return None, None
+    return resolver.resolve_ticker(ticker.upper()), entry.sleeve
+
+
 def _cmd_log_verdict(args: argparse.Namespace) -> int:
     """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price and
     sealing the machine's proposal (from the committed dossier) + the confirm/override disposition
@@ -968,16 +991,28 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     with Store(cfg.db_path) as store:
         try:
             cand = store.get_candidate(args.candidate_id)
+            # THE FOLLOWED ROUTE. A followed name has NO candidate record by construction, so the
+            # positional argument is its TICKER. Resolved here rather than inside `log_verdict`
+            # because establishing that a name is genuinely followed is a dossier-layer question
+            # (`followed.json`), and the ledger package must not import the dossier package.
+            identity, origin, sleeve = None, ORIGIN_SCREEN, None
             if cand is None:
-                raise LedgerError(
-                    f"no candidate {args.candidate_id!r} in the store (run the screen first)"
-                )
+                identity, sleeve = _followed_identity(cfg, resolver, args.candidate_id)
+                if identity is None:
+                    raise LedgerError(
+                        f"{args.candidate_id!r} is neither a candidate in the store nor a FOLLOWED "
+                        f"ticker in data/followed.json — run the screen first, or add the follow "
+                        f"entry (with its reason and sleeve) if this name is covered out of band.")
+                origin = ORIGIN_FOLLOWED
             # (A4) THE EDGE-BASIS GATE, BEFORE the ledger write. The ledger is APPEND-ONLY, so a
             # verdict that reaches it cannot be un-logged — the gate has to refuse here or not at
             # all. It reads the COMMITTED dossier's persisted gap rather than recomputing: the
             # question is what the human could point at when they decided, not what a fresh
             # extraction would say afterwards.
-            ticker = cand.data_record.identity.ticker
+            # THE GATE IS ORIGIN-BLIND: a followed name states its edge basis on exactly the same
+            # terms as a screen name. The sleeve says WHICH BOOK; the edge basis says WHICH CLAIM.
+            ticker = (cand.data_record.identity.ticker if cand is not None
+                      else str(getattr(identity, "ticker", "")))
             edge_line = require_edge_basis(
                 getattr(args, "edge_basis", None),
                 ev_gap=_committed_ev_gap(cfg, ticker),
@@ -985,6 +1020,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
             mp, ml, stamp = _sealed_proposal(cfg, ticker)
             entry = log_verdict(
                 store, resolver=resolver, candidate_id=args.candidate_id,
+                identity=identity, origin=origin, sleeve=sleeve,
                 verdict=Verdict(args.verdict),
                 twin_call=args.twin,
                 # SEALED INTO THE THESIS because the ledger row is append-only and has no field for

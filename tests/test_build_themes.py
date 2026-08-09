@@ -473,12 +473,30 @@ def test_shelf_tag_prefers_the_logged_human_verdict() -> None:
         "name would wear a decision colour")
     vt = re.search(r"function verdictTag\(v\) \{(.*?)\n\}", js, re.S)
     assert vt, "verdictTag() is gone"
-    # AVOID_TERMINAL -> AVOID is lossless ONLY while those are the two verdicts — pin the premise
+    assert "isBuyVerdict(" in vt.group(1), "verdictTag lost its buy/avoid TONE classifier"
+    # THIS PIN MOVED WITH THE ENUM (PR-1b); it did not loosen. It used to assert the enum held
+    # exactly {BUY, AVOID_TERMINAL}, on its own stated premise: `buy ? "BUY" : "AVOID"` is lossless
+    # ONLY while those are the whole vocabulary. `PASS` made that premise false — and the old
+    # collapse would have printed "AVOID" over a PASS, which is precisely the false record the
+    # separate label exists to prevent. So the WORD now comes from `verdictWord`, and what is
+    # pinned is the property the old assertion stood in for: every member renders as ITSELF except
+    # the one documented shortening. That is strictly stronger — it stays true as the enum grows,
+    # instead of going red and being loosened.
+    assert '"BUY" : "AVOID"' not in vt.group(1), (
+        "verdictTag still collapses the verdict to two words — a third label prints as AVOID")
+    assert "verdictWord(v.verdict)" in vt.group(1), (
+        "verdictTag must render through verdictWord — the one place the shortening lives")
+    vw = re.search(r"function verdictWord\(verdict\) \{(.*?)\n\}", js, re.S)
+    assert vw, "verdictWord() is gone — the display shortening lost its single home"
     from vinci.schemas.ledger import Verdict
 
-    assert {v.value for v in Verdict} == {"BUY", "AVOID_TERMINAL"}, (
-        "the Verdict enum grew — verdictTag's short AVOID word may no longer be lossless")
-    assert '"BUY" : "AVOID"' in vt.group(1) and "isBuyVerdict(" in vt.group(1)
+    body = vw.group(1)
+    assert '"AVOID_TERMINAL" ? "AVOID"' in body, "the documented AVOID_TERMINAL shortening is gone"
+    for member in Verdict:
+        if member.value != "AVOID_TERMINAL":
+            assert f'"{member.value}"' not in body, (
+                f"{member.value} is special-cased in verdictWord — every other member must render "
+                f"as ITSELF, or the shelf and the sealed record disagree about what was decided")
 
 
 def test_build_never_grows_a_second_lean_parser() -> None:
