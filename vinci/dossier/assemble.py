@@ -384,6 +384,27 @@ def _finalist(
         # A SCREEN CANDIDATE IS `overshoot` BY CONSTRUCTION, not by default-because-unstated: the
         # screen finds overshoot setups (`screens/screen2.py`). A name that came through the front
         # door has already said which book it is in by the door it used.
+        #
+        # BUT BOTH DOORS CAN CLAIM THE SAME NAME, and then neither answer is safe to assume. A
+        # ticker deliberately listed in `followed.json` under one book can also appear in the
+        # ranked candidate set — it re-enters the band after a drawdown, or the operator follows a
+        # name the screen later admits. This branch runs FIRST, so before this guard the follow
+        # entry's stated sleeve AND its stated reason were both silently discarded and the name was
+        # assembled as overshoot: an explicit operator judgement overridden by an implicit one.
+        #
+        # REFUSED, NOT RESOLVED BY PRECEDENCE. Either order is defensible and both are guesses —
+        # "the screen wins" throws away a deliberate follow decision, "the follow wins" hides that
+        # the name now qualifies on its own. The operator holds the information needed to choose,
+        # so the build stops and names exactly which two records disagree.
+        followed = _follow_entry(cfg, ticker)
+        if followed is not None and followed.sleeve != DEFAULT_SLEEVE:
+            raise DossierAssemblyError(
+                f"{ticker} is BOTH a screen candidate and a followed name under sleeve "
+                f"{followed.sleeve!r} — the two routes disagree about which book it is judged "
+                f"under, and assembling either way silently discards the other's answer. Resolve "
+                f"it deliberately: drop the {ticker} entry from data/followed.json if the screen "
+                f"should now own the name, or keep the follow entry and exclude the name from the "
+                f"ranked queue. (Follow reason on file: {followed.reason!r}.)")
         return Finalist(rec, rank, ref, cap, sleeve=DEFAULT_SLEEVE)
     # THE MAINTENANCE PATH. Not a candidate today — but the band is an ENTRY rule, and a name we
     # already hold a dossier or an underwrite on has to stay refreshable.
