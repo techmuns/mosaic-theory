@@ -2898,7 +2898,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # 180d, idio) AND survival triage (net debt/EBITDA, FCF sign, going concern). Keeping those
     # adjacent is right — overshoot-vs-terminal is the fund's whole question and survival is its
     # discriminator — but "What happened" described only the first half.
-    out.append("## What happened — and can it survive?")
+    out.append(f"## {BY_KEY[d.sleeve].survive_heading}")
     if m.drawdown_cause is not None:
         out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
     io = m.idiosyncratic_vs_shared
@@ -3077,8 +3077,8 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     # broke and the WRONG one for a compounder that never did — the defect this build removes. The
     # SECTION is unchanged: the gap-downs and the idiosyncratic-vs-shared split are real facts
     # about any name's price path; only the heading claimed something about the name.
-    heading = BY_KEY[require_sleeve(sleeve, where="render._drawdown_idio_lines")].drawdown_heading
-    out.append(f"## {heading}")
+    _row = BY_KEY[require_sleeve(sleeve, where="render._drawdown_idio_lines")]
+    out.append(f"## {_row.drawdown_heading}")
     # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
     # move (derived from the daily perf series; omitted, never estimated, when the committed series
     # can't carry it), cause. One gap / unparseable shape → the one-line fact.
@@ -3086,13 +3086,13 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     _rows = (_gap_list(_fmt_shape(_shape.value))
              if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
     if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
-        out.append(f"- **Read — what broke** · discrete gap-downs:{_cite(_shape.source_ref)}")
+        out.append(f"- **{_row.read_label}** · discrete gap-downs:{_cite(_shape.source_ref)}")
         for _gd, _cause in _rows:
             _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
             _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
             out.append(f"  - {_gd}{_gpct_s} → {_cause}")
     else:
-        out.append(_fact("Read — what broke", _shape, _fmt_shape))
+        out.append(_fact(_row.read_label, _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape

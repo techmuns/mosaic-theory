@@ -16,7 +16,7 @@ Uber Technologies, Inc. develops and operates proprietary technology application
 _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Starting August 8, 2025 and expanding this month, DG and pOpshelf customers can tap to order an expansive mix of ~2026-08 `[stated]` — calendar in Analysis
 
-## What happened — and can it survive?
+## What happened — and does it change the runway?
 - **Shape:** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** -11.1% [5]
 - **Market (SPY) 180d:** 5.4% [6]
@@ -108,7 +108,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What moved the price — and did it move alone?
-- **Read — what broke:** gradual bleed — no discrete gap-down detected [4]
+- **Read — what moved:** gradual bleed — no discrete gap-down detected [4]
 - **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
