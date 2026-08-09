@@ -893,3 +893,103 @@ def test_the_web_page_refuses_to_frame_an_unknown_sleeve_as_overshoot() -> None:
         "an UNRECOGNISED sleeve is rendered with the overshoot question — the page would ask what "
         "broke about a name the client was told is a different book")
     assert "momentum" in unknown["drawdown"], "the unknown state does not name the bad value"
+
+
+# ------------------------------------------------------------------ the LEDGER-READING surfaces
+
+
+def _row(tag: str, verdict: str, excess: float, origin: str, sleeve: str) -> Any:
+    """One marked position. Built from the REAL constructor so field defaults and validation are
+    the production ones."""
+    from datetime import date
+
+    from vinci.monitor import position_row
+
+    r = position_row(
+        ticker=tag, verdict=verdict, sector="Test", entry_price=100.0,
+        entry_date=date(2026, 1, 1), current_price=100.0 * (1 + excess),
+        current_date=date(2026, 6, 1), benchmark="IWM", benchmark_entry=100.0,
+        benchmark_now=100.0, horizon_days=180, origin=origin, sleeve=sleeve)
+    return r
+
+
+def test_the_monitor_spread_is_screen_origin_like_the_scoring_report() -> None:
+    """THE SAME HEADLINE NUMBER, PRINTED BY A DIFFERENT COMMAND — and it was not scoped. `vinci
+    score` filtered to screen-origin while `vinci monitor` did not, so the operator's own console
+    and the committed report would have disagreed about the fund's proof number the moment a
+    followed row existed.
+
+    A quality `PASS` made it worse than a rounding difference: `_is_buy` is a BUY-PREFIX test, so
+    PASS lands in the AVOID leg and MOVES the spread rather than being ignored.
+
+    THE FIXTURE IS BUILT SO POOLING WOULD CHANGE THE ANSWER — the audit's finding about
+    `test_monitor.py` was that its pins use fixed inputs and stay green while production
+    mis-routes. This one fails if the filter is removed."""
+    from vinci.monitor import compute_spread
+
+    screen = [_row("A", "BUY", 0.20, "screen", "overshoot"),
+              _row("B", "AVOID_TERMINAL", 0.05, "screen", "overshoot")]
+    base = compute_spread(screen)
+    assert base.spread is not None
+
+    polluted = compute_spread([*screen, _row("U", "PASS", -5.0, "followed", "quality")])
+    assert polluted.spread == base.spread, (
+        "a FOLLOWED quality PASS moved the monitor's BUY−AVOID spread — the operator's console "
+        "and the scoring report now disagree about the fund's proof number")
+    assert polluted.avoid_n == base.avoid_n, "the PASS row was counted into the AVOID leg"
+
+
+def test_the_monitor_panel_names_a_non_default_book() -> None:
+    """EXCLUDED FROM THE SPREAD IS NOT THE SAME AS ABSENT FROM THE PANEL. A followed row still
+    marks to market and still belongs on the operator's screen — it simply does not feed the
+    number underneath. Named only when it is NOT the default, the same rule the shelf uses."""
+    from datetime import date
+
+    from vinci.monitor import MonitorSnapshot, compute_spread, render_table
+
+    rows = [_row("A", "BUY", 0.20, "screen", "overshoot"),
+            _row("U", "BUY", 0.40, "followed", "quality")]
+    text = render_table(MonitorSnapshot(
+        as_of=date(2026, 6, 1), rows=rows, spread=compute_spread(rows),
+        freshness=[], price_basis="test", notes=[]))
+    assert "[quality]" in text, "the followed row does not say which book it belongs to"
+    assert "[overshoot]" not in text, "the default book is tagged — that is noise on every row"
+    assert "screen-origin" in text, "the spread does not state the scope it now measures"
+
+
+def test_the_web_gate_stat_is_screen_origin_and_the_books_are_counted_beside_it() -> None:
+    """THE DEPLOYED PAGE'S PROOF NUMBER. `getLedger().counts` fed a widget labelled "the BUY−AVOID
+    spread that must prove positive before capital deploys" while pooling every book — so the site
+    and the python side would have reported different things about the fund's own gate.
+
+    The enabling defect was one layer down: the entry projection DROPPED `origin`/`sleeve`, so no
+    consumer could filter even in principle.
+
+    EXECUTED under node against a synthetic ledger payload, so this asserts what the browser
+    computes rather than that some source text exists."""
+    import json
+    import re
+    import subprocess
+
+    lib = (SRC.parents[1] / "frontend" / "lib" / "snapshots.js").read_text()
+    assert "origin: p.origin" in lib and "sleeve: p.sleeve" in lib, (
+        "the ledger projection dropped origin/sleeve — nothing downstream can filter by book")
+
+    body = re.search(r"const primary = entries\.filter.*?\n  return \{.*?\n  \};", lib, re.S)
+    assert body, "the screen-origin scoping of the gate counts is gone"
+    assert 'e.origin === "screen"' in body.group(0), (
+        "the gate counts no longer filter to screen-origin — the deployed proof number pools books")
+    assert "bySleeve" in body.group(0), (
+        "the other books are not counted beside it — a followed verdict would vanish from the app")
+
+    # the display helper both views now share
+    proc = subprocess.run(
+        ["node", "--input-type=module", "-e", "\n".join([
+            re.search(r"export function verdictWord\(verdict\) \{.*?\n\}", lib, re.S)
+            .group(0).replace("export ", ""),
+            "console.log(JSON.stringify(['BUY','AVOID_TERMINAL','PASS'].map(verdictWord)));"])],
+        capture_output=True, text=True)
+    if proc.returncode != 0:
+        pytest.skip("node unavailable")
+    assert json.loads(proc.stdout) == ["BUY", "AVOID", "PASS"], (
+        "verdictWord no longer renders each label as itself (bar the documented AVOID shortening)")

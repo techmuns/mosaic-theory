@@ -466,10 +466,17 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # `closed` rides WITH the verdict so no surface can render the word "BUY" without the
         # fact that the position is closed (external-honesty pass 2026-07-27). Key omitted for an
         # open position → open cards stay byte-identical.
+        # The BOOK rides with the verdict for the same reason `closed` does: the card renders a
+        # verdict word, and a `PASS` on a quality name means "not at this price" where an
+        # `AVOID_TERMINAL` on a screen name means "this is dying". A card showing the word without
+        # the book cannot distinguish them. Emitted ONLY for a non-default book, so every existing
+        # card stays byte-identical (the same omit-don't-null rule the keys above follow).
         **({"ledger": {"verdict": led["verdict"], "entryId": led["entry_id"],
                        "entryPrice": _rd(led.get("entry_price"), 2),
                        "entryPriceAsOf": led.get("entry_price_as_of"),
                        "decidedAt": led.get("decided_at"),
+                       **({"sleeve": led["sleeve"]}
+                          if (led.get("sleeve") or "overshoot") != "overshoot" else {}),
                        **({"closed": led["_closed"]} if led.get("_closed") else {})}}
            if led else {}),
     }

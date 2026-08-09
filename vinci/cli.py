@@ -41,7 +41,15 @@ from vinci.rank import (
     render_queue_markdown,
 )
 from vinci.resolver import EntityResolver, ResolutionError
-from vinci.schemas.ledger import ORIGIN_FOLLOWED, ORIGIN_SCREEN, Confidence, Verdict
+from vinci.schemas.ledger import (
+    ORIGIN_FOLLOWED,
+    ORIGIN_SCREEN,
+    Confidence,
+    LedgerEntry,
+    Verdict,
+    origin_of,
+    sleeve_of,
+)
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.sleeves import DEFAULT_SLEEVE
@@ -1462,6 +1470,10 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     notes: list[str] = []
     for r in rows_raw:
         payload = json.loads(r["payload"])
+        # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
+        # on the model's helpers, and reading the raw dict here would be a second definition of
+        # them that could drift from the scoring path's.
+        led_entry = LedgerEntry.model_validate(payload)
         tkr, asg = r["ticker"], assignments[r["ticker"]]
         entry_day, entry_bars = bars_on_or_before(date.fromisoformat(r["entry_price_as_of"]))
         for need, where in ((tkr, "position"), (asg.benchmark, "benchmark")):
@@ -1474,6 +1486,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                          f"(the frozen row logged {payload['sector']} — never rewritten)")
         rows.append(mon.position_row(
             ticker=tkr, verdict=r["verdict"], sector=live_sector,
+            origin=origin_of(led_entry), sleeve=sleeve_of(led_entry),
             entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
             current_price=now_bars[tkr].close, current_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,

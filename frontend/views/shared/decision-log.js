@@ -1,6 +1,6 @@
 // DECISION LOG — the immutable, append-only ledger as a read-only list of frozen legs.
 // Displayed here; logged ONLY via the CLI. No edit / delete / write path exists.
-import { getLedger, isBuyVerdict, getMonitor } from "../../lib/snapshots.js";
+import { getLedger, isBuyVerdict, verdictWord, getMonitor } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../../lib/format.js";
 
 // The LIVE columns come from the latest COMMITTED monitor snapshot (vinci monitor, manual
@@ -17,13 +17,32 @@ export async function render(root, _params, { item, frame }) {
   const marks = {};
   for (const r of (mon && mon.rows) || []) marks[String(r.ticker).toUpperCase()] = r;
 
+  // EXCLUDED FROM THE PROOF NUMBER IS NOT THE SAME AS ABSENT FROM THE APP. The tiles above are
+  // screen-origin only (that is what the spread measures); any other book is stated here so a
+  // followed verdict is visible as its own line rather than silently missing from both.
+  const books = (l) => {
+    const rows = Object.entries(l.bySleeve || {}).filter(([k]) => k !== "overshoot");
+    if (!rows.length) return "";
+    const cells = rows.map(([k, b]) =>
+      `<span class="mono">${escapeHtml(k)}</span> ${b.long} long / ${b.short} measured-against · ${b.resolved} resolved`
+    ).join(" &nbsp;·&nbsp; ");
+    return `<div class="subtitle muted" style="margin:-8px 0 16px;">Other books (their own curves, never pooled into the spread above) — ${cells}</div>`;
+  };
+
+  // The book, named only when it is NOT the default — same rule as the dossier shelf: a chip on
+  // every row is noise, and its absence on the overshoot majority carries the same information.
+  // Neutral ink, never a coloured pill: the book is context, not a call.
+  const sleeveChip = (sv) => (!sv || sv === "overshoot") ? ""
+    : ` <span class="ds-lean" title="judged under the ${escapeHtml(sv)} book — excluded from the screen-origin spread above">${escapeHtml(sv)}</span>`;
+
   const counts = `
     <div class="grid cols-4" style="margin-bottom:16px;">
-      <div class="card metric"><h3>Verdicts logged</h3><div class="value">${fmtInt(led.counts.logged)}</div><div class="foot">immutable legs of the spread</div></div>
+      <div class="card metric"><h3>Verdicts logged</h3><div class="value">${fmtInt(led.counts.logged)}</div><div class="foot">screen-origin · immutable legs of the spread</div></div>
       <div class="card metric"><h3>Resolved</h3><div class="value">${fmtInt(led.counts.resolved)}</div><div class="foot">reached horizon · feed the spread</div></div>
       <div class="card metric"><h3>Buy legs</h3><div class="value">${fmtInt(led.counts.buy)}</div><div class="foot">the long side</div></div>
-      <div class="card metric"><h3>Avoid legs</h3><div class="value">${fmtInt(led.counts.avoid)}</div><div class="foot">the terminal-decline side</div></div>
-    </div>`;
+      <div class="card metric"><h3>Avoid legs</h3><div class="value">${fmtInt(led.counts.avoid)}</div><div class="foot">the leg it is measured against</div></div>
+    </div>
+    ${books(led)}`;
 
   const banner = `
     <div class="subtitle muted" style="margin-bottom:16px;">
@@ -134,7 +153,7 @@ function entryCard(e, mark) {
     <div class="card" style="margin-bottom:14px;">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
         <span class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(e.ticker)}</span>
-        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(e.verdict)}</span>
+        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(verdictWord(e.verdict))}</span>${sleeveChip(e.sleeve)}
         ${closedChip}
         ${status}
         <span class="muted" style="font-size:12px; margin-left:auto;">decided ${fmtDate(e.decidedAt)}</span>

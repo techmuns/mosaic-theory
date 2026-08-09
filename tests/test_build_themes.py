@@ -486,8 +486,21 @@ def test_shelf_tag_prefers_the_logged_human_verdict() -> None:
         "verdictTag still collapses the verdict to two words — a third label prints as AVOID")
     assert "verdictWord(v.verdict)" in vt.group(1), (
         "verdictTag must render through verdictWord — the one place the shortening lives")
-    vw = re.search(r"function verdictWord\(verdict\) \{(.*?)\n\}", js, re.S)
-    assert vw, "verdictWord() is gone — the display shortening lost its single home"
+    # MOVED TO THE SHARED LIB (PR-2f): the decision log was printing AVOID_TERMINAL in full where
+    # the shelf printed AVOID, because only ONE view had this function. It now lives beside
+    # `isBuyVerdict` — its sibling classifier — and both views import it, which is the single home
+    # this assertion was always about. Checked THERE, not here, or the pin would pass while the
+    # two surfaces disagreed again.
+    lib = (Path(__file__).resolve().parents[1] / "frontend" / "lib" / "snapshots.js").read_text()
+    vw = re.search(r"export function verdictWord\(verdict\) \{(.*?)\n\}", lib, re.S)
+    assert vw, "verdictWord() is gone from the shared lib — the display shortening lost its home"
+    assert "function verdictWord" not in js, (
+        "verdictWord was re-declared in dossier.js — one definition, imported, or the shelf and "
+        "the decision log drift apart again")
+    for view in ("dossier.js", "decision-log.js"):
+        src = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / view
+               ).read_text()
+        assert "verdictWord" in src, f"{view} does not route its verdict word through the helper"
     from vinci.schemas.ledger import Verdict
 
     body = vw.group(1)

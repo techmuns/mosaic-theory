@@ -204,6 +204,13 @@ async function _loadLedger() {
         confidence: p.confidence,
         benchmark: p.benchmark,
         decidedAt: p.decided_at,
+        // WHICH ROUTE and WHICH BOOK. Dropped here, nothing downstream could filter or label by
+        // them — which is why the gate stat below pooled every book into the fund's proof number.
+        // Absent == a row logged before the fields existed, and its truthful reading is
+        // screen/overshoot: no other route could reach this ledger then (mirrors origin_of /
+        // sleeve_of on the python side — one meaning, two languages).
+        origin: p.origin || "screen",
+        sleeve: p.sleeve || "overshoot",
         // the call is STILL scored at its horizon after a close — exits never launder the track
         // record — so `resolved` is untouched; `closed` is a separate, additive fact.
         resolved: daysToHorizon !== null ? daysToHorizon <= 0 : false,
@@ -225,13 +232,30 @@ async function _loadLedger() {
       };
     })
     .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
+  // THE PROOF NUMBER IS SCREEN-ORIGIN ONLY, matching scoring/metrics.py and vinci monitor. The
+  // gate widget below is labelled "the BUY−AVOID spread that must prove positive before capital
+  // deploys" — pooling a followed megacap verdict into it would silently change what the number
+  // means on the deployed page while the python side reported something else.
+  const primary = entries.filter((e) => e.origin === "screen");
+  // …and the other books are counted BESIDE it, never inside it, so a followed row is excluded
+  // from the proof number without disappearing from the app entirely.
+  const bySleeve = {};
+  for (const e of entries) {
+    const k = e.sleeve || "overshoot";
+    const b = (bySleeve[k] ||= { logged: 0, resolved: 0, long: 0, short: 0 });
+    b.logged += 1;
+    if (e.resolved) b.resolved += 1;
+    if (isBuyVerdict(e.verdict)) b.long += 1; else b.short += 1;
+  }
   return {
     counts: {
-      logged: entries.length,
-      resolved: entries.filter((e) => e.resolved).length,
-      buy: entries.filter((e) => isBuyVerdict(e.verdict)).length,
-      avoid: entries.filter((e) => !isBuyVerdict(e.verdict)).length,
+      logged: primary.length,
+      resolved: primary.filter((e) => e.resolved).length,
+      buy: primary.filter((e) => isBuyVerdict(e.verdict)).length,
+      avoid: primary.filter((e) => !isBuyVerdict(e.verdict)).length,
+      loggedAllBooks: entries.length,
     },
+    bySleeve,
     entries,
   };
 }
@@ -262,6 +286,20 @@ export async function getMonitorRow(ticker) {
 
 // The long leg is any BUY-family verdict; everything else (AVOID_TERMINAL, …) is the avoid leg.
 // Classify by family, not exact equality, so a future BUY_* verdict isn't miscounted as avoid.
+// The DISPLAY WORD for a verdict of record. HERE, beside isBuyVerdict, because BOTH views
+// need it: the shelf and the decision log were printing the same verdict two different ways
+// (AVOID vs AVOID_TERMINAL) because only one of them had this function. Mirrors MachineProposal.action_word on the py side.
+// AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
+//
+// IT USED TO SHORTEN BY ASSUMING THERE WERE ONLY TWO. `buy ? "BUY" : "AVOID"` was lossless while
+// BUY and AVOID_TERMINAL were the whole vocabulary — and the moment a sleeve added its own
+// negative leg it would have printed "AVOID" over a PASS, which is precisely the false record the
+// separate label exists to prevent: PASS says "not at this price", never "this is dying".
+export function verdictWord(verdict) {
+  const v = String(verdict || "").toUpperCase();
+  return v === "AVOID_TERMINAL" ? "AVOID" : v;
+}
+
 export function isBuyVerdict(v) {
   return String(v || "").toUpperCase().startsWith("BUY");
 }

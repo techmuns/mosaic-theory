@@ -16,6 +16,7 @@
 // and it was leaving the theme page's copy of the card visibly different from the dossier's.
 // Gaps render as pills (UNDEFINED), never blank.
 import { escapeHtml, fmtPrice, fmtDate, DASH } from "../../lib/format.js";
+import { isBuyVerdict } from "../../lib/snapshots.js";
 import { citeMark, withEndnotes } from "../../lib/cites.js";
 
 const mono = (s) => `<span class="mono">${escapeHtml(s)}</span>`;
@@ -84,7 +85,12 @@ function verdictPills(c) {
   const led = c.ledger;
   const out = [];
   if (led && led.verdict) {
-    const buy = String(led.verdict).toUpperCase().startsWith("BUY");
+    const buy = isBuyVerdict(led.verdict);
+    // the BOOK, when it is not the default — a verdict word alone cannot tell a quality PASS
+    // ("not at this price") from an overshoot AVOID_TERMINAL ("this is dying").
+    const book = led.sleeve
+      ? ` <span class="ds-lean" title="judged under the ${escapeHtml(led.sleeve)} book">${escapeHtml(led.sleeve)}</span>`
+      : "";
     // CLOSE-AWARE (external-honesty pass 2026-07-27): a position that has been closed NEVER
     // headlines as a bare live verdict. The word of record stays (the call is still scored at its
     // horizon — exits cannot launder the track record), but it reads with its close attached.
@@ -93,7 +99,7 @@ function verdictPills(c) {
       ? `${escapeHtml(led.verdict)} — closed ${escapeHtml(cl.exitPriceAsOf || "")}` +
         (typeof cl.exitPrice === "number" ? ` at $${cl.exitPrice.toFixed(2)}` : "")
       : escapeHtml(led.verdict);
-    out.push(`<span class="pill ${cl ? "unresolved" : buy ? "buy" : "avoid"}">${word}</span>`);
+    out.push(`<span class="pill ${cl ? "unresolved" : buy ? "buy" : "avoid"}">${word}</span>${book}`);
   } else if (v.status) {
     out.push(`<span class="pill ${v.status === "pending_analyst" ? "conditional" : "unresolved"}"
       >${escapeHtml(v.status.replace("_", " "))}</span>`);

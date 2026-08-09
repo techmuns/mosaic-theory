@@ -15,7 +15,7 @@ export async function render(root) {
 
   const gateCard = `
     <div class="card gate-card" style="grid-column: 1 / -1;">
-      <h3 class="g-label">Validation gate · BUY−AVOID spread</h3>
+      <h3 class="g-label">Validation gate · BUY−AVOID spread <span class="muted" style="font-weight:400; font-size:11.5px;">(screen-origin only)</span></h3>
       <div class="g-spread${spread.spread === null ? " empty" : ""}">${spread.spread === null ? DASH : spread.spread}</div>
       <div class="g-status">
         <b>${spread.resolvedCount} resolved</b> · gate not met ·
@@ -40,7 +40,10 @@ export async function render(root) {
     ${metric("Verdicts",
       `${fmtInt(ledger.counts.logged)}`,
       "logged",
-      `${fmtInt(ledger.counts.resolved)} resolved · ${fmtInt(ledger.counts.buy)} buy / ${fmtInt(ledger.counts.avoid)} avoid`)}
+      `${fmtInt(ledger.counts.resolved)} resolved · ${fmtInt(ledger.counts.buy)} buy / ${fmtInt(ledger.counts.avoid)} avoid${
+        ledger.counts.loggedAllBooks > ledger.counts.logged
+          ? ` · ${fmtInt(ledger.counts.loggedAllBooks - ledger.counts.logged)} in other books`
+          : ""}`)}
     ${metric("Dossiers",
       `${fmtInt(dossiers.length)}`,
       "assembled",
