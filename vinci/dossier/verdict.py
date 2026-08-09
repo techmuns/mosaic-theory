@@ -78,6 +78,15 @@ def _legs(sleeve: str) -> tuple[Verdict, Verdict] | str:
     row = BY_KEY.get(sleeve)
     if row is None:
         return f"unknown sleeve {sleeve!r} — no proposal (fail-honest)"
+    # THE GATE IS `ledger_active`, NOT "do the labels happen to be enum members" (review #380).
+    # `neglect` is explicitly DORMANT and shares overshoot's BUY/AVOID_TERMINAL labels, so a
+    # membership test let it through and returned a live proposal for a book the registry says is
+    # not activated. `theme` was refused only by the accident of its labels — the right property
+    # was never being read. A dormant book proposing a verdict is the activation gate bypassed at
+    # its first real consumer.
+    if not row.ledger_active:
+        return (f"sleeve {sleeve!r} is defined but NOT activated for the decision ledger — "
+                f"no proposal until it is (vinci/sleeves.py: ledger_active)")
     if not set(row.verdicts) <= {v.value for v in Verdict}:
         return (f"sleeve {sleeve!r} records no ledger verdicts — no proposal "
                 f"(it validates in its own ledger)")

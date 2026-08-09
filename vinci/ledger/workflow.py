@@ -67,6 +67,20 @@ def _require_verdict_in_sleeve(
     row = BY_KEY.get(sleeve)
     if row is None:
         return                                   # validated at every write path; nothing to check
+    # THE ACTIVATION GATE, ENFORCED AT THE WRITE BOUNDARY (review #380). The registry says which
+    # books may appear on a decision-ledger row; `theme` validates in its OWN append-only
+    # ratification ledger and `neglect` is dormant. Without this a followed entry naming either one
+    # would append a row to the fund's proof ledger under a book that is not being measured there —
+    # and the ledger is append-only, so it could not be taken back out.
+    if not row.ledger_active:
+        raise LedgerError(
+            f"sleeve {sleeve!r} is defined but NOT activated for the decision ledger "
+            f"(vinci/sleeves.py: ledger_active=False). "
+            + ("`theme` validates in its own append-only ratification ledger; a single name from a "
+               "theme is logged under overshoot/quality with the variant-vs-cross-section edge "
+               "basis." if sleeve == "theme" else
+               "Activate it deliberately — with its kill criterion stated first — before logging "
+               "a verdict under it."))
     if verdict.value not in row.verdicts:
         raise LedgerError(
             f"sleeve {sleeve!r} records {list(row.verdicts)}, not {verdict.value!r} — use one of "

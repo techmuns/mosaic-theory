@@ -653,11 +653,16 @@ def test_an_unknown_sleeve_and_a_non_ledger_book_give_different_reasons() -> Non
     from vinci.dossier.verdict import derive_proposal
 
     unknown = derive_proposal("strongly-bearish — x", sleeve="momentum")
-    non_ledger = derive_proposal("strongly-bearish — x", sleeve="theme")
-    assert unknown.action is None and non_ledger.action is None
+    defined = derive_proposal("strongly-bearish — x", sleeve="theme")
+    assert unknown.action is None and defined.action is None
     assert "unknown sleeve" in unknown.note, unknown.note
-    assert "no ledger verdicts" in non_ledger.note, non_ledger.note
-    assert unknown.note != non_ledger.note, "two different absences share one sentence"
+    # PIN MOVED WITH THE #380 FIX, and it moved to the MORE correct answer. `theme` is both dormant
+    # AND labelled outside the Verdict enum; it used to report the second because the activation
+    # property was never read. Activation is the PRIMARY reason — it is the registry's own stated
+    # gate — so that is what a reader should be told. The distinction this test exists for is
+    # unchanged: a DEFINED book and an UNKNOWN one still give different sentences.
+    assert "NOT activated" in defined.note, defined.note
+    assert unknown.note != defined.note, "two different absences share one sentence"
 
 
 def test_the_js_proposal_twin_mirrors_the_python_registry() -> None:
@@ -682,3 +687,39 @@ def test_the_js_proposal_twin_mirrors_the_python_registry() -> None:
 
     assert {v.strip().strip('"') for v in mv.group(1).split(",") if v.strip()} == {
         v.value for v in Verdict}, "the JS verdict mirror drifted from the enum"
+
+
+def test_a_dormant_sleeve_proposes_nothing_and_cannot_reach_the_ledger() -> None:
+    """REVIEW FINDING (#380). The proposal gated on "are the labels enum members", which is not the
+    activation question. `neglect` is explicitly DORMANT and shares overshoot's BUY/AVOID_TERMINAL
+    labels, so it returned a LIVE proposal; `theme` was refused only by the accident of its own
+    labels. The right property — `ledger_active` — was never read at either boundary, so a follow
+    entry naming a dormant book could receive a proposal and append a row to the fund's proof
+    ledger under a strategy that is not being measured there. The ledger is append-only, so that
+    row could not have been taken back out.
+
+    BOTH BOUNDARIES, because they fail independently: the proposal is fail-honest (it returns a
+    reason, since this is the render path), the ledger write RAISES (append-only, so it refuses
+    before the seal). Derived from `ledger_active` rather than a hardcoded roster, so activating a
+    book flips both without touching this test."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    for row in sl.SLEEVE_ROWS:
+        prop = derive_proposal("strongly-bearish — x", sleeve=row.key)
+        if row.ledger_active:
+            assert prop.action is not None, f"{row.key} is active but proposes nothing"
+            _require_verdict_in_sleeve(Verdict(row.verdicts[0]), row.key)   # must not raise
+        else:
+            assert prop.action is None, (
+                f"{row.key} is DORMANT (ledger_active=False) but returned a live proposal "
+                f"{prop.action_word!r} — the registry's activation gate is bypassed")
+            assert "NOT activated" in prop.note, prop.note
+            with pytest.raises(LedgerError, match="NOT activated"):
+                _require_verdict_in_sleeve(Verdict.BUY, row.key)
+
+    # the sharp case: neglect shares overshoot's LABELS, so a membership test let it through
+    assert sl.BY_KEY["neglect"].verdicts == sl.BY_KEY["overshoot"].verdicts, (
+        "neglect no longer shares overshoot's labels — this test's whole point was that identical "
+        "labels are not an activation signal; re-check the gate if the registry changed")
