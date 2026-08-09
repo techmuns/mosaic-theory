@@ -1617,8 +1617,15 @@ function peerCapitalIntensity(m) {
 }
 
 function capitalAllocation(m) {
+  // GATED PER BLOCK — see render._capital_allocation. An early return on `capital_allocation`
+  // left seven names carrying `peer_capital_intensity` with nothing on the page.
   const ca = m.capital_allocation;
-  if (!ca) return "";
+  const peers = peerCapitalIntensity(m);
+  if (!ca) {
+    return peers
+      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${peers}`
+      : "";
+  }
   const usd = (v) => escapeHtml(`$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
   const cnt = (v) => escapeHtml(Number(v).toLocaleString("en-US"));
   const pres = (f) => f && f.status === "present" && f.value != null;
@@ -1664,7 +1671,7 @@ function capitalAllocation(m) {
   // `subtitle muted` line (see `sec()` above); the first cut used it as a wrapper and invented a
   // `.ds-subtitle` that has zero rules in styles.css — the block would have rendered unstyled on
   // the web while the markdown preview looked correct.
-  out.push(peerCapitalIntensity(m));
+  out.push(peers);
   return `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${out.join("")}`;
 }
 
