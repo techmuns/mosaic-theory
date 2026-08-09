@@ -352,7 +352,17 @@ is the 3.9 system one).
    `{TICKER: "reason"}` map TODAY**; queue item 34 (SERIES A) Phase 1 migrates it to
    `{TICKER: {"reason": …, "sleeve": …}}` and refuses a bare string, a missing sleeve, or an unknown
    one — **until that ships, write the plain string**, or the current parser rejects the entry.
-2. **Benchmark bars must exist for the name's cap band** — **>$25B needs SPY, >$4B needs MDY**:
+2. **Benchmark bars must exist for the name's cap band.** The bands are MUTUALLY EXCLUSIVE — one
+   name, one benchmark — and they are read from `monitor.benchmark_for_cap`, not restated:
+
+   | market cap at entry | benchmark |
+   |---|---|
+   | `cap < $4B` | **IWM** |
+   | `$4B ≤ cap < $25B` | **MDY** |
+   | `cap ≥ $25B` | **SPY** |
+
+   **Both boundaries are CLOSED-BELOW:** exactly $4B is MDY, exactly $25B is **SPY**. Refresh only
+   the one benchmark the name's band selects:
 
    ```
    PYTHONPATH=$PWD $VENV/python -m vinci.cli refresh SPY --aggs --start 2021-07-01 --end <today>
@@ -362,8 +372,9 @@ is the 3.9 system one).
    backfill for a NEW name — the default grouped-daily path is the whole-universe refresh. Bars are
    git-ignored, so this is per-worktree. Skipping it does not crash: every market-relative leg
    reads UNKNOWN and the page says so. That is how UBER's first build shipped — SPY had **4 bars**,
-   because a $300M–$10B band had only ever asked for IWM/MDY. *(Source: `refresh --help`; STATE.md
-   §OPERATOR TO-DOs item 1.)*
+   because a $300M–$10B band had only ever asked for IWM/MDY. *(Source: `vinci/monitor.py`
+   `benchmark_for_cap` + `CAP_BAND_SMALL_MAX`/`CAP_BAND_MID_MAX`, verified at the boundaries;
+   `refresh --help`.)*
 3. **Pull the CIQ export** — REQUIRED before any quality-sleeve verdict: the priced-in exhibit
    (`implied_expectations`), the `ev_gap` and the consensus ladder are all CIQ-fed. Without it the
    dossier still assembles (CIQ sections MISSING + a 'pull CIQ' flag) but the sleeve's own question
