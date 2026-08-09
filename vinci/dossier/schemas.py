@@ -1291,6 +1291,12 @@ class Dossier(BaseModel):
     cik: str
     reference_date: date
     rank: int | None  # position in the ranked queue — ordering context, never a verdict on the name
+    # WHICH STRATEGY BOOK this name is judged under (`vinci/sleeves.py`; STATE.md §4 SLEEVE
+    # ARCHITECTURE). NOT a verdict and not a rank — it names the QUESTION the page answers, which
+    # is why an untagged megacap was being asked what broke when nothing had. Defaulted rather than
+    # required so every dossier committed before the tag existed still round-trips, and `overshoot`
+    # is the truthful answer for all of them: the screen is the only route those names had.
+    sleeve: str = "overshoot"
     mechanical: MechanicalLayer
     synthesis: Synthesis | None  # None if CIQ/inputs too thin or the synthesis was skipped
     # Human-review flags split by audience (see vinci.dossier.flags): decision CAVEATS render in the
