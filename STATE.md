@@ -7645,7 +7645,11 @@ sample: **the source was authoritative and the excerpt was not.**
     rather than encoding a guess about the vocabulary.
 
 34. **SLEEVES — un-hardcode the overshoot framing (SERIES A; briefed 2026-08-08; §4 records
-    the decision). BUILT ACROSS EIGHT PRs, #376-#383 — all OPEN, none merged as of 2026-08-09.**
+    the decision). BUILT ACROSS NINE PRs AND ALL MERGED TO main 2026-08-09 — #376, #385, #378,
+    #379, #380, #381, #382, #383, #384, in that order, each squashed with the full suite green on
+    the merged result. (#377 carried PR-1a; GitHub auto-CLOSED it when the #376 merge deleted its
+    base branch, then refused to reopen it because the head had been force-pushed in between, so
+    it landed unchanged as **#385** — same head, review history on #377.)**
     The pipeline was hard-bound to overshoot at seven surfaces; a followed megacap (UBER) was
     therefore asked what broke when nothing had, and its bearish twin label would have written
     "terminal decline" into an append-only ledger against a compounder.
@@ -7661,8 +7665,10 @@ sample: **the source was authoritative and the excerpt was not.**
     table); #381 the per-book page question + case labels, the sleeve-conditional CIQ requirement,
     and the shelf tag; #382 the ledger-READING surfaces (monitor / gate widget / decision log /
     uw-card) which segmented in the engine and still pooled in every human-facing view; #383 the
-    residual per-book strings INSIDE the headings #381 had already moved.
-    **THE REVIEW FOUND SIX DEFECTS THE BUILD DID NOT** — worth recording because five were the
+    residual per-book strings INSIDE the headings #381 had already moved; #384 the gradual-decline
+    price path, so a name that BLED rather than broke (UBER: worst day −6.89%, under the −10%
+    gap detector) shows a price exhibit instead of an empty panel.
+    **THE REVIEW FOUND TEN DEFECTS THE BUILD DID NOT** — worth recording because eight were the
     same shape: a fix applied at the layer it was noticed instead of the layer where the harm
     lands. (a) `by_sleeve` existed only in `to_dict()` while both default paths emit MARKDOWN, so
     a followed verdict was scored and then invisible; (b) the screen-origin scope held for the
@@ -7673,8 +7679,38 @@ sample: **the source was authoritative and the excerpt was not.**
     gate tested label membership rather than `ledger_active`; (e) a name in BOTH the follow list
     and the candidate set had its stated sleeve and reason silently discarded; (f) an UNKNOWN
     sleeve rendered with overshoot copy — the misleading framing reached through the error path.
+    **FOUR MORE FOUND IN THE FINAL PRE-MERGE PASS 2026-08-09**, all fixed and mutation-tested
+    before the stack landed: (g) the no-forward-price branch in `score_ledger` incremented
+    `pending` before any origin filter — it `continue`s before the row reaches `scores`, so it was
+    the ONE path no downstream filter could reach, and the pin meant to cover it asserted on
+    `aggregate`, where `n_pending` is already an int INPUT (a pin that could not have caught an
+    error made upstream of itself); (h) `bySleeve` grouped on the sleeve alone, so a
+    followed-OVERSHOOT row — legal, since `followed.json` admits the default book and `_finalist`
+    refuses the screen/follow overlap only when the sleeve DIFFERS — merged into the screen
+    majority's bucket, which the renderer drops: out of `primary`, absent from "Other books", and
+    chip-less, while the overview tile announced "1 in other books"; now keyed on the (origin,
+    sleeve) PAIR, the chip gated on origin too; (i) `resolved_n` counts SCOPED rows and BOTH
+    renderers divided it by the snapshot's total row count ("resolved 1/2" on one screen + one
+    followed row) — two callers erring identically, so `scoped_n` now travels ON the diagnostic
+    rather than being re-derived per caller.
+    **(j) INCIDENT — the decision-log page threw on EVERY load and no test saw it.** #382 wrote
+    `sleeveChip` as a `const` inside `render()` while its only caller, `entryCard`, is a
+    module-scope function: every call raised `sleeveChip is not defined`, so the page stopped at
+    "Loading ledger…" — the whole decision log, the fund's own proof number included, blank. It
+    was found by OPENING the page, not by 2000+ tests. Every pin on that file greps source text or
+    executes one lifted function, and a scope error is invisible to both: the string is present,
+    the body is correct, and the WIRING between them is what breaks. Same shape as the two unwired
+    `dossier.js` call sites the browser found earlier in the same session — the third landing of
+    this class. **Incident→invariant (shipped Y):**
+    `test_the_decision_log_page_actually_renders` runs the REAL `render()` over the REAL committed
+    snapshots (plain-object `root`, `fetch` stubbed onto the committed files — no DOM, no server)
+    and asserts the page reaches its content; mutation-tested against the version this branch had
+    already pushed.
     **STANDING RULE EARNED:** when a value becomes per-book, the enumeration of its consumers is
     the fix, not the three call sites that were noticed — the mirror pins now walk every field.
+    **SECOND STANDING RULE:** a JS view is not covered by grepping its source or executing one
+    lifted function — render it. Three of this session's defects lived in the wiring, which is
+    exactly what a source pin cannot see.
     **OPEN, and deliberately not built here:** the UNDERWRITE layer is still book-blind
     (`ScenarioRecord` carries no sleeve; `propose.py` has zero references), and it already holds
     `avoid_priced` + a `"passed"` status — the concept `Verdict.PASS` names, in different words,
