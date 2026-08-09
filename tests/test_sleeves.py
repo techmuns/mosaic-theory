@@ -9,10 +9,13 @@ from __future__ import annotations
 
 import ast
 import pathlib
+from datetime import date, datetime
+from pathlib import Path
 
 import pytest
 
 from vinci import sleeves as sl
+from vinci.schemas.market import PriceBar
 
 SRC = pathlib.Path(sl.__file__)
 
@@ -411,3 +414,49 @@ def test_every_primary_report_input_is_screen_scoped_not_just_the_spread() -> No
             f"'screen-origin ONLY' claim does not hold for it")
     # …and the row is not lost: it appears under its own book
     assert with_followed.by_sleeve["quality"].n_long == 1
+
+
+def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -> None:
+    """REVIEW FINDING (#382), and a TEST-LAYER lesson about the fix above it.
+
+    ``score_ledger`` increments ``pending`` in TWO places: the unresolved-horizon filter at the
+    end (fixed with the sibling test above) and the earlier no-forward-price branch. That earlier
+    branch ``continue``s before the row is ever appended to ``scores`` — so it is the one path
+    that NO downstream origin filter can reach, and a followed name whose bars are not loaded yet
+    inflated the screen-only pending count through it.
+
+    THE PREVIOUS PIN COULD NOT HAVE CAUGHT THIS: it asserts on ``aggregate``, and ``n_pending`` is
+    an *input* to aggregate — already an int by the time that layer sees it. The count is only
+    ever wrong upstream, so this pin runs the real ``score_ledger`` over a real store (the layer
+    where the arithmetic happens), per the test-layer rule.
+
+    Both names deliberately have NO price bars at all: that is the branch under test."""
+    from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+    from vinci.scoring import score_ledger
+    from vinci.store import Store
+
+    entry_d = date(2026, 6, 1)
+
+    def row(ticker: str, iid: str, verdict: Verdict, origin: str, sleeve: str) -> LedgerEntry:
+        return LedgerEntry(
+            entry_id=f"V-{ticker}", candidate_id=f"{ticker}-c", internal_id=iid, ticker=ticker,
+            verdict=verdict, twin_call="t", entry_price=100.0, entry_price_as_of=entry_d,
+            thesis="t", kill_criteria="k", horizon_days=90, confidence=Confidence.MEDIUM,
+            decided_at=datetime.combine(entry_d, datetime.min.time()),
+            origin=origin, sleeve=sleeve)
+
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices([
+            PriceBar(internal_id="IDX-IWM", bar_date=d, open=c, high=c + 1, low=c - 1, close=c,
+                     volume=1e6, source="t")
+            for d, c in ((entry_d, 100.0), (date(2026, 6, 10), 101.0))
+        ])
+        # neither name has bars → both take the no-forward-price branch
+        store.append_ledger(row("AAA", "SEC-A", Verdict.BUY, "screen", "overshoot"))
+        store.append_ledger(row("UUU", "SEC-U", Verdict.BUY, "followed", "quality"))
+        scores, report = score_ledger(store, as_of=date(2026, 6, 10))
+
+    assert scores == []  # neither row could be scored — both hit the branch
+    assert report.n_pending == 1, (
+        "the FOLLOWED row was counted into the primary pending figure — the report prints it "
+        "under a heading that claims screen-origin ONLY")

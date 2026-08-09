@@ -66,7 +66,13 @@ def score_ledger(
         bench_entry = _close_on_or_before(bench_bars, entry_date)
         bench_exit = _close_on_or_before(bench_bars, scoring_date)
         if exit_price is None or bench_entry is None or bench_exit is None:
-            pending += 1  # no forward/benchmark price yet → cannot score
+            # No forward/benchmark price yet → cannot score. SCOPED HERE TOO, and this is the
+            # easier half to miss: the row never reaches ``scores``, so the origin filter below
+            # can never see it. A followed name whose bars are not loaded yet would land in the
+            # screen-only pending count through this branch alone — the one path that skips
+            # every later filter by construction (review #382).
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
             continue
 
         score = VerdictScore(
