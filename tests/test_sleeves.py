@@ -11,6 +11,7 @@ import ast
 import pathlib
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -18,6 +19,19 @@ from vinci import sleeves as sl
 from vinci.schemas.market import PriceBar
 
 SRC = pathlib.Path(sl.__file__)
+
+
+def _mech() -> Any:
+    """A REAL MechanicalLayer from a committed dossier — the synthesis path walks it, so a
+    hand-rolled stand-in would shape the test rather than exercise the code (the fixture rule)."""
+    import json
+
+    from vinci.dossier.schemas import Dossier
+
+    committed = sorted((SRC.parents[1] / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this worktree")
+    return Dossier.model_validate(json.loads(committed[0].read_text())).mechanical
 
 
 def test_every_sleeve_row_is_complete() -> None:
@@ -549,3 +563,44 @@ def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -
     assert report.n_pending == 1, (
         "the FOLLOWED row was counted into the primary pending figure — the report prints it "
         "under a heading that claims screen-origin ONLY")
+
+
+def test_the_llm_log_records_the_prompt_that_was_actually_sent() -> None:
+    """REVIEW FINDING (#379) — a FALSE PROVENANCE RECORD, which is the worst kind of defect this
+    repo has a name for. The call used `system_for(sleeve)` while the log recorded the module-level
+    `_SYSTEM` (the OVERSHOOT constant), so every quality assembly persisted an `llm_call.log`
+    claiming it had been framed as a sharply de-rated overshoot name — the one artifact whose whole
+    purpose is to answer "what was this model actually asked", answering it wrongly, in exactly the
+    case the sleeve work exists to serve.
+
+    CAPTURED FROM A STUB CLIENT, so the assertion compares the log against what the call RECEIVED
+    rather than against a second copy of what we think it should be. A test that rebuilt the
+    expected prompt itself would have passed against the buggy code."""
+    from vinci.dossier import synthesis as syn
+
+    seen: dict[str, object] = {}
+
+    class _Stub:
+        model = "stub-model"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, object]) -> dict[str, object]:
+            seen["system"], seen["tool"] = system, tool
+            raise syn.LlmError("stop here — the prompt is already captured")
+
+    for key in ("overshoot", "quality"):
+        seen.clear()
+        _, _, log = syn.synthesize(
+            _mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="Test", sleeve=key)
+        assert seen, f"{key}: the stub client was never called"
+        assert str(seen["system"]) in log, (
+            f"{key}: the log does not contain the system prompt the model RECEIVED — the audit "
+            f"artifact would describe a framing that was never sent")
+        assert f"=== SLEEVE === {key}" in log, f"{key}: the log does not name the book it used"
+
+    # and the two books really do differ, so the check above is not vacuous
+    seen.clear()
+    syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="quality")
+    q = str(seen["system"])
+    seen.clear()
+    syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="overshoot")
+    assert q != str(seen["system"]), "the two books sent the same prompt — nothing was proven"

@@ -1101,11 +1101,21 @@ def synthesize(
             "the 'CIQ transcript' source_ref from the facts. ===\n"
             + transcript
         )
-    log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]
+    # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller keeps
+    # the byte-identical live prompt; the followed route passes the name's own book.
+    #
+    # BUILT ONCE AND USED FOR BOTH THE LOG AND THE CALL. The first cut logged the module-level
+    # `_SYSTEM` — the OVERSHOOT constant — while sending `system_for(sleeve)`, so every quality
+    # assembly persisted an `llm_call.log` claiming it had been framed as a sharply de-rated
+    # overshoot name. That is a FALSE PROVENANCE RECORD in a committed audit artifact: the one
+    # document whose entire purpose is to answer "what was this model actually asked", answering
+    # it wrongly, in exactly the case the sleeve work exists to serve. Two names, one binding —
+    # the log cannot describe a prompt the call did not receive.
+    system, tool = system_for(sleeve), tool_for(sleeve)
+    log_parts = [f"model: {llm.model}", "", f"=== SLEEVE === {sleeve}",
+                 "", "=== SYSTEM ===", system, "", "=== USER ===", user]
     try:
-        # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller
-        # keeps the byte-identical live prompt; the followed route passes the name's own book.
-        raw = llm.extract(system=system_for(sleeve), user=user, tool=tool_for(sleeve))
+        raw = llm.extract(system=system, user=user, tool=tool)
     except LlmError as exc:
         log_parts += ["", "=== ERROR ===", str(exc)]
         return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)
