@@ -346,12 +346,18 @@ fleet rosters that used to be pinned by literal name).
 All commands assume the Preamble's `$VENV` (the venv is NOT inside the worktrees — bare `python`
 is the 3.9 system one).
 
-1. **Add the follow entry** — `data/followed.json`, keyed by UPPERCASE ticker, with the operator's
-   stated REASON: required, and it prints in the dossier's main body (a follow decision without its
-   reason is the silent admission the file exists to prevent). **The file is a flat
-   `{TICKER: "reason"}` map TODAY**; queue item 34 (SERIES A) Phase 1 migrates it to
-   `{TICKER: {"reason": …, "sleeve": …}}` and refuses a bare string, a missing sleeve, or an unknown
-   one — **until that ships, write the plain string**, or the current parser rejects the entry.
+1. **Add the follow entry** — `data/followed.json`, keyed by UPPERCASE ticker:
+
+   ```json
+   { "UBER": { "reason": "why the cap band does not apply to this name", "sleeve": "quality" } }
+   ```
+
+   **Both fields are required and assembly REFUSES the entry without them.** The REASON prints in
+   the dossier's main body — a follow decision without its reason is the silent admission this file
+   exists to prevent. The SLEEVE names which strategy book the name is judged under
+   (`vinci/sleeves.py`); untagged, the name would silently inherit the OVERSHOOT framing and be
+   asked what broke when nothing did. A bare string (the pre-2026-08-09 shape), a missing sleeve,
+   or an unlisted one each raise at assembly with the rewrite quoted.
 2. **Benchmark bars must exist for the name's cap band.** The bands are MUTUALLY EXCLUSIVE — one
    name, one benchmark — and they are read from `monitor.benchmark_for_cap`, not restated:
 
@@ -375,10 +381,21 @@ is the 3.9 system one).
    because a $300M–$10B band had only ever asked for IWM/MDY. *(Source: `vinci/monitor.py`
    `benchmark_for_cap` + `CAP_BAND_SMALL_MAX`/`CAP_BAND_MID_MAX`, verified at the boundaries;
    `refresh --help`.)*
-3. **Pull the CIQ export** — REQUIRED before any quality-sleeve verdict: the priced-in exhibit
-   (`implied_expectations`), the `ev_gap` and the consensus ladder are all CIQ-fed. Without it the
-   dossier still assembles (CIQ sections MISSING + a 'pull CIQ' flag) but the sleeve's own question
-   is unanswerable. **The raw workbooks land in `data/manual/ciq/` and are NEVER committed or
+3. **Pull the CIQ exports.** Do NOT work from this list — it drifts. Ask the machine, which derives
+   the answer from the same definition the assembler reads:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m vinci.cli dossier requirements --ticker <T>
+   ```
+
+   It prints REQUIRED, **ALSO REQUIRED FOR CERTAIN BOOKS**, and OPTIONAL. Read the middle section:
+   a **quality** name additionally requires **Company Comparable Analysis (peer comps)**, because
+   that export carries `implied_valuation` — the priced-in exhibit the quality book's whole question
+   ("what does today's price already assume") rests on. Optional for an overshoot name, load-bearing
+   for a quality one; the requirement is a property of the QUESTION, not of the file.
+
+   Without a required export the dossier still assembles (CIQ sections MISSING + a 'pull CIQ' flag),
+   but that book's own question is unanswerable — a page, not an answer. **The raw workbooks land in `data/manual/ciq/` and are NEVER committed or
    logged** — git-ignored regardless of repo privacy; only the DERIVED per-ticker `dossier.json`
    is committable. *(Source: CLAUDE.md §Security & secrets.)*
 4. **Assemble** — the maintenance path builds the data record from the resolver + price store with
