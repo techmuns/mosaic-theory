@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -330,6 +330,16 @@ function cardTag(ticker, reads, verdictBy) {
   return v ? verdictTag(v) : leanTag(reads[ticker]);
 }
 
+// WHICH BOOK the name is judged under, on the shelf card. Shown ONLY for a non-default book: a
+// tag on all twelve names would be noise, while its ABSENCE on eleven of them carries the same
+// information. Deliberately NEUTRAL ink like leanTag — the book is context, not a call, and a
+// coloured pill here would let the eye triage the shelf by strategy before reading anything.
+function sleeveTag(sleeve) {
+  const sl = String(sleeve || DEFAULT_SLEEVE);
+  if (sl === DEFAULT_SLEEVE || !Object.hasOwn(SLEEVE_COPY, sl)) return "";
+  return `<span class="ds-lean ds-card-tag" title="this name is judged under the ${escapeHtml(sl)} book — it asks a different question and records a different verdict vocabulary">${escapeHtml(sl)}</span>`;
+}
+
 // The DISPLAY WORD for a verdict of record. Mirrors MachineProposal.action_word on the py side.
 // AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
 //
@@ -367,8 +377,8 @@ function leanTag(eb) {
 }
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
-  const [tickers, scenTickers, reads, led] = await Promise.all([
-    getDossierIndex(), getScenarioIndex(), getMachineReads(), getLedger()]);
+  const [tickers, scenTickers, reads, led, sleeves] = await Promise.all([
+    getDossierIndex(), getScenarioIndex(), getMachineReads(), getLedger(), getSleeves()]);
   // the human's logged verdicts, by ticker — the shelf's tag precedence resolves against these
   const verdictBy = {};
   for (const e of (led && led.entries) || []) if (e && e.ticker) verdictBy[e.ticker] = e;
@@ -398,7 +408,7 @@ async function renderIndex(root, item, frame) {
   const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
-          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}</div>
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}${sleeveTag(sleeves[t])}</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   const dossierPanel = `

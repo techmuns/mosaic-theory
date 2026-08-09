@@ -318,6 +318,16 @@ export async function getMachineReads() {
   return idx && typeof idx.reads === "object" && idx.reads ? idx.reads : {};
 }
 
+// getSleeves() -> {TICKER: sleeve} — WHICH STRATEGY BOOK each committed dossier is judged under
+// (vinci/sleeves.py). The shelf uses it to say so without opening the page: a quality name asks a
+// different question and records a different verdict vocabulary, and a reader meeting that with no
+// label has to infer the book from the copy. An index committed before the tag existed -> {}, and
+// consumers fall back to the default book, which is truthful for every one of those names.
+export async function getSleeves() {
+  const idx = await _dossierIndex();
+  return idx && typeof idx.sleeves === "object" && idx.sleeves ? idx.sleeves : {};
+}
+
 // The per-name WORKFLOW-state vocabulary — ONE definition (MED-7): getProcessedStates() returns
 // these keys; consumers (the ranker badge/sort) import THIS object instead of re-typing strings.
 export const WORKFLOW_STATES = {

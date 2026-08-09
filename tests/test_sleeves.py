@@ -795,3 +795,55 @@ def test_every_committed_page_renders_under_its_own_book() -> None:
                     f"{f.parent.name} ({d.sleeve}) carries {other.key}'s question")
         seen += 1
     assert seen, "no committed page was checked"
+
+
+# ------------------------------------------------------------------ the FRONTEND surface
+
+
+def test_the_committed_index_tells_the_shelf_which_book_each_name_is_in() -> None:
+    """THE SHELF HAD NO WAY TO KNOW. The per-name mirror carries `sleeve` for free (it is a byte
+    copy of the source), but the INDEX is what the grid reads — so a quality name was
+    indistinguishable from an overshoot one until you opened it, and its different question and
+    BUY/PASS vocabulary then arrived unexplained.
+
+    Derived from the committed dossiers rather than hardcoded, so it stays silent as names are
+    added and still reddens if the index and the artifacts disagree."""
+    import json
+
+    root = SRC.parents[1]
+    idx_path = root / "frontend" / "dossiers" / "index.json"
+    if not idx_path.exists():
+        pytest.skip("no committed dossier index in this worktree")
+    idx = json.loads(idx_path.read_text())
+    assert "sleeves" in idx, "the index lost its sleeve map — the shelf cannot label a book"
+    for t in idx["tickers"]:
+        src = root / "data" / "dossiers" / t / "dossier.json"
+        if not src.exists():
+            continue
+        want = json.loads(src.read_text()).get("sleeve", sl.DEFAULT_SLEEVE)
+        assert idx["sleeves"].get(t) == want, (
+            f"{t}: the index says {idx['sleeves'].get(t)!r} but the dossier says {want!r}")
+        assert idx["sleeves"][t] in sl.SLEEVES
+
+
+def test_the_shelf_tags_only_the_non_default_book_and_never_in_colour() -> None:
+    """TWO DELIBERATE CHOICES, pinned so they are decisions rather than drift.
+
+    ONLY the non-default book is tagged: a label on every name is noise, and its ABSENCE on the
+    overshoot majority carries the same information. And the tag is NEUTRAL ink — the book is
+    context, not a call. A coloured pill would let the eye triage the shelf by strategy before
+    reading anything, which is the same anchoring the sealed proposal exists to prevent (the
+    existing `leanTag` guard makes exactly this argument for the machine's lean)."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"function sleeveTag\(sleeve\) \{(.*?)\n\}", js, re.S)
+    assert m, "sleeveTag() is gone — the shelf stopped saying which book a name is in"
+    body = m.group(1)
+    assert "DEFAULT_SLEEVE" in body and 'return ""' in body, (
+        "sleeveTag no longer suppresses the default book — every card would carry a tag")
+    for banned in ("pill", "--danger", "--live", "--pos-text", "buy", "avoid"):
+        assert banned not in body, (
+            f"sleeveTag uses {banned!r} — the shelf would triage by strategy in COLOUR before a "
+            f"single fact is read")
+    assert "ds-lean" in body, "the tag lost the neutral class leanTag uses"

@@ -1142,6 +1142,11 @@ def main(argv: list[str] | None = None) -> None:
     tickers: list[str] = []
     labels: dict[str, dict[str, str]] = {}
     reads: dict[str, str] = {}
+    # WHICH BOOK each name is judged under, so the SHELF can say so without opening the page.
+    # The per-name JSON already carries it (the mirror is a byte copy), but the index is what the
+    # grid reads — without it a quality name is indistinguishable from an overshoot one until you
+    # open it, and its BUY/PASS vocabulary and different question then arrive unexplained.
+    sleeves: dict[str, str] = {}
     if DOSS.exists():
         for folder in sorted(p for p in DOSS.iterdir() if p.is_dir()):
             f = folder / "dossier.json"
@@ -1163,8 +1168,13 @@ def main(argv: list[str] | None = None) -> None:
                 eb = ((doc.get("synthesis") or {}).get("evidence_balance") or "").strip()
                 if eb:
                     reads[ticker] = eb
+                # ABSENT == the default book, exactly as the model reads it: every dossier
+                # committed before the tag existed is overshoot, which is truthful (the screen was
+                # their only route). Emitted for every name so the shelf never has to guess.
+                sleeves[ticker] = str(doc.get("sleeve") or "overshoot")
     (OUT_DOSS / "index.json").write_text(
-        json.dumps({"tickers": tickers, "labels": labels, "reads": reads}, indent=2))
+        json.dumps({"tickers": tickers, "labels": labels, "reads": reads,
+                    "sleeves": sleeves}, indent=2))
 
     scen_tickers = emit_scenarios()
     mon_days = emit_monitor()
