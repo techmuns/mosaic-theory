@@ -56,8 +56,14 @@ def test_every_sleeve_row_is_complete() -> None:
     import dataclasses
 
     assert sl.SLEEVE_ROWS, "the registry is empty"
-    str_fields = [f.name for f in dataclasses.fields(sl.SLEEVE_ROWS[0])
-                  if f.type in ("str", str)]
+    # UNION of the declared annotation and the runtime value, because either alone leaves a hole:
+    # matching only on the annotation re-introduces a hand-maintained assumption (the literal
+    # spelling "str"), so a field annotated any other way would be SILENTLY skipped — the very
+    # failure this derivation removes; matching only on the runtime value would skip a str-declared
+    # field that a row filled with the wrong type, instead of failing on it.
+    probe = sl.SLEEVE_ROWS[0]
+    str_fields = [f.name for f in dataclasses.fields(probe)
+                  if f.type in ("str", str) or isinstance(getattr(probe, f.name), str)]
     assert len(str_fields) >= 20, (
         f"only {len(str_fields)} string fields discovered ({str_fields}) — the derivation broke "
         f"and this pin is now checking less than it did when it was a hand-written list")
@@ -1174,18 +1180,24 @@ def test_the_log_verdict_cli_help_privileges_no_single_book() -> None:
     known (`Sleeve.twin_help`, rendered into the dossier page's copy-paste command).
 
     Asserted against the REAL parser's formatted help, not the source line, so re-wording or
-    moving the argument cannot quietly slip a book's twin back in."""
+    moving the argument cannot quietly slip a book's twin back in.
+
+    WHITESPACE IS NORMALISED FIRST, and the first cut of this pin was wrong without it: argparse
+    wraps help to the terminal width, so at COLUMNS=50 and 60 the phrase "terminal-decline twin"
+    straddles a line break and a raw substring test PASSES while the overshoot framing is sitting
+    right there. It happened to catch the regression at 80 columns, which is the worst kind of
+    guard — one that works on the machine where it was written."""
     import argparse
 
     from vinci.cli import build_parser
 
     parser = build_parser()
     sub = next(a for a in parser._actions if isinstance(a, argparse._SubParsersAction))
-    help_text = sub.choices["log-verdict"].format_help()
+    help_text = " ".join(sub.choices["log-verdict"].format_help().split())
 
     assert "--twin" in help_text, "the --twin argument is gone from log-verdict"
     for row in sl.SLEEVE_ROWS:
-        assert row.twin_help not in help_text, (
+        assert " ".join(row.twin_help.split()) not in help_text, (
             f"the CLI help hardcodes the {row.key!r} book's twin wording ({row.twin_help!r}). "
             f"argparse cannot know the sleeve here, so naming one book asks every OTHER book's "
             f"verdict to rule out a twin that is not its own.")
