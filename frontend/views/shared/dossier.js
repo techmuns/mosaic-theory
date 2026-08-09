@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -330,6 +330,16 @@ function cardTag(ticker, reads, verdictBy) {
   return v ? verdictTag(v) : leanTag(reads[ticker]);
 }
 
+// WHICH BOOK the name is judged under, on the shelf card. Shown ONLY for a non-default book: a
+// tag on all twelve names would be noise, while its ABSENCE on eleven of them carries the same
+// information. Deliberately NEUTRAL ink like leanTag — the book is context, not a call, and a
+// coloured pill here would let the eye triage the shelf by strategy before reading anything.
+function sleeveTag(sleeve) {
+  const sl = String(sleeve || DEFAULT_SLEEVE);
+  if (sl === DEFAULT_SLEEVE || !Object.hasOwn(SLEEVE_COPY, sl)) return "";
+  return `<span class="ds-lean ds-card-tag" title="this name is judged under the ${escapeHtml(sl)} book — it asks a different question and records a different verdict vocabulary">${escapeHtml(sl)}</span>`;
+}
+
 // The DISPLAY WORD for a verdict of record. Mirrors MachineProposal.action_word on the py side.
 // AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
 //
@@ -367,8 +377,8 @@ function leanTag(eb) {
 }
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
-  const [tickers, scenTickers, reads, led] = await Promise.all([
-    getDossierIndex(), getScenarioIndex(), getMachineReads(), getLedger()]);
+  const [tickers, scenTickers, reads, led, sleeves] = await Promise.all([
+    getDossierIndex(), getScenarioIndex(), getMachineReads(), getLedger(), getSleeves()]);
   // the human's logged verdicts, by ticker — the shelf's tag precedence resolves against these
   const verdictBy = {};
   for (const e of (led && led.entries) || []) if (e && e.ticker) verdictBy[e.ticker] = e;
@@ -398,7 +408,7 @@ async function renderIndex(root, item, frame) {
   const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
-          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}</div>
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}${sleeveTag(sleeves[t])}</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   const dossierPanel = `
@@ -759,9 +769,9 @@ function analysisTier(d, m, card) {
   // it's worth → vs whom → how it's trending → what the street thinks → can it survive → what to
   // verify. Twin: render.py's analysis composition (which also drops its "Mechanical layer"
   // wrapper — a grouping by who PRODUCED the content, which this side never had).
-  return drawdownIdio(m, d.reference_date)              // what broke — and did it fall alone?
+  return drawdownIdio(m, d.reference_date, d.sleeve)   // the question this BOOK asks
     + concentration(m.concentration)                    // business quality — what this IS
-    + synthesis(d.synthesis, m)                         // the argument
+    + synthesis(d.synthesis, m, d.sleeve)               // the argument, framed by its book
     + catalystCalendar(m, card)                         // when reality votes on it
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + evGap(m.ev_gap)                                   // (A2) our leg vs the street
@@ -1024,7 +1034,7 @@ function briefTier(d, verdict, m, card, mark) {
   const parts = openerCard(d, verdict, m, card, mark)
     + whatHappened(m)
     + underwriteDetail(d, verdict, m, card, mark)
-    + briefCase(d.synthesis, m)
+    + briefCase(d.synthesis, m, d.sleeve)
     + financialSnapshot(m) + valuationCard(m);
   return parts.trim() ? parts : "";
 }
@@ -1301,6 +1311,41 @@ const SLEEVE_LEGS = {
   neglect: ["BUY", "AVOID_TERMINAL"],
 };
 const LEDGER_VERDICTS = ["BUY", "AVOID_TERMINAL", "PASS"];   // mirrors the Verdict enum
+// THE PAGE COPY, per book — mirrors vinci/sleeves.py (drawdown_heading, bull_label, bear_label).
+// Same drift discipline as SLEEVE_LEGS: a test derives the expected table from the Python registry
+// and compares, so this copy cannot go stale silently. "What broke" is the right question for a
+// name that broke and the wrong one for a compounder that never did.
+const SLEEVE_COPY = {
+  overshoot: { drawdown: "What broke — and did it fall alone?",
+               bull: "Bull case — the decline is overdone",
+               bear: "Bear case — the decline is real" },
+  quality: { drawdown: "What moved the price — and did it move alone?",
+             bull: "Bull case — the runway outlasts the price",
+             bear: "Bear case — the price already pays for it" },
+  theme: { drawdown: "What moved the basket — and did the members move together?",
+           bull: "Bull case — the driver is real and unpriced",
+           bear: "Bear case — momentum wearing a story" },
+  neglect: { drawdown: "What moved the price — and did it move alone?",
+             bull: "Bull case — the neglect is mechanical",
+             bear: "Bear case — cheap for a reason" },
+};
+// ABSENT and UNKNOWN are different states and must not share a fallback (review #381, and the
+// same distinction deriveProposal already draws). MISSING is the legitimate legacy case — every
+// dossier committed before the tag, plus the sealed FUBO record — and reads as the default book,
+// which is truthful for all of them. A PRESENT but unrecognised value is a corrupt or stale
+// artifact, and answering it with overshoot copy would ask the de-rating question over a page the
+// client was told is something else: precisely the misleading framing this work exists to remove.
+function sleeveCopy(sleeve) {
+  if (sleeve == null || sleeve === "") return SLEEVE_COPY[DEFAULT_SLEEVE];
+  if (Object.hasOwn(SLEEVE_COPY, sleeve)) return SLEEVE_COPY[sleeve];
+  const named = escapeHtml(String(sleeve));
+  return {
+    unknown: true,
+    drawdown: `Unrecognised strategy book '${named}' — this page cannot state its question`,
+    bull: `Case FOR (book '${named}' unrecognised)`,
+    bear: `Case AGAINST (book '${named}' unrecognised)`,
+  };
+}
 const KNOWN_LEANS = ["strongly-bearish", "strongly-bullish", "mixed"];
 const DEFAULT_SLEEVE = "overshoot";
 
@@ -1385,7 +1430,7 @@ function briefSnapshot(d, m) {
 // a card), then top-3 bull / top-3 bear (evidence-weighted, same order as Analysis) + top-3 key
 // unknowns. Labels state the claim, not the house shorthand: "the decline is overdone" /
 // "the decline is real" (was "overshoot" / "terminal"). Full argument lives in Analysis.
-function briefCase(s, m) {
+function briefCase(s, m, sleeve) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
   // (buy-side cover) the decisive question + key unknowns moved to the opener's CRUX block — this
   // card carries the condensed bull/bear alone, so the question renders once per tier.
@@ -1395,8 +1440,8 @@ function briefCase(s, m) {
   const bears = orderPoints(s.bear_points, "bear", decisiveRefs(s, "bear"), dv).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
   return `<div class="card ds-section"><div class="ds-title">The case<span class="ds-route">full argument in Analysis</span></div>
     <div class="brief-case">
-      <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull case — the decline is overdone</div>${bulls}</div>
-      <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear case — the decline is real</div>${bears}</div>
+      <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">${escapeHtml(sleeveCopy(sleeve).bull)}</div>${bulls}</div>
+      <div><div class="ds-title" style="font-size:12px; color:var(--danger);">${escapeHtml(sleeveCopy(sleeve).bear)}</div>${bears}</div>
     </div></div>`;
 }
 
@@ -2103,7 +2148,7 @@ function cleanNote(note) {
 // READ leads, the alone-or-with-market comparison follows DIRECTLY (the card's question), and the
 // 8-K evidence closes as provenance. Revised guidance moved to the street card (it is a guidance
 // fact, not a what-broke fact); the cohort-absence row collapsed to a footnote (idioVsShared).
-function drawdownIdio(m, refDate) {
+function drawdownIdio(m, refDate, sleeve) {
   const dd = drawdownCause(m.drawdown_cause, m.stock_performance, refDate);
   const io = idioVsShared(m.idiosyncratic_vs_shared, m.stock_performance && m.stock_performance.name_symbol);
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
@@ -2111,7 +2156,7 @@ function drawdownIdio(m, refDate) {
     ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
   if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
-  return sec("What broke — and did it fall alone?",
+  return sec(sleeveCopy(sleeve).drawdown,
     "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
     dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
 }
@@ -3831,7 +3876,7 @@ function consensus(cc) {
     seriesTable("Surprise history", cc.surprise_history));
 }
 
-function synthesis(s, m) {
+function synthesis(s, m, sleeve) {
   // one lead line, not a boxed lecture — the full reading guide lives in the Appendix's
   // "How to read this dossier". The fence's substance (no recommendation anywhere, by design;
   // cited is not verified) is stated once there.
@@ -3860,9 +3905,9 @@ function synthesis(s, m) {
   const dv = driverRefs(m);
   return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
     ${s.evidence_balance ? `<div style="margin:6px 0 10px; font-size:13.5px; line-height:1.5;">${machineReadHtml(s.evidence_balance)}</div>` : ""}
-    <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull case — the decline is overdone</div>
+    <div class="ds-title" style="font-size:12px; margin-top:6px;">${escapeHtml(sleeveCopy(sleeve).bull)}</div>
     ${orderPoints(s.bull_points, "bull", decisiveRefs(s, "bull"), dv).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
-    <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear case — the decline is real</div>
+    <div class="ds-title" style="font-size:12px; margin-top:14px;">${escapeHtml(sleeveCopy(sleeve).bear)}</div>
     ${orderPoints(s.bear_points, "bear", decisiveRefs(s, "bear"), dv).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">The decisive question</div>
     <div style="font-size:13.5px; font-weight:600; margin:4px 0 8px;">${escapeHtml(dq.question || DASH)}</div>

@@ -88,5 +88,19 @@
     "UBER": "strongly-bullish \u2014 absolute EBITDA, gross bookings and FCF all compounding while the multiple sits at its own-history floor; GAAP-EPS softness is the lone genuine offset.",
     "VITL": "mixed \u2014 a clean balance sheet and reversible price-gap mechanics offset an ~97% FY26 EBITDA collapse, cash burn, and weakening trial.",
     "VRRM": "mixed \u2014 a large, verified, structural Avis revenue loss offsets a genuinely cash-generative, self-funding, high-margin business trading at a floor multiple."
+  },
+  "sleeves": {
+    "AORT": "overshoot",
+    "BRBR": "overshoot",
+    "CNXC": "overshoot",
+    "EPAM": "overshoot",
+    "FUBO": "overshoot",
+    "IT": "overshoot",
+    "MVST": "overshoot",
+    "NCNO": "overshoot",
+    "SMPL": "overshoot",
+    "UBER": "quality",
+    "VITL": "overshoot",
+    "VRRM": "overshoot"
   }
 }

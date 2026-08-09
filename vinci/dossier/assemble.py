@@ -696,7 +696,10 @@ def assemble_one(
     location = manual.location(ticker)
     # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this
     # and `vinci dossier requirements` can't drift). Empty/partial folder → what's still owed.
-    flags: list[str] = requirements.manifest_flags(bundle, ticker=ticker, location=location)
+    # SLEEVE-AWARE: the quality book needs the Comparable Analysis export its lead exhibit
+    # (implied_valuation) is derived from, while overshoot treats the same file as colour.
+    flags: list[str] = requirements.manifest_flags(bundle, ticker=ticker, location=location,
+                                                   sleeve=fin.sleeve)
     with Store(cfg.db_path) as store:
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),

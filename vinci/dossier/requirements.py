@@ -27,6 +27,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from vinci.dossier.ciq import CiqBundle
+from vinci.sleeves import DEFAULT_SLEEVE
 
 # The documented manual-CIQ root (mirrors :meth:`LocalFolderStore.from_config` — git-ignored
 # ``data/manual/ciq``). Kept as a literal so the manifest is a pure, config-free reference.
@@ -55,6 +56,14 @@ class CiqModuleRequirement(BaseModel, frozen=True):
     granularity: Granularity
     lookback: str  # the duration / lookback the extractors need
     required: bool  # required (mechanical FACTS depend on it) vs optional (synthesis colour only)
+    #: Books that need this export EVEN THOUGH ``required`` is False for the fund at large.
+    #: WHY THIS IS NOT JUST `required=True`: requirement is a property of the QUESTION being asked,
+    #: not of the export. Comparable Analysis colours an overshoot dossier and CARRIES the quality
+    #: book's lead exhibit (`implied_valuation` — "what does today's price already assume"), so the
+    #: same file is optional for one book and load-bearing for another. Flipping the global flag
+    #: would newly flag eleven overshoot names for an export their question does not need, which is
+    #: how a checklist stops being read.
+    required_for_sleeves: tuple[str, ...] = ()
 
     def expected_path(self, ticker: str | None = None) -> str:
         """The folder this export must be placed in — concrete for a ticker, else the template."""
@@ -210,6 +219,11 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         granularity=Granularity.SNAPSHOT,
         lookback="current — the latest comp set (LTM + NTM forward), current-only",
         required=False,
+        # THE QUALITY BOOK'S LEAD EXHIBIT LIVES HERE. Its question is "what does today's price
+        # already assume, and is the runway longer than that" — which is `implied_valuation` plus
+        # the forward ladder. Optional for overshoot (colour); without it a quality verdict has no
+        # evidence for the only thing that book claims.
+        required_for_sleeves=("quality",),
     ),
     CiqModuleRequirement(
         module="Public Company Profile (tearsheet)",
@@ -302,19 +316,31 @@ def module_present(bundle: CiqBundle, req: CiqModuleRequirement) -> bool:
     )
 
 
-def missing_required(bundle: CiqBundle) -> list[CiqModuleRequirement]:
-    """The REQUIRED modules absent from ``bundle`` — the per-module MISSING manifest. Reads
-    :data:`CIQ_MODULES`, so it can never drift from the requirements command. Optional modules are
-    never reported missing (the dossier degrades gracefully without them)."""
-    return [m for m in CIQ_MODULES if m.required and not module_present(bundle, m)]
+def is_required(m: CiqModuleRequirement, sleeve: str = DEFAULT_SLEEVE) -> bool:
+    """Is ``m`` required for a name judged under ``sleeve``?
+
+    Requirement is a property of the QUESTION, not the export: the same Comparable Analysis file is
+    colour for an overshoot dossier and the quality book's lead exhibit. Defaulting to overshoot
+    keeps every existing caller's answer identical."""
+    return m.required or sleeve in m.required_for_sleeves
 
 
-def manifest_flags(bundle: CiqBundle, *, ticker: str, location: str) -> list[str]:
+def missing_required(
+    bundle: CiqBundle, *, sleeve: str = DEFAULT_SLEEVE
+) -> list[CiqModuleRequirement]:
+    """The modules required FOR THIS BOOK that are absent from ``bundle``. Reads
+    :data:`CIQ_MODULES`, so it can never drift from the requirements command. A module optional for
+    this book is never reported missing (the dossier degrades gracefully without it)."""
+    return [m for m in CIQ_MODULES if is_required(m, sleeve) and not module_present(bundle, m)]
+
+
+def manifest_flags(bundle: CiqBundle, *, ticker: str, location: str,
+                   sleeve: str = DEFAULT_SLEEVE) -> list[str]:
     """Assemble-time 'pull CIQ' flags for the MISSING required modules — derived from
     :data:`CIQ_MODULES` (the same definition the requirements command renders). Empty when every
     required module is present. An empty folder yields one summary flag; a partial folder names each
     still-missing module so the human pulls exactly what's left."""
-    missing = missing_required(bundle)
+    missing = missing_required(bundle, sleeve=sleeve)
     if not missing:
         return []
     names = ", ".join(m.module for m in missing)
@@ -379,9 +405,20 @@ def render_checklist(ticker: str | None = None) -> str:
         lines.append(f"  ☐ {m.module}  [{m.granularity.value}; {m.lookback}]")
         lines.append(f"      sheets: {', '.join(m.sheets) or '(text document)'}")
         lines.append(f"      used for: {m.used_for}")
+    # PER-BOOK REQUIREMENTS, stated where the human reads the checklist. Left implicit, the
+    # quality book's lead exhibit sits under a heading that says "the dossier still assembles
+    # without it" — true, and useless: it assembles WITHOUT THE ONE THING that book claims.
+    conditional = [m for m in CIQ_MODULES if not m.required and m.required_for_sleeves]
+    if conditional:
+        lines += ["", "ALSO REQUIRED FOR CERTAIN BOOKS (sleeve-conditional):"]
+        for m in conditional:
+            books = " / ".join(sorted(m.required_for_sleeves))
+            lines.append(f"  ☐ {m.module}  — REQUIRED for: {books}")
+            lines.append("      why: optional for the fund at large, but this book's decision "
+                         "rests on it; a verdict without it has no evidence for its own claim.")
     lines += ["", "OPTIONAL (colours the synthesis only — the dossier still assembles without it):"]
     for m in CIQ_MODULES:
-        if m.required:
+        if m.required or m.required_for_sleeves:
             continue
         lines.append(f"  ☐ {m.module}  [{m.granularity.value}; {m.lookback}]")
         lines.append(f"      used for: {m.used_for}")

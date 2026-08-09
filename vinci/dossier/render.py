@@ -32,6 +32,7 @@ from vinci.dossier.schemas import (
     StockInfo,
 )
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
+from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, require_sleeve
 
 if TYPE_CHECKING:  # typing only — a RUNTIME import would cycle (scenarios → dossier.midcycle)
     from vinci.scenarios import ScenarioRecord
@@ -2088,8 +2089,9 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
         out.extend(cite(p) for p in pts)
         out.append("")
 
-    ordered("Bull case — the decline is overdone", s.bull_points, "bull")
-    ordered("Bear case — the decline is real", s.bear_points, "bear")
+    _sl = BY_KEY[d.sleeve]
+    ordered(_sl.bull_label, s.bull_points, "bull")
+    ordered(_sl.bear_label, s.bear_points, "bear")
     out += ["### Decisive question", f"**{s.decisive_question.question}**", ""]
     plain("…evidence for", s.decisive_question.evidence_for)
     plain("…evidence against", s.decisive_question.evidence_against)
@@ -2201,7 +2203,7 @@ def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
     return out
 
 
-def _brief_case_lines(s: Any, mech: Any) -> list[str]:
+def _brief_case_lines(s: Any, mech: Any, *, sleeve: str = DEFAULT_SLEEVE) -> list[str]:
     """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted hybrid order as
     Analysis, so the Brief's three ARE the lead of the full argument). The decisive question +
     unknowns live in the cover's crux block; the FULL synthesis stays in the Analysis tier."""
@@ -2217,8 +2219,9 @@ def _brief_case_lines(s: Any, mech: Any) -> list[str]:
                                   driver_refs=driver_refs)
         return [f"- {p.claim}{_cite(p.source_ref)}" for p, *_ in ordered[:3]]
 
-    out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points, "bull") or ["- —"])]
-    out += ["_Bear case — the decline is real:_", *(top3(s.bear_points, "bear") or ["- —"])]
+    _sl = BY_KEY[require_sleeve(sleeve, where="render._brief_case_lines")]
+    out += [f"_{_sl.bull_label}:_", *(top3(s.bull_points, "bull") or ["- —"])]
+    out += [f"_{_sl.bear_label}:_", *(top3(s.bear_points, "bear") or ["- —"])]
     # (buy-side cover) key unknowns moved to the cover's crux block — no second copy here
     out.append("")
     return out
@@ -2938,7 +2941,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
-    out += _brief_case_lines(s, d.mechanical)
+    out += _brief_case_lines(s, d.mechanical, sleeve=d.sleeve)
     # 5 — FINANCIAL SNAPSHOT: the compact table. The per-period return-ratios table moved to the
     # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
     out.append("## Financial snapshot")
@@ -3061,8 +3064,8 @@ def _midcycle_section(mc: Any) -> list[str]:
     return out
 
 
-def _drawdown_idio_lines(m: MechanicalLayer) -> list[str]:
-    """(D1·§1) "What broke — and did it fall alone?" — the drawdown READ (per-gap ledger when the
+def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) -> list[str]:
+    """(D1·§1) The drawdown READ — per-gap ledger when the
     shape is discrete), the market comparison, the graph cohort, and the 8-K evidence grouped by
     accession. Extracted verbatim from render_markdown (2026-07-27) so the analysis tier
     COMPOSES like its JS twin instead of running inline — no behaviour change.
@@ -3070,7 +3073,12 @@ def _drawdown_idio_lines(m: MechanicalLayer) -> list[str]:
     out: list[str] = []
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
-    out.append("## What broke — and did it fall alone?")
+    # THE QUESTION THE PAGE ASKS, per book. "What broke" is the right question for a name that
+    # broke and the WRONG one for a compounder that never did — the defect this build removes. The
+    # SECTION is unchanged: the gap-downs and the idiosyncratic-vs-shared split are real facts
+    # about any name's price path; only the heading claimed something about the name.
+    heading = BY_KEY[require_sleeve(sleeve, where="render._drawdown_idio_lines")].drawdown_heading
+    out.append(f"## {heading}")
     # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
     # move (derived from the daily perf series; omitted, never estimated, when the committed series
     # can't carry it), cause. One gap / unparseable shape → the one-line fact.
@@ -3624,7 +3632,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # never had it, per-fact source-binding already carries provenance precisely, and the
     # three tiers already separate decide/argue/prove), so the sequence below reads as the
     # questions a decision asks, in order. Twin: dossier.js analysisTier().
-    out += _drawdown_idio_lines(m)
+    out += _drawdown_idio_lines(m, sleeve=d.sleeve)
     out += _business_quality_lines(m)
     out += _argument_lines(d, dev=dev)
     out += _catalyst_calendar_lines(d, card)

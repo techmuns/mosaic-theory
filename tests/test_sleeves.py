@@ -723,3 +723,173 @@ def test_a_dormant_sleeve_proposes_nothing_and_cannot_reach_the_ledger() -> None
     assert sl.BY_KEY["neglect"].verdicts == sl.BY_KEY["overshoot"].verdicts, (
         "neglect no longer shares overshoot's labels — this test's whole point was that identical "
         "labels are not an activation signal; re-check the gate if the registry changed")
+
+
+# ------------------------------------------------------------------ the PAGE side (PR-2c)
+
+
+def test_the_page_asks_each_books_own_question() -> None:
+    """THE DEFECT, AT THE SURFACE A READER MEETS. "What broke — and did it fall alone?" is the right
+    question for a name that broke and the WRONG one for a compounder that never did — a megacap
+    was being asked it because the heading was hardcoded.
+
+    THE SECTION IS UNCHANGED, only the heading: the gap-downs and the idiosyncratic-vs-shared split
+    are real facts about ANY name's price path. It was the heading that made a claim about the
+    name, which is why this is a copy change and not a data one."""
+    from vinci.dossier.render import _drawdown_idio_lines
+    from vinci.dossier.schemas import Dossier
+
+    committed = sorted((SRC.parents[1] / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this worktree")
+    mech = Dossier.model_validate_json(committed[0].read_text()).mechanical
+    for row in sl.SLEEVE_ROWS:
+        head = _drawdown_idio_lines(mech, sleeve=row.key)[0]
+        assert head == f"## {row.drawdown_heading}", (
+            f"{row.key}: the page asks {head!r}, not its own question")
+    # and the live book's heading is the exact pre-existing string
+    assert sl.BY_KEY["overshoot"].drawdown_heading == "What broke — and did it fall alone?"
+
+
+def test_the_js_page_copy_mirrors_the_python_registry() -> None:
+    """THE TWIN RULE on the page copy — the second genuine duplicate, pinned the same way as the
+    proposal legs: the expectation is DERIVED from the registry, so adding a sleeve reddens here
+    until the mirror is updated rather than letting the two renderers drift apart silently."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"const SLEEVE_COPY = \{(.*?)\n\};", js, re.S)
+    assert m, "the JS SLEEVE_COPY mirror is gone — the web page lost its per-book headings"
+    body = m.group(1)
+    for row in sl.SLEEVE_ROWS:
+        for field in (row.drawdown_heading, row.bull_label, row.bear_label):
+            assert field in body, (
+                f"{row.key}: the JS page copy is missing {field!r} — the md and web renderers "
+                f"would print different questions for the same book")
+    # the hardcoded overshoot strings must be GONE from the render paths
+    assert "the decline is overdone</div>" not in js, (
+        "a hardcoded case label survives in the JS — it would print over every other book")
+
+
+def test_every_committed_page_renders_under_its_own_book() -> None:
+    """E2E ON THE LIVING ARTIFACTS, phrasing-independent: each committed page must carry the
+    heading its OWN sleeve declares, and none of the others'. This is the pin that would have
+    caught a followed name inheriting the overshoot question — the exact live defect."""
+    from vinci.dossier.schemas import Dossier
+
+    root = SRC.parents[1] / "data" / "dossiers"
+    if not root.is_dir():
+        pytest.skip("no committed dossiers in this worktree")
+    seen = 0
+    for f in sorted(root.glob("*/dossier.json")):
+        md = (f.parent / "dossier.md")
+        if not md.exists():
+            continue
+        d = Dossier.model_validate_json(f.read_text())
+        row, text = sl.BY_KEY[d.sleeve], md.read_text()
+        assert f"## {row.drawdown_heading}" in text, (
+            f"{f.parent.name} ({d.sleeve}) does not ask its own book's question")
+        for other in sl.SLEEVE_ROWS:
+            if other.drawdown_heading != row.drawdown_heading:
+                assert f"## {other.drawdown_heading}" not in text, (
+                    f"{f.parent.name} ({d.sleeve}) carries {other.key}'s question")
+        seen += 1
+    assert seen, "no committed page was checked"
+
+
+# ------------------------------------------------------------------ the FRONTEND surface
+
+
+def test_the_committed_index_tells_the_shelf_which_book_each_name_is_in() -> None:
+    """THE SHELF HAD NO WAY TO KNOW. The per-name mirror carries `sleeve` for free (it is a byte
+    copy of the source), but the INDEX is what the grid reads — so a quality name was
+    indistinguishable from an overshoot one until you opened it, and its different question and
+    BUY/PASS vocabulary then arrived unexplained.
+
+    Derived from the committed dossiers rather than hardcoded, so it stays silent as names are
+    added and still reddens if the index and the artifacts disagree."""
+    import json
+
+    root = SRC.parents[1]
+    idx_path = root / "frontend" / "dossiers" / "index.json"
+    if not idx_path.exists():
+        pytest.skip("no committed dossier index in this worktree")
+    idx = json.loads(idx_path.read_text())
+    assert "sleeves" in idx, "the index lost its sleeve map — the shelf cannot label a book"
+    for t in idx["tickers"]:
+        src = root / "data" / "dossiers" / t / "dossier.json"
+        if not src.exists():
+            continue
+        want = json.loads(src.read_text()).get("sleeve", sl.DEFAULT_SLEEVE)
+        assert idx["sleeves"].get(t) == want, (
+            f"{t}: the index says {idx['sleeves'].get(t)!r} but the dossier says {want!r}")
+        assert idx["sleeves"][t] in sl.SLEEVES
+
+
+def test_the_shelf_tags_only_the_non_default_book_and_never_in_colour() -> None:
+    """TWO DELIBERATE CHOICES, pinned so they are decisions rather than drift.
+
+    ONLY the non-default book is tagged: a label on every name is noise, and its ABSENCE on the
+    overshoot majority carries the same information. And the tag is NEUTRAL ink — the book is
+    context, not a call. A coloured pill would let the eye triage the shelf by strategy before
+    reading anything, which is the same anchoring the sealed proposal exists to prevent (the
+    existing `leanTag` guard makes exactly this argument for the machine's lean)."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"function sleeveTag\(sleeve\) \{(.*?)\n\}", js, re.S)
+    assert m, "sleeveTag() is gone — the shelf stopped saying which book a name is in"
+    body = m.group(1)
+    assert "DEFAULT_SLEEVE" in body and 'return ""' in body, (
+        "sleeveTag no longer suppresses the default book — every card would carry a tag")
+    for banned in ("pill", "--danger", "--live", "--pos-text", "buy", "avoid"):
+        assert banned not in body, (
+            f"sleeveTag uses {banned!r} — the shelf would triage by strategy in COLOUR before a "
+            f"single fact is read")
+    assert "ds-lean" in body, "the tag lost the neutral class leanTag uses"
+
+
+def test_the_web_page_refuses_to_frame_an_unknown_sleeve_as_overshoot() -> None:
+    """REVIEW FINDING (#381). `sleeveCopy` fell back to overshoot copy for ANY value it did not
+    recognise, so a corrupt or stale artifact carrying an unknown sleeve was rendered asking the
+    de-rating question and labelling its cases as an overshoot — the exact misleading framing this
+    work removes, reached through the error path instead of the default one.
+
+    ABSENT AND UNKNOWN ARE DIFFERENT STATES. Missing is the legitimate legacy case (every dossier
+    committed before the tag, plus the sealed FUBO record) and truthfully reads as the default
+    book. A PRESENT unrecognised value is a defect and now says so — matching the fail-honest
+    handling `deriveProposal` already had.
+
+    EXECUTED, not grepped: the real resolver is lifted out of the module and run, so this asserts
+    what a browser would actually render rather than that some source text is present."""
+    import json
+    import re
+    import subprocess
+
+    js_path = SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js"
+    js = js_path.read_text()
+    parts = [
+        re.search(r'const DEFAULT_SLEEVE = "[^"]+";', js).group(0),
+        re.search(r"const SLEEVE_COPY = \{.*?\n\};", js, re.S).group(0),
+        "const escapeHtml = (x) => String(x);",
+        re.search(r"function sleeveCopy\(sleeve\) \{.*?\n\}", js, re.S).group(0),
+        "const out = {};",
+        "for (const v of [null, '', 'quality', 'momentum']) out[String(v)] = sleeveCopy(v);",
+        "console.log(JSON.stringify(out));",
+    ]
+    proc = subprocess.run(["node", "--input-type=module", "-e", "\n".join(parts)],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        pytest.skip(f"node unavailable or module changed shape: {proc.stderr[:120]}")
+    got = json.loads(proc.stdout)
+
+    overshoot_q = sl.BY_KEY[sl.DEFAULT_SLEEVE].drawdown_heading
+    assert got["null"]["drawdown"] == overshoot_q, "absent sleeve must read as the default book"
+    assert got[""]["drawdown"] == overshoot_q, "blank sleeve must read as the default book"
+    assert got["quality"]["drawdown"] == sl.BY_KEY["quality"].drawdown_heading
+    unknown = got["momentum"]
+    assert unknown.get("unknown") is True, "an unrecognised sleeve is not flagged as unknown"
+    assert unknown["drawdown"] != overshoot_q, (
+        "an UNRECOGNISED sleeve is rendered with the overshoot question — the page would ask what "
+        "broke about a name the client was told is a different book")
+    assert "momentum" in unknown["drawdown"], "the unknown state does not name the bad value"
