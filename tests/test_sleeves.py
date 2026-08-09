@@ -99,6 +99,40 @@ def test_require_sleeve_accepts_every_defined_key_and_trims() -> None:
         assert sl.require_sleeve(f"  {key}  ", where="t") == key
 
 
+def test_the_persisted_model_refuses_an_unlisted_sleeve() -> None:
+    """REVIEW FINDING (PR-1a self-review). The registry validated the followed.json EDGE, but
+    `Dossier.sleeve` was a bare `str` — so any OTHER writer could persist an unlisted strategy into
+    a committed artifact, and a reader would meet a sleeve no registry row defines with no framing
+    to apply. Edge-only validation guards one writer; the MODEL guards every writer, which is why
+    `ScenarioInput.bear_basis` validates on the model rather than at its callers.
+
+    The legacy case is pinned beside it: a dossier that OMITS the field — every artifact committed
+    before the tag, and the sealed FUBO record that must not be rewritten — still loads and reads
+    as `overshoot`, which is truthful for all of them since the screen was their only route.
+    CORPUS BEFORE SYNTHETIC: the base document is a REAL committed dossier, not a dict hand-rolled
+    to the shape this test wants — a fixture built to fit would have let the field's own model
+    dictate what "valid" means, and `MechanicalLayer` alone has a dozen required blocks."""
+    import json
+
+    from pydantic import ValidationError
+
+    from vinci.dossier.schemas import Dossier
+
+    committed = sorted((SRC.parents[1] / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this worktree")
+    base = json.loads(committed[0].read_text())
+    base.pop("sleeve", None)
+
+    for bad in ("momentum", "", "   ", "OVERSHOOT", "Quality"):
+        with pytest.raises(ValidationError):
+            Dossier.model_validate({**base, "sleeve": bad})
+    for good in sorted(sl.SLEEVES):
+        assert Dossier.model_validate({**base, "sleeve": good}).sleeve == good
+    assert Dossier.model_validate(base).sleeve == sl.DEFAULT_SLEEVE, (
+        "a dossier committed before the tag existed must still load, reading as the default")
+
+
 def test_the_registry_concludes_nothing_and_reads_no_returns() -> None:
     """THE LINE THAT MUST NOT BLUR (the ranker/themes AST-guard class, applied here). A sleeve is a
     VOCABULARY — it says which question to ask, never what the answer is. If this module ever
