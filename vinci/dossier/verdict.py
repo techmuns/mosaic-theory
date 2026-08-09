@@ -5,9 +5,12 @@ the verdict of record (logged via the ledger CLI, which seals the proposal besid
 hold the discipline:
 
 1. The proposal is a FACE-VALIDITY-FROZEN mapping over the synthesis's committed evidence lean
-   (``evidence_balance``) — the three rows in ``_PROPOSAL_BY_LEAN``, set by structure and NEVER
-   outcome-tuned: no code path reads forward returns when setting this mapping (the tuning
-   guardrail), so the proposal is exactly as disciplined as the lean it derives from.
+   (``evidence_balance``) — three rows, set by structure and NEVER outcome-tuned: no code path
+   reads forward returns when setting this mapping (the tuning guardrail), so the proposal is
+   exactly as disciplined as the lean it derives from. Since PR-2b the mapping is PER BOOK and
+   DERIVED from the sleeve's declared legs (`vinci/sleeves.py`), so its SHAPE is frozen once while
+   the labels follow the book — `quality` proposes PASS where `overshoot` proposes AVOID_TERMINAL,
+   because "terminal decline" is not what a PASS records.
 2. The LLM still emits NO verdict field (``Synthesis`` is unchanged; the no-conclusion schema pin
    stands). The conclusion is DERIVED here, in plain code, from the lean LABEL — never free-written
    by the model. ``mixed`` proposes NOTHING: a genuinely two-sided read is where the human's
@@ -26,6 +29,7 @@ import re
 from dataclasses import dataclass
 
 from vinci.schemas.ledger import Verdict
+from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE
 
 # "<lean> — <reason>": em/en dash or hyphen separator, whitespace REQUIRED after it — so the
 # hyphen inside "strongly-bearish" never splits the label. Mirrors dossier.js machineReadHtml().
@@ -40,15 +44,44 @@ def split_lean(evidence_balance: str) -> tuple[str, str] | None:
     return m.group(1).strip(), m.group(2).strip()
 
 
-# The face-validity-frozen mapping (2026-07-13 pivot) — the bear case IS the terminal case in this
-# dossier's framing, so a committed bearish lean proposes AVOID_TERMINAL; a committed bullish lean
-# proposes BUY; ``mixed`` proposes nothing (None). Any other label is UNRECOGNIZED → no proposal,
-# fail-honest — never a guessed direction.
-_PROPOSAL_BY_LEAN: dict[str, Verdict | None] = {
-    "strongly-bearish": Verdict.AVOID_TERMINAL,
-    "strongly-bullish": Verdict.BUY,
-    "mixed": None,
-}
+# THE FACE-VALIDITY-FROZEN MAPPING (2026-07-13 pivot), now per BOOK — three rows, still frozen.
+#
+# IT IS DERIVED FROM THE SLEEVE'S OWN LEGS, NOT A SECOND TABLE. A book already declares
+# ``verdicts = (long, measured-against)`` in the registry, and the mapping was only ever "the
+# bullish lean proposes the long leg, the bearish lean proposes its twin". Written as a per-sleeve
+# dict it would be a DUAL WRITE — the shape this repo refuses — and adding a sleeve would mean
+# remembering to add its mapping row or silently getting the wrong one. Derived, sleeve N+1 needs
+# nothing here at all.
+#
+# THE SHAPE IS WHAT IS FROZEN, and it is unchanged: bullish → long, bearish → twin, ``mixed`` →
+# NOTHING (a two-sided read is where the human's discrimination is the product, and a coin-flip
+# would only anchor it). No code path reads forward returns to set it. Only the LABELS vary, and
+# they vary because "terminal decline" is not what a PASS records.
+_LEAN_BULLISH = "strongly-bullish"
+_LEAN_BEARISH = "strongly-bearish"
+_LEAN_MIXED = "mixed"
+_KNOWN_LEANS = frozenset({_LEAN_BULLISH, _LEAN_BEARISH, _LEAN_MIXED})
+
+
+def _legs(sleeve: str) -> tuple[Verdict, Verdict] | str:
+    """The sleeve's (long, twin) legs as Verdict members, or the REASON there are none.
+
+    TWO DIFFERENT ABSENCES, AND THEY MUST NOT SHARE A SENTENCE — found by running it. A book whose
+    labels are not ledger verdicts (``theme`` records RATIFIED / NOT-RATIFIED in its OWN
+    append-only ratification ledger) legitimately has no proposal to make here. An UNKNOWN sleeve
+    is a typo or a stale artifact. The first cut reported both as "records no ledger verdicts",
+    which states something FALSE about the fund's design for the second — the same class as a guard
+    that refuses a value and reports it missing, where one of the two has to be a lie.
+
+    Returns the reason rather than raising: this is on the RENDER path, and a page that cannot be
+    drawn because its sleeve is misspelled is worse than a page that says so."""
+    row = BY_KEY.get(sleeve)
+    if row is None:
+        return f"unknown sleeve {sleeve!r} — no proposal (fail-honest)"
+    if not set(row.verdicts) <= {v.value for v in Verdict}:
+        return (f"sleeve {sleeve!r} records no ledger verdicts — no proposal "
+                f"(it validates in its own ledger)")
+    return Verdict(row.verdicts[0]), Verdict(row.verdicts[1])
 
 
 @dataclass(frozen=True)
@@ -70,8 +103,12 @@ class MachineProposal:
         return "AVOID" if self.action is Verdict.AVOID_TERMINAL else self.action.value
 
 
-def derive_proposal(evidence_balance: str | None) -> MachineProposal:
-    """The deterministic proposal — a frozen dict lookup over the lean LABEL, nothing more."""
+def derive_proposal(
+    evidence_balance: str | None, *, sleeve: str = DEFAULT_SLEEVE
+) -> MachineProposal:
+    """The deterministic proposal — the lean LABEL against the sleeve's own legs, nothing more.
+
+    ``sleeve`` defaults to overshoot so every pre-registry caller keeps the identical mapping."""
     if not evidence_balance or not evidence_balance.strip():
         return MachineProposal(None, None, None, "no machine read on this dossier")
     parts = split_lean(evidence_balance)
@@ -79,11 +116,14 @@ def derive_proposal(evidence_balance: str | None) -> MachineProposal:
         return MachineProposal(None, None, None, "machine read did not parse — no proposal")
     label, reason = parts
     key = re.sub(r"\s+", "-", label.strip().lower())  # "Strongly bearish" → "strongly-bearish"
-    if key not in _PROPOSAL_BY_LEAN:
+    if key not in _KNOWN_LEANS:
         return MachineProposal(
             None, label, reason, f"unrecognized lean {label!r} — no proposal (fail-honest)"
         )
-    action = _PROPOSAL_BY_LEAN[key]
-    if action is None:
+    if key == _LEAN_MIXED:
         return MachineProposal(None, label, reason, "evidence two-sided (mixed) — the human's call")
+    legs = _legs(sleeve)
+    if isinstance(legs, str):                      # the reason there are no legs, stated verbatim
+        return MachineProposal(None, label, reason, legs)
+    action = legs[0] if key == _LEAN_BULLISH else legs[1]
     return MachineProposal(action, label, reason, f"derived from the committed lean {label!r}")

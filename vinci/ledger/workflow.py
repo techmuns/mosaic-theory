@@ -52,11 +52,14 @@ def _require_verdict_in_sleeve(
     THE PROPOSAL IS CHECKED TOO, and that half is subtler than the verdict half. ``disposition`` is
     stamped by comparing the human verdict to the machine proposal, so a proposal drawn from
     ANOTHER book's vocabulary does not merely look odd — it makes the comparison meaningless and
-    seals OVERRIDDEN onto a row where the machine and the human may well have agreed. The
-    proposal mapping is still global today (``strongly-bearish`` → ``AVOID_TERMINAL`` for every
-    name); the per-sleeve mapping lands in PR-2b. Until then a quality name whose dossier leans
-    bearish cannot be logged, and saying so out loud is the honest answer — the alternative is a
-    disagreement statistic that measures a vocabulary mismatch."""
+    seals OVERRIDDEN onto a row where the machine and the human may well have agreed.
+
+    SINCE PR-2b THE MAPPING IS PER-BOOK, so this no longer fires on the normal path: a quality
+    dossier's bearish lean proposes PASS, which IS in quality's vocabulary. The check STAYS because
+    it guards the join rather than the mapping — a caller passing a proposal sealed under a
+    different sleeve than the row it is writing (a stale artifact, a re-tagged name, a future
+    caller that reads the two from different places) would still corrupt the disposition, and that
+    is a class the mapping cannot close from its own side."""
     if sleeve is None:
         return                                   # legacy/untagged: the pre-sleeve vocabulary holds
     from vinci.sleeves import BY_KEY

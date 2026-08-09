@@ -2558,13 +2558,28 @@ def test_web_brief_proposal_mirror_static() -> None:
     reproduce). Node-free source pins; the mapping is OUR frozen code, never LLM."""
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function deriveProposal" in src
-    assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
-    assert '"mixed": null' in src  # two-sided → NO proposal
+    # PER-BOOK SINCE PR-2b, and the expected table is DERIVED FROM THE PYTHON REGISTRY rather than
+    # transcribed here. The JS cannot import `vinci.sleeves`, so its `SLEEVE_LEGS` is a genuine
+    # second copy — the drift risk is real, and a hand-typed expectation in this test would be a
+    # THIRD copy rather than a check on the second. Deriving it means adding a sleeve reddens here
+    # until the mirror is updated, which is the only version that measures anything.
+    import re as _re
+
+    from vinci import sleeves as _sl
+
+    m = _re.search(r"const SLEEVE_LEGS = \{(.*?)\n\};", src, _re.S)
+    assert m, "the JS SLEEVE_LEGS mirror is gone — deriveProposal has no legs to map onto"
+    js_legs = {k: (long, short) for k, long, short in
+               _re.findall(r'(\w+):\s*\["([^"]+)",\s*"([^"]+)"\]', m.group(1))}
+    py_legs = {row.key: tuple(row.verdicts) for row in _sl.SLEEVE_ROWS}
+    assert js_legs == py_legs, (
+        f"the JS proposal mirror drifted from the Python registry:\n  js={js_legs}\n  py={py_legs}")
+    assert "mixed" in src  # two-sided → NO proposal
     # (review) ONE shared JS lean parser (splitLean) — machineReadHtml + deriveProposal both call it
     assert "function splitLean" in src
     assert src.count(r"[A-Za-z\- ]*?") == 1, "the lean regex must live in ONE parser (splitLean)"
     # (review) Object.hasOwn, not `key in` — `in` walks Object.prototype (a parity break vs Python)
-    assert "Object.hasOwn(PROPOSAL_BY_LEAN" in src and "key in PROPOSAL_BY_LEAN" not in src
+    assert "Object.hasOwn(SLEEVE_LEGS" in src and "key in SLEEVE_LEGS" not in src
     # NO proposal surface on the web brief — no slot, no sealed-note, no reveal gate
     assert 'class="brief-proposal"' not in src and "propSlot" not in src
     assert "Machine proposal" not in src

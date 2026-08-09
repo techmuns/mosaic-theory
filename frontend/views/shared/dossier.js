@@ -1288,20 +1288,49 @@ function machineReadHtml(eb) {
 // never the LLM. "mixed" proposes NOTHING (a two-sided read is the human's call — no coin-flip);
 // an absent/unparseable/unrecognized read proposes nothing, fail-honest. The human's logged
 // confirm/override (the ledger) is the verdict of record. AVOID_TERMINAL displays as AVOID.
-const PROPOSAL_BY_LEAN = { "strongly-bearish": "AVOID", "strongly-bullish": "BUY", "mixed": null };
-function deriveProposal(eb) {
+// PER BOOK SINCE PR-2b. Each sleeve declares (long leg, the leg it is measured against) and the
+// mapping is DERIVED from that pair — bullish proposes the long leg, bearish proposes its twin —
+// so there is no second table to keep in step and sleeve N+1 needs nothing here. `quality` proposes
+// PASS and not AVOID_TERMINAL because "terminal decline" is not what a PASS records.
+// MIRRORS vinci/sleeves.py SLEEVE_ROWS[*].verdicts; a test derives the expected table from the
+// Python registry and compares, so this copy cannot drift silently.
+const SLEEVE_LEGS = {
+  overshoot: ["BUY", "AVOID_TERMINAL"],
+  quality: ["BUY", "PASS"],
+  theme: ["RATIFIED", "NOT-RATIFIED"],
+  neglect: ["BUY", "AVOID_TERMINAL"],
+};
+const LEDGER_VERDICTS = ["BUY", "AVOID_TERMINAL", "PASS"];   // mirrors the Verdict enum
+const KNOWN_LEANS = ["strongly-bearish", "strongly-bullish", "mixed"];
+const DEFAULT_SLEEVE = "overshoot";
+
+function deriveProposal(eb, sleeve) {
   if (!eb || !String(eb).trim()) return { action: null, note: "no machine read on this dossier" };
   const p = splitLean(eb);
   if (!p) return { action: null, note: "machine read did not parse — no proposal" };
   const label = p[0], reason = p[1];
   const key = label.toLowerCase().replace(/\s+/g, "-");
-  // Object.hasOwn, NOT `key in` — `in` walks Object.prototype, so lean 'constructor'/'toString'
-  // would falsely resolve to a garbage action (parity break vs Python's plain-dict membership).
-  if (!Object.hasOwn(PROPOSAL_BY_LEAN, key)) {
+  if (!KNOWN_LEANS.includes(key)) {
     return { action: null, lean: label, note: `unrecognized lean '${label}' — no proposal (fail-honest)` };
   }
-  const action = PROPOSAL_BY_LEAN[key];
-  if (!action) return { action: null, lean: label, note: "evidence two-sided (mixed) — the human's call" };
+  if (key === "mixed") {
+    return { action: null, lean: label, note: "evidence two-sided (mixed) — the human's call" };
+  }
+  // Object.hasOwn, NOT `key in` — `in` walks Object.prototype, so a sleeve named
+  // 'constructor'/'toString' would falsely resolve to a garbage pair (parity break vs Python's
+  // plain-dict membership, which is why the original mapping used it too).
+  const sl = sleeve || DEFAULT_SLEEVE;
+  // TWO DIFFERENT ABSENCES, never one sentence (parity with _legs on the py side): an UNKNOWN
+  // sleeve is a typo, while a book with non-ledger labels legitimately validates in its own ledger.
+  if (!Object.hasOwn(SLEEVE_LEGS, sl)) {
+    return { action: null, lean: label, note: `unknown sleeve '${sl}' — no proposal (fail-honest)` };
+  }
+  const legs = SLEEVE_LEGS[sl];
+  if (!legs.every((v) => LEDGER_VERDICTS.includes(v))) {
+    return { action: null, lean: label,
+             note: `sleeve '${sl}' records no ledger verdicts — no proposal (it validates in its own ledger)` };
+  }
+  const action = key === "strongly-bullish" ? legs[0] : legs[1];
   return { action, lean: label, reason };
 }
 

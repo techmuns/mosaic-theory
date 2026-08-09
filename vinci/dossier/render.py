@@ -2932,7 +2932,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         out += scen
         if show_proposal:
             out += [_machine_proposal_md(
-                derive_proposal(s.evidence_balance if s is not None else None)), ""]
+                derive_proposal(s.evidence_balance if s is not None else None,
+                                sleeve=d.sleeve)), ""]
         out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.

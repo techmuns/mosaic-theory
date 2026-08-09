@@ -44,6 +44,7 @@ from vinci.resolver import EntityResolver, ResolutionError
 from vinci.schemas.ledger import ORIGIN_FOLLOWED, ORIGIN_SCREEN, Confidence, Verdict
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
+from vinci.sleeves import DEFAULT_SLEEVE
 from vinci.store import Store
 from vinci.themes.assay import PriceCloseFn
 from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
@@ -932,7 +933,10 @@ def _sealed_proposal(
     try:
         doc = json.loads(path.read_text())
         synth = doc.get("synthesis") or {}
-        prop = derive_proposal(synth.get("evidence_balance"))
+        # THE BOOK COMES FROM THE ARTIFACT, never from a flag: the proposal must be derived under
+        # the same framing the synthesis was written under, and the dossier is what records it.
+        prop = derive_proposal(synth.get("evidence_balance"),
+                               sleeve=str(doc.get("sleeve") or DEFAULT_SLEEVE))
         stamp = doc.get("assembled_at")
         assembled = datetime.fromisoformat(stamp) if stamp else None
     except (ValueError, OSError) as exc:  # corrupt/unreadable artifact → loud, actionable

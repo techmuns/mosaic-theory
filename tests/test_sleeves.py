@@ -604,3 +604,81 @@ def test_the_llm_log_records_the_prompt_that_was_actually_sent() -> None:
     seen.clear()
     syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="overshoot")
     assert q != str(seen["system"]), "the two books sent the same prompt — nothing was proven"
+
+
+# ------------------------------------------------------------------ the PROPOSAL side (PR-2b)
+
+
+def test_the_proposal_maps_to_each_books_own_legs() -> None:
+    """THE SAME LEAN, A DIFFERENT PROPOSAL PER BOOK — and overshoot's is unchanged.
+
+    The mapping is DERIVED from `Sleeve.verdicts` rather than a per-sleeve table: a book already
+    declares (long, measured-against), and the rule was only ever "bullish proposes the long leg,
+    bearish proposes its twin". A second table would be a dual write, and adding a sleeve would
+    mean remembering to add its row or silently getting the wrong one.
+
+    THE SHAPE IS WHAT IS FROZEN and it has not moved: bullish → long, bearish → twin, mixed →
+    NOTHING. Only the labels follow the book."""
+    from vinci.dossier.verdict import derive_proposal
+
+    # the LIVE book, unchanged — every committed row was sealed under exactly this
+    assert derive_proposal("strongly-bearish — x").action_word == "AVOID"
+    assert derive_proposal("strongly-bullish — x").action_word == "BUY"
+    assert derive_proposal("mixed — x").action is None
+
+    # the quality book proposes its OWN twin, never "terminal"
+    assert derive_proposal("strongly-bearish — x", sleeve="quality").action_word == "PASS"
+    assert derive_proposal("strongly-bullish — x", sleeve="quality").action_word == "BUY"
+    assert derive_proposal("mixed — x", sleeve="quality").action is None, (
+        "a two-sided read proposed something — mixed must propose NOTHING in every book")
+
+    # derived, so it holds for every ledger-active book without a table
+    for row in sl.SLEEVE_ROWS:
+        if not row.ledger_active:
+            continue
+        assert derive_proposal("strongly-bullish — x", sleeve=row.key).action_word is not None
+        got = derive_proposal("strongly-bearish — x", sleeve=row.key).action
+        assert got is not None and got.value == row.verdicts[1], (
+            f"{row.key}: the bearish lean did not propose the book's own twin")
+
+
+def test_an_unknown_sleeve_and_a_non_ledger_book_give_different_reasons() -> None:
+    """FOUND BY RUNNING IT, not by reading it. The first cut reported both as "records no ledger
+    verdicts", which is TRUE of `theme` (it validates in its own ratification ledger) and FALSE of
+    a typo — it would state something about the fund's design that is not so. Same class as a guard
+    that refuses a value and reports it missing: one of the two has to be a lie.
+
+    Neither raises: this is on the RENDER path, and a page that cannot be drawn because its sleeve
+    is misspelled is worse than a page that says so."""
+    from vinci.dossier.verdict import derive_proposal
+
+    unknown = derive_proposal("strongly-bearish — x", sleeve="momentum")
+    non_ledger = derive_proposal("strongly-bearish — x", sleeve="theme")
+    assert unknown.action is None and non_ledger.action is None
+    assert "unknown sleeve" in unknown.note, unknown.note
+    assert "no ledger verdicts" in non_ledger.note, non_ledger.note
+    assert unknown.note != non_ledger.note, "two different absences share one sentence"
+
+
+def test_the_js_proposal_twin_mirrors_the_python_registry() -> None:
+    """THE TWIN RULE, on the one genuine second copy this design has. The JS cannot import
+    `vinci.sleeves`, so `SLEEVE_LEGS` really is a duplicate — and the expectation here is DERIVED
+    from the Python registry rather than transcribed, because a hand-typed table would be a THIRD
+    copy rather than a check on the second. Adding a sleeve therefore reddens here until the mirror
+    is updated, which is the only version that measures anything."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"const SLEEVE_LEGS = \{(.*?)\n\};", js, re.S)
+    assert m, "the JS SLEEVE_LEGS mirror is gone"
+    js_legs = {k: (a, b) for k, a, b in
+               re.findall(r'(\w+):\s*\["([^"]+)",\s*"([^"]+)"\]', m.group(1))}
+    assert js_legs == {r.key: tuple(r.verdicts) for r in sl.SLEEVE_ROWS}, (
+        f"the JS proposal mirror drifted from the registry: {js_legs}")
+    # the enum mirror too — the JS decides "can this book propose at all" from it
+    mv = re.search(r"const LEDGER_VERDICTS = \[(.*?)\];", js)
+    assert mv, "the JS LEDGER_VERDICTS mirror is gone"
+    from vinci.schemas.ledger import Verdict
+
+    assert {v.strip().strip('"') for v in mv.group(1).split(",") if v.strip()} == {
+        v.value for v in Verdict}, "the JS verdict mirror drifted from the enum"
