@@ -124,6 +124,11 @@ class SleeveSpread:
     allocator asks for (one composite per strategy)."""
 
     sleeve: str
+    # THE LEG LABELS TRAVEL WITH THE NUMBERS, so a rendered row is self-describing. "spread +0.35"
+    # means nothing until the reader knows whether it is BUY−AVOID_TERMINAL or BUY−PASS, and a
+    # renderer that looked them up separately could print one book's labels over another's counts.
+    long_label: str
+    short_label: str
     n_long: int
     n_short: int          # the "measured against" leg (AVOID_TERMINAL, PASS, …) — never a short
     long_mean: float | None
@@ -186,7 +191,8 @@ class ScoreReport:
             for s, v in self.by_sector.items()
         }
         d["by_sleeve"] = {
-            k: {"n_long": v.n_long, "n_short": v.n_short, "long_mean": v.long_mean,
+            k: {"long_label": v.long_label, "short_label": v.short_label,
+                "n_long": v.n_long, "n_short": v.n_short, "long_mean": v.long_mean,
                 "short_mean": v.short_mean, "spread": v.spread}
             for k, v in self.by_sleeve.items()
         }
@@ -207,6 +213,8 @@ class ScoreReport:
             f"- Resolved verdicts: **{self.n_resolved_buy} BUY**, "
             f"**{self.n_resolved_avoid} AVOID** ({self.n_pending} pending)",
             f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}**",
+            "  _Screen-origin overshoot ONLY — the discriminator measured on the $300M–$10B "
+            "hunting ground it claims to measure. Other books are below, never pooled in._",
             f"- BUY mean return {pct(self.buy_mean_return)} · AVOID mean return "
             f"{pct(self.avoid_mean_return)}",
             f"- Hit-rate — BUY beat benchmark: {pct(self.buy_hit_rate)} · "
@@ -228,6 +236,24 @@ class ScoreReport:
             "",
             "## Per-sector BUY−AVOID spread (sector-expertise read)",
             *(sector_lines or ["- (no resolved verdicts yet)"]),
+        ]
+        # THE SURFACE WHERE THE HARM OCCURS (operator P1 on #378). `by_sleeve` existed in
+        # `to_dict()` only, and BOTH default paths — `vinci score` and `run_monthly`'s
+        # `scoring_report.md` — emit ONLY this markdown; JSON is opt-in. So a resolved followed
+        # verdict was correctly excluded from the primary and then invisible to every reader, which
+        # is worse than pooling it: the row exists, is scored, and appears nowhere.
+        sleeve_lines = [
+            f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
+            f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} resolved)"
+            for v in self.by_sleeve.values()
+        ]
+        lines += [
+            "",
+            "## Per-sleeve curves (one book, one composite)",
+            "_Each book is measured on ITS OWN legs — overshoot on BUY−AVOID_TERMINAL, quality on_ "
+            "_BUY−PASS — because 'terminal decline' is not what a PASS records. The overshoot row_ "
+            "_reproduces the primary above; the others accumulate beside it and are never pooled._",
+            *(sleeve_lines or ["- (no resolved verdicts yet)"]),
         ]
         override_lines = [
             f"- {o.ticker}: human {o.human.value} vs machine {o.machine.value} → "
@@ -284,7 +310,8 @@ def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
         lm = statistics.fmean(longs) if longs else None
         sm = statistics.fmean(shorts) if shorts else None
         out[key] = SleeveSpread(
-            sleeve=key, n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
+            sleeve=key, long_label=long_label, short_label=short_label,
+            n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
             spread=(lm - sm if lm is not None and sm is not None else None))
     return out
 

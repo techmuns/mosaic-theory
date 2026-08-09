@@ -325,3 +325,53 @@ def test_a_proposal_from_another_books_vocabulary_is_refused() -> None:
     with pytest.raises(LedgerError, match="machine proposal"):
         _require_verdict_in_sleeve(Verdict.BUY, "quality",
                                    machine_proposal=Verdict.AVOID_TERMINAL)
+
+
+def test_the_per_sleeve_curves_reach_the_markdown_a_reader_actually_gets() -> None:
+    """OPERATOR P1 ON #378, and it is the repo's own rule: a fix is satisfied at the SURFACE WHERE
+    THE HARM OCCURS. `by_sleeve` existed in `to_dict()` only, while BOTH default paths — `vinci
+    score` (cli) and `run_monthly`'s committed `scoring_report.md` (orchestrator) — emit ONLY the
+    markdown, with JSON opt-in. So a resolved followed verdict was correctly kept out of the
+    primary and then invisible to every reader: scored, recorded, and appearing nowhere. That is
+    worse than pooling it, because pooling at least shows up.
+
+    PINNED ON THE MARKDOWN, not on `to_dict()`, for exactly the reason the defect existed — a pin
+    on the machine tier would have passed throughout. Asserted on the STRUCTURED facts the row must
+    carry (its own leg labels and counts), never on the surrounding prose."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    md = aggregate([s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+                    s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot"),
+                    s("U", Verdict.BUY, 0.40, "followed", "quality"),
+                    s("V", Verdict.PASS, 0.05, "followed", "quality")],
+                   cost_bps=0, n_pending=0).to_markdown()
+
+    assert "quality" in md, (
+        "the quality book is absent from the report a reader is given — the followed verdict was "
+        "excluded from the primary and then shown nowhere at all")
+    assert "BUY−PASS" in md, "the quality curve does not state the legs it measures"
+    assert "BUY−AVOID_TERMINAL" in md, "the overshoot curve does not state the legs it measures"
+    # each book's counts must appear in ITS OWN row, not pooled
+    sleeve_rows = [ln for ln in md.splitlines() if ln.startswith("- **")]
+    assert any("quality" in ln and "+35.0%" in ln for ln in sleeve_rows), (
+        f"the quality spread is missing or wrong in the rendered rows: {sleeve_rows}")
+    assert any("overshoot" in ln and "+15.0%" in ln for ln in sleeve_rows), (
+        f"the overshoot row does not reproduce the primary: {sleeve_rows}")
+
+
+def test_the_primary_line_states_that_it_is_screen_origin_only() -> None:
+    """THE NUMBER'S MEANING NARROWED, so the report has to say so. `buy_avoid_spread` used to cover
+    every logged verdict; it now covers screen-origin overshoot only. A reader meeting an unlabelled
+    "primary spread" would carry forward the old meaning — the silent redefinition this
+    segmentation exists to prevent, arriving through the report instead of through the math."""
+    from vinci.scoring.metrics import aggregate
+
+    md = aggregate([], cost_bps=0, n_pending=0).to_markdown()
+    head = md.split("## ")[0]
+    assert "primary" in head.lower() and "creen-origin" in head, (
+        f"the primary spread does not state its scope:\n{head}")
