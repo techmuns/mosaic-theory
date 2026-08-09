@@ -32,6 +32,7 @@ from vinci.dossier.schemas import (
 )
 from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import LlmClient, LlmError
+from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, Sleeve, require_sleeve
 
 _UNVERIFIED = "[LLM-suggested, unverified]"
 # unit renderings an LLM uses for the same stored number (fraction↔%, raw↔K/M/B) — for number-trace
@@ -242,10 +243,10 @@ _POINT = {
     "required": ["claim", "source_ref"],
 }
 
-SYNTHESIS_TOOL: dict[str, Any] = {
+_TOOL_TEMPLATE: dict[str, Any] = {
     "name": "assemble_dossier_framing",
     "description": (
-        "Assemble the two readings of a sharply de-rated name FOR A HUMAN to adjudicate — "
+        "Assemble {tool_subject} FOR A HUMAN to adjudicate — "
         "you are NOT deciding, rating, scoring, or predicting. There is no field for a verdict "
         "because the conclusion is the human's. Use ONLY the supplied source-bound facts; cite a "
         "source_ref on every point; never invent a number or a fact not in the input."
@@ -256,7 +257,7 @@ SYNTHESIS_TOOL: dict[str, Any] = {
             "bull_points": {
                 "type": "array",
                 "items": _POINT,
-                "description": "The exaggerated/TEMPORARY overshoot case (mean-revert). A 'cheap "
+                "description": "{bull_case} A 'cheap "
                 "vs peers' claim is a CONSENSUS framing, not a signal: present a peer gap only "
                 "WITH the peer-set composition AND the earned-vs-residual decomposition "
                 "(fundamental_deltas) — POSE whether the discount is EARNED (value trap) or "
@@ -270,7 +271,7 @@ SYNTHESIS_TOOL: dict[str, Any] = {
             "bear_points": {
                 "type": "array",
                 "items": _POINT,
-                "description": "The secular-and-TERMINAL decline case. For EACH bear point on an "
+                "description": "{bear_case} For EACH bear point on an "
                 "OPTICAL/timing/trailing metric (a margin %, a trailing multiple, leverage), state "
                 "in the claim whether it is the REAL signal or the consensus MISREAD, using the "
                 "paired reconciler in the SAME fact (margin % carries absolute EBITDA beside it; a "
@@ -287,7 +288,7 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                     "type": "object",
                     "properties": {
                         "name": {"type": "string", "description": "A SPECIFIC named company."},
-                        "outcome": {"type": "string", "description": "recovered / went terminal."},
+                        "outcome": {"type": "string", "description": "{twin_outcome}"},
                         "distinguishing_fact": {
                             "type": "string",
                             "description": "QUALITATIVE: the analogue pattern only; NO figures "
@@ -333,14 +334,14 @@ SYNTHESIS_TOOL: dict[str, Any] = {
     },
 }
 
-_SYSTEM = (
-    "You assemble a research dossier's framing for a human discriminator on a sharply de-rated US "
-    "equity. You ASSEMBLE AND CITE; you NEVER CONCLUDE. Hard rules: (1) Use ONLY the source-bound "
+_SYSTEM_TEMPLATE = (
+    "You assemble a research dossier's framing for a human discriminator on {subject}"
+    ". You ASSEMBLE AND CITE; you NEVER CONCLUDE. Hard rules: (1) Use ONLY the source-bound "
     "facts in the user message — never your own memory, never the web; if a fact is MISSING "
     "or UNKNOWN, say so in key_unknowns, don't fill it. (2) Every bull/bear point and every "
     "piece of decisive-question evidence MUST copy a source_ref verbatim from the supplied facts. "
-    "(3) Give both cases honestly: the overshoot/mean-revert reading AND the terminal/value-trap "
-    "reading. (4) Twin reference cases must be SPECIFIC NAMED companies; tag each source as a real "
+    "(3) Give both cases honestly: {both_cases}"
+    ". (4) Twin reference cases must be SPECIFIC NAMED companies; tag each source as a real "
     "source_ref or exactly '[LLM-suggested, unverified]'. Keep distinguishing_fact QUALITATIVE: "
     "the analogue PATTERN only, with NO figures — caps / multiples / ratios live source-bound in "
     "peer_set / fundamental_deltas, never restated in twin prose; never a recovery rate, base "
@@ -927,6 +928,58 @@ def _mark_drawdown_guidance(dumped: dict[str, Any], ps: PrimarySource | None) ->
     rg["value"] = f"{mark.strip()}\n{rg['value']}"
 
 
+def _fragments(sl: Sleeve) -> dict[str, str]:
+    """The six strings the synthesis prompt varies by BOOK. Everything else in the template —
+    cite-or-drop, anti-balance, the no-conclusion contract, the peer-comp discipline — is INVARIANT,
+    and that asymmetry is the whole argument for a registry over a second prompt: only the two CASE
+    DEFINITIONS and the subject they concern were ever sleeve-specific."""
+    return {
+        "subject": sl.subject, "tool_subject": sl.tool_subject,
+        "bull_case": sl.bull_case, "bear_case": sl.bear_case,
+        "both_cases": sl.both_cases, "twin_outcome": sl.twin_outcome,
+    }
+
+
+def _fill(node: Any, frag: dict[str, str]) -> Any:
+    """Substitute the fragments through the tool schema, structure untouched.
+
+    WALKS THE TREE rather than formatting a rendered blob: the schema is a nested dict the LLM
+    client consumes as JSON, so the substitution has to happen in the string LEAVES and leave every
+    key, list and nesting level exactly as it was. `str.format` is deliberate — a stray brace in
+    prompt prose would raise here rather than silently producing a malformed schema."""
+    if isinstance(node, str):
+        return node.format(**frag)
+    if isinstance(node, dict):
+        return {k: _fill(v, frag) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_fill(v, frag) for v in node]
+    return node
+
+
+def tool_for(sleeve: str) -> dict[str, Any]:
+    """The synthesis tool schema for ``sleeve``.
+
+    REFUSES an unlisted sleeve rather than falling back to overshoot: a silent fallback is exactly
+    the defect this registry exists to remove — it is how a megacap came to be asked what broke."""
+    sl = BY_KEY[require_sleeve(sleeve, where="synthesis.tool_for")]
+    out: dict[str, Any] = _fill(_TOOL_TEMPLATE, _fragments(sl))
+    return out
+
+
+def system_for(sleeve: str) -> str:
+    """The system prompt for ``sleeve``. Same refusal as :func:`tool_for`."""
+    sl = BY_KEY[require_sleeve(sleeve, where="synthesis.system_for")]
+    return _SYSTEM_TEMPLATE.format(**_fragments(sl))
+
+
+#: The OVERSHOOT prompt, kept under the historical names because it is the LIVE book's text and
+#: every existing reader (the QA layer, the digests, the tests) already names them. Byte-identity
+#: with the pre-registry strings is TEST-PINNED — the live fleet's prompt cannot drift as a side
+#: effect of making the other books possible.
+SYNTHESIS_TOOL: dict[str, Any] = tool_for(DEFAULT_SLEEVE)
+_SYSTEM: str = system_for(DEFAULT_SLEEVE)
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -1017,7 +1070,8 @@ def _primary_source_digest(ps: PrimarySource) -> str:
 
 
 def synthesize(
-    mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str, transcript: str | None = None
+    mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str,
+    transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE,
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
@@ -1047,9 +1101,21 @@ def synthesize(
             "the 'CIQ transcript' source_ref from the facts. ===\n"
             + transcript
         )
-    log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]
+    # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller keeps
+    # the byte-identical live prompt; the followed route passes the name's own book.
+    #
+    # BUILT ONCE AND USED FOR BOTH THE LOG AND THE CALL. The first cut logged the module-level
+    # `_SYSTEM` — the OVERSHOOT constant — while sending `system_for(sleeve)`, so every quality
+    # assembly persisted an `llm_call.log` claiming it had been framed as a sharply de-rated
+    # overshoot name. That is a FALSE PROVENANCE RECORD in a committed audit artifact: the one
+    # document whose entire purpose is to answer "what was this model actually asked", answering
+    # it wrongly, in exactly the case the sleeve work exists to serve. Two names, one binding —
+    # the log cannot describe a prompt the call did not receive.
+    system, tool = system_for(sleeve), tool_for(sleeve)
+    log_parts = [f"model: {llm.model}", "", f"=== SLEEVE === {sleeve}",
+                 "", "=== SYSTEM ===", system, "", "=== USER ===", user]
     try:
-        raw = llm.extract(system=_SYSTEM, user=user, tool=SYNTHESIS_TOOL)
+        raw = llm.extract(system=system, user=user, tool=tool)
     except LlmError as exc:
         log_parts += ["", "=== ERROR ===", str(exc)]
         return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)

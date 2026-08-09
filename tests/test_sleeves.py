@@ -11,6 +11,7 @@ import ast
 import pathlib
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -18,6 +19,19 @@ from vinci import sleeves as sl
 from vinci.schemas.market import PriceBar
 
 SRC = pathlib.Path(sl.__file__)
+
+
+def _mech() -> Any:
+    """A REAL MechanicalLayer from a committed dossier — the synthesis path walks it, so a
+    hand-rolled stand-in would shape the test rather than exercise the code (the fixture rule)."""
+    import json
+
+    from vinci.dossier.schemas import Dossier
+
+    committed = sorted((SRC.parents[1] / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this worktree")
+    return Dossier.model_validate(json.loads(committed[0].read_text())).mechanical
 
 
 def test_every_sleeve_row_is_complete() -> None:
@@ -380,6 +394,95 @@ def test_the_primary_line_states_that_it_is_screen_origin_only() -> None:
         f"the primary spread does not state its scope:\n{head}")
 
 
+# ------------------------------------------------------------------ the PROMPT side (PR-2a)
+
+
+def test_the_overshoot_prompt_is_byte_identical_to_the_pre_registry_text() -> None:
+    """THE LIVE BOOK'S PROMPT CANNOT DRIFT AS A SIDE EFFECT of making the others possible.
+
+    Every committed dossier's synthesis was produced by the pre-registry constants. Parameterising
+    them is only safe if overshoot reproduces them EXACTLY — a one-word difference would silently
+    re-frame every re-assembly of the live fleet, and synthesis is stochastic enough that nobody
+    would attribute the change to this build.
+
+    THE BASELINE IS EXTRACTED FROM GIT, not transcribed: a hand-copied expected string would be a
+    restatement of the code rather than an independent check, and the probe rule says an
+    instrument that restates cannot measure. AST-extracted so no module import side-effects run."""
+    import ast
+    import subprocess
+    from typing import Any
+
+    from vinci.dossier import synthesis as syn
+
+    src = subprocess.run(
+        ["git", "show", "origin/feat/sleeve-ledger:vinci/dossier/synthesis.py"],
+        capture_output=True, text=True, cwd=SRC.parents[1])
+    if src.returncode != 0 or not src.stdout:
+        pytest.skip("pre-registry revision unavailable in this checkout")
+    ns: dict[str, Any] = {"Any": Any}
+    for node in ast.parse(src.stdout).body:
+        name = None
+        if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name):
+            name = node.targets[0].id
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            name = node.target.id
+        if name in {"SYNTHESIS_TOOL", "_SYSTEM", "_POINT", "_UNVERIFIED"}:
+            exec(compile(ast.Module(body=[node], type_ignores=[]), "<pre>", "exec"), ns)
+
+    assert syn.system_for("overshoot") == ns["_SYSTEM"], (
+        "the overshoot SYSTEM prompt changed — every committed synthesis was written under the old "
+        "one, and a re-assembly would silently re-frame the live fleet")
+    assert syn.tool_for("overshoot") == ns["SYNTHESIS_TOOL"], (
+        "the overshoot TOOL schema changed — same hazard, and it also changes what the model is "
+        "allowed to emit")
+    # the historical names still resolve to the same objects, so no existing reader moved
+    assert ns["_SYSTEM"] == syn._SYSTEM and ns["SYNTHESIS_TOOL"] == syn.SYNTHESIS_TOOL
+
+
+def test_every_sleeve_builds_a_prompt_stating_its_own_two_cases() -> None:
+    """THE POINT OF THE SWAP, asserted structurally rather than on wording. Each book's prompt must
+    carry ITS OWN case definitions and no other book's — a sleeve silently inheriting overshoot's
+    text is the exact defect (a megacap asked what broke when nothing did), and it would be
+    invisible in a test that only checked the prompt was non-empty."""
+    from vinci.dossier import synthesis as syn
+
+    for key in sorted(sl.SLEEVES):
+        row = sl.BY_KEY[key]
+        system = syn.system_for(key)
+        tool = syn.tool_for(key)
+        props = tool["input_schema"]["properties"]
+        assert row.subject in system, f"{key}: the prompt does not name its own subject"
+        assert row.both_cases in system, f"{key}: rule 3 does not name this book's two readings"
+        assert props["bull_points"]["description"].startswith(row.bull_case), (
+            f"{key}: the bull case is not this book's own definition")
+        assert props["bear_points"]["description"].startswith(row.bear_case), (
+            f"{key}: the bear case is not this book's own definition")
+        # and it must NOT carry another book's case definitions
+        for other in sl.SLEEVE_ROWS:
+            if other.key != key:
+                assert other.bull_case not in system + str(tool), (
+                    f"{key} carries {other.key}'s bull case — a book inheriting another's framing "
+                    f"is the defect the registry exists to remove")
+
+
+def test_the_invariant_discipline_survives_in_every_sleeve() -> None:
+    """WHAT MUST NOT BECOME PER-BOOK. Cite-or-drop, the no-conclusion contract, anti-balance and
+    the evidence_balance vocabulary are the discipline, not the framing — if a sleeve could drop
+    them, the registry would be a route around the constitution rather than a way to serve more
+    than one strategy under it."""
+    from vinci.dossier import synthesis as syn
+
+    for key in sorted(sl.SLEEVES):
+        system, tool = syn.system_for(key), syn.tool_for(key)
+        assert "NEVER CONCLUDE" in system, f"{key}: the no-conclusion contract is missing"
+        assert "source_ref" in system, f"{key}: the cite-or-drop rule is missing"
+        assert "ANTI-BALANCE" in system, f"{key}: the anti-balance rule is missing"
+        req = tool["input_schema"]["required"]
+        assert "evidence_balance" in req, f"{key}: the committed lean is not required"
+        assert not any("verdict" in k.lower() for k in tool["input_schema"]["properties"]), (
+            f"{key}: a verdict-shaped field appeared in the tool schema")
+
+
 def test_every_primary_report_input_is_screen_scoped_not_just_the_spread() -> None:
     """REVIEW FINDING (#378). `primary` correctly excluded followed rows from the SPREAD, but
     `score_ledger` still built beta/alpha from every resolved BUY and `n_pending` from every row —
@@ -460,3 +563,44 @@ def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -
     assert report.n_pending == 1, (
         "the FOLLOWED row was counted into the primary pending figure — the report prints it "
         "under a heading that claims screen-origin ONLY")
+
+
+def test_the_llm_log_records_the_prompt_that_was_actually_sent() -> None:
+    """REVIEW FINDING (#379) — a FALSE PROVENANCE RECORD, which is the worst kind of defect this
+    repo has a name for. The call used `system_for(sleeve)` while the log recorded the module-level
+    `_SYSTEM` (the OVERSHOOT constant), so every quality assembly persisted an `llm_call.log`
+    claiming it had been framed as a sharply de-rated overshoot name — the one artifact whose whole
+    purpose is to answer "what was this model actually asked", answering it wrongly, in exactly the
+    case the sleeve work exists to serve.
+
+    CAPTURED FROM A STUB CLIENT, so the assertion compares the log against what the call RECEIVED
+    rather than against a second copy of what we think it should be. A test that rebuilt the
+    expected prompt itself would have passed against the buggy code."""
+    from vinci.dossier import synthesis as syn
+
+    seen: dict[str, object] = {}
+
+    class _Stub:
+        model = "stub-model"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, object]) -> dict[str, object]:
+            seen["system"], seen["tool"] = system, tool
+            raise syn.LlmError("stop here — the prompt is already captured")
+
+    for key in ("overshoot", "quality"):
+        seen.clear()
+        _, _, log = syn.synthesize(
+            _mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="Test", sleeve=key)
+        assert seen, f"{key}: the stub client was never called"
+        assert str(seen["system"]) in log, (
+            f"{key}: the log does not contain the system prompt the model RECEIVED — the audit "
+            f"artifact would describe a framing that was never sent")
+        assert f"=== SLEEVE === {key}" in log, f"{key}: the log does not name the book it used"
+
+    # and the two books really do differ, so the check above is not vacuous
+    seen.clear()
+    syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="quality")
+    q = str(seen["system"])
+    seen.clear()
+    syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="overshoot")
+    assert q != str(seen["system"]), "the two books sent the same prompt — nothing was proven"

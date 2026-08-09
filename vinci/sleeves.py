@@ -64,6 +64,25 @@ class Sleeve:
     #: What would prove this sleeve carries no edge. Recorded per sleeve because a kill criterion
     #: that lives only in prose is not a falsifier (STATE.md §4).
     kill: str
+    #: The FRAGMENTS the synthesis prompt varies by book. Everything else in that prompt — the
+    #: cite-or-drop rule, the anti-balance rule, the no-conclusion contract, the peer-comp
+    #: discipline — is INVARIANT and stays in one place: only the two CASE DEFINITIONS and the
+    #: subject they are about were ever sleeve-specific, which is the whole reason a registry beats
+    #: a second prompt. Overshoot's fragments are the LIVE TEXT verbatim, so `system_for` and
+    #: `tool_for` reproduce today's prompt byte-for-byte (test-pinned) — the live book cannot drift
+    #: as a side effect of making the others possible.
+    #: What the name IS, as the prompt's opening subject ("a sharply de-rated US equity").
+    subject: str
+    #: The tool description's subject phrase ("the two readings of a sharply de-rated name").
+    tool_subject: str
+    #: The opening sentence of `bull_points.description` — the LONG case, defined.
+    bull_case: str
+    #: The opening sentence of `bear_points.description` — the TWIN, defined.
+    bear_case: str
+    #: How rule 3 names the pair the model must give honestly.
+    both_cases: str
+    #: The twin-reference-case outcome vocabulary ("recovered / went terminal.").
+    twin_outcome: str
     #: False until the sleeve may appear on a DECISION-LEDGER row. `theme` validates in its own
     #: append-only ratification ledger; `neglect` is defined but dormant. A defined-but-inactive
     #: sleeve is deliberately NOT the same thing as an unknown one.
@@ -80,6 +99,12 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
         twin="terminal decline — the sellers are right and the business really is going away",
         question="What broke — and did it fall alone? Temporary or terminal?",
         verdicts=_OVERSHOOT_VERDICTS,
+        subject="a sharply de-rated US equity",
+        tool_subject="the two readings of a sharply de-rated name",
+        bull_case="The exaggerated/TEMPORARY overshoot case (mean-revert).",
+        bear_case="The secular-and-TERMINAL decline case.",
+        both_cases="the overshoot/mean-revert reading AND the terminal/value-trap reading",
+        twin_outcome="recovered / went terminal.",
         entry="the screen ($300M–$10B) → rank → dossier",
         kill="the BUY−AVOID spread stays at or below zero — the discriminator carries no "
              "information (the standing fund-wide falsifier)",
@@ -93,6 +118,14 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
         twin="fully priced — the market already pays for the quality; a great company bought badly",
         question="What does today's price already assume — and is the runway longer than that?",
         verdicts=_QUALITY_VERDICTS,
+        subject="a durable, high-return US business trading on long-duration expectations",
+        tool_subject="the two readings of a durable compounder",
+        bull_case="The RUNWAY case: the reinvestment opportunity is longer, larger or "
+                  "higher-returning than the price assumes.",
+        bear_case="The FULLY-PRICED case: the quality is real and already paid for — the "
+                  "expectations embedded in the price are the thing that must be beaten.",
+        both_cases="the longer-runway reading AND the already-priced reading",
+        twin_outcome="kept compounding / re-rated to fair value.",
         entry="the follow list (operator judgement; reason AND sleeve both required)",
         kill="the sleeve's BUY−PASS curve fails to beat simply INDEXING the same followed names — "
              "the judgement adds nothing over passive exposure to a list we chose anyway",
@@ -107,6 +140,12 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
              "fully priced",
         question="Is there a nameable driver — and does picking within the basket beat the basket?",
         verdicts=("RATIFIED", "NOT-RATIFIED"),
+        subject="a basket of names exposed to one nameable driver",
+        tool_subject="the two readings of a thematic basket",
+        bull_case="The REAL-DRIVER case: a nameable shared driver the market prices late.",
+        bear_case="The MOMENTUM-BUCKET case: co-movement with no driver, or one already priced.",
+        both_cases="the real-driver reading AND the momentum-bucket reading",
+        twin_outcome="the driver persisted / the theme was already priced.",
         entry="the theme lane (detection → gates → analyst driver-naming)",
         kill="the RATIFIED-vs-naive-momentum spread fails to beat the baseline — the assembly is "
              "re-describing momentum, which is replicable and is not this fund's edge",
@@ -125,6 +164,12 @@ SLEEVE_ROWS: tuple[Sleeve, ...] = (
              "being cheap",
         question="Is the neglect informed or mechanical — and what ends it?",
         verdicts=("BUY", "AVOID_TERMINAL"),
+        subject="a sound but under-covered US business",
+        tool_subject="the two readings of a neglected name",
+        bull_case="The NEGLECT case: nobody is looking, and something will make them look.",
+        bear_case="The VALUE-TRAP case: cheap forever, with no mechanism to end the neglect.",
+        both_cases="the mechanical-neglect reading AND the value-trap reading",
+        twin_outcome="was re-discovered / stayed a cigar butt.",
         entry="not yet built — Edge 1, gated by the §4 GOVERNOR",
         kill="not yet testable; activating this sleeve means filling this row and stating the "
              "falsifier before the first verdict, never after",
