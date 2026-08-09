@@ -1188,3 +1188,32 @@ def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
         assert "ds-lean" in chip and "pill" not in chip, (
             "the book must be neutral ink, never a coloured pill — a colour lets the eye triage "
             "the log by book before reading anything")
+
+
+def test_no_per_book_string_is_hardcoded_outside_the_js_mirror() -> None:
+    """FOUND BY THE BROWSER PREVIEW, not by any test — which is why this pin exists.
+
+    Two per-book strings had been ADDED to `SLEEVE_COPY` and never WIRED to their call sites, so
+    `dossier.js` still rendered "What happened — and can it survive?" and "Read — what broke" on a
+    quality page while the markdown renderer had already moved on. The mirror-parity pin passed
+    throughout: it checks the table CONTAINS each string, which an unwired literal satisfies twice
+    over — once in the table and once at the hardcoded call site.
+
+    THIS CHECKS THE INVERSE, which is the property that actually matters: outside the mirror table
+    itself, no per-book string may appear as a literal at all. A call site that has not been wired
+    fails here even though the table is complete. It is also the exact sweep that found the second
+    instance after the preview surfaced the first — a defect one finds by hand is a defect that
+    will recur, so the hand-sweep becomes the guard."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    body = re.sub(r"const SLEEVE_COPY = \{.*?\n\};", "", js, flags=re.S)
+    fields = ("drawdown_heading", "bull_label", "bear_label", "survive_heading",
+              "read_label", "drawdown_subtitle", "twin_help", "thesis_help")
+    stray = [f"{row.key}.{name} = {getattr(row, name)!r}"
+             for row in sl.SLEEVE_ROWS for name in fields
+             if getattr(row, name) in body]
+    assert not stray, (
+        "per-book copy is hardcoded outside the mirror — the call site was never wired, so this "
+        "string renders on EVERY book regardless of which one the page belongs to:\n  "
+        + "\n  ".join(stray))

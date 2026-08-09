@@ -1021,7 +1021,7 @@ function briefTier(d, verdict, m, card, mark) {
   // (brief re-order 2026-07-27) WHAT HAPPENED precedes the underwrite detail — the reader met the
   // valuation grid before the problem it values. Setup, then what it is worth. Twin of render.py.
   const parts = openerCard(d, verdict, m, card, mark)
-    + whatHappened(m)
+    + whatHappened(m, d.sleeve)
     + underwriteDetail(d, verdict, m, card, mark)
     + briefCase(d.synthesis, m, d.sleeve)
     + financialSnapshot(m) + valuationCard(m);
@@ -1199,14 +1199,14 @@ function companyInner(d, m, card = null) {
 // drawdown % with no WHY — but the fund's whole question (overshoot vs terminal) starts from what
 // broke, so the shape belongs on page 1. The narrative names the EVENTS; the tiles carry the
 // NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
-function whatHappened(m) {
+function whatHappened(m, sleeve) {
   const dc = m.drawdown_cause || {};
   const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape, fmtShape) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
   // (net debt/EBITDA, FCF, going concern) beside the event. Twin of render.py.
-  return `<div class="card ds-section"><div class="ds-title">What happened — and can it survive?<span class="ds-route">full event log in Analysis</span></div>
+  return `<div class="card ds-section"><div class="ds-title">${escapeHtml(sleeveCopy(sleeve).survive)}<span class="ds-route">full event log in Analysis</span></div>
     ${shape}${tiles}</div>`;
 }
 
@@ -2104,11 +2104,11 @@ export function drawdownChart(sp, rows, det) {  // exported for the SVG-renderer
 // gap-downs (№ · date · true 1-day % · cause), the one-liner otherwise. The % derives from the
 // daily perf series (gapPctFromPerf) and is OMITTED, never estimated, when the series can't carry
 // it. A repeat filing reads "same 8-K as №" instead of restating the cause.
-function readWhatBroke(s, sp, dc, refDate) {
+function readWhatBroke(s, sp, dc, refDate, sleeve) {
   const rows = gapList(fmtShape(s.value));
   // ANY discrete-gap name gets the chart+ledger (a 1-gap name still needs "did it fall alone" and
   // its true 1-day %); only a gradual-bleed / unparseable shape stays the one-liner.
-  if (!rows) return factRead("Read — what broke", s, (v) => escapeHtml(fmtShape(v)));
+  if (!rows) return factRead(sleeveCopy(sleeve).read, s, (v) => escapeHtml(fmtShape(v)));
   const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days, refDate };
   const { svg, preDrops } = drawdownChart(sp, rows, det);
   // accession per gap-date (explanatory filings only) → "same 8-K as №" cross-refs
@@ -2142,7 +2142,7 @@ function readWhatBroke(s, sp, dc, refDate) {
   const key = `<div style="flex:0 1 236px; font-size:11.5px;">
     <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">${hdr}</div>
     ${items}${pre}${citeMark(s.source_ref)}</div>`;
-  return `<div class="fg-read"><div class="fg-read-lab">Read — what broke</div>
+  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
     <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${svg}${key}</div></div>`;
 }
 
@@ -2158,7 +2158,7 @@ function cleanNote(note) {
 // 8-K evidence closes as provenance. Revised guidance moved to the street card (it is a guidance
 // fact, not a what-broke fact); the cohort-absence row collapsed to a footnote (idioVsShared).
 function drawdownIdio(m, refDate, sleeve) {
-  const dd = drawdownCause(m.drawdown_cause, m.stock_performance, refDate);
+  const dd = drawdownCause(m.drawdown_cause, m.stock_performance, refDate, sleeve);
   const io = idioVsShared(m.idiosyncratic_vs_shared, m.stock_performance && m.stock_performance.name_symbol);
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
   const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
@@ -3099,7 +3099,7 @@ export function cleanItemEvent(ev) {  // exported for the py-twin equivalence te
   return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;
 }
 
-function drawdownCause(dc, sp, refDate) {
+function drawdownCause(dc, sp, refDate, sleeve) {
   if (!dc) return { read: "", evidence: "" };
   // GROUP BY ACCESSION: two consecutive gap-downs can share ONE 8-K (SMPL 04-09/04-10, CNXC
   // 02-11/02-12), and rendering the identical block per gap-date read as a duplicate. One card per
@@ -3175,7 +3175,7 @@ function drawdownCause(dc, sp, refDate) {
   // (buy-side anatomy) the Shape classification IS this card's read — it leads when present;
   // an absent shape stays a loud UNKNOWN row (fail-honest, never silently dropped)
   const shapeLead = (shapeV.status === "present" && shapeV.value != null)
-    ? readWhatBroke(dc.shape, sp, dc, refDate)
+    ? readWhatBroke(dc.shape, sp, dc, refDate, sleeve)
     : fact("Shape", dc.shape, fmtShape);
   // (restructure) read + evidence returned SEPARATELY: the idio comparison renders between them
   // (the card's question directly after its read; the 8-K callout closes as provenance). Revised
