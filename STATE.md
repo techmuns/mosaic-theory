@@ -3499,6 +3499,61 @@ remnant + untested live core follow.
   mispricing is taxonomic. KILL CRITERION: mis-classified names must re-rate when re-classified,
   **forward, not in hindsight.** Untested.
 
+**SLEEVE ARCHITECTURE — the edges become a REGISTRY, not a fork (decided 2026-08-08; build
+briefed, Phase 0 is this record).** The whole dossier pipeline is hard-bound to overshoot at SEVEN
+surfaces — the synthesis prompt ("two readings of a sharply de-rated name"), the proposal mapping
+(`strongly-bearish → AVOID_TERMINAL`), the page headline ("What broke — and did it fall alone?"),
+the two-label `Verdict` enum, the spread math (exact-identity filters at **7 sites** — 6 in
+`scoring/metrics.py`, 1 in `scoring/harness.py` — so a third label would vanish from every curve
+SILENTLY), the R1-shaped underwrite template, and the ledger entry gate. **Seven surfaces but NINE
+code sites:** the proposal mapping and the page headline each exist in BOTH renderers
+(`verdict.py` ↔ `dossier.js`, `render.py` ↔ `dossier.js`) and must move together — the twin rule. That was correct while one edge existed. It stopped being correct the day a
+followed megacap was committed (UBER, PR #368): the machine now asks a de-rating question about a
+name that never de-rated, and its bearish twin label would record "terminal" on a compounder — a
+FALSE RECORD in an append-only ledger.
+**A `sleeve` = a tagged strategy book with its own playbook, verdict labels, and attribution
+curve** (the standard buy-side/allocator term; one prior prose use, `OBJECTIVE_FUNCTION.md`).
+The insight that makes ONE engine serve all of them: every edge here is already defined WITH its
+evil twin, and the synthesis schema (bull points / bear points / evidence balance, NO verdict
+field) is ALREADY the universal shape of "case vs twin". Only the two case DEFINITIONS are
+hardcoded. So a sleeve is a registry row — {case, twin, page question, proposal 3-row mapping,
+verdict labels} — and adding sleeve N+1 touches no assembler, no schema, no ledger mechanics.
+**The lines that do NOT move:** the machine still proposes and never concludes; the mapping stays
+face-validity-frozen and never outcome-tuned; `mixed` still proposes nothing; the edge-basis gate
+still runs (sleeve = WHICH BOOK, edge-basis = WHICH CLAIM — orthogonal, both required); and the
+PRIMARY BUY−AVOID spread stays **screen-origin overshoot ONLY** (the 2026-08-07 segmentation
+decision; pooling megacap verdicts into the fund's proof-number silently changes what it means —
+the GIPS composite discipline, and what an allocator will ask for).
+Four sleeves recorded; **two active in the decision ledger at v1**:
+- **S1 overshoot** — LIVE, unchanged, becomes the explicit default. Kill: the standing empty-spread
+  falsifier.
+- **S2 quality (NEW CANDIDATE EDGE — the followed-megacap book: UBER/AMZN/NFLX/V class).**
+  Mispricing = **an expectations gap on DURATION**: a durable compounder whose reinvestment runway
+  is longer or stronger than the price assumes. Twin = **fully priced** — the market already pays
+  for the quality (a great company bought badly). Question: *"What does today's price already
+  assume — and is the runway longer than that?"*, whose lead exhibit is the ALREADY-BUILT
+  `implied_expectations` block (verified present on UBER's committed dossier, with a computed
+  three-ratio `ev_gap` beside it — the variant view is assembled machinery, not new work).
+  Entry: the follow list (operator judgment, reason + sleeve both required). Verdicts: BUY /
+  **PASS** — `PASS` and not a second AVOID because the underwrite record ALREADY carries the
+  concept (`VerdictStatus` literal `"passed"`, and `Verdict.avoid_priced`); the ledger label just
+  names what the record could already say. **KILL CRITERION:** over the stated horizon the sleeve's
+  BUY−PASS curve fails to beat simply INDEXING the same followed names — the judgment adds nothing
+  over passive exposure to a list we chose anyway. (Secondary, inherited: the verdicts merely track
+  the machine proposal.) **DATA REQUIREMENT, stated so a thin page cannot pass for an answer:** the
+  priced-in exhibit, the `ev_gap` and the consensus ladder are all CIQ-fed, so a quality verdict
+  REQUIRES the CIQ export pulled; without it the dossier still assembles (MISSING + 'pull CIQ'),
+  but the sleeve's own question is unanswerable.
+- **S3 theme** — the THEME / TREND FAMILY below, unchanged; it validates in its OWN append-only
+  ratification ledger and its verdicts stay OUT of the decision ledger at v1. When a single name
+  from a theme is underwritten it enters under S1/S2 with edge-basis `variant-vs-cross-section`.
+- **S4 neglect** — Edge 1 above, registry row only; activating it later = filling that row.
+**ACCEPTED RISK / KNOWN GAP (recorded, not hidden):** at the end of the briefed build a quality
+name gets a dossier that asks the right question, a machine proposal, and a human verdict in the
+ledger — but **not yet a scenario record**: the underwrite template still emits R1 axes only
+(§Next-steps OPERATOR TO-DO item 2, layer 2, which interacts with the open third-recipe question).
+And option 6 of the edge-basis gate still renders "machine verification pending" — A5 unbuilt.
+
 **THE THEME / TREND FAMILY** — AI-assembled reasoning about themes / trends / rotations. All three
 share ONE failure mode and ONE discipline: they are **MOMENTUM-ADJACENT** — simpler replicable
 strategies (momentum, trend-following) capture much of any theme move — so EACH is this fund's edge
@@ -7588,6 +7643,27 @@ sample: **the source was authoritative and the excerpt was not.**
     positives (`Borrower` and `Client Services` are real CIQ types). The corpus is the authority on
     that vocabulary, so the gate now detects the DEFECT — a company name in the relationship slot —
     rather than encoding a guess about the vocabulary.
+
+34. **SLEEVES — un-hardcode the overshoot framing (SERIES A; briefed 2026-08-08; §4 records
+    the decision).**
+    Phase 0 = this record + the glossary line + the followed-name INTAKE RUNBOOK (docs-only, ships
+    with this item). **Phase 1** (2 PRs): `vinci/sleeves.py` registry validated against a frozenset
+    (the `BEAR_BASES` precedent, never an Enum); `followed.json` migrates flat-string →
+    `{reason, sleeve}` and REFUSES a bare string or unknown sleeve; `Dossier.sleeve` defaults
+    `overshoot`; `LedgerEntry` gains `origin`/`sleeve` optional-with-default (the documented
+    append-only-safe precedent on that model) so a followed name can log a verdict AT ALL — today
+    `log_verdict` refuses it (`store.get_candidate` → `LedgerError`), which is the acceptance RED;
+    curves segment with the PRIMARY spread pinned IDENTICAL on the committed ledger. **Phase 2**
+    (4 PRs): `system_for(sleeve)`/`tool_for(sleeve)` replacing the single `_SYSTEM`+`SYNTHESIS_TOOL`
+    (overshoot output pinned BYTE-IDENTICAL on a frozen fixture); per-sleeve proposal mapping +
+    `Verdict.PASS` in both twins; per-sleeve page question/case labels (PREVIEW-gated, collapsed
+    AND print-expanded); e2e + artifact pass. **The pin that must MOVE, not loosen:**
+    `test_shelf_tag_prefers_the_logged_human_verdict` asserts `{v.value for v in Verdict} ==
+    {"BUY","AVOID_TERMINAL"}` and its own message says why — it moves WITH the display fix.
+    **The hazard it does NOT catch:** monitor/JS classify by BUY-PREFIX family (PASS → avoid leg)
+    while `scoring/metrics.py` uses EXACT identity, so a PASS row would land in NEITHER leg
+    silently — closed by the registry's per-sleeve avoid-label plus a new pin that every enum
+    member resolves into exactly one leg. Brief: `~/.claude/plans/fluffy-foraging-codd.md`.
 
 24. **ANALYST-DECISION BUCKET — HEADLINE CORRECTED 2026-08-03 (disposition render): (a) SHIPPED
     2026-07-31, (b) STILL BLOCKED. The "Item stays BLOCKED" below was true of the whole item for
