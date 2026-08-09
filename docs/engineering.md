@@ -162,6 +162,13 @@ PR (CLAUDE.md: coin-time translation).
   spread** is THE fund metric. **close row** = the ledger's position-closed row (with a stated
   reason); **watch** = a `VerdictStatus` on the underwrite record — not underwritable at today's
   price, franchise intact, no position (`scenarios.py`).
+- **sleeve** — a tagged STRATEGY BOOK with its own playbook, verdict labels and attribution curve
+  (plain words: which strategy is this name being judged under). Four recorded — `overshoot`
+  (live), `quality` (followed megacaps), `theme`, `neglect` — STATE.md §4 SLEEVE ARCHITECTURE.
+  Orthogonal to **edge-basis**: the sleeve says WHICH BOOK, the edge-basis says WHICH CLAIM.
+  Distinct from **book** (= the live portfolio of positions, `monitor.py`) and from **frame**
+  (three unrelated live meanings: `frame()` page layout, the XBRL frames API, "reference frame"
+  on an underwrite record).
 - **themes lane** (`vinci/themes/`): **theme** = a ratified thematic driver; **DriverSpec** = its
   verbatim definition; **sweep** = the monthly theme sweep; **radar** = the frontend triage inbox;
   **assay** = the evidence test of a theme (**retrocast** = assay on deeper history);

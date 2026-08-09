@@ -335,6 +335,44 @@ merges** any change that touches them:
 
 ---
 
+## i. FOLLOWED-NAME INTAKE (out-of-band names: megacaps, cross-reads)
+
+Onboarding a name the screen will never surface — a large-cap followed deliberately (UBER, and the
+AMZN/NFLX/V class behind it). **The cap band decides where the fund HUNTS, not what it may hold or
+follow**, so absence from it is not a rejection. Cost is MEASURED, not estimated: this is exactly
+what PR #368 ran for UBER, and it needed **no test changes** (#366/#367 had already derived the
+fleet rosters that used to be pinned by literal name).
+
+1. **Add the follow entry** — `data/followed.json`, keyed by UPPERCASE ticker, with the operator's
+   stated REASON (required, and it prints in the dossier's main body: a follow decision without
+   its reason is the silent admission the file exists to prevent) **and its SLEEVE** (from Phase 1
+   on; `quality` for the megacap book). A blank/placeholder reason, a missing sleeve, or an unknown
+   sleeve is REFUSED at assembly.
+2. **Benchmark bars must exist for the name's cap band** — **>$25B needs SPY, >$4B needs MDY**
+   (`vinci refresh <SYM> --aggs`; bars are git-ignored, so this is per-worktree). Skipping it does
+   not crash: every market-relative leg reads UNKNOWN and the page says so. That is how UBER's
+   first build shipped — SPY had **4 bars**, because a $300M–$10B band had only ever asked for
+   IWM/MDY. *(Source: STATE.md §OPERATOR TO-DOs item 1.)*
+3. **Pull the CIQ export** — REQUIRED before any quality-sleeve verdict: the priced-in exhibit
+   (`implied_expectations`), the `ev_gap` and the consensus ladder are all CIQ-fed. Without it the
+   dossier still assembles (CIQ sections MISSING + a 'pull CIQ' flag) but the sleeve's own question
+   is unanswerable.
+4. **Assemble** — `vinci dossier --ticker <T>`. The maintenance path builds the data record from
+   the resolver + price store with no screen involved, and the page leads with a caveat stating the
+   name is not a current screen candidate and why.
+5. **Regenerate the two fixtures** — `python scripts/build_companyfacts_fixture.py <T>` (its own
+   test failure message instructs this) and `scripts/build_price_fixture.py`, which DERIVES the new
+   name once the dossier is committed.
+6. **Artifact pass** — run the FULL offline suite green BEFORE pushing (`pytest -m "not network"`):
+   tests read the committed artifacts, so a re-assembled dossier can turn a pinned test red.
+   *(Source: CLAUDE.md §ARTIFACT-PASS RULE.)*
+
+**Do NOT re-use a parked copy of an earlier build** — re-assemble whenever any rendering input has
+changed, or you ship the defect the fix removed (#365→#368). **Do NOT re-roll a synthesis to get
+cleaner flags** — that is selecting prose on outcome; the flags stay on the page for the human.
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut
