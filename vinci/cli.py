@@ -2930,7 +2930,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
     p_log.add_argument("--verdict", required=True, choices=[v.value for v in Verdict])
-    p_log.add_argument("--twin", required=True, help="how the terminal-decline twin was ruled out")
+    # BOOK-NEUTRAL ON PURPOSE. Each sleeve names its OWN twin (overshoot's is terminal decline,
+    # quality's is fully-priced), but argparse builds this help before any ticker — and therefore
+    # any sleeve — is known, so it cannot be per-book. Naming one book's twin here asked a quality
+    # verdict to rule out terminal decline, the exact false framing the registry exists to remove.
+    # The per-book wording lives in `Sleeve.twin_help` and reaches the analyst where the book IS
+    # known: the dossier page prints this name's own log-verdict command.
+    p_log.add_argument("--twin", required=True,
+                       help="how this book's twin case was ruled out (the dossier page prints the "
+                            "wording for this name's book)")
     p_log.add_argument("--thesis", required=True, help="short thesis / rationale")
     p_log.add_argument("--kill", required=True, help="kill-criteria that would falsify the thesis")
     p_log.add_argument("--horizon-days", type=int, required=True, dest="horizon_days")
