@@ -15,7 +15,8 @@
 // ============================================================================
 import { escapeHtml } from "./lib/format.js";
 
-const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital deploys";
+const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital deploys "
+  + "(screen-origin overshoot only — other books carry their own curves)";
 
 // --- SHARED zone: edge-agnostic, always-visible direct links -----------------
 const SHARED = [

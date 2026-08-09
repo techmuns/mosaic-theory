@@ -32,7 +32,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from vinci.schemas.ledger import EVENT_CLOSE
+from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
+from vinci.sleeves import DEFAULT_SLEEVE
 
 # --- design constants (tunable; named so a change is a decision, not a drift) ------------------
 # Cap bands → benchmark proxy. Chosen by FACE VALIDITY (a small-cap leg is measured against a
@@ -94,6 +95,11 @@ class PositionRow(BaseModel):
     ticker: str
     verdict: str
     sector: str | None = None
+    # WHICH ROUTE and WHICH BOOK — carried so the spread below can be scoped the way the scoring
+    # report already is. Defaults are the truthful reading of a row logged before the fields
+    # existed: the screen was the only route that could reach the ledger, overshoot the only book.
+    origin: str = ORIGIN_SCREEN
+    sleeve: str = DEFAULT_SLEEVE
     entry_price: float
     entry_date: date
     current_price: float
@@ -119,6 +125,15 @@ class SpreadDiagnostic(BaseModel):
     avoid_mean_excess: float | None = None
     spread: float | None = None
     resolved_n: int = 0
+    # THE DENOMINATOR TRAVELS WITH THE NUMERATOR. ``resolved_n`` counts the SCOPED rows, so a
+    # renderer dividing it by the snapshot's total row count prints a fraction whose two halves
+    # measure different populations — "resolved 1/2" on a book holding one screen row and one
+    # followed row. BOTH renderers made exactly that mistake (review #382), and two independent
+    # callers getting it wrong the same way is the signal that the scope belongs in the model
+    # rather than in each caller's arithmetic. Legacy snapshots default to 0 and are never
+    # rewritten; the renderers fall back to the row count for them, which is what they meant
+    # when every row was screen-origin.
+    scoped_n: int = 0
     max_days_elapsed: int = 0
     sign_convention: str = AVOID_SIGN_NOTE
     caveat: str = SPREAD_CAVEAT
@@ -240,10 +255,17 @@ def _is_buy(verdict: str) -> bool:
 
 
 def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
-    """mean(BUY excess) − mean(AVOID excess). An EMPTY leg makes the spread ``None`` with a
-    stated reason — never 0.0, which would read as "no edge" when it means "not measurable"."""
-    buys = [r.excess for r in rows if _is_buy(r.verdict)]
-    avoids = [r.excess for r in rows if not _is_buy(r.verdict)]
+    """mean(BUY excess) − mean(AVOID excess) over the SCREEN-ORIGIN rows. An EMPTY leg makes the
+    spread ``None`` with a stated reason — never 0.0, which would read as "no edge" when it means
+    "not measurable".
+
+    SCREEN-ORIGIN ONLY, matching `scoring/metrics.py` — this is the same headline number, printed
+    by a different command, and the two must not disagree about what they measure. Without the
+    filter a followed quality row landed in the AVOID leg by the BUY-prefix test below (`PASS` does
+    not start with "BUY") and moved the fund's proof number on the operator's own console."""
+    scoped = [r for r in rows if r.origin == ORIGIN_SCREEN]
+    buys = [r.excess for r in scoped if _is_buy(r.verdict)]
+    avoids = [r.excess for r in scoped if not _is_buy(r.verdict)]
     buy_mean = sum(buys) / len(buys) if buys else None
     avoid_mean = sum(avoids) / len(avoids) if avoids else None
     reason = None
@@ -255,15 +277,17 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
         buy_mean_excess=buy_mean, avoid_mean_excess=avoid_mean,
         spread=(buy_mean - avoid_mean) if (buy_mean is not None and avoid_mean is not None)
         else None,
-        resolved_n=sum(1 for r in rows if r.resolved),
-        max_days_elapsed=max((r.days_elapsed for r in rows), default=0),
+        resolved_n=sum(1 for r in scoped if r.resolved),
+        scoped_n=len(scoped),
+        max_days_elapsed=max((r.days_elapsed for r in scoped), default=0),
         undefined_reason=reason,
     )
 
 
 def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: float,
                  entry_date: date, current_price: float, current_date: date, benchmark: str,
-                 benchmark_entry: float, benchmark_now: float, horizon_days: int) -> PositionRow:
+                 benchmark_entry: float, benchmark_now: float, horizon_days: int,
+                 origin: str = ORIGIN_SCREEN, sleeve: str = DEFAULT_SLEEVE) -> PositionRow:
     """Mark one leg. Fails loud on a non-positive entry or benchmark price — a return computed
     off a zero base is not a number this fund reports."""
     if not entry_price > 0 or not benchmark_entry > 0:
@@ -274,6 +298,7 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
     horizon_date = entry_date + timedelta(days=horizon_days)
     return PositionRow(
         ticker=ticker, verdict=verdict, sector=sector,
+        origin=origin, sleeve=sleeve,
         entry_price=entry_price, entry_date=entry_date,
         current_price=current_price, current_date=current_date,
         position_return=pos_ret, benchmark=benchmark, benchmark_entry=benchmark_entry,
@@ -405,12 +430,22 @@ def render_table(snap: MonitorSnapshot) -> str:
            f"{'BMK':>5}{'BMK%':>8}{'EXCESS%':>9}{'DAYS':>7}  HORIZON")
     out.append(hdr)
     for r in sorted(snap.rows, key=lambda r: r.ticker):
+        # THE BOOK IS NAMED ONLY WHEN IT IS NOT THE DEFAULT — a tag on every row is noise, and its
+        # absence on the overshoot majority carries the same information (the shelf makes the same
+        # call). Without it a followed row sits in this table indistinguishable from a screen one
+        # while being deliberately excluded from the spread printed underneath.
+        book = "" if r.sleeve == DEFAULT_SLEEVE else f"  [{r.sleeve}]"
         out.append(
             f"{r.ticker:<7}{r.verdict:<16}{r.entry_price:>9.2f}{r.current_price:>9.2f}"
             f"{r.position_return * 100:>+8.2f}{r.benchmark:>5}{r.benchmark_return * 100:>+8.2f}"
             f"{r.excess * 100:>+9.2f}{f'{r.days_elapsed}/{r.horizon_days}':>7}  "
-            f"{r.horizon_date}{'' if not r.resolved else '  RESOLVED'}")
+            f"{r.horizon_date}{'' if not r.resolved else '  RESOLVED'}{book}")
     s = snap.spread
+    # THE SCOPE IS STATED, because the number's meaning narrowed. It measures the discriminator on
+    # the $300M–$10B hunting ground; a reader meeting an unlabelled "BUY−AVOID SPREAD" would carry
+    # the old, wider meaning forward. The scoring report states the same scope on its own line.
+    out += ["", "SCOPE: screen-origin rows only — other books are listed above but never pooled "
+                "into this number."]
     out += ["", "BUY−AVOID SPREAD: "
             + ("UNDEFINED — " + (s.undefined_reason or "") if s.spread is None
                else f"{s.spread * 100:+.2f} pp")]
@@ -418,7 +453,11 @@ def render_table(snap: MonitorSnapshot) -> str:
         out.append(f"  BUY  n={s.buy_n} mean excess {s.buy_mean_excess * 100:+.2f} pp")
     if s.avoid_mean_excess is not None:
         out.append(f"  AVOID n={s.avoid_n} mean excess {s.avoid_mean_excess * 100:+.2f} pp")
-    out += [f"  resolved {s.resolved_n}/{len(snap.rows)} · max days elapsed {s.max_days_elapsed}",
+    # Denominator from the diagnostic, NOT from the row list: `resolved_n` counts scoped rows
+    # only. A legacy snapshot predating `scoped_n` reports 0 → fall back to the row count, which
+    # is exactly right for it (every row it holds is screen-origin).
+    scoped_n = s.scoped_n or len(snap.rows)
+    out += [f"  resolved {s.resolved_n}/{scoped_n} · max days elapsed {s.max_days_elapsed}",
             f"  {s.caveat}", f"  {s.sign_convention}"]
     if snap.freshness:
         out += ["", "FRESHNESS / TRIGGERS (machine flags; the human concludes)"]

@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -340,17 +340,6 @@ function sleeveTag(sleeve) {
   return `<span class="ds-lean ds-card-tag" title="this name is judged under the ${escapeHtml(sl)} book — it asks a different question and records a different verdict vocabulary">${escapeHtml(sl)}</span>`;
 }
 
-// The DISPLAY WORD for a verdict of record. Mirrors MachineProposal.action_word on the py side.
-// AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
-//
-// IT USED TO SHORTEN BY ASSUMING THERE WERE ONLY TWO. `buy ? "BUY" : "AVOID"` was lossless while
-// BUY and AVOID_TERMINAL were the whole vocabulary — and the moment a sleeve added its own
-// negative leg it would have printed "AVOID" over a PASS, which is precisely the false record the
-// separate label exists to prevent: PASS says "not at this price", never "this is dying".
-function verdictWord(verdict) {
-  const v = String(verdict || "").toUpperCase();
-  return v === "AVOID_TERMINAL" ? "AVOID" : v;
-}
 
 function verdictTag(v) {
   const buy = isBuyVerdict(v.verdict);

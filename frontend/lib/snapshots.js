@@ -204,6 +204,13 @@ async function _loadLedger() {
         confidence: p.confidence,
         benchmark: p.benchmark,
         decidedAt: p.decided_at,
+        // WHICH ROUTE and WHICH BOOK. Dropped here, nothing downstream could filter or label by
+        // them — which is why the gate stat below pooled every book into the fund's proof number.
+        // Absent == a row logged before the fields existed, and its truthful reading is
+        // screen/overshoot: no other route could reach this ledger then (mirrors origin_of /
+        // sleeve_of on the python side — one meaning, two languages).
+        origin: p.origin || "screen",
+        sleeve: p.sleeve || "overshoot",
         // the call is STILL scored at its horizon after a close — exits never launder the track
         // record — so `resolved` is untouched; `closed` is a separate, additive fact.
         resolved: daysToHorizon !== null ? daysToHorizon <= 0 : false,
@@ -225,13 +232,37 @@ async function _loadLedger() {
       };
     })
     .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
+  // (grouping lives in `groupOtherBooks` below — exported so a test can EXECUTE it against a
+  // followed-overshoot row rather than grep this file for a variable name.)
+  // THE PROOF NUMBER IS SCREEN-ORIGIN ONLY, matching scoring/metrics.py and vinci monitor. The
+  // gate widget below is labelled "the BUY−AVOID spread that must prove positive before capital
+  // deploys" — pooling a followed megacap verdict into it would silently change what the number
+  // means on the deployed page while the python side reported something else.
+  const primary = entries.filter((e) => e.origin === "screen");
+  // …and the other books are counted BESIDE it, never inside it, so a followed row is excluded
+  // from the proof number without disappearing from the app entirely.
+  //
+  // GROUPED ON (origin, sleeve) OVER THE NON-PRIMARY ROWS — not on the sleeve alone, and this is
+  // the distinction the first cut got wrong (review #382). What excludes a row from the proof
+  // number is its ORIGIN; the sleeve only says which book it belongs to. `followed.json`
+  // legitimately admits a followed name under the DEFAULT book (assemble.py refuses a
+  // screen/follow overlap only when the sleeve DIFFERS), so a followed-overshoot row keyed on
+  // "overshoot" merged into the screen majority's bucket — and the only consumer of this map
+  // drops the "overshoot" key. That row was therefore out of `primary`, invisible under "Other
+  // books", and chip-less on its own line: counted nowhere and labelled nothing, while the
+  // overview tile simultaneously announced "1 in other books". Keying on the pair makes the
+  // fold impossible, and each bucket carries both parts so the renderer can name the book
+  // without re-deriving them from the key string.
+  const otherBooks = groupOtherBooks(entries);
   return {
     counts: {
-      logged: entries.length,
-      resolved: entries.filter((e) => e.resolved).length,
-      buy: entries.filter((e) => isBuyVerdict(e.verdict)).length,
-      avoid: entries.filter((e) => !isBuyVerdict(e.verdict)).length,
+      logged: primary.length,
+      resolved: primary.filter((e) => e.resolved).length,
+      buy: primary.filter((e) => isBuyVerdict(e.verdict)).length,
+      avoid: primary.filter((e) => !isBuyVerdict(e.verdict)).length,
+      loggedAllBooks: entries.length,
     },
+    otherBooks,
     entries,
   };
 }
@@ -262,8 +293,47 @@ export async function getMonitorRow(ticker) {
 
 // The long leg is any BUY-family verdict; everything else (AVOID_TERMINAL, …) is the avoid leg.
 // Classify by family, not exact equality, so a future BUY_* verdict isn't miscounted as avoid.
+// The DISPLAY WORD for a verdict of record. HERE, beside isBuyVerdict, because BOTH views
+// need it: the shelf and the decision log were printing the same verdict two different ways
+// (AVOID vs AVOID_TERMINAL) because only one of them had this function. Mirrors MachineProposal.action_word on the py side.
+// AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
+//
+// IT USED TO SHORTEN BY ASSUMING THERE WERE ONLY TWO. `buy ? "BUY" : "AVOID"` was lossless while
+// BUY and AVOID_TERMINAL were the whole vocabulary — and the moment a sleeve added its own
+// negative leg it would have printed "AVOID" over a PASS, which is precisely the false record the
+// separate label exists to prevent: PASS says "not at this price", never "this is dying".
+export function verdictWord(verdict) {
+  const v = String(verdict || "").toUpperCase();
+  return v === "AVOID_TERMINAL" ? "AVOID" : v;
+}
+
 export function isBuyVerdict(v) {
   return String(v || "").toUpperCase().startsWith("BUY");
+}
+
+// The books counted BESIDE the primary composite — every ledger entry the screen-origin proof
+// number excludes, grouped so none of them can go uncounted.
+//
+// KEYED ON (origin, sleeve), NOT on the sleeve alone. What excludes a row is its ORIGIN; the
+// sleeve only says which book it is. `followed.json` legitimately admits a followed name under
+// the DEFAULT book — assemble.py refuses a screen/follow overlap only when the sleeve DIFFERS —
+// so keying on the sleeve merged a followed-overshoot row into the screen majority's bucket,
+// which the renderer then dropped as "the default book". The row was out of `primary`, absent
+// from "Other books" and chip-less, while the overview tile announced "1 in other books"
+// (review #382). Each bucket carries both parts so the renderer names the book without
+// re-parsing the key.
+export function groupOtherBooks(entries) {
+  const out = {};
+  for (const e of entries || []) {
+    if ((e.origin || "screen") === "screen") continue;  // in the composite; `counts` has it
+    const origin = e.origin, sleeve = e.sleeve || "overshoot";
+    const b = (out[`${origin}:${sleeve}`] ||=
+      { origin, sleeve, logged: 0, resolved: 0, long: 0, short: 0 });
+    b.logged += 1;
+    if (e.resolved) b.resolved += 1;
+    if (isBuyVerdict(e.verdict)) b.long += 1; else b.short += 1;
+  }
+  return out;
 }
 
 // getSpreadStatus() -> {

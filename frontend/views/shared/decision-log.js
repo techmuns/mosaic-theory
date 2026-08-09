@@ -1,6 +1,6 @@
 // DECISION LOG — the immutable, append-only ledger as a read-only list of frozen legs.
 // Displayed here; logged ONLY via the CLI. No edit / delete / write path exists.
-import { getLedger, isBuyVerdict, getMonitor } from "../../lib/snapshots.js";
+import { getLedger, isBuyVerdict, verdictWord, getMonitor } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../../lib/format.js";
 
 // The LIVE columns come from the latest COMMITTED monitor snapshot (vinci monitor, manual
@@ -17,13 +17,30 @@ export async function render(root, _params, { item, frame }) {
   const marks = {};
   for (const r of (mon && mon.rows) || []) marks[String(r.ticker).toUpperCase()] = r;
 
+  // EXCLUDED FROM THE PROOF NUMBER IS NOT THE SAME AS ABSENT FROM THE APP. The tiles above are
+  // screen-origin only (that is what the spread measures); any other book is stated here so a
+  // followed verdict is visible as its own line rather than silently missing from both.
+  const books = (l) => {
+    // NO "not overshoot" FILTER any more: the map now holds exactly the rows the tiles above
+    // exclude, so filtering by sleeve here is what dropped a followed-OVERSHOOT row from the
+    // only line that would have shown it (review #382). The label names the origin too — under
+    // the default book the sleeve alone would read as the screen composite it is not.
+    const rows = Object.values(l.otherBooks || {});
+    if (!rows.length) return "";
+    const cells = rows.map((b) =>
+      `<span class="mono">${escapeHtml(b.sleeve === "overshoot" ? `${b.origin} · ${b.sleeve}` : b.sleeve)}</span> ${b.long} long / ${b.short} measured-against · ${b.resolved} resolved`
+    ).join(" &nbsp;·&nbsp; ");
+    return `<div class="subtitle muted" style="margin:-8px 0 16px;">Other books (their own curves, never pooled into the spread above) — ${cells}</div>`;
+  };
+
   const counts = `
     <div class="grid cols-4" style="margin-bottom:16px;">
-      <div class="card metric"><h3>Verdicts logged</h3><div class="value">${fmtInt(led.counts.logged)}</div><div class="foot">immutable legs of the spread</div></div>
+      <div class="card metric"><h3>Verdicts logged</h3><div class="value">${fmtInt(led.counts.logged)}</div><div class="foot">screen-origin · immutable legs of the spread</div></div>
       <div class="card metric"><h3>Resolved</h3><div class="value">${fmtInt(led.counts.resolved)}</div><div class="foot">reached horizon · feed the spread</div></div>
       <div class="card metric"><h3>Buy legs</h3><div class="value">${fmtInt(led.counts.buy)}</div><div class="foot">the long side</div></div>
-      <div class="card metric"><h3>Avoid legs</h3><div class="value">${fmtInt(led.counts.avoid)}</div><div class="foot">the terminal-decline side</div></div>
-    </div>`;
+      <div class="card metric"><h3>Avoid legs</h3><div class="value">${fmtInt(led.counts.avoid)}</div><div class="foot">the leg it is measured against</div></div>
+    </div>
+    ${books(led)}`;
 
   const banner = `
     <div class="subtitle muted" style="margin-bottom:16px;">
@@ -62,7 +79,7 @@ function spreadCard(mon) {
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:8px; font-size:13px;">
         <div><span class="muted">BUY legs</span> <span class="mono">${fmtInt(s.buy_n)}</span> <span class="mono ${signCls(s.buy_mean_excess)}">${pct(s.buy_mean_excess)}</span> <span class="muted">mean excess</span></div>
         <div><span class="muted">AVOID legs</span> <span class="mono">${fmtInt(s.avoid_n)}</span> <span class="mono ${signCls(s.avoid_mean_excess)}">${pct(s.avoid_mean_excess)}</span> <span class="muted">mean excess</span></div>
-        <div><span class="muted">Resolved</span> <span class="mono">${fmtInt(s.resolved_n)}/${fmtInt((mon.rows || []).length)}</span></div>
+        <div><span class="muted">Resolved</span> <span class="mono">${fmtInt(s.resolved_n)}/${fmtInt(s.scoped_n || (mon.rows || []).length)}</span></div>
       </div>
       <div class="foot" style="margin-top:8px;">${escapeHtml(s.caveat || "")}</div>
       <div class="foot">${escapeHtml(s.sign_convention || "")}</div>
@@ -108,6 +125,27 @@ function freshnessPanel(mon) {
     </div>`;
 }
 
+// The book, named only when it is NOT the default — same rule as the dossier shelf: a chip on
+// every row is noise, and its absence on the overshoot majority carries the same information.
+// Neutral ink, never a coloured pill: the book is context, not a call.
+//
+// Chipped when the row is NOT part of the screen-origin composite — whether that is because of
+// its BOOK or because of its ORIGIN. Gating on the sleeve alone left a followed-overshoot row
+// bare, so it read as one of the screen majority while being excluded from their spread
+// (review #382). Under the default book the chip names the origin, because "overshoot" is
+// precisely the thing it must not be mistaken for.
+//
+// AT MODULE SCOPE, beside its only caller. It was first written as a `const` inside `render()`
+// while `entryCard` is a module-scope function, so every call threw `sleeveChip is not defined`
+// and the whole page stopped at "Loading ledger…". Found by loading the page, not by any test.
+const sleeveChip = (e) => {
+  const sv = e.sleeve || "overshoot";
+  const origin = e.origin || "screen";
+  if (origin === "screen" && sv === "overshoot") return "";
+  const label = sv === "overshoot" ? origin : sv;
+  return ` <span class="ds-lean" title="judged under the ${escapeHtml(sv)} book, ${escapeHtml(origin)} origin — excluded from the screen-origin spread above">${escapeHtml(label)}</span>`;
+};
+
 function entryCard(e, mark) {
   const isBuy = isBuyVerdict(e.verdict);
   const status = e.resolved
@@ -134,7 +172,7 @@ function entryCard(e, mark) {
     <div class="card" style="margin-bottom:14px;">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
         <span class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(e.ticker)}</span>
-        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(e.verdict)}</span>
+        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(verdictWord(e.verdict))}</span>${sleeveChip(e)}
         ${closedChip}
         ${status}
         <span class="muted" style="font-size:12px; margin-left:auto;">decided ${fmtDate(e.decidedAt)}</span>
