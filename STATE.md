@@ -7648,8 +7648,9 @@ sample: **the source was authoritative and the excerpt was not.**
     the decision). BUILT ACROSS NINE PRs AND ALL MERGED TO main 2026-08-09 — #376, #385, #378,
     #379, #380, #381, #382, #383, #384, in that order, each squashed with the full suite green on
     the merged result. (#377 carried PR-1a; GitHub auto-CLOSED it when the #376 merge deleted its
-    base branch, then refused to reopen it because the head had been force-pushed in between, so
-    it landed unchanged as **#385** — same head, review history on #377.)**
+    base branch, then refused to reopen it because the head had been force-pushed in between —
+    so the same work landed as #385, its content unchanged but REBASED onto main
+    (`55202ea` → `2a1bb3c`, which is why the reopen was refused). Review history stays on #377.)**
     The pipeline was hard-bound to overshoot at seven surfaces; a followed megacap (UBER) was
     therefore asked what broke when nothing had, and its bearish twin label would have written
     "terminal decline" into an append-only ledger against a compounder.
