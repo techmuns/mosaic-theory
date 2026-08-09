@@ -353,3 +353,29 @@ def test_every_committed_dossier_carries_a_sleeve_matching_its_entry_route() -> 
             f"the tag and the route that set it have diverged")
         checked += 1
     assert checked, "no committed dossier was checked — the loop found nothing to assert on"
+
+
+def test_a_name_that_is_both_followed_and_a_screen_candidate_is_refused(
+    tmp_path: pathlib.Path,
+) -> None:
+    """REVIEW FINDING (#377). The screen branch of `_finalist` returns BEFORE the follow file is
+    consulted, so a ticker listed in `followed.json` under a non-default book that ALSO appears in
+    the ranked candidate set was assembled as `overshoot` — its stated sleeve and its stated reason
+    both silently discarded. That is an explicit operator judgement overridden by an implicit one,
+    in the one file whose whole job is to record deliberate coverage decisions.
+
+    IT REFUSES RATHER THAN PICKING A WINNER. Either precedence is defensible and both are guesses:
+    "the screen wins" throws away a deliberate follow decision, "the follow wins" hides that the
+    name now qualifies on its own. Only the operator knows which, so the build stops and names the
+    two records that disagree.
+
+    A followed entry on the DEFAULT book is NOT a conflict — it agrees with the screen route, so
+    there is nothing to resolve and nothing is discarded."""
+    monkey = _write(tmp_path, {UNTOUCHED: _e("followed as a compounder", "quality")})
+    with pytest.raises(asm.DossierAssemblyError, match="BOTH a screen candidate and a followed"):
+        asm._finalist(monkey, UNTOUCHED, cast(Any, object()), {"screen_run_at": "2026-07-29"})
+
+    agreeing = _write(tmp_path, {UNTOUCHED: _e("followed, same book", DEFAULT_SLEEVE)})
+    fin = asm._finalist(agreeing, UNTOUCHED, cast(Any, object()), {"screen_run_at": "2026-07-29"})
+    assert fin is not None and fin.sleeve == DEFAULT_SLEEVE, (
+        "a follow entry AGREEING with the screen route is not a conflict and must not refuse")
