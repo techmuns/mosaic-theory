@@ -1217,3 +1217,40 @@ def test_no_per_book_string_is_hardcoded_outside_the_js_mirror() -> None:
         "per-book copy is hardcoded outside the mirror — the call site was never wired, so this "
         "string renders on EVERY book regardless of which one the page belongs to:\n  "
         + "\n  ".join(stray))
+
+
+def test_a_gradual_decline_name_still_gets_its_price_path() -> None:
+    """A NAME THAT BLED RATHER THAN BROKE USED TO RENDER ONE SENTENCE AND NO CHART.
+
+    The section asks what MOVED the price and whether it moved alone; both halves are answerable
+    whether or not the move arrived in discrete steps. UBER is the live case — −18.8% over the year
+    with a worst single day of −6.9%, so the −10% detector fires never and the reader was shown a
+    line of text where every other name got a chart.
+
+    THE SCREEN SELECTS FOR GAPS, which is why this looked like an edge case and is not: a
+    compounder followed deliberately is exactly the name that bleeds. Today UBER is the only
+    committed name with zero gaps and the only quality name — that correlation is the point.
+
+    Asserted on the RENDERER's contract rather than on a browser: `drawdownChart` consumes `rows`
+    only to build gap markers, so an empty list must still yield a chart. If that stops being true
+    the gradual branch silently returns to a bare sentence."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    fn = re.search(r"function readWhatBroke\(.*?\n\}\n", js, re.S)
+    assert fn, "readWhatBroke is gone"
+    body = fn.group(0)
+    assert "drawdownChart(sp, [], det)" in body, (
+        "the no-gap branch no longer draws the price path — a gradual-decline name is back to one "
+        "line of text while every gap name gets a chart")
+    # the same chart, not a second renderer: rows are consumed ONLY for markers
+    chart = re.search(r"export function drawdownChart\(sp, rows, det\) \{(.*?)\n\}\n", js, re.S)
+    assert chart, "drawdownChart is gone"
+    uses = re.findall(r"\brows\b", chart.group(1))
+    assert len(uses) <= 2, (
+        f"drawdownChart now reads `rows` in {len(uses)} places — passing an empty list may no "
+        f"longer produce a usable chart, which is what the gradual branch depends on")
+    # and it must say WHY nothing is marked, rather than leaving a bare unannotated chart
+    assert "No discrete gap-downs" in body and "detector" in body, (
+        "the gradual branch does not state why nothing is marked — an unannotated chart beside a "
+        "gap-annotated one on every other page reads as a missing annotation, not an absent event")
