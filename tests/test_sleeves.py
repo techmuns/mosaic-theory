@@ -604,3 +604,122 @@ def test_the_llm_log_records_the_prompt_that_was_actually_sent() -> None:
     seen.clear()
     syn.synthesize(_mech(), llm=cast("Any", _Stub()), ticker="ZZZZ", name="T", sleeve="overshoot")
     assert q != str(seen["system"]), "the two books sent the same prompt — nothing was proven"
+
+
+# ------------------------------------------------------------------ the PROPOSAL side (PR-2b)
+
+
+def test_the_proposal_maps_to_each_books_own_legs() -> None:
+    """THE SAME LEAN, A DIFFERENT PROPOSAL PER BOOK — and overshoot's is unchanged.
+
+    The mapping is DERIVED from `Sleeve.verdicts` rather than a per-sleeve table: a book already
+    declares (long, measured-against), and the rule was only ever "bullish proposes the long leg,
+    bearish proposes its twin". A second table would be a dual write, and adding a sleeve would
+    mean remembering to add its row or silently getting the wrong one.
+
+    THE SHAPE IS WHAT IS FROZEN and it has not moved: bullish → long, bearish → twin, mixed →
+    NOTHING. Only the labels follow the book."""
+    from vinci.dossier.verdict import derive_proposal
+
+    # the LIVE book, unchanged — every committed row was sealed under exactly this
+    assert derive_proposal("strongly-bearish — x").action_word == "AVOID"
+    assert derive_proposal("strongly-bullish — x").action_word == "BUY"
+    assert derive_proposal("mixed — x").action is None
+
+    # the quality book proposes its OWN twin, never "terminal"
+    assert derive_proposal("strongly-bearish — x", sleeve="quality").action_word == "PASS"
+    assert derive_proposal("strongly-bullish — x", sleeve="quality").action_word == "BUY"
+    assert derive_proposal("mixed — x", sleeve="quality").action is None, (
+        "a two-sided read proposed something — mixed must propose NOTHING in every book")
+
+    # derived, so it holds for every ledger-active book without a table
+    for row in sl.SLEEVE_ROWS:
+        if not row.ledger_active:
+            continue
+        assert derive_proposal("strongly-bullish — x", sleeve=row.key).action_word is not None
+        got = derive_proposal("strongly-bearish — x", sleeve=row.key).action
+        assert got is not None and got.value == row.verdicts[1], (
+            f"{row.key}: the bearish lean did not propose the book's own twin")
+
+
+def test_an_unknown_sleeve_and_a_non_ledger_book_give_different_reasons() -> None:
+    """FOUND BY RUNNING IT, not by reading it. The first cut reported both as "records no ledger
+    verdicts", which is TRUE of `theme` (it validates in its own ratification ledger) and FALSE of
+    a typo — it would state something about the fund's design that is not so. Same class as a guard
+    that refuses a value and reports it missing: one of the two has to be a lie.
+
+    Neither raises: this is on the RENDER path, and a page that cannot be drawn because its sleeve
+    is misspelled is worse than a page that says so."""
+    from vinci.dossier.verdict import derive_proposal
+
+    unknown = derive_proposal("strongly-bearish — x", sleeve="momentum")
+    defined = derive_proposal("strongly-bearish — x", sleeve="theme")
+    assert unknown.action is None and defined.action is None
+    assert "unknown sleeve" in unknown.note, unknown.note
+    # PIN MOVED WITH THE #380 FIX, and it moved to the MORE correct answer. `theme` is both dormant
+    # AND labelled outside the Verdict enum; it used to report the second because the activation
+    # property was never read. Activation is the PRIMARY reason — it is the registry's own stated
+    # gate — so that is what a reader should be told. The distinction this test exists for is
+    # unchanged: a DEFINED book and an UNKNOWN one still give different sentences.
+    assert "NOT activated" in defined.note, defined.note
+    assert unknown.note != defined.note, "two different absences share one sentence"
+
+
+def test_the_js_proposal_twin_mirrors_the_python_registry() -> None:
+    """THE TWIN RULE, on the one genuine second copy this design has. The JS cannot import
+    `vinci.sleeves`, so `SLEEVE_LEGS` really is a duplicate — and the expectation here is DERIVED
+    from the Python registry rather than transcribed, because a hand-typed table would be a THIRD
+    copy rather than a check on the second. Adding a sleeve therefore reddens here until the mirror
+    is updated, which is the only version that measures anything."""
+    import re
+
+    js = (SRC.parents[1] / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    m = re.search(r"const SLEEVE_LEGS = \{(.*?)\n\};", js, re.S)
+    assert m, "the JS SLEEVE_LEGS mirror is gone"
+    js_legs = {k: (a, b) for k, a, b in
+               re.findall(r'(\w+):\s*\["([^"]+)",\s*"([^"]+)"\]', m.group(1))}
+    assert js_legs == {r.key: tuple(r.verdicts) for r in sl.SLEEVE_ROWS}, (
+        f"the JS proposal mirror drifted from the registry: {js_legs}")
+    # the enum mirror too — the JS decides "can this book propose at all" from it
+    mv = re.search(r"const LEDGER_VERDICTS = \[(.*?)\];", js)
+    assert mv, "the JS LEDGER_VERDICTS mirror is gone"
+    from vinci.schemas.ledger import Verdict
+
+    assert {v.strip().strip('"') for v in mv.group(1).split(",") if v.strip()} == {
+        v.value for v in Verdict}, "the JS verdict mirror drifted from the enum"
+
+
+def test_a_dormant_sleeve_proposes_nothing_and_cannot_reach_the_ledger() -> None:
+    """REVIEW FINDING (#380). The proposal gated on "are the labels enum members", which is not the
+    activation question. `neglect` is explicitly DORMANT and shares overshoot's BUY/AVOID_TERMINAL
+    labels, so it returned a LIVE proposal; `theme` was refused only by the accident of its own
+    labels. The right property — `ledger_active` — was never read at either boundary, so a follow
+    entry naming a dormant book could receive a proposal and append a row to the fund's proof
+    ledger under a strategy that is not being measured there. The ledger is append-only, so that
+    row could not have been taken back out.
+
+    BOTH BOUNDARIES, because they fail independently: the proposal is fail-honest (it returns a
+    reason, since this is the render path), the ledger write RAISES (append-only, so it refuses
+    before the seal). Derived from `ledger_active` rather than a hardcoded roster, so activating a
+    book flips both without touching this test."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    for row in sl.SLEEVE_ROWS:
+        prop = derive_proposal("strongly-bearish — x", sleeve=row.key)
+        if row.ledger_active:
+            assert prop.action is not None, f"{row.key} is active but proposes nothing"
+            _require_verdict_in_sleeve(Verdict(row.verdicts[0]), row.key)   # must not raise
+        else:
+            assert prop.action is None, (
+                f"{row.key} is DORMANT (ledger_active=False) but returned a live proposal "
+                f"{prop.action_word!r} — the registry's activation gate is bypassed")
+            assert "NOT activated" in prop.note, prop.note
+            with pytest.raises(LedgerError, match="NOT activated"):
+                _require_verdict_in_sleeve(Verdict.BUY, row.key)
+
+    # the sharp case: neglect shares overshoot's LABELS, so a membership test let it through
+    assert sl.BY_KEY["neglect"].verdicts == sl.BY_KEY["overshoot"].verdicts, (
+        "neglect no longer shares overshoot's labels — this test's whole point was that identical "
+        "labels are not an activation signal; re-check the gate if the registry changed")

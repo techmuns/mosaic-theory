@@ -52,11 +52,14 @@ def _require_verdict_in_sleeve(
     THE PROPOSAL IS CHECKED TOO, and that half is subtler than the verdict half. ``disposition`` is
     stamped by comparing the human verdict to the machine proposal, so a proposal drawn from
     ANOTHER book's vocabulary does not merely look odd — it makes the comparison meaningless and
-    seals OVERRIDDEN onto a row where the machine and the human may well have agreed. The
-    proposal mapping is still global today (``strongly-bearish`` → ``AVOID_TERMINAL`` for every
-    name); the per-sleeve mapping lands in PR-2b. Until then a quality name whose dossier leans
-    bearish cannot be logged, and saying so out loud is the honest answer — the alternative is a
-    disagreement statistic that measures a vocabulary mismatch."""
+    seals OVERRIDDEN onto a row where the machine and the human may well have agreed.
+
+    SINCE PR-2b THE MAPPING IS PER-BOOK, so this no longer fires on the normal path: a quality
+    dossier's bearish lean proposes PASS, which IS in quality's vocabulary. The check STAYS because
+    it guards the join rather than the mapping — a caller passing a proposal sealed under a
+    different sleeve than the row it is writing (a stale artifact, a re-tagged name, a future
+    caller that reads the two from different places) would still corrupt the disposition, and that
+    is a class the mapping cannot close from its own side."""
     if sleeve is None:
         return                                   # legacy/untagged: the pre-sleeve vocabulary holds
     from vinci.sleeves import BY_KEY
@@ -64,6 +67,20 @@ def _require_verdict_in_sleeve(
     row = BY_KEY.get(sleeve)
     if row is None:
         return                                   # validated at every write path; nothing to check
+    # THE ACTIVATION GATE, ENFORCED AT THE WRITE BOUNDARY (review #380). The registry says which
+    # books may appear on a decision-ledger row; `theme` validates in its OWN append-only
+    # ratification ledger and `neglect` is dormant. Without this a followed entry naming either one
+    # would append a row to the fund's proof ledger under a book that is not being measured there —
+    # and the ledger is append-only, so it could not be taken back out.
+    if not row.ledger_active:
+        raise LedgerError(
+            f"sleeve {sleeve!r} is defined but NOT activated for the decision ledger "
+            f"(vinci/sleeves.py: ledger_active=False). "
+            + ("`theme` validates in its own append-only ratification ledger; a single name from a "
+               "theme is logged under overshoot/quality with the variant-vs-cross-section edge "
+               "basis." if sleeve == "theme" else
+               "Activate it deliberately — with its kill criterion stated first — before logging "
+               "a verdict under it."))
     if verdict.value not in row.verdicts:
         raise LedgerError(
             f"sleeve {sleeve!r} records {list(row.verdicts)}, not {verdict.value!r} — use one of "
