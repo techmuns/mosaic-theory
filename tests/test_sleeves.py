@@ -375,3 +375,39 @@ def test_the_primary_line_states_that_it_is_screen_origin_only() -> None:
     head = md.split("## ")[0]
     assert "primary" in head.lower() and "creen-origin" in head, (
         f"the primary spread does not state its scope:\n{head}")
+
+
+def test_every_primary_report_input_is_screen_scoped_not_just_the_spread() -> None:
+    """REVIEW FINDING (#378). `primary` correctly excluded followed rows from the SPREAD, but
+    `score_ledger` still built beta/alpha from every resolved BUY and `n_pending` from every row —
+    and the markdown prints all three under the same screen-scoped heading. So the first followed
+    quality BUY would have moved the reported primary beta/alpha, and a followed pending row would
+    have inflated the primary pending count.
+
+    THE SCOPE CLAIM HAS TO HOLD FOR EVERY INPUT THE HEADING COVERS, not just the number the fix
+    happened to start with — otherwise the report says "screen-origin ONLY" over figures that are
+    not. Asserted on `aggregate` (the boundary both paths cross) rather than on the harness, so it
+    holds however the caller assembles its inputs."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen = [s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+              s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    followed = s("U", Verdict.BUY, 5.00, "followed", "quality")
+
+    base = aggregate(screen, cost_bps=0, n_pending=0)
+    with_followed = aggregate([*screen, followed], cost_bps=0, n_pending=0)
+
+    # every PRIMARY figure the screen-scoped heading covers
+    for field in ("buy_avoid_spread", "n_resolved_buy", "n_resolved_avoid",
+                  "buy_mean_return", "avoid_mean_return", "buy_hit_rate",
+                  "buy_excess_gross", "buy_excess_net"):
+        assert getattr(base, field) == getattr(with_followed, field), (
+            f"a FOLLOWED row moved the primary figure {field!r} — the report's "
+            f"'screen-origin ONLY' claim does not hold for it")
+    # …and the row is not lost: it appears under its own book
+    assert with_followed.by_sleeve["quality"].n_long == 1
