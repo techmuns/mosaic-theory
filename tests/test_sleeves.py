@@ -1082,6 +1082,62 @@ def test_the_resolved_fraction_never_mixes_two_populations() -> None:
     assert "resolved 1/1" in render_table(legacy)
 
 
+def test_the_decision_log_page_actually_renders() -> None:
+    """THE INCIDENT PIN. `sleeveChip` was written as a `const` inside `render()` while its only
+    caller, `entryCard`, is a module-scope function — so every call threw `sleeveChip is not
+    defined` and the page stopped dead at "Loading ledger…". The whole decision log, including the
+    fund's own proof number, was blank on every load.
+
+    NOTHING IN THE SUITE NOTICED. Every pin on this file greps source text or executes one lifted
+    function, and a scope error is invisible to both: the string is present, the function body is
+    correct, and it is the WIRING between them that is broken. Same shape as the two unwired call
+    sites the browser found in `dossier.js` — the third landing of this class, which is what makes
+    it a guard rather than a fix.
+
+    So this runs the REAL `render()` over the REAL committed snapshots, end-to-end, and asserts
+    the page reaches its content. `root` is a plain object because render only assigns
+    `innerHTML`, and `fetch` is stubbed onto the committed files — no DOM, no server."""
+    import json
+    import subprocess
+
+    fe = SRC.parents[1] / "frontend"
+    if not (fe / "snapshots" / "decision_ledger.jsonl").exists():
+        pytest.skip("no committed frontend snapshots in this worktree")
+    script = """
+import { readFile } from 'node:fs/promises';
+const ROOT = __ROOT__;
+globalThis.fetch = async (p) => {
+  const rel = String(p).replace(/^\\.\\//, '').replace(/^\\//, '');
+  try {
+    const buf = await readFile(ROOT + '/' + rel, 'utf8');
+    return { ok: true, status: 200, json: async () => JSON.parse(buf), text: async () => buf };
+  } catch {
+    return { ok: false, status: 404, json: async () => ({}), text: async () => '' };
+  }
+};
+const v = await import(ROOT + '/views/shared/decision-log.js');
+const root = { innerHTML: '' };
+await v.render(root, {}, { item: { title: 'Decision log', blurb: '' },
+                           frame: (i, o) => o.bodyHtml });
+console.log(JSON.stringify({ html: root.innerHTML }));
+""".replace("__ROOT__", json.dumps(str(fe)))
+    proc = subprocess.run(["node", "--input-type=module", "-e", script],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        if "not found" in proc.stderr.lower() and "node" in proc.stderr.lower():
+            pytest.skip("node unavailable")
+        raise AssertionError(
+            f"the decision-log page THREW while rendering the committed ledger — in the browser "
+            f"it shows nothing but its loading placeholder:\n{proc.stderr.strip()}")
+
+    html = json.loads(proc.stdout)["html"]
+    assert "Loading ledger" not in html, (
+        "render returned with the loading placeholder still in place — the page never reached "
+        "its content")
+    assert "Verdicts logged" in html and len(html) > 2000, (
+        f"the page rendered but produced no ledger body ({len(html)} chars)")
+
+
 def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
     """REVIEW FINDING (#382), the display half. The chip was gated on the SLEEVE, so a
     followed-overshoot row rendered bare — reading as one of the screen majority while being
@@ -1096,7 +1152,8 @@ def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
     import subprocess
 
     src = (SRC.parents[1] / "frontend" / "views" / "shared" / "decision-log.js").read_text()
-    fn = re.search(r"const sleeveChip = \(e\) => \{.*?\n  \};", src, re.S)
+    # module scope (see the incident pin above) — the body closes at column 0
+    fn = re.search(r"const sleeveChip = \(e\) => \{.*?\n\};", src, re.S)
     assert fn, "sleeveChip is gone or reshaped — re-point this pin at the chip's new home"
     cases = [
         {"origin": "screen", "sleeve": "overshoot"},    # the majority → no chip

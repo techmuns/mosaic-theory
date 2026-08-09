@@ -33,22 +33,6 @@ export async function render(root, _params, { item, frame }) {
     return `<div class="subtitle muted" style="margin:-8px 0 16px;">Other books (their own curves, never pooled into the spread above) — ${cells}</div>`;
   };
 
-  // The book, named only when it is NOT the default — same rule as the dossier shelf: a chip on
-  // every row is noise, and its absence on the overshoot majority carries the same information.
-  // Neutral ink, never a coloured pill: the book is context, not a call.
-  // Chipped when the row is NOT part of the screen-origin composite — whether that is because of
-  // its BOOK or because of its ORIGIN. Gating on the sleeve alone left a followed-overshoot row
-  // bare, so it read as one of the screen majority while being excluded from their spread
-  // (review #382). Under the default book the chip names the origin, because "overshoot" is
-  // precisely the thing it must not be mistaken for.
-  const sleeveChip = (e) => {
-    const sv = e.sleeve || "overshoot";
-    const origin = e.origin || "screen";
-    if (origin === "screen" && sv === "overshoot") return "";
-    const label = sv === "overshoot" ? origin : sv;
-    return ` <span class="ds-lean" title="judged under the ${escapeHtml(sv)} book, ${escapeHtml(origin)} origin — excluded from the screen-origin spread above">${escapeHtml(label)}</span>`;
-  };
-
   const counts = `
     <div class="grid cols-4" style="margin-bottom:16px;">
       <div class="card metric"><h3>Verdicts logged</h3><div class="value">${fmtInt(led.counts.logged)}</div><div class="foot">screen-origin · immutable legs of the spread</div></div>
@@ -140,6 +124,27 @@ function freshnessPanel(mon) {
       ${rows.map(card).join("")}
     </div>`;
 }
+
+// The book, named only when it is NOT the default — same rule as the dossier shelf: a chip on
+// every row is noise, and its absence on the overshoot majority carries the same information.
+// Neutral ink, never a coloured pill: the book is context, not a call.
+//
+// Chipped when the row is NOT part of the screen-origin composite — whether that is because of
+// its BOOK or because of its ORIGIN. Gating on the sleeve alone left a followed-overshoot row
+// bare, so it read as one of the screen majority while being excluded from their spread
+// (review #382). Under the default book the chip names the origin, because "overshoot" is
+// precisely the thing it must not be mistaken for.
+//
+// AT MODULE SCOPE, beside its only caller. It was first written as a `const` inside `render()`
+// while `entryCard` is a module-scope function, so every call threw `sleeveChip is not defined`
+// and the whole page stopped at "Loading ledger…". Found by loading the page, not by any test.
+const sleeveChip = (e) => {
+  const sv = e.sleeve || "overshoot";
+  const origin = e.origin || "screen";
+  if (origin === "screen" && sv === "overshoot") return "";
+  const label = sv === "overshoot" ? origin : sv;
+  return ` <span class="ds-lean" title="judged under the ${escapeHtml(sv)} book, ${escapeHtml(origin)} origin — excluded from the screen-origin spread above">${escapeHtml(label)}</span>`;
+};
 
 function entryCard(e, mark) {
   const isBuy = isBuyVerdict(e.verdict);
