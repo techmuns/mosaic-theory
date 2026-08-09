@@ -39,35 +39,43 @@ class LedgerError(RuntimeError):
     """The verdict cannot be recorded (unknown candidate, or no price to anchor the entry)."""
 
 
-def _require_verdict_in_sleeve(verdict: Verdict, sleeve: str | None) -> None:
-    """A verdict must belong to its own sleeve's vocabulary — refused at WRITE, not at SCORE.
+def _require_verdict_in_sleeve(
+    verdict: Verdict, sleeve: str | None, *, machine_proposal: Verdict | None = None
+) -> None:
+    """Verdict AND sealed proposal must belong to the sleeve's vocabulary — refused at WRITE.
 
     THE LEDGER IS APPEND-ONLY, so this has to refuse here or not at all: a row recording a verdict
     its book does not use cannot be un-logged, and it would fall out of that book's curve (which
     reads the sleeve's own leg labels) without appearing anywhere else. Failing at scoring time
     instead would mean the damage is already sealed.
 
-    THE LIVE INTERIM CASE, and the reason this exists NOW rather than in Phase 2: `quality` records
-    BUY / PASS, and `Verdict.PASS` does not exist yet — it lands with the per-sleeve proposal
-    mapping. So a quality name cannot record its negative verdict at all today, and the honest
-    answer is to say so out loud at the moment it is attempted, naming what is missing. Recording
-    AVOID_TERMINAL instead would put "terminal decline" against a fully-priced compounder — the
-    FALSE RECORD this whole design exists to prevent."""
+    THE PROPOSAL IS CHECKED TOO, and that half is subtler than the verdict half. ``disposition`` is
+    stamped by comparing the human verdict to the machine proposal, so a proposal drawn from
+    ANOTHER book's vocabulary does not merely look odd — it makes the comparison meaningless and
+    seals OVERRIDDEN onto a row where the machine and the human may well have agreed. The
+    proposal mapping is still global today (``strongly-bearish`` → ``AVOID_TERMINAL`` for every
+    name); the per-sleeve mapping lands in PR-2b. Until then a quality name whose dossier leans
+    bearish cannot be logged, and saying so out loud is the honest answer — the alternative is a
+    disagreement statistic that measures a vocabulary mismatch."""
     if sleeve is None:
         return                                   # legacy/untagged: the pre-sleeve vocabulary holds
     from vinci.sleeves import BY_KEY
 
     row = BY_KEY.get(sleeve)
-    if row is None or verdict.value in row.verdicts:
-        return
-    raise LedgerError(
-        f"sleeve {sleeve!r} records {list(row.verdicts)}, not {verdict.value!r}. "
-        + (f"{row.verdicts[1]!r} is not a Verdict member yet — it lands with the per-sleeve "
-           f"proposal mapping, so this name cannot record that leg until then; do not substitute "
-           f"AVOID_TERMINAL, which would record 'terminal decline' against a "
-           f"{row.label.lower()}."
-           if row.verdicts[1] not in {v.value for v in Verdict}
-           else "use one of the sleeve's own labels."))
+    if row is None:
+        return                                   # validated at every write path; nothing to check
+    if verdict.value not in row.verdicts:
+        raise LedgerError(
+            f"sleeve {sleeve!r} records {list(row.verdicts)}, not {verdict.value!r} — use one of "
+            f"the sleeve's own labels. Recording {verdict.value!r} here would put another book's "
+            f"claim against a {row.label.lower()}.")
+    if machine_proposal is not None and machine_proposal.value not in row.verdicts:
+        raise LedgerError(
+            f"the sealed machine proposal is {machine_proposal.value!r}, which is not in sleeve "
+            f"{sleeve!r}'s vocabulary {list(row.verdicts)}. The proposal mapping is still GLOBAL "
+            f"(the per-sleeve mapping lands with PR-2b), so it proposed another book's label for "
+            f"this name. Logging now would stamp a confirm/override disposition off a comparison "
+            f"between two different vocabularies — a disagreement statistic measuring a mismatch.")
 
 
 def log_verdict(
@@ -138,7 +146,7 @@ def log_verdict(
                 f"screen verdict.")
         assert identity is not None  # narrowed by the guard above; mypy cannot see it
         ident = identity
-    _require_verdict_in_sleeve(verdict, sleeve)
+    _require_verdict_in_sleeve(verdict, sleeve, machine_proposal=machine_proposal)
     sector = resolve_label(resolver.sic_for(ident.cik)[0]).sector
 
     try:

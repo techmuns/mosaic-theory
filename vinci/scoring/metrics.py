@@ -68,9 +68,18 @@ def spread_by_sector(
     """Per-sector BUY−AVOID spread over the given (resolved) verdict scores. A sector reports
     ``sufficient=False`` ("insufficient data") until it has at least ``min_per_leg`` resolved BUYs
     AND AVOIDs — the per-sector edge is only readable once each sector's sample is real. Untagged
-    verdicts (``sector is None``, e.g. the pre-feature VRRM entry) bucket under ``"Unknown"``."""
+    verdicts (``sector is None``, e.g. the pre-feature VRRM entry) bucket under ``"Unknown"``.
+
+    SCREEN-ORIGIN ONLY, because this is a CUT OF THE PRIMARY SPREAD and has to mean the same thing
+    it does. It also closes the same silent drop the per-sleeve curves close: the legs below match
+    ``AVOID_TERMINAL`` by IDENTITY, so a ``PASS`` row would land in neither leg and disappear from
+    its sector with nothing raised. Filtering by origin is the honest fix rather than widening the
+    labels — a quality verdict does not belong in a per-sector read of the overshoot
+    discriminator in the first place."""
     by: dict[str, list[VerdictScore]] = defaultdict(list)
     for s in scores:
+        if s.origin != ORIGIN_SCREEN:
+            continue
         by[s.sector or "Unknown"].append(s)
     out: dict[str, SectorSpread] = {}
     for sector, ss in sorted(by.items()):
@@ -310,15 +319,25 @@ def aggregate(
     if book_daily is not None and bench_daily is not None:
         beta, alpha = ols_beta_alpha(book_daily, bench_daily)
 
-    # machine shadow curves (2026-07-13 pivot) — the SAME resolved set, bucketed by the SEALED
-    # machine proposal; the override subset carries each disagreement's forward outcome raw.
-    m_buys = [s.name_return for s in scores if s.machine_proposal is Verdict.BUY]
-    m_avoids = [s.name_return for s in scores if s.machine_proposal is Verdict.AVOID_TERMINAL]
+    # machine shadow curves (2026-07-13 pivot) — bucketed by the SEALED machine proposal; the
+    # override subset carries each disagreement's forward outcome raw.
+    # THE SAME SET THE PRIMARY MEASURES (`primary`, not `scores`), because this curve exists to be
+    # COMPARED with the primary: the pivot's whole question is how the human's spread differs from
+    # the machine's ON THE SAME NAMES. Reading a wider set would make the two incomparable while
+    # still printing them side by side — and it would silently drop a PASS proposal, which matches
+    # neither identity filter below.
+    m_buys = [s.name_return for s in primary if s.machine_proposal is Verdict.BUY]
+    m_avoids = [s.name_return for s in primary if s.machine_proposal is Verdict.AVOID_TERMINAL]
     m_buy_mean, m_avoid_mean = mean(m_buys), mean(m_avoids)
     machine_spread = (
         m_buy_mean - m_avoid_mean
         if m_buy_mean is not None and m_avoid_mean is not None else None
     )
+    # DELIBERATELY OVER `scores`, NOT `primary` — the one place the wider set is right. This is the
+    # disagreement LOG, not a curve: every override is decision-relevant evidence about the
+    # human-vs-machine relationship regardless of which book the name sits in, and dropping the
+    # followed ones would hide exactly the overrides most worth reading. It is a list of named
+    # rows, so nothing here is pooled into a number that would change meaning.
     overrides = tuple(
         OverrideOutcome(s.ticker, s.verdict, s.machine_proposal, s.name_return)
         for s in scores

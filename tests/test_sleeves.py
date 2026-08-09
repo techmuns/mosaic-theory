@@ -253,3 +253,75 @@ def test_each_sleeve_curve_uses_its_own_leg_labels() -> None:
         spread_by_sleeve([VerdictScore(entry_id="U", ticker="U", verdict=Verdict.AVOID_TERMINAL,
                                        resolved=True, name_return=0.1, bench_return=0.0,
                                        sleeve="quality")])
+
+
+def test_pass_is_a_first_class_verdict_with_its_own_leg() -> None:
+    """PASS BROUGHT FORWARD INTO PR-1b (operator decision). Without it `quality` had a vocabulary
+    it could not record — a book able to log its long leg and not its short one accumulates a
+    one-sided curve, which is worse than no curve.
+
+    Pinned as BEHAVIOUR, not membership: the quality curve is BUY−PASS and the primary is unmoved
+    by either. A membership-only assertion is what the old shelf pin was, and it went red the
+    moment the enum grew rather than describing what must stay true."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    assert Verdict.PASS.value == "PASS"
+
+    def s(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True, name_return=ret,
+                            bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen = [s("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+              s("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    both = aggregate([*screen,
+                      s("U", Verdict.BUY, 0.40, "followed", "quality"),
+                      s("V", Verdict.PASS, 0.05, "followed", "quality")],
+                     cost_bps=0, n_pending=0)
+    assert both.buy_avoid_spread == aggregate(screen, cost_bps=0, n_pending=0).buy_avoid_spread, (
+        "a quality BUY/PASS pair moved the primary spread")
+    q = both.by_sleeve["quality"]
+    assert (q.n_long, q.n_short) == (1, 1), "the PASS row did not land in quality's short leg"
+    assert q.spread == pytest.approx(0.35)
+
+
+def test_a_verdict_outside_its_sleeve_is_refused_before_the_seal() -> None:
+    """REFUSED AT WRITE, NOT AT SCORE. The ledger is append-only, so a row recording another book's
+    label cannot be un-logged — and it would fall out of that book's curve without appearing
+    anywhere else. Both directions are pinned: PASS on the overshoot book is as wrong as
+    AVOID_TERMINAL on the quality book, and the second is the one that would write 'terminal
+    decline' against a durable compounder."""
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    _require_verdict_in_sleeve(Verdict.BUY, "quality")            # in-vocabulary: silent
+    _require_verdict_in_sleeve(Verdict.PASS, "quality")
+    _require_verdict_in_sleeve(Verdict.AVOID_TERMINAL, "overshoot")
+    _require_verdict_in_sleeve(Verdict.PASS, None)                # legacy/untagged row: unchanged
+
+    with pytest.raises(LedgerError, match="quality"):
+        _require_verdict_in_sleeve(Verdict.AVOID_TERMINAL, "quality")
+    with pytest.raises(LedgerError, match="overshoot"):
+        _require_verdict_in_sleeve(Verdict.PASS, "overshoot")
+
+
+def test_a_proposal_from_another_books_vocabulary_is_refused() -> None:
+    """THE SUBTLER HALF. `disposition` is stamped by comparing the human verdict to the sealed
+    machine proposal, so a proposal drawn from another book's vocabulary does not merely look odd
+    — it seals OVERRIDDEN onto a row where the two may well have agreed, and the override subset
+    is the most decision-relevant data the pivot produces.
+
+    The proposal mapping is still GLOBAL (strongly-bearish → AVOID_TERMINAL for every name); the
+    per-sleeve mapping lands in PR-2b. Until then a bearish-leaning quality name cannot be logged,
+    and refusing is the honest answer — the alternative is a disagreement statistic measuring a
+    vocabulary mismatch."""
+    from vinci.ledger.workflow import LedgerError, _require_verdict_in_sleeve
+    from vinci.schemas.ledger import Verdict
+
+    _require_verdict_in_sleeve(Verdict.BUY, "quality", machine_proposal=Verdict.BUY)
+    _require_verdict_in_sleeve(Verdict.PASS, "quality", machine_proposal=Verdict.PASS)
+    _require_verdict_in_sleeve(Verdict.BUY, "quality", machine_proposal=None)   # no read: fine
+
+    with pytest.raises(LedgerError, match="machine proposal"):
+        _require_verdict_in_sleeve(Verdict.BUY, "quality",
+                                   machine_proposal=Verdict.AVOID_TERMINAL)

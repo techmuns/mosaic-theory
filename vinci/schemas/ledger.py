@@ -69,10 +69,20 @@ def sleeve_of(entry: LedgerEntry) -> str:
 
 
 class Verdict(enum.StrEnum):
-    """The two verdicts Loop 1 records for Screen 2 (overshot de-rating)."""
+    """Every verdict any sleeve records. WHICH ones a given book may use is the sleeve's own
+    vocabulary (``vinci/sleeves.py``), enforced at write time — this enum is the union, not a menu.
+
+    THE NEGATIVE LEG IS PER-BOOK, and that is the whole reason this grew past two. "Terminal
+    decline" is the overshoot twin; recording it against a fully-priced compounder would be a FALSE
+    RECORD in an append-only ledger, which is why ``quality`` gets ``PASS`` rather than reusing
+    ``AVOID_TERMINAL``. A verdict outside its sleeve's vocabulary is refused before the seal."""
 
     BUY = "BUY"  # overshoot — the de-rating is exaggerated-and-temporary; a reversal is nameable
-    AVOID_TERMINAL = "AVOID_TERMINAL"  # the twin — real-and-permanent decline; no trade
+    AVOID_TERMINAL = "AVOID_TERMINAL"  # the overshoot twin — real-and-permanent decline; no trade
+    # The QUALITY twin — the business is sound and the PRICE already pays for it. Deliberately not
+    # an AVOID_*: it says "not at this price", never "this is dying", and the underwrite record
+    # already carried the concept (`VerdictStatus` literal "passed", `Verdict.avoid_priced`).
+    PASS = "PASS"
 
 
 class Confidence(enum.StrEnum):

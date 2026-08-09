@@ -330,8 +330,18 @@ function cardTag(ticker, reads, verdictBy) {
   return v ? verdictTag(v) : leanTag(reads[ticker]);
 }
 
-// The human's verdict of record. AVOID_TERMINAL displays as AVOID — lossless, since BUY and
-// AVOID_TERMINAL are the only two verdicts (mirrors MachineProposal.action_word on the py side).
+// The DISPLAY WORD for a verdict of record. Mirrors MachineProposal.action_word on the py side.
+// AVOID_TERMINAL still shortens to AVOID; every other label prints ITSELF.
+//
+// IT USED TO SHORTEN BY ASSUMING THERE WERE ONLY TWO. `buy ? "BUY" : "AVOID"` was lossless while
+// BUY and AVOID_TERMINAL were the whole vocabulary — and the moment a sleeve added its own
+// negative leg it would have printed "AVOID" over a PASS, which is precisely the false record the
+// separate label exists to prevent: PASS says "not at this price", never "this is dying".
+function verdictWord(verdict) {
+  const v = String(verdict || "").toUpperCase();
+  return v === "AVOID_TERMINAL" ? "AVOID" : v;
+}
+
 function verdictTag(v) {
   const buy = isBuyVerdict(v.verdict);
   const at = [v.entryPrice != null ? `@ ${fmtPrice(v.entryPrice)}` : "", fmtDate(v.decidedAt)]
@@ -346,7 +356,7 @@ function verdictTag(v) {
     ? ` — closed ${cl.exitPriceAsOf || ""}${cl.exitPrice != null ? ` at ${fmtPrice(cl.exitPrice)}` : ""}`
     : ""}`;
   return `<span class="pill ${tone} ds-card-tag" title="${escapeHtml(tip)}">${
-    buy ? "BUY" : "AVOID"}${cl ? " · closed" : ""}</span>`;
+    verdictWord(v.verdict)}${cl ? " · closed" : ""}</span>`;
 }
 
 function leanTag(eb) {
@@ -3846,14 +3856,14 @@ function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
     if (bare) {
       return wrap(`no verdict logged yet — verdicts are logged via the CLI only, never from this
         dashboard (the friction is the safeguard):
-        <pre class="ds-rerun"><code>python -m vinci log-verdict ${escapeHtml(cid)} --verdict &lt;BUY|AVOID_TERMINAL&gt; …</code></pre>
+        <pre class="ds-rerun"><code>python -m vinci log-verdict ${escapeHtml(cid)} --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; …</code></pre>
         <span class="muted" style="font-size:11px;">append-only — the entry price freezes from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted</span>`);
     }
     return `<details class="card ds-section">
       <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
       <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
       <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
-  --verdict &lt;BUY|AVOID_TERMINAL&gt; \\
+  --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; \\
   --twin "how the terminal-decline twin is ruled out" \\
   --thesis "the overshoot thesis (or AVOID rationale)" \\
   --kill "what would falsify it" \\
