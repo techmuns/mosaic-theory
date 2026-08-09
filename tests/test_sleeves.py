@@ -41,10 +41,34 @@ def test_every_sleeve_row_is_complete() -> None:
     copy. A row missing its bet or its twin would reach that code as an empty string and render as
     a blank question rather than an error, which is the silent-default failure the whole sleeve
     design exists to remove. Checked per FIELD rather than by counting rows, so adding a sleeve
-    without filling it in reddens here."""
+    without filling it in reddens here.
+
+    THE FIELD LIST IS DERIVED, NOT RESTATED. It used to name seven fields by hand while the row
+    carries twenty-three, so the fifteen render/prompt strings the later PRs added — the case
+    labels, the page headings, the CLI help copy — were unchecked: a new sleeve passing `""` for
+    `bull_case` imported cleanly and rendered a blank prompt section, which is the exact
+    silent-default failure this pin exists to catch. A hand-kept list guards the fields someone
+    remembered, and the registry grows precisely when someone is not remembering.
+
+    (Omitting a field outright is already impossible — no field carries a default, so the
+    dataclass raises at import. This pin covers the case the type system cannot see: present but
+    empty.)"""
+    import dataclasses
+
     assert sl.SLEEVE_ROWS, "the registry is empty"
+    # UNION of the declared annotation and the runtime value, because either alone leaves a hole:
+    # matching only on the annotation re-introduces a hand-maintained assumption (the literal
+    # spelling "str"), so a field annotated any other way would be SILENTLY skipped — the very
+    # failure this derivation removes; matching only on the runtime value would skip a str-declared
+    # field that a row filled with the wrong type, instead of failing on it.
+    probe = sl.SLEEVE_ROWS[0]
+    str_fields = [f.name for f in dataclasses.fields(probe)
+                  if f.type in ("str", str) or isinstance(getattr(probe, f.name), str)]
+    assert len(str_fields) >= 20, (
+        f"only {len(str_fields)} string fields discovered ({str_fields}) — the derivation broke "
+        f"and this pin is now checking less than it did when it was a hand-written list")
     for s in sl.SLEEVE_ROWS:
-        for field in ("key", "label", "bet", "twin", "question", "entry", "kill"):
+        for field in str_fields:
             value = getattr(s, field)
             assert isinstance(value, str) and value.strip(), (
                 f"sleeve {s.key!r} has an empty {field!r} — an incomplete row reaches Phase 2 as a "
@@ -1142,6 +1166,44 @@ console.log(JSON.stringify({ html: root.innerHTML }));
         "its content")
     assert "Verdicts logged" in html and len(html) > 2000, (
         f"the page rendered but produced no ledger body ({len(html)} chars)")
+
+
+def test_the_log_verdict_cli_help_privileges_no_single_book() -> None:
+    """`--twin` help read "how the terminal-decline twin was ruled out" — one book's twin, asked
+    of every book. A quality verdict was told to rule out terminal decline at the moment of
+    logging it, which is the false framing the registry exists to remove, on the surface closest
+    to the append-only record.
+
+    IT CANNOT BE MADE PER-BOOK: argparse builds this help when the parser is constructed, before
+    any ticker — and so any sleeve — is known. So the invariant is not "it matches the sleeve" but
+    "it privileges NO sleeve", and the per-book wording reaches the analyst where the book IS
+    known (`Sleeve.twin_help`, rendered into the dossier page's copy-paste command).
+
+    Asserted against the REAL parser's formatted help, not the source line, so re-wording or
+    moving the argument cannot quietly slip a book's twin back in.
+
+    WHITESPACE IS NORMALISED FIRST, and the first cut of this pin was wrong without it: argparse
+    wraps help to the terminal width, so at COLUMNS=50 and 60 the phrase "terminal-decline twin"
+    straddles a line break and a raw substring test PASSES while the overshoot framing is sitting
+    right there. It happened to catch the regression at 80 columns, which is the worst kind of
+    guard — one that works on the machine where it was written."""
+    import argparse
+
+    from vinci.cli import build_parser
+
+    parser = build_parser()
+    sub = next(a for a in parser._actions if isinstance(a, argparse._SubParsersAction))
+    help_text = " ".join(sub.choices["log-verdict"].format_help().split())
+
+    assert "--twin" in help_text, "the --twin argument is gone from log-verdict"
+    for row in sl.SLEEVE_ROWS:
+        assert " ".join(row.twin_help.split()) not in help_text, (
+            f"the CLI help hardcodes the {row.key!r} book's twin wording ({row.twin_help!r}). "
+            f"argparse cannot know the sleeve here, so naming one book asks every OTHER book's "
+            f"verdict to rule out a twin that is not its own.")
+    # and the overshoot twin specifically, in either tense — the exact string that was there
+    for phrasing in ("terminal-decline twin", "terminal decline twin"):
+        assert phrasing not in help_text, f"overshoot's twin is back in the shared help: {phrasing}"
 
 
 def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
