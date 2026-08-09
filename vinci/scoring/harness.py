@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-from vinci.schemas.ledger import Verdict
+from vinci.schemas.ledger import Verdict, origin_of, sleeve_of
 from vinci.schemas.market import PriceBar
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
@@ -79,6 +79,11 @@ def score_ledger(
             sector=entry.sector,  # carried through for the per-sector spread read
             machine_proposal=entry.machine_proposal,  # sealed at log time (2026-07-13 pivot)
             disposition=entry.disposition,
+            # READ THROUGH THE HELPERS, never off the attribute: a legacy row carries None for
+            # both, and its truthful reading is screen/overshoot (no other route could reach the
+            # ledger when it was written). One definition, so the report cannot disagree with it.
+            origin=origin_of(entry),
+            sleeve=sleeve_of(entry),
         )
         scores.append(score)
         # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression

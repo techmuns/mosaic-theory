@@ -13,7 +13,8 @@ import statistics
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from vinci.schemas.ledger import Disposition, Verdict
+from vinci.schemas.ledger import ORIGIN_SCREEN, Disposition, Verdict
+from vinci.sleeves import DEFAULT_SLEEVE
 
 
 def total_return(entry_price: float, exit_price: float) -> float:
@@ -35,6 +36,11 @@ class VerdictScore:
     # the report can read the machine curve and the override subset. None == pre-pivot entry.
     machine_proposal: Verdict | None = None
     disposition: Disposition | None = None
+    # WHICH BOOK, and HOW the name got in — carried from the ledger row so the report can segment.
+    # Defaults are the truthful reading of a row logged before the fields existed: the screen was
+    # the only route that could reach the ledger, and overshoot the only strategy.
+    origin: str = ORIGIN_SCREEN
+    sleeve: str = DEFAULT_SLEEVE
 
     @property
     def excess_gross(self) -> float:
@@ -100,6 +106,23 @@ def ols_beta_alpha(
 
 
 @dataclass(frozen=True)
+class SleeveSpread:
+    """One strategy book's own curve — its long leg minus the leg it is measured against.
+
+    SEPARATE FROM THE PRIMARY by construction: `overshoot` here is the screen-origin book and
+    reproduces the primary number, while `quality` accumulates its own BUY−PASS curve. Pooling them
+    would answer a question nobody asked — the fund's proof is per-book, which is also what an
+    allocator asks for (one composite per strategy)."""
+
+    sleeve: str
+    n_long: int
+    n_short: int          # the "measured against" leg (AVOID_TERMINAL, PASS, …) — never a short
+    long_mean: float | None
+    short_mean: float | None
+    spread: float | None  # None (never 0.0) when either leg is empty — an empty leg is not a zero
+
+
+@dataclass(frozen=True)
 class OverrideOutcome:
     """One resolved OVERRIDE — human vs machine on the same name, with the forward outcome.
     The most informative subset the pivot produces: it directly reads which side the forward
@@ -143,6 +166,8 @@ class ScoreReport:
     n_overridden: int = 0
     n_no_proposal: int = 0
     overrides: tuple[OverrideOutcome, ...] = ()
+    # PER-BOOK curves, beside the primary and never inside it (STATE.md §4 SLEEVE ARCHITECTURE).
+    by_sleeve: dict[str, SleeveSpread] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -150,6 +175,11 @@ class ScoreReport:
             s: {"n_buy": v.n_buy, "n_avoid": v.n_avoid, "spread": v.spread,
                 "sufficient": v.sufficient}
             for s, v in self.by_sector.items()
+        }
+        d["by_sleeve"] = {
+            k: {"n_long": v.n_long, "n_short": v.n_short, "long_mean": v.long_mean,
+                "short_mean": v.short_mean, "spread": v.spread}
+            for k, v in self.by_sleeve.items()
         }
         d["overrides"] = [
             {"ticker": o.ticker, "human": o.human.value, "machine": o.machine.value,
@@ -211,6 +241,45 @@ class ScoreReport:
         return "\n".join(lines)
 
 
+def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
+    """Each strategy book's own curve, with ITS OWN leg labels read from the registry.
+
+    THE LEG LABELS ARE NOT HARDCODED, and that is the point of the registry: overshoot measures
+    BUY−AVOID_TERMINAL while quality measures BUY−PASS, so a hardcoded `AVOID_TERMINAL` filter
+    would silently drop every quality row out of both legs and report an empty curve as though the
+    book had no verdicts. `Sleeve.verdicts` names (long, measured-against) per book, so adding
+    sleeve N+1 needs no change here at all.
+
+    A verdict whose label belongs to NEITHER leg of its own sleeve is counted in `n_long`/`n_short`
+    by nobody and would vanish silently — so it raises. That is the exact failure mode the
+    exact-identity filters had before this existed.
+    """
+    from vinci.sleeves import BY_KEY
+
+    out: dict[str, SleeveSpread] = {}
+    for key in sorted({s.sleeve for s in scores}):
+        rows = [s for s in scores if s.sleeve == key]
+        row = BY_KEY.get(key)
+        if row is None:                       # validated at every write path; belt-and-braces here
+            raise ValueError(f"scored rows carry sleeve {key!r}, which no registry row defines")
+        long_label, short_label = row.verdicts
+        longs = [r.name_return for r in rows if r.verdict.value == long_label]
+        shorts = [r.name_return for r in rows if r.verdict.value == short_label]
+        unclassified = [r for r in rows if r.verdict.value not in (long_label, short_label)]
+        if unclassified:
+            raise ValueError(
+                f"sleeve {key!r} scored {len(unclassified)} verdict(s) belonging to neither of its "
+                f"legs ({long_label}/{short_label}): "
+                f"{sorted({r.verdict.value for r in unclassified})} — such a row would fall out of "
+                f"the curve without appearing anywhere, which is the silent-drop this refuses")
+        lm = statistics.fmean(longs) if longs else None
+        sm = statistics.fmean(shorts) if shorts else None
+        out[key] = SleeveSpread(
+            sleeve=key, n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
+            spread=(lm - sm if lm is not None and sm is not None else None))
+    return out
+
+
 def aggregate(
     scores: list[VerdictScore],
     *,
@@ -220,8 +289,13 @@ def aggregate(
     bench_daily: list[float] | None = None,
 ) -> ScoreReport:
     """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression."""
-    buys = [s for s in scores if s.verdict is Verdict.BUY]
-    avoids = [s for s in scores if s.verdict is Verdict.AVOID_TERMINAL]
+    # THE PRIMARY SPREAD IS SCREEN-ORIGIN ONLY (operator decision 2026-08-07). The spread is the
+    # fund's proof and it measures the discriminator ON the $300M–$10B hunting ground; pooling
+    # followed megacap verdicts into it would silently change what the number means. Every other
+    # cut accumulates beside it in `by_sleeve`, never inside this one.
+    primary = [s for s in scores if s.origin == ORIGIN_SCREEN]
+    buys = [s for s in primary if s.verdict is Verdict.BUY]
+    avoids = [s for s in primary if s.verdict is Verdict.AVOID_TERMINAL]
 
     def mean(xs: list[float]) -> float | None:
         return statistics.fmean(xs) if xs else None
@@ -267,6 +341,7 @@ def aggregate(
         twin_buy_bounced=(buy_mean > 0) if buy_mean is not None else None,
         twin_avoid_fell=(avoid_mean < 0) if avoid_mean is not None else None,
         by_sector=spread_by_sector(scores),
+        by_sleeve=spread_by_sleeve(scores),
         n_machine_buy=len(m_buys),
         n_machine_avoid=len(m_avoids),
         machine_buy_avoid_spread=machine_spread,

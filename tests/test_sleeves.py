@@ -153,3 +153,103 @@ def test_the_registry_concludes_nothing_and_reads_no_returns() -> None:
         n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
     forbidden = {"forward_return", "forward_returns", "name_return", "excess_gross", "spread"}
     assert not (names & forbidden), f"registry reads outcome data: {sorted(names & forbidden)}"
+
+
+# ------------------------------------------------------------------ the LEDGER side (PR-1b)
+
+
+def test_a_legacy_ledger_row_reads_screen_and_overshoot() -> None:
+    """THE ADDITIVE-FIELD CONTRACT, on the fields that decide which curve a row lands in.
+
+    Every committed row predates these fields and carries None for both. Their truthful reading is
+    screen/overshoot — not a convenient default: `log_verdict` REFUSED any name without a
+    CandidateRecord, so no other route could reach this ledger at all, and overshoot was the only
+    strategy. Read through the helpers so a legacy row and a tagged row answer identically."""
+    import json
+    import pathlib
+
+    from vinci.schemas.ledger import LedgerEntry, origin_of, sleeve_of
+
+    p = pathlib.Path(__file__).resolve().parents[1] / "data/snapshots/decision_ledger.jsonl"
+    if not p.exists():
+        pytest.skip("no committed ledger in this worktree")
+    rows = [LedgerEntry.model_validate_json(json.loads(x)["payload"])
+            for x in p.read_text().splitlines() if x.strip()]
+    assert rows, "the committed ledger is empty — nothing to assert on"
+    for e in rows:
+        assert e.origin is None and e.sleeve is None, (
+            f"{e.entry_id} was BACKFILLED — a sealed row is never rewritten to satisfy a later "
+            f"schema; absent is the record of when it was logged")
+        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE
+
+
+@pytest.mark.parametrize(("field", "bad"), [
+    ("origin", "backdoor"), ("origin", ""), ("sleeve", "momentum"), ("sleeve", "OVERSHOOT")])
+def test_the_ledger_row_refuses_an_unlisted_origin_or_sleeve(field: str, bad: str) -> None:
+    """ABSENT is legal (legacy); PRESENT-BUT-UNKNOWN is a typo that would drop the row out of every
+    filtered curve without saying so — the silent-drop this segmentation exists to prevent."""
+    import json
+    import pathlib
+
+    from pydantic import ValidationError
+
+    from vinci.schemas.ledger import LedgerEntry
+
+    p = pathlib.Path(__file__).resolve().parents[1] / "data/snapshots/decision_ledger.jsonl"
+    if not p.exists():
+        pytest.skip("no committed ledger in this worktree")
+    base = json.loads(json.loads(p.read_text().splitlines()[0])["payload"])
+    with pytest.raises(ValidationError):
+        LedgerEntry.model_validate({**base, field: bad})
+
+
+def test_the_primary_spread_counts_screen_origin_only() -> None:
+    """THE OPERATOR'S 2026-08-07 DECISION, pinned as behaviour rather than prose.
+
+    The spread is the fund's proof and it measures the discriminator ON the $300M–$10B hunting
+    ground. A followed megacap verdict must not move it — pooling silently changes what the number
+    means. Built so the followed rows would CHANGE the answer if they counted, which is what makes
+    this a measurement rather than a restatement."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, aggregate
+
+    def score(tag: str, v: Verdict, ret: float, origin: str, sleeve: str) -> VerdictScore:
+        return VerdictScore(entry_id=tag, ticker=tag, verdict=v, resolved=True,
+                            name_return=ret, bench_return=0.0, origin=origin, sleeve=sleeve)
+
+    screen_only = [score("A", Verdict.BUY, 0.20, "screen", "overshoot"),
+                   score("B", Verdict.AVOID_TERMINAL, 0.05, "screen", "overshoot")]
+    baseline = aggregate(screen_only, cost_bps=0, n_pending=0)
+    with_followed = aggregate(
+        [*screen_only, score("U", Verdict.BUY, 5.00, "followed", "quality")],
+        cost_bps=0, n_pending=0)
+
+    assert baseline.buy_avoid_spread == with_followed.buy_avoid_spread, (
+        "a FOLLOWED verdict moved the primary spread — the fund's proof number now measures "
+        "something other than the hunting ground it claims to measure")
+    assert with_followed.n_resolved_buy == baseline.n_resolved_buy, (
+        "the followed row was counted in the primary BUY leg")
+    assert "quality" in with_followed.by_sleeve, "the followed row vanished from every curve"
+    assert with_followed.by_sleeve["quality"].n_long == 1
+
+
+def test_each_sleeve_curve_uses_its_own_leg_labels() -> None:
+    """THE HAZARD THE EXACT-IDENTITY FILTERS COULD NOT SEE. `scoring` matched
+    `Verdict.AVOID_TERMINAL` by identity, so a verdict belonging to another book's vocabulary would
+    land in NEITHER leg and disappear from the report with nothing raised. The per-sleeve curve
+    reads its labels from the registry, and a verdict matching neither leg RAISES."""
+    from vinci.schemas.ledger import Verdict
+    from vinci.scoring.metrics import VerdictScore, spread_by_sleeve
+
+    rows = [VerdictScore(entry_id="A", ticker="A", verdict=Verdict.BUY, resolved=True,
+                         name_return=0.2, bench_return=0.0, sleeve="overshoot"),
+            VerdictScore(entry_id="B", ticker="B", verdict=Verdict.AVOID_TERMINAL, resolved=True,
+                         name_return=0.05, bench_return=0.0, sleeve="overshoot")]
+    out = spread_by_sleeve(rows)
+    assert out["overshoot"].spread == pytest.approx(0.15)
+
+    # AVOID_TERMINAL is not in quality's vocabulary — it must not be silently ignored.
+    with pytest.raises(ValueError, match="neither of its legs"):
+        spread_by_sleeve([VerdictScore(entry_id="U", ticker="U", verdict=Verdict.AVOID_TERMINAL,
+                                       resolved=True, name_return=0.1, bench_return=0.0,
+                                       sleeve="quality")])

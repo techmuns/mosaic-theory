@@ -39,6 +39,35 @@ def close_entry_id(candidate_id: str) -> str:
     return f"{CLOSE_ID_PREFIX}{candidate_id}"
 
 
+# How a name reached the ledger. SCREEN = through the $300M–$10B hunting ground; FOLLOWED = an
+# operator follow decision, deliberately outside the band. The PRIMARY spread counts SCREEN only.
+ORIGIN_SCREEN = "screen"
+ORIGIN_FOLLOWED = "followed"
+ORIGINS = frozenset({ORIGIN_SCREEN, ORIGIN_FOLLOWED})
+
+
+def origin_of(entry: LedgerEntry) -> str:
+    """The row's route, with the legacy row's TRUTHFUL default rather than a guess.
+
+    A row logged before the field existed is necessarily screen-origin: ``log_verdict`` refused any
+    name without a ``CandidateRecord``, so no other route could reach this ledger at all. Reading
+    through here rather than off the attribute is what lets the spread filter treat legacy and
+    tagged rows identically — the alternative is `or ORIGIN_SCREEN` repeated at every call site,
+    which is the drift shape this repo refuses."""
+    return entry.origin or ORIGIN_SCREEN
+
+
+def sleeve_of(entry: LedgerEntry) -> str:
+    """The row's strategy book, defaulting a legacy row to the only strategy that then existed.
+
+    Imported lazily so this module keeps importing nothing from the sleeve registry at module
+    scope — ``vinci.sleeves`` is a leaf, but the ledger schema is imported by almost everything and
+    the no-extra-imports property here is load-bearing for the AST guards."""
+    from vinci.sleeves import DEFAULT_SLEEVE
+
+    return entry.sleeve or DEFAULT_SLEEVE
+
+
 class Verdict(enum.StrEnum):
     """The two verdicts Loop 1 records for Screen 2 (overshot de-rating)."""
 
@@ -110,6 +139,24 @@ class LedgerEntry(BaseModel, frozen=True):
     # PER-SECTOR (where the edge is real). Optional: None == a verdict logged before sector-tagging
     # existed (VRRM). Frozen with the verdict; never derived later.
     sector: str | None = None
+    # --- WHICH BOOK, AND HOW THE NAME GOT IN (2026-08-09; STATE.md §4 SLEEVE ARCHITECTURE) ------
+    # ``origin`` is the ROUTE the name arrived by — ORIGIN_SCREEN (the $300M–$10B hunting ground)
+    # or ORIGIN_FOLLOWED (an operator follow decision, deliberately out of band). ``sleeve`` is the
+    # STRATEGY BOOK the verdict is a claim under (`vinci/sleeves.py`).
+    #
+    # TWO FIELDS AND NOT ONE, because they answer different questions and the PRIMARY BUY−AVOID
+    # SPREAD KEYS ON ORIGIN: the spread is the fund's proof and it measures the discriminator ON
+    # the hunting ground, so pooling megacap verdicts into it silently changes what the number
+    # means. Every other cut accumulates as its own labelled curve beside it — the same shape as
+    # the machine-proposal-vs-human-final split (operator decision 2026-08-07).
+    #
+    # Optional-with-default, the precedent every field above follows: None == a verdict logged
+    # before these existed, which is every committed row. Their meaning for those rows is the
+    # truthful one — the screen was the ONLY route that could reach this ledger (``log_verdict``
+    # refused anything without a CandidateRecord), and overshoot the only strategy. Read them via
+    # :func:`origin_of` / :func:`sleeve_of` so a legacy row and a tagged row answer identically.
+    origin: str | None = None
+    sleeve: str | None = None
 
     verdict: Verdict
     twin_call: str  # how the twin was ruled out / why it is the twin (the central judgement)
@@ -177,6 +224,33 @@ class LedgerEntry(BaseModel, frozen=True):
     # own grounds. Sealed by the same append-only discipline as everything else in this record —
     # the row is frozen at write.
     reason: str | None = None                # CLOSE only
+
+    @field_validator("origin")
+    @classmethod
+    def _origin_known(cls, v: str | None) -> str | None:
+        """An unlisted route is refused, but ABSENT is legal — the two are different states.
+
+        None means "logged before the field existed" and reads as screen through
+        :func:`origin_of`. A present-but-unknown value is a typo that would silently drop the row
+        out of every origin-filtered curve, which is worse than either."""
+        if v is not None and v not in ORIGINS:
+            raise ValueError(
+                f"origin {v!r} is not one of {sorted(ORIGINS)} — a row whose route is unrecognised "
+                f"falls out of the origin-filtered spreads without saying so")
+        return v
+
+    @field_validator("sleeve")
+    @classmethod
+    def _sleeve_known(cls, v: str | None) -> str | None:
+        """Same shape as ``origin``: absent is legal, unlisted is refused, and the refusal names
+        the admissible set (the registry's own message)."""
+        if v is None:
+            return v
+        from vinci.sleeves import UnknownSleeveError, require_sleeve
+        try:
+            return require_sleeve(v, where=f"{cls.__name__}.sleeve")
+        except UnknownSleeveError as exc:
+            raise ValueError(str(exc)) from exc
 
     @model_validator(mode="after")
     def _close_row_shape(self) -> LedgerEntry:
