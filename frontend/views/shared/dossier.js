@@ -2106,10 +2106,35 @@ export function drawdownChart(sp, rows, det) {  // exported for the SVG-renderer
 // it. A repeat filing reads "same 8-K as №" instead of restating the cause.
 function readWhatBroke(s, sp, dc, refDate, sleeve) {
   const rows = gapList(fmtShape(s.value));
-  // ANY discrete-gap name gets the chart+ledger (a 1-gap name still needs "did it fall alone" and
-  // its true 1-day %); only a gradual-bleed / unparseable shape stays the one-liner.
-  if (!rows) return factRead(sleeveCopy(sleeve).read, s, (v) => escapeHtml(fmtShape(v)));
   const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days, refDate };
+  // NO GAPS IS NOT NO PRICE PATH. A gradual-decline name used to render one line of text and
+  // nothing else — but the section asks what MOVED the price and whether it moved alone, and both
+  // halves are answerable whether or not the move arrived in discrete steps. UBER is the live
+  // case: −18.8% over the year with a worst single day of −6.9%, so the −10% detector fires
+  // never and the reader was shown a sentence where every other name got a chart.
+  //
+  // IT IS THE SAME CHART with an EMPTY marker set, not a second renderer: `drawdownChart` uses
+  // `rows` only to build its gap markers, so passing none yields the identical axes, rebase line
+  // and benchmark comparison with nothing annotated on it. A separate "gradual" chart would be a
+  // second thing to keep in step for no gain.
+  //
+  // THE SCREEN SELECTS FOR GAPS, so this case is rare in the overshoot book and ROUTINE in the
+  // quality one: a compounder followed deliberately is exactly the name that bleeds rather than
+  // breaks. Today UBER is the only committed name with zero gaps, and it is the only quality name.
+  if (!rows) {
+    const { svg: plain } = drawdownChart(sp, [], det);
+    if (!plain) return factRead(sleeveCopy(sleeve).read, s, (v) => escapeHtml(fmtShape(v)));
+    const why = (det.threshold != null && det.windowDays != null)
+      ? `No single day crossed the −${Math.round(Math.abs(det.threshold) * 100)}% detector inside the ${det.windowDays}d window, so there is nothing to mark — the path is the whole event.`
+      : "No discrete gap-down was detected, so there is nothing to mark — the path is the whole event.";
+    const note = `<div style="flex:0 1 236px; font-size:11.5px;">
+      <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">No discrete gap-downs</div>
+      <div style="color:var(--ink-2); line-height:1.55;">${escapeHtml(fmtShape(s.value))}</div>
+      <div style="color:var(--ink-3); margin-top:7px; line-height:1.55;">${escapeHtml(why)}</div>
+      ${citeMark(s.source_ref)}</div>`;
+    return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
+      <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${plain}${note}</div></div>`;
+  }
   const { svg, preDrops } = drawdownChart(sp, rows, det);
   // accession per gap-date (explanatory filings only) → "same 8-K as №" cross-refs
   const accByDate = new Map();
