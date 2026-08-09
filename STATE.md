@@ -7645,25 +7645,46 @@ sample: **the source was authoritative and the excerpt was not.**
     rather than encoding a guess about the vocabulary.
 
 34. **SLEEVES — un-hardcode the overshoot framing (SERIES A; briefed 2026-08-08; §4 records
-    the decision).**
-    Phase 0 = this record + the glossary line + the followed-name INTAKE RUNBOOK (docs-only, ships
-    with this item). **Phase 1** (2 PRs): `vinci/sleeves.py` registry validated against a frozenset
-    (the `BEAR_BASES` precedent, never an Enum); `followed.json` migrates flat-string →
-    `{reason, sleeve}` and REFUSES a bare string or unknown sleeve; `Dossier.sleeve` defaults
-    `overshoot`; `LedgerEntry` gains `origin`/`sleeve` optional-with-default (the documented
-    append-only-safe precedent on that model) so a followed name can log a verdict AT ALL — today
-    `log_verdict` refuses it (`store.get_candidate` → `LedgerError`), which is the acceptance RED;
-    curves segment with the PRIMARY spread pinned IDENTICAL on the committed ledger. **Phase 2**
-    (4 PRs): `system_for(sleeve)`/`tool_for(sleeve)` replacing the single `_SYSTEM`+`SYNTHESIS_TOOL`
-    (overshoot output pinned BYTE-IDENTICAL on a frozen fixture); per-sleeve proposal mapping +
-    `Verdict.PASS` in both twins; per-sleeve page question/case labels (PREVIEW-gated, collapsed
-    AND print-expanded); e2e + artifact pass. **The pin that must MOVE, not loosen:**
-    `test_shelf_tag_prefers_the_logged_human_verdict` asserts `{v.value for v in Verdict} ==
-    {"BUY","AVOID_TERMINAL"}` and its own message says why — it moves WITH the display fix.
-    **The hazard it does NOT catch:** monitor/JS classify by BUY-PREFIX family (PASS → avoid leg)
-    while `scoring/metrics.py` uses EXACT identity, so a PASS row would land in NEITHER leg
-    silently — closed by the registry's per-sleeve avoid-label plus a new pin that every enum
-    member resolves into exactly one leg. Brief: `~/.claude/plans/fluffy-foraging-codd.md`.
+    the decision). BUILT ACROSS EIGHT PRs, #376-#383 — all OPEN, none merged as of 2026-08-09.**
+    The pipeline was hard-bound to overshoot at seven surfaces; a followed megacap (UBER) was
+    therefore asked what broke when nothing had, and its bearish twin label would have written
+    "terminal decline" into an append-only ledger against a compounder.
+    **What shipped, in order:** #376 the four sleeve definitions + the followed-name INTAKE
+    RUNBOOK; #377 `vinci/sleeves.py` (frozenset-validated, the `BEAR_BASES` precedent, never an
+    Enum), `followed.json` migrated flat-string → `{reason, sleeve}` with the bare form REFUSED,
+    `Dossier.sleeve`; #378 `LedgerEntry.origin`/`.sleeve` optional-with-default, the followed
+    name can log a verdict AT ALL (the acceptance red: `log_verdict` refused it), curve
+    segmentation with the PRIMARY spread pinned identical on the committed ledger, and
+    **`Verdict.PASS` brought forward here by operator decision** rather than waiting for #380;
+    #379 `system_for(sleeve)`/`tool_for(sleeve)` with overshoot pinned BYTE-IDENTICAL against a
+    git-extracted baseline; #380 the proposal mapping DERIVED from each book's own legs (no second
+    table); #381 the per-book page question + case labels, the sleeve-conditional CIQ requirement,
+    and the shelf tag; #382 the ledger-READING surfaces (monitor / gate widget / decision log /
+    uw-card) which segmented in the engine and still pooled in every human-facing view; #383 the
+    residual per-book strings INSIDE the headings #381 had already moved.
+    **THE REVIEW FOUND SIX DEFECTS THE BUILD DID NOT** — worth recording because five were the
+    same shape: a fix applied at the layer it was noticed instead of the layer where the harm
+    lands. (a) `by_sleeve` existed only in `to_dict()` while both default paths emit MARKDOWN, so
+    a followed verdict was scored and then invisible; (b) the screen-origin scope held for the
+    spread but not for the beta/alpha and pending counts printed beside it under the same heading;
+    (c) the `llm_call.log` recorded the OVERSHOOT prompt while the model received the quality one
+    — a false provenance record in the one artifact that answers "what was this asked"; (d) a
+    DORMANT sleeve (`neglect`, sharing overshoot's labels) received a live proposal because the
+    gate tested label membership rather than `ledger_active`; (e) a name in BOTH the follow list
+    and the candidate set had its stated sleeve and reason silently discarded; (f) an UNKNOWN
+    sleeve rendered with overshoot copy — the misleading framing reached through the error path.
+    **STANDING RULE EARNED:** when a value becomes per-book, the enumeration of its consumers is
+    the fix, not the three call sites that were noticed — the mirror pins now walk every field.
+    **OPEN, and deliberately not built here:** the UNDERWRITE layer is still book-blind
+    (`ScenarioRecord` carries no sleeve; `propose.py` has zero references), and it already holds
+    `avoid_priced` + a `"passed"` status — the concept `Verdict.PASS` names, in different words,
+    unreconciled. Settle that with the open R2/EV-Revenue template question (§OPERATOR TO-DOs item
+    2 layer 2) before the template work starts. A **vocabulary collision** also wants an operator
+    call: the underwrite bar test renders a GREEN `PASS` chip meaning *cleared the 2:1 bar*, while
+    `Verdict.PASS` means *not at this price* — cheaper to settle before PASS is sealed into
+    append-only rows. And UBER has not been RE-ASSEMBLED under `quality` (needs local price bars
+    + its CIQ export), so its synthesis prose is still the one written under the overshoot prompt;
+    only its framing strings have moved. Brief: `~/.claude/plans/fluffy-foraging-codd.md`.
 
 24. **ANALYST-DECISION BUCKET — HEADLINE CORRECTED 2026-08-03 (disposition render): (a) SHIPPED
     2026-07-31, (b) STILL BLOCKED. The "Item stays BLOCKED" below was true of the whole item for
