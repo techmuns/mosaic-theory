@@ -178,15 +178,20 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                              f"— EDGAR XBRL companyfacts"))
 
     direct = _pick(facts, BUYBACK_AVG_PRICE, kind="flow")
-    # VINTAGE BEATS DIRECTNESS — `_latest_dep_amort`'s rule, and the same failure it was built for.
-    # The filer's own average-price tag is preferred only while it is CURRENT: EPAM's last one is
-    # Q1 **2023** ($283.69, on a stock now near $112) sitting beside Q1 **2026** repurchase cash.
-    # A three-year-old average presented next to this year's spend is the abandoned-tag shape, and
-    # a derivation over the current period is the better answer when both legs are there.
-    if (direct is not None and cash_pt is not None and shares_pt is not None
-            and direct[0].period_end < cash_pt[0].period_end
-            and shares_pt[0].period_end == cash_pt[0].period_end):
-        direct = None
+    # THE VINTAGE SUPPRESSION IS GONE, and removing it is forced by refusing the derivation.
+    #
+    # It read: if the filer's own average is OLDER than the repurchase cash and both legs align on
+    # the current window, drop the direct tag — because "a derivation over the current period is
+    # the better answer when both legs are there". That reasoning was sound only while a derivation
+    # existed to replace it. It does not any more (cash-paid ÷ shares-acquired is not a price at
+    # any window), so suppressing here threw away the ONLY figure the filer states and then fell
+    # through to a refusal whose note read "no TreasuryStockAcquiredAverageCostPerShare" — an
+    # affirmative claim that the filer reports none, about a filer that reports one.
+    #
+    # THAT IS THE SAME CLASS THIS CHANGE FIXES IN `ebitda_basis`, one module over: not-detected is
+    # not agreement there, suppressed is not absent here. A stale figure carried WITH its staleness
+    # stated beats a false absence, and the PERIOD MISMATCH note below already says it — a direct
+    # tag on a different window than the cash beside it is exactly what that branch prints.
     if direct is not None:
         p, tag = direct
         # THE THREE BUYBACK FIELDS MUST NAME THE SAME WINDOW, OR SAY THEY DO NOT. The filer's
@@ -205,33 +210,44 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
             round(p.value, 4),
             source_ref=f"EDGAR companyfacts {tag} ({_span(p)})",
             note=AVG_PRICE_BASIS + mismatch)
-    elif (cash_pt is not None and shares_pt is not None and cash.value is not None
-          and shares.value
-          and cash_pt[0].period_start == shares_pt[0].period_start
-          and cash_pt[0].period_end == shares_pt[0].period_end):
-        # SAME PERIOD ON BOTH LEGS OR NOTHING — `_latest_dep_amort`'s rule, and the first cut
-        # broke it while ASSERTING it: the note read "both legs are the same fiscal year" and the
-        # code never checked. VITL divided Q1-2026 cash ($20.0M) by a **2019** share count and
-        # published $7.01 as a derived average — a seven-year straddle, and a number that never
-        # existed. An assertion the code does not enforce is worse than no assertion, because it
-        # tells the reader not to look.
-        avg = Sourced.present(
-            round(cash.value * _USD_M / shares.value, 4),
-            source_ref=f"DERIVED: {cash.source_ref} ÷ {shares.source_ref}",
-            note=f"{AVG_PRICE_BASIS}. DERIVED as cash ÷ shares — the filer states no "
-                 f"{BUYBACK_AVG_PRICE[0]}; both legs verified on {_span(cash_pt[0])}")
     else:
-        if cash.value is None:
+        # THE DERIVATION IS REFUSED OUTRIGHT — operator ruling 2026-08-10, and the period guard
+        # below is why it had to go rather than be tightened.
+        #
+        # SAME WINDOW IS NOT SAME BASIS, and that is a guard shape nothing here could check.
+        # `PaymentsForRepurchaseOfCommonStock` is a CASH-FLOW line — cash actually PAID in the
+        # period — while `TreasuryStockSharesAcquired` counts shares ACQUIRED in it. On BRBR both
+        # legs cover an identical 272 days, so every period check passed, and the quotient was
+        # still not a price: the $137.2M includes $3.9M of PRIOR-YEAR excise tax settled in the
+        # window and excludes $1.2M accrued but unpaid. The filer's own figure for the same nine
+        # months is $27.41 on $134.5M.
+        #
+        # AND IT CANNOT BE REPAIRED BY FIXING ONE LEG: $134.5M ÷ 4.86M is $27.67, not $27.41,
+        # because the company's implied share count is 4.907M against the tag's 4.86M. BOTH legs
+        # sit on different bases from the filer's own measure, so NO arithmetic over these two tags
+        # reproduces it. A figure nobody can reproduce is worse than an absence — the absence is
+        # at least true, and this one carried a `source_ref` that made it look derived-and-checked.
+        #
+        # The filer's OWN tag stays preferred and printed wherever it exists (EPAM $283.69, SMPL
+        # $18.29 — a purchase-COST measure, which is the right one). Where it does not, the field
+        # states its absence and names what was tried.
+        if (cash_pt is not None and shares_pt is not None
+                and cash.value is not None and shares.value):
+            why = (f"the only available legs are a CASH-FLOW payment line ({cash.source_ref}) and "
+                   f"a share COUNT ({shares.source_ref}). They cover one window but not one "
+                   f"BASIS — cash paid includes prior-period excise tax and excludes accrued-"
+                   f"unpaid, so the quotient is not a purchase price and does not reproduce the "
+                   f"filer's own figure")
+        elif cash.value is None:
             why = "the cash leg is absent"
         elif not shares.value:
             why = "the share-count leg is absent"
         else:
-            why = (f"its legs cover DIFFERENT periods — cash {_span(cash_pt[0])} vs shares "  # type: ignore[index]
-                   f"{_span(shares_pt[0])} — and dividing one by the other would state an average "  # type: ignore[index]
-                   f"for a window neither covers")
+            why = "its legs are incomplete"
         avg = Sourced.unknown(
-            note=f"no {BUYBACK_AVG_PRICE[0]} and {why}, so an average would be imputed rather "
-                 f"than computed — refused (EDGAR XBRL companyfacts)")
+            note=f"no {BUYBACK_AVG_PRICE[0]}, and {why} — refused rather than derived "
+                 f"(EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each "
+                 f"sound on their own basis; it is their QUOTIENT that is not a price")
 
     # DOES THE BUYBACK PAIR NAME ONE WINDOW? Cash and shares are separate facts with separate
     # latest periods — EPAM states cash over **89 days** and shares over **364** — and printed

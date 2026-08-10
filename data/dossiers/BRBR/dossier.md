@@ -77,7 +77,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the filer records no impairment under any tag tried
 - **Buyback — cash:** $137.2M [15]
 - **Buyback — shares repurchased:** 4,860,000 [16]
-- **Buyback — average cost/share:** $28.23 — **fiscal-period average over 2025-10-01→2026-06-30, 272d; NOT a purchase price** and not evidence of when they bought [17]
+- **Buyback — average cost/share:** $29.18 — **fiscal-period average over 2025-10-01→2026-03-31, 181d; NOT a purchase price** and not evidence of when they bought [17]
+  - ⚠ **PERIOD MISMATCH** — this average covers 2025-10-01→2026-03-31, 181d while the repurchase cash beside it covers 2025-10-01→2026-06-30, 272d; they are not two views of one window and must not be divided into each other
 - **Acquisition consideration:** _UNKNOWN_ — no acquisition consideration under any of BusinessCombinationConsiderationTransferred1, BusinessCombinationConsiderationTransferred, PaymentsToAcquireBusinessesNetOfCashAcquired — EDGAR XBRL companyfacts
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
 - **Peer acquired-asset intensity — goodwill + intangibles** — [18]  <!-- ds-table -->
@@ -543,7 +544,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [14] `EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-06-30)`
 [15] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-06-30, 272d)`
 [16] `EDGAR companyfacts TreasuryStockSharesAcquired (2025-10-01→2026-06-30, 272d)`
-[17] `DERIVED: EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-06-30, 272d) ÷ EDGAR companyfacts TreasuryStockSharesAcquired (2025-10-01→2026-06-30, 272d)`
+[17] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2025-10-01→2026-03-31, 181d)`
 [18] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [19] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
 [20] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
