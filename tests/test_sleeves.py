@@ -1168,6 +1168,79 @@ console.log(JSON.stringify({ html: root.innerHTML }));
         f"the page rendered but produced no ledger body ({len(html)} chars)")
 
 
+def test_the_cohort_read_uses_a_direction_neutral_verb() -> None:
+    """`_idio_read` said "fell ALONE" / "fell WITH cohort". It is computed in the SLEEVE-BLIND
+    mechanical layer and rendered under a heading the sleeve owns — and the quality book's heading
+    asks whether the price "moved alone", so the body contradicted the heading directly above it
+    on any name not being judged for a decline. The signed percentages beside it carry direction,
+    so the verb was never the thing conveying it.
+
+    LATENT WHEN FIXED — no committed dossier reaches this branch — which is precisely why it needs
+    a guard rather than a memory: nothing renders it today, so a revert stays invisible until the
+    first quality name with a graph cohort, by which point it is already in an artifact.
+
+    Scoped by AST to that function's own STRING LITERALS, so prose in comments and docstrings —
+    which legitimately discuss the old wording — cannot false-positive it."""
+    import ast
+
+    src = pathlib.Path(sl.__file__).resolve().parents[1] / "vinci" / "dossier" / "mechanical.py"
+    fn = next((n for n in ast.walk(ast.parse(src.read_text()))
+               if isinstance(n, ast.FunctionDef) and n.name == "_idio_read"), None)
+    assert fn is not None, "_idio_read is gone — re-point this pin at the cohort read's new home"
+
+    doc = ast.get_docstring(fn, clean=False)
+    emitted = [n.value for n in ast.walk(fn)
+               if isinstance(n, ast.Constant) and isinstance(n.value, str) and n.value != doc]
+    assert emitted, "no string literals found in _idio_read — the pin is not reaching its subject"
+    for text in emitted:
+        low = text.lower()
+        for verb in ("fell", "rose", "dropped", "crashed", "plunged"):
+            assert verb not in low, (
+                f"the cohort read emits a DIRECTIONAL verb ({verb!r}) in {text!r}. This layer is "
+                f"sleeve-blind and renders under each book's own heading — the percentages beside "
+                f"it already carry the direction.")
+
+
+def test_the_shared_valuation_caveat_privileges_no_single_book() -> None:
+    """The trailing-multiple blind-flag is attached to EVERY book's dossier, and it used to be
+    written in one book's language: "cannot distinguish cheap-overshoot from cheap-terminal".
+
+    IT DID NOT STAY IN THE CODE. The note is fed to the synthesis, and the LLM handed it back —
+    UBER's committed QUALITY read carried "a trailing multiple that cannot disambiguate overshoot
+    from terminal re-rate". A name judged on whether its runway is underpriced had its machine read
+    phrased as a de-rating hunt, in an artifact the human decides from. A shared string is the one
+    place per-book vocabulary does the most damage, because every book pays for it.
+
+    ONE DEFINITION, ASSERTED: `cli.py`'s CIQ-ingest path carried a byte-copy with a comment saying
+    it mirrored the original — so the wording sat unexamined in two places and would have been
+    fixed in one. The literal must exist exactly once in the tree."""
+    import pathlib as _pl
+
+    from vinci.dossier.mechanical import TRAILING_ONLY_NOTE
+
+    lowered = TRAILING_ONLY_NOTE.lower()
+    for row in sl.SLEEVE_ROWS:
+        assert row.key not in lowered, (
+            f"the shared valuation caveat names the {row.key!r} book: {TRAILING_ONLY_NOTE!r}. "
+            f"Every book receives this note, so naming one frames the others' evidence in a "
+            f"vocabulary they are not judged in — and the synthesis repeats it back.")
+    assert "terminal" not in lowered, (
+        f"'terminal' is overshoot's twin, not a universal one: {TRAILING_ONLY_NOTE!r}")
+
+    # SINGLE SOURCE — the duplicate is what let the wording go unexamined. Searched by a
+    # DISTINCTIVE FRAGMENT, not the assembled string: the constant is an implicit concatenation
+    # across two source lines, so the full text never appears contiguously in any file and a
+    # whole-string grep silently matches nothing — a check that passes by finding zero copies of
+    # a string that exists once is not a check. (It found 0 on the first run.)
+    fragment = "no forward basis"
+    assert fragment in TRAILING_ONLY_NOTE, "re-point this pin: the fragment left the note"
+    root = _pl.Path(sl.__file__).resolve().parents[1]
+    hits = sorted(p.name for p in (root / "vinci").rglob("*.py") if fragment in p.read_text())
+    assert hits == ["mechanical.py"], (
+        f"the caveat is declared in {hits} — it must have exactly one definition and every other "
+        f"caller must import it, or the next wording fix lands in one copy and not the other")
+
+
 def test_the_log_verdict_cli_help_privileges_no_single_book() -> None:
     """`--twin` help read "how the terminal-decline twin was ruled out" — one book's twin, asked
     of every book. A quality verdict was told to rule out terminal decline at the moment of
