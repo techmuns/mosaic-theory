@@ -1002,6 +1002,30 @@ class OperatingDriver(BaseModel):
     value_num: float | None = None  # STRUCTURED numeric — anchored rows only; consumers read THIS
     unit: str | None = None  # the value_num's unit ("%", "MWh", "$M"); None on verbatim-only rows
     verbatim: str  # the exact sentence/row read from — the human greps for it
+    #: THE REST OF THE SPEAKER'S PARAGRAPH after `verbatim`, unclassified (STATE §B1a).
+    #:
+    #: WHY THE QUOTE ALONE IS NOT ENOUGH. BRBR's row quoted *"In the third quarter, 70% of RTD
+    #: shake category volumes were sold on price promotion"* — exact, correctly cited, digits
+    #: traceable, passing every guard we have, because every guard takes the QUOTED TEXT as the
+    #: check. The sentence the extraction did not take says the figure is *"in line with historical
+    #: norms … while DOWN sequentially from the heavier promoted second quarter"*. The synthesis
+    #: then argued an escalating sequence its own source contradicts.
+    #:
+    #: UNCONDITIONAL, AND THAT IS THE DESIGN. No opener list, no contrastive classifier, no rule
+    #: deciding which rows deserve context — the moment one exists, the criterion is back. It was
+    #: measured and it does not work: BRBR's reversal opens with *"This is"*, the same connective
+    #: as VRRM's *"This is a great indication that safety measures are working."* Identical syntax,
+    #: opposite function, so a connective regex calls the one case that bit us benign.
+    #:
+    #: PARAGRAPH, NOT N SENTENCES. A 26-row hand sample put the reading-changing context BEYOND the
+    #: next sentence in 4 of 7 cases, so one sentence is the wrong bound. Over all 191 rows:
+    #: +1 sentence = 90% of the verbatim payload, +2 = 186%, +3 = 279%, PARAGRAPH = 161% — and the
+    #: paragraph is the ONLY bound crossing ZERO call boundaries, because a blank line precedes
+    #: every `--- <call> ---` marker. Sentence bounds splice a different transcript onto 1-3 rows.
+    #:
+    #: COST. ~1.8% of the synthesis prompt on the largest name, and NOTHING for the reader: 0 of
+    #: 241 driver verbatims render on the page — this is tier 3, `dossier.json` and the LLM brief.
+    following_context: str | None = None
     source_ref: str  # accession + exhibit / "CIQ Key Developments: …" / "CIQ transcript: …"
     tier: str  # "anchored" | "llm-fenced"
 

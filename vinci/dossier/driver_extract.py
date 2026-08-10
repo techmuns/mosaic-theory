@@ -118,6 +118,53 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip().lower()
 
 
+#: A call header inside the concatenated slice. The paragraph bound must never run past one, or a
+#: quote acquires the OPENING REMARKS OF A DIFFERENT CALL as its context. Measured: sentence bounds
+#: cross this on 1-3 rows (EPAM's Nelnet quote picks up the Q4 2025 call), the paragraph bound on
+#: ZERO — a blank line always precedes the header, which is what makes the paragraph the safe unit.
+_CALL_HEADER = re.compile(r"---\s*[^-\n]{4,140}Earnings Call[^-\n]{0,80}---")
+
+#: Hard ceiling. A malformed slice with no blank lines would otherwise return the whole transcript
+#: as one row's "paragraph"; 1,200 chars is ~4x the longest real paragraph observed on the fleet.
+_CONTEXT_MAX = 1_200
+
+
+def _following_paragraph(quote: str, slice_text: str) -> str | None:
+    """The rest of the speaker's paragraph after ``quote`` — verbatim, unclassified, or None.
+
+    THE ONE RULE IS THAT THERE IS NO RULE. Every row that can have context gets it. No opener list,
+    no contrastive test, no "does this look like a qualifier" — each of those is the text-criterion
+    judgment this repo refuses to invent, and it was MEASURED not to work: BRBR's reversal opens
+    with "This is", the same connective as VRRM's "This is a great indication that safety measures
+    are working" (STATE §B1a). A classifier here calls the one case that bit us benign.
+
+    FAIL-SOFT, NEVER FAIL-LOUD. A quote that cannot be located returns None rather than raising:
+    the row is already validated (the caller dropped it if the quote was not in the slice), the
+    context is ADDITIVE, and a locate-miss must not cost a real driver row. `None` and `""` are
+    distinct — None is "not located", empty is "the quote ended its paragraph".
+    """
+    if not quote.strip() or not slice_text:
+        return None
+    # Locate on the NORMALISED text (the quote came back from an LLM and its whitespace may not
+    # match the source byte-for-byte), then map back by walking the raw string.
+    flat = re.sub(r"\s+", " ", slice_text)
+    i = flat.lower().find(re.sub(r"\s+", " ", quote).strip().lower())
+    if i < 0:
+        return None
+    rest_flat = flat[i + len(re.sub(r"\s+", " ", quote).strip()):]
+    # Paragraph end in the RAW text: the first blank line after the quote. Located raw-side because
+    # the flattening that made the match possible is exactly what destroys paragraph breaks.
+    raw_i = slice_text.find(quote)
+    if raw_i >= 0:
+        tail = slice_text[raw_i + len(quote):]
+        para = re.split(r"\n[ \t]*\n", tail, maxsplit=1)[0]
+    else:                                     # whitespace differs; fall back to the flat tail
+        para = rest_flat[:_CONTEXT_MAX]
+    para = _CALL_HEADER.split(para)[0]        # never run into the next call
+    out = re.sub(r"\s+", " ", para).strip()
+    return out[:_CONTEXT_MAX].rstrip() or None
+
+
 def _digit_traces(claimed: float, universe: list[float]) -> bool:
     """True iff ``claimed`` matches a slice number at some scale (%, K, M, B…) within the synthesis
     tracer's ±2%-or-0.05 tolerance — the mis-scale / misbinding guard. A 0 traces to a 0 only."""
@@ -198,6 +245,7 @@ def extract_transcript_drivers(
             kind=DriverKind(kind), metric=metric,
             period=str(d.get("period", "")).strip() or None,
             value=value, value_num=None, unit=None,  # LLM-fenced rows are verbatim-only
-            verbatim=quote, source_ref=src, tier="llm-fenced",
+            verbatim=quote, following_context=_following_paragraph(quote, slice_text),
+            source_ref=src, tier="llm-fenced",
         ))
     return rows, flags, str(raw)
