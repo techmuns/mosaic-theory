@@ -5982,6 +5982,17 @@ restored agreement. The lesson is the one the fixture message already states and
 skipped: **a re-assembly without its fixture regeneration produces a divergence that looks like a
 broken anchor.** `test_propose`'s three share literals were re-struck in the same PR, as frozen
 literals — deriving them from the artifact would put the oracle in the same place as the subject.
+**TWO OTHER THINGS MOVED IN THE SAME RE-ASSEMBLY, recorded because a later reader diffing BRBR
+before/after will meet them.** (a) The CIQ **comp set itself changed** — MDLZ and CPB out, NATR and
+FitLife in — so every relative-value read (peer median leverage 2.8x → 2.4x) is against a
+different, smaller-cap cohort. Not a defect and not our choice: it is the vendor's set in the
+2026-08-09 re-pull, and the peer grid was verified cell-for-cell against the workbook by ticker
+(BellRing 4.4x, consistent with the page's own 4.3x NET-debt caveat). (b) A whole
+`capital_allocation` block APPEARED — 46 new paths — because BRBR's artifact predated that
+extractor. Nothing was lost: the structural diff is zero paths dropped.
+**A REVIEW NOTE ON HOW TO DIFF THESE.** The peer grid is a TICKER-KEYED list. Comparing two
+vintages positionally reports false regressions the moment the vendor's set changes — this review
+did exactly that and briefly "found" a leverage misalignment that did not exist. Join on ticker.
 
 **"NOTHING ELSE MOVES" DID NOT HOLD, and the failure is worth keeping.** Dry-running the other
 eight flagged **FUBO and IT as CHANGED too** — but for reasons that are NOT this fix. Isolated by
