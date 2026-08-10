@@ -11,27 +11,27 @@
     "value/share = equity ÷ diluted shares"
   ],
   "multiple_basis": "EV/EBITDA",
-  "underwrite_date": "2026-07-21",
+  "underwrite_date": "2026-08-07",
   "analyst": "nogods404",
-  "spot": 89.4,
-  "spot_source": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
+  "spot": 97.43,
+  "spot_source": "EOD close 2026-08-07",
   "facts": {
     "d_and_a": {
-      "value": 124.811,
+      "value": 127.58,
       "unit": "$M",
-      "basis": "consolidated latest FY (FY2025)",
+      "basis": "FY26 consensus depreciation and amortisation of $127.580M — a forward valuation wants a forward figure. Verified as the FULL reported charge rather than a partial line: first-half actual $63.640M annualises to $127.280M, within 0.24% of consensus. Deviates from the prior 124.811, which was the FY2025 consolidated actual.",
       "source": "EDGAR companyfacts DepreciationAndAmortization, 10-K accession 0001352010-26-000015 filed 2026-02-26 (CY2025) [amended 2026-07-22 pre-verdict: prior 45.317 was the abandoned combined tag's FY2019 value carried forward by alias ordering (fixed PR #182); filer's split tag FY2025 = 124.811]"
     },
     "net_debt": {
-      "value": -749.016,
+      "value": -764.397,
       "unit": "$M",
-      "basis": "NET CASH (negative net debt), lease-inclusive, latest 10-Q",
+      "basis": "NET CASH (negative net debt) on a FINANCIAL-ONLY basis: $25.000M debt less $789.397M cash. Deviates from the dossier anchor of -637.154, which capitalises $127.243M of operating leases into enterprise value while the earnings line below still carries lease expense. Adding lease liabilities to the bridge without adding lease expense back to earnings mixes two bases; financial-only keeps the bridge and the earnings line on one.",
       "source": "EDGAR: total debt 165 + finance leases 0 + operating leases 123 − cash 1,037 ($M) = −749.016; 10-Q acc 0001352010-26-000029. Equity = EV − (−749.016), i.e. the cash is ADDED — reproduced against the committed anchor's $306.05/sh before this run"
     },
     "diluted_shares": {
-      "value": 52.634451,
+      "value": 51.656981,
       "unit": "M shares",
-      "basis": "Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 − basic 53,793,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+      "basis": "Diluted shares outstanding 51,656,981 = basic shares outstanding 51,586,981 (cover of the 10-Q filed 2026-08-06, as of 2026-07-31) + a dilutive increment of 70,000 (diluted weighted average 52,267,000 less basic weighted average 52,197,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is the condition that makes the construction sound: the increment is highly price-sensitive and has COLLAPSED as the stock fell — 260,000 in Q3-2025, 390,000 in Q1-2026, 70,000 now. Pairing a current share count with a stale increment would have overstated the denominator by 320,000 shares. The prior 52,634,451 was self-consistent when written (Q1 count plus the Q1 increment) and is now two quarters stale on both legs. The latest-quarter diluted weighted average of 52,267,000 is NOT used: it is a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date.",
       "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     },
     "ltm_revenue": {
@@ -55,28 +55,29 @@
   },
   "scenarios": {
     "bear": {
-      "revenue": 5000.0,
-      "margin": 0.08,
-      "multiple": 6.0,
-      "reason": "Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) — a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]",
+      "revenue": 5500.0,
+      "margin": 0.09,
+      "multiple": 5.0,
+      "reason": "Multiple 5.0x is the bottom of the company's own nine-year trading range, translated onto the earnings denominator this valuation actually uses: the 4.2627x low is struck on a vendor earnings figure running about 1.188x the accounting figure below, so the comparable floor is roughly 5.07x. Revenue 5,500 is 3.2% below the low end of the fiscal-2027 analyst range (5,683). Margin 9.0% sits below fiscal 2025's 9.53%, its worst year, as pricing grinds.",
       "years_to_terminal": null,
       "bear_basis": "own-history",
       "margin_basis": "EBIT"
     },
     "base": {
-      "revenue": 5730.0,
-      "margin": 0.105,
-      "multiple": 12.5,
-      "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]",
-      "years_to_terminal": null,
+      "revenue": 5850.5,
+      "margin": 0.115,
+      "multiple": 7.5,
+      "reason": "Revenue 5,850.5 is the fiscal-2027 analyst median, taken without adjustment. Multiple 7.5x sits near the 7.1x peer median and below Accenture at 7.7x, which also carries net cash. THE MARGIN CELL IS CONTESTED AND IS RECORDED AS CONTESTED, NOT RESOLVED: 11.5% matches fiscal 2024 actual and a 11.9% ten-year median, but company guidance for fiscal 2026 is 10.5-11.0%. At 10.5% the base falls to roughly $121 and the two-to-one boundary reaches the practical limit. The evidence does not decide between them; 11.5% is the recovery this thesis requires rather than a level the data establishes, and a reader should treat it as the assumption most likely to be wrong.",
+      "years_to_terminal": 1.5,
       "bear_basis": null,
-      "margin_basis": null
+      "margin_basis": null,
+      "leg_fy": "2027"
     },
     "bull": {
-      "revenue": 6075.0,
+      "revenue": 6100.0,
       "margin": 0.13,
-      "multiple": 18.0,
-      "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]",
+      "multiple": 9.5,
+      "reason": "Revenue 6,100 is just above the top of the fiscal-2027 analyst range (6,054). Multiple 9.5x implies about 1.43x enterprise value to revenue, close to Accenture's 1.5x. Margin 13.0% recovers toward but stays below the pre-2022 level.",
       "years_to_terminal": null,
       "bear_basis": null,
       "margin_basis": null
@@ -254,13 +255,13 @@
   "result": {
     "per_scenario": {
       "bear": {
-        "value_per_share": 74.05571685358701,
-        "op_income": 400.0,
-        "ebitda": 524.811,
-        "ev": 3148.866,
-        "equity": 3897.882,
-        "ev_ebit": 7.872165,
-        "norm_fcf": 297.756441,
+        "value_per_share": 75.0585288753131,
+        "op_income": 495.0,
+        "ebitda": 622.58,
+        "ev": 3112.9,
+        "equity": 3877.297,
+        "ev_ebit": 6.288686868686868,
+        "norm_fcf": 368.72144099999997,
         "years": null,
         "d_and_a_t": null,
         "net_debt_t": null,
@@ -269,14 +270,14 @@
         "hurdle": null
       },
       "base": {
-        "value_per_share": 186.75560043363996,
-        "op_income": 601.65,
-        "ebitda": 726.461,
-        "ev": 9080.7625,
-        "equity": 9829.7785,
-        "ev_ebit": 15.09309814676307,
-        "norm_fcf": 448.388991,
-        "years": null,
+        "value_per_share": 131.0046216212287,
+        "op_income": 672.8075,
+        "ebitda": 800.3875,
+        "ev": 6002.90625,
+        "equity": 6767.30325,
+        "ev_ebit": 8.922174990617673,
+        "norm_fcf": 501.54364350000003,
+        "years": 1.5,
         "d_and_a_t": null,
         "net_debt_t": null,
         "shares_t": null,
@@ -284,13 +285,13 @@
         "hurdle": null
       },
       "bull": {
-        "value_per_share": 326.9933223013954,
-        "op_income": 789.75,
-        "ebitda": 914.561,
-        "ev": 16462.098,
-        "equity": 17211.114,
-        "ev_ebit": 20.84469515669516,
-        "norm_fcf": 588.899691,
+        "value_per_share": 184.09722782676752,
+        "op_income": 793.0,
+        "ebitda": 920.58,
+        "ev": 8745.51,
+        "equity": 9509.907000000001,
+        "ev_ebit": 11.028385876418664,
+        "norm_fcf": 591.327441,
         "years": null,
         "d_and_a_t": null,
         "net_debt_t": null,
@@ -301,18 +302,18 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 97.35560043363995,
-    "risk": 15.344283146412991,
-    "ratio": 6.344747389284107,
+    "reward": 33.57462162122869,
+    "risk": 22.371471124686906,
+    "ratio": 1.500778443853838,
     "ratio_undefined": null,
     "bar": 2.0,
-    "pass_fail": "PASS",
-    "horizon_years": null,
-    "irr": null,
-    "irr_undefined": "no horizon stated — an IRR needs a realisation date",
+    "pass_fail": "FAIL",
+    "horizon_years": 1.5,
+    "irr": 0.21822996123613247,
+    "irr_undefined": null,
     "irr_floor": 0.15,
-    "irr_pass_fail": "UNDEFINED",
-    "gate": "UNDEFINED"
+    "irr_pass_fail": "PASS",
+    "gate": "FAIL"
   },
   "verdict": {
     "status": "pending_analyst",
@@ -343,6 +344,6 @@
       "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
     }
   ],
-  "supersedes": null,
+  "supersedes": "EPAM-2026-07-21",
   "superseded_by": null
 }

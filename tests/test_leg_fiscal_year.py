@@ -95,19 +95,51 @@ def test_run_recipe_never_refuses_on_the_leg_year() -> None:
     assert out.result.ratio is not None and out.result.gate is not None
 
 
-def test_every_committed_dossier_reads_unstated_and_none_reads_disagrees() -> None:
-    """THE CORPUS TODAY. No committed record carries `leg_fy`, so every computed gap must say
-    `unstated` — never `agrees` (which would claim a check that did not happen) and never
-    `disagrees` (which would fault a record for a field that did not exist)."""
-    seen = 0
+def test_every_committed_gap_reads_the_state_its_record_actually_supports() -> None:
+    """WAS a snapshot of a corpus in which NOTHING carried `leg_fy` ("every computed gap must say
+    `unstated`"). EPAM broke it on 2026-08-07 by becoming the first record to state the field —
+    correctly, and reading `disagrees` (base leg FY2027 against an FY2026 decomposition).
+
+    THE SNAPSHOT HAD THE MIRROR OF THE HOLE `leg_fy_problems` WAS WRITTEN TO AVOID. That function
+    refuses to fault an unstated year precisely because "the first record to state it would be the
+    only one that could ever be written"; this test made the first record to state it turn the
+    suite RED, which is the same adoption trap one layer over.
+
+    BOTH ORIGINAL PROTECTIONS ARE KEPT AND ONE IS TIGHTENED. A record with no `leg_fy` must still
+    read `unstated` — never `agrees`, which would claim a check that did not happen. A record that
+    DOES state one must read the state its two years actually support, so `agrees` still cannot be
+    asserted without the years matching, and a stated year can no longer hide as `unstated`."""
+    import json as _json
+
+    def _leg_fy(t: str) -> str | None:
+        f = ROOT / "scenarios" / f"{t}.json"
+        if not f.is_file():
+            return None
+        base = ((_json.loads(f.read_text()).get("scenarios") or {}).get("base")) or {}
+        return None if base.get("leg_fy") is None else str(base["leg_fy"])
+
+    seen = stated = 0
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         g = (json.loads(p.read_text())["mechanical"].get("ev_gap")) or {}
         lb = g.get("leg_basis")
         if lb is None:
             continue                      # a gap that was never struck carries no basis claim
         seen += 1
-        assert lb["state"] == "unstated", f"{p.parent.name}: {lb}"
+        t = p.parent.name
+        fy = _leg_fy(t)
+        if fy is None:
+            assert lb["state"] == "unstated", f"{t}: no leg_fy on the record, but {lb}"
+            continue
+        stated += 1
+        anchor = None if lb.get("anchor_fy") is None else str(lb["anchor_fy"])
+        want = "agrees" if fy == anchor else "disagrees"
+        assert lb["state"] == want, (
+            f"{t}: record states leg_fy={fy} against anchor_fy={anchor}, so the gap must read "
+            f"{want!r} — got {lb['state']!r}")
     assert seen, "no committed dossier carries a leg_basis — this sweep checked nothing"
+    assert stated, (
+        "no committed record states leg_fy — the stated branch above checked nothing, so this "
+        "test has quietly reverted to the snapshot it replaced")
 
 
 def test_the_total_gap_does_not_move_with_the_year_but_the_split_does() -> None:
@@ -204,3 +236,65 @@ def test_every_scenario_input_field_is_settable_from_the_template() -> None:
         "to `exempt` with the reason it belongs there.")
     stale = set(exempt) - set(_sc.ScenarioInput.model_fields)
     assert not stale, f"`exempt` names {sorted(stale)}, which are not fields — a stale licence"
+
+
+def test_a_declared_year_difference_that_does_not_move_the_shape_is_not_a_defect() -> None:
+    """REVIEW FINDING on EPAM, the first record to state `leg_fy`. The caveat printed
+    "⚠ … describes a comparison the leg does not make. Re-read the attribution on FY2027"
+    DIRECTLY BENEATH the shape line reading "FY2027 gives the same shape — the label does not move
+    with the year." Two adjacent sentences, one instructing work the other had just done, on the
+    only page in the fleet showing this caveat. A correctly-declared difference read as a defect.
+
+    Severity now follows the cross-year check the shape line already computed."""
+    md = (ROOT / "data" / "dossiers" / "EPAM" / "dossier.md").read_text()
+    lines = md.splitlines()
+    # TWO lines start "- **Shape:**" — the drawdown character line and the EV-gap decomposition
+    # line. Only the latter carries a fiscal year, which is what disambiguates them.
+    i = next((k for k, ln in enumerate(lines)
+              if ln.startswith("- **Shape:**") and " at FY" in ln), None)
+    assert i is not None, "no EV-gap shape line on EPAM's page — this pin checked nothing"
+    assert "same shape" in lines[i], f"expected an invariant shape: {lines[i]}"
+    caveat = "\n".join(lines[i + 1:i + 4])          # the paragraph that rides with the shape
+    assert "Declared, and immaterial to this label" in caveat, caveat
+    assert "\u26a0" not in caveat, (
+        "a declared year difference that does not move the shape still renders as a warning")
+    assert "Re-read the attribution" not in caveat, (
+        "instructs work the line above already reports as done")
+
+
+def test_the_caveat_severity_is_driven_by_the_cross_year_check_on_all_three_states() -> None:
+    """THE UNIT PIN, and the reason it exists is that my first two attempts could not fail.
+
+    One read the COMMITTED `dossier.md` — a static file, so no change to `render.py` can move it.
+    The other grepped `render.py`'s SOURCE TEXT for a sentence, which survives any logic edit that
+    leaves the string in place. Both passed while mutations of the branch they were written to
+    guard survived. A test that cannot fail on the change it covers is not a guard.
+
+    This one CALLS the renderer over the three cross-year states and reads the emitted lines."""
+    import json as _json
+
+    from vinci.dossier.render import _ev_gap_lines
+    from vinci.dossier.schemas import MechanicalLayer
+
+    doc = _json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+
+    def caveat(agree: object, leg_fy: str) -> str:
+        mech = _json.loads(_json.dumps(doc["mechanical"]))
+        g = mech["ev_gap"]
+        g["shape"] = {**(g.get("shape") or {}), "agree": agree}
+        g["leg_basis"] = {"leg_fy": leg_fy, "anchor_fy": str(g.get("anchor_fy")),
+                          "state": "disagrees", "note": "n/a"}
+        lines = _ev_gap_lines(MechanicalLayer.model_validate(mech))
+        i = next(k for k, ln in enumerate(lines) if ln.startswith("- **Shape:**"))
+        return "\n".join(lines[i + 1:i + 3])
+
+    adj = str(doc["mechanical"]["ev_gap"]["adjacent_fy"])
+
+    same = caveat(True, adj)
+    assert "Declared, and immaterial" in same and "\u26a0" not in same, same
+
+    moves = caveat(False, adj)
+    assert "\u26a0" in moves and "shape MOVES between them" in moves, moves
+
+    unchecked = caveat(None, adj)
+    assert "\u26a0" in unchecked, unchecked

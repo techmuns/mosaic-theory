@@ -1,0 +1,254 @@
+{
+ "ticker": "EPAM",
+ "recipeId": "R1_midcycle_margin_evebitda",
+ "recipeDesc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+ "recipeFormula": [
+  "EBIT = revenue \u00d7 op margin",
+  "EBITDA = EBIT + D&A",
+  "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+  "equity = EV \u2212 net debt",
+  "value/share = equity \u00f7 diluted shares"
+ ],
+ "assumptions": [
+  {
+   "axis": "revenue",
+   "method": "Legs are set on the consensus path: base is consensus FY26E, bull is consensus FY27E, and bear is the trailing twelve months less ~10%, carrying the negative forward revision breadth (FQ3 0 up / 14 down) forward rather than assuming it reverses. [restated for external readability 2026-07-21; substance unchanged]",
+   "unratified": true,
+   "references": [
+    {
+     "label": "consensus FY26E revenue",
+     "value": 5730.43,
+     "unit": "$M",
+     "source": "committed financial_summary.annual FY26E \u2014 CIQ Estimates\u2192Trends 'Current', as-of \u22652026-06-18"
+    },
+    {
+     "label": "consensus FY27E revenue",
+     "value": 6074.52,
+     "unit": "$M",
+     "source": "committed financial_summary.annual FY27E \u2014 CIQ Estimates\u2192Trends 'Current', as-of \u22652026-06-18"
+    },
+    {
+     "label": "LTM revenue",
+     "value": 5555.425,
+     "unit": "$M",
+     "source": "committed financial_summary.annual (LTM) \u2014 CIQ Income Statement"
+    }
+   ]
+  },
+  {
+   "axis": "margin",
+   "method": "Modelled on regime-split operating-margin statistics (post-2022 window; operating income divided by the ASC-606 revenue tag, with annual filing points filtered to 350-380 day durations so no quarter is mistaken for a year): base is the post-2022 median of 11.10% less a ~60bps trajectory haircut; bear sits below the regime's worst year (FY25, 9.53%); bull recovers toward but below the pre-war median (13.27%, a regime no longer representative). The 10-year blend (11.90%) is explicitly not used \u2014 it straddles the 2022 break and describes neither regime. [restated for external readability 2026-07-21; substance unchanged]",
+   "unratified": true,
+   "references": [
+    {
+     "label": "post-2022 regime median operating margin (FY2022-2025)",
+     "value": 11.1,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss \u00f7 RevenueFromContractWithCustomerExcludingAssessedTax, 10-K 365d points \u2014 regime-split basis pull 2026-07-21"
+    },
+    {
+     "label": "post-2022 worst year (FY2025)",
+     "value": 9.53,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 same basis, FY2025 (520 EBIT / 5,457 revenue)"
+    },
+    {
+     "label": "post-2022 best year (FY2022)",
+     "value": 11.88,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 same basis, FY2022 (573 EBIT / 4,825 revenue); GAAP carries the war-year charges, so a cleaned FY22 would sit higher"
+    },
+    {
+     "label": "pre-war median operating margin (FY2016-2021)",
+     "value": 13.27,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 same basis, pre-2022 window; shown for reference ONLY (the pre-invasion cost structure no longer exists)",
+     "role": "median",
+     "excluded": true,
+     "excludedReason": "the pre-war margin structure no longer obtains"
+    },
+    {
+     "label": "10-FY blended median (FY2016-2025)",
+     "value": 11.9,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 same basis, 10 FY; equals the committed anchor's margin, which averages across the 2022 regime break and describes neither regime",
+     "role": "median",
+     "excluded": true,
+     "excludedReason": "blends across the structural break"
+    }
+   ]
+  },
+  {
+   "axis": "multiple",
+   "method": "Chosen against the regime-split TEV/LTM-EBITDA trading range (38 quarterly closes): base sits below the post-2022 median (15.16x) as an analyst discount for the unresolved AI-substitution question; bear near the post-2022 trough; bull toward but below the post-2022 75th percentile (20.09x). The full-blend median (22.41x) is not used \u2014 it is a pre-2022 bubble-era statistic. [restated for external readability 2026-07-21; substance unchanged]",
+   "unratified": true,
+   "references": [
+    {
+     "label": "post-2022 band 25th percentile",
+     "value": 11.83,
+     "unit": "x",
+     "source": "committed valuation.own_history series, 2022Q1 onward (n=18) \u2014 refreshed band sha 9614730c9e"
+    },
+    {
+     "label": "post-2022 band median",
+     "value": 15.16,
+     "unit": "x",
+     "source": "committed valuation.own_history series, 2022Q1 onward (n=18) \u2014 refreshed band sha 9614730c9e",
+     "role": "median"
+    },
+    {
+     "label": "post-2022 band 75th percentile",
+     "value": 20.09,
+     "unit": "x",
+     "source": "committed valuation.own_history series, 2022Q1 onward (n=18) \u2014 refreshed band sha 9614730c9e"
+    },
+    {
+     "label": "full-band minimum (9.5y history)",
+     "value": 4.26,
+     "unit": "x",
+     "source": "committed valuation.own_history \u2014 refreshed band sha 9614730c9e"
+    },
+    {
+     "label": "current TEV/LTM-EBITDA (2.6th percentile of the full band)",
+     "value": 4.87,
+     "unit": "x",
+     "source": "committed valuation.own_history current, as-of 2026-07-17 \u2014 refreshed band sha 9614730c9e"
+    },
+    {
+     "label": "band multiples are vendor TEV/LTM-EBITDA computed on the filer's actual depreciation - the corrected fact aligns the grid's EBITDA basis with the band's",
+     "value": 124.811,
+     "unit": "$M",
+     "source": "EDGAR companyfacts DepreciationAndAmortization FY2025 (accession 0001352010-26-000015)"
+    }
+   ]
+  }
+ ],
+ "multipleBasis": "EV/EBITDA",
+ "underwriteDate": "2026-07-21",
+ "analyst": "nogods404",
+ "spot": 89.4,
+ "spotSource": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
+ "facts": [
+  {
+   "key": "d_and_a",
+   "value": 124.811,
+   "unit": "$M",
+   "basis": "consolidated latest FY (FY2025)",
+   "source": "EDGAR companyfacts DepreciationAndAmortization, 10-K accession 0001352010-26-000015 filed 2026-02-26 (CY2025) [amended 2026-07-22 pre-verdict: prior 45.317 was the abandoned combined tag's FY2019 value carried forward by alias ordering (fixed PR #182); filer's split tag FY2025 = 124.811]"
+  },
+  {
+   "key": "net_debt",
+   "value": -749.016,
+   "unit": "$M",
+   "basis": "NET CASH (negative net debt), lease-inclusive, latest 10-Q",
+   "source": "EDGAR: total debt 165 + finance leases 0 + operating leases 123 \u2212 cash 1,037 ($M) = \u2212749.016; 10-Q acc 0001352010-26-000029. Equity = EV \u2212 (\u2212749.016), i.e. the cash is ADDED \u2014 reproduced against the committed anchor's $306.05/sh before this run"
+  },
+  {
+   "key": "diluted_shares",
+   "value": 52.634451,
+   "unit": "M shares",
+   "basis": "Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 \u2212 basic 53,793,000 weighted average, 2026-01-01\u21922026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
+  },
+  {
+   "key": "ltm_revenue",
+   "value": 5555.425,
+   "unit": "$M",
+   "basis": "LTM revenue",
+   "source": "committed financial_summary.annual (LTM) \u2014 CIQ Income Statement"
+  },
+  {
+   "key": "cash_interest",
+   "value": 1.397,
+   "unit": "$M",
+   "basis": "FY2025 cash interest PAID (cross-check input only; EPAM is net-cash with $165M total debt, so interest is immaterial)",
+   "source": "EDGAR companyfacts us-gaap InterestPaidNet, FY2025 \u2014 10-K acc 0001352010-26-000015"
+  },
+  {
+   "key": "cash_tax_rate",
+   "value": 0.253,
+   "unit": "rate",
+   "basis": "EDGAR-DERIVED FY2025 effective rate (NOT an analyst assumption): income tax expense 127.946 \u00f7 pretax income 505.624 = 25.30%; cross-check only, does not touch value/share",
+   "source": "EDGAR companyfacts IncomeTaxExpenseBenefit \u00f7 IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, FY2025 \u2014 10-K acc 0001352010-26-000015"
+  }
+ ],
+ "scenarios": [
+  {
+   "name": "bear",
+   "revenue": 5000.0,
+   "margin": 0.08,
+   "multiple": 6.0,
+   "reason": "Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds \u2014 floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) \u2014 a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]",
+   "valuePerShare": 74.06,
+   "opIncome": 400.0,
+   "ebitda": 524.8,
+   "ev": 3148.9,
+   "equity": 3897.9,
+   "evEbit": 7.9,
+   "normFcf": 297.8
+  },
+  {
+   "name": "base",
+   "revenue": 5730.0,
+   "margin": 0.105,
+   "multiple": 12.5,
+   "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income \u2014 the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]",
+   "valuePerShare": 186.76,
+   "opIncome": 601.6,
+   "ebitda": 726.5,
+   "ev": 9080.8,
+   "equity": 9829.8,
+   "evEbit": 15.1,
+   "normFcf": 448.4
+  },
+  {
+   "name": "bull",
+   "revenue": 6075.0,
+   "margin": 0.13,
+   "multiple": 18.0,
+   "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]",
+   "valuePerShare": 326.99,
+   "opIncome": 789.8,
+   "ebitda": 914.6,
+   "ev": 16462.1,
+   "equity": 17211.1,
+   "evEbit": 20.8,
+   "normFcf": 588.9
+  }
+ ],
+ "reward": 97.36,
+ "risk": 15.34,
+ "ratio": 6.34,
+ "bar": 2.0,
+ "ratioUndefined": null,
+ "passFail": "PASS",
+ "irrUndefined": "no horizon stated \u2014 an IRR needs a realisation date",
+ "irrFloor": 0.15,
+ "irrPassFail": "UNDEFINED",
+ "gate": "UNDEFINED",
+ "currentState": {
+  "status": "pending_analyst",
+  "ratio": 6.34,
+  "bar": 2.0,
+  "passFail": "PASS",
+  "spot": 89.4,
+  "spotSource": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
+  "underwriteDate": "2026-07-21",
+  "nextEvidence": {
+   "date": "2026-11-05",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
+  },
+  "ceiling2to1": 111.62
+ },
+ "supersededBy": "EPAM-2026-08-07",
+ "archiveKey": "EPAM-2026-07-21",
+ "verdict": {
+  "status": "pending_analyst",
+  "recorded": null,
+  "rationale": null,
+  "reunderwriteTriggers": [],
+  "avoidPriced": false,
+  "avoidPricedNote": null
+ }
+}
