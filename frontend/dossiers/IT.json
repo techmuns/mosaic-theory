@@ -7425,6 +7425,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Meta Integration Technology, Inc. participated as a sponsor at the Gartner Data & Analytics Summit 2026, taking place March 9–11 in Orlando, Florida. At the event, MITI will present the first public demonstration of MetaKarta Semantic Hub, its new platform designed to unify business seman",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Gartner Inc NYSE IT Key Developments.rtf · Mar-09-2026",
           "tier": "anchored"
         },
@@ -7436,6 +7437,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Gartner, Inc. updated earnings guidance for the full year 2025. The company expects Insights revenue of at least $5.06 billion, which is an increase from last quarter and is FX-neutral growth of about 4%. The company expects Conferences revenue of at least $630 million, which is an increa",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Gartner Inc NYSE IT Key Developments.rtf · Nov-04-2025",
           "tier": "anchored"
         },
@@ -7447,6 +7449,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Gartner, Inc. reported impairment charges for the third quarter ended September 30, 2025. For the quarter, the company reported loss on impairment of lease related assets of $4 million against $2 million a year ago. Goodwill impairment of $150 million.",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Gartner Inc NYSE IT Key Developments.rtf · Nov-04-2025",
           "tier": "anchored"
         },
@@ -7458,6 +7461,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Gartner, Inc. provided earnings guidance for the year 2025. For the year, The company expects Insights revenue of at least $5.255 billion, which is FX-neutral growth of about 2%. This reflects subscription Insights revenue growth of about 4%. Expect around $210 million of non-subscription",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Gartner Inc NYSE IT Key Developments.rtf · Aug-05-2025",
           "tier": "anchored"
         },
@@ -7469,6 +7473,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We've increased the number of high-impact documents by 22%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7480,6 +7485,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "The number of documents in our insights library is up 19%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7491,6 +7497,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "The number of these documents has more than doubled.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7502,6 +7509,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "First quarter contract value, or CV, grew 1% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7513,6 +7521,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Excluding the U.S. federal government, CV growth was 3.5%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7524,6 +7533,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "At March 31, we had approximately $114 million of U.S. federal CV.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7535,6 +7545,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We had more than $200 million in new business in the first quarter as there continues to be considerable interest in Gartner's proprietary unbiased insights.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7546,6 +7557,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Derived from analyzing monthly active users, overall engagement in Q1 was up over 170 basis points compared to the prior year quarter.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7557,6 +7569,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Digital engagement improved by more than 160 basis points year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7568,6 +7581,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Human interactions increased more than 80 basis points year-over-year through improvements in the usage of analyst inquiries.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7579,6 +7593,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Global Technology Sales contract value was $4 billion at the end of the first quarter, up versus the prior year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7590,6 +7605,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "GTS CV for both enterprise leaders and tech vendors increased by more than 3% year-over-year ex-Fed.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7601,6 +7617,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Wallet retention for GTS was 97% for the quarter.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7612,6 +7629,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Ex-Fed wallet retention was 99%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7623,6 +7641,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "GTS new business was down 4% compared to last year and down about 3% ex-Fed.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7634,6 +7653,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Global Business Sales contract value was $1.3 billion at the end of the first quarter, up 3% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7645,6 +7665,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Ex-Fed, GBS CV grew 5%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7656,6 +7677,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Wallet retention for GBS was 98% for the quarter.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7667,6 +7689,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "GBS new business was down 2% compared to last year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7678,6 +7701,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "On a same conference basis, revenue growth was around 9% FX neutral.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7689,6 +7713,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We held 10 destination conferences in the first quarter as planned.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7700,6 +7725,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Backlog at March 31 was $201 million.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7711,6 +7737,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We have more than 6,000 AI-related documents in our library.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7722,6 +7749,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We've documented more than 1,000 unique use cases.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7733,6 +7761,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7744,6 +7773,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "As of the end of 2025, our active insights library has grown by approximately 50%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7755,6 +7785,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Second, for insight types that are highly valued by our clients, such as Magic Quadrants, we reduced our average insight creation time by 75% compared to 2024.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7766,6 +7797,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Fourth quarter Contract Value or CV grew 1% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7777,6 +7809,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Outside the U.S. federal government, CV grew 4%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7788,6 +7821,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Contract Value was $5.2 billion at the end of the fourth quarter, up 1% versus the prior year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7799,6 +7833,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Outside the U.S. federal government, CV growth was about 330 basis points faster at around 4%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7810,6 +7845,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Global NCVI in the quarter outside the U.S. federal government was positive $147 million.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7821,6 +7857,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "At December 31, we had $126 million of U.S. federal CV.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         }

@@ -7014,6 +7014,7 @@
           "value_num": 12.0,
           "unit": "%",
           "verbatim": "Change 2025 2026 % Change Revenue $ 12,651 $ 14,191 12 % $ 24,184 $ 27,394 13 % Revenue increased $1.5 billion or 12% in the three months ended June 30, 2026 , primarily attributable to an increase in Gross Bookings of 24%.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7025,6 +7026,7 @@
           "value_num": 13.0,
           "unit": "%",
           "verbatim": "Revenue increased $3.2 billion or 13% in the six months ended June 30, 2026, primarily attributable to an increase in Gross Bookings of 25%.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7036,6 +7038,7 @@
           "value_num": 3.0,
           "unit": "%",
           "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $204 million or 3% in the three months ended June 30, 2026, primarily attributable to a $545 million increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $320 million increase in Carrier payme",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7047,6 +7050,7 @@
           "value_num": 4.0,
           "unit": "%",
           "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $525 million or 4% in the six months ended June 30, 2026, mainly due to a $1.2 billion increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $400 million increase in Carrier payme",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7058,6 +7062,7 @@
           "value_num": 16.0,
           "unit": "%",
           "verbatim": "Percentage of revenue 6 % 6 % 6 % 6 % Operations and support expenses increased $109 million or 16% in the three months ended June 30, 2026, primarily attributable to a $80 million increase in employee compensation costs including stock-based compensation, and a $15 million increase in contractor and professional service costs.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7069,6 +7074,7 @@
           "value_num": 15.0,
           "unit": "%",
           "verbatim": "Operations and support expenses increased $204 million or 15% in the six months ended June 30, 2026, primarily attributable to a $163 million increase in employee compensation costs including stock-based compensation, and a $22 million increase in contractor and professional service costs.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7080,6 +7086,7 @@
           "value_num": 25.0,
           "unit": "%",
           "verbatim": "Percentage of revenue 10 % 11 % 9 % 10 % 38 Sales and marketing expenses increased $305 million or 25% in the three months ended June 30, 2026, primarily attributable to a a $136 million increase in consumer discounts, promotions, credits and refunds and a $115 million increase in indirect advertising and marketing.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7091,6 +7098,7 @@
           "value_num": 25.0,
           "unit": "%",
           "verbatim": "Sales and marketing expenses increased $574 million or 25% in the six months ended June 30, 2026, primarily attributable to a $248 million increase in consumer discounts, promotions, credits and refunds, a $231 million increase in indirect advertising and marketing, and a $103 million increas",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7102,6 +7110,7 @@
           "value_num": 24.0,
           "unit": "%",
           "verbatim": "Percentage of revenue 7 % 7 % 7 % 7 % Research and development expenses increased $203 million or 24% in the three months ended June 30, 2026, primarily attributable to a $189 million increase in employee compensation costs including stock-based compensation.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7113,6 +7122,7 @@
           "value_num": 20.0,
           "unit": "%",
           "verbatim": "Research and development expenses increased $339 million or 20% in the six months ended June 30, 2026, primarily attributable to a $320 million increase in employee compensation costs including stock-based compensation.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7124,6 +7134,7 @@
           "value_num": 40.0,
           "unit": "%",
           "verbatim": "Percentage of revenue 5 % 7 % 5 % 6 % General and administrative expenses increased $266 million or 40% in the three months ended June 30, 2026, primarily attributable to a $138 million increase in legal-related accruals and expenses, a $66 million increase in employee compensation costs including stock-based compensation and a $53 millio",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7135,6 +7146,7 @@
           "value_num": 31.0,
           "unit": "%",
           "verbatim": "General and administrative expenses increased $407 million or 31% in the six months ended June 30, 2026, primarily attributable to a $148 million increase in legal-related accruals and expenses, a $111 million increase in employee compensation costs including stock-based compensation, a $92 million",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7146,6 +7158,7 @@
           "value_num": 1.0,
           "unit": "%",
           "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially o",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7157,6 +7170,7 @@
           "value_num": 28.0,
           "unit": "%",
           "verbatim": "Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted reven",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7168,6 +7182,7 @@
           "value_num": 3.0,
           "unit": "%",
           "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially o",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7179,6 +7194,7 @@
           "value_num": 28.0,
           "unit": "%",
           "verbatim": "Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted reven",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7190,6 +7206,7 @@
           "value_num": 28.0,
           "unit": "%",
           "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $1.1 billion, or 28%, and Delivery Segment Operating Income increased $289 million, or 38%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 26%, driven by an increase in Trip volumes, and a $18",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7201,6 +7218,7 @@
           "value_num": 38.0,
           "unit": "%",
           "verbatim": "Delivery revenue increased $1.1 billion, or 28%, and Delivery Segment Operating Income increased $289 million, or 38%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 26%, driven by an increase in Trip volumes, and a $182 million increase in advertising revenue.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7212,6 +7230,7 @@
           "value_num": 31.0,
           "unit": "%",
           "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $2.4 billion, or 31%, and Delivery Segment Operating Income increased $579 million, or 40%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 27%, driven by an increase in Trip volumes, and a $362",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7223,6 +7242,7 @@
           "value_num": 40.0,
           "unit": "%",
           "verbatim": "Delivery revenue increased $2.4 billion, or 31%, and Delivery Segment Operating Income increased $579 million, or 40%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 27%, driven by an increase in Trip volumes, and a $362 million increase in advertising revenue.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7234,6 +7254,7 @@
           "value_num": 26.0,
           "unit": "%",
           "verbatim": "the three months ended June 30, 2026 compared to the same period in 2025, Freight revenue increased $322 million or 26% , and Freight Segment Operating Loss decreased $2 million , or 8% . Freight revenue increased primarily attributable to a 25% increase in Freight Gross Bookings due to an increase in gross booking per trip and trip volum",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7245,6 +7266,7 @@
           "value_num": -8.0,
           "unit": "%",
           "verbatim": "Freight revenue increased $322 million or 26% , and Freight Segment Operating Loss decreased $2 million , or 8% . Freight revenue increased primarily attributable to a 25% increase in Freight Gross Bookings due to an increase in gross booking per trip and trip volume.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7256,6 +7278,7 @@
           "value_num": 16.0,
           "unit": "%",
           "verbatim": "r the six months ended June 30, 2026 compared to the same period in 2025, Freight revenue increased $399 million, or 16% , and Freight Segment Operating Loss increased $3 million , or 6% . Freight revenue increased primarily attributable to a 16% increase in Freight Gross Bookings due to an increase in revenue per trip and trip volume.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7267,6 +7290,7 @@
           "value_num": 6.0,
           "unit": "%",
           "verbatim": "Freight revenue increased $399 million, or 16% , and Freight Segment Operating Loss increased $3 million , or 6% . Freight revenue increased primarily attributable to a 16% increase in Freight Gross Bookings due to an increase in revenue per trip and trip volume.",
+          "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
         },
@@ -7278,6 +7302,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Wayve’s partnership to bring autonomous rides to London has taken an important step forward after Transport for London granted Private Hire Vehicle licences to a number of Wayve’s autonomous all-electric Ford Mustang Mach-E vehicles. The cars, which are equippe",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-05-2026",
           "tier": "anchored"
         },
@@ -7289,6 +7314,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that it has entered into a strategic partnership with GreenMobility to deploy autonomous shared mobility services in Denmark. The partnership combines WeRide's globally validated Level 4 autonomous driving technology with GreenMobility's local fleet operations and shared ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-03-2026",
           "tier": "anchored"
         },
@@ -7300,6 +7326,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced partnerships with several new grocery retailers across the U.S. This expansion brings regional grocery brands to the Uber Eats marketplace, including Busch’s Fresh Food Market, Hays, Lowe’s Market, and Piggly Wiggly. These partnerships broaden Uber’s nati",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jul-29-2026",
           "tier": "anchored"
         },
@@ -7311,6 +7338,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide unveiled WITT (World Intelligence Toward Truth), a Physical AI Cognitive Foundation Model designed to build AI cognition of the physical world through trusted facts extracted from real-world experience. WITT introduces Atomic Physical Facts (APFs), the smallest verifiable units of ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jul-17-2026",
           "tier": "anchored"
         },
@@ -7322,6 +7350,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Foot Locker, Inc. announced that it has entered into a new partnership with Uber Technologies, Inc. that brings Foot Locker, Kids Foot Locker, and Champs Sports to the Uber Eats marketplace. Consumers can now shop a wide assortment of footwear, apparel and accessories from more than 1,000",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jul-16-2026",
           "tier": "anchored"
         },
@@ -7333,6 +7362,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide is building a global integrated engineering and validation framework spanning R&D, testing, adaptation across diverse international markets. WeRide is systematically expanding its global engineering and validation capabilities. Together with Bosch, the company is conducting on-road",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jul-13-2026",
           "tier": "anchored"
         },
@@ -7344,6 +7374,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced the addition of several new retailers to the Uber Eats marketplace, broadening its retail selection available for on-demand delivery. Consumers can now shop for products from Kiehl’s, FedEx Office, Blick Art Materials, Academy Sports + Outdoors, and Choic",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jun-24-2026",
           "tier": "anchored"
         },
@@ -7355,6 +7386,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Life360, Inc. announced that it has launched the next phase of a strategic partnership with Uber Technologies, Inc., allowing Life360 members to request and coordinate Uber rides for teens and other family members directly within the Life360 app. The integration combines Uber Family’s tru",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jun-18-2026",
           "tier": "anchored"
         },
@@ -7366,6 +7398,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Stellantis N.V. announced that it has entered a partnership with Wayve and Uber Technologies, Inc. to jointly explore the development and deployment of Level 4 (driverless) robotaxis at a global scale. The collaboration brings together Stellantis’ L4-Ready Platforms™, Wayve’s AI driving t",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jun-17-2026",
           "tier": "anchored"
         },
@@ -7377,6 +7410,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that it will once again deploy its autonomous Robobus at the Roland-Garros tournament – marking the third consecutive year of operations in partnership with Renault Group. Since 2024, the WeRide Robobus has provided the only autonomous public shuttle service at Roland-Gar",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · May-26-2026",
           "tier": "anchored"
         },
@@ -7388,6 +7422,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Ulta Beauty announced the addition of more than 1,500 Ulta Beauty stores to the Uber Eats marketplace. Customers across the U.S. can now shop an expansive assortment of beauty and wellness products—including makeup, skincare, haircare, fragrance, tools & device",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · May-07-2026",
           "tier": "anchored"
         },
@@ -7399,6 +7434,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Stop & Shop has announced a new partnership with Uber Eats to bring enhanced on-demand grocery delivery to customers across New York, New Jersey, Connecticut, Rhode Island, and Massachusetts. Stop & Shop’s 350+ stores are now live on the Uber Eats marketplace, providing another channel fo",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · May-04-2026",
           "tier": "anchored"
         },
@@ -7410,6 +7446,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Ahold Delhaize USA announced an expanded partnership with Uber Eats to bring enhanced on-demand grocery delivery to customers across the Northeast and Mid-Atlantic. Through the collaboration, nearly 2,000 stores – operated by Food Lion, Giant Food, The GIANT Company, encompassing GIANT an",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · May-04-2026",
           "tier": "anchored"
         },
@@ -7421,6 +7458,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced a new set of products and features at its annual GO–GET product event, including hotel bookings and new travel tools. The updates reflect Uber’s continued platform strategy to bring more of everyday life into one simple user experience. Among the new offe",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-29-2026",
           "tier": "anchored"
         },
@@ -7432,6 +7470,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that WeRide Driving (WRD 3.0), its one-stage end-to-end ADAS (Advanced Driver Assistance System) solution, has achieved multi-chip compatibility across computing platforms including NVIDIA DRIVE®, Qualcomm Snapdragon®, and SiEngine StarLight (AD1000). By supporting differ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-24-2026",
           "tier": "anchored"
         },
@@ -7443,6 +7482,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Block, Inc. announced a comprehensive global partnership with Uber Technologies, Inc. that expands restaurant operations capabilities across multiple markets and payment flexibility in the United States. Square's native Uber Eats integration builds on its current availability in the Unite",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-22-2026",
           "tier": "anchored"
         },
@@ -7454,6 +7494,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Pony AI Inc. announced that its robotaxi program in partnership with Verne and Uber has officially begun commercial service in Zagreb, Croatia, marking Europe's first commercial robotaxi service. The launch comes two weeks after Pony.ai, Verne and Uber announced their partnership to intro",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-08-2026",
           "tier": "anchored"
         },
@@ -7465,6 +7506,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Ace Hardware announced a new partnership that will bring over 3,700 Ace Hardware locations across all 50 states to the Uber Eats platform. Customers can shop their neighborhood Ace Hardware on the Uber Eats app for convenient on-demand or scheduled delivery. Th",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-07-2026",
           "tier": "anchored"
         },
@@ -7476,6 +7518,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. and Grab Holdings Limited commenced public operations for the Ai.R (Autonomously Intelligent Ride) service in Punggol. The Ai.R (Autonomously Intelligent Ride) service is operated by Grab Holdings Limited and features WeRide Inc.’s GXR and Robobus autonomous vehicle models. Th",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Apr-01-2026",
           "tier": "anchored"
         },
@@ -7487,6 +7530,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies launched fully driverless Robotaxi fare-charging operations in Dubai, as part of the first batch of Level 4 Robotaxis to enter commercial service in the city. Public commercial operations began across Umm Suqeim and Jumeirah districts without a vehicle operato",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-31-2026",
           "tier": "anchored"
         },
@@ -7498,6 +7542,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Ibotta, Inc. announced a partnership with Uber Technologies, Inc. to deliver Ibotta-powered digital promotions across Uber’s grocery and retail ecosystem in the United States. This partnership strengthens the Ibotta Performance Network’s existing marketplace presence and gives CPG brands ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-25-2026",
           "tier": "anchored"
         },
@@ -7509,6 +7554,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. showcased its Robotaxi GXR at NVIDIA GTC 2026, expanding the model's global appearance. WeRide’s Robotaxi GXR is engineered for dense, complex urban environments like those across Southeast Asia. It leverages the NVIDIA DRIVE Hyperion autonomous vehicle development platform, p",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-17-2026",
           "tier": "anchored"
         },
@@ -7520,6 +7566,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and NVIDIA announced an expansion of their autonomous vehicle partnership. The companies, supported by their growing roster of automaker partners, plan to launch a global fleet of entirely NVIDIA software-driven autonomous vehicles, starting in Los Angeles and San ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-16-2026",
           "tier": "anchored"
         },
@@ -7531,6 +7578,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Motional announced that Uber riders in Las Vegas can now be matched with an all-electric Motional IONIQ 5 robotaxi. Motional and Uber established a 10-year framework agreement in 2022 that set a partnership in motion for effective scaling and broad adoption of ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-13-2026",
           "tier": "anchored"
         },
@@ -7542,6 +7590,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Serve Robotics Inc. and White Castle announced a partnership to deliver the brand's beloved Sliders and Crave-worthy menu items via Serve's autonomous delivery robots on Uber Eats. Customers ordering White Castle in Serve’s delivery zone may now have their meals arrive in one of Serve’s a",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-11-2026",
           "tier": "anchored"
         },
@@ -7553,6 +7602,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. signed an expanded strategic cooperation agreement with Geely’s Zhejiang Farizon New Energy Commercial Vehicle Group. The two companies announced plans to deliver 2,000 upgraded, purpose-built, mass-produced Robotaxi GXRs by 2026, advancing WeRide's progress toward large-scale",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Mar-09-2026",
           "tier": "anchored"
         },
@@ -7564,6 +7614,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Joby Aviation, Inc. introduced Uber Air powered by Joby, giving riders a first look at how they'll be able to book a Joby Aviation all-electric air taxi directly in the Uber app. Joby expects to carry its first passengers later this year in Dubai, marking a major milestone in the Joby- Ub",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-25-2026",
           "tier": "anchored"
         },
@@ -7575,6 +7626,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Eats announced the national launch of T&T Supermarket, bringing a greater variety of groceries to Canadians' front doors. Customers can now order from T&T locations across Canada, with Quebec delivery launching at a later date. This partnership gives on demand access to fresh vegetab",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-24-2026",
           "tier": "anchored"
         },
@@ -7586,6 +7638,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced the launch of Uber Autonomous Solutions, a comprehensive suite of unique services and capabilities that are already helping partners to build and successfully commercialize autonomous vehicles in multiple markets around the world. Beyond just getting acce",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-23-2026",
           "tier": "anchored"
         },
@@ -7597,6 +7650,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies announced that it would invest more than $100 million to develop autonomous ?vehicle charging hubs, ?underscoring the ride-hailing company's latest push to scale up ?self-driving operations. The move includes building DC fast charging stations at its autonomous ?depots w",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-18-2026",
           "tier": "anchored"
         },
@@ -7608,6 +7662,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced the expansion of their strategic partnership to help families navigate everyday transportation with greater ease, visibility, and confidence. The first-of-its-kind integration will allow users across Life360 and Uber to link their accounts – including Ube",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-17-2026",
           "tier": "anchored"
         },
@@ -7619,6 +7674,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. and Uber Technologies, Inc. have launched the first commercial Robotaxi service in downtown Abu Dhabi - marking the Emirate's first autonomous vehicle (AV) deployment in its city center. With this latest downtown expansion, the WeRide- Uber service now reaches approximately 70",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-12-2026",
           "tier": "anchored"
         },
@@ -7630,6 +7686,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Baidu, Inc. and Uber Technologies, Inc. announced the next phase of their global partnership, bringing the Apollo Go autonomous ride-hailing service to the Uber platform in Dubai. Expected to launch in the coming month, the fully autonomous vehicles will be available via the Uber app acro",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-10-2026",
           "tier": "anchored"
         },
@@ -7641,6 +7698,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies, Inc. announced a major expansion of their strategic partnership to deploy at least 1,200 Robotaxis across the Middle East. The deployment, which will span Abu Dhabi, Dubai, and Riyadh, is expected to be completed as soon as 2027. WeRide and Uber's Robotaxi fl",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Feb-06-2026",
           "tier": "anchored"
         },
@@ -7652,6 +7710,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and The Kroger Co. announced the launch of nearly 2,700 Kroger Family of Companies stores on the Uber Eats, Uber, and Postmates apps. Customers nationwide can now shop their local Kroger banner for fresh groceries, Kroger's Brands favorites, household essentials, a",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jan-15-2026",
           "tier": "anchored"
         },
@@ -7663,6 +7722,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide launched its Robotaxi service Mini Program,\"WeRide Go\", on WeChat, a super-app owned by tech giant Tencent. WeChat is one of China's most widely used digital platforms, with over a billion users. Residents and visitors in WeRide's Robotaxi operating areas, including Guangzhou's Hua",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Jan-14-2026",
           "tier": "anchored"
         },
@@ -7674,6 +7734,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Equiti Group has partnered with Uber to become the first brand in the UAE to launch an in-j journey advertising campaign. Using Uber's newly launched Journey Ads, the campaign marks a bold step forward in how fintech brands engage with high-value consumers, establishing a strong and susta",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Dec-16-2025",
           "tier": "anchored"
         },
@@ -7685,6 +7746,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies, Inc. in partnership with Dubai's Roads and Transport Authority (RTA), announced the official launch of Robotaxi passenger ridesin Dubai on the Uber app. Starting December 12, 2025, WeRide Robotaxi will be available on the Uber app in locations across Umm Suqe",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Dec-12-2025",
           "tier": "anchored"
         },
@@ -7696,6 +7758,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber announced new regional additions to the Uber and Uber Eats apps with Stater Bros. Markets, Kowalski's Markets, and Big Red Liquors this month, further expanding the platform's growing network of local grocery and alcohol retailers across the U.S. In 2025 Uber has added more than a th",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Dec-11-2025",
           "tier": "anchored"
         },
@@ -7707,6 +7770,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced that Dallas riders can now be matched with an Avride robotaxi, unlocking a brand-new way to ride with Uber. The service will be available throughout 9 square miles of Dallas-from Downtown to Uptown to Turtle Creek to Deep Ellum-with plans to expand the op",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Dec-03-2025",
           "tier": "anchored"
         },
@@ -7718,6 +7782,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Expensify, Inc. announced an improved expense integration with Uber for Business. The integration fully automates receipt collection for employee Uber rides and Uber Eats orders, offering a seamless and scalable way to manage travel and dining expenses while on the road for work. Once Ube",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Dec-02-2025",
           "tier": "anchored"
         },
@@ -7729,6 +7794,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Pet Valu, Canada's leading specialty retailer of pet food and pet supplies, is now available on the Uber Eats app. Customers can order from over 650 Pet Valu locations, giving pet parents from coast to coast quick and easy access to food, treats, toys and other must-have items for their p",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-26-2025",
           "tier": "anchored"
         },
@@ -7740,6 +7806,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies, Inc. announced the launch of Level 4 fully driverless Robotaxi commercial operations in Abu Dhabi. This marks the first driverless deployment in the Middle East, as well as the first city outside the United States to host fully driverless operations on the Ub",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-26-2025",
           "tier": "anchored"
         },
@@ -7751,6 +7818,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced the addition of PacSun, Camping World and Lush to its apps, further expanding Uber's growing retail selection and giving consumers more ways to get the products they need, delivered fast and on-demand. This week, shoppers across the U.S. can order from hu",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-25-2025",
           "tier": "anchored"
         },
@@ -7762,6 +7830,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Forage and Save A Lot announced that SNAP EBT is live on Uber Eats at more than 325 participating Save A Lot locations. The launch makes it easier for families in food deserts, seniors, people with disabilities, and households without reliable transportation to get groceries delivered the",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-20-2025",
           "tier": "anchored"
         },
@@ -7773,6 +7842,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Starship Technologies and Uber Technologies announced a global collaboration to roll out autonomous sidewalk robot delivery across multiple markets. The partnership will start with the UK in December, followed by multiple European countries in 2026, and U.S. expansion planned for 2027. Th",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-20-2025",
           "tier": "anchored"
         },
@@ -7784,6 +7854,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Coco Robotics is bringing Shake Shack favorites to customers in Chicago via autonomous deliveries on Uber Eats. This collaboration between Shake Shack, Coco, and Uber Eats aims to enhance the guest experience while growing Coco's presence across major U.S. cities. Shake Shack is debuting ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-19-2025",
           "tier": "anchored"
         },
@@ -7795,6 +7866,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide has been granted a permit to conduct fully driverless Robotaxi commercial operations, marking it as one of the first companies to receive a city-level commercial permit for Level 4 autonomous driving issued outside the United States (U.S.), and the first international company to ac",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-17-2025",
           "tier": "anchored"
         },
@@ -7806,6 +7878,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. is introducing an easy new way to reach favorite winter destinations worldwide: Uber Ski. Forget the hassle of finding a ride that fits party and gear. With Uber Ski, riders can reserve a vehicle that's large enough to accommodate up to four people with everyone's ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-13-2025",
           "tier": "anchored"
         },
@@ -7817,6 +7890,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Freight announced an expanded commercial partnership with Better Trucks. The collaboration allows Uber Freight to leverage Better Trucks' technology, operational capability, and scaled delivery network to significantly expand its last-mile capabilities. Uber Freight customers may now",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-13-2025",
           "tier": "anchored"
         },
@@ -7828,6 +7902,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber in partnership with Consubanco and Bkaya announced the launch of the Uber Pro Card program throughout Mexico. This innovative financial solution is designed to give drivers and couriers greater control over their earnings, more financial flexibility, and access to exclusive benefits.",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-11-2025",
           "tier": "anchored"
         },
@@ -7839,6 +7914,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies Inc. announced that Shake Shack Canada is now available for delivery in Toronto straight to doorstep through the Uber Eats app. Shake Shack is now available for delivery, with the new Vaughan Mills location joining the lineup soon. The partnership expands Uber Eats Canad",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-10-2025",
           "tier": "anchored"
         },
@@ -7850,6 +7926,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Loblaw Companies Limited announced a partnership to bring Loblaw banners to the Uber Eats app. Canadians can now shop select Loblaw banner stores through Uber Eats, with all participating locations available nationwide by November 12. At launch, consumers will ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-06-2025",
           "tier": "anchored"
         },
@@ -7861,6 +7938,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Toast and Uber Technologies, Inc. announced a multi-year strategic global partnership focused on product innovation and go-to-market initiatives designed to help restaurants grow their businesses and better serve guests. Beginning in the United States and Canada, Toast and Uber will deepe",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Nov-03-2025",
           "tier": "anchored"
         },
@@ -7872,6 +7950,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and The Kroger Co. announced an expanded relationship that brings together Kroger's Family of Companies and Uber Eats' leading delivery platform to make it easier than ever for customers to shop, save, and dine--all in one place. This announcement builds on a stron",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-30-2025",
           "tier": "anchored"
         },
@@ -7883,6 +7962,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced it is working with NVIDIA to accelerate the next generation of robotaxi and autonomous delivery fleets using NVIDIA AI Architecture. Through this partnership, Uber plans to greatly expand its global autonomous fleets. Stellantis will be among the first OE",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-28-2025",
           "tier": "anchored"
         },
@@ -7894,6 +7974,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Script Runner announced a partnership with Uber Direct to introduce prescription delivery in Canada, giving pharmacies a smarter, lower-cost way to deliver at scale. This makes prescription delivery faster, more efficient, and more reliable for patients nationwide. Through Uber Direct's s",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-28-2025",
           "tier": "anchored"
         },
@@ -7905,6 +7986,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies, Inc. have begun offering autonomous Robotaxi passenger rides in Riyadh, marking the first time autonomous vehicles (AVs) are publicly available on the Uber platform in Saudi Arabia. The initiative represents a major milestone in Uber's partnership with the Tr",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-27-2025",
           "tier": "anchored"
         },
@@ -7916,6 +7998,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide and Uber Technologies Inc. have begun offering autonomous Robotaxi passenger rides in Riyadh, marking the first time autonomous vehicles (AVs) are publicly available on the Uber platform in Saudi Arabia. The initiative represents a major milestone in Uber's partnership with the Tra",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-24-2025",
           "tier": "anchored"
         },
@@ -7927,6 +8010,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Hibbett, Inc. announced a new partnership bringing the omnichannel retailer's broad selection of athletic-inspired fashion, footwear and accessories to the Uber Eats platform. Beginning this week, consumers across the U.S. can shop from nearly 900 Hibbett locat",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-23-2025",
           "tier": "anchored"
         },
@@ -7938,6 +8022,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: ShiftMed has expanded its integration with Uber Health to give health system employees direct access to transportation through the ShiftMed Flex platform. The feature enables hospital-employed clinicians and staff to request Uber rides to and from shifts with no upfront costs. The expansi",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-16-2025",
           "tier": "anchored"
         },
@@ -7949,6 +8034,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced the launch of Robotaxi GXR and Robobus pilot operations in partnership with theRas Al Khaimah Transport Authority (RAKTA). This represents WeRide's first deployment in Ras Al Khaimah and its expansion into a third emirate in the UAE. The pilot integrates WeRide's autonomo",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Oct-02-2025",
           "tier": "anchored"
         },
@@ -7960,6 +8046,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Serve Robotics Inc. announced the launch of its service in the Chicago metro area, marking its first expansion into the Midwest. This milestone builds on Serve's successful rollouts in Los Angeles, Miami, Dallas-Fort Worth, and Atlanta as part of its ongoing collaboration with Uber Eats, ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-30-2025",
           "tier": "anchored"
         },
@@ -7971,6 +8058,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Eats announced new partnerships with Citarella, Rouses Markets, Town and Country, Wild Fork and Rosauers Supermarkets, bringing even more regional favorites onto the platform. From gourmet markets to neighborhood staples, these additions reflect Uber Eats' ongoing commitment to conne",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-29-2025",
           "tier": "anchored"
         },
@@ -7982,6 +8070,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and ALDI announced a new collaboration to bring its award-winning ALDI selection of organic meats, fresh produce, gourmet cheeses, globally-sourced wine, bread and bakery treats, seasonal items and so much more, to Uber Eats. With more than 2,500 ALDI locations nat",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-25-2025",
           "tier": "anchored"
         },
@@ -7993,6 +8082,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Papa John's International, Inc. is flipping the script on the quiet exit. In partnership with Uber Eats, the brand is launching \"Dip Out with the Papa Dippa,\" a guilt-free way to bail and still deliver the pizza love. Whether you're ghosting a football watch party or sneak out of a date, ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-24-2025",
           "tier": "anchored"
         },
@@ -8004,6 +8094,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that it will be deploying its GXRs and Robobus vehicles in Singapore as part of Ai.R, Grab's first autonomous vehicle (AV) service for Singapore consumers. Ai.R, short for Autonomously Intelligent Ride, will be operated by Grab, a leading super app in Southeast Asia, in p",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-22-2025",
           "tier": "anchored"
         },
@@ -8015,6 +8106,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that its Robobus has received Belgium's first federal test permit for a Level 4 autonomous shuttle. With this approval, WeRide becomes the only technology company in the world with products holding autonomous driving permits in seven countries: Belgium, China, France, the",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-19-2025",
           "tier": "anchored"
         },
@@ -8026,6 +8118,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Designer Brands Inc. announced a new partnership that brings DSW's vast selection of footwear and accessories to the Uber Eats platform. With nearly 500 DSW stores now available on Uber Eats across the contiguous United States, customers can browse and order to",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-17-2025",
           "tier": "anchored"
         },
@@ -8037,6 +8130,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. announced its expansion into Belgium with the launch of its Robobus in Leuven, in partnership with Flemish public transportation company De Lijn, the City of Leuven, and mobility consultancy firm Espaces-Mobilits. The move marks WeRide's 11th global market worldwide and builds",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-11-2025",
           "tier": "anchored"
         },
@@ -8048,6 +8142,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Pipe and Uber Technologies, Inc. announced a strategic relationship that will provide hundreds of thousands of restaurants in the US access to working capital. Through this relationship, eligible restaurants across the US will have access to Pipe Capital through Uber Eats Manager, the Ube",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-10-2025",
           "tier": "anchored"
         },
@@ -8059,6 +8154,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Joby Aviation, Inc. and Uber Technologies, Inc. announced they plan to bring Blade's air mobility services to the Uber app as soon as next year, following Joby's recent acquisition of Blade's passenger business. In 2024, Blade flew more than 50,000 passengers across a network of routes in",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-10-2025",
           "tier": "anchored"
         },
@@ -8070,6 +8166,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Sephora announced a partnership to bring hundreds of Sephora locations to the Uber Eats platform. Beginning September 9, 2025, beauty lovers across the U.S. and Canada can enjoy on-demand delivery of makeup, skincare, fragrance, haircare, wellness products, and",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-09-2025",
           "tier": "anchored"
         },
@@ -8081,6 +8178,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide announced that its mass-produced Robotaxi GXR has launched 24-hour fully driverless commercial operations in Huangpu District, Guangzhou. This marks the world's first autonomous ride-hailing service offering point-to-point trips across any location in the core urban area of a major",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-04-2025",
           "tier": "anchored"
         },
@@ -8092,6 +8190,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. announced a new partnership with Best Buy that brings consumer electronics from more than 800 stores to the Uber Eats platform. Starting September 2, 2025, Best Buy customers can tap to order a wide range of electronics, appliances, and tech essentials on Uber Eats",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Sep-02-2025",
           "tier": "anchored"
         },
@@ -8103,6 +8202,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Dollar Tree, Inc. announced a new nationwide partnership that brings nearly 9,000 Dollar Tree stores to the Uber Eats platform. Customers across the U.S. can experience Dollar Tree's unique shopping experience and the thrill of discovering affordable everyday i",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-28-2025",
           "tier": "anchored"
         },
@@ -8114,6 +8214,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide has partnered with Shenzhen Bus Group to launch Shenzhen's first Level 4 fully driverless Robobus public transport line in Luohu District, operating in the busy central business district. The launch of the B888 line coincides with Shenzhen's 45th anniversary as China's first Specia",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-26-2025",
           "tier": "anchored"
         },
@@ -8125,6 +8226,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide Inc. launched WePilot AiDrive, its one-stage end-to-end ADAS (Advanced Driver Assistance System) solution. Developed in partnership with leading Tier 1 supplier Bosch, this milestone comes just six months after both companies brought their two-stage end-to- end-to-end solution into",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-21-2025",
           "tier": "anchored"
         },
@@ -8136,6 +8238,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. and Dollar General Corporation announced a partnership that will bring more than 14,000 Dollar General and pOpshelf locations to the Uber Eats platform. Starting August 8, 2025 and expanding this month, DG and pOpshelf customers can tap to order an expansive mix of",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-08-2025",
           "tier": "anchored"
         },
@@ -8147,6 +8250,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Uber Technologies, Inc. provided earnings guidance for the third quarter of 2025. for the quarter, the company expects Gross Bookings of $48.25 billion to $49.75 billion, representing growth of 17% to 21% YoY on a constant currency basis. Our outlook assumes a neutral to modestly positive",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-06-2025",
           "tier": "anchored"
         },
@@ -8158,6 +8262,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: WeRide has received approval to conduct late-night testing of its Robotaxi on public roads within the Beijing High-Level Autonomous Driving Demonstration Zone from 10pm to 7am. This milestone marks a crucial step for WeRide in building a 24/7 autonomous ride-hailing network in Beijing, la",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Uber Technologies Inc NYSE UBER Key Developments.rtf · Aug-06-2025",
           "tier": "anchored"
         },
@@ -8169,6 +8274,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Gross bookings were up 21% year-on-year, reflecting the durability of our platform and that growth was once again trip and audience-led with our audience growing 17% alongside strong engagement.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8180,6 +8286,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Gross bookings were up 21% year-on-year, reflecting the durability of our platform and that growth was once again trip and audience-led with our audience growing 17% alongside strong engagement.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8191,6 +8298,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Mobility gross bookings accelerated to 20% with record margins.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8202,6 +8310,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Delivery grew 23%, led by grocery and retail and supported by strong retention, and Freight returned to growth for the first time in nearly 2 years.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8213,6 +8322,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We've now surpassed 50 million Uber One members and 10 million drivers and couriers globally, both important milestones that reflect strong customer loyalty and expanding number of earner opportunities on our platform.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8224,6 +8334,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We've now surpassed 50 million Uber One members and 10 million drivers and couriers globally, both important milestones that reflect strong customer loyalty and expanding number of earner opportunities on our platform.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8235,6 +8346,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We now have more than 30 autonomous partners across Mobility and Delivery and are scaling deployments globally.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8246,6 +8358,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "AV Mobility trips grew more than 10x year-on-year, and we remain on track to be live in up to 15 cities by the end of the year, including new deployments in the U.S.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8257,6 +8370,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8268,6 +8382,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8279,6 +8394,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And globally, just last year, we had over 1.5 billion trips happening outside one of our users' home cities.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8290,6 +8406,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "So now we've got 700,000 hotels available on Uber as we speak.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8301,6 +8418,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Uber One members get 10% Uber credits. There's a rolling list of 10,000 hotels where you get another 20% off as well.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8312,6 +8430,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And obviously, you've seen kind of the momentum that we've had with Uber One with over 50 million members growing 50%. The retention rates are higher. They spend 3x more. It's a unique advantage that we have over our competition.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8323,6 +8442,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And as we said at the end of last year, we expect to see hundreds of millions of dollars of savings in our insurance line this year, thanks to the great work our policy teams have done as well as the tech improvements we have implemented in the market.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8334,6 +8454,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "In addition to that, we also had our auto insurance renewals that went into effect in March, and we've seen continued improvement in rates there, which is also -- with the improvement in the market conditions here for auto insurance, we have found opportunities to also offload more risk to third-party carriers.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8345,6 +8466,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "If you look at L.A., which is the market with the most significant insurance headwinds over the last few years, the trip growth trends there are significantly better than California and the rest of the country.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8356,6 +8478,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "The growth of cross-platform consumers is growing 1.5x faster than the overall growth of consumers.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8367,6 +8490,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And 3/4 of the rides on Uber, we have successfully actually predicted with AI algorithms where we think you're likely to go.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8378,6 +8502,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Gross bookings grew 22% year-on-year to more than $58 billion, above the high end of our guidance and marking our fourth consecutive quarter above 20% growth.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8389,6 +8514,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8400,6 +8526,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8411,6 +8538,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "So to remind you, we're live in 7 cities, and we're on track to be live in 15 cities by year-end.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8422,6 +8550,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And what we've seen is that launching with us as a partner with kind of the built-in kind of demand that we've got, we can drive very significant utilization per vehicle, often mid- to high 20s, low 30s in terms of trips per vehicle per day, which is quite substantial in terms of the needed monetization as it relates to these vehicles.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8433,6 +8562,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We are reinvesting the savings from insurance back into the market. And particularly in California, where there's a significant amount of reinvestment, we are seeing a very clear inflection in growth.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8444,6 +8574,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And in L.A. and SF, our trip growth, for example, meaningfully outpaced the rest of the country.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8455,6 +8586,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "U4B, in particular, we saw 40% year-on-year growth. Uber Health is growing even faster.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8466,6 +8598,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "And just for context, in the U.S., less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8477,6 +8610,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8488,6 +8622,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "The combination is going to expand our reach to nearly 100 markets and extend the proven strategy that has underpinned our growth for years by roughly doubling the number of markets where we can offer the full power of our platform across mobility and delivery.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         }

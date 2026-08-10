@@ -5288,6 +5288,7 @@
           "value_num": 0.6,
           "unit": "%",
           "verbatim": "Cost of revenue increased $9.0 million, or 0.6%, due to changes in foreign currency exchange rates, which was caused primarily by the strengthening of the euro and several other currencies against the U.S.",
+          "following_context": null,
           "source_ref": "10-Q 0001803599-26-000136",
           "tier": "anchored"
         },
@@ -5299,6 +5300,7 @@
           "value_num": 2.0,
           "unit": "%",
           "verbatim": "Cost of revenue increased $62.7 million, or 2.0%, due to changes in foreign currency exchange rates, which was caused primarily by the strengthening of the euro and several other currencies against the U.S.",
+          "following_context": null,
           "source_ref": "10-Q 0001803599-26-000136",
           "tier": "anchored"
         },
@@ -5310,6 +5312,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation provided unaudited earnings guidance for the Second quarter and full year of 2026. For the quarter, the company expects reported revenue to be between $2.460 billion to $2.485 billion. Operating income to be between $128 million to $138 million . For the full year, ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Mar-24-2026",
           "tier": "anchored"
         },
@@ -5321,6 +5324,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation provided unaudited earnings guidance for the first quarter ending February 28, 2026 and full year ending November 30, 2026. For the quarter, the company expects reported revenue to be between $2,475,000,000 to $2,500,000,000. Operating income to be between $139,500,",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Jan-13-2026",
           "tier": "anchored"
         },
@@ -5332,6 +5336,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation announced a new suite of pre-built, emotionally aware Conversational AI Agents designed to make adding AI to the brand experience faster and simpler. Created for brands who want to intelligently transform their operations with the power of agentic AI without the com",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Dec-22-2025",
           "tier": "anchored"
         },
@@ -5343,6 +5348,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation provided earnings guidance for the fourth quarter and the full year ending November 30, 2025. For the quarter, the company expects Fourth quarter reported revenue of $2.525 billion to $2.550 billion. Based on current exchange rates, these expectations assume an appr",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Sep-25-2025",
           "tier": "anchored"
         },
@@ -5354,6 +5360,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation announced the launch of its Agentic Operating Framework, optimized to help enterprises overcome the common problems behind the widespread AI pilot failures in businesses today. Building on decades of expertise earned by helping the world's best brands create differe",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Sep-18-2025",
           "tier": "anchored"
         },
@@ -5365,6 +5372,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation announced the newest release of iX Hero, part of its expanding Intelligent Experience (iX) product suite. iX Hero uses agentic AI to supercharge the way customer experiences are delivered. The latest release adds two new features, Harmony and Clarity, to create more",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Jul-30-2025",
           "tier": "anchored"
         },
@@ -5376,6 +5384,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Concentrix Corporation provided earnings guidance for the third quarter ending August 31, 2025 and full year ending November 30, 2025. For the third quarter, the company expected revenue of $2.445 billion to $2.470 billion. Based on current exchange rates, these expectations assume an app",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Concentrix Corporation NasdaqGS CNXC Key Developments.rtf · Jun-26-2025",
           "tier": "anchored"
         },
@@ -5387,6 +5396,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Our overall wins with Technology are up more than 61% year-over-year in the first quarter, highlighting the shift in our go-to-market offerings and client acceptance.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5398,6 +5408,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "When we look at our bookings quarter-on-quarter, our signed annual contract value for solutions including AI more than doubled, and we're seeing sequential increases in expanding AI license consumption across our client base.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5409,6 +5420,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "As an example, we closed close to 60 enterprise iX Suite deals in the quarter including our largest iX Hero contracts to date with 2 Fortune 50 companies.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5420,6 +5432,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue from banking and financial services clients grew 13% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5431,6 +5444,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5442,6 +5456,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5453,6 +5468,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5464,6 +5480,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "This year, we were successful in reducing our non-complex work from 7% to 5% of our revenue.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5475,6 +5492,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "This helped move 4% of our onshore business to offshore centers.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5486,6 +5504,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "a 6% increase in the annual contract value of deals in the pipeline as we exited this year;",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5497,6 +5516,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "a 9% increase in new wins year-on-year;",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5508,6 +5528,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "a 14% increase in transformational deal values this year;",
+          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         }

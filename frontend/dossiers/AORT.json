@@ -7814,6 +7814,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: On-X Life Technologies Inc. had heart valves released and distributed before all required testing was complete, so it cannot be confirmed that they meet all release specifications. US Food and Drug Administration, The Government of USA has issued the following enforcement report: On-X Mit",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-23-2026",
           "tier": "anchored"
         },
@@ -7825,6 +7826,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. lowered earnings guidance for the full year 2026. For the year, the company expects revenue to be in the range of $480 to $496 million.",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-07-2026",
           "tier": "anchored"
         },
@@ -7836,6 +7838,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Endospan, a privately-held company pioneering solutions for the endovascular repair of aortic arch disease, announced that the U.S. Food and Drug Administration (FDA) has approved the NEXUS Aortic Arch Stent Graft. FDA approval was supported by the one-year results of the TRIOMPHE Investi",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Apr-07-2026",
           "tier": "anchored"
         },
@@ -7847,6 +7850,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. announced that the U.S. Food and Drug Administration (FDA) has approved the premarket approval application (PMA) for the NEXUS Aortic Arch System, developed by Endospan Ltd. The approval entitles Artivion to exercise its option to acquire Endospan at any time within 90 days",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Apr-07-2026",
           "tier": "anchored"
         },
@@ -7858,6 +7862,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Endospan announced the one-year results of their TRIOMPHE Investigational Device Exemption (IDE) Study evaluating the NEXUS®? Aortic Arch Stent-Graft System presented during the Society of Thoracic Surgeons (STS) Annual Meeting in New Orleans. TRIOMPHE is a prospective, multicenter, three",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Feb-03-2026",
           "tier": "anchored"
         },
@@ -7869,6 +7874,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. announced the presentation of new clinical data from Endospan's NEXUS TRIOMPHE IDE trial and its AMDS PERSEVERE IDE trial at the 62nd Annual Meeting of the Society of Thoracic Surgery in New Orleans, Louisiana. The NEXUS TRIOMPHE IDE trial presentation of 94 patients highli",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Feb-02-2026",
           "tier": "anchored"
         },
@@ -7880,6 +7886,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. raised earnings guidance for the year 2025. Given strong third quarter performance and continued business momentum, the company are raising the midpoints of full year 2025 constant currency revenue and EBITDA guidance and remain confident in ability to grow adjusted EBITDA ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Nov-06-2025",
           "tier": "anchored"
         },
@@ -7891,6 +7898,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. announced the treatment of the first patient in the ARTIZEN pivotal trial, evaluating the safety and effectiveness of the Arcevo™? LSA Hybrid Stent Graft System (\"Arcevo LSA\") in the treatment of acute and chronic arch pathologies. The trial is designed to support the Compa",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Nov-06-2025",
           "tier": "anchored"
         },
@@ -7902,6 +7910,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. announced data from its AMDS PERSEVERE and PROTECT trials were presented in Late-Breaking Science presentations at the 39thEuropean Association for Cardio-Thoracic Surgery (EACTS) Annual Meeting in Copenhagen, Denmark. The AMDS PERSEVER E trial presentation highlighted posi",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Oct-13-2025",
           "tier": "anchored"
         },
@@ -7913,6 +7922,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: On September 26, 2025, Artivion, Inc. entered into two Real Estate Purchase and Sale Contracts having substantially similar material terms, except as noted otherwise herein. The execution and performance of this Contract by Seller will not violate any provision of Seller's operating agree",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Sep-29-2025",
           "tier": "anchored"
         },
@@ -7924,6 +7934,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Artivion, Inc. raised earnings guidance for the year 2025. The company is raising the midpoint for the year ended December 2025 revenue guidance and now expects constant currency growth of 12% to 14%, compared to the previous range of 11% to 14%. The Company expects reported revenues to b",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Aug-07-2025",
           "tier": "anchored"
         },
@@ -7935,6 +7946,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "In the quarter, we delivered constant currency revenue growth of 12% and adjusted EBITDA growth of 26% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7946,6 +7958,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "From a product category perspective, stent graft revenues grew 10% on a constant currency basis in the first quarter compared to the same period last year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7957,6 +7970,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Meanwhile, our Q1 On-X revenue was 17% year-over-year growth on a constant currency basis.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7968,6 +7982,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7979,6 +7994,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We maintain our conviction that On-X is the best aortic valve in the market for patients under the age of 65, and we will continue to take market share worldwide in that product line.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7990,6 +8006,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Tissue processing revenues increased 23% year-over-year on a constant currency basis in the first quarter as demand for our products remained strong and tissue volumes normalized year-over-year following the cybersecurity incident in late '24.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8001,6 +8018,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Lastly, BioGlue was relatively flat on a constant currency basis compared to the same period last year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8012,6 +8030,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We now have 26 patients enrolled in the trial, which is a nonrandomized clinical trial consisting of 132 patients in the U.S. and Europe and up to 30 centers for treatment for aortic dissection and aneurysm in the arch.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8023,6 +8042,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Total revenues were $116.3 million for the first quarter of 2026, up 12% compared to Q1 of 2025.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8034,6 +8054,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Meanwhile, adjusted EBITDA increased approximately 26% from $17.5 million to $22.1 million in the first quarter of 2026.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8045,6 +8066,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8056,6 +8078,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "I'm pleased to report that for the full year of 2025, total adjusted constant currency revenue growth was 13% and adjusted EBITDA growth was 26% year-over-year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
           "tier": "llm-fenced"
         }
