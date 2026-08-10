@@ -4377,7 +4377,7 @@
             "last_charge_end": "2018-07-29",
             "last_charge_amount": 540.0,
             "pending": 176.0,
-            "pending_span": "2024-07-29→2025-04-27, 272d",
+            "pending_span": "2024-07-29→2025-04-27, 272d · EXCLUDES a GoodwillAndIntangibleAssetImpairment charge covering 2018-07-30→2019-01-27, 181d — a different window, not summable with this one",
             "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill",
             "note": "tagged historically but NOT inside this window — the last annual observation under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill ends 2018-07-29. Not evidence of a clean 5 years"
           }

@@ -175,9 +175,11 @@ def test_the_live_charge_is_never_added_to_the_window_total() -> None:
 
 
 def test_a_combined_tag_does_not_double_count_the_intangible_leg() -> None:
-    """NO LIVE INSTANCE — every name on SMPL's set resolves to `GoodwillImpairmentLoss`, so this is
-    SYNTHETIC and says so. The tag sits in `GOODWILL_IMPAIRMENT`, its scope already includes
-    intangibles, and adding the intangible family on top would double the charge silently."""
+    """A LIVE INSTANCE EXISTS — corrected during review, having first been written as synthetic.
+    Swept across all 95 peers on the committed fleet, **HLF resolves its annual goodwill series to
+    `GoodwillAndIntangibleAssetImpairment` with 11 annual points**, so without this guard HLF's
+    intangible family would be added on top of a total that already contains it. The original
+    claim ("no name uses it") was drawn from SMPL's eleven names, not from the corpus."""
     facts = _facts(**{COMBINED: _annual_years(1, val=200.0e6),
                       INT: _annual_years(1, val=150.0e6)})
     imp = _build_peer_impairment(facts, 1000.0, END)
@@ -243,3 +245,47 @@ def test_a_peer_that_never_resolves_gets_no_impairment_record_rather_than_a_clea
     pc = build_peer_capital_intensity(grid, resolve=_boom, companyfacts=lambda c: {})
     assert pc.rows[0].impairment is None, "an unresolvable ticker was given a write-down state"
     assert pc.imp_n_large_assessed == 0
+
+
+# ─── review findings: two states the SMPL happy path could not show ───────────────────────────
+
+def test_a_window_of_only_reversals_is_never_described_as_nil() -> None:
+    """REVIEW FINDING, five live instances. `charged` filters on `> 0`, so a window whose only
+    annual points are NEGATIVE fell through to `explicit-zero` and printed "every one nil" about a
+    figure that is nothing of the kind — CMI states `GoodwillImpairmentLoss` = **-$210.0M** for
+    FY2025. A reversal is an earlier write-down being taken back — information, not a zero."""
+    imp = _build_peer_impairment(_facts(**{GW: [_row(-210.0e6, END)]}), 1000.0, END)
+    assert imp.state == "explicit-zero"
+    assert imp.note is not None
+    assert "every one nil" not in imp.note, "a -$210.0M reversal was described as nil"
+    assert "CONTAINS A REVERSAL" in imp.note and "-210.0M" in imp.note
+
+
+def test_a_window_of_genuine_zeros_still_says_nil() -> None:
+    """The other half of the pair — JJSF's real shape must keep its plain sentence, or the fix
+    above has just made every explicit-zero row read like a reversal."""
+    imp = _build_peer_impairment(_facts(**{GW: _annual_years(5, val=0.0)}), 1000.0, END)
+    assert imp.note is not None
+    assert "every one nil" in imp.note and "REVERSAL" not in imp.note
+
+
+def test_a_pending_leg_on_a_different_window_is_named_not_silently_dropped() -> None:
+    """REVIEW FINDING, 13 live instances (HAIN goodwill 2026-03-31 vs intangibles 2020-03-31; CPB
+    2018-04-29 vs 2025-04-27). Only points at the LATEST period end are summable, so the other leg
+    must go — but this module states a PERIOD MISMATCH rather than dropping one quietly (the
+    buyback trio's rule), and the first cut dropped it with nothing on the page."""
+    facts = _facts(**{GW: [_row(100.0e6, END, days=200)],
+                      INT: [_row(55.0e6, END - timedelta(days=400), days=200)]})
+    imp = _build_peer_impairment(facts, 1000.0, END)
+    assert imp.pending == pytest.approx(100.0), "a non-summable leg was added into the live charge"
+    assert imp.pending_span is not None
+    assert "EXCLUDES" in imp.pending_span and "not summable" in imp.pending_span
+
+
+def test_two_pending_legs_on_one_window_still_add_with_no_exclusion_note() -> None:
+    """SMPL's real shape, and the negative pin for the guard above: when both legs share the period
+    end they ADD ($38.0M + $331.0M) and nothing is excluded."""
+    facts = _facts(**{GW: [_row(38.0e6, END, days=272)], INT: [_row(331.0e6, END, days=272)]})
+    imp = _build_peer_impairment(facts, 1508.9, END)
+    assert imp.pending == pytest.approx(369.0)
+    assert imp.pending_span is not None and "EXCLUDES" not in imp.pending_span

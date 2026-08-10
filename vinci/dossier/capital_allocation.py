@@ -322,9 +322,13 @@ def _acquired_and_assets(facts: dict[str, Any]) -> tuple[float | None, float | N
 IMPAIRMENT_WINDOW_YEARS = 5
 
 #: Tags whose scope ALREADY INCLUDES intangibles. If the goodwill family resolves to one of these,
-#: adding the intangible family on top double-counts the same charge. No name on SMPL's set uses
-#: it today (all ten resolved to `GoodwillImpairmentLoss`), so this guard has no live instance —
-#: it is written because the tag sits in `GOODWILL_IMPAIRMENT` and the failure would be silent.
+#: adding the intangible family on top double-counts the same charge.
+#: THIS GUARD HAS A LIVE INSTANCE, and the first draft of this comment said it did not. Swept
+#: across all 95 peers on the committed fleet: **HLF resolves its annual goodwill series to
+#: `GoodwillAndIntangibleAssetImpairment`, 11 annual points** — so on HLF the intangible family
+#: would have been added on top of a total that already contains it. CPB carries the same tag on a
+#: 181-day non-annual charge. Checked, not assumed: the earlier claim rested on SMPL's eleven
+#: names rather than on the corpus.
 COMBINED_IMPAIRMENT_TAGS = frozenset({"GoodwillAndIntangibleAssetImpairment"})
 
 #: The four states in READER words, DEFINED ONCE AND CARRIED IN THE DATA. The first cut wrote this
@@ -409,7 +413,19 @@ def _pending_charge(facts: dict[str, Any], after: Any) -> tuple[float, str] | No
     at_end = [(p, v) for p, v in per_family if p.period_end == latest]
     if not at_end:
         return None
-    return sum(v for _, v in at_end) / _USD_M, _span(at_end[0][0])
+    # A DROPPED LEG IS STATED, NEVER SILENT — this module's own PERIOD MISMATCH discipline, which
+    # the buyback trio already applies to cash-vs-shares. The two families' latest year-to-date
+    # points frequently END ON DIFFERENT DATES (13 live instances across the fleet's peer sets:
+    # HAIN goodwill 2026-03-31 vs intangibles 2020-03-31, CPB 2018-04-29 vs 2025-04-27), and only
+    # points at the LATEST end are summable. Dropping the other one quietly would understate a
+    # live charge with nothing on the page saying so.
+    dropped = [p for p, _ in per_family if p.period_end != latest]
+    span = _span(at_end[0][0])
+    if dropped:
+        span += (" · EXCLUDES a "
+                 + ", ".join(f"{p.tag} charge covering {_span(p)}" for p in dropped)
+                 + " — a different window, not summable with this one")
+    return sum(v for _, v in at_end) / _USD_M, span
 
 
 def _build_peer_impairment(facts: dict[str, Any], acquired: float | None,
@@ -436,9 +452,21 @@ def _build_peer_impairment(facts: dict[str, Any], acquired: float | None,
         state, note = "charged", None
     elif observed_ends:
         state = "explicit-zero"
+        # "EVERY ONE NIL" MUST BE TRUE WHEN IT IS PRINTED. A negative point is a REVERSAL of an
+        # earlier write-down, not a zero, and `charged` filters on `> 0` — so a window holding only
+        # reversals reached this branch and asserted "nil" about figures that are nothing of the
+        # kind. Five live instances on the fleet's peer sets (CMI states -$210.0M for FY2025; also
+        # HSY, PAR x2, TTEC). The reversal is INFORMATION — it says a prior charge was taken back —
+        # so it is named rather than rounded into the reassuring sentence.
+        rev = [p for p in in_win if p.value < 0]
         note = (f"the filer REPORTS this concept and states zero — {len(observed_ends)} annual "
-                f"period(s) in the window under {tags}, every one nil. A measurement that they did "
-                f"not write down, not a missing figure")
+                f"period(s) in the window under {tags}, "
+                f"{'every one nil' if not rev else 'none of them a charge'}. A measurement that "
+                f"they did not write down, not a missing figure")
+        if rev:
+            note += (" · CONTAINS A REVERSAL, which is not a zero: "
+                     + ", ".join(f"{p.period_end} {p.value / _USD_M:+,.1f}M" for p in rev)
+                     + " — an earlier write-down being taken back")
     elif series:
         state = "none-in-window"
         note = (f"tagged historically but NOT inside this window — the last annual observation "
