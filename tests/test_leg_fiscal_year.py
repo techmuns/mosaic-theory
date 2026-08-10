@@ -95,19 +95,51 @@ def test_run_recipe_never_refuses_on_the_leg_year() -> None:
     assert out.result.ratio is not None and out.result.gate is not None
 
 
-def test_every_committed_dossier_reads_unstated_and_none_reads_disagrees() -> None:
-    """THE CORPUS TODAY. No committed record carries `leg_fy`, so every computed gap must say
-    `unstated` — never `agrees` (which would claim a check that did not happen) and never
-    `disagrees` (which would fault a record for a field that did not exist)."""
-    seen = 0
+def test_every_committed_gap_reads_the_state_its_record_actually_supports() -> None:
+    """WAS a snapshot of a corpus in which NOTHING carried `leg_fy` ("every computed gap must say
+    `unstated`"). EPAM broke it on 2026-08-07 by becoming the first record to state the field —
+    correctly, and reading `disagrees` (base leg FY2027 against an FY2026 decomposition).
+
+    THE SNAPSHOT HAD THE MIRROR OF THE HOLE `leg_fy_problems` WAS WRITTEN TO AVOID. That function
+    refuses to fault an unstated year precisely because "the first record to state it would be the
+    only one that could ever be written"; this test made the first record to state it turn the
+    suite RED, which is the same adoption trap one layer over.
+
+    BOTH ORIGINAL PROTECTIONS ARE KEPT AND ONE IS TIGHTENED. A record with no `leg_fy` must still
+    read `unstated` — never `agrees`, which would claim a check that did not happen. A record that
+    DOES state one must read the state its two years actually support, so `agrees` still cannot be
+    asserted without the years matching, and a stated year can no longer hide as `unstated`."""
+    import json as _json
+
+    def _leg_fy(t: str) -> str | None:
+        f = ROOT / "scenarios" / f"{t}.json"
+        if not f.is_file():
+            return None
+        base = ((_json.loads(f.read_text()).get("scenarios") or {}).get("base")) or {}
+        return None if base.get("leg_fy") is None else str(base["leg_fy"])
+
+    seen = stated = 0
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         g = (json.loads(p.read_text())["mechanical"].get("ev_gap")) or {}
         lb = g.get("leg_basis")
         if lb is None:
             continue                      # a gap that was never struck carries no basis claim
         seen += 1
-        assert lb["state"] == "unstated", f"{p.parent.name}: {lb}"
+        t = p.parent.name
+        fy = _leg_fy(t)
+        if fy is None:
+            assert lb["state"] == "unstated", f"{t}: no leg_fy on the record, but {lb}"
+            continue
+        stated += 1
+        anchor = None if lb.get("anchor_fy") is None else str(lb["anchor_fy"])
+        want = "agrees" if fy == anchor else "disagrees"
+        assert lb["state"] == want, (
+            f"{t}: record states leg_fy={fy} against anchor_fy={anchor}, so the gap must read "
+            f"{want!r} — got {lb['state']!r}")
     assert seen, "no committed dossier carries a leg_basis — this sweep checked nothing"
+    assert stated, (
+        "no committed record states leg_fy — the stated branch above checked nothing, so this "
+        "test has quietly reverted to the snapshot it replaced")
 
 
 def test_the_total_gap_does_not_move_with_the_year_but_the_split_does() -> None:
