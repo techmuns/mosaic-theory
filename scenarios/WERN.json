@@ -1,6 +1,7 @@
 {
   "schema_version": "1.3",
   "ticker": "WERN",
+  "limit": null,
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
   "recipe_formula": [
@@ -246,6 +247,7 @@
   "tier": null,
   "survival_input": null,
   "result": {
+    "ceiling2to1": 22.96345608900556,
     "per_scenario": {
       "bear": {
         "value_per_share": 16.59129427858479,

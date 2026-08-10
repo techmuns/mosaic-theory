@@ -1,6 +1,7 @@
 {
   "schema_version": "1.2",
   "ticker": "SMPL",
+  "limit": null,
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
   "recipe_formula": [
@@ -193,6 +194,7 @@
   "tier": null,
   "survival_input": null,
   "result": {
+    "ceiling2to1": 12.716194807632887,
     "per_scenario": {
       "bear": {
         "value_per_share": 6.953995429504158,
@@ -247,7 +249,13 @@
     "ratio": 3.8340537025625956,
     "ratio_undefined": null,
     "bar": 2.0,
-    "pass_fail": "PASS"
+    "pass_fail": "PASS",
+    "horizon_years": null,
+    "irr": null,
+    "irr_undefined": "no horizon stated — an IRR needs a realisation date",
+    "irr_floor": 0.15,
+    "irr_pass_fail": "UNDEFINED",
+    "gate": "UNDEFINED"
   },
   "verdict": {
     "status": "watch",

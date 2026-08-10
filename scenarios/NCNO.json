@@ -1,6 +1,7 @@
 {
   "schema_version": "1.3",
   "ticker": "NCNO",
+  "limit": null,
   "recipe_id": "R2_terminal_margin",
   "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company.",
   "recipe_formula": [
@@ -289,6 +290,7 @@
     "latest_period_fcf": null
   },
   "result": {
+    "ceiling2to1": 5.503955181162046,
     "per_scenario": {
       "bear": {
         "value_per_share": 4.208834675928381,

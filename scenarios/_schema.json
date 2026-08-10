@@ -260,6 +260,18 @@
     "Result": {
       "description": "Filled by the run. ``pass_fail`` records the bar test honestly \u2014 a FAIL is a result.",
       "properties": {
+        "ceiling2to1": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ceiling2To1"
+        },
         "per_scenario": {
           "additionalProperties": {
             "$ref": "#/$defs/ScenarioOutcome"
@@ -667,6 +679,38 @@
       "title": "ScenarioOutcome",
       "type": "object"
     },
+    "StatedLimit": {
+      "description": "The price the analyst will actually pay \u2014 STATED, never derived.\n\nTHE COMPUTED CEILING AND THE STATED LIMIT ARE DIFFERENT OBJECTS, and EPAM is why the field\nexists: its ceiling is **$93.71** and the analyst's limit is **$89.50**, chosen to clear under\nBOTH net-debt treatments. Storing the ceiling would replace a decision with an arithmetic\nresult, and the $4.21 gap \u2014 the conservatism the analyst added \u2014 is itself the information.\n\nIT MUST NOT MOVE WHEN THE LEGS MOVE. That is the whole distinction from `Result.ceiling2to1`,\nwhich recomputes on every supersede. So the limit carries ``stated_at``: a limit struck against\nsuperseded legs is otherwise indistinguishable from one struck against the live ones, which is\nthe vintage defect this repo has paid for in `dep_amort`, in the buyback overlay, and in the\ncovenant digest.\n\nOPTIONAL, AND `unstated` IS NOT `absent`. Seven records predate this field; requiring it would\nmean the first record to state one is the only one that could ever be written \u2014 the adoption\ntrap `leg_fy_problems` names, and which its own fleet pin then fell into a second time. The\ncost is stated rather than hidden: a record without a limit is enforced by nothing, exactly as\nevery record is today.",
+      "properties": {
+        "price": {
+          "title": "Price",
+          "type": "number"
+        },
+        "stated_at": {
+          "format": "date",
+          "title": "Stated At",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "price",
+        "stated_at"
+      ],
+      "title": "StatedLimit",
+      "type": "object"
+    },
     "SurvivalBlock": {
       "description": "(R2) The survival gate, recorded in full so its runway arithmetic is re-checkable.\n\nA terminal value is worthless if the company never reaches the terminal year, so this is a HARD\nBLOCK on confirming a BUY rather than an input to the ratio \u2014 an asymmetry computed on a company\nthat runs out of money is not a cheap asymmetry, it is a wrong one.",
       "properties": {
@@ -1070,6 +1114,17 @@
     "ticker": {
       "title": "Ticker",
       "type": "string"
+    },
+    "limit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StatedLimit"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "recipe_id": {
       "title": "Recipe Id",
