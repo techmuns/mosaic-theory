@@ -26,6 +26,7 @@ scopes, and the source_ref must say which.
 """
 from __future__ import annotations
 
+from datetime import timedelta
 from statistics import median
 from typing import Any
 
@@ -33,6 +34,7 @@ from vinci.dossier.schemas import (
     CapitalAllocation,
     PeerCapitalIntensity,
     PeerCapitalRow,
+    PeerImpairment,
     Sourced,
     SourceStatus,
 )
@@ -313,6 +315,186 @@ def _acquired_and_assets(facts: dict[str, Any]) -> tuple[float | None, float | N
     return acquired, (assets[0].value / _USD_M if assets else None)
 
 
+#: Trailing window, in fiscal years, for the peer write-down history. FACE-VALIDITY, never tuned:
+#: five years spans a full impairment cycle for packaged food (KHC's run is FY2019-FY2025) while
+#: staying short enough that the answer is about CURRENT management. It is STATED on every row
+#: because each peer's window ends at its OWN balance date — fiscal calendars differ by months.
+IMPAIRMENT_WINDOW_YEARS = 5
+
+#: Tags whose scope ALREADY INCLUDES intangibles. If the goodwill family resolves to one of these,
+#: adding the intangible family on top double-counts the same charge.
+#: THIS GUARD HAS A LIVE INSTANCE, and the first draft of this comment said it did not. Swept
+#: across all 95 peers on the committed fleet: **HLF resolves its annual goodwill series to
+#: `GoodwillAndIntangibleAssetImpairment`, 11 annual points** — so on HLF the intangible family
+#: would have been added on top of a total that already contains it. CPB carries the same tag on a
+#: 181-day non-annual charge. Checked, not assumed: the earlier claim rested on SMPL's eleven
+#: names rather than on the corpus.
+COMBINED_IMPAIRMENT_TAGS = frozenset({"GoodwillAndIntangibleAssetImpairment"})
+
+#: The four states in READER words, DEFINED ONCE AND CARRIED IN THE DATA. The first cut wrote this
+#: map twice — here and in `dossier.js` — and the duplicate-definition detector (27a) failed the
+#: build on it, correctly: its baseline may only ever SHRINK, so a fourteenth entry is not an
+#: option. `is_subject` is the precedent (#372, where a positional convention in one twin and a
+#: field in the other disagreed): put the fact in the record and both renderers read it, rather
+#: than hand-copying vocabulary that can drift one side at a time.
+IMPAIRMENT_STATE_LABELS = {
+    "charged": "wrote down",
+    "explicit-zero": "reports nil",
+    "none-in-window": "no annual obs.",
+    "untagged": "does not tag",
+}
+
+
+def _annual_series(facts: dict[str, Any],
+                   tags: tuple[str, ...]) -> tuple[str | None, list[ConceptPoint]]:
+    """The first tag in the family with ANNUAL points, de-duplicated into DISJOINT years.
+
+    THREE HAZARDS, ALL LIVE IN companyfacts, and each one silently inflates a sum:
+
+    1. **Non-annual points.** Year-to-date and quarterly durations overlap the year that contains
+       them. `is_annual` (~350-380 days) is the filter, and it is why the total can be summed
+       at all.
+    2. **Restatements.** The same `period_end` is re-reported across filings. Keyed by
+       `period_end`, latest `filed` wins — the amended figure, not the original.
+    3. **Overlapping spans that are not equal.** A 52/53-week filer can report two "annual"
+       periods whose ends differ by days but whose spans overlap. Kept newest-first, and a point
+       overlapping one already kept is dropped.
+
+    Returns ``(None, [])`` when the family yields no annual point at all — `untagged`, which is a
+    different fact from a zero and is classified by the caller, never here.
+    """
+    for tag in tags:
+        pts = [p for p in points_for_tag(facts, tag)
+               if p.value is not None and not p.is_instant and p.is_annual]
+        if not pts:
+            continue
+        newest: dict[Any, ConceptPoint] = {}
+        for p in sorted(pts, key=lambda x: (x.period_end, x.filed)):
+            newest[p.period_end] = p                       # hazard 2: latest filed wins
+        kept: list[ConceptPoint] = []
+        for p in sorted(newest.values(), key=lambda x: x.period_end, reverse=True):
+            if any(p.period_start < k.period_end and k.period_start < p.period_end  # type: ignore[operator]
+                   for k in kept):
+                continue                                    # hazard 3: overlapping spans
+            kept.append(p)
+        return tag, kept
+    return None, []
+
+
+def _pending_charge(facts: dict[str, Any], after: Any) -> tuple[float, str] | None:
+    """The live YTD charge that `is_annual` EXCLUDES, summed across BOTH families on ONE window.
+
+    SMPL's $369.0M is a 272-day year-to-date point. The annual rule that makes the window total
+    summable drops it, leaving the peer-comparable figure at the $60.9M FY2025 annual charge —
+    a 6x difference between two numbers a reader would otherwise assume are the same quantity.
+    Carried separately and never summed into the window total (STATE.md §M3).
+
+    ONE POINT PER FAMILY AT ONE PERIOD END, and the first cut got this wrong in the direction that
+    published a wrong headline: taking the single latest point across all five tags returned SMPL's
+    **$38.0M goodwill** leg and silently dropped the **$331.0M intangible** leg beside it — the
+    number the whole block exists to contextualise. The families are different concepts on the same
+    income statement, so they ADD; two tags within one family are aliases, so only the preferred
+    one counts. Both legs must share the period end, or the sum spans two windows.
+    """
+    latest: Any = None
+    per_family: list[tuple[Any, float]] = []
+    for tags in (GOODWILL_IMPAIRMENT, INTANGIBLE_IMPAIRMENT):
+        for tag in tags:
+            pts = [p for p in points_for_tag(facts, tag)
+                   if p.value is not None and p.value > 0 and not p.is_instant
+                   and not p.is_annual and p.period_start is not None
+                   and (after is None or p.period_end > after)]
+            if not pts:
+                continue
+            p = max(pts, key=lambda x: (x.period_end, x.filed))
+            per_family.append((p, p.value))
+            latest = p.period_end if latest is None else max(latest, p.period_end)
+            break                                    # preference order within the family
+    at_end = [(p, v) for p, v in per_family if p.period_end == latest]
+    if not at_end:
+        return None
+    # A DROPPED LEG IS STATED, NEVER SILENT — this module's own PERIOD MISMATCH discipline, which
+    # the buyback trio already applies to cash-vs-shares. The two families' latest year-to-date
+    # points frequently END ON DIFFERENT DATES (13 live instances across the fleet's peer sets:
+    # HAIN goodwill 2026-03-31 vs intangibles 2020-03-31, CPB 2018-04-29 vs 2025-04-27), and only
+    # points at the LATEST end are summable. Dropping the other one quietly would understate a
+    # live charge with nothing on the page saying so.
+    dropped = [p for p, _ in per_family if p.period_end != latest]
+    span = _span(at_end[0][0])
+    if dropped:
+        span += (" · EXCLUDES a "
+                 + ", ".join(f"{p.tag} charge covering {_span(p)}" for p in dropped)
+                 + " — a different window, not summable with this one")
+    return sum(v for _, v in at_end) / _USD_M, span
+
+
+def _build_peer_impairment(facts: dict[str, Any], acquired: float | None,
+                           window_end: Any) -> PeerImpairment:
+    """Classify one filer into the four states, with the window STATED on the row."""
+    window_start = window_end - timedelta(days=365 * IMPAIRMENT_WINDOW_YEARS + 1)
+    gw_tag, gw = _annual_series(facts, GOODWILL_IMPAIRMENT)
+    it_tag, it = _annual_series(facts, INTANGIBLE_IMPAIRMENT)
+    combined = gw_tag in COMBINED_IMPAIRMENT_TAGS
+    if combined:
+        it_tag, it = None, []          # the goodwill tag already contains the intangible charge
+    series = gw + it
+    tags = " + ".join(t for t in (gw_tag, it_tag) if t) or None
+
+    in_win = [p for p in series if window_start <= p.period_end <= window_end]
+    charged = [p for p in in_win if p.value > 0]
+    observed_ends = {p.period_end for p in in_win}
+    total = sum(p.value for p in charged) / _USD_M if charged else None
+
+    last = max((p for p in series if p.value > 0), key=lambda x: x.period_end, default=None)
+    pend = _pending_charge(facts, max((p.period_end for p in series), default=None))
+
+    if charged:
+        state, note = "charged", None
+    elif observed_ends:
+        state = "explicit-zero"
+        # "EVERY ONE NIL" MUST BE TRUE WHEN IT IS PRINTED. A negative point is a REVERSAL of an
+        # earlier write-down, not a zero, and `charged` filters on `> 0` — so a window holding only
+        # reversals reached this branch and asserted "nil" about figures that are nothing of the
+        # kind. Five live instances on the fleet's peer sets (CMI states -$210.0M for FY2025; also
+        # HSY, PAR x2, TTEC). The reversal is INFORMATION — it says a prior charge was taken back —
+        # so it is named rather than rounded into the reassuring sentence.
+        rev = [p for p in in_win if p.value < 0]
+        note = (f"the filer REPORTS this concept and states zero — {len(observed_ends)} annual "
+                f"period(s) in the window under {tags}, "
+                f"{'every one nil' if not rev else 'none of them a charge'}. A measurement that "
+                f"they did not write down, not a missing figure")
+        if rev:
+            note += (" · CONTAINS A REVERSAL, which is not a zero: "
+                     + ", ".join(f"{p.period_end} {p.value / _USD_M:+,.1f}M" for p in rev)
+                     + " — an earlier write-down being taken back")
+    elif series:
+        state = "none-in-window"
+        note = (f"tagged historically but NOT inside this window — the last annual observation "
+                f"under {tags} ends {max(p.period_end for p in series)}. Not evidence of a clean "
+                f"{IMPAIRMENT_WINDOW_YEARS} years")
+    else:
+        state = "untagged"
+        note = (f"no annual impairment point under any of "
+                f"{', '.join(GOODWILL_IMPAIRMENT + INTANGIBLE_IMPAIRMENT)} — the filer does not "
+                f"tag the concept, which is NOT the same as reporting zero")
+    if combined:
+        note = ((note + " · ") if note else "") + (
+            f"{gw_tag} covers goodwill AND intangibles, so the intangible family is deliberately "
+            f"not added on top — it would double-count the same charge")
+
+    return PeerImpairment(
+        state=state, state_label=IMPAIRMENT_STATE_LABELS[state],
+        window_start=window_start, window_end=window_end,
+        observations=len(observed_ends), charged_years=len({p.period_end for p in charged}),
+        total=round(total, 3) if total is not None else None,
+        pct_acquired=(total / acquired) if (total and acquired) else None,
+        last_charge_end=last.period_end if last else None,
+        last_charge_amount=round(last.value / _USD_M, 3) if last else None,
+        pending=round(pend[0], 3) if pend else None,
+        pending_span=pend[1] if pend else None,
+        tags=tags, note=note)
+
+
 def build_peer_capital_intensity(
     grid: list[Any], *, resolve: Any, companyfacts: Any,
     floor: float = PEER_SIZE_FLOOR_MUSD,
@@ -353,6 +535,13 @@ def build_peer_capital_intensity(
                      "the filer reports no goodwill"))
             continue
         acquired, assets = _acquired_and_assets(facts)
+        # THE WINDOW ENDS AT THIS FILER'S OWN BALANCE DATE, not at a fleet-wide clock. Fiscal
+        # calendars differ by months across this set (CAG ends in May, KHC in June, MZTI in
+        # March), so one shared cut-off would give some peers four years of history and others
+        # six. Each row therefore STATES its own window.
+        anchor = (_pick(facts, GOODWILL, kind="instant")
+                  or _pick(facts, INTANGIBLES, kind="instant")
+                  or _pick(facts, TOTAL_ASSETS, kind="instant"))
         row = PeerCapitalRow(
             ticker=tk, is_subject=bool(getattr(pr, "is_name", False)),
             market_cap=mcap, acquired=acquired, total_assets=assets,
@@ -360,7 +549,9 @@ def build_peer_capital_intensity(
             pct_market_cap=(acquired / mcap) if (acquired and mcap) else None,
             note=(None if acquired is not None else
                   "no-tag — the filer reports neither goodwill nor intangibles (a real balance "
-                  "sheet, not a data gap)"))
+                  "sheet, not a data gap)"),
+            impairment=(_build_peer_impairment(facts, acquired, anchor[0].period_end)
+                        if anchor is not None else None))
         if getattr(pr, "is_name", False):
             subject = row
         else:
@@ -371,8 +562,26 @@ def build_peer_capital_intensity(
 
     peers = [r for r in rows if r.pct_assets is not None and r.pct_market_cap is not None]
     large = [r for r in peers if (r.market_cap or 0.0) >= floor]
+
+    # THE DENOMINATOR IS THE ASSESSED SET, NOT THE LARGE SET. A peer whose window holds no annual
+    # observation (CPB — impaired FY2013-FY2018, nothing since) was NOT measured over these five
+    # years, and counting it among the clean names would manufacture the reassuring answer out of
+    # an absence. Only `charged` and `explicit-zero` are measurements of this window.
+    assessed = [r for r in large
+                if r.impairment is not None
+                and r.impairment.state in ("charged", "explicit-zero")]
+    charged_large = [r for r in assessed if r.impairment is not None
+                     and r.impairment.state == "charged"]
     return PeerCapitalIntensity(
         rows=([subject] if subject else []) + rows, size_floor=floor,
+        imp_window_years=IMPAIRMENT_WINDOW_YEARS,
+        imp_n_large_assessed=len(assessed), imp_n_large_charged=len(charged_large),
+        imp_median_large_pct=_med([r.impairment.pct_acquired for r in charged_large
+                                   if r.impairment is not None
+                                   and r.impairment.pct_acquired is not None]),
+        imp_subject_pct=(subject.impairment.pct_acquired
+                         if subject and subject.impairment else None),
+        imp_subject_state=(subject.impairment.state if subject and subject.impairment else None),
         subject_pct_assets=subject.pct_assets if subject else None,
         subject_pct_market_cap=subject.pct_market_cap if subject else None,
         median_all_assets=_med([r.pct_assets for r in peers if r.pct_assets is not None]),
