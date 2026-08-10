@@ -235,7 +235,7 @@
   "spotSource": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
   "underwriteDate": "2026-07-21",
   "nextEvidence": {
-   "date": "2026-08-06",
+   "date": "2026-11-05",
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
