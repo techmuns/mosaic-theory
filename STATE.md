@@ -6234,6 +6234,14 @@ extractor. Nothing was lost: the structural diff is zero paths dropped.
 **A REVIEW NOTE ON HOW TO DIFF THESE.** The peer grid is a TICKER-KEYED list. Comparing two
 vintages positionally reports false regressions the moment the vendor's set changes — this review
 did exactly that and briefly "found" a leverage misalignment that did not exist. Join on ticker.
+**GENERALISED 2026-08-10 (PR #399), because the narrow version did not hold.** The note above named
+`peer_grid`, so the next review applied it there and walked straight into the same trap on
+`peer_capital_intensity.rows` — reporting six fields "regressing to None" on rows[5] and rows[6]
+when the eleven peers were UNCHANGED and merely REORDERED. **The rule is structural, not
+per-block: any list of ENTITIES in a dossier is keyed by its entity, and a positional diff of two
+vintages is meaningless.** Key on ticker/name and compare the intersection; a bare index diff
+answers a question nobody asked. A guard written for one instance of a class stops the instance,
+not the class — which is the same lesson as the mirror pins, arriving at the review layer.
 
 **"NOTHING ELSE MOVES" DID NOT HOLD, and the failure is worth keeping.** Dry-running the other
 eight flagged **FUBO and IT as CHANGED too** — but for reasons that are NOT this fix. Isolated by
