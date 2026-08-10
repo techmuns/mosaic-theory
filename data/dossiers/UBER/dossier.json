@@ -4230,7 +4230,23 @@
           "total_assets": 65801.0,
           "pct_assets": 0.16115256607042447,
           "pct_market_cap": 0.07614441012855652,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 2,
+            "charged_years": 1,
+            "total": 96.0,
+            "pct_acquired": 0.009053187476423991,
+            "last_charge_end": "2021-12-31",
+            "last_charge_amount": 73.0,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived",
+            "note": null
+          }
         },
         {
           "ticker": "DASH",
@@ -4240,7 +4256,23 @@
           "total_assets": 19561.0,
           "pct_assets": 0.3834159807780788,
           "pct_market_cap": 0.08351037532903088,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under GoodwillImpairmentLoss, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "DIDI.Y",
@@ -4250,7 +4282,8 @@
           "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "unresolved — no CIK for 'DIDI.Y'"
+          "note": "unresolved — no CIK for 'DIDI.Y'",
+          "impairment": null
         },
         {
           "ticker": "GRAB",
@@ -4260,7 +4293,8 @@
           "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)"
+          "note": "no-tag — the filer reports neither goodwill nor intangibles (a real balance sheet, not a data gap)",
+          "impairment": null
         },
         {
           "ticker": "LYFT",
@@ -4270,7 +4304,23 @@
           "total_assets": 9107.486,
           "pct_assets": 0.07045325131435833,
           "pct_market_cap": 0.10254618679281469,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under GoodwillImpairmentLoss, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "CAR",
@@ -4280,7 +4330,23 @@
           "total_assets": 30603.0,
           "pct_assets": 0.05698787700552233,
           "pct_market_cap": 0.35602008737190216,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 1,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": "2017-12-31",
+            "last_charge_amount": 2.0,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill",
+            "note": "the filer REPORTS this concept and states zero — 1 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "HTZ",
@@ -4290,7 +4356,23 @@
           "total_assets": 23288.0,
           "pct_assets": 0.16785468911027138,
           "pct_market_cap": 7.9354445797807545,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 2,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": "2020-12-31",
+            "last_charge_amount": 213.0,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived",
+            "note": "the filer REPORTS this concept and states zero — 2 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "2640",
@@ -4300,7 +4382,8 @@
           "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "unresolved — no CIK for '2640'"
+          "note": "unresolved — no CIK for '2640'",
+          "impairment": null
         },
         {
           "ticker": "9680",
@@ -4310,7 +4393,8 @@
           "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "unresolved — no CIK for '9680'"
+          "note": "unresolved — no CIK for '9680'",
+          "impairment": null
         },
         {
           "ticker": "9082",
@@ -4320,7 +4404,8 @@
           "total_assets": null,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "unresolved — no CIK for '9082'"
+          "note": "unresolved — no CIK for '9082'",
+          "impairment": null
         }
       ],
       "size_floor": 1000.0,
@@ -4331,7 +4416,13 @@
       "median_large_assets": 0.07045325131435833,
       "median_large_market_cap": 0.10254618679281469,
       "n_all": 4,
-      "n_large": 3
+      "n_large": 3,
+      "imp_window_years": 5,
+      "imp_n_large_assessed": 3,
+      "imp_n_large_charged": 0,
+      "imp_median_large_pct": null,
+      "imp_subject_pct": 0.009053187476423991,
+      "imp_subject_state": "charged"
     },
     "financial_summary": {
       "annual": {

@@ -4557,7 +4557,23 @@
           "total_assets": 7193.674,
           "pct_assets": 0.421629476120269,
           "pct_market_cap": 0.2734806953636413,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 5,
+            "charged_years": 1,
+            "total": 150.0,
+            "pct_acquired": 0.04945492430923834,
+            "last_charge_end": "2025-12-31",
+            "last_charge_amount": 150.0,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": null
+          }
         },
         {
           "ticker": "SPGI",
@@ -4567,7 +4583,23 @@
           "total_assets": 60792.0,
           "pct_assets": 0.8608698512962232,
           "pct_market_cap": 0.42307536843466803,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "MCO",
@@ -4577,7 +4609,23 @@
           "total_assets": 14675.0,
           "pct_assets": 0.549710391822828,
           "pct_market_cap": 0.09639374820762833,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "none-in-window",
+            "state_label": "no annual obs.",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 0,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": "2012-12-31",
+            "last_charge_amount": 12.2,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill",
+            "note": "tagged historically but NOT inside this window — the last annual observation under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill ends 2013-12-31. Not evidence of a clean 5 years"
+          }
         },
         {
           "ticker": "VRSK",
@@ -4587,7 +4635,23 @@
           "total_assets": 4598.4,
           "pct_assets": 0.47670929018789143,
           "pct_market_cap": 0.07901509580864224,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 2,
+            "charged_years": 2,
+            "total": 89.9,
+            "pct_acquired": 0.04101090278728161,
+            "last_charge_end": "2022-12-31",
+            "last_charge_amount": 1.7,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill",
+            "note": null
+          }
         },
         {
           "ticker": "CTSH",
@@ -4597,7 +4661,23 @@
           "total_assets": 20500.0,
           "pct_assets": 0.4471219512195122,
           "pct_market_cap": 0.363565688537725,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "none-in-window",
+            "state_label": "no annual obs.",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 0,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "tagged historically but NOT inside this window — the last annual observation under GoodwillImpairmentLoss ends 2010-12-31. Not evidence of a clean 5 years"
+          }
         },
         {
           "ticker": "EFX",
@@ -4607,7 +4687,23 @@
           "total_assets": 11981.8,
           "pct_assets": 0.6690981321671202,
           "pct_market_cap": 0.3648153625628541,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "none-in-window",
+            "state_label": "no annual obs.",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 0,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "tagged historically but NOT inside this window — the last annual observation under GoodwillImpairmentLoss ends 2016-12-31. Not evidence of a clean 5 years"
+          }
         },
         {
           "ticker": "TRU",
@@ -4617,7 +4713,23 @@
           "total_assets": 12047.3,
           "pct_assets": 0.7752276443684477,
           "pct_market_cap": 0.5821588635329464,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-03-31",
+            "window_end": "2026-03-31",
+            "observations": 5,
+            "charged_years": 1,
+            "total": 414.0,
+            "pct_acquired": 0.0443283294430049,
+            "last_charge_end": "2023-12-31",
+            "last_charge_amount": 414.0,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived",
+            "note": null
+          }
         },
         {
           "ticker": "FDS",
@@ -4627,7 +4739,23 @@
           "total_assets": 4191.997,
           "pct_assets": 0.7518600323425804,
           "pct_market_cap": 0.31420859544009017,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2021-05-31",
+            "window_end": "2026-05-31",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsExcludingGoodwill, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "DOX",
@@ -4637,7 +4765,23 @@
           "total_assets": 6386.142,
           "pct_assets": 0.47064988532982827,
           "pct_market_cap": 0.4982654752826498,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "explicit-zero",
+            "state_label": "reports nil",
+            "window_start": "2019-10-01",
+            "window_end": "2024-09-30",
+            "observations": 5,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": null,
+            "last_charge_amount": null,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "the filer REPORTS this concept and states zero — 5 annual period(s) in the window under GoodwillImpairmentLoss, every one nil. A measurement that they did not write down, not a missing figure"
+          }
         },
         {
           "ticker": "EPAM",
@@ -4647,7 +4791,23 @@
           "total_assets": 4574.086,
           "pct_assets": 0.3445534255368176,
           "pct_market_cap": 0.28221778525893565,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "charged",
+            "state_label": "wrote down",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 1,
+            "charged_years": 1,
+            "total": 0.686,
+            "pct_acquired": 0.00043527449259747836,
+            "last_charge_end": "2022-12-31",
+            "last_charge_amount": 0.686,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsFinitelived",
+            "note": null
+          }
         },
         {
           "ticker": "EFOR",
@@ -4657,7 +4817,23 @@
           "total_assets": 4023.5,
           "pct_assets": 0.7148005467876227,
           "pct_market_cap": 2.996457595332361,
-          "note": null
+          "note": null,
+          "impairment": {
+            "state": "none-in-window",
+            "state_label": "no annual obs.",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
+            "observations": 0,
+            "charged_years": 0,
+            "total": null,
+            "pct_acquired": null,
+            "last_charge_end": "2010-12-31",
+            "last_charge_amount": 15.399,
+            "pending": null,
+            "pending_span": null,
+            "tags": "GoodwillImpairmentLoss",
+            "note": "tagged historically but NOT inside this window — the last annual observation under GoodwillImpairmentLoss ends 2012-12-31. Not evidence of a clean 5 years"
+          }
         }
       ],
       "size_floor": 1000.0,
@@ -4668,7 +4844,13 @@
       "median_large_assets": 0.549710391822828,
       "median_large_market_cap": 0.363565688537725,
       "n_all": 10,
-      "n_large": 9
+      "n_large": 9,
+      "imp_window_years": 5,
+      "imp_n_large_assessed": 6,
+      "imp_n_large_charged": 3,
+      "imp_median_large_pct": 0.04101090278728161,
+      "imp_subject_pct": 0.04945492430923834,
+      "imp_subject_state": "charged"
     },
     "financial_summary": {
       "annual": {
