@@ -4542,20 +4542,34 @@ the price tag.
 **WHAT #372/#375 SETTLED.** `peer_capital_intensity` (committed on SMPL) measures acquired assets
 — goodwill + intangibles — against two denominators, for the subject and every comps-grid peer:
 
-  * SMPL **73.2% of total assets**, against a **57.6%** median over the 7 peers above the size
-    floor (`median_large_assets`; the floor is on MARKET CAP, not assets — JBSS at ~$939M and HAIN
-    at ~$49M fall out, FRPT has no acquired figure at all);
-  * SMPL **165.9% of market cap**, against **144.7%**.
+  * SMPL **73.2% of total assets**, against a **57.6%** median (`median_large_assets`) over the
+    7 peers above the size floor;
+  * SMPL **165.9% of market cap**, against **144.7%** (`median_large_market_cap` — which on this
+    data happens to equal `median_all_market_cap`; name the field, the coincidence is not a rule).
 
 Elevated, and inside the band the large packaged-food names already occupy — KHC 71.3%, UTZ 65.3%,
 CPB 61.5%. **THE LOAD IS ORDINARY FOR THE SECTOR.** That is the whole of what the block establishes.
 
-**WHAT IT DOES NOT SETTLE, AND THE QUESTION WAS THE OTHER HALF.** `PeerCapitalRow` carries
-`market_cap`, `acquired`, `total_assets`, `pct_assets`, `pct_market_cap`, `note` — **and no
-impairment field**. The subject side does: SMPL's `capital_allocation` holds `goodwill_impairment`
-**$38.0M** and `intangible_impairment` **$331.0M**. So SMPL's write-down has **no peer
-denominator**, and the question the memo actually asked — *what does this say about management* —
-is untouched.
+**THE FLOOR IS ON MARKET CAP, NOT ASSETS** — `large = [r for r in peers if (r.market_cap or 0.0)
+>= floor]`, worth stating because three of the exclusions are counter-intuitive: JBSS (~$939M
+market cap) and HAIN (~$49M) fall out **despite** HAIN carrying $1.16bn of assets, and **SMPL
+itself, at ~$909M, is below its own floor** — the subject is measured against LARGER peers and is
+correctly absent from its own median. FRPT is excluded on a different ground: `no-tag`, which the
+row states as *"the filer reports neither goodwill nor intangibles (a real balance sheet, not a
+data gap)"* — not a fetch failure, and the distinction is the one §2 below turns on.
+
+**WHAT IT DOES NOT SETTLE, AND THE QUESTION WAS THE OTHER HALF.** `PeerCapitalRow` carries eight
+fields — `ticker`, `is_subject`, `market_cap`, `acquired`, `total_assets`, `pct_assets`,
+`pct_market_cap`, `note` — and **no impairment field**. The subject side does: SMPL's
+`capital_allocation` holds `goodwill_impairment` **$38.0M** and `intangible_impairment`
+**$331.0M**. So SMPL's write-down has **no peer denominator**, and the question the memo actually
+asked — *what does this say about management* — is untouched.
+
+**BOTH CHARGES ARE A 272-DAY FY2026 YTD FIGURE — `2025-08-31→2026-05-30`, identical on both legs**
+(the `source_ref`s say so). Stated here because this entry's own §1 cost is exactly that an
+unlabelled flow invites a false comparison, and a record that warns about it while citing a bare
+`$331.0M` would be teaching the error. The two legs sharing one window is also what makes the
+**$369.0M** sum legitimate rather than a layer mix — check that the next time, do not assume it.
 
 **WHY THAT IS THE HALF THAT BEARS ON MANAGEMENT QUALITY.** An impairment is the one accounting
 event where management marks its OWN past capital allocation. Against a peer set that carries ~60%
@@ -4567,18 +4581,27 @@ writing down more than peers are different claims — do not let the first stand
 **THIS IS NOT AN M1-STYLE STRUCTURAL BLOCK — THE RAW MATERIAL IS ALREADY IN HAND.**
 `GOODWILL_IMPAIRMENT` and `INTANGIBLE_IMPAIRMENT` exist in `capital_allocation.py`, and
 `build_peer_capital_intensity` already holds each peer's FULL `companyfacts` (one cached call per
-peer) at the point where it computes `acquired`. Two more `_pick` calls on data already fetched.
-The gap is SCOPE, not capability: the brief asked for intensity and impairment was not in it.
+peer) at the point where it computes `acquired`. **The DATA cost is two more `_pick` calls per peer
+on facts already in memory** — no new fetch, no new source. The BUILD is the usual shape around it
+(two `PeerCapitalRow` fields, their medians, both twins, pins), so "two calls" is the input cost,
+not the ticket size; do not quote it as the latter. The gap is SCOPE, not capability: the brief
+asked for the intensity of the load and impairment was not in it.
 
 **THE TWO REAL COSTS, so the next build does not discover them.** (1) **BASIS.** Impairment is a
-FLOW; intensity is an INSTANT. `_pick(kind="flow")` takes the latest period_end with the longest
-span at that end, which lands on DIFFERENT windows across peers with different fiscal calendars —
-the basis-mistranslation class this repo keeps re-meeting (#363 read a span off a fiscal-year label
-and was wrong). A peer impairment column needs a declared common window, or it is not a comparison.
-(2) **ABSENCE IS THE COMMON CASE.** Most peers in most years take no charge, so the column is
-mostly-empty by nature, and `filer-reports-none` vs `we-could-not-fetch` must not render alike —
-#362 exactly. `build_peer_capital_intensity` **already implements the three-absence discipline**
-(`unresolved` / `fetch-failed` / no-tag, each its own sentence); extend that, do not re-invent it.
+FLOW; intensity is an INSTANT. `_pick(kind="flow")` takes the latest period_end and, at that end,
+the LONGEST span — so it lands on DIFFERENT windows across peers with different fiscal calendars
+(SMPL's own is a 272-day YTD, not an annual). That is the basis-mistranslation class this repo
+keeps re-meeting. **Its most recent instance was in the #363 ANALYSIS, not in shipped code** — a
+span was read off a fiscal-year label, the operator caught it before merge, and `_span` exists
+precisely to prevent it; cited that way because "#363 was wrong" would misdescribe a PR that
+shipped correct. A peer impairment column needs a DECLARED COMMON WINDOW, or it is not a
+comparison. (2) **ABSENCE WILL BE COMMON, AND ITS FREQUENCY IS UNMEASURED.** Some peers will
+report no charge in any given window — how many, and how often, **is the very base rate this
+entry says we do not have**, so no figure is asserted here and none should be inferred. What
+follows regardless: the column will carry real absences, and `filer-reports-none` vs
+`we-could-not-fetch` must not render alike — #362 exactly. `build_peer_capital_intensity`
+**already implements the three-absence discipline** (`unresolved` / `fetch-failed` / no-tag, each
+its own sentence, all three verified present in code); extend that, do not re-invent it.
 
 **OPEN — not deferred, not dropped. No unlock trigger is needed; it is queued work whose cost is
 known.** Until it ships, any claim about SMPL's write-down relative to its sector is UNSUPPORTED.
