@@ -263,6 +263,16 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
         pytest.skip("no local dossiers in this worktree")
     from vinci.edgar.concepts import points_for_tag
 
+    #: EXEMPTIONS, KEYED ON THE REASON — never a bare roster, so a new name is in scope the day it
+    #: lands and an exemption self-clears if the filer's tagging changes.
+    #:
+    #: V reports every common-share figure PER SHARE CLASS, and this API view surfaces only
+    #: undimensioned facts: no period carries both the basic and diluted weighted-average tags, so
+    #: the overlay has nothing to compute from and refuses. That refusal is CORRECT and it holds
+    #: the line — V's committed anchor is None, and no per-share figure on its page is built from
+    #: the 2010 cover-page count the same gap leaves behind (tests/test_share_basis.py).
+    exempt = {"V": "multi-class filer: no undimensioned basic+diluted weighted-average pair"}
+
     names = sorted(p.name for p in db.iterdir() if p.is_dir())
     served, zero = [], []
     for t in names:
@@ -270,12 +280,17 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
         pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
         out = max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
         d = diluted_outstanding(f, basic_out=out)
+        if t in exempt:
+            assert d.shares is None, (
+                f"{t} is exempt ({exempt[t]}) but the overlay now SERVES it — the filer changed "
+                f"its tagging, so drop the exemption rather than keep a stale carve-out")
+            continue
         assert d.shares is not None, f"{t}: {d.reason}"
         assert d.shares >= d.basic_out, f"{t}: diluted below basic"
         served.append(t)
         if d.is_zero_dilution:
             zero.append(t)
-    assert len(served) == len(names)
+    assert len(served) == len(names) - len(exempt)
     # The zero-dilution set is REPORTED, not pinned to a fixed list — a filer that starts tagging
     # dilution must not red this. What must hold is that the state stays DISTINGUISHABLE on the
     # surface, since the number itself is identical to the basic count.

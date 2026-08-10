@@ -3343,6 +3343,32 @@ def comps_market_cap(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def comps_shares_outstanding(bundle: CiqBundle) -> Sourced[float]:
+    """The name's share count from Financial Data, in SHARES (the panel column is millions).
+
+    THE POINT IS THAT IT COMES FROM THE SAME ROW AS THE CAP. ``comps_market_cap`` reads column 3 of
+    this row and this reads column 2, so cap ÷ shares reproduces the panel's own column-1 close by
+    construction — which is exactly the coherence ``reconcile_cap`` tests. An EDGAR share count and
+    a CIQ cap are two vendors' bases and can disagree across a corporate action; these two cannot.
+
+    USED ONLY WHERE THE EDGAR COVER-PAGE COUNT IS UNUSABLE, never in preference to it: EDGAR is
+    primary, free, and point-in-time. This is the depth-stage bridge the CIQ manifest already
+    describes — "used only where the EDGAR tag is absent or stale"."""
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _h, _p, tgt = _comps_layout(fd, bundle.ticker)
+    sh = _num_or_none(_comps_cell(fd, tgt, 2)) if tgt is not None else None
+    if sh is None or sh <= 0:
+        return Sourced.unknown(note="Financial Data: no share count for the name")
+    return Sourced.present(
+        sh * 1e6,  # panel is in millions; every consumer of shares_out works in raw share counts
+        source_ref="CIQ Comparable Analysis→Financial Data (name Shares Outstanding Latest)"
+        + _comps_asof_suffix(bundle),
+    )
+
+
 # --- PR C: the FINANCIAL-SUMMARY appendix (C1 annual+estimates, C2 8-quarter, C3 balance-sheet).
 # Reuses the financials period/reclassified helpers; estimate columns come from Estimates→Trends
 # "Current" per FY; growth is NEVER computed across a basis change (renders "— (basis)").

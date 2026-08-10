@@ -1070,7 +1070,8 @@ _ADJ_EPS = re.compile(rf"Adjusted EPS of \$?{_NUM} to \$?{_NUM}", re.I)
 
 
 def _adjusted_facts(
-    record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str]
+    record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str],
+    reference_date: date,
 ) -> tuple[Sourced[str], Sourced[str], Sourced[str]]:
     """Surface the adjusted (non-GAAP) figures the GAAP caveats called UNAVAILABLE — the 99.1
     revised guidance is in the dossier: adjusted EPS, forward EV/adj-EBITDA, and covenant-basis
@@ -1101,7 +1102,17 @@ def _adjusted_facts(
     except (HttpError, KeyError):
         snap, share_pts = None, []
     net_debt = snap.net_debt.value if snap and snap.net_debt.is_known else None
-    shares = max(share_pts, key=lambda p: p.period_end).value if share_pts else None
+    # THE SAME STALENESS BOUND AS THE STOCK-INFO BASIS, because this multiplies it by a price:
+    # `ev = price * shares + net_debt` below. A multi-class filer whose newest undimensioned count
+    # predates a split (Visa: 2010, then a 4-for-1 in 2015) would compute an EV wrong by that
+    # split factor, on a page whose headline share basis was correctly refused. Guarding one
+    # consumer of a bad number and leaving its neighbour is how the first fix would have half
+    # landed — the fleet is unaffected either way (counts run 10–375d against a 540d bound).
+    fresh_pts = [
+        p for p in share_pts
+        if (reference_date - p.period_end).days <= _SHARES_MAX_AGE_DAYS
+    ]
+    shares = max(fresh_pts, key=lambda p: p.period_end).value if fresh_pts else None
 
     ev_adj, nd_adj = unk, unk
     if eb:
@@ -1727,14 +1738,50 @@ def _short_interest(
         source_ref=f"FINRA consolidated short interest (settle {latest.settlement_date}); {basis}")
 
 
-def _edgar_shares_outstanding(edgar: EdgarClient, cik: str | None) -> float | None:
+#: How old the cover-page share count may be before it stops being a CURRENT count.
+#:
+#: NOT A PRECISION BOUND — a count a few quarters old is merely imprecise, and buybacks move it
+#: slowly. This is a MAINTENANCE signal: an active filer tags this on every 10-Q and 10-K, so a
+#: newest fact older than this means the filer STOPPED reporting it undimensioned, and what comes
+#: back is not a stale number but a different era's number.
+#:
+#: 540 DAYS, SET AGAINST THE MEASURED FLEET, not picked round. The twelve committed names' counts
+#: run 10–375 days old (FUBO oldest at 375, its record sealed); Visa's newest undimensioned fact is
+#: ~6,040 days old. The bound clears the fleet's maximum by 165 days and still catches the case it
+#: exists for by more than a decade, so it changes no existing name — verified by re-deriving all
+#: twelve before and after.
+_SHARES_MAX_AGE_DAYS = 540
+
+
+def _edgar_shares_outstanding(
+    edgar: EdgarClient, cik: str | None, *, as_of: date | None = None
+) -> float | None:
     """(H5) Latest EDGAR XBRL shares outstanding (dei cover-page, us-gaap fallback), or None when
-    absent — the denominator for short interest as a % of shares out (never faked when missing)."""
+    absent OR STALE — the denominator for short interest as a % of shares out, and the share basis
+    the cap reconciliation tests (never faked when missing).
+
+    STALENESS IS REFUSAL, NOT A CAVEAT, and Visa is why. Visa stopped tagging the undimensioned
+    ``dei:EntityCommonStockSharesOutstanding`` after 2010 — it reports per share CLASS, which this
+    API view does not surface — so the newest fact available is 469,280,842 shares dated
+    2010-01-27. That is not merely old: Visa split 4-for-1 in March 2015, so the count is from a
+    different share basis entirely, and every per-share and EV figure built on it is wrong by ~4x.
+    Returning it "with a note" would put that number on the page; returning None hands the caller
+    the chance to bridge to a basis that agrees with the cap, or to say UNKNOWN.
+
+    ``as_of`` defaults to today only so existing callers keep working; assembly passes its
+    reference date so a build is reproducible rather than clock-dependent."""
     facts = _companyfacts_or_none(edgar, cik)
     if not facts:
         return None
     pt = latest_instant(extract_points(facts, "shares"))
-    return pt.value if pt else None
+    if pt is None:
+        return None
+    end = getattr(pt, "period_end", None)
+    if isinstance(end, date) and (as_of or date.today()) - end > timedelta(
+        days=_SHARES_MAX_AGE_DAYS
+    ):
+        return None
+    return pt.value
 
 
 def _catalyst_path(
@@ -2777,7 +2824,18 @@ def _stock_info(
         bars, reference_date=reference_date,
         staleness_days=get_config().price_staleness_days, market_cap=cap_val)
     sym = record.identity.eod_symbol
-    shares = _edgar_shares_outstanding(edgar, record.identity.cik)
+    shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=reference_date)
+    # THE DEPTH-STAGE BRIDGE, and only when EDGAR has nothing usable. A multi-class filer may stop
+    # tagging the undimensioned cover-page count altogether (Visa: nothing since 2010, across a
+    # 4-for-1 split), and the CIQ panel then carries the only current basis we have. It is taken
+    # from the SAME ROW as the cap, so cap ÷ shares reproduces that panel's own close and the
+    # reconciliation is coherent by construction rather than by luck.
+    shares_src = "EDGAR XBRL shares outstanding"
+    if not (shares and shares > 0):
+        bridged = ciq_sheets.comps_shares_outstanding(bundle)
+        if bridged.status is SourceStatus.PRESENT and (bridged.value or 0) > 0:
+            shares = bridged.value
+            shares_src = bridged.source_ref or "CIQ Comparable Analysis→Financial Data"
     price = _sourced(feats.last, source_ref=f"EOD {sym} last close")
     stale = _price_stale_note(feats.last.as_of, today or date.today())
     if stale and price.status is SourceStatus.PRESENT:
@@ -2787,9 +2845,11 @@ def _stock_info(
         high_52w=_sourced(feats.high_52w, source_ref=f"EOD {sym} 52-week high"),
         low_52w=_sourced(feats.low_52w, source_ref=f"EOD {sym} 52-week low"),
         shares_out=(
-            Sourced.present(float(shares), source_ref="EDGAR XBRL shares outstanding")
+            Sourced.present(float(shares), source_ref=shares_src)
             if shares and shares > 0
-            else Sourced.unknown(note="no EDGAR XBRL share count")),
+            else Sourced.unknown(
+                note="no usable share count — the EDGAR cover-page tag is absent or older than "
+                     f"{_SHARES_MAX_AGE_DAYS}d, and no CIQ Financial Data panel supplies one")),
         book_value_ps=ciq_sheets.book_value_per_share(bundle),
         market_cap=market_cap,
         as_of=feats.last.as_of,
@@ -2836,7 +2896,8 @@ def assemble_mechanical(
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown = _drawdown_cause(record, edgar, http)
-    adj_eps, adj_ev, adj_lev = _adjusted_facts(record, edgar, drawdown.revised_guidance)
+    adj_eps, adj_ev, adj_lev = _adjusted_facts(
+        record, edgar, drawdown.revised_guidance, reference_date)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
     # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
@@ -2883,7 +2944,12 @@ def assemble_mechanical(
         insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
         short_interest=_short_interest(
             finra, record, reference_date,
-            shares_out=_edgar_shares_outstanding(edgar, record.identity.cik)),
+            # SAME as-of AS THE STOCK-INFO CALL. Left undated, this resolved the staleness bound
+            # against `date.today()`, so a name whose cover-page count sits near the bound would
+            # get a short-interest denominator depending on WHEN the build ran — a re-assembly
+            # flipping with no data change, in a repo whose whole point is as-of discipline.
+            shares_out=_edgar_shares_outstanding(
+                edgar, record.identity.cik, as_of=reference_date)),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)

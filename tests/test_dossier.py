@@ -4566,8 +4566,12 @@ def test_adjusted_facts_compute_forward_ev_and_leverage() -> None:
         source_ref="EDGAR 8-K X Ex-99.1",
     )
     edgar = _StubEdgar(_facts([(2024, 0.85)], shares=151_906_653), net_debt=1_008_723_000.0)
+    # The reference date now gates the share count's age (the EV here is price × shares, so a
+    # count from a pre-split era would multiply straight through). `_facts` stamps its instant
+    # 2026-03-31, so this sits 132d inside the bound and the EV below still computes — the point
+    # of the gate is refusing an ERA, not refusing a quarter.
     adj_eps, adj_ev, adj_lev = dm._adjusted_facts(
-        _min_record(pe=5.5, price=4.71), typing.cast(EdgarClient, edgar), rg
+        _min_record(pe=5.5, price=4.71), typing.cast(EdgarClient, edgar), rg, date(2026, 8, 10)
     )
     assert "~2.6x fwd-adj" in (adj_lev.value or "")  # 1008.7M / 382.5M ≈ 2.6x
     assert "~4.5x" in (adj_ev.value or "")  # (4.71×151.9M + 1008.7M) / 382.5M ≈ 4.5x
