@@ -1168,6 +1168,39 @@ console.log(JSON.stringify({ html: root.innerHTML }));
         f"the page rendered but produced no ledger body ({len(html)} chars)")
 
 
+def test_the_cohort_read_uses_a_direction_neutral_verb() -> None:
+    """`_idio_read` said "fell ALONE" / "fell WITH cohort". It is computed in the SLEEVE-BLIND
+    mechanical layer and rendered under a heading the sleeve owns — and the quality book's heading
+    asks whether the price "moved alone", so the body contradicted the heading directly above it
+    on any name not being judged for a decline. The signed percentages beside it carry direction,
+    so the verb was never the thing conveying it.
+
+    LATENT WHEN FIXED — no committed dossier reaches this branch — which is precisely why it needs
+    a guard rather than a memory: nothing renders it today, so a revert stays invisible until the
+    first quality name with a graph cohort, by which point it is already in an artifact.
+
+    Scoped by AST to that function's own STRING LITERALS, so prose in comments and docstrings —
+    which legitimately discuss the old wording — cannot false-positive it."""
+    import ast
+
+    src = pathlib.Path(sl.__file__).resolve().parents[1] / "vinci" / "dossier" / "mechanical.py"
+    fn = next((n for n in ast.walk(ast.parse(src.read_text()))
+               if isinstance(n, ast.FunctionDef) and n.name == "_idio_read"), None)
+    assert fn is not None, "_idio_read is gone — re-point this pin at the cohort read's new home"
+
+    doc = ast.get_docstring(fn, clean=False)
+    emitted = [n.value for n in ast.walk(fn)
+               if isinstance(n, ast.Constant) and isinstance(n.value, str) and n.value != doc]
+    assert emitted, "no string literals found in _idio_read — the pin is not reaching its subject"
+    for text in emitted:
+        low = text.lower()
+        for verb in ("fell", "rose", "dropped", "crashed", "plunged"):
+            assert verb not in low, (
+                f"the cohort read emits a DIRECTIONAL verb ({verb!r}) in {text!r}. This layer is "
+                f"sleeve-blind and renders under each book's own heading — the percentages beside "
+                f"it already carry the direction.")
+
+
 def test_the_shared_valuation_caveat_privileges_no_single_book() -> None:
     """The trailing-multiple blind-flag is attached to EVERY book's dossier, and it used to be
     written in one book's language: "cannot distinguish cheap-overshoot from cheap-terminal".
