@@ -77,7 +77,11 @@ from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord, Identity
 from vinci.schemas.envelope import CoverageStatus, DataField
 from vinci.schemas.market import PriceBar
-from vinci.screens.assemble import DECLINE_WINDOW_DAYS, GAP_DOWN_THRESHOLD
+from vinci.screens.assemble import (
+    DECLINE_WINDOW_DAYS,
+    GAP_DOWN_THRESHOLD,
+    share_basis_change,
+)
 from vinci.store import Store
 from vinci.universe import benchmark_identity
 
@@ -817,6 +821,15 @@ def _pe_reconciliation(
     except (HttpError, KeyError):
         return None
     if len(eps) < 3:
+        return None
+    # A SHARE-BASIS CHANGE MAKES THIS COMPARISON MEANINGLESS, and the flag it produces is worse
+    # than silence because it names the wrong cause. NFLX's committed page said "trailing EPS 2.53
+    # is anomalous vs the recent median 7.00" — 2.53 is CORRECT, and the MEDIAN is the contaminated
+    # figure, drawn across a 10:1 split the filer restated only two years of. A reader told to
+    # "verify against normalized/forward EPS" is being sent after an earnings anomaly that does not
+    # exist. Silent here rather than re-worded: the percentile beside it already refuses WITH the
+    # split as its stated reason, and a second differently-worded split note is a claim that drifts.
+    if share_basis_change(eps) is not None:
         return None
     latest, prior = eps[-1].value, [p.value for p in eps[:-1]][-4:]
     med = statistics.median(prior)

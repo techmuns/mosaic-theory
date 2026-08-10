@@ -65,9 +65,87 @@ G3_EPS_TOO_OLD = (
 #: taxonomy does not know about, so it escapes both the exhaustiveness pin and the population count.
 G3_NO_PRICE = "no price at the reference date"
 
+#: The percentile's two columns stop agreeing on a share basis when a split lands inside the
+#: window. Prices are RETROACTIVELY split-adjusted by the vendor; annual EPS is point-in-time AS
+#: FILED, and a filer restates only the two or three comparatives its latest 10-K carries. So every
+#: observation older than that restatement divides an adjusted price by an unadjusted EPS.
+#: NFLX is the live case: a 10:1 split, FY2020-22 EPS still as-filed at ~10x the current basis, and
+#: a percentile that read 0.909 ("near the top of its 5-year range") where a consistent basis puts
+#: it near the bottom. The P/E ITSELF stands — price and current EPS are both current-basis — it is
+#: only the RANGE that cannot be built.
+G3_SPLIT_BASIS = (
+    "a share-basis change (stock split) falls inside the window — prices are split-adjusted but "
+    "the older annual EPS is as-filed, so a trailing range would divide the two bases against each "
+    "other. The current P/E stands; its percentile cannot be built")
+
 #: Every reason G3 can emit. The pin asserts the emitted set is exactly this — a fourth reason
 #: added inline (as `G3_NO_PRICE` was) is a cause with no count and no label anyone reads.
-G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE, G3_EPS_TOO_OLD)
+G3_REASONS = (G3_NO_INPUT, G3_NEGATIVE_ECONOMICS, G3_SHORT_HISTORY, G3_NO_PRICE, G3_EPS_TOO_OLD,
+              G3_SPLIT_BASIS)
+
+#: A restatement is read as a SHARE-BASIS change only when independent periods AGREE on the factor.
+#: One period restated by 10x could be an earnings correction; two periods restated by the SAME 10x
+#: is a split, because a split rescales every comparative identically and an accounting revision
+#: does not. Below the floor the series is left alone — the point is to catch a basis change, not
+#: to referee restatements.
+_SPLIT_MIN_FACTOR = 1.5
+_SPLIT_TOL = 0.02          # agreement between periods, as a fraction of the factor
+_SPLIT_MIN_PERIODS = 2
+
+
+def share_basis_change(points: list[ConceptPoint]) -> float | None:
+    """The per-share rescaling factor a filer applied to its own comparatives, or None.
+
+    READ FROM THE FILINGS, NEVER GUESSED: the same fiscal period reported by an EARLIER and a LATER
+    filing at values whose ratio repeats across periods. NFLX reports FY2023 as 12.03 (filed 2024)
+    and 1.20 (filed 2026), FY2024 as 19.83 then 1.98 — 10.03x and 10.02x, which is a 10:1 split
+    stated by the filer rather than inferred from a magnitude.
+
+    WHAT KEEPS THE UNRESTATED PERIODS OUT is the factor floor, not the filing count. Measured on
+    NFLX's annual series: every period appears in two or three successive 10-Ks as a comparative,
+    but FY2018-2022 repeat ONE value each (ratio 1.0) while only FY2023 and FY2024 carry two
+    distinct ones. So the older periods contribute nothing because their ratio is 1.0, and the
+    ``len(filings) < 2`` skip only drops the newest period, which has nothing to compare against.
+
+    (The raw concept also carries several EPS measures tagged on one filing day — total versus
+    continuing operations — but those do not survive the ``is_annual`` filter above, so no
+    same-filing pair ever reaches the ratio.)"""
+    # ANNUAL ONLY, FILTERED HERE rather than trusted from the caller. Fed the raw concept this
+    # returns 1.75x for NFLX instead of 10x — quarterly facts share period_ends with annual ones
+    # and pair the wrong values. Both current callers already filter, so this changes nothing
+    # today and removes a way for the next one to get a confidently wrong number.
+    by_period: dict[date, list[ConceptPoint]] = {}
+    for p in points:
+        if not p.is_annual:
+            continue
+        by_period.setdefault(p.period_end, []).append(p)
+
+    factors: list[float] = []
+    for ps in by_period.values():
+        filings = {p.filed for p in ps}
+        if len(filings) < 2:
+            continue                      # never re-reported: nothing to compare
+        first, last = min(filings), max(filings)
+        old = [abs(p.value) for p in ps if p.filed == first and p.value]
+        new = [abs(p.value) for p in ps if p.filed == last and p.value]
+        if not old or not new:
+            continue
+        # EITHER WAY, like the cap reconciliation's "3.91x either way". The first cut divided
+        # old/new, which only catches a FORWARD split (EPS restated DOWN, the NFLX shape) and
+        # silently misses a REVERSE split, where the filer restates EPS UP by the same factor and
+        # the contamination is identical. Reverse splits are the commoner event in the $300M-$10B
+        # hunting band, so the one-directional version had its blind spot pointed at the screen's
+        # own population.
+        a, b = max(old), max(new)          # the LARGEST per filing: a multi-concept day cannot
+        ratio = max(a / b, b / a)          # pair the wrong two
+        if ratio >= _SPLIT_MIN_FACTOR:
+            factors.append(ratio)
+
+    for f in factors:
+        agreeing = [g for g in factors if abs(g - f) / f <= _SPLIT_TOL]
+        if len(agreeing) >= _SPLIT_MIN_PERIODS:
+            return sum(agreeing) / len(agreeing)
+    return None
 
 
 #: How far past its period end an annual EPS may be and still describe the CURRENT business.
@@ -173,6 +251,18 @@ def pe_current_and_percentile(
              f"{cur_pt.period_end.isoformat()} ({eps_age}d old, filed {cur_pt.filed.isoformat()})")
     pe_df = DataField.present(cur_pe, as_of=cur_pt.period_end, source="EDGAR",
                               tier=SourceTier.DERIVED, note=basis)
+
+    # THE RANGE, NOT THE RATIO. `cur_pe` above is sound — its price and its EPS are both on the
+    # current basis. The trailing range is not, whenever the filer rescaled per-share figures
+    # inside the window: the price series is retroactively adjusted and the older EPS is not, so
+    # those observations divide one basis by the other. Refused with its cause rather than
+    # rescaled, because the periods the filer never restated have no published current-basis
+    # figure and deriving one would be fabrication.
+    if (factor := share_basis_change(annual_eps)) is not None:
+        return pe_df, DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{factor:.4g}x)",
+        )
 
     start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
     hist: list[float] = []
