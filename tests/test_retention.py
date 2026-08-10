@@ -789,9 +789,12 @@ def test_the_reason_taxonomy_is_exhaustive_no_inline_fourth() -> None:
               and isinstance(n.value.value, str)
               and any(isinstance(t, ast.Name) and t.id == "why" for t in n.targets)]
     assert not inline, f"a reason is an inline literal, outside the taxonomy: {inline}"
-    # five since the EPS bound added G3_EPS_TOO_OLD — the pin caught the taxonomy growing,
-    # which is what it is for
-    assert len(set(asm.G3_REASONS)) == 5, asm.G3_REASONS
+    # five since the EPS bound added G3_EPS_TOO_OLD, SIX since G3_SPLIT_BASIS — the pin caught the
+    # taxonomy growing both times, which is what it is for. The sixth is the share-basis refusal:
+    # prices are split-adjusted while older annual EPS is as-filed, so a range spanning a split
+    # divides one basis by the other (NFLX read 0.909 — "top of its 5-year range" — where a
+    # consistent basis puts it near the bottom).
+    assert len(set(asm.G3_REASONS)) == 6, asm.G3_REASONS
     for r in asm.G3_REASONS:
         assert r.strip(), "an empty reason is not a reason"
 

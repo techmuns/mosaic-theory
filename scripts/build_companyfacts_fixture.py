@@ -43,6 +43,10 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "CommonStockSharesIssued",
     "WeightedAverageNumberOfSharesOutstandingBasic",
     "WeightedAverageNumberOfDilutedSharesOutstanding",
+    # per-share earnings — the share-basis-change detector compares ONE fiscal period as reported
+    # by TWO different filings, so this tag must arrive with its restatement history intact rather
+    # than one value per period (NFLX FY2023: 12.03 filed 2024-01-26, 1.20 filed 2026-01-23)
+    "EarningsPerShareDiluted",
     # revenue — the anchor's margin history, all four tags in the preference order
     "RevenueFromContractWithCustomerExcludingAssessedTax",
     "RevenueFromContractWithCustomerIncludingAssessedTax",
