@@ -130,8 +130,14 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
         new = [abs(p.value) for p in ps if p.filed == last and p.value]
         if not old or not new:
             continue
-        # the LARGEST of each filing's values, so a multi-concept day cannot pair the wrong two
-        ratio = max(old) / max(new)
+        # EITHER WAY, like the cap reconciliation's "3.91x either way". The first cut divided
+        # old/new, which only catches a FORWARD split (EPS restated DOWN, the NFLX shape) and
+        # silently misses a REVERSE split, where the filer restates EPS UP by the same factor and
+        # the contamination is identical. Reverse splits are the commoner event in the $300M-$10B
+        # hunting band, so the one-directional version had its blind spot pointed at the screen's
+        # own population.
+        a, b = max(old), max(new)          # the LARGEST per filing: a multi-concept day cannot
+        ratio = max(a / b, b / a)          # pair the wrong two
         if ratio >= _SPLIT_MIN_FACTOR:
             factors.append(ratio)
 

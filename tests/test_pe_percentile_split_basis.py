@@ -57,6 +57,38 @@ def test_the_factor_is_read_from_the_filings_not_inferred_from_magnitude() -> No
     assert factor == pytest.approx(10.0, rel=0.01), f"factor read as {factor}, expected ~10x"
 
 
+def test_a_reverse_split_is_caught_too() -> None:
+    """REVIEW FINDING on this PR. The first cut divided old/new, catching only a FORWARD split —
+    EPS restated DOWN, the NFLX shape — and silently missing a REVERSE split, where the filer
+    restates EPS UP by the same factor and the contamination is identical.
+
+    That blind spot pointed straight at the screen's own population: reverse splits are the
+    commoner event among $300M-$10B names, and the forward case that motivated the fix is the rarer
+    one. Ratio is now taken EITHER WAY, matching the cap reconciliation's "x either way".
+
+    SYNTHETIC, deliberately and narrowly: no committed name has a reverse split, so there is no
+    corpus to read it from, and the alternative is leaving the direction untested until a name
+    arrives with a wrong percentile. The forward case above is pinned on real filings."""
+    from vinci.edgar.concepts import ConceptPoint
+
+    def pt(year: int, filed: date, val: float) -> ConceptPoint:
+        return ConceptPoint(
+            concept="eps_diluted", tag="EarningsPerShareDiluted", unit="USD/shares", value=val,
+            period_start=date(year, 1, 1), period_end=date(year, 12, 31), filed=filed,
+            fy=year, fp="FY", form="10-K", accession="x")
+
+    # 1:10 reverse split — the later filing restates each comparative UPWARD by 10x
+    reverse = [
+        pt(2023, date(2024, 1, 26), 0.50), pt(2023, date(2026, 1, 23), 5.00),
+        pt(2024, date(2025, 1, 27), 0.80), pt(2024, date(2026, 1, 23), 8.00),
+    ]
+    got = share_basis_change(reverse)
+    assert got is not None, (
+        "a reverse split was not detected — prices are split-adjusted and the older EPS is "
+        "as-filed exactly as in the forward case, so the percentile is wrong by the same factor")
+    assert got == pytest.approx(10.0, rel=0.01), f"factor read as {got}"
+
+
 def test_a_name_without_a_restatement_is_left_alone() -> None:
     """The detector must be a NARROW instrument. Fired on ordinary restatement noise it would
     delete a valid percentile from every name that ever revised a figure."""
