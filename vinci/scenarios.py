@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 import re
 import warnings
+from datetime import date
 from pathlib import Path
 from typing import Any, Literal
 
@@ -500,6 +501,12 @@ def base_irr(res: Result, spot: float, years: float | None) -> tuple[float | Non
 class Result(BaseModel):
     """Filled by the run. ``pass_fail`` records the bar test honestly — a FAIL is a result."""
 
+    #: The spot at which reward:risk decays to ``bar`` — DERIVED, and the counterpart to the
+    #: operator's stated ``ScenarioRecord.limit``. It MOVES whenever the legs move (EPAM ran
+    #: 111.62 -> 93.71 across one supersede; SMPL 12.72 -> 13.47 -> 11.46 across three), which is
+    #: exactly why it must never be mistaken for a commitment. Computed in `_with_irr_gate` so one
+    #: definition serves the record, the supersede flag and the page.
+    ceiling2to1: float | None = None
     per_scenario: dict[str, ScenarioOutcome] = Field(default_factory=dict)
     # (R2) the gate, and the discount rate the PV legs were computed at. Absent on R1 records.
     survival: SurvivalBlock | None = None
@@ -635,11 +642,44 @@ class DatedTrigger(BaseModel):
     model_config = {"frozen": True}
 
 
+class StatedLimit(BaseModel):
+    """The price the analyst will actually pay — STATED, never derived.
+
+    THE COMPUTED CEILING AND THE STATED LIMIT ARE DIFFERENT OBJECTS, and EPAM is why the field
+    exists: its ceiling is **$93.71** and the analyst's limit is **$89.50**, chosen to clear under
+    BOTH net-debt treatments. Storing the ceiling would replace a decision with an arithmetic
+    result, and the $4.21 gap — the conservatism the analyst added — is itself the information.
+
+    IT MUST NOT MOVE WHEN THE LEGS MOVE. That is the whole distinction from `Result.ceiling2to1`,
+    which recomputes on every supersede. So the limit carries ``stated_at``: a limit struck against
+    superseded legs is otherwise indistinguishable from one struck against the live ones, which is
+    the vintage defect this repo has paid for in `dep_amort`, in the buyback overlay, and in the
+    covenant digest.
+
+    OPTIONAL, AND `unstated` IS NOT `absent`. Seven records predate this field; requiring it would
+    mean the first record to state one is the only one that could ever be written — the adoption
+    trap `leg_fy_problems` names, and which its own fleet pin then fell into a second time. The
+    cost is stated rather than hidden: a record without a limit is enforced by nothing, exactly as
+    every record is today.
+    """
+
+    price: float
+    #: WHEN the analyst stated it — not when the record was written. Compared against the legs'
+    #: vintage so a stale commitment is visible rather than inferred.
+    stated_at: date
+    #: WHY this price rather than the ceiling — the conservatism, in the analyst's words.
+    note: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class ScenarioRecord(BaseModel):
     """``scenarios/<TICKER>.json`` — the full versioned underwrite record."""
 
     schema_version: str = SCHEMA_VERSION
     ticker: str
+    #: The analyst's stated maximum, or None. Never written by a recipe — see :class:`StatedLimit`.
+    limit: StatedLimit | None = None
     recipe_id: str                         # e.g. "R1_midcycle_margin_evebitda"
     recipe_desc: str
     # the arithmetic chain, stamped by run_recipe from midcycle.R1_FORMULA (the multiple_basis
@@ -910,6 +950,41 @@ def leg_fy_problems(base: ScenarioInput | None, anchor_fy: str | None) -> list[s
             "way any other deviation from an anchor is stated."]
 
 
+def limit_notes(rec: ScenarioRecord) -> list[str]:
+    """The stated limit against the recomputed ceiling — NOTES, never problems.
+
+    A FLAG AND NOT A REFUSAL, deliberately. `limit > ceiling` means the LEGS MOVED under a
+    commitment that did not, and the analyst may perfectly well conclude that the limit stands and
+    the ceiling is what moved. That is a judgment, not a defect, so this returns notes the write
+    path PRINTS while the write proceeds — unlike `validate_legs` / `horizon_problems`, whose
+    returns refuse.
+
+    ONE-SIDED ON PURPOSE. `limit <= ceiling` is silent: a limit below where the bar falls is the
+    normal, conservative case and needs no sentence (EPAM's $89.50 against a $93.71 ceiling). Only
+    the other direction is information.
+
+    THE VINTAGE IS THE SECOND NOTE. A limit stated before the legs it now sits beside is not wrong,
+    but it is unverified against them, and saying so is cheaper than a reader inferring it.
+    """
+    lim = rec.limit
+    if lim is None:
+        return []                       # unstated is not absent — and is not this function's job
+    out: list[str] = []
+    ceiling = (rec.result.ceiling2to1 if rec.result is not None else None)
+    if ceiling is not None and lim.price > ceiling:
+        out.append(
+            f"stated limit ${lim.price:,.2f} is ABOVE the recomputed ceiling ${ceiling:,.2f} — the "
+            f"legs moved under a commitment that did not. The limit is the analyst's and is not "
+            f"changed here; either restate it, or record that the ceiling is what moved.")
+    # ISO strings compare lexicographically in date order, which is why `underwrite_date` (a str
+    # on this model) and `stated_at` (a date) are compared through `str`, not through a parse.
+    if rec.underwrite_date and str(lim.stated_at) < str(rec.underwrite_date):
+        out.append(
+            f"stated limit dates from {lim.stated_at} and these legs from {rec.underwrite_date} "
+            f"— the limit predates the underwrite it sits beside, so it is unverified against it.")
+    return out
+
+
 def horizon_problems(rec: ScenarioRecord) -> list[str]:
     """The stated-horizon requirement, as `validate_legs` returns problems — empty when satisfied.
 
@@ -974,9 +1049,24 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
         gate = "UNDEFINED"
     else:
         gate = "PASS"
+    # THE CEILING IS COMPUTED ONCE, HERE, because two implementations of one formula is the
+    # divergent-parse class. It existed only in `frontend/build.py` — stdlib-only and unable to
+    # import this module — so the supersede flag would have needed a SECOND copy, and the flag and
+    # the rendered number could then disagree about the same name.
+    #
+    # `bar` COMES FROM THE RECORD, never the module constant. build.py's copy hardcodes
+    # `(base + 2*bear)/3`, correct only while every record carries bar 2.0 (all seven do today) —
+    # while `uw-card.js` states the opposite rule for itself: "an absent bar renders honest, never
+    # an invented 2 … the card carries no fund constants of its own". This seat reads `res.bar`.
+    per, ceiling = res.per_scenario or {}, None
+    if "base" in per and "bear" in per and res.bar:
+        b_vps, r_vps = per["base"].value_per_share, per["bear"].value_per_share
+        if b_vps is not None and r_vps is not None:
+            ceiling = (b_vps + res.bar * r_vps) / (1.0 + res.bar)
     return res.model_copy(update={
         "horizon_years": years, "irr": irr, "irr_undefined": why or None,
-        "irr_floor": IRR_FLOOR, "irr_pass_fail": irr_pf, "gate": gate})
+        "irr_floor": IRR_FLOOR, "irr_pass_fail": irr_pf, "gate": gate,
+        "ceiling2to1": ceiling})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:

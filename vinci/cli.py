@@ -955,6 +955,21 @@ def _sealed_proposal(
     return prop.action, prop.lean, assembled
 
 
+def _committed_limit(ticker: str) -> Any:
+    """The STATED limit off the committed scenario record, or None.
+
+    Reads the record rather than recomputing a ceiling: the gate asks what the analyst committed
+    to, not what today's legs imply. Missing record, unreadable record and unstated limit all
+    return None — `unstated` is not `absent`, and an unenforced verdict is the status quo, so a
+    read failure must never invent a limit nor block a write.
+    """
+    try:
+        import vinci.scenarios as _sc
+        return _sc.read_record(ticker.upper(), root=Path.cwd()).limit
+    except Exception:                                        # noqa: BLE001 — see the docstring
+        return None
+
+
 def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
     """The COMMITTED dossier's persisted EV gap, or None.
 
@@ -1043,6 +1058,10 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
                 decided_at=datetime.now(), reference_date=ref,
                 staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+                # THE COMMITTED RECORD'S limit, read here and passed in — the gate itself must not
+                # reach for a file. A name with no record, or a record with no limit, passes None
+                # and is unenforced, which is every name today.
+                stated_limit=_committed_limit(ticker),
                 machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
                 revealed_pre_verdict=getattr(args, "saw_proposal", False),
             )
@@ -1347,6 +1366,11 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         for p in problems:
             print(f"  - {p}")
         return 2
+    # THE LIMIT NOTES PRINT AND DO NOT REFUSE. `limit > ceiling` says the legs moved under a
+    # commitment that did not, which is the analyst's judgment to resolve — so it is surfaced
+    # beside the write rather than blocking it. Kept OUT of `problems` on purpose.
+    for note in sc.limit_notes(incoming):
+        print(f"  ⚠ limit: {note}")
 
     # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:
     # a confirmed verdict whose decision row carries no close row is an open position.

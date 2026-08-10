@@ -290,12 +290,13 @@ def _current_state(rec: dict[str, Any]) -> dict[str, Any]:
     note below. What remains is what the band actually reads."""
     v = rec.get("verdict") or {}
     r = rec.get("result") or {}
-    per = r.get("per_scenario") or {}
     status = str(v.get("status") or "pending_analyst")
-    base_vps, bear_vps = (per.get("base") or {}).get("value_per_share"), \
-                         (per.get("bear") or {}).get("value_per_share")
-    ceiling = (base_vps + 2 * bear_vps) / 3 if base_vps is not None and bear_vps is not None \
-        else None
+    # READ, NEVER RECOMPUTE. This file is stdlib-only and cannot import `vinci`, so it used to
+    # carry its own copy of the formula — with the bar HARDCODED to 2, while `uw-card.js` states
+    # the opposite rule for itself ("an absent bar renders honest, never an invented 2 … the card
+    # carries no fund constants of its own"). The recipe now computes the ceiling from the RECORD's
+    # own bar and persists it, so both sides read one number and cannot drift.
+    ceiling = r.get("ceiling2to1")
     # RETIRED 2026-07-27 — `statusNote`, and with it `held` / `holdingLabel` / `baseNormalMargin`,
     # all four for the same reason: nothing read them. The at-a-glance fold deleted the block that
     # rendered the holding trio and left them emitted into every card, which is exactly how a dead
@@ -317,6 +318,17 @@ def _current_state(rec: dict[str, Any]) -> dict[str, Any]:
     }
     if ceiling is not None:
         out["ceiling2to1"] = _rd(ceiling, 2)
+    # THE STATED LIMIT RIDES BESIDE THE CEILING, because the pair is the information: the ceiling
+    # says where the bar falls on today's legs, the limit says what the analyst will pay, and the
+    # GAP is the conservatism they added. EPAM: ceiling $93.71, limit $89.50. Shown only when
+    # stated — an absent limit renders nothing rather than borrowing the ceiling, which is the
+    # substitution the field exists to prevent.
+    lim = rec.get("limit") or {}
+    if lim.get("price") is not None:
+        # ONLY the price reaches the card. `stated_at` and `note` are PROVENANCE and live in
+        # `scenarios/<T>.json` (tier 3) — emitting them here would put keys on the card that no
+        # view renders, which the parity pin correctly refuses.
+        out["limit"] = _rd(lim.get("price"), 2)
     return out
 
 

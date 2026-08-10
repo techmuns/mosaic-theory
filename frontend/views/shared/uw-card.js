@@ -133,11 +133,15 @@ function ratioCell(c) {
   // #165's two-ratio rule, kept under the masthead layout: the UNDERWRITE ratio lives here
   // (labelled), the AT-ENTRY ratio lives in the Entry cell — both shown, neither misreported.
   const ceil = (c.currentState || {}).ceiling2to1;
+  const lim = (c.currentState || {}).limit;
   const bar = (typeof c.bar === "number"
     ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`)
     // the price at which the ratio decays to the bar — a qualifier ON this cell, so it belongs in
     // this cell's sub-line rather than in a block of its own.
-    + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "");
+    + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "")
+    // the STATED limit beside the computed ceiling — the pair is the information, and the gap is
+    // the conservatism the analyst added. Absent renders nothing; it never borrows the ceiling.
+    + (typeof lim === "number" ? ` · limit $${lim.toFixed(2)}` : "");
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 
