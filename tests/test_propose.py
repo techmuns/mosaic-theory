@@ -278,9 +278,16 @@ def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() ->
     takes the point-in-time count, SAYS what it is and is not, and refuses a structural gap."""
     from vinci.dossier.propose import SHARE_DISAGREEMENT_TOL, resolve_shares
     val, basis, source = resolve_shares(_doc("BRBR"))
-    assert abs(val - 116.27785) < 1e-5, val          # MILLIONS, the ScenarioRecord.facts unit
+    # FROZEN LITERALS, per this file's stated convention — the oracle must not come from the same
+    # artifact as the subject, or a corrupted dossier value would satisfy the check that reads it.
+    # They moved when BRBR was re-assembled 2026-08-10 against a newer filing (diluted 117,500,000
+    # → 116,600,000, so the point-in-time gap narrowed 1.05% → 0.28%), and they were re-pinned in
+    # THAT PR alongside the regenerated companyfacts fixture — which is the workflow the fixture's
+    # own error message prescribes, and the reason a literal here is a deliberate edit rather than
+    # a rot: nothing moves these numbers except a re-assembly someone chose to make.
+    assert abs(val - 116.278194) < 1e-5, val         # MILLIONS, the ScenarioRecord.facts unit
     assert "point-in-time" in basis and "BASIC" in basis and "do not assume it" in basis
-    assert "117,500,000" in basis and "1.05%" in basis, basis
+    assert "116,600,000" in basis and "0.28%" in basis, basis
 
     far = {"ticker": "X", "mechanical": {"stock_info": {"shares_out": {"value": 100e6}}},
            "anchor": {"diluted_shares": {"value": 100e6 * (1 + SHARE_DISAGREEMENT_TOL + 0.01)}}}
