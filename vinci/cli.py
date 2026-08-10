@@ -955,6 +955,27 @@ def _sealed_proposal(
     return prop.action, prop.lean, assembled
 
 
+def _committed_limit(ticker: str) -> Any:
+    """The STATED limit off the committed scenario record, or None when there is no record.
+
+    NO RECORD AND AN UNREADABLE RECORD ARE DIFFERENT FACTS, and the first draft of this collapsed
+    them: a bare `except Exception` returned None for both, so a corrupt or schema-invalid
+    `scenarios/<T>.json` SILENTLY DISABLED THE GATE and a BUY above a stated limit went through.
+    Its docstring even argued for it — "a read failure must never block a write" — which is the
+    wrong reasoning for a guard, where the reassuring answer (unenforced, proceed) is exactly the
+    dangerous one. #362's rule, applied to a safety check rather than to a rendered fact.
+
+    So: a MISSING record is None and unenforced, because most names have no record and never will.
+    Anything else propagates and refuses the write loudly — a commitment we cannot read is not a
+    commitment that is absent.
+    """
+    import vinci.scenarios as _sc
+    try:
+        return _sc.read_record(ticker.upper(), root=Path.cwd()).limit
+    except FileNotFoundError:
+        return None                        # no record for this name — unenforced, and that is true
+
+
 def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
     """The COMMITTED dossier's persisted EV gap, or None.
 
@@ -1043,6 +1064,10 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
                 decided_at=datetime.now(), reference_date=ref,
                 staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+                # THE COMMITTED RECORD'S limit, read here and passed in — the gate itself must not
+                # reach for a file. A name with no record, or a record with no limit, passes None
+                # and is unenforced, which is every name today.
+                stated_limit=_committed_limit(ticker),
                 machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
                 revealed_pre_verdict=getattr(args, "saw_proposal", False),
             )
@@ -1347,6 +1372,11 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         for p in problems:
             print(f"  - {p}")
         return 2
+    # THE LIMIT NOTES PRINT AND DO NOT REFUSE. `limit > ceiling` says the legs moved under a
+    # commitment that did not, which is the analyst's judgment to resolve — so it is surfaced
+    # beside the write rather than blocking it. Kept OUT of `problems` on purpose.
+    for note in sc.limit_notes(incoming):
+        print(f"  ⚠ limit: {note}")
 
     # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:
     # a confirmed verdict whose decision row carries no close row is an open position.

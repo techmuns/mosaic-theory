@@ -12,7 +12,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import date, datetime
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:  # annotation only — no runtime import, so no cycle with `vinci.scenarios`
+    from vinci.scenarios import StatedLimit
 
 from vinci.labels import resolve_label
 from vinci.schemas.data_record import Identity
@@ -110,6 +113,7 @@ def log_verdict(
     decided_at: datetime,
     reference_date: date,
     staleness_days: int,
+    stated_limit: StatedLimit | None = None,
     benchmark: str = "IWM",
     machine_proposal: Verdict | None = None,
     machine_lean: str | None = None,
@@ -181,6 +185,28 @@ def log_verdict(
             f"no price to freeze an entry for {ident.ticker} "
             f"({ident.internal_id}) — refresh EOD bars first"
         )
+
+    # THE STATED-LIMIT GATE, and its seat is mechanical rather than stylistic. The entry price is
+    # frozen HERE, inside this function; the CLI's pre-write gates (the edge-basis check) run
+    # before it exists. A limit gate in the CLI would have to resolve the close a SECOND time, and
+    # two resolutions of one price is the divergent-parse class this repo keeps paying for. So it
+    # sits beside `_require_verdict_in_sleeve`, at the first point where the verdict and the price
+    # both exist — and before the append, because the ledger is append-only: "the gate has to
+    # refuse here or not at all" (the edge-basis gate's own words).
+    #
+    # BUY ONLY. An AVOID_TERMINAL row freezes a REFERENCE price for scoring, not a purchase, so
+    # refusing it above a limit would be meaningless — VRRM's 4.71 is not capital at risk.
+    #
+    # READS THE COMMITTED RECORD, never a recomputed ceiling: the question is what the analyst
+    # committed to, not what today's legs imply. A record with no limit is not refused — `unstated`
+    # is not `absent`, and six of seven records carry no limit today.
+    if verdict is Verdict.BUY and stated_limit is not None and close.value > stated_limit.price:
+        raise LedgerError(
+            f"REFUSED: {ident.ticker} BUY at {close.value:,.2f} (as of {close.as_of}) is ABOVE the "
+            f"stated limit of {stated_limit.price:,.2f} from {stated_limit.stated_at}"
+            + (f" — {stated_limit.note}" if stated_limit.note else "")
+            + ". The limit is the analyst's commitment and the ledger is append-only, so this "
+              "cannot be un-logged: either wait for the price, or restate the limit deliberately.")
 
     # Disposition — stamped ONCE, at log time (every post-pivot entry carries one; a None
     # disposition in the ledger therefore always means "logged before the pivot").

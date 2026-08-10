@@ -212,6 +212,10 @@
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "PASS",
+ "irrUndefined": "no horizon stated \u2014 an IRR needs a realisation date",
+ "irrFloor": 0.15,
+ "irrPassFail": "UNDEFINED",
+ "gate": "UNDEFINED",
  "gateAdjudication": "~80% one-off bar fired at 72.8%; residual identified as vendor-definitional, not operating; analyst adjudicated RESUME 2026-07-21.",
  "currentState": {
   "status": "watch",
