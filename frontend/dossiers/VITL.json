@@ -29,7 +29,7 @@
         "value": 1.5,
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "status": "present",
-        "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from cheap-terminal"
+        "note": "trailing only — no forward basis; cannot distinguish a temporarily depressed level from a permanently impaired one"
       },
       "ev_ebitda_percentile_5y": {
         "value": 0.083,
