@@ -12,7 +12,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import date, datetime
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:  # annotation only — no runtime import, so no cycle with `vinci.scenarios`
+    from vinci.scenarios import StatedLimit
 
 from vinci.labels import resolve_label
 from vinci.schemas.data_record import Identity
@@ -110,7 +113,7 @@ def log_verdict(
     decided_at: datetime,
     reference_date: date,
     staleness_days: int,
-    stated_limit: Any = None,
+    stated_limit: StatedLimit | None = None,
     benchmark: str = "IWM",
     machine_proposal: Verdict | None = None,
     machine_lean: str | None = None,

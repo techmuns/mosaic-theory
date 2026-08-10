@@ -178,8 +178,12 @@ def test_the_ceiling_is_computed_from_the_records_own_bar() -> None:
     per = out.result.per_scenario
     bar = out.result.bar
     expected = ((per["base"].value_per_share + bar * per["bear"].value_per_share) / (1.0 + bar))
+    # DERIVED, NOT PINNED. The first draft also asserted `== 93.7072` — a VALUE-level pin on a
+    # LIVING artifact: EPAM's record is superseded whenever it is re-underwritten, so that literal
+    # rots by design (TEST-LAYER RULE). The identity above is the real check and survives any
+    # re-underwrite, because it recomputes from whatever legs the record then carries.
     assert out.result.ceiling2to1 == pytest.approx(expected, abs=1e-9)
-    assert out.result.ceiling2to1 == pytest.approx(93.7072, abs=0.001), "EPAM's known ceiling"
+    assert out.result.ceiling2to1 > 0, "a ceiling of zero would satisfy the identity vacuously"
 
 
 def test_the_ceiling_follows_a_non_default_bar() -> None:
@@ -207,3 +211,32 @@ def test_the_ceiling_follows_a_non_default_bar() -> None:
             f"ceiling ignored a bar of {bar} — it is using a constant, not the record's bar")
         assert out.ceiling2to1 != pytest.approx((base + 2.0 * bear) / 3.0, abs=1e-6), (
             "the bar-2 answer came back for a non-2 bar")
+
+
+def test_an_unreadable_record_refuses_rather_than_silently_disabling_the_gate(
+    tmp_path: Any, monkeypatch: Any,
+) -> None:
+    """REVIEW FINDING, and the most dangerous kind: a guard that turns itself off.
+
+    `_committed_limit` caught `Exception` and returned None, so a corrupt or schema-invalid
+    `scenarios/<T>.json` made the limit look UNSTATED and a BUY above it went through. Its own
+    docstring argued for that — "a read failure must never block a write" — which is the wrong
+    reasoning for a safety check, where the reassuring answer is the dangerous one. #362's rule
+    applied to a guard rather than to a rendered fact.
+
+    RUNS IN A TMP CWD, and that is a review finding of its own: the first draft of this test wrote
+    the corrupt file to the REAL `scenarios/EPAM.json` and restored it in a `finally`. Mutating
+    that `finally` while mutation-testing left a committed record corrupt on disk. A test whose
+    only protection for real state is its own cleanup path is a hazard — it must not be able to
+    touch committed artifacts at all.
+    """
+    import vinci.cli as cli
+    (tmp_path / "scenarios").mkdir()
+    (tmp_path / "scenarios" / "EPAM.json").write_text("{ not valid json")
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(Exception):             # noqa: B017 — any loud failure, never a silent None
+        cli._committed_limit("EPAM")
+
+    # …and a name with no record at all stays unenforced, which is true rather than reassuring
+    assert cli._committed_limit("NOSUCHTICKER") is None

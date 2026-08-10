@@ -956,18 +956,24 @@ def _sealed_proposal(
 
 
 def _committed_limit(ticker: str) -> Any:
-    """The STATED limit off the committed scenario record, or None.
+    """The STATED limit off the committed scenario record, or None when there is no record.
 
-    Reads the record rather than recomputing a ceiling: the gate asks what the analyst committed
-    to, not what today's legs imply. Missing record, unreadable record and unstated limit all
-    return None — `unstated` is not `absent`, and an unenforced verdict is the status quo, so a
-    read failure must never invent a limit nor block a write.
+    NO RECORD AND AN UNREADABLE RECORD ARE DIFFERENT FACTS, and the first draft of this collapsed
+    them: a bare `except Exception` returned None for both, so a corrupt or schema-invalid
+    `scenarios/<T>.json` SILENTLY DISABLED THE GATE and a BUY above a stated limit went through.
+    Its docstring even argued for it — "a read failure must never block a write" — which is the
+    wrong reasoning for a guard, where the reassuring answer (unenforced, proceed) is exactly the
+    dangerous one. #362's rule, applied to a safety check rather than to a rendered fact.
+
+    So: a MISSING record is None and unenforced, because most names have no record and never will.
+    Anything else propagates and refuses the write loudly — a commitment we cannot read is not a
+    commitment that is absent.
     """
+    import vinci.scenarios as _sc
     try:
-        import vinci.scenarios as _sc
         return _sc.read_record(ticker.upper(), root=Path.cwd()).limit
-    except Exception:                                        # noqa: BLE001 — see the docstring
-        return None
+    except FileNotFoundError:
+        return None                        # no record for this name — unenforced, and that is true
 
 
 def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
