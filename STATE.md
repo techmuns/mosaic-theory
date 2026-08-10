@@ -4360,6 +4360,36 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
 
+**OPERATOR TO-DO — THE WEEKLY SCREEN CAN TURN THE FLEET RED WITH `[skip ci]`, AND NOTHING GATES IT
+(2026-08-10).** Recorded per the OPERATOR-ACTION RULE: this was raised in chat during #393/#394 and
+chat is not a ledger.
+
+**WHAT HAPPENED.** The scheduled weekly screen pushed `607e7d1 weekly screen: refresh snapshots
+[skip ci]` to main at 08:06Z. The new screen snapshot moved **NCNO** out of the candidate band and
+onto the MAINTENANCE route — and a maintained name needs COMMITTED price bars, because
+`data/vinci.db` is git-ignored and CI has no store. NCNO had none, so five maintenance-path pins
+failed **on every open PR regardless of its contents**: #393 is docs-only and went red identically
+to #394, both having passed forty minutes earlier.
+
+**THE `[skip ci]` IS THE HOLE, not the snapshot.** The one commit that changes the fleet's ROUTING
+is the one commit nothing gates, so the breakage lands on main invisibly and first surfaces on the
+next unrelated PR — where it reads as that PR's regression. Main's own last gate ran BEFORE it and
+stayed green, which is what makes the misattribution so easy. **Diagnosis rule that worked: a
+failure that hits a docs-only PR identically is not the PR's.**
+
+**UNBLOCKED, NOT FIXED.** #393 carries `tests/fixtures/prices/NCNO.jsonl` — the remedy the failing
+pin itself prescribes (`scripts/build_price_fixture.py`, whose docstring says to re-run it "in the
+SAME PR that makes a new name maintained"). No HUMAN PR made NCNO maintained, so the obligation
+fell to the next PR that happened to touch the fleet. **That is the defect: an automated commit
+incurs an obligation only a human PR can discharge.**
+
+**THE DECISION IS THE OPERATOR'S, because it is about the workflow and not about a test.** Options,
+not a recommendation to act on unasked: (a) drop `[skip ci]` from the screen commit so main gates
+itself and goes red at the CAUSE; (b) have the workflow run the fixture builder when its snapshot
+changes the maintained set — it needs a populated EOD store, which the workflow has; (c) leave it
+and accept that the next PR after a routing change pays the toll, now that the shape is written
+down. **Nothing was changed in the workflow by the build that found this.**
+
 **FLEET AS-OF IS SPLIT — READ THIS BEFORE ANY CROSS-SECTIONAL COMPARISON (2026-08-06).**
 The names do **NOT** share a reference date. `ranked_queue.jsonl` stamps every one of its 331 rows
 `2026-07-29`, but a dossier's `reference_date` is stamped **AT ASSEMBLY**, so only names
@@ -4536,8 +4566,11 @@ decision today.
 appears.** Recorded with the question intact so the next reader inherits the argument and not just
 the price tag.
 
-**M3 — OPEN GAP, HALF-ANSWERED: THE PEER BLOCK MEASURES THE LOAD, NOT THE WRITE-DOWN.** Recorded
-2026-08-10 at operator instruction, because the finding has been over-read — including by me.
+**M3 — CLOSED: THE PEER BLOCK MEASURED THE LOAD; THE WRITE-DOWN HISTORY NOW MEASURES THE REST.**
+Recorded 2026-08-10 at operator instruction because the finding had been over-read — including by
+me — and CLOSED the same day by #394. The gap statement below is kept INTACT rather than rewritten
+in hindsight: it is the argument that produced the build, and the disposition at the foot of this
+entry is what changed.
 
 **WHAT #372/#375 SETTLED.** `peer_capital_intensity` (committed on SMPL) measures acquired assets
 — goodwill + intangibles — against two denominators, for the subject and every comps-grid peer:
@@ -4603,8 +4636,55 @@ follows regardless: the column will carry real absences, and `filer-reports-none
 **already implements the three-absence discipline** (`unresolved` / `fetch-failed` / no-tag, each
 its own sentence, all three verified present in code); extend that, do not re-invent it.
 
-**OPEN — not deferred, not dropped. No unlock trigger is needed; it is queued work whose cost is
-known.** Until it ships, any claim about SMPL's write-down relative to its sector is UNSUPPORTED.
+**CLOSED 2026-08-10 by #394** (`PeerImpairment`, four states, trailing-5FY window; artifacts on
+11 of 12 names — FUBO refused, sealed by its own `known_wrong.json`).
+
+**THE ANSWER, AND IT IS A NEGATIVE ONE.** Over the trailing five fiscal years, **3 of the 4 large
+peers that could be ASSESSED took a charge, median 31.1% of acquired assets among those that
+did** (KHC 31.1%, CAG 47.1%, MZTI 2.1%; JJSF `explicit-zero`). **Writing down acquired assets is
+ORDINARY in packaged food.** So the inference the memo wanted is NOT AVAILABLE: SMPL having taken
+a charge is evidence neither of unusual candour nor of unusual lateness, because a charge is what
+this sector does. That removes a reading rather than supplying one — which is the useful outcome
+here, since the reading was being made.
+
+**WHAT IT STILL DOES NOT SETTLE — three limits, none of them cosmetic.**
+
+  1. **n=4, and the three exclusions are not noise.** The assessed set is 4 of 7 large peers.
+     CPB is `none-in-window` (four charges FY2013–FY2018, none since), BRBR and UTZ are
+     `untagged`. A base rate on four names is thin, and CPB is the pointed case: over five years
+     it contributes nothing, while its own history says this sector impairs in WAVES. A longer
+     lens would give a different number.
+  2. **SMPL'S LIVE CHARGE STILL HAS NO SAME-BASIS PEER DENOMINATOR — the residual that matters.**
+     `$369.0M` is a **272-day year-to-date** point; every peer window figure is ANNUAL. SMPL's
+     comparable figure is the **$60.9M / 4.0%** in the window column. **DO NOT divide 369.0 by
+     1,508.9 and set the resulting 24.5% beside the 31.1% median** — that is precisely the basis
+     mistranslation this entry was written about, and shipping the block has now put both numbers
+     in ONE ROW where the error is one glance away. The page labels the column for this reason.
+     It resolves on its own when SMPL's FY2026 closes and the charge lands in an annual period.
+  3. **The five-year window is FACE-VALIDITY, never derived and never tuned.** It spans a full
+     impairment cycle (KHC's run is FY2019–FY2025) while staying about current management. A
+     ten-year window is a different question with a different answer; changing it to move a
+     result would be outcome-tuning.
+
+**INCIDENT → INVARIANT (from #394's review).**
+
+  * *A window of only REVERSALS was described as "nil"* — `charged` filters on `> 0`, so a window
+    of negative points reached `explicit-zero` and asserted "every one nil" about figures that are
+    not (CMI states −$210.0M for FY2025; also HSY, PAR ×2, TTEC). → `test_a_window_of_only_
+    reversals_is_never_described_as_nil`, with its negative half pinning that a genuine all-zero
+    window still reads "every one nil". **Shipped Y.**
+  * *A non-summable `pending` leg was dropped SILENTLY* — the two families' latest year-to-date
+    points often end on different dates (13 live instances); only the latest end is summable, but
+    this module STATES a period mismatch rather than dropping one quietly. → `test_a_pending_leg_
+    on_a_different_window_is_named_not_silently_dropped`. **Shipped Y.** It caught a live instance
+    on its first run: CPB was dropping a 181-day combined-tag charge.
+  * *A code comment claimed the combined-tag guard had NO live instance* — it has one: **HLF**
+    resolves its annual goodwill series to `GoodwillAndIntangibleAssetImpairment`, 11 annual
+    points. The claim came from SMPL's eleven names rather than the corpus, and the test that said
+    "SYNTHETIC and says so" repeated it. Both corrected. → **No machine check shipped**: whether a
+    comment's factual claim is true is not machine-checkable. **Recorded as ACCEPTED RISK**, with
+    the transferable rule — *a claim about "the corpus" is scoped to the corpus actually swept, and
+    the sweep's breadth belongs in the sentence.* The 95-peer sweep is what found all three.
 
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
