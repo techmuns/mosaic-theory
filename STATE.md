@@ -4749,9 +4749,21 @@ excludes $1.2M accrued but unpaid. The filer's own figure is **$27.41 on $134.5M
 repaired by fixing one leg** — 134.5 ÷ 4.86 is $27.67, because the company's implied count is
 4.907M against the tag's 4.86M; BOTH legs sit on a different basis, so no arithmetic over these two
 tags reproduces it. **DERIVATION REFUSED OUTRIGHT** rather than given a tighter period test, since
-the defect is invisible to period comparison by construction. The filer's own purchase-cost tag
-still prints (EPAM $283.69, SMPL $18.29); both legs survive individually — only the quotient goes.
-**Neither name is emptied: BRBR keeps 4 of 9 capital-allocation fields, IT keeps 6 of 9.**
+the defect is invisible to period comparison by construction.
+
+**AND THE REVIEW FOUND THE DERIVATION HAD BEEN HIDING A REAL FIGURE.** A "vintage beats directness"
+rule dropped the filer's own average whenever it was OLDER than the repurchase cash and both legs
+aligned — sound only while a derivation existed to replace it. **BRBR states
+`TreasuryStockAcquiredAverageCostPerShare` = $29.18 over 181 days**, and that rule suppressed it in
+favour of the unreproducible $28.23. With the derivation gone, suppressing threw the filer's figure
+away and then reported `no TreasuryStockAcquiredAverageCostPerShare` — an affirmative claim of
+absence about a filer that discloses one. **The same class as B1b one module over: not-detected is
+not agreement there, SUPPRESSED IS NOT ABSENT here.** The rule is removed; a stale figure now
+prints with its window and a PERIOD MISMATCH note.
+
+**BRBR keeps 5 of 9 capital-allocation fields (including the $29.18 average), IT keeps 6 of 9**;
+IT genuinely states no direct tag, so its refusal stands. *Note the $29.18 covers 181 days while
+the presentation's $27.41 covers nine months — different windows, not a disagreement.*
 **INCIDENT → INVARIANT: shipped Y** — `tests/test_buyback_average.py`, offline, 5 pins, 3 mutations
 killed. *(2 of the 4 names carrying the field were affected; the other 2 used the direct tag.)*
 

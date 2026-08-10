@@ -178,15 +178,20 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                              f"— EDGAR XBRL companyfacts"))
 
     direct = _pick(facts, BUYBACK_AVG_PRICE, kind="flow")
-    # VINTAGE BEATS DIRECTNESS — `_latest_dep_amort`'s rule, and the same failure it was built for.
-    # The filer's own average-price tag is preferred only while it is CURRENT: EPAM's last one is
-    # Q1 **2023** ($283.69, on a stock now near $112) sitting beside Q1 **2026** repurchase cash.
-    # A three-year-old average presented next to this year's spend is the abandoned-tag shape, and
-    # a derivation over the current period is the better answer when both legs are there.
-    if (direct is not None and cash_pt is not None and shares_pt is not None
-            and direct[0].period_end < cash_pt[0].period_end
-            and shares_pt[0].period_end == cash_pt[0].period_end):
-        direct = None
+    # THE VINTAGE SUPPRESSION IS GONE, and removing it is forced by refusing the derivation.
+    #
+    # It read: if the filer's own average is OLDER than the repurchase cash and both legs align on
+    # the current window, drop the direct tag — because "a derivation over the current period is
+    # the better answer when both legs are there". That reasoning was sound only while a derivation
+    # existed to replace it. It does not any more (cash-paid ÷ shares-acquired is not a price at
+    # any window), so suppressing here threw away the ONLY figure the filer states and then fell
+    # through to a refusal whose note read "no TreasuryStockAcquiredAverageCostPerShare" — an
+    # affirmative claim that the filer reports none, about a filer that reports one.
+    #
+    # THAT IS THE SAME CLASS THIS CHANGE FIXES IN `ebitda_basis`, one module over: not-detected is
+    # not agreement there, suppressed is not absent here. A stale figure carried WITH its staleness
+    # stated beats a false absence, and the PERIOD MISMATCH note below already says it — a direct
+    # tag on a different window than the cash beside it is exactly what that branch prints.
     if direct is not None:
         p, tag = direct
         # THE THREE BUYBACK FIELDS MUST NAME THE SAME WINDOW, OR SAY THEY DO NOT. The filer's

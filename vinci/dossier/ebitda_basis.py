@@ -129,12 +129,19 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
         # (implied D&A) against ONE THRESHOLD, so a step below that threshold is a measurement that
         # came back under the bar, never a finding of sameness. BRBR is the live counterexample —
         # 1.73x, and its rows really do differ (GAAP actuals against ADJUSTED estimates).
+        # NO OTHER COMPANY'S NAME OR FIGURE GOES IN THIS SENTENCE. The first cut cited "BRBR …
+        # at 1.73x" as the worked example, which printed on IT's own page — a per-name artifact
+        # carrying a claim about a different name — and baked in a number that MOVES: BRBR's ratio
+        # was 1.76x before its re-assembly and 1.73x after, so every other band member's note would
+        # have gone stale on a re-roll they had nothing to do with. Same class as the STATE entry
+        # that cited `render.py:599` and rotted inside one session. The reader needs the BAND and
+        # the instruction, both of which are true of this name; the example belongs in STATE.
         band = (
             f" This ratio sits in the {_BLIND_LOW:.1f}-{FLAG_HIGH:.1f}x BAND WHERE A REAL BASIS "
-            f"CHANGE HAS BEEN OBSERVED WITHOUT BEING FLAGGED — BRBR reads GAAP actuals against "
-            f"ADJUSTED estimates at 1.73x — so treat this as UNRESOLVED rather than clear, and "
-            f"reconcile the estimate row against the company's own guidance basis before "
-            f"comparing across the boundary."
+            f"CHANGE HAS BEEN OBSERVED ON THIS FLEET WITHOUT BEING FLAGGED (GAAP actuals against "
+            f"ADJUSTED estimates), so treat this as UNRESOLVED rather than clear: reconcile the "
+            f"estimate row against the company's own guidance basis before comparing across the "
+            f"boundary."
             if _BLIND_LOW <= ratio < FLAG_HIGH else "")
         note = (
             f"implied D&A is {ma:,.0f} in the actuals and {me:,.0f} in the estimates "

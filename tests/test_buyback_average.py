@@ -105,3 +105,27 @@ def test_an_absence_still_names_what_was_tried() -> None:
     invites a correction from a reader who knows the filer uses a fifth one."""
     ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}))
     assert DIRECT in (ca.buyback_avg_price.note or "")
+
+
+def test_a_stale_direct_tag_is_kept_and_dated_never_suppressed_into_a_false_absence() -> None:
+    """REVIEW FINDING, and it is the same class this change fixes one module over.
+
+    The vintage rule dropped the filer's own average when it was OLDER than the repurchase cash and
+    both legs aligned — sound only while a DERIVATION existed to replace it. Once the derivation was
+    refused, suppressing here threw away the only figure the filer states and fell through to a
+    note reading "no TreasuryStockAcquiredAverageCostPerShare": an affirmative claim that the filer
+    reports none, about a filer that reports one. Not-detected is not agreement in `ebitda_basis`;
+    SUPPRESSED IS NOT ABSENT here."""
+    old, cur = date(2022, 12, 31), date(2025, 12, 31)
+    ca = build_capital_allocation(_facts(**{
+        DIRECT: [_flow(283.69, start=date(2022, 1, 1), end=old)],
+        CASH: [_flow(100e6, start=date(2025, 1, 1), end=cur)],
+        SHARES: [_flow(1e6, start=date(2025, 1, 1), end=cur)]}))
+    avg = ca.buyback_avg_price
+    assert avg.status is SourceStatus.PRESENT, (
+        f"the filer's own average was suppressed into an absence — note said: {avg.note}")
+    assert avg.value == pytest.approx(283.69)
+    assert f"no {DIRECT}" not in (avg.note or ""), (
+        "the note claims the filer reports no average price while printing the one it reports")
+    assert "PERIOD MISMATCH" in (avg.note or ""), (
+        "a stale figure must carry its staleness — the mismatch note is what dates it")

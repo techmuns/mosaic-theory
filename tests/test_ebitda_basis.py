@@ -105,6 +105,23 @@ def test_a_ratio_inside_the_observed_blind_band_says_so_on_the_page() -> None:
     assert "UNRESOLVED" in b.note
 
 
+def test_the_band_warning_names_no_other_company_and_no_moving_figure() -> None:
+    """REVIEW FINDING. The first cut cited "BRBR ... at 1.73x" as the worked example, so IT's own
+    dossier page carried a claim about a different name — and pinned a number that MOVES (BRBR read
+    1.76x before its re-assembly, 1.73x after), which would rot every other band member's note on a
+    re-roll they had nothing to do with. Same class as the STATE citation that named `render.py:599`
+    and went stale inside one session. The band and the instruction are true of the name being
+    rendered; the worked example belongs in STATE."""
+    import re
+    b = read_basis(_table(ebitda=[400.0, 330.0], ebit=[376.0, 289.0], is_estimate=[False, True]))
+    # WORD BOUNDARIES, because the first draft of THIS pin failed on "IT" inside "WITHOUT" — the
+    # same substring trap as the bare `grep -i <ticker>` corrected in the RUNBOOKS convention.
+    for other in ("BRBR", "IT", "SMPL", "UBER", "EPAM", "AORT", "VITL"):
+        assert not re.search(rf"\b{other}\b", b.note), (
+            f"the band warning names {other} on every other name's page")
+    assert "1.73" not in b.note, "a figure from another name's artifact is pinned into this note"
+
+
 def test_a_low_ratio_outside_the_band_is_not_given_the_band_warning() -> None:
     """THE NEGATIVE HALF. SMPL sits at 1.19x and VRRM at 1.32x — under the band, and a warning on
     every un-flagged name is the freeze the threshold exists to avoid."""
