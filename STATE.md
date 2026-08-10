@@ -5968,6 +5968,32 @@ flipped from "these three diverge" to "nothing diverges", and future drift reds 
 Dry-run confirmed the recorded moves before writing. Three lines changed per `dossier.json`
 (`computed_at`, `diluted_shares`, base VPS) and one per rendered page.
 
+**IT RED ON ITS FIRST RUN, EXACTLY AS DESIGNED — BRBR, 2026-08-10 (PR #391).** A re-assembly
+(`vinci dossier --ticker BRBR`) picked up a newer filing: diluted **117,500,000 → 116,600,000**,
+base VPS **55.9721 → 57.6055 (+2.9%)**, and the point-in-time-vs-diluted gap **1.05% → 0.28%**.
+Fewer shares, higher value per share — real inputs, not a regression, and the anchor here is
+DECISION-PATH (it feeds the underwrite), so it is recorded rather than absorbed.
+**`ANCHORS_AWAITING_BACKFILL` STAYS EMPTY.** Quarantining BRBR would have re-opened the escape
+hatch this entry closed; the divergence was not a defective anchor but the committed
+**companyfacts fixture going stale** against the re-assembled artifact — the anchor computed from
+fresh EDGAR facts, the pin recomputing from the old fixture. Regenerating it (runbook step 5,
+which the fixture's own error message requires "in the SAME PR that re-assembles the name")
+restored agreement. The lesson is the one the fixture message already states and this build
+skipped: **a re-assembly without its fixture regeneration produces a divergence that looks like a
+broken anchor.** `test_propose`'s three share literals were re-struck in the same PR, as frozen
+literals — deriving them from the artifact would put the oracle in the same place as the subject.
+**TWO OTHER THINGS MOVED IN THE SAME RE-ASSEMBLY, recorded because a later reader diffing BRBR
+before/after will meet them.** (a) The CIQ **comp set itself changed** — MDLZ and CPB out, NATR and
+FitLife in — so every relative-value read (peer median leverage 2.8x → 2.4x) is against a
+different, smaller-cap cohort. Not a defect and not our choice: it is the vendor's set in the
+2026-08-09 re-pull, and the peer grid was verified cell-for-cell against the workbook by ticker
+(BellRing 4.4x, consistent with the page's own 4.3x NET-debt caveat). (b) A whole
+`capital_allocation` block APPEARED — 46 new paths — because BRBR's artifact predated that
+extractor. Nothing was lost: the structural diff is zero paths dropped.
+**A REVIEW NOTE ON HOW TO DIFF THESE.** The peer grid is a TICKER-KEYED list. Comparing two
+vintages positionally reports false regressions the moment the vendor's set changes — this review
+did exactly that and briefly "found" a leverage misalignment that did not exist. Join on ticker.
+
 **"NOTHING ELSE MOVES" DID NOT HOLD, and the failure is worth keeping.** Dry-running the other
 eight flagged **FUBO and IT as CHANGED too** — but for reasons that are NOT this fix. Isolated by
 recomputing each anchor under both tie-breaks with the workbook attached: FUBO's `net_debt`
