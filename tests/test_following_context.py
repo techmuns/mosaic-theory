@@ -105,6 +105,24 @@ def test_whitespace_differences_between_the_llm_quote_and_the_source_still_locat
     assert ctx == "But margins fell."
 
 
+def test_a_re_wrapped_quote_still_stops_at_its_own_paragraph() -> None:
+    """REVIEW FINDING, and the version of this test above is why it was needed.
+
+    Locating a re-wrapped quote once took a separate code path that matched on FLATTENED text — and
+    flattening is exactly what destroys the paragraph breaks the bound depends on. That path
+    returned up to `_CONTEXT_MAX` of running text, splicing later paragraphs and other speakers
+    onto the fact as though they qualified it. It never fired on the corpus (191/191 matched raw)
+    and the test above passed on it, because its fixture is ONE SHORT PARAGRAPH — too small to show
+    the difference. The fixture was shaped to the assertion.
+
+    Same input shape, a fixture large enough to tell the two behaviours apart."""
+    q = "Revenue grew   6%\n  this quarter."
+    src = ("Revenue grew 6% this quarter. Margins held.\n\n"
+           "A DIFFERENT SPEAKER answering a different question entirely.\n\n"
+           "And a third paragraph nobody quoted.")
+    assert _following_paragraph(q, src) == "Margins held."
+
+
 def test_a_slice_with_no_paragraph_breaks_is_bounded_rather_than_returning_everything() -> None:
     """A malformed slice would otherwise hand one row the entire transcript as its 'paragraph'."""
     q = "Revenue grew 6%."
@@ -143,3 +161,12 @@ def test_a_row_without_context_emits_no_continues_line() -> None:
     # whole-string check matches the documentation rather than the data.
     rows = [ln for ln in _operating_drivers_digest(od).splitlines() if not ln.startswith("===")]
     assert not any("…continues:" in ln for ln in rows)
+
+
+def test_a_quote_at_the_very_end_of_the_slice_returns_none_rather_than_raising() -> None:
+    """REVIEW FINDING — the bounds guard was unpinned and survived mutation. The last driver on a
+    call can quote its final sentence, and without the guard the index map is read one past its end
+    and raises IndexError straight into the extraction, costing every row on that name."""
+    q = "And that concludes our prepared remarks."
+    assert _following_paragraph(q, f"Some earlier text. {q}") is None
+    assert _following_paragraph(q, q) is None
