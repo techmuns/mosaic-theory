@@ -279,7 +279,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
 
-  ⚠ **The label is struck on FY2026, but the underwrite's base leg is FY2027.** the base leg is struck at FY2027 and the decomposition at FY2026, so the split across revenue/margin/multiple — and the shape label drawn from it — describes a comparison the leg does not make. The TOTAL gap is unaffected. Re-read the attribution on FY2027, or state why FY2026 is the right basis.
+  _Declared, and immaterial to this label: the base leg is struck at FY2027 and the decomposition at FY2026, but the shape is the same at both years (checked above), so the label holds on either basis. The total gap carries no year and is unaffected._
 
 - **Bridge:** our EV $6,003M − net debt $-637M = equity $6,640M ÷ 51.657M sh = **$128.54/sh** — against TEV $4,389M.
 

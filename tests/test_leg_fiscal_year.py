@@ -236,3 +236,65 @@ def test_every_scenario_input_field_is_settable_from_the_template() -> None:
         "to `exempt` with the reason it belongs there.")
     stale = set(exempt) - set(_sc.ScenarioInput.model_fields)
     assert not stale, f"`exempt` names {sorted(stale)}, which are not fields — a stale licence"
+
+
+def test_a_declared_year_difference_that_does_not_move_the_shape_is_not_a_defect() -> None:
+    """REVIEW FINDING on EPAM, the first record to state `leg_fy`. The caveat printed
+    "⚠ … describes a comparison the leg does not make. Re-read the attribution on FY2027"
+    DIRECTLY BENEATH the shape line reading "FY2027 gives the same shape — the label does not move
+    with the year." Two adjacent sentences, one instructing work the other had just done, on the
+    only page in the fleet showing this caveat. A correctly-declared difference read as a defect.
+
+    Severity now follows the cross-year check the shape line already computed."""
+    md = (ROOT / "data" / "dossiers" / "EPAM" / "dossier.md").read_text()
+    lines = md.splitlines()
+    # TWO lines start "- **Shape:**" — the drawdown character line and the EV-gap decomposition
+    # line. Only the latter carries a fiscal year, which is what disambiguates them.
+    i = next((k for k, ln in enumerate(lines)
+              if ln.startswith("- **Shape:**") and " at FY" in ln), None)
+    assert i is not None, "no EV-gap shape line on EPAM's page — this pin checked nothing"
+    assert "same shape" in lines[i], f"expected an invariant shape: {lines[i]}"
+    caveat = "\n".join(lines[i + 1:i + 4])          # the paragraph that rides with the shape
+    assert "Declared, and immaterial to this label" in caveat, caveat
+    assert "\u26a0" not in caveat, (
+        "a declared year difference that does not move the shape still renders as a warning")
+    assert "Re-read the attribution" not in caveat, (
+        "instructs work the line above already reports as done")
+
+
+def test_the_caveat_severity_is_driven_by_the_cross_year_check_on_all_three_states() -> None:
+    """THE UNIT PIN, and the reason it exists is that my first two attempts could not fail.
+
+    One read the COMMITTED `dossier.md` — a static file, so no change to `render.py` can move it.
+    The other grepped `render.py`'s SOURCE TEXT for a sentence, which survives any logic edit that
+    leaves the string in place. Both passed while mutations of the branch they were written to
+    guard survived. A test that cannot fail on the change it covers is not a guard.
+
+    This one CALLS the renderer over the three cross-year states and reads the emitted lines."""
+    import json as _json
+
+    from vinci.dossier.render import _ev_gap_lines
+    from vinci.dossier.schemas import MechanicalLayer
+
+    doc = _json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+
+    def caveat(agree: object, leg_fy: str) -> str:
+        mech = _json.loads(_json.dumps(doc["mechanical"]))
+        g = mech["ev_gap"]
+        g["shape"] = {**(g.get("shape") or {}), "agree": agree}
+        g["leg_basis"] = {"leg_fy": leg_fy, "anchor_fy": str(g.get("anchor_fy")),
+                          "state": "disagrees", "note": "n/a"}
+        lines = _ev_gap_lines(MechanicalLayer.model_validate(mech))
+        i = next(k for k, ln in enumerate(lines) if ln.startswith("- **Shape:**"))
+        return "\n".join(lines[i + 1:i + 3])
+
+    adj = str(doc["mechanical"]["ev_gap"]["adjacent_fy"])
+
+    same = caveat(True, adj)
+    assert "Declared, and immaterial" in same and "\u26a0" not in same, same
+
+    moves = caveat(False, adj)
+    assert "\u26a0" in moves and "shape MOVES between them" in moves, moves
+
+    unchecked = caveat(None, adj)
+    assert "\u26a0" in unchecked, unchecked

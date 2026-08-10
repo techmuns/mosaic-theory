@@ -3444,8 +3444,32 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
     # precisely the records it exists for, every one of which predates the field.
     lb = g.get("leg_basis") or {}
     if lb.get("state") == "disagrees":
-        out += [f"  ⚠ **The label is struck on FY{lb.get('anchor_fy')}, but the underwrite's base "
-                f"leg is FY{lb.get('leg_fy')}.** {lb.get('note')}", ""]
+        # SEVERITY FOLLOWS THE CROSS-YEAR CHECK ALREADY PRINTED ONE LINE ABOVE. EPAM is the first
+        # record to state `leg_fy`, and the first draft warned "⚠ … describes a comparison the leg
+        # does not make. Re-read the attribution on FY2027" DIRECTLY BENEATH a line reading "FY2027
+        # gives the same shape — the label does not move with the year." Two adjacent sentences,
+        # one instructing work the other had just done, on the only page in the fleet that shows
+        # this caveat at all. A reader meeting it first would read a defect where there is a
+        # correctly-declared difference.
+        #
+        # `agree` is the SAME tristate the shape line uses, so the two can never diverge: shape
+        # invariant across the checked year → DECLARED AND IMMATERIAL to the label; shape MOVES →
+        # the warning is real and keeps its mark; unchecked → say unchecked, never confirmed.
+        same_year = str(lb.get("leg_fy")) == str(adj)
+        if agree is True and same_year:
+            out += [f"  _Declared, and immaterial to this label: the base leg is struck at "
+                    f"FY{lb.get('leg_fy')} and the decomposition at FY{lb.get('anchor_fy')}, but "
+                    f"the shape is the same at both years (checked above), so the label holds on "
+                    f"either basis. The total gap carries no year and is unaffected._", ""]
+        elif agree is False and same_year:
+            out += [f"  ⚠ **The label is struck on FY{lb.get('anchor_fy')}, the base leg is "
+                    f"FY{lb.get('leg_fy')}, and the shape MOVES between them.** This is the case "
+                    f"the caveat exists for: the split — and the label drawn from it — describes a "
+                    f"comparison the leg does not make. Re-read the attribution on "
+                    f"FY{lb.get('leg_fy')}.", ""]
+        else:
+            out += [f"  ⚠ **The label is struck on FY{lb.get('anchor_fy')}, but the underwrite's "
+                    f"base leg is FY{lb.get('leg_fy')}.** {lb.get('note')}", ""]
     elif lb.get("state") == "unstated":
         out += [f"  _The record does not state which fiscal year its base leg is struck at, so "
                 f"this label is reported on FY{lb.get('anchor_fy')}'s basis and is unverified "
