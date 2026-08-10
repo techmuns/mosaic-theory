@@ -12,6 +12,8 @@ The TEST is encoded rather than its answer, so a re-export that moves rows still
 """
 from __future__ import annotations
 
+from datetime import date as _date
+
 import pytest
 
 from vinci.config import get_config
@@ -80,9 +82,24 @@ def data_vintage(bundle: CiqBundle) -> str | None:
     the failure direction is a stale pin asserted one cycle too long, not a real break skipped.
 
     Derived from the workbook's own contents rather than the file mtime, which a copy or a
-    checkout resets."""
+    checkout resets.
+
+    THE SHAPE IS VALIDATED, and the DIRECTION of the fallback is the load-bearing half. The caller
+    compares ISO date STRINGS, and every non-date sorts ABOVE one — `'unknown' > '2026-07-27'` is
+    True — so a value that stopped being a date would silently skip every name and switch the
+    whole eleven-name baseline off with the suite still green. That is the guard-that-stops-
+    guarding failure this repo keeps re-meeting. Unrecognised therefore means NO gate, so the
+    pinned value is ASSERTED: a wrong assertion is loud and investigable, a silent skip is
+    neither."""
     raw = estimates_as_of(bundle).value
-    return str(raw).lstrip("≥") or None if raw else None
+    if not raw:
+        return None
+    candidate = str(raw).lstrip("≥").strip()
+    try:
+        _date.fromisoformat(candidate)
+    except ValueError:
+        return None
+    return candidate
 
 
 @pytest.mark.parametrize("ticker", sorted(REVENUE_BASELINE))
@@ -142,6 +159,44 @@ def test_the_range_check_holds_on_every_resolved_cell(ticker: str) -> None:
             pytest.fail(f"{ticker} {metric}: range check fired — {exc}")
         for c in cells:
             assert c.low <= c.median <= c.high
+
+
+def test_an_unparseable_vintage_asserts_rather_than_disabling_the_baseline() -> None:
+    """REVIEW FINDING on this PR's own gate. The vintage comparison is between ISO date STRINGS,
+    and every non-date sorts ABOVE a date: `'unknown' > '2026-07-27'` is True. So the moment
+    `estimates_as_of` returned anything that was not a date, EVERY name would skip and the whole
+    eleven-name value baseline would switch off — green suite, nothing measured, no signal.
+
+    A gate whose failure mode is "silently stop gating" is the one shape this file already exists
+    to prevent (`_bundle`'s skip was written the same way and could not fire). So the fallback
+    direction is the fix, not the parsing: unrecognised → None → NO gate → the pinned value is
+    ASSERTED. Loud and wrong beats quiet and untested.
+
+    Exercised through the real helper with a stubbed source, so it pins the behaviour rather than
+    re-deriving the arithmetic. The stub replaces the name in THIS module — `data_vintage` resolves
+    `estimates_as_of` from its own globals via the from-import, so patching `ciq_sheets` would have
+    left the real function bound and tested nothing (it did, on the first run)."""
+    import sys
+
+    module = sys.modules[__name__]
+    real = module.estimates_as_of  # type: ignore[attr-defined]
+
+    class _Stub:
+        def __init__(self, v: object) -> None:
+            self.value = v
+
+    try:
+        for bad in ("unknown", "n/a", "", None, "≥not-a-date", "2026-13-45"):
+            module.estimates_as_of = lambda _b, _v=bad: _Stub(_v)  # type: ignore[attr-defined]
+            assert data_vintage(object()) is None, (  # type: ignore[arg-type]
+                f"{bad!r} was accepted as a vintage — it sorts above every real date, so the "
+                f"value assertions on ALL eleven names would silently skip")
+        # …and a real one still passes through, so the guard is not simply refusing everything
+        for good, want in (("≥2026-08-06", "2026-08-06"), ("2026-07-27", "2026-07-27")):
+            module.estimates_as_of = lambda _b, _v=good: _Stub(_v)  # type: ignore[attr-defined]
+            assert data_vintage(object()) == want  # type: ignore[arg-type]
+    finally:
+        module.estimates_as_of = real  # type: ignore[attr-defined]
 
 
 def test_the_block_is_selected_by_value_not_by_position() -> None:
