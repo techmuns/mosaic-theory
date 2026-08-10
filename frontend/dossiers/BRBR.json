@@ -4353,10 +4353,10 @@
         "note": null
       },
       "buyback_avg_price": {
-        "value": 28.2305,
-        "source_ref": "DERIVED: EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-06-30, 272d) ÷ EDGAR companyfacts TreasuryStockSharesAcquired (2025-10-01→2026-06-30, 272d)",
-        "status": "present",
-        "note": "fiscal-period average across every repurchase in the period — NOT a purchase price and not evidence of timing; a period spanning a large price move averages opposite decisions into one number. DERIVED as cash ÷ shares — the filer states no TreasuryStockAcquiredAverageCostPerShare; both legs verified on 2025-10-01→2026-06-30, 272d"
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no TreasuryStockAcquiredAverageCostPerShare, and the only available legs are a CASH-FLOW payment line (EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-06-30, 272d)) and a share COUNT (EDGAR companyfacts TreasuryStockSharesAcquired (2025-10-01→2026-06-30, 272d)). They cover one window but not one BASIS — cash paid includes prior-period excise tax and excludes accrued-unpaid, so the quotient is not a purchase price and does not reproduce the filer's own figure — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price"
       },
       "acquisition_consideration": {
         "value": null,
@@ -5548,7 +5548,7 @@
         "estimate_implied_dna": 41.09500000000001,
         "ratio": 1.7266806722689094,
         "divergent": false,
-        "note": "implied D&A is 24 in the actuals and 41 in the estimates (1.73x) — consistent, so both EBITDA rows read as the same basis (EBIT + D&A)."
+        "note": "implied D&A is 24 in the actuals and 41 in the estimates (1.73x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement. This ratio sits in the 1.5-2.0x BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED WITHOUT BEING FLAGGED — BRBR reads GAAP actuals against ADJUSTED estimates at 1.73x — so treat this as UNRESOLVED rather than clear, and reconcile the estimate row against the company's own guidance basis before comparing across the boundary."
       }
     },
     "primary_source": {

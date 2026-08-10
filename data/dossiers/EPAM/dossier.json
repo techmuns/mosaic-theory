@@ -4486,14 +4486,14 @@
     },
     "capital_allocation": {
       "goodwill": {
-        "value": 1204.577,
-        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-03-31)",
+        "value": 1203.048,
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-06-30)",
         "status": "present",
         "note": null
       },
       "intangibles": {
-        "value": 385.728,
-        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-03-31)",
+        "value": 372.969,
+        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)",
         "status": "present",
         "note": null
       },
@@ -4501,31 +4501,31 @@
         "value": 0.686,
         "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2022-01-01→2022-12-31, 364d)",
         "status": "present",
-        "note": null
+        "note": "STALE — the last such charge covers 2022-01-01→2022-12-31, 364d, 3.5 years before the balance beside it (as at 2026-06-30), so it measures no current period. Nothing has been written down since"
       },
       "intangible_impairment": {
         "value": 0.0,
         "source_ref": "EDGAR companyfacts ImpairmentOfIntangibleAssetsFinitelived (2013-01-01→2013-12-31, 364d)",
         "status": "present",
-        "note": null
+        "note": "STALE — the last such charge covers 2013-01-01→2013-12-31, 364d, 12.5 years before the balance beside it (as at 2026-06-30), so it measures no current period. Nothing has been written down since"
       },
       "buyback_cash": {
-        "value": 323.98,
-        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-03-31, 89d)",
+        "value": 408.955,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d)",
         "status": "present",
-        "note": null
+        "note": " PERIOD MISMATCH — cash covers 2026-01-01→2026-06-30, 180d and the share count covers 2025-01-01→2025-12-31, 364d; they are not one window and must not be divided into each other"
       },
       "buyback_shares": {
         "value": 3538000.0,
         "source_ref": "EDGAR companyfacts TreasuryStockSharesAcquired (2025-01-01→2025-12-31, 364d)",
         "status": "present",
-        "note": null
+        "note": " PERIOD MISMATCH — cash covers 2026-01-01→2026-06-30, 180d and the share count covers 2025-01-01→2025-12-31, 364d; they are not one window and must not be divided into each other"
       },
       "buyback_avg_price": {
         "value": 283.69,
         "source_ref": "EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2023-01-01→2023-03-31, 89d)",
         "status": "present",
-        "note": "fiscal-period average across every repurchase in the period — NOT a purchase price and not evidence of timing; a period spanning a large price move averages opposite decisions into one number PERIOD MISMATCH — this average covers 2023-01-01→2023-03-31, 89d while the repurchase cash beside it covers 2026-01-01→2026-03-31, 89d; they are not two views of one window and must not be divided into each other"
+        "note": "fiscal-period average across every repurchase in the period — NOT a purchase price and not evidence of timing; a period spanning a large price move averages opposite decisions into one number PERIOD MISMATCH — this average covers 2023-01-01→2023-03-31, 89d while the repurchase cash beside it covers 2026-01-01→2026-06-30, 180d; they are not two views of one window and must not be divided into each other"
       },
       "acquisition_consideration": {
         "value": 912.158,
@@ -5672,7 +5672,7 @@
         "estimate_implied_dna": 63.884999999999934,
         "ratio": 0.7478752546182478,
         "divergent": false,
-        "note": "implied D&A is 85 in the actuals and 64 in the estimates (0.75x) — consistent, so both EBITDA rows read as the same basis (EBIT + D&A)."
+        "note": "implied D&A is 85 in the actuals and 64 in the estimates (0.75x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement."
       }
     },
     "primary_source": {

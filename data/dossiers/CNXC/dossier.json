@@ -2371,6 +2371,62 @@
         "note": "(P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event"
       }
     },
+    "capital_allocation": {
+      "goodwill": {
+        "value": 3653.49,
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-05-31)",
+        "status": "present",
+        "note": null
+      },
+      "intangibles": {
+        "value": 1749.909,
+        "source_ref": "EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-05-31)",
+        "status": "present",
+        "note": null
+      },
+      "goodwill_impairment": {
+        "value": 1523.266,
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2024-12-01→2025-11-30, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "intangible_impairment": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no intangible impairment under any of ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — EDGAR XBRL companyfacts"
+      },
+      "buyback_cash": {
+        "value": 43.194,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-12-01→2026-05-31, 181d)",
+        "status": "present",
+        "note": null
+      },
+      "buyback_shares": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no annual repurchased-share count under TreasuryStockSharesAcquired — EDGAR XBRL companyfacts"
+      },
+      "buyback_avg_price": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no TreasuryStockAcquiredAverageCostPerShare, and the share-count leg is absent — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price"
+      },
+      "acquisition_consideration": {
+        "value": 1914.079,
+        "source_ref": "EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2022-12-01→2023-11-30, 364d)",
+        "status": "present",
+        "note": null
+      },
+      "brand_split": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      }
+    },
     "peer_capital_intensity": {
       "rows": [
         {
@@ -3452,7 +3508,7 @@
         "estimate_implied_dna": 220.06499999999994,
         "ratio": 0.7152898424714413,
         "divergent": false,
-        "note": "implied D&A is 308 in the actuals and 220 in the estimates (0.72x) — consistent, so both EBITDA rows read as the same basis (EBIT + D&A)."
+        "note": "implied D&A is 308 in the actuals and 220 in the estimates (0.72x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement."
       }
     },
     "primary_source": {

@@ -4005,6 +4005,62 @@
       "covenant_term_rows": null,
       "maturity_event": null
     },
+    "capital_allocation": {
+      "goodwill": {
+        "value": 3.858,
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-06-28)",
+        "status": "present",
+        "note": null
+      },
+      "intangibles": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no intangible-asset balance under any of IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill — EDGAR XBRL companyfacts"
+      },
+      "goodwill_impairment": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no goodwill impairment under any of GoodwillImpairmentLoss, GoodwillAndIntangibleAssetImpairment — EDGAR XBRL companyfacts"
+      },
+      "intangible_impairment": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no intangible impairment under any of ImpairmentOfIntangibleAssetsExcludingGoodwill, ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill, ImpairmentOfIntangibleAssetsFinitelived — EDGAR XBRL companyfacts"
+      },
+      "buyback_cash": {
+        "value": 35.151,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-12-29→2026-06-28, 181d)",
+        "status": "present",
+        "note": " PERIOD MISMATCH — cash covers 2025-12-29→2026-06-28, 181d and the share count covers 2019-03-01→2019-04-30, 60d; they are not one window and must not be divided into each other"
+      },
+      "buyback_shares": {
+        "value": 2852770.0,
+        "source_ref": "EDGAR companyfacts TreasuryStockSharesAcquired (2019-03-01→2019-04-30, 60d)",
+        "status": "present",
+        "note": " PERIOD MISMATCH — cash covers 2025-12-29→2026-06-28, 181d and the share count covers 2019-03-01→2019-04-30, 60d; they are not one window and must not be divided into each other"
+      },
+      "buyback_avg_price": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no TreasuryStockAcquiredAverageCostPerShare, and the only available legs are a CASH-FLOW payment line (EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-12-29→2026-06-28, 181d)) and a share COUNT (EDGAR companyfacts TreasuryStockSharesAcquired (2019-03-01→2019-04-30, 60d)). They cover one window but not one BASIS — cash paid includes prior-period excise tax and excludes accrued-unpaid, so the quotient is not a purchase price and does not reproduce the filer's own figure — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price"
+      },
+      "acquisition_consideration": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no acquisition consideration under any of BusinessCombinationConsiderationTransferred1, BusinessCombinationConsiderationTransferred, PaymentsToAcquireBusinessesNetOfCashAcquired — EDGAR XBRL companyfacts"
+      },
+      "brand_split": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      }
+    },
     "peer_capital_intensity": {
       "rows": [
         {

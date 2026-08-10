@@ -4205,7 +4205,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no TreasuryStockAcquiredAverageCostPerShare and the share-count leg is absent, so an average would be imputed rather than computed — refused (EDGAR XBRL companyfacts)"
+        "note": "no TreasuryStockAcquiredAverageCostPerShare, and the share-count leg is absent — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price"
       },
       "acquisition_consideration": {
         "value": 2314.0,

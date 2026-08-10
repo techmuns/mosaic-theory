@@ -77,7 +77,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the last such charge covers 2021-01-01→2021-12-31, 364d, 4.5 years before the balance beside it (as at 2026-06-30), so it measures no current period. Nothing has been written down since
 - **Buyback — cash:** $3,529.0M [16]
 - **Buyback — shares repurchased:** _UNKNOWN_ — no annual repurchased-share count under TreasuryStockSharesAcquired — EDGAR XBRL companyfacts
-- **Buyback — average cost/share:** _UNKNOWN_ — no TreasuryStockAcquiredAverageCostPerShare and the share-count leg is absent, so an average would be imputed rather than computed — refused (EDGAR XBRL companyfacts)
+- **Buyback — average cost/share:** _UNKNOWN_ — no TreasuryStockAcquiredAverageCostPerShare, and the share-count leg is absent — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price
 - **Acquisition consideration:** $2,314.0M [17]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
 - **Peer acquired-asset intensity — goodwill + intangibles** — [18]  <!-- ds-table -->
