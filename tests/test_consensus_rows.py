@@ -16,21 +16,32 @@ import pytest
 
 from vinci.config import get_config
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
-from vinci.dossier.ciq_sheets import consensus_rows
+from vinci.dossier.ciq_sheets import consensus_rows, estimates_as_of
 from vinci.dossier.manual_store import LocalFolderStore
 
-#: The verified fleet baseline: {ticker: (first forward FY, median, raw estimate pair)}.
+#: The verified fleet baseline:
+#: {ticker: (first forward FY, median, raw estimate pair, Estimates data-vintage read at)}.
 #: RAW PAIRS, never re-labelled "broker count" — CIQ's two numbers are not one number, and the
 #: ragged ones (SMPL 9/11, VITL 9/10) are the reason the pair is persisted per CELL.
+#:
+#: THE FOURTH ELEMENT IS WHAT KEEPS THIS BASELINE HONEST. Median and pair are a snapshot of a
+#: MOVING quantity — brokers revise, so a re-pulled export changes both without anything being
+#: broken. Measured, not assumed: ten of these exports date from the 2026-07-30 pull this baseline
+#: was verified against and still match to 1e-3; BRBR's was re-pulled 2026-08-09 after its Q3
+#: print and moved 2331.0 → 2358.6. The pin was not wrong, it was older than the data.
+#:
+#: So each row records the vintage its numbers were read at, and the VALUE assertions run only
+#: while the export on this machine is not newer than that. Everything vintage-independent stays
+#: strict regardless — see the test.
 REVENUE_BASELINE = {
-    "AORT": ("2026", 486.4, "8/8"), "BRBR": ("2026", 2331.0, "13/13"),
-    "CNXC": ("2026", 9975.0, "3/3"), "EPAM": ("2026", 5723.0, "19/19"),
-    "FUBO": ("2026", 6241.0, "10/10"), "IT": ("2026", 6428.0, "14/14"),
-    "MVST": ("2026", 444.4, "2/2"), "SMPL": ("2026", 1352.0, "9/11"),
-    "VITL": ("2026", 774.6, "9/10"), "VRRM": ("2026", 990.1, "8/8"),
+    "AORT": ("2026", 486.4, "8/8", "2026-06-30"), "BRBR": ("2026", 2358.6, "13/13", "2026-08-06"),
+    "CNXC": ("2026", 9975.0, "3/3", "2026-07-06"), "EPAM": ("2026", 5723.0, "19/19", "2026-07-27"),
+    "FUBO": ("2026", 6241.0, "10/10", "2026-07-21"), "IT": ("2026", 6428.0, "14/14", "2026-07-27"),
+    "MVST": ("2026", 444.4, "2/2", "2026-05-15"), "SMPL": ("2026", 1352.0, "9/11", "2026-07-21"),
+    "VITL": ("2026", 774.6, "9/10", "2026-07-21"), "VRRM": ("2026", 990.1, "8/8", "2026-07-13"),
     # NCNO HAS NO FY2026 COLUMN — its forward span starts FY2027. Pinned because it is the live
     # counter-example to a fleet-fixed anchor year, which A2 would otherwise assume.
-    "NCNO": ("2027", 644.3, "13/13"),
+    "NCNO": ("2027", 644.3, "13/13", "2026-07-22"),
 }
 
 
@@ -59,15 +70,57 @@ def _bundle(ticker: str) -> CiqBundle:
         pytest.skip(f"{ticker}: CIQ bundle unreadable ({type(exc).__name__})")
 
 
+def data_vintage(bundle: CiqBundle) -> str | None:
+    """The Estimates export's data vintage as a bare ISO date, or None when undeterminable.
+
+    THE EXPORT DATE IS NOT STAMPED IN THE WORKBOOK — the repo already knows this, which is why
+    ``estimates_as_of`` returns a '≥'-prefixed FLOOR derived from the latest embedded broker
+    revision event rather than a true export date. A floor is exactly what this comparison needs:
+    it can only understate how fresh an export is, so it never wrongly suppresses a value check;
+    the failure direction is a stale pin asserted one cycle too long, not a real break skipped.
+
+    Derived from the workbook's own contents rather than the file mtime, which a copy or a
+    checkout resets."""
+    raw = estimates_as_of(bundle).value
+    return str(raw).lstrip("≥") or None if raw else None
+
+
 @pytest.mark.parametrize("ticker", sorted(REVENUE_BASELINE))
 def test_revenue_resolves_on_every_name(ticker: str) -> None:
     """REVENUE RESOLVES ON 11 OF 11. This went 11 -> 1 when a block-extent computation was added,
-    and nothing in the suite noticed. Pinned per name so a regression names its own casualty."""
-    fy, median, pair = REVENUE_BASELINE[ticker]
-    cells = consensus_rows(_bundle(ticker), metric="Revenue")
+    and nothing in the suite noticed. Pinned per name so a regression names its own casualty.
+
+    RESOLUTION IS THE REGRESSION THIS FILE EXISTS FOR, and it is asserted unconditionally: rows
+    resolve, the first forward FY is the pinned one, every cell is forward. None of that moves
+    when brokers revise, so none of it is gated.
+
+    THE EXACT MEDIAN AND PAIR ARE GATED ON THE EXPORT'S VINTAGE, because they are a snapshot of a
+    quantity that legitimately moves. Without the gate this test fails the moment an operator
+    re-pulls any one export — as BRBR's did after its Q3 print — and it fails ONLY on a machine
+    holding licensed data, so CI can never see it and the red lands on whoever is doing unrelated
+    work that day. A pin that reddens on someone else's data refresh is not measuring the code.
+
+    A SKIP, NOT A LOOSER TOLERANCE. Widening `rel` until a revision fits would have to admit ~1.2%
+    (BRBR's move), which is far more than enough room to hide a genuine value corruption — the
+    check would still be green while measuring nothing. Skipping says which of the two things is
+    true: the value is unverified against THIS export, and here is what it reads now, so re-pinning
+    is one deliberate edit with the number in hand."""
+    fy, median, pair, verified_at = REVENUE_BASELINE[ticker]
+    bundle = _bundle(ticker)
+    cells = consensus_rows(bundle, metric="Revenue")
     assert cells, f"{ticker}: Revenue resolved no forward fiscal years"
     first = cells[0]
     assert first.fy == fy, f"{ticker}: first forward year {first.fy}, expected {fy}"
+
+    vintage = data_vintage(bundle)
+    if vintage is not None and vintage > verified_at:
+        pytest.skip(
+            f"{ticker}: export re-pulled since this baseline was verified "
+            f"(data ≥{vintage} > pinned {verified_at}) — brokers revise, so median/pair are "
+            f"expected to move. Resolution and forward-year checks above still ran and passed. "
+            f"Reads now: median {first.median!r}, pair {first.estimates!r} — re-pin with "
+            f'("{fy}", {round(first.median, 1)}, "{first.estimates}", "{vintage}") once verified.')
+
     assert first.median == pytest.approx(median, rel=1e-3)
     assert first.estimates == pair, (
         f"{ticker}: estimate pair {first.estimates!r}, expected {pair!r}")

@@ -17,7 +17,7 @@ import shutil
 
 import pytest
 
-from tests.test_consensus_rows import REVENUE_BASELINE, _bundle
+from tests.test_consensus_rows import REVENUE_BASELINE, _bundle, data_vintage
 from vinci.dossier.refresh import CONSENSUS_METRICS, consensus_transform, refresh_dossier
 from vinci.dossier.schemas import Dossier
 
@@ -28,7 +28,7 @@ ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
 def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  # type: ignore[no-untyped-def]
     """READ BACK, never compared to the extractor. The eleven-name baseline already verifies the
     extractor; what is unverified is whether the value lands."""
-    _bundle(ticker)                                   # skips if the CIQ bundle is unavailable
+    bundle = _bundle(ticker)                          # skips if the CIQ bundle is unavailable
     src = ROOT / "data" / "dossiers" / ticker / "dossier.json"
     if not src.is_file():
         pytest.skip(f"{ticker}: no committed dossier")
@@ -48,12 +48,26 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
     assert levels is not None, f"{ticker}: consensus_levels never reached the artifact"
     assert set(levels) == set(CONSENSUS_METRICS)
 
-    fy, median, pair = REVENUE_BASELINE[ticker]
+    fy, median, pair, verified_at = REVENUE_BASELINE[ticker]
     first = levels["Revenue"][0]
     assert first["fy"] == fy
+    # LANDING is what this test owns, and it stays strict: the row is present, carries the right
+    # forward year, and both value fields survived the write as fields.
+    assert first["estimates"], "the RAW pair did not survive the write"
+    assert isinstance(first["median"], (int, float)), "median did not survive the write as a number"
+    assert all(int(c["fy"]) >= int(fy) for c in levels["Revenue"]), "forward years only"
+
+    # The EXACT numbers are gated on the export vintage for the same reason as the baseline this
+    # imports from — they move when brokers revise. Shared helper, never a second copy of the
+    # rule: two tests disagreeing about when a baseline is current is how one of them starts lying.
+    vintage = data_vintage(bundle)
+    if vintage is not None and vintage > verified_at:
+        pytest.skip(
+            f"{ticker}: export re-pulled since the baseline was verified (data ≥{vintage} > "
+            f"pinned {verified_at}); landing assertions above still ran. Reads now: "
+            f"median {first['median']!r}, pair {first['estimates']!r}")
     assert first["median"] == pytest.approx(median, rel=1e-3)
     assert first["estimates"] == pair, "the RAW pair must survive the write, not a re-derived count"
-    assert all(int(c["fy"]) >= int(fy) for c in levels["Revenue"]), "forward years only"
 
     # It must also survive VALIDATION — a dict that loads is not the same as a typed field.
     model = Dossier.model_validate_json(work.read_text())
