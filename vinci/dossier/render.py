@@ -2521,6 +2521,66 @@ def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
         "- _Read the ASSETS column for the peer judgement — it measures how acquisitive the "
         "balance sheet is. The market-cap column sizes the exposure but moves with the price, so "
         "a de-rated name shows a high ratio on unchanged accounting._")
+    return out + _peer_impairment_lines(pc)
+
+
+def _peer_impairment_lines(pc: Any) -> list[str]:
+    """Does the sector WRITE DOWN what it carries — the half the balance columns cannot answer.
+
+    THE BASE RATE IS THE DECISION VALUE, so it leads. SMPL carrying 73% of assets against a 57.6%
+    median settles that the LOAD is ordinary; it says nothing about whether the sector marks that
+    load down, and the same charge means opposite things against a sector that impairs routinely
+    and one that never does (STATE.md §M3).
+
+    THE DENOMINATOR IS THE ASSESSED SET, NOT THE PEER SET, and the difference is the finding.
+    A peer with no annual observation in the window (CPB — four charges FY2013-FY2018, none since)
+    was not measured, and counting it as a clean year would manufacture the reassuring answer out
+    of an absence.
+
+    THE LIVE COLUMN IS NOT THE WINDOW COLUMN. A year-to-date charge is excluded from the window
+    total by the annual rule that makes that total summable — SMPL's window figure is the $60.9M
+    FY2025 charge while its live year-to-date is $369.0M, a 6x gap between two numbers a reader
+    would otherwise take for the same quantity. The column is labelled, not merged.
+    """
+    have = [r for r in pc.rows if r.impairment is not None]
+    if not have:
+        return []
+
+    def pct(v: float | None) -> str:
+        return "—" if v is None else f"{v * 100:.0f}%"
+
+    def usd(v: float | None) -> str:
+        return "—" if v is None else f"{v:,.0f}"
+
+    rows = []
+    for r in have:
+        i = r.impairment
+        last = (f"{i.last_charge_end} (${i.last_charge_amount:,.0f}M)"
+                if i.last_charge_end is not None else "never")
+        rows.append([r.ticker, i.state_label or i.state,
+                     f"{i.charged_years} of {i.observations}" if i.observations else "—",
+                     usd(i.total), pct(i.pct_acquired), last, usd(i.pending)])
+    out = _table(
+        f"Peer write-down history — did they MARK DOWN what they carry? "
+        f"(trailing {pc.imp_window_years} fiscal years)",
+        "EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · "
+        "each row's window ends at that filer's own balance date",
+        ["state", "yrs charged", "window $M", "% acquired", "last charge (any date)",
+         "live YTD $M"],
+        rows, num_cols=frozenset({3, 4, 6}),
+        name_rows=frozenset(i for i, x in enumerate(have) if x.is_subject))
+    if pc.imp_n_large_assessed:
+        out.append(
+            f"- **Base rate — {pc.imp_n_large_charged} of {pc.imp_n_large_assessed} large peers "
+            f"ASSESSED over the window took a charge**, median {pct(pc.imp_median_large_pct)} of "
+            f"acquired assets among those that did. The denominator counts only peers with an "
+            f"annual observation in the window — a name with none was not measured, and is not a "
+            f"clean year.")
+    out.append(
+        "- _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. "
+        "`no annual obs.` and `does not tag` are not measurements and must not be read as clean "
+        "years. The **live YTD** column is excluded from the window total: a year-to-date charge "
+        "is not an annual one, and the two are different quantities._")
     return out
 
 

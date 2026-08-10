@@ -1092,6 +1092,65 @@ class CapitalAllocation(BaseModel):
     model_config = {"frozen": True}
 
 
+class PeerImpairment(BaseModel):
+    """Did this filer WRITE DOWN what it carries, over a stated trailing window?
+
+    THE BALANCE COMPARISON CANNOT ANSWER THIS, and that is why the block exists (STATE.md §M3).
+    SMPL carrying 73% of assets as acquired against a 57.6% peer median says the LOAD is ordinary;
+    it says nothing about whether the sector marks that load down. The same charge means opposite
+    things against a sector that impairs routinely and one that never does.
+
+    FOUR STATES, FOUR SENTENCES — and the live corpus produced all four before a line was written:
+
+    * ``charged``        — an annual charge inside the window (KHC 5 years, CAG 4, MZTI 2).
+    * ``explicit-zero``  — the filer TAGS impairment and reports **0**. JJSF states
+      ``GoodwillImpairmentLoss`` for 16 consecutive years, every one zero. That is the strongest
+      available evidence of "did not write down" — a MEASUREMENT, not a gap — and it must never
+      render like an absence.
+    * ``none-in-window`` — the filer tags impairment historically but has no annual point inside
+      the window. CPB impaired four times between FY2013 and FY2018 and nothing since; over a
+      trailing five years it would look identical to a name that never impaired, and it is not
+      one. ``last_charge_end`` carries the fact the window drops.
+    * ``untagged``       — no annual point under either family, ever (FRPT, BRBR, UTZ).
+
+    ``explicit-zero`` vs ``none-in-window`` vs ``untagged`` is #362's rule at VALUE scope: three
+    different facts, and the informative one must not stand in for the empty one.
+
+    ANNUAL DURATIONS ONLY, WHICH IS WHAT MAKES THE SUM SAFE. companyfacts carries overlapping
+    year-to-date and quarterly points for the same period, plus restatements of it; summing them
+    double-counts. Restricting to ~12-month spans (`ConceptPoint.is_annual`), de-duplicating by
+    `period_end` (latest `filed` wins) and then dropping any span overlapping one already kept
+    makes the total a sum over DISJOINT years.
+
+    AND THE RULE THAT MAKES THE SUM SAFE EXCLUDES THE SUBJECT'S OWN LIVE CHARGE. SMPL's $369.0M is
+    a **272-day year-to-date** point, so it is not annual and is not in the window total — whose
+    comparable figure is the $60.9M FY2025 annual charge. Rendering those two adjacent without
+    saying so is precisely the basis mistranslation §M3 was written about, so the year-to-date
+    charge is carried SEPARATELY in ``pending`` and is never summed into ``total``.
+    """
+
+    state: str                              # charged | explicit-zero | none-in-window | untagged
+    #: The reader-facing wording, IN THE DATA so the two renderers cannot drift apart —
+    #: `is_subject`'s lesson (#372) and the duplicate-definition detector's rule (27a).
+    state_label: str = ""
+    window_start: date
+    window_end: date
+    observations: int = 0                   # annual points found INSIDE the window
+    charged_years: int = 0                  # of those, how many carry a charge > 0
+    total: float | None = None              # $M, summed over disjoint annual years in the window
+    pct_acquired: float | None = None       # total / acquired balance
+    #: From the FULL history, not the window — the fact `none-in-window` would otherwise hide.
+    last_charge_end: date | None = None
+    last_charge_amount: float | None = None  # $M
+    #: The live year-to-date charge `is_annual` excludes. NEVER summed into `total`.
+    pending: float | None = None            # $M
+    pending_span: str | None = None
+    tags: str | None = None                 # which tag(s) actually answered
+    note: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class PeerCapitalRow(BaseModel):
     """One peer's acquired-asset intensity, or a STATED reason it has none."""
 
@@ -1113,6 +1172,10 @@ class PeerCapitalRow(BaseModel):
     #: into one sentence. #362 exactly: a failed fetch reading as "carries none" is the reassuring
     #: wrong answer.
     note: str | None = None
+    #: Did they WRITE DOWN what they carry — the half the balance columns above cannot answer.
+    #: `None` only when the row has no figures at all (unresolved / fetch-failed); a resolved peer
+    #: always gets one of the four states, because "never impaired" is an answer and not a gap.
+    impairment: PeerImpairment | None = None
 
     model_config = {"frozen": True}
 
@@ -1140,6 +1203,17 @@ class PeerCapitalIntensity(BaseModel):
     median_large_market_cap: float | None = None
     n_all: int = 0
     n_large: int = 0
+
+    #: DOES THE SECTOR WRITE DOWN WHAT IT CARRIES — the base rate §M3 records as missing.
+    #: The denominator is `imp_n_large_assessed`, NOT `n_large`: a peer whose window holds no
+    #: annual observation (CPB) was not measured, and counting it as a clean year would manufacture
+    #: the reassuring answer out of an absence.
+    imp_window_years: int = 0
+    imp_n_large_assessed: int = 0        # large peers in state `charged` or `explicit-zero`
+    imp_n_large_charged: int = 0         # of those, how many took a charge
+    imp_median_large_pct: float | None = None   # median charge / acquired, over CHARGED large peers
+    imp_subject_pct: float | None = None
+    imp_subject_state: str | None = None
 
     model_config = {"frozen": True}
 

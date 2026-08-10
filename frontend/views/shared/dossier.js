@@ -1706,7 +1706,37 @@ function peerCapitalIntensity(m) {
     <div class="fact-val"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table>
     <div class="fact-caveat">Median — all peers (n=${pc.n_all}): ${escapeHtml(pct(pc.median_all_assets))} of assets · ${escapeHtml(pct(pc.median_all_market_cap))} of market cap<br>
     Median — peers ≥ $${escapeHtml(usd(pc.size_floor))}M market cap (n=${pc.n_large}): ${escapeHtml(pct(pc.median_large_assets))} of assets · ${escapeHtml(pct(pc.median_large_market_cap))} of market cap<br>
-    <b>Read the ASSETS column for the peer judgement</b> — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting.</div></div></div>`;
+    <b>Read the ASSETS column for the peer judgement</b> — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting.</div></div></div>${peerImpairment(pc)}`;
+}
+
+// Does the sector WRITE DOWN what it carries — the half the balance columns cannot answer.
+// READS THE SAME FIELDS THE MARKDOWN TWIN READS. #372's defect was a field (`is_subject`) that
+// existed only in this file: the web read something the builder never wrote, so the subject row
+// was never marked. Every field below is on `PeerImpairment` in schemas.py.
+function peerImpairment(pc) {
+  const have = (pc.rows || []).filter((r) => r.impairment);
+  if (!have.length) return "";
+  const pct = (v) => (v == null ? "—" : `${(v * 100).toFixed(0)}%`);
+  const usd = (v) => (v == null ? "—" : Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 }));
+  const head = `<tr><th></th><th>state</th><th>yrs charged</th><th class="num">window $M</th>`
+    + `<th class="num">% acquired</th><th>last charge (any date)</th><th class="num">live YTD $M</th></tr>`;
+  const body = have.map((r) => {
+    const i = r.impairment;
+    const nm = r.is_subject ? `<b>${escapeHtml(r.ticker)}</b>` : escapeHtml(r.ticker);
+    const last = i.last_charge_end ? `${i.last_charge_end} ($${usd(i.last_charge_amount)}M)` : "never";
+    return `<tr><td>${nm}</td><td>${escapeHtml(i.state_label || i.state)}</td>`
+      + `<td>${escapeHtml(i.observations ? `${i.charged_years} of ${i.observations}` : "—")}</td>`
+      + `<td class="num mono">${escapeHtml(usd(i.total))}</td>`
+      + `<td class="num mono">${escapeHtml(pct(i.pct_acquired))}</td>`
+      + `<td>${escapeHtml(last)}</td>`
+      + `<td class="num mono">${escapeHtml(usd(i.pending))}</td></tr>`;
+  }).join("");
+  const base = pc.imp_n_large_assessed
+    ? `<b>Base rate — ${pc.imp_n_large_charged} of ${pc.imp_n_large_assessed} large peers ASSESSED over the window took a charge</b>, median ${escapeHtml(pct(pc.imp_median_large_pct))} of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.<br>`
+    : "";
+  return `<div class="fact"><div class="fact-label">Peer write-down history — did they MARK DOWN what they carry? (trailing ${pc.imp_window_years} fiscal years)</div>
+    <div class="fact-val"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table>
+    <div class="fact-caveat">${base}<b>reports nil</b> is a MEASUREMENT — the filer tags impairment and states zero. <b>no annual obs.</b> and <b>does not tag</b> are not measurements and must not be read as clean years. The <b>live YTD</b> column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities.</div></div></div>`;
 }
 
 function capitalAllocation(m) {
