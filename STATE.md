@@ -4536,6 +4536,53 @@ decision today.
 appears.** Recorded with the question intact so the next reader inherits the argument and not just
 the price tag.
 
+**M3 — OPEN GAP, HALF-ANSWERED: THE PEER BLOCK MEASURES THE LOAD, NOT THE WRITE-DOWN.** Recorded
+2026-08-10 at operator instruction, because the finding has been over-read — including by me.
+
+**WHAT #372/#375 SETTLED.** `peer_capital_intensity` (committed on SMPL) measures acquired assets
+— goodwill + intangibles — against two denominators, for the subject and every comps-grid peer:
+
+  * SMPL **73.2% of total assets**, against a **57.6%** median over the 7 peers above the size
+    floor (`median_large_assets`; the floor is on MARKET CAP, not assets — JBSS at ~$939M and HAIN
+    at ~$49M fall out, FRPT has no acquired figure at all);
+  * SMPL **165.9% of market cap**, against **144.7%**.
+
+Elevated, and inside the band the large packaged-food names already occupy — KHC 71.3%, UTZ 65.3%,
+CPB 61.5%. **THE LOAD IS ORDINARY FOR THE SECTOR.** That is the whole of what the block establishes.
+
+**WHAT IT DOES NOT SETTLE, AND THE QUESTION WAS THE OTHER HALF.** `PeerCapitalRow` carries
+`market_cap`, `acquired`, `total_assets`, `pct_assets`, `pct_market_cap`, `note` — **and no
+impairment field**. The subject side does: SMPL's `capital_allocation` holds `goodwill_impairment`
+**$38.0M** and `intangible_impairment` **$331.0M**. So SMPL's write-down has **no peer
+denominator**, and the question the memo actually asked — *what does this say about management* —
+is untouched.
+
+**WHY THAT IS THE HALF THAT BEARS ON MANAGEMENT QUALITY.** An impairment is the one accounting
+event where management marks its OWN past capital allocation. Against a peer set that carries ~60%
+acquired assets and rarely writes down, a $369.0M charge is management marking early; against a
+sector that impairs routinely, the same charge is late capitulation. **The number means opposite
+things under the two, and the artifact cannot distinguish them.** Carrying more than peers and
+writing down more than peers are different claims — do not let the first stand in for the second.
+
+**THIS IS NOT AN M1-STYLE STRUCTURAL BLOCK — THE RAW MATERIAL IS ALREADY IN HAND.**
+`GOODWILL_IMPAIRMENT` and `INTANGIBLE_IMPAIRMENT` exist in `capital_allocation.py`, and
+`build_peer_capital_intensity` already holds each peer's FULL `companyfacts` (one cached call per
+peer) at the point where it computes `acquired`. Two more `_pick` calls on data already fetched.
+The gap is SCOPE, not capability: the brief asked for intensity and impairment was not in it.
+
+**THE TWO REAL COSTS, so the next build does not discover them.** (1) **BASIS.** Impairment is a
+FLOW; intensity is an INSTANT. `_pick(kind="flow")` takes the latest period_end with the longest
+span at that end, which lands on DIFFERENT windows across peers with different fiscal calendars —
+the basis-mistranslation class this repo keeps re-meeting (#363 read a span off a fiscal-year label
+and was wrong). A peer impairment column needs a declared common window, or it is not a comparison.
+(2) **ABSENCE IS THE COMMON CASE.** Most peers in most years take no charge, so the column is
+mostly-empty by nature, and `filer-reports-none` vs `we-could-not-fetch` must not render alike —
+#362 exactly. `build_peer_capital_intensity` **already implements the three-absence discipline**
+(`unresolved` / `fetch-failed` / no-tag, each its own sentence); extend that, do not re-invent it.
+
+**OPEN — not deferred, not dropped. No unlock trigger is needed; it is queued work whose cost is
+known.** Until it ships, any claim about SMPL's write-down relative to its sector is UNSUPPORTED.
+
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**
 `gate_g2_idiosyncratic` compares `rel` to `idio_rel_max` with no window term. Before #280 a stale
 benchmark produced PERMISSIVE ADMISSION — countable, because admitted names leave records (4 of
