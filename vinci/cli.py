@@ -854,6 +854,7 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     from vinci.dossier.anchor import replace_valuation_fields
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.mechanical import TRAILING_ONLY_NOTE
     from vinci.dossier.schemas import SourceStatus
 
     cfg = get_config()
@@ -895,10 +896,10 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         ev = cs.ev_ebitda_current(bundle)
         if ev.status is SourceStatus.PRESENT and (
                 (val_old.get("ev_ebitda_adjusted_fwd") or {}).get("status") != "present"):
-            # mirror mechanical._valuation's trailing-only blind-flag (no forward counterpart)
-            ev = ev.model_copy(update={
-                "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from "
-                        "cheap-terminal"})
+            # mechanical._valuation's trailing-only blind-flag (no forward counterpart), IMPORTED
+            # rather than mirrored: this line used to carry a byte-copy of the string, which is how
+            # one book's vocabulary sat in two places at once and got fixed in neither.
+            ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
         updates["ev_ebitda"] = ev.model_dump(mode="json")
         # percentile is EDGAR-screen-sourced when the screen knew it; only the CIQ path is ours
         pct_old = val_old.get("ev_ebitda_percentile_5y") or {}

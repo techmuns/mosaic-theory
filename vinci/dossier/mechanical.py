@@ -84,6 +84,25 @@ from vinci.universe import benchmark_identity
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _DECLINE_WINDOW_DAYS = 180  # the G2 decline window — keep the cohort comparison on the same window
 
+#: The trailing-multiple blind-flag, carried ON the value so the synthesis cannot read a low
+#: trailing multiple as evidence of anything by itself.
+#:
+#: BOOK-NEUTRAL, and it did not start that way. It read "cannot distinguish cheap-overshoot from
+#: cheap-terminal" — one strategy's vocabulary on a caveat every book receives. It reached the
+#: LLM and came back out in UBER's committed QUALITY read ("a trailing multiple that cannot
+#: disambiguate overshoot from terminal re-rate"), so a name judged on whether its runway is
+#: underpriced had its machine read phrased in the language of a de-rating hunt. The dichotomy the
+#: caveat draws is real and general — temporary versus permanent — and only the words were
+#: overshoot's.
+#:
+#: ONE DEFINITION. `cli.py`'s CIQ-ingest path carried a byte-copy of this string with a comment
+#: saying it mirrored this one, which is the dual-write that let the wording sit unexamined in two
+#: places at once. Both now read from here.
+TRAILING_ONLY_NOTE = (
+    "trailing only — no forward basis; cannot distinguish a temporarily depressed level from a "
+    "permanently impaired one"
+)
+
 
 def _sourced(field: DataField[float] | DataField[int], *, source_ref: str) -> Sourced[float]:
     """Lift a screen data-record :class:`DataField` into a source-bound dossier fact."""
@@ -598,10 +617,15 @@ def _idio_read(name_180d: Sourced[float], cohort: Sourced[list[CohortMember]]) -
         return Sourced.unknown(note="cohort names have no price history over the window")
     med = statistics.median(rets)
     gap = name_180d.value - med
+    # MOVED, not "fell" — the verb is book-neutral because this layer is. The quality book's own
+    # rendered heading already asks whether the price "moved alone", so "fell" contradicted the
+    # heading above it on any name not being judged for a decline; the signed percentages beside
+    # it carry the direction anyway. Latent when changed: no committed dossier reached this branch.
     if gap <= -0.15:
-        read = f"fell ALONE (idiosyncratic): name {name_180d.value:.0%} vs cohort median {med:.0%}"
+        read = f"moved ALONE (idiosyncratic): name {name_180d.value:.0%} vs cohort median {med:.0%}"
     elif med <= -0.20:
-        read = f"fell WITH cohort (shared/thematic): name {name_180d.value:.0%} vs median {med:.0%}"
+        read = (f"moved WITH cohort (shared/thematic): name {name_180d.value:.0%} "
+                f"vs median {med:.0%}")
     else:
         read = f"mixed: name {name_180d.value:.0%} vs cohort median {med:.0%} (cohort steady)"
     return Sourced.present(read, source_ref=f"derived from {len(rets)} cohort names; face-validity")
@@ -1110,15 +1134,12 @@ def _valuation(
     pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)")
     if pe_note and pe.status is SourceStatus.PRESENT:
         pe = pe.model_copy(update={"note": pe_note})  # carry the distortion caveat ON the value
-    # trailing-only blind-flag: a trailing multiple with NO forward counterpart can't tell
-    # cheap-overshoot from cheap-terminal — force the synthesis to declare it's flying blind rather
-    # than imply trailing-cheap = overshoot.
+    # trailing-only blind-flag: a trailing multiple with NO forward counterpart cannot tell a
+    # temporarily depressed level from a permanently impaired one — force the synthesis to declare
+    # it is flying blind rather than imply trailing-cheap = a reversible de-rating.
     ev = ciq_sheets.ev_ebitda_current(bundle)
     if ev.status is SourceStatus.PRESENT and adj_ev.status is not SourceStatus.PRESENT:
-        ev = ev.model_copy(update={
-            "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from "
-            "cheap-terminal"
-        })
+        ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
     return Valuation(
         cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,
