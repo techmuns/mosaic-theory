@@ -30,6 +30,27 @@
   The sweep does NOT commit `data/`. *(Source: `.gitignore`; `git check-ignore`.)*
 - **Merge is operator-only, per-PR.** Every loop ends at an open PR; a human reviews and merges. A
   prior "yes" is never standing permission. *(Source: CLAUDE.md §Non-negotiable behavior.)*
+- **ONE SESSION OWNS A TICKER, AND THE REMOTE BRANCH IS THE CLAIM.** Two sessions on this repo is
+  normal; two sessions re-assembling one NAME is not recoverable, because assembly is
+  LLM-dependent — you get two different syntheses for one ticker and only one can be committed.
+  On 2026-08-10 both sessions were one step from touching BRBR and it held only because they
+  happened not to collide. Three rules, and no new artifact — the branch you already push IS the
+  lock:
+  1. **CLAIM** — before assembling or re-assembling `<TICKER>`, push a branch whose name contains
+     it: `git push -u origin artifacts/<ticker>-<what>`. **Push FIRST, work second** — a branch
+     created after the work is a record, not a claim.
+  2. **CHECK** — before starting, `git ls-remote --heads origin | grep -i <ticker>` **and**
+     `gh pr list --state open`. A hit means another session owns it: pick a different name, or ask
+     the operator. This is the step that was missing on 2026-08-10 — the claim was already on the
+     remote (`artifacts/brbr-reassemble`) and discoverable; nobody looked.
+  3. **COLLIDE** — if both sessions already hold uncommitted work on one name, **the pushed branch
+     wins**; the other discards and re-runs from the winner's artifact. **NEVER merge two
+     assemblies of one ticker** — the halves come from different LLM passes, so the result is a
+     dossier whose synthesis and figures have no single provenance, which is worse than either
+     input alone.
+  Artifact-only branches still open a PR, so the same claim serves both. *(Cause: the 2026-08-10
+  near-collision on BRBR. Recorded because the existing rules cover worktrees and stashes but
+  never said who owns a NAME.)*
 
 ---
 
