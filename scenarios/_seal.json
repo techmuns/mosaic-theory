@@ -3,6 +3,10 @@
     "chars": 687,
     "sha256": "fa08fde90c63ebe47fa0d6a026be40ea04a0f11c65009a1d82ceaaf5f3965b8d"
   },
+  "EPAM-2026-07-21": {
+    "chars": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
   "IT": {
     "chars": 632,
     "sha256": "dd5ca6d29748bee5eed082766f1ad83ae7dbd6b6dfc1dfb3137394a266f62089"

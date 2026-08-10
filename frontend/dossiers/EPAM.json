@@ -672,23 +672,23 @@
         }
       },
       "leg_basis": {
-        "leg_fy": null,
+        "leg_fy": "2027",
         "anchor_fy": "2026",
-        "state": "unstated",
-        "note": "the record does not state which fiscal year its base leg is struck at, so the split across revenue/margin/multiple is reported on FY2026's basis and cannot be verified against the leg. The TOTAL gap is unaffected — it carries no year."
+        "state": "disagrees",
+        "note": "the base leg is struck at FY2027 and the decomposition at FY2026, so the split across revenue/margin/multiple — and the shape label drawn from it — describes a comparison the leg does not make. The TOTAL gap is unaffected. Re-read the attribution on FY2027, or state why FY2026 is the right basis."
       },
       "status": "computed",
       "ratios": {
-        "revenue_ratio": 1.0129043662718755,
-        "margin_ratio": 0.7554625349882077,
-        "multiple_ratio": 2.7038665724896895,
-        "ev_gap": 2.0690292556221377
+        "revenue_ratio": 1.0342054092275057,
+        "margin_ratio": 0.8151969819697874,
+        "multiple_ratio": 1.6223199434938136,
+        "ev_gap": 1.367747328487776
       },
       "at_adjacent": {
-        "revenue_ratio": 0.9793980458940796,
-        "margin_ratio": 0.7476314344912327,
-        "multiple_ratio": 2.8256596185832437,
-        "ev_gap": 2.0690292556221377
+        "revenue_ratio": 0.999994462042463,
+        "margin_ratio": 0.8067466761042082,
+        "multiple_ratio": 1.6953957711499463,
+        "ev_gap": 1.367747328487776
       },
       "shape": {
         "anchor": "multiple-dominant",
@@ -699,9 +699,9 @@
       "bridge": {
         "tev": 4388.900000000001,
         "net_debt": -637.2,
-        "shares": 52.634451,
-        "our_ev": 9080.7625,
-        "our_ebitda": 726.461,
+        "shares": 51.656981,
+        "our_ev": 6002.90625,
+        "our_ebitda": 800.3875,
         "market_multiple": 4.62300918513525
       },
       "consensus": {

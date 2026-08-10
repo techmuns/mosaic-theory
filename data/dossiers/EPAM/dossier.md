@@ -5,9 +5,9 @@ _August 10, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $186.76 (+108.9% vs entry-vintage spot) · **Spot** $89.40 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $97.36 · **Risk** $15.34 · **Reward : risk** 6.34 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** UNDEFINED (both tests)
+**Target (base)** $131.00 (+34.5% vs entry-vintage spot) · **Spot** $97.43 (entry-vintage — frozen at underwrite 2026-08-07) · **Reward** $33.57 · **Risk** $22.37 · **Reward : risk** 1.50 : 1 (bar 2 : 1) · **Base IRR** 21.8% (floor 15%, 1.5y) · **Gate** FAIL (both tests)
 
-_Spot source: Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)_
+_Spot source: EOD close 2026-08-07_
 
 **Underwrite disposition:** PENDING_ANALYST — _the BUY/AVOID verdict of record is the ledger's_
 
@@ -37,21 +37,21 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 | scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 5,000 | 8.0% | 6x | $74.06 | -17.2% |
-| base | 5,730 | 10.5% | 12.5x | $186.76 | +108.9% |
-| bull | 6,075 | 13.0% | 18x | $326.99 | +265.8% |
+| bear | 5,500 | 9.0% | 5x | $75.06 | -23.0% |
+| base | 5,850 | 11.5% | 7.5x | $131.00 | +34.5% |
+| bull | 6,100 | 13.0% | 9.5x | $184.10 | +89.0% |
 
-- **bear** — Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) — a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]
-- **base** — Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]
-- **bull** — The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]
+- **bear** — Multiple 5.0x is the bottom of the company's own nine-year trading range, translated onto the earnings denominator this valuation actually uses: the 4.2627x low is struck on a vendor earnings figure running about 1.188x the accounting figure below, so the comparable floor is roughly 5.07x. Revenue 5,500 is 3.2% below the low end of the fiscal-2027 analyst range (5,683). Margin 9.0% sits below fiscal 2025's 9.53%, its worst year, as pricing grinds.
+- **base** — Revenue 5,850.5 is the fiscal-2027 analyst median, taken without adjustment. Multiple 7.5x sits near the 7.1x peer median and below Accenture at 7.7x, which also carries net cash. THE MARGIN CELL IS CONTESTED AND IS RECORDED AS CONTESTED, NOT RESOLVED: 11.5% matches fiscal 2024 actual and a 11.9% ten-year median, but company guidance for fiscal 2026 is 10.5-11.0%. At 10.5% the base falls to roughly $121 and the two-to-one boundary reaches the practical limit. The evidence does not decide between them; 11.5% is the recovery this thesis requires rather than a level the data establishes, and a reader should treat it as the assumption most likely to be wrong.
+- **bull** — Revenue 6,100 is just above the top of the fiscal-2027 analyst range (6,054). Multiple 9.5x implies about 1.43x enterprise value to revenue, close to Accenture's 1.5x. Margin 13.0% recovers toward but stays below the pre-2022 level.
 
 **Scenario inputs** — every value in the grid recomputes from these.
 
 | input | value | basis | source |
 | --- | ---: | --- | --- |
-| d and a | 124.811 $M | consolidated latest FY (FY2025) | EDGAR companyfacts DepreciationAndAmortization, 10-K accession 0001352010-26-000015 filed 2026-02-26 (CY2025) [amended 2026-07-22 pre-verdict: prior 45.317 was the abandoned combined tag's FY2019 value carried forward by alias ordering (fixed PR #182); filer's split tag FY2025 = 124.811] |
-| net debt | -749.016 $M | NET CASH (negative net debt), lease-inclusive, latest 10-Q | EDGAR: total debt 165 + finance leases 0 + operating leases 123 − cash 1,037 ($M) = −749.016; 10-Q acc 0001352010-26-000029. Equity = EV − (−749.016), i.e. the cash is ADDED — reproduced against the committed anchor's $306.05/sh before this run |
-| diluted shares | 52.634451 M shares | Diluted shares outstanding 52,634,451 = basic outstanding 52,244,451 + dilutive increment 390,000 (diluted 54,183,000 − basic 53,793,000 weighted average, 2026-01-01→2026-03-31). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
+| d and a | 127.58 $M | FY26 consensus depreciation and amortisation of $127.580M — a forward valuation wants a forward figure. Verified as the FULL reported charge rather than a partial line: first-half actual $63.640M annualises to $127.280M, within 0.24% of consensus. Deviates from the prior 124.811, which was the FY2025 consolidated actual. | EDGAR companyfacts DepreciationAndAmortization, 10-K accession 0001352010-26-000015 filed 2026-02-26 (CY2025) [amended 2026-07-22 pre-verdict: prior 45.317 was the abandoned combined tag's FY2019 value carried forward by alias ordering (fixed PR #182); filer's split tag FY2025 = 124.811] |
+| net debt | -764.397 $M | NET CASH (negative net debt) on a FINANCIAL-ONLY basis: $25.000M debt less $789.397M cash. Deviates from the dossier anchor of -637.154, which capitalises $127.243M of operating leases into enterprise value while the earnings line below still carries lease expense. Adding lease liabilities to the bridge without adding lease expense back to earnings mixes two bases; financial-only keeps the bridge and the earnings line on one. | EDGAR: total debt 165 + finance leases 0 + operating leases 123 − cash 1,037 ($M) = −749.016; 10-Q acc 0001352010-26-000029. Equity = EV − (−749.016), i.e. the cash is ADDED — reproduced against the committed anchor's $306.05/sh before this run |
+| diluted shares | 51.656981 M shares | Diluted shares outstanding 51,656,981 = basic shares outstanding 51,586,981 (cover of the 10-Q filed 2026-08-06, as of 2026-07-31) + a dilutive increment of 70,000 (diluted weighted average 52,267,000 less basic weighted average 52,197,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is the condition that makes the construction sound: the increment is highly price-sensitive and has COLLAPSED as the stock fell — 260,000 in Q3-2025, 390,000 in Q1-2026, 70,000 now. Pairing a current share count with a stale increment would have overstated the denominator by 320,000 shares. The prior 52,634,451 was self-consistent when written (Q1 count plus the Q1 increment) and is now two quarters stale on both legs. The latest-quarter diluted weighted average of 52,267,000 is NOT used: it is a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
 | ltm revenue | 5,555.425 $M | LTM revenue | committed financial_summary.annual (LTM) — CIQ Income Statement |
 | cash interest | 1.397 $M | FY2025 cash interest PAID (cross-check input only; EPAM is net-cash with $165M total debt, so interest is immaterial) | EDGAR companyfacts us-gaap InterestPaidNet, FY2025 — 10-K acc 0001352010-26-000015 |
 | cash tax rate | 0.253 rate | EDGAR-DERIVED FY2025 effective rate (NOT an analyst assumption): income tax expense 127.946 ÷ pretax income 505.624 = 25.30%; cross-check only, does not touch value/share | EDGAR companyfacts IncomeTaxExpenseBenefit ÷ IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, FY2025 — 10-K acc 0001352010-26-000015 |
@@ -270,18 +270,18 @@ _Anchor FY2026 · consensus as-of ≥2026-08-09 (a FLOOR — the export states n
 
 |  | ratio | consensus dispersion |
 |---|---|---:|
-| revenue | 1.01x | sigma 12.50 on n=17 |
-| EBITDA margin | 0.76x | sigma 5.06 on n=7 |
-| exit multiple | 2.70x | street 4.62x at FY2026 |
-| **product = the EV gap** | **2.07x** |  |
+| revenue | 1.03x | sigma 12.50 on n=17 |
+| EBITDA margin | 0.82x | sigma 5.06 on n=7 |
+| exit multiple | 1.62x | street 4.62x at FY2026 |
+| **product = the EV gap** | **1.37x** |  |
 
 _the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an attribution of cause_
 
 - **Shape:** **multiple-dominant** at FY2026, and FY2027 gives the same shape — the label does not move with the year.
 
-  _The record does not state which fiscal year its base leg is struck at, so this label is reported on FY2026's basis and is unverified against the leg. The total gap above carries no year and is unaffected._
+  ⚠ **The label is struck on FY2026, but the underwrite's base leg is FY2027.** the base leg is struck at FY2027 and the decomposition at FY2026, so the split across revenue/margin/multiple — and the shape label drawn from it — describes a comparison the leg does not make. The TOTAL gap is unaffected. Re-read the attribution on FY2027, or state why FY2026 is the right basis.
 
-- **Bridge:** our EV $9,081M − net debt $-637M = equity $9,718M ÷ 52.634M sh = **$184.63/sh** — against TEV $4,389M.
+- **Bridge:** our EV $6,003M − net debt $-637M = equity $6,640M ÷ 51.657M sh = **$128.54/sh** — against TEV $4,389M.
 
   - _Revenue dispersion 1.1% (high−low ÷ |median|, FY2026, as-of ≥2026-08-09)_
   - _EBITDA dispersion 1.5% (high−low ÷ |median|, FY2026, as-of ≥2026-08-09)_
