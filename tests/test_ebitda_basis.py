@@ -70,12 +70,47 @@ def test_the_inverse_case_is_caught_too() -> None:
 
 
 def test_a_consistent_name_is_not_flagged() -> None:
-    """THE NEGATIVE PIN. SMPL/CNXC's shape: implied D&A barely moves, so both rows read as the same
-    basis and nothing is printed. A guard that fires on everything is a freeze."""
+    """THE NEGATIVE PIN. SMPL/CNXC's shape: implied D&A barely moves, so nothing is flagged. A
+    guard that fires on everything is a freeze.
+
+    THE NOTE NO LONGER SAYS "consistent" — see the pin below. Not-detected is not agreement, and
+    this function cannot support the stronger claim."""
     b = read_basis(_table(ebitda=[319.0, 245.0], ebit=[300.0, 223.0], is_estimate=[False, True]))
     assert not b.divergent
     assert b.ratio is not None and FLAG_LOW < b.ratio < FLAG_HIGH
-    assert "consistent" in b.note
+    assert "NO DIVERGENCE WAS DETECTED" in b.note
+
+
+def test_the_unflagged_branch_never_claims_the_rows_share_a_basis() -> None:
+    """THE DEFECT BRBR EXPOSED, and it is wording rather than arithmetic. The un-flagged note read
+    "consistent, so both EBITDA rows read as the same basis" — an affirmative claim this function
+    cannot support: it tests ONE PROXY against ONE THRESHOLD, so a step under the bar is a
+    measurement that came back low, never a finding of sameness. Declared-vs-enforced, in the one
+    place a reader goes to CHECK basis."""
+    b = read_basis(_table(ebitda=[319.0, 245.0], ebit=[300.0, 223.0], is_estimate=[False, True]))
+    assert "consistent" not in b.note, b.note
+    assert "same basis" not in b.note, b.note
+    assert "not a finding that the rows share a basis" in b.note
+
+
+def test_a_ratio_inside_the_observed_blind_band_says_so_on_the_page() -> None:
+    """BRBR'S SHAPE at 1.73x: below the 2.0x flag, and its rows genuinely differ — FY25 EBITDA
+    reads 376 against a REPORTED ADJUSTED 481.6, and FY26E 288.1 matches management's ADJUSTED
+    guidance of 275-295. The threshold is deliberately NOT lowered (that would be tuning to the
+    instance); instead a reader standing in the band is told they are in it."""
+    b = read_basis(_table(ebitda=[400.0, 330.0], ebit=[376.0, 289.0], is_estimate=[False, True]))
+    assert b.ratio is not None and 1.5 <= b.ratio < FLAG_HIGH, b.ratio
+    assert not b.divergent
+    assert "BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED" in b.note
+    assert "UNRESOLVED" in b.note
+
+
+def test_a_low_ratio_outside_the_band_is_not_given_the_band_warning() -> None:
+    """THE NEGATIVE HALF. SMPL sits at 1.19x and VRRM at 1.32x — under the band, and a warning on
+    every un-flagged name is the freeze the threshold exists to avoid."""
+    b = read_basis(_table(ebitda=[319.0, 245.0], ebit=[300.0, 223.0], is_estimate=[False, True]))
+    assert b.ratio is not None and b.ratio < 1.5
+    assert "BAND WHERE" not in b.note, b.note
 
 
 @pytest.mark.parametrize("ratio", [FLAG_HIGH, FLAG_LOW])

@@ -35,6 +35,15 @@ FLAG_HIGH = 2.0
 #: ...and the inverse case — the estimate adding back LESS than the actuals do (NCNO's shape).
 FLAG_LOW = 0.5
 
+#: THE BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED UN-FLAGGED, named on the page rather than
+#: silently tolerated. BRBR sits at **1.73x** and its rows genuinely differ: FY25 EBITDA reads 376
+#: here against a REPORTED ADJUSTED EBITDA of 481.6, and FY26E of 288.1 matches management's
+#: ADJUSTED guidance of 275-295. **The threshold is NOT lowered to catch it** — moving FLAG_HIGH
+#: because one case fell under it is tuning to the instance (operator ruling, 2026-08-10). What
+#: changes is that the un-flagged sentence stops claiming agreement, and a ratio in this band says
+#: so out loud. IT (1.82x) is the only other fleet member inside it.
+_BLIND_LOW = 1.5
+
 _EBITDA_ROW = "EBITDA ($M)"
 _EBIT_ROW = "EBIT ($M)"
 
@@ -114,9 +123,23 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
             f"across the boundary as part definitional; do not compare a trailing multiple struck "
             f"off the actual row with a forward multiple struck off the estimate row.")
     else:
+        # NOT-DETECTED IS NOT AGREEMENT — the declared-vs-enforced class, in the one place a reader
+        # goes to CHECK basis. The first wording said "consistent, so both EBITDA rows read as the
+        # same basis", an affirmative claim this function cannot support: it tests ONE PROXY
+        # (implied D&A) against ONE THRESHOLD, so a step below that threshold is a measurement that
+        # came back under the bar, never a finding of sameness. BRBR is the live counterexample —
+        # 1.73x, and its rows really do differ (GAAP actuals against ADJUSTED estimates).
+        band = (
+            f" This ratio sits in the {_BLIND_LOW:.1f}-{FLAG_HIGH:.1f}x BAND WHERE A REAL BASIS "
+            f"CHANGE HAS BEEN OBSERVED WITHOUT BEING FLAGGED — BRBR reads GAAP actuals against "
+            f"ADJUSTED estimates at 1.73x — so treat this as UNRESOLVED rather than clear, and "
+            f"reconcile the estimate row against the company's own guidance basis before "
+            f"comparing across the boundary."
+            if _BLIND_LOW <= ratio < FLAG_HIGH else "")
         note = (
             f"implied D&A is {ma:,.0f} in the actuals and {me:,.0f} in the estimates "
-            f"({ratio:.2f}x) — consistent, so both EBITDA rows read as the same basis "
-            f"(EBIT + D&A).")
+            f"({ratio:.2f}x) — below the {FLAG_HIGH:.1f}x flag, so NO DIVERGENCE WAS DETECTED. "
+            f"That is not a finding that the rows share a basis: this check tests implied D&A "
+            f"against one threshold, and nothing here proves agreement.{band}")
     return EbitdaBasis(actual_implied_dna=ma, estimate_implied_dna=me, ratio=ratio,
                        divergent=divergent, note=note)

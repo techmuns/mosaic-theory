@@ -111,9 +111,12 @@ def test_the_average_price_is_labelled_a_period_average_not_a_purchase_price() -
 def test_a_stale_average_is_either_replaced_by_a_current_derivation_or_flagged() -> None:
     """VINTAGE BEATS DIRECTNESS — `_latest_dep_amort`'s rule, same failure. EPAM's own
     average-price tag last reported **Q1 2023** ($283.69, on a stock now near $112) beside **Q1
-    2026** repurchase cash. Two outcomes are acceptable and a silent third is not: derive over the
-    current period when BOTH legs align there, else keep the stale figure and SAY the periods
-    disagree. What must never happen is the two printed side by side as one window."""
+    2026** repurchase cash. What must never happen is the two printed side by side as one window.
+
+    THE DERIVATION ALTERNATIVE IS GONE (2026-08-10): cash-paid ÷ shares-acquired is not a price at
+    any window, so the surviving outcomes are the filer's own figure with any period disagreement
+    STATED, or a refusal. A present average must therefore be the direct tag, and it must either
+    share the cash window or say that it does not."""
     seen = 0
     for t in _names():
         ca = build_capital_allocation(_facts(t))
@@ -121,13 +124,16 @@ def test_a_stale_average_is_either_replaced_by_a_current_derivation_or_flagged()
         if avg.value is None or cash.value is None:
             continue
         seen += 1
-        derived = str(avg.source_ref).startswith("DERIVED")
+        assert not str(avg.source_ref).startswith("DERIVED"), (
+            f"{t}: a DERIVED average survived — cash-paid over shares-acquired is not a price")
         same_window = str(avg.source_ref).split("(")[-1] == str(cash.source_ref).split("(")[-1]
         flagged = "PERIOD MISMATCH" in (avg.note or "")
-        assert derived or same_window or flagged, (
+        assert same_window or flagged, (
             f"{t}: a direct average over a different window than the cash beside it, with nothing "
             f"saying so — avg {avg.source_ref} vs cash {cash.source_ref}")
-    assert seen >= 5, f"only {seen} names exercised this — near-vacuous"
+    assert seen >= 2, (
+        f"only {seen} names carry BOTH an average and repurchase cash — near-vacuous. Two is the "
+        f"floor because refusing the derivation left only the direct-tag names (EPAM, SMPL)")
 
 
 def test_every_absence_names_the_tags_that_were_tried() -> None:
@@ -152,35 +158,21 @@ def test_the_brand_split_is_a_stated_gap_on_every_name() -> None:
         assert "no XBRL axis" in bs.note and "10-K" in bs.note, bs.note
 
 
-def test_the_derivation_requires_both_legs_on_the_same_period() -> None:
-    """SAME PERIOD ON BOTH LEGS OR NOTHING — `_latest_dep_amort`'s rule, and the first cut broke it
-    while ASSERTING it: the note read "both legs are the same fiscal year" and nothing checked.
+def test_no_name_on_the_corpus_carries_a_derived_average_any_more() -> None:
+    """SUPERSEDES `test_the_derivation_requires_both_legs_on_the_same_period` (2026-08-10).
 
-    VITL divided **Q1-2026 cash ($20.0M) by a 2019 share count** and published **$7.01** as a
-    derived average — a seven-year straddle and a number that never existed. An assertion the code
-    does not enforce is worse than no assertion, because it tells the reader not to look.
+    That pin proved the two legs shared a WINDOW, which they did — BRBR's covered an identical 272
+    days and the quotient was still not a price, because `PaymentsForRepurchaseOfCommonStock` is
+    CASH PAID (including $3.9M of prior-year excise tax, excluding $1.2M accrued) while
+    `TreasuryStockSharesAcquired` counts shares acquired. Same window, different BASIS — invisible
+    to any period comparison, which is why the derivation went rather than got a tighter test.
 
-    Asserted over the CORPUS, not a fixture: the straddle was invisible until the live names ran."""
-    from vinci.dossier.capital_allocation import BUYBACK_CASH, BUYBACK_SHARES, _pick
-
-    checked = 0
+    Asserted over the CORPUS: BRBR ($28.23) and IT ($155.86) were the two live instances."""
     for t in _names():
-        facts = _facts(t)
-        c, s = _pick(facts, BUYBACK_CASH, kind="flow"), _pick(facts, BUYBACK_SHARES, kind="flow")
-        avg = build_capital_allocation(facts).buyback_avg_price
-        if c is None or s is None or str(avg.source_ref or "").startswith("EDGAR"):
-            continue                      # no legs, or the filer's own direct tag answered
-        checked += 1
-        aligned = (c[0].period_start == s[0].period_start and c[0].period_end == s[0].period_end)
-        if aligned:
-            assert avg.value is not None and "verified on" in (avg.note or ""), (
-                f"{t}: aligned legs but no derivation — {avg.note}")
-        else:
-            assert avg.value is None and "DIFFERENT periods" in (avg.note or ""), (
-                f"{t}: derived an average across MISMATCHED periods — cash "
-                f"{c[0].period_start}→{c[0].period_end} vs shares "
-                f"{s[0].period_start}→{s[0].period_end}, value {avg.value}")
-    assert checked >= 3, f"only {checked} names exercised the derivation branch — near-vacuous"
+        avg = build_capital_allocation(_facts(t)).buyback_avg_price
+        assert not str(avg.source_ref or "").startswith("DERIVED"), (
+            f"{t}: {avg.value} is cash-paid over shares-acquired — a figure the filer's own "
+            f"disclosure does not reproduce")
 
 
 def test_the_derivation_is_refused_rather_than_imputed_from_one_leg() -> None:
@@ -192,7 +184,7 @@ def test_the_derivation_is_refused_rather_than_imputed_from_one_leg() -> None:
     ca = build_capital_allocation(cash_only)
     assert ca.buyback_cash.value == pytest.approx(100.0)
     assert ca.buyback_avg_price.value is None
-    assert "imputed" in (ca.buyback_avg_price.note or "")
+    assert "refused rather than derived" in (ca.buyback_avg_price.note or "")
 
 
 def test_an_empty_facts_dict_yields_a_fully_stated_block_not_a_crash() -> None:
