@@ -120,6 +120,49 @@ def test_every_committed_dossier_states_which_share_basis_it_used() -> None:
                 f"figure on the page")
 
 
+def test_every_consumer_of_the_raw_share_concept_bounds_it() -> None:
+    """REVIEW FINDING on this PR. The first cut guarded `_edgar_shares_outstanding` and left two
+    other readers of the same concept extracting points directly — one of them computing
+    `ev = price * shares + net_debt`, which is precisely the multiplication that turns a pre-split
+    count into a 4x-wrong enterprise value, on a page whose HEADLINE share basis had just been
+    correctly refused.
+
+    Guarding one consumer of a bad number and leaving its neighbour is the half-landed fix this
+    repo keeps re-meeting. So the pin is on the CLASS: every site that reaches for the raw concept
+    must bound it by age, and a new unbounded reader reddens here rather than in an EV.
+
+    Read from the SOURCE, so a future reader added anywhere in the module is in scope the moment
+    it lands — a roster of known call sites would go stale the day someone adds one."""
+    import ast
+    import re
+
+    src = (ROOT / "vinci" / "dossier" / "mechanical.py").read_text()
+    # SCOPED BY FUNCTION, VIA AST — not by a line window. Two earlier cuts of this pin failed for
+    # reasons worth keeping: `[^)]*` could not cross the nested paren in
+    # `extract_points(edgar.companyfacts(cik), "shares")` and so matched only the guarded helper;
+    # then a ±N-line window put the bound out of range the moment a comment grew above it. A
+    # function is the unit the rule is actually about, and it has no such edges.
+    reader = re.compile(r'extract_points\(.*?"shares"\)', re.S)
+    bounds = ("_SHARES_MAX_AGE_DAYS", "_SHARES_WINDOW_DAYS")
+
+    funcs = [n for n in ast.walk(ast.parse(src)) if isinstance(n, ast.FunctionDef)]
+    readers = [f for f in funcs if reader.search(ast.get_source_segment(src, f) or "")]
+    assert len(readers) >= 3, (
+        f"only {len(readers)} functions read the raw share concept "
+        f"({[f.name for f in readers]}) — the module has had three since this pin was written, so "
+        f"the pattern has stopped matching rather than the readers having gone away")
+
+    unbounded = [
+        f.name for f in readers
+        if f.name != "_edgar_shares_outstanding"          # the guarded helper IS the bound
+        and not any(b in (ast.get_source_segment(src, f) or "") for b in bounds)
+    ]
+    assert not unbounded, (
+        f"{unbounded} read the raw share concept without an age bound. A pre-split count from a "
+        f"multi-class filer reaches whatever they compute — the Visa case is a 4x error in every "
+        f"per-share and EV figure downstream.")
+
+
 def test_the_bridged_name_reconciles_cap_shares_and_price_exactly() -> None:
     """WHY THE BRIDGE IS THE CIQ PANEL AND NOT SOME OTHER CURRENT COUNT. Its share column sits in
     the SAME ROW as the cap, so cap ÷ shares reproduces that row's own close — the coherence

@@ -1070,7 +1070,8 @@ _ADJ_EPS = re.compile(rf"Adjusted EPS of \$?{_NUM} to \$?{_NUM}", re.I)
 
 
 def _adjusted_facts(
-    record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str]
+    record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str],
+    reference_date: date,
 ) -> tuple[Sourced[str], Sourced[str], Sourced[str]]:
     """Surface the adjusted (non-GAAP) figures the GAAP caveats called UNAVAILABLE — the 99.1
     revised guidance is in the dossier: adjusted EPS, forward EV/adj-EBITDA, and covenant-basis
@@ -1101,7 +1102,17 @@ def _adjusted_facts(
     except (HttpError, KeyError):
         snap, share_pts = None, []
     net_debt = snap.net_debt.value if snap and snap.net_debt.is_known else None
-    shares = max(share_pts, key=lambda p: p.period_end).value if share_pts else None
+    # THE SAME STALENESS BOUND AS THE STOCK-INFO BASIS, because this multiplies it by a price:
+    # `ev = price * shares + net_debt` below. A multi-class filer whose newest undimensioned count
+    # predates a split (Visa: 2010, then a 4-for-1 in 2015) would compute an EV wrong by that
+    # split factor, on a page whose headline share basis was correctly refused. Guarding one
+    # consumer of a bad number and leaving its neighbour is how the first fix would have half
+    # landed — the fleet is unaffected either way (counts run 10–375d against a 540d bound).
+    fresh_pts = [
+        p for p in share_pts
+        if (reference_date - p.period_end).days <= _SHARES_MAX_AGE_DAYS
+    ]
+    shares = max(fresh_pts, key=lambda p: p.period_end).value if fresh_pts else None
 
     ev_adj, nd_adj = unk, unk
     if eb:
@@ -2885,7 +2896,8 @@ def assemble_mechanical(
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown = _drawdown_cause(record, edgar, http)
-    adj_eps, adj_ev, adj_lev = _adjusted_facts(record, edgar, drawdown.revised_guidance)
+    adj_eps, adj_ev, adj_lev = _adjusted_facts(
+        record, edgar, drawdown.revised_guidance, reference_date)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
     # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
@@ -2932,7 +2944,12 @@ def assemble_mechanical(
         insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
         short_interest=_short_interest(
             finra, record, reference_date,
-            shares_out=_edgar_shares_outstanding(edgar, record.identity.cik)),
+            # SAME as-of AS THE STOCK-INFO CALL. Left undated, this resolved the staleness bound
+            # against `date.today()`, so a name whose cover-page count sits near the bound would
+            # get a short-interest denominator depending on WHEN the build ran — a re-assembly
+            # flipping with no data change, in a repo whose whole point is as-of discipline.
+            shares_out=_edgar_shares_outstanding(
+                edgar, record.identity.cik, as_of=reference_date)),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)
