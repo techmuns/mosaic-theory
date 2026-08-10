@@ -6904,6 +6904,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "pricing actions",
+          "following_context": null,
           "source_ref": "8-K 0001193125-26-210294 EX-99.1",
           "tier": "anchored"
         },
@@ -6915,6 +6916,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Strategic Pricing Actions",
+          "following_context": null,
           "source_ref": "8-K 0000950170-25-104561 EX-99.1",
           "tier": "anchored"
         },
@@ -6926,6 +6928,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms, Inc. updated earnings guidance for the fiscal year 2026. For the fiscal year 2026, the company expects net revenue of $775 million to $800 million, which represents at least 5% growth versus fiscal year 2025. The updated outlook for fiscal year 2026 reflects a prudent respons",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · May-07-2026",
           "tier": "anchored"
         },
@@ -6937,6 +6940,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms hit the road with the Good Eggs Diner, a Route 66-inspired diner on wheels, to celebrate its farming roots during the Route 66 Centennial Celebration from April 24 to May 3. At the diner, guests can grab a taste of nostalgia and what Vital Farms is all about: good eggs from fa",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Apr-23-2026",
           "tier": "anchored"
         },
@@ -6948,6 +6952,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms, Inc. lowered earnings guidance for the fiscal year 2026. For the year, the company expects Net revenue of $900 million to $920 million, which represents 19% to 22% growth versus fiscal year 2025. This net revenue guidance is lower than the initial outlook at the Investor Day ",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Feb-26-2026",
           "tier": "anchored"
         },
@@ -6959,6 +6964,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms, Inc. updated earnings guidance for the fiscal year 2025. For 2025, Company now expects Net Revenue of $755 million to $765 million. This reflects a temporary disruption in returning to regular order patterns following the company’s enterprise resource planning (ERP) system tr",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Dec-16-2025",
           "tier": "anchored"
         },
@@ -6970,6 +6976,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms, Inc. increased earnings guidance for the year 2025. Net revenue of at least $775 million, which represents at least 28% growth versus fiscal year 2024, an increase from previous guidance of at least $770 million.",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Nov-04-2025",
           "tier": "anchored"
         },
@@ -6981,6 +6988,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms has released limited-edition Cheesy Over Easy Dog Treats, breakfast-flavored treats made with ingredients that include Vital Farms pasture-raised eggs. The exclusive item is a focal point of the brand's new campaign \"For Working Dogs Only\" that celebrates working dogs of all t",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Aug-26-2025",
           "tier": "anchored"
         },
@@ -6992,6 +7000,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms, Inc. revised earnings guidance for the year 2025. For the year company expects Net revenue of at least $770 million, which represents at least 27% growth versus fiscal year 2024 results, an increase from previous guidance of at least $740 million.",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Aug-07-2025",
           "tier": "anchored"
         },
@@ -7003,6 +7012,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Situation: Vital Farms announced a major milestone within its farm network, now surpassing 500 family farms versus 300 at the end of 2023. To meet the strong demand for its eggs, Vital Farms has continued to raise the standards in attracting and retain family farmers across the Pasture Belt™? to pro",
+          "following_context": null,
           "source_ref": "CIQ Key Developments: Vital Farms Inc NasdaqGM VITL Key Developments.rtf · Jul-17-2025",
           "tier": "anchored"
         },
@@ -7014,6 +7024,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "In 2024 and 2025, more than 55% of our consumers were households that had not bought us previously.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7025,6 +7036,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "That dropped to just 50% in the first quarter of 2026.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7036,6 +7048,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7047,6 +7060,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "For example, we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7058,6 +7072,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "For example, we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7069,6 +7084,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "We've secured an at least 50% TDP increase with a top 3 customer, negotiated direct distribution instead of going through a distributor with a top 10 customer and have been assigned the category captain role for eggs with a banner of another top 3 customer.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7080,6 +7096,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "All-in, we anticipate that we will add 20 to 30 TDPs or 15% to 25% over the course of 2026, and we expect to produce our single best yearly gain in TDP since going public as measured in Circana MULO+ for Shell eggs.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7091,6 +7108,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7102,6 +7120,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7113,6 +7132,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7124,6 +7144,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "Because we buy eggs from our farmer partners regardless of the retail sales environment, temporary imbalances between supply and demand can create a costly supply overhang.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7135,6 +7156,7 @@
           "value_num": null,
           "unit": null,
           "verbatim": "In 2025, we gained 25 basis points of volume share within all outlets of MULO+ according to Circana, making us the top share gainer in premium shell egg brands.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
           "tier": "llm-fenced"
         }

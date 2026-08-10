@@ -118,6 +118,83 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip().lower()
 
 
+#: A call header inside the concatenated slice. The paragraph bound must never run past one, or a
+#: quote acquires the OPENING REMARKS OF A DIFFERENT CALL as its context. Measured: sentence bounds
+#: cross this on 1-3 rows (EPAM's Nelnet quote picks up the Q4 2025 call), the paragraph bound on
+#: ZERO — a blank line always precedes the header, which is what makes the paragraph the safe unit.
+_CALL_HEADER = re.compile(r"---\s*[^-\n]{4,140}Earnings Call[^-\n]{0,80}---")
+
+#: Hard ceiling. A malformed slice with no blank lines would otherwise return the whole transcript
+#: as one row's "paragraph"; 1,200 chars is ~4x the longest real paragraph observed on the fleet.
+_CONTEXT_MAX = 1_200
+
+
+def _flat_with_index_map(s: str) -> tuple[str, list[int]]:
+    """Whitespace-collapsed text, plus each output character's index in the ORIGINAL string.
+
+    The map is what lets a normalised MATCH produce a raw-coordinate CUT, so paragraph breaks are
+    still there to split on. A whitespace run collapses to one space whose mapped index is the run's
+    FIRST character — so cutting at that index keeps the run (and any blank line inside it) in the
+    tail, which is precisely what the paragraph bound needs to see.
+    """
+    out: list[str] = []
+    idx: list[int] = []
+    prev_ws = False
+    for k, ch in enumerate(s):
+        if ch.isspace():
+            if prev_ws:
+                continue
+            out.append(" ")
+            idx.append(k)
+            prev_ws = True
+        else:
+            out.append(ch)
+            idx.append(k)
+            prev_ws = False
+    return "".join(out), idx
+
+
+def _following_paragraph(quote: str, slice_text: str) -> str | None:
+    """The rest of the speaker's paragraph after ``quote`` — verbatim, unclassified, or None.
+
+    THE ONE RULE IS THAT THERE IS NO RULE. Every row that can have context gets it. No opener list,
+    no contrastive test, no "does this look like a qualifier" — each of those is the text-criterion
+    judgment this repo refuses to invent, and it was MEASURED not to work: BRBR's reversal opens
+    with "This is", the same connective as VRRM's "This is a great indication that safety measures
+    are working" (STATE §B1a). A classifier here calls the one case that bit us benign.
+
+    FAIL-SOFT, NEVER FAIL-LOUD. A quote that cannot be located returns None rather than raising:
+    the row is already validated (the caller dropped it if the quote was not in the slice), the
+    context is ADDITIVE, and a locate-miss must not cost a real driver row. `None` and `""` are
+    distinct — None is "not located", empty is "the quote ended its paragraph".
+    """
+    if not quote.strip() or not slice_text:
+        return None
+    # MATCH FLAT, CUT RAW — and there is no fallback, deliberately. The quote comes back from an
+    # LLM so its whitespace need not match the source byte-for-byte, which forces a normalised
+    # match; but normalising is exactly what DESTROYS the paragraph breaks the bound depends on.
+    # The first cut resolved that with two paths — exact-raw when `slice_text.find(quote)` hit, a
+    # flattened tail otherwise — and the second path silently abandoned the paragraph bound: on a
+    # re-wrapped quote it returned up to `_CONTEXT_MAX` of RUNNING TEXT, splicing later paragraphs
+    # and other speakers onto the fact as though they qualified it. It never fired on the corpus
+    # (191/191 matched raw) and the test covering it passed only because its fixture was a single
+    # short paragraph — a fixture shaped to the assertion. An index map removes the choice.
+    flat, raw_at = _flat_with_index_map(slice_text)
+    needle = re.sub(r"\s+", " ", quote).strip().lower()
+    j = flat.lower().find(needle)
+    if j < 0:
+        return None
+    end = j + len(needle)
+    # `raw_at[end]` is the first RAW character after the quote — and when that position is a
+    # collapsed whitespace run it points at its FIRST character, so a following "\n\n" survives
+    # into `tail` and the paragraph split sees it.
+    tail = slice_text[raw_at[end]:] if end < len(raw_at) else ""
+    para = re.split(r"\n[ \t]*\n", tail, maxsplit=1)[0]
+    para = _CALL_HEADER.split(para)[0]        # never run into the next call
+    out = re.sub(r"\s+", " ", para).strip()
+    return out[:_CONTEXT_MAX].rstrip() or None
+
+
 def _digit_traces(claimed: float, universe: list[float]) -> bool:
     """True iff ``claimed`` matches a slice number at some scale (%, K, M, B…) within the synthesis
     tracer's ±2%-or-0.05 tolerance — the mis-scale / misbinding guard. A 0 traces to a 0 only."""
@@ -198,6 +275,7 @@ def extract_transcript_drivers(
             kind=DriverKind(kind), metric=metric,
             period=str(d.get("period", "")).strip() or None,
             value=value, value_num=None, unit=None,  # LLM-fenced rows are verbatim-only
-            verbatim=quote, source_ref=src, tier="llm-fenced",
+            verbatim=quote, following_context=_following_paragraph(quote, slice_text),
+            source_ref=src, tier="llm-fenced",
         ))
     return rows, flags, str(raw)

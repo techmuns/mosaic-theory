@@ -849,10 +849,24 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
     """
     out = ["=== OPERATING DRIVERS — validated, cited facts. GROUND any operating bull/bear point "
            "(volume · price · mix · capacity · client · guidance) in the relevant driver and copy "
-           "its source_ref. Anchored = filings; llm-fenced = the call (already validated). ==="]
+           "its source_ref. Anchored = filings; llm-fenced = the call (already validated). "
+           "A '…continues:' line is THE REST OF THAT SPEAKER'S PARAGRAPH, verbatim — read it "
+           "before characterising the fact above it, because it frequently qualifies, reverses or "
+           "seasonally normalises the number, and a point that contradicts it is unsupported. ==="]
     for r in od.rows:
         val = r.value if len(r.value) <= 130 else r.value[:127].rstrip() + "…"
         out.append(f"[{r.kind.value}] {r.metric}: {val} → {r.source_ref}")
+        # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category
+        # volumes were sold on price promotion" — is exact and correctly cited, and the sentence
+        # after it says the figure is "in line with historical norms … DOWN sequentially from the
+        # heavier promoted second quarter". The synthesis had the WHOLE transcript in its prompt
+        # and still built an escalating sequence out of the quote alone, because THIS digest is
+        # what it is told to ground in and copy refs from. Putting the qualifier beside the fact
+        # is the intervention; leaving it in the JSON would only serve the audit.
+        if r.following_context:
+            ctx = (r.following_context if len(r.following_context) <= 400
+                   else r.following_context[:397].rstrip() + "…")
+            out.append(f"    …continues: {ctx}")
     return "\n".join(out)
 
 
