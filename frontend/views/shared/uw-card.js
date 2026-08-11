@@ -141,7 +141,10 @@ function ratioCell(c) {
     + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "")
     // the STATED limit beside the computed ceiling — the pair is the information, and the gap is
     // the conservatism the analyst added. Absent renders nothing; it never borrows the ceiling.
-    + (typeof lim === "number" ? ` · limit $${lim.toFixed(2)}` : "");
+    + (typeof lim === "number" ? ` · limit $${lim.toFixed(2)}`
+       // a DEFERRAL renders as a deferral. Falling through to "" here would make a deliberate
+       // absence indistinguishable from never having looked.
+       : (c.currentState || {}).limitDeferred ? " · limit deferred" : "");
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 

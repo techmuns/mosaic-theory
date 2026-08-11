@@ -663,12 +663,53 @@ class StatedLimit(BaseModel):
     every record is today.
     """
 
-    price: float
-    #: WHEN the analyst stated it — not when the record was written. Compared against the legs'
-    #: vintage so a stale commitment is visible rather than inferred.
+    #: THREE STATES, AND `unstated` IS THE ABSENCE OF THIS OBJECT — `leg_basis`'s shape, and the
+    #: same distinction it exists for: a DELIBERATE absence must not render as an oversight.
+    #:
+    #:   * ``stated``   — the analyst named a price. EPAM: $89.50.
+    #:   * ``deferred`` — the analyst LOOKED and chose not to name one yet, with a reason and a
+    #:     revisit point. SMPL: not before the segment scan says whether a peer is a better use of
+    #:     the same capital. Distinguishable from silence, which is the whole point.
+    #:   * ``unstated`` — no `limit` object at all. Six of seven records, and the honest default.
+    #:
+    #: Why `unstated` is NOT a member here, unlike `leg_basis`: that field is DERIVED and therefore
+    #: always present, so its third state needs a name. This one is analyst-supplied, so absence is
+    #: already expressible and a member would give two ways to say the same thing.
+    state: Literal["stated", "deferred"] = "stated"
+    #: The price — REQUIRED when stated, and REFUSED when deferred. A deferral with a number in it
+    #: is a limit pretending to be a deferral.
+    price: float | None = None
+    #: WHEN the analyst stated (or deferred) it — not when the record was written. Compared against
+    #: the legs' vintage so a stale commitment is visible rather than inferred.
     stated_at: date
-    #: WHY this price rather than the ceiling — the conservatism, in the analyst's words.
+    #: WHY this price rather than the ceiling — the conservatism, in the analyst's words. REQUIRED
+    #: on a deferral, where it carries the reason for not stating one.
     note: str | None = None
+    #: WHEN the deferral is to be revisited. Free text, because the trigger is not always a date
+    #: ("the October print", "after the segment scan") and inventing a date type would force a
+    #: precision the analyst does not have.
+    revisit: str | None = None
+
+    @model_validator(mode="after")
+    def _state_and_price_agree(self) -> StatedLimit:
+        """The state and the fields must say the same thing — declared IS enforced here.
+
+        A deferral carrying a price would be enforced by the log-verdict gate as though it were a
+        commitment, which is exactly the substitution the deferral exists to avoid; and a `stated`
+        limit with no price is a gate that silently enforces nothing while the page claims a limit.
+        """
+        if self.state == "stated" and self.price is None:
+            raise ValueError("a STATED limit needs a price — use state='deferred' to record that "
+                             "the analyst looked and chose not to name one")
+        if self.state == "deferred":
+            if self.price is not None:
+                raise ValueError(f"a DEFERRED limit must not carry a price (got {self.price}) — a "
+                                 "number here would be enforced as a commitment")
+            if not (self.note or "").strip():
+                raise ValueError("a DEFERRED limit needs a note giving the reason — a deferral "
+                                 "without one is indistinguishable from an oversight, which is "
+                                 "the distinction this state exists to make")
+        return self
 
     model_config = {"frozen": True}
 
@@ -971,7 +1012,9 @@ def limit_notes(rec: ScenarioRecord) -> list[str]:
         return []                       # unstated is not absent — and is not this function's job
     out: list[str] = []
     ceiling = (rec.result.ceiling2to1 if rec.result is not None else None)
-    if ceiling is not None and lim.price > ceiling:
+    # A DEFERRED limit has no price, so there is nothing to compare against the ceiling. Its
+    # vintage note below still applies — a deferral can go stale exactly as a commitment can.
+    if ceiling is not None and lim.price is not None and lim.price > ceiling:
         out.append(
             f"stated limit ${lim.price:,.2f} is ABOVE the recomputed ceiling ${ceiling:,.2f} — the "
             f"legs moved under a commitment that did not. The limit is the analyst's and is not "

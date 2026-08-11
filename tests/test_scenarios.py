@@ -1078,7 +1078,7 @@ def test_an_unparseable_schema_version_keeps_nothing_versioned(tmp_path: Path) -
         "label", "value", "unit", "source"}
 
 
-def test_the_seven_committed_records_round_trip_byte_identical(tmp_path: Path) -> None:
+def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None:
     """THE CORPUS RUN, not a synthetic. #302's hygiene guard passed its mutation and ran green over
     six live violations because the mutation used a shape it already knew — so this asserts on the
     REAL committed records: re-writing each one changes NOTHING. It is the check that would have
