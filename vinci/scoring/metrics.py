@@ -41,6 +41,11 @@ class VerdictScore:
     # the only route that could reach the ledger, and overshoot the only strategy.
     origin: str = ORIGIN_SCREEN
     sleeve: str = DEFAULT_SLEEVE
+    # The sleeve's PASSIVE comparator over this row's own window (`vinci.scoring.baseline`), and
+    # the reason when there isn't one. Exactly one is non-None; both are None when the caller
+    # supplied no basket for this sleeve at all.
+    basket_return: float | None = None
+    basket_note: str | None = None
 
     @property
     def excess_gross(self) -> float:
@@ -134,6 +139,15 @@ class SleeveSpread:
     long_mean: float | None
     short_mean: float | None
     spread: float | None  # None (never 0.0) when either leg is empty — an empty leg is not a zero
+    # THE SLEEVE'S OWN KILL TEST, when the book names a passive comparator (`Sleeve.kill`): the
+    # equal-weight follow basket over the LONG leg's own windows, and the long leg minus it.
+    # `vs_basket <= 0` sustained IS the quality sleeve's kill condition — judgement adding nothing
+    # over indexing a list we chose anyway. None when no basket was supplied or it was refused;
+    # `basket_note` then says which, because a blank comparator reads as a failed one.
+    basket_label: str | None = None
+    basket_mean: float | None = None
+    vs_basket: float | None = None
+    basket_note: str | None = None
 
 
 @dataclass(frozen=True)
@@ -193,7 +207,9 @@ class ScoreReport:
         d["by_sleeve"] = {
             k: {"long_label": v.long_label, "short_label": v.short_label,
                 "n_long": v.n_long, "n_short": v.n_short, "long_mean": v.long_mean,
-                "short_mean": v.short_mean, "spread": v.spread}
+                "short_mean": v.short_mean, "spread": v.spread,
+                "basket_label": v.basket_label, "basket_mean": v.basket_mean,
+                "vs_basket": v.vs_basket, "basket_note": v.basket_note}
             for k, v in self.by_sleeve.items()
         }
         d["overrides"] = [
@@ -242,17 +258,40 @@ class ScoreReport:
         # `scoring_report.md` — emit ONLY this markdown; JSON is opt-in. So a resolved followed
         # verdict was correctly excluded from the primary and then invisible to every reader, which
         # is worse than pooling it: the row exists, is scored, and appears nowhere.
-        sleeve_lines = [
-            f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
-            f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} resolved)"
-            for v in self.by_sleeve.values()
-        ]
+        sleeve_lines = []
+        for v in self.by_sleeve.values():
+            sleeve_lines.append(
+                f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
+                f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} "
+                f"resolved)")
+            # THE PASSIVE BASELINE, INDENTED UNDER ITS OWN BOOK and never pooled into the spread
+            # above it. Printed even when unavailable, WITH the reason: a baseline that simply
+            # vanishes on a bad window reads as "the judgement didn't beat it", which is the one
+            # misreading this line exists to prevent.
+            #
+            # GATED ON THE BASKET EXISTING, NOT ON THE NUMBER. A book with no followed names has no
+            # indexing comparator to fail — overshoot's kill criterion is the standing fund-wide
+            # falsifier (spread <= 0), not "beat the follow list" — so printing "unavailable" there
+            # would invent a missing measurement for a book that never names one.
+            if v.basket_label is None:
+                continue
+            if v.basket_mean is None:
+                sleeve_lines.append(
+                    f"  - vs equal-weight follow basket: unavailable — {v.basket_note}")
+            else:
+                verdict = "beats" if (v.vs_basket or 0.0) > 0 else "does NOT beat"
+                sleeve_lines.append(
+                    f"  - vs equal-weight follow basket ({v.basket_label}): basket "
+                    f"{pct(v.basket_mean)} → {v.long_label} {verdict} indexing by "
+                    f"**{pct(v.vs_basket)}** _(this book's kill test)_")
         lines += [
             "",
             "## Per-sleeve curves (one book, one composite)",
             "_Each book is measured on ITS OWN legs — overshoot on BUY−AVOID_TERMINAL, quality on_ "
             "_BUY−PASS — because 'terminal decline' is not what a PASS records. The overshoot row_ "
             "_reproduces the primary above; the others accumulate beside it and are never pooled._",
+            "_The indented line is the book's own KILL TEST where it names one: the long leg_ "
+            "_against simply INDEXING the same followed names, over those verdicts' own windows._",
             *(sleeve_lines or ["- (no resolved verdicts yet)"]),
         ]
         override_lines = [
@@ -276,8 +315,15 @@ class ScoreReport:
         return "\n".join(lines)
 
 
-def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
+def spread_by_sleeve(
+    scores: list[VerdictScore],
+    basket_labels: dict[str, str] | None = None,
+) -> dict[str, SleeveSpread]:
     """Each strategy book's own curve, with ITS OWN leg labels read from the registry.
+
+    ``basket_labels`` names each sleeve's passive comparator (e.g. ``"NFLX, UBER, V"``) so the
+    rendered row states WHICH names it was measured against. A number without its membership is
+    unauditable — the reader cannot tell a three-name basket from a one-name one.
 
     THE LEG LABELS ARE NOT HARDCODED, and that is the point of the registry: overshoot measures
     BUY−AVOID_TERMINAL while quality measures BUY−PASS, so a hardcoded `AVOID_TERMINAL` filter
@@ -309,10 +355,25 @@ def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
                 f"the curve without appearing anywhere, which is the silent-drop this refuses")
         lm = statistics.fmean(longs) if longs else None
         sm = statistics.fmean(shorts) if shorts else None
+        # THE PASSIVE COMPARATOR, over the LONG leg's rows only — the counterfactual is "hold the
+        # basket instead of these BUYs, across the windows those BUYs were held". Averaging the
+        # PASS rows' windows in as well would compare the judgement to a period it never held.
+        long_rows = [r for r in rows if r.verdict.value == long_label]
+        b_rets = [r.basket_return for r in long_rows if r.basket_return is not None]
+        # A REFUSAL ON ANY ROW REFUSES THE WHOLE MEAN. Averaging only the rows whose basket priced
+        # would silently compare the full BUY leg against a comparator drawn from a subset of its
+        # windows — the same partial-basket substitution `baseline` refuses one level down.
+        notes = [r.basket_note for r in long_rows if r.basket_note is not None]
+        bm = statistics.fmean(b_rets) if b_rets and not notes and long_rows else None
+        note = notes[0] if notes else (None if b_rets else "no basket supplied for this sleeve")
         out[key] = SleeveSpread(
             sleeve=key, long_label=long_label, short_label=short_label,
             n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
-            spread=(lm - sm if lm is not None and sm is not None else None))
+            spread=(lm - sm if lm is not None and sm is not None else None),
+            basket_label=(basket_labels or {}).get(key),
+            basket_mean=bm,
+            vs_basket=(lm - bm if lm is not None and bm is not None else None),
+            basket_note=note)
     return out
 
 
@@ -323,6 +384,7 @@ def aggregate(
     n_pending: int,
     book_daily: list[float] | None = None,
     bench_daily: list[float] | None = None,
+    basket_labels: dict[str, str] | None = None,
 ) -> ScoreReport:
     """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression."""
     # THE PRIMARY SPREAD IS SCREEN-ORIGIN ONLY (operator decision 2026-08-07). The spread is the
@@ -387,7 +449,7 @@ def aggregate(
         twin_buy_bounced=(buy_mean > 0) if buy_mean is not None else None,
         twin_avoid_fell=(avoid_mean < 0) if avoid_mean is not None else None,
         by_sector=spread_by_sector(scores),
-        by_sleeve=spread_by_sleeve(scores),
+        by_sleeve=spread_by_sleeve(scores, basket_labels),
         n_machine_buy=len(m_buys),
         n_machine_avoid=len(m_avoids),
         machine_buy_avoid_spread=machine_spread,
