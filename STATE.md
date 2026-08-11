@@ -3326,6 +3326,22 @@ Each line: *what it does* — *verified how*.
   discriminator. It gates nothing and makes no trade decision. Validated **operationally** (vs a
   hand-built baseline on a live event), never statistically — so it can't be data-mined.
 
+- **Technical states as queue FILTERS (200d-MA tailwind, RSI bands): FALSIFIED (2026-08-11).**
+  Pre-registered falsifier (`scripts/price_state_falsifier.py`) over the 36 G3-complete backdated
+  queues: "above 200d MA" is DEGENERATE at entry (2.1% of names — the queue is deep-drawdown by
+  construction; a tailwind filter on it is structurally incoherent), and RSI-14 bands show no
+  forward sector-relative separation at any horizon (all |diff| < 1.5 pts, shuffle pct ≤ 48%).
+  The COST-OF-WAITING concern was also falsified in the OTHER direction: deferring entry to the
+  first 50d-MA reclaim (≤126 sessions) LOST NOTHING vs buying at first appearance (waiting
+  gained +0.5 to +1.3 pts vs MDY at every horizon), 0 of 297 eventual ≥+50% winners were missed
+  by waiting, and the median winner had earned only 2% of its total gain before the reclaim —
+  there is no rush to catch the knife. RECORD-ONLY residue (unpromotable by operator rule, see
+  §6): an "early-recovery vs still-falling" split (≥15% off the 52w low / fresh-low-in-21d /
+  50d-MA slope — three facets of one state) separates +4 to +8 pts sector-relative at 120–180d
+  with consistent sign across disjoint non-overlapping phases. That is textbook loser-momentum
+  continuation — published, replicable, therefore NOT an edge by the §7 filter — and the operator
+  ruled 2026-08-11 that price states may NEVER move a rank. It informs analyst WORK TIMING only.
+
 ## 4. Deferred — CAPITAL-gated on the spread; BUILD per the GOVERNOR
 
 **GATE — disciplined on CAPITAL, flexible on BUILD.** No real capital deploys on an edge until its
@@ -4356,6 +4372,26 @@ references name their series.
 **Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
+
+**EXPERIMENT RECORD — 2026-08-11 price-state falsifier (pre-registered; MEASURE-AND-KILL, nothing
+promotable).** Operator asked whether technicals (50/200d MA, RSI) should join the pipeline as
+supportive flags. Web research first (recorded in the approved plan): MA-rule profits are
+data-snooping that dies out-of-sample (Bajgrowicz-Scaillet 2012); 3–12-month losers CONTINUE to
+lose (Jegadeesh-Titman) — the queue's measured ~−1 pt/mo sector-relative drag is what the
+literature predicts; the strong-evidence answers to "is anyone buying / is it terminal" are
+POSITIONING, not price: insider buys (Cohen-Malloy-Pomorski 2012), short interest
+(Rapach-Ringgenberg-Zhou 2016), net issuance (Pontiff-Woodgate), Piotroski F-Score (2000) — the
+first three already computed at dossier level (docs/EDGE_THESIS.md "inflection" legs), none at
+queue level. Falsifier run (`scripts/price_state_falsifier.py`; report on the operator desktop,
+`ranked-queue-price-check/price_states/`): loader sanity gate reproduced the independent
+sector-relative sweep to 0.000 pts on 3 months. RESULTS — 200d-MA filter degenerate (R1 DEAD);
+RSI null; waiting-for-reclaim FREE (my pre-registered expectation that deferral costs the bounce
+was WRONG: winners earned 98% of gains AFTER the 50d reclaim); early-recovery vs still-falling
+separates at 120–180d (record-only; replicable momentum continuation; unpromotable per operator
+rule — price never moves a rank). Falsifications recorded in §3; operator ruling appended to the
+§ "Fundamental vs quant" bullet. NEXT (approved plan): PR-B1 queue "evidence strip"
+(insiders / short interest / share-count direction + price tail, display-only, AST-fenced),
+PR-B2 dossier twin, Phase C F-Score display pending separate operator green-light.
 
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
@@ -14285,7 +14321,10 @@ cannot converge within the reroll bound, the demand — not the roll — is what
   fund is fundamental-for-the-VERDICT (overshoot vs terminal) and quant-for-the-FUNNEL (the screen's
   drawdown / idiosyncrasy / multiple filters) + risk-sizing. Do **NOT** add technical / price-pattern
   signals as DECISION inputs — replicable (fails the edge filter) and they don't solve the real problem
-  (the generalist depth-gap). The depth-gap is bridged by the **dossier** supplying specialist-grade
+  (the generalist depth-gap). **OPERATOR RULING 2026-08-11: price states may NEVER sink or move a
+  rank — display-only permanently; only filing-based structural signals demote** (the 2026-08-11
+  falsifier record + §3 entry are the evidence base; the queue/dossier evidence strip ships under
+  the sector/industry inform-only template, AST-fenced). The depth-gap is bridged by the **dossier** supplying specialist-grade
   sector facts (FCF runway, covenants, segment economics, customer concentration) the generalist lacks;
   the per-sector spread (§2) measures whether it bridges — positive in a generalist-blind sector =
   dossier worked, poor = filter or learn it. **AI-disruption regime (relates to the small-cap terminal
