@@ -42,6 +42,7 @@ from vinci.rank import (
 )
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.schemas.ledger import (
+    EVENT_CLOSE,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
@@ -1620,7 +1621,17 @@ def _watch_tickers(root: Path) -> set[str]:
 
 
 def _cmd_ledger(args: argparse.Namespace) -> int:
-    """List all recorded paper verdicts (BUY and AVOID alike)."""
+    """List every recorded ledger row — the decisions, and the closes that followed them.
+
+    CLOSES ARE SHOWN AND MARKED — never hidden, never bare. This is the append-only record, so
+    dropping close rows would misrepresent it; but a close carries the ORIGINAL verdict for
+    provenance, so printing one unmarked under a VERDICT header shows the same name twice, both
+    reading BUY, with nothing to tell them apart. That is how a reader miscounts the book by hand,
+    and it is the display half of the double-count `score_ledger` was just fixed for.
+
+    Matches the web decision log's rule (2026-07-27): the decision keeps its verdict word, and the
+    close says it is a close beside it.
+    """
     cfg = get_config()
     with Store(cfg.db_path) as store:
         entries = list(store.iter_ledger())
@@ -1629,10 +1640,20 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
         return 0
     print(f"{'TICKER':<7}{'VERDICT':<16}{'ENTRY':>9}{'AS_OF':>13}{'HORIZON':>9}  DECIDED")
     for e in entries:
+        close_mark = (
+            f"  ← CLOSE @ {e.exit_price:.2f} on {e.exit_price_as_of}"
+            if e.event == EVENT_CLOSE and e.exit_price is not None
+            else ""
+        )
         print(
             f"{e.ticker:<7}{e.verdict.value:<16}{e.entry_price:>9.2f}"
             f"{str(e.entry_price_as_of):>13}{e.horizon_days:>8}d  {e.decided_at:%Y-%m-%d}"
+            f"{close_mark}"
         )
+    n_close = sum(1 for e in entries if e.event == EVENT_CLOSE)
+    if n_close:
+        print(f"\n{len(entries) - n_close} decision(s) · {n_close} close(s) — a close is not a "
+              f"second verdict; the spread counts decisions only.")
     return 0
 
 

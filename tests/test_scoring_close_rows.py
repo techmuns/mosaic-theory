@@ -103,6 +103,44 @@ def test_the_close_is_skipped_entirely_not_merely_deduplicated(tmp_path: Path) -
     assert ids == ["V-AAA"], f"the close row reached the score list: {ids}"
 
 
+def test_the_ledger_listing_marks_closes_instead_of_showing_two_verdicts(
+    tmp_path: Path, capsys: object, monkeypatch: object,
+) -> None:
+    """THE DISPLAY HALF, found reviewing the fix above. `iter_ledger` has exactly two consumers —
+    `score_ledger` and `vinci ledger` — and fixing one while leaving the other is this session's
+    recurring failure, so the neighbour was checked rather than assumed.
+
+    `vinci ledger` printed close rows unmarked under a VERDICT header: the same ticker twice, both
+    reading BUY, nothing to tell them apart. It corrupts no number, but it is how a reader
+    miscounts the book by hand.
+
+    NOT hidden — this is the append-only record and dropping rows would misrepresent it. Marked,
+    which is what the web decision log settled on 2026-07-27: the decision keeps its verdict word,
+    the close says it is a close."""
+    import argparse
+
+    from vinci import cli
+
+    buy = _decision("AAA", "SEC-A", Verdict.BUY)
+    db = tmp_path / "s.db"
+    with Store(db) as store:
+        store.append_ledger(buy)
+        store.append_ledger(_close_of(buy))
+
+    class _Cfg:
+        db_path = db
+    monkeypatch.setattr(cli, "get_config", lambda: _Cfg())  # type: ignore[attr-defined]
+    assert cli._cmd_ledger(argparse.Namespace()) == 0
+    out = capsys.readouterr().out  # type: ignore[attr-defined]
+
+    assert out.count("AAA") == 2, "the append-only record must still show both rows"
+    assert "CLOSE" in out, (
+        f"a close row printed with nothing marking it — two rows reading BUY "
+        f"for one decision:\n{out}")
+    assert "1 decision(s) · 1 close(s)" in out, (
+        f"the listing does not state how many of its rows are decisions:\n{out}")
+
+
 def test_a_close_is_not_counted_as_pending_either(tmp_path: Path) -> None:
     """The unresolved path has the same hole, and it is the one the committed report shows: a
     close with no forward price inflates `n_pending`, which reads to a human as 'decisions still
