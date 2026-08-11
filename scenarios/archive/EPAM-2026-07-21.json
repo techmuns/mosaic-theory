@@ -16,6 +16,7 @@
   "analyst": "nogods404",
   "spot": 89.4,
   "spot_source": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
+  "spot_as_of": null,
   "facts": {
     "d_and_a": {
       "value": 124.811,

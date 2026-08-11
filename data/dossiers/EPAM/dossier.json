@@ -7922,6 +7922,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-10T11:26:31.896149Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Technology",
   "industry": {
     "value": "IT Consulting and Other Services",

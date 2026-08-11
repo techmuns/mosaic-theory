@@ -27,6 +27,7 @@ from vinci.dossier.schemas import (
     Dossier,
     FinancialSummary,
     MechanicalLayer,
+    PriceStoreStamp,
     Sourced,
     SourceStatus,
     StockInfo,
@@ -3814,6 +3815,29 @@ def _panel_age_line(d: Dossier) -> list[str]:
     return out
 
 
+def _price_store_line(stamp: PriceStoreStamp | None) -> str:
+    """The price store, named by its WORKTREE rather than its absolute path.
+
+    THE READER NEEDS COMPARABILITY, NOT A FILESYSTEM TOUR. `.../mosaic-theory-wb/data/vinci.db`
+    reads as noise; `mosaic-theory-wb` is what tells one page from another, and the full declared
+    and resolved paths stay in `dossier.json` — the machine-complete tier, exactly where the
+    three-tier rule puts the full record behind a curated value.
+
+    THE ARROW IS THE SYMLINK, and it is worth a reader's attention: a worktree whose store points
+    into another's is reading data it did not refresh, which is how a corroboration check once
+    reported that "the store" could not see a price it was never actually asked for.
+    """
+    if stamp is None:
+        # UNSTAMPED IS NOT UNKNOWN-STORE. Every dossier committed before this field predates it;
+        # saying so beats printing nothing, which would read as "no store worth naming".
+        return "unstamped — this dossier predates the store stamp"
+    declared = Path(stamp.declared_path).parent.parent.name or stamp.declared_path
+    resolved = Path(stamp.resolved_path).parent.parent.name or stamp.resolved_path
+    where = declared if declared == resolved else f"{declared} → {resolved}"
+    reach = f"reaching {stamp.frontier}" if stamp.frontier else "holding no bars"
+    return f"`{where}` · {reach}"
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -3828,6 +3852,12 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # a reader meets it; this carries the meaning, which is audit-tier context by the three-tier
         # rule and print-expanded regardless.
         f"- **Extraction:** {stamp_detail(d.extraction_version)}",
+        # (spot audit) WHICH STORE, beside with-what and when. Rendered on every dossier and not
+        # only when it looks unusual: `data/` is per-worktree by design, so two pages built the
+        # same day can be struck days apart, and a reader cannot infer that from anything else on
+        # the page. Absent stamps say "unstamped" rather than nothing — a dossier built before the
+        # field and one built from an unknown store must not read alike.
+        f"- **Price store:** {_price_store_line(d.price_store)}",
         # (item 1) The build's panel spread, rendered on EVERY dossier rather than only when it
         # breaches: the spread is context a reader needs in order to read a multiple at all. Nine
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with

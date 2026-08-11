@@ -464,6 +464,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:05 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Price store:** unstamped — this dossier predates the store stamp
 - **Panel age:** oldest panel 33d old — 2026-06-24 (valuation.implied_expectations.tev_as_of), against a 2026-07-27 build
 - **Consensus age:** consensus 45d old (2026-06-12, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides

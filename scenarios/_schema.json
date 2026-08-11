@@ -1189,6 +1189,19 @@
       "title": "Spot Source",
       "type": "string"
     },
+    "spot_as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Spot As Of"
+    },
     "facts": {
       "additionalProperties": {
         "$ref": "#/$defs/Fact"

@@ -8842,6 +8842,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-10T12:09:34.260734Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Unknown",
   "industry": {
     "value": "Transaction and Payment Processing Services",

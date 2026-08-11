@@ -5719,6 +5719,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-07-30T10:36:17.059161Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Technology",
   "industry": {
     "value": "Data Processing and Outsourced Services",

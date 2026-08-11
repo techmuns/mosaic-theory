@@ -11118,6 +11118,49 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    number means. Append-only-safe as an optional field with a default (the `disposition`/`facts`
    precedent). Operator decision 2026-08-07.
 
+4. **STAMP BRBR's AND EPAM's `spot_as_of` FROM THE `-sl` WORKTREE — the only checkout that can.**
+   Opened 2026-08-11 by the `spot_as_of` PR. Both records carry `"spot_as_of": null` and both are
+   struck at **2026-08-07**, a date only `-sl` holds (`-wb` reaches 08-04, primary 08-05). The
+   backfill deliberately declined to write a date this worktree cannot verify: doing so would
+   assert from another store's authority, which is the same assumption a refuse-on-mismatch check
+   would encode and which was rejected for the same reason. **From `-sl`: `vinci audit spot`, then
+   write `spot_as_of: "2026-08-07"` on each and re-run — both should go silent.** BRBR needs a
+   HUMAN read either way: its `spot_source` names three dates and no rule picks the right one.
+   (`null` here means *we looked and cannot state one HERE* — the records predate nothing.)
+
+5. **VISA's ANCHOR IS NOT ONE MISSING FIELD, AND THE OBVIOUS FIX IS A 4× TRAP.** Opened 2026-08-11.
+   Netflix and Visa were assumed to share a cause; they do not.
+   - **NFLX** — `net_debt: None`, and the reason is a REFUSAL rather than a gap. Its `source` reads
+     in full: *"total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) —
+     **UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total;
+     pull CIQ**"*. The extractor caught its own under-capture and declined to publish a number it
+     could see was too small — fail-loud working as designed. `diluted_shares` is present at
+     4,261,300,000 off `WeightedAverageNumberOfDilutedSharesOutstanding`. **So NFLX's unblock is a
+     DATA PULL with a stated remedy, not a code fix** — the extractor already names what it needs.
+   - **V** — `net_debt` is FINE at 12,485.0 (source complete, no caveat). The missing input is
+     **`diluted_shares`**, and the committed evidence is the extractor's own stamp:
+     `anchor.diluted_shares.source` = *"UNKNOWN — no diluted WA tag"* — accurate REPORTING, not a
+     lookup failure. A live companyfacts read (2026-08-11) found **zero** occurrences of
+     `WeightedAverageNumberOfDilutedSharesOutstanding` for Visa, against NFLX's populated tag.
+     **EVIDENCE CAVEAT — do not re-derive this from the fixture:** `tests/fixtures/companyfacts/
+     V.json` is a CURATED 15-TAG SUBSET (`FIXTURE_TAGS`), so absence there proves nothing and would
+     be the "absence asserted from a scoped search" error. Re-check against live companyfacts.
+     Working hypothesis: Visa's counts are DIMENSIONAL (Class A/B/C) and companyfacts carries
+     undimensioned facts. **So Visa needs a different SOURCE**: the 10-Q cover, a dimensional XBRL
+     query, or CIQ.
+   - **THE TRAP, and whoever takes this must read it before writing a line:**
+     `dei:EntityCommonStockSharesOutstanding` — the tag anyone reaches for first — is last stamped
+     **2010-01-27 at 469,280,842** (corroborated in the committed fixture, which DOES carry `dei`)
+     against an actual count near **1.836bn**. A **4× error on the fund's largest name**, and the
+     `dep_amort` abandoned-tag class sixteen years wide.
+   - **AND THE ANSWER MAY ALREADY BE ON THE PAGE.** `mechanical.stock_info.shares_out` carries
+     **1,835,600,000**, source-stamped *"CIQ Comparable Analysis→Financial Data (Shares Outstanding
+     Latest) · as-of 2026-08-10"*. **So the first question is not which tag to substitute but
+     whether the anchor may read the CIQ figure** — and note it is SHARES OUTSTANDING, not the
+     DILUTED WEIGHTED AVERAGE the anchor's own basis line asks for ("diluted weighted-average
+     (latest 10-Q)"). Substituting one for the other is the same-window/different-BASIS class that
+     refused the buyback average; if it is used, the basis change is the decision, not a detail.
+
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 
 0. **PRINT-LAYOUT PASS — 2026-07-29 (operator: "this looks really bad and unprofessionally
@@ -12777,6 +12820,34 @@ sign-off.**
   documented defaults ARE the canonical set; their values live on the argparse subparser, not
   re-hardcoded). **Reminder is display-only:** the (future) Radar screen shows last-run / next-due (+30d)
   from the `component-a` scan_history manifest, amber when overdue — nothing fires automatically.
+- **THE THREE-STORE SPREAD IS THE DESIGN, NOT DRIFT — so the fix is a STAMP, not a sync (established
+  2026-08-11, PR `spot_as_of` / `price_store`).** The spread had been called a hazard twice without
+  anyone checking whether it was one. It is not: the DATA-TOPOLOGY entry directly below already
+  records `data/` as PER-WORKTREE, so three checkouts holding three frontiers (`wb` 2026-08-04, `sl`
+  2026-08-07, primary 2026-08-05) is the documented arrangement working. **What DOES follow is that
+  a reader cannot infer the data behind an artifact from the artifact.** Two names assembled the
+  same day out of different worktrees are struck days apart with nothing saying so; comparability
+  today rests on reference dates happening to lag every frontier — a coincidence, not a guarantee.
+  Hence `Dossier.price_store` (declared path + RESOLVED path + frontier), stamped at assembly.
+  **The resolved path is load-bearing:** `-pg`'s `data/vinci.db` is a SYMLINK into `-wb`, so a stamp
+  carrying only the declared path would make two dossiers built from ONE store look like two — the
+  same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
+  store it had not identified.
+- **SPOT WAS UNAUDITABLE, NOT UNVALIDATED — measured across all 8 records × all 3 stores
+  (2026-08-11).** Every committed spot is a REAL EOD close, equal to its stored bar with delta
+  **exactly 0.0**; not one is an analyst's intraday number. What differs is which store can SEE it:
+  BRBR and EPAM are struck at 2026-08-07 and resolve in `-sl` ONLY. **A refuse-on-mismatch check run
+  from `-wb` would therefore have blocked two CORRECT records** — every spot is auditable somewhere,
+  none everywhere, and a refusal encodes an assumption about which store is asking. Notes, never
+  problems. **The nearest-bar VALUE search was designed and then killed by its own corpus:** it is
+  one-to-MANY on real data (AORT's 25.37 → 2 bars sixteen months apart, MVST's 0.9188 → 4 spanning
+  two years, WERN's 46.04 → 2), and on the two records `-wb` cannot reach it returns a coincidental
+  collision (11.55 from June, 97.35 from May) — noise presented as a finding. Keyed by date,
+  `prices` is one-to-one. **And the date was already there, in prose:** all 8 `spot_source` strings
+  name an ISO date, so `spot_as_of` PROMOTES an existing fact rather than adding one — but BRBR's
+  carries THREE (close 08-07, `-wb` frontier 08-04, three-store agreement 07-29), so no regex
+  extracts it and the field is WRITTEN. A live instance of "parsers consume structured values, never
+  rendered strings". Seats: `vinci audit spot` (whole corpus) + `scenario-supersede` (at the write).
 - **DATA-TOPOLOGY of git-ignored artifacts (verified 2026-07-13 by `ls`; `data/` is PER-WORKTREE, NOT
   shared).** `-s2`: `data/assay/` = 14 cards, `data/assay_history/` = 3 driver subdirs + `manifest.jsonl`
   (46 snapshot files), `data/assay_cache/` = 1944 efts files. `-main`: `data/priced_check/report_all.txt`

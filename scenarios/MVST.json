@@ -20,6 +20,7 @@
   "analyst": "analyst",
   "spot": 0.9188,
   "spot_source": "Polygon MVST close 2026-07-21 (live at underwrite)",
+  "spot_as_of": "2026-07-21",
   "facts": {
     "net_debt": {
       "value": 199.9,

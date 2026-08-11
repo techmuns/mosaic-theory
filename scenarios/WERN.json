@@ -16,6 +16,7 @@
   "analyst": "nogods404",
   "spot": 46.04,
   "spot_source": "Polygon EOD daily close 2026-07-17 (live)",
+  "spot_as_of": "2026-07-17",
   "facts": {
     "d_and_a": {
       "value": 286.321,

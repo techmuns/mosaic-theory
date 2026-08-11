@@ -22,6 +22,7 @@
   "analyst": "nogods404",
   "spot": 97.43,
   "spot_source": "EOD close 2026-08-07",
+  "spot_as_of": null,
   "facts": {
     "d_and_a": {
       "value": 127.58,

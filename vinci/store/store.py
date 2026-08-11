@@ -291,6 +291,43 @@ class Store:
         row = self._conn.execute("SELECT MAX(bar_date) AS d FROM prices").fetchone()
         return date.fromisoformat(row["d"]) if row and row["d"] else None
 
+    def price_frontier_for(self, internal_id: str) -> date | None:
+        """The newest bar date FOR ONE NAME — None when this store carries no bars for it at all.
+
+        The per-name counterpart to :meth:`price_frontier`. The distinction is load-bearing for
+        the spot audit: a store can be current overall and still hold nothing for one security
+        (WERN has no bars in the ``-sl`` store while that store's global frontier is the newest
+        of the three), and "this store has not refreshed that far" is a different statement from
+        "this store does not carry this name".
+        """
+        row = self._conn.execute(
+            "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ?", (internal_id,)
+        ).fetchone()
+        return date.fromisoformat(row["d"]) if row and row["d"] else None
+
+    def close_on(self, internal_id: str, bar_date: date) -> float | None:
+        """The close on EXACTLY ``bar_date`` — never the nearest, never a reach-back.
+
+        None when the store has no bar on that day.
+
+        THE POINT OF THE METHOD IS WHAT IT REFUSES TO DO. :meth:`close_as_of` deliberately reaches
+        BACKWARD to the latest bar on or before its reference date, which is correct for freezing
+        an entry price and wrong for auditing one: a record claiming a close on 2026-08-07 checked
+        through a reach-back silently gets the 2026-08-04 bar and reads as verified. That is not a
+        hypothetical — it is how BRBR's spot passed its guards while sitting a date beyond this
+        worktree's frontier. An audit needs the answer "this store has no bar on that day", so the
+        absence comes back as None rather than as a neighbouring price.
+
+        ``prices`` is keyed PRIMARY KEY (internal_id, bar_date), so a date lookup is one-to-one —
+        unlike a lookup by VALUE, which is one-to-many on real data (MVST's 0.9188 matches four
+        separate bars spanning 2024-02-06 to 2026-07-21).
+        """
+        row = self._conn.execute(
+            "SELECT close FROM prices WHERE internal_id = ? AND bar_date = ?",
+            (internal_id, _iso(bar_date)),
+        ).fetchone()
+        return float(row["close"]) if row is not None else None
+
     def latest_close(
         self, internal_id: str, *, reference_date: date, staleness_days: int
     ) -> DataField[float]:

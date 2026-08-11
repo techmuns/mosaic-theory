@@ -7807,6 +7807,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-10T06:33:26.557064Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Consumer Staples",
   "industry": {
     "value": "Personal Care Products",

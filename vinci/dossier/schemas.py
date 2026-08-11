@@ -1381,6 +1381,30 @@ class Synthesis(BaseModel):
     model_config = {"frozen": True}
 
 
+class PriceStoreStamp(BaseModel):
+    """WHICH price store a dossier was built from, and how far it reached.
+
+    THE RESOLVED PATH IS THE IDENTITY, AND THE DECLARED ONE IS ALSO INFORMATION. This checkout's
+    `data/vinci.db` is a SYMLINK to another worktree's store, so the two paths differ while the
+    bytes are the same file. Stamping only the declared path would make two dossiers built from
+    ONE store look like they came from two; stamping only the resolved path would hide that this
+    worktree is reading someone else's data. Both, and a reader can tell either way.
+
+    That symlink is not a hypothetical detail: a corroboration check for BRBR's $11.56 was run
+    against `data/vinci.db` here, reported that the store could not see the price, and was wrong
+    about WHICH store it had just asked.
+
+    `frontier` is the store's newest bar across every name — the last moment its price data
+    actually reaches, and the number that decides whether an as-of can be checked here at all.
+    """
+
+    declared_path: str          # the path as configured, e.g. "<worktree>/data/vinci.db"
+    resolved_path: str          # symlinks followed — the identity two stamps compare on
+    frontier: date | None       # newest bar date in the store; None when it holds no bars
+
+    model_config = {"frozen": True}
+
+
 class Dossier(BaseModel):
     """A per-finalist dossier: source-bound mechanical facts + fenced synthesis. Assembles, cites;
     never concludes. The human's BUY/AVOID verdict is logged separately via the ledger CLI."""
@@ -1419,6 +1443,18 @@ class Dossier(BaseModel):
     # "unstamped" on BOTH twins rather than as nothing, because "vintage unknown" and "no
     # divergence" must not look the same to a reader.
     extraction_version: str | None = None
+    # (spot audit, 2026-08-11) WHICH PRICE STORE produced this document. `extraction_version` says
+    # with WHAT code, `assembled_at` says WHEN — this says FROM WHICH DATA, the third leg of "are
+    # these two dossiers comparable?" and the one nothing recorded.
+    #
+    # IT IS NOT DRIFT, WHICH IS WHY A STAMP IS THE WHOLE ANSWER. `data/` is per-worktree BY DESIGN
+    # (STATE §DATA-TOPOLOGY), so three checkouts holding three frontiers — 2026-08-04, 2026-08-07,
+    # 2026-08-05 — is the documented arrangement working, not divergence to repair. What follows is
+    # that a reader cannot infer the data behind a page FROM the page: two names assembled the same
+    # day out of different worktrees are struck days apart with nothing saying so. Comparability
+    # today rests on reference dates happening to lag every frontier — a coincidence, not a
+    # guarantee. Default None so committed JSON predating the field round-trips byte-identically.
+    price_store: PriceStoreStamp | None = None
     # (teaser/company) Brief-teaser + company-overview context: the SIC-derived coarse sector (the
     # CIQ-GICS fallback), the CIQ GICS Primary Industry Classification (source-bound), the exchange,
     # and the CIQ subject business description. Assemble/inform only — never a gate/rank input.

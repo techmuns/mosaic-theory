@@ -731,6 +731,22 @@ class ScenarioRecord(BaseModel):
     analyst: str
     spot: float
     spot_source: str
+    # (spot audit, 2026-08-11) THE DATE THE SPOT IS A CLOSE OF — structured, because the prose
+    # beside it cannot be parsed. All eight committed records already NAME their date inside
+    # `spot_source`, so this is a promotion of an existing fact and not a new one; what none of
+    # them offers is a MACHINE-READABLE date. BRBR is the proof that a regex cannot supply it: its
+    # `spot_source` carries THREE ISO dates (the close 2026-08-07, this worktree's frontier
+    # 2026-08-04, the date all three stores agree 2026-07-29) and no rule picks the right one —
+    # first-date is right only by the accident of how that sentence happens to be worded, and
+    # last-date and max-date each return something else. The house rule ("parsers consume
+    # structured values, never rendered strings") arriving as a live instance: this field is
+    # WRITTEN, never extracted from the sentence beside it.
+    #
+    # Default None so every record predating the field round-trips, and because UNSTATED and
+    # ABSENT are different states. A spot with no date is UNAUDITABLE, which is much narrower than
+    # unvalidated: all eight committed spots are real EOD closes, exact to the stored bar — just
+    # not ones that every store can see.
+    spot_as_of: date | None = None
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
@@ -1026,6 +1042,69 @@ def limit_notes(rec: ScenarioRecord) -> list[str]:
             f"stated limit dates from {lim.stated_at} and these legs from {rec.underwrite_date} "
             f"— the limit predates the underwrite it sits beside, so it is unverified against it.")
     return out
+
+
+#: The spot is COPIED from a stored bar, so the two are the same number and not two roundings of
+#: one — measured across the six records this worktree can check, the delta is exactly 0.0 in every
+#: case. The epsilon is float-round-trip insurance, not a tolerance for a real price difference;
+#: anything a cent wide would be inventing slack the data has never needed and would swallow a
+#: genuine mis-transcription.
+_SPOT_EPS = 5e-7
+
+
+def spot_notes(
+    rec: ScenarioRecord, *, bar_close: float | None, name_frontier: date | None, store: str,
+) -> list[str]:
+    """The record's spot against the bar it CLAIMS to be — NOTES, never problems.
+
+    A FLAG AND NOT A REFUSAL, and that is a measured conclusion rather than a cautious one. Run
+    across all eight committed records against all three stores: every spot is a real EOD close,
+    exact to the stored bar — and BRBR's and EPAM's resolve in the ``-sl`` store ONLY, because
+    they are struck at 2026-08-07 while this worktree's frontier is 2026-08-04. A refusal run from
+    here would therefore have blocked two CORRECT records. Every spot is auditable somewhere; none
+    is auditable everywhere, so a refusal encodes an assumption about which store is asking.
+
+    THE LOOKUP IS BY DATE, NEVER BY VALUE. Searching for the nearest bar matching the spot's VALUE
+    was the first design and the corpus killed it: it is one-to-MANY on real data (AORT's 25.37
+    matches two bars sixteen months apart, MVST's 0.9188 four spanning two years, WERN's 46.04 two)
+    and on the two records this store cannot reach it returns a coincidental collision — an 11.55
+    from June for BRBR, a 97.35 from May for EPAM — noise presented as a finding. Keyed by date,
+    ``prices`` is one-to-one and the answer is a lookup instead of a search.
+
+    THE FOUR STATES ARE DELIBERATELY NOT THREE. "This store has not refreshed that far" is benign
+    and says nothing about the record; "this store reaches past that date and still has no bar on
+    it" is a coverage hole or a non-trading day, and is worth a sentence. Collapsing them would put
+    the fleet's ordinary frontier lag and a real gap under one wording — the two-states-that-must-
+    not-render-alike class this repo keeps meeting.
+
+    ``bar_close`` / ``name_frontier`` are RESOLVED BY THE CALLER so this stays a pure function of
+    what a store answered: the store I/O belongs at the call site, and the judgment is testable
+    without one.
+    """
+    asof = rec.spot_as_of
+    if asof is None:
+        # UNSTATED IS NOT WRONG. It is unauditable, which is the narrower claim — and it is the
+        # honest state for a record struck against a store this checkout cannot see.
+        return [f"spot ${rec.spot:,.4g} carries no `spot_as_of` — it names no date, so no store "
+                f"can check it. The date is stated in prose (`spot_source`) and is not machine-"
+                f"readable; it is UNAUDITABLE here, which is narrower than unverified."]
+    if bar_close is not None:
+        if abs(bar_close - rec.spot) <= _SPOT_EPS:
+            return []                       # the clean case is silent, as `limit_notes` is
+        return [f"SPOT DOES NOT MATCH ITS OWN BAR: the record states ${rec.spot:,.4f} as of "
+                f"{asof}, and {store} closed that day at ${bar_close:,.4f}. One of the two is "
+                f"wrong — this is the case the check exists for."]
+    if name_frontier is None:
+        return [f"spot is stated as of {asof} and {store} carries NO bars for this name at all, "
+                f"so it cannot be checked here — a coverage gap in this store, not a finding "
+                f"about the record."]
+    if name_frontier < asof:
+        return [f"spot is stated as of {asof} and {store} reaches only to {name_frontier}, so the "
+                f"bar is not here to check against. Frontier lag in this checkout, not a finding "
+                f"about the record — the store that wrote it may well hold the bar."]
+    return [f"spot is stated as of {asof} and {store} reaches to {name_frontier} — past that date "
+            f"— yet holds no bar ON it. Either {asof} was not a trading day for this name, or "
+            f"this store has a hole in its coverage."]
 
 
 def horizon_problems(rec: ScenarioRecord) -> list[str]:

@@ -22,6 +22,7 @@
   "analyst": "nogods404",
   "spot": 11.56,
   "spot_source": "EOD BRBR close 2026-08-07. NOTE: only the -sl worktree's store carries a bar that far; this worktree's frontier is 2026-08-04. All three stores agree at 2026-07-29 ($13.29), so the difference is refresh depth, not value.",
+  "spot_as_of": null,
   "facts": {
     "net_debt": {
       "value": 1122.7,

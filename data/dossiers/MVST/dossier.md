@@ -671,6 +671,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-10 07:06 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Price store:** unstamped — this dossier predates the store stamp
 - **Panel age:** oldest panel 16d old — 2026-06-24 (valuation.implied_expectations.tev_as_of), against a 2026-07-10 build
 - **Consensus age:** consensus is 56d old (2026-05-15, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
