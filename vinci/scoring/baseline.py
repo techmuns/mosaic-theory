@@ -20,6 +20,18 @@ the window, which is the buy-equal-amounts-and-hold construction. It is delibera
 cap-weighted: the kill test asks whether judgement beats the naive alternative, and the naive
 alternative to a hand-written follow list is holding all of it evenly.
 
+TWO LIMITS ON HOW HARD THIS NUMBER MAY BE READ, stated here because it is a FALSIFIER and a weak
+falsifier read as a strong one is worse than none:
+
+1. THE BASKET CONTAINS THE NAME BEING JUDGED. That is what the kill criterion asks for — passive
+   exposure to the list — but with a three-name follow list a BUY on one member is measured against
+   a basket that is one-third that same member, so early readings are heavily self-overlapping and
+   the test has little power. It sharpens as the follow list grows, not as verdicts accumulate.
+2. IT IS GROSS AGAINST GROSS. Neither leg carries transaction costs, so the comparison FLATTERS the
+   active book: indexing a follow list is materially cheaper to run than picking within it, and
+   that advantage is invisible here. The primary spread's `buy_excess_net` is where costs enter;
+   this line has no equivalent. A `vs_basket` inside a few tenths of a point is not a win.
+
 A PARTIAL BASKET IS REFUSED, NOT REWEIGHTED. If any member lacks a price at either end of the
 window, the comparator returns None WITH ITS REASON rather than silently averaging the members that
 happen to be priced. Three names minus one is a different basket, and quietly renormalising it

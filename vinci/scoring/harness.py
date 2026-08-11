@@ -19,17 +19,17 @@ from vinci.schemas.ledger import (
     sleeve_of,
 )
 from vinci.schemas.market import PriceBar
-from vinci.scoring.baseline import Basket, basket_return, close_on_or_before
+
+# Imported under its old private name so the call sites below read unchanged. The DEFINITION moved
+# to `baseline`, because the basket must read "the price on this date" exactly as the benchmark
+# does — see that module's note on why it is shared rather than copied.
+from vinci.scoring.baseline import Basket, basket_return
+from vinci.scoring.baseline import close_on_or_before as _close_on_or_before
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
 
 _DEFAULT_COST_BPS = 25.0  # coarse small-cap one-way cost estimate (round-trip applied in metrics)
 _DEFAULT_BENCHMARK_ID = "IDX-IWM"
-
-#: Bound to its old private name so the call sites below read unchanged. The DEFINITION moved to
-#: `baseline`, because the basket must read "the price on this date" exactly as the benchmark does
-#: — see that module's note on why it is shared rather than copied.
-_close_on_or_before = close_on_or_before
 
 
 def _daily_returns(bars: list[PriceBar], start: date, end: date) -> list[tuple[date, float]]:

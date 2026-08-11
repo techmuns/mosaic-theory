@@ -164,6 +164,40 @@ def test_a_book_with_no_follow_basket_prints_no_baseline_line(tmp_path: pathlib.
 # 3. The refusal
 # --------------------------------------------------------------------------------------------
 
+def test_a_supplied_basket_with_no_resolved_long_leg_says_so_truthfully(
+    tmp_path: pathlib.Path,
+) -> None:
+    """REVIEW FINDING, and the quality book's most likely EARLY STATE — the first resolved verdict
+    can easily be a PASS.
+
+    Three absences were collapsed into two: "no basket for this book", "basket present but no
+    resolved BUY yet", and "basket refused on a window". The middle one reported as the first, so a
+    report whose basket WAS supplied printed `unavailable — no basket supplied for this sleeve`
+    while naming that same basket's members in JSON. A false statement about its own inputs, in the
+    artifact the fund reads its falsifiers from.
+    """
+    followed = _followed_file(tmp_path, {"AAA": "quality", "BBB": "quality"})
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices(_bars("IDX-IWM", 100.0, 105.0))
+        store.write_prices(_bars("SEC-AAA", 100.0, 130.0))
+        store.write_prices(_bars("SEC-BBB", 100.0, 110.0))
+        store.append_ledger(_entry("BBB", "SEC-BBB", Verdict.PASS, "quality", "followed"))
+        baskets = resolve_baskets(
+            followed, [_FakeIdentity("AAA", "SEC-AAA"), _FakeIdentity("BBB", "SEC-BBB")])  # type: ignore[arg-type]
+        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets)
+
+    q = report.by_sleeve["quality"]
+    assert q.basket_label == "AAA, BBB", "fixture broken: the basket did not resolve"
+    assert q.basket_mean is None, "a basket mean was computed with no BUY leg to compare it to"
+    assert "no basket supplied" not in (q.basket_note or ""), (
+        f"the report claims no basket was supplied while naming its members: {q.basket_note!r}")
+    assert "no resolved BUY" in (q.basket_note or ""), (
+        f"the reason does not say what is actually missing: {q.basket_note!r}")
+    # AND THE MEMBERS ARE NAMED ON THE REFUSAL LINE — with two books on the page, a bare
+    # "unavailable" cannot be attributed to a basket.
+    assert "vs equal-weight follow basket (AAA, BBB): unavailable" in report.to_markdown()
+
+
 def test_a_partial_basket_is_refused_and_names_the_missing_member() -> None:
     """Reweighting two names into a three-name basket answers a question nobody asked. The reason
     has to name the member, because 'unavailable' alone is indistinguishable from 'it lost'."""

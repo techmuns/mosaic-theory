@@ -276,8 +276,12 @@ class ScoreReport:
             if v.basket_label is None:
                 continue
             if v.basket_mean is None:
+                # THE MEMBERS ARE NAMED EVEN WHEN THE NUMBER IS REFUSED. With more than one book
+                # on the page, "unavailable" alone leaves the reader unable to tell which basket
+                # failed, or whether the one they care about was even constituted.
                 sleeve_lines.append(
-                    f"  - vs equal-weight follow basket: unavailable — {v.basket_note}")
+                    f"  - vs equal-weight follow basket ({v.basket_label}): unavailable — "
+                    f"{v.basket_note}")
             else:
                 verdict = "beats" if (v.vs_basket or 0.0) > 0 else "does NOT beat"
                 sleeve_lines.append(
@@ -363,14 +367,29 @@ def spread_by_sleeve(
         # A REFUSAL ON ANY ROW REFUSES THE WHOLE MEAN. Averaging only the rows whose basket priced
         # would silently compare the full BUY leg against a comparator drawn from a subset of its
         # windows — the same partial-basket substitution `baseline` refuses one level down.
-        notes = [r.basket_note for r in long_rows if r.basket_note is not None]
-        bm = statistics.fmean(b_rets) if b_rets and not notes and long_rows else None
-        note = notes[0] if notes else (None if b_rets else "no basket supplied for this sleeve")
+        notes = sorted({r.basket_note for r in long_rows if r.basket_note is not None})
+        label = (basket_labels or {}).get(key)
+        bm: float | None
+        note: str | None
+        # THREE DISTINCT ABSENCES, kept distinct — an earlier cut collapsed the middle one into the
+        # first and reported "no basket supplied for this sleeve" for a book whose basket WAS
+        # supplied and simply had no resolved BUY yet. That is a false statement in the report, and
+        # it is the quality book's most likely early state: the first resolved quality verdict can
+        # easily be a PASS.
+        if label is None:
+            bm, note = None, "no basket supplied for this sleeve"
+        elif not long_rows:
+            bm, note = None, f"no resolved {long_label} verdicts to compare against yet"
+        elif notes:
+            extra = f" (+{len(notes) - 1} other reason(s))" if len(notes) > 1 else ""
+            bm, note = None, f"{notes[0]}{extra}"
+        else:
+            bm, note = (statistics.fmean(b_rets) if b_rets else None), None
         out[key] = SleeveSpread(
             sleeve=key, long_label=long_label, short_label=short_label,
             n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
             spread=(lm - sm if lm is not None and sm is not None else None),
-            basket_label=(basket_labels or {}).get(key),
+            basket_label=label,
             basket_mean=bm,
             vs_basket=(lm - bm if lm is not None and bm is not None else None),
             basket_note=note)
