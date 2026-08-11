@@ -1,7 +1,13 @@
 {
   "schema_version": "1.3",
   "ticker": "EPAM",
-  "limit": null,
+  "limit": {
+    "state": "stated",
+    "price": 89.5,
+    "stated_at": "2026-08-07",
+    "note": "Chosen to clear under BOTH net-debt treatments — the financial-only bridge puts the two-to-one price at $93.71 and the lease-inclusive bridge at $90.18 — rather than taking the more favourable one. The gap to the computed ceiling is conservatism the analyst added, not an arithmetic result.",
+    "revisit": null
+  },
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
   "recipe_formula": [
@@ -318,17 +324,22 @@
     "gate": "FAIL"
   },
   "verdict": {
-    "status": "pending_analyst",
-    "recorded": null,
-    "rationale": null,
+    "status": "watch",
+    "recorded": "2026-08-11",
+    "rationale": "Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor. The fall may well have gone further than the business did, on a company holding net cash and still growing revenue, but the price does not compensate for the thesis being wrong. Limit $89.50, chosen to clear under both net-debt bridges.",
     "rationale_plain": null,
     "rationale_plain_recorded": null,
-    "reunderwrite_triggers": [],
+    "reunderwrite_triggers": [
+      "North American organic constant-currency growth recovering from about 1.8% toward mid-single digits.",
+      "Delayed large deals signed and contributing to revenue.",
+      "Operating margin on the reported basis reaching 11.5%, against company guidance for fiscal 2026 of 10.5-11.0% — the cell the underwrite records as contested.",
+      "Evidence that revenue from AI-native work is incremental rather than replacing existing engagements."
+    ],
     "dated_triggers": [],
     "entry_price": null,
     "ratio_at_entry": null,
-    "avoid_priced": false,
-    "avoid_priced_note": null
+    "avoid_priced": true,
+    "avoid_priced_note": "Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor, so the asymmetry is what refuses it. The fall may well have gone further than the business did, on a company that holds net cash and is still growing revenue, but the price does not compensate for the thesis being wrong."
   },
   "refresh_log": [
     {

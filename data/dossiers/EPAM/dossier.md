@@ -9,12 +9,23 @@ _August 10, 2026 · extraction 2026-07-28.1_
 
 _Spot source: EOD close 2026-08-07_
 
-**Underwrite disposition:** PENDING_ANALYST — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** WATCH (2026-08-11) — _the BUY/AVOID verdict of record is the ledger's_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-08-07); the live close is in Snapshot, above._
+
+Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor. The fall may well have gone further than the business did, on a company holding net cash and still growing revenue, but the price does not compensate for the thesis being wrong. Limit $89.50, chosen to clear under both net-debt bridges.
+
+### What would reopen this name
+
+- North American organic constant-currency growth recovering from about 1.8% toward mid-single digits.
+- Delayed large deals signed and contributing to revenue.
+- Operating margin on the reported basis reaching 11.5%, against company guidance for fiscal 2026 of 10.5-11.0% — the cell the underwrite records as contested.
+- Evidence that revenue from AI-native work is incremental rather than replacing existing engagements.
+
 EPAM Systems, Inc. provides digital platform engineering and software development services worldwide.
-**Mixed** — a net-cash, still-EBITDA-growing franchise at a valuation floor, against a genuinely deteriorating North American core and persistent margin erosion.
 - **Segments:** Americas 58%; Europe 42% [1]
 - **Geography:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
 - **Snapshot:** NYSE · CMP $97.43 (2026-08-07) · cap $5.0B (2026-08-10) · 52-wk $73.06–$222.53 · shares 51.6M · book value/sh $68.21 [3]
