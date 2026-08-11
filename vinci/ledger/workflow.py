@@ -200,10 +200,16 @@ def log_verdict(
     # READS THE COMMITTED RECORD, never a recomputed ceiling: the question is what the analyst
     # committed to, not what today's legs imply. A record with no limit is not refused — `unstated`
     # is not `absent`, and six of seven records carry no limit today.
-    if verdict is Verdict.BUY and stated_limit is not None and close.value > stated_limit.price:
+    # A DEFERRED limit carries NO price and must enforce nothing — the analyst looked and
+    # chose not to commit, which is a different fact from a commitment. `price is None` is
+    # therefore checked explicitly rather than trusted from `state`: two ways to ask the
+    # same question is how they drift, and the model already refuses the mismatch.
+    _lim = stated_limit.price if stated_limit is not None else None
+    if (verdict is Verdict.BUY and stated_limit is not None
+            and _lim is not None and close.value > _lim):
         raise LedgerError(
             f"REFUSED: {ident.ticker} BUY at {close.value:,.2f} (as of {close.as_of}) is ABOVE the "
-            f"stated limit of {stated_limit.price:,.2f} from {stated_limit.stated_at}"
+            f"stated limit of {_lim:,.2f} from {stated_limit.stated_at}"
             + (f" — {stated_limit.note}" if stated_limit.note else "")
             + ". The limit is the analyst's commitment and the ledger is append-only, so this "
               "cannot be un-logged: either wait for the price, or restate the limit deliberately.")

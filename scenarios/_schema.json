@@ -682,9 +682,26 @@
     "StatedLimit": {
       "description": "The price the analyst will actually pay \u2014 STATED, never derived.\n\nTHE COMPUTED CEILING AND THE STATED LIMIT ARE DIFFERENT OBJECTS, and EPAM is why the field\nexists: its ceiling is **$93.71** and the analyst's limit is **$89.50**, chosen to clear under\nBOTH net-debt treatments. Storing the ceiling would replace a decision with an arithmetic\nresult, and the $4.21 gap \u2014 the conservatism the analyst added \u2014 is itself the information.\n\nIT MUST NOT MOVE WHEN THE LEGS MOVE. That is the whole distinction from `Result.ceiling2to1`,\nwhich recomputes on every supersede. So the limit carries ``stated_at``: a limit struck against\nsuperseded legs is otherwise indistinguishable from one struck against the live ones, which is\nthe vintage defect this repo has paid for in `dep_amort`, in the buyback overlay, and in the\ncovenant digest.\n\nOPTIONAL, AND `unstated` IS NOT `absent`. Seven records predate this field; requiring it would\nmean the first record to state one is the only one that could ever be written \u2014 the adoption\ntrap `leg_fy_problems` names, and which its own fleet pin then fell into a second time. The\ncost is stated rather than hidden: a record without a limit is enforced by nothing, exactly as\nevery record is today.",
       "properties": {
+        "state": {
+          "default": "stated",
+          "enum": [
+            "stated",
+            "deferred"
+          ],
+          "title": "State",
+          "type": "string"
+        },
         "price": {
-          "title": "Price",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
         },
         "stated_at": {
           "format": "date",
@@ -702,10 +719,21 @@
           ],
           "default": null,
           "title": "Note"
+        },
+        "revisit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revisit"
         }
       },
       "required": [
-        "price",
         "stated_at"
       ],
       "title": "StatedLimit",

@@ -1,0 +1,266 @@
+{
+ "ticker": "BRBR",
+ "recipeId": "R1_midcycle_margin_evebitda",
+ "recipeDesc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+ "recipeFormula": [
+  "EBIT = revenue \u00d7 op margin",
+  "EBITDA = EBIT + D&A",
+  "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+  "equity = EV \u2212 net debt",
+  "value/share = equity \u00f7 diluted shares"
+ ],
+ "assumptions": [
+  {
+   "axis": "revenue",
+   "method": "All three legs are read off the street's forecast distribution AT THIS RECORD'S EIGHTEEN-MONTH HORIZON rather than at the nearest fiscal year: base 1,340 is the median FY2028 estimate, bull 1,410 the highest, and bear 1,200 approximates the lowest FY2027 estimate of 1,203.2. Taking all three from one distribution keeps a single horizon across the legs. The computed default of 1,351.7 is the FY2026 median and therefore describes a different moment, which is why base sits below it.",
+   "references": [
+    {
+     "label": "FY2025 reported revenue",
+     "value": 1450.9,
+     "unit": "$M",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)"
+    },
+    {
+     "label": "LTM revenue",
+     "value": 1416.208,
+     "unit": "$M",
+     "source": "committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    {
+     "label": "consensus FY26E revenue",
+     "value": 1334.0,
+     "unit": "$M",
+     "source": "committed dossier financial_summary (E cols = consensus)",
+     "role": "consensus",
+     "leg": "base"
+    }
+   ]
+  },
+  {
+   "axis": "margin",
+   "method": "Base 15.5% matches the median operating margin of the last eight fiscal years, 15.45%, and is corroborated forward rather than extrapolated from a depressed present \u2014 the street carries about 15.5% for FY2027 and an implied 15.7% for FY2028. Bear 13.0% is roughly 0.9pp below the trailing twelve-month margin: deterioration from a level already impaired. Bull 17.0% is held below the 17.18% actually earned in FY2024, so the upside claims only what the business has already done. Stated on operating income, not EBITDA.",
+   "references": [
+    {
+     "label": "screening median (naive, 8 FY)",
+     "value": 15.45,
+     "unit": "%",
+     "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value",
+     "role": "median"
+    },
+    {
+     "label": "7yr clean median (FY2025 adjusted)",
+     "value": 15.51,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment",
+     "role": "median",
+     "leg": "base"
+    },
+    {
+     "label": "FY2020 worst clean year",
+     "value": 9.58,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)",
+     "role": "trough",
+     "leg": "bear"
+    },
+    {
+     "label": "FY2022 best clean year",
+     "value": 17.35,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)",
+     "role": "peak",
+     "leg": "bull"
+    },
+    {
+     "label": "FY2025 adjusted ex $60.9M impairment",
+     "value": 15.01,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)"
+    }
+   ]
+  },
+  {
+   "axis": "multiple",
+   "method": "Base 9.0x is roughly half the 17.85x median close of the company's own eight-and-a-half-year trading history, and that gap IS the judgment: the history spans a growth era the business has left, so a median drawn across it describes a company that no longer exists. The leg follows the company's own de-rating instead \u2014 it traded at 9.54x as recently as September 2025 \u2014 and is cross-checked against the 8.72x median that comparable companies fetch on next-twelve-month earnings, which it sits slightly above. Bear 5.5x is below the 6.11x lowest close in that same history, deliberately not 5.0x, because a lower multiple would count deterioration the revenue and margin legs already carry. Bull 12.0x is near the 12.89x the most expensive comparable fetches.",
+   "references": [
+    {
+     "label": "this company's trading-range low",
+     "value": 6.11,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+     "role": "band_low",
+     "leg": "bear"
+    },
+    {
+     "label": "this company's trailing 25th percentile",
+     "value": 15.2,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+     "role": "percentile"
+    },
+    {
+     "label": "this company's trailing median",
+     "value": 17.85,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+     "role": "median",
+     "leg": "base"
+    },
+    {
+     "label": "this company's trailing 75th percentile",
+     "value": 20.88,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+     "role": "percentile"
+    },
+    {
+     "label": "current multiple (0th pctile)",
+     "value": 5.65,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+     "role": "current"
+    },
+    {
+     "label": "entry-boundary cell A (1,100 \u00d7 8% \u00d7 6.0x)",
+     "value": 1.96,
+     "unit": ":1",
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+    },
+    {
+     "label": "entry-boundary cell B (1,050 \u00d7 7% \u00d7 6.0x)",
+     "value": 1.73,
+     "unit": ":1",
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+    }
+   ],
+   "notes": [
+    {
+     "text": "entry-boundary cells: 1,100 \u00d7 8% \u00d7 6.0x \u2192 $3.54; 1,050 \u00d7 7% \u00d7 6.0x \u2192 $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (\u22482.34 / \u22482.07); on the re-set 14% normal they read \u22481.96 / \u22481.73 \u2014 below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
+     "date": "2026-07-26",
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+    }
+   ]
+  }
+ ],
+ "multipleBasis": "EV/EBITDA",
+ "underwriteDate": "2026-08-07",
+ "analyst": "nogods404",
+ "spot": 11.56,
+ "spotSource": "EOD BRBR close 2026-08-07. NOTE: only the -sl worktree's store carries a bar that far; this worktree's frontier is 2026-08-04. All three stores agree at 2026-07-29 ($13.29), so the difference is refresh depth, not value.",
+ "facts": [
+  {
+   "key": "net_debt",
+   "value": 1122.7,
+   "unit": "$M",
+   "basis": "net debt, latest 10-Q",
+   "source": "CIQ Financials/EDGAR \u2014 carried from the completed stage-2 underwrite"
+  },
+  {
+   "key": "d_and_a",
+   "value": 18.6,
+   "unit": "$M",
+   "basis": "FROZEN \u2014 no clean FY27 figure exists, so the latest reported annual charge is carried forward unchanged rather than forecast",
+   "source": "carried from the completed stage-2 underwrite"
+  },
+  {
+   "key": "diluted_shares",
+   "value": 116.478194,
+   "unit": "M shares",
+   "basis": "Diluted shares outstanding 116,478,194 = basic shares outstanding 116,278,194 (cover of the 10-Q filed 2026-08-04, as of 2026-07-28) + a dilutive increment of 200,000 (diluted weighted average 116,600,000 less basic weighted average 116,400,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is what makes the construction sound. The underwrite's 116,600,000 is NOT used: it is the latest-quarter diluted weighted average, a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date.",
+   "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} \u2014 item 24 denominator swap"
+  },
+  {
+   "key": "ltm_revenue",
+   "value": 1392.235,
+   "unit": "$M",
+   "basis": "LTM revenue",
+   "source": "committed financial_summary.annual (LTM) \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+  }
+ ],
+ "scenarios": [
+  {
+   "name": "bear",
+   "revenue": 2250.0,
+   "margin": 0.08,
+   "multiple": 6.0,
+   "reason": "Promotional intensity persists and the price increase does not hold, so revenue falls back and margin compresses to 8.0%. The multiple sits at 6.0x. The equity is thin enough here that the residual is close to nothing.",
+   "valuePerShare": 0.59,
+   "opIncome": 180.0,
+   "ebitda": 198.6,
+   "ev": 1191.6,
+   "equity": 68.9,
+   "evEbit": 6.6,
+   "normFcf": null
+  },
+  {
+   "name": "base",
+   "revenue": 2385.47,
+   "margin": 0.1183,
+   "multiple": 8.5,
+   "reason": "Promotion normalises \u2014 the third quarter ran at 17% of category volume, down sequentially \u2014 cash generation stays positive and there is no near-term maturity. Margin recovers to 11.83% and the multiple to 8.5x.",
+   "yearsToTerminal": 1.5,
+   "valuePerShare": 12.31,
+   "opIncome": 282.2,
+   "ebitda": 300.8,
+   "ev": 2556.8,
+   "equity": 1434.1,
+   "evEbit": 9.1,
+   "normFcf": null
+  },
+  {
+   "name": "bull",
+   "revenue": 2500.0,
+   "margin": 0.155,
+   "multiple": 12.0,
+   "reason": "The price increase holds through the elasticity, distribution gains carry, and margin reaches 15.5% against a 12.0x multiple.",
+   "valuePerShare": 32.2,
+   "opIncome": 387.5,
+   "ebitda": 406.1,
+   "ev": 4873.2,
+   "equity": 3750.5,
+   "evEbit": 12.6,
+   "normFcf": null
+  }
+ ],
+ "reward": 0.75,
+ "risk": 10.97,
+ "ratio": 0.07,
+ "bar": 2.0,
+ "ratioUndefined": null,
+ "passFail": "FAIL",
+ "irr": 0.0429,
+ "irrFloor": 0.15,
+ "irrPassFail": "FAIL",
+ "horizonYears": 1.5,
+ "gate": "FAIL",
+ "currentState": {
+  "status": "watch",
+  "ratio": 0.07,
+  "bar": 2.0,
+  "passFail": "FAIL",
+  "spot": 11.56,
+  "spotSource": "EOD BRBR close 2026-08-07. NOTE: only the -sl worktree's store carries a bar that far; this worktree's frontier is 2026-08-04. All three stores agree at 2026-07-29 ($13.29), so the difference is refresh depth, not value.",
+  "underwriteDate": "2026-08-07",
+  "nextEvidence": {
+   "date": "2026-11-03",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
+  },
+  "ceiling2to1": 4.5,
+  "limitDeferred": true
+ },
+ "verdict": {
+  "status": "watch",
+  "recorded": "2026-08-11",
+  "rationale": "Analysed and not buying at any price near today's. The operating case is alive \u2014 promotion normalised at 17% of category volume, cash generation positive, no near-term maturity \u2014 but a possible recovery is not a mispricing: at $11.56 the market already gives near-full credit to a $12.31 base case while the equity carries close to total downside if that recovery fails. Only 0.35 turns of the multiple separate the bear case from no equity at all, and the 4.29x low in its trading history predates the current capital structure. No standing limit: a fall to about $4.49 would more likely reflect an event that also lowered the base.",
+  "reunderwriteTriggers": [
+   "Price entering roughly $4 to $5 WITHOUT corresponding deterioration in the business.",
+   "Inventory normalising from $480.6M without material write-offs.",
+   "Cash conversion sustained over consecutive quarters.",
+   "Material reduction in net debt.",
+   "Margin recovery that survives the fiscal 2027 price increase."
+  ],
+  "avoidPriced": true,
+  "avoidPricedNote": "Analysed and not buying at any price near today's. The operating case is alive \u2014 promotion normalised at 17% of category volume, cash generation positive, no near-term maturity \u2014 but a possible recovery is not the same thing as a mispricing: at $11.56 the market already gives near-full credit to a $12.30 base case, while the equity carries close to total downside if that recovery fails. Only 0.35 turns of the multiple separate the bear case from no equity at all, and the 4.29x low in its own trading history predates the current capital structure, so there is no floor to measure the downside against."
+ }
+}

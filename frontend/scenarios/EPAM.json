@@ -229,7 +229,7 @@
  "horizonYears": 1.5,
  "gate": "FAIL",
  "currentState": {
-  "status": "pending_analyst",
+  "status": "watch",
   "ratio": 1.5,
   "bar": 2.0,
   "passFail": "FAIL",
@@ -241,15 +241,21 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 93.71
+  "ceiling2to1": 93.71,
+  "limit": 89.5
  },
  "supersedes": "EPAM-2026-07-21",
  "verdict": {
-  "status": "pending_analyst",
-  "recorded": null,
-  "rationale": null,
-  "reunderwriteTriggers": [],
-  "avoidPriced": false,
-  "avoidPricedNote": null
+  "status": "watch",
+  "recorded": "2026-08-11",
+  "rationale": "Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor. The fall may well have gone further than the business did, on a company holding net cash and still growing revenue, but the price does not compensate for the thesis being wrong. Limit $89.50, chosen to clear under both net-debt bridges.",
+  "reunderwriteTriggers": [
+   "North American organic constant-currency growth recovering from about 1.8% toward mid-single digits.",
+   "Delayed large deals signed and contributing to revenue.",
+   "Operating margin on the reported basis reaching 11.5%, against company guidance for fiscal 2026 of 10.5-11.0% \u2014 the cell the underwrite records as contested.",
+   "Evidence that revenue from AI-native work is incremental rather than replacing existing engagements."
+  ],
+  "avoidPriced": true,
+  "avoidPricedNote": "Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor, so the asymmetry is what refuses it. The fall may well have gone further than the business did, on a company that holds net cash and is still growing revenue, but the price does not compensate for the thesis being wrong."
  }
 }
