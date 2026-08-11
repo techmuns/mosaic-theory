@@ -11,7 +11,13 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-from vinci.schemas.ledger import ORIGIN_SCREEN, Verdict, origin_of, sleeve_of
+from vinci.schemas.ledger import (
+    EVENT_CLOSE,
+    ORIGIN_SCREEN,
+    Verdict,
+    origin_of,
+    sleeve_of,
+)
 from vinci.schemas.market import PriceBar
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
@@ -56,6 +62,16 @@ def score_ledger(
     bench_rets: list[float] = []
 
     for entry in store.iter_ledger():
+        # A CLOSE IS NOT A DECISION. A close row is appended (never an edit) and carries the
+        # ORIGINAL verdict for provenance, so partitioning by verdict counts that name's leg
+        # TWICE — `monitor.decision_rows` has filtered these since 2026-07-22 for exactly this
+        # reason, and this loop, which partitions the same way, did not. The committed ledger
+        # already holds two closes against four decisions; it cost nothing only because nothing
+        # has resolved yet. Filtered here rather than inside `aggregate`, so a close never reaches
+        # `scores` either — the per-verdict listing the report renders would otherwise show a
+        # phantom row that the counts alone would not reveal.
+        if entry.event == EVENT_CLOSE:
+            continue
         entry_date = entry.entry_price_as_of
         horizon_date = entry_date + timedelta(days=entry.horizon_days)
         resolved = as_of >= horizon_date
