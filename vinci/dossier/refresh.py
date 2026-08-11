@@ -511,6 +511,81 @@ def peer_capital_intensity_transform() -> Transform:
     return _apply
 
 
+def basis_triangulation_transform(ticker: str) -> Transform:
+    """Rebuild `primary_source.basis_triangulation` FROM ITS SOURCES after a record appears.
+
+    WHY THIS EXISTS. Writing an underwrite record changes what the covenant-basis line should say —
+    `_covenant_basis(card)` feeds it — but the line is built during FULL ASSEMBLY and no refresh
+    path touched it. Creating BellRing's record made its committed page stale by one line, and the
+    only remedy on offer was a re-assembly that would re-roll the synthesis its own underwrite
+    cites. This is the narrow alternative.
+
+    IT REBUILDS, IT DOES NOT EDIT. Rewriting the one line in the stored string would make the other
+    four identical BY CONSTRUCTION — which is assuming the answer, not verifying it. Re-deriving
+    all five from the sources and finding four unchanged is the proof; the caller asserts it.
+
+    IT READS NO PRICE STORE, which is what makes it safe to run from any worktree. Its inputs are
+    the committed mechanical layer, the local CIQ bundle, the EDGAR releases (cached) and the card.
+    `data/vinci.db` is per-worktree — this checkout's is a symlink to a different one at a
+    different frontier — so a recompute that read prices could silently derive against a store the
+    page was never built from.
+
+    AND IT WRITES BACK EXACTLY ONE FIELD. `_primary_source` also returns operating drivers and the
+    rest of the primary-source layer; taking anything but `basis_triangulation` would smuggle a
+    wider rebuild into a targeted fix.
+
+    THE REAL DEFECT IS ONE LAYER DOWN. `basis_triangulation` stores a RENDERED FIVE-LINE STRING
+    with no structured backing, so no single component can be recomputed without re-deriving all
+    five — the house rule about display strings, inverted: the field publishes its rendering and
+    keeps its values private. Exposing the components is the fix; this is the bridge.
+    """
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        import pathlib as _pl
+
+        from vinci.config import Config
+        from vinci.dossier import mechanical as dm
+        from vinci.dossier.assemble import _read_scenario_card, load_finalists
+        from vinci.dossier.ciq import CiqBundle
+        from vinci.dossier.schemas import MechanicalLayer
+        from vinci.edgar.client import EdgarClient
+        from vinci.sec import build_sec_http
+
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        card = _read_scenario_card(ticker)
+        if card is None:
+            return out                      # no record — nothing about the line has changed
+        node = (out.get("primary_source") or {}).get("basis_triangulation") or {}
+        old = str(node.get("value") or "")
+        if not old:
+            return out
+
+        cfg = Config.load() if hasattr(Config, "load") else Config()
+        fin = load_finalists(cfg, ticker=ticker)[0]
+        bundle = CiqBundle.from_files(
+            ticker, sorted(_pl.Path(f"data/manual/ciq/{ticker}").glob("*")))
+        primary, _lat, _drv = dm._primary_source(
+            fin.data_record, EdgarClient.from_config(cfg), build_sec_http(cfg),
+            bundle, fin.reference_date, MechanicalLayer.model_validate(out), card)
+        rebuilt = primary.basis_triangulation.value or ""
+        if not rebuilt:
+            return out
+
+        # FOUR LINES MUST COME BACK BYTE-IDENTICAL. Anything else means the rebuild is wider than
+        # a covenant-basis restatement, and a wider rebuild is not what this transform promises.
+        a, b = old.splitlines(), rebuilt.splitlines()
+        moved = [i for i, (x, y) in enumerate(zip(a, b, strict=True)) if x != y]
+        if len(moved) > 1 or any(not a[i].strip().startswith("covenant basis:") for i in moved):
+            raise ValueError(
+                f"{ticker}: rebuilding basis_triangulation moved {len(moved)} line(s) "
+                f"{[a[i][:48] for i in moved]} — expected only the covenant-basis line")
+        if not moved:
+            return out
+        out["primary_source"]["basis_triangulation"] = {**node, "value": rebuilt}
+        return out
+
+    return _apply
+
+
 def ebitda_basis_transform() -> Transform:
     """A `refresh_dossier` transform writing `mech.financial_summary.ebitda_basis`.
 

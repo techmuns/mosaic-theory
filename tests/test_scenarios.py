@@ -1000,7 +1000,7 @@ def test_a_new_reference_without_a_vintage_is_refused_and_a_committed_one_is_not
 
 def test_every_committed_record_predates_the_vintage_rule(tmp_path: Path) -> None:
     """The 70 unstamped references are NOT backfilled — P3 pt1 does not close on code. This pin
-    is the reason that is safe: all seven committed records sit below VINTAGE_REQUIRED_FROM, so
+    is the reason that is safe: all eight committed records sit below VINTAGE_REQUIRED_FROM, so
     nothing in the tree is silently in violation. It reddens the day someone bumps a record's
     schema_version without stamping its references — which is exactly when the backfill stops
     being optional."""
@@ -1014,7 +1014,7 @@ def test_every_committed_record_predates_the_vintage_rule(tmp_path: Path) -> Non
         assert sc._schema_ver(rec["schema_version"]) < sc._schema_ver(sc.VINTAGE_REQUIRED_FROM), (
             f"{f.name} is at schema {rec['schema_version']} — at or past "
             f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage")
-    assert seen == 7, f"expected the 7 committed records, walked {seen}"
+    assert seen == 8, f"expected the 8 committed records, walked {seen}"
 
 
 def _ref_keys(payload: dict[str, object], axis: str = "revenue") -> set[str]:
@@ -1097,7 +1097,7 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
             f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
             "next real diff is unreadable. If a field was just added, declare it in "
             "REF_FIELDS_INTRODUCED_IN or AXIS_FIELDS_INTRODUCED_IN.")
-    assert seen == 7, f"expected the 7 committed records, walked {seen}"
+    assert seen == 8, f"expected the 8 committed records, walked {seen}"
 
     # THE ARCHIVE IS THE ONLY RECORD BELOW 1.3, and therefore the only one that exercises
     # version-scoping AT ALL: seven records that share a version cannot fail a version check.
