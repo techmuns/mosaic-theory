@@ -130,6 +130,28 @@ def test_the_real_workbooks_derive_their_own_years(ticker: str, want: list[str])
     assert [display for _trends, display in pairs] == want
 
 
+@pytest.mark.parametrize("ticker", ["NCNO", "NFLX", "VITL", "WERN"])
+def test_no_row_is_ragged_against_the_derived_header(ticker: str) -> None:
+    """EVERY ROW PADS TO THE DERIVED COUNT, never to a literal 2.
+
+    Making the column count dynamic silently put three sites out of step — the unusual-items rows,
+    and the CFO/Capex/FCF cells AND values — each of which appended exactly two estimate slots. A
+    row padded to 2 against a header of 1 does not raise: the cells shift and render under the wrong
+    heading, which is a wrong number presented confidently. Cheap to pin, expensive to discover.
+    """
+    table = ciq_sheets.financial_summary_annual(_bundle(ticker)).value
+    assert table is not None
+    width = len(table.columns)
+    for row in table.rows:
+        assert len(row.cells) == width, (
+            f"{ticker}: row {row.label!r} has {len(row.cells)} cells against {width} columns")
+        if getattr(row, "values", None):
+            assert len(row.values) == width, (
+                f"{ticker}: row {row.label!r} carries {len(row.values)} values against {width} "
+                f"columns — a structured consumer would read them against the wrong periods")
+    assert len(table.is_estimate) == width
+
+
 def test_ncnos_empty_estimate_column_is_gone_and_its_fy28_arrives() -> None:
     """THE SHIPPED DEFECT, end to end on the real workbook. Before: an `FY26E` column holding `—`
     beside an ACTUAL `FY26` of 595. After: FY27E/FY28E, both populated, and NCNO's FY2028 consensus

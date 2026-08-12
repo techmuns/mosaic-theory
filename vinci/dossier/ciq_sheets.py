@@ -3684,6 +3684,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     # already reported FY2026, so a hardcoded FY26E column stood empty beside their ACTUAL FY26.
     est_pairs = forward_estimate_fys(bundle)
     est_fys = tuple(trends_label for trends_label, _d in est_pairs)
+    n_est = len(est_pairs)   # every row pads to THIS, so the table can never go ragged
     # LTM is its own basis (a ttm, not a fiscal year), so growth never spans the FY↔LTM boundary
     # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
     bases = ([("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp]
@@ -3771,9 +3772,12 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
             u_lbl = str(ur[0] or "").strip()
             if not u_lbl:
                 continue
+            # PADDED TO THE DERIVED COLUMN COUNT, never a literal 2 — the estimate columns are no
+            # longer a fixed pair (see `forward_estimate_fys`), and a row padded to 2 against a
+            # header of 1 is a RAGGED table: cells silently shift under the wrong heading.
             u_series = [
                 clean_num(ur[c]) if c < len(ur) else None for c in act_cols
-            ] + [None, None]
+            ] + [None] * n_est
             if any(v for v in u_series):
                 rows.append(FinRow(label=u_lbl + " ($M)",
                                    cells=[_fmt_m(v) for v in u_series], values=u_series))
@@ -3810,7 +3814,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         for disp_lbl, cf_lbl in _C1_CF:
             cf_ri = _find_row(cf, cf_lbl)
             nums = [cf_num(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp]
-            cells = [_fmt_m(v) for v in nums] + ["—", "—"]
+            cells = [_fmt_m(v) for v in nums] + ["—"] * n_est
             if any(c != "—" for c in cells):
                 # VALUES, NOT ONLY CELLS. These three rows shipped display-only — `Revenue ($M)`
                 # carried 12 structured values while `CFO`/`Capex`/`FCF` carried ZERO, so anything
@@ -3819,7 +3823,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 # the thousands-blind `$1,101.80M` re-parse is what it costs. `clean_num` already
                 # produced the number; the old cell helper formatted it and threw it away.
                 rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells,
-                                   values=[*nums, None, None]))
+                                   values=[*nums, *([None] * n_est)]))
     except CiqUnavailableError:
         pass
     est = as_of or "?"
