@@ -3644,8 +3644,33 @@ _C1_ROWS: tuple[tuple[str, str, str, str], ...] = (  # (display, IS label, Estim
     ("EPS (GAAP, dil.)", "Diluted EPS", "EPS (GAAP)", "e"),
     ("EPS (Normalized)", "Normalized Diluted EPS", "EPS Normalized", "e"),
 )
-_C1_CF: tuple[tuple[str, str], ...] = (
-    ("CFO", "Cash from Ops."), ("Capex", "Capital Expenditure"), ("FCF", "Levered Free Cash Flow"),
+#: (display, Cash-Flow label, Estimates→Trends metric or None). A metric is fused into its actuals
+#: row ONLY when the two sheets name the SAME measure; otherwise the consensus goes in its own
+#: basis-labelled row below and this stays None. See `_C1_CF_CONSENSUS_ONLY` for why.
+_C1_CF: tuple[tuple[str, str, str | None], ...] = (
+    ("CFO", "Cash from Ops.", "Cash From Operations"),
+    ("Capex", "Capital Expenditure", "Capital Expenditure"),
+    # FCF IS NOT FUSED. CIQ's actuals row is "Levered Free Cash Flow"; its consensus row is plain
+    # "Free Cash Flow". Measured across the fleet, consensus FCF is not even CFO − capex — same
+    # within 2% on only 4 of 15 names, and SIGN-FLIPPED on AORT (−2.16x) and WERN (−7.79x), with
+    # PENG at 19.35x. Trends carries no year overlapping the actuals, so there is NO period on which
+    # the two bases can be tested against each other. Putting the consensus in this row would assert
+    # an identity nobody has established — the "same window, different basis" class of #370/#421.
+    ("FCF", "Levered Free Cash Flow", None),
+    # D&A actuals, newly surfaced. NOT fused either, and the repo already measured why: UBER's own
+    # committed bear point reads "estimate columns imply 2,952 of D&A against 737 in the actuals
+    # (4.01x), so the forward EBITDA add-back is a DIFFERENT basis". NFLX shows the mechanism —
+    # its Cash Flow sheet carries BOTH "Depreciation & Amort." (~104) and "Other Amortization"
+    # (~9,216, the content assets), so what "D&A" denotes depends on the business.
+    ("D&A", "Depreciation & Amort., Total", None),
+)
+
+#: Consensus figures that could NOT be tied to an actuals basis, rendered as their own rows with the
+#: actual columns blank. A row that is mostly "—" is the honest shape here: it says the vendor has a
+#: forward view and declines to claim it continues the history beside it.
+_C1_CF_CONSENSUS_ONLY: tuple[tuple[str, str], ...] = (
+    ("FCF (consensus basis)", "Free Cash Flow"),
+    ("D&A (consensus basis)", "Depreciation & Amortization"),
 )
 
 
@@ -3811,19 +3836,38 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 return None
             return clean_num(cf[ri][j])
 
-        for disp_lbl, cf_lbl in _C1_CF:
+        for disp_lbl, cf_lbl, cf_est_metric in _C1_CF:
             cf_ri = _find_row(cf, cf_lbl)
             nums = [cf_num(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp]
-            cells = [_fmt_m(v) for v in nums] + ["—"] * n_est
+            # FUSED ONLY WHERE THE TWO SHEETS NAME THE SAME MEASURE (see `_C1_CF`). CFO and capex
+            # carry the identical concept on both sides; FCF and D&A do not, and get their own
+            # basis-labelled rows below rather than a silent continuation of the actuals.
+            est_vals: list[float | None] = (
+                [_est_fy_current(tr, cf_est_metric, fy) for fy in est_fys]
+                if cf_est_metric else [None] * n_est)
+            series_vals = [*nums, *est_vals]
+            cells = [_fmt_m(v) for v in series_vals]
             if any(c != "—" for c in cells):
-                # VALUES, NOT ONLY CELLS. These three rows shipped display-only — `Revenue ($M)`
+                # VALUES, NOT ONLY CELLS. These rows shipped display-only — `Revenue ($M)`
                 # carried 12 structured values while `CFO`/`Capex`/`FCF` carried ZERO, so anything
                 # wanting CFO − capex had to re-parse "11,971" out of a rendered string. That is the
                 # forbidden shape ("parsers consume structured values, never rendered strings"), and
                 # the thousands-blind `$1,101.80M` re-parse is what it costs. `clean_num` already
                 # produced the number; the old cell helper formatted it and threw it away.
-                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells,
-                                   values=[*nums, *([None] * n_est)]))
+                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells, values=series_vals))
+
+        # CONSENSUS WITHOUT AN ESTABLISHED ACTUALS BASIS — its own row, actual columns blank. A
+        # mostly-"—" row is the honest shape here: the vendor has a forward view, and we decline to
+        # claim it continues the history beside it. Emitted only when a figure exists, so no name
+        # gains an empty row — that is the very defect PR-C removed from the estimate columns.
+        for disp_lbl, est_metric in _C1_CF_CONSENSUS_ONLY:
+            est_only: list[float | None] = [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
+            if not any(v is not None for v in est_only):
+                continue
+            blank: list[float | None] = [None] * len(act_cols)
+            cons_vals: list[float | None] = blank + est_only
+            rows.append(FinRow(label=disp_lbl + " ($M)",
+                               cells=[_fmt_m(v) for v in cons_vals], values=cons_vals))
     except CiqUnavailableError:
         pass
     est = as_of or "?"

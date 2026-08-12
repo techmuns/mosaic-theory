@@ -13701,6 +13701,36 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **FORWARD CASH-FLOW CONSENSUS REACHES THE PAGE — AND TWO METRICS DELIBERATELY DO NOT FUSE
+  (2026-08-12, PR-D).** `CFO`/`Capex`/`FCF` carried actuals and nothing forward while
+  Estimates→Trends carried a consensus for all of them (Capex/CFO/FCF on 18 of 19 workbooks, D&A on
+  19 of 19); D&A had no row at all. **CFO and Capex are now fused** into their actuals rows — CIQ
+  names the same measure on both sheets and the sign convention matches.
+  **FCF IS NOT FUSED, and this is the substance of the change.** The actuals row is **Levered Free
+  Cash Flow**; the consensus row is plain **Free Cash Flow**. Measured across the fleet, consensus
+  FCF is not even CFO − capex: within 2% on only **4 of 15** measurable names, **SIGN-FLIPPED on AORT
+  (−2.16x) and WERN (−7.79x)**, and 19.35x on PENG. And Trends carries no fiscal year overlapping the
+  actuals, so **there is no period on which the two bases can be tested against each other** — a fuse
+  would assert an identity nobody can establish.
+  **WHAT THAT WOULD HAVE COST, MEASURED:** the step from the last actual to the first consensus
+  column would have rendered as a real change on every name — **median |step| 51% across 17 names**:
+  WERN −982% (sign flip), FUBO +281%, VRRM +184%, PENG −168%, AORT +166%, **NFLX −49%
+  (25,388 → 12,868)**. A reader scanning that row sees free cash flow halving. Nothing halved.
+  **D&A IS NOT FUSED EITHER, on evidence this repo had already recorded.** UBER's own committed bear
+  point reads *"estimate columns imply 2,952 of D&A against 737 in the actuals (4.01x), so the
+  forward EBITDA add-back is a DIFFERENT basis"*. NFLX shows the mechanism: its Cash Flow sheet
+  carries BOTH `Depreciation & Amort.` (~372) and `Other Amortization` (~9,216 — the content
+  assets), so what "D&A" denotes depends on the business. *(The operator's first instruction was to
+  fuse D&A; the measurement above was taken after that answer and argued against it, so it was
+  treated like FCF — stated here rather than quietly changed.)*
+  **THE CONSENSUS IS MOVED, NEVER DROPPED:** `FCF (consensus basis)` and `D&A (consensus basis)` are
+  their own rows with the actual columns blank. A mostly-`—` row is the honest shape — the vendor has
+  a forward view and we decline to claim it continues the history beside it. A row is omitted
+  entirely when the metric is absent, so no name gains an EMPTY row (the defect PR-C just removed).
+  **WHICH METRICS FUSE IS DATA, NOT BRANCHES** (`_C1_CF`'s third element + `_C1_CF_CONSENSUS_ONLY`),
+  so a future edit has to face the basis question rather than stumble past it. Mutation-tested by
+  fusing FCF: the pin reddens with *"this is the 'same window, different basis' defect"*.
+  **ARTIFACTS NOT UPDATED** — the pages gain these rows at their next assembly.
 - **THE ESTIMATE COLUMNS ASSUMED A DECEMBER FISCAL YEAR — NCNO SHIPPED AN EMPTY `FY26E`
   (2026-08-12, PR-C).** Two sites hardcoded `FY 2026`/`FY 2027`: the financial-summary columns
   (`ciq_sheets.financial_summary_annual`) and the direct consensus anchors
