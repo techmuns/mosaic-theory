@@ -15124,6 +15124,35 @@ with no internal contradiction would not have surfaced at all — **driver rows 
 quote-in-transcript and digit-trace validation; synthesis points carry NEITHER.** That asymmetry is
 why this check had to be manual, and it is unclosed.
 
+**THE DIGEST'S CAP WAS ON THE WRONG AXIS — IT DROPPED THE GUIDE HISTORY IT EXISTS TO PRESERVE
+(2026-08-12, fix/brief-template-guidance-parity).** Found while re-assembling BRBR/SMPL: the fresh
+artifacts reddened `test_the_analyst_template_shows_the_same_vintages_as_the_brief`, and the
+diagnosis was not the surfaces but the window. `_primary_source_digest` capped the RAW release list
+(`ps.releases[:4]`), so a release carrying NO guidance could hold a slot while a guidance-bearing
+one fell outside it. **Measured on the committed fleet: AORT −1, CNXC −1, NCNO −2 guidance-bearing
+releases dropped** — and the note said only *"older release(s) omitted"*, never that any of them
+carried a guide. The block's own comment is **"MARK, NEVER DROP … the guidance history IS a bear
+point — SMPL's three-step cut sequence is evidence"**, so the cap was deleting the very evidence the
+vintage marking (the P2 fix above) was built to keep, and a bear case resting on a cut sequence
+could lose it silently. **FIX: two windows.** The CONTENT window stays at 4 (reconciliation,
+one-offs, event impacts are LTM-shaped — widening them would just add tokens); GUIDANCE selects the
+4 most recent releases that actually carry some. They usually coincide; where they do not, this is
+the difference between showing a cut sequence and implying there wasn't one. The note now also says
+how many omitted releases carried guidance.
+**AND THE TEST'S INVARIANT WAS WRONG, not merely stale.** It asserted the template and the brief show
+the SAME vintages — true only while no name had >4 guidance-bearing releases, and broken by richer
+extraction rather than by a defect. The brief caps BY DESIGN and discloses it; the template is the
+analyst surface and carries the full history. Asserting equality would force one of those deliberate
+choices to give way. Replaced with what the old message was reaching for — **ONE DERIVATION**: the
+brief's vintages are a SUBSET of the template's, the CURRENT/SUPERSEDED mark AGREES on every shared
+vintage (a guide current on one surface and superseded on the other is P2 in a new place), and any
+omission is DISCLOSED. The sibling P2 pin was likewise re-pointed at the oldest guidance-bearing
+release **inside the window**, which keeps its coverage exactly.
+*3 pins: the fleet cap-axis pin FAILS on the pre-fix digest naming exactly `AORT, CNXC, NCNO` and
+passes after; the two corrected invariants hold on both. ruff + mypy --strict (124) + pytest 2409
+green. **No artifact moved** — the digest is an LLM INPUT, not a stored field, so this changes what
+the next assembly reads, not any committed page.*
+
 **`scenario-create` NOW REFUSES A NAME THAT ALREADY HAS A RECORD.** `write_record` is an
 unconditional `path.write_text`, so a create on SMPL would have DESTROYED the live record and
 skipped archive-and-reissue — the supersession chain is unreconstructable once gone. **REFUSES
