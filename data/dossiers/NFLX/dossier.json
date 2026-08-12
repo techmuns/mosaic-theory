@@ -1171,7 +1171,7 @@
       },
       "guidance_bridge": {
         "value": "Gross Margin %: latest guide '47.00 - 48.00' for FQ4 2002 (dated 2002-10-17) (stale — 8686d old); EBITDA: latest guide '14.50 - 16.50' for FQ2 2003 (dated 2003-06-09) (stale — 8451d old); actual ≥ guided floor 1/2 resolved; most recent resolved: FQ2 2003 MISSED; Revenue: latest guide 12,860.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 70/83 resolved; most recent resolved: FQ2 2026 MISSED; EPS Normalized: latest guide 0.82 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 30/40 resolved; most recent resolved: FQ2 2026 MET  [data ≥ 2026-08-07 · export date unverified]",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },
@@ -1214,7 +1214,7 @@
             "most_recent": "FQ2 2026 MET"
           }
         ],
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },

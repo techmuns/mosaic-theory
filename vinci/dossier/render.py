@@ -477,8 +477,18 @@ def _guidance_bridge_lines(cp: Any) -> list[str]:
 
     ordered = ([r for r in rows_s.value if not _superseded(r)]
                + [r for r in rows_s.value if _superseded(r)])
+    # (PR-A) WHOSE NUMBER IT IS, said once beneath the table rather than per row. The column reads
+    # "Latest guide" and the citation names CIQ, which together read as the company's own words —
+    # but CIQ states every guide as a LEVEL, so a rate-guider's figure here is CIQ's arithmetic.
+    # Visa is the proven case: "low end of low-teens" revenue growth arrives as 45,200.0, exactly
+    # FY25's 40,000 x 1.13. Once, not per row, because the sheet does not record which form
+    # management used and 32 of 49 committed guides are ranges that plausibly ARE the company's.
     return _table("Guidance bridge (latest guide + sign-aware delivery track-record)",
-                  rows_s.source_ref, cols, [_row(r) for r in ordered])
+                  rows_s.source_ref, cols, [_row(r) for r in ordered],
+                  note="CIQ states every guide as a LEVEL in the metric's own units. Where "
+                       "management guided a RATE, the level is CIQ's arithmetic on its own base, "
+                       "not a figure the company published — check the release before quoting one "
+                       "as guidance.")
 
 
 # (T3) headline metric PRIORITY — each tuple is the substrings a metric must contain (all of them).
