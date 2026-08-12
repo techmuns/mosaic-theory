@@ -3333,9 +3333,20 @@ Each line: *what it does* — *verified how*.
   forward sector-relative separation at any horizon (all |diff| < 1.5 pts, shuffle pct ≤ 48%).
   The COST-OF-WAITING concern was also falsified in the OTHER direction: deferring entry to the
   first 50d-MA reclaim (≤126 sessions) LOST NOTHING vs buying at first appearance (waiting
-  gained +0.5 to +1.3 pts vs MDY at every horizon), 0 of 297 eventual ≥+50% winners were missed
+  gained +0.73 to +1.79 pts vs MDY at 30/60/120d), 0 of 306 eventual ≥+50% winners were missed
   by waiting, and the median winner had earned only 2% of its total gain before the reclaim —
-  there is no rush to catch the knife. RECORD-ONLY residue (unpromotable by operator rule, see
+  there is no rush to catch the knife.
+  - **CORRECTED BEFORE MERGE (review, #405).** The never-entered branch recorded the deferred
+    book's excess as `0.0`, which claims cash MATCHED MDY; cash returns 0% while MDY moves, so the
+    excess is minus MDY's return. Now `deferred_excess()`, pinned by four unit tests. The published
+    figures were +0.5 to +1.3; corrected they are **+0.73 to +1.79** — the conclusion holds and is
+    slightly stronger. **The predicted bias direction was WRONG, mine as much as the reviewer's:**
+    we both reasoned that crediting cash with 0.0 flatters waiting in a rising market and 2023–2026
+    rose. But the bias is CONDITIONAL — it applies only over the windows where a name never
+    reclaimed in 126 sessions, and those sit in weak tape, so MDY FELL across them and the old
+    `0.0` was UNDERSTATING the deferred book. The fix stands on being right, not on which way it
+    moved the answer. Winners 297 → 306 is unrelated: the netcache extends two sessions further
+    after the 2026-08-12 screen, and "the last session" is a moving anchor. RECORD-ONLY residue (unpromotable by operator rule, see
   §6): an "early-recovery vs still-falling" split (≥15% off the 52w low / fresh-low-in-21d /
   50d-MA slope — three facets of one state) separates +4 to +8 pts sector-relative at 120–180d
   with consistent sign across disjoint non-overlapping phases. That is textbook loser-momentum
@@ -8517,8 +8528,8 @@ the spread before believing any cohort-timed improvement in it.
 
 **HANDOFF TO THE PRICE-STATES / EVIDENCE-STRIP SESSION (PR #405 and its Phase B/C).** Their measured
 result STRENGTHENS ruling (1) rather than competing with it: waiting for the 50d-MA reclaim is free
-(+0.5 to +1.3 pts vs MDY at every horizon), **0 of 297 eventual ≥+50% winners were missed by
-waiting**, and the median winner had earned only 2% of its total gain before the reclaim. If there
+(+0.73 to +1.79 pts vs MDY at 30/60/120d — corrected before merge, see §3), **0 of 306 eventual
+≥+50% winners were missed by waiting**, and the median winner had earned only 2% of its total gain before the reclaim. If there
 is no rush to catch the knife, then a missing catalyst costs entry TIMING, not the trade — which is
 the empirical half of the ruling this entry records.
 **TWO SIGNALS THEIR PHASE B/C LIST DOES NOT CARRY** — offered for their consideration, deliberately
