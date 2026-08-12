@@ -3,6 +3,7 @@
 // client-side, in place — the queue is fetched once and never re-fetched on sort/filter.
 import { getRankedQueue, getProcessedStates, getG3Reasons, getGicsLabels, WORKFLOW_STATES } from "../../lib/snapshots.js";
 import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+import { linScale } from "../../lib/exhibit.js";
 import { refreshBlock } from "../../lib/ui.js";
 
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
@@ -13,6 +14,13 @@ const COLS = [
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
+  // Tier-2, not an axis — sits after the four Tier-1 axes and before the tradeability figures,
+  // mirroring the order the subtitle describes the composite in. The header carries the BASIS so
+  // the cell can be the bare ratio; the title carries the one-session caveat, which the other
+  // columns (windowed over 180d/52w) do not need.
+  { key: "volumeSpike", label: "Volume vs 90d", num: true,
+    title: "The latest single session's share volume ÷ its own 90-day average, as of the screen "
+         + "date. A ONE-SESSION reading — unlike the windowed axes, it can differ the next day." },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
 const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here
@@ -33,6 +41,46 @@ let GICS = {};  // {TICKER: {industry, source_ref}} — the committed-dossier CI
 // SIC title (the JS twin of vinci.labels.resolve_label's precedence — pinned by a source test)
 function dispIndustry(r) {
   return (GICS[r.ticker] && GICS[r.ticker].industry) || r.industry || "—";
+}
+
+// The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
+// not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
+// arithmetic on — and that is exactly how it once drifted 12 days and 95 names behind the screen
+// feeding it (STATE.md §5). 10 days = the weekly cadence plus slack; a face-validity threshold, not
+// tuned on anything. Says how old and what to do, never how stale is "too" stale to act on.
+// A 13-week volume sparkline for the queue cell. The NUMBER says today; the LINE says which way it
+// has been moving — the distinction a one-session ratio structurally cannot make, and the reason a
+// name reads 3.6× on one screen date and 0.63× twelve days later. It DRAWS ONLY: no "building" /
+// "fading" word is derived from it, because that would be the same unearned mechanism claim the
+// band labels were retired for. y-domain is [0, max(2, series max)] so quiet names share a scale
+// and a spike still fits, with a dashed reference at 1.0 = the name's own 90-day average.
+const SPARK_W = 46, SPARK_H = 14, SPARK_REF = 1.0;
+function volSpark(series) {
+  if (!Array.isArray(series) || series.length < 2) return "";
+  const hi = Math.max(SPARK_REF * 2, ...series);
+  const x = linScale(0, series.length - 1, 0.5, SPARK_W - 0.5);
+  const y = linScale(0, hi, SPARK_H - 1.5, 1.5);
+  const pts = series.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const ref = y(SPARK_REF).toFixed(1);
+  const label = `volume by week over the last quarter, oldest to newest, each as a multiple of the `
+    + `name's 90-day average: ${series.join(", ")}`;
+  return `<svg width="${SPARK_W}" height="${SPARK_H}" viewBox="0 0 ${SPARK_W} ${SPARK_H}"`
+    + ` role="img" aria-label="${escapeHtml(label)}" style="vertical-align:middle; margin-right:5px;">`
+    + `<line x1="0" y1="${ref}" x2="${SPARK_W}" y2="${ref}" stroke="var(--line-2)"`
+    + ` stroke-width="0.75" stroke-dasharray="2 2"/>`
+    + `<polyline fill="none" stroke="var(--ink-3)" stroke-width="1.15" stroke-linejoin="round"`
+    + ` points="${pts}"/></svg>`;
+}
+
+const QUEUE_STALE_DAYS = 10;
+function stalenessChip(asOf) {
+  if (!asOf) return "";
+  const days = Math.floor((Date.now() - Date.parse(`${asOf}T00:00:00Z`)) / 86400000);
+  if (!Number.isFinite(days) || days < QUEUE_STALE_DAYS) return "";
+  return `<span class="chip gate" title="The weekly job (vinci run-weekly) screens and then writes this queue. `
+    + `A queue older than ${QUEUE_STALE_DAYS} days means that job has not completed since — the names, ranks and `
+    + `price-derived reads below are all as of the screen date, not today. Re-run it, or run vinci rank.">`
+    + `⚠ queue is ${days} days old — the weekly screen may not have run</span>`;
 }
 let G3 = null; // ticker -> the specific G3 UNKNOWN reason
 let state = null;
@@ -68,6 +116,7 @@ export async function render(root, _params, { item, frame }) {
         <input id="rk-hide" type="checkbox" /> hide structurally-sunk (${DATA.counts.demoted})
       </label>
       <span class="muted" style="font-size:12px;">${DATA.counts.total} candidates · screened ${escapeHtml(fmtDate(DATA.asOf))}</span>
+      ${stalenessChip(DATA.asOf)}
     </div>
     <div class="subtitle muted" style="margin-bottom:12px;">
       Columns lead with the interpretable quantity (depth/idio as % moves, multiple as the percentile or reason); hover a cell
@@ -78,7 +127,10 @@ export async function render(root, _params, { item, frame }) {
 
   root.innerHTML = frame(item, {
     bodyHtml: edge + legend + controls
-      + `<table class="data" id="rk-table"><thead><tr id="rk-head"></tr></thead><tbody id="rk-body"></tbody></table>`
+      // 13 columns overruns the content area on a 1280px laptop (th is white-space:nowrap, so the
+      // table cannot shrink below its headers). Scrolls inside its own container rather than
+      // pushing the page sideways — the same wrapper uw-card/dossier use for their wide tables.
+      + `<div style="overflow-x:auto;"><table class="data" id="rk-table"><thead><tr id="rk-head"></tr></thead><tbody id="rk-body"></tbody></table></div>`
       + refreshBlock(),
   });
   renderHead();
@@ -94,6 +146,11 @@ export async function render(root, _params, { item, frame }) {
     else { state.sort = k; state.dir = (k === "rank" || k === "ticker" || k === "depthBand" || k === "state") ? 1 : -1; }
     renderHead();
     renderRows();
+    // renderHead() replaced the whole row, so the button just activated no longer exists. Without
+    // this a KEYBOARD sort drops focus to <body> and the next Tab restarts from the top of the
+    // page — the sort would be reachable but unusable. :focus-visible keeps the ring off for mice.
+    const again = document.querySelector(`#rk-head th[data-sort="${k}"] button`);
+    if (again) again.focus();
   });
 }
 
@@ -101,8 +158,17 @@ function renderHead() {
   const head = document.getElementById("rk-head");
   if (!head) return;
   head.innerHTML = COLS.map((c) => {
-    const arrow = state.sort === c.key ? (state.dir > 0 ? " ▲" : " ▼") : "";
-    return `<th data-sort="${c.key}" class="${c.num ? "num" : ""}" style="cursor:pointer; user-select:none;">${c.label}${arrow}</th>`;
+    const active = state.sort === c.key;
+    const arrow = active ? (state.dir > 0 ? " ▲" : " ▼") : "";
+    const tip = c.title ? ` title="${escapeHtml(c.title)}"` : "";
+    // The control is a real <button>, not the <th> itself: a th with a click handler is not
+    // focusable and has no activation semantics, so all 13 columns were mouse-ONLY. The button
+    // brings native focus + Enter/Space for free; `aria-sort` on the th is what announces WHICH
+    // column is sorted and which way — the ▲/▼ is decoration and hidden from assistive tech.
+    const sort = active ? (state.dir > 0 ? "ascending" : "descending") : "none";
+    return `<th scope="col" data-sort="${c.key}" class="${c.num ? "num" : ""}" aria-sort="${sort}"`
+      + ` style="user-select:none;"><button type="button" class="col-sort"${tip}>${c.label}`
+      + `<span aria-hidden="true">${arrow}</span></button></th>`;
   }).join("");
 }
 
@@ -160,6 +226,32 @@ function renderRows() {
     const short = (a.label || "").split(" of ")[0]; // "P/E 0%ile of own 5y range" → "P/E 0%ile"
     return `<td title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${escapeHtml(short)}</td>`;
   };
+  // Tier-2 volume — the one component of Score with no column of its own. LEADS WITH THE RATIO,
+  // like every other column on this page ("columns lead with the interpretable quantity"): the
+  // band word is only a bucketing of a number the reader can now see, and the two words it used to
+  // lead with named a MECHANISM the input cannot contain — one session's volume carries no
+  // direction, so "distribution" was a guess that was wrong on 2 of 10 names (audit, STATE.md §5).
+  // The word survives in the hover as the scorer's own read, never as the headline.
+  const volCell = (r) => {
+    const s = r.volumeState;
+    const adj = r.volumeOverlay;
+    const note = adj == null ? "overlay unavailable"
+      : adj ? `${adj > 0 ? "+" : ""}${adj.toFixed(2)} to quality` : "no adjustment";
+    const vs = r.volumeSpike;
+    if (vs == null) {
+      // legacy snapshot (pre-2026-08-12): no structured ratio, so fall back to the scorer's string
+      // rather than digging the number out of it — a display string is never re-parsed for a value.
+      if (!s || s === "UNKNOWN") return `<td><span class="muted">${DASH}</span></td>`;
+      return `<td style="font-size:12px;" title="${escapeHtml(s)} · ${note}">${escapeHtml(s)}</td>`;
+    }
+    const trend = r.volumeTrend;
+    const scale = Array.isArray(trend) && trend.length
+      ? ` · sparkline: 13 weekly means, 0 to ${Math.max(SPARK_REF * 2, ...trend).toFixed(1)}×, dashed line = 1.0×`
+      : "";
+    return `<td class="num" title="${escapeHtml(s || "")} · ${note} · one session, as of the screen `
+      + `date${escapeHtml(scale)}">${volSpark(trend)}`
+      + `${vs < 10 ? vs.toFixed(2) : vs.toFixed(1)}×</td>`;
+  };
 
   body.innerHTML = rows.map((r) => {
     const sunk = r.structurallyDisqualified;
@@ -175,7 +267,7 @@ function renderRows() {
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>
-        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}
+        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}
         <td class="num">${fmtMoney(r.advUsd)}</td>
         <td class="num">${r.marketCap == null ? `<span class="muted">${DASH}</span>` : fmtMoney(r.marketCap)}</td>
       </tr>`;

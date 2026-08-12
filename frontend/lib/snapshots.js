@@ -111,7 +111,7 @@ export async function getScreenStatus() {
 // getRankedQueue() -> {
 //   asOf, weights: {idiosyncrasy,depth,character,multiple},
 //   counts: { total, demoted, gated, unknownAxis },
-//   rows: [{ rank, ticker, name, score, depthBand, quality, volumeOverlay, volumeState,
+//   rows: [{ rank, ticker, name, score, depthBand, quality, volumeOverlay, volumeState, volumeSpike,
 //            liquidityTier, advUsd, marketCap, gated, unknownAxes:[],
 //            structurallyDisqualified, structuralFlag: {signal,detail,source}|null,
 //            axes: { idiosyncrasy, depth, character, multiple } each {score,label,coverage,raw,contribution} }]
@@ -132,6 +132,13 @@ export async function getRankedQueue() {
       quality: r.quality,
       volumeOverlay: r.volume_overlay,
       volumeState: r.volume_state,
+      // the structured ratio behind volumeState's multiple — null on a snapshot written before
+      // 2026-08-12, which is why the queue cell keeps a volumeState fallback
+      volumeSpike: r.volume_spike ?? null,
+      // ~13 weekly volume means on the same 90d denominator, oldest→newest. Populated by a SCREEN
+      // run (it is computed from bars in eod/features), so it stays null until the weekly job next
+      // re-screens — the queue cell degrades to the bare ratio, which is the pre-sparkline state.
+      volumeTrend: Array.isArray(r.volume_trend) ? r.volume_trend : null,
       liquidityTier: r.liquidity_tier,
       advUsd: r.adv_usd,
       marketCap: r.market_cap,

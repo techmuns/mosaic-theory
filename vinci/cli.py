@@ -28,17 +28,20 @@ from vinci.eod import (
 )
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
-from vinci.orchestrator import run_monthly, run_weekly
+from vinci.orchestrator import (
+    QUEUE_ADV_FLOOR,
+    QUEUE_MD_TOP,
+    rank_from_snapshots,
+    run_monthly,
+    run_weekly,
+    write_queue_snapshots,
+)
 from vinci.progress import stderr_reporter
 from vinci.rank import (
-    RankWeights,
     StructuralDisqualifier,
     load_candidates_from_snapshot,
     load_cause_annotations,
-    load_market_caps_from_snapshot,
-    rank_candidates,
     render_profile_block,
-    render_queue_markdown,
 )
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.schemas.ledger import (
@@ -193,18 +196,16 @@ def _cmd_screen(args: argparse.Namespace) -> int:
 def _cmd_rank(args: argparse.Namespace) -> int:
     """Order the screen's candidates into a priority queue + print the top-N structural profiles.
 
-    Reads the committed snapshots (no DB, no network): ``candidate_records.jsonl`` for the screen
-    output and ``universe_snapshot.jsonl`` for size. Orders, never decides — see ``vinci.rank``.
+    Reads the committed snapshots (no DB, no network unless ``--structural``):
+    ``candidate_records.jsonl`` for the screen output and ``universe_snapshot.jsonl`` for size.
+    The ranking itself goes through ``orchestrator.rank_from_snapshots`` — the SAME path the weekly
+    job takes, so a hand-built queue and a CI-built one are the same object and cannot drift.
+    Orders, never decides — see ``vinci.rank``.
     """
     from pathlib import Path
 
     cfg = get_config()
     snaps = cfg.snapshots_dir
-    cands = load_candidates_from_snapshot(snaps / "candidate_records.jsonl")
-    if not cands:
-        print(f"no candidates in {snaps / 'candidate_records.jsonl'} — run `vinci screen` first")
-        return 1
-    caps = load_market_caps_from_snapshot(snaps / "universe_snapshot.jsonl")
     annotations = load_cause_annotations(Path(args.cause_file)) if args.cause_file else {}
 
     structural_flags: dict[str, StructuralDisqualifier] = {}
@@ -213,34 +214,24 @@ def _cmd_rank(args: argparse.Namespace) -> int:
         from vinci.rank import scan_structural
         from vinci.sec import build_sec_http
 
-        print(
-            f"scanning {len(cands)} candidates for structural disqualifiers "
-            f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
-        )
-        structural_flags = scan_structural(
-            cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
-        )
+        # loaded here only to feed the scan; rank_from_snapshots re-reads them as its own input
+        cands = load_candidates_from_snapshot(snaps / "candidate_records.jsonl")
+        if cands:
+            print(
+                f"scanning {len(cands)} candidates for structural disqualifiers "
+                f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
+            )
+            structural_flags = scan_structural(
+                cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
+            )
 
-    ranked = rank_candidates(
-        cands, weights=RankWeights(), annotations=annotations,
-        market_caps=caps, deep_work_adv_floor=args.deep_work_adv_floor,
-        structural_flags=structural_flags or None,
+    ranked = rank_from_snapshots(
+        cfg, annotations=annotations, structural_flags=structural_flags or None,
+        deep_work_adv_floor=args.deep_work_adv_floor,
     )
-    # Attach the RESOLVED labels per name (vinci.labels — the ONE resolver) HERE in the writer,
-    # never in the scorer — vinci.rank / vinci.screens stay pure (an AST fence test asserts it).
-    # Assemble/inform ONLY: they feed the human cluster roll-up; never a gate/weight/sort.
-    # gics=None at universe scale: CIQ-GICS overlays join at the frontend build from the committed
-    # dossier index, so a dossier landing between rank runs upgrades its name without a re-rank.
-    from vinci.labels import resolve_label
-
-    sic_by_id = {c.candidate_id: c.data_record.identity.sic for c in cands}
-    ranked = [
-        r.model_copy(update={
-            "sector": (lbl := resolve_label(sic_by_id.get(r.candidate_id))).sector,
-            "industry": lbl.industry,
-        })
-        for r in ranked
-    ]
+    if not ranked:
+        print(f"no candidates in {snaps / 'candidate_records.jsonl'} — run `vinci screen` first")
+        return 1
     n_unknown = sum(1 for r in ranked if r.unknown_axes)
     n_gated = sum(1 for r in ranked if r.tradeability_gated)
     disqualified = [r for r in ranked if r.structurally_disqualified]
@@ -269,13 +260,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
         print()
 
     if not args.no_write:
-        cfg.ensure_dirs()
-        jsonl = snaps / "ranked_queue.jsonl"
-        with jsonl.open("w") as f:
-            for r in ranked:
-                f.write(r.model_dump_json() + "\n")
-        md = snaps / "ranked_queue.md"
-        md.write_text(render_queue_markdown(ranked, top=args.md_top))
+        jsonl, md = write_queue_snapshots(cfg, ranked, md_top=args.md_top)
         print(f"wrote {jsonl} ({len(ranked)} rows) and {md} (top {args.md_top})")
     return 0
 
@@ -3173,11 +3158,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_rank = sub.add_parser("rank", help="order screen candidates into a priority queue (profiles)")
     p_rank.add_argument("--top", type=int, default=15, help="profiles to print (default: 15)")
     p_rank.add_argument(
-        "--md-top", type=int, default=50, dest="md_top",
+        "--md-top", type=int, default=QUEUE_MD_TOP, dest="md_top",
         help="rows in the committed ranked_queue.md table (default: 50)",
     )
     p_rank.add_argument(
-        "--deep-work-adv-floor", type=float, default=3_000_000.0, dest="deep_work_adv_floor",
+        "--deep-work-adv-floor", type=float, default=QUEUE_ADV_FLOOR,
+        dest="deep_work_adv_floor",
         help="ADV($) below which a name is tradeability-gated (default: 3e6 = universe floor, a "
         "no-op re-check; raise to push thin names down)",
     )

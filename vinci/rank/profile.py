@@ -100,7 +100,16 @@ class RankedCandidate(BaseModel, frozen=True):
     # sector groups the cluster roll-up; the industry is the per-name display + the sub-breakdown.
     sector: str | None = None
     industry: str | None = None
-    volume_state: str  # Tier-2 read, e.g. "exhausted (0.68×)" / "heavy distribution (12.4×)"
+    volume_state: str  # Tier-2 read, e.g. "quiet (0.68× vs 90d avg)" / "heavy (12.4× vs 90d avg)"
+    # The STRUCTURED twin of the multiple inside volume_state: the latest session's share volume
+    # over its 90d average. Emitted so no consumer re-parses the display string for the number
+    # (CLAUDE.md — display formatting is never load-bearing). None = UNKNOWN, never imputed.
+    # Defaulted so a snapshot written before 2026-08-12 still parses.
+    volume_spike: float | None = None
+    # ~13 weekly volume means, oldest→newest, on the SAME 90d denominator as volume_spike — so the
+    # queue can draw the DIRECTION beside the one-session number. Display-only, never a rank input.
+    # None when the name lacks a full quarter of bars: a half-length trend line reads as a shape.
+    volume_trend: list[float] | None = None
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
     structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)
