@@ -384,7 +384,7 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [10]
-- **Free cash flow ($M):** 53.9 [35]
+- **Free cash flow ($M):** 53.9 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $233.7M − capex $129.1M = $104.6M — 0.52x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [35]
 - **Debt schedule vintage:** the debt schedule is 132d old (source filed 2026-02-24); no Item 1.02 (termination of a material agreement) has been filed since [60]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 4 undated / later aggregate line item(s) in the appendix panel [61]
 - **Maturity wall** · vs the 2026-07-06 reference:

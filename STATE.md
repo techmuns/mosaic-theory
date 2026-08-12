@@ -13073,6 +13073,32 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **"FREE CASH FLOW" MEANT TWO DIFFERENT THINGS AND THE PAGE NAMED NEITHER (2026-08-12, PR-5).**
+  `quality.free_cash_flow` reads CIQ's `Levered Free Cash Flow`. Against the SAME sheet's
+  `Cash from Ops. − Capital Expenditure` the two agree on **exactly one** committed name (V, 0.97×);
+  the other thirteen run **NFLX 2.28× · MVST 1.54 · CNXC 1.51 · EPAM 1.35 · NCNO 1.25 · SMPL 0.89 ·
+  IT 0.85 · UBER 0.72 · BRBR 0.70 · VITL 0.60 · VRRM 0.51 · FUBO 0.27 · AORT −0.47 (OPPOSITE
+  SIGNS)**. So this is not a content-company quirk — they are different measures nearly everywhere.
+  **NFLX is why it reaches a reader:** the page carried **$25,388M** against CFO−capex of
+  **$11,152M** while management guides ≈$12.5bn, under a synthesis quoting it as self-funding
+  evidence. FY17 makes it unmistakable: **+$6,673M** levered while CFO that year was **−$1,786M**.
+  **The CIQ figure is KEPT, not replaced** — it is the panel's own measure, consistent across the
+  comp set; swapping it for our arithmetic would put a derived number where a reader takes the
+  vendor's. Both stated, each named.
+- **THE CASH-FLOW ROWS WERE DISPLAY-ONLY — a house-rule violation found while fixing the above
+  (2026-08-12, PR-5).** `Revenue ($M)` carried 12 structured `values`; `CFO`/`Capex`/`FCF` carried
+  **ZERO** — `cells` only. Anything wanting CFO−capex had to re-parse `"11,971"` out of rendered
+  text, which is the forbidden shape ("parsers consume structured values, never rendered strings")
+  and the class of the thousands-blind `$1,101.80M` incident. `clean_num` already produced the
+  number; the row builder formatted it and discarded it. Fixed at source (`cf_num` returns the
+  number, the call site formats), so the basis note derives from values rather than strings.
+- **`_fact` DROPS THE NOTE ON A *PRESENT* FACT — 55 of NFLX's 135 present facts carry one nobody
+  renders (found 2026-08-12, PR-5; NOT FIXED).** The note reaches `dossier.json` and never the
+  page. PR-5 renders the FCF line specially rather than changing `_fact`, because rendering all of
+  them would add ~55 mostly-verbatim lines to every page — but some look decision-relevant
+  (`valuation.ev_ebitda`: *"trailing only — no forward basis; cannot distinguish a temporarily
+  depressed…"*). Wants a curation pass of its own: which of the 55 are decision values and which
+  are audit context.
 - **THE DEBT SCHEDULE HAD NO AGE, AND ONE STILL LISTS A DEAD FACILITY —
   `capital_structure.panel_vintage` (2026-08-12, PR-3).** NFLX's page lists the Warner Bros.
   Discovery bridge facility; its commitments were terminated **2026-02-27** and the panel is dated

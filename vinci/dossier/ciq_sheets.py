@@ -446,10 +446,74 @@ def free_cash_flow(bundle: CiqBundle) -> Sourced[float]:
     latest = _latest_col(rows, ri, _period_header(rows))
     if latest is None:
         return Sourced.unknown(note="Levered Free Cash Flow has no value in any period")
-    _, value, period = latest
+    col, value, period = latest
     return Sourced.present(
-        round(value, 1), source_ref=f"CIQ Financials→Cash Flow 'Levered Free Cash Flow' [{period}]"
-    )
+        round(value, 1),
+        source_ref=f"CIQ Financials→Cash Flow 'Levered Free Cash Flow' [{period}]",
+        note=_fcf_basis_note(rows, value, period, col))
+
+
+def _fcf_basis_note(rows: list[list[Any]], levered: float, period: str, col: int) -> str:
+    """Name the basis, and state the OTHER one from the same sheet when they disagree.
+
+    MEASURED, NOT SUSPECTED. Across all 14 committed dossiers, CIQ's 'Levered Free Cash Flow' and
+    the same sheet's `Cash from Ops. − Capital Expenditure` agree on exactly ONE name (V, 0.97x).
+    The other thirteen run from **0.27x (FUBO) to 2.28x (NFLX)**, and AORT's disagree in SIGN
+    (CFO − capex +$15M against a levered figure of −$7.3M). So this is not a content-company quirk;
+    the two are simply different measures almost everywhere.
+
+    NFLX IS WHY IT MATTERS TO A READER. Its levered figure is $25,388M while CFO − capex is
+    $11,152M, and the company itself guides to roughly $12.5bn — so the page's FCF was twice the
+    number management publishes, feeding a "self-funding" claim the synthesis quotes verbatim. The
+    early years make the divergence unmistakable: FY17 reads +$6,673M levered while CFO that year
+    was **−$1,786M**.
+
+    THE CIQ FIGURE IS KEPT, NOT REPLACED. It is the panel's own measure, consistently defined
+    across the comp set, and swapping it for our arithmetic would put a derived number in the slot
+    a reader takes as the vendor's — the move the buyback average was refused for. Both are stated,
+    each named, and the human picks.
+    """
+    cfo_i, capex_i = _find_row(rows, "Cash from Ops."), _find_row(rows, "Capital Expenditure")
+    if cfo_i is None or capex_i is None:
+        return ("basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex. The same sheet carries no "
+                "'Cash from Ops.'/'Capital Expenditure' pair to state the other basis against.")
+    # THE SAME COLUMN, NOT EACH ROW'S OWN LATEST (review finding, #421). `_latest_col` picks the
+    # rightmost POPULATED cell per row, so when a newly added period is filled for Levered FCF but
+    # not yet for CFO, the two legs come from DIFFERENT columns — and the note then says
+    # "on the same sheet and period [LTM …]" about a subtraction that spanned two. That is the
+    # same-window defect the buyback average was refused for, committed by the very sentence
+    # written to make the basis auditable.
+    # `_cell_at` (defined below, beside the revisions reader) is exactly this: one row's value
+    # in a GIVEN column. It already existed — a second copy was written here before checking,
+    # which is the habit the house rule about asserting absence exists to break.
+    cfo_v, capex_v = _cell_at(rows, cfo_i, col), _cell_at(rows, capex_i, col)
+    if cfo_v is None or capex_v is None:
+        absent = " and ".join(n for n, v in (("CFO", cfo_v), ("capex", capex_v)) if v is None)
+        return (f"basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex, and the other basis "
+                f"cannot be stated for [{period}]: {absent} has no value in that column. Comparing "
+                f"against a different period would not be a basis check.")
+    derived = cfo_v - abs(capex_v)
+    arith = (f"on the same sheet and period [{period}], CFO ${cfo_v:,.1f}M − capex "
+             f"${abs(capex_v):,.1f}M = ${derived:,.1f}M")
+    ratio = (levered / derived) if derived else None
+    if ratio is not None and 0.95 <= ratio <= 1.05:
+        # AGREEING IS NOT THE SAME AS IDENTICAL, and the wording has to keep them apart: V's two
+        # figures land within 3%, which says nothing about the definitions — they are different
+        # measures that happen to coincide this period, and next period they need not.
+        return (f"basis: CIQ 'Levered Free Cash Flow' — {arith}, so the two land within 5% here. "
+                f"They are still different measures and diverge on 13 of 14 committed names.")
+    if ratio is not None and ratio < 0:
+        # OPPOSITE SIGNS is the loudest case and a bare negative multiple hides it: AORT's derived
+        # figure is +$14.6M against a levered −$7.3M, which is not "-0.50x apart" to a reader, it
+        # is cash-generative against cash-consuming.
+        return (f"basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry "
+                f"OPPOSITE SIGNS: {arith}. One says the business generated cash this period "
+                f"and the other "
+                f"says it consumed it; the basis decides which, so name it before quoting either.")
+    gap = f"{ratio:.2f}x apart" if ratio is not None else "the derived figure is zero, so no ratio"
+    return (f"basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: {arith} — {gap}. "
+            f"Company-defined FCF is usually the second; a per-share or self-funding read should "
+            f"say which it used.")
 
 
 def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
@@ -3586,17 +3650,27 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                     cf_dupe.add(key)
                 cf_map[key] = cc
 
-        def cf_cell(ri: int | None, key: tuple[str, bool]) -> str:
+        def cf_num(ri: int | None, key: tuple[str, bool]) -> float | None:
+            """The cash-flow cell's NUMBER. Formatting happens at the call site, so the structured
+            value survives — see the FinRow below for why that matters."""
             j = cf_map.get(key)
             if ri is None or j is None or key in cf_dupe or j >= len(cf[ri]):
-                return "—"
-            return _fmt_m(clean_num(cf[ri][j]))
+                return None
+            return clean_num(cf[ri][j])
 
         for disp_lbl, cf_lbl in _C1_CF:
             cf_ri = _find_row(cf, cf_lbl)
-            cells = [cf_cell(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp] + ["—", "—"]
+            nums = [cf_num(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp]
+            cells = [_fmt_m(v) for v in nums] + ["—", "—"]
             if any(c != "—" for c in cells):
-                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells))
+                # VALUES, NOT ONLY CELLS. These three rows shipped display-only — `Revenue ($M)`
+                # carried 12 structured values while `CFO`/`Capex`/`FCF` carried ZERO, so anything
+                # wanting CFO − capex had to re-parse "11,971" out of a rendered string. That is the
+                # forbidden shape ("parsers consume structured values, never rendered strings"), and
+                # the thousands-blind `$1,101.80M` re-parse is what it costs. `clean_num` already
+                # produced the number; the old cell helper formatted it and threw it away.
+                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells,
+                                   values=[*nums, None, None]))
     except CiqUnavailableError:
         pass
     est = as_of or "?"
