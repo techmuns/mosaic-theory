@@ -166,20 +166,36 @@ def basis_triangulation(
 #: Only these two shapes are decided — an unrecognised label yields None and the check proceeds
 #: exactly as before, because inventing a scope would manufacture the refusal this guards against.
 _QUARTER_PERIOD = re.compile(r"\b(?:FQ\s*[1-4]|Q[1-4])\b", re.I)
+#: A HALF-YEAR names a determinate six-month span, so it decides a scope exactly as "FQ3" does.
+#: Leaving it undecidable let an H1 guide fall through to the numeric comparison against an FY
+#: guide and emit the same false MISMATCH this refusal exists to stop (review finding, #429).
+#: PROTECTIVE, NOT CORRECTIVE — measured over the live corpus, the labels that actually reach
+#: `guide_verification` are only `FQ*`/`FY*` (CIQ side) and `2024`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/
+#: `next-fy` (release side); NO committed name currently produces a half-year guide period. The
+#: worded half-year forms in the corpus (`first half of 2026`, `six months ended June 30, 2026`)
+#: live in `operating_drivers.rows[]`, a different consumer that never calls this.
+_HALF_PERIOD = re.compile(
+    r"\b(?:H[12]|[12]H)\b|\b(?:first|second)\s+half\b|\bsix\s+months\s+ended\b", re.I)
 _ANNUAL_PERIOD = re.compile(r"\bFY\b|\bfiscal\b|\bnext-fy\b|^\s*(?:19|20)\d{2}\s*$", re.I)
 
 
 def period_scope(label: str | None) -> str | None:
-    """``"quarter"`` / ``"annual"`` / ``None`` (undecidable) for a guide-period label.
+    """``"quarter"`` / ``"half"`` / ``"annual"`` / ``None`` (undecidable) for a guide-period label.
 
-    Quarter is tested FIRST: "FQ3 2026" contains a bare year that the annual pattern would also
-    match, and a quarter label carrying its fiscal year is still a quarter.
+    ORDER IS LOAD-BEARING, most-specific first. Quarter leads: "FQ3 2026" carries a bare year the
+    annual pattern would also match, and a quarter label carrying its fiscal year is still a
+    quarter — and "second half of quarter" is a QUARTER, not a half-year. Half comes next for the
+    same reason in the other direction: "H1 fiscal 2026" contains "fiscal", so testing annual first
+    would call a six-month guide a year — the misclassification is worse than the undecidable it
+    replaces, because a wrong scope SILENCES a real mismatch instead of merely not refusing.
     """
     if not label:
         return None
     text = label.strip()
     if _QUARTER_PERIOD.search(text):
         return "quarter"
+    if _HALF_PERIOD.search(text):
+        return "half"
     if _ANNUAL_PERIOD.search(text):
         return "annual"
     return None
@@ -228,7 +244,8 @@ def guide_verification(
     if release_low is not None:
         ciq_scope, rel_scope = period_scope(ciq_period), period_scope(release_period)
         if ciq_scope is not None and rel_scope is not None and ciq_scope != rel_scope:
-            noun = {"quarter": "QUARTER", "annual": "YEAR"}  # reads as English in the rendered line
+            # reads as English in the rendered line ("guides a QUARTER … guides a HALF-YEAR")
+            noun = {"quarter": "QUARTER", "half": "HALF-YEAR", "annual": "YEAR"}
             return (f"guide verification ({metric}): CIQ guides a {noun[ciq_scope]} "
                     f"({ciq_period}: {ciq_low}–{ciq_high}) and the release guides a "
                     f"{noun[rel_scope]} ({release_period}: {release_low}–{release_high}) "

@@ -13191,6 +13191,25 @@ sign-off.**
   incl. the before/after in one test (withholding the periods reproduces the shipped string) and
   every period shape in the corpus (`FQ3 2026`/`FY 2026`/`Q3`/`2026`/`Fiscal 2028`/`next-fy`, and
   `H1 2026`→undecidable). ruff + mypy --strict (124) + pytest 2316 green.*
+  **HALF-YEAR IS A SCOPE, NOT AN UNDECIDABLE (review finding, #429).** The first cut returned `None`
+  for `H1 2026` on the reasoning that a half-year "decides neither" — but it names a determinate
+  six-month span exactly as `FQ3` does, so refusing on it let an H1-vs-FY pair fall straight through
+  to the numeric comparison and print the same false MISMATCH this PR was written to stop. Now a
+  third scope (`H[12]`/`[12]H`/`first|second half`/`six months ended`).
+  **PROTECTIVE, NOT CORRECTIVE — measured, not assumed.** Across every committed dossier the labels
+  that actually REACH `guide_verification` are only `FQ*`/`FY*` (CIQ side, from
+  `guidance_bridge_rows[].period`) and `2024`/`2025`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/`next-fy`
+  (release side, from `primary_source.releases[].guidance[].period`). **No committed name produces a
+  half-year guide period today**, so this repairs no live page — it closes the path before one does,
+  the same footing as #426's as-of bound. The worded half-year labels that DO exist in the corpus
+  (`first half of 2026`, `six months ended June 30, 2026` ×12) sit in `operating_drivers.rows[]`,
+  a different consumer that never calls `period_scope`.
+  **ORDER IS LOAD-BEARING IN BOTH DIRECTIONS**, and pinned: half must beat annual (`H1 fiscal 2026`
+  contains "fiscal", so annual-first would call a six-month guide a YEAR — a wrong scope SILENCES a
+  real mismatch, strictly worse than the undecidable it replaced), and quarter must beat half
+  (`Q2 2026, second half of quarter` is a QUARTER). Mutation-tested by swapping the two branches:
+  `H1 fiscal 2026` → `annual` and the pin reddens. `nine months ended …` stays `None` deliberately —
+  a YTD span is none of the three and guessing one would manufacture a refusal.
   **NOT FIXED HERE, RECORDED:** the release leg ALSO carried a unit error — `$50.7-$51.7` **billion**
   parsed as `$M` because the verbatim was truncated before the word "billion". Current
   `parse_release` scales correctly WHEN the word is present (tested: 50,700–51,700), so this is

@@ -102,12 +102,46 @@ def test_undecidable_period_leaves_the_prior_behaviour_untouched() -> None:
         ("next-fy", "annual"),
         ("", None),
         (None, None),
-        ("H1 2026", None),         # a half-year decides neither — refuse to guess
+        # HALF-YEAR (review finding, #429). Previously None — "decides neither, refuse to guess" —
+        # but a half-year names a determinate six-month span exactly as FQ3 does, so refusing on it
+        # let H1-vs-FY fall through to the numeric compare and emit the very MISMATCH this guards.
+        ("H1 2026", "half"),
+        ("2H 2026", "half"),
+        ("first half of 2026", "half"),
+        ("six months ended June 30, 2026", "half"),
+        # ORDER PINS, both directions. "fiscal" would make an H1 label read ANNUAL if annual were
+        # tested first — a wrong scope silences a real mismatch, strictly worse than undecidable.
+        ("H1 fiscal 2026", "half"),
+        # …and a half-OF-A-QUARTER is a quarter, so quarter must keep winning over the half pattern.
+        ("Q2 2026, second half of quarter", "quarter"),
+        # Still undecidable: a nine-month/YTD span is none of the three, and guessing one would
+        # manufacture a refusal. It stays None deliberately.
+        ("nine months ended June 30, 2026", None),
     ],
 )
 def test_period_scope_reads_both_vendors_labels(label: str | None, scope: str | None) -> None:
     """Every period shape the committed dossiers actually contain, on both sides of the check."""
     assert period_scope(label) == scope
+
+
+def test_a_half_year_guide_is_not_cross_checked_against_an_annual_one() -> None:
+    """THE REVIEW FINDING (#429), as a behaviour pin rather than a scope-table entry. An H1 guide
+    against an FY guide is the same incompatible pair as quarter-vs-year, and before this it fell
+    through to the numeric comparison and printed MISMATCH.
+
+    PROTECTIVE, NOT CORRECTIVE, and the distinction is stated so nobody reads this as a live repair:
+    measured across every committed dossier, the labels that actually reach `guide_verification`
+    are `FQ*`/`FY*` (CIQ) and `2024`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/`next-fy` (release). No name
+    produces a half-year guide period today; this closes the path before one does.
+    """
+    out = guide_verification(
+        "revenue", 25_000.0, 25_500.0,
+        release_low=_NFLX_RELEASE_FY26[0], release_high=_NFLX_RELEASE_FY26[1],
+        ciq_period="H1 2026", release_period="2026")
+    assert "NOT CROSS-CHECKED" in out
+    assert "MISMATCH" not in out
+    assert "HALF-YEAR" in out and "YEAR" in out
+    assert " a HALF-YEAR" in out and " a YEAR" in out   # reads as English, not "a HALF"
 
 
 def test_percentile_window_states_its_span_in_years() -> None:
