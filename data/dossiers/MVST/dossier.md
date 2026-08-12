@@ -30,7 +30,7 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 - **Segments:** Batteries / Battery Systems — single segment [1]
 - **Geography:** China 33%; Italy 22%; France 18%; Other Europe 10%; U.S. 9%; India 8%; Other Asia & Pacific 1% [2]
 - **Customer concentration:** top customer 52% (from 31%) · top-2 ~70% of revenue [3]
-- **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 [4]
+- **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M ⚠ implies $1.27/sh vs CMP (+17.6%) · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?**
@@ -333,7 +333,7 @@ _NM = a real state (negative base), not missing_
 _Revenue YoY (latest same-quarter): -25.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2024). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
 - **Share-count trend:** diluting (trailing ~1.7y): 323,815,298 (2024-08-05) → 333,157,384 (2026-05-04), +2.9% [35]
-- **Non-operating earnings:** $-122M of the quarter ended 2025-06-30 came from BELOW the operating line — 115% of pre-tax income, and 134% of revenue. Operating income $16M → pre-tax $-106M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor. [36]
+- **Non-operating earnings:** 4 of the trailing four quarters carry a material block from BELOW the operating line — 2024-09-30 +$6M (46% of pre-tax · 6% of revenue) · 2025-03-31 +$43M (69% of pre-tax · 37% of revenue) · 2025-06-30 −$122M (115% of pre-tax · 134% of revenue) · 2025-09-30 −$14M (exceeds pre-tax · 11% of revenue) — netting −$87M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them. [36]
 - **Return ratios — per fiscal period** — [37]  <!-- ds-table -->
 
 |  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |

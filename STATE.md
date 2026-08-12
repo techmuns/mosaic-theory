@@ -4585,6 +4585,34 @@ only thing discharging clause (e) — `reconcile_cap`'s result is used solely as
 to have the CIQ cap extractor expose its as-of as a structured value, then bind the label to it.
 Newly urgent because SMPL's cap-vs-spot divergence is now 9.2%, not 0.3%.
 
+**O3 (SECOND HALF) — CLAUSE (e) NOW RENDERS THE MAGNITUDE, NOT ONLY THE VINTAGE (2026-08-12,
+fix/render-cap-drift).** Found by the analyst reading UBER's page, and the sentence above named the
+gap before anyone hit it: *"`reconcile_cap`'s result is used solely as a gate and is NEVER STORED OR
+RENDERED"*. It computes `implied_price` and `gap` on every build; `check_freshness` deliberately
+does not fail on ordinary drift (failing would stop 8 of 14 — "a freeze wearing a guard's name") and
+hands the disclosure to rendering; rendering shipped the DATE and dropped the NUMBER. UBER printed
+`CMP $78.54 · cap $139.3B (2026-08-06)` — two figures 13.2% apart, unreconciled — so the analyst had
+to fetch the share count and recompute to find that NTM EV/EBITDA reads 11.89x where the current
+price gives ~13.6x. **A reader cannot infer 13% from a date.**
+**KEYED ON THE GAP, NOT THE VINTAGE, and that is the load-bearing choice:** 8 of the 14 names carry
+**no `market_cap_as_of` at all**, so a date-keyed caveat renders blank on the three LARGEST drifts
+(AORT −18.4%, VITL −19.0%, MVST +17.6% — all undated). The gap is computable whenever cap, shares
+and spot are present, which is what the reconciliation already requires. Pinned, so a future
+re-keying on the vintage reddens.
+**SILENT INSIDE THE TOLERANCE the guard itself uses** — BRBR/CNXC/EPAM/NFLX/V/VRRM say nothing, so
+the mark means something wherever it appears. **A SHARE-BASIS mismatch is worded differently**
+(FUBO: `⚠ SHARE-BASIS MISMATCH: implies $0.75/sh vs CMP`, no percentage): drift invites re-dating
+the cap and reading on, which is the wrong remedy for a page where no per-share figure holds.
+*DERIVED at render from the three fields already in the JSON — no schema change, no stored field, and
+the machine-complete tier still reproduces it (pinned). Real run over all 14 committed names; the
+ARTIFACT PASS re-rendered the 8 that moved (AORT/FUBO/IT/MVST/NCNO/SMPL/UBER/VITL), render-only via
+`_rerender_only` — `dossier.json` untouched, no synthesis re-rolled, and every artifact diff is
+EXACTLY ONE LINE (the Snapshot). 6 pins incl. the fleet sweep (any name drifting past tolerance whose
+page is silent reddens); 4 of them FAIL without the renderer change. ruff + mypy --strict (124) +
+pytest 2380 green.* **PREVIEW RULE: this is a render change — the preview is in the PR body and it
+awaits approval before merge.** **Does NOT fix O3's original defect** (the label still names another
+panel's date where a vintage exists) — that is blocked on the structured cap as-of, unchanged above.
+
 **OPERATOR ACTIONS — RECORDED 2026-08-06, arising from the rank re-run and the EPAM/IT re-assemblies.**
 
 **O4 — SETTLED, NOT PENDING: WERN FAILS ON ITS OWN NUMBERS AND A HORIZON CHANGES NOTHING
@@ -6559,6 +6587,36 @@ Every one is deferred for a stated reason, and one of them is not a build at all
   breaks the R2 terminal bridge (the NCI item). Labelling the gate's refusal "the Class A/B ≈5x
   case" merged two diagnoses; the ratio is the field that distinguishes corporate action from
   drift, so it has to be right.
+  - **FIXED AT THE SOURCE 2026-08-12 (fix/shares-staleness-fubo) — the staleness bound was
+    ACCOMMODATING this defect.** `_SHARES_MAX_AGE_DAYS` was **540**, chosen (per its own pin) to
+    clear a fleet whose counts ran "10–375 days old" — **but the 375 WAS FUBO**, so the bound was
+    sized around the one name it needed to catch. Visa's SIXTEEN YEARS was refused and FUBO's ONE
+    was not, though both are the same thing: a filer that moved to PER-CLASS tagging, after which
+    the undimensioned `dei:EntityCommonStockSharesOutstanding` simply stops and the extractor keeps
+    serving its final pre-change value.
+    **EVIDENCE (verified this build, refining the note above rather than contradicting it):** the
+    10-Q of **2026-08-05** states **30,204,277 Class A + 78,992,518 Class B**; a FRESH companyfacts
+    pull (not the cache) confirms `dei` genuinely ends at **2025-07-31 / 342,433,118**. So the
+    11.13x is between an EDGAR SINGLE-CLASS total and a Class-A-basis CIQ cap. Whether a reverse
+    split also occurred is not what our extractor tripped on — per-class tagging is.
+    **THE FIX IS ONE CONSTANT, because the architecture already had the answer:** at 180d FUBO is
+    refused and falls to the **CIQ bridge** that Visa already uses — shares taken from the SAME ROW
+    as the cap, so `cap ÷ shares` reproduces that panel's own close and the reconciliation is
+    coherent **by construction**. No new code path. **180 = two quarters**, by face-validity: a
+    cover-page count is restated in every 10-Q, so two quarters of silence means the tag stopped
+    being maintained. Measured, not assumed — the healthy fixtures run **10–101d** (AORT/WERN at
+    101) and the next value is FUBO's **375d**; the bound sits in that empty band, 1.8x above the
+    fleet and 2.1x below the defect. **Blast radius: FUBO only** — V was already bridged, no other
+    name moves (pinned).
+    *Regression-pinned on FUBO's REAL committed fixture (`test_fubos_pre_restructuring_count_is_
+    refused_at_the_new_bound`): it FAILS at the old 540 bound and passes at 180, and asserts the
+    bound stays inside the 101–375 band so a future widening cannot silently re-admit the defect.
+    ruff + mypy --strict (124) + pytest 2374 green.*
+    **NOT FIXED, AND NOT CLAIMED:** the ≈5x NCI / economic-share problem (§ item 29) is untouched —
+    this makes the SHARE BASIS coherent, it does not give FUBO an economic share count. **The
+    committed FUBO page still carries the old basis** until the operator re-assembles it: the build
+    could not run here (its licensed CIQ workbook is not in this worktree), so the artifact pin
+    records the owed state via `BRIDGED_PENDING_REASSEMBLY` and fails the moment it lands.
 - **GUIDANCE EXTRACTION — FOUR MODES BUILT 2026-07-29 at the ASSEMBLY layer (operator ruling).**
   Derive-at-render was rejected for a better reason than mine: it would add a SIXTH composition
   site across both twins — the exact surface that produced five twin-drift instances — trading a
@@ -11598,6 +11656,19 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    writer + the `snapshots.js` allowlist retires it. Small, and it removes a standing contract
    violation rather than only improving a sort. **SEE THE AUDIT BELOW — this is now a prerequisite
    for displaying the column correctly, not only a sort fix.**
+10. **RE-ASSEMBLE FUBO — the share-basis fix is in the CODE and not yet on the PAGE. Opened
+   2026-08-12 by `fix/shares-staleness-fubo`.** The staleness bound moved 540d → 180d, so FUBO's
+   pre-restructuring `dei` count (342,433,118 @ 2025-07-31, 375d stale and single-class against a
+   now dual-class filer) is refused and the name falls to the CIQ bridge Visa already uses. **The
+   committed page still carries the old basis** — cap $256.4M ÷ 342.4M shares = $0.75/sh implied
+   against an $8.33 close, 11.13x wrong on every per-share and EV figure. The build could NOT be run
+   here: FUBO's licensed CIQ workbook is absent from this worktree, and the bridge reads
+   `comps→Financial Data`, so the fix is unverifiable end-to-end without it. **Needs: the FUBO CIQ
+   workbook on disk → re-assemble → confirm `shares_out.source_ref` names CIQ and `reconcile_cap`
+   drops from 11.13x to ordinary drift → drop FUBO from `BRIDGED_PENDING_REASSEMBLY` in
+   `tests/test_share_basis.py`** (that pin FAILS the moment the artifact lands, so the set cannot
+   be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
+   that is a separate defect on the same name and stays open.
 
 ### AUDIT — THE TIER-2 VOLUME OVERLAY (2026-08-12, operator-prompted; NO CODE CHANGED)
 
@@ -11908,6 +11979,15 @@ because `frontend/snapshots/` is git-ignored (0 tracked files) — the gate's mi
   covenant work needs both halves. **CLOSED 2026-08-12 by the NFLX/UBER re-assembly: UBER now
   carries 8 rows** — 4 accession-bound (2028/2025 convertible-note credit agreements, each with an
   `ex10-1` exhibit) + 4 honestly marked *"no contract-level filing expected (aggregate line item)"*.
+- **`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE (found 2026-08-12,
+  PR-C).** It scans the whole rendered queue body for direction words (`building`, `fading`,
+  `rising`…) and reddens on the SIC label *"other building materials dealers"* — an industry
+  description, not a claim derived from the volume series. The string is in NO committed file; it is
+  resolved from the local store at render time, so the test **passes in a bare worktree and in CI**
+  (neither has a populated `vinci.db`) and **fails in a worktree that does**. Isolated properly:
+  reverting PR-C's production files leaves it failing, so it is not PR-C — the trigger was the
+  `vinci refresh --aggs` backfills that populated the shared store. A word-scan over a whole page is
+  the wrong layer for "do not name a direction"; the assertion belongs on the volume CELL.
 - **`primary_source` IS NOT AS-OF BOUNDED — UBER reads a filing 7 days past its own reference date
   (found 2026-08-12 during the re-assembly).** UBER's page is stamped `reference_date 2026-07-29`
   and its `primary_source.filing` is **10-Q `0001543151-26-000032`, filed 2026-08-05**. The whole
@@ -13682,6 +13762,37 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **THE ESTIMATE COLUMNS ASSUMED A DECEMBER FISCAL YEAR — NCNO SHIPPED AN EMPTY `FY26E`
+  (2026-08-12, PR-C).** Two sites hardcoded `FY 2026`/`FY 2027`: the financial-summary columns
+  (`ciq_sheets.financial_summary_annual`) and the direct consensus anchors
+  (`mechanical._implied_expectations._direct_anchors`, whose FAILURE NOTE also named those years).
+  **NCNO closes in January and NIKE in May, so both had already REPORTED FY2026** — their
+  Estimates→Trends starts at FY 2027, the hardcoded lookup found nothing, and NCNO's committed page
+  shipped `columns: […'FY26','LTM','FY26E','FY27E']` with Revenue `[…595, 610, '—', 645]`: **an
+  EMPTY estimate column sitting beside an ACTUAL FY26**, which reads as "consensus has no FY26 view"
+  when the truth is that FY2026 is history. Their FY2028 consensus never reached a page at all.
+  **THE RULE IS "BEYOND THE LAST ACTUAL", not "the first columns offered"** — a vendor sheet can
+  still list a year since reported, and taking its first columns blindly would head a PAST year with
+  `E`: the same error pointing the other way. LTM is excluded from "last actual" (a trailing window
+  is not a fiscal year, and counting it would push the boundary a year early).
+  *MEASURED OVER ALL 19 WORKBOOKS BEFORE THE RULE WAS WRITTEN: 17 names derive exactly the pair that
+  was hardcoded and only NCNO and NIKE move (`FY26E, FY27E` → `FY27E, FY28E`) — surgical by
+  measurement, not by hope. End-to-end on the real workbook, NCNO's table becomes
+  `[…'FY26','LTM','FY27E','FY28E']` with Revenue `[…595, 610, 645, 702]`: the empty column is gone,
+  FY2028 consensus reaches a page for the first time, and the growth row bases correctly off
+  `+8% (vs FY26)`.*
+  **ONE HELPER, BOTH SITES** (`forward_estimate_fys`) — two literal year tuples is how the table and
+  the anchors come to name different years on one page; PR-A's lesson in a second place.
+  **A DESIGN FLAW CAUGHT BY AN EXISTING TEST, not by me:** the first cut anchored the lookup on the
+  Trends **Revenue** block, so a sheet carrying only an `EPS (GAAP)` block derived NO estimate column
+  at all — the empty-column defect rebuilt in a new place. `test_d5a_eps_absent_basis_renders_dash_
+  never_borrows` reddened on exactly that fixture shape. The years are now unioned over every period
+  header in the sheet.
+  **NOT FIXED, RECORDED — a THIRD hardcode of the same shape:** `_anchor("FY 2026")` in
+  `_implied_expectations` feeds the G5 vintage-guard probe, so for NCNO/NIKE that probe is inert.
+  Different consumer, different blast radius; it needs its own look rather than a blind sweep.
+  **ARTIFACTS NOT UPDATED (deliberate):** NCNO and NIKE gain this at their next assembly. Re-rolling
+  a synthesis nobody asked to re-roll is the cost the #426 entry already refused to pay.
 - **A QUARTER WAS CHECKED AGAINST A YEAR AND THE PAGE CALLED IT A MISMATCH (2026-08-12,
   fix/guide-period-and-pctile-window).** Analyst review of the committed NFLX page, post-#426.
   The dossier printed `guide verification (revenue): CIQ 12860.0–12860.0 vs release 50.7–51.7 →
@@ -13930,6 +14041,31 @@ sign-off.**
   norm and its median rises to meet it. The reader's question is not "is this unusual for them" but
   "how much of this is operating", which holds however habitual the behaviour. Fleet today: 4 of 15
   flag, 9 clean, 2 UNKNOWN (NCNO and WERN file no quarterly pre-tax tag).
+  - **EVERY MATERIAL QUARTER IS NAMED, NOT THE LARGEST ONE (2026-08-12,
+    fix/nonoperating-all-quarters).** The analyst's own objection landed on this field: they flagged
+    UBER's **Q2-2026 $1.6bn** equity-revaluation benefit, and the page did not mention that quarter.
+    It named **only the largest by revenue share** — 2025-09-30's +$1,507M — and called it *"an
+    earlier quarter still inside the trailing four"*, which tells a reader the distortion sits
+    BEHIND them and the recent quarters are clean. **UBER has THREE material quarters and both
+    dropped ones are the RECENT ones:** 2026-03-31 **−$1,427M** (exceeds pre-tax) and 2026-06-30
+    **+$1,387M** — the analyst's. The selection rule was defensible in the abstract ("the one that
+    most distorts a trailing figure") and wrong in its own live case, because the figure a reader
+    divides by is an LTM one, so every quarter inside it counts.
+    **AND THE NET IS THE POINT THE MAXIMUM CANNOT MAKE.** UBER's two unnamed quarters point OPPOSITE
+    ways and very nearly cancel: the four net to **+$1,521M**, not the +$1,507M the page implied a
+    reader should carry. Naming the maximum asserted a distortion the trailing figure does not have.
+    The multi-quarter form states the count, every item, and the net; **the single-quarter form is
+    UNCHANGED** (NFLX still reads verbatim as pinned — it has one material quarter, and only the
+    multi form has no room for the where-clause).
+    *Verified on the committed fixtures: UBER now names all three + the net; NFLX and V byte-identical.
+    **ARTIFACT PASS via the MECHANICAL-ONLY refresh** (`refresh_dossier(transform=…)`, no
+    re-assembly, no synthesis re-roll): **UBER and MVST** moved — MVST is **4 of 4** quarters
+    material — and the `moved_cited_claims` guard PASSED rather than being bypassed, because every
+    figure UBER's synthesis cites (1,507 · 58% · 2025-09-30) is still on the page; the new text adds
+    quarters, it does not restate the one the prose quotes. **FUBO REFUSED, correctly** — it is
+    SEALED by its own `known_wrong.json`, and the write path said so. 4 pins (all three quarters
+    named · the net · the count leading · the single-quarter form unchanged); 2 FAIL without the fix.
+    ruff + mypy --strict (124) + pytest 2377 green.*
 - **`extract_points` RETURNS STALE DATA WHEN A FILER ABANDONS ITS PREFERRED ALIAS (found
   2026-08-12, PR-4; BROADER THAN THAT PR).** It is first-alias-**with-data**-wins, and an abandoned
   tag still has data — just old data. **UBER stopped filing

@@ -832,6 +832,20 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
     return out
 
 
+def _nonop_share_txt(share: float, *, compact: bool = False) -> str:
+    """The pre-tax share of a non-operating block, in words.
+
+    THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
+    pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries the
+    figure that is real; the revenue-relative half still carries the magnitude. ``compact`` is the
+    per-item form used when several quarters are listed on one line — same rule, fewer words.
+    """
+    if share <= 1.5:
+        return f"{share:.0%} of pre-tax" if compact else f"{share:.0%} of pre-tax income"
+    return ("exceeds pre-tax" if compact
+            else "more than the entire pre-tax result, which nets near zero")
+
+
 def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
     """How much of the latest quarter's pre-tax result came from BELOW the operating line.
 
@@ -904,16 +918,34 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         return Sourced.present(
             f"no material non-operating item in the four quarters to {end} — in the latest, "
             f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax", source_ref=src)
-    # THE LARGEST RELATIVE TO REVENUE, not the most recent: with several material quarters the one
-    # that most distorts a trailing figure is the one worth naming, and revenue is the arm that
-    # stays comparable across them — the pre-tax share does not, its denominator moves.
-    end, gap, share, rev_share = max(material, key=lambda m: m[3] or 0.0)
+    # EVERY MATERIAL QUARTER, NOT THE LARGEST ONE (2026-08-12). Naming only the biggest was chosen
+    # for a reason that does not survive its own live case: UBER carries THREE material quarters —
+    # 2025-09-30 +$1,507M, 2026-03-31 −$1,427M, 2026-06-30 +$1,387M — and the page named the first,
+    # calling it "an earlier quarter still inside the trailing four". A reader is then told the
+    # distortion sits behind them and the recent quarters are clean; both dropped quarters are the
+    # RECENT ones, and one of them is the $1.4bn revaluation an analyst flagged against this very
+    # field. The figure a reader divides by is an LTM one, so every quarter inside it counts.
+    #
+    # AND THE NET IS THE POINT THE LARGEST CANNOT MAKE. UBER's two unnamed quarters point OPPOSITE
+    # WAYS and very nearly cancel; the trailing sum is what an LTM EPS actually carries, not the
+    # biggest single item. Reporting the maximum implied a distortion the LTM does not have.
+    if len(material) > 1:
+        def signed(v: float) -> str:  # "+$1,507M" — the sign leads, the $ stays on the figure
+            return f"{'+' if v >= 0 else '−'}${abs(v) / 1e6:,.0f}M"
+
+        net = sum(_arms(d)[0] for d in window)
+        items = " · ".join(
+            f"{d} {signed(g)} ({_nonop_share_txt(s, compact=True)} · {r:.0%} of revenue)"
+            for d, g, s, r in material)  # chronological — `material` is built in window order
+        return Sourced.present(
+            f"{len(material)} of the trailing four quarters carry a material block from BELOW the "
+            f"operating line — {items} — netting {signed(net)} across the four. A trailing "
+            f"EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the "
+            f"SUM, not the largest of them.",
+            source_ref=src)
+    end, gap, share, rev_share = material[0]
     assert share is not None and rev_share is not None
-    # THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
-    # pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries
-    # the figure that is real; the revenue-relative half still carries the magnitude.
-    share_txt = (f"{share:.0%} of pre-tax income" if share <= 1.5
-                 else "more than the entire pre-tax result, which nets near zero")
+    share_txt = _nonop_share_txt(share)
     where = ("the latest quarter" if end == window[-1]
              else "an earlier quarter still inside the trailing four")
     return Sourced.present(
@@ -2027,7 +2059,65 @@ def _short_interest(
 #: ~6,040 days old. The bound clears the fleet's maximum by 165 days and still catches the case it
 #: exists for by more than a decade, so it changes no existing name — verified by re-deriving all
 #: twelve before and after.
-_SHARES_MAX_AGE_DAYS = 540
+#: How old a cover-page share count may be before it is REFUSED as a different share basis.
+#:
+#: 180 DAYS, AND THE PREVIOUS 540 IS WHY (2026-08-12). The bound was first set to clear the whole
+#: committed fleet, whose counts ran 10–375 days old — but the 375 was FUBO, and FUBO is exactly the
+#: name the bound needed to catch. It went dual-class in the intervening year (10-Q of 2026-08-05
+#: states 30,204,277 Class A and 78,992,518 Class B), the undimensioned `dei` tag stopped being
+#: populated at 2025-07-31, and the extractor kept serving that final single-class total of
+#: 342,433,118. Divided into a Class-A-basis CIQ cap of $256.4M it implied $0.75/sh against an
+#: $8.33 close — an 11.1x error, and `reconcile_cap` reads it as a corporate action, which it is.
+#: So the bound was accommodating the defect it existed to prevent: Visa's 16 YEARS was caught and
+#: FUBO's ONE was not, though both are the same thing — a filer that moved to per-class tagging.
+#:
+#: 180 is two quarters. A cover-page count is restated in every 10-Q, so two quarters of silence
+#: means the tag stopped being maintained, not that the filer is slow. Measured rather than assumed:
+#: on the committed fixtures the healthy names run 10–101 days (AORT/WERN at 101) and the next value
+#: is FUBO's 375 — an empty band between them, so this sits 1.8x above the fleet and 2.1x below the
+#: defect. Face-validity, not a number tuned to an outcome.
+_SHARES_MAX_AGE_DAYS = 180
+
+#: The same bound for a filer that reports ANNUALLY — a foreign private issuer on Form 20-F (or a
+#: Canadian one on 40-F). This is the pre-2026-08-12 value, kept for exactly the population it was
+#: safe for.
+#:
+#: 180 DAYS IS A 10-Q CADENCE, AND ASSUMING IT GLOBALLY BREAKS A REAL NAME (review finding, #432).
+#: A 20-F filer restates its cover-page count ONCE a year and may file up to four months after its
+#: fiscal year end, so a perfectly current count is routinely 181–365+ days old. Measured on our own
+#: universe rather than argued: **ONON (On Holding, Swiss) files 20-F and 6-K and NO 10-Q**, and its
+#: dei count is dated 2025-12-31 — **224 days** at a 2026-08-12 reference. A flat 180 would REFUSE a
+#: current fact and strip its per-share and EV figures, usually to an unavailable CIQ bridge. The
+#: defect this bound exists for is unaffected: FUBO (377d) files 10-Q so still gets 180, and Visa
+#: (6,041d) is caught by either.
+#: 540 = one annual cycle (365) + the 4-month FPI filing window + margin, and still 11x tighter than
+#: Visa's gap.
+_SHARES_MAX_AGE_ANNUAL_DAYS = 540
+
+
+def _shares_max_age(edgar: EdgarClient, cik: str | None, as_of: date) -> int:
+    """How stale a cover-page share count may be, given how often this filer actually reports.
+
+    QUARTERLY IS THE STRICT DEFAULT, INCLUDING WHEN THE LOOKUP FAILS, and the asymmetry is
+    deliberate: refusing a good count yields UNKNOWN, which is honest and recoverable; accepting a
+    stale one puts a wrong share basis behind every per-share and EV figure on the page, which is
+    the ~4x Visa error and the 11.1x FUBO one. When we cannot establish the cadence we take the
+    tighter bound.
+
+    A filer is treated as ANNUAL only on positive evidence — a 20-F/40-F on file and no 10-Q in the
+    same window. The window is three years so a name that changed status is judged on its recent
+    behaviour, not on one old filing.
+    """
+    if not cik:
+        return _SHARES_MAX_AGE_DAYS
+    try:
+        recent = edgar.recent_filings(
+            cik, forms=("10-Q", "20-F", "40-F"), since=as_of - timedelta(days=3 * 365))
+    except Exception:
+        return _SHARES_MAX_AGE_DAYS      # cadence unknown ⇒ the strict bound, never the loose one
+    forms = {f.form for f in recent}
+    annual_only = bool(forms & {"20-F", "40-F"}) and "10-Q" not in forms
+    return _SHARES_MAX_AGE_ANNUAL_DAYS if annual_only else _SHARES_MAX_AGE_DAYS
 
 
 def _edgar_shares_outstanding(
@@ -2054,9 +2144,8 @@ def _edgar_shares_outstanding(
     if pt is None:
         return None
     end = getattr(pt, "period_end", None)
-    if isinstance(end, date) and (as_of or date.today()) - end > timedelta(
-        days=_SHARES_MAX_AGE_DAYS
-    ):
+    ref = as_of or date.today()
+    if isinstance(end, date) and ref - end > timedelta(days=_shares_max_age(edgar, cik, ref)):
         return None
     return pt.value
 
@@ -2811,15 +2900,21 @@ def _implied_expectations(
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
 
     def _direct_anchors(metric: str) -> Sourced[str]:
-        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric=metric, fy_label=fy))
-                for lab, fy in (("FY26E", "FY 2026"), ("FY27E", "FY 2027"))]
-        if all(v is None for _, v in vals):
+        # SAME DERIVATION AS THE SUMMARY COLUMNS — one helper, not a second literal pair. Two
+        # hardcoded (FY 2026, FY 2027) tuples is how the anchors and the table come to name
+        # different years on one page. NCNO/NIKE had already REPORTED FY2026, so asking Trends for
+        # it returned nothing AND the failure note named years the sheet never offered.
+        pairs = ciq_sheets.forward_estimate_fys(bundle)
+        span = "/".join(display for _t, display in pairs) or "forward-year"
+        vals = [(display, ciq_sheets.trends_fy_level(bundle, metric=metric, fy_label=trends_label))
+                for trends_label, display in pairs]
+        if not vals or all(v is None for _, v in vals):
             return Sourced.unknown(
-                note=f"no direct FY26/FY27 {metric} consensus in Estimates→Trends")
+                note=f"no direct {span} {metric} consensus in Estimates→Trends")
         txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
         return Sourced.present(
             txt + f" (direct consensus {metric} — CIQ Estimates→Trends latest snapshot)",
-            source_ref=f"CIQ Estimates→Trends (FY26/FY27 consensus {metric}, latest snapshot)")
+            source_ref=f"CIQ Estimates→Trends ({span} consensus {metric}, latest snapshot)")
 
     a26 = _anchor("FY 2026")  # LADDER-derived FY26 — kept ONLY for the G5 vintage-guard probe below
     anchors = _direct_anchors("EBITDA")  # (H7) direct Trends, the single source of truth
