@@ -368,8 +368,8 @@ _export date unverified (data ≥ 2026-05-15)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | Revenue | 427.5 | FY 2026 | 2026-03-16 | 112d (stale) | actual ≥ floor 10/13 | FY 2025 MISSED |
-| Capital Expenditure | '(180.00) - (210.00)' | FY 2023 | 2023-11-10 | 969d (stale) | spend ≤ ceiling 4/4 | FY 2023 MET |
-| Gross Margin % | '32.00 - 35.00' | FY 2025 | 2025-11-10 | 238d (stale) | actual ≥ floor 4/4 | FY 2024 MET |
+| Capital Expenditure | none current (last: '(180.00) - (210.00)') | FY 2023 | 2023-11-10 | 969d (stale) | spend ≤ ceiling 4/4 | FY 2023 MET |
+| Gross Margin % | none current (last: '32.00 - 35.00') | FY 2025 | 2025-11-10 | 238d (stale) | actual ≥ floor 4/4 | FY 2024 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $5.50, median $5.50, high/low 6.00/5.00, N 2/2; Ratings: Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-05-15 · export date unverified] [21]
 - **Revision-event log (47 events · 3 broker-days)** — [41]  <!-- ds-table -->
@@ -401,7 +401,7 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** 39.6 [11]
+- **Free cash flow ($M):** 39.6 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $45.9M − capex $20.3M = $25.6M — 1.55x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [11]
 - **Debt schedule vintage:** the debt schedule is 112d old (source filed 2026-03-16); no Item 1.02 (termination of a material agreement) has been filed since [46]
 - **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Mar-16-2026** — [47]  <!-- ds-table -->
 

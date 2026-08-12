@@ -32,7 +32,7 @@ from vinci.dossier.covenant_extract import (
 from vinci.dossier.driver_extract import extract_transcript_drivers
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
-from vinci.dossier.mechanical import assemble_mechanical
+from vinci.dossier.mechanical import COVENANT_SEARCH_FOUND_NOTHING, assemble_mechanical
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier, PriceStoreStamp, Sourced, SourceStatus
 from vinci.dossier.synthesis import (
@@ -762,8 +762,27 @@ def assemble_one(
             gov_present = any(g.value.status is SourceStatus.PRESENT for g in gov)
             mat_present = (maturity_event is not None
                            and maturity_event.status is SourceStatus.PRESENT)
+            # TWO FAILURES THAT MUST NOT READ ALIKE. "extraction failed from located exhibits"
+            # points a reader at the LLM phase — we found the contract and could not read it. When
+            # NO exhibit was located there was nothing to read, and the remedy is upstream in the
+            # pointer search, not in extraction. Four names shipped the first message while their
+            # own `covenant_pointers` said "no CIK-scoped agreement exhibit located" two fields
+            # away: one page asserting both, in opposite directions.
+            # THREE STATES, NOT TWO (review finding, #426). `bool(ptrs.value)` is falsy for BOTH
+            # "the search ran and found nothing" AND "the search could not run" (no CIK, or EDGAR
+            # unreachable) — so keying on it reports a COMPLETED search that never happened. The
+            # reassuring answer is the dangerous one, and this was introduced while fixing a
+            # two-states-must-not-read-alike bug. Keyed on the search's own note constant.
+            located_any = ptrs is not None and bool(ptrs.value)
+            searched = (ptrs is not None
+                        and (bool(ptrs.value) or ptrs.note == COVENANT_SEARCH_FOUND_NOTHING))
             fail = (None if (gov_present or mat_present)
-                    else "no covenant terms extracted from located exhibits")
+                    else "no covenant terms extracted from located exhibits" if located_any
+                    else "no agreement exhibit was located to extract from — the gap is in the "
+                         "pointer search, not in extraction" if searched
+                    else "the covenant-exhibit search could not run "
+                         f"({ptrs.note if ptrs is not None else 'no pointer result'}) — whether an "
+                         "agreement exists is UNKNOWN, not absent")
             digest = covenant_digest(gov, maturity_event, fail_reason=fail)
             cs_pre = mech.capital_structure.model_copy(update={
                 "covenant_terms": Sourced.present(digest, source_ref="fenced Tier-2 digest (P1)"),

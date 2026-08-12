@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 import statistics
 from collections.abc import Callable
-from datetime import date
+from datetime import date, datetime
 from typing import Any, NamedTuple
 
 from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
@@ -156,8 +156,38 @@ def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
 # --- valuation: Multiples (Financials → Multiples, historical) --------------------------------
 
 
+def _as_date(value: Any) -> date | None:
+    """A Multiples column header → ``date``, or None when it is not one. The headers arrive as
+    ``date``/``datetime`` or as an ISO string depending on the workbook's column format."""
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return date(value.year, value.month, value.day)
+    try:
+        return date.fromisoformat(str(value).strip()[:10])
+    except (TypeError, ValueError):
+        return None
+
+
+def _quarterly_span_label(dates: list[Any]) -> str:
+    """`" spanning 2017-03-31..2026-05-31 (9.2y)"` for the distribution's own dates, or `""`.
+
+    Empty when the headers do not parse as dates — an omitted span is honest; a guessed one would
+    put a fabricated window on the very label that exists to stop a window being assumed.
+    """
+    parsed = sorted(d for d in (_as_date(x) for x in dates) if d is not None)
+    if len(parsed) < 2:
+        return ""
+    years = (parsed[-1] - parsed[0]).days / 365.25
+    return f" spanning {parsed[0].isoformat()}..{parsed[-1].isoformat()} ({years:.1f}y)"
+
+
 def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
-    """Percentile of the current TEV/LTM EBITDA Close within its own quarterly history (0=floor)."""
+    """Percentile of the current TEV/LTM EBITDA Close within its own quarterly history (0=floor).
+
+    The window is the workbook's FULL quarterly Close history, not the five years the destination
+    field's legacy name (``ev_ebitda_percentile_5y``) implies — so the source_ref states the span.
+    """
     try:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
@@ -174,15 +204,24 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
         return Sourced.unknown(
             note="TEV/LTM EBITDA is NM at the latest Close — a percentile against an older close "
                  "would carry no date to reveal it")
-    series = [v for _, v in pairs_ev if v is not None]
+    kept = [(d, v) for d, v in pairs_ev if v is not None]
+    series = [v for _, v in kept]
     if len(series) < 4:
         return Sourced.unknown(note=f"TEV/LTM EBITDA Close <4 quarters ({len(series)}) — no pctile")
     current, history = series[-1], series[:-1]  # partial last col = current, excluded from history
     pct = sum(1 for h in history if h <= current) / len(history)
+    # THE WINDOW SAYS HOW LONG IT IS (2026-08-12). The field this lands in is named
+    # `ev_ebitda_percentile_5y`, and the distribution is every quarterly Close the workbook carries
+    # — NFLX's is 38 of them, 2017→2026, spanning 9.4 YEARS. The count alone did not reveal that:
+    # a reader who trusts the field name divides 38 quarters into the 5 years it claims and reads a
+    # different window than the one that produced the number. The full history is the better
+    # distribution (more of the name's own cycle), so the VALUE is unchanged and the SPAN is stated
+    # instead — the honest label, not a silently re-cut window.
+    span = _quarterly_span_label([d for d, _ in kept[:-1]])
     return Sourced.present(
         round(pct, 3),
-        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters "
-        "(partial last column excluded from the distribution)",
+        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters"
+        f"{span} (partial last column excluded from the distribution)",
     )
 
 
@@ -446,10 +485,74 @@ def free_cash_flow(bundle: CiqBundle) -> Sourced[float]:
     latest = _latest_col(rows, ri, _period_header(rows))
     if latest is None:
         return Sourced.unknown(note="Levered Free Cash Flow has no value in any period")
-    _, value, period = latest
+    col, value, period = latest
     return Sourced.present(
-        round(value, 1), source_ref=f"CIQ Financials→Cash Flow 'Levered Free Cash Flow' [{period}]"
-    )
+        round(value, 1),
+        source_ref=f"CIQ Financials→Cash Flow 'Levered Free Cash Flow' [{period}]",
+        note=_fcf_basis_note(rows, value, period, col))
+
+
+def _fcf_basis_note(rows: list[list[Any]], levered: float, period: str, col: int) -> str:
+    """Name the basis, and state the OTHER one from the same sheet when they disagree.
+
+    MEASURED, NOT SUSPECTED. Across all 14 committed dossiers, CIQ's 'Levered Free Cash Flow' and
+    the same sheet's `Cash from Ops. − Capital Expenditure` agree on exactly ONE name (V, 0.97x).
+    The other thirteen run from **0.27x (FUBO) to 2.28x (NFLX)**, and AORT's disagree in SIGN
+    (CFO − capex +$15M against a levered figure of −$7.3M). So this is not a content-company quirk;
+    the two are simply different measures almost everywhere.
+
+    NFLX IS WHY IT MATTERS TO A READER. Its levered figure is $25,388M while CFO − capex is
+    $11,152M, and the company itself guides to roughly $12.5bn — so the page's FCF was twice the
+    number management publishes, feeding a "self-funding" claim the synthesis quotes verbatim. The
+    early years make the divergence unmistakable: FY17 reads +$6,673M levered while CFO that year
+    was **−$1,786M**.
+
+    THE CIQ FIGURE IS KEPT, NOT REPLACED. It is the panel's own measure, consistently defined
+    across the comp set, and swapping it for our arithmetic would put a derived number in the slot
+    a reader takes as the vendor's — the move the buyback average was refused for. Both are stated,
+    each named, and the human picks.
+    """
+    cfo_i, capex_i = _find_row(rows, "Cash from Ops."), _find_row(rows, "Capital Expenditure")
+    if cfo_i is None or capex_i is None:
+        return ("basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex. The same sheet carries no "
+                "'Cash from Ops.'/'Capital Expenditure' pair to state the other basis against.")
+    # THE SAME COLUMN, NOT EACH ROW'S OWN LATEST (review finding, #421). `_latest_col` picks the
+    # rightmost POPULATED cell per row, so when a newly added period is filled for Levered FCF but
+    # not yet for CFO, the two legs come from DIFFERENT columns — and the note then says
+    # "on the same sheet and period [LTM …]" about a subtraction that spanned two. That is the
+    # same-window defect the buyback average was refused for, committed by the very sentence
+    # written to make the basis auditable.
+    # `_cell_at` (defined below, beside the revisions reader) is exactly this: one row's value
+    # in a GIVEN column. It already existed — a second copy was written here before checking,
+    # which is the habit the house rule about asserting absence exists to break.
+    cfo_v, capex_v = _cell_at(rows, cfo_i, col), _cell_at(rows, capex_i, col)
+    if cfo_v is None or capex_v is None:
+        absent = " and ".join(n for n, v in (("CFO", cfo_v), ("capex", capex_v)) if v is None)
+        return (f"basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex, and the other basis "
+                f"cannot be stated for [{period}]: {absent} has no value in that column. Comparing "
+                f"against a different period would not be a basis check.")
+    derived = cfo_v - abs(capex_v)
+    arith = (f"on the same sheet and period [{period}], CFO ${cfo_v:,.1f}M − capex "
+             f"${abs(capex_v):,.1f}M = ${derived:,.1f}M")
+    ratio = (levered / derived) if derived else None
+    if ratio is not None and 0.95 <= ratio <= 1.05:
+        # AGREEING IS NOT THE SAME AS IDENTICAL, and the wording has to keep them apart: V's two
+        # figures land within 3%, which says nothing about the definitions — they are different
+        # measures that happen to coincide this period, and next period they need not.
+        return (f"basis: CIQ 'Levered Free Cash Flow' — {arith}, so the two land within 5% here. "
+                f"They are still different measures and diverge on 13 of 14 committed names.")
+    if ratio is not None and ratio < 0:
+        # OPPOSITE SIGNS is the loudest case and a bare negative multiple hides it: AORT's derived
+        # figure is +$14.6M against a levered −$7.3M, which is not "-0.50x apart" to a reader, it
+        # is cash-generative against cash-consuming.
+        return (f"basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry "
+                f"OPPOSITE SIGNS: {arith}. One says the business generated cash this period "
+                f"and the other "
+                f"says it consumed it; the basis decides which, so name it before quoting either.")
+    gap = f"{ratio:.2f}x apart" if ratio is not None else "the derived figure is zero, so no ratio"
+    return (f"basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: {arith} — {gap}. "
+            f"Company-defined FCF is usually the second; a per-share or self-funding read should "
+            f"say which it used.")
 
 
 def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
@@ -2134,23 +2237,31 @@ def guidance_bridge(
 
 def revenue_guide_lohi(
     bundle: CiqBundle, *, reference_date: date | None = None
-) -> tuple[float | None, float | None]:
-    """The latest CIQ FY-revenue guide as (low, high) — a POINT guide reads (v, v), a RANGE reads
-    (lo, hi), absent reads (None, None). The cross-source input for guide verification (a point
-    echoing the prior-FY actual = vendor artifact; a range matching the release = VERIFIED).
-    Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a display re-parse)."""
+) -> tuple[float | None, float | None, str | None]:
+    """The latest CIQ revenue guide as (low, high, PERIOD) — a POINT guide reads (v, v, period), a
+    RANGE reads (lo, hi, period), absent reads (None, None, None). The cross-source input for guide
+    verification (a point echoing the prior-FY actual = vendor artifact; a range matching the
+    release = VERIFIED). Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a
+    display re-parse).
+
+    THE PERIOD RIDES WITH THE NUMBERS (2026-08-12), for the reason the BASIS does. This guide is
+    whichever period CIQ last published — NFLX's is FQ3 2026, not the fiscal year the old docstring
+    assumed — and handing (low, high) onward without saying which period they cover is how a
+    quarterly 12,860 got compared against an annual 50,700–51,700 and printed MISMATCH. The caller
+    refuses on it.
+    """
     try:
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError:
-        return (None, None)
+        return (None, None, None)
     for r in _guidance_reads(rows, _metric_starts(rows, _GUIDANCE_METRICS), reference_date, 45):
         if "revenue" not in r.metric.lower():
             continue
         if r.guide_num is not None:
-            return (r.guide_num, r.guide_num)
+            return (r.guide_num, r.guide_num, r.period)
         if r.guide_range is not None:
-            return r.guide_range
-    return (None, None)
+            return (*r.guide_range, r.period)
+    return (None, None, None)
 
 
 def guidance_bridge_rows(
@@ -3586,17 +3697,27 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                     cf_dupe.add(key)
                 cf_map[key] = cc
 
-        def cf_cell(ri: int | None, key: tuple[str, bool]) -> str:
+        def cf_num(ri: int | None, key: tuple[str, bool]) -> float | None:
+            """The cash-flow cell's NUMBER. Formatting happens at the call site, so the structured
+            value survives — see the FinRow below for why that matters."""
             j = cf_map.get(key)
             if ri is None or j is None or key in cf_dupe or j >= len(cf[ri]):
-                return "—"
-            return _fmt_m(clean_num(cf[ri][j]))
+                return None
+            return clean_num(cf[ri][j])
 
         for disp_lbl, cf_lbl in _C1_CF:
             cf_ri = _find_row(cf, cf_lbl)
-            cells = [cf_cell(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp] + ["—", "—"]
+            nums = [cf_num(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp]
+            cells = [_fmt_m(v) for v in nums] + ["—", "—"]
             if any(c != "—" for c in cells):
-                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells))
+                # VALUES, NOT ONLY CELLS. These three rows shipped display-only — `Revenue ($M)`
+                # carried 12 structured values while `CFO`/`Capex`/`FCF` carried ZERO, so anything
+                # wanting CFO − capex had to re-parse "11,971" out of a rendered string. That is the
+                # forbidden shape ("parsers consume structured values, never rendered strings"), and
+                # the thousands-blind `$1,101.80M` re-parse is what it costs. `clean_num` already
+                # produced the number; the old cell helper formatted it and threw it away.
+                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells,
+                                   values=[*nums, None, None]))
     except CiqUnavailableError:
         pass
     est = as_of or "?"

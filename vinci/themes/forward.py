@@ -95,6 +95,12 @@ class FrozenBaskets(BaseModel, frozen=True):
     # tracks whether the human's PASS on the strongest almost-buys held up forward. NOT the
     # watchlist (those are genuine-exposure re-underwrite candidates); these are near-miss controls.
     avoid_controls: tuple[str, ...] = ()
+    #: WHERE THIS FILE CAME FROM, in one sentence. A basket written by the freeze and a basket
+    #: RECONSTRUCTED from the frontend mirror hold the same names, but they are not the same
+    #: evidence: the freeze read the analyst's dispositioned worksheet, the reconstruction read a
+    #: published summary of it. Committing both without saying which is which would make the
+    #: durable record unauditable at exactly the point it starts being trusted.
+    provenance: str = ""
     deferred_controls: tuple[str, ...] = (
         "keyword/co-movement naive baseline (§3b-ii) — SECOND-PHASE: needs Component A "
         "live-forward; the INDEPENDENT replicable control (isolates the classifier's contribution "
@@ -247,6 +253,113 @@ def freeze_baskets(
         real_tier=tuple(real_tier or ()), avoid_controls=ac)
 
 
+#: The COMMITTED home for a frozen basket, one file per driver. Operator decision 2026-08-12,
+#: reversing the standing `.gitignore` rule that these were local-only. The reason the rule changed:
+#: the Stage-4 measurement's whole product is a number that accrues over CALENDAR TIME, and its
+#: input existed on exactly one machine — so on any other checkout the accrual could not be computed
+#: at all, and the reconstruction path that closed that gap works ONLY for hold-none freezes. The
+#: first RATIFIED theme would have had no durable record of its BUY leg's entry dates anywhere.
+#: The ratification LEDGER stays git-ignored: it is the analyst's raw dispositioned worksheet output
+#: and that was not what was decided here.
+BASKETS_SUBDIR = "themes/baskets"
+
+#: The COMMITTED home for a driver's ratification ledger — operator decision 2026-08-12, extending
+#: the basket decision to the record the basket is DERIVED FROM. The basket says which names are in
+#: which cohort; the ledger says WHY, in the analyst's own words, one appended row at a time. Losing
+#: it loses the judgment and keeps only its conclusion.
+#:
+#: THE THREE JULY 2026 LEDGERS ARE GONE and are NOT reconstructed here. A ledger is an APPEND-ONLY
+#: record whose value is that it records what was appended and when; a rebuild from the published
+#: mirror would carry one synthetic timestamp for every row and no correction history, and
+#: committing that as "the ledger" would misrepresent the artifact at the moment it starts being
+#: trusted. Their dispositions survive in the mirrors (`rationale`, `gradeFact`, `accession` per
+#: name) — that is the honest surviving record, and it is named as such rather than dressed up.
+LEDGER_SUBDIR = "themes/ledgers"
+
+
+def ledger_path(driver: str, *, data_dir: Path) -> Path:
+    """The committed ratification ledger for one driver."""
+    return data_dir / LEDGER_SUBDIR / f"{driver}.jsonl"
+
+
+def baskets_path(driver: str, *, data_dir: Path) -> Path:
+    """The committed basket for one driver, under the configured DATA DIR.
+
+    Keyed on ``data_dir`` rather than the process's cwd, and that is not a detail: the first cut
+    resolved it from `Path.cwd()`, so an existing CLI test that freezes a tmp worksheet wrote its
+    four synthetic names straight over the real committed baskets in the repo. Every other durable
+    artifact here is located through config; this one is too."""
+    return data_dir / BASKETS_SUBDIR / f"{driver}.json"
+
+
+def assert_basket_writable(driver: str, *, data_dir: Path, supersede: bool = False) -> None:
+    """Raise if freezing ``driver`` would overwrite an existing basket. NO SIDE EFFECTS.
+
+    SPLIT OUT SO THE FREEZE CAN PREFLIGHT IT (operator review P1 on #424). The ledger append used
+    to run BEFORE the basket write, so a refused re-freeze left the now-COMMITTED ledger carrying
+    dispositions for a basket that was never frozen — and the retry with --supersede-basket
+    appended the same judgment a third time. Measured: 1 row, then 2, then 3. Making the ledger
+    durable is what turned a harmless local side effect into a corrupted permanent record; the
+    write order had to follow.
+    """
+    p = baskets_path(driver, data_dir=data_dir)
+    if p.exists() and not supersede:
+        prior = load_baskets(p)
+        raise FileExistsError(
+            f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
+            f"replace the entry dates the forward accrual is measured from. Pass "
+            f"supersede=True to archive it and re-freeze deliberately.")
+
+
+def write_baskets(
+    baskets: FrozenBaskets, *, data_dir: Path, supersede: bool = False,
+) -> Path:
+    """Write one driver's frozen basket to its committed home. Returns the path.
+
+    REFUSES TO OVERWRITE AN EXISTING BASKET (operator review P1 on #422). These are the
+    IMMUTABLE frozen references, and their per-name entry dates are the input to a calendar-time
+    accrual — but every later `themes-forward --worksheet …` for the same driver wrote a newly
+    frozen object to the same filename. Measured: re-freezing defense moved `entry_dates` from
+    {2026-07-03} to {2026-08-12}, shifting the forward window's start by 40 days with nothing said.
+    The append-only ledger does not protect this artifact, and committing it made the silent
+    rewrite worse, not better — it now looks authoritative.
+
+    THE SAME CLASS AS THE MONITOR SNAPSHOT OVERWRITE (#418), and this file did not learn from it.
+
+    ``supersede=True`` is the deliberate re-freeze: the existing basket is ARCHIVED under
+    ``baskets/archive/<driver>-<its own freeze date>.json`` before the new one lands, so a
+    supersession never destroys the window it replaces. Archiving rather than refusing outright is
+    what makes the flow usable — a re-freeze is legitimate when the analyst re-dispositions a tier;
+    losing the prior basket is not.
+    """
+    p = baskets_path(baskets.driver, data_dir=data_dir)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    # The same check the caller should have PREFLIGHTED — kept here as the backstop, so a caller
+    # that skips the preflight still cannot overwrite.
+    assert_basket_writable(baskets.driver, data_dir=data_dir, supersede=supersede)
+    if p.exists():
+        prior = load_baskets(p)
+        # THE ARCHIVE NAME IS DATE-KEYED and the freeze timestamp is date-only, so two
+        # supersessions on the SAME DAY would collide and the second would overwrite the first
+        # archive — losing exactly what archiving exists to keep. Disambiguated rather than
+        # trusted to be rare: re-dispositioning a tier twice in a session is a normal thing to do.
+        base = p.parent / "archive" / f"{baskets.driver}-{prior.freeze_timestamp[:10]}"
+        base.parent.mkdir(parents=True, exist_ok=True)
+        archive = base.with_suffix(".json")
+        n = 2
+        while archive.exists():
+            archive = base.with_name(f"{base.name}-{n}").with_suffix(".json")
+            n += 1
+        archive.write_text(p.read_text())
+    p.write_text(baskets.model_dump_json(indent=1) + "\n")
+    return p
+
+
+def load_baskets(path: Path) -> FrozenBaskets:
+    """Read a committed frozen basket — the durable input the forward measurement was missing."""
+    return FrozenBaskets.model_validate_json(path.read_text())
+
+
 def baskets_from_mirror(
     mirror: dict[str, object], *, driver: str | None = None,
 ) -> FrozenBaskets:
@@ -320,7 +433,15 @@ def baskets_from_mirror(
         layer_of={field(n, "ticker"): field(n, "substructureTag") for n in names},
         watchlist=cohort("watchlist") or None,
         avoid_controls=cohort("avoid-control") or None,
-        real_tier=cohort("real") or None)
+        real_tier=cohort("real") or None,
+    ).model_copy(update={"provenance": (
+        f"RECONSTRUCTED from the committed frontend mirror, not written by the freeze. The "
+        f"ratification ledger and the freeze-time basket were git-ignored local-only files and "
+        f"were gone; this recovers the names, cohorts and freeze timestamp from the published "
+        f"summary. Every name is PASSED with entry = the freeze date, which is the only reading a "
+        f"hold-none mirror supports and what `_cohort_fwd_mean` already defaults to — a BUY leg "
+        f"cannot be reconstructed this way and is refused. Driver key supplied by the caller; the "
+        f"mirror's own `driver` field read {str(mirror.get('driver'))!r}.")})
 
 
 # --------------------------------------------------------------------------------------------------

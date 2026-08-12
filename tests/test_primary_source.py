@@ -66,9 +66,14 @@ def test_release_revenue_guide_prefers_most_recent() -> None:
 
     THE FOURTH ELEMENT IS THE BASIS (2026-08-05). A release can guide revenue as a CHANGE, and
     handing (low, high) onward without saying which kind they are is how -2..+2 reaches a
-    comparison against a 1,345..1,355 level guide."""
+    comparison against a 1,345..1,355 level guide.
+
+    THE FIFTH IS THE PERIOD (2026-08-12), for the same reason: a release guiding a YEAR against a
+    CIQ guide covering a QUARTER cannot agree as bare numbers (NFLX printed MISMATCH on a pair that
+    corroborated). A QUALITATIVE outlook still names the period it is an outlook FOR — the period
+    survives the absent numbers, so the scope check works on the qualitative path too."""
     assert mech._release_revenue_guide(
-        [rp.parse_release(_FY25, source_ref="fy")]) == (None, None, True, "level")
+        [rp.parse_release(_FY25, source_ref="fy")]) == (None, None, True, "level", "2026")
 
 _MVST_PANEL = [
     ps.PanelInstrument("Convertible Bond", 41.7, date(2027, 1, 31)),

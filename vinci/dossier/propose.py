@@ -607,6 +607,11 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
         "analyst": "",
         "spot": _get(doc, "mechanical", "stock_info", "price", "value"),
         "spot_source": _get(doc, "mechanical", "stock_info", "price", "source_ref"),
+        # (PR-7) THE DAY THAT SPOT IS A CLOSE OF, pre-filled from the dossier's own bar date so the
+        # schema-1.5 requirement is satisfiable from the template rather than needing a hand-typed
+        # date. `stock_info.as_of` IS the EOD bar the price came from — the same object, one level
+        # up, because `Sourced` carries no date of its own. All 14 committed dossiers have it.
+        "spot_as_of": _get(doc, "mechanical", "stock_info", "as_of"),
         "facts": facts,
         "scenarios": scenarios,
         f"{COMMENTARY_PREFIX}evidence": ev,

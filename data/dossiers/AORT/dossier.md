@@ -392,11 +392,11 @@ _export date unverified (data ≥ 2026-06-30)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| EPS Normalized | '0.28 - 0.32' | FY 2019 | 2019-10-30 | 2441d (stale) | actual ≥ floor 5/7 | FY 2019 MET |
 | Revenue | '480.00 - 496.00' | FY 2026 | 2026-05-07 | 60d (stale) | actual ≥ floor 28/41 | FY 2025 MET |
 | EBITDA | '100.00 - 107.00' | FY 2026 | 2026-05-07 | 60d (stale) | actual ≥ floor 3/4 | FY 2025 MET |
 | Capital Expenditure | -50.0 | FY 2026 | 2026-02-12 | 144d (stale) | — | — |
 | Gross Margin % | 64.9 | FY 2026 | 2026-02-12 | 144d (stale) | actual ≥ floor 3/6 | FY 2024 MISSED |
+| EPS Normalized | none current (last: '0.28 - 0.32') | FY 2019 | 2019-10-30 | 2441d (stale) | actual ≥ floor 5/7 | FY 2019 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $42.00, median $43.00, high/low 48.00/36.00, N 8/8; Ratings: Buy 6, Outperform 2, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-06-30 · export date unverified] [25]
 - **Revision-event log (250 events · 17 broker-days)** — [49]  <!-- ds-table -->
@@ -433,7 +433,7 @@ _S&P issuer rating NR · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** -7.3 [12]
+- **Free cash flow ($M):** -7.3 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry OPPOSITE SIGNS: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $58.0M − capex $43.4M = $14.6M. One says the business generated cash this period and the other says it consumed it; the basis decides which, so name it before quoting either. [12]
 - **Debt schedule vintage:** the debt schedule is 138d old (source filed 2026-02-18); no Item 1.02 (termination of a material agreement) has been filed since [54]
 - **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-18-2026** — [55]  <!-- ds-table -->
 

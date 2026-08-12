@@ -8540,11 +8540,146 @@ fixed by making the caller's registry key authoritative; (b) **`--from-mirror <w
 line two and asks the operator to confirm, which is mitigation, not a guard. Closing it properly
 means the mirror carrying its registry key; do it when the mirror builder is next touched (there is
 no mirror builder in `vinci/` today — the three mirrors were hand-built).
-**OPERATOR TO-DO:** decide whether the frozen baskets become a committed artifact. They are derived
-analysis and would be committable under the private-repo rule, but `.gitignore` names them
-never-committed, so this build did NOT override that. Until it is decided the reconstruction path is
-the only route to an accrual, and it works ONLY for hold-none (zero-RATIFIED) freezes — the first
-RATIFIED theme will have no durable record of its BUY leg's entry dates at all.
+
+**RULED 2026-08-12 — A CLOSED POSITION'S DECISION KEEPS ACCRUING (decision-queue item 1), AND THE
+HEADLINE MUST DECOMPOSE.** The question was whether a decision closed early still counts toward the
+spread. **It does, and nothing changed about that:** the spread measures the DISCRIMINATOR, and
+closing is a capital decision that does not retract the call — the same rule the scoring harness
+already followed. What the ruling does NOT license is a headline the reader cannot take apart. On
+2026-08-11 the book read **+9.54 pp**, and **+29.00 pts of the BUY leg came from IT — a position
+closed at the entry price on 2026-07-21, realized P&L +0.0%.** Over the rows still held the same
+spread is **−1.56 pp**. THE SIGN FLIPS, so both now print, neither labelled the "real" one: the
+headline answers *was the call right*, the second answers *did the book hold it*. Keyed on the
+DECISION's entry_id, never the ticker — SMPL is closed AND re-entered, so a ticker-keyed flag would
+mark the live re-entry closed and silently drop it from the held figure.
+**THE SAME SPLIT NOW ON THE SCORING REPORT (2026-08-12).** The monitor showed the decomposition
+from #418 and the scoring report — the LP-facing artifact — did not, which is the surface-gap #378
+was about: a number correct in one place and absent from the other. `ScoreReport` now carries
+`n_closed` / `buy_avoid_spread_open_only` and renders them beside the headline, computed off the
+SAME `primary` set so the two are comparable by construction. The headline is unchanged; the ruling
+is unchanged. **The as-of filter on closes was applied from the start here rather than re-learned**
+— #418's P1 (a close dated after the scoring date has not happened yet) transferred directly.
+**A COUNT THAT COULD CONTRADICT ITS OWN BREAKDOWN, found reviewing my own diff.** `n_closed` was
+summed over `primary` — every screen-origin resolved row — while the rendered "still held" figure
+subtracted it from the two LEGS. Origin and sleeve are ORTHOGONAL, so a quality `PASS` can carry
+screen origin (the model permits it), landing in `primary` and in neither leg; closing one printed
+**"1 still held" beside "BUY n=1 · AVOID n=1"**. Counted over the legs the spread actually uses now,
+so the line cannot disagree with its own breakdown. Also: the ledger is read ONCE per scoring run
+(`iter_ledger` re-validates every row since #417, so a second scan doubled that for nothing), and
+the as-of filter now REQUIRES a dated close rather than treating an undated one as already-happened
+— the schema refuses an undated close outright, so the branch was unreachable and now says so.
+**THE LIVE REPORT STILL PRINTS NOTHING, and that is correct:** zero verdicts have resolved (the
+first BUY horizon passes 2027-01-16), so the split has nothing to decompose and stays silent. My
+earlier objection — that this was "untestable scaffolding" — was too strong and is worth correcting:
+the ARTIFACT is blank, the LOGIC is exercised on fixtures where rows resolve, exactly as
+`test_scoring_close_rows.py` already does. *"The artifact is blank" and "the logic is unverifiable"
+are different claims.*
+**AND THE REALIZED BOOK IS TYPED (item 4).** It reached the snapshot only as free-text `notes`, so
+the one view saying what the fund actually EARNED was unreadable by anything not parsing English,
+while the marked-to-market rows beside it were fully structured. `MonitorSnapshot.realized` now
+carries it, and the note line is RENDERED from the typed row (`RealizedRow.note`) so display cannot
+drift from data — the standing rule that display formatting is never load-bearing.
+**LOOK-AHEAD IN THE HISTORICAL BOOK — REVIEW P1 ON #418, AND IT WAS BROADER THAN REPORTED.** The
+monitor's price path carefully refuses a future bar; the LEDGER path did not. `monitor --ref <past
+date>` counted every close in today's ledger regardless of when it happened (at ref 2026-07-20 it
+reported 2 closes against a truth of 0), AND — the half the review did not see, found by comparing a
+re-run against the original file — it counted every DECISION too, marking SMPL's 2026-08-04
+re-entry into the 2026-07-20 book with **`days_elapsed: -15`**, a position that did not exist yet.
+Both halves now read the ledger as of the snapshot date (`monitor.decisions_as_of`,
+`pair_closes(as_of=)`, `closed_decision_ids(as_of=)`), filtering AFTER pairing so the
+unpairable/duplicate-close refusals still see the whole ledger. **VERIFIED BY REPRODUCTION:
+re-running 2026-07-20 today now returns the original day's three rows and its spread to full
+precision** (0.1442638831149694 both ways), with zero realized rows — both exits were still in the
+future then.
+**AND THE BOOK HISTORY HAD NO WRITE PROTECTION.** `write_snapshot`'s docstring claimed the history
+is "never overwritten across days" and nothing enforced it — I silently replaced the committed
+2026-07-20 snapshot while testing, which is how the decision look-ahead surfaced. It now refuses to
+rewrite a SUPERSEDED day. The rule is deliberately "superseded", not "not today": the normal daily
+run resolves to the LAST TRADING DAY, so a not-today rule refuses the routine re-run — the first cut
+of the guard did exactly that.
+**A PIN THAT COULD NOT FAIL, caught by mutation for the third time in this sequence.** The
+re-entry guard was asserted against the COMMITTED ARTIFACT, which is static — mutating the keying
+does not regenerate it, so the test stayed green while the logic was wrong. The keying moved to
+`monitor.closed_decision_ids` and is now exercised against the real ledger, with the artifact pin
+KEPT beside it: one catches the logic, the other catches what shipped. *An artifact pin proves what
+was written; it cannot prove what the code would write next time.*
+
+**~~OPERATOR TO-DO: decide whether the frozen baskets become a committed artifact.~~ DECIDED
+2026-08-12 — THEY ARE COMMITTED** (`data/themes/baskets/<driver>.json`), reversing the standing
+`.gitignore` rule for that artifact only. The reason the rule changed: Stage-4's entire product is a
+number that accrues over CALENDAR TIME and its input existed on exactly ONE machine, so on any other
+checkout the accrual could not be computed at all — two themes passed their 30-day horizon with
+their diagnostics still reading "0 days forward from freeze" for precisely that reason. The
+reconstruction path (#412) works ONLY for hold-none freezes, so the first RATIFIED theme would have
+had no durable record of its BUY leg's entry dates anywhere.
+**SCOPED, AND THE SCOPE IS PINNED.** The ratification LEDGER stays git-ignored — it is the analyst's
+raw dispositioned worksheet output and committing it was not what was decided; a test asserts the
+ledger and `data/forward/` are still ignored and that allowing `data/themes/` did not open the whole
+directory. The baskets qualify under the private-repo rule as DERIVED analysis: tickers, dates,
+cohorts and layer labels only — no verbatim filing text (`watchlist_triggers` is empty by
+construction and pinned so), no CIQ, checked on the FILES.
+**AND THE RATIFICATION LEDGER IS COMMITTED TOO (2026-08-12, second decision).** The basket says
+which names are in which cohort; the LEDGER says WHY, in the analyst's own words, one appended row
+at a time. `--ledger` was REQUIRED and ARBITRARY, so the dispositions went wherever the command line
+pointed — which was somewhere git-ignored. It now defaults to `data/themes/ledgers/<driver>.jsonl`,
+and an explicit `--ledger` still wins for ad-hoc runs (pinned that it does NOT also write the
+canonical file: two ledgers for one freeze is two records of one judgment). Only the LOOSE
+`forward_*` names stay ignored.
+**THE THREE JULY 2026 LEDGERS ARE GONE AND ARE NOT RECONSTRUCTED — deliberately, and pinned so the
+gap is not later filled in quietly.** A ledger is an APPEND-ONLY record whose value is that it
+records what was appended and WHEN; a rebuild from the published mirror would carry one synthetic
+timestamp for every row and no correction history, and committing that as "the ledger" would
+misrepresent the artifact at the moment it starts being trusted. Their dispositions survive in the
+mirrors (`rationale`, `gradeFact`, `accession` per name) — the honest surviving record, named as
+such. **What was lost is the judgment; what remains is the conclusion.**
+**MAKING THE LEDGER DURABLE CREATED A TORN WRITE — review P1 on #424, and the lesson generalises.**
+The ledger append ran BEFORE the basket write, and the basket write can REFUSE (the #422 supersede
+guard). So a refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that
+was never frozen, and the retry appended the same judgment a third time: measured 1 row, then 2,
+then 3. **The durability decision changed the cost of a side effect the write order had always
+had.** Fixed by preflighting everything that can fail (`assert_basket_writable`, side-effect-free)
+before any append, so the ledger and basket land as ONE successful freeze; the NOT-READY early exit
+now writes nothing either, since an un-frozen tier should not record partial judgment.
+*When an artifact becomes durable, re-read every path that writes it — the ordering that was
+harmless while it was scratch is now the ordering of a permanent record.*
+**AND A FIFTH PIN ASSERTING THE WRONG PROPERTY**, same family as the other four: the preflight's
+no-side-effects test asserted the FILE was absent, so a mutation that `mkdir`s the parent stayed
+green while the check touched the tree. Asserted on "creates nothing" instead of one visible
+consequence of it.
+**ONE PIN RETIRED BY DESIGN, recorded rather than deleted:** #412's P2 pinned that `--worksheet`
+without `--ledger` must be refused. That half is now the NORMAL path — it is the whole point of the
+default — so it was removed with its reason written where the pin used to be. The reverse (a bare
+`--ledger`, nothing to append) still refuses.
+
+**EVERY COMMITTED BASKET STATES ITS PROVENANCE**, because a basket written by the freeze and one
+RECONSTRUCTED from the published mirror hold the same names and are NOT the same evidence. All three
+today say RECONSTRUCTED — the freeze-time files were local-only and are gone. The freeze now writes
+the canonical file itself, and `themes-forward --from-baskets` re-measures from it (preferred over
+`--from-mirror`, which recovers from a summary and refuses a BUY leg).
+**A WRITE THAT ESCAPED ITS CONFIG, caught by the suite within minutes.** The canonical path first
+resolved from `Path.cwd()`, so an existing CLI test freezing a tmp worksheet wrote its four
+synthetic names straight over the real committed basket in the repo. Keyed on the configured data
+dir now, like every other durable artifact here, and the CLI test redirects config to a tmp tree.
+**A COMMITTED BASKET WAS STILL SILENTLY REWRITABLE — review P1 on #422.** Every later
+`themes-forward --worksheet …` for the same driver wrote a newly frozen object over the same
+filename: measured, re-freezing defense moved `entry_dates` from {2026-07-03} to {2026-08-12},
+shifting the forward window's start by 40 days with nothing said. The append-only ledger does not
+protect this artifact, and committing it made the rewrite WORSE — the file now looks authoritative.
+**This is the same class as the monitor-snapshot overwrite fixed hours earlier (#418), and this
+module did not learn from it.** A second freeze now REFUSES; `--supersede-basket` archives the
+existing basket under `baskets/archive/<driver>-<its freeze date>.json` first, so a supersession is
+never destructive. A HOLE IN THAT FIX, found by reading the archive name back: the freeze timestamp
+is DATE-ONLY, so two supersessions in one day collided and the second overwrote the first archive —
+disambiguated, because re-dispositioning a tier twice in a session is normal.
+**AND `--from-baskets` ACCEPTED ANY DRIVER (P2).** Passing the defense basket with
+`--driver ai-datacenter` printed an AI-datacenter header over 108 defense names and measured them.
+Unlike the mirror — which carries only a human label and can therefore only WARN — this artifact
+holds the canonical registry key, so the mismatch is CHECKABLE and is now refused.
+**AND THE FOURTH PIN-THAT-PROVED-NOTHING in this sequence, same root cause each time:** the
+round-trip compared `write_baskets(...)` to `baskets_path(...)`, two values that MOVE TOGETHER — 
+point the helper back at cwd and both change identically while every write lands in the repo. The
+lesson generalises past artifacts: *a pin that compares two outputs of the same broken assumption
+cannot fail; assert the property, not the agreement.*
 
 **THE DECISION CHAIN WAS THREE PIECES THAT NEVER TOUCHED (2026-08-12, operator-reported). Each
 worked; nothing joined them.** Diagnosed on a copy of the committed tree, measured not read:
@@ -11254,6 +11389,10 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    write `spot_as_of: "2026-08-07"` on each and re-run — both should go silent.** BRBR needs a
    HUMAN read either way: its `spot_source` names three dates and no rule picks the right one.
    (`null` here means *we looked and cannot state one HERE* — the records predate nothing.)
+   **NOT URGENT AFTER PR-7, and the reason is worth keeping:** the schema-1.5 gate binds only
+   records CREATED at 1.5+, and `write_record` PRESERVES an existing record's `schema_version`
+   (driven, not assumed). Both stay at 1.3, so both remain writable indefinitely. Stamping them is
+   an accuracy improvement, not an unblock.
 
 5. **VISA's ANCHOR IS NOT ONE MISSING FIELD, AND THE OBVIOUS FIX IS A 4× TRAP.** Opened 2026-08-11.
    Netflix and Visa were assumed to share a cause; they do not.
@@ -13246,6 +13385,140 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **A SPOT THAT NAMES NO DAY IS NOW UNRECORDABLE — schema 1.5 (2026-08-12, PR-7).**
+  `vinci audit spot` can check a stated date against the store; against a record naming none it
+  checks NOTHING and reports UNAUDITABLE forever. `write_record` now refuses a record created at
+  **1.5+** without `spot_as_of`, and `scenario-propose` pre-fills it from the dossier's own
+  `stock_info.as_of` — the bar date the price came from — so the requirement is satisfiable from
+  the one path that creates records. `SCHEMA_VERSION` bumped 1.4 → 1.5.
+  **THE ADOPTION TRAP WAS CHECKED BEFORE THE DESIGN, and does not exist.** Every committed record
+  is schema **1.3** (8 live + 3 archived, one at 1.2), and `write_record` **PRESERVES** an existing
+  record's version — driven through the real path, not read off the code. So BRBR and EPAM, which
+  legitimately carry no date (struck at 2026-08-07, visible only to `-sl`), stay at 1.3 and remain
+  writable indefinitely. The premise is pinned, because the gate's safety rests on it: if a write
+  path ever re-stamps the version those two become unwritable, and the failure would surface far
+  from here looking like a bug in something else.
+  **THE COHERENCE HALF IS NOT VERSION-GATED** — a stated `spot_as_of` AFTER its own underwrite is
+  refused at any schema, since legs cannot have been struck against a close that had not happened.
+  #416's lookahead lesson moved to the WRITE seat. Costs no committed record: all six stamped
+  spots precede their underwrite by 1–3 days.
+  **WHAT IT DOES NOT DO:** it does not verify the date — that stays `vinci audit spot`'s job and
+  deliberately a flag, because a refusal there would block correct records whose bar this worktree
+  cannot see. The gate requires the CLAIM so that something exists to check.
+  **AND IT SURFACED AN ORPHAN-ARCHIVE WINDOW IN `scenario-supersede`** (self-review): that command
+  writes the ARCHIVE first and the live record second, so a refusal on the second left a superseded
+  record with no successor and an un-updated seal manifest. The window PREDATES this change — the
+  basis and fielded-ref gates raise at the same point — but the spot gate makes it far likelier to
+  fire, since a fresh hand-written payload commonly omits `spot_as_of` until the field is habit.
+  Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
+  `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
+  gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A QUARTER WAS CHECKED AGAINST A YEAR AND THE PAGE CALLED IT A MISMATCH (2026-08-12,
+  fix/guide-period-and-pctile-window).** Analyst review of the committed NFLX page, post-#426.
+  The dossier printed `guide verification (revenue): CIQ 12860.0–12860.0 vs release 50.7–51.7 →
+  MISMATCH flag`. **Nothing about that was a verification.** CIQ's revenue guide is **FQ3 2026** —
+  one quarter, 12,860.0 — and the release guides **FY2026**. Four quarters at CIQ's own number is
+  **51,440, INSIDE the annual guide**: the two sources CORROBORATE, and the check reported them as
+  contradicting. `guide_verification` compared the numbers and had no idea the periods differed.
+  **WHY IT MATTERS BEYOND A LABEL:** a revenue-guidance MISMATCH reads as management missing its own
+  number — the analyst's finding was raised as evidence of deteriorating execution — so a spurious
+  one manufactures exactly the impression the flag exists to warrant. **NOT NFLX-SPECIFIC:** any
+  name whose CIQ guide period differs from the period its release guides gets one.
+  **THE FIX IS THE REFUSAL ALREADY BESIDE IT.** Cross-basis (LEVEL vs CHANGE) refuses rather than
+  derives; cross-PERIOD now refuses identically. Annualising the quarter to force the comparison
+  would manufacture the base the check exists to verify — a guide is not four equal quarters — which
+  is the same manufactured-base argument the cross-basis refusal already makes. The period now RIDES
+  WITH THE NUMBERS on both sides (`revenue_guide_lohi` → `(lo, hi, period)`, `_release_revenue_guide`
+  → `(lo, hi, qual, basis, period)`), for the reason the BASIS does. **REFUSES ONLY WHEN BOTH LABELS
+  DECIDE A SCOPE AND THEY DIFFER** — an unrecognised label leaves prior behaviour untouched, because
+  inventing a scope would silence REAL mismatches (the opposite failure).
+  *Verified on the committed artifact's own inputs (not synthetic): CIQ `FQ3 2026`→quarter, release
+  `2026`→annual → the shipped MISMATCH becomes "CIQ guides a QUARTER … the release guides a YEAR …
+  NOT CROSS-CHECKED"; same-period pairs still VERIFY and real disagreements still MISMATCH. 16 pins
+  incl. the before/after in one test (withholding the periods reproduces the shipped string) and
+  every period shape in the corpus (`FQ3 2026`/`FY 2026`/`Q3`/`2026`/`Fiscal 2028`/`next-fy`, and
+  `H1 2026`→undecidable). ruff + mypy --strict (124) + pytest 2316 green.*
+  **HALF-YEAR IS A SCOPE, NOT AN UNDECIDABLE (review finding, #429).** The first cut returned `None`
+  for `H1 2026` on the reasoning that a half-year "decides neither" — but it names a determinate
+  six-month span exactly as `FQ3` does, so refusing on it let an H1-vs-FY pair fall straight through
+  to the numeric comparison and print the same false MISMATCH this PR was written to stop. Now a
+  third scope (`H[12]`/`[12]H`/`first|second half`/`six months ended`).
+  **PROTECTIVE, NOT CORRECTIVE — measured, not assumed.** Across every committed dossier the labels
+  that actually REACH `guide_verification` are only `FQ*`/`FY*` (CIQ side, from
+  `guidance_bridge_rows[].period`) and `2024`/`2025`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/`next-fy`
+  (release side, from `primary_source.releases[].guidance[].period`). **No committed name produces a
+  half-year guide period today**, so this repairs no live page — it closes the path before one does,
+  the same footing as #426's as-of bound. The worded half-year labels that DO exist in the corpus
+  (`first half of 2026`, `six months ended June 30, 2026` ×12) sit in `operating_drivers.rows[]`,
+  a different consumer that never calls `period_scope`.
+  **ORDER IS LOAD-BEARING IN BOTH DIRECTIONS**, and pinned: half must beat annual (`H1 fiscal 2026`
+  contains "fiscal", so annual-first would call a six-month guide a YEAR — a wrong scope SILENCES a
+  real mismatch, strictly worse than the undecidable it replaced), and quarter must beat half
+  (`Q2 2026, second half of quarter` is a QUARTER). Mutation-tested by swapping the two branches:
+  `H1 fiscal 2026` → `annual` and the pin reddens. `nine months ended …` stays `None` deliberately —
+  a YTD span is none of the three and guessing one would manufacture a refusal.
+  **NOT FIXED HERE, RECORDED:** the release leg ALSO carried a unit error — `$50.7-$51.7` **billion**
+  parsed as `$M` because the verbatim was truncated before the word "billion". Current
+  `parse_release` scales correctly WHEN the word is present (tested: 50,700–51,700), so this is
+  likely a stale artifact predating #411 — **unverified against the live filing**, and the period
+  refusal above holds either way (it fires on correct units too).
+- **A "5-YEAR" PERCENTILE HELD 9.4 YEARS (same PR).** `ev_ebitda_percentile_5y` is the workbook's
+  FULL quarterly Close history — NFLX's is **38 closes, 2017-03-31..2026-06-30 = 9.2y** — and the
+  source_ref named a COUNT, which does not reveal a span. A reader trusting the field name divides
+  38 quarters into the 5 years it claims and reads a different window than the one that produced the
+  number. **THE VALUE IS UNCHANGED** (full history is the better distribution — more of the name's
+  own cycle — and re-cutting it would move a decision number by relabelling); the SPAN is now stated:
+  `— 38 quarters spanning 2017-03-31..2026-06-30 (9.2y)`. **THE FIELD IS NOT RENAMED:** it is a
+  REQUIRED field on a frozen model that 11 committed dossiers and the suite parse, and this repo has
+  already ruled once that a bare rename breaks committed artifacts (the `ev_ebitda` scalar, §2) —
+  an honest label is the non-breaking half; a true rename needs a schema migration + fleet
+  re-assembly and is NOT done here. An unparseable header omits the span rather than guessing one.
+- **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
+  opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
+  column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
+  guide with a PARSEABLE RANGE, so a company that STOPPED guiding a metric keeps surfacing whatever
+  it last said — NFLX 2002/2003, EPAM 2016, AORT 2019, UBER 2020 (×2), V 2020.
+  **THE TEST IS THE GUIDE'S PERIOD, NOT ITS ISSUE AGE** (review finding, #423). Age was the first
+  criterion — a measured 365d bound sitting in the corpus's empty 238d–969d band — and it is WRONG
+  IN BOTH DIRECTIONS, with a counterexample each way in the same corpus: **VITL**'s gross-margin
+  guide is dated 2023-11-02 (977d) but is **for FY 2027**, still ahead of a 2026 as-of — long-term
+  guidance stays applicable without being reissued, so "none current" is simply false. **MVST**'s is
+  only **238d** old but is **for FY 2025**, a year already closed and never reguided — genuinely no
+  current guide, and the age rule MISSED it. The issue date says nothing about applicability. The
+  switch keeps all 10 true positives, drops the VITL false positive, and catches MVST.
+  An unreadable period is LEFT ALONE: a false demotion misleads, a missed one leaves the Age column
+  still telling the truth.
+  **DISPLAY-ONLY, AND NOTHING IS DELETED:** the figure stays in its cell reframed as `none current
+  (last: …)`, demoted rows sort BELOW current ones (sheet order put NFLX's two dead guides first),
+  and `dossier.json` is byte-untouched — verified, 0 JSON files changed by the pass. Checked before
+  choosing that surface: no committed synthesis quotes a figure from any >1y-stale guide, so the
+  harm was to a human reader and the fix belongs where a human reads.
+- **"FREE CASH FLOW" MEANT TWO DIFFERENT THINGS AND THE PAGE NAMED NEITHER (2026-08-12, PR-5).**
+  `quality.free_cash_flow` reads CIQ's `Levered Free Cash Flow`. Against the SAME sheet's
+  `Cash from Ops. − Capital Expenditure` the two agree on **exactly one** committed name (V, 0.97×);
+  the other thirteen run **NFLX 2.28× · MVST 1.54 · CNXC 1.51 · EPAM 1.35 · NCNO 1.25 · SMPL 0.89 ·
+  IT 0.85 · UBER 0.72 · BRBR 0.70 · VITL 0.60 · VRRM 0.51 · FUBO 0.27 · AORT −0.47 (OPPOSITE
+  SIGNS)**. So this is not a content-company quirk — they are different measures nearly everywhere.
+  **NFLX is why it reaches a reader:** the page carried **$25,388M** against CFO−capex of
+  **$11,152M** while management guides ≈$12.5bn, under a synthesis quoting it as self-funding
+  evidence. FY17 makes it unmistakable: **+$6,673M** levered while CFO that year was **−$1,786M**.
+  **The CIQ figure is KEPT, not replaced** — it is the panel's own measure, consistent across the
+  comp set; swapping it for our arithmetic would put a derived number where a reader takes the
+  vendor's. Both stated, each named.
+- **THE CASH-FLOW ROWS WERE DISPLAY-ONLY — a house-rule violation found while fixing the above
+  (2026-08-12, PR-5).** `Revenue ($M)` carried 12 structured `values`; `CFO`/`Capex`/`FCF` carried
+  **ZERO** — `cells` only. Anything wanting CFO−capex had to re-parse `"11,971"` out of rendered
+  text, which is the forbidden shape ("parsers consume structured values, never rendered strings")
+  and the class of the thousands-blind `$1,101.80M` incident. `clean_num` already produced the
+  number; the row builder formatted it and discarded it. Fixed at source (`cf_num` returns the
+  number, the call site formats), so the basis note derives from values rather than strings.
+- **`_fact` DROPS THE NOTE ON A *PRESENT* FACT — 55 of NFLX's 135 present facts carry one nobody
+  renders (found 2026-08-12, PR-5; NOT FIXED).** The note reaches `dossier.json` and never the
+  page. PR-5 renders the FCF line specially rather than changing `_fact`, because rendering all of
+  them would add ~55 mostly-verbatim lines to every page — but some look decision-relevant
+  (`valuation.ev_ebitda`: *"trailing only — no forward basis; cannot distinguish a temporarily
+  depressed…"*). Wants a curation pass of its own: which of the 55 are decision values and which
+  are audit context.
 - **THE DEBT SCHEDULE HAD NO AGE, AND ONE STILL LISTS A DEAD FACILITY —
   `capital_structure.panel_vintage` (2026-08-12, PR-3).** NFLX's page lists the Warner Bros.
   Discovery bridge facility; its commitments were terminated **2026-02-27** and the panel is dated
@@ -13274,16 +13547,50 @@ sign-off.**
   REAL and will surface when those names are re-assembled at a later as-of (item 7). A FLAG, never
   a deletion, and never a claim about WHICH instrument died: matching a termination to a facility
   means reading the 8-K, and a wrong match is worse than an honest "something ended".
-- **COVENANT POINTERS FIND NOTHING FOR 4 OF 14 NAMES — wider than the one name it was raised as
-  (2026-08-12, PR-3; NOT FIXED).** FUBO, SMPL, **UBER** and VITL all return **zero**
-  `covenant_pointer_rows`, and all four carry exactly 116 covenant terms — a suspiciously identical
-  count worth its own look. UBER has **15 instruments** and finds no pointer at all. This is the
-  find-NOTHING failure, distinct from EPAM's four-years-wrong and AORT's five-and-a-half-year-stale
-  maturities, which are find-the-WRONG-one. **PR-3's warning is silent on it by construction** —
-  the vintage note keys on the CIQ panel, not on pointers, so those four names DO get an age and a
-  termination check; what they lack is any located agreement exhibit to read terms from. Diagnosing
-  it means exercising the efts full-text path (`mechanical.py:2187-2220`), which is a network
-  investigation rather than a code fix, and wants its own brief.
+- **COVENANT POINTERS FOUND NOTHING FOR 4 OF 14 NAMES — DIAGNOSED AND FIXED (2026-08-12).** FUBO,
+  SMPL, UBER and VITL returned **zero** `covenant_pointer_rows`. **ROOT CAUSE: `ex-?10\d` demands a
+  DIGIT immediately after "10"**, so it matched only the compacted filename form (`ex102` = exhibit
+  10.2) — the MINORITY convention. Real filenames in this fleet's own filings: `vitl-ex10_10.htm`,
+  `aort-…xexx1032.htm`, `fubo-…exx1026.htm`, `f8k032018ex10-1_simplygood.htm`, `a19-22146_1ex10d1
+  .htm`. **NFLX was the only name it matched, and only by its filing agent's naming style.**
+  **THE FAILURE WAS TOTAL RATHER THAN PARTIAL** because the fragment appears in BOTH passes — the
+  10-K exhibit index filter AND `_AGREEMENT_EXHIBIT_RE` for the efts hits — so one flaw closed both
+  routes on the same names. Now one shared `_EX10_RE`, pinned to stay shared.
+  **WHAT IT WAS NOT**, each eliminated before landing on the regex: efts works (UBER 17 hits, SMPL
+  46, AORT 16); the instruments do qualify for a query (all four generate one); the exhibits exist
+  (SMPL's 8-K hits carry a real credit agreement the filter rejected). Nothing to do with company
+  type — purely filing-agent filename convention.
+  **MEASURED LIVE, all 14: FUBO 0→6 · SMPL 0→3 · UBER 0→8 · VITL 0→3**, and seven already-working
+  names gained pointers too (AORT 9→13 · CNXC 5→9 · MVST 6→9 · IT 6→7 · EPAM 4→5 · NCNO 4→5 ·
+  VRRM 5→6). `10` stays pinned so exhibit 19.1/21.1 still correctly miss.
+  **SECONDARY, also fixed:** `_covenant_query` had no `note` branch, so convertible notes queried
+  "Loan Agreement" instead of "Indenture". Not the binding constraint (querying "Indenture" for
+  UBER still returned zero exhibit-bearing hits before the regex fix) but it decides what the
+  search ASKS.
+  **THIRD, also fixed — two failures that read alike:** `covenant_pointers` said "no CIK-scoped
+  agreement exhibit located" while `covenant_terms` two fields away said "extraction failed: no
+  covenant terms extracted from LOCATED exhibits". One page asserting both, pointing at opposite
+  remedies (the LLM phase vs the pointer search). The digest now keys on whether a pointer exists.
+  **CORRECTION TO THE ORIGINAL ENTRY:** the "exactly 116 covenant terms" flagged as suspicious was
+  `len()` on a STRING — the character count of a shared failure message, not a count of terms. That
+  measurement error is what made four names look like they shared a data shape when what they
+  shared was a code path.
+  **AS-OF BOUNDED (review finding, #426):** `_covenant_pointers` took `tenks[0]` from TODAY's
+  submissions index and accepted all efts hits, so re-assembling a historical dossier could attach
+  an agreement filed after its own reference date — the #416 lookahead class again, and **the
+  widened matcher made it REACHABLE** for the four names that previously located nothing. Both
+  passes now bound to `reference_date`. On today's data the bound changes nothing (bounded and
+  unbounded runs are identical across all 14), so it is protective rather than corrective — pinned
+  by a fixture whose newest filing postdates the as-of.
+  **THREE STATES, NOT TWO (review finding, #426):** the digest keyed on `bool(ptrs.value)`, which is
+  falsy for BOTH "the search ran and found nothing" AND "the search could not run" (no CIK, EDGAR
+  unreachable) — so a lookup that never happened reported a COMPLETED search. Introduced WHILE
+  fixing a two-states-must-not-read-alike bug. Now keyed on `COVENANT_SEARCH_FOUND_NOTHING`, a
+  shared constant rather than a duplicated literal, so the two cannot drift.
+  **ARTIFACTS NOT UPDATED (deliberate):** pointers are ASSEMBLED, not refreshable, and the terms
+  they unlock are LLM-extracted. Injecting rows via the transform seam would leave a page carrying
+  pointers beside a digest still saying none were located — the PR-1 half-refresh incoherence. The
+  committed pages gain this at the next **re-assembly**, which is where the terms arrive too.
 - **QUARTERLY ONE-OFFS HAD NO ROUTE ONTO A PAGE — `quality.nonoperating_earnings` (2026-08-12,
   PR-4).** NFLX's Q1-2026 carries a **$2.59bn** Warner Bros. Discovery termination fee below the
   operating line (40% of pre-tax, 21% of revenue) and UBER's Q2-2026 ~**$1.39bn** of investment

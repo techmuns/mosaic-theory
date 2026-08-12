@@ -1262,6 +1262,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             multiple_basis=str(tpl["multiple_basis"]),
             underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
             spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
+        # (PR-7) carried through from the template; `write_record` refuses without it from
+        # schema 1.5, and a create that silently dropped it would make the gate
+        # unsatisfiable from the one path that is supposed to satisfy it.
+        spot_as_of=(date.fromisoformat(str(tpl["spot_as_of"])[:10])
+                    if tpl.get("spot_as_of") else None),
             facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
             scenarios={leg: sc.ScenarioInput(
                 revenue=float(c["revenue"]), margin=float(c["margin"]),
@@ -1494,6 +1499,15 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     if args.dry_run:
         print("  --dry-run: nothing written")
         return 0
+    # PRE-CHECK BEFORE EITHER WRITE. The archive lands first, so a refusal on the live
+    # record used to leave an orphan archive — a superseded record with no successor and an
+    # un-updated seal manifest. Validating here makes the pair atomic in the only way that
+    # matters: nothing is written unless both can be.
+    try:
+        sc.validate_for_write(live)
+    except ValueError as exc:
+        print(f"=== scenario-supersede {t_up}: REFUSED ===\n  {exc}")
+        return 2
     ap = sc.write_archived(archived, root=root)
     lp = sc.write_record(live, root=root)
     (root / "scenarios" / seal.SEAL_FILE).write_text(_json.dumps(man, indent=2, sort_keys=True)
@@ -1530,7 +1544,6 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
     # stops the run rather than rendering wrong.
     rows_raw = mon.decision_rows(ledger_all)
-    realized = mon.pair_closes(ledger_all)
     assignments = mon.read_assignments(root)
     missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
     if missing:
@@ -1569,9 +1582,27 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         raise RuntimeError(f"no EOD session found within 7 days of {day}")
 
     now_date, now_bars = bars_on_or_before(ref)
-    rows: list[mon.PositionRow] = []
+    # THE BOOK'S CLOSURE STATE IS READ AS OF THE SNAPSHOT DATE, not as of "whatever the ledger holds
+    # now" (review P1 on #418). Anchored on `now_date` rather than `ref` because `now_date` is what
+    # the snapshot claims to BE — a close falling between the last trading bar and a non-trading
+    # `ref` has not happened yet in the book this file describes. Without this, `monitor --ref
+    # <past date>` marked positions closed and printed realized P&L for exits that had not occurred,
+    # so a historical snapshot was not reproducible — while the price path beside it was carefully
+    # refusing future bars.
+    realized = mon.pair_closes(ledger_all, as_of=now_date)
+    closed_entry_ids = mon.closed_decision_ids(ledger_all, as_of=now_date)
     notes: list[str] = []
-    for r in rows_raw:
+    # AND THE DECISIONS THEMSELVES ARE POINT-IN-TIME. The review flagged the CLOSE half; the same
+    # defect sat on the entry half and was louder — re-running `--ref 2026-07-20` marked SMPL's
+    # 2026-08-04 re-entry into that day's book with `days_elapsed: -15`, a position that did not
+    # exist yet. Both halves now read the ledger as of the snapshot date.
+    asof_rows = mon.decisions_as_of(ledger_all, as_of=now_date)
+    if len(asof_rows) != len(rows_raw):
+        notes.append(
+            f"{len(rows_raw) - len(asof_rows)} decision(s) entered after {now_date} are excluded "
+            f"— this book is the state as of that date, not today's ledger re-marked backwards")
+    rows: list[mon.PositionRow] = []
+    for r in asof_rows:
         payload = json.loads(r["payload"])
         # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
         # on the model's helpers, and reading the raw dict here would be a second definition of
@@ -1593,7 +1624,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
             current_price=now_bars[tkr].close, current_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
-            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"]))
+            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
+            # Is the POSITION still held? Read from the close rows, which name the decision they
+            # close — never inferred from the ticker, since a name can be re-entered (SMPL is, and
+            # its two decisions are on opposite sides of this flag).
+            closed=r["entry_id"] in closed_entry_ids))
         if payload.get("benchmark") and payload["benchmark"] != asg.benchmark:
             notes.append(f"{tkr}: benchmark {asg.benchmark} (cap band) SUPERSEDES the ledger "
                          f"row's {payload['benchmark']} — the row itself is never mutated")
@@ -1625,15 +1660,17 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # dropping exited names from calibration would let the discriminator's hit-rate be curated by
     # sell timing. REALIZED P&L (entry→exit) is a SEPARATE, labelled view. Both are shown; neither
     # is allowed to stand in for the other.
-    for r in realized:
-        notes.append(
-            f"{r['ticker']}: REALIZED {r['realized_return']:+.1%} "
-            f"(entry ${r['entry_price']:,.2f} {r['entry_price_as_of']} → exit "
-            f"${r['exit_price']:,.2f} {r['exit_price_as_of']}) — realized P&L, a separate view; "
-            f"the {r['verdict']} call stays in horizon calibration")
+    # TYPED FIRST, PROSE RENDERED FROM IT. The note text used to be composed here from raw dicts,
+    # which made the free-text line the ONLY carrier of the realized book. Now the rows are the
+    # carrier and `RealizedRow.note()` renders them, so display cannot drift from the data.
+    realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
+    notes.extend(r.note() for r in realized_rows)
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
-                               freshness=fresh, notes=notes)
+                               freshness=fresh, notes=notes, realized=realized_rows)
     print(mon.render_table(snap))
+    # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
+    # replacing a day that later snapshots sit on top of would overwrite what the book recorded
+    # then. `write_snapshot` decides which case this is.
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
     return 0
@@ -2615,18 +2652,47 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
     # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
     # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
-    if bool(args.worksheet) != bool(args.ledger):
-        given, missing = (("--worksheet", "--ledger") if args.worksheet
-                          else ("--ledger", "--worksheet"))
+    # --ledger WITHOUT --worksheet is still meaningless (nothing to append); the reverse is not,
+    # because the ledger now defaults to its committed home. Reversing this check rather than
+    # deleting it: a bare --ledger used to die on `Path(None)` (review P2 on #412) and still would.
+    if args.ledger and not args.worksheet:
         raise SystemExit(
-            f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
-            f"carries the analyst's dispositions and the ledger is where they are appended. "
-            f"To re-measure an already-frozen theme instead, use --from-mirror.")
-    if bool(args.from_mirror) == bool(args.worksheet):
+            "--ledger was given without --worksheet — the ledger is where the worksheet's "
+            "dispositions are appended, so there is nothing to write. To re-measure an "
+            "already-frozen theme, use --from-baskets (or --from-mirror).")
+    sources = [bool(args.worksheet), bool(args.from_mirror), bool(args.from_baskets)]
+    if sum(sources) != 1:
         raise SystemExit(
-            "give EITHER --worksheet + --ledger (freeze from the analyst's dispositions) OR "
-            "--from-mirror (re-measure an already-frozen theme from its committed mirror) — "
-            "not both, and not neither.")
+            "give EXACTLY ONE source: --worksheet + --ledger (freeze from the analyst's "
+            "dispositions), --from-baskets (re-measure from the COMMITTED frozen basket, the "
+            "durable record the freeze wrote), or --from-mirror (recover a basket from the "
+            "published summary — hold-none freezes only).")
+
+    if args.from_baskets:
+        # THE PREFERRED RE-MEASURE PATH now that baskets are committed. Unlike --from-mirror this
+        # reads what the FREEZE wrote, so it carries the BUY leg and its per-name entry dates —
+        # the thing a mirror cannot supply and the reason a reconstruction refuses one.
+        baskets = fwd.load_baskets(Path(args.from_baskets))
+        # THE ARTIFACT KNOWS ITS OWN DRIVER, so unlike the mirror path this is CHECKABLE rather
+        # than a printed warning (review P2 on #422): passing the defense basket with
+        # --driver ai-datacenter produced an AI-datacenter-labelled re-measurement of 108 defense
+        # names. The mirror carries only a human label and cannot be bound; this can, so it is.
+        if baskets.driver != driver:
+            print(f"REFUSED: {args.from_baskets} is the {baskets.driver!r} basket, not "
+                  f"{driver!r}. The re-measurement would be labelled with one driver and computed "
+                  f"over another's names.")
+            return 1
+        watchlist = list(baskets.watchlist)
+        print(f"\n=== Stage-4 forward RE-MEASURE (committed basket) · {driver} ===")
+        print(f"basket {args.from_baskets} · frozen {baskets.freeze_timestamp}")
+        unstated = "(unstated — written before provenance was recorded)"
+        print(f"provenance: {baskets.provenance or unstated}")
+        print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+              f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+        if not args.measure:
+            print("\n(no --measure: basket loaded only)")
+            return 0
+        return _themes_forward_measure(args, fwd, baskets, watchlist)
 
     if args.from_mirror:
         # THE RE-MEASURE PATH. No worksheet, no ledger write, no re-freeze: the baskets are
@@ -2655,7 +2721,13 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
             return 0
         return _themes_forward_measure(args, fwd, baskets, watchlist)
 
-    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    # THE LEDGER DEFAULTS TO ITS COMMITTED HOME, so a freeze cannot land the analyst's
+    # dispositions somewhere that is never kept — which is how the three July 2026 ledgers were
+    # lost. An explicit --ledger still wins, for ad-hoc runs.
+    ws = Path(args.worksheet)
+    ledger = (Path(args.ledger) if args.ledger
+              else fwd.ledger_path(driver, data_dir=get_config().data_dir))
+    ledger.parent.mkdir(parents=True, exist_ok=True)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
     all_committed = [r["ticker"] for r in rows]
@@ -2664,8 +2736,6 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
     ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
     records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
-    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
-        fwd.append_record(ledger, rec)
     counts = Counter(r.disposition.value for r in records)
     print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
     print(f"worksheet {ws}\nledger {ledger} (append-only)")
@@ -2690,6 +2760,32 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         records, all_committed, driver=driver, freeze_timestamp=freeze_ts, layer_of=layer_of,
         watchlist=watchlist or None, watchlist_triggers=triggers,
         avoid_controls=avoid_controls or None, real_tier=real_tier or None)
+    # THE DURABLE RECORD, written every freeze rather than only when someone remembers a flag.
+    # `--baskets-out` predates this and stays as an extra copy for ad-hoc use; the canonical file is
+    # committed, because the Stage-4 accrual is a calendar-time number whose input previously
+    # existed on exactly one machine (operator decision 2026-08-12).
+    baskets = baskets.model_copy(update={"provenance": (
+        f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
+        f"worksheet, appended to the ratification ledger at {ledger}")})
+    # PREFLIGHT BEFORE ANY WRITE (review P1 on #424). The ledger append used to run FIRST, so a
+    # refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that was
+    # never frozen, and the retry appended the same judgment again — 1 row, then 2, then 3.
+    # Everything that can fail is checked here; the ledger and the basket then land together as ONE
+    # successful freeze. (`records_from_worksheet` and `freeze_baskets` above are already pure —
+    # they parse and validate without writing, which is what makes this ordering possible.)
+    try:
+        fwd.assert_basket_writable(driver, data_dir=get_config().data_dir,
+                                   supersede=args.supersede_basket)
+    except FileExistsError as exc:
+        print(f"REFUSED: {exc}\n  Re-run with --supersede-basket to archive the existing basket "
+              f"under data/themes/baskets/archive/ and freeze again. NOTHING was written — the "
+              f"ledger is untouched.")
+        return 1
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
+                                  supersede=args.supersede_basket)
+    print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
     print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
@@ -3465,7 +3561,21 @@ def build_parser() -> argparse.ArgumentParser:
     # two must be given; the parser enforces it rather than discovering it mid-run.
     p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
-    p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ledger",
+                       help="append-only ratification ledger JSONL path. Defaults to the COMMITTED "
+                            "home, data/themes/ledgers/<driver>.jsonl — the record the basket is "
+                            "derived from, kept because the basket says which names are in which "
+                            "cohort while the ledger says why, in the analyst's own words.")
+    p_fwd.add_argument("--supersede-basket", dest="supersede_basket", action="store_true",
+                       help="deliberately re-freeze a driver that already has a committed basket: "
+                            "archives the existing one under baskets/archive/ first. Without this "
+                            "a second freeze REFUSES rather than silently moving the entry dates "
+                            "the forward accrual is measured from.")
+    p_fwd.add_argument("--from-baskets", dest="from_baskets",
+                       help="re-measure from a COMMITTED frozen basket "
+                            "(data/themes/baskets/<driver>.json) — the durable input written by "
+                            "the freeze. Preferred over --from-mirror, which recovers a basket "
+                            "from a published summary and only works for hold-none freezes.")
     p_fwd.add_argument("--from-mirror", dest="from_mirror",
                        help="re-measure an ALREADY-FROZEN theme from its committed "
                             "frontend/themes/<slug>.json instead of re-freezing. Hold-none "

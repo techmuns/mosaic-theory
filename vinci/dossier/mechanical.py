@@ -2392,8 +2392,30 @@ _COVENANT_CLASS_RE = re.compile(
     r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\b", re.IGNORECASE)
 # an EXECUTION filing carries the agreement as an EXHIBIT — a material-contract ex-10.x or a
 # filename naming the contract; a primary 8-K body ('mvst-20240603.htm') matches none of these.
+#: A MATERIAL-CONTRACT EXHIBIT FILENAME, across the conventions filers actually use.
+#:
+#: The shipped pattern was `ex-?10\d` — a DIGIT immediately after "10" — which matches only the
+#: compacted form (`ex102` = exhibit 10.2). Measured against the real filenames in the fleet's own
+#: filings, that is the minority convention, and the majority use a SEPARATOR:
+#:
+#:     ex102_q425.htm                    NFLX    compact       matched
+#:     vitl-ex10_10.htm                  VITL    underscore    MISSED
+#:     aort-20251231xexx1032.htm         AORT    double-x      MISSED
+#:     fubo-20241231exx1026.htm          FUBO    double-x      MISSED
+#:     f8k032018ex10-1_simplygood.htm    SMPL    hyphen        MISSED
+#:     a19-22146_1ex10d1.htm             SMPL    d-separator   MISSED
+#:
+#: NFLX was the ONLY name it matched, and only by its filing agent's naming style — which is why
+#: four names located no covenant exhibit at all. The fragment appears in BOTH pointer passes (the
+#: 10-K exhibit index and this efts hit filter), so one flaw failed both routes on the same names
+#: and the failure looked total rather than partial.
+#:
+#: `10` STAYS PINNED: exhibit 10.x is the material-contract class. UBER's `exhibit191` (19.1) and
+#: SMPL's `exhibit211` (21.1) must NOT match — those are a clawback policy and a subsidiary list.
+_EX10_RE = r"ex(?:hibit)?[-_x]?10[._\-d]?\d"
 _AGREEMENT_EXHIBIT_RE = re.compile(
-    r"ex-?10\d|loan|credit|facilit|indenture|agreement|secur|pledge|guarant|warrant", re.IGNORECASE)
+    rf"{_EX10_RE}|loan|credit|facilit|indenture|agreement|secur|pledge|guarant|warrant",
+    re.IGNORECASE)
 
 
 def _covenant_query(desc: str) -> str:
@@ -2401,7 +2423,10 @@ def _covenant_query(desc: str) -> str:
     Loan With Shareholder') rarely matches the filing's contract name ('Loan and Security
     Agreement'), so query the class's standard agreement term instead of the raw label."""
     d = desc.lower()
-    if "bond" in d and "loan" not in d:
+    # A NOTE IS AN INDENTURE INSTRUMENT, like a bond. Without this, "2025 Convertible Notes" fell
+    # through every branch to the "Loan Agreement" default — the wrong contract class entirely, and
+    # the query UBER's and FUBO's convertible notes were searched under.
+    if ("bond" in d or "note" in d) and "loan" not in d:
         return "Indenture"
     if "credit" in d:
         return "Credit Agreement"
@@ -2509,8 +2534,16 @@ def _capital_structure_vintage(
         source_ref=src)
 
 
+#: The note for a search that RAN and located nothing — as opposed to one that could not run
+#: (no CIK, or EDGAR/efts unreachable). Both come back UNKNOWN with a null value, so a caller that
+#: keys on `bool(value)` cannot tell them apart and will report a completed search that never
+#: happened. Shared as a constant rather than matched as a literal, so the two cannot drift.
+COVENANT_SEARCH_FOUND_NOTHING = "no CIK-scoped agreement exhibit located across the filing history"
+
+
 def _covenant_pointers(
-    edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument]
+    edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument],
+    reference_date: date,
 ) -> Sourced[list[CovenantPointer]]:
     """(H1) Locate the EXECUTION filing (the 8-K/10-K carrying the agreement as an exhibit) for each
     AGREEMENT-CLASS instrument, SCOPED to the subject CIK. efts full-text is queried with ciks=<CIK>
@@ -2525,10 +2558,17 @@ def _covenant_pointers(
 
     # (1) latest 10-K material-contract exhibits (ex-10.x) — contracts incorporated by reference
     try:
-        tenks = edgar.recent_filings(cik, forms=("10-K",))
+        # AS-OF BOUNDED (review finding, #426). `recent_filings` returns TODAY's submissions
+        # index, so `tenks[0]` is whatever is newest when the code RUNS — re-assembling a
+        # historical dossier would attach a 10-K filed after its own reference date. Same class as
+        # #416's termination lookahead, and the widened exhibit matcher makes it REACHABLE for the
+        # four names that previously located nothing at all.
+        tenks = [f for f in edgar.recent_filings(cik, forms=("10-K",))
+                 if f.filing_date <= reference_date]
         if tenks:
             acc = tenks[0].accession
-            exs = [n for n in _exhibit_names(http, cik, acc) if re.search(r"ex-?10\d", n, re.I)]
+            exs = [n for n in _exhibit_names(http, cik, acc)
+                   if re.search(_EX10_RE, n, re.I)]
             if exs:
                 rows.append(CovenantPointer(
                     family="material contracts (10-K exhibit index)", filing="latest 10-K",
@@ -2558,6 +2598,9 @@ def _covenant_pointers(
             # (H1a) DEFENSE-IN-DEPTH cross-CIK guard — reject any hit whose filer CIK ≠ the subject
             if h.cik and pad_cik(h.cik) != cik10:
                 continue
+            # …and never an execution filing the record's own as-of could not have seen.
+            if h.file_date and h.file_date > reference_date:
+                continue
             if h.accession in seen:
                 continue
             exs = [n for n in _exhibit_names(http, cik, h.accession)
@@ -2579,8 +2622,7 @@ def _covenant_pointers(
             note="no contract-level filing expected (aggregate line item)"))
 
     if not any(r.accession for r in rows):
-        return Sourced.unknown(
-            note="no CIK-scoped agreement exhibit located across the filing history")
+        return Sourced.unknown(note=COVENANT_SEARCH_FOUND_NOTHING)
     return Sourced.present(
         rows,
         source_ref="EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)")
@@ -2605,7 +2647,7 @@ def _capital_structure(
     insts = (instruments.value
              if instruments.status is SourceStatus.PRESENT and instruments.value else [])
     cik = record.identity.cik
-    pointer_rows = _covenant_pointers(edgar, http, cik or "", insts)
+    pointer_rows = _covenant_pointers(edgar, http, cik or "", insts, reference_date)
     vintage = (_capital_structure_vintage(edgar, cik, detail_as_of, reference_date)
                if cik else Sourced.unknown(note="no CIK"))
     located = (pointer_rows.status is SourceStatus.PRESENT
@@ -2894,19 +2936,24 @@ def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
 
 def _release_revenue_guide(
     releases: list[ReleaseExtract],
-) -> tuple[float | None, float | None, bool, str]:
-    """The most-recent release's revenue guide as (low, high, qualitative, BASIS) — the cross-source
-    comparison for guide verification. Releases are most-recent first; the first with a revenue
-    guide wins (a QUALITATIVE-only outlook signals a numeric CIQ guide has no corroboration).
+) -> tuple[float | None, float | None, bool, str, str | None]:
+    """The most-recent release's revenue guide as (low, high, qualitative, BASIS, PERIOD) — the
+    cross-source comparison for guide verification. Releases are most-recent first; the first with
+    a revenue guide wins (a QUALITATIVE-only outlook means the CIQ guide has no corroboration).
 
     THE BASIS RIDES WITH THE NUMBERS (2026-08-05). A release can guide revenue as a CHANGE
     ("-2% to +2% year-over-year"), and handing (low, high) onward without saying which kind they
-    are is how -2..+2 gets compared against a 1,345..1,355 level guide. The caller refuses on it."""
+    are is how -2..+2 gets compared against a 1,345..1,355 level guide. The caller refuses on it.
+
+    THE PERIOD RIDES WITH THEM TOO (2026-08-12), for the same reason and after the same failure:
+    the release can guide a YEAR while CIQ guides a QUARTER, and two numbers covering different
+    spans cannot agree no matter how well each is parsed."""
     for r in releases:
         for g in r.guidance:
             if g.metric == "revenue":
-                return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"))
-    return (None, None, False, "level")
+                return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"),
+                        getattr(g, "period", None))
+    return (None, None, False, "level", None)
 
 
 #: Display cap for a qualitative guide's verbatim in the MAIN BODY. The stored text is a 200-char
@@ -3140,12 +3187,14 @@ def _primary_source(
             f"'covenant basis: {primary_source.COVENANT_BASIS_UNKNOWN}' — a FALSE UNKNOWN "
             "(item 18). Refusing the build: a gap invites a look, an UNKNOWN closes the question.")
     # guide verification — CIQ revenue guide (point OR range) vs the release guide + prior-FY actual
-    ciq_lo, ciq_hi = ciq_sheets.revenue_guide_lohi(bundle, reference_date=reference_date)
-    rel_lo, rel_hi, rel_qual, rel_basis = _release_revenue_guide(releases)
+    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
+        bundle, reference_date=reference_date)
+    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
     guide = primary_source.guide_verification(
         "revenue", ciq_lo, ciq_hi,
         prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
-        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis)
+        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
+        ciq_period=ciq_period, release_period=rel_period)
     ps = PrimarySource(
         releases=releases, filing=filing,
         self_funding=Sourced.present(

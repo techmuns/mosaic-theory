@@ -404,7 +404,7 @@ _+8 more broker-days in JSON_
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** 138.5 [32]
+- **Free cash flow ($M):** 138.5 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Apr-30-2026], CFO $117.2M − capex $6.4M = $110.8M — 1.25x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [32]
 - **Debt schedule vintage:** the debt schedule is 97d old (source filed 2026-03-31); no Item 1.02 (termination of a material agreement) has been filed since [51]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [52]
 - **Maturity wall** · vs the 2026-07-06 reference:
