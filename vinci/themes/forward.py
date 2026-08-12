@@ -95,6 +95,12 @@ class FrozenBaskets(BaseModel, frozen=True):
     # tracks whether the human's PASS on the strongest almost-buys held up forward. NOT the
     # watchlist (those are genuine-exposure re-underwrite candidates); these are near-miss controls.
     avoid_controls: tuple[str, ...] = ()
+    #: WHERE THIS FILE CAME FROM, in one sentence. A basket written by the freeze and a basket
+    #: RECONSTRUCTED from the frontend mirror hold the same names, but they are not the same
+    #: evidence: the freeze read the analyst's dispositioned worksheet, the reconstruction read a
+    #: published summary of it. Committing both without saying which is which would make the
+    #: durable record unauditable at exactly the point it starts being trusted.
+    provenance: str = ""
     deferred_controls: tuple[str, ...] = (
         "keyword/co-movement naive baseline (§3b-ii) — SECOND-PHASE: needs Component A "
         "live-forward; the INDEPENDENT replicable control (isolates the classifier's contribution "
@@ -247,6 +253,40 @@ def freeze_baskets(
         real_tier=tuple(real_tier or ()), avoid_controls=ac)
 
 
+#: The COMMITTED home for a frozen basket, one file per driver. Operator decision 2026-08-12,
+#: reversing the standing `.gitignore` rule that these were local-only. The reason the rule changed:
+#: the Stage-4 measurement's whole product is a number that accrues over CALENDAR TIME, and its
+#: input existed on exactly one machine — so on any other checkout the accrual could not be computed
+#: at all, and the reconstruction path that closed that gap works ONLY for hold-none freezes. The
+#: first RATIFIED theme would have had no durable record of its BUY leg's entry dates anywhere.
+#: The ratification LEDGER stays git-ignored: it is the analyst's raw dispositioned worksheet output
+#: and that was not what was decided here.
+BASKETS_SUBDIR = "themes/baskets"
+
+
+def baskets_path(driver: str, *, data_dir: Path) -> Path:
+    """The committed basket for one driver, under the configured DATA DIR.
+
+    Keyed on ``data_dir`` rather than the process's cwd, and that is not a detail: the first cut
+    resolved it from `Path.cwd()`, so an existing CLI test that freezes a tmp worksheet wrote its
+    four synthetic names straight over the real committed baskets in the repo. Every other durable
+    artifact here is located through config; this one is too."""
+    return data_dir / BASKETS_SUBDIR / f"{driver}.json"
+
+
+def write_baskets(baskets: FrozenBaskets, *, data_dir: Path) -> Path:
+    """Write one driver's frozen basket to its committed home. Returns the path."""
+    p = baskets_path(baskets.driver, data_dir=data_dir)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(baskets.model_dump_json(indent=1) + "\n")
+    return p
+
+
+def load_baskets(path: Path) -> FrozenBaskets:
+    """Read a committed frozen basket — the durable input the forward measurement was missing."""
+    return FrozenBaskets.model_validate_json(path.read_text())
+
+
 def baskets_from_mirror(
     mirror: dict[str, object], *, driver: str | None = None,
 ) -> FrozenBaskets:
@@ -320,7 +360,15 @@ def baskets_from_mirror(
         layer_of={field(n, "ticker"): field(n, "substructureTag") for n in names},
         watchlist=cohort("watchlist") or None,
         avoid_controls=cohort("avoid-control") or None,
-        real_tier=cohort("real") or None)
+        real_tier=cohort("real") or None,
+    ).model_copy(update={"provenance": (
+        f"RECONSTRUCTED from the committed frontend mirror, not written by the freeze. The "
+        f"ratification ledger and the freeze-time basket were git-ignored local-only files and "
+        f"were gone; this recovers the names, cohorts and freeze timestamp from the published "
+        f"summary. Every name is PASSED with entry = the freeze date, which is the only reading a "
+        f"hold-none mirror supports and what `_cohort_fwd_mean` already defaults to — a BUY leg "
+        f"cannot be reconstructed this way and is refused. Driver key supplied by the caller; the "
+        f"mirror's own `driver` field read {str(mirror.get('driver'))!r}.")})
 
 
 # --------------------------------------------------------------------------------------------------

@@ -2674,11 +2674,30 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
             f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
             f"carries the analyst's dispositions and the ledger is where they are appended. "
             f"To re-measure an already-frozen theme instead, use --from-mirror.")
-    if bool(args.from_mirror) == bool(args.worksheet):
+    sources = [bool(args.worksheet), bool(args.from_mirror), bool(args.from_baskets)]
+    if sum(sources) != 1:
         raise SystemExit(
-            "give EITHER --worksheet + --ledger (freeze from the analyst's dispositions) OR "
-            "--from-mirror (re-measure an already-frozen theme from its committed mirror) — "
-            "not both, and not neither.")
+            "give EXACTLY ONE source: --worksheet + --ledger (freeze from the analyst's "
+            "dispositions), --from-baskets (re-measure from the COMMITTED frozen basket, the "
+            "durable record the freeze wrote), or --from-mirror (recover a basket from the "
+            "published summary — hold-none freezes only).")
+
+    if args.from_baskets:
+        # THE PREFERRED RE-MEASURE PATH now that baskets are committed. Unlike --from-mirror this
+        # reads what the FREEZE wrote, so it carries the BUY leg and its per-name entry dates —
+        # the thing a mirror cannot supply and the reason a reconstruction refuses one.
+        baskets = fwd.load_baskets(Path(args.from_baskets))
+        watchlist = list(baskets.watchlist)
+        print(f"\n=== Stage-4 forward RE-MEASURE (committed basket) · {driver} ===")
+        print(f"basket {args.from_baskets} · frozen {baskets.freeze_timestamp}")
+        unstated = "(unstated — written before provenance was recorded)"
+        print(f"provenance: {baskets.provenance or unstated}")
+        print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+              f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+        if not args.measure:
+            print("\n(no --measure: basket loaded only)")
+            return 0
+        return _themes_forward_measure(args, fwd, baskets, watchlist)
 
     if args.from_mirror:
         # THE RE-MEASURE PATH. No worksheet, no ledger write, no re-freeze: the baskets are
@@ -2742,6 +2761,15 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         records, all_committed, driver=driver, freeze_timestamp=freeze_ts, layer_of=layer_of,
         watchlist=watchlist or None, watchlist_triggers=triggers,
         avoid_controls=avoid_controls or None, real_tier=real_tier or None)
+    # THE DURABLE RECORD, written every freeze rather than only when someone remembers a flag.
+    # `--baskets-out` predates this and stays as an extra copy for ad-hoc use; the canonical file is
+    # committed, because the Stage-4 accrual is a calendar-time number whose input previously
+    # existed on exactly one machine (operator decision 2026-08-12).
+    baskets = baskets.model_copy(update={"provenance": (
+        f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
+        f"worksheet, appended to the ratification ledger at {ledger}")})
+    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir)
+    print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
     print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
@@ -3517,6 +3545,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
     p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--from-baskets", dest="from_baskets",
+                       help="re-measure from a COMMITTED frozen basket "
+                            "(data/themes/baskets/<driver>.json) — the durable input written by "
+                            "the freeze. Preferred over --from-mirror, which recovers a basket "
+                            "from a published summary and only works for hold-none freezes.")
     p_fwd.add_argument("--from-mirror", dest="from_mirror",
                        help="re-measure an ALREADY-FROZEN theme from its committed "
                             "frontend/themes/<slug>.json instead of re-freezing. Hold-none "

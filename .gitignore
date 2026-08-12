@@ -51,10 +51,26 @@ frontend/snapshots/
 node_modules/
 
 # theme forward-validation harness runtime outputs — derived, LOCAL-only (fail-closed, like the
-# build-2 scan output): the ratification ledger + the frozen baskets are never committed.
+# build-2 scan output). The ratification LEDGER is never committed: it is the analyst's raw
+# dispositioned worksheet output, and committing it was not what was decided.
+#
+# THE FROZEN BASKETS ARE NOW COMMITTED — operator decision 2026-08-12, reversing the line above for
+# that artifact only. Why the rule changed: Stage-4's entire product is a number that accrues over
+# CALENDAR TIME, and its input existed on exactly one machine — so on any other checkout the accrual
+# could not be computed at all. Three themes froze in July 2026 and two passed their 30-day horizon
+# with their diagnostics still reading "0 days forward from freeze" for precisely this reason. The
+# reconstruction path that closed that gap (#412) works ONLY for hold-none freezes, so the first
+# RATIFIED theme would have had no durable record of its BUY leg's entry dates anywhere.
+#
+# They qualify under the private-repo rule: DERIVED analysis (the names, cohorts and dates the
+# analyst dispositioned), never reproduced licensed content. The loose `forward_*_baskets.json`
+# name stays ignored — only the canonical per-driver path below is tracked.
 forward_*_ledger.jsonl
 forward_*_baskets.json
 data/forward/
+!data/themes/
+data/themes/*
+!data/themes/baskets/
 
 # scan-history archive (themes-exposure) — timestamped scan snapshots + manifest. DATA, never
 # committed (already covered by data/*; explicit here for fail-closed clarity).

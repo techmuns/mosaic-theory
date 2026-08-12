@@ -184,8 +184,12 @@ def test_the_cli_refuses_both_paths_and_neither_path() -> None:
     from vinci import cli
 
     for kwargs in ({"worksheet": "w.csv", "ledger": "l.jsonl", "from_mirror": "m.json"},
-                   {"worksheet": None, "ledger": None, "from_mirror": None}):
-        with pytest.raises(SystemExit, match="EITHER"):
+                   {"worksheet": None, "ledger": None, "from_mirror": None},
+                   # --from-baskets is the third source; any two together are ambiguous
+                   {"worksheet": None, "ledger": None, "from_mirror": "m.json",
+                    "from_baskets": "b.json"}):
+        kwargs = {"from_baskets": None, **kwargs}
+        with pytest.raises(SystemExit, match="EXACTLY ONE source"):
             cli._cmd_themes_forward(_forward_args(**kwargs))  # type: ignore[arg-type]
 
 
