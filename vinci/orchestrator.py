@@ -11,11 +11,23 @@ candidates, ledger, and as-reported fundamentals.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from pathlib import Path
 
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
+from vinci.labels import resolve_label
 from vinci.progress import ProgressFn
+from vinci.rank import (
+    CauseClass,
+    RankedCandidate,
+    RankWeights,
+    StructuralDisqualifier,
+    load_candidates_from_snapshot,
+    load_market_caps_from_snapshot,
+    rank_candidates,
+    render_queue_markdown,
+)
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
@@ -26,6 +38,73 @@ from vinci.universe import benchmark_identity
 _SCREEN_LOOKBACK_DAYS = 1825
 # Monthly scoring refreshes ~2y so verdicts in that window have forward prices to score against.
 _SCORE_LOOKBACK_DAYS = 730
+# Queue-writing defaults, shared by the weekly job and the `vinci rank` CLI so the two cannot drift.
+QUEUE_MD_TOP = 50
+QUEUE_ADV_FLOOR = 3_000_000.0  # = the universe ADV floor; mirrors vinci.rank's own default
+
+
+def rank_from_snapshots(
+    cfg: Config,
+    *,
+    annotations: dict[str, CauseClass] | None = None,
+    structural_flags: dict[str, StructuralDisqualifier] | None = None,
+    deep_work_adv_floor: float = QUEUE_ADV_FLOOR,
+) -> list[RankedCandidate]:
+    """Rank the committed screen output, with the resolved sector/industry labels attached.
+
+    THE ONE RANKING PATH — `vinci rank` and the weekly job both come through here, so a queue built
+    by CI is the same object as one built by hand. Reads the committed snapshots only (no DB, no
+    network): ``candidate_records.jsonl`` for the screen output, ``universe_snapshot.jsonl`` for
+    size. Returns [] when the screen produced nothing, so a caller can skip the write.
+    """
+    snaps = cfg.snapshots_dir
+    records = snaps / "candidate_records.jsonl"
+    # ABSENT is a legitimate state (a fresh checkout, or the very first run) and means "nothing has
+    # been screened", not "invent something" — so it returns empty and the caller skips the write,
+    # leaving any existing queue untouched. Only the missing FILE is tolerated; a malformed one
+    # still raises. run_weekly reports `ranked` in its result dict, so a screen that found
+    # candidates while the rank found none is visible in the job output rather than silent.
+    if not records.exists():
+        return []
+    cands = load_candidates_from_snapshot(records)
+    if not cands:
+        return []
+    ranked = rank_candidates(
+        cands,
+        weights=RankWeights(),
+        annotations=annotations,
+        market_caps=load_market_caps_from_snapshot(snaps / "universe_snapshot.jsonl"),
+        structural_flags=structural_flags or None,
+        deep_work_adv_floor=deep_work_adv_floor,
+    )
+    # The RESOLVED labels are attached HERE, in the writer, never in the scorer — vinci.rank and
+    # vinci.screens stay label-free and an AST fence test asserts it. Assemble/inform ONLY: they
+    # feed the human cluster roll-up, never a gate/weight/sort. gics=None at universe scale: the
+    # CIQ-GICS overlay joins at the frontend build from the committed dossier index, so a dossier
+    # landing between rank runs upgrades its name without a re-rank.
+    sic_by_id = {c.candidate_id: c.data_record.identity.sic for c in cands}
+    return [
+        r.model_copy(update={
+            "sector": (lbl := resolve_label(sic_by_id.get(r.candidate_id))).sector,
+            "industry": lbl.industry,
+        })
+        for r in ranked
+    ]
+
+
+def write_queue_snapshots(
+    cfg: Config, ranked: list[RankedCandidate], *, md_top: int = QUEUE_MD_TOP
+) -> tuple[Path, Path]:
+    """Write ranked_queue.jsonl + .md. Returns both paths so a caller can report what it wrote."""
+    cfg.ensure_dirs()
+    snaps = cfg.snapshots_dir
+    jsonl = snaps / "ranked_queue.jsonl"
+    with jsonl.open("w") as f:
+        for r in ranked:
+            f.write(r.model_dump_json() + "\n")
+    md = snaps / "ranked_queue.md"
+    md.write_text(render_queue_markdown(ranked, top=md_top))
+    return jsonl, md
 
 
 def run_weekly(
@@ -50,7 +129,17 @@ def run_weekly(
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
         )
         store.export_snapshots(cfg.snapshots_dir)
-    return {**stats, "ref": end.isoformat()}
+    # ...then RANK, from the snapshot the screen just exported, through the same path `vinci rank`
+    # uses. Until 2026-08-12 this job stopped at the screen: candidate_records advanced every week
+    # while ranked_queue.jsonl only moved when a human remembered to run the ranker, and the served
+    # queue had drifted 12 days and 95 names behind the screen that fed it (STATE.md §5).
+    # Defaults reproduce the manual invocation exactly — no cause annotations (they need an operator
+    # -supplied file) and NO --structural, which is a network 8-K scan and is off by default in the
+    # CLI too. Adding the structural scan here would sink names, so it stays an explicit human act.
+    ranked = rank_from_snapshots(cfg)
+    if ranked:
+        write_queue_snapshots(cfg, ranked)
+    return {**stats, "ref": end.isoformat(), "ranked": len(ranked)}
 
 
 def run_monthly(

@@ -11441,10 +11441,36 @@ is written only by the manual `vinci rank` (`cli.py:273`), and no CI workflow in
 `.github/` for both `vinci rank` and bare `rank`). So `candidate_records.jsonl` advances every week
 and the served queue does not move until a human runs the ranker — which is exactly how it came to be
 12 days behind. **Today's regen closes the instance, not the mechanism: the next weekly screen will
-leave the queue behind again.** Options for the operator, none taken here: add `rank` to
-`run_weekly()`; add a rank step to `weekly-screen.yml`; or accept the manual step and add a staleness
-banner to the queue page (the as-of is already displayed, but nothing says it is older than the
-screen). Recorded per the OPERATOR-ACTION RULE.
+leave the queue behind again.** Options for the operator: add `rank` to `run_weekly()`; add a rank
+step to `weekly-screen.yml`; or accept the manual step and add a staleness banner to the queue page.
+Recorded per the OPERATOR-ACTION RULE.
+
+**CLOSED 2026-08-12 — the operator chose option 1; `run_weekly()` now ranks.** The screen exports
+its snapshots, then the queue is written from that snapshot through
+`orchestrator.rank_from_snapshots()` + `write_queue_snapshots()` — **the ONE ranking path, which
+`vinci rank` was refactored onto in the same change**, so a CI-built queue and a hand-built one are
+provably the same object rather than two implementations that agree today. Verified by re-running
+the CLI after the refactor and byte-diffing: `ranked_queue.jsonl` and `.md` came back **IDENTICAL**
+to the committed artifact, so the extraction changed no behaviour.
+- **Defaults reproduce the manual invocation.** No cause annotations (they need an operator-supplied
+  file) and **NO `--structural`** — that is a network 8-K scan, it is off by default in the CLI, and
+  it SINKS names. Putting a demote channel on a cron is a decision-path change, so it stays an
+  explicit human act. `QUEUE_MD_TOP` / `QUEUE_ADV_FLOOR` now live in the orchestrator and argparse
+  reads them, so the two callers cannot drift on the numbers either.
+- **A bug the new test caught before it shipped:** `load_candidates_from_snapshot` RAISES on a
+  missing file, so the first draft made `run_weekly` die between the screen export and the queue
+  write on any fresh checkout. An absent `candidate_records.jsonl` is now read as "nothing screened
+  yet" → return `[]` → caller skips the write and leaves the existing queue untouched. Only the
+  missing FILE is tolerated; a malformed one still raises, and `run_weekly` returns `ranked` in its
+  result dict so a screen that found candidates while the rank found none is visible in the job log.
+- **Guards, each mutation-tested:** the weekly job calling the ranker at all; both callers sharing
+  the one path (AST over the unparsed function bodies, so a mention in a comment cannot satisfy it);
+  the writer-side sector/industry enrichment surviving — a weekly job that called `rank_candidates`
+  directly would have emitted a queue with both fields `None` and quietly broken the frontend's
+  industry column and cluster roll-up; and the missing-file case above.
+- **Still true, and NOT fixed by this:** the weekly job is the only automated writer, so a week where
+  CI does not run still leaves the queue behind. The queue page shows its as-of but never says
+  whether that as-of is older than the last screen — the staleness banner (option 3) remains open.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 

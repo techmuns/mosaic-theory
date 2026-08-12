@@ -10,6 +10,8 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 from vinci.edgar.client import all_unknown_snapshot
 from vinci.eod.client import RawBar
 from vinci.resolver.index import pad_cik
@@ -119,3 +121,72 @@ def test_rescreen_replaces_not_accretes(tmp_path: Path) -> None:
         # ...and only week-2's generation remains — the set is THIS run's, not the union of both.
         for c in c2:
             assert store.get_candidate(c.candidate_id) is not None
+
+
+# --- the weekly job now writes the QUEUE, not just the screen ------------------------------------
+def test_the_weekly_job_ranks_through_the_same_path_as_the_cli() -> None:
+    """Until 2026-08-12 `run_weekly` stopped at the screen: `candidate_records.jsonl` advanced every
+    week while `ranked_queue.jsonl` only moved when a human remembered to run `vinci rank`, and the
+    served queue had drifted 12 days and 95 names behind the screen feeding it (STATE.md §5).
+
+    Pinned at the SOURCE layer deliberately, and this is the honest limit: `run_weekly` builds its
+    own Polygon/EDGAR clients from config, so exercising it end-to-end would mean faking the network
+    rather than testing the wiring this guards. What must not silently regress is that the weekly
+    job calls the ranker AT ALL, and that both callers go through the ONE path — the moment they
+    diverge, a CI-built queue and a hand-built one stop being the same object."""
+    import ast
+
+    root = Path(__file__).resolve().parent.parent
+    bodies: dict[str, str] = {}
+    for mod, fn in (("vinci/orchestrator.py", "run_weekly"), ("vinci/cli.py", "_cmd_rank")):
+        tree = ast.parse((root / mod).read_text())
+        node = next((n for n in ast.walk(tree)
+                     if isinstance(n, ast.FunctionDef) and n.name == fn), None)
+        assert node is not None, f"{fn} not found in {mod}"
+        # STRIP comments/docstrings by unparsing the AST — a mention in prose must not satisfy this
+        bodies[fn] = ast.unparse(node)
+
+    assert "rank_from_snapshots" in bodies["run_weekly"], (
+        "run_weekly does not call rank_from_snapshots — the weekly job is back to writing the "
+        "screen output and leaving the served queue frozen until someone runs the ranker by hand")
+    assert "write_queue_snapshots" in bodies["run_weekly"], (
+        "run_weekly ranks but never writes the queue snapshots")
+    assert "rank_from_snapshots" in bodies["_cmd_rank"], (
+        "`vinci rank` no longer shares the weekly job's ranking path — a CI queue and a hand-built "
+        "one can now diverge")
+
+
+def test_rank_from_snapshots_attaches_the_resolved_labels() -> None:
+    """THE REGRESSION THIS CHANGE COULD HAVE SHIPPED. Sector/industry are attached by the WRITER,
+    never the scorer (vinci.rank may not import vinci.labels — a separate AST fence asserts it), so
+    a weekly job that called `rank_candidates` directly would have emitted a queue with both fields
+    None and quietly broken the frontend's industry column and cluster roll-up. Run on the REAL
+    committed screen output, not a fixture."""
+    from vinci.config import Config
+    from vinci.orchestrator import rank_from_snapshots
+
+    cfg = Config(data_dir=Path(__file__).resolve().parent.parent / "data")
+    if not (cfg.snapshots_dir / "candidate_records.jsonl").exists():
+        pytest.skip("no committed candidate_records.jsonl in this worktree")
+    ranked = rank_from_snapshots(cfg)
+    assert len(ranked) > 50, f"only {len(ranked)} rows ranked from the committed screen output"
+    labelled = [r for r in ranked if r.sector and r.industry]
+    assert len(labelled) > len(ranked) * 0.8, (
+        f"only {len(labelled)}/{len(ranked)} rows carry a resolved sector AND industry — the "
+        "writer-side label enrichment is not being applied")
+    # and the structured volume ratio rides along, so the queue cell never re-parses its own label
+    assert all(r.volume_spike is not None for r in ranked if r.volume_state != "UNKNOWN")
+
+
+def test_rank_from_snapshots_is_empty_not_fatal_when_the_screen_has_produced_nothing(
+    tmp_path: Path,
+) -> None:
+    """A fresh checkout, or the very first run, has no candidate_records.jsonl. The weekly job must
+    reach its return rather than dying between the screen export and the queue write — it returns
+    [] and the caller skips the write, leaving any existing queue untouched."""
+    from vinci.config import Config
+    from vinci.orchestrator import rank_from_snapshots
+
+    cfg = Config(data_dir=tmp_path)
+    cfg.ensure_dirs()
+    assert rank_from_snapshots(cfg) == []
