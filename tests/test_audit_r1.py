@@ -12,6 +12,8 @@ this book carried, so a regression names the incident rather than a constant:
 """
 from __future__ import annotations
 
+import datetime as _dt
+
 import pytest
 
 from vinci import audit_r1 as ar
@@ -253,6 +255,7 @@ def _minimal_r1(**bear_over):
     return sc.ScenarioRecord(
         ticker="TESTW", recipe_id=sc.RECIPE_R1, recipe_desc="d", multiple_basis="EV/EBITDA",
         underwrite_date="2026-07-22", analyst="t", spot=10.0, spot_source="s",
+        spot_as_of=_dt.date(2026, 7, 10),
         facts={"d_and_a": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),
                "net_debt": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),
                "diluted_shares": sc.Fact(value=1.0, unit="M shares", basis="b", source="s")},
