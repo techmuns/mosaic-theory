@@ -30,7 +30,7 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 - **Segments:** Batteries / Battery Systems — single segment [1]
 - **Geography:** China 33%; Italy 22%; France 18%; Other Europe 10%; U.S. 9%; India 8%; Other Asia & Pacific 1% [2]
 - **Customer concentration:** top customer 52% (from 31%) · top-2 ~70% of revenue [3]
-- **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 [4]
+- **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M ⚠ implies $1.27/sh vs CMP (+17.6%) · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?**

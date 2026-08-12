@@ -26,7 +26,7 @@ BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.
 Gartner, Inc. provides business and technology insights to support decision-making and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and…
 - **Segments:** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [1]
 - **Geography:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [2]
-- **Snapshot:** NYSE · CMP $185.79 (2026-08-04) · cap $11.1B (2026-07-30) · 52-wk $124.25–$353.77 · shares 63.1M · book value/sh $0.93 [3]
+- **Snapshot:** NYSE · CMP $185.79 (2026-08-04) · cap $11.1B (2026-07-30) ⚠ implies $175.63/sh vs CMP (-5.5%) · 52-wk $124.25–$353.77 · shares 63.1M · book value/sh $0.93 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the near-stall in contract value and negative new-business trend a temporary, identifiable (largely US-federal / geopolitical) demand deferral that reverts, or the onset of a structural growth impairment in the Insights subscription franchise?**
