@@ -11182,6 +11182,42 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
      (latest 10-Q)"). Substituting one for the other is the same-window/different-BASIS class that
      refused the buyback average; if it is used, the basis change is the decision, not a detail.
 
+6. **RE-ASSEMBLE UBER AND SMPL — the verbatim fix corrects the EVIDENCE, not the syntheses written
+   against it.** Opened 2026-08-12 by PR-2. The artifact pass lengthened 15 attribution quotes on
+   three names (UBER 12, SMPL 2, VRRM 1) through the `refresh_dossier` transform seam, which
+   deliberately PRESERVES the stored synthesis. But those syntheses were composed while the
+   quantifications were invisible — UBER's live bull point reads *"Q2 2026 revenue grew 12%
+   ($1.5bn) driven primarily by a 24% rise in Gross Bookings — a validated volume mechanism"*,
+   written without ever seeing that the UK model change cut revenue by **$1.1bn**. The claim is
+   not false; it is under-informed, and only a re-synthesis fixes that. **Needs CIQ + LLM, so it is
+   an operator action.** Both names' workbooks are stale anyway (item 7), so do it in one pass.
+7. **RE-PULL THE NFLX AND UBER CIQ WORKBOOKS — both predate material filings.** NFLX's
+   capital-structure panel is stamped *"A 2025 filed Jan-23-2026"* (the FY25 10-K, ~6 months old),
+   so the page still carries the **terminated WBD bridge facility** and lacks the **5.250% 2036
+   notes** issued 2026-07-22 to repay the Nov-2026 maturity. UBER's folder is Aug 5–6, two days
+   before the Delivery Hero 8-K (2026-08-07). Re-pull → re-assemble retires all three staleness
+   findings without any code change.
+
+### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
+
+- **The following-paragraph carry reaches only 3 of 12 names.** 41 of 530 committed driver rows
+  carry a `following_context` (EPAM 13, NFLX 18, V 10); **BRBR — the name the fix was built for —
+  has 0 of 31**, on a dossier assembled 2026-08-10. Either those quotes all genuinely end their
+  paragraphs, or the carry is not reaching the seat that mattered. Cheap to settle: re-run
+  `_following_paragraph` against BRBR's transcript slices and count.
+- **MVST — and ONLY MVST — loses attribution rows between extraction and the record.** Its
+  `primary_source.filing` names 10-Q 0001628280-26-033590 and its `operating_drivers.rows` is
+  EMPTY, while running `results_attribution` directly over that same filing yields **5 rows**
+  (one of which the old bound severed). Checked per-name across all 14: every other zero is the
+  extractor honestly finding nothing (AORT/EPAM/FUBO/IT/NCNO/NFLX/V/VITL yield 0 and carry 0), and
+  the seven non-zero names match exactly. So this is one name's dropped rows, not a fleet-wide
+  pipeline gap — the first draft of this entry claimed the latter and was wrong.
+  **Upstream of PR-2 and unaffected by it**: PR-2 only lengthens rows that survive.
+- **UBER carries zero covenant pointer rows** — the third name in that subsystem after EPAM's
+  four-years-wrong maturity and AORT's five-and-a-half-year-stale one. EPAM/AORT find the WRONG
+  facility; UBER finds NONE. A "flag the facility" fix is silent on the find-nothing case, so the
+  covenant work needs both halves.
+
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 
 0. **PRINT-LAYOUT PASS — 2026-07-29 (operator: "this looks really bad and unprofessionally
@@ -12854,6 +12890,27 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **ANCHORED VERBATIMS WERE CUT MID-WORD ON 40% OF THE CORPUS — bounds measured, not chosen
+  (2026-08-12, PR-2).** `_attr_verbatim`'s sentence-end search window (`cause_end + 170`) silently
+  degraded to a raw offset cut whenever the real sentence ended later, and `frag[:340]` cut whatever
+  survived. Measured across all 14 committed names' 10-Q primary documents — 40 attribution rows —
+  **16 were cut mid-word on four names** (UBER 12, SMPL 2, MVST 1, VRRM 1); **four severed a dollar
+  figure.** The worst: UBER's UK sentence ended at *"…negatively impacted reven"*, dropping **"by
+  $1.1 billion"** — the number explaining why Mobility revenue grew 1% against Gross Bookings +22%.
+  A third severed figure surfaced in the fix: a **$808M** Driver-payments offset in cost of revenue.
+  True distributions: cause→sentence-end p50 138 / p90 285 / **MAX 477**; full fragment p50 324 /
+  p90 482 / **MAX 633** — so 170 and 340 sat *below the p90 of the thing they bounded*. New:
+  window **520**, cap **700**, and any cut that still happens is at a WORD boundary with an
+  ellipsis. **The second branch was the near-miss**: marking only the cap left the window-bounded
+  fallback exactly as silent as the bug — caught by the run-on test, not by reading.
+  **WHY WIDENING IS SAFE STRUCTURALLY:** `text.find(". ", cause_end)` returns the FIRST boundary
+  after the cause, so the window only decides ACCEPT-vs-offset-cut; it can never reach a second
+  sentence. **DIFFERENT SEAT FROM THE BRBR FIX** — BellRing's severed reversal was `llm-fenced`
+  (`driver_extract.py`, repaired by the following-paragraph carry); these are `anchored`
+  (`filing_sections.py`). Same class, two seats, neither fix covers the other.
+  **PRIMARY HARM PATH IS THE SYNTHESIS, not the page**: the rendered `.md` never carried these
+  verbatims, but `_operating_drivers_digest` puts `verbatim` in front of the LLM — so the model
+  reasoned from truncated evidence. That is the BellRing shape exactly.
 - **SPOT WAS UNAUDITABLE, NOT UNVALIDATED — measured across all 8 records × all 3 stores
   (2026-08-11).** Every committed spot is a REAL EOD close, equal to its stored bar with delta
   **exactly 0.0**; not one is an analyst's intraday number. What differs is which store can SEE it:
