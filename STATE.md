@@ -3341,6 +3341,41 @@ Each line: *what it does* — *verified how*.
   with consistent sign across disjoint non-overlapping phases. That is textbook loser-momentum
   continuation — published, replicable, therefore NOT an edge by the §7 filter — and the operator
   ruled 2026-08-11 that price states may NEVER move a rank. It informs analyst WORK TIMING only.
+  - **AMENDED 2026-08-12 — "consistent sign across disjoint phases" is SPECIFICATION-FRAGILE for
+    the 50d-MA-slope facet. Do not lean on it.** A wider panel (28 technical states — 21/50/200-day
+    MA stack, RSI range regime, volume, relative strength vs MDY and own sector; the SAME 32
+    months, ex-sunk population, forward-minus-own-sector outcome and 300-shuffle null as R2)
+    re-measured the same underlying quantity CONTINUOUSLY and reached the opposite stability
+    verdict. Phase A binarised it (`ma50_rising`, monthly mean true−false): 120d phase blocks
+    **+3.5 / +1.0 / +5.8 / +4.5** → same sign, PASSED. The panel rank-correlated it
+    (`ma50_slope21`, monthly cross-sectional Spearman): 120d blocks **−0.004 / −0.019 / +0.074 /
+    +0.084** → sign flips, FAILS. Both cleared their shuffle null at 120d (99% / 100%), so the
+    null is not what separates them: **binarising at zero smoothed a sign flip that the rank
+    correlation exposes.** Phase A's OWN table already had `ma50_rising` failing its 180d split —
+    the 120d pass was carrying this claim alone.
+  - **AND IT IS NOT ONE STATE — it is one regime.** Every trend/momentum state in the panel splits
+    the same way (flat-to-negative through the 2023–24 blocks, strongly positive through 2025–26),
+    and they are not independent: cross-state correlation runs 0.71–0.86 (`ma50_slope21`↔
+    `rs_sec_63` 0.80, `rsi`↔`p_ma50` 0.86). Nine states, one-to-two factors, one regime — which
+    confirms and widens this entry's own "three facets of one state" framing. With effectively TWO
+    regime observations, no t-statistic on the residue is trustworthy; that is the honest reason to
+    stop quoting +4 to +8 pts as structure.
+  - **UNAFFECTED, and deliberately not retracted:** R1 degeneracy (above-200d-MA at 2.1%), the RSI
+    nulls, and **R3 cost-of-waiting** — R3 is an ENTRY-TIMING test on identical calendar exits, not
+    a cross-sectional separation, so nothing above touches it. Waiting for the reclaim is still
+    free. The **off-low and fresh-low facets were NOT re-measured** in the panel's continuous form:
+    suspect by the regime finding above, untested, and not to be quoted as confirmed either way.
+  - **What DID clear the full bar in the panel** (99th+ pct AND same sign in all four blocks, with
+    no regime ramp): the ranker's existing low-volume read — `volume_spike ≤ 0.80×` its 90d average
+    → **+3.58 pts at 180d sector-relative, t +2.5, 100th pct, 44% of names**. The face-validity
+    sign the overlay already shipped with is the one the data supports; Lee-Swaminathan's
+    "high-volume losers reverse faster" does NOT transfer here (their formation-period turnover
+    measure is dead flat, 3rd pct). Surfaced on the queue row by PR #420.
+  - **Provenance:** panel run 2026-08-12 (`panel.py` + `panel2.py` in the session scratchpad;
+    results at `ranked-queue-price-check/price_states/panel.json`). **NOT COMMITTED** — it reuses
+    this PR's own `load_bars`/`load_sector_map`/`sector_forward`, so the numbers are re-derivable
+    from the constants stated here, but committing the panel beside the falsifier is an open call
+    for the operator.
 
 ## 4. Deferred — CAPITAL-gated on the spread; BUILD per the GOVERNOR
 
@@ -4388,7 +4423,11 @@ sector-relative sweep to 0.000 pts on 3 months. RESULTS — 200d-MA filter degen
 RSI null; waiting-for-reclaim FREE (my pre-registered expectation that deferral costs the bounce
 was WRONG: winners earned 98% of gains AFTER the 50d reclaim); early-recovery vs still-falling
 separates at 120–180d (record-only; replicable momentum continuation; unpromotable per operator
-rule — price never moves a rank). Falsifications recorded in §3; operator ruling appended to the
+rule — price never moves a rank). **AMENDED 2026-08-12 BEFORE MERGE: the 50d-MA-slope facet of
+that residue is SPECIFICATION-FRAGILE — its continuous twin fails the same phase split the binary
+passed, and a 28-state panel shows every trend state is one 2025–26 regime measured many ways
+(correlations 0.71–0.86). R3 cost-of-waiting and the R1/RSI nulls are unaffected. Full amendment in
+§3.** Falsifications recorded in §3; operator ruling appended to the
 § "Fundamental vs quant" bullet. NEXT (approved plan): PR-B1 queue "evidence strip"
 (insiders / short interest / share-count direction + price tail, display-only, AST-fenced),
 PR-B2 dossier twin, Phase C F-Score display pending separate operator green-light.
