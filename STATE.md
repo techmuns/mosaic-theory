@@ -3326,6 +3326,68 @@ Each line: *what it does* — *verified how*.
   discriminator. It gates nothing and makes no trade decision. Validated **operationally** (vs a
   hand-built baseline on a live event), never statistically — so it can't be data-mined.
 
+- **Technical states as queue FILTERS (200d-MA tailwind, RSI bands): FALSIFIED (2026-08-11).**
+  Pre-registered falsifier (`scripts/price_state_falsifier.py`) over the 36 G3-complete backdated
+  queues: "above 200d MA" is DEGENERATE at entry (2.1% of names — the queue is deep-drawdown by
+  construction; a tailwind filter on it is structurally incoherent), and RSI-14 bands show no
+  forward sector-relative separation at any horizon (all |diff| < 1.5 pts, shuffle pct ≤ 48%).
+  The COST-OF-WAITING concern was also falsified in the OTHER direction: deferring entry to the
+  first 50d-MA reclaim (≤126 sessions) LOST NOTHING vs buying at first appearance (waiting
+  gained +0.73 to +1.79 pts vs MDY at 30/60/120d), 0 of 306 eventual ≥+50% winners were missed
+  by waiting, and the median winner had earned only 2% of its total gain before the reclaim —
+  there is no rush to catch the knife.
+  - **CORRECTED BEFORE MERGE (review, #405).** The never-entered branch recorded the deferred
+    book's excess as `0.0`, which claims cash MATCHED MDY; cash returns 0% while MDY moves, so the
+    excess is minus MDY's return. Now `deferred_excess()`, pinned by four unit tests. The published
+    figures were +0.5 to +1.3; corrected they are **+0.73 to +1.79** — the conclusion holds and is
+    slightly stronger. **The predicted bias direction was WRONG, mine as much as the reviewer's:**
+    we both reasoned that crediting cash with 0.0 flatters waiting in a rising market and 2023–2026
+    rose. But the bias is CONDITIONAL — it applies only over the windows where a name never
+    reclaimed in 126 sessions, and those sit in weak tape, so MDY FELL across them and the old
+    `0.0` was UNDERSTATING the deferred book. The fix stands on being right, not on which way it
+    moved the answer. Winners 297 → 306 is unrelated: the netcache extends two sessions further
+    after the 2026-08-12 screen, and "the last session" is a moving anchor. RECORD-ONLY residue (unpromotable by operator rule, see
+  §6): an "early-recovery vs still-falling" split (≥15% off the 52w low / fresh-low-in-21d /
+  50d-MA slope — three facets of one state) separates +4 to +8 pts sector-relative at 120–180d
+  with consistent sign across disjoint non-overlapping phases. That is textbook loser-momentum
+  continuation — published, replicable, therefore NOT an edge by the §7 filter — and the operator
+  ruled 2026-08-11 that price states may NEVER move a rank. It informs analyst WORK TIMING only.
+  - **AMENDED 2026-08-12 — "consistent sign across disjoint phases" is SPECIFICATION-FRAGILE for
+    the 50d-MA-slope facet. Do not lean on it.** A wider panel (28 technical states — 21/50/200-day
+    MA stack, RSI range regime, volume, relative strength vs MDY and own sector; the SAME 32
+    months, ex-sunk population, forward-minus-own-sector outcome and 300-shuffle null as R2)
+    re-measured the same underlying quantity CONTINUOUSLY and reached the opposite stability
+    verdict. Phase A binarised it (`ma50_rising`, monthly mean true−false): 120d phase blocks
+    **+3.5 / +1.0 / +5.8 / +4.5** → same sign, PASSED. The panel rank-correlated it
+    (`ma50_slope21`, monthly cross-sectional Spearman): 120d blocks **−0.004 / −0.019 / +0.074 /
+    +0.084** → sign flips, FAILS. Both cleared their shuffle null at 120d (99% / 100%), so the
+    null is not what separates them: **binarising at zero smoothed a sign flip that the rank
+    correlation exposes.** Phase A's OWN table already had `ma50_rising` failing its 180d split —
+    the 120d pass was carrying this claim alone.
+  - **AND IT IS NOT ONE STATE — it is one regime.** Every trend/momentum state in the panel splits
+    the same way (flat-to-negative through the 2023–24 blocks, strongly positive through 2025–26),
+    and they are not independent: cross-state correlation runs 0.71–0.86 (`ma50_slope21`↔
+    `rs_sec_63` 0.80, `rsi`↔`p_ma50` 0.86). Nine states, one-to-two factors, one regime — which
+    confirms and widens this entry's own "three facets of one state" framing. With effectively TWO
+    regime observations, no t-statistic on the residue is trustworthy; that is the honest reason to
+    stop quoting +4 to +8 pts as structure.
+  - **UNAFFECTED, and deliberately not retracted:** R1 degeneracy (above-200d-MA at 2.1%), the RSI
+    nulls, and **R3 cost-of-waiting** — R3 is an ENTRY-TIMING test on identical calendar exits, not
+    a cross-sectional separation, so nothing above touches it. Waiting for the reclaim is still
+    free. The **off-low and fresh-low facets were NOT re-measured** in the panel's continuous form:
+    suspect by the regime finding above, untested, and not to be quoted as confirmed either way.
+  - **What DID clear the full bar in the panel** (99th+ pct AND same sign in all four blocks, with
+    no regime ramp): the ranker's existing low-volume read — `volume_spike ≤ 0.80×` its 90d average
+    → **+3.58 pts at 180d sector-relative, t +2.5, 100th pct, 44% of names**. The face-validity
+    sign the overlay already shipped with is the one the data supports; Lee-Swaminathan's
+    "high-volume losers reverse faster" does NOT transfer here (their formation-period turnover
+    measure is dead flat, 3rd pct). Surfaced on the queue row by PR #420.
+  - **Provenance:** panel run 2026-08-12 (`panel.py` + `panel2.py` in the session scratchpad;
+    results at `ranked-queue-price-check/price_states/panel.json`). **NOT COMMITTED** — it reuses
+    this PR's own `load_bars`/`load_sector_map`/`sector_forward`, so the numbers are re-derivable
+    from the constants stated here, but committing the panel beside the falsifier is an open call
+    for the operator.
+
 ## 4. Deferred — CAPITAL-gated on the spread; BUILD per the GOVERNOR
 
 **GATE — disciplined on CAPITAL, flexible on BUILD.** No real capital deploys on an edge until its
@@ -4356,6 +4418,30 @@ references name their series.
 **Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
+
+**EXPERIMENT RECORD — 2026-08-11 price-state falsifier (pre-registered; MEASURE-AND-KILL, nothing
+promotable).** Operator asked whether technicals (50/200d MA, RSI) should join the pipeline as
+supportive flags. Web research first (recorded in the approved plan): MA-rule profits are
+data-snooping that dies out-of-sample (Bajgrowicz-Scaillet 2012); 3–12-month losers CONTINUE to
+lose (Jegadeesh-Titman) — the queue's measured ~−1 pt/mo sector-relative drag is what the
+literature predicts; the strong-evidence answers to "is anyone buying / is it terminal" are
+POSITIONING, not price: insider buys (Cohen-Malloy-Pomorski 2012), short interest
+(Rapach-Ringgenberg-Zhou 2016), net issuance (Pontiff-Woodgate), Piotroski F-Score (2000) — the
+first three already computed at dossier level (docs/EDGE_THESIS.md "inflection" legs), none at
+queue level. Falsifier run (`scripts/price_state_falsifier.py`; report on the operator desktop,
+`ranked-queue-price-check/price_states/`): loader sanity gate reproduced the independent
+sector-relative sweep to 0.000 pts on 3 months. RESULTS — 200d-MA filter degenerate (R1 DEAD);
+RSI null; waiting-for-reclaim FREE (my pre-registered expectation that deferral costs the bounce
+was WRONG: winners earned 98% of gains AFTER the 50d reclaim); early-recovery vs still-falling
+separates at 120–180d (record-only; replicable momentum continuation; unpromotable per operator
+rule — price never moves a rank). **AMENDED 2026-08-12 BEFORE MERGE: the 50d-MA-slope facet of
+that residue is SPECIFICATION-FRAGILE — its continuous twin fails the same phase split the binary
+passed, and a 28-state panel shows every trend state is one 2025–26 regime measured many ways
+(correlations 0.71–0.86). R3 cost-of-waiting and the R1/RSI nulls are unaffected. Full amendment in
+§3.** Falsifications recorded in §3; operator ruling appended to the
+§ "Fundamental vs quant" bullet. NEXT (approved plan): PR-B1 queue "evidence strip"
+(insiders / short interest / share-count direction + price tail, display-only, AST-fenced),
+PR-B2 dossier twin, Phase C F-Score display pending separate operator green-light.
 
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
@@ -8442,8 +8528,8 @@ the spread before believing any cohort-timed improvement in it.
 
 **HANDOFF TO THE PRICE-STATES / EVIDENCE-STRIP SESSION (PR #405 and its Phase B/C).** Their measured
 result STRENGTHENS ruling (1) rather than competing with it: waiting for the 50d-MA reclaim is free
-(+0.5 to +1.3 pts vs MDY at every horizon), **0 of 297 eventual ≥+50% winners were missed by
-waiting**, and the median winner had earned only 2% of its total gain before the reclaim. If there
+(+0.73 to +1.79 pts vs MDY at 30/60/120d — corrected before merge, see §3), **0 of 306 eventual
+≥+50% winners were missed by waiting**, and the median winner had earned only 2% of its total gain before the reclaim. If there
 is no rush to catch the knife, then a missing catalyst costs entry TIMING, not the trade — which is
 the empirical half of the ruling this entry records.
 **TWO SIGNALS THEIR PHASE B/C LIST DOES NOT CARRY** — offered for their consideration, deliberately
@@ -15115,7 +15201,10 @@ cannot converge within the reroll bound, the demand — not the roll — is what
   fund is fundamental-for-the-VERDICT (overshoot vs terminal) and quant-for-the-FUNNEL (the screen's
   drawdown / idiosyncrasy / multiple filters) + risk-sizing. Do **NOT** add technical / price-pattern
   signals as DECISION inputs — replicable (fails the edge filter) and they don't solve the real problem
-  (the generalist depth-gap). The depth-gap is bridged by the **dossier** supplying specialist-grade
+  (the generalist depth-gap). **OPERATOR RULING 2026-08-11: price states may NEVER sink or move a
+  rank — display-only permanently; only filing-based structural signals demote** (the 2026-08-11
+  falsifier record + §3 entry are the evidence base; the queue/dossier evidence strip ships under
+  the sector/industry inform-only template, AST-fenced). The depth-gap is bridged by the **dossier** supplying specialist-grade
   sector facts (FCF runway, covenants, segment economics, customer concentration) the generalist lacks;
   the per-sector spread (§2) measures whether it bridges — positive in a generalist-blind sector =
   dossier worked, poor = filter or learn it. **AI-disruption regime (relates to the small-cap terminal
