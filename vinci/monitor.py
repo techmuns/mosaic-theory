@@ -48,6 +48,9 @@ SPREAD_CAVEAT = (
     "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). "
     "A leg's excess is price-return vs its assigned benchmark over the same window."
 )
+#: A dated snapshot filename — so a stray file in the directory cannot be read as a day.
+_SNAPSHOT_DAY = re.compile(r"\d{4}-\d{2}-\d{2}")
+
 AVOID_SIGN_NOTE = (
     "BUY−AVOID = mean(BUY excess) − mean(AVOID excess). An AVOID leg falling against its "
     "benchmark carries NEGATIVE excess, so subtracting it makes the spread MORE positive: "
@@ -263,12 +266,22 @@ def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [r for r in raw if entry_of(r).get("event") == EVENT_CLOSE]
 
 
-def pair_closes(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def pair_closes(
+    raw: list[dict[str, Any]], *, as_of: date | None = None,
+) -> list[dict[str, Any]]:
     """Pair each close to the decision row it closes, and DERIVE the realized return.
 
     Realized return is computed here, never stored: it is ``exit/entry − 1`` from two frozen
     prices, so persisting it would create a second source of truth able to drift from the two
     numbers it came from. The ledger stores facts; views derive.
+
+    ``as_of`` MAKES THE VIEW POINT-IN-TIME (operator review P1 on #418). Without it every close in
+    the ledger counted regardless of when it happened, so `vinci monitor --ref <past date>` marked
+    positions closed — and printed their realized P&L — for exits that had not occurred yet at that
+    point in the book. The price path already refuses a future bar; the close path did not, so a
+    historical snapshot was not reproducible. Filtering happens AFTER pairing, deliberately: the
+    unpairable/duplicated-close refusals below must see the WHOLE ledger, or a malformed close
+    dated past ``as_of`` would slip through unexamined.
 
     Refuses loud on an unpairable or duplicated close — a close pointing at nothing, or two closes
     for one entry, means the realized book is wrong and must not render as though it were right.
@@ -295,11 +308,15 @@ def pair_closes(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "entry_price_as_of": d.get("entry_price_as_of"),
                     "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
                     "realized_return": exit_ / entry - 1.0})    # DERIVED, never stored
-    return out
+    if as_of is None:
+        return out
+    return [r for r in out if date.fromisoformat(str(r["exit_price_as_of"])) <= as_of]
 
 
 # --- spread ------------------------------------------------------------------------------------
-def closed_decision_ids(raw: list[dict[str, Any]]) -> set[str]:
+def closed_decision_ids(
+    raw: list[dict[str, Any]], *, as_of: date | None = None,
+) -> set[str]:
     """The ENTRY IDs of decisions whose position has been closed — never the tickers.
 
     KEYED ON THE DECISION, because a name can be closed and re-entered: SMPL was closed 2026-07-22
@@ -307,7 +324,19 @@ def closed_decision_ids(raw: list[dict[str, Any]]) -> set[str]:
     out of the still-held spread and changes the number the operator reads. This lives here rather
     than inline in the CLI so the keying is exercised against the real ledger instead of being
     re-derived correctly-or-not at each call site."""
-    return {str(r["entry_id"]) for r in pair_closes(raw)}
+    return {str(r["entry_id"]) for r in pair_closes(raw, as_of=as_of)}
+
+
+def decisions_as_of(raw: list[dict[str, Any]], *, as_of: date) -> list[dict[str, Any]]:
+    """The decision rows that EXISTED on ``as_of`` — entered on or before that date.
+
+    The sibling of ``closed_decision_ids``, and the louder half of the same defect: without it
+    `monitor --ref 2026-07-20` marked SMPL's 2026-08-04 re-entry into that day's book with
+    ``days_elapsed: -15``, a position that did not exist yet. Lives here rather than inline at the
+    call site so the rule is exercised against the real ledger — the CLI's copy could only ever be
+    checked by a static artifact, which cannot catch a change to the code that writes it."""
+    return [r for r in decision_rows(raw)
+            if date.fromisoformat(str(entry_of(r)["entry_price_as_of"])) <= as_of]
 
 
 def _is_buy(verdict: str) -> bool:
@@ -485,11 +514,38 @@ def write_assignments(items: dict[str, BenchmarkAssignment], *, root: Path | Non
     return p
 
 
-def write_snapshot(snap: MonitorSnapshot, *, root: Path | None = None) -> Path:
-    """One dated file per run — the auditable book history (never overwritten across days)."""
+def write_snapshot(
+    snap: MonitorSnapshot, *, root: Path | None = None, rewrite_history: bool = False,
+) -> Path:
+    """One dated file per run — the auditable book history (never overwritten across days).
+
+    REFUSES TO REWRITE A SUPERSEDED DAY. That docstring line claimed the history is never
+    overwritten and nothing enforced it, so re-running `--ref <past date>` silently replaced that
+    day's file. I did exactly that while testing the point-in-time fix, and it is how the decision
+    look-ahead was found.
+
+    THE RULE IS "SUPERSEDED", NOT "NOT TODAY", and the difference matters in practice: the normal
+    daily run resolves to the LAST TRADING DAY, which is usually not today, so a not-today rule
+    would refuse the routine re-run. Rewriting the FRONT of the book is fine — same day, better
+    data. Rewriting a day that later snapshots already sit on top of is the destructive case, and
+    that is what this refuses.
+
+    Note that a past re-run now REPRODUCES: decisions and closes are both read as of the snapshot
+    date. So this is a guard against a future divergence (a code change, a ledger correction),
+    not against a known-bad rewrite.
+    """
     d = monitor_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     p = d / f"{snap.as_of.isoformat()}.json"
+    if p.exists() and not rewrite_history:
+        later = sorted(f.stem for f in d.glob("*.json")
+                       if _SNAPSHOT_DAY.fullmatch(f.stem) and f.stem > snap.as_of.isoformat())
+        if later:
+            raise FileExistsError(
+                f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
+                f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
+                f"then with what today's code and ledger produce. Pass rewrite_history=True if "
+                f"that is genuinely what you mean.")
     p.write_text(snap.model_dump_json(indent=2) + "\n")
     return p
 

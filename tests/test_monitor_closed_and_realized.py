@@ -130,6 +130,108 @@ def test_a_re_entered_ticker_does_not_mark_the_live_position_closed() -> None:
         f"mark both True and quietly drop the live row out of the open-only spread.")
 
 
+@pytest.mark.parametrize(
+    ("ref", "expect_closed", "expect_realized"),
+    [
+        ("2026-07-20", set(), 0),                              # before BOTH exits
+        ("2026-07-21", {"V-IT-screen2-20260706"}, 1),           # IT exits this day, SMPL has not
+        ("2026-07-22", {"V-IT-screen2-20260706",
+                        "V-SMPL-screen2-20260706"}, 2),         # both exits are now history
+    ],
+    ids=["before-both-exits", "after-IT-only", "after-both"],
+)
+def test_closure_state_is_read_as_of_the_snapshot_date(
+    ref: str, expect_closed: set[str], expect_realized: int,
+) -> None:
+    """OPERATOR REVIEW P1 ON #418 — LOOK-AHEAD, in the one module whose price path refuses it.
+
+    `closed_decision_ids`/`pair_closes` counted every close in the ledger regardless of WHEN it
+    happened, so `vinci monitor --ref <past date>` marked positions closed and printed their
+    realized P&L for exits that had not occurred at that point in the book. Measured before the
+    fix: at ref 2026-07-20 the code reported 2 closes against a truth of 0; at 2026-07-21, 2
+    against 1. A historical snapshot was therefore not reproducible — while `bars_on_or_before`
+    beside it was carefully refusing future bars.
+
+    IT exits 2026-07-21 and SMPL 2026-07-22, so the committed ledger supplies all three states
+    without a synthetic row. The boundary case is deliberate: a close is visible ON its exit date,
+    not the day after.
+    """
+    from vinci.monitor import closed_decision_ids, pair_closes
+
+    ledger = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
+    raw = [json.loads(ln) for ln in ledger.read_text().splitlines() if ln.strip()]
+    as_of = date.fromisoformat(ref)
+    assert closed_decision_ids(raw, as_of=as_of) == expect_closed, (
+        f"as of {ref} the book's closure state is wrong — a close dated after that day was "
+        f"counted, which is look-ahead")
+    assert len(pair_closes(raw, as_of=as_of)) == expect_realized, (
+        f"as of {ref} the realized view reported P&L for an exit that had not happened")
+
+
+def test_a_superseded_day_cannot_be_silently_rewritten(tmp_path: pathlib.Path) -> None:
+    """FOUND BY DOING IT. Verifying the point-in-time fix meant running `monitor --ref 2026-07-20`,
+    which silently REPLACED that committed snapshot — and comparing the two is how the decision
+    look-ahead above was found.
+
+    `write_snapshot`'s docstring already claimed the history is "never overwritten across days";
+    nothing enforced it.
+
+    THE RULE IS "SUPERSEDED", NOT "NOT TODAY". The normal daily run resolves to the LAST TRADING
+    DAY, which is usually not today, so a not-today rule would refuse the routine re-run — the
+    first cut of this guard did exactly that. Rewriting the FRONT of the book is fine; rewriting a
+    day that later snapshots sit on top of is not.
+    """
+    from vinci.monitor import compute_spread, write_snapshot
+
+    (tmp_path / "data" / "monitor").mkdir(parents=True)
+
+    def snap(d: date) -> MonitorSnapshot:
+        return MonitorSnapshot(as_of=d, rows=[], spread=compute_spread([]))
+
+    older, newer = date(2026, 3, 1), date(2026, 3, 2)
+    first = write_snapshot(snap(older), root=tmp_path)
+    # RE-RUNNING THE FRONT OF THE BOOK IS ROUTINE — nothing sits on top of it yet
+    assert write_snapshot(snap(older), root=tmp_path) == first, (
+        "the guard refused a re-run of the latest day, which is the normal daily operation")
+    write_snapshot(snap(newer), root=tmp_path)
+    # now `older` is superseded, and rewriting it would replace what the book recorded then
+    with pytest.raises(FileExistsError, match="later snapshot"):
+        write_snapshot(snap(older), root=tmp_path)
+    assert write_snapshot(snap(older), root=tmp_path, rewrite_history=True) == first
+
+
+def test_omitting_as_of_still_returns_the_whole_book() -> None:
+    """The filter is OPT-IN: existing callers that want the full realized book (and the
+    unpairable/duplicate refusals it performs) keep getting it."""
+    from vinci.monitor import closed_decision_ids, pair_closes
+
+    ledger = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
+    raw = [json.loads(ln) for ln in ledger.read_text().splitlines() if ln.strip()]
+    assert len(pair_closes(raw)) == 2
+    assert len(closed_decision_ids(raw)) == 2
+
+
+def test_a_malformed_close_is_still_refused_even_when_dated_past_the_as_of() -> None:
+    """THE FILTER MUST NOT BECOME AN ESCAPE HATCH. Filtering happens AFTER pairing, so a close
+    that points at nothing still raises even when its exit date is beyond ``as_of`` — otherwise a
+    future-dated malformed row would sit unexamined in the ledger until the day it came into
+    scope."""
+    from vinci.monitor import pair_closes
+
+    ledger = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
+    raw = [json.loads(ln) for ln in ledger.read_text().splitlines() if ln.strip()]
+    orphan = json.loads(json.dumps(next(r for r in raw if "C-" in json.dumps(r))))
+    payload = json.loads(orphan["payload"]) if isinstance(orphan["payload"], str) else \
+        orphan["payload"]
+    payload["entry_id"] = "C-ORPHAN"
+    payload["closes_entry_id"] = "V-DOES-NOT-EXIST"
+    payload["exit_price_as_of"] = "2099-01-01"
+    orphan["payload"] = json.dumps(payload)
+    orphan["entry_id"] = "C-ORPHAN"
+    with pytest.raises(ValueError, match="must close something"):
+        pair_closes([*raw, orphan], as_of=date(2026, 8, 11))
+
+
 def test_the_closed_set_is_keyed_on_decisions_over_the_real_ledger() -> None:
     """MUTATION FINDING: the artifact pin above cannot catch a code regression, because the
     artifact is STATIC — mutating the keying does not regenerate it, so the test stayed green.
@@ -196,3 +298,31 @@ def test_a_legacy_snapshot_without_the_new_fields_still_loads() -> None:
     assert snap.realized == [], "a legacy snapshot invented a realized book"
     assert snap.spread.closed_n == 0 and snap.spread.spread_open_only is None
     assert all(not r.closed for r in snap.rows), "legacy rows defaulted to closed"
+
+
+def test_decisions_are_read_as_of_the_snapshot_date_too() -> None:
+    """THE LOUDER HALF OF THE P1, and a mutation finding on my own fix.
+
+    The review flagged the CLOSE half; the same defect sat on the ENTRY half. Re-running
+    `--ref 2026-07-20` marked SMPL's 2026-08-04 re-entry into that day's book with
+    ``days_elapsed: -15`` — a position that did not exist yet.
+
+    First fixed inline in the CLI, where the only available pin was a STATIC artifact — so
+    mutation went green on it, exactly as it had for the ticker-keying. Moved next to
+    ``closed_decision_ids`` and exercised against the real ledger."""
+    from vinci.monitor import decisions_as_of, entry_of
+
+    ledger = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
+    raw = [json.loads(ln) for ln in ledger.read_text().splitlines() if ln.strip()]
+
+    def ids(d: str) -> set[str]:
+        return {entry_of(r)["entry_id"] for r in decisions_as_of(raw, as_of=date.fromisoformat(d))}
+
+    # SMPL's re-entry is dated 2026-08-04 — the live case, not a constructed one
+    assert "V-SMPL-screen2-20260729" not in ids("2026-07-20"), (
+        "a decision entered 2026-08-04 appeared in the book as of 2026-07-20 — it would carry "
+        "negative days_elapsed")
+    assert "V-SMPL-screen2-20260729" in ids("2026-08-04"), "a decision is invisible on its own "\
+        "entry date"
+    assert len(ids("2026-06-16")) == 0, "the book predates its first decision and is not empty"
+    assert len(ids("2026-08-11")) == 4, "the full book as of 2026-08-11 is not 4 decisions"

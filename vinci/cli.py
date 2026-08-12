@@ -1559,8 +1559,6 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
     # stops the run rather than rendering wrong.
     rows_raw = mon.decision_rows(ledger_all)
-    realized = mon.pair_closes(ledger_all)
-    closed_entry_ids = mon.closed_decision_ids(ledger_all)
     assignments = mon.read_assignments(root)
     missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
     if missing:
@@ -1599,9 +1597,27 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         raise RuntimeError(f"no EOD session found within 7 days of {day}")
 
     now_date, now_bars = bars_on_or_before(ref)
-    rows: list[mon.PositionRow] = []
+    # THE BOOK'S CLOSURE STATE IS READ AS OF THE SNAPSHOT DATE, not as of "whatever the ledger holds
+    # now" (review P1 on #418). Anchored on `now_date` rather than `ref` because `now_date` is what
+    # the snapshot claims to BE — a close falling between the last trading bar and a non-trading
+    # `ref` has not happened yet in the book this file describes. Without this, `monitor --ref
+    # <past date>` marked positions closed and printed realized P&L for exits that had not occurred,
+    # so a historical snapshot was not reproducible — while the price path beside it was carefully
+    # refusing future bars.
+    realized = mon.pair_closes(ledger_all, as_of=now_date)
+    closed_entry_ids = mon.closed_decision_ids(ledger_all, as_of=now_date)
     notes: list[str] = []
-    for r in rows_raw:
+    # AND THE DECISIONS THEMSELVES ARE POINT-IN-TIME. The review flagged the CLOSE half; the same
+    # defect sat on the entry half and was louder — re-running `--ref 2026-07-20` marked SMPL's
+    # 2026-08-04 re-entry into that day's book with `days_elapsed: -15`, a position that did not
+    # exist yet. Both halves now read the ledger as of the snapshot date.
+    asof_rows = mon.decisions_as_of(ledger_all, as_of=now_date)
+    if len(asof_rows) != len(rows_raw):
+        notes.append(
+            f"{len(rows_raw) - len(asof_rows)} decision(s) entered after {now_date} are excluded "
+            f"— this book is the state as of that date, not today's ledger re-marked backwards")
+    rows: list[mon.PositionRow] = []
+    for r in asof_rows:
         payload = json.loads(r["payload"])
         # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
         # on the model's helpers, and reading the raw dict here would be a second definition of
@@ -1667,6 +1683,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
                                freshness=fresh, notes=notes, realized=realized_rows)
     print(mon.render_table(snap))
+    # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
+    # replacing a day that later snapshots sit on top of would overwrite what the book recorded
+    # then. `write_snapshot` decides which case this is.
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
     return 0

@@ -8538,6 +8538,24 @@ the one view saying what the fund actually EARNED was unreadable by anything not
 while the marked-to-market rows beside it were fully structured. `MonitorSnapshot.realized` now
 carries it, and the note line is RENDERED from the typed row (`RealizedRow.note`) so display cannot
 drift from data — the standing rule that display formatting is never load-bearing.
+**LOOK-AHEAD IN THE HISTORICAL BOOK — REVIEW P1 ON #418, AND IT WAS BROADER THAN REPORTED.** The
+monitor's price path carefully refuses a future bar; the LEDGER path did not. `monitor --ref <past
+date>` counted every close in today's ledger regardless of when it happened (at ref 2026-07-20 it
+reported 2 closes against a truth of 0), AND — the half the review did not see, found by comparing a
+re-run against the original file — it counted every DECISION too, marking SMPL's 2026-08-04
+re-entry into the 2026-07-20 book with **`days_elapsed: -15`**, a position that did not exist yet.
+Both halves now read the ledger as of the snapshot date (`monitor.decisions_as_of`,
+`pair_closes(as_of=)`, `closed_decision_ids(as_of=)`), filtering AFTER pairing so the
+unpairable/duplicate-close refusals still see the whole ledger. **VERIFIED BY REPRODUCTION:
+re-running 2026-07-20 today now returns the original day's three rows and its spread to full
+precision** (0.1442638831149694 both ways), with zero realized rows — both exits were still in the
+future then.
+**AND THE BOOK HISTORY HAD NO WRITE PROTECTION.** `write_snapshot`'s docstring claimed the history
+is "never overwritten across days" and nothing enforced it — I silently replaced the committed
+2026-07-20 snapshot while testing, which is how the decision look-ahead surfaced. It now refuses to
+rewrite a SUPERSEDED day. The rule is deliberately "superseded", not "not today": the normal daily
+run resolves to the LAST TRADING DAY, so a not-today rule refuses the routine re-run — the first cut
+of the guard did exactly that.
 **A PIN THAT COULD NOT FAIL, caught by mutation for the third time in this sequence.** The
 re-entry guard was asserted against the COMMITTED ARTIFACT, which is static — mutating the keying
 does not regenerate it, so the test stayed green while the logic was wrong. The keying moved to
