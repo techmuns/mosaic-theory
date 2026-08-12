@@ -12,7 +12,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import ConceptPoint, extract_points
+from vinci.edgar.concepts import ConceptPoint, extract_points, share_count_change
 from vinci.eod.features import _close_on_or_before, compute_price_features, relative_return
 from vinci.schemas.data_record import (
     CoverageTier,
@@ -364,6 +364,24 @@ def enrich_with_fundamentals(
     ev_unknown: DataField[float] = DataField.unknown(
         source="EDGAR", tier=SourceTier.DERIVED, note="EV/EBITDA deferred — needs net-debt/EV"
     )
+    # NET SHARE ISSUANCE — evidence-strip input, INFORM-ONLY (never a rank input). Free: it reads
+    # the SAME `facts` already fetched above, through the one shared `share_count_change`, so the
+    # displayed number is by construction the same quantity the dilution-spiral demote uses.
+    # UNKNOWN — never 0.0 — when the series is too short: a fabricated "flat" reads as a confirmed
+    # unchanged share count, the opposite of "we could not tell".
+    share_pts = [(p.period_end, p.value) for p in extract_points(facts, "shares")
+                 if p.value is not None] if facts else []
+    chg = share_count_change(share_pts)
+    shares_change: DataField[float] = (
+        DataField.present(
+            chg.change, as_of=chg.to_date, source="EDGAR", tier=SourceTier.EDGAR,
+            note=(f"XBRL shares {chg.from_value:,.0f} ({chg.from_date.isoformat()}) → "
+                  f"{chg.to_value:,.0f} ({chg.to_date.isoformat()})"),
+        )
+        if chg is not None
+        else DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR,
+                               note="fewer than 2 usable XBRL share points")
+    )
     fundamentals = Fundamentals(
         ev_ebitda=ev_unknown,
         ev_ebitda_pctile_vs_history=ev_unknown,
@@ -373,6 +391,7 @@ def enrich_with_fundamentals(
         op_income_sign=snap.op_income_sign,
         net_leverage=snap.net_leverage,
         net_debt_to_ocf=snap.net_debt_to_ocf,
+        share_count_change_730d=shares_change,
     )
     return rec.model_copy(update={"fundamentals": fundamentals})
 

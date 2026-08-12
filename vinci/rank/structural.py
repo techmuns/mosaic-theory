@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points
+from vinci.edgar.concepts import extract_points, share_count_change
 from vinci.graph.filings import html_to_text
 from vinci.netcache import CachedHttp, HttpError
 from vinci.rank.profile import StructuralDisqualifier
@@ -35,7 +35,6 @@ from vinci.schemas.data_record import PriceFeatures
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _FILINGS_WINDOW_DAYS = 540  # ~18 months of 8-Ks around the de-rating
-_SHARES_WINDOW_DAYS = 730  # trailing ~2y for the dilution-trajectory (mirrors the dossier)
 _DILUTION_SHARE_GROWTH = 0.50  # +50% shares over the window = aggressive dilution (face-validity)
 _DILUTION_PRICE_DROP = -0.50  # ≤ −50% from the 52w high confirms the "into a falling price" leg
 
@@ -99,15 +98,14 @@ def _dilution_spiral(
 ) -> StructuralDisqualifier | None:
     """Shares rising materially into a falling price = death-spiral signature. Uses the candidate's
     already-computed TRAILING drawdown (never a forward return)."""
-    if len(shares) < 2:
+    # ONE implementation of "share count change over the trailing window", shared with the
+    # screen-side evidence strip (vinci.edgar.concepts). The demote and the displayed number must
+    # be the same quantity — two computations would agree today and diverge on the first edit.
+    chg = share_count_change(shares)
+    if chg is None:
         return None
-    series = sorted(shares)
-    anchor = series[-1][0] - timedelta(days=_SHARES_WINDOW_DAYS)
-    window = [s for s in series if s[0] >= anchor] or series
-    (d0, v0), (d1, v1) = window[0], window[-1]
-    if v0 <= 0 or v1 <= 0:
-        return None
-    growth = v1 / v0 - 1.0
+    d0, v0, d1, v1 = chg.from_date, chg.from_value, chg.to_date, chg.to_value
+    growth = chg.change
     dd = prices.drawdown_from_high
     fell = dd.is_evaluable and dd.value is not None and dd.value <= _DILUTION_PRICE_DROP
     if growth >= _DILUTION_SHARE_GROWTH and fell and dd.value is not None:

@@ -139,6 +139,9 @@ export async function getRankedQueue() {
       // run (it is computed from bars in eod/features), so it stays null until the weekly job next
       // re-screens — the queue cell degrades to the bare ratio, which is the pre-sparkline state.
       volumeTrend: Array.isArray(r.volume_trend) ? r.volume_trend : null,
+      // the evidence strip — inform-only context composed by the WRITER (vinci/evidence.py), null
+      // when nothing is known for the name or the snapshot predates the field
+      context: r.context ?? null,
       liquidityTier: r.liquidity_tier,
       advUsd: r.adv_usd,
       marketCap: r.market_cap,

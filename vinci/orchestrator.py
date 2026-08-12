@@ -16,6 +16,7 @@ from pathlib import Path
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
+from vinci.evidence import evidence_strip
 from vinci.labels import resolve_label
 from vinci.progress import ProgressFn
 from vinci.rank import (
@@ -85,10 +86,15 @@ def rank_from_snapshots(
     # CIQ-GICS overlay joins at the frontend build from the committed dossier index, so a dossier
     # landing between rank runs upgrades its name without a re-rank.
     sic_by_id = {c.candidate_id: c.data_record.identity.sic for c in cands}
+    # The EVIDENCE STRIP is composed HERE, in the writer, for the same reason the labels are: it is
+    # presented context, and the scorer must never be able to read it. Ranking is already finished
+    # by this line, so the strip cannot influence an order it is attached to.
+    rec_by_id = {c.candidate_id: c.data_record for c in cands}
     return [
         r.model_copy(update={
             "sector": (lbl := resolve_label(sic_by_id.get(r.candidate_id))).sector,
             "industry": lbl.industry,
+            "context": (evidence_strip(rec) if (rec := rec_by_id.get(r.candidate_id)) else None),
         })
         for r in ranked
     ]

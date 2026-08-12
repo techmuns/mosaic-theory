@@ -21,6 +21,12 @@ const COLS = [
   { key: "volumeSpike", label: "Volume vs 90d", num: true,
     title: "The latest single session's share volume ÷ its own 90-day average, as of the screen "
          + "date. A ONE-SESSION reading — unlike the windowed axes, it can differ the next day." },
+  // Inform-only CONTEXT, never a rank input — it sits after everything the score is built from so
+  // the row reads score-then-evidence. Sorts as text; there is no ordering claim in a strip.
+  { key: "context", label: "Evidence",
+    title: "Context the score does NOT use: net share issuance over ~2y (shrinking = the bullish "
+         + "twin of the dilution demote) and distance off the 52-week low. Drawdown is not repeated "
+         + "here — the Depth column already carries it." },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
 const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here
@@ -43,11 +49,6 @@ function dispIndustry(r) {
   return (GICS[r.ticker] && GICS[r.ticker].industry) || r.industry || "—";
 }
 
-// The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
-// not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
-// arithmetic on — and that is exactly how it once drifted 12 days and 95 names behind the screen
-// feeding it (STATE.md §5). 10 days = the weekly cadence plus slack; a face-validity threshold, not
-// tuned on anything. Says how old and what to do, never how stale is "too" stale to act on.
 // A 13-week volume sparkline for the queue cell. The NUMBER says today; the LINE says which way it
 // has been moving — the distinction a one-session ratio structurally cannot make, and the reason a
 // name reads 3.6× on one screen date and 0.63× twelve days later. It DRAWS ONLY: no "building" /
@@ -72,6 +73,11 @@ function volSpark(series) {
     + ` points="${pts}"/></svg>`;
 }
 
+// The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
+// not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
+// arithmetic on — and that is exactly how it once drifted 12 days and 95 names behind the screen
+// feeding it (STATE.md §5). 10 days = the weekly cadence plus slack; a face-validity threshold, not
+// tuned on anything. Says how old and what to do, never how stale is "too" stale to act on.
 const QUEUE_STALE_DAYS = 10;
 function stalenessChip(asOf) {
   if (!asOf) return "";
@@ -253,6 +259,12 @@ function renderRows() {
       + `${vs < 10 ? vs.toFixed(2) : vs.toFixed(1)}×</td>`;
   };
 
+  // The evidence strip. Rendered as the writer composed it — no re-parsing, no re-formatting, and
+  // no direction word derived from it beyond the arrows the composer already put in.
+  const evidenceCell = (r) => (r.context
+    ? `<td class="muted" style="font-size:11.5px; line-height:1.3;"><span style="display:inline-block; max-width:150px;">${escapeHtml(r.context)}</span></td>`
+    : `<td><span class="muted">${DASH}</span></td>`);
+
   body.innerHTML = rows.map((r) => {
     const sunk = r.structurallyDisqualified;
     const flag = sunk && r.structuralFlag
@@ -267,7 +279,7 @@ function renderRows() {
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>
-        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}
+        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}${evidenceCell(r)}
         <td class="num">${fmtMoney(r.advUsd)}</td>
         <td class="num">${r.marketCap == null ? `<span class="muted">${DASH}</span>` : fmtMoney(r.marketCap)}</td>
       </tr>`;
