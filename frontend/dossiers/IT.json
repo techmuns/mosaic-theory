@@ -8030,6 +8030,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-06T09:55:49.201394Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Unknown",
   "industry": {
     "value": "IT Consulting and Other Services",

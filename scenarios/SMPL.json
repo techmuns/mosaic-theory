@@ -22,6 +22,7 @@
   "analyst": "nogods404",
   "spot": 11.33,
   "spot_source": "EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)",
+  "spot_as_of": "2026-08-04",
   "facts": {
     "d_and_a": {
       "value": 21.431,

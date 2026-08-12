@@ -20,6 +20,7 @@
   "analyst": "analyst",
   "spot": 25.37,
   "spot_source": "Polygon AORT close 2026-07-20 (live at underwrite)",
+  "spot_as_of": "2026-07-20",
   "facts": {
     "net_debt": {
       "value": 202.393,

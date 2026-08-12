@@ -4265,6 +4265,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-07-10T07:06:48.016414Z",
   "extraction_version": null,
+  "price_store": null,
   "sector": "Technology",
   "industry": {
     "value": "Construction Machinery and Heavy Transportation Equipment",

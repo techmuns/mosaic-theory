@@ -618,6 +618,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-29 · assembled 2026-08-06 09:55 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
+- **Price store:** unstamped — this dossier predates the store stamp
 - **Panel age:** oldest panel 8d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-06 build
 - **Consensus age:** consensus 10d old (2026-07-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides

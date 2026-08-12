@@ -1378,6 +1378,28 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     # beside the write rather than blocking it. Kept OUT of `problems` on purpose.
     for note in sc.limit_notes(incoming):
         print(f"  ⚠ limit: {note}")
+    # THE SPOT NOTES PRINT AND DO NOT REFUSE either, and that is measured rather than cautious:
+    # run from this worktree a refusal would block BRBR and EPAM — both correct, both struck at a
+    # date past this store's frontier. `vinci audit spot` sweeps the committed corpus; this catches
+    # a record at the moment it is written, while the analyst is still holding it.
+    try:
+        _cfg = get_config()
+        with Store(_cfg.db_path) as _store:
+            _iid = EntityResolver.from_config(_cfg).resolve_ticker(
+                incoming.ticker).internal_id
+            _spot_notes = sc.spot_notes(
+                incoming, store=f"`{_cfg.db_path.absolute().parent.parent.name}`",
+                name_frontier=_store.price_frontier_for(_iid),
+                bar_close=(_store.close_on(_iid, incoming.spot_as_of)
+                           if incoming.spot_as_of else None))
+    except Exception as exc:  # noqa: BLE001 — deliberate, and the asymmetry is the point
+        # A NOTE-ONLY CHECK MUST NOT BLOCK A WRITE — the exact OPPOSITE of the rule for
+        # `_committed_limit`, whose bare `except` silently disabled a REFUSAL and let a BUY past a
+        # stated limit. Swallowing here costs a note; swallowing there cost a gate. The failure is
+        # printed rather than hidden, so a check that stopped working still says so.
+        _spot_notes = [f"could not be checked — {type(exc).__name__}: {exc}"]
+    for note in _spot_notes:
+        print(f"  ⚠ spot: {note}")
 
     # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:
     # a confirmed verdict whose decision row carries no close row is an open position.
@@ -1565,6 +1587,61 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     print(mon.render_table(snap))
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
+    return 0
+
+
+def _cmd_audit_spot(args: argparse.Namespace) -> int:
+    """SPOT audit — every committed record's spot against the bar it claims to be. READ-ONLY.
+
+    WHY A FLEET SWEEP AND NOT ONLY A WRITE-PATH CHECK. A gate on `scenario-create` /
+    `scenario-supersede` never looks at a record again after it lands, and all eight committed
+    records predate the field — so a write-path seat alone would leave the corpus permanently
+    unexamined. This is the seat that can actually run against it (CORPUS BEFORE SYNTHETIC).
+
+    IT PRINTS AND NEVER REFUSES, and the corpus is why. Run from this worktree, a
+    refuse-on-mismatch rule would block BRBR and EPAM — both CORRECT, both struck at 2026-08-07,
+    both resolving only in the `-sl` store while this one reaches 2026-08-04. Every spot is
+    auditable somewhere and none is auditable everywhere, so the exit code stays 0 on a note.
+    """
+    import vinci.scenarios as sc
+    from vinci.store.store import Store
+
+    root = Path.cwd()
+    cfg = get_config()
+    resolver = EntityResolver.from_config(cfg)
+    recs = sorted(sc.records_dir(root).glob("*.json"))
+    recs = [p for p in recs if not p.stem.startswith("_")]
+    if not recs:
+        print("no committed scenario records — nothing to audit")
+        return 0
+
+    with Store(cfg.db_path) as store:
+        # ABSOLUTE BEFORE NAMED: `cfg.db_path` is relative ("data/vinci.db"), so naming the
+        # worktree off it directly yields an empty string. `.absolute()` keeps the symlink
+        # (which worktree DECLARED it); `.resolve()` follows it (whose bytes these are).
+        declared, real = cfg.db_path.absolute(), cfg.db_path.resolve()
+        label = f"`{declared.parent.parent.name}`"
+        via = ("" if declared == real
+               else f" → `{real.parent.parent.name}` (symlinked)")
+        print(f"=== spot audit: {len(recs)} record(s) vs {label}{via}, "
+              f"frontier {store.price_frontier()} ===")
+        clean = notes_total = 0
+        for p in recs:
+            rec = sc.ScenarioRecord.model_validate_json(p.read_text())
+            iid = resolver.resolve_ticker(rec.ticker).internal_id
+            bar = (store.close_on(iid, rec.spot_as_of) if rec.spot_as_of else None)
+            notes = sc.spot_notes(rec, bar_close=bar, store=label,
+                                  name_frontier=store.price_frontier_for(iid))
+            if not notes:
+                clean += 1
+                print(f"  {rec.ticker:6} ${rec.spot:<10,.4g} {rec.spot_as_of}  ✓ matches this "
+                      f"store's bar exactly")
+                continue
+            notes_total += len(notes)
+            print(f"  {rec.ticker:6} ${rec.spot:<10,.4g} {rec.spot_as_of or 'unstated':10}")
+            for n in notes:
+                print(f"         ⚠ {n}")
+    print(f"\n{clean} clean · {notes_total} note(s) — notes never change the exit code")
     return 0
 
 
@@ -3069,6 +3146,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_r1.add_argument("--as-of", dest="as_of", help="date stamp for the report (default: today)")
     p_r1.add_argument("--out", type=Path, help="write the report here as well as printing it")
     p_r1.set_defaults(func=_cmd_audit_r1)
+    p_spot = audit_sub.add_parser(
+        "spot", help="every record's spot against the bar it claims to be (read-only; notes print)")
+    p_spot.set_defaults(func=_cmd_audit_spot)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

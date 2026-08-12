@@ -8811,6 +8811,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-09T18:28:51.181215Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Unknown",
   "industry": {
     "value": "Passenger Ground Transportation",
