@@ -293,6 +293,9 @@ def test_a_manual_structural_disqualifier_survives_the_weekly_refresh() -> None:
         rows = [json.loads(x) for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x]
         victim = rows[0]["ticker"]  # the CURRENT top name — the most visible thing to lose
         assert rows[0]["structurally_disqualified"] is False
+        # measured, never hardcoded: the committed queue's own flag count moves with every screen
+        # (it was 0 before the scan went on the schedule, 54 after), so a literal here rots
+        baseline = sum(1 for r in rows if r.get("structural_flag"))
         rows[0]["structural_flag"] = {
             "signal": "going-concern", "detail": "substantial doubt language in the 8-K",
             "source": "8-K 0000000000-26-000001 item 8.01 filed 2026-08-01"}
@@ -301,7 +304,8 @@ def test_a_manual_structural_disqualifier_survives_the_weekly_refresh() -> None:
             "\n".join(json.dumps(r) for r in rows) + "\n")
 
         out = refresh_queue(Config(data_dir=tmp))
-        assert out["carried_structural"] == 1, "the operator's assessment was not carried forward"
+        assert out["carried_structural"] == baseline + 1, (
+            "the operator's assessment was not carried forward")
         after = {r.ticker: r for r in (
             RankedCandidate.model_validate_json(x)
             for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x.strip())}
