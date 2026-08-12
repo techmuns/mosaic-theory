@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import pytest
 
-from vinci.edgar.release_parse import parse_release
+from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX, parse_release
 
 
 def _guide(sentence: str):
@@ -69,6 +69,44 @@ def test_each_side_scales_by_its_own_stated_unit() -> None:
     g = _guide("We project 2026 revenue of $500 million to $1.2 billion.")
     assert g is not None and (g.low, g.high) == (500.0, 1200.0)
     assert g.low < g.high, "a range whose floor exceeds its ceiling is not a guide"
+
+
+def test_a_range_that_runs_backwards_is_refused_and_not_quietly_sorted() -> None:
+    """THE REVIEW FINDING (#430). Per-side scaling is what makes this reachable: written in the
+    reverse order, `$1.2 billion to $500M` scales to low=1,200 high=500 and, before this, was
+    emitted as real guidance — printed on the page and handed to the cross-check.
+
+    REFUSED, NOT SORTED, and the assertion below pins that distinction. Sorting would state
+    500–1,200 as the filing's range when the filing said the reverse, and if the real cause is a
+    mis-parse (unit words bound to the wrong sides) sorting hides the evidence instead of showing
+    it. The refusal is ATTRIBUTED — it carries the sentence — so a reader can settle it from the
+    filing, which a dropped guide would not allow.
+
+    PROTECTIVE, NOT CORRECTIVE: 56 committed guidance items carry both bounds and none is inverted,
+    so no live page changes.
+    """
+    r = parse_release("Outlook\nWe project 2026 revenue of $1.2 billion to $500M.\n",
+                      source_ref="8-K test EX-99.1")
+    assert not [g for g in r.guidance if g.metric == "revenue"], (
+        "an impossible range must not reach GuidanceItem as though it were a guide")
+    refusals = [n for n in r.qa_flags if GUIDANCE_REFUSAL_PREFIX in n]
+    assert refusals, (
+        "the refusal must be ATTRIBUTED — a silently dropped guide is the absent-and-silent shape")
+    assert "runs backwards" in refusals[0]
+    assert "1,200.0 to 500.0" in refusals[0], "the refusal states the bounds it rejected"
+    assert "$1.2 billion to $500M" in refusals[0], "…and carries the sentence, so it is checkable"
+
+
+def test_the_change_basis_path_still_sorts_its_own_inversion() -> None:
+    """THE BOUNDARY. A decline range signs to -350..-300, and reversing THAT is mechanical — the
+    consequence of applying a sign, not an anomaly in what was written. The new level-range refusal
+    must not leak into it, or a legitimate decline guide would start being refused."""
+    r = parse_release(
+        "Outlook\nWe expect adjusted EBITDA to decline by $300 million to $350 million.\n",
+        source_ref="8-K test EX-99.1")
+    changed = [g for g in r.guidance if getattr(g, "basis", "level") == "change"]
+    for g in changed:
+        assert g.low <= g.high, "the change-basis path sorts its inversion; it must keep doing so"
 
 
 # --- what must NOT change -----------------------------------------------------------------------

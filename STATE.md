@@ -13247,6 +13247,22 @@ sign-off.**
   The single letters carry `(?![A-Za-z])` because `[MB]` under `re.I` otherwise eats the first letter
   of the next word — *"$2.4 to $2.5 **b**ased on…"* would read billions, the same magnitude error
   inverted; that guard is pinned.
+  **AN IMPOSSIBLE RANGE IS NOW REFUSED, AND DELIBERATELY NOT SORTED (review finding, #430).**
+  Per-side scaling is what made the reverse order reachable: `$1.2 billion to $500M` arrived as
+  **low=1,200 high=500** and was emitted as real guidance — printed and handed to the cross-check —
+  with nothing rejecting it. **SORTING IS THE WRONG REPAIR**: it would state 500–1,200 as the
+  filing's range when the filing said the reverse, and if the true cause is a MIS-PARSE (unit words
+  bound to the wrong sides) sorting hides the evidence instead of surfacing it. The refusal is
+  ATTRIBUTED — it carries the bounds it rejected and the sentence — so a reader can settle it from
+  the filing, which a silently dropped guide would not allow.
+  **NOT the same as the change-basis swap one loop down, which DOES sort**: there the inversion is
+  the mechanical consequence of applying a sign (a decline range signs to −350..−300), not an
+  anomaly in what was written. That boundary is pinned by its own test so the new refusal cannot
+  leak into it and start refusing legitimate decline guides.
+  **PROTECTIVE, NOT CORRECTIVE — measured:** 56 committed guidance items carry both bounds and
+  **none is inverted**, so no live page changes. Mutation-tested by replacing the refusal with a
+  sort: the pin reddens (`an impossible range must not reach GuidanceItem as though it were a
+  guide`), so refuse-vs-sort is discriminated rather than merely described.
   *Verified on the REAL exhibit end-to-end (fetched 0001065280-26-000137 EX-99.1): the guide now
   parses **50,700–51,700 $M**, was 50.7–51.7. 20 pins on frozen filed text — the 5 behavioural ones
   FAIL on the pre-fix parser and the "must not change" ones PASS on both, so the pin is

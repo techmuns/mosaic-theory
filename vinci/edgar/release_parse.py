@@ -538,6 +538,23 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             governing = m["unitword"] or m["lowunit"]
             low *= _unit_scale(m["lowunit"] or governing)
             high *= _unit_scale(m["unitword"] or governing)
+        # AN IMPOSSIBLE RANGE ⇒ REFUSE, AND DO NOT SORT IT (review finding, #430). Per-side scaling
+        # is what makes this reachable: "$1.2 billion to $500M" arrives as low=1,200 high=500, and
+        # before this it was emitted as real guidance — printed on the page and fed to the
+        # cross-check. SORTING IS THE WRONG REPAIR: it would state 500–1,200 as the filing's range
+        # when the filing said the reverse, and if the true cause is a mis-parse (the unit words
+        # bound to the wrong sides) it hides the evidence of that instead of surfacing it.
+        # DIFFERENT FROM THE CHANGE-BASIS SWAP one loop down, which DOES sort: there the inversion
+        # is a mechanical consequence of applying a sign (a decline range signs to -350..-300), not
+        # an anomaly in what was written. Here nothing mechanical produced it.
+        # PROTECTIVE, NOT CORRECTIVE — measured across every committed dossier: 56 guidance items
+        # carry both bounds and NONE is inverted, so no live page changes.
+        if low > high:
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — the stated range runs backwards after unit "
+                f"normalisation ({low:,.1f} to {high:,.1f} {unit}), so the bounds cannot be read "
+                f"with confidence; verify against the filing: \"{vb[:150]}\" ({src})")
+            continue
         seen.add(metric)
         out.append(GuidanceItem(
             metric=metric, period=_period_for(text, m.start(), m.end(), vb),
