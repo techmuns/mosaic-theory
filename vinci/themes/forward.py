@@ -247,6 +247,70 @@ def freeze_baskets(
         real_tier=tuple(real_tier or ()), avoid_controls=ac)
 
 
+def baskets_from_mirror(mirror: dict[str, object]) -> FrozenBaskets:
+    """Rebuild the frozen baskets from a COMMITTED ``frontend/themes/<slug>.json`` mirror.
+
+    WHY THIS EXISTS. The ratification ledger and the frozen baskets are git-ignored by an explicit
+    standing decision (`.gitignore`: "derived, LOCAL-only … never committed"), so the only durable
+    record of a freeze is the frontend mirror. When the local files are gone — a different machine,
+    a fresh clone, a cleaned worktree — the Stage-4 forward measurement has NO input, and the whole
+    point of Stage 4 is a number that accrues over CALENDAR TIME. Three themes froze in July 2026;
+    two passed their 30-day horizon in early August with their diagnostics still reading
+    ``0 days forward from freeze``, because nothing could recompute them. This closes that gap
+    WITHOUT committing the ledger, which stays the operator's call.
+
+    REFUSES A NON-EMPTY BUY LEG. The mirror carries no per-name ratification date, and for a
+    RATIFIED name the entry date IS the ratification date — dating the BUY leg from the freeze
+    instead would silently measure a window the analyst never held. An all-PASSED (hold-none)
+    freeze has no such problem: every name entered at the freeze, which is exactly what
+    ``_cohort_fwd_mean`` already defaults to, so nothing is invented. Rebuild the BUY leg from the
+    local ledger, or re-freeze from the worksheet.
+    """
+    driver = str(mirror["driver"])
+    n_ratified = int(str(mirror.get("ratifiedCount", 0) or 0))
+    if n_ratified:
+        raise ValueError(
+            f"{driver}: the mirror reports {n_ratified} RATIFIED name(s) and carries no "
+            f"ratification dates — a BUY leg dated from the freeze would measure a window the "
+            f"analyst never held. Rebuild from the local ledger, or re-freeze from the worksheet.")
+    raw = mirror["names"]
+    if not isinstance(raw, list) or not raw:
+        raise ValueError(f"{driver}: mirror carries no committed names")
+    names: list[dict[str, object]] = [n for n in raw if isinstance(n, dict)]
+    if len(names) != len(raw):
+        raise ValueError(f"{driver}: {len(raw) - len(names)} malformed entries in `names`")
+    freeze_ts = str(mirror["freezeTimestamp"])
+
+    def field(n: dict[str, object], key: str) -> str:
+        return str(n.get(key, "") or "")
+
+    def cohort(tag: str) -> list[str]:
+        out: list[str] = []
+        for n in names:
+            tags = n.get("cohorts")
+            if isinstance(tags, list) and tag in tags:
+                out.append(field(n, "ticker"))
+        return out
+
+    all_committed = [field(n, "ticker") for n in names]
+    return freeze_baskets(
+        # Every name PASSED, dispositioned at the freeze. Reconstructed rather than read, and legal
+        # ONLY because the no-BUY-leg case above is the only one this function accepts.
+        [RatificationRecord(
+            ticker=field(n, "ticker"), cik="", driver=driver,
+            substructure_tag=field(n, "substructureTag"), grade=field(n, "grade"),
+            driver_tie=field(n, "driverTie"), grade_fact=field(n, "gradeFact"),
+            source_ref=field(n, "accession"), disposition=Disposition.PASSED,
+            rationale=field(n, "rationale"),
+            ratification_date=date.fromisoformat(freeze_ts[:10]))
+         for n in names],
+        all_committed, driver=driver, freeze_timestamp=freeze_ts,
+        layer_of={field(n, "ticker"): field(n, "substructureTag") for n in names},
+        watchlist=cohort("watchlist") or None,
+        avoid_controls=cohort("avoid-control") or None,
+        real_tier=cohort("real") or None)
+
+
 # --------------------------------------------------------------------------------------------------
 # Component 3 — the forward measurement (§4): LAYER-AWARE + §3c partial-kill + §4 power
 # --------------------------------------------------------------------------------------------------
