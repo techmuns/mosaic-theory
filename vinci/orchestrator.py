@@ -17,6 +17,7 @@ from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
 from vinci.progress import ProgressFn
 from vinci.scoring import score_ledger
+from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
 from vinci.store import Store
 from vinci.universe import benchmark_identity
@@ -79,7 +80,11 @@ def run_monthly(
             store.upsert_security(bench)
             ingest_prices(client, store, [bench], start=start, end=as_of)
         _scores, report = score_ledger(
-            store, as_of=as_of, cost_bps=cost_bps, benchmark_internal_id=f"IDX-{benchmark}"
+            store, as_of=as_of, cost_bps=cost_bps, benchmark_internal_id=f"IDX-{benchmark}",
+            # Wired here as well as in `vinci score` — see that call site's note.
+            # `scoring_report.md` is the artifact most readers open, so a kill test missing
+            # from it is missing.
+            baskets=resolve_baskets(cfg.data_dir / "followed.json", store.iter_securities()),
         )
         store.export_snapshots(cfg.snapshots_dir)
     (cfg.snapshots_dir / "scoring_report.md").write_text(report.to_markdown())

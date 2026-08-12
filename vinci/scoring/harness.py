@@ -19,21 +19,17 @@ from vinci.schemas.ledger import (
     sleeve_of,
 )
 from vinci.schemas.market import PriceBar
+
+# Imported under its old private name so the call sites below read unchanged. The DEFINITION moved
+# to `baseline`, because the basket must read "the price on this date" exactly as the benchmark
+# does — see that module's note on why it is shared rather than copied.
+from vinci.scoring.baseline import Basket, basket_return
+from vinci.scoring.baseline import close_on_or_before as _close_on_or_before
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
 
 _DEFAULT_COST_BPS = 25.0  # coarse small-cap one-way cost estimate (round-trip applied in metrics)
 _DEFAULT_BENCHMARK_ID = "IDX-IWM"
-
-
-def _close_on_or_before(bars: list[PriceBar], target: date) -> float | None:
-    chosen: float | None = None
-    for b in bars:  # bars come from the store ordered ascending by date
-        if b.bar_date <= target:
-            chosen = b.close
-        else:
-            break
-    return chosen
 
 
 def _daily_returns(bars: list[PriceBar], start: date, end: date) -> list[tuple[date, float]]:
@@ -51,10 +47,26 @@ def score_ledger(
     as_of: date,
     cost_bps: float = _DEFAULT_COST_BPS,
     benchmark_internal_id: str = _DEFAULT_BENCHMARK_ID,
+    baskets: dict[str, Basket] | None = None,
 ) -> tuple[list[VerdictScore], ScoreReport]:
-    """Score every ledger verdict as of ``as_of``; return per-verdict scores and the aggregate."""
+    """Score every ledger verdict as of ``as_of``; return per-verdict scores and the aggregate.
+
+    ``baskets`` maps sleeve key → its passive comparator (see ``vinci.scoring.baseline``). Supplied
+    by the caller rather than read here, because the follow list is a data-layer fact and the
+    scoring package resolves neither config nor tickers — the same reason the CLI resolves a
+    followed name's identity before ``log_verdict`` sees it. Absent → every sleeve's baseline
+    reports "not supplied" rather than silently reading zero, and both production paths are pinned
+    to supply it (``tests/test_quality_baseline.py``).
+    """
     bench_bars = store.get_price_history(benchmark_internal_id)
     bench_daily = dict(_daily_returns(bench_bars, date.min, as_of))
+    # Fetched ONCE per basket member, not per verdict: the windows differ per row but the series
+    # does not, and a followed book re-reading three full histories per verdict would be the
+    # slowest thing in the report for no gain.
+    basket_bars: dict[str, dict[str, list[PriceBar]]] = {
+        key: {t: store.get_price_history(iid) for t, iid in b.internal_ids.items()}
+        for key, b in (baskets or {}).items()
+    }
 
     scores: list[VerdictScore] = []
     pending = 0
@@ -91,6 +103,22 @@ def score_ledger(
                 pending += 1
             continue
 
+        # THE PASSIVE COMPARATOR, over THIS verdict's window — the counterfactual of holding the
+        # whole follow list from this entry date to this scoring date instead of picking within it.
+        # Computed per row (not once per sleeve) precisely because the windows differ: averaging a
+        # single basket return across rows entered months apart would compare the judgement's
+        # windows to a window nobody held.
+        # THE ROSTER IS TAKEN AS OF `entry_date`, so re-running this report after the follow list
+        # changes cannot move a historical verdict's comparator (operator review P1 on #409).
+        b_ret: float | None = None
+        b_note: str | None = None
+        b_members: tuple[str, ...] = ()
+        sleeve_key = sleeve_of(entry)
+        basket = (baskets or {}).get(sleeve_key)
+        if basket is not None:
+            b_ret, b_note, b_members = basket_return(
+                basket, basket_bars.get(sleeve_key, {}), entry_date, scoring_date)
+
         score = VerdictScore(
             entry_id=entry.entry_id,
             ticker=entry.ticker,
@@ -98,6 +126,9 @@ def score_ledger(
             resolved=resolved,
             name_return=total_return(entry.entry_price, exit_price),
             bench_return=total_return(bench_entry, bench_exit),
+            basket_return=b_ret,
+            basket_note=b_note,
+            basket_members=b_members,
             sector=entry.sector,  # carried through for the per-sector spread read
             machine_proposal=entry.machine_proposal,  # sealed at log time (2026-07-13 pivot)
             disposition=entry.disposition,
@@ -132,5 +163,6 @@ def score_ledger(
         n_pending=pending,
         book_daily=book_rets or None,
         bench_daily=bench_rets or None,
+        basket_labels={k: b.label for k, b in (baskets or {}).items()},
     )
     return scores, report

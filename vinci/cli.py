@@ -52,6 +52,7 @@ from vinci.schemas.ledger import (
     sleeve_of,
 )
 from vinci.scoring import score_ledger
+from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
 from vinci.sleeves import DEFAULT_SLEEVE
 from vinci.store import Store
@@ -1744,6 +1745,11 @@ def _cmd_score(args: argparse.Namespace) -> int:
         _scores, report = score_ledger(
             store, as_of=ref, cost_bps=args.cost_bps,
             benchmark_internal_id=f"IDX-{args.benchmark}",
+            # THE PASSIVE COMPARATOR each sleeve's kill test names. Wired at BOTH default paths
+            # (here and `run_monthly`) deliberately: #378's lesson was that a per-book number
+            # reachable from only one of them is invisible to every reader of the other.
+            baskets=resolve_baskets(
+                cfg.data_dir / "followed.json", store.iter_securities()),
         )
     print(report.to_markdown())
     if args.json:

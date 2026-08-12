@@ -8459,6 +8459,27 @@ enforceable version — "warn when a base year sits beyond the horizon" — is t
 costume, and it would fire on every R1 record by construction (R1 is timeless; see the two-clocks
 note). The pre-registered falsifier above is the control, and it reads off the ledger.
 
+**OPERATOR CONTRACT CHANGE — `data/followed.json` ENTRIES ARE NOW DATED (PR #409, operator review
+P1).** The quality sleeve's kill test compares its BUY leg against indexing the follow list, and the
+first cut read the roster as "whatever is in the file today" and applied it to every historical
+verdict. On an APPEND-ONLY ledger that is non-reproducible: adding a quality name next month
+silently rewrites the comparator for a BUY recorded last month — over a window in which that name
+was not followed at all — so the kill test's historical answer would depend on future roster edits.
+Two rules follow, and they are the operator's to keep:
+1. **Every follow entry states `followed_since`** (ISO date). It is REQUIRED — a name that cannot
+   be placed in time cannot be placed in a basket, and "assume always followed" is the look-ahead
+   itself. The three committed entries were backfilled from `git log -- data/followed.json`, not
+   chosen: **UBER 2026-08-07** (`fdb95f4`), **V 2026-08-10** (`63dc405`), **NFLX 2026-08-10**
+   (`b939ede`).
+2. **Removing a name is a TOMBSTONE, never a delete** — set `followed_until` (EXCLUSIVE; the last
+   day held is the day before it). A deleted entry takes its history with it and silently re-dates
+   every past basket that contained it.
+**CONSEQUENCE, STATED SO IT IS NOT MISREAD AS A BUG:** the quality book has no basket history yet.
+The roster as of 2026-08-06 is EMPTY, so any quality verdict entered before 2026-08-07 refuses its
+comparator with that reason rather than back-dating today's three names onto it. The kill test
+starts producing numbers once quality verdicts are entered after the follow dates and their
+horizons pass — which is the correct behaviour and the point of the fix.
+
 43. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
     memo answers the review with what was verified, what was refuted, what changed, and what the
     exit realized. Everything it needs is now committed.
