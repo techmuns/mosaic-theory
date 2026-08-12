@@ -1194,7 +1194,7 @@
       },
       "guidance_bridge": {
         "value": "EPS Normalized: latest guide 1.69 for FY 2023 (dated 2023-06-29) (stale — 1103d old); actual ≥ guided floor 2/3 resolved; most recent resolved: FY 2023 MISSED; Revenue: latest guide '322.00 - 332.00' for FQ4 2026 (dated 2026-07-09); actual ≥ guided floor 9/11 resolved; most recent resolved: FQ3 2026 MET; EBITDA: latest guide '52.00 - 57.00' for FQ4 2026 (dated 2026-07-09); actual ≥ guided floor 7/10 resolved; most recent resolved: FQ3 2026 MET; Capital Expenditure: latest guide '(20.00) - (25.00)' for FY 2026 (dated 2026-07-09); spend ≤ guided ceiling 6/8 resolved; most recent resolved: FY 2025 MISSED; Gross Margin %: latest guide 32.5 for FY 2026 (dated 2026-07-09); actual ≥ guided floor 4/10 resolved; most recent resolved: FQ2 2026 MISSED  [data ≥ 2026-07-21 · export date unverified]",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },
@@ -1246,7 +1246,7 @@
             "most_recent": "FQ2 2026 MISSED"
           }
         ],
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },

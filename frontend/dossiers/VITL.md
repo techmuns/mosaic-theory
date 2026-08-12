@@ -355,6 +355,8 @@ _export date unverified (data ≥ 2026-07-21)_
 | Capital Expenditure | '(70.00) - (75.00)' | FY 2026 | 2026-05-07 | 60d (stale) | spend ≤ ceiling 3/3 | FY 2025 MET |
 | Gross Margin % | 35.0 | FY 2027 | 2023-11-02 | 977d (stale) | actual ≥ floor 2/2 | FY 2022 MET |
 
+_CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
+
 - **Consensus stats (target + ratings):** Target price: mean $12.00, median $12.00, high/low 16.00/10.00, N 8/8; Ratings: Buy 2, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-21 · export date unverified] [24]
 - **Revision-event log (250 events · 11 broker-days)** — [44]  <!-- ds-table -->
 
@@ -578,7 +580,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [40] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
 [41] `EDGAR 8-K 0001193125-26-210294 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-ex99_1.htm`
 [42] `8-K 0001193125-26-210294 EX-99.1 (filed 2026-05-07)`
-[43] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+[43] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
 [44] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-07-21 · export date unverified]`
 [45] `CIQ Estimates→Surprise (annual)`
 [46] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-29`

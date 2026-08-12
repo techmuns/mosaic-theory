@@ -13138,6 +13138,40 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **"LATEST GUIDE" CARRIED A NUMBER THE COMPANY NEVER PUBLISHED (2026-08-12, PR-A).** Visa guided
+  FY26 revenue at *"the low end of low-teens"* — a RATE. The page showed **45,200.0** under "Latest
+  guide", cited to CIQ→Guidance as though quoting the company. **PROVEN, not inferred: Visa's FY25
+  revenue is 40,000 and 40,000 × 1.13 = 45,200 exactly.** The level is CIQ's arithmetic on its own
+  base. Analyst finding, verified against the live workbook.
+  **CIQ CANNOT GIVE US THE OTHER FORM.** Its Guidance sheet for V has TEN metric blocks (Revenue,
+  EBIT, EPS Normalized, EPS GAAP, Capex, FCF, Net Income, DPS, Interest Expense, Effective Tax Rate)
+  and **not one growth-form block**. We are not dropping management's wording — CIQ normalises it
+  away before the export reaches us. The only honest move is to say the level may be derived.
+  **SAID ONCE, NOT PER ROW, and the restraint is the finding.** The sheet does not record which form
+  management used, and the shape cannot be inferred: **32 of the 49 committed guides are RANGES**
+  (`'2,335.00 - 2,375.00'`) that plausibly ARE the company's own band, and a company can guide a
+  point too. Flagging every point-valued guide as "derived" would be #423's false-demotion error in
+  a new place. The caution is general because the evidence is general.
+  **IN THE `source_ref`, NOT ONLY THE RENDER — a deliberate departure from #423, which was
+  render-only.** Checked rather than assumed by analogy: **seven committed syntheses cite this sheet
+  and five quote a figure off it** (NFLX 12,860.0 · MVST 427.5 · VRRM 1.19/1.25 · BRBR 10.0). The
+  LLM reads the mechanical layer as JSON, so a render-only note would leave the model treating a CIQ
+  derivation as the company's own words. One `GUIDANCE_BASIS_REF` constant feeds both call sites —
+  pinned, because two literals would let one carry the basis and the other keep claiming otherwise.
+  **A LABEL CHANGE MUST MOVE NO NUMBER**, so the artifact pass ran under a guard that re-derived
+  every guide from the workbook and refused any name whose figures differed. **13 of 14 updated; 0
+  refused for a moved figure.** The JSON diff is exclusively `source_ref` lines.
+  **FUBO: JSON SEALED, VIEW RE-RENDERED.** The seal refused its `dossier.json` (correctly — it is
+  frozen until a post-combination re-assembly). Its `dossier.md` was re-rendered anyway, on the
+  seal sidecar's own terms: *"`dossier.json` is untouched. `dossier.md` renders this block at the
+  top, because a rendered view is not the record."* Two e2e tests caught the stale twin. The
+  artifact pin exempts sealed records **by detecting the sidecar, never by naming FUBO** — a
+  hardcoded ticker would silently stop covering it the day it unseals.
+  **STILL BARE, DELIBERATELY: eight synthesis citations across seven names** (CNXC, EPAM, NCNO,
+  SMPL, UBER, VRRM bull points; SMPL bear; CNXC decisive-question evidence). Those strings were
+  copied from the mechanical layer when the synthesis was written, before the basis existed.
+  Hand-patching them would make the record show a caution the model never actually saw. They pick
+  it up at re-synthesis — which is already an operator to-do for UBER/SMPL/NFLX.
 - **A SPOT THAT NAMES NO DAY IS NOW UNRECORDABLE — schema 1.5 (2026-08-12, PR-7).**
   `vinci audit spot` can check a stated date against the store; against a record naming none it
   checks NOTHING and reports UNAUDITABLE forever. `write_record` now refuses a record created at
