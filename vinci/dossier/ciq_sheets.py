@@ -2113,6 +2113,27 @@ def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
     )
 
 
+#: WHOSE NUMBER THE GUIDE IS. CIQ's Guidance sheet states every guide as a LEVEL in the metric's
+#: own units — there is no growth-form block anywhere in it (measured: 10 blocks for V, all levels).
+#: So when a company guides a RATE, the level on this page is CIQ's ARITHMETIC, not a figure the
+#: company published. Visa is the proven case: management guided FY26 revenue growth at "the low
+#: end of low-teens", and the sheet carries 45,200.0 — exactly FY25's 40,000 x 1.13.
+#:
+#: IT IS SAID ONCE, NOT PER ROW, because the sheet does not record which form management used and
+#: the shape cannot be inferred: 32 of the 49 committed guides are RANGES (plausibly the company's
+#: own band) and 17 are points — but a company can guide a point too. Flagging every point as
+#: derived would be the false-demotion error of #423 in a new place. The caution is general because
+#: the evidence is general.
+#:
+#: IN THE source_ref DELIBERATELY, not only in the render: five committed syntheses QUOTE a figure
+#: from this table (NFLX 12,860.0, MVST 427.5, VRRM 1.19/1.25, BRBR 10.0), and the LLM reads the
+#: mechanical layer as JSON. A render-only note would leave the model treating a CIQ derivation as
+#: the company's own words — which is the reading this exists to prevent.
+GUIDANCE_BASIS_REF = ("CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) "
+                      "— CIQ states every guide as a LEVEL; where management guided a RATE, the "
+                      "level is CIQ's arithmetic, not the company's published figure")
+
+
 def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | None, int | None]:
     """(guidance-date, guidance-range, actual) row indices for a Guidance metric block [bi, end).
     The As-Of 'Guidance Date'/'Guidance' rows precede the 'Actual/Latest' sub-block; 'Actual' is the
@@ -2231,7 +2252,7 @@ def guidance_bridge(
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
     return Sourced.present(
         "; ".join(lines) + _asof_suffix(as_of),
-        source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        source_ref=GUIDANCE_BASIS_REF,
     )
 
 
@@ -2290,7 +2311,7 @@ def guidance_bridge_rows(
             metric=r.metric, latest_guide=r.guide, period=r.period, dated=r.dated.isoformat(),
             age=age, record=record, most_recent=recent))
     return Sourced.present(
-        out, source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)")
+        out, source_ref=GUIDANCE_BASIS_REF)
 
 
 def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[list[RevisionEvent]]:

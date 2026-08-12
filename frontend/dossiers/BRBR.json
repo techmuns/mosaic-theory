@@ -1050,7 +1050,7 @@
       },
       "guidance_bridge": {
         "value": "Revenue: latest guide '2,335.00 - 2,375.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 9/11 resolved; most recent resolved: FY 2025 MET; EBITDA: latest guide '275.00 - 295.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 7/7 resolved; most recent resolved: FY 2025 MET; Capital Expenditure: latest guide -10.0 for FY 2026 (dated 2026-08-04); spend ≤ guided ceiling 6/6 resolved; most recent resolved: FY 2025 MET; Gross Margin %: latest guide '28.20 - 32.40' for FQ4 2022 (dated 2022-08-05) (stale — 1454d old); actual ≥ guided floor 1/1 resolved; most recent resolved: FQ4 2022 MET  [data ≥ 2026-08-06 · export date unverified]",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },
@@ -1093,7 +1093,7 @@
             "most_recent": "FQ4 2022 MET"
           }
         ],
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
       },
