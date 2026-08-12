@@ -2027,7 +2027,24 @@ def _short_interest(
 #: ~6,040 days old. The bound clears the fleet's maximum by 165 days and still catches the case it
 #: exists for by more than a decade, so it changes no existing name — verified by re-deriving all
 #: twelve before and after.
-_SHARES_MAX_AGE_DAYS = 540
+#: How old a cover-page share count may be before it is REFUSED as a different share basis.
+#:
+#: 180 DAYS, AND THE PREVIOUS 540 IS WHY (2026-08-12). The bound was first set to clear the whole
+#: committed fleet, whose counts ran 10–375 days old — but the 375 was FUBO, and FUBO is exactly the
+#: name the bound needed to catch. It went dual-class in the intervening year (10-Q of 2026-08-05
+#: states 30,204,277 Class A and 78,992,518 Class B), the undimensioned `dei` tag stopped being
+#: populated at 2025-07-31, and the extractor kept serving that final single-class total of
+#: 342,433,118. Divided into a Class-A-basis CIQ cap of $256.4M it implied $0.75/sh against an
+#: $8.33 close — an 11.1x error, and `reconcile_cap` reads it as a corporate action, which it is.
+#: So the bound was accommodating the defect it existed to prevent: Visa's 16 YEARS was caught and
+#: FUBO's ONE was not, though both are the same thing — a filer that moved to per-class tagging.
+#:
+#: 180 is two quarters. A cover-page count is restated in every 10-Q, so two quarters of silence
+#: means the tag stopped being maintained, not that the filer is slow. Measured rather than assumed:
+#: on the committed fixtures the healthy names run 10–101 days (AORT/WERN at 101) and the next value
+#: is FUBO's 375 — an empty band between them, so this sits 1.8x above the fleet and 2.1x below the
+#: defect. Face-validity, not a number tuned to an outcome.
+_SHARES_MAX_AGE_DAYS = 180
 
 
 def _edgar_shares_outstanding(
