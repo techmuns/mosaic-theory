@@ -41,7 +41,15 @@ def test_the_insider_line_always_states_its_horizon() -> None:
     checked = 0
     for folder in DOSSIERS:
         for line in (folder / "dossier.md").read_text().splitlines():
-            if "Insider activity" in line:
+            # THE MECHANICAL LINE ONLY, selected by its bold label. A bare "Insider activity"
+            # substring also catches SYNTHESIS PROSE: UBER's 2026-08-12 re-assembly produced the
+            # point "Insider activity is net-sell over 182 days ($481M sold vs $22M bought)", which
+            # states its horizon perfectly clearly — just not in either phrasing this guard knows.
+            # Policing LLM-composed wording is the pin-rot the TEST-LAYER RULE forbids: that point
+            # reworders on every re-assembly, so the guard would redden for a reason #319 was never
+            # about. #319 was the MECHANICAL label/value losing its horizon, and that is what this
+            # selects.
+            if "**Insider activity" in line:
                 assert states_a_horizon(line), (
                     f"{folder.name}: the insider line states NO horizon — "
                     f"neither the label nor the value says what period it covers:\n  {line}")

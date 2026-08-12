@@ -11522,12 +11522,31 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    written without ever seeing that the UK model change cut revenue by **$1.1bn**. The claim is
    not false; it is under-informed, and only a re-synthesis fixes that. **Needs CIQ + LLM, so it is
    an operator action.** Both names' workbooks are stale anyway (item 7), so do it in one pass.
-7. **RE-PULL THE NFLX AND UBER CIQ WORKBOOKS — both predate material filings.** NFLX's
-   capital-structure panel is stamped *"A 2025 filed Jan-23-2026"* (the FY25 10-K, ~6 months old),
-   so the page still carries the **terminated WBD bridge facility** and lacks the **5.250% 2036
-   notes** issued 2026-07-22 to repay the Nov-2026 maturity. UBER's folder is Aug 5–6, two days
+   **UBER HALF DONE 2026-08-12** — re-assembled, synthesis re-rolled; its bull point now reads
+   *"reported Mobility revenue rose only 1% due to UK model changes"*, so the mechanism is no
+   longer invisible to the argument. **SMPL still open** (not re-assembled in this pass).
+7. **RE-PULL THE NFLX AND UBER CIQ WORKBOOKS — both predate material filings. STILL OPEN
+   2026-08-12 — the workbooks on disk were NEVER re-pulled**, and file mtimes (Aug 7 / Aug 10) are
+   when the folders were copied locally, not the CIQ export vintage. Read the panels directly:
+   **NFLX is still stamped `A 2025 filed Jan-23-2026` and UBER `A 2025 filed Feb-13-2026`** — the
+   same stale stamps this item was opened for. NFLX's panel still lists a **bridge** facility and
+   still has **no 2036 note** (checked by scanning the parsed instruments, not by eye).
+   NFLX's capital-structure panel is stamped *"A 2025 filed Jan-23-2026"* (the FY25 10-K, ~6 months
+   old), so the page still carries the **terminated WBD bridge facility** and lacks the **5.250%
+   2036 notes** issued 2026-07-22 to repay the Nov-2026 maturity. UBER's folder is Aug 5–6, two days
    before the Delivery Hero 8-K (2026-08-07). Re-pull → re-assemble retires all three staleness
    findings without any code change.
+   **THE 2026-08-12 RE-ASSEMBLY DID NOT RETIRE THESE, AND COULD NOT.** Two independent reasons,
+   both structural rather than fixable by re-running: (a) the instrument panel is CIQ-sourced, so a
+   stale workbook stays stale no matter how often the name is assembled — **PR-3's vintage flag now
+   LABELS it** (*"the debt schedule is 187d old (source filed 2026-01-23) AND an Item 1.02 … was
+   filed 2026-02-27"*) rather than presenting it as current, which is the mitigation, not the cure;
+   and (b) **UBER's Delivery Hero 8-K (2026-08-07, items 1.01/1.02/2.03) falls OUTSIDE the fleet
+   as-of of 2026-07-29**, so the page correctly reports *"no Item 1.02 … has been filed since"*.
+   That half needs the FLEET AS-OF to advance (a screen run), not a re-pull — `_fleet_reference_date`
+   takes the newest screen run's own reference date and never the wall clock, deliberately.
+   **So this item now has three prerequisites, not one: re-pull CIQ · advance the fleet as-of ·
+   re-assemble.** Doing only the third (today) moved neither staleness finding.
 8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
    2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
    *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point
@@ -11536,6 +11555,34 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
    that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
    **Bundle with item 7's NFLX re-pull — one pass.**
+   **CLOSED 2026-08-12.** NFLX re-assembled; the mechanical field now reads *"flat over ~0.5y since
+   a ~10.0x share-basis change at 2025-12-31 (count rose): 4,222,162,150 → 4,163,939,676, −1.4%"*
+   and **no synthesis point quotes the old figure any more** — scanned for `874.1`,
+   `4,163,939,676` and `427,458,114` across every bull/bear point: zero hits. Both halves land
+   together, which was the whole reason this was held back from the transform seam.
+   **A PREREQUISITE NOBODY HAD RECORDED: the store held no NFLX bars at all** — no `securities`
+   row, so `_standalone_record` refused outright (*"no price history in the store"*). Backfilled
+   5y via `vinci refresh --aggs` (1,253 bars, through 2026-08-11) before the assembly could run.
+   UBER's bars were present but ended 2026-08-04 and were topped up in the same call. **A
+   maintained name can be missing from the price store entirely and nothing says so until an
+   assembly refuses** — the same gap #367/#369 hit for UBER and SPY, now a third time.
+9. **THE AS-OF LEAK NEEDS A DECISION BEFORE IT NEEDS CODE — opened 2026-08-12 by review #428.**
+   Every dossier publishes observations dated after its own `reference_date` (NFLX 79, UBER 117;
+   measured, and pre-existing — see §OPEN OBSERVATIONS for the field list and the before/after).
+   **The operator picks the remedy, because they cost differently and only one is an engineering
+   task:**
+   - **(a) BOUND EVERY SOURCE** by `reference_date` — ~12 extractors across the CIQ and EDGAR
+     layers, each owing its own shown run, plus the guard the reviewer asked for ("assert that no
+     dated artifact fact exceeds it"). Keeps the fleet on one as-of; large.
+   - **(b) ADVANCE THE FLEET AS-OF** by running a screen, so August data is legitimately in scope
+     and the pages stop claiming a July as-of they do not honour. Cheap in code, but it is the
+     MONTHLY OPERATING LOOP (docs/RUNBOOKS.md) and belongs to the operator, not to a build.
+   **(b) then (a) is probably the right order** — advancing the as-of makes today's pages honest
+   immediately, and the bound then keeps them honest for a historical re-assembly. But that is a
+   judgment about how the fund runs, not about code, so it is NOT taken here.
+   **The guard is worth shipping under EITHER choice** and does not depend on it: a test that reads
+   each committed dossier and refuses a dated observation past its own as-of, with forward-looking
+   facts (maturities, scheduled catalysts) excluded by field rather than by heuristic.
 
 9. **[SHIPPED 2026-08-12 in PR #420 — the operator held the PR and asked for the labels first.]**
    `RankedCandidate.volume_spike: float | None` now carries the ratio; the queue cell leads with it
@@ -11797,7 +11844,48 @@ would have produced a focusable element that still did nothing on Enter.
 - **UBER carries zero covenant pointer rows** — the third name in that subsystem after EPAM's
   four-years-wrong maturity and AORT's five-and-a-half-year-stale one. EPAM/AORT find the WRONG
   facility; UBER finds NONE. A "flag the facility" fix is silent on the find-nothing case, so the
-  covenant work needs both halves.
+  covenant work needs both halves. **CLOSED 2026-08-12 by the NFLX/UBER re-assembly: UBER now
+  carries 8 rows** — 4 accession-bound (2028/2025 convertible-note credit agreements, each with an
+  `ex10-1` exhibit) + 4 honestly marked *"no contract-level filing expected (aggregate line item)"*.
+- **`primary_source` IS NOT AS-OF BOUNDED — UBER reads a filing 7 days past its own reference date
+  (found 2026-08-12 during the re-assembly).** UBER's page is stamped `reference_date 2026-07-29`
+  and its `primary_source.filing` is **10-Q `0001543151-26-000032`, filed 2026-08-05**. The whole
+  Q2-2026 evidence base the synthesis argues from (revenue +12%, Gross Bookings +22% to $58bn, the
+  UK model change) was not public at the as-of the page claims to be assembled at.
+  **NOT A REGRESSION — the committed artifact carried the SAME accession before the re-assembly**,
+  so this predates today and was inherited, not introduced. **NFLX is clean** (10-Q 0001065280-26-
+  000212, filed 2026-07-17, inside its as-of), so this is currently one name.
+  **This is the #416 lookahead class in a subsystem that was never bounded.** PR-3 bounded the debt
+  schedule and #426 bounded the covenant pointers; the primary-source filing selection was not in
+  either scope and still takes the newest filing from today's submissions index. **Reported, not
+  fixed** — out of scope for an artifact pass, and the fix is a decision-path change needing its own
+  shown run.
+  **MEASURED FLEET-WIDE (review finding #428, 2026-08-12) — IT IS NOT ONE FIELD, IT IS ~12.** The
+  reviewer flagged an **August-10 Form 4** published as the latest insider event on a record stamped
+  2026-07-29. Scanning every ISO/US date in both artifacts against the page's own as-of, and
+  excluding genuinely FORWARD-LOOKING facts (bond maturities to 2054, scheduled catalysts to 2028 —
+  those are facts ABOUT the future known at the as-of, not lookahead), the leaking fields are:
+  `catalyst_path.revision_events` (45 NFLX / 74 UBER dates), `valuation.own_history`,
+  `range_position`, `implied_expectations.{tev_as_of,multiples_as_of}`, `ev_gap.vintages`,
+  `catalyst_path.insider_activity`, `peer_comps.peer_grid`, `operating_drivers.rows`,
+  `guidance_bridge{,_rows}`, and `quality.share_count_trend`. **Both CIQ-sourced and EDGAR-sourced
+  layers leak**, so no single bound closes it.
+  **PRE-EXISTING AND UNCHANGED BY THE RE-ASSEMBLY, measured on both sides:** NFLX **79 post-as-of
+  observation dates BEFORE the pass and 79 AFTER**; UBER **118 → 117**. The only movement is the
+  newest date, 08-10 → 08-11, and it is the PRICE-STORE FRONTIER from the bar backfill, not a new
+  fact — bars themselves are already filtered (`_standalone_record`: `b.bar_date <= reference_date`).
+  **THE TWO REMEDIES BOTH COST MORE THAN THIS PR CAN SPEND**, which is why it is recorded rather
+  than fixed: (a) bounding every source is a decision-path change across ~12 extractors, each owing
+  its own shown run; (b) advancing the fleet as-of needs a SCREEN RUN — the monthly operating loop —
+  because `_fleet_reference_date` is deliberately `max(screen-run reference_date)`, and advancing it
+  for two names alone would break the invariant that a maintained name sits at the same as-of as
+  every candidate. **Improvising either inside an artifact pass is the scope creep this repo
+  forbids.**
+  **A RELATED SYMPTOM, same root, also pre-existing:** `stock_info.as_of` is the STORE FRONTIER while
+  the 52-week window starts at `reference_date − 1y`, so the window mixes two clocks and the page
+  says *"52-week window 2025-07-29→2026-08-11: spans **378d** over 261 bars"*. It was 374d before
+  the pass (the backfill moved the frontier 4 days). The note states the span honestly, which is how
+  it was found — but a "52-week" high/low computed over 378 days is not the field's own definition.
 
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 
