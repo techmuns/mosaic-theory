@@ -263,6 +263,24 @@ def freeze_baskets(
 #: and that was not what was decided here.
 BASKETS_SUBDIR = "themes/baskets"
 
+#: The COMMITTED home for a driver's ratification ledger — operator decision 2026-08-12, extending
+#: the basket decision to the record the basket is DERIVED FROM. The basket says which names are in
+#: which cohort; the ledger says WHY, in the analyst's own words, one appended row at a time. Losing
+#: it loses the judgment and keeps only its conclusion.
+#:
+#: THE THREE JULY 2026 LEDGERS ARE GONE and are NOT reconstructed here. A ledger is an APPEND-ONLY
+#: record whose value is that it records what was appended and when; a rebuild from the published
+#: mirror would carry one synthetic timestamp for every row and no correction history, and
+#: committing that as "the ledger" would misrepresent the artifact at the moment it starts being
+#: trusted. Their dispositions survive in the mirrors (`rationale`, `gradeFact`, `accession` per
+#: name) — that is the honest surviving record, and it is named as such rather than dressed up.
+LEDGER_SUBDIR = "themes/ledgers"
+
+
+def ledger_path(driver: str, *, data_dir: Path) -> Path:
+    """The committed ratification ledger for one driver."""
+    return data_dir / LEDGER_SUBDIR / f"{driver}.jsonl"
+
 
 def baskets_path(driver: str, *, data_dir: Path) -> Path:
     """The committed basket for one driver, under the configured DATA DIR.

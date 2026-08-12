@@ -2667,13 +2667,14 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
     # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
     # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
-    if bool(args.worksheet) != bool(args.ledger):
-        given, missing = (("--worksheet", "--ledger") if args.worksheet
-                          else ("--ledger", "--worksheet"))
+    # --ledger WITHOUT --worksheet is still meaningless (nothing to append); the reverse is not,
+    # because the ledger now defaults to its committed home. Reversing this check rather than
+    # deleting it: a bare --ledger used to die on `Path(None)` (review P2 on #412) and still would.
+    if args.ledger and not args.worksheet:
         raise SystemExit(
-            f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
-            f"carries the analyst's dispositions and the ledger is where they are appended. "
-            f"To re-measure an already-frozen theme instead, use --from-mirror.")
+            "--ledger was given without --worksheet — the ledger is where the worksheet's "
+            "dispositions are appended, so there is nothing to write. To re-measure an "
+            "already-frozen theme, use --from-baskets (or --from-mirror).")
     sources = [bool(args.worksheet), bool(args.from_mirror), bool(args.from_baskets)]
     if sum(sources) != 1:
         raise SystemExit(
@@ -2735,7 +2736,13 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
             return 0
         return _themes_forward_measure(args, fwd, baskets, watchlist)
 
-    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    # THE LEDGER DEFAULTS TO ITS COMMITTED HOME, so a freeze cannot land the analyst's
+    # dispositions somewhere that is never kept — which is how the three July 2026 ledgers were
+    # lost. An explicit --ledger still wins, for ad-hoc runs.
+    ws = Path(args.worksheet)
+    ledger = (Path(args.ledger) if args.ledger
+              else fwd.ledger_path(driver, data_dir=get_config().data_dir))
+    ledger.parent.mkdir(parents=True, exist_ok=True)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
     all_committed = [r["ticker"] for r in rows]
@@ -3559,7 +3566,11 @@ def build_parser() -> argparse.ArgumentParser:
     # two must be given; the parser enforces it rather than discovering it mid-run.
     p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
-    p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ledger",
+                       help="append-only ratification ledger JSONL path. Defaults to the COMMITTED "
+                            "home, data/themes/ledgers/<driver>.jsonl — the record the basket is "
+                            "derived from, kept because the basket says which names are in which "
+                            "cohort while the ledger says why, in the analyst's own words.")
     p_fwd.add_argument("--supersede-basket", dest="supersede_basket", action="store_true",
                        help="deliberately re-freeze a driver that already has a committed basket: "
                             "archives the existing one under baskets/archive/ first. Without this "

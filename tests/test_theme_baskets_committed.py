@@ -1,4 +1,4 @@
-"""The frozen theme baskets are a COMMITTED artifact — operator decision 2026-08-12.
+"""The frozen theme baskets AND the ratification ledger are COMMITTED — decisions 2026-08-12.
 
 WHY THE STANDING RULE WAS REVERSED. `.gitignore` named the ratification ledger and the frozen
 baskets local-only. Stage-4's entire product is a number that accrues over CALENDAR TIME, and its
@@ -8,8 +8,10 @@ August with their diagnostics still reading "0 days forward from freeze" for pre
 The reconstruction path that closed the gap (#412) works ONLY for hold-none freezes, so the first
 RATIFIED theme would have had no durable record of its BUY leg's entry dates anywhere.
 
-REVERSED FOR THE BASKETS ONLY. The ledger stays git-ignored — it is the analyst's raw dispositioned
-worksheet output, and that is not what was decided.
+REVERSED FOR THE BASKETS FIRST, THEN THE LEDGER. The basket says which names are in which cohort;
+the ledger says WHY, in the analyst's own words, one appended row at a time — and `--ledger` was
+REQUIRED and arbitrary, so the three July 2026 ledgers went somewhere git-ignored and are gone. Only
+the LOOSE `forward_*` filenames stay ignored, so an ad-hoc run still cannot commit itself.
 """
 from __future__ import annotations
 
@@ -90,17 +92,16 @@ def test_the_committed_baskets_carry_no_licensed_or_verbatim_filing_text() -> No
         assert longest < 60, f"{p.name}: a layer label of {longest} chars looks like prose"
 
 
-def test_the_ledger_is_still_ignored_and_the_basket_path_is_not() -> None:
-    """THE DECISION WAS SCOPED TO THE BASKETS. A `.gitignore` edit that swept the ratification
-    ledger in with them would commit the analyst's raw dispositioned worksheet output, which is not
-    what was decided — and the ledger is the one artifact that could carry a name's disposition
-    before the operator has published it."""
+def test_only_the_canonical_paths_are_tracked_not_the_loose_ad_hoc_names() -> None:
+    """THE SCOPE OF BOTH DECISIONS. The canonical per-driver paths are tracked; the loose
+    `forward_*` filenames and `data/forward/` stay ignored, so an ad-hoc run cannot commit itself,
+    and allowing `data/themes/` must not have opened the whole directory."""
     def ignored(rel: str) -> bool:
         return subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT).returncode == 0
 
     assert not ignored(f"data/{BASKETS_SUBDIR}/ai-datacenter.json"), (
         "the committed basket path is ignored — the artifact would silently never be tracked")
-    assert ignored("forward_ai-datacenter_ledger.jsonl"), "the ratification ledger became tracked"
+    assert ignored("forward_ai-datacenter_ledger.jsonl"), "a LOOSE ad-hoc ledger became tracked"
     assert ignored("data/forward/anything.json"), "the local-only forward dir became tracked"
     assert ignored("data/themes/scratch.json"), (
         "allowing data/themes/ opened the whole directory — only the baskets subdir is tracked")
@@ -228,3 +229,124 @@ def test_from_baskets_refuses_a_driver_that_is_not_the_baskets_own(
 
     args.driver = "defense-demand-shift"          # the matching driver still works
     assert cli._cmd_themes_forward(args) == 0
+
+
+# --------------------------------------------------------------------------------------------
+# The ratification ledger — committed too (operator decision, 2026-08-12)
+# --------------------------------------------------------------------------------------------
+
+def test_a_freeze_with_no_ledger_flag_lands_in_the_committed_home(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE FIX FOR HOW THE THREE JULY LEDGERS WERE LOST: `--ledger` was REQUIRED and arbitrary, so
+    the analyst's dispositions went wherever the command line happened to point — and that was
+    somewhere git-ignored. It now defaults to the committed home.
+
+    The ledger is the record the BASKET is derived from: the basket says which names are in which
+    cohort, the ledger says WHY, in the analyst's own words. Losing it keeps the conclusion and
+    discards the judgment."""
+    from vinci import cli
+    from vinci.cli import build_parser
+    from vinci.config import Config
+    from vinci.themes.forward import ledger_path, load_ledger
+
+    cfg = Config(data_dir=tmp_path / "data")
+    cfg.ensure_dirs()
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    ws = tmp_path / "ws.csv"
+    ws.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal,acc-1,PASSED,priced\n")
+    args = build_parser().parse_args(
+        ["themes-forward", "--worksheet", str(ws), "--driver", "defense-demand-shift",
+         "--ratify-date", "2026-08-12"])
+    assert args.func(args) == 0
+
+    lp = ledger_path("defense-demand-shift", data_dir=cfg.data_dir)
+    assert lp.is_file(), "the freeze wrote no ledger — the dispositions have no durable home"
+    rows = load_ledger(lp)
+    assert len(rows) == 1
+    assert rows[0].rationale == "priced", "the analyst's reasoning did not survive the write"
+    assert rows[0].source_ref == "acc-1", "the accession did not survive"
+
+
+def test_an_explicit_ledger_path_still_wins(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The default is a floor, not a cage — an ad-hoc run can still point somewhere else."""
+    from vinci import cli
+    from vinci.cli import build_parser
+    from vinci.config import Config
+    from vinci.themes.forward import ledger_path, load_ledger
+
+    cfg = Config(data_dir=tmp_path / "data")
+    cfg.ensure_dirs()
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    ws = tmp_path / "ws.csv"
+    ws.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal,acc-1,PASSED,priced\n")
+    elsewhere = tmp_path / "adhoc.jsonl"
+    args = build_parser().parse_args(
+        ["themes-forward", "--worksheet", str(ws), "--ledger", str(elsewhere),
+         "--driver", "defense-demand-shift", "--ratify-date", "2026-08-12"])
+    assert args.func(args) == 0
+    assert len(load_ledger(elsewhere)) == 1
+    assert not ledger_path("defense-demand-shift", data_dir=cfg.data_dir).exists(), (
+        "an explicit --ledger ALSO wrote the canonical file — two ledgers for one freeze is two "
+        "records of one judgment")
+
+
+def test_a_bare_ledger_flag_is_still_refused() -> None:
+    """`--ledger` with no `--worksheet` has nothing to append. Kept (reversed, not deleted) from
+    review P2 on #412, where it died on `Path(None)` with an unrelated TypeError."""
+    import argparse
+
+    from vinci import cli
+
+    args = argparse.Namespace(
+        driver="defense-demand-shift", worksheet=None, ledger="l.jsonl", from_mirror=None,
+        from_baskets=None, measure=False, as_of=None, horizons="30", ratify_date=None,
+        baskets_out=None, supersede_basket=False, exposure_names=None, watchlist=None,
+        watchlist_triggers=None, avoid_controls=None, real_tier=None)
+    with pytest.raises(SystemExit, match="nothing to write"):
+        cli._cmd_themes_forward(args)
+
+
+def test_the_ledger_path_is_tracked_and_the_loose_names_are_not() -> None:
+    """The decision extended to the ledger; the LOOSE `forward_*` filenames stay ignored, so an
+    ad-hoc run still cannot accidentally commit itself."""
+    from vinci.themes.forward import LEDGER_SUBDIR
+
+    def ignored(rel: str) -> bool:
+        return subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT).returncode == 0
+
+    assert not ignored(f"data/{LEDGER_SUBDIR}/defense-demand-shift.jsonl"), (
+        "the committed ledger path is ignored — dispositions would silently never be tracked")
+    assert ignored("forward_defense_ledger.jsonl"), "a loose ad-hoc ledger became tracked"
+    assert ignored("data/themes/scratch.json"), "allowing the ledger opened the whole directory"
+
+
+def test_the_three_july_ledgers_are_absent_and_not_fabricated() -> None:
+    """THE HONEST GAP, pinned so nobody later mistakes silence for loss-of-nerve or fills it in.
+
+    A ledger is an APPEND-ONLY record whose value is that it records what was appended and WHEN. A
+    rebuild from the published mirror would carry one synthetic timestamp for every row and no
+    correction history — committing that as "the ledger" would misrepresent the artifact at the
+    moment it starts being trusted. The dispositions themselves survive in the mirrors
+    (`rationale`, `gradeFact`, `accession` per name), which is the honest surviving record."""
+    from vinci.themes.forward import LEDGER_SUBDIR
+
+    live = sorted(p.name for p in (ROOT / "data" / LEDGER_SUBDIR).glob("*.jsonl")) \
+        if (ROOT / "data" / LEDGER_SUBDIR).is_dir() else []
+    assert live == [], (
+        f"a ratification ledger appeared for a July 2026 theme: {live}. Those files were lost; if "
+        f"one has been RE-FROZEN from a real worksheet that is good — update this pin deliberately "
+        f"rather than deleting it.")
+    # and the mirrors still carry what survived, so the gap is documented rather than total
+    mirror = json.loads((ROOT / "frontend" / "themes" / "defense.json").read_text())
+    assert all(n.get("rationale") for n in mirror["names"]), (
+        "the mirrors no longer carry the per-name rationale — the last surviving record of the "
+        "three lost ledgers' judgment")
