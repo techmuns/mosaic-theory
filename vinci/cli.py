@@ -2687,6 +2687,15 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         # reads what the FREEZE wrote, so it carries the BUY leg and its per-name entry dates —
         # the thing a mirror cannot supply and the reason a reconstruction refuses one.
         baskets = fwd.load_baskets(Path(args.from_baskets))
+        # THE ARTIFACT KNOWS ITS OWN DRIVER, so unlike the mirror path this is CHECKABLE rather
+        # than a printed warning (review P2 on #422): passing the defense basket with
+        # --driver ai-datacenter produced an AI-datacenter-labelled re-measurement of 108 defense
+        # names. The mirror carries only a human label and cannot be bound; this can, so it is.
+        if baskets.driver != driver:
+            print(f"REFUSED: {args.from_baskets} is the {baskets.driver!r} basket, not "
+                  f"{driver!r}. The re-measurement would be labelled with one driver and computed "
+                  f"over another's names.")
+            return 1
         watchlist = list(baskets.watchlist)
         print(f"\n=== Stage-4 forward RE-MEASURE (committed basket) · {driver} ===")
         print(f"basket {args.from_baskets} · frozen {baskets.freeze_timestamp}")
@@ -2768,7 +2777,13 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     baskets = baskets.model_copy(update={"provenance": (
         f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
         f"worksheet, appended to the ratification ledger at {ledger}")})
-    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir)
+    try:
+        canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
+                                      supersede=args.supersede_basket)
+    except FileExistsError as exc:
+        print(f"REFUSED: {exc}\n  Re-run with --supersede-basket to archive the existing basket "
+              f"under data/themes/baskets/archive/ and freeze again.")
+        return 1
     print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
@@ -3545,6 +3560,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
     p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--supersede-basket", dest="supersede_basket", action="store_true",
+                       help="deliberately re-freeze a driver that already has a committed basket: "
+                            "archives the existing one under baskets/archive/ first. Without this "
+                            "a second freeze REFUSES rather than silently moving the entry dates "
+                            "the forward accrual is measured from.")
     p_fwd.add_argument("--from-baskets", dest="from_baskets",
                        help="re-measure from a COMMITTED frozen basket "
                             "(data/themes/baskets/<driver>.json) — the durable input written by "

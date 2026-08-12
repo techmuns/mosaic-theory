@@ -130,3 +130,101 @@ def test_the_basket_is_written_under_the_given_data_dir(tmp_path: pathlib.Path) 
         f"the basket was written to {p}, outside the data dir it was given ({tmp_path}) — a write "
         f"that escapes its configured root lands in the repo when a test or a script runs it")
     assert not (ROOT / "data" / BASKETS_SUBDIR / "should-not-exist.json").exists()
+
+
+# --------------------------------------------------------------------------------------------
+# Review findings on #422
+# --------------------------------------------------------------------------------------------
+
+def test_a_second_freeze_refuses_and_leaves_the_original_basket_intact(
+    tmp_path: pathlib.Path,
+) -> None:
+    """OPERATOR REVIEW P1 ON #422. These are the IMMUTABLE frozen references and their per-name
+    entry dates are the input to a calendar-time accrual — but every later `--worksheet` freeze
+    wrote a new object over the same filename. Measured before the fix: re-freezing defense moved
+    `entry_dates` from {2026-07-03} to {2026-08-12}, shifting the forward window's start by 40 days
+    with nothing said. The append-only ledger does not protect this artifact, and committing it made
+    the silent rewrite worse — the file now looks authoritative.
+
+    THE SAME CLASS AS THE MONITOR SNAPSHOT OVERWRITE (#418), which this module did not learn from.
+    """
+    original = load_baskets(BASKETS / "truckload-supply-purge.json")
+    write_baskets(original, data_dir=tmp_path)
+    later = original.model_copy(update={
+        "freeze_timestamp": "2026-09-01T00:00:00",
+        "entry_dates": dict.fromkeys(original.entry_dates, "2026-09-01")})
+
+    with pytest.raises(FileExistsError, match="entry dates"):
+        write_baskets(later, data_dir=tmp_path)
+    assert load_baskets(baskets_path(original.driver, data_dir=tmp_path)) == original, (
+        "a refused re-freeze still altered the basket on disk")
+
+
+def test_a_deliberate_supersession_archives_the_basket_it_replaces(
+    tmp_path: pathlib.Path,
+) -> None:
+    """Re-freezing IS legitimate when the analyst re-dispositions a tier; losing the window it
+    replaces is not. `supersede=True` archives first, so a supersession is never destructive."""
+    original = load_baskets(BASKETS / "truckload-supply-purge.json")
+    write_baskets(original, data_dir=tmp_path)
+    later = original.model_copy(update={
+        "freeze_timestamp": "2026-09-01T00:00:00",
+        "entry_dates": dict.fromkeys(original.entry_dates, "2026-09-01")})
+
+    write_baskets(later, data_dir=tmp_path, supersede=True)
+    live = load_baskets(baskets_path(original.driver, data_dir=tmp_path))
+    assert live == later, "the supersession did not take effect"
+    archived = sorted((tmp_path / BASKETS_SUBDIR / "archive").glob("*.json"))
+    assert len(archived) == 1, f"expected one archived basket, found {[a.name for a in archived]}"
+    assert load_baskets(archived[0]) == original, "the archive does not hold what was replaced"
+    assert original.freeze_timestamp[:10] in archived[0].name, (
+        f"the archive is not named for the window it holds: {archived[0].name}")
+
+
+def test_two_supersessions_on_one_day_do_not_collide_in_the_archive(
+    tmp_path: pathlib.Path,
+) -> None:
+    """A HOLE IN MY OWN FIX, found by reading the archive name back. The freeze timestamp is
+    DATE-ONLY, so two supersessions on the same day produced the same archive filename and the
+    second overwrote the first — losing precisely what archiving exists to keep. Re-dispositioning
+    a tier twice in one session is a normal thing to do, so this is disambiguated rather than
+    assumed rare."""
+    a = load_baskets(BASKETS / "truckload-supply-purge.json")
+    b = a.model_copy(update={"entry_dates": dict.fromkeys(a.entry_dates, "2026-09-01")})
+    c = a.model_copy(update={"entry_dates": dict.fromkeys(a.entry_dates, "2026-09-02")})
+    write_baskets(a, data_dir=tmp_path)
+    write_baskets(b, data_dir=tmp_path, supersede=True)   # archives `a`
+    write_baskets(c, data_dir=tmp_path, supersede=True)   # archives `b`, SAME freeze date
+    archived = sorted((tmp_path / BASKETS_SUBDIR / "archive").glob("*.json"))
+    assert len(archived) == 2, (
+        f"a same-day supersession overwrote the earlier archive: {[p.name for p in archived]}")
+    # membership, not order: FrozenBaskets is unhashable (it holds dicts) and the archive
+    # filenames do not sort in write order ("-2.json" precedes ".json"). What matters is that
+    # BOTH replaced windows survived.
+    contents = [load_baskets(p) for p in archived]
+    assert a in contents and b in contents, "an archived window was lost"
+
+
+def test_from_baskets_refuses_a_driver_that_is_not_the_baskets_own(
+    tmp_path: pathlib.Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """OPERATOR REVIEW P2 ON #422. Unlike the mirror — which carries only a human label and can
+    therefore only WARN — this artifact holds the canonical registry key, so a mismatch is
+    checkable. Before the fix, passing the defense basket with `--driver ai-datacenter` printed an
+    AI-datacenter header over 108 defense names and measured them."""
+    import argparse
+
+    from vinci import cli
+
+    args = argparse.Namespace(
+        driver="ai-datacenter", worksheet=None, ledger=None, from_mirror=None,
+        from_baskets=str(BASKETS / "defense-demand-shift.json"), measure=False, as_of=None,
+        horizons="30", ratify_date=None, baskets_out=None, supersede_basket=False,
+        exposure_names=None, watchlist=None, watchlist_triggers=None, avoid_controls=None,
+        real_tier=None)
+    assert cli._cmd_themes_forward(args) == 1
+    out = capsys.readouterr().out
+    assert "is the 'defense-demand-shift' basket, not 'ai-datacenter'" in out, out
+
+    args.driver = "defense-demand-shift"          # the matching driver still works
+    assert cli._cmd_themes_forward(args) == 0

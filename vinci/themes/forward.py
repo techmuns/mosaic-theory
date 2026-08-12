@@ -274,10 +274,48 @@ def baskets_path(driver: str, *, data_dir: Path) -> Path:
     return data_dir / BASKETS_SUBDIR / f"{driver}.json"
 
 
-def write_baskets(baskets: FrozenBaskets, *, data_dir: Path) -> Path:
-    """Write one driver's frozen basket to its committed home. Returns the path."""
+def write_baskets(
+    baskets: FrozenBaskets, *, data_dir: Path, supersede: bool = False,
+) -> Path:
+    """Write one driver's frozen basket to its committed home. Returns the path.
+
+    REFUSES TO OVERWRITE AN EXISTING BASKET (operator review P1 on #422). These are the
+    IMMUTABLE frozen references, and their per-name entry dates are the input to a calendar-time
+    accrual — but every later `themes-forward --worksheet …` for the same driver wrote a newly
+    frozen object to the same filename. Measured: re-freezing defense moved `entry_dates` from
+    {2026-07-03} to {2026-08-12}, shifting the forward window's start by 40 days with nothing said.
+    The append-only ledger does not protect this artifact, and committing it made the silent
+    rewrite worse, not better — it now looks authoritative.
+
+    THE SAME CLASS AS THE MONITOR SNAPSHOT OVERWRITE (#418), and this file did not learn from it.
+
+    ``supersede=True`` is the deliberate re-freeze: the existing basket is ARCHIVED under
+    ``baskets/archive/<driver>-<its own freeze date>.json`` before the new one lands, so a
+    supersession never destroys the window it replaces. Archiving rather than refusing outright is
+    what makes the flow usable — a re-freeze is legitimate when the analyst re-dispositions a tier;
+    losing the prior basket is not.
+    """
     p = baskets_path(baskets.driver, data_dir=data_dir)
     p.parent.mkdir(parents=True, exist_ok=True)
+    if p.exists():
+        prior = load_baskets(p)
+        if not supersede:
+            raise FileExistsError(
+                f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
+                f"replace the entry dates the forward accrual is measured from. Pass "
+                f"supersede=True to archive it and re-freeze deliberately.")
+        # THE ARCHIVE NAME IS DATE-KEYED and the freeze timestamp is date-only, so two
+        # supersessions on the SAME DAY would collide and the second would overwrite the first
+        # archive — losing exactly what archiving exists to keep. Disambiguated rather than
+        # trusted to be rare: re-dispositioning a tier twice in a session is a normal thing to do.
+        base = p.parent / "archive" / f"{baskets.driver}-{prior.freeze_timestamp[:10]}"
+        base.parent.mkdir(parents=True, exist_ok=True)
+        archive = base.with_suffix(".json")
+        n = 2
+        while archive.exists():
+            archive = base.with_name(f"{base.name}-{n}").with_suffix(".json")
+            n += 1
+        archive.write_text(p.read_text())
     p.write_text(baskets.model_dump_json(indent=1) + "\n")
     return p
 

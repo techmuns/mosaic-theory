@@ -8586,6 +8586,21 @@ the canonical file itself, and `themes-forward --from-baskets` re-measures from 
 resolved from `Path.cwd()`, so an existing CLI test freezing a tmp worksheet wrote its four
 synthetic names straight over the real committed basket in the repo. Keyed on the configured data
 dir now, like every other durable artifact here, and the CLI test redirects config to a tmp tree.
+**A COMMITTED BASKET WAS STILL SILENTLY REWRITABLE — review P1 on #422.** Every later
+`themes-forward --worksheet …` for the same driver wrote a newly frozen object over the same
+filename: measured, re-freezing defense moved `entry_dates` from {2026-07-03} to {2026-08-12},
+shifting the forward window's start by 40 days with nothing said. The append-only ledger does not
+protect this artifact, and committing it made the rewrite WORSE — the file now looks authoritative.
+**This is the same class as the monitor-snapshot overwrite fixed hours earlier (#418), and this
+module did not learn from it.** A second freeze now REFUSES; `--supersede-basket` archives the
+existing basket under `baskets/archive/<driver>-<its freeze date>.json` first, so a supersession is
+never destructive. A HOLE IN THAT FIX, found by reading the archive name back: the freeze timestamp
+is DATE-ONLY, so two supersessions in one day collided and the second overwrote the first archive —
+disambiguated, because re-dispositioning a tier twice in a session is normal.
+**AND `--from-baskets` ACCEPTED ANY DRIVER (P2).** Passing the defense basket with
+`--driver ai-datacenter` printed an AI-datacenter header over 108 defense names and measured them.
+Unlike the mirror — which carries only a human label and can therefore only WARN — this artifact
+holds the canonical registry key, so the mismatch is CHECKABLE and is now refused.
 **AND THE FOURTH PIN-THAT-PROVED-NOTHING in this sequence, same root cause each time:** the
 round-trip compared `write_baskets(...)` to `baskets_path(...)`, two values that MOVE TOGETHER — 
 point the helper back at cwd and both change identically while every write lands in the repo. The
