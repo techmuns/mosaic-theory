@@ -313,10 +313,35 @@ _GUIDE_RANGE = re.compile(
     # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
     # `pct` is CAPTURED now: it used to be discarded inside a non-capturing group, so a percentage
     # range was stored with the default "$M" unit.
-    r"\$?\s*(?P<low>[\d,.]+)\s*(?P<pct>%)?\s*(?:million|billion)?\s*(?:to|and|[-–—])\s*"
-    r"\$?\s*(?P<high>[\d,.]+)\s*(?P<unitword>million|billion|%)?",
+    # UNIT SUFFIXES ARE UNITS (2026-08-12). Filers write the magnitude two ways and only the
+    # spelled-out word was read: NFLX guides "2026 revenue of $50.7-$51.7B" and "$50.7B-$51.7B" in
+    # the same exhibit. The suffix form failed THREE ways at once — a trailing `B` was ignored
+    # (50.7 stood for $50.7M, a 1000x understatement of a $50bn guide), and a LEADING one broke the
+    # match entirely because `B` sat where the separator had to be, so the guide was dropped with no
+    # flag. `bn`/`mm` are the same family. The single letters carry `(?![A-Za-z])` because `[MB]`
+    # under re.I otherwise eats the first letter of the next word — "$2.4 to $2.5 based on…" would
+    # read `b`("based") as billions, which is the magnitude error this is fixing, inverted.
+    #
+    # THE LOW SIDE'S UNIT IS CAPTURED, not discarded, and that is a second defect fixed here: the
+    # trailing unit was applied to BOTH numbers, so "$500 million to $1.2 billion" scaled the low
+    # side by 1000 and produced low=500,000 against high=1,200 — a range whose floor sits 400x above
+    # its ceiling. Each side now scales by ITS OWN stated unit; a bare side inherits the trailing
+    # one (unchanged for "$2.465 to $2.49 billion", where only the trailing unit is stated).
+    r"\$?\s*(?P<low>[\d,.]+)\s*(?P<pct>%)?\s*"
+    r"(?:(?P<lowunit>million|billion|bn|mm|[MB])(?![A-Za-z])\s*)?"
+    r"(?:to|and|[-–—])\s*"
+    r"\$?\s*(?P<high>[\d,.]+)\s*"
+    r"(?:(?P<unitword>million|billion|bn|mm|[MB]|%)(?![A-Za-z]))?",
     re.I,
 )
+
+
+#: Scale a stated magnitude word/suffix onto the ``$M`` the composer prints. Anything unrecognised
+#: (or absent) is 1.0 — a guessed magnitude is the fabrication this codebase refuses, so an unknown
+#: unit leaves the number as filed rather than inventing a multiplier for it.
+def _unit_scale(word: str | None) -> float:
+    w = (word or "").strip().lower()
+    return 1000.0 if (w.startswith("billion") or w in {"bn", "b"}) else 1.0
 # A GROWTH-RATE guide is a real number, not a qualitative outlook: EPAM guides
 # "the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%". The dollar-range
 # pattern cannot see it, so it fell through to the QUALITATIVE marker — which asserts the company
@@ -506,8 +531,30 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         # ("$2.465 to $2.49 billion"). Inferring billions from magnitude would be a guess, and a
         # guessed magnitude is exactly the fabrication this codebase refuses.
         unit = _guide_unit(metric, m["pct"] or (m["unitword"] if m["unitword"] == "%" else None))
-        if (m["unitword"] or "").lower().startswith("billion") and unit == "$M":
-            low, high = low * 1000.0, high * 1000.0
+        if unit == "$M":
+            # PER-SIDE, with the trailing unit as the fallback for a bare side. "$2.465 to $2.49
+            # billion" states one unit and it governs both (unchanged); "$500 million to $1.2
+            # billion" states two and each governs its own number.
+            governing = m["unitword"] or m["lowunit"]
+            low *= _unit_scale(m["lowunit"] or governing)
+            high *= _unit_scale(m["unitword"] or governing)
+        # AN IMPOSSIBLE RANGE ⇒ REFUSE, AND DO NOT SORT IT (review finding, #430). Per-side scaling
+        # is what makes this reachable: "$1.2 billion to $500M" arrives as low=1,200 high=500, and
+        # before this it was emitted as real guidance — printed on the page and fed to the
+        # cross-check. SORTING IS THE WRONG REPAIR: it would state 500–1,200 as the filing's range
+        # when the filing said the reverse, and if the true cause is a mis-parse (the unit words
+        # bound to the wrong sides) it hides the evidence of that instead of surfacing it.
+        # DIFFERENT FROM THE CHANGE-BASIS SWAP one loop down, which DOES sort: there the inversion
+        # is a mechanical consequence of applying a sign (a decline range signs to -350..-300), not
+        # an anomaly in what was written. Here nothing mechanical produced it.
+        # PROTECTIVE, NOT CORRECTIVE — measured across every committed dossier: 56 guidance items
+        # carry both bounds and NONE is inverted, so no live page changes.
+        if low > high:
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — the stated range runs backwards after unit "
+                f"normalisation ({low:,.1f} to {high:,.1f} {unit}), so the bounds cannot be read "
+                f"with confidence; verify against the filing: \"{vb[:150]}\" ({src})")
+            continue
         seen.add(metric)
         out.append(GuidanceItem(
             metric=metric, period=_period_for(text, m.start(), m.end(), vb),

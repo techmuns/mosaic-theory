@@ -13226,6 +13226,54 @@ sign-off.**
   already ruled once that a bare rename breaks committed artifacts (the `ev_ebitda` scalar, §2) —
   an honest label is the non-breaking half; a true rename needs a schema migration + fleet
   re-assembly and is NOT done here. An unparseable header omits the span rather than guessing one.
+- **A `B` SUFFIX IS NOT A UNIT THE PARSER KNEW — $51.7bn READ AS $51.7M (2026-08-12,
+  fix/guidance-unit-suffix).** Found validating an analyst's reading of the committed NFLX page.
+  The dossier carried `revenue 2026: 50.7–51.7 $M` for a company guiding **$50.7–51.7 BILLION**, in
+  the exhibit the dossier itself cites: *"We continue to project 2026 revenue of **$50.7-$51.7B**"*
+  and *"we forecast 2026 revenue of **$50.7B-$51.7B**"*. `_GUIDE_RANGE` read only the SPELLED-OUT
+  `million|billion`; the suffix form did not exist to it. **This is the Concentrix
+  billions-as-millions defect a THIRD time** (after BellRing's shared range), against this module's
+  own rule that a magnitude error in a decision figure is worse than an absent one.
+  **THREE FAILURES IN ONE REGEX, all silent:** (1) a TRAILING suffix was ignored → 50.7 for $50.7bn,
+  a **1000x understatement**, and the verbatim stopped at "51.7" so the page showed a sentence
+  ending mid-number; (2) a LEADING suffix **broke the match entirely** — `$50.7B-$51.7B` and
+  `$985M-$995M` parsed to NOTHING because the `B` sat where the separator had to be, so the guide
+  was DROPPED with no flag (the dropped-clause class that cost ten of seventeen clauses on the
+  change-basis fix); (3) the trailing unit was applied to BOTH numbers, so `$500 million to $1.2
+  billion` produced **low=500,000 against high=1,200** — a floor 400x its own ceiling, and nothing
+  rejected it.
+  **THE FIX:** `bn`/`mm`/`[MB]` join the unit alternation on BOTH sides, each side scales by ITS OWN
+  stated unit, and a bare side inherits the trailing one (so `$2.465 to $2.49 billion` is unchanged).
+  The single letters carry `(?![A-Za-z])` because `[MB]` under `re.I` otherwise eats the first letter
+  of the next word — *"$2.4 to $2.5 **b**ased on…"* would read billions, the same magnitude error
+  inverted; that guard is pinned.
+  **AN IMPOSSIBLE RANGE IS NOW REFUSED, AND DELIBERATELY NOT SORTED (review finding, #430).**
+  Per-side scaling is what made the reverse order reachable: `$1.2 billion to $500M` arrived as
+  **low=1,200 high=500** and was emitted as real guidance — printed and handed to the cross-check —
+  with nothing rejecting it. **SORTING IS THE WRONG REPAIR**: it would state 500–1,200 as the
+  filing's range when the filing said the reverse, and if the true cause is a MIS-PARSE (unit words
+  bound to the wrong sides) sorting hides the evidence instead of surfacing it. The refusal is
+  ATTRIBUTED — it carries the bounds it rejected and the sentence — so a reader can settle it from
+  the filing, which a silently dropped guide would not allow.
+  **NOT the same as the change-basis swap one loop down, which DOES sort**: there the inversion is
+  the mechanical consequence of applying a sign (a decline range signs to −350..−300), not an
+  anomaly in what was written. That boundary is pinned by its own test so the new refusal cannot
+  leak into it and start refusing legitimate decline guides.
+  **PROTECTIVE, NOT CORRECTIVE — measured:** 56 committed guidance items carry both bounds and
+  **none is inverted**, so no live page changes. Mutation-tested by replacing the refusal with a
+  sort: the pin reddens (`an impossible range must not reach GuidanceItem as though it were a
+  guide`), so refuse-vs-sort is discriminated rather than merely described.
+  *Verified on the REAL exhibit end-to-end (fetched 0001065280-26-000137 EX-99.1): the guide now
+  parses **50,700–51,700 $M**, was 50.7–51.7. 20 pins on frozen filed text — the 5 behavioural ones
+  FAIL on the pre-fix parser and the "must not change" ones PASS on both, so the pin is
+  discriminating rather than incidental. ruff + mypy --strict (124) + pytest 2320 green; the corpus
+  guidance pins are unmoved.*
+  **BLAST RADIUS (measured, not assumed):** across the 14 committed dossiers, five names carry a
+  "no anchored pattern — guidance" flag AND no revenue guide — **BRBR, FUBO, IT, SMPL, V** (IT: 0
+  guides against 5 such flags; V: 0 against 3) — the signature of failure (2). These are SUSPECTS
+  sized by signature, **not confirmed**: each needs its own exhibit fetched. NFLX is the one proven
+  case. **Nothing was re-assembled here** — the artifacts still carry the old numbers until a
+  re-assembly runs.
 - **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
   opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
   column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
