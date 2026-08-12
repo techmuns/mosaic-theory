@@ -8540,6 +8540,15 @@ was about: a number correct in one place and absent from the other. `ScoreReport
 SAME `primary` set so the two are comparable by construction. The headline is unchanged; the ruling
 is unchanged. **The as-of filter on closes was applied from the start here rather than re-learned**
 — #418's P1 (a close dated after the scoring date has not happened yet) transferred directly.
+**A COUNT THAT COULD CONTRADICT ITS OWN BREAKDOWN, found reviewing my own diff.** `n_closed` was
+summed over `primary` — every screen-origin resolved row — while the rendered "still held" figure
+subtracted it from the two LEGS. Origin and sleeve are ORTHOGONAL, so a quality `PASS` can carry
+screen origin (the model permits it), landing in `primary` and in neither leg; closing one printed
+**"1 still held" beside "BUY n=1 · AVOID n=1"**. Counted over the legs the spread actually uses now,
+so the line cannot disagree with its own breakdown. Also: the ledger is read ONCE per scoring run
+(`iter_ledger` re-validates every row since #417, so a second scan doubled that for nothing), and
+the as-of filter now REQUIRES a dated close rather than treating an undated one as already-happened
+— the schema refuses an undated close outright, so the branch was unreachable and now says so.
 **THE LIVE REPORT STILL PRINTS NOTHING, and that is correct:** zero verdicts have resolved (the
 first BUY horizon passes 2027-01-16), so the split has nothing to decompose and stays silent. My
 earlier objection — that this was "untestable scaffolding" — was too strong and is worth correcting:

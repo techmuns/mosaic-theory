@@ -69,10 +69,17 @@ def score_ledger(
     # AS-OF FILTERED, learned from review P1 on #418: an exit dated after the scoring date has not
     # happened yet in the book being scored. Keyed on the DECISION's entry_id, never the ticker —
     # SMPL is closed AND re-entered, so a ticker-keyed set marks the live re-entry closed too.
+    #
+    # READ ONCE. `iter_ledger` is a DB round-trip that now also re-validates every row (#417), so
+    # scanning it twice doubles that for no gain — the second pass below iterates this same list.
+    ledger = list(store.iter_ledger())
+    # An undated close cannot be placed in time, so it cannot be KNOWN to have happened by `as_of`.
+    # The schema refuses one outright (a close is fully specified or refused), so this is
+    # unreachable rather than lenient — written as a requirement so the filter says what it means.
     closed_ids = {
-        e.closes_entry_id for e in store.iter_ledger()
+        e.closes_entry_id for e in ledger
         if e.event == EVENT_CLOSE and e.closes_entry_id is not None
-        and (e.exit_price_as_of is None or e.exit_price_as_of <= as_of)
+        and e.exit_price_as_of is not None and e.exit_price_as_of <= as_of
     }
     # Fetched ONCE per basket member, not per verdict: the windows differ per row but the series
     # does not, and a followed book re-reading three full histories per verdict would be the
@@ -87,7 +94,7 @@ def score_ledger(
     book_rets: list[float] = []
     bench_rets: list[float] = []
 
-    for entry in store.iter_ledger():
+    for entry in ledger:
         # A CLOSE IS NOT A DECISION. A close row is appended (never an edit) and carries the
         # ORIGINAL verdict for provenance, so partitioning by verdict counts that name's leg
         # TWICE — `monitor.decision_rows` has filtered these since 2026-07-22 for exactly this

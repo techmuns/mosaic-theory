@@ -266,7 +266,7 @@ class ScoreReport:
         # IN the headline by ruling; this says how much of it they carry, so nobody reads a spread
         # earned on positions the book no longer holds as a spread the book earned.
         if self.n_closed:
-            held = self.n_resolved_buy + self.n_resolved_avoid - self.n_closed
+            held = self.n_open_buy + self.n_open_avoid
             open_txt = (f"UNDEFINED — {self.open_only_note}"
                         if self.buy_avoid_spread_open_only is None
                         else pct(self.buy_avoid_spread_open_only))
@@ -475,14 +475,19 @@ def aggregate(
     open_avoids = [s.name_return for s in avoids if not s.closed]
     open_bm, open_am = mean(open_buys), mean(open_avoids)
     spread_open = (open_bm - open_am) if (open_bm is not None and open_am is not None) else None
-    n_closed = sum(1 for s in primary if s.closed)
+    # COUNTED OVER THE LEGS THE SPREAD USES, not over `primary`. A screen-origin row whose verdict
+    # is neither leg (a quality PASS logged with screen origin — the model permits it, since origin
+    # and sleeve are orthogonal) sits in `primary` and in no leg, so counting it here made the
+    # rendered line contradict itself: "1 still held" printed beside "BUY n=1 · AVOID n=1".
+    n_closed = sum(1 for s in (*buys, *avoids) if s.closed)
     open_note: str | None = None
     if spread_open is None and n_closed:
         # Worded for THIS scope: "no AVOID leg" reads very differently when it means "every AVOID
         # was closed" than when it means "none was ever logged".
         missing = "BUY" if open_bm is None else "AVOID"
-        open_note = (f"no {missing} leg among the {len(primary) - n_closed} of {len(primary)} "
-                     f"resolved rows still held")
+        n_legs = len(buys) + len(avoids)
+        open_note = (f"no {missing} leg among the {n_legs - n_closed} of {n_legs} resolved rows "
+                     f"still held")
     beta = alpha = None
     if book_daily is not None and bench_daily is not None:
         beta, alpha = ols_beta_alpha(book_daily, bench_daily)

@@ -156,3 +156,34 @@ def test_a_re_entered_ticker_is_keyed_by_decision_not_by_name(tmp_path: Path) ->
     assert by_id == {"V-MEH": True, "V-MEH-2": False, "V-BAD": False}, by_id
     assert rep.n_closed == 1, "the re-entry was marked closed by its ticker"
     assert rep.n_open_buy == 1
+
+
+def test_a_screen_row_in_neither_leg_does_not_corrupt_the_counts(tmp_path: Path) -> None:
+    """REVIEW FINDING (mine, on my own diff). `n_closed` was counted over `primary` — every
+    screen-origin row — while the rendered "still held" figure subtracted it from the two LEGS.
+
+    A screen-origin row whose verdict is in neither leg is constructible today: origin and sleeve
+    are orthogonal, so a quality PASS can carry screen origin, and the model permits it. Closing one
+    made the report contradict itself — "1 still held" printed beside "BUY n=1 · AVOID n=1".
+
+    Counted over the legs the spread actually uses now, so the line cannot disagree with its own
+    breakdown."""
+    odd = _decision("ODD", "SEC-ODD", Verdict.PASS).model_copy(update={"sleeve": "quality"})
+    win = _decision("WIN", "SEC-WIN", Verdict.BUY)
+    bad = _decision("BAD", "SEC-BAD", Verdict.AVOID_TERMINAL)
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices(_bars("IDX-IWM", 100.0, 100.0))
+        store.write_prices(_bars("SEC-WIN", 100.0, 140.0))
+        store.write_prices(_bars("SEC-BAD", 100.0, 90.0))
+        store.write_prices(_bars("SEC-ODD", 100.0, 110.0))
+        for e in (win, bad, odd):
+            store.append_ledger(e)
+        store.append_ledger(_close_of(odd, on=date(2026, 2, 1)))
+        _s, rep = score_ledger(store, as_of=AS_OF)
+
+    assert rep.n_closed == 0, (
+        "a closed row belonging to NEITHER leg was counted against the spread's own breakdown")
+    assert rep.n_open_buy + rep.n_open_avoid == rep.n_resolved_buy + rep.n_resolved_avoid, (
+        "the still-held counts disagree with the resolved counts while nothing in a leg is closed")
+    assert "still held" not in rep.to_markdown(), (
+        "the split rendered for a book whose spread has nothing closed in it")
