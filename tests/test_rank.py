@@ -424,6 +424,30 @@ def test_volume_overlay_bounded_and_directional() -> None:
     assert abs(exhausted) <= 0.05 and abs(heavy) <= 0.05  # an overlay, never a pillar
 
 
+def test_the_volume_label_describes_magnitude_and_never_names_a_mechanism() -> None:
+    """AUDIT 2026-08-12 (STATE.md §5). The input is ONE session's share volume over a 90d average —
+    it carries no price direction — so the label may describe HOW MUCH and never WHO or WHY. The
+    old strings said "exhausted" and "heavy distribution"; on the 2026-07-29 queue 2 of the 10 names
+    labelled "heavy distribution" closed UP that session (VRRM +22.0% on 3.6×, at rank 5).
+
+    POSITIVE: every band states its ratio AND the basis it is a ratio OF — "0.39×" alone cannot
+    answer "relative to what", which is the question that opened the audit.
+    NEGATIVE: the retired mechanism words never come back."""
+    labels = [volume_overlay(_cand(volume_spike=v).data_record.prices)[1]
+              for v in (0.39, 1.04, 1.87, 3.60, 12.0)]
+    for lab in labels:
+        assert "90d avg" in lab, f"label states no basis — 'relative to what?': {lab!r}"
+        assert "×" in lab, f"label carries no ratio: {lab!r}"
+        for word in ("distribution", "exhausted", "accumulation", "panic", "smart money"):
+            assert word not in lab.lower(), (
+                f"{lab!r} names a MECHANISM the input cannot contain — one session's volume has no "
+                "direction. Describe the magnitude instead.")
+    # the bands are still distinguishable by name, and UNKNOWN is still the un-imputed sentinel
+    assert len({lab.split(" (")[0] for lab in labels}) == 4
+    unevaluable = _cand(volume_spike=None).data_record.prices
+    assert volume_overlay(unevaluable) == (0.0, "UNKNOWN")
+
+
 # --- composite + fail-loud + gate -------------------------------------------------------------
 def test_weights_must_sum_to_one() -> None:
     RankWeights()  # default is valid

@@ -14,8 +14,12 @@ const COLS = [
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
   // Tier-2, not an axis — sits after the four Tier-1 axes and before the tradeability figures,
-  // mirroring the order the subtitle describes the composite in. Sorts on the STRUCTURED overlay.
-  { key: "volumeOverlay", label: "Volume (T2)" },
+  // mirroring the order the subtitle describes the composite in. The header carries the BASIS so
+  // the cell can be the bare ratio; the title carries the one-session caveat, which the other
+  // columns (windowed over 180d/52w) do not need.
+  { key: "volumeSpike", label: "Volume vs 90d", num: true,
+    title: "The latest single session's share volume ÷ its own 90-day average, as of the screen "
+         + "date. A ONE-SESSION reading — unlike the windowed axes, it can differ the next day." },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
 const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here
@@ -108,7 +112,8 @@ function renderHead() {
   if (!head) return;
   head.innerHTML = COLS.map((c) => {
     const arrow = state.sort === c.key ? (state.dir > 0 ? " ▲" : " ▼") : "";
-    return `<th data-sort="${c.key}" class="${c.num ? "num" : ""}" style="cursor:pointer; user-select:none;">${c.label}${arrow}</th>`;
+    const tip = c.title ? ` title="${escapeHtml(c.title)}"` : "";
+    return `<th data-sort="${c.key}" class="${c.num ? "num" : ""}"${tip} style="cursor:pointer; user-select:none;">${c.label}${arrow}</th>`;
   }).join("");
 }
 
@@ -166,18 +171,26 @@ function renderRows() {
     const short = (a.label || "").split(" of ")[0]; // "P/E 0%ile of own 5y range" → "P/E 0%ile"
     return `<td title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${escapeHtml(short)}</td>`;
   };
-  // Tier-2 volume — the one component of Score with no column of its own. The subtitle above
-  // already tells the reader a volume overlay moves the composite, so the ±0.05 it contributed was
-  // asserted but unexplainable on this page. The label is shown VERBATIM as the scorer emitted it
-  // and is never re-parsed for its multiple (display formatting is never load-bearing); the sort
-  // key is the structured volumeOverlay, which orders exhausted → normal → elevated → heavy.
+  // Tier-2 volume — the one component of Score with no column of its own. LEADS WITH THE RATIO,
+  // like every other column on this page ("columns lead with the interpretable quantity"): the
+  // band word is only a bucketing of a number the reader can now see, and the two words it used to
+  // lead with named a MECHANISM the input cannot contain — one session's volume carries no
+  // direction, so "distribution" was a guess that was wrong on 2 of 10 names (audit, STATE.md §5).
+  // The word survives in the hover as the scorer's own read, never as the headline.
   const volCell = (r) => {
     const s = r.volumeState;
-    if (!s || s === "UNKNOWN") return `<td><span class="muted">${DASH}</span></td>`;
     const adj = r.volumeOverlay;
     const note = adj == null ? "overlay unavailable"
       : adj ? `${adj > 0 ? "+" : ""}${adj.toFixed(2)} to quality` : "no adjustment";
-    return `<td style="font-size:12px;" title="current volume vs its 90d average · ${note}">${escapeHtml(s)}</td>`;
+    const vs = r.volumeSpike;
+    if (vs == null) {
+      // legacy snapshot (pre-2026-08-12): no structured ratio, so fall back to the scorer's string
+      // rather than digging the number out of it — a display string is never re-parsed for a value.
+      if (!s || s === "UNKNOWN") return `<td><span class="muted">${DASH}</span></td>`;
+      return `<td style="font-size:12px;" title="${escapeHtml(s)} · ${note}">${escapeHtml(s)}</td>`;
+    }
+    return `<td class="num" title="${escapeHtml(s || "")} · ${note} · one session, as of the screen date">`
+      + `${vs < 10 ? vs.toFixed(2) : vs.toFixed(1)}×</td>`;
   };
 
   body.innerHTML = rows.map((r) => {

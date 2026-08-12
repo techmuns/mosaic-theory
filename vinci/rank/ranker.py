@@ -78,10 +78,19 @@ _CHAR_MEAN_REVERT = 0.97  # Tier-3 LLM: confirmed mean-revert candidate
 _DECLINE_WINDOW_DAYS = 180  # the screen's gap-down detection window (for catalyst recency)
 
 # Tier-2 volume overlay (MINOR). The only bar readable from a screen-time record is current volume
-# vs its 90d average: low == panic exhausted (a clean-setup plus); high == still under active
-# distribution (a falling-knife caution). This is NOT a smart-money-accumulation signal — that flow
-# is private/microsecond and we are structurally late; public volume is coincident-to-lagging and
-# strip-mined. Bounded small on purpose: it sharpens the ranking, it is not a pillar.
+# vs its 90d average. THE SIGN'S RATIONALE (face-validity, never returns): low reads as panic
+# exhausted (a clean-setup plus); high reads as a falling-knife caution. This is NOT a
+# smart-money-accumulation signal — that flow is private/microsecond and we are structurally late;
+# public volume is coincident-to-lagging and strip-mined. Bounded small on purpose: it sharpens the
+# ranking, it is not a pillar.
+#
+# THE RATIONALE IS NOT THE LABEL (audit 2026-08-12, STATE.md §5). The input is ONE session's share
+# volume over a 90d average — no price direction — so a displayed label may describe the MAGNITUDE
+# and never the MECHANISM. The old strings said "exhausted" and "heavy distribution", naming who
+# traded and why from a number containing neither: on the 2026-07-29 queue, 2 of the 10 names
+# labelled "heavy distribution" closed UP that session (VRRM +22.0% on 3.6×, at rank 5). The bands
+# below are now plainly descriptive and state their basis. Unchanged: every ± value, and the
+# thresholds — re-banding on the audit's forward-return numbers would be tuning on outcomes.
 _VOL_EXHAUSTED = 0.80
 _VOL_ELEVATED = 1.50
 _VOL_HEAVY = 3.00
@@ -250,18 +259,23 @@ def character_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
 
 # --- Tier-2 volume overlay + tradeability -----------------------------------------------------
 def volume_overlay(prices: PriceFeatures) -> tuple[float, str]:
-    """A MINOR ± adjustment from current volume vs its 90d average (panic exhausted vs heavy)."""
+    """A MINOR ± adjustment from the latest session's volume vs its 90d average.
+
+    The returned label describes the MAGNITUDE and states its basis. It must never name a mechanism
+    (who traded, and why) — the input carries no price direction, so any such word is a guess. See
+    the band comment above and the 2026-08-12 audit in STATE.md §5.
+    """
     f = prices.volume_spike
     if not f.is_evaluable or f.value is None:
         return 0.0, "UNKNOWN"
     vs = f.value
     if vs <= _VOL_EXHAUSTED:
-        return _VOL_BONUS, f"exhausted ({vs:.2f}×)"
+        return _VOL_BONUS, f"quiet ({vs:.2f}× vs 90d avg)"
     if vs <= _VOL_ELEVATED:
-        return 0.0, f"normal ({vs:.2f}×)"
+        return 0.0, f"normal ({vs:.2f}× vs 90d avg)"
     if vs <= _VOL_HEAVY:
-        return _VOL_CAUTION_SMALL, f"elevated ({vs:.2f}×)"
-    return _VOL_CAUTION, f"heavy distribution ({vs:.1f}×)"
+        return _VOL_CAUTION_SMALL, f"elevated ({vs:.2f}× vs 90d avg)"
+    return _VOL_CAUTION, f"heavy ({vs:.1f}× vs 90d avg)"
 
 
 def liquidity_tier(adv_usd: float) -> LiquidityTier:
@@ -312,6 +326,10 @@ def rank_candidate(
 
     vol_adj, vol_state = volume_overlay(prices)
 
+    # the RATIO itself, structurally — so no consumer ever has to parse it back out of vol_state
+    vs_f = prices.volume_spike
+    vol_spike = vs_f.value if (vs_f.is_evaluable and vs_f.value is not None) else None
+
     adv_f = prices.adv_90d_usd
     adv_usd = adv_f.value if (adv_f.is_evaluable and adv_f.value is not None) else 0.0
     gated = adv_usd < deep_work_adv_floor
@@ -340,6 +358,7 @@ def rank_candidate(
         adv_usd=adv_usd,
         market_cap=market_cap,
         volume_state=vol_state,
+        volume_spike=vol_spike,
         cause_class=cause_class,
         structurally_disqualified=structurally_disqualified,
         structural_flag=structural_flag,

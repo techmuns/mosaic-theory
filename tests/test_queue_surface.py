@@ -10,10 +10,15 @@ human reads), because the failure class here is WIRING: a source grep for `volCe
 when the call site is deleted from the row template, and a unit call of `volCell` stays green when
 the COLS entry and the <td> drift apart. Both are invisible to anything but a real render.
 
+TWO RENDER PATHS, both pinned. After the 2026-08-12 audit the cell LEADS WITH THE RATIO from the
+structured `volume_spike` field. A snapshot written before that field existed has no ratio, so the
+cell falls back to the scorer's string rather than digging the number out of it. The committed
+snapshot is currently a legacy one, so the fallback is what real traffic hits today and the
+structured path is exercised by injecting the field — never by hand-rolling a fixture.
+
 Living-artifact discipline (CLAUDE.md TEST-LAYER): the snapshot is re-drawn by every screen run, so
-nothing here pins a VALUE. The invariants are structural — the column exists, every row has exactly
-as many cells as there are headers, and the cell text is byte-identical to the snapshot field it
-came from (which is what makes "never re-parse the label" checkable).
+nothing here pins a VALUE that the screen produces. The invariants are structural, plus "the cell
+is byte-identical to the field it came from" — the checkable form of "never re-parse the label".
 """
 
 from __future__ import annotations
@@ -29,26 +34,34 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
 QUEUE = ROOT / "data" / "snapshots" / "ranked_queue.jsonl"
-VOL_COLUMN_LABEL = "Volume (T2)"
+VOL_COLUMN_LABEL = "Volume vs 90d"
+# the two words the audit retired: they name a MECHANISM (who traded, why) that one session's
+# volume cannot contain. "heavy distribution" was wrong on 2 of 10 names on the 2026-07-29 queue.
+RETIRED_WORDS = ("distribution", "exhausted")
 
 # The renderer touches only `root.innerHTML` plus two document sinks, so a handful of plain objects
 # stands in for the DOM. `fetch` is redirected onto the committed files: ./snapshots/x is served
 # from data/snapshots/x, so this runs without a build.py deploy copy in the worktree.
 _DRIVER = """
 import { readFile } from 'node:fs/promises';
-const ROOT = __ROOT__, DATA = __DATA__, MUTATE = __MUTATE__;
+const ROOT = __ROOT__, DATA = __DATA__, MODE = __MODE__;
 globalThis.fetch = async (p) => {
   const rel = String(p).replace(/^\\.\\//, '').replace(/^\\//, '');
   for (const base of [ROOT, DATA]) {
     try {
       let buf = await readFile(base + '/' + rel, 'utf8');
-      if (MUTATE && rel.endsWith('ranked_queue.jsonl')) {
-        const lines = buf.split('\\n').filter((l) => l.trim());
-        const first = JSON.parse(lines[0]);
-        first.volume_state = 'UNKNOWN';
-        first.volume_overlay = 0.0;
-        lines[0] = JSON.stringify(first);
-        buf = lines.join('\\n');
+      if (MODE && rel.endsWith('ranked_queue.jsonl')) {
+        const lines = buf.split('\\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+        if (MODE === 'unknown') {
+          lines[0].volume_state = 'UNKNOWN';
+          lines[0].volume_overlay = 0.0;
+          delete lines[0].volume_spike;
+        } else if (MODE === 'spike') {
+          // the structured field a post-2026-08-12 screen emits, injected onto REAL rows
+          const inj = [3.75, 0.4, 12.4];
+          lines.forEach((r, i) => { r.volume_spike = inj[i] !== undefined ? inj[i] : 1.0; });
+        }
+        buf = lines.map((r) => JSON.stringify(r)).join('\\n');
       }
       return { ok: true, status: 200, json: async () => JSON.parse(buf), text: async () => buf };
     } catch { /* fall through to the next base */ }
@@ -71,7 +84,7 @@ console.log(JSON.stringify({
 """
 
 
-def _render(mutate: bool = False) -> dict[str, str]:
+def _render(mode: str = "") -> dict[str, str]:
     """Run the real ranker view over the committed queue; return its head/body/page html."""
     if not shutil.which("node"):
         pytest.skip("node unavailable")
@@ -80,7 +93,7 @@ def _render(mutate: bool = False) -> dict[str, str]:
     script = (_DRIVER
               .replace("__ROOT__", json.dumps(str(FRONTEND)))
               .replace("__DATA__", json.dumps(str(ROOT / "data")))
-              .replace("__MUTATE__", "true" if mutate else "false"))
+              .replace("__MODE__", json.dumps(mode)))
     proc = subprocess.run(["node", "--input-type=module", "-e", script],
                           capture_output=True, text=True, cwd=ROOT)
     if proc.returncode != 0:
@@ -95,34 +108,76 @@ def _rows(body: str) -> list[str]:
     return re.findall(r"<tr\b.*?</tr>", body, re.S)
 
 
+def _vol_cells(body: str) -> list[str]:
+    """The 11th cell of every row — the volume column, by position."""
+    out = []
+    for row in _rows(body):
+        tds = re.findall(r"<td\b[^>]*>(.*?)</td>", row, re.S)
+        if len(tds) >= 11:
+            out.append(re.sub(r"<[^>]+>", "", tds[10]).strip())
+    return out
+
+
 def test_the_queue_row_shows_the_volume_term_that_moves_its_score() -> None:
     """THE WIRING PIN. Score = quality + volume_overlay, and the page says so in its own subtitle,
-    so the read must be visible on the row. Asserts the header exists AND that the state text
-    actually reaches the rendered cells — a COLS entry alone would satisfy the first and leave the
-    column blank in every browser."""
+    so the read must be visible on the row. Asserts the header exists AND that the value actually
+    reaches the rendered cells — a COLS entry alone would satisfy the first and leave the column
+    blank in every browser."""
     r = _render()
-    head, body = r["head"], r["body"]
-    assert VOL_COLUMN_LABEL in head, f"no volume column header in the rendered thead: {head[:400]}"
-    rows = _rows(body)
-    assert len(rows) > 50, f"queue body rendered {len(rows)} rows — the page did not reach content"
+    assert VOL_COLUMN_LABEL in r["head"], f"no volume column header in the thead: {r['head'][:400]}"
+    assert len(_rows(r["body"])) > 50, "queue body did not reach content"
+    filled = [c for c in _vol_cells(r["body"]) if c and c != "—"]
+    assert len(filled) > 50, f"only {len(filled)} rows carried a volume read — the column is blank"
 
-    snap = [json.loads(x) for x in QUEUE.read_text().splitlines() if x.strip()]
-    by_ticker = {r["ticker"]: r for r in snap}
+
+def test_the_volume_header_discloses_that_it_is_a_single_session() -> None:
+    """Every other column on this page is windowed (52w depth, 180d idio, ~5y multiple); this one
+    is ONE session and flips band 43% of the time between adjacent sessions (audit, STATE.md §5).
+    A reader comparing it to its neighbours will assume a window unless told, so the disclosure
+    rides on the header itself, not on a doc nobody opens."""
+    head = _render()["head"]
+    m = re.search(r'<th[^>]*data-sort="volumeSpike"[^>]*title="([^"]+)"', head)
+    assert m, f"the volume header carries no title attribute:\n{head[:600]}"
+    tip = m.group(1).lower()
+    assert "session" in tip, f"the header tip does not say it is a single session: {m.group(1)}"
+    assert "90-day" in tip or "90d" in tip, f"the header tip does not state the basis: {m.group(1)}"
+
+
+def test_a_structured_spike_renders_as_the_bare_ratio_not_a_band_word() -> None:
+    """THE AUDIT'S FIX. Post-2026-08-12 snapshots carry `volume_spike`, and the cell must lead with
+    the RATIO — the page's own rule is "columns lead with the interpretable quantity", and the band
+    word was both redundant with the number and, for two of the four bands, a mechanism claim the
+    input cannot support. Values are INJECTED onto real committed rows, so this pins the format
+    without pinning anything the screen produces."""
+    cells = _vol_cells(_render("spike")["body"])
+    assert cells[:3] == ["3.75×", "0.40×", "12.4×"], (
+        f"expected the bare ratio, 2dp under 10 and 1dp above; got {cells[:3]}")
+    for c in cells:
+        assert re.fullmatch(r"\d+\.\d+×", c), f"volume cell is not a bare ratio: {c!r}"
+        assert not any(w in c.lower() for w in RETIRED_WORDS), f"retired word led the cell: {c!r}"
+
+
+def test_a_legacy_snapshot_without_the_structured_field_still_renders() -> None:
+    """The committed snapshot predates `volume_spike`, so the fallback is what real traffic hits
+    until the queue is regenerated. It shows the scorer's string BYTE-IDENTICALLY — the checkable
+    form of "a display string is never re-parsed for its value", which is exactly the temptation
+    here (the ratio is sitting right there inside the label)."""
+    body = _render()["body"]
+    snap = {json.loads(x)["ticker"]: json.loads(x)
+            for x in QUEUE.read_text().splitlines() if x.strip()}
+    if any(r.get("volume_spike") is not None for r in snap.values()):
+        pytest.skip("the committed snapshot now carries volume_spike — fallback path not exercised")
     checked = 0
-    for row in rows:
+    for row in _rows(body):
         m = re.search(r'data-ticker="([^"]+)"', row)
-        assert m, f"row without a ticker: {row[:200]}"
-        rec = by_ticker.get(m.group(1))
+        rec = snap.get(m.group(1)) if m else None
         if not rec or not rec.get("volume_state") or rec["volume_state"] == "UNKNOWN":
             continue
-        # BYTE-IDENTICAL to the snapshot field. This is the checkable form of "the label is never
-        # re-parsed and never re-formatted" — any regex that lifted the multiple out, or any
-        # rounding of it, breaks this without needing to know today's values.
         assert f">{rec['volume_state']}<" in row, (
-            f"{m.group(1)}: snapshot says {rec['volume_state']!r} but the rendered row does not "
-            f"carry it verbatim:\n{row[:400]}")
+            f"{m.group(1)}: snapshot says {rec['volume_state']!r}, row does not carry it "
+            f"verbatim:\n{row[:400]}")
         checked += 1
-    assert checked > 50, f"only {checked} rows carried a volume state — too few to pin"
+    assert checked > 50, f"only {checked} rows exercised the fallback — too few to pin"
 
 
 def test_every_rendered_row_has_exactly_one_cell_per_header() -> None:
@@ -130,13 +185,12 @@ def test_every_rendered_row_has_exactly_one_cell_per_header() -> None:
     every column right of it — the whole table reads wrong while looking fine. Structural, so it
     guards the next column added here as much as this one."""
     r = _render()
-    head, body = r["head"], r["body"]
-    n_head = len(re.findall(r"<th\b", head))
+    n_head = len(re.findall(r"<th\b", r["head"]))
     assert n_head >= 13, f"expected the queue's full header set, got {n_head}"
-    for row in _rows(body):
+    for row in _rows(r["body"]):
         n_cells = len(re.findall(r"<td\b", row))
         assert n_cells == n_head, (
-            f"row has {n_cells} cells against {n_head} headers — the columns are misaligned:\n"
+            f"row has {n_cells} cells against {n_head} headers — columns are misaligned:\n"
             f"{row[:400]}")
 
 
@@ -146,14 +200,12 @@ def test_an_unknown_volume_read_renders_a_dash_not_the_word_unknown() -> None:
     cell must degrade to the muted dash every other unknown on this page uses, never print the
     sentinel. No committed row is UNKNOWN today, which is exactly why this needs a guard."""
     clean = _render()["body"]
-    mutated = _render(mutate=True)["body"]
+    mutated = _render("unknown")["body"]
     assert clean != mutated, (
         "the mutation changed nothing — the guard cannot fail, so it is untested")
-
     first = _rows(mutated)[0]  # the mutation was applied to the first snapshot line
     assert "UNKNOWN" not in first, f"the UNKNOWN sentinel leaked into the row:\n{first[:400]}"
     assert "—" in first, f"the unknown volume read did not degrade to a dash:\n{first[:400]}"
-    # and the mutation is confined to the row it was applied to
     assert len(_rows(mutated)) == len(_rows(clean))
 
 

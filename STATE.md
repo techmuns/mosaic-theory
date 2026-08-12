@@ -11312,7 +11312,12 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
    **Bundle with item 7's NFLX re-pull — one pass.**
 
-9. **EMIT `volume_spike` AS A STRUCTURED FIELD ON THE RANKED-QUEUE SNAPSHOT.** Opened 2026-08-12 by
+9. **[SHIPPED 2026-08-12 in PR #420 — the operator held the PR and asked for the labels first.]**
+   `RankedCandidate.volume_spike: float | None` now carries the ratio; the queue cell leads with it
+   and the band words are retired at source. **The field is emitted but the COMMITTED snapshot
+   predates it — see the staleness note at the end of the audit below; the fix is dormant until the
+   queue is regenerated, which is #420's merge precondition.** Original entry:
+   **EMIT `volume_spike` AS A STRUCTURED FIELD ON THE RANKED-QUEUE SNAPSHOT.** Opened 2026-08-12 by
    PR #420. The snapshot carries `volume_state` (the display string, e.g. `"exhausted (0.39×)"`) and
    `volume_overlay` (the ±0.05 step) but **not the ratio itself** — so the new queue column can only
    sort by the 4-step overlay, leaving the order arbitrary within a band. Parsing the multiple back
@@ -11392,6 +11397,31 @@ built (faithful to what the scorer emits today, labels corrected in a follow-up)
 label fix. Recommended sequence if it waits: emit `volume_spike` structurally (item 9) → retire the
 band words and lead with the number + its date → only then revisit the scorer, separately and on
 face-validity grounds.
+
+**OPERATOR CHOSE: HOLD #420, FIX THE LABELS FIRST (2026-08-12).** Done, in the same PR:
+`volume_spike` emitted structurally on `RankedCandidate`; `volume_overlay()`'s bands renamed to
+plain magnitudes that state their basis (`quiet / normal / elevated / heavy`, each `"(N× vs 90d
+avg)"`) — which also answers the question that opened the audit, *"relative to what?"*, everywhere
+the string appears including the CLI; the queue cell now LEADS WITH THE RATIO (`0.39×`) per the
+page's own "columns lead with the interpretable quantity" rule, with the band word demoted to the
+hover and a one-session disclosure on the column header. **Every ± value and every threshold is
+untouched** — re-banding on the audit's forward-return numbers would be tuning on outcomes.
+Guarded by `tests/test_rank.py::test_the_volume_label_describes_magnitude_and_never_names_a_mechanism`
+(positive: each band states ratio + basis; negative: `distribution`/`exhausted`/`accumulation`/
+`panic`/`smart money` can never come back) and by two end-to-end render pins, one per path.
+
+**THE FIX IS DORMANT UNTIL THE QUEUE IS REGENERATED — AND A REGEN IS NOT A REFRESH (found while
+checking whether it could just be re-run).** `vinci rank` reads committed snapshots with no DB and
+no network, so regeneration looked free. It is not: the committed **queue is 331 rows stamped
+2026-07-29**, while the committed **`candidate_records.jsonl` is 280 records stamped 2026-08-10**.
+Re-ranking from today's records would **ADD 44 names, DROP 95, keep 236** — that is ADVANCING the
+queue to a newer screen, with ~40% turnover and analyst workflow states keyed to tickers, not
+refreshing a label. Deliberately not done here. Consequences: (a) the frontend keeps a legacy
+fallback that renders the old string verbatim rather than digging the ratio out of it, so the page
+stays correct-but-old and pinned by its own test; (b) **#420's merge precondition is a deliberate
+queue regeneration** — until then the column still shows `exhausted` / `heavy distribution` from the
+2026-07-29 snapshot; (c) the 12-day gap between the committed queue and the committed records is
+itself worth a look — nothing guarantees the served queue reflects the last screen that ran.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
