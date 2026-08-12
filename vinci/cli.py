@@ -1092,6 +1092,69 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
         f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d "
         f"· {prop_note} → disposition {disp}"
     )
+    _export_ledger(cfg, "log-verdict")
+    return 0
+
+
+def _export_ledger(cfg: Config, what: str) -> None:
+    """Flush the working DB's ledger to the COMMITTED snapshot, and say where it landed.
+
+    WHY EVERY LEDGER WRITE ENDS HERE. `log_verdict` wrote to the working SQLite DB and stopped, but
+    the DB is a CACHE — the durable record is `data/snapshots/decision_ledger.jsonl`, and it is what
+    `vinci monitor`, the frontend mirror and any fresh clone actually read (`_cmd_monitor` says so
+    in its own docstring). So a verdict logged today reached no reader until somebody happened to
+    run the weekly screen or the monthly score, both of which export as a side effect of doing
+    something else. Measured on a copy of the committed tree: after a ledger write the DB held 7
+    rows and the snapshot still held 6, byte-identical.
+
+    Exporting the LEDGER TABLE ONLY, deliberately. A blanket export would also rewrite the
+    universe/candidate snapshots from whatever half-populated state this operator's DB happens to
+    be in, which is a much larger diff than the one decision the command was asked to record.
+    """
+    with Store(cfg.db_path) as store:
+        store.export_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
+    path = cfg.snapshots_dir / "decision_ledger.jsonl"
+    n = len([ln for ln in path.read_text().splitlines() if ln.strip()])
+    print(f"{what}: committed ledger now {n} row(s) → {path}")
+    print("  the frontend mirror is NOT rebuilt by this command — run `python frontend/build.py` "
+          "and commit, or CI's mirror-sync gate will fail the PR.")
+
+
+def _cmd_close_position(args: argparse.Namespace) -> int:
+    """Append the CLOSE row for a decision, then flush the committed ledger.
+
+    THE COMMAND THAT DID NOT EXIST. The close-row schema, readers, display and id helper all
+    shipped in `4f34c11`; the writer did not. Both committed closes were therefore hand-authored
+    JSON — a row reaching an append-only record without passing one guard. This is that writer,
+    with the guards the hand path never had: no unknown candidate, no second close, no exit before
+    entry, and a stated reason (the schema's own rule, enforced where the operator can read it).
+    """
+    from vinci.ledger import close_position
+
+    cfg = get_config()
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    reason = (args.reason or "").strip()
+    if not reason:
+        print("REFUSED: --reason is required — a position closes for a stated reason, or the "
+              "record cannot be reviewed later.")
+        return 1
+    try:
+        with Store(cfg.db_path) as store:
+            close = close_position(
+                store, candidate_id=args.candidate_id, exit_price=args.exit_price,
+                exit_price_as_of=as_of, reason=reason,
+                closed_at=datetime.now(UTC).replace(tzinfo=None))
+    except LedgerError as exc:
+        print(f"could not close: {exc}")
+        return 1
+    realized = close.exit_price / close.entry_price - 1.0 if close.exit_price else 0.0
+    print(
+        f"closed {close.ticker} [{close.verdict.value}] — entry {close.entry_price:.2f} "
+        f"{close.entry_price_as_of} → exit {close.exit_price:.2f} {close.exit_price_as_of} "
+        f"= {realized:+.2%} realized")
+    print(f"  {close.entry_id} closes {close.closes_entry_id}. The DECISION keeps running to its "
+          f"horizon — a close is a portfolio action, not a retraction of the call.")
+    _export_ledger(cfg, "close-position")
     return 0
 
 
@@ -3119,6 +3182,20 @@ def build_parser() -> argparse.ArgumentParser:
                             "(ALWAYS overwrites — no skip-if-present; missing canonical is fatal). "
                             "Use when running outside the primary worktree.")
     p_ohr.set_defaults(func=_cmd_own_history_refresh)
+
+    p_close = sub.add_parser(
+        "close-position",
+        help="append the CLOSE row for a logged decision (the realized-P&L half)")
+    p_close.add_argument("candidate_id", help="candidate id of the decision being closed")
+    p_close.add_argument("--exit-price", dest="exit_price", type=float, required=True,
+                         help="the price the position actually exited at")
+    p_close.add_argument("--as-of", dest="as_of",
+                         help="exit date YYYY-MM-DD (default: today). Must not precede the "
+                              "frozen entry date.")
+    p_close.add_argument("--reason", required=True,
+                         help="why the position was closed — the schema refuses a close without "
+                              "one, because an unexplained exit cannot be reviewed later")
+    p_close.set_defaults(func=_cmd_close_position)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
