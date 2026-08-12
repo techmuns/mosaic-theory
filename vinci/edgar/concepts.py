@@ -9,8 +9,8 @@ takes the most recent ``filed`` (handling restatements without mutating earlier 
 
 from __future__ import annotations
 
-from datetime import date
-from typing import Any
+from datetime import date, timedelta
+from typing import Any, NamedTuple
 
 from pydantic import BaseModel
 
@@ -190,3 +190,59 @@ def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     if not instants:
         return None
     return max(instants, key=lambda p: (p.period_end, p.filed))
+
+
+# --- shares-outstanding trajectory (ONE implementation, two consumers) --------------------------
+# The trailing window over which a share-count change is read. Lives here rather than in either
+# consumer because BOTH read it: the rank-side dilution-spiral demote (vinci.rank.structural) and
+# the screen-side evidence strip. Two computations of one quantity is the twin-drift class this
+# repo keeps finding — they would agree today and diverge on the first edit to one of them.
+SHARES_WINDOW_DAYS = 730  # ~2y, mirroring the dossier's dilution trajectory
+
+
+class ShareCountChange(NamedTuple):
+    """A share-count change over the trailing window, carrying its own endpoints.
+
+    The endpoints travel with the number because a fraction alone cannot be checked: "+42%" is
+    unverifiable, "58,598,133 (2024-05-13) → 83,209,441 (2026-05-12)" is a claim a human can go
+    read off EDGAR. Every source string built from this uses them.
+    """
+
+    change: float  # fraction: +0.42 == shares up 42%; negative == buyback
+    from_date: date
+    from_value: float
+    to_date: date
+    to_value: float
+
+
+def share_count_change(
+    shares: list[tuple[date, float]], *, window_days: int = SHARES_WINDOW_DAYS
+) -> ShareCountChange | None:
+    """Fractional change in shares outstanding across the trailing window, or None if unreadable.
+
+    None — never 0.0 — when the series is too short or a value is non-positive: a fabricated "no
+    change" would read as a confirmed flat share count, which is the opposite of "we could not
+    tell". The window is anchored on the LAST point rather than on today, so a name whose XBRL
+    series ends early is measured over the span it actually has.
+    """
+    if len(shares) < 2:
+        return None
+    series = sorted(shares)
+    anchor = series[-1][0] - timedelta(days=window_days)
+    window = [s for s in series if s[0] >= anchor]
+    # TWO DISTINCT DATES INSIDE THE WINDOW, or nothing (review, #440). When every other point is
+    # older than the window, `window` holds only the latest tuple — and unpacking [0] and [-1] then
+    # used ONE datum as both endpoints and returned 0.0, publishing a confident "no change" from a
+    # single observation. Measured live: 1 of 273 rows (RXRX, 2026-07-31 → 2026-07-31).
+    #
+    # AND NO FALLING BACK to the full history: the caller states a horizon, so silently measuring a
+    # six-year span and calling it two years swaps one wrong number for another. This also removes a
+    # dead `or series` branch — `series[-1]` always satisfies `>= anchor`, so the window could never
+    # be empty and the fallback implied a safety net that never once fired.
+    if len({d for d, _ in window}) < 2:
+        return None
+    (d0, v0), (d1, v1) = window[0], window[-1]
+    if v0 <= 0 or v1 <= 0:
+        return None
+    return ShareCountChange(change=v1 / v0 - 1.0, from_date=d0, from_value=v0,
+                            to_date=d1, to_value=v1)

@@ -110,6 +110,10 @@ class RankedCandidate(BaseModel, frozen=True):
     # queue can draw the DIRECTION beside the one-session number. Display-only, never a rank input.
     # None when the name lacks a full quarter of bars: a half-length trend line reads as a shape.
     volume_trend: list[float] | None = None
+    # The EVIDENCE STRIP — inform-only context (net issuance, price tail), composed by the WRITER
+    # after ranking from data the screen already assembled. NEVER a rank input: vinci.rank must not
+    # import vinci.evidence, and an AST fence asserts it. None when nothing is known for the name.
+    context: str | None = None
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
     structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)

@@ -78,6 +78,16 @@ class Fundamentals(BaseModel, frozen=True):
     net_debt_to_ocf: DataField[float] = DataField.unknown(
         source="EDGAR", tier=SourceTier.EDGAR, note="not in snapshot (pre-OCF-leverage screen)"
     )
+    # Net share issuance over the trailing ~2y, as a fraction (+0.42 == shares up 42%; negative ==
+    # buyback). INFORM-ONLY — an evidence-strip input the human reads, never a rank input, and an
+    # AST fence asserts the scorer never touches it. Computed from the SAME companyfacts the
+    # screen already fetches (no extra network) via the one shared `share_count_change`, so the
+    # displayed number and the dilution-spiral demote can never be two different quantities.
+    # Its `note` carries the endpoints, so "+42%" is checkable against EDGAR rather than trusted.
+    # Defaulted so a snapshot written before 2026-08-12 still loads (reads UNKNOWN until re-screen).
+    share_count_change_730d: DataField[float] = DataField.unknown(
+        source="EDGAR", tier=SourceTier.EDGAR, note="not in snapshot (pre-evidence-strip screen)"
+    )
 
 
 class StressSignals(BaseModel, frozen=True):
