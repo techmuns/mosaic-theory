@@ -252,7 +252,7 @@
         "note": null
       },
       "nonoperating_earnings": {
-        "value": "$-122M of the quarter ended 2025-06-30 came from BELOW the operating line — 115% of pre-tax income, and 134% of revenue. Operating income $16M → pre-tax $-106M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "value": "4 of the trailing four quarters carry a material block from BELOW the operating line — 2024-09-30 +$6M (46% of pre-tax · 6% of revenue) · 2025-03-31 +$43M (69% of pre-tax · 37% of revenue) · 2025-06-30 −$122M (115% of pre-tax · 134% of revenue) · 2025-09-30 −$14M (exceeds pre-tax · 11% of revenue) — netting −$87M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2024-09-30..2025-09-30",
         "status": "present",
         "note": null

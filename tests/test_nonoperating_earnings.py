@@ -104,6 +104,54 @@ def test_ubers_investment_revaluation_is_surfaced() -> None:
     assert "of revenue" in out.value
 
 
+@pytest.mark.skipif(not (FIX / "UBER.json").is_file(), reason="no fixture")
+def test_every_material_quarter_is_named_not_only_the_largest() -> None:
+    """THE REGRESSION (2026-08-12, from an analyst reading UBER's page).
+
+    UBER carries THREE material quarters and the page named ONE — the largest by revenue share,
+    2025-09-30 — describing it as "an earlier quarter still inside the trailing four". A reader is
+    then told the distortion sits behind them and the recent quarters are clean. Both dropped
+    quarters are the RECENT ones, and 2026-06-30's +$1,387M is the investment revaluation the
+    analyst raised AGAINST THIS VERY FIELD ("Q2 GAAP net income included a $1.6bn pre-tax benefit").
+
+    The figure a reader divides by is an LTM one, so every quarter inside it counts."""
+    out = _run("UBER")
+    assert out.value is not None
+    for quarter, amount in (("2025-09-30", "+$1,507M"),
+                            ("2026-03-31", "−$1,427M"),
+                            ("2026-06-30", "+$1,387M")):
+        assert quarter in out.value, f"{quarter} is material and unnamed"
+        assert amount in out.value, f"{quarter}'s magnitude is missing"
+    assert out.value.startswith("3 of the trailing four quarters"), (
+        "the count leads, so a reader knows how many items the LTM carries before reading them")
+
+
+@pytest.mark.skipif(not (FIX / "UBER.json").is_file(), reason="no fixture")
+def test_the_net_is_stated_because_the_largest_alone_overstates_it() -> None:
+    """THE POINT THE MAXIMUM CANNOT MAKE. UBER's two unnamed quarters point OPPOSITE ways
+    (−$1,427M then +$1,387M) and very nearly cancel, so naming only the +$1,507M implied a
+    distortion the trailing figure does not carry. An LTM EPS carries the SUM."""
+    out = _run("UBER")
+    assert out.value is not None
+    assert "netting +$1,521M across the four" in out.value, out.value
+    assert "carries the SUM, not the largest" in out.value
+
+
+def test_a_single_material_quarter_keeps_the_original_sentence() -> None:
+    """THE BOUNDARY. One material quarter must read exactly as before — including the where-clause
+    that tells a reader whether it is the latest quarter or sits behind it, which the multi-quarter
+    list has no room for. NFLX (one material quarter) is pinned verbatim above; this holds the
+    shape on a constructed one so the branch is covered without depending on a fixture."""
+    # values in DOLLARS (the function renders $M): gap $400M = 80% of pre-tax, 40% of revenue
+    facts = _facts(**{"2026_06_30": (100e6, 500e6, 1000e6)})
+    out = _nonoperating_earnings(_Stub(facts), "x", REF)
+    assert out.value is not None
+    assert out.value.startswith("$400M of the quarter ended 2026-06-30 came from BELOW")
+    assert "80% of pre-tax income, and 40% of revenue" in out.value
+    assert "This is the latest quarter" in out.value
+    assert "netting" not in out.value, "the single-quarter form must not grow a net clause"
+
+
 @pytest.mark.skipif(not (FIX / "V.json").is_file(), reason="no fixture")
 def test_an_ordinary_name_says_so_rather_than_going_silent() -> None:
     """NOT-MATERIAL IS A FINDING, not an absence — the field states what it checked and what it

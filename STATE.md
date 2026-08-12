@@ -13869,6 +13869,31 @@ sign-off.**
   norm and its median rises to meet it. The reader's question is not "is this unusual for them" but
   "how much of this is operating", which holds however habitual the behaviour. Fleet today: 4 of 15
   flag, 9 clean, 2 UNKNOWN (NCNO and WERN file no quarterly pre-tax tag).
+  - **EVERY MATERIAL QUARTER IS NAMED, NOT THE LARGEST ONE (2026-08-12,
+    fix/nonoperating-all-quarters).** The analyst's own objection landed on this field: they flagged
+    UBER's **Q2-2026 $1.6bn** equity-revaluation benefit, and the page did not mention that quarter.
+    It named **only the largest by revenue share** — 2025-09-30's +$1,507M — and called it *"an
+    earlier quarter still inside the trailing four"*, which tells a reader the distortion sits
+    BEHIND them and the recent quarters are clean. **UBER has THREE material quarters and both
+    dropped ones are the RECENT ones:** 2026-03-31 **−$1,427M** (exceeds pre-tax) and 2026-06-30
+    **+$1,387M** — the analyst's. The selection rule was defensible in the abstract ("the one that
+    most distorts a trailing figure") and wrong in its own live case, because the figure a reader
+    divides by is an LTM one, so every quarter inside it counts.
+    **AND THE NET IS THE POINT THE MAXIMUM CANNOT MAKE.** UBER's two unnamed quarters point OPPOSITE
+    ways and very nearly cancel: the four net to **+$1,521M**, not the +$1,507M the page implied a
+    reader should carry. Naming the maximum asserted a distortion the trailing figure does not have.
+    The multi-quarter form states the count, every item, and the net; **the single-quarter form is
+    UNCHANGED** (NFLX still reads verbatim as pinned — it has one material quarter, and only the
+    multi form has no room for the where-clause).
+    *Verified on the committed fixtures: UBER now names all three + the net; NFLX and V byte-identical.
+    **ARTIFACT PASS via the MECHANICAL-ONLY refresh** (`refresh_dossier(transform=…)`, no
+    re-assembly, no synthesis re-roll): **UBER and MVST** moved — MVST is **4 of 4** quarters
+    material — and the `moved_cited_claims` guard PASSED rather than being bypassed, because every
+    figure UBER's synthesis cites (1,507 · 58% · 2025-09-30) is still on the page; the new text adds
+    quarters, it does not restate the one the prose quotes. **FUBO REFUSED, correctly** — it is
+    SEALED by its own `known_wrong.json`, and the write path said so. 4 pins (all three quarters
+    named · the net · the count leading · the single-quarter form unchanged); 2 FAIL without the fix.
+    ruff + mypy --strict (124) + pytest 2377 green.*
 - **`extract_points` RETURNS STALE DATA WHEN A FILER ABANDONS ITS PREFERRED ALIAS (found
   2026-08-12, PR-4; BROADER THAN THAT PR).** It is first-alias-**with-data**-wins, and an abandoned
   tag still has data — just old data. **UBER stopped filing
