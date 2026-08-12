@@ -4866,7 +4866,13 @@
         "status": "present",
         "note": null
       },
-      "maturity_event": null
+      "maturity_event": null,
+      "panel_vintage": {
+        "value": "the debt schedule is 138d old (source filed 2026-02-18); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-18-2026",
+        "status": "present",
+        "note": null
+      }
     },
     "capital_allocation": {
       "goodwill": {

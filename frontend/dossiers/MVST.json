@@ -2333,6 +2333,12 @@
         "source_ref": "8-K 0000947871-26-000585 (2026-05-28)",
         "status": "present",
         "note": null
+      },
+      "panel_vintage": {
+        "value": "the debt schedule is 112d old (source filed 2026-03-16); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Mar-16-2026",
+        "status": "present",
+        "note": null
       }
     },
     "capital_allocation": {

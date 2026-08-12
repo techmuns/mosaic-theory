@@ -616,6 +616,13 @@ class CapitalStructure(BaseModel):
     # (e.g. the 2026-05-28 Notice-of-Conversion: full principal → common stock). value = verbatim
     # (≤400c), source_ref = "8-K <accession> (<date>)". Optional so a pre-P3 dossier.json validates.
     maturity_event: Sourced[str] | None = None
+    # (PR-3) HOW OLD THE PANEL IS, and whether a termination has been filed since it was taken.
+    # The panel has never carried an age: `freshness._PANEL_KEY` matches `detail_as_of` but
+    # `freshness._ISO` wants an ISO date and CIQ writes "Jan-23-2026", so the key was found and the
+    # date never extracted — measured, every committed name's schedule is 82-280 DAYS old. Not
+    # routed into `check_freshness`, whose ceiling is 45d: all fourteen are past it, so that gate
+    # would refuse the whole fleet. Optional-with-default so pre-field JSON round-trips.
+    panel_vintage: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
