@@ -282,11 +282,21 @@ def _clip(frag: str, cap: int, *, incomplete: bool = False) -> str:
     and independent way to be cut short: it can be well under ``cap`` and still stop mid-clause.
     Marking only the cap would have left that branch exactly as silent as the bug being fixed —
     caught by the run-on test, not by reading.
+
+    THE WORD TRIM APPLIES TO BOTH BRANCHES (review finding). The first cut trimmed only when the
+    CAP bit, so an offset-bounded fragment under the cap kept its partial final token and merely
+    gained a marker — `"volume v …"`, which still shows a word the filer never wrote. A cap cut and
+    an offset cut are equally arbitrary about where they land, so the final token of either may be
+    a word fragment; dropping it unconditionally costs at most one whole word off a quote already
+    known to be truncated, and is the only version where the guarantee actually holds.
     """
     frag = frag.strip()
     if len(frag) <= cap and not incomplete:
         return frag
-    body = frag[:cap].rsplit(" ", 1)[0] if len(frag) > cap else frag
+    body = frag[:cap] if len(frag) > cap else frag
+    # A fragment with no space at all is a single token — there is no word boundary to retreat to,
+    # so it keeps its (marked) self rather than becoming empty.
+    body = body[:body.rindex(" ")] if " " in body else body
     return f"{body.rstrip(' ,;:')} …".strip()
 
 

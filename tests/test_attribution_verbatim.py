@@ -108,6 +108,37 @@ def test_a_sentence_with_no_end_at_all_is_bounded_rather_than_taking_the_documen
     assert vb.rstrip().endswith("…"), "an offset-bounded fragment did not mark itself as cut"
 
 
+def test_an_offset_cut_landing_inside_a_word_still_ends_on_a_whole_word() -> None:
+    """REVIEW FINDING (P1), and the version above is exactly why it was needed.
+
+    The word trim ran only when the CAP bit. An offset-bounded fragment sits UNDER the cap, so it
+    kept its partial final token and merely gained a marker — the emitted quote read `…volume v …`,
+    showing "v" as though the filer wrote it. The ellipsis assertion above passed anyway, because
+    that fixture's 16-character cycle happens to put the 520th character on a boundary: the test
+    was measuring alignment luck, not the guarantee.
+
+    A 7-character cycle lands the offset cut INSIDE a token, and the assertion is on the invariant
+    rather than on the cut position — every token emitted must be a whole token of the source, so
+    the test cannot be satisfied by a different accidental alignment."""
+    runon = "Revenue increased $5 million, or 3%, due to " + "volume " * 200
+    vb = _row(runon)
+    assert vb.rstrip().endswith("…"), "the offset-bounded fragment lost its marker"
+    source_tokens = set(runon.split())
+    emitted = vb.rstrip(" …").split()
+    orphans = [t for t in emitted if t not in source_tokens]
+    assert not orphans, f"emitted token(s) that are not whole words of the source: {orphans}"
+    assert emitted[-1] == "volume", f"trailing partial word survived: {emitted[-1]!r}"
+
+
+def test_the_word_trim_applies_to_an_under_cap_incomplete_fragment() -> None:
+    """The same finding at the helper, where the branch actually lives: `incomplete=True` with a
+    fragment far below the cap must still retreat to a word boundary."""
+    assert _clip("the quick brown foxx", 700, incomplete=True) == "the quick brown …"
+    # …and a single-token fragment has no boundary to retreat to, so it keeps itself rather than
+    # collapsing to a bare marker
+    assert _clip("supercalifragilistic", 700, incomplete=True) == "supercalifragilistic …"
+
+
 def test_the_leading_table_debris_strip_still_runs() -> None:
     """The pre-existing behaviour the cap change must not disturb: MD&A magnitudes are snapped out
     of table rows, so the fragment starts with cell noise that has to go."""
