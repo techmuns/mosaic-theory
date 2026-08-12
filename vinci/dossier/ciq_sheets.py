@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 import statistics
 from collections.abc import Callable
-from datetime import date
+from datetime import date, datetime
 from typing import Any, NamedTuple
 
 from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
@@ -156,8 +156,38 @@ def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
 # --- valuation: Multiples (Financials → Multiples, historical) --------------------------------
 
 
+def _as_date(value: Any) -> date | None:
+    """A Multiples column header → ``date``, or None when it is not one. The headers arrive as
+    ``date``/``datetime`` or as an ISO string depending on the workbook's column format."""
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return date(value.year, value.month, value.day)
+    try:
+        return date.fromisoformat(str(value).strip()[:10])
+    except (TypeError, ValueError):
+        return None
+
+
+def _quarterly_span_label(dates: list[Any]) -> str:
+    """`" spanning 2017-03-31..2026-05-31 (9.2y)"` for the distribution's own dates, or `""`.
+
+    Empty when the headers do not parse as dates — an omitted span is honest; a guessed one would
+    put a fabricated window on the very label that exists to stop a window being assumed.
+    """
+    parsed = sorted(d for d in (_as_date(x) for x in dates) if d is not None)
+    if len(parsed) < 2:
+        return ""
+    years = (parsed[-1] - parsed[0]).days / 365.25
+    return f" spanning {parsed[0].isoformat()}..{parsed[-1].isoformat()} ({years:.1f}y)"
+
+
 def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
-    """Percentile of the current TEV/LTM EBITDA Close within its own quarterly history (0=floor)."""
+    """Percentile of the current TEV/LTM EBITDA Close within its own quarterly history (0=floor).
+
+    The window is the workbook's FULL quarterly Close history, not the five years the destination
+    field's legacy name (``ev_ebitda_percentile_5y``) implies — so the source_ref states the span.
+    """
     try:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
@@ -174,15 +204,24 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
         return Sourced.unknown(
             note="TEV/LTM EBITDA is NM at the latest Close — a percentile against an older close "
                  "would carry no date to reveal it")
-    series = [v for _, v in pairs_ev if v is not None]
+    kept = [(d, v) for d, v in pairs_ev if v is not None]
+    series = [v for _, v in kept]
     if len(series) < 4:
         return Sourced.unknown(note=f"TEV/LTM EBITDA Close <4 quarters ({len(series)}) — no pctile")
     current, history = series[-1], series[:-1]  # partial last col = current, excluded from history
     pct = sum(1 for h in history if h <= current) / len(history)
+    # THE WINDOW SAYS HOW LONG IT IS (2026-08-12). The field this lands in is named
+    # `ev_ebitda_percentile_5y`, and the distribution is every quarterly Close the workbook carries
+    # — NFLX's is 38 of them, 2017→2026, spanning 9.4 YEARS. The count alone did not reveal that:
+    # a reader who trusts the field name divides 38 quarters into the 5 years it claims and reads a
+    # different window than the one that produced the number. The full history is the better
+    # distribution (more of the name's own cycle), so the VALUE is unchanged and the SPAN is stated
+    # instead — the honest label, not a silently re-cut window.
+    span = _quarterly_span_label([d for d, _ in kept[:-1]])
     return Sourced.present(
         round(pct, 3),
-        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters "
-        "(partial last column excluded from the distribution)",
+        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters"
+        f"{span} (partial last column excluded from the distribution)",
     )
 
 
@@ -2074,6 +2113,27 @@ def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
     )
 
 
+#: WHOSE NUMBER THE GUIDE IS. CIQ's Guidance sheet states every guide as a LEVEL in the metric's
+#: own units — there is no growth-form block anywhere in it (measured: 10 blocks for V, all levels).
+#: So when a company guides a RATE, the level on this page is CIQ's ARITHMETIC, not a figure the
+#: company published. Visa is the proven case: management guided FY26 revenue growth at "the low
+#: end of low-teens", and the sheet carries 45,200.0 — exactly FY25's 40,000 x 1.13.
+#:
+#: IT IS SAID ONCE, NOT PER ROW, because the sheet does not record which form management used and
+#: the shape cannot be inferred: 32 of the 49 committed guides are RANGES (plausibly the company's
+#: own band) and 17 are points — but a company can guide a point too. Flagging every point as
+#: derived would be the false-demotion error of #423 in a new place. The caution is general because
+#: the evidence is general.
+#:
+#: IN THE source_ref DELIBERATELY, not only in the render: five committed syntheses QUOTE a figure
+#: from this table (NFLX 12,860.0, MVST 427.5, VRRM 1.19/1.25, BRBR 10.0), and the LLM reads the
+#: mechanical layer as JSON. A render-only note would leave the model treating a CIQ derivation as
+#: the company's own words — which is the reading this exists to prevent.
+GUIDANCE_BASIS_REF = ("CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) "
+                      "— CIQ states every guide as a LEVEL; where management guided a RATE, the "
+                      "level is CIQ's arithmetic, not the company's published figure")
+
+
 def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | None, int | None]:
     """(guidance-date, guidance-range, actual) row indices for a Guidance metric block [bi, end).
     The As-Of 'Guidance Date'/'Guidance' rows precede the 'Actual/Latest' sub-block; 'Actual' is the
@@ -2192,29 +2252,37 @@ def guidance_bridge(
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
     return Sourced.present(
         "; ".join(lines) + _asof_suffix(as_of),
-        source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        source_ref=GUIDANCE_BASIS_REF,
     )
 
 
 def revenue_guide_lohi(
     bundle: CiqBundle, *, reference_date: date | None = None
-) -> tuple[float | None, float | None]:
-    """The latest CIQ FY-revenue guide as (low, high) — a POINT guide reads (v, v), a RANGE reads
-    (lo, hi), absent reads (None, None). The cross-source input for guide verification (a point
-    echoing the prior-FY actual = vendor artifact; a range matching the release = VERIFIED).
-    Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a display re-parse)."""
+) -> tuple[float | None, float | None, str | None]:
+    """The latest CIQ revenue guide as (low, high, PERIOD) — a POINT guide reads (v, v, period), a
+    RANGE reads (lo, hi, period), absent reads (None, None, None). The cross-source input for guide
+    verification (a point echoing the prior-FY actual = vendor artifact; a range matching the
+    release = VERIFIED). Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a
+    display re-parse).
+
+    THE PERIOD RIDES WITH THE NUMBERS (2026-08-12), for the reason the BASIS does. This guide is
+    whichever period CIQ last published — NFLX's is FQ3 2026, not the fiscal year the old docstring
+    assumed — and handing (low, high) onward without saying which period they cover is how a
+    quarterly 12,860 got compared against an annual 50,700–51,700 and printed MISMATCH. The caller
+    refuses on it.
+    """
     try:
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError:
-        return (None, None)
+        return (None, None, None)
     for r in _guidance_reads(rows, _metric_starts(rows, _GUIDANCE_METRICS), reference_date, 45):
         if "revenue" not in r.metric.lower():
             continue
         if r.guide_num is not None:
-            return (r.guide_num, r.guide_num)
+            return (r.guide_num, r.guide_num, r.period)
         if r.guide_range is not None:
-            return r.guide_range
-    return (None, None)
+            return (*r.guide_range, r.period)
+    return (None, None, None)
 
 
 def guidance_bridge_rows(
@@ -2243,7 +2311,7 @@ def guidance_bridge_rows(
             metric=r.metric, latest_guide=r.guide, period=r.period, dated=r.dated.isoformat(),
             age=age, record=record, most_recent=recent))
     return Sourced.present(
-        out, source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)")
+        out, source_ref=GUIDANCE_BASIS_REF)
 
 
 def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[list[RevisionEvent]]:

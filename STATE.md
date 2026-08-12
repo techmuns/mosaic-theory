@@ -13224,6 +13224,40 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **"LATEST GUIDE" CARRIED A NUMBER THE COMPANY NEVER PUBLISHED (2026-08-12, PR-A).** Visa guided
+  FY26 revenue at *"the low end of low-teens"* — a RATE. The page showed **45,200.0** under "Latest
+  guide", cited to CIQ→Guidance as though quoting the company. **PROVEN, not inferred: Visa's FY25
+  revenue is 40,000 and 40,000 × 1.13 = 45,200 exactly.** The level is CIQ's arithmetic on its own
+  base. Analyst finding, verified against the live workbook.
+  **CIQ CANNOT GIVE US THE OTHER FORM.** Its Guidance sheet for V has TEN metric blocks (Revenue,
+  EBIT, EPS Normalized, EPS GAAP, Capex, FCF, Net Income, DPS, Interest Expense, Effective Tax Rate)
+  and **not one growth-form block**. We are not dropping management's wording — CIQ normalises it
+  away before the export reaches us. The only honest move is to say the level may be derived.
+  **SAID ONCE, NOT PER ROW, and the restraint is the finding.** The sheet does not record which form
+  management used, and the shape cannot be inferred: **32 of the 49 committed guides are RANGES**
+  (`'2,335.00 - 2,375.00'`) that plausibly ARE the company's own band, and a company can guide a
+  point too. Flagging every point-valued guide as "derived" would be #423's false-demotion error in
+  a new place. The caution is general because the evidence is general.
+  **IN THE `source_ref`, NOT ONLY THE RENDER — a deliberate departure from #423, which was
+  render-only.** Checked rather than assumed by analogy: **seven committed syntheses cite this sheet
+  and five quote a figure off it** (NFLX 12,860.0 · MVST 427.5 · VRRM 1.19/1.25 · BRBR 10.0). The
+  LLM reads the mechanical layer as JSON, so a render-only note would leave the model treating a CIQ
+  derivation as the company's own words. One `GUIDANCE_BASIS_REF` constant feeds both call sites —
+  pinned, because two literals would let one carry the basis and the other keep claiming otherwise.
+  **A LABEL CHANGE MUST MOVE NO NUMBER**, so the artifact pass ran under a guard that re-derived
+  every guide from the workbook and refused any name whose figures differed. **13 of 14 updated; 0
+  refused for a moved figure.** The JSON diff is exclusively `source_ref` lines.
+  **FUBO: JSON SEALED, VIEW RE-RENDERED.** The seal refused its `dossier.json` (correctly — it is
+  frozen until a post-combination re-assembly). Its `dossier.md` was re-rendered anyway, on the
+  seal sidecar's own terms: *"`dossier.json` is untouched. `dossier.md` renders this block at the
+  top, because a rendered view is not the record."* Two e2e tests caught the stale twin. The
+  artifact pin exempts sealed records **by detecting the sidecar, never by naming FUBO** — a
+  hardcoded ticker would silently stop covering it the day it unseals.
+  **STILL BARE, DELIBERATELY: eight synthesis citations across seven names** (CNXC, EPAM, NCNO,
+  SMPL, UBER, VRRM bull points; SMPL bear; CNXC decisive-question evidence). Those strings were
+  copied from the mechanical layer when the synthesis was written, before the basis existed.
+  Hand-patching them would make the record show a caution the model never actually saw. They pick
+  it up at re-synthesis — which is already an operator to-do for UBER/SMPL/NFLX.
 - **A SPOT THAT NAMES NO DAY IS NOW UNRECORDABLE — schema 1.5 (2026-08-12, PR-7).**
   `vinci audit spot` can check a stated date against the store; against a record naming none it
   checks NOTHING and reports UNAUDITABLE forever. `write_record` now refuses a record created at
@@ -13252,6 +13286,114 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A QUARTER WAS CHECKED AGAINST A YEAR AND THE PAGE CALLED IT A MISMATCH (2026-08-12,
+  fix/guide-period-and-pctile-window).** Analyst review of the committed NFLX page, post-#426.
+  The dossier printed `guide verification (revenue): CIQ 12860.0–12860.0 vs release 50.7–51.7 →
+  MISMATCH flag`. **Nothing about that was a verification.** CIQ's revenue guide is **FQ3 2026** —
+  one quarter, 12,860.0 — and the release guides **FY2026**. Four quarters at CIQ's own number is
+  **51,440, INSIDE the annual guide**: the two sources CORROBORATE, and the check reported them as
+  contradicting. `guide_verification` compared the numbers and had no idea the periods differed.
+  **WHY IT MATTERS BEYOND A LABEL:** a revenue-guidance MISMATCH reads as management missing its own
+  number — the analyst's finding was raised as evidence of deteriorating execution — so a spurious
+  one manufactures exactly the impression the flag exists to warrant. **NOT NFLX-SPECIFIC:** any
+  name whose CIQ guide period differs from the period its release guides gets one.
+  **THE FIX IS THE REFUSAL ALREADY BESIDE IT.** Cross-basis (LEVEL vs CHANGE) refuses rather than
+  derives; cross-PERIOD now refuses identically. Annualising the quarter to force the comparison
+  would manufacture the base the check exists to verify — a guide is not four equal quarters — which
+  is the same manufactured-base argument the cross-basis refusal already makes. The period now RIDES
+  WITH THE NUMBERS on both sides (`revenue_guide_lohi` → `(lo, hi, period)`, `_release_revenue_guide`
+  → `(lo, hi, qual, basis, period)`), for the reason the BASIS does. **REFUSES ONLY WHEN BOTH LABELS
+  DECIDE A SCOPE AND THEY DIFFER** — an unrecognised label leaves prior behaviour untouched, because
+  inventing a scope would silence REAL mismatches (the opposite failure).
+  *Verified on the committed artifact's own inputs (not synthetic): CIQ `FQ3 2026`→quarter, release
+  `2026`→annual → the shipped MISMATCH becomes "CIQ guides a QUARTER … the release guides a YEAR …
+  NOT CROSS-CHECKED"; same-period pairs still VERIFY and real disagreements still MISMATCH. 16 pins
+  incl. the before/after in one test (withholding the periods reproduces the shipped string) and
+  every period shape in the corpus (`FQ3 2026`/`FY 2026`/`Q3`/`2026`/`Fiscal 2028`/`next-fy`, and
+  `H1 2026`→undecidable). ruff + mypy --strict (124) + pytest 2316 green.*
+  **HALF-YEAR IS A SCOPE, NOT AN UNDECIDABLE (review finding, #429).** The first cut returned `None`
+  for `H1 2026` on the reasoning that a half-year "decides neither" — but it names a determinate
+  six-month span exactly as `FQ3` does, so refusing on it let an H1-vs-FY pair fall straight through
+  to the numeric comparison and print the same false MISMATCH this PR was written to stop. Now a
+  third scope (`H[12]`/`[12]H`/`first|second half`/`six months ended`).
+  **PROTECTIVE, NOT CORRECTIVE — measured, not assumed.** Across every committed dossier the labels
+  that actually REACH `guide_verification` are only `FQ*`/`FY*` (CIQ side, from
+  `guidance_bridge_rows[].period`) and `2024`/`2025`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/`next-fy`
+  (release side, from `primary_source.releases[].guidance[].period`). **No committed name produces a
+  half-year guide period today**, so this repairs no live page — it closes the path before one does,
+  the same footing as #426's as-of bound. The worded half-year labels that DO exist in the corpus
+  (`first half of 2026`, `six months ended June 30, 2026` ×12) sit in `operating_drivers.rows[]`,
+  a different consumer that never calls `period_scope`.
+  **ORDER IS LOAD-BEARING IN BOTH DIRECTIONS**, and pinned: half must beat annual (`H1 fiscal 2026`
+  contains "fiscal", so annual-first would call a six-month guide a YEAR — a wrong scope SILENCES a
+  real mismatch, strictly worse than the undecidable it replaced), and quarter must beat half
+  (`Q2 2026, second half of quarter` is a QUARTER). Mutation-tested by swapping the two branches:
+  `H1 fiscal 2026` → `annual` and the pin reddens. `nine months ended …` stays `None` deliberately —
+  a YTD span is none of the three and guessing one would manufacture a refusal.
+  **NOT FIXED HERE, RECORDED:** the release leg ALSO carried a unit error — `$50.7-$51.7` **billion**
+  parsed as `$M` because the verbatim was truncated before the word "billion". Current
+  `parse_release` scales correctly WHEN the word is present (tested: 50,700–51,700), so this is
+  likely a stale artifact predating #411 — **unverified against the live filing**, and the period
+  refusal above holds either way (it fires on correct units too).
+- **A "5-YEAR" PERCENTILE HELD 9.4 YEARS (same PR).** `ev_ebitda_percentile_5y` is the workbook's
+  FULL quarterly Close history — NFLX's is **38 closes, 2017-03-31..2026-06-30 = 9.2y** — and the
+  source_ref named a COUNT, which does not reveal a span. A reader trusting the field name divides
+  38 quarters into the 5 years it claims and reads a different window than the one that produced the
+  number. **THE VALUE IS UNCHANGED** (full history is the better distribution — more of the name's
+  own cycle — and re-cutting it would move a decision number by relabelling); the SPAN is now stated:
+  `— 38 quarters spanning 2017-03-31..2026-06-30 (9.2y)`. **THE FIELD IS NOT RENAMED:** it is a
+  REQUIRED field on a frozen model that 11 committed dossiers and the suite parse, and this repo has
+  already ruled once that a bare rename breaks committed artifacts (the `ev_ebitda` scalar, §2) —
+  an honest label is the non-breaking half; a true rename needs a schema migration + fleet
+  re-assembly and is NOT done here. An unparseable header omits the span rather than guessing one.
+- **A `B` SUFFIX IS NOT A UNIT THE PARSER KNEW — $51.7bn READ AS $51.7M (2026-08-12,
+  fix/guidance-unit-suffix).** Found validating an analyst's reading of the committed NFLX page.
+  The dossier carried `revenue 2026: 50.7–51.7 $M` for a company guiding **$50.7–51.7 BILLION**, in
+  the exhibit the dossier itself cites: *"We continue to project 2026 revenue of **$50.7-$51.7B**"*
+  and *"we forecast 2026 revenue of **$50.7B-$51.7B**"*. `_GUIDE_RANGE` read only the SPELLED-OUT
+  `million|billion`; the suffix form did not exist to it. **This is the Concentrix
+  billions-as-millions defect a THIRD time** (after BellRing's shared range), against this module's
+  own rule that a magnitude error in a decision figure is worse than an absent one.
+  **THREE FAILURES IN ONE REGEX, all silent:** (1) a TRAILING suffix was ignored → 50.7 for $50.7bn,
+  a **1000x understatement**, and the verbatim stopped at "51.7" so the page showed a sentence
+  ending mid-number; (2) a LEADING suffix **broke the match entirely** — `$50.7B-$51.7B` and
+  `$985M-$995M` parsed to NOTHING because the `B` sat where the separator had to be, so the guide
+  was DROPPED with no flag (the dropped-clause class that cost ten of seventeen clauses on the
+  change-basis fix); (3) the trailing unit was applied to BOTH numbers, so `$500 million to $1.2
+  billion` produced **low=500,000 against high=1,200** — a floor 400x its own ceiling, and nothing
+  rejected it.
+  **THE FIX:** `bn`/`mm`/`[MB]` join the unit alternation on BOTH sides, each side scales by ITS OWN
+  stated unit, and a bare side inherits the trailing one (so `$2.465 to $2.49 billion` is unchanged).
+  The single letters carry `(?![A-Za-z])` because `[MB]` under `re.I` otherwise eats the first letter
+  of the next word — *"$2.4 to $2.5 **b**ased on…"* would read billions, the same magnitude error
+  inverted; that guard is pinned.
+  **AN IMPOSSIBLE RANGE IS NOW REFUSED, AND DELIBERATELY NOT SORTED (review finding, #430).**
+  Per-side scaling is what made the reverse order reachable: `$1.2 billion to $500M` arrived as
+  **low=1,200 high=500** and was emitted as real guidance — printed and handed to the cross-check —
+  with nothing rejecting it. **SORTING IS THE WRONG REPAIR**: it would state 500–1,200 as the
+  filing's range when the filing said the reverse, and if the true cause is a MIS-PARSE (unit words
+  bound to the wrong sides) sorting hides the evidence instead of surfacing it. The refusal is
+  ATTRIBUTED — it carries the bounds it rejected and the sentence — so a reader can settle it from
+  the filing, which a silently dropped guide would not allow.
+  **NOT the same as the change-basis swap one loop down, which DOES sort**: there the inversion is
+  the mechanical consequence of applying a sign (a decline range signs to −350..−300), not an
+  anomaly in what was written. That boundary is pinned by its own test so the new refusal cannot
+  leak into it and start refusing legitimate decline guides.
+  **PROTECTIVE, NOT CORRECTIVE — measured:** 56 committed guidance items carry both bounds and
+  **none is inverted**, so no live page changes. Mutation-tested by replacing the refusal with a
+  sort: the pin reddens (`an impossible range must not reach GuidanceItem as though it were a
+  guide`), so refuse-vs-sort is discriminated rather than merely described.
+  *Verified on the REAL exhibit end-to-end (fetched 0001065280-26-000137 EX-99.1): the guide now
+  parses **50,700–51,700 $M**, was 50.7–51.7. 20 pins on frozen filed text — the 5 behavioural ones
+  FAIL on the pre-fix parser and the "must not change" ones PASS on both, so the pin is
+  discriminating rather than incidental. ruff + mypy --strict (124) + pytest 2320 green; the corpus
+  guidance pins are unmoved.*
+  **BLAST RADIUS (measured, not assumed):** across the 14 committed dossiers, five names carry a
+  "no anchored pattern — guidance" flag AND no revenue guide — **BRBR, FUBO, IT, SMPL, V** (IT: 0
+  guides against 5 such flags; V: 0 against 3) — the signature of failure (2). These are SUSPECTS
+  sized by signature, **not confirmed**: each needs its own exhibit fetched. NFLX is the one proven
+  case. **Nothing was re-assembled here** — the artifacts still carry the old numbers until a
+  re-assembly runs.
 - **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
   opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
   column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest

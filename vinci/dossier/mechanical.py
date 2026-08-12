@@ -2936,19 +2936,24 @@ def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
 
 def _release_revenue_guide(
     releases: list[ReleaseExtract],
-) -> tuple[float | None, float | None, bool, str]:
-    """The most-recent release's revenue guide as (low, high, qualitative, BASIS) — the cross-source
-    comparison for guide verification. Releases are most-recent first; the first with a revenue
-    guide wins (a QUALITATIVE-only outlook signals a numeric CIQ guide has no corroboration).
+) -> tuple[float | None, float | None, bool, str, str | None]:
+    """The most-recent release's revenue guide as (low, high, qualitative, BASIS, PERIOD) — the
+    cross-source comparison for guide verification. Releases are most-recent first; the first with
+    a revenue guide wins (a QUALITATIVE-only outlook means the CIQ guide has no corroboration).
 
     THE BASIS RIDES WITH THE NUMBERS (2026-08-05). A release can guide revenue as a CHANGE
     ("-2% to +2% year-over-year"), and handing (low, high) onward without saying which kind they
-    are is how -2..+2 gets compared against a 1,345..1,355 level guide. The caller refuses on it."""
+    are is how -2..+2 gets compared against a 1,345..1,355 level guide. The caller refuses on it.
+
+    THE PERIOD RIDES WITH THEM TOO (2026-08-12), for the same reason and after the same failure:
+    the release can guide a YEAR while CIQ guides a QUARTER, and two numbers covering different
+    spans cannot agree no matter how well each is parsed."""
     for r in releases:
         for g in r.guidance:
             if g.metric == "revenue":
-                return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"))
-    return (None, None, False, "level")
+                return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"),
+                        getattr(g, "period", None))
+    return (None, None, False, "level", None)
 
 
 #: Display cap for a qualitative guide's verbatim in the MAIN BODY. The stored text is a 200-char
@@ -3182,12 +3187,14 @@ def _primary_source(
             f"'covenant basis: {primary_source.COVENANT_BASIS_UNKNOWN}' — a FALSE UNKNOWN "
             "(item 18). Refusing the build: a gap invites a look, an UNKNOWN closes the question.")
     # guide verification — CIQ revenue guide (point OR range) vs the release guide + prior-FY actual
-    ciq_lo, ciq_hi = ciq_sheets.revenue_guide_lohi(bundle, reference_date=reference_date)
-    rel_lo, rel_hi, rel_qual, rel_basis = _release_revenue_guide(releases)
+    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
+        bundle, reference_date=reference_date)
+    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
     guide = primary_source.guide_verification(
         "revenue", ciq_lo, ciq_hi,
         prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
-        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis)
+        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
+        ciq_period=ciq_period, release_period=rel_period)
     ps = PrimarySource(
         releases=releases, filing=filing,
         self_funding=Sourced.present(

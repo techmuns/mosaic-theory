@@ -308,6 +308,8 @@ _export date unverified (data ≥ 2026-06-12)_
 |---|---|---|---|---|---|---|
 | EBITDA | '80.00 - 100.00' | FY 2026 | 2026-05-06 | 61d (stale) | — | — |
 
+_CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
+
 - **Consensus stats (target + ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-06-12 · export date unverified] [17]
 - **Revision-event log (250 events · 18 broker-days)** — [38]  <!-- ds-table -->
 

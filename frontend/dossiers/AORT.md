@@ -398,6 +398,8 @@ _export date unverified (data ≥ 2026-06-30)_
 | Gross Margin % | 64.9 | FY 2026 | 2026-02-12 | 144d (stale) | actual ≥ floor 3/6 | FY 2024 MISSED |
 | EPS Normalized | none current (last: '0.28 - 0.32') | FY 2019 | 2019-10-30 | 2441d (stale) | actual ≥ floor 5/7 | FY 2019 MET |
 
+_CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
+
 - **Consensus stats (target + ratings):** Target price: mean $42.00, median $43.00, high/low 48.00/36.00, N 8/8; Ratings: Buy 6, Outperform 2, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-06-30 · export date unverified] [25]
 - **Revision-event log (250 events · 17 broker-days)** — [49]  <!-- ds-table -->
 
@@ -766,7 +768,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 [45] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [46] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
 [47] `8-K 0001628280-26-032097 EX-99.1 (filed 2026-05-07)`
-[48] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+[48] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
 [49] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-06-30 · export date unverified]`
 [50] `CIQ Estimates→Surprise (annual)`
 [51] `CIQ Net Debt $202M [Q1 Mar-31-2026] ÷ CIQ OCF $58M [LTM 12 months Mar-31-2026]`
