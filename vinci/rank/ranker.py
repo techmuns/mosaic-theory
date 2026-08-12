@@ -329,6 +329,9 @@ def rank_candidate(
     # the RATIO itself, structurally — so no consumer ever has to parse it back out of vol_state
     vs_f = prices.volume_spike
     vol_spike = vs_f.value if (vs_f.is_evaluable and vs_f.value is not None) else None
+    # and the weekly series beside it, for the queue's direction sparkline (display-only)
+    vt_f = prices.volume_trend
+    vol_trend = vt_f.value if (vt_f is not None and vt_f.is_evaluable and vt_f.value) else None
 
     adv_f = prices.adv_90d_usd
     adv_usd = adv_f.value if (adv_f.is_evaluable and adv_f.value is not None) else 0.0
@@ -359,6 +362,7 @@ def rank_candidate(
         market_cap=market_cap,
         volume_state=vol_state,
         volume_spike=vol_spike,
+        volume_trend=vol_trend,
         cause_class=cause_class,
         structurally_disqualified=structurally_disqualified,
         structural_flag=structural_flag,

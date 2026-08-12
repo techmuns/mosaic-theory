@@ -25,6 +25,11 @@ _MIN_52W_SPAN = 330  # require at least this much history before reporting 52w-b
 _RET_LOOKBACK = {"3m": 91, "6m": 182, "12m": 365}
 _ADV_WINDOW = 90
 _ADV_MIN_BARS = 20  # need at least this many bars in the 90d window for a meaningful ADV
+# Display-only volume trend: 13 weekly buckets of 5 sessions == ~one quarter, matching the
+# months-to-quarters hold the queue feeds. Wide enough to show a direction, short enough to
+# stay legible in a ~54px sparkline.
+_TREND_BUCKET = 5
+_TREND_BUCKETS = 13
 
 
 def _eod(value: float, as_of: date) -> DataField[float]:
@@ -33,6 +38,11 @@ def _eod(value: float, as_of: date) -> DataField[float]:
 
 def _derived(value: float, as_of: date) -> DataField[float]:
     return DataField.present(value, as_of=as_of, source="EOD", tier=SourceTier.DERIVED)
+
+
+def _derived_series(values: list[float], as_of: date) -> DataField[list[float]]:
+    """The list-valued twin of :func:`_derived` — same envelope, a series instead of a scalar."""
+    return DataField.present(values, as_of=as_of, source="EOD", tier=SourceTier.DERIVED)
 
 
 def _unknown(note: str) -> DataField[float]:
@@ -221,9 +231,25 @@ def compute_price_features(
             if market_cap and market_cap > 0
             else DataField.unknown(source="DERIVED", tier=SourceTier.DERIVED, note="no market cap")
         )
+        # DISPLAY-ONLY trend beside that one-session ratio, on the SAME denominator so the two share
+        # a unit. Weekly means: at sparkline width a daily series of a small-cap is spike noise, and
+        # DIRECTION is what this is for — the number already carries today. Emitted only with a full
+        # set of buckets; a half-length trend line reads as a real shape rather than missing data.
+        span = _TREND_BUCKET * _TREND_BUCKETS
+        recent = [b.volume for b in bars[-span:]]
+        trend = (
+            _derived_series(
+                [round(sum(recent[k:k + _TREND_BUCKET]) / _TREND_BUCKET / adv_shares_v, 2)
+                 for k in range(0, span, _TREND_BUCKET)],
+                as_of,
+            )
+            if adv_shares_v > 0 and len(recent) == span
+            else None
+        )
     else:
         note = f"only {len(adv_window)} bars in 90d (< {_ADV_MIN_BARS})"
         adv_shares = adv_usd = spike = turnover = _unknown(note)
+        trend = None
 
     return PriceFeatures(
         last=last,
@@ -241,6 +267,7 @@ def compute_price_features(
         adv_90d_usd=adv_usd,
         turnover=turnover,
         volume_spike=spike,
+        volume_trend=trend,
     )
 
 

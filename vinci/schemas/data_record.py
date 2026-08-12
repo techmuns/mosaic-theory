@@ -54,6 +54,13 @@ class PriceFeatures(BaseModel, frozen=True):
     adv_90d_usd: DataField[float]
     turnover: DataField[float]  # adv_90d_usd / market_cap
     volume_spike: DataField[float]  # latest volume / 90d average
+    # ~13 WEEKLY means (5 sessions each), oldest→newest, each a ratio to the SAME 90d average
+    # volume_spike uses — so the trend and the number share a unit and the last point is the most
+    # recent week. DISPLAY-ONLY: volume_spike stays the scorer's input; this is what lets a human
+    # see DIRECTION, which a one-session ratio structurally cannot show. Bucketed weekly because at
+    # sparkline width a daily series of a small-cap is spike noise and direction is the point.
+    # Defaulted: a snapshot written before 2026-08-12 carries no series and must still parse.
+    volume_trend: DataField[list[float]] | None = None
 
 
 class Fundamentals(BaseModel, frozen=True):

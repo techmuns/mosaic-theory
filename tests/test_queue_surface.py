@@ -60,6 +60,15 @@ globalThis.fetch = async (p) => {
           // the structured field a post-2026-08-12 screen emits, injected onto REAL rows
           const inj = [3.75, 0.4, 12.4];
           lines.forEach((r, i) => { r.volume_spike = inj[i] !== undefined ? inj[i] : 1.0; });
+        } else if (MODE === 'trend') {
+          // what a SCREEN run emits; injected because features.py computes it from bars
+          const inj = [0.27, 0.31, 0.21, 3.7, 1.31, 1.09, 0.92, 0.89, 0.53, 0.59, 0.38, 1.1, 0.83];
+          lines.forEach((r) => { r.volume_spike = 0.72; r.volume_trend = inj; });
+        } else if (MODE === 'stale' || MODE === 'fresh') {
+          // age is relative to the RUNNING clock, so both cases are stamped here rather than
+          // relying on how old the committed snapshot happens to be on the day the suite runs
+          const d = new Date(Date.now() - (MODE === 'stale' ? 40 : 0) * 86400000);
+          lines.forEach((r) => { r.screen_run_at = d.toISOString().slice(0, 19); });
         }
         buf = lines.map((r) => JSON.stringify(r)).join('\\n');
       }
@@ -224,3 +233,49 @@ def test_the_wide_queue_table_scrolls_inside_its_own_container() -> None:
         "the queue table is not wrapped in an overflow-x container — a 13-column table pushes the "
         f"whole page sideways on a 1280px viewport. Rendered around the table:\n"
         f"{page[max(0, page.find('rk-table') - 300):page.find('rk-table') + 80]}")
+
+
+def test_a_stale_queue_says_so_and_a_fresh_one_stays_quiet() -> None:
+    """The queue only moves when the RANKER runs. `run_weekly()` writes it now, but a week where CI
+    does not fire leaves this page serving a stale queue whose only signal is a date the reader has
+    to do arithmetic on — which is how it once drifted 12 days and 95 names behind the screen that
+    fed it (STATE.md §5). Both cases are stamped onto real committed rows against the running clock,
+    so neither pin rots as the committed snapshot ages."""
+    stale = _render("stale")["page"]
+    fresh = _render("fresh")["page"]
+    assert "may not have run" in stale, (
+        f"a 40-day-old queue renders no staleness warning:\n{stale[:600]}")
+    assert re.search(r"queue is \d+ days old", stale), "the warning does not say HOW old"
+    assert "may not have run" not in fresh, (
+        "a queue screened today is flagged stale — the threshold is firing on everything")
+
+
+def test_the_volume_cell_draws_a_trend_sparkline_when_the_series_is_present() -> None:
+    """The ratio says TODAY; the sparkline says which way volume has been moving — the distinction a
+    one-session reading structurally cannot make, and the reason VRRM read 3.6× on 2026-07-29 and
+    0.63× twelve days later. Injected onto real committed rows because `volume_trend` is computed
+    from BARS in eod/features, so it only appears after a SCREEN run, not a rank.
+
+    Also pins that it stays a DRAWING: no "building"/"fading" word may be derived from the series —
+    that would be the same unearned mechanism claim the band labels were retired for."""
+    cells = _vol_cells(_render("trend")["body"])
+    body = _render("trend")["body"]
+    assert body.count("<polyline") > 50, (
+        f"only {body.count('<polyline')} sparklines drawn across the queue")
+    assert 'role="img"' in body and "aria-label" in body, (
+        "the sparkline is a silent decoration — it needs a role and a described series")
+    for c in cells[:5]:
+        assert re.fullmatch(r"\d+\.\d+×", c), f"the cell text is no longer the bare ratio: {c!r}"
+    for word in ("building", "fading", "rising", "falling", "accumulat"):
+        assert word not in body.lower(), (
+            f"'{word}' derived from the volume series — draw the line, do not name a direction")
+
+
+def test_a_snapshot_without_the_trend_series_still_renders_the_ratio() -> None:
+    """`volume_trend` needs a SCREEN re-run, so between this change and the next weekly job every
+    committed row has none. The cell must degrade to exactly the pre-sparkline state — the ratio,
+    no empty SVG, no gap — or the column is broken for a week."""
+    body = _render("spike")["body"]  # injects volume_spike but never volume_trend
+    assert "<polyline" not in body, "a sparkline was drawn with no series behind it"
+    cells = _vol_cells(body)
+    assert cells[:3] == ["3.75×", "0.40×", "12.4×"], f"the ratio did not survive: {cells[:3]}"

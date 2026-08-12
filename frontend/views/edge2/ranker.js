@@ -3,6 +3,7 @@
 // client-side, in place — the queue is fetched once and never re-fetched on sort/filter.
 import { getRankedQueue, getProcessedStates, getG3Reasons, getGicsLabels, WORKFLOW_STATES } from "../../lib/snapshots.js";
 import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+import { linScale } from "../../lib/exhibit.js";
 import { refreshBlock } from "../../lib/ui.js";
 
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
@@ -41,6 +42,46 @@ let GICS = {};  // {TICKER: {industry, source_ref}} — the committed-dossier CI
 function dispIndustry(r) {
   return (GICS[r.ticker] && GICS[r.ticker].industry) || r.industry || "—";
 }
+
+// The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
+// not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
+// arithmetic on — and that is exactly how it once drifted 12 days and 95 names behind the screen
+// feeding it (STATE.md §5). 10 days = the weekly cadence plus slack; a face-validity threshold, not
+// tuned on anything. Says how old and what to do, never how stale is "too" stale to act on.
+// A 13-week volume sparkline for the queue cell. The NUMBER says today; the LINE says which way it
+// has been moving — the distinction a one-session ratio structurally cannot make, and the reason a
+// name reads 3.6× on one screen date and 0.63× twelve days later. It DRAWS ONLY: no "building" /
+// "fading" word is derived from it, because that would be the same unearned mechanism claim the
+// band labels were retired for. y-domain is [0, max(2, series max)] so quiet names share a scale
+// and a spike still fits, with a dashed reference at 1.0 = the name's own 90-day average.
+const SPARK_W = 46, SPARK_H = 14, SPARK_REF = 1.0;
+function volSpark(series) {
+  if (!Array.isArray(series) || series.length < 2) return "";
+  const hi = Math.max(SPARK_REF * 2, ...series);
+  const x = linScale(0, series.length - 1, 0.5, SPARK_W - 0.5);
+  const y = linScale(0, hi, SPARK_H - 1.5, 1.5);
+  const pts = series.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const ref = y(SPARK_REF).toFixed(1);
+  const label = `volume by week over the last quarter, oldest to newest, each as a multiple of the `
+    + `name's 90-day average: ${series.join(", ")}`;
+  return `<svg width="${SPARK_W}" height="${SPARK_H}" viewBox="0 0 ${SPARK_W} ${SPARK_H}"`
+    + ` role="img" aria-label="${escapeHtml(label)}" style="vertical-align:middle; margin-right:5px;">`
+    + `<line x1="0" y1="${ref}" x2="${SPARK_W}" y2="${ref}" stroke="var(--line-2)"`
+    + ` stroke-width="0.75" stroke-dasharray="2 2"/>`
+    + `<polyline fill="none" stroke="var(--ink-3)" stroke-width="1.15" stroke-linejoin="round"`
+    + ` points="${pts}"/></svg>`;
+}
+
+const QUEUE_STALE_DAYS = 10;
+function stalenessChip(asOf) {
+  if (!asOf) return "";
+  const days = Math.floor((Date.now() - Date.parse(`${asOf}T00:00:00Z`)) / 86400000);
+  if (!Number.isFinite(days) || days < QUEUE_STALE_DAYS) return "";
+  return `<span class="chip gate" title="The weekly job (vinci run-weekly) screens and then writes this queue. `
+    + `A queue older than ${QUEUE_STALE_DAYS} days means that job has not completed since — the names, ranks and `
+    + `price-derived reads below are all as of the screen date, not today. Re-run it, or run vinci rank.">`
+    + `⚠ queue is ${days} days old — the weekly screen may not have run</span>`;
+}
 let G3 = null; // ticker -> the specific G3 UNKNOWN reason
 let state = null;
 
@@ -75,6 +116,7 @@ export async function render(root, _params, { item, frame }) {
         <input id="rk-hide" type="checkbox" /> hide structurally-sunk (${DATA.counts.demoted})
       </label>
       <span class="muted" style="font-size:12px;">${DATA.counts.total} candidates · screened ${escapeHtml(fmtDate(DATA.asOf))}</span>
+      ${stalenessChip(DATA.asOf)}
     </div>
     <div class="subtitle muted" style="margin-bottom:12px;">
       Columns lead with the interpretable quantity (depth/idio as % moves, multiple as the percentile or reason); hover a cell
@@ -189,7 +231,12 @@ function renderRows() {
       if (!s || s === "UNKNOWN") return `<td><span class="muted">${DASH}</span></td>`;
       return `<td style="font-size:12px;" title="${escapeHtml(s)} · ${note}">${escapeHtml(s)}</td>`;
     }
-    return `<td class="num" title="${escapeHtml(s || "")} · ${note} · one session, as of the screen date">`
+    const trend = r.volumeTrend;
+    const scale = Array.isArray(trend) && trend.length
+      ? ` · sparkline: 13 weekly means, 0 to ${Math.max(SPARK_REF * 2, ...trend).toFixed(1)}×, dashed line = 1.0×`
+      : "";
+    return `<td class="num" title="${escapeHtml(s || "")} · ${note} · one session, as of the screen `
+      + `date${escapeHtml(scale)}">${volSpark(trend)}`
       + `${vs < 10 ? vs.toFixed(2) : vs.toFixed(1)}×</td>`;
   };
 

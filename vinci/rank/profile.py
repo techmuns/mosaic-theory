@@ -106,6 +106,10 @@ class RankedCandidate(BaseModel, frozen=True):
     # (CLAUDE.md — display formatting is never load-bearing). None = UNKNOWN, never imputed.
     # Defaulted so a snapshot written before 2026-08-12 still parses.
     volume_spike: float | None = None
+    # ~13 weekly volume means, oldest→newest, on the SAME 90d denominator as volume_spike — so the
+    # queue can draw the DIRECTION beside the one-session number. Display-only, never a rank input.
+    # None when the name lacks a full quarter of bars: a half-length trend line reads as a shape.
+    volume_trend: list[float] | None = None
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
     structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)
