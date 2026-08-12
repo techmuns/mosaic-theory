@@ -9,6 +9,7 @@ component (filing vs CIQ panel vs release) — a mixed-layer figure is SURFACED,
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import date
 
@@ -160,6 +161,30 @@ def basis_triangulation(
 
 
 # --- (surface / digest) guide verification -------------------------------------------------------
+#: A guide period label → the SCOPE it covers, or None when the label says nothing decidable.
+#: CIQ writes "FQ3 2026" / "FY 2026"; a release writes "2026" / "Fiscal 2028" / "next-fy" / "Q3".
+#: Only these two shapes are decided — an unrecognised label yields None and the check proceeds
+#: exactly as before, because inventing a scope would manufacture the refusal this guards against.
+_QUARTER_PERIOD = re.compile(r"\b(?:FQ\s*[1-4]|Q[1-4])\b", re.I)
+_ANNUAL_PERIOD = re.compile(r"\bFY\b|\bfiscal\b|\bnext-fy\b|^\s*(?:19|20)\d{2}\s*$", re.I)
+
+
+def period_scope(label: str | None) -> str | None:
+    """``"quarter"`` / ``"annual"`` / ``None`` (undecidable) for a guide-period label.
+
+    Quarter is tested FIRST: "FQ3 2026" contains a bare year that the annual pattern would also
+    match, and a quarter label carrying its fiscal year is still a quarter.
+    """
+    if not label:
+        return None
+    text = label.strip()
+    if _QUARTER_PERIOD.search(text):
+        return "quarter"
+    if _ANNUAL_PERIOD.search(text):
+        return "annual"
+    return None
+
+
 def guide_verification(
     metric: str,
     ciq_low: float | None,
@@ -170,6 +195,8 @@ def guide_verification(
     release_low: float | None = None,
     release_high: float | None = None,
     release_basis: str = "level",
+    ciq_period: str | None = None,
+    release_period: str | None = None,
 ) -> str:
     """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO requires BOTH: CIQ
     guide ≈ prior-FY actual (0.1% relative, source-rounding) AND the release gives NO corroborating
@@ -190,6 +217,23 @@ def guide_verification(
                 f"release guides a CHANGE ({release_low}–{release_high}) — NOT CROSS-CHECKED. "
                 "Deriving a level from the prior period would compare a filing-derived guide "
                 "against a vendor-derived base; the two need not share a definition.")
+    # CROSS-PERIOD: REFUSE, the same way (2026-08-12). The two sources need not guide the SAME
+    # period, and nothing here checked it: NFLX's CIQ revenue guide is FQ3 2026 (12,860.0) while the
+    # release guides FY2026 ($50.7–51.7bn). Compared as bare numbers they cannot agree, so the check
+    # printed MISMATCH — reading as a management-execution failure — when 12,860 × 4 = 51,440 sits
+    # INSIDE the annual guide and the two corroborate. Scaling a quarter to a year to force the
+    # comparison would be the manufactured base the cross-basis refusal above already rejects (a
+    # guide is not four equal quarters). Only refuse when BOTH labels decide a scope and the scopes
+    # differ; an unrecognised label leaves the prior behaviour untouched.
+    if release_low is not None:
+        ciq_scope, rel_scope = period_scope(ciq_period), period_scope(release_period)
+        if ciq_scope is not None and rel_scope is not None and ciq_scope != rel_scope:
+            noun = {"quarter": "QUARTER", "annual": "YEAR"}  # reads as English in the rendered line
+            return (f"guide verification ({metric}): CIQ guides a {noun[ciq_scope]} "
+                    f"({ciq_period}: {ciq_low}–{ciq_high}) and the release guides a "
+                    f"{noun[rel_scope]} ({release_period}: {release_low}–{release_high}) "
+                    "— NOT CROSS-CHECKED. Different periods; annualising one to match the other "
+                    "would manufacture the base the comparison is supposed to verify.")
     # VENDOR-ECHO — TWO CONJUNCTS: (1) CIQ guide ≈ prior-FY actual within source-rounding (0.1% rel;
     # the release rounds $427.516→$427.5, so relative not absolute-3dp); AND (2) the release states
     # NO number for this metric (release_low is None) or only a QUALITATIVE outlook. A numeric
