@@ -64,7 +64,7 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.edgar.concepts import ConceptPoint, extract_points, latest_instant
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
@@ -775,10 +775,108 @@ def _stock_performance(
 _SHARES_WINDOW_DAYS = 730  # trailing ~2y — current capital-allocation posture, not a stale 7y delta
 
 
+#: How far a share-count jump may sit from the filer's OWN stated factor and still be that event —
+#: RELATIVE, and narrow, because the measurement says it can be. NFLX's cover count moves 9.96x
+#: against 10.02x restated in EPS: **0.6% apart**. That gap has a physical cause and therefore a
+#: bound — a cover count is an as-of headcount, so between the two cover dates the ORGANIC change
+#: (NFLX was retiring ~0.7% of its shares per quarter) rides on top of the split factor. One
+#: period's organic drift sits far inside 25%; a different corporate action does not.
+#:
+#: THE FIRST CUT USED A FACTOR OF 2 — 5x through 20x for a stated 10x — AND THAT WAS A DEFECT
+#: rather than merely loose (review finding, #413). A 5x dilutive issuance sitting BEFORE a real
+#: 10x split matched first, and the "post-change" segment then still crossed the true break: the
+#: function emitted `+900.0%` wrapped in a sentence asserting the basis had been accounted for.
+#: That is worse than the bug this code exists to fix, because it reads as checked.
+_SPLIT_RATIO_TOL = 0.25
+
+
+def _basis_break(pts: list[ConceptPoint], factor: float) -> int | None:
+    """Index of the point sitting on the FAR side of a share-basis change, or None.
+
+    ``factor`` is the filer's own restatement ratio (:func:`share_basis_change`, read off annual
+    EPS). This locates WHERE it lands in the share series, which the factor alone cannot say.
+
+    THE BEST MATCH, NOT THE FIRST — the second half of the #413 fix, and independent of the
+    tolerance. Scanning for the first in-range jump makes the answer depend on the ORDER in which
+    corporate actions happened, so a 5x raise preceding a 10x split wins on position rather than on
+    fit. Choosing the closest ratio removes that sensitivity outright: with both a 5x and a 10x jump
+    in a series whose stated factor is 10x, the split wins by an error of 0.6% against 50%.
+
+    DIRECTION-FREE, matching the detector it corroborates: `share_basis_change` returns
+    ``max(a/b, b/a)`` precisely because a reverse split contaminates identically, and it is the
+    commoner event in the $300M-$10B hunting band. A one-directional scan here would re-open that
+    blind spot on the side of the series where it actually bites — MVST trades at $0.92.
+    """
+    best: tuple[float, int] | None = None
+    for i, (a, b) in enumerate(zip(pts, pts[1:], strict=False)):
+        if not a.value or not b.value:
+            continue
+        ratio = max(a.value / b.value, b.value / a.value)
+        err = abs(ratio - factor) / factor
+        if err <= _SPLIT_RATIO_TOL and (best is None or err < best[0]):
+            best = (err, i + 1)
+    return best[1] if best is not None else None
+
+
+def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float) -> Sourced[str]:
+    """The reading for a window a share-basis change runs through — measured on ONE side of it.
+
+    NO CROSS-BASIS PERCENTAGE IS PRINTED, not even a corrected one. Re-scaling the pre-change points
+    by the factor would yield a comparable number, and it would be OUR arithmetic sitting in the
+    slot a reader reads as the filer's — the move the buyback average was refused for. What the
+    filer actually supports is the post-change series, so that is what is quoted, with the change
+    named so the missing earlier half is explained rather than silently dropped.
+    """
+    post = recent[brk:]
+    at = recent[brk].period_end
+    rose = (recent[brk].value or 0) > (recent[brk - 1].value or 0)
+    change = f"~{factor:.1f}x share-basis change at {at} (count {'rose' if rose else 'fell'})"
+    src = f"EDGAR XBRL shares, post-basis-change {post[0].period_end}..{post[-1].period_end}"
+    if len(post) < 2:
+        return Sourced.present(
+            f"NOT COMPARABLE across this window: {change}. Only one share count since it "
+            f"({post[0].value:,.0f} at {post[0].period_end}) — no trend on the current basis yet.",
+            source_ref=src)
+    first, last = post[0], post[-1]
+    pct = (last.value / first.value - 1.0) if first.value else 0.0
+    word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"
+    # THE SPAN IS PRINTED BECAUSE THE BAND DID NOT MOVE. The +-2% label thresholds were set against
+    # a ~2y window; a post-change window is whatever the filer's calendar leaves, and NFLX's is 0.5y
+    # — where -1.4% reads "flat" while the same pace over two years would read "buying back". The
+    # threshold is a face-validity constant and is NOT re-tuned here (that is a separate judgment,
+    # and re-tuning it as a side effect of a split fix is how a calibration quietly drifts); making
+    # the span explicit is what keeps the label honest at a length it was not calibrated for.
+    span = (last.period_end - first.period_end).days / 365.0
+    return Sourced.present(
+        f"{word} over ~{span:.1f}y since a {change}: {first.value:,.0f} ({first.period_end}) → "
+        f"{last.value:,.0f} ({last.period_end}), {pct:+.1%}. The pre-change count is a DIFFERENT "
+        f"BASIS and is not compared — an endpoint delta across the change measures the "
+        f"restatement, not dilution.",
+        source_ref=src)
+
+
 def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
-    """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture."""
+    """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture.
+
+    SPLIT-AWARE, because across a basis change the percentage is a lie of arithmetic. NFLX's
+    committed page read *"diluting (trailing ~1.7y): 427,458,114 → 4,163,939,676, +874.1%"* with no
+    flag anywhere: the filer executed a 10:1 forward split in Nov-2025 and restated its EPS
+    comparatives but never the dei cover count, so the two endpoints are different units. On one
+    basis the count FELL ~1.4% while the company was buying stock back — the label was not merely
+    overstated, it pointed the opposite way.
+
+    THE FACTOR IS READ FROM THE FILER, NEVER INFERRED FROM THE MAGNITUDE. `share_basis_change` finds
+    one fiscal period reported at two values by two filings — a restatement the company itself
+    performed. It is fed the ANNUAL EPS series and not the share series, and that is not an
+    implementation detail: run against these very share points it returns None (a dei cover count is
+    never re-filed for a prior period, so no ratio exists to read), and against the diluted
+    weighted-average series it returns a confidently wrong 7.0x. Only EPS states 10.02x. A guard
+    keyed to either of the other two would have shipped and never fired — which is why this was
+    measured on all three before the branch was written.
+    """
     try:
-        pts = [p for p in extract_points(edgar.companyfacts(cik), "shares") if p.value]
+        facts = edgar.companyfacts(cik)
+        pts = [p for p in extract_points(facts, "shares") if p.value]
     except (HttpError, KeyError):
         return Sourced.unknown(note="EDGAR companyfacts shares unavailable")
     pts.sort(key=lambda p: p.period_end)
@@ -787,6 +885,13 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
         return Sourced.unknown(
             note=f"<2 XBRL shares points in the trailing ~2y ({len(pts)} total) — no current trend"
         )
+    # A basis change OUTSIDE the window is not this window's problem: every point in it then sits on
+    # one basis and the ordinary reading is correct. Only a break INSIDE it makes the endpoints
+    # incomparable — so the factor alone never suppresses a trend, its LOCATION does.
+    factor = share_basis_change(extract_points(facts, "eps_diluted"))
+    brk = _basis_break(recent, factor) if factor else None
+    if brk is not None:
+        return _split_straddled_trend(recent, brk, factor or 0.0)
     first, last = recent[0], recent[-1]
     pct = (last.value / first.value - 1.0) if first.value else 0.0
     word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"

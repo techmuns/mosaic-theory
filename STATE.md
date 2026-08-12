@@ -11197,8 +11197,30 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    notes** issued 2026-07-22 to repay the Nov-2026 maturity. UBER's folder is Aug 5–6, two days
    before the Delivery Hero 8-K (2026-08-07). Re-pull → re-assemble retires all three staleness
    findings without any code change.
+8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
+   2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
+   *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point
+   QUOTES the old figure (*"shown diluting from 427,458,114 to 4,163,939,676, +874.1%"*). Applying
+   the transform produced a page whose prose cited numbers its own table no longer showed, so it was
+   reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
+   that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
+   **Bundle with item 7's NFLX re-pull — one pass.**
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
+
+- **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
+  `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
+  synthesis quoted its old text verbatim — exactly the "page citing numbers its own tables no longer
+  show" state the refusal exists to prevent (item 19c). It passed because the guard tracks numeric
+  figures and this field is prose-shaped. Caught by reading the result, not by the guard. Every
+  string-valued mechanical field is currently outside that refusal.
+- **THE LLM CAUGHT WHAT THE DETERMINISTIC LAYER MISSED, on this name.** NFLX's committed bear point
+  already reads *"a share-basis change (stock split ~10.02x) sits inside the window and must be
+  reconciled before reading per-share history"* — written against a mechanical field that said
+  "diluting +874.1%" with `qa_flags: []`. So the reader was not misled here, and the harm was
+  bounded by the synthesis rather than by any control. **That is not a reason to weaken the fix**:
+  relying on an LLM to catch a deterministic error is the inverse of this repo's division of labour,
+  and it is luck that it fired. Worth remembering as evidence about where the checks actually are.
 
 - **The following-paragraph carry reaches only 3 of 12 names.** 41 of 530 committed driver rows
   carry a `following_context` (EPAM 13, NFLX 18, V 10); **BRBR — the name the fix was built for —
