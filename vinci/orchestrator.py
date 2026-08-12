@@ -34,7 +34,7 @@ from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
 from vinci.sec import build_sec_http
 from vinci.store import Store
-from vinci.universe import benchmark_identity
+from vinci.universe import benchmark_identity, build_universe
 
 # ~5y: enough history for the 52w drawdown AND the G3 multiple-at-floor range (Polygon Starter).
 _SCREEN_LOOKBACK_DAYS = 1825
@@ -185,33 +185,46 @@ def run_weekly(
     end: date,
     benchmark: str = "IWM",
     lookback_days: int = _SCREEN_LOOKBACK_DAYS,
-    structural: bool = False,
     progress: ProgressFn | None = None,
 ) -> dict[str, object]:
-    """Weekly: refresh the universe's prices and lazily run Screen 2; persist candidates."""
+    """Weekly: rebuild the universe, screen it, rank the result, and export the lot.
+
+    ONE CALL IS THE WHOLE WEEK, and every stage below is UNCONDITIONAL. A scheduled job with
+    opt-in pieces is one that can be run with parts switched off and emit a queue that looks
+    complete — which is exactly how two stages came to be silently missing for months: nothing
+    ranked (the served queue froze 12 days behind its own screen) and nothing scanned for
+    structural disqualifiers (0 flags across 284 names). Flags on a cron are how that happens, so
+    there are none here.
+    """
     cfg = config or get_config()
     cfg.ensure_dirs()
+    # 1. UNIVERSE — the screen's INPUT, and the artifact that decides which names are eligible to
+    #    be screened AT ALL (cap band, ADV floor, operating-co gates). Nothing rebuilt it on a
+    #    schedule until 2026-08-12: the committed snapshot was stamped 2026-07-29 while the screen
+    #    consuming it ran 2026-08-12, so a name that fell into the band in between was never
+    #    screened and one that left it still was. It writes its own snapshots and closes its own
+    #    Store, so the rebuild below reads the universe this just produced.
+    universe = build_universe(cfg, reference_date=end)
     eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
         if not any(not s.internal_id.startswith("IDX-") for s in store.iter_securities()):
-            return {"status": "no universe in snapshots — run build-universe first"}
+            # the build above just ran, so an empty universe is a FAILURE, not a missing input
+            return {"status": "universe rebuilt EMPTY — screen skipped", "universe": universe}
         _cands, stats = screen_universe(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
         )
         store.export_snapshots(cfg.snapshots_dir)
-    # ...then RANK, from the snapshot the screen just exported, through the same path `vinci rank`
-    # uses. Until 2026-08-12 this job stopped at the screen: candidate_records advanced every week
-    # while ranked_queue.jsonl only moved when a human remembered to run the ranker, and the served
-    # queue had drifted 12 days and 95 names behind the screen that fed it (STATE.md §5).
-    #
-    # NO --structural here: it is a network 8-K scan, off by default in the CLI too, and it SINKS
-    # names — putting a demote channel on a cron is a decision-path change and stays a human act.
-    # But the last explicit assessment IS carried forward, because the flags live nowhere but the
-    # artifact this is about to overwrite (see carry_forward_assessment).
-    return {**stats, "ref": end.isoformat(), **refresh_queue(cfg, structural=structural)}
+    # 3. RANK + the structural scan, from the snapshot the screen just exported, through the same
+    #    path `vinci rank` uses. Until 2026-08-12 this job stopped at the screen, so the served
+    #    queue drifted 12 days and 95 names behind the screen that fed it; and the scan ran only
+    #    when a human typed the flag, which nobody had — 0 disqualifiers across 284 names.
+    #    `structural=True` is HARD-WIRED: it is a demote-only, source-bound channel, and making it
+    #    optional on the scheduled path is what let it go dormant in the first place.
+    return {**stats, "ref": end.isoformat(), "universe": universe,
+            **refresh_queue(cfg, structural=True)}
 
 
 def run_monthly(

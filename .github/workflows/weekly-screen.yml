@@ -42,12 +42,12 @@ jobs:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
-        # --structural runs the Tier-3 disqualifier scan (EDGAR 8-K text + shares series) as part
-        # of the job. It was previously reachable ONLY by a human typing `vinci rank --structural`,
-        # and nobody had: the 2026-08-12 queue carried 0 flags across 284 names, so the one channel
-        # permitted to demote a name was dormant in production. DEMOTE-ONLY and source-bound to an
-        # accession, so it can sink a structurally-dead name but never lift one.
-        run: python -m vinci run-weekly --structural
+        # ONE CALL IS THE WHOLE WEEK — universe rebuild, screen, structural scan, rank, export.
+        # Deliberately flagless: every stage is unconditional inside run_weekly(). Opt-in pieces on
+        # a cron are exactly how two stages went silently missing for months — nothing ranked (the
+        # served queue froze 12 days behind its own screen) and nothing scanned for structural
+        # disqualifiers (0 flags across 284 names). See STATE.md §5.
+        run: python -m vinci run-weekly
 
       - name: Commit refreshed snapshots
         run: |

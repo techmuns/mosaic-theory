@@ -1846,11 +1846,13 @@ def _cmd_score(args: argparse.Namespace) -> int:
 
 
 def _cmd_run_weekly(args: argparse.Namespace) -> int:
-    """Scheduled weekly job: refresh the universe + run the screen + export snapshots."""
+    """Scheduled weekly job: rebuild the universe, screen it, rank it, export the lot.
+
+    No flags — every stage is unconditional. A cron with opt-in pieces is how the ranker and the
+    structural scan both came to be silently missing from the weekly run (STATE.md §5).
+    """
     end = date.fromisoformat(args.end) if args.end else date.today()
-    result = run_weekly(
-        end=end, benchmark=args.benchmark, structural=args.structural, progress=stderr_reporter
-    )
+    result = run_weekly(end=end, benchmark=args.benchmark, progress=stderr_reporter)
     print(f"weekly run: {result}")
     return 0
 
@@ -3389,12 +3391,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_weekly = sub.add_parser("run-weekly", help="scheduled: refresh + screen + export snapshots")
     p_weekly.add_argument("--end", help="end date YYYY-MM-DD (default: today)")
     p_weekly.add_argument("--benchmark", default="IWM")
-    p_weekly.add_argument(
-        "--structural", action="store_true",
-        help="run the Tier-3 structural-disqualifier scan as part of the weekly job (network: "
-             "EDGAR 8-K text + shares). DEMOTE-ONLY. A live scan REPLACES the carried-forward "
-             "assessment, so a name whose signal no longer fires comes back clean.",
-    )
     p_weekly.set_defaults(func=_cmd_run_weekly)
 
     p_monthly = sub.add_parser("run-monthly", help="scheduled: score the ledger + export report")

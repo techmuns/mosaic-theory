@@ -152,6 +152,14 @@ def test_the_weekly_job_ranks_through_the_same_path_as_the_cli() -> None:
     # run_weekly reaches the ranker through refresh_queue (the weekly tail, extracted so its
     # empty-result and carry-forward cases are testable); follow that hop rather than pinning the
     # exact call shape, which would redden on any refactor that keeps the behaviour.
+    # every weekly stage is UNCONDITIONAL — no flag may gate a piece of the scheduled run, which
+    # is how the ranker and the structural scan each went missing for months (STATE.md §5)
+    assert "build_universe" in bodies["run_weekly"], (
+        "run_weekly no longer rebuilds the universe — the screen would run against whatever the "
+        "last manual build left behind, and nothing rebuilds it on any other schedule")
+    assert "structural=True" in bodies["run_weekly"], (
+        "the structural scan is no longer hard-wired into the weekly run — making it optional on "
+        "the scheduled path is what let the only demote channel go dormant")
     assert "refresh_queue" in bodies["run_weekly"], (
         "run_weekly does not reach the queue refresh — the weekly job is back to writing the "
         "screen output and leaving the served queue frozen until someone runs the ranker by hand")
