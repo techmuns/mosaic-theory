@@ -1560,6 +1560,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # stops the run rather than rendering wrong.
     rows_raw = mon.decision_rows(ledger_all)
     realized = mon.pair_closes(ledger_all)
+    closed_entry_ids = mon.closed_decision_ids(ledger_all)
     assignments = mon.read_assignments(root)
     missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
     if missing:
@@ -1622,7 +1623,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
             current_price=now_bars[tkr].close, current_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
-            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"]))
+            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
+            # Is the POSITION still held? Read from the close rows, which name the decision they
+            # close — never inferred from the ticker, since a name can be re-entered (SMPL is, and
+            # its two decisions are on opposite sides of this flag).
+            closed=r["entry_id"] in closed_entry_ids))
         if payload.get("benchmark") and payload["benchmark"] != asg.benchmark:
             notes.append(f"{tkr}: benchmark {asg.benchmark} (cap band) SUPERSEDES the ledger "
                          f"row's {payload['benchmark']} — the row itself is never mutated")
@@ -1654,14 +1659,13 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # dropping exited names from calibration would let the discriminator's hit-rate be curated by
     # sell timing. REALIZED P&L (entry→exit) is a SEPARATE, labelled view. Both are shown; neither
     # is allowed to stand in for the other.
-    for r in realized:
-        notes.append(
-            f"{r['ticker']}: REALIZED {r['realized_return']:+.1%} "
-            f"(entry ${r['entry_price']:,.2f} {r['entry_price_as_of']} → exit "
-            f"${r['exit_price']:,.2f} {r['exit_price_as_of']}) — realized P&L, a separate view; "
-            f"the {r['verdict']} call stays in horizon calibration")
+    # TYPED FIRST, PROSE RENDERED FROM IT. The note text used to be composed here from raw dicts,
+    # which made the free-text line the ONLY carrier of the realized book. Now the rows are the
+    # carrier and `RealizedRow.note()` renders them, so display cannot drift from the data.
+    realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
+    notes.extend(r.note() for r in realized_rows)
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
-                               freshness=fresh, notes=notes)
+                               freshness=fresh, notes=notes, realized=realized_rows)
     print(mon.render_table(snap))
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
