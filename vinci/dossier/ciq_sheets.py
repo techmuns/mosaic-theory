@@ -3533,6 +3533,77 @@ def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
     ]
 
 
+#: Estimates→Trends writes a four-digit fiscal year ("FY 2027"); the Financials period header writes
+#: a two-digit one ("FY26", plus a "(R)" flag carried separately). Both are matched exactly — a
+#: loose pattern here would silently pick a quarter column and name it as a fiscal year.
+_FY_TRENDS_COL = re.compile(r"^FY\s*((?:19|20)\d{2})$")
+_FY_ACTUAL_COL = re.compile(r"^FY\s*(\d{2})\b")
+
+
+def _last_actual_fy(bundle: CiqBundle) -> int | None:
+    """The newest fiscal year the Income Statement reports as an ACTUAL (LTM excluded — it is a
+    trailing window, not a fiscal year, and treating it as one would push the estimate boundary)."""
+    try:
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError:
+        return None
+    hdr = _period_header(inc)
+    if hdr is None:
+        return None
+    years = [2000 + int(m.group(1)) for _c, s, is_ltm, _r in _fin_periods(inc[hdr])
+             if not is_ltm and (m := _FY_ACTUAL_COL.match(str(s).strip()))]
+    return max(years) if years else None
+
+
+def forward_estimate_fys(bundle: CiqBundle, *, count: int = 2) -> list[tuple[str, str]]:
+    """The next ``count`` fiscal years CONSENSUS ACTUALLY COVERS → ``[(trends_label, display_label)]``
+    e.g. ``[("FY 2027", "FY27E"), ("FY 2028", "FY28E")]``.
+
+    DERIVED, NEVER ASSUMED. Both call sites previously hardcoded ``FY 2026``/``FY 2027``, which is
+    only right for a December fiscal year. **NCNO (Jan FYE) and NIKE (May FYE) have already REPORTED
+    FY2026**, so their Estimates→Trends starts at FY 2027 and the hardcoded lookup found nothing:
+    NCNO's committed page shows an ACTUAL ``FY26`` of 595 beside an EMPTY ``FY26E`` — which reads as
+    "consensus has no FY26 view" when the truth is that FY2026 is history. Their FY2028 consensus
+    never reached a page at all.
+
+    THE RULE IS "BEYOND THE LAST ACTUAL", not "the first columns offered". A vendor sheet can still
+    list a year that has since been reported, and taking its first columns blindly would put a past
+    year under an ``E`` heading — the same class of error pointed the other way.
+
+    MEASURED OVER ALL 19 WORKBOOKS: 17 names derive exactly the hardcoded pair (no change), and only
+    NCNO and NIKE move — both from ``FY26E, FY27E`` to ``FY27E, FY28E``.
+
+    Returns ``[]`` when the sheet is absent or names no forward year, so the caller emits NO estimate
+    column rather than an empty one under a fabricated heading.
+    """
+    try:
+        tr = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return []
+    bi = _find_row(tr, "Revenue")   # the anchor block: the columns are shared by every metric block
+    header = _metric_block_header(tr, bi) if bi is not None else None
+    if header is None:
+        return []
+    years = sorted({int(m.group(1)) for c in header
+                    if (m := _FY_TRENDS_COL.match(str(c).strip()))})
+    return [(f"FY {y}", f"FY{y % 100:02d}E")
+            for y in forward_years(years, _last_actual_fy(bundle), count)]
+
+
+def forward_years(offered: list[int], last_actual: int | None, count: int = 2) -> list[int]:
+    """The selection rule alone: the first ``count`` offered years STRICTLY AFTER ``last_actual``.
+
+    Split out as a pure function over plain ints so it is pinnable without hand-rolling a workbook
+    fixture — the shape a fixture would have to take is exactly what dictates a production signature
+    (#305), and here nothing about the rule needs a sheet to state it.
+
+    ``last_actual is None`` means the actuals could not be read; the offered years are then taken as
+    given rather than dropped, because refusing every column on a missing header would hide the
+    consensus entirely over a fact we simply failed to establish.
+    """
+    return [y for y in sorted(offered) if last_actual is None or y > last_actual][:count]
+
+
 def _est_fy_current(rows: Rows | None, metric: str, fy_label: str) -> float | None:
     """The Estimates→Trends 'Current' consensus for ``metric`` at the ``fy_label`` (e.g. 'FY 2026')
     column — the FY-level E figure. None when the metric/period/Current row is absent."""
@@ -3607,9 +3678,16 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     act_cols = [c for c, _s, _l, _r in disp]
     # LTM is its own basis (a ttm, not a fiscal year), so growth never spans the FY↔LTM boundary
     # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
-    bases = [("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp] + ["est", "est"]
-    columns = [s + (" (R)" if r else "") for _c, s, _l, r in disp] + ["FY26E", "FY27E"]
-    est_fys = ("FY 2026", "FY 2027")
+    # THE ESTIMATE YEARS ARE DERIVED, not assumed — see `forward_estimate_fys`. NCNO and NIKE have
+    # already reported FY2026, so a hardcoded FY26E column stood empty beside their ACTUAL FY26.
+    est_pairs = forward_estimate_fys(bundle)
+    est_fys = tuple(trends_label for trends_label, _d in est_pairs)
+    # LTM is its own basis (a ttm, not a fiscal year), so growth never spans the FY↔LTM boundary
+    # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
+    bases = ([("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp]
+             + ["est"] * len(est_pairs))
+    columns = ([s + (" (R)" if r else "") for _c, s, _l, r in disp]
+               + [display for _t, display in est_pairs])
     try:
         tr: Rows | None = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError:
@@ -3620,8 +3698,9 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         act = [
             clean_num(inc[ri][c]) if ri is not None and c < len(inc[ri]) else None for c in act_cols
         ]
-        est = (
-            [_est_fy_current(tr, est_metric, fy) for fy in est_fys] if est_metric else [None, None]
+        est: list[float | None] = (
+            [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
+            if est_metric else [None] * len(est_fys)
         )
         return act + est
 
