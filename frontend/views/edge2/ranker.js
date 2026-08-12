@@ -23,10 +23,12 @@ const COLS = [
          + "date. A ONE-SESSION reading — unlike the windowed axes, it can differ the next day." },
   // Inform-only CONTEXT, never a rank input — it sits after everything the score is built from so
   // the row reads score-then-evidence. Sorts as text; there is no ordering claim in a strip.
-  { key: "context", label: "Evidence",
-    title: "Context the score does NOT use: net share issuance over ~2y (shrinking = the bullish "
-         + "twin of the dilution demote) and distance off the 52-week low. Drawdown is not repeated "
-         + "here — the Depth column already carries it." },
+  { key: "context", label: "Evidence (issuance ≤2y)",
+    title: "Context the score does NOT use. Net share issuance across the name's XBRL points inside "
+         + "a ≤2-year window — anchored on its LAST filed point, so the span is what that issuer "
+         + "actually filed and is often shorter; shrinking is the bullish twin of the dilution "
+         + "demote. Plus distance off the 52-week low. Drawdown is NOT repeated here — the Depth "
+         + "column already carries it." },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
 const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here

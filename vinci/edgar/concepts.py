@@ -229,7 +229,18 @@ def share_count_change(
         return None
     series = sorted(shares)
     anchor = series[-1][0] - timedelta(days=window_days)
-    window = [s for s in series if s[0] >= anchor] or series
+    window = [s for s in series if s[0] >= anchor]
+    # TWO DISTINCT DATES INSIDE THE WINDOW, or nothing (review, #440). When every other point is
+    # older than the window, `window` holds only the latest tuple — and unpacking [0] and [-1] then
+    # used ONE datum as both endpoints and returned 0.0, publishing a confident "no change" from a
+    # single observation. Measured live: 1 of 273 rows (RXRX, 2026-07-31 → 2026-07-31).
+    #
+    # AND NO FALLING BACK to the full history: the caller states a horizon, so silently measuring a
+    # six-year span and calling it two years swaps one wrong number for another. This also removes a
+    # dead `or series` branch — `series[-1]` always satisfies `>= anchor`, so the window could never
+    # be empty and the fallback implied a safety net that never once fired.
+    if len({d for d, _ in window}) < 2:
+        return None
     (d0, v0), (d1, v1) = window[0], window[-1]
     if v0 <= 0 or v1 <= 0:
         return None

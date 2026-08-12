@@ -67,7 +67,7 @@ def test_the_strip_shows_issuance_direction_and_distance_off_the_low() -> None:
     no arrow is unreadable, and a buyback and a raise are opposite facts."""
     out = evidence_strip(_rec(shares_change=-0.014, dist_from_low=0.18))
     assert out is not None
-    assert "shares ↓1.4% 2y" in out, out
+    assert "shares ↓1.4%" in out, out
     assert "+18% off low" in out, out
 
 
@@ -87,7 +87,7 @@ def test_the_drawdown_is_not_repeated_from_the_depth_column() -> None:
 
 
 def test_an_unknown_leg_is_omitted_rather_than_guessed() -> None:
-    """UNKNOWN never becomes 0.0. A fabricated 'shares ↔0.0%' would read as a confirmed flat share
+    """UNKNOWN never becomes 0.0. A fabricated 'shares 0.0%' would read as a confirmed flat share
     count, which is the opposite of 'we could not tell'."""
     out = evidence_strip(_rec(shares_change=None, dist_from_low=0.18)) or ""
     assert "shares" not in out, out
@@ -176,3 +176,36 @@ def test_the_scorer_and_the_screen_can_never_read_the_evidence_strip() -> None:
                         assert not alias.name.startswith("vinci.evidence"), (
                             f"{src.name} imports {alias.name} — evidence must not gate/score")
     assert {"ranker.py", "structural.py"} <= scanned  # sanity: the scorer files were scanned
+
+
+def test_a_lone_in_window_point_is_unknown_not_a_flat_two_year_count() -> None:
+    """REVIEW FINDING (#440). When every other XBRL point is older than the window, the window held
+    only the LATEST tuple — and unpacking [0] and [-1] used one datum as both endpoints, returning
+    0.0. The queue then published `shares 0.0%` as a measured two-year trajectory built from a
+    single observation. Live on the committed queue: RXRX, 2026-07-31 → 2026-07-31.
+
+    UNKNOWN is the answer, and NOT a fallback to the full history — measuring six years and calling
+    it two swaps one wrong number for another."""
+    latest, stale = date(2026, 7, 31), date(2021, 1, 1)   # ~5.5y apart, far outside the window
+    assert share_count_change([(stale, 100.0), (latest, 100.0)]) is None
+    assert share_count_change([(stale, 100.0), (latest, 250.0)]) is None, (
+        "a real 150% raise was reported from endpoints 5.5 years apart under a 2-year label")
+
+    # the CONTROL: two points genuinely inside the window still resolve, including a truly flat one
+    # (six live names are flat across two real dates — that is an answer, not a gap)
+    inside = share_count_change([(date(2025, 12, 31), 100.0), (date(2026, 6, 30), 100.0)])
+    assert inside is not None and inside.change == 0.0
+    assert inside.from_date != inside.to_date, "the flat case must still have two distinct dates"
+
+
+def test_the_cell_states_no_horizon_it_cannot_keep() -> None:
+    """The strip said "2y", but the window is anchored on the name's LAST filed point, so the span
+    is only what that issuer filed — 57 of 273 live rows spanned under 500 days while claiming two
+    years. The horizon moved to the column header, which is where this page states every other
+    window (`Depth (52w)`, `Volume vs 90d`). A label must not out-claim its number."""
+    out = evidence_strip(_rec(shares_change=-0.077, dist_from_low=0.41)) or ""
+    assert "shares ↓7.7%" in out, out
+    assert "2y" not in out, f"the cell is claiming a horizon it cannot keep: {out}"
+    header = (pathlib.Path(__file__).resolve().parents[1]
+              / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    assert "issuance ≤2y" in header, "the window vanished from the header as well as the cell"

@@ -42,9 +42,14 @@ def evidence_strip(rec: DataRecord) -> str | None:
     # 1. NET SHARE ISSUANCE — the strongest leg currently wired. Shrinking share count is the
     #    bullish twin of the dilution channel; both read the same trailing window through the one
     #    shared `share_count_change`, so this number and the demote can never disagree.
+    #    NO HORIZON IN THE CELL. It read "2y", but the window is anchored on the name's LAST XBRL
+    #    point and only spans what that name actually filed — measured live, 57 of 273 rows had a
+    #    span under 500 days while the label said two years. The page's own convention puts the
+    #    window in the HEADER (`Depth (52w)`, `Volume vs 90d`), so the header carries "up to ~2y"
+    #    and the cell states only what it measured. A label must not out-claim its number.
     sc = rec.fundamentals.share_count_change_730d
     if sc.is_evaluable and sc.value is not None:
-        parts.append(f"shares {_pct(sc.value)} 2y")
+        parts.append(f"shares {_pct(sc.value)}")
 
     # 2. DISTANCE FROM THE 52-WEEK LOW — descriptive only, and computed since day one while being
     #    consumed by nothing. It says whether a name has begun to come back, which nothing else on
