@@ -1470,8 +1470,21 @@ _METRICS: tuple[str, ...] = (
     "Revenue", "EBITDA", "EBIT", "EBT (GAAP)", "EPS Normalized", "EPS (GAAP)",
     "Net Income (GAAP)", "Net Income (Excl. Excep)", "Interest Expense",
 )
+#: EVERY metric block CIQ's Guidance sheet actually carries, not a five-item sample of it. The
+#: original tuple silently dropped whatever management guided outside it — most consequentially
+#: NFLX's own FREE CASH FLOW guide, the figure #421's basis note points a reader toward after
+#: showing the page's levered measure ran ~2x above it. Also dropped: EBIT, EPS (GAAP), Net Income,
+#: Cash From Operations, DPS, effective tax rate, interest expense, D&A.
+#: ORDERED, AND THE ORDER IS THE DISPLAY ORDER: what the business earns and converts first, the
+#: below-the-line items a reader consults second.
+#: A block absent from a workbook is simply not rendered, so this widens what CAN be read and never
+#: what must be. Every guide still carries `GUIDANCE_BASIS_REF` — CIQ states a LEVEL, and where
+#: management guided a RATE the level is CIQ's arithmetic (#427).
 _GUIDANCE_METRICS: tuple[str, ...] = (
-    "Revenue", "Capital Expenditure", "Gross Margin %", "EBITDA", "EPS Normalized",
+    "Revenue", "EBITDA", "EBIT", "Gross Margin %",
+    "EPS Normalized", "EPS (GAAP)", "Net Income (GAAP)", "Net Income (Excl. Excep)",
+    "Cash From Operations", "Capital Expenditure", "Free Cash Flow",
+    "Depreciation & Amortization", "Interest Expense", "Effective Tax Rate %", "DPS",
 )
 _REV_WINDOWS: tuple[tuple[str, str], ...] = (
     ("1m", "Last Month"), ("2m", "Last 2 Months"), ("3m", "Last 3 Months"),
