@@ -11416,12 +11416,35 @@ no network, so regeneration looked free. It is not: the committed **queue is 331
 2026-07-29**, while the committed **`candidate_records.jsonl` is 280 records stamped 2026-08-10**.
 Re-ranking from today's records would **ADD 44 names, DROP 95, keep 236** — that is ADVANCING the
 queue to a newer screen, with ~40% turnover and analyst workflow states keyed to tickers, not
-refreshing a label. Deliberately not done here. Consequences: (a) the frontend keeps a legacy
-fallback that renders the old string verbatim rather than digging the ratio out of it, so the page
-stays correct-but-old and pinned by its own test; (b) **#420's merge precondition is a deliberate
-queue regeneration** — until then the column still shows `exhausted` / `heavy distribution` from the
-2026-07-29 snapshot; (c) the 12-day gap between the committed queue and the committed records is
-itself worth a look — nothing guarantees the served queue reflects the last screen that ran.
+refreshing a label. The frontend therefore keeps a legacy fallback that renders the old string
+verbatim rather than digging the ratio out of it, so a pre-field snapshot stays correct-but-old and
+pinned by its own test.
+
+**REGENERATED ON THE OPERATOR'S INSTRUCTION, 2026-08-12 (separate artifact commit).** `vinci rank`
+with defaults — matching the replaced artifact's exact configuration (no `--cause-file`: all 331 old
+rows were already `unclassified`; no `--structural`: the old queue carried 0 disqualifiers, so the
+scan has NOT been applied and this regen does not change that; `--md-top` 50). Blast radius checked
+BEFORE overwriting: of the 95 names dropping out, exactly **one (NCNO) has a committed dossier and
+none has a ledger entry** — no verdict is orphaned. Result: **280 rows @ 2026-08-10**, all carrying
+`volume_spike`, bands quiet 109 / normal 121 / elevated 39 / heavy 11, and **zero rows carrying a
+retired word**. Full offline suite green ON the freshly-written artifact (2,220 passed; skips 59→60
+as the legacy-fallback pin correctly steps aside). **#420's merge precondition is now satisfied.**
+
+*A demonstration of finding 2, unplanned:* **VRRM** — the +22%-on-3.6× name that made "heavy
+distribution" demonstrably wrong — reads **`quiet (0.63× vs 90d avg)`** on the 2026-08-10 tape. Same
+name, opposite band, twelve days apart. That is the 43% flip rate in a single observation.
+
+**WHY THE QUEUE LAGGED — a structural gap, not a sync bug (found while regenerating).** The weekly CI
+job runs `python -m vinci run-weekly` → `run_weekly()` (`vinci/orchestrator.py:31`), which refreshes
+the universe, runs the SCREEN and exports snapshots — **it never runs the ranker.** `ranked_queue.jsonl`
+is written only by the manual `vinci rank` (`cli.py:273`), and no CI workflow invokes it (searched
+`.github/` for both `vinci rank` and bare `rank`). So `candidate_records.jsonl` advances every week
+and the served queue does not move until a human runs the ranker — which is exactly how it came to be
+12 days behind. **Today's regen closes the instance, not the mechanism: the next weekly screen will
+leave the queue behind again.** Options for the operator, none taken here: add `rank` to
+`run_weekly()`; add a rank step to `weekly-screen.yml`; or accept the manual step and add a staleness
+banner to the queue page (the as-of is already displayed, but nothing says it is older than the
+screen). Recorded per the OPERATOR-ACTION RULE.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
