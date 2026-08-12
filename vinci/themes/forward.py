@@ -292,6 +292,25 @@ def baskets_path(driver: str, *, data_dir: Path) -> Path:
     return data_dir / BASKETS_SUBDIR / f"{driver}.json"
 
 
+def assert_basket_writable(driver: str, *, data_dir: Path, supersede: bool = False) -> None:
+    """Raise if freezing ``driver`` would overwrite an existing basket. NO SIDE EFFECTS.
+
+    SPLIT OUT SO THE FREEZE CAN PREFLIGHT IT (operator review P1 on #424). The ledger append used
+    to run BEFORE the basket write, so a refused re-freeze left the now-COMMITTED ledger carrying
+    dispositions for a basket that was never frozen — and the retry with --supersede-basket
+    appended the same judgment a third time. Measured: 1 row, then 2, then 3. Making the ledger
+    durable is what turned a harmless local side effect into a corrupted permanent record; the
+    write order had to follow.
+    """
+    p = baskets_path(driver, data_dir=data_dir)
+    if p.exists() and not supersede:
+        prior = load_baskets(p)
+        raise FileExistsError(
+            f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
+            f"replace the entry dates the forward accrual is measured from. Pass "
+            f"supersede=True to archive it and re-freeze deliberately.")
+
+
 def write_baskets(
     baskets: FrozenBaskets, *, data_dir: Path, supersede: bool = False,
 ) -> Path:
@@ -315,13 +334,11 @@ def write_baskets(
     """
     p = baskets_path(baskets.driver, data_dir=data_dir)
     p.parent.mkdir(parents=True, exist_ok=True)
+    # The same check the caller should have PREFLIGHTED — kept here as the backstop, so a caller
+    # that skips the preflight still cannot overwrite.
+    assert_basket_writable(baskets.driver, data_dir=data_dir, supersede=supersede)
     if p.exists():
         prior = load_baskets(p)
-        if not supersede:
-            raise FileExistsError(
-                f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
-                f"replace the entry dates the forward accrual is measured from. Pass "
-                f"supersede=True to archive it and re-freeze deliberately.")
         # THE ARCHIVE NAME IS DATE-KEYED and the freeze timestamp is date-only, so two
         # supersessions on the SAME DAY would collide and the second would overwrite the first
         # archive — losing exactly what archiving exists to keep. Disambiguated rather than

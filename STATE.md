@@ -8591,6 +8591,20 @@ timestamp for every row and no correction history, and committing that as "the l
 misrepresent the artifact at the moment it starts being trusted. Their dispositions survive in the
 mirrors (`rationale`, `gradeFact`, `accession` per name) — the honest surviving record, named as
 such. **What was lost is the judgment; what remains is the conclusion.**
+**MAKING THE LEDGER DURABLE CREATED A TORN WRITE — review P1 on #424, and the lesson generalises.**
+The ledger append ran BEFORE the basket write, and the basket write can REFUSE (the #422 supersede
+guard). So a refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that
+was never frozen, and the retry appended the same judgment a third time: measured 1 row, then 2,
+then 3. **The durability decision changed the cost of a side effect the write order had always
+had.** Fixed by preflighting everything that can fail (`assert_basket_writable`, side-effect-free)
+before any append, so the ledger and basket land as ONE successful freeze; the NOT-READY early exit
+now writes nothing either, since an un-frozen tier should not record partial judgment.
+*When an artifact becomes durable, re-read every path that writes it — the ordering that was
+harmless while it was scratch is now the ordering of a permanent record.*
+**AND A FIFTH PIN ASSERTING THE WRONG PROPERTY**, same family as the other four: the preflight's
+no-side-effects test asserted the FILE was absent, so a mutation that `mkdir`s the parent stayed
+green while the check touched the tree. Asserted on "creates nothing" instead of one visible
+consequence of it.
 **ONE PIN RETIRED BY DESIGN, recorded rather than deleted:** #412's P2 pinned that `--worksheet`
 without `--ledger` must be refused. That half is now the NORMAL path — it is the whole point of the
 default — so it was removed with its reason written where the pin used to be. The reverse (a bare

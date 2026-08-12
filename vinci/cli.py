@@ -2751,8 +2751,6 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
     ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
     records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
-    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
-        fwd.append_record(ledger, rec)
     counts = Counter(r.disposition.value for r in records)
     print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
     print(f"worksheet {ws}\nledger {ledger} (append-only)")
@@ -2784,13 +2782,24 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     baskets = baskets.model_copy(update={"provenance": (
         f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
         f"worksheet, appended to the ratification ledger at {ledger}")})
+    # PREFLIGHT BEFORE ANY WRITE (review P1 on #424). The ledger append used to run FIRST, so a
+    # refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that was
+    # never frozen, and the retry appended the same judgment again — 1 row, then 2, then 3.
+    # Everything that can fail is checked here; the ledger and the basket then land together as ONE
+    # successful freeze. (`records_from_worksheet` and `freeze_baskets` above are already pure —
+    # they parse and validate without writing, which is what makes this ordering possible.)
     try:
-        canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
-                                      supersede=args.supersede_basket)
+        fwd.assert_basket_writable(driver, data_dir=get_config().data_dir,
+                                   supersede=args.supersede_basket)
     except FileExistsError as exc:
         print(f"REFUSED: {exc}\n  Re-run with --supersede-basket to archive the existing basket "
-              f"under data/themes/baskets/archive/ and freeze again.")
+              f"under data/themes/baskets/archive/ and freeze again. NOTHING was written — the "
+              f"ledger is untouched.")
         return 1
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
+                                  supersede=args.supersede_basket)
     print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))

@@ -350,3 +350,108 @@ def test_the_three_july_ledgers_are_absent_and_not_fabricated() -> None:
     assert all(n.get("rationale") for n in mirror["names"]), (
         "the mirrors no longer carry the per-name rationale — the last surviving record of the "
         "three lost ledgers' judgment")
+
+
+def _freeze_fixture(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch):
+    """A config redirected to tmp plus a one-name dispositioned worksheet."""
+    from vinci import cli
+    from vinci.config import Config
+
+    cfg = Config(data_dir=tmp_path / "data")
+    cfg.ensure_dirs()
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    ws = tmp_path / "ws.csv"
+    ws.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal,acc-1,PASSED,priced\n")
+    return cfg, ws
+
+
+def _run_freeze(ws: pathlib.Path, *, driver: str = "defense-demand-shift",
+                supersede: bool = False) -> int:
+    from vinci.cli import build_parser
+
+    argv = ["themes-forward", "--worksheet", str(ws), "--driver", driver,
+            "--ratify-date", "2026-08-12"]
+    if supersede:
+        argv.append("--supersede-basket")
+    args = build_parser().parse_args(argv)
+    rc = args.func(args)
+    return int(rc)
+
+
+def test_a_refused_re_freeze_leaves_the_committed_ledger_untouched(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """OPERATOR REVIEW P1 ON #424 — A TORN WRITE THAT MY OWN CHANGE CREATED.
+
+    The ledger append ran BEFORE the basket write, and the basket write can refuse (the #422
+    supersede guard). So a refused re-freeze left the now-COMMITTED ledger carrying dispositions
+    for a basket that was never frozen, and the retry with --supersede-basket appended the same
+    judgment a THIRD time. Measured before the fix: 1 row, then 2, then 3.
+
+    Making the ledger durable is what turned a harmless local side effect into a corrupted
+    permanent record — the write order had to follow the durability decision, and did not.
+
+    Everything that can fail is preflighted now; the ledger and the basket land as ONE successful
+    freeze."""
+    from vinci.themes.forward import ledger_path, load_ledger
+
+    cfg, ws = _freeze_fixture(tmp_path, monkeypatch)
+    lp = ledger_path("defense-demand-shift", data_dir=cfg.data_dir)
+
+    assert _run_freeze(ws) == 0
+    assert len(load_ledger(lp)) == 1
+
+    assert _run_freeze(ws) == 1, "the second freeze was not refused"
+    assert len(load_ledger(lp)) == 1, (
+        "a REFUSED freeze still appended to the committed ledger — dispositions recorded for a "
+        "basket that was never frozen")
+
+    assert _run_freeze(ws, supersede=True) == 0
+    assert len(load_ledger(lp)) == 2, (
+        "the deliberate re-freeze did not append exactly once")
+
+
+def test_a_not_ready_worksheet_writes_nothing_at_all(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The same rule at the other early exit. A tier with pending dispositions is NOT frozen, so
+    committing a partial ledger for it would record judgment the analyst has not finished giving —
+    and the eventual real freeze would then append a second copy of the rows that were complete."""
+    from vinci.themes.forward import baskets_path, ledger_path
+
+    cfg, ws = _freeze_fixture(tmp_path, monkeypatch)
+    ws.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal,acc-1,PASSED,priced\n"
+        "counter-uas,ZZZ,9,committed-capacity,indirect,x,acc-2,,\n")   # one PENDING
+
+    assert _run_freeze(ws) == 0, "a not-ready tier should report and exit cleanly"
+    assert not ledger_path("defense-demand-shift", data_dir=cfg.data_dir).exists(), (
+        "a NOT-READY worksheet appended to the committed ledger — the tier was never frozen")
+    assert not baskets_path("defense-demand-shift", data_dir=cfg.data_dir).exists()
+
+
+def test_the_preflight_has_no_side_effects(tmp_path: pathlib.Path) -> None:
+    """It must be safe to ask "would this freeze be refused?" without changing anything — otherwise
+    the preflight becomes another write to order correctly."""
+    from vinci.themes.forward import assert_basket_writable, baskets_path, load_baskets
+
+    b = load_baskets(BASKETS / "truckload-supply-purge.json")
+    data_dir = tmp_path / "data"
+    assert_basket_writable(b.driver, data_dir=data_dir)          # no basket yet → silent
+    # ASSERTED ON THE DIRECTORY TOO, not just the file — mutation finding. A preflight that
+    # `mkdir`s its parent leaves the FILE absent, so a file-only assertion stayed green while the
+    # check was quietly touching the tree. "Creates nothing" is the property; "the file is absent"
+    # is one visible consequence of it.
+    assert not data_dir.exists(), (
+        f"the preflight created {data_dir} — it was only asked whether a write WOULD be refused")
+
+    write_baskets(b, data_dir=data_dir)
+    with pytest.raises(FileExistsError):
+        assert_basket_writable(b.driver, data_dir=data_dir)
+    assert load_baskets(baskets_path(b.driver, data_dir=data_dir)) == b, (
+        "the refused preflight altered the basket on disk")
