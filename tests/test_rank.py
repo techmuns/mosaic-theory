@@ -14,6 +14,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from vinci.edgar.client import Filing
+from vinci.netcache import HttpError
 from vinci.rank import (
     CauseClass,
     FilingText,
@@ -332,9 +333,50 @@ def test_scan_structural_skips_a_name_whose_edgar_fetch_raises() -> None:
         _cand(ticker="GOOD", cik="CIK-GOOD"),
     ]
     # http is unused (the GOOD filing has primary_doc=None → no body fetch); None proves that.
-    flags = scan_structural(cands, edgar=_ScanFakeEdgar(), http=None)  # type: ignore[arg-type]
-    assert set(flags) == {"SEC-X-GOOD"}  # 3 boom names skipped, no crash; healthy name survives
-    assert "4.02" in flags["SEC-X-GOOD"].signal
+    scan = scan_structural(cands, edgar=_ScanFakeEdgar(), http=None)  # type: ignore[arg-type]
+    assert set(scan.flags) == {"SEC-X-GOOD"}  # 3 boom names skipped, no crash; healthy survives
+    assert "4.02" in scan.flags["SEC-X-GOOD"].signal
+    # AND THE SKIPPED NAMES ARE NOT REPORTED AS COVERED (#431). A caller that replaces prior flags
+    # with this result must be able to tell "scanned and clean" from "never scanned" — otherwise a
+    # transient EDGAR outage erases a real 8-K disqualifier and lifts the name back above its cap.
+    assert scan.covered == frozenset({"SEC-X-GOOD"}), (
+        f"the failed names are being reported as scanned: {sorted(scan.covered)}")
+
+
+class _OutageEdgar:
+    """EdgarClient stand-in for the TRANSIENT-OUTAGE path: `recent_filings` raises the very error
+    `_filings_for` CATCHES, so the failure never reaches scan_structural's outer guard."""
+
+    def recent_filings(
+        self, cik: str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
+    ) -> list[Filing]:
+        if cik == "CIK-DOWN":
+            raise HttpError("503 from EDGAR")  # caught inside _filings_for, not by the outer guard
+        return []  # a genuinely quiet issuer: fetched fine, filed nothing
+
+    def companyfacts(self, cik: str) -> dict[str, object]:
+        return {}
+
+
+def test_an_edgar_outage_is_not_reported_as_a_clean_scan() -> None:
+    """THE FAILURE MODE THAT MATTERS MOST (#431), and it does NOT reach the outer per-name guard —
+    `_filings_for` catches HttpError itself. Returning `[]` there made "EDGAR was down" identical
+    to "this issuer filed no 8-Ks": both classify clean, both are absent from `flags`.
+
+    That mattered because the weekly job REPLACES prior flags with this result. An unscanned name
+    read as clean would erase a real 8-K disqualifier and lift it back above its 0.05 cap. `None`
+    vs `[]` is the whole distinction, and `covered` is how a caller sees it.
+
+    The quiet issuer is the control: it must stay COVERED, or the fix would simply stop trusting
+    every clean result and the scan could never clear anything."""
+    cands = [_cand(ticker="DOWN", cik="CIK-DOWN"), _cand(ticker="QUIET", cik="CIK-QUIET")]
+    scan = scan_structural(cands, edgar=_OutageEdgar(), http=None)  # type: ignore[arg-type]
+    assert scan.flags == {}
+    assert "SEC-X-DOWN" not in scan.covered, (
+        "an EDGAR outage was reported as a completed scan — the caller cannot tell it from a clean "
+        "bill of health, and will erase a real disqualifier on the strength of it")
+    assert "SEC-X-QUIET" in scan.covered, (
+        "an issuer that simply filed nothing must stay covered, or no clean result is ever trusted")
 
 
 def test_structural_dilution_spiral_fires_on_shares_into_drawdown() -> None:

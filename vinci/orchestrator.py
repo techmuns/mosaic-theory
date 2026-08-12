@@ -27,12 +27,14 @@ from vinci.rank import (
     load_market_caps_from_snapshot,
     rank_candidates,
     render_queue_markdown,
+    scan_structural,
 )
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
+from vinci.sec import build_sec_http
 from vinci.store import Store
-from vinci.universe import benchmark_identity
+from vinci.universe import benchmark_identity, build_universe
 
 # ~5y: enough history for the 52w drawdown AND the G3 multiple-at-floor range (Polygon Starter).
 _SCREEN_LOOKBACK_DAYS = 1825
@@ -142,14 +144,41 @@ def write_queue_snapshots(
     return jsonl, md
 
 
-def refresh_queue(cfg: Config) -> dict[str, int]:
+def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
     """Rank the screen's committed output and REPLACE the queue. The weekly job's tail.
 
-    Extracted from :func:`run_weekly` so its two dangerous cases are testable without the network —
-    both were review findings on #420, and neither is reachable through a function that builds
+    Extracted from :func:`run_weekly` so its dangerous cases are testable without the network —
+    they were review findings on #420, and none is reachable through a function that builds
     Polygon and EDGAR clients from config.
+
+    ``structural=True`` runs the deterministic 8-K disqualifier scan (network). A LIVE SCAN IS
+    AUTHORITATIVE AND REPLACES THE CARRY-FORWARD outright — it re-checks all five signals against
+    current filings, so a name that no longer fires must come back clean rather than have a stale
+    flag resurrected underneath it. The carry-forward exists for the runs that DON'T scan.
     """
     flags, causes = carry_forward_assessment(cfg)
+    scanned = 0
+    if structural:
+        records = cfg.snapshots_dir / "candidate_records.jsonl"
+        cands = load_candidates_from_snapshot(records) if records.exists() else []
+        if cands:
+            scan = scan_structural(
+                cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
+            )
+            scanned = len(scan.covered)
+            # REPLACE ONLY WHERE THE SCAN ACTUALLY LOOKED. `scan_structural` fails soft per name, so
+            # a transient EDGAR outage yields no flag for that name — indistinguishable from a clean
+            # result unless coverage is consulted. A blanket replacement would therefore let one bad
+            # response erase a real 8-K disqualifier and lift the name back above its 0.05 cap: the
+            # #420 failure, reintroduced by the fix for it (review, #431). Prior flags survive for
+            # every name the scan did not cover; covered names take the scan's verdict, flag or
+            # no flag.
+            by_id = {c.data_record.identity.internal_id: c.data_record.identity.ticker
+                     for c in cands}
+            covered_tickers = {by_id[i] for i in scan.covered if i in by_id}
+            flags = {t: f for t, f in flags.items() if t not in covered_tickers}
+            for iid, flag in scan.flags.items():
+                flags[by_id.get(iid, iid)] = flag
     ranked = rank_from_snapshots(cfg, annotations=causes or None, structural_flags=flags or None)
     # WRITE EVEN WHEN EMPTY. The screen has completed by this point, so no candidates is an ANSWER —
     # the latest screen rejected everything — not a failure to produce one. Skipping the write left
@@ -161,7 +190,8 @@ def refresh_queue(cfg: Config) -> dict[str, int]:
     # an existing queue; a PRESENT-but-empty one is a real screen result and must replace it.
     if (cfg.snapshots_dir / "candidate_records.jsonl").exists():
         write_queue_snapshots(cfg, ranked)
-    return {"ranked": len(ranked),
+    return {"ranked": len(ranked), "structural_scanned": scanned,
+            "structural_flagged": sum(1 for r in ranked if r.structurally_disqualified),
             "carried_structural": len(flags), "carried_cause": len(causes)}
 
 
@@ -173,30 +203,52 @@ def run_weekly(
     lookback_days: int = _SCREEN_LOOKBACK_DAYS,
     progress: ProgressFn | None = None,
 ) -> dict[str, object]:
-    """Weekly: refresh the universe's prices and lazily run Screen 2; persist candidates."""
+    """Weekly: rebuild the universe, screen it, rank the result, and export the lot.
+
+    ONE CALL IS THE WHOLE WEEK, and every stage below is UNCONDITIONAL. A scheduled job with
+    opt-in pieces is one that can be run with parts switched off and emit a queue that looks
+    complete — which is exactly how two stages came to be silently missing for months: nothing
+    ranked (the served queue froze 12 days behind its own screen) and nothing scanned for
+    structural disqualifiers (0 flags across 284 names). Flags on a cron are how that happens, so
+    there are none here.
+    """
     cfg = config or get_config()
     cfg.ensure_dirs()
+    # 1. UNIVERSE — the screen's INPUT, and the artifact that decides which names are eligible to
+    #    be screened AT ALL (cap band, ADV floor, operating-co gates). Nothing rebuilt it on a
+    #    schedule until 2026-08-12: the committed snapshot was stamped 2026-07-29 while the screen
+    #    consuming it ran 2026-08-12, so a name that fell into the band in between was never
+    #    screened and one that left it still was. It writes its own snapshots and closes its own
+    #    Store, so the rebuild below reads the universe this just produced.
+    universe = build_universe(cfg, reference_date=end)
     eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
         if not any(not s.internal_id.startswith("IDX-") for s in store.iter_securities()):
-            return {"status": "no universe in snapshots — run build-universe first"}
+            # RAISE, never return. build_universe has ALREADY cleared and exported
+            # universe_snapshot.jsonl, so a soft return would exit 0, and the workflow's next step
+            # commits data/snapshots — publishing a blank universe beside the previous candidates
+            # and queue while reporting a clean run. A transient resolver/price/shares outage must
+            # fail the job before that commit (review, #431).
+            raise RuntimeError(
+                f"universe rebuilt EMPTY at {end} ({universe}) — refusing to continue: the "
+                "snapshot has already been cleared and exported, so proceeding would commit a "
+                "blank universe over a good one"
+            )
         _cands, stats = screen_universe(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
         )
         store.export_snapshots(cfg.snapshots_dir)
-    # ...then RANK, from the snapshot the screen just exported, through the same path `vinci rank`
-    # uses. Until 2026-08-12 this job stopped at the screen: candidate_records advanced every week
-    # while ranked_queue.jsonl only moved when a human remembered to run the ranker, and the served
-    # queue had drifted 12 days and 95 names behind the screen that fed it (STATE.md §5).
-    #
-    # NO --structural here: it is a network 8-K scan, off by default in the CLI too, and it SINKS
-    # names — putting a demote channel on a cron is a decision-path change and stays a human act.
-    # But the last explicit assessment IS carried forward, because the flags live nowhere but the
-    # artifact this is about to overwrite (see carry_forward_assessment).
-    return {**stats, "ref": end.isoformat(), **refresh_queue(cfg)}
+    # 3. RANK + the structural scan, from the snapshot the screen just exported, through the same
+    #    path `vinci rank` uses. Until 2026-08-12 this job stopped at the screen, so the served
+    #    queue drifted 12 days and 95 names behind the screen that fed it; and the scan ran only
+    #    when a human typed the flag, which nobody had — 0 disqualifiers across 284 names.
+    #    `structural=True` is HARD-WIRED: it is a demote-only, source-bound channel, and making it
+    #    optional on the scheduled path is what let it go dormant in the first place.
+    return {**stats, "ref": end.isoformat(), "universe": universe,
+            **refresh_queue(cfg, structural=True)}
 
 
 def run_monthly(

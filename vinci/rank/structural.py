@@ -155,11 +155,22 @@ def classify_structural_disqualifier(
 # --- the network pass (free EDGAR 8-K text + shares series) — outside the pure classifier ---------
 
 
-def _filings_for(edgar: EdgarClient, http: CachedHttp, cik: str, since: date) -> list[FilingText]:
+def _filings_for(
+    edgar: EdgarClient, http: CachedHttp, cik: str, since: date
+) -> list[FilingText] | None:
+    """The name's recent 8-Ks, or **None if the filings index could not be fetched**.
+
+    `[]` and `None` are different answers and must never be conflated: `[]` means the issuer filed
+    no 8-Ks in the window (a real, clean result), `None` means we never found out. Returning `[]` on
+    a failed fetch made an EDGAR outage look like a clean bill of health — see `StructuralScan`.
+
+    A failure to fetch one filing's BODY is NOT a coverage failure: the index still carries the item
+    codes, and the item-code-only signals (3.01 delisting, 4.02 restatement) still classify.
+    """
     try:
         raw = edgar.recent_filings(cik, forms=("8-K",), since=since)
     except (HttpError, KeyError, ValueError):
-        return []
+        return None
     out: list[FilingText] = []
     for f in raw:
         body = ""
@@ -179,21 +190,47 @@ def _filings_for(edgar: EdgarClient, http: CachedHttp, cik: str, since: date) ->
     return out
 
 
-def _shares_for(edgar: EdgarClient, cik: str) -> list[tuple[date, float]]:
+def _shares_for(edgar: EdgarClient, cik: str) -> list[tuple[date, float]] | None:
+    """The shares-outstanding series, or **None if companyfacts could not be fetched**.
+
+    Same `[]` vs `None` distinction as :func:`_filings_for` — `[]` is an issuer with no share points
+    in XBRL, `None` is a fetch that failed. The dilution-spiral leg reads this series, so silently
+    returning `[]` disabled that signal without anyone being able to tell.
+    """
     try:
         pts = extract_points(edgar.companyfacts(cik), "shares")
     except (HttpError, KeyError):
-        return []
+        return None
     return [(p.period_end, p.value) for p in pts if p.value is not None]
+
+
+@dataclass(frozen=True)
+class StructuralScan:
+    """What the scan FOUND, and what it actually LOOKED AT.
+
+    `covered` holds the internal_ids whose inputs were both retrieved, so the classifier ran on real
+    evidence. Without it a caller cannot tell **"scanned and clean"** from **"never scanned"** —
+    both are simply absent from `flags` — and a transient EDGAR outage reads as a clean bill of
+    health for the whole cohort.
+
+    That distinction is load-bearing because the weekly job REPLACES prior flags with this result
+    (a live scan is authoritative). Treating an unscanned name as clean would erase a real 8-K
+    disqualifier and lift it back above the 0.05 cap on the next run — reintroducing the exact
+    #420 failure that the replace-semantics was written to fix.
+    """
+
+    flags: dict[str, StructuralDisqualifier]
+    covered: frozenset[str]
 
 
 def scan_structural(
     cands: list[CandidateRecord], *, edgar: EdgarClient, http: CachedHttp
-) -> dict[str, StructuralDisqualifier]:
+) -> StructuralScan:
     """Network pass: for each candidate fetch its recent 8-Ks (free EDGAR text) + shares series,
-    run the pure classifier, and return ``{internal_id -> StructuralDisqualifier}`` for the FLAGGED
-    names only (DEMOTE-ONLY — unflagged names are simply absent). Cached via ``http``."""
+    run the pure classifier, and report the FLAGGED names (DEMOTE-ONLY — unflagged names are simply
+    absent from ``flags``) alongside the names actually COVERED. Cached via ``http``."""
     out: dict[str, StructuralDisqualifier] = {}
+    covered: set[str] = set()
     for c in cands:
         rec = c.data_record
         cik = rec.identity.cik
@@ -201,14 +238,18 @@ def scan_structural(
             continue
         # Per-name guard (mirrors assemble_cohort): one bad EDGAR response or a corrupt cache file
         # must not kill the whole pass. A skipped name is simply not triaged here — a safe
-        # under-demote (it still reaches the dossier), never a fabricated flag.
+        # under-demote (it still reaches the dossier), never a fabricated flag. It is also NOT
+        # marked covered, so a caller replacing prior flags leaves this name's alone.
         try:
             since = (rec.as_of or date.today()) - timedelta(days=_FILINGS_WINDOW_DAYS)
-            flag = classify_structural_disqualifier(
-                _filings_for(edgar, http, cik, since), _shares_for(edgar, cik), rec.prices
-            )
+            filings = _filings_for(edgar, http, cik, since)
+            shares = _shares_for(edgar, cik)
+            if filings is None or shares is None:
+                continue  # an input was never retrieved — classifying now would invent a verdict
+            flag = classify_structural_disqualifier(filings, shares, rec.prices)
         except Exception:  # noqa: BLE001 — fail soft per name, never crash the cohort scan
             continue
+        covered.add(rec.identity.internal_id)
         if flag is not None:
             out[rec.identity.internal_id] = flag
-    return out
+    return StructuralScan(flags=out, covered=frozenset(covered))

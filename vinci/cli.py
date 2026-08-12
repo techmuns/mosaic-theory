@@ -221,9 +221,12 @@ def _cmd_rank(args: argparse.Namespace) -> int:
                 f"scanning {len(cands)} candidates for structural disqualifiers "
                 f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
             )
+            # `.flags` only: a MANUAL run is the operator asking for this scan's verdict outright,
+            # so there is no prior assessment to preserve. Coverage matters on the SCHEDULED path,
+            # which replaces flags and must not read an unscanned name as clean (orchestrator).
             structural_flags = scan_structural(
                 cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
-            )
+            ).flags
 
     ranked = rank_from_snapshots(
         cfg, annotations=annotations, structural_flags=structural_flags or None,
@@ -1846,9 +1849,14 @@ def _cmd_score(args: argparse.Namespace) -> int:
 
 
 def _cmd_run_weekly(args: argparse.Namespace) -> int:
-    """Scheduled weekly job: refresh the universe + run the screen + export snapshots."""
+    """Scheduled weekly job: rebuild the universe, screen it, rank it, export the lot.
+
+    No flags — every stage is unconditional. A cron with opt-in pieces is how the ranker and the
+    structural scan both came to be silently missing from the weekly run (STATE.md §5).
+    """
     end = date.fromisoformat(args.end) if args.end else date.today()
-    print(f"weekly run: {run_weekly(end=end, benchmark=args.benchmark, progress=stderr_reporter)}")
+    result = run_weekly(end=end, benchmark=args.benchmark, progress=stderr_reporter)
+    print(f"weekly run: {result}")
     return 0
 
 

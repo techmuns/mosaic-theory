@@ -42,6 +42,11 @@ jobs:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        # ONE CALL IS THE WHOLE WEEK — universe rebuild, screen, structural scan, rank, export.
+        # Deliberately flagless: every stage is unconditional inside run_weekly(). Opt-in pieces on
+        # a cron are exactly how two stages went silently missing for months — nothing ranked (the
+        # served queue froze 12 days behind its own screen) and nothing scanned for structural
+        # disqualifiers (0 flags across 284 names). See STATE.md §5.
         run: python -m vinci run-weekly
 
       - name: Commit refreshed snapshots
