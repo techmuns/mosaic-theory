@@ -395,3 +395,80 @@ def test_the_cap_never_spends_a_slot_on_a_guidanceless_release() -> None:
     assert not thin, (
         f"the digest dropped guidance-bearing releases that sit inside the guide window: {thin} — "
         f"a slot went to a release with no guidance while a guide fell out of the digest")
+
+
+def test_the_note_counts_after_the_union_not_the_content_window() -> None:
+    """REVIEW FINDING (#439): the omission note contradicted the digest it annotates.
+
+    THE MIXED WINDOW. The count was `len(releases) - len(recent)` — the CONTENT window's leftovers —
+    but the digest emits `recent ∪ guided`. So a release outside the content window that CARRIES
+    guidance is present, with its guide printed, and the note still called it omitted. The LLM was
+    handed the older outlook and told in the same breath that it had been dropped.
+
+    THE FIXTURE IS THE MIXED CASE ON PURPOSE: six releases, and only the two OLDEST carry guidance.
+    The content window takes the four newest (all guidance-less); the guide window takes the two
+    guidance-bearing ones. Nothing is genuinely absent — every release is in one window or the
+    other — so the note must NOT claim an omission.
+    """
+    import datetime as _dt
+
+    from vinci.dossier.schemas import (
+        GuidanceItem,
+        PrimarySource,
+        ReleaseExtract,
+        Sourced,
+    )
+    from vinci.dossier.synthesis import _primary_source_digest
+
+    def _rel(day: int, *, guides: bool) -> ReleaseExtract:
+        return ReleaseExtract(
+            filed=_dt.date(2026, 1, day), source_ref=f"8-K day{day} EX-99.1",
+            guidance=([GuidanceItem(metric="revenue", period="2026", low=float(day),
+                                    high=float(day) + 10, unit="$M", qualitative=False,
+                                    verbatim="v", source_ref="s")] if guides else []))
+
+    _u = Sourced.unknown(note="not under test")
+    # most-recent first, as the record stores them: 6 newest … 1 oldest; only 2 and 1 guide.
+    releases = [_rel(d, guides=d <= 2) for d in (6, 5, 4, 3, 2, 1)]
+    ps = PrimarySource(releases=releases, self_funding=_u, wall_coherence=_u,
+                       basis_triangulation=_u, guide_verification=_u)
+
+    text = _primary_source_digest(ps)
+    note = [ln for ln in text.splitlines() if ln.startswith("(note:")]
+
+    # the guides from OUTSIDE the content window are in fact present …
+    assert "guidance (" in text, "the guide history the union exists to keep is missing"
+    # … so nothing may be described as contributing nothing.
+    assert not note, (
+        f"every release is in one window or the other, yet the digest claims an omission: {note}")
+
+
+def test_a_guide_that_is_genuinely_dropped_is_disclosed_separately() -> None:
+    """THE OTHER HALF, so the note is not merely silenced. Beyond the guide window's own cap a
+    guidance-bearing release IS lost, and that is a different loss from a release whose
+    non-guidance content falls outside the content window — the note states them apart."""
+    import datetime as _dt
+
+    from vinci.dossier.schemas import (
+        GuidanceItem,
+        PrimarySource,
+        ReleaseExtract,
+        Sourced,
+    )
+    from vinci.dossier.synthesis import _primary_source_digest
+
+    def _rel(day: int) -> ReleaseExtract:
+        return ReleaseExtract(
+            filed=_dt.date(2026, 1, day), source_ref=f"8-K day{day} EX-99.1",
+            guidance=[GuidanceItem(metric="revenue", period="2026", low=float(day),
+                                   high=float(day) + 10, unit="$M", qualitative=False,
+                                   verbatim="v", source_ref="s")])
+
+    _u = Sourced.unknown(note="not under test")
+    ps = PrimarySource(releases=[_rel(d) for d in (6, 5, 4, 3, 2, 1)], self_funding=_u,
+                       wall_coherence=_u, basis_triangulation=_u, guide_verification=_u)
+
+    note = [ln for ln in _primary_source_digest(ps).splitlines() if ln.startswith("(note:")]
+    assert note, "two guidance-bearing releases fall outside both windows and nothing says so"
+    assert "guidance that is NOT shown" in note[0], note
+    assert "content window" in note[0], "the note must name WHICH window it is describing"

@@ -1047,10 +1047,25 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     # not, this is the difference between showing a cut sequence and implying there wasn't one.
     guided = [r for r in ps.releases if r.guidance][:4]
     omitted_guided = sum(1 for r in ps.releases if r.guidance) - len(guided)
-    if len(ps.releases) > len(recent):
-        tail = (f"; {omitted_guided} of them carried guidance" if omitted_guided else "")
-        out.append(f"(note: {len(ps.releases) - len(recent)} older release(s) omitted from the "
-                   f"digest — the four most recent are shown{tail}; full set in the JSON)")
+    # COUNTED AFTER THE UNION, AND NAMED AS THE CONTENT WINDOW (review finding, #439). The count was
+    # `len(releases) - len(recent)` — the CONTENT window's leftovers — but the loop below emits
+    # `recent ∪ guided`, so a release outside the content window that CARRIES guidance is in the
+    # digest with its guide printed. Calling it "omitted" told the LLM the older outlook had been
+    # dropped while handing it that very outlook: contradictory evidence, with no way to tell which
+    # half to believe. What is genuinely absent is a release in NEITHER window.
+    shown = [r for r in ps.releases if r in recent or r in guided]
+    omitted = len(ps.releases) - len(shown)
+    if omitted or omitted_guided:
+        parts = []
+        if omitted:
+            parts.append(f"{omitted} older release(s) contribute nothing here")
+        # DISCLOSED SEPARATELY, because it is a different loss: a guide that EXISTS and is not
+        # shown, versus a release whose non-guidance content falls outside the window.
+        if omitted_guided:
+            parts.append(f"{omitted_guided} further release(s) state guidance that is NOT shown")
+        out.append(f"(note: {'; '.join(parts)} — the content window is the 4 most recent releases, "
+                   f"and guidance is carried for the 4 most recent that state any; "
+                   f"full set in the JSON)")
     # WHICH GUIDE IS CURRENT — derived from the filing dates, which are already known.
     #
     # WHY: the digest emitted every release's guidance as `guidance (metric period): low–high →
