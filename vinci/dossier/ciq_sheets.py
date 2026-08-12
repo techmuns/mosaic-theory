@@ -3556,12 +3556,12 @@ def _last_actual_fy(bundle: CiqBundle) -> int | None:
 
 
 def forward_estimate_fys(bundle: CiqBundle, *, count: int = 2) -> list[tuple[str, str]]:
-    """The next ``count`` fiscal years CONSENSUS ACTUALLY COVERS → ``[(trends_label, display_label)]``
-    e.g. ``[("FY 2027", "FY27E"), ("FY 2028", "FY28E")]``.
+    """The next ``count`` fiscal years CONSENSUS ACTUALLY COVERS, as
+    ``[(trends_label, display_label)]`` e.g. ``[("FY 2027", "FY27E"), ("FY 2028", "FY28E")]``.
 
     DERIVED, NEVER ASSUMED. Both call sites previously hardcoded ``FY 2026``/``FY 2027``, which is
-    only right for a December fiscal year. **NCNO (Jan FYE) and NIKE (May FYE) have already REPORTED
-    FY2026**, so their Estimates→Trends starts at FY 2027 and the hardcoded lookup found nothing:
+    only right for a December fiscal year. **NCNO (Jan FYE) and NIKE (May FYE) have already
+    REPORTED FY2026**, so their Trends starts at FY 2027 and the hardcoded lookup found nothing:
     NCNO's committed page shows an ACTUAL ``FY26`` of 595 beside an EMPTY ``FY26E`` — which reads as
     "consensus has no FY26 view" when the truth is that FY2026 is history. Their FY2028 consensus
     never reached a page at all.
@@ -3573,18 +3573,20 @@ def forward_estimate_fys(bundle: CiqBundle, *, count: int = 2) -> list[tuple[str
     MEASURED OVER ALL 19 WORKBOOKS: 17 names derive exactly the hardcoded pair (no change), and only
     NCNO and NIKE move — both from ``FY26E, FY27E`` to ``FY27E, FY28E``.
 
-    Returns ``[]`` when the sheet is absent or names no forward year, so the caller emits NO estimate
-    column rather than an empty one under a fabricated heading.
+    Returns ``[]`` when the sheet is absent or names no forward year, so the caller emits NO
+    estimate column rather than an empty one under a fabricated heading.
     """
     try:
         tr = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError:
         return []
-    bi = _find_row(tr, "Revenue")   # the anchor block: the columns are shared by every metric block
-    header = _metric_block_header(tr, bi) if bi is not None else None
-    if header is None:
-        return []
-    years = sorted({int(m.group(1)) for c in header
+    # EVERY period header in the sheet, not one privileged metric block. The first cut anchored on
+    # the Revenue block, so a sheet carrying only an `EPS (GAAP)` block derived NO estimate column
+    # at all — caught by `test_d5a_eps_absent_basis_renders_dash_never_borrows`, whose fixture is
+    # exactly that shape. The blocks share their period columns, so a union over the sheet is both
+    # simpler and strictly harder to starve than depending on one metric being present. The pattern
+    # is fully anchored, so only a cell that IS a fiscal-year label can match.
+    years = sorted({int(m.group(1)) for row in tr for c in row
                     if (m := _FY_TRENDS_COL.match(str(c).strip()))})
     return [(f"FY {y}", f"FY{y % 100:02d}E")
             for y in forward_years(years, _last_actual_fy(bundle), count)]

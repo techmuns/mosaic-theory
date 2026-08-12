@@ -11918,6 +11918,15 @@ would have produced a focusable element that still did nothing on Enter.
   covenant work needs both halves. **CLOSED 2026-08-12 by the NFLX/UBER re-assembly: UBER now
   carries 8 rows** — 4 accession-bound (2028/2025 convertible-note credit agreements, each with an
   `ex10-1` exhibit) + 4 honestly marked *"no contract-level filing expected (aggregate line item)"*.
+- **`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE (found 2026-08-12,
+  PR-C).** It scans the whole rendered queue body for direction words (`building`, `fading`,
+  `rising`…) and reddens on the SIC label *"other building materials dealers"* — an industry
+  description, not a claim derived from the volume series. The string is in NO committed file; it is
+  resolved from the local store at render time, so the test **passes in a bare worktree and in CI**
+  (neither has a populated `vinci.db`) and **fails in a worktree that does**. Isolated properly:
+  reverting PR-C's production files leaves it failing, so it is not PR-C — the trigger was the
+  `vinci refresh --aggs` backfills that populated the shared store. A word-scan over a whole page is
+  the wrong layer for "do not name a direction"; the assertion belongs on the volume CELL.
 - **`primary_source` IS NOT AS-OF BOUNDED — UBER reads a filing 7 days past its own reference date
   (found 2026-08-12 during the re-assembly).** UBER's page is stamped `reference_date 2026-07-29`
   and its `primary_source.filing` is **10-Q `0001543151-26-000032`, filed 2026-08-05**. The whole
@@ -13692,6 +13701,37 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **THE ESTIMATE COLUMNS ASSUMED A DECEMBER FISCAL YEAR — NCNO SHIPPED AN EMPTY `FY26E`
+  (2026-08-12, PR-C).** Two sites hardcoded `FY 2026`/`FY 2027`: the financial-summary columns
+  (`ciq_sheets.financial_summary_annual`) and the direct consensus anchors
+  (`mechanical._implied_expectations._direct_anchors`, whose FAILURE NOTE also named those years).
+  **NCNO closes in January and NIKE in May, so both had already REPORTED FY2026** — their
+  Estimates→Trends starts at FY 2027, the hardcoded lookup found nothing, and NCNO's committed page
+  shipped `columns: […'FY26','LTM','FY26E','FY27E']` with Revenue `[…595, 610, '—', 645]`: **an
+  EMPTY estimate column sitting beside an ACTUAL FY26**, which reads as "consensus has no FY26 view"
+  when the truth is that FY2026 is history. Their FY2028 consensus never reached a page at all.
+  **THE RULE IS "BEYOND THE LAST ACTUAL", not "the first columns offered"** — a vendor sheet can
+  still list a year since reported, and taking its first columns blindly would head a PAST year with
+  `E`: the same error pointing the other way. LTM is excluded from "last actual" (a trailing window
+  is not a fiscal year, and counting it would push the boundary a year early).
+  *MEASURED OVER ALL 19 WORKBOOKS BEFORE THE RULE WAS WRITTEN: 17 names derive exactly the pair that
+  was hardcoded and only NCNO and NIKE move (`FY26E, FY27E` → `FY27E, FY28E`) — surgical by
+  measurement, not by hope. End-to-end on the real workbook, NCNO's table becomes
+  `[…'FY26','LTM','FY27E','FY28E']` with Revenue `[…595, 610, 645, 702]`: the empty column is gone,
+  FY2028 consensus reaches a page for the first time, and the growth row bases correctly off
+  `+8% (vs FY26)`.*
+  **ONE HELPER, BOTH SITES** (`forward_estimate_fys`) — two literal year tuples is how the table and
+  the anchors come to name different years on one page; PR-A's lesson in a second place.
+  **A DESIGN FLAW CAUGHT BY AN EXISTING TEST, not by me:** the first cut anchored the lookup on the
+  Trends **Revenue** block, so a sheet carrying only an `EPS (GAAP)` block derived NO estimate column
+  at all — the empty-column defect rebuilt in a new place. `test_d5a_eps_absent_basis_renders_dash_
+  never_borrows` reddened on exactly that fixture shape. The years are now unioned over every period
+  header in the sheet.
+  **NOT FIXED, RECORDED — a THIRD hardcode of the same shape:** `_anchor("FY 2026")` in
+  `_implied_expectations` feeds the G5 vintage-guard probe, so for NCNO/NIKE that probe is inert.
+  Different consumer, different blast radius; it needs its own look rather than a blind sweep.
+  **ARTIFACTS NOT UPDATED (deliberate):** NCNO and NIKE gain this at their next assembly. Re-rolling
+  a synthesis nobody asked to re-roll is the cost the #426 entry already refused to pay.
 - **A QUARTER WAS CHECKED AGAINST A YEAR AND THE PAGE CALLED IT A MISMATCH (2026-08-12,
   fix/guide-period-and-pctile-window).** Analyst review of the committed NFLX page, post-#426.
   The dossier printed `guide verification (revenue): CIQ 12860.0–12860.0 vs release 50.7–51.7 →

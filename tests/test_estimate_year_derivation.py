@@ -1,9 +1,9 @@
 """The estimate columns name the years CONSENSUS covers, not the years a December filer would have.
 
 WHY (NCNO, found reading the committed page). Two sites hardcoded `FY 2026` / `FY 2027`. That is
-right only for a December fiscal year. **NCNO closes in January and NIKE in May, so both had already
-REPORTED FY2026** — their Estimates→Trends starts at FY 2027, the hardcoded lookup found nothing,
-and the committed NCNO page shipped:
+right only for a December fiscal year. **NCNO closes in January and NIKE in May, so both had
+already REPORTED FY2026** — their Estimates→Trends starts at FY 2027, so the hardcoded lookup
+found nothing, and the committed NCNO page shipped:
 
     columns: [… 'FY25', 'FY26', 'LTM', 'FY26E', 'FY27E']
     Revenue: […    595,    610,    '—',    645]
@@ -12,13 +12,13 @@ and the committed NCNO page shipped:
 Which reads as "consensus has no FY26 view" when the truth is that FY2026 is history. Their FY2028
 consensus never reached a page at all.
 
-MEASURED OVER ALL 19 WORKBOOKS BEFORE THE RULE WAS WRITTEN: 17 names derive exactly the pair that was
-hardcoded, and only NCNO and NIKE move (`FY26E, FY27E` → `FY27E, FY28E`). The fix is surgical by
-measurement, not by hope.
+MEASURED OVER ALL 19 WORKBOOKS BEFORE THE RULE WAS WRITTEN: 17 names derive exactly the pair
+that was hardcoded, and only NCNO and NIKE move (`FY26E, FY27E` → `FY27E, FY28E`). The fix is
+surgical by measurement, not by hope.
 
-THE RULE IS "BEYOND THE LAST ACTUAL", NOT "THE FIRST COLUMNS OFFERED" — a vendor sheet can still list
-a year that has since been reported, and taking its first columns blindly would put a PAST year under
-an `E` heading: the same error pointing the other way.
+THE RULE IS "BEYOND THE LAST ACTUAL", NOT "THE FIRST COLUMNS OFFERED" — a vendor sheet can still
+list a year that has since been reported, and taking its first columns blindly would put a PAST
+year under an `E` heading: the same error pointing the other way.
 """
 from __future__ import annotations
 
@@ -54,6 +54,20 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_the_forward_years_are_those_after_the_last_reported_one(
     offered: list[int], last_actual: int | None, want: list[int], why: str) -> None:
     assert forward_years(offered, last_actual) == want, why
+
+
+def test_the_years_are_read_from_any_block_not_a_privileged_one() -> None:
+    """REGRESSION on my own first cut, which anchored the lookup on the Trends **Revenue** block.
+    A sheet carrying only an `EPS (GAAP)` block therefore derived NO estimate column at all — the
+    empty-column defect rebuilt in a new place. The d5a EPS-absent-basis test is the one that
+    caught it, on exactly that fixture shape; this states the invariant by name so
+    the reason cannot be lost.
+
+    The blocks share their period columns, so the years are unioned over the whole sheet.
+    """
+    src = inspect.getsource(ciq_sheets.forward_estimate_fys)
+    assert '_find_row(tr, "Revenue")' not in src, (
+        "the derivation depends on one metric block again — a sheet without it derives no columns")
 
 
 def test_the_count_is_honoured_and_never_padded() -> None:
