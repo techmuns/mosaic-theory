@@ -13713,6 +13713,18 @@ sign-off.**
   +34 — that was wrong; the measured figure is +73.)*
   **WIDENS WHAT CAN BE READ, NEVER WHAT MUST BE:** a block absent from a workbook is not rendered,
   every recovered guide carries `GUIDANCE_BASIS_REF` (#427), and each row states its own `age`.
+  **DELIVERY DIRECTION IS A METRIC PROPERTY, NOT A SIGN (review finding, #437).** The delivery read
+  inferred "this is a cost guide" from `range_high < 0`, which holds ONLY because CIQ states capex
+  and interest expense NEGATIVE — a vendor formatting choice, not a semantic. Widening admitted
+  **`Effective Tax Rate %`, cost-like but stated POSITIVE**, so it took the revenue path and a tax
+  rate HIGHER than guided was recorded as **MET**. **MEASURED: all 12 names carrying a tax-rate
+  guide had an INVERTED record** — VRRM `3/3` → `0/3` (a perfect delivery record that was a perfect
+  miss), V `12/32` → `28/32`, WERN `5/13` → `12/13`, NIKE `13/28` → `23/28`, NFLX `0/1` → `1/1`.
+  Now `_GUIDANCE_HIGHER_IS_DELIVERY` decides by NAME. **ABSENT MEANS UNRESOLVED, NEVER GUESSED:**
+  `Depreciation & Amortization` is a consequence of past capital decisions, not a target — its guide
+  still shows and its met/missed record reads `—`. A completeness pin refuses any future whitelist
+  addition that is neither classified nor deliberately listed as undirected, so this cannot recur
+  the way it just did.
   **REPORTED, NOT DECIDED — a staleness question this makes visible.** More metrics means more names
   that STOPPED guiding something: **V recovers 10 guides of which 6 are 2114–4767 days old**
   (Interest Expense FY 2016, Net Income Excl. Excep FY 2013, EPS GAAP FY 2020…). They are LABELLED

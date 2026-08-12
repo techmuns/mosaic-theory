@@ -1486,6 +1486,33 @@ _GUIDANCE_METRICS: tuple[str, ...] = (
     "Cash From Operations", "Capital Expenditure", "Free Cash Flow",
     "Depreciation & Amortization", "Interest Expense", "Effective Tax Rate %", "DPS",
 )
+
+#: Which way DELIVERY runs for each guided metric — ``True`` when a HIGHER actual is delivery,
+#: ``False`` when a LOWER one is, and ABSENT when the question has no defined answer.
+#:
+#: BY METRIC, NOT BY SIGN (review finding, #437). The delivery read inferred "this is a cost guide"
+#: from ``range_high < 0``, which works only because CIQ reports capex and interest expense as
+#: NEGATIVE. Widening the whitelist admitted ``Effective Tax Rate %`` — a cost-like metric stated
+#: POSITIVE (e.g. 19.0) — so it fell into the revenue path and a tax rate HIGHER than guided was
+#: recorded as MET: the exact inverse of what a reader takes from the word. Interest Expense escaped
+#: only by CIQ's sign convention, which is a vendor formatting choice and not a semantic.
+#:
+#: ABSENT MEANS UNRESOLVED, NEVER GUESSED. ``Depreciation & Amortization`` is a consequence of past
+#: capital decisions, not a target management delivers against — more of it is neither a beat nor a
+#: miss. A metric with no entry still shows its GUIDE; only the met/missed record is withheld, which
+#: is the honest half rather than a coin-flip dressed as a track record.
+_GUIDANCE_HIGHER_IS_DELIVERY: dict[str, bool] = {
+    "Revenue": True, "EBITDA": True, "EBIT": True, "Gross Margin %": True,
+    "EPS Normalized": True, "EPS (GAAP)": True,
+    "Net Income (GAAP)": True, "Net Income (Excl. Excep)": True,
+    "Cash From Operations": True, "Free Cash Flow": True, "DPS": True,
+    # Stated NEGATIVE by CIQ, so "higher" is signed — less negative means less spend. The signed
+    # comparison is unchanged for these; what changed is that it is chosen by NAME, not by sign.
+    "Capital Expenditure": True, "Interest Expense": True,
+    # Stated POSITIVE, and LOWER is delivery. This is the one the sign heuristic got backwards.
+    "Effective Tax Rate %": False,
+    # "Depreciation & Amortization" is deliberately ABSENT — direction undefined.
+}
 _REV_WINDOWS: tuple[tuple[str, str], ...] = (
     ("1m", "Last Month"), ("2m", "Last 2 Months"), ("3m", "Last 3 Months"),
 )
@@ -2200,19 +2227,27 @@ def _guidance_reads(
         latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
         recent: tuple[date, str, bool] | None = None  # date, period, met — most-recent resolved
         resolved = met_n = 0
+        # DIRECTION BY METRIC, NEVER BY SIGN (#437) — see `_GUIDANCE_HIGHER_IS_DELIVERY`. A metric
+        # absent from the map has no defined delivery direction, so this block records its GUIDE and
+        # NO met/missed outcome; guessing one is worse than withholding it.
+        higher_is_delivery = _GUIDANCE_HIGHER_IS_DELIVERY.get(metric)
         for j in range(1, len(header)):
             rng = _parse_range(rows[guide][j]) if j < len(rows[guide]) else None
             if rng is None:
                 continue
-            cost_like = rng[1] < 0  # whole guide range non-positive → a spend/cost guide
+            # `cost_like` now only chooses the sentence a reader is shown ("spend ≤ guided ceiling"
+            # vs "actual ≥ guided floor"); the OUTCOME is decided by the map above.
+            cost_like = higher_is_delivery is False or rng[1] < 0
             gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
             per_j = str(header[j]).strip()
             if gd is not None and (latest is None or gd > latest[0]):
                 latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
             av = _cell_at(rows, actual, j)
-            if av is not None:
+            if av is not None and higher_is_delivery is not None:
                 resolved += 1
-                met = av >= rng[0]  # ≥ floor (revenue) == ≤ ceiling (cost) in signed terms
+                # ≥ floor when higher is delivery (revenue, and signed-negative capex alike);
+                # ≤ ceiling when lower is (a tax RATE, stated positive).
+                met = av >= rng[0] if higher_is_delivery else av <= rng[1]
                 met_n += int(met)
                 if gd is not None and (recent is None or gd > recent[0]):
                     recent = (gd, per_j, met)
