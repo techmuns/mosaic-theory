@@ -60,6 +60,20 @@ def score_ledger(
     """
     bench_bars = store.get_price_history(benchmark_internal_id)
     bench_daily = dict(_daily_returns(bench_bars, date.min, as_of))
+    # WHICH DECISIONS HAVE BEEN CLOSED, as of the scoring date. The rows keep accruing to their
+    # horizons either way (the 2026-08-12 ruling — a close is a capital decision, not a retraction),
+    # so this changes no number the report already printed; it lets the report SAY how much of the
+    # spread is carried by calls the book no longer holds. The monitor has shown that split since
+    # #418 and the scoring report did not, which is the same surface-gap #378 was about.
+    #
+    # AS-OF FILTERED, learned from review P1 on #418: an exit dated after the scoring date has not
+    # happened yet in the book being scored. Keyed on the DECISION's entry_id, never the ticker —
+    # SMPL is closed AND re-entered, so a ticker-keyed set marks the live re-entry closed too.
+    closed_ids = {
+        e.closes_entry_id for e in store.iter_ledger()
+        if e.event == EVENT_CLOSE and e.closes_entry_id is not None
+        and (e.exit_price_as_of is None or e.exit_price_as_of <= as_of)
+    }
     # Fetched ONCE per basket member, not per verdict: the windows differ per row but the series
     # does not, and a followed book re-reading three full histories per verdict would be the
     # slowest thing in the report for no gain.
@@ -137,6 +151,8 @@ def score_ledger(
             # ledger when it was written). One definition, so the report cannot disagree with it.
             origin=origin_of(entry),
             sleeve=sleeve_of(entry),
+            # Is the POSITION still held? Distinct from `resolved`, which is about the CALL's clock.
+            closed=entry.entry_id in closed_ids,
         )
         scores.append(score)
         # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression.
