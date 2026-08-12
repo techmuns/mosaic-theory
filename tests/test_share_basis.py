@@ -227,3 +227,91 @@ def test_the_bridged_name_reconciles_cap_shares_and_price_exactly() -> None:
     assert implied == pytest.approx(spot, rel=0.01), (
         f"cap/shares implies ${implied:,.2f}/sh against a ${spot:,.2f} close — the bridged basis "
         f"does not agree with the cap it sits beside")
+
+
+# ─── the bound is a CADENCE, not a constant (review finding, #432) ────────────────────────────────
+
+def _stub_edgar_with_forms(facts: dict[str, Any], forms: tuple[str, ...]) -> Any:
+    """The real `_shares_max_age` contract: `companyfacts` plus `recent_filings`.
+
+    `recent_filings` returns objects with a `.form`, which is all the cadence read consumes — the
+    same shape `EdgarClient.recent_filings` yields, so this stub cannot drift into asserting a
+    signature production does not have.
+    """
+    class _F:
+        def __init__(self, form: str) -> None:
+            self.form = form
+
+    class _E:
+        def companyfacts(self, _cik: str) -> dict[str, Any]:
+            return facts
+
+        def recent_filings(self, _cik: Any, **_kw: Any) -> list[Any]:
+            return [_F(f) for f in forms]
+
+    return _E()
+
+
+@pytest.mark.parametrize(
+    ("forms", "want", "why"),
+    [
+        (("20-F",), 540, "a foreign private issuer restates its count once a year"),
+        (("40-F",), 540, "the Canadian equivalent, same cadence"),
+        (("10-Q", "10-Q"), 180, "a domestic quarterly reporter restates it every quarter"),
+        # A filer that carries BOTH is judged by the tighter cadence: it IS filing quarterly, so a
+        # two-quarter silence still means the tag stopped being maintained.
+        (("20-F", "10-Q"), 180, "quarterly evidence wins over the annual form"),
+        ((), 180, "no evidence either way ⇒ the strict bound, never the loose one"),
+    ],
+)
+def test_the_staleness_bound_follows_the_filers_reporting_cadence(
+    forms: tuple[str, ...], want: int, why: str) -> None:
+    """REVIEW FINDING (#432): 180 days is a 10-Q cadence, and applying it globally refuses CURRENT
+    facts from annual reporters.
+
+    NOT HYPOTHETICAL — measured on our own universe: **ONON (On Holding) files 20-F and 6-K and no
+    10-Q**, and its dei count is dated 2025-12-31, i.e. **224 days** at a 2026-08-12 reference. A
+    flat 180 would refuse a perfectly current fact and strip its per-share and EV figures.
+    """
+    from vinci.dossier.mechanical import _shares_max_age
+
+    edgar = _stub_edgar_with_forms({}, forms)
+    assert _shares_max_age(edgar, "0000000000", date(2026, 8, 12)) == want, why
+
+
+def test_an_annual_filers_count_survives_where_a_quarterly_filers_does_not() -> None:
+    """THE DISCRIMINATING PAIR, on one age. The SAME 224-day-old count is CURRENT for a 20-F filer
+    and STALE for a 10-Q filer — which is the whole point, and a bound that cannot tell them apart
+    either strips good data or serves a wrong share basis.
+
+    Built from a REAL committed fixture with its cover-page date shifted, so the fact's shape is the
+    production one rather than something hand-rolled to suit the assertion.
+    """
+    facts = _facts("NFLX")
+    pt = latest_instant(extract_points(facts, "shares"))
+    assert pt is not None
+    ref = pt.period_end + timedelta(days=224)
+
+    annual = _edgar_shares_outstanding(_stub_edgar_with_forms(facts, ("20-F",)), "X", as_of=ref)
+    quarterly = _edgar_shares_outstanding(_stub_edgar_with_forms(facts, ("10-Q",)), "X", as_of=ref)
+
+    assert annual is not None, (
+        "a 224-day-old count from an ANNUAL reporter is current and must survive — this is the "
+        "ONON case, and refusing it removes per-share and EV data for no reason")
+    assert quarterly is None, (
+        "224 days of silence from a QUARTERLY reporter means the tag stopped being maintained — "
+        "this is the FUBO case and must still be refused")
+
+
+def test_a_cadence_lookup_failure_takes_the_strict_bound() -> None:
+    """FAIL SAFE IN THE RIGHT DIRECTION. If EDGAR cannot be asked, we do NOT widen the bound:
+    refusing a good count yields UNKNOWN, which is honest and recoverable; accepting a stale one
+    puts a wrong share basis behind every per-share and EV figure — the ~4x Visa error."""
+    from vinci.dossier.mechanical import _SHARES_MAX_AGE_DAYS, _shares_max_age
+
+    class _Broken:
+        def recent_filings(self, *_a: Any, **_k: Any) -> list[Any]:
+            raise RuntimeError("EDGAR unreachable")
+
+    assert _shares_max_age(_Broken(), "0000000000", date(2026, 8, 12)) == _SHARES_MAX_AGE_DAYS
+    assert _shares_max_age(_Broken(), None, date(2026, 8, 12)) == _SHARES_MAX_AGE_DAYS
