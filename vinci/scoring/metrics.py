@@ -50,6 +50,9 @@ class VerdictScore:
     #: Per row, not per sleeve: two verdicts entered either side of a follow-list change are
     #: measured against different baskets, and the report has to be able to say so.
     basket_members: tuple[str, ...] = ()
+    #: Has the POSITION been closed? The decision keeps accruing to its horizon regardless (the
+    #: 2026-08-12 ruling), so this only lets the report decompose the spread — it changes no number.
+    closed: bool = False
 
     @property
     def excess_gross(self) -> float:
@@ -200,6 +203,17 @@ class ScoreReport:
     overrides: tuple[OverrideOutcome, ...] = ()
     # PER-BOOK curves, beside the primary and never inside it (STATE.md §4 SLEEVE ARCHITECTURE).
     by_sleeve: dict[str, SleeveSpread] = field(default_factory=dict)
+    # --- THE PRIMARY, OVER POSITIONS STILL HELD (2026-08-12 ruling; monitor parity since #418) ---
+    # A closed decision keeps accruing to its horizon — the spread measures the DISCRIMINATOR and a
+    # close is a capital decision, not a retraction. The headline above is therefore UNCHANGED. What
+    # this adds is the decomposition the monitor has printed since #418 and this report did not: how
+    # much of the spread is carried by calls the book no longer holds. On the monitor's 2026-08-11
+    # book the two figures were +9.54pp and −1.56pp — the sign flips, so the reader needs both.
+    n_closed: int = 0
+    n_open_buy: int = 0
+    n_open_avoid: int = 0
+    buy_avoid_spread_open_only: float | None = None
+    open_only_note: str | None = None
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -247,6 +261,21 @@ class ScoreReport:
             f"- Twin-realisation — BUYs bounced: {self.twin_buy_bounced} · "
             f"AVOIDs kept falling: {self.twin_avoid_fell}",
         ]
+        # THE DECOMPOSITION, printed only when it says something. With nothing closed the two
+        # figures are identical and a second line trains the reader to skip it. The closed rows are
+        # IN the headline by ruling; this says how much of it they carry, so nobody reads a spread
+        # earned on positions the book no longer holds as a spread the book earned.
+        if self.n_closed:
+            held = self.n_open_buy + self.n_open_avoid
+            open_txt = (f"UNDEFINED — {self.open_only_note}"
+                        if self.buy_avoid_spread_open_only is None
+                        else pct(self.buy_avoid_spread_open_only))
+            lines += [
+                f"  _of which **{self.n_closed}** resolved row(s) are CLOSED positions, still "
+                f"marked to horizon — the call is scored; the exit was a capital decision._",
+                f"  _Same spread over the **{held}** still held: **{open_txt}** "
+                f"(BUY n={self.n_open_buy} · AVOID n={self.n_open_avoid})._",
+            ]
         sector_lines = [
             f"- {v.sector}: {('spread ' + pct(v.spread)) if v.sufficient else 'insufficient data'} "
             f"({v.n_buy} buy / {v.n_avoid} avoid)"
@@ -440,6 +469,25 @@ def aggregate(
     buy_mean = mean([s.name_return for s in buys])
     avoid_mean = mean([s.name_return for s in avoids])
     spread = buy_mean - avoid_mean if buy_mean is not None and avoid_mean is not None else None
+    # THE SAME ARITHMETIC OVER POSITIONS STILL HELD. Computed off `primary` — the identical set the
+    # headline uses — so the two figures are comparable by construction rather than by coincidence.
+    open_buys = [s.name_return for s in buys if not s.closed]
+    open_avoids = [s.name_return for s in avoids if not s.closed]
+    open_bm, open_am = mean(open_buys), mean(open_avoids)
+    spread_open = (open_bm - open_am) if (open_bm is not None and open_am is not None) else None
+    # COUNTED OVER THE LEGS THE SPREAD USES, not over `primary`. A screen-origin row whose verdict
+    # is neither leg (a quality PASS logged with screen origin — the model permits it, since origin
+    # and sleeve are orthogonal) sits in `primary` and in no leg, so counting it here made the
+    # rendered line contradict itself: "1 still held" printed beside "BUY n=1 · AVOID n=1".
+    n_closed = sum(1 for s in (*buys, *avoids) if s.closed)
+    open_note: str | None = None
+    if spread_open is None and n_closed:
+        # Worded for THIS scope: "no AVOID leg" reads very differently when it means "every AVOID
+        # was closed" than when it means "none was ever logged".
+        missing = "BUY" if open_bm is None else "AVOID"
+        n_legs = len(buys) + len(avoids)
+        open_note = (f"no {missing} leg among the {n_legs - n_closed} of {n_legs} resolved rows "
+                     f"still held")
     beta = alpha = None
     if book_daily is not None and bench_daily is not None:
         beta, alpha = ols_beta_alpha(book_daily, bench_daily)
@@ -476,6 +524,11 @@ def aggregate(
         buy_mean_return=buy_mean,
         avoid_mean_return=avoid_mean,
         buy_avoid_spread=spread,
+        n_closed=n_closed,
+        n_open_buy=len(open_buys),
+        n_open_avoid=len(open_avoids),
+        buy_avoid_spread_open_only=spread_open,
+        open_only_note=open_note,
         buy_hit_rate=frac([s.excess_gross > 0 for s in buys]),
         avoid_hit_rate=frac([s.excess_gross < 0 for s in avoids]),
         buy_excess_gross=mean([s.excess_gross for s in buys]),

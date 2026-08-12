@@ -8533,6 +8533,28 @@ spread is **−1.56 pp**. THE SIGN FLIPS, so both now print, neither labelled th
 headline answers *was the call right*, the second answers *did the book hold it*. Keyed on the
 DECISION's entry_id, never the ticker — SMPL is closed AND re-entered, so a ticker-keyed flag would
 mark the live re-entry closed and silently drop it from the held figure.
+**THE SAME SPLIT NOW ON THE SCORING REPORT (2026-08-12).** The monitor showed the decomposition
+from #418 and the scoring report — the LP-facing artifact — did not, which is the surface-gap #378
+was about: a number correct in one place and absent from the other. `ScoreReport` now carries
+`n_closed` / `buy_avoid_spread_open_only` and renders them beside the headline, computed off the
+SAME `primary` set so the two are comparable by construction. The headline is unchanged; the ruling
+is unchanged. **The as-of filter on closes was applied from the start here rather than re-learned**
+— #418's P1 (a close dated after the scoring date has not happened yet) transferred directly.
+**A COUNT THAT COULD CONTRADICT ITS OWN BREAKDOWN, found reviewing my own diff.** `n_closed` was
+summed over `primary` — every screen-origin resolved row — while the rendered "still held" figure
+subtracted it from the two LEGS. Origin and sleeve are ORTHOGONAL, so a quality `PASS` can carry
+screen origin (the model permits it), landing in `primary` and in neither leg; closing one printed
+**"1 still held" beside "BUY n=1 · AVOID n=1"**. Counted over the legs the spread actually uses now,
+so the line cannot disagree with its own breakdown. Also: the ledger is read ONCE per scoring run
+(`iter_ledger` re-validates every row since #417, so a second scan doubled that for nothing), and
+the as-of filter now REQUIRES a dated close rather than treating an undated one as already-happened
+— the schema refuses an undated close outright, so the branch was unreachable and now says so.
+**THE LIVE REPORT STILL PRINTS NOTHING, and that is correct:** zero verdicts have resolved (the
+first BUY horizon passes 2027-01-16), so the split has nothing to decompose and stays silent. My
+earlier objection — that this was "untestable scaffolding" — was too strong and is worth correcting:
+the ARTIFACT is blank, the LOGIC is exercised on fixtures where rows resolve, exactly as
+`test_scoring_close_rows.py` already does. *"The artifact is blank" and "the logic is unverifiable"
+are different claims.*
 **AND THE REALIZED BOOK IS TYPED (item 4).** It reached the snapshot only as free-text `notes`, so
 the one view saying what the fund actually EARNED was unreadable by anything not parsing English,
 while the marked-to-market rows beside it were fully structured. `MonitorSnapshot.realized` now
