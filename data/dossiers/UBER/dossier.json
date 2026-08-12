@@ -33,7 +33,7 @@
       },
       "ev_ebitda_percentile_5y": {
         "value": 0.0,
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 12 quarters (partial last column excluded from the distribution)",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 12 quarters spanning 2023-09-29..2026-06-30 (2.8y) (partial last column excluded from the distribution)",
         "status": "present",
         "note": null
       },
@@ -4235,7 +4235,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2025 Convertible Notes · 0001552781-23-000469 · amended by 0001552781-23-000469]\n  Conversion price / mechanics: This is a capped call (call option) confirmation, not the convertible note itself.…\n  Principal / commitment amount: Underlying Convertible Notes aggregate initial principal amount USD 1,500,000,000,…\n  Interest / coupon rate: 0.875% (coupon of the underlying Convertible Senior Notes; this capped call…\n  Maturity date: Expiration Date: December 1, 2028, subject to earlier exercise; Free Convertibility…\n[2028 Convertible Notes · 0001552781-21-000058 · amended by 0001552781-23-000109]\n  Principal / commitment amount: $760,625,000 (aggregate amount of the 2023 Refinancing Commitments under Amendment…\n  Interest / coupon rate: 2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans (2023…\n  Maturity date: March 3, 2030",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2025 Convertible Notes · 0001552781-23-000469 · amended by 0001552781-23-000469]\n  Conversion price / mechanics: Strike Price: USD 72.5437; Cap Price: USD 95.8125; Option Entitlement: A number…\n  Principal / commitment amount: Convertible Notes aggregate initial principal amount of USD 1,500,000,000 (as…\n  Interest / coupon rate: 0.875% (coupon on the referenced Convertible Senior Notes due 2028)\n  Maturity date: Convertible Senior Notes due 2028; Expiration Date: December 1, 2028, subject to…\n[2028 Convertible Notes · 0001552781-21-000058 · amended by 0001552781-23-000109]\n  Principal / commitment amount: The aggregate amount of the 2023 Refinancing Commitments shall be equal to…\n  Interest / coupon rate: 2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans\n  Maturity date: March 3, 2030\n  Financial-maintenance covenants: No traditional financial-maintenance covenant (leverage/coverage) stated;…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4245,10 +4245,10 @@
           {
             "name": "Conversion price / mechanics",
             "value": {
-              "value": "This is a capped call (call option) confirmation, not the convertible note itself. Strike Price: USD 72.5437; Cap Price: USD 95.8125; Option Entitlement: A number equal to the product of the Applicable Percentage and 13.7848. Relates to the 0.875% Convertible Senior Notes due 2028.",
+              "value": "Strike Price: USD 72.5437; Cap Price: USD 95.8125; Option Entitlement: A number equal to the product of the Applicable Percentage and 13.7848",
               "source_ref": "8-K 0001552781-23-000469 · e23472_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Strike Price: USD 72.5437 ... Cap Price: USD 95.8125 ... Option Entitlement: A number equal to the product of the Applicable Percentage and 13.7848.”"
+              "note": "verbatim: “Option Entitlement: A number equal to the product of the Applicable Percentage and 13.7848. Strike Price: USD 72.5437 Cap Price: USD 95.8125”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4259,10 +4259,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Underlying Convertible Notes aggregate initial principal amount USD 1,500,000,000, as increased by up to USD 225,000,000 upon exercise of Initial Purchasers' option. Number of Options: [_______] (blank); Premium: USD [______] (blank).",
+              "value": "Convertible Notes aggregate initial principal amount of USD 1,500,000,000 (as increased by up to an aggregate principal amount of USD 225,000,000); Premium: USD [______] (blank)",
               "source_ref": "8-K 0001552781-23-000469 · e23472_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “issued by Counterparty in an aggregate initial principal amount of USD 1,500,000,000 (as increased by [up to] an aggregate principal amount of USD 225,000,000 [if and to the extent that] ... the Initial Purchasers ... their option to purchase additional Convertible Notes ...)”"
+              "note": "verbatim: “issued by Counterparty in an aggregate initial principal amount of USD 1,500,000,000 (as increased by [up to] an aggregate principal amount of USD 225,000,000 [if and to the extent that] ... the Initial Purchasers ... exercise ... their option to purchase additional Convertible Notes”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4273,13 +4273,13 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "0.875% (coupon of the underlying Convertible Senior Notes; this capped call confirmation itself bears no coupon).",
+              "value": "0.875% (coupon on the referenced Convertible Senior Notes due 2028)",
               "source_ref": "8-K 0001552781-23-000469 · e23472_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “relating to the 0.875% Convertible Senior Notes due 2028 (as originally issued by Counterparty, the “Convertible Notes” ...)”"
             },
             "base_rate_label": null,
-            "margin_pct": 0.875,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
@@ -4287,10 +4287,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Expiration Date: December 1, 2028, subject to earlier exercise; Free Convertibility Date: September 1, 2028; underlying notes are Convertible Senior Notes due 2028.",
+              "value": "Convertible Senior Notes due 2028; Expiration Date: December 1, 2028, subject to earlier exercise; Free Convertibility Date: September 1, 2028",
               "source_ref": "8-K 0001552781-23-000469 · e23472_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Expiration Date: December 1, 2028, subject to earlier exercise.”"
+              "note": "verbatim: “relating to the 0.875% Convertible Senior Notes due 2028”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4329,10 +4329,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Cross Default provisions of Section 5(a)(vi) of the Agreement apply solely to Dealer with a Threshold Amount of three percent of Dealer's shareholders' equity. Additional Termination Events include: an event of default under Section 6.01 of the Indenture with acceleration of the Convertible Notes; an Amendment Event; a Repayment Event (Repayment Notice); Early Conversion; and an Early Unwind if the securities sale is not consummated by the Premium Payment Date.",
+              "value": "Cross Default under Section 5(a)(vi) of the Agreement applies solely to Dealer with Threshold Amount of three percent of Dealer's shareholders' equity; Additional Termination Events for Early Conversion, Amendment Event, Repayment Event, and event of default under Section 6.01 of the Indenture; Nationalization, Insolvency or Delisting: Cancellation and Payment",
               "source_ref": "8-K 0001552781-23-000469 · e23472_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Notwithstanding anything to the contrary in this Confirmation, if an event of default with respect to Counterparty occurs under the terms of the Convertible Notes as set forth in Section 6.01 of the Indenture and the Convertible Notes are declared due and payable as a result thereof, then such event of default shall constitute an Additional Termination Event applicable to the Transaction ...”"
+              "note": "verbatim: “if an event of default with respect to Counterparty occurs under the terms of the Convertible Notes as set forth in Section 6.01 of the Indenture and the Convertible Notes are declared due and payable as a result thereof, then such event of default shall constitute an Additional Termination Event applicable to the Transaction”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4360,7 +4360,7 @@
               "value": "2021 Refinancing Commitments: $1,101,125,000.00; 2021 Incremental Commitments: $1,462,500,000.00",
               "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “The aggregate amount of (i) the 2021 Refinancing Commitments shall be equal to $1,101,125,000.00 and (ii) the 2021 Incremental Commitments shall be equal to $1,462,500,000.00;”"
+              "note": "verbatim: “The aggregate amount of (i) the 2021 Refinancing Commitments shall be equal to $1,101,125,000.00 and (ii) the 2021 Incremental Commitments shall be equal to $1,462,500,000.00”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4371,7 +4371,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "2021 Refinancing Term Loans and 2021 Incremental Term Loans: Eurodollar (Adjusted LIBO Rate) + 3.50%; ABR (Alternate Base Rate) + 2.50%. Floor as of Amendment No. 2 Effectiveness Date shall be 0%.",
+              "value": "2021 Refinancing Term Loans and 2021 Incremental Term Loans: 3.50% for Eurodollar (Adjusted LIBO Rate) Loans; 2.50% for ABR Loans. Floor as of Amendment No.2 Effective Date shall be 0%.",
               "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “The “Applicable Rate” with respect to the 2021 Refinancing Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans. ... The “Applicable Rate” with respect to the 2021 Incremental Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans.”"
@@ -4399,10 +4399,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "not stated in 8-K 0001552781-21-000058 · e21071_ex10-1.htm"
+              "value": "No traditional financial-maintenance covenant (leverage/coverage) stated; incurrence/basket tests referencing Liquidity not less than $1,500,000,000 (Sections 6.06(g), 6.07(a)) and Senior Secured Net Leverage Ratio 2.50 to 1.00 for Incremental Available Amount",
+              "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
+              "status": "present",
+              "note": "verbatim: “additional Restricted Payments not otherwise permitted in clauses (a) through (f) above, so long as after giving effect to such Restricted Payment, Liquidity shall not be less than $1,500,000,000 on a pro forma basis; ... Junior Debt Prepayments, so long as after giving effect to such Junior Debt Prepayment, Liquidity shall not be less than $1,500,000,000 on a pro forma basis”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4413,10 +4413,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantor: RASIER, LLC (Delaware LLC). Secured by first-priority security interest in Collateral (Pledged Collateral / Pledged Equity) under the U.S. Security Agreement, subject to Permitted Liens.",
+              "value": "Guarantor: Rasier, LLC (and any Material Domestic Subsidiary/Holdings that delivers a Guaranty). Secured by first-priority security interest in the Collateral (Pledged Equity/Pledged Collateral) under the U.S. Security Agreement, subject to Permitted Liens and Excluded Collateral.",
               "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the “Guarantor”) ... the Administrative Agent has a perfected first priority security interest therein (subject to Permitted Liens). ... “Collateral” means all “Pledged Collateral” as defined in the U.S. Security Agreement and all other property and assets that are or are required to be pledged or granted as collateral pursuant to a Security Document”"
+              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the “Guarantor”) ... which shall provide for the grant of a first-priority security interest in the Collateral (subject to Permitted Liens) to the Administrative Agent for the benefit of the Secured Parties ... the Administrative Agent has a perfected first priority security interest therein (subject to Permitted Liens).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4427,52 +4427,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Prepayment in full of Existing 2016 Term Loans and Existing 2018 Term Loans on the Amendment Effective Date. Events of Default set forth in Article 7 / Section 7.01 (payment defaults, covenant defaults, cross-default to Material Indebtedness, bankruptcy, judgments in excess of $250,000,000, ERISA events, Change in Control, etc.).",
+              "value": "Events of Default set forth in Section 7.01(a)-(o), including nonpayment of principal (a); nonpayment of interest/fees after 5 Business Days (b); breach of representations (c); covenant defaults (d)-(e); cross-default on Material Indebtedness (>$250,000,000) (f)-(g); bankruptcy events (h)-(j); judgments >$250,000,000 (k); ERISA events (l); Change in Control (m); Loan Document invalidity (n)-(o). Repricing premium of 1.00% if a Repricing Transaction consummated within six months of Amendment No. 2 Effective Date. No scheduled mandatory prepayment sweep stated in this exhibit.",
               "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “On the Amendment Effective Date: ... The Borrower shall prepay in full the Existing 2016 Term Loans ... The Borrower shall prepay in full the Existing 2018 Term Loans by: (A) directing the 2018 Agent to apply the funds made available to the 2018 Agent pursuant to Section 2.3(b)(i) above to prepay in full the Existing 2018 Term Loans. ... Section 7.01 Events of Default. If any of the following events (each, an “Event of Default”) shall occur: (a) the Borrower shall fail to pay any principal of any Loan when and as the same shall become due and payable...”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Repricing premium",
-            "value": {
-              "value": "1.00% premium on Repricing Transaction consummated within six (6) months after the Amendment Effective Date",
-              "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “If a Repricing Transaction is consummated prior to the date that is six (6) months after the Amendment Effective Date, the Borrower agrees to pay to the Administrative Agent for the ratable account of each applicable Lender, on the date of effectiveness of such Repricing Transaction, a premium equal to 1.00% of the principal amount of the Term Loans prepaid in connection with such Repricing Event”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Amortization",
-            "value": {
-              "value": "Quarterly amortization: 2021 Refinancing Term Loans $2,875,000; 2021 Incremental Term Loans $3,750,000 (each 0.25% per quarter of original principal)",
-              "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “for the account of each 2021 Refinancing Term Lender ... a principal amount of the Term Loans 2021 Refinancing Term Loans equal to $2,875,000 ... and (ii) for the account of each 2021 Incremental Term Lender ... a principal amount of 2021 Incremental Term Loans equal to $3,750,000”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Upfront fee",
-            "value": {
-              "value": "0.125% of aggregate principal amount of Refinancing Term Loans funded on Amendment No. 2 Effective Date (may take form of OID)",
-              "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “an upfront fee in an amount equal to 0.125% of the aggregate principal amount of the Refinancing Term Loans funded on the Amendment No. 2 Effective Date, which upfront fee shall be due and payable on the Amendment No. 2 Effective Date and may take the form of original issue discount.”"
+              "note": "verbatim: “If any of the following events (each, an “Event of Default”) shall occur: (a) the Borrower shall fail to pay any principal of any Loan when and as the same shall become due and payable ... (b) the Borrower shall fail to pay any interest on any Loan ... and such failure shall continue unremedied for a period of five Business Days ... one or more judgments for the payment of money in excess of $250,000,000 ... a Change in Control shall occur”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4497,7 +4455,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,750,000,000 (aggregate 2023 Refinancing Commitments); see also Section 2.2 refinancing in respect of Existing 2021 Incremental Term Loans and $317,500,000 of 2021 Refinancing Term Loans",
+              "value": "$1,750,000,000 aggregate 2023 Refinancing Commitments (per Section 3.7(a); also 'the aggregate amount of 2023 Refinancing Term Loans is $1,750,000,000.00'). Amendment also refinances a portion of the 2021 Refinancing Term Loans equal to $317,500,000.",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the 2023 Refinancing Commitments shall be equal to $1,750,000,000.”"
@@ -4511,10 +4469,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "2023 Refinancing Term Loans: Term SOFR (Adjusted Term SOFR) plus 2.75% for SOFR Loans; Alternate Base Rate plus 1.75% for ABR Loans",
+              "value": "2.75% per annum for SOFR Loans (Term SOFR + 2.75%); 1.75% per annum for ABR Loans, on the 2023 Refinancing Term Loans",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “The \"Applicable Rate\" with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”"
+              "note": "verbatim: “The “Applicable Rate” with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”"
             },
             "base_rate_label": "Adjusted Term SOFR",
             "margin_pct": 2.75,
@@ -4553,10 +4511,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantor: RASIER, LLC. 2023 Refinancing Term Loans constitute a Class of Term Loans secured under existing Loan Agreement/Security Documents (U.S. Security Agreement; first-priority security interest in Collateral subject to Permitted Liens); Guaranties by Material Domestic Subsidiaries / Holdings per Loan Agreement",
+              "value": "Guarantor: Rasier, LLC. Obligations secured by Collateral (Pledged Collateral under the U.S. Security Agreement / Security Documents); Guarantors are Material Domestic Subsidiaries and, upon a Permitted Holdco Transaction, Holdings. Guaranties/Security Documents reaffirmed under Amendment (Section 4.2).",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the \"Guarantor\") ... The 2023 Refinancing Term Loans made pursuant to this Agreement shall constitute one Class of \"Term Loans\" for all purposes of the Loan Agreement and the other Loan Documents, and shall otherwise be subject to the provisions of the Loan Agreement and the other Loan Documents.”"
+              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the “ Guarantor ”) ... “ Collateral ” means all “Pledged Collateral” as defined in the U.S. Security Agreement and all other property and assets that are or are required to be pledged or granted as collateral pursuant to a Security Document”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4567,24 +4525,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Events of Default set forth in Section 7.01 (payment defaults, representation breaches, covenant defaults, cross-default on Material Indebtedness ($350,000,000), bankruptcy, judgments exceeding $350,000,000, ERISA events, Change in Control, etc.); acceleration and Commitment termination remedies per Article 7. Repricing prepayment premium of 1.00% if a Repricing Transaction occurs within six months of the Amendment Effective Date.",
+              "value": "Events of Default in Section 7.01 (a)–(o) (payment defaults, representation breaches, covenant defaults, cross-default on Material Indebtedness, bankruptcy events, judgment default > $350,000,000, ERISA events, Change in Control, Loan Document/Security Document invalidity). Prepayment provisions in Section 2.08 (voluntary) and Repricing Transaction premium of 1.00% if consummated within six months after Amendment Effective Date (Section 2.2(g)).",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “then, and in every such event ... the Administrative Agent may, and at the request of the Required Lenders shall, by notice to the Borrower, take either or both of the following actions ... (i) terminate the Commitments ... and (ii) declare the Loans then outstanding to be due and payable in whole”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Amortization",
-            "value": {
-              "value": "Quarterly amortization of $4,375,000 per quarter for 2023 Refinancing Term Loans",
-              "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “for the account of each 2023 Refinancing Term Lender, on the last Business Day of each March, June, September and December, commencing with the first fiscal quarter ending after the Amendment No. 3 Effective Date, a principal amount of 2023 Refinancing Term Loans equal to $4,375,000”"
+              "note": "verbatim: “Article VII EVENTS OF DEFAULT Section 7.01 Events of Default. If any of the following events (each, an “ Event of Default ”) shall occur: (a) the Borrower shall fail to pay any principal of any Loan when and as the same shall become due and payable ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4595,7 +4539,7 @@
           {
             "name": "Repricing premium",
             "value": {
-              "value": "1.00% premium on Repricing Transaction within 6 months of Amendment Effective Date",
+              "value": "1.00% premium on Repricing Transaction within six months after Amendment Effective Date",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “If a Repricing Transaction is consummated in respect of the 2023 Refinancing Term Loans prior to the date that is six (6) months after the Amendment Effective Date, the Borrower agrees to pay ... a premium equal to 1.00% of the principal amount of the 2023 Refinancing Term Loans prepaid”"
@@ -4607,12 +4551,26 @@
             "pik_pct": null
           },
           {
-            "name": "Borrower",
+            "name": "Amortization",
             "value": {
-              "value": "Uber Technologies, Inc.",
+              "value": "$4,375,000 quarterly amortization of 2023 Refinancing Term Loans",
               "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “UBER TECHNOLOGIES, INC., a Delaware corporation (the \"Borrower\")”"
+              "note": "verbatim: “for the account of each 2023 Refinancing Term Lender, on the last Business Day of each March, June, September and December, commencing with the first fiscal quarter ending after the Amendment No. 3 Effective Date, a principal amount of 2023 Refinancing Term Loans equal to $4,375,000”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Amendment / agreement date",
+            "value": {
+              "value": "March 3, 2023 (Amendment No. 3); underlying Term Loan Agreement dated July 13, 2016",
+              "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
+              "status": "present",
+              "note": "verbatim: “THIS AMENDMENT NO. 3 TO TERM LOAN AGREEMENT, dated as of March 3, 2023”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4651,7 +4609,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$760,625,000 (aggregate amount of the 2023 Refinancing Commitments under Amendment No. 4). As of the Amendment No. 4 Effective Date, the aggregate amount of 2023 Refinancing Term Loans is $2,511,000,000. Original Term Loan Agreement initial aggregate principal amount not in excess of $1,150,000,000.",
+              "value": "The aggregate amount of the 2023 Refinancing Commitments shall be equal to $760,625,000. (As of the Amendment No. 4 Effective Date, the aggregate amount of 2023 Refinancing Term Loans is $2,511,000,000.)",
               "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “(a) The aggregate amount of the 2023 Refinancing Commitments shall be equal to $760,625,000.”"
@@ -4665,7 +4623,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans (2023 Refinancing Term Loans)",
+              "value": "2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans",
               "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
               "status": "present",
               "note": "verbatim: “(e) The “Applicable Rate” with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”"
@@ -4707,10 +4665,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantor: RASIER, LLC, a Delaware limited liability company. Underlying Loan Agreement provides for Collateral, a U.S. Security Agreement granting a first-priority security interest, Guaranty and Holdings Guaranty; “Collateral” means all “Pledged Collateral” as defined in the U.S. Security Agreement and all other property and assets that are or are required to be pledged or granted as collateral pursuant to a Security Document.",
+              "value": "Guarantor: RASIER, LLC. Collateral as defined in the U.S. Security Agreement (first-priority security interest in the Collateral, subject to Permitted Liens); Guarantors are Material Domestic Subsidiaries that deliver a Guaranty and, upon a Permitted Holdco Transaction, Holdings.",
               "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the “ Guarantor ”) ... (ii) certified copies of the resolutions of the board of directors of the Borrower and the Guarantor approving the transactions contemplated by the Loan Documents”"
+              "note": "verbatim: “RASIER, LLC, a Delaware limited liability company (the “Guarantor”) ... “Collateral” means all “Pledged Collateral” as defined in the U.S. Security Agreement and all other property and assets that are or are required to be pledged or granted as collateral pursuant to a Security Document”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4721,66 +4679,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Amendment requires prepayment in full of the Refinanced 2021 Refinancing Term Loans on the Amendment Effective Date. Repricing Transaction premium of 1.00% if consummated within six (6) months after the Amendment No. 3 Effective Date. Events of Default governed by Article 7 (Section 7.01) of the underlying Loan Agreement; Section 3.2 requires officer's certificate that no Default or Event of Default exists.",
+              "value": "Events of Default set forth in Section 7.01(a)–(o), including failure to pay principal/interest, breach of covenants, cross-default on Material Indebtedness (>$350,000,000), bankruptcy events, judgments in excess of $350,000,000, Change in Control, ERISA Events, and invalidity of Loan/Security Documents. Prepayment in full of Refinanced 2021 Refinancing Term Loans required on the Amendment Effective Date; voluntary prepayment permitted under Section 2.08; 1.00% Repricing Transaction premium within six months of Amendment No. 3 Effective Date.",
               "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “(ii) The Borrower shall prepay in full the Refinanced 2021 Refinancing Term Loans by: (A) delivering to the Administrative Agent an amount equal to the excess of (a) the sum of the Refinanced 2021 Refinancing Term Loan Prepayment Amount ...”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Repricing premium",
-            "value": {
-              "value": "1.00% premium if a Repricing Transaction is consummated prior to the date that is six (6) months after the Amendment No. 3 Effective Date",
-              "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “the Borrower agrees to pay to the Administrative Agent for the ratable account of each applicable Lender, on the date of effectiveness of such Repricing Transaction, a premium equal to 1.00% of the principal amount of the 2023 Refinancing Term Loans prepaid in connection with such Repricing Event”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Amortization",
-            "value": {
-              "value": "Quarterly principal amortization of 2023 Refinancing Term Loans equal to $6,277,500 (per Amendment No. 4 marked amendment)",
-              "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “for the account of each 2023 Refinancing Term Lender, on the last Business Day of each March, June, September and December, commencing with the first fiscal quarter ending after the Amendment No. 3 Effective Date, a principal amount of 2023 Refinancing Term Loans equal to $ 4,375,000 6,277,500”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “THIS AGREEMENT SHALL BE DEEMED TO BE A CONTRACT MADE UNDER AND GOVERNED BY THE LAW OF THE STATE OF NEW YORK”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Administrative Agent",
-            "value": {
-              "value": "Morgan Stanley Senior Funding, Inc.",
-              "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
-              "status": "present",
-              "note": "verbatim: “MORGAN STANLEY SENIOR FUNDING, INC., as administrative agent (in such capacity, the “ Administrative Agent ”) for the Lenders”"
+              "note": "verbatim: “(ii) The Borrower shall prepay in full the Refinanced 2021 Refinancing Term Loans ... Section 7.01 Events of Default. If any of the following events (each, an “Event of Default”) shall occur: (a) the Borrower shall fail to pay any principal of any Loan when and as the same shall become due and payable...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -8947,7 +8849,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross bookings growth",
+          "metric": "gross bookings growth year-on-year",
           "period": "Q1 2026",
           "value": "up 21% year-on-year",
           "value_num": null,
@@ -9007,7 +8909,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "drivers and couriers",
+          "metric": "drivers and couriers globally",
           "period": "Q1 2026",
           "value": "10 million drivers and couriers globally",
           "value_num": null,
@@ -9019,9 +8921,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "autonomous partners",
+          "metric": "autonomous partners across Mobility and Delivery",
           "period": "Q1 2026",
-          "value": "more than 30 autonomous partners across Mobility and Delivery",
+          "value": "more than 30 autonomous partners",
           "value_num": null,
           "unit": null,
           "verbatim": "We now have more than 30 autonomous partners across Mobility and Delivery and are scaling deployments globally.",
@@ -9042,7 +8944,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "airports share of Mobility gross bookings",
           "period": "Q1 2026",
           "value": "about 15% of our Mobility gross bookings",
@@ -9054,10 +8956,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "U.S. riders taking trips outside home city",
           "period": "Q1 2026",
-          "value": "40% of, for example, our U.S. riders take trips outside of their home city",
+          "value": "40% of our U.S. riders take trips outside of their home city",
           "value_num": null,
           "unit": null,
           "verbatim": "Airports are about 15% of our Mobility gross bookings and 40% of, for example, our U.S. riders take trips outside of their home city.",
@@ -9067,9 +8969,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "trips outside home city",
+          "metric": "trips outside users' home cities",
           "period": "last year",
-          "value": "over 1.5 billion trips happening outside one of our users' home cities",
+          "value": "over 1.5 billion trips",
           "value_num": null,
           "unit": null,
           "verbatim": "And globally, just last year, we had over 1.5 billion trips happening outside one of our users' home cities.",
@@ -9090,32 +8992,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "Uber One member hotel credits",
-          "period": "Q1 2026",
-          "value": "10% Uber credits",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Uber One members get 10% Uber credits.",
-          "following_context": "There's a rolling list of 10,000 hotels where you get another 20% off as well. So really, the focus for us is drive that cross-platform activity, give a bunch of money back to Uber One members. And obviously, you've seen kind of the momentum that we've had with Uber One with over 50 million members growing 50%. The retention rates are higher. They spend 3x more. It's a unique advantage that we have over our competition. So we're very much looking forward to the product. We're really happy that the team put it together and happy about our partnership, and we're hoping hotels can be just as big as Reserve. Balaji, do you want to talk insurance?",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "pricing_action",
-          "metric": "Uber One member hotel discount",
-          "period": "Q1 2026",
-          "value": "another 20% off",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "There's a rolling list of 10,000 hotels where you get another 20% off as well.",
-          "following_context": "So really, the focus for us is drive that cross-platform activity, give a bunch of money back to Uber One members. And obviously, you've seen kind of the momentum that we've had with Uber One with over 50 million members growing 50%. The retention rates are higher. They spend 3x more. It's a unique advantage that we have over our competition. So we're very much looking forward to the product. We're really happy that the team put it together and happy about our partnership, and we're hoping hotels can be just as big as Reserve. Balaji, do you want to talk insurance?",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "Uber One member growth",
+          "kind": "leading_indicator",
+          "metric": "Uber One membership growth",
           "period": "Q1 2026",
           "value": "over 50 million members growing 50%",
           "value_num": null,
@@ -9127,7 +9005,7 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Uber One member spend",
+          "metric": "Uber One member spend vs non-members",
           "period": "Q1 2026",
           "value": "spend 3x more",
           "value_num": null,
@@ -9139,9 +9017,9 @@
         },
         {
           "kind": "pass_through_structure",
-          "metric": "insurance savings reinvested into pricing",
-          "period": "2026",
-          "value": "hundreds of millions of dollars of savings in our insurance line this year",
+          "metric": "insurance savings reinvested into consumer pricing",
+          "period": "this year (2026)",
+          "value": "hundreds of millions of dollars of savings",
           "value_num": null,
           "unit": null,
           "verbatim": "And as we said at the end of last year, we expect to see hundreds of millions of dollars of savings in our insurance line this year, thanks to the great work our policy teams have done as well as the tech improvements we have implemented in the market.",
@@ -9150,10 +9028,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pass_through_structure",
-          "metric": "auto insurance renewals",
+          "kind": "pricing_action",
+          "metric": "auto insurance renewals effective March",
           "period": "March 2026",
-          "value": "went into effect in March",
+          "value": "went into effect in March, continued improvement in rates",
           "value_num": null,
           "unit": null,
           "verbatim": "In addition to that, we also had our auto insurance renewals that went into effect in March, and we've seen continued improvement in rates there, which is also -- with the improvement in the market conditions here for auto insurance, we have found opportunities to also offload more risk to third-party carriers.",
@@ -9162,20 +9040,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "L.A. trip growth vs. rest of country",
-          "period": "Q1 2026",
-          "value": "significantly better than California and the rest of the country",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "If you look at L.A., which is the market with the most significant insurance headwinds over the last few years, the trip growth trends there are significantly better than California and the rest of the country.",
-          "following_context": "And we expect to see this translating to accelerating U.S. business growth in 2026, as we've previously said, and we feel even more confident today than we did in December or January.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "cross-platform consumer growth",
+          "kind": "leading_indicator",
+          "metric": "cross-platform consumer growth vs overall consumer growth",
           "period": "Q1 2026",
           "value": "growing 1.5x faster than the overall growth of consumers",
           "value_num": null,
@@ -9187,19 +9053,19 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "AI-predicted ride destinations",
+          "metric": "AI-predicted destination preselection on rides",
           "period": "Q1 2026",
-          "value": "3/4 of the rides on Uber, we have successfully actually predicted",
+          "value": "3/4 of the rides",
           "value_num": null,
           "unit": null,
-          "verbatim": "And that can work in very simple ways, like 3/4 of the time when you get a ride on an Uber, we have preselected the destination for you.",
-          "following_context": null,
+          "verbatim": "And 3/4 of the rides on Uber, we have successfully actually predicted with AI algorithms where we think you're likely to go.",
+          "following_context": "After work, you're probably going to go home, for example. And at the same time, come up with upsells that delight and surprise you like a hot cup of coffee waiting for you in that Uber Reserve when you're going to the airport. AI makes this all possible, and we're very, very early in the early innings, and we're extremely excited about the potential that it has for cross-platform usage on our platform.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross bookings growth",
+          "metric": "gross bookings growth year-on-year",
           "period": "Q2 2026",
           "value": "grew 22% year-on-year to more than $58 billion",
           "value_num": null,
@@ -9212,8 +9078,8 @@
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month free cash flow",
-          "period": "trailing 12-month, Q2 2026",
-          "value": "exceeding $10 billion for the first time in our history",
+          "period": "trailing 12 months as of Q2 2026",
+          "value": "exceeding $10 billion for the first time",
           "value_num": null,
           "unit": null,
           "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
@@ -9222,22 +9088,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "markets reach post Delivery Hero acquisition",
-          "period": "Q2 2026",
-          "value": "nearly 100 markets",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "The combination is going to expand our reach to nearly 100 markets and extend the proven strategy that has underpinned our growth for years by roughly doubling the number of markets where we can offer the full power of our platform across mobility and delivery.",
-          "following_context": "By bringing our technology and Uber One to millions more people, we believe this deal will create significant long-term shareholder value.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
           "metric": "AV cities live",
           "period": "Q2 2026",
-          "value": "live in 7 cities, and we're on track to be live in 15 cities by year-end",
+          "value": "live in 7 cities, on track to be live in 15 cities by year-end",
           "value_num": null,
           "unit": null,
           "verbatim": "So to remind you, we're live in 7 cities, and we're on track to be live in 15 cities by year-end.",
@@ -9247,9 +9101,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "AV utilization per vehicle",
+          "metric": "AV utilization trips per vehicle per day",
           "period": "Q2 2026",
-          "value": "often mid- to high 20s, low 30s in terms of trips per vehicle per day",
+          "value": "mid- to high 20s, low 30s in terms of trips per vehicle per day",
           "value_num": null,
           "unit": null,
           "verbatim": "And what we've seen is that launching with us as a partner with kind of the built-in kind of demand that we've got, we can drive very significant utilization per vehicle, often mid- to high 20s, low 30s in terms of trips per vehicle per day, which is quite substantial in terms of the needed monetization as it relates to these vehicles.",
@@ -9258,34 +9112,22 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "L.A. and SF trip growth vs. rest of country",
-          "period": "Q2 2026",
-          "value": "meaningfully outpaced the rest of the country",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "And in L.A. and SF, our trip growth, for example, meaningfully outpaced the rest of the country.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
-          "metric": "U4B growth",
+          "metric": "U4B year-on-year growth",
           "period": "Q2 2026",
           "value": "40% year-on-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "U4B, in particular, we saw 40% year-on-year growth. Uber Health is growing even faster.",
-          "following_context": "So that's the second theme.",
+          "verbatim": "U4B, in particular, we saw 40% year-on-year growth.",
+          "following_context": "Uber Health is growing even faster. So that's the second theme.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "sparse markets consumer penetration",
-          "period": "Q2 2026",
-          "value": "less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%",
+          "metric": "sparse market penetration vs dense markets (U.S.)",
+          "period": "past 12 months",
+          "value": "less than 10% of eligible consumers in sparse markets vs over 50% in dense markets",
           "value_num": null,
           "unit": null,
           "verbatim": "And just for context, in the U.S., less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%.",
@@ -9295,12 +9137,12 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "consumers using both Rides and Eats",
+          "metric": "cross-platform (Rides and Eats) consumers",
           "period": "Q2 2026",
-          "value": "only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users",
+          "value": "only 20% of our consumers use both Rides and Eats, growing 1.5x faster than single product users",
           "value_num": null,
           "unit": null,
-          "verbatim": "and I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
+          "verbatim": "I'll remind folks that only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
           "following_context": "So that's a very sustainable advantage that we have as it relates to cross-platform. And as our Eats business is getting bigger, not only is Rides moving consumers to Eats, but then our Eats business is moving consumers on to Rides as well, and that's true both globally and in the U.S. as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "tier": "llm-fenced"
@@ -9312,177 +9154,181 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — volume-led bookings acceleration, rising absolute EBITDA/ROIC and $10B FCF against a below-peer forward multiple; earnings-quality and cost-growth caveats are real but secondary.",
+    "evidence_balance": "mixed — operating drivers (gross bookings, segment income, rising returns) still compound, but reported GAAP earnings step down and cost lines outrun revenue.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from a $2,932M loss in FY21 to $7,474M positive LTM, with EBITDA margin rising 12%→14% while dollars keep climbing — the profit engine is inflecting, not just optically expanding.",
+        "claim": "Consolidated EBITDA has compounded from a $885M loss in FY22 to $7,474M LTM as margin turned from -3% to +14% and absolute EBITDA rises every step, so the falling multiple is not a deteriorating business.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Gross Bookings grew 22% year-on-year to more than $58 billion in Q2 2026, the fourth consecutive quarter above 20% growth — the top-of-funnel demand driving the runway is still accelerating.",
-        "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Q2 2026 revenue rose 12% ($1.5B) driven by a 24% increase in Gross Bookings, the mechanism showing volume-led rather than price-led growth.",
-        "source_ref": "10-Q 0001543151-26-000032",
-        "cited": true
-      },
-      {
-        "claim": "Mobility Segment Operating Income rose $486M or 28% in Q2 2026 on a 22% Gross Bookings increase, so segment profit is outgrowing bookings even as reported Mobility revenue rose only 1% due to UK model changes.",
-        "source_ref": "10-Q 0001543151-26-000032",
-        "cited": true
-      },
-      {
-        "claim": "Delivery Segment Operating Income rose $289M or 38% in Q2 2026 on 26% Gross Bookings growth plus a $182M advertising-revenue increase — the second segment is now a compounding profit contributor.",
-        "source_ref": "10-Q 0001543151-26-000032",
-        "cited": true
-      },
-      {
-        "claim": "Trailing 12-month free cash flow exceeded $10 billion for the first time in the company's history, with LTM levered FCF of $7,238.8M confirming self-funding capacity.",
-        "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "ROIC has climbed every year from -4.9% (FY22) to 10.6% LTM, evidencing genuine improvement in return on capital rather than a one-off.",
+        "claim": "Return on capital has inflected positive and is still climbing — RoCE -4.9% (FY22) → 3.1% → 6.0% → 9.4% → 10.6% LTM — a durable-compounder signature rather than a one-off.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The AV runway is expanding — live in 7 cities and on track for 15 by year-end, with utilization of mid-to-high-20s/low-30s trips per vehicle per day cited as substantial monetization.",
+        "claim": "Q2-2026 gross bookings grew 22% YoY to more than $58B, the fourth consecutive quarter above 20% growth, evidencing a still-expanding demand engine beneath the reported revenue.",
         "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "On a forward basis the name trades at NTM TEV/EBITDA 11.89x vs a heterogeneous peer median of 18.67x with superior fundamentals (EBITDA margin 14% vs 6%, rev growth 17% vs 9%, LT EPS growth 32% vs 13%) — posing whether the discount is RESIDUAL rather than EARNED, though the 1,672x cap-span peer set is not a clean benchmark.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Delivery segment operating income rose $289M or 38% in Q2-2026 on a 26% increase in Delivery Gross Bookings plus $182M more advertising revenue — the second segment is now a compounding profit driver, not just Mobility.",
+        "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "Balance sheet supports the runway: net-debt/EBITDA 1.2x and interest coverage 16.2x, far below the peer-median 9.8x total-debt/EBITDA leverage.",
-        "source_ref": "CIQ Net Debt $9,340M [Press Release Q2 Jun-30-2026] ÷ CIQ EBITDA $7,474M [LTM Press Release 12 months Jun-30-2026]",
+        "claim": "Mobility segment operating income rose $486M or 28% in the quarter even as reported Mobility revenue rose only 1% (depressed by a $1.1B UK business-model change), so headline Mobility revenue understates the underlying 22% gross-bookings growth.",
+        "source_ref": "10-Q 0001543151-26-000032",
+        "cited": true
+      },
+      {
+        "claim": "Trailing-12-month free cash flow exceeded $10B for the first time in company history, funding a self-financing reinvestment runway rather than requiring external capital.",
+        "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Management frames a large untapped runway: less than 10% of eligible consumers in U.S. sparse markets have used Uber in the past 12 months versus over 50% in dense markets, and only 20% of consumers use both Rides and Eats (growing 1.5x faster than single-product users).",
+        "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Consensus embeds a long, steep runway — EBITDA modeled from $11,365M (FY26E) to a $37,846M (FY34) figure — and the forward multiple ladder compresses to single digits by FY30, so the current price rests on that trajectory being met, not exceeded.",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "cited": true
+      },
+      {
+        "claim": "Balance sheet supports reinvestment: net-debt/EBITDA 1.2x, interest coverage 16.2x and FCF-positive/self-funding — leverage is not a constraint on the runway.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "On the fundamental deltas the name beats the peer median on margin (14% vs 6%), 1-yr revenue growth (17% vs 9%), long-term EPS growth (32% vs 13%) and carries far lower leverage (Debt/EBITDA 1.9 vs 9.8) — posing whether the discount to peers is RESIDUAL (overshoot) rather than EARNED; the human must weigh this against a HETEROGENEOUS peer set.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The trailing P/E of 14.9x sits at its ~5-year floor (4.6th percentile), but a large slice of recent earnings is non-operating — $1,507M in the quarter ended Sep-30-2025 came from below the operating line (58% of pre-tax income), so a trailing P/E spanning it is not an operating anchor and the cheapness is partly optical.",
+        "claim": "The trailing EV/EBITDA of 19.2x sits at the 0th percentile of its own 2.8-year range (low 20.5x, median 39.6x) — but this is TRAILING-ONLY with no forward basis, so it cannot itself distinguish a temporarily depressed level from a permanently impaired one, and the paired forward NTM TEV/EBITDA of 11.89x shows the multiple is far lower still on estimates.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "cited": true
+      },
+      {
+        "claim": "The P/E of 14.9x is contaminated as an operating anchor: $1,507M of the quarter ended 2025-09-30 pre-tax income — 58% of pre-tax and 11% of revenue — came from BELOW the operating line, so a trailing multiple spanning it flatters GAAP earnings.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "The current-FY consensus EPS path has been cut ~8% (GAAP) and ~23% (Normalized) over 12 months, so the earnings the runway is priced against are being marked down, not up.",
+        "claim": "Consensus GAAP net income for FY26E has been cut to $6,351M from FY25's $10,053M and FY26E EPS to $3.21 from FY25's $4.73 — the reported earnings line steps DOWN across the estimate boundary, and the FY26 EPS path has fallen ~14% (GAAP) / ~23% (Normalized) over 12 months.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Consensus has been front-loaded far into the future — revenue estimates run to FY2035 and EBITDA to FY2034, a long-duration expectation embedded in the price that must be beaten, not merely met.",
-        "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
+        "claim": "Cost growth is running ahead of revenue on several lines — S&M +25%, R&D +24% and G&A +40% in Q2-2026 (the last on a $138M jump in legal-related accruals) versus +12% revenue — a genuine margin-pressure counter that the reinvestment thesis must absorb.",
+        "source_ref": "10-Q 0001543151-26-000032",
         "cited": true
       },
       {
-        "claim": "The stock is a genuine idiosyncratic laggard: -11.1% over 180 days against SPY +5.4% (-16.5% relative), a gradual bleed with no discrete gap-down — the market has been de-rating quality that the price already paid for.",
+        "claim": "The stock is the idiosyncratic laggard — down ~11% over 180d while SPY rose ~5% (−16pp relative) — a gradual bleed with no single gap-down, indicating a slow de-rating rather than a discrete shock the market has already digested.",
         "source_ref": "EOD UBER−SPY 180d to 2026-07-29 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "Cost lines are outrunning revenue: in Q2 2026 sales & marketing rose 25%, R&D 24% and G&A 40% (the last on a $138M jump in legal-related accruals) against 12% revenue growth — reinvestment intensity that pressures the margin runway.",
-        "source_ref": "10-Q 0001543151-26-000032",
+        "claim": "The consensus vs actual EBITDA basis diverges: estimate columns imply 2,952 of D&A against 737 in the actuals (4.01x), so the forward EBITDA add-back is a DIFFERENT basis — growth read across the trailing-to-forward boundary is part definitional, not all operational.",
+        "source_ref": "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "DoorDash",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "Same peer-set delivery-platform where consensus rewarded volume-led bookings growth and an emerging advertising layer with a premium multiple despite thin near-term margins.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Grab Holdings Limited",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "Peer-set superapp combining mobility and delivery in emerging markets, priced on the multi-product cross-sell runway rather than trailing profitability.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "Amazon.com",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Multi-segment consumer platform where a maturing high-margin ancillary line (ads/marketplace) funded reinvestment while headline earnings stayed optically depressed by non-operating and investment items.",
+        "distinguishing_fact": "Multi-segment platform that reinvested marketplace cash flow into new verticals while optically thin GAAP margins masked a widening absolute cash-flow engine and a long consumer-penetration runway.",
         "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "DoorDash",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "Same peer-set gig-delivery model transitioning from cash-burn to positive segment operating income on rising gross bookings, priced on a steep forward-runway rather than trailing profit.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Meta Platforms",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Cash-generative platform that de-rated sharply while spending heavily on an unproven long-duration bet, then re-rated once the core's operating leverage reasserted — the AV-spend-vs-core-leverage tension analogue.",
+        "distinguishing_fact": "De-rated to a low multiple during a heavy-reinvestment / rising-opex phase where cost growth outran revenue, then re-rated as operating leverage and buybacks reasserted — a template for both the overshoot and the value-trap reading.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Lyft",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "Single-market ride-hailing peer with far weaker margin and scale, illustrating the value-trap read if the discount were EARNED rather than residual.",
+        "name": "Grab Holdings Limited",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "Same peer-set Southeast-Asian super-app crossing into positive EBITDA growth, illustrating the platform-crossover pattern being priced across the cohort.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Netflix",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "Subscription-loyalty flywheel (membership base spending multiples of non-members) that compounded engagement and pricing power over a multi-year penetration runway.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the discount RESIDUAL — a mispricing of a genuinely inflecting, volume-led, self-funding platform whose forward multiple sits below a superior-fundamentals peer set — or is it EARNED, because trailing earnings are propped by non-operating items, consensus is being cut, and the long-dated runway is already fully embedded in the price?",
+      "question": "Is the ~50% discount to its own history and to the peer median a RESIDUAL overshoot on a business whose gross bookings, segment operating income and returns are still compounding — or an EARNED de-rating as reported GAAP earnings step down, non-operating income fades, and cost lines outrun revenue?",
       "evidence_for": [
         {
-          "claim": "Gross Bookings grew 22% to over $58B in Q2 2026, the fourth straight quarter above 20%, with management naming insurance reinvestment, sparse-market penetration (<10% vs >50% in dense markets) and cross-platform (only 20% use both Rides and Eats, growing 1.5x faster) as broad, sustainable drivers.",
-          "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "Segment operating income is outgrowing revenue — Mobility +28% and Delivery +38% in Q2 2026 — while absolute EBITDA climbs to $7,474M LTM and ROIC reaches 10.6%.",
+          "claim": "Gross bookings grew 22% YoY to more than $58B — the fourth straight quarter above 20% — with Delivery segment operating income +38% and Mobility +28%, the causal drivers beneath the reported numbers.",
           "source_ref": "10-Q 0001543151-26-000032",
           "cited": true
         },
         {
-          "claim": "Forward NTM TEV/EBITDA of 11.89x sits below the peer median 18.67x while name fundamentals (margin 14% vs 6%, rev growth 17% vs 9%) are superior — the residual-vs-earned input the human must weigh, gated by the heterogeneous peer set.",
+          "claim": "RoCE has climbed every year from -4.9% (FY22) to 10.6% LTM and absolute EBITDA rises at each step even as the margin % is read alongside it, so the operating base is improving as the multiple falls.",
+          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+          "cited": true
+        },
+        {
+          "claim": "The name beats the peer median on margin, revenue growth, long-term EPS growth and leverage, posing a possible residual (unearned) discount — gated by a HETEROGENEOUS peer set spanning $54M–$89.8B.",
           "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "$1,507M of an in-window quarter's pre-tax income (58%) came from below the operating line, so the trailing P/E at its 4.6th-percentile floor overstates the operating-earnings cheapness.",
-          "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
-          "cited": true
-        },
-        {
-          "claim": "Current-FY consensus EPS has been cut ~8% GAAP and ~23% Normalized over 12 months, so the earnings base is being marked down even as bookings grow.",
+          "claim": "FY26E GAAP net income is cut to $6,351M from FY25's $10,053M and FY26E EPS to $3.21 from $4.73 — the reported earnings line steps down across the estimate boundary.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Q2 2026 operating-expense growth (S&M +25%, R&D +24%, G&A +40%) outran 12% revenue growth, so the profitable-scaling narrative depends on reinvestment discipline the reported quarter does not yet show.",
+          "claim": "$1,507M — 58% of the Sep-2025 quarter's pre-tax income — came from below the operating line, so trailing GAAP earnings (and the P/E struck off them) are not a clean operating anchor.",
+          "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+          "cited": true
+        },
+        {
+          "claim": "Q2-2026 opex outran the 12% revenue rise — S&M +25%, R&D +24%, G&A +40% — a genuine margin-pressure signal against the operating-leverage story.",
           "source_ref": "10-Q 0001543151-26-000032",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Company-adjusted LTM EBITDA and adjusted EPS are not in the revised 99.1 guidance, so net-debt/adjusted-EBITDA and any adjusted forward multiple are UNKNOWN — the covenant leverage basis is undisclosed.",
-      "The actual-vs-estimate EBITDA basis diverges 4.01x (estimate columns imply $2,952M D&A vs $737M actual), so trailing multiples struck off actuals are not comparable to forward multiples struck off estimates — the overshoot-vs-terminal question on EV/EBITDA is unresolved.",
-      "TEV/LTM EBITDA at 19.2x is trailing-only with no forward basis on that line and sits at a 0th-percentile own-history floor — a neutral fact that cannot distinguish a temporarily depressed level from a permanent impairment.",
-      "The Delivery Hero acquisition (nearly 100 markets) is described qualitatively with no purchase-price, financing, or accretion/dilution figures supplied — its effect on leverage, share count and margins is undisclosed.",
-      "AV economics are early and small; utilization is cited but per-trip profitability, capital commitment beyond the $100M charging investment, and timeline to material contribution are not quantified.",
-      "The peer set is HETEROGENEOUS (caps span $54M–$89.8B vs the $139.3B name), so every peer multiple is a confidence-gated input, not a clean benchmark; the residual-vs-earned decomposition cannot be closed from the supplied facts.",
-      "Insider activity is net-sell over 182 days ($481M sold vs $22M bought) — the motive/context is not disclosed and cannot be read as directional here."
+      "Company-adjusted LTM EBITDA and a forward-adjusted EV/EBITDA are NOT in the revised 99.1 guidance — so net-debt/adjusted-EBITDA and the covenant leverage basis are UNKNOWN, leaving the true forward leverage/valuation basis undisclosed (a gap, not a neutral).",
+      "The trailing EV/EBITDA at its own 0th percentile is tagged trailing-only with no forward basis on that same metric — whether it is a temporarily depressed level or a permanent impairment is unresolved and belongs to the human.",
+      "Peer set is flagged HETEROGENEOUS (caps span $54M–$89.8B, 1672x; name $139.3B), so every peer multiple is a confidence-gated input, not a clean benchmark — the earned-vs-residual read cannot be settled from the comp alone.",
+      "The Delivery Hero acquisition (management-stated, ~100 markets) has no disclosed price, financing or EBITDA contribution in the supplied facts — its effect on leverage, share count and the runway is unquantified.",
+      "The consensus-vs-actual EBITDA basis diverges 4.01x on implied D&A, so any trailing-to-forward growth or multiple comparison mixes definitional and operational change — the clean apples-to-apples basis is not supplied.",
+      "Autonomous-vehicle economics are early and small ('numbers are small at this point'); trips-per-vehicle utilization is cited qualitatively but no revenue/margin contribution is quantified — the AV runway's magnitude is unresolved.",
+      "The as-of date is a FLOOR (export date unverified; a dated sibling export is weeks newer) and the debt schedule is 166d old — vintage of several inputs is imprecise."
     ]
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+3.4s fetch)"
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.3s fetch)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-12T10:27:55.596448Z",
+  "assembled_at": "2026-08-12T12:24:22.453921Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -9508,7 +9354,7 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-12T10:34:18.891514Z",
+    "computed_at": "2026-08-12T12:27:12.321617Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],

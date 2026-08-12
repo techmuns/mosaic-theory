@@ -11461,6 +11461,23 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    UBER's bars were present but ended 2026-08-04 and were topped up in the same call. **A
    maintained name can be missing from the price store entirely and nothing says so until an
    assembly refuses** — the same gap #367/#369 hit for UBER and SPY, now a third time.
+9. **THE AS-OF LEAK NEEDS A DECISION BEFORE IT NEEDS CODE — opened 2026-08-12 by review #428.**
+   Every dossier publishes observations dated after its own `reference_date` (NFLX 79, UBER 117;
+   measured, and pre-existing — see §OPEN OBSERVATIONS for the field list and the before/after).
+   **The operator picks the remedy, because they cost differently and only one is an engineering
+   task:**
+   - **(a) BOUND EVERY SOURCE** by `reference_date` — ~12 extractors across the CIQ and EDGAR
+     layers, each owing its own shown run, plus the guard the reviewer asked for ("assert that no
+     dated artifact fact exceeds it"). Keeps the fleet on one as-of; large.
+   - **(b) ADVANCE THE FLEET AS-OF** by running a screen, so August data is legitimately in scope
+     and the pages stop claiming a July as-of they do not honour. Cheap in code, but it is the
+     MONTHLY OPERATING LOOP (docs/RUNBOOKS.md) and belongs to the operator, not to a build.
+   **(b) then (a) is probably the right order** — advancing the as-of makes today's pages honest
+   immediately, and the bound then keeps them honest for a historical re-assembly. But that is a
+   judgment about how the fund runs, not about code, so it is NOT taken here.
+   **The guard is worth shipping under EITHER choice** and does not depend on it: a test that reads
+   each committed dossier and refuses a dated observation past its own as-of, with forward-looking
+   facts (maturities, scheduled catalysts) excluded by field rather than by heuristic.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
@@ -11510,6 +11527,32 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
   either scope and still takes the newest filing from today's submissions index. **Reported, not
   fixed** — out of scope for an artifact pass, and the fix is a decision-path change needing its own
   shown run.
+  **MEASURED FLEET-WIDE (review finding #428, 2026-08-12) — IT IS NOT ONE FIELD, IT IS ~12.** The
+  reviewer flagged an **August-10 Form 4** published as the latest insider event on a record stamped
+  2026-07-29. Scanning every ISO/US date in both artifacts against the page's own as-of, and
+  excluding genuinely FORWARD-LOOKING facts (bond maturities to 2054, scheduled catalysts to 2028 —
+  those are facts ABOUT the future known at the as-of, not lookahead), the leaking fields are:
+  `catalyst_path.revision_events` (45 NFLX / 74 UBER dates), `valuation.own_history`,
+  `range_position`, `implied_expectations.{tev_as_of,multiples_as_of}`, `ev_gap.vintages`,
+  `catalyst_path.insider_activity`, `peer_comps.peer_grid`, `operating_drivers.rows`,
+  `guidance_bridge{,_rows}`, and `quality.share_count_trend`. **Both CIQ-sourced and EDGAR-sourced
+  layers leak**, so no single bound closes it.
+  **PRE-EXISTING AND UNCHANGED BY THE RE-ASSEMBLY, measured on both sides:** NFLX **79 post-as-of
+  observation dates BEFORE the pass and 79 AFTER**; UBER **118 → 117**. The only movement is the
+  newest date, 08-10 → 08-11, and it is the PRICE-STORE FRONTIER from the bar backfill, not a new
+  fact — bars themselves are already filtered (`_standalone_record`: `b.bar_date <= reference_date`).
+  **THE TWO REMEDIES BOTH COST MORE THAN THIS PR CAN SPEND**, which is why it is recorded rather
+  than fixed: (a) bounding every source is a decision-path change across ~12 extractors, each owing
+  its own shown run; (b) advancing the fleet as-of needs a SCREEN RUN — the monthly operating loop —
+  because `_fleet_reference_date` is deliberately `max(screen-run reference_date)`, and advancing it
+  for two names alone would break the invariant that a maintained name sits at the same as-of as
+  every candidate. **Improvising either inside an artifact pass is the scope creep this repo
+  forbids.**
+  **A RELATED SYMPTOM, same root, also pre-existing:** `stock_info.as_of` is the STORE FRONTIER while
+  the 52-week window starts at `reference_date − 1y`, so the window mixes two clocks and the page
+  says *"52-week window 2025-07-29→2026-08-11: spans **378d** over 261 bars"*. It was 374d before
+  the pass (the backfill moved the frontier 4 days). The note states the span honestly, which is how
+  it was found — but a "52-week" high/low computed over 378 days is not the field's own definition.
 
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 
