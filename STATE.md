@@ -11669,6 +11669,18 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    `tests/test_share_basis.py`** (that pin FAILS the moment the artifact lands, so the set cannot
    be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
    that is a separate defect on the same name and stays open.
+11. **RE-ASSEMBLE BRBR AND SMPL — the net-sales cross-check fix is in the CODE and not on the PAGE.
+   Opened 2026-08-12 by `fix/net-sales-is-the-revenue-line`.** Both pages currently read *"release
+   NO NUMERIC OUTLOOK → not cross-checked"* while their releases state a net-sales guide the parser
+   captured. On re-assembly **BRBR becomes cross-source VERIFIED** (CIQ 2335.0–2375.0 vs release
+   2335.0–2375.0 — the same numbers) and **SMPL becomes the PERIOD refusal** (release guides the
+   YEAR 1345–1355, CIQ a QUARTER 322–332), which is the honest reading rather than silence.
+   **A REFRESH CANNOT DO IT** — verified, not assumed: `guide_verification` is computed at assembly
+   and `recompute_derived` rebuilds only TEV + implied levels, so a transform-free pass moved no
+   page. Recomputing it in a one-off transform would duplicate the assembly wiring in a script,
+   which is the drift this repo avoids. **Needs: the CIQ workbooks → re-assemble → confirm BRBR
+   reads VERIFIED and SMPL names the period mismatch.** No test blocks on it (the pins run against
+   the stored RELEASES, which are already correct); this is a page-accuracy item, not a red one.
 
 ### AUDIT — THE TIER-2 VOLUME OVERLAY (2026-08-12, operator-prompted; NO CODE CHANGED)
 
@@ -13962,6 +13974,36 @@ sign-off.**
   sized by signature, **not confirmed**: each needs its own exhibit fetched. NFLX is the one proven
   case. **Nothing was re-assembled here** — the artifacts still carry the old numbers until a
   re-assembly runs.
+  - **ALL FIVE CONFIRMED AGAINST THEIR FILINGS 2026-08-12 — NONE WAS A SUFFIX DROP, and the
+    signature was a FALSE POSITIVE (fix/net-sales-is-the-revenue-line).** Each exhibit fetched and
+    re-parsed with the merged parser: **BRBR** guides *"fiscal year 2026 net sales outlook of
+    $2.335-$2.375 billion"* → parsed correctly as **2335.0–2375.0 $M**; **SMPL** guides *"$1.345 and
+    $1.355 billion"* → **1345.0–1355.0 $M**. Both were extracted ALL ALONG, under the metric name
+    **`net sales`** — and the sweep that produced the five filtered on `metric == "revenue"`, so it
+    reported its own filter as a parser defect. **IT** points the reader to *"an earnings supplement
+    available on the Company's Investor Relations website"* — the guide is not in the 8-K at all;
+    **V** and **FUBO** state no numeric revenue guide in the exhibit. So the suffix fix's blast
+    radius is **NFLX alone**, as proven, and the sentence above overstated it. *(The lesson is the
+    one this repo keeps re-learning: a signature is a hypothesis, and only the filing settles it.)*
+  - **BUT THE CONFIRMATION FOUND A DIFFERENT, REAL DEFECT — "net sales" never reached the
+    cross-check.** `_release_revenue_guide` matched the string `"revenue"` exactly, so a net-sales
+    guide was invisible to it and BRBR's page reads **"CIQ 2335.0–2375.0 vs release NO NUMERIC
+    OUTLOOK → not cross-checked"** — while the release it cites states **2335–2375, the same
+    numbers**. That is a cross-source **VERIFIED** reported as nothing to compare. **A verification
+    that silently declines to run is worse than one that fails:** "not cross-checked" reads as *we
+    looked and there was nothing there*, the false-UNKNOWN shape this repo closes elsewhere.
+    **FIXED IN THE CONSUMER, NOT THE PARSER** (`_REVENUE_LINE_METRICS = {"revenue", "net sales"}`):
+    `_guide_metric` deliberately keeps the filer's own word so BellRing's page says *net sales*;
+    normalising at parse time would rename the metric on every page and churn the artifacts and pins
+    that carry it. The synonym belongs to the consumer that needs it. *SMPL composes with the period
+    refusal: its release guides the YEAR (1345–1355) against a CIQ QUARTER (322–332), so seeing the
+    guide is what lets that refusal fire at all — it previously read "NO NUMERIC OUTLOOK", naming
+    neither. 6 pins, ALL failing on the pre-fix consumer (behavioural, not an ImportError — the new
+    symbol is imported locally so the file still collects). ruff + mypy --strict (124) + pytest
+    2414 green.* **ARTIFACT: NOT LANDED.** `guide_verification` is computed at ASSEMBLY, not by
+    `recompute_derived` (which rebuilds only TEV + implied levels), so a transform-free refresh
+    moves nothing — verified, the pass touched no page. **BRBR and SMPL keep the wrong line until
+    re-assembled** (operator item below).
 - **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
   opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
   column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
