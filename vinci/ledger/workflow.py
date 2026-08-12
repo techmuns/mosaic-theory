@@ -17,9 +17,12 @@ from typing import TYPE_CHECKING, Protocol
 if TYPE_CHECKING:  # annotation only — no runtime import, so no cycle with `vinci.scenarios`
     from vinci.scenarios import StatedLimit
 
+from pydantic import ValidationError
+
 from vinci.labels import resolve_label
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
+    EVENT_CLOSE,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
@@ -27,6 +30,7 @@ from vinci.schemas.ledger import (
     LedgerEntry,
     LedgerFact,
     Verdict,
+    close_entry_id,
 )
 from vinci.store import Store
 
@@ -248,3 +252,104 @@ def log_verdict(
     )
     store.append_ledger(entry)
     return entry
+
+
+def close_position(
+    store: Store,
+    *,
+    candidate_id: str,
+    exit_price: float,
+    exit_price_as_of: date,
+    reason: str,
+    closed_at: datetime,
+) -> LedgerEntry:
+    """Append the CLOSE row for ``candidate_id``'s decision; returns it.
+
+    THE WRITER THAT WAS NEVER BUILT. `4f34c11` shipped the close-row SCHEMA, the readers
+    (``monitor.close_rows`` / ``pair_closes``), the display and the id helper — everything except a
+    way to write one. So the two committed closes were hand-authored JSON, which is how a row can
+    reach an append-only record without passing a single guard.
+
+    THE PROVENANCE FIELDS ARE COPIED, NEVER RETYPED. A close repeats its decision's ticker,
+    candidate, verdict, frozen entry price and horizon so the realized view can pair them; retyping
+    those by hand is how a close comes to describe a position that does not exist. What the close
+    does NOT inherit is anything that would read as a second underwrite: ``facts`` (the schema
+    refuses them outright — they belong to the decision they justified), the machine proposal and
+    its disposition (no proposal was made about closing), and the thesis/twin/kill prose, which are
+    replaced by pointers back to the decision of record.
+    """
+    rows = list(store.iter_ledger())
+    decisions = [r for r in rows if r.candidate_id == candidate_id and r.event is None]
+    if not decisions:
+        known = sorted({r.candidate_id for r in rows if r.event is None})
+        raise LedgerError(
+            f"no open decision for candidate {candidate_id!r} — nothing to close. Known: {known}")
+    if len(decisions) > 1:
+        raise LedgerError(
+            f"{candidate_id!r} has {len(decisions)} decision rows "
+            f"({sorted(d.entry_id for d in decisions)}) — close by entry_id is not supported, so "
+            f"this must be resolved before a close can name its position unambiguously.")
+    decision = decisions[0]
+    # ALREADY CLOSED → REFUSE. `pair_closes` raises on a duplicated close, so a second one would
+    # not corrupt the realized book quietly — it would break every later monitor run instead, at a
+    # point far from the command that caused it.
+    existing = [r for r in rows if r.closes_entry_id == decision.entry_id]
+    if existing:
+        raise LedgerError(
+            f"{candidate_id!r} is already closed by {existing[0].entry_id} "
+            f"(exit {existing[0].exit_price} on {existing[0].exit_price_as_of}). The ledger is "
+            f"append-only: a correction is a new DECISION, never a second close.")
+    if exit_price_as_of < decision.entry_price_as_of:
+        raise LedgerError(
+            f"exit date {exit_price_as_of} precedes the frozen entry date "
+            f"{decision.entry_price_as_of} — a position cannot close before it opened.")
+    return _append_close(store, decision, exit_price, exit_price_as_of, reason, closed_at)
+
+
+def _append_close(
+    store: Store, decision: LedgerEntry, exit_price: float, exit_price_as_of: date,
+    reason: str, closed_at: datetime,
+) -> LedgerEntry:
+    """Build, VALIDATE and append the close row. Split out so the guards above read as one list.
+
+    THE ROW IS RE-VALIDATED BEFORE IT IS PERSISTED (operator review P1 on #417), and it has to be:
+    ``model_copy(update=...)`` does NOT run the model validators, and ``Store.append_ledger`` only
+    serializes. So `close-position --exit-price -1` sailed past the guards above, printed a success
+    line, and wrote a row the close-row schema forbids straight into an APPEND-ONLY record — where
+    it cannot be deleted. The next ``iter_ledger()`` then raised, which means one bad flag made the
+    whole decision ledger unreadable: every later close, `vinci ledger`, `score`, and the monitor's
+    DB path.
+
+    Validating here converts that into a refusal at the command, before anything is written.
+    ``Store.append_ledger`` also re-validates now, as the backstop for every OTHER writer — this
+    call site is simply the one that had the hole.
+    """
+    close = decision.model_copy(update={
+        "entry_id": close_entry_id(decision.candidate_id),
+        "event": EVENT_CLOSE,
+        "closes_entry_id": decision.entry_id,
+        "exit_price": exit_price,
+        "exit_price_as_of": exit_price_as_of,
+        "reason": reason,
+        "decided_at": closed_at,
+        # cleared — see the docstring: none of these describe a close
+        "facts": {},
+        "machine_proposal": None,
+        "machine_lean": None,
+        "proposal_assembled_at": None,
+        "disposition": None,
+        "stated_limit": None,
+        "thesis": f"close row - see reason; the thesis of record stays on {decision.entry_id}",
+        "twin_call": f"n/a - close row; the twin call of record is on {decision.entry_id}",
+        "kill_criteria": "n/a - close row",
+    })
+    try:
+        close = LedgerEntry.model_validate(close.model_dump())
+    except ValidationError as exc:
+        # Re-raised as the type this module documents, so a caller catching LedgerError does not
+        # silently miss exactly the failure that would have corrupted the record.
+        raise LedgerError(
+            f"the close row for {decision.candidate_id!r} is invalid and was NOT written: {exc}"
+        ) from exc
+    store.append_ledger(close)
+    return close
