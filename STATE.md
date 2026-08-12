@@ -13111,6 +13111,26 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
+  opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
+  column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
+  guide with a PARSEABLE RANGE, so a company that STOPPED guiding a metric keeps surfacing whatever
+  it last said — NFLX 2002/2003, EPAM 2016, AORT 2019, UBER 2020 (×2), V 2020.
+  **THE TEST IS THE GUIDE'S PERIOD, NOT ITS ISSUE AGE** (review finding, #423). Age was the first
+  criterion — a measured 365d bound sitting in the corpus's empty 238d–969d band — and it is WRONG
+  IN BOTH DIRECTIONS, with a counterexample each way in the same corpus: **VITL**'s gross-margin
+  guide is dated 2023-11-02 (977d) but is **for FY 2027**, still ahead of a 2026 as-of — long-term
+  guidance stays applicable without being reissued, so "none current" is simply false. **MVST**'s is
+  only **238d** old but is **for FY 2025**, a year already closed and never reguided — genuinely no
+  current guide, and the age rule MISSED it. The issue date says nothing about applicability. The
+  switch keeps all 10 true positives, drops the VITL false positive, and catches MVST.
+  An unreadable period is LEFT ALONE: a false demotion misleads, a missed one leaves the Age column
+  still telling the truth.
+  **DISPLAY-ONLY, AND NOTHING IS DELETED:** the figure stays in its cell reframed as `none current
+  (last: …)`, demoted rows sort BELOW current ones (sheet order put NFLX's two dead guides first),
+  and `dossier.json` is byte-untouched — verified, 0 JSON files changed by the pass. Checked before
+  choosing that surface: no committed synthesis quotes a figure from any >1y-stale guide, so the
+  harm was to a human reader and the fix belongs where a human reads.
 - **"FREE CASH FLOW" MEANT TWO DIFFERENT THINGS AND THE PAGE NAMED NEITHER (2026-08-12, PR-5).**
   `quality.free_cash_flow` reads CIQ's `Levered Free Cash Flow`. Against the SAME sheet's
   `Cash from Ops. − Capital Expenditure` the two agree on **exactly one** committed name (V, 0.97×);

@@ -418,20 +418,67 @@ def _ladder_lines(s: Sourced[Any]) -> list[str]:
     return out
 
 
+def _guide_period_year(period: str) -> int | None:
+    """The fiscal year a guide COVERS, from its own period label (`FQ4 2002`, `FY 2027`)."""
+    m = re.search(r"(20\d\d|19\d\d)", str(period or ""))
+    return int(m.group(1)) if m else None
+
+
+def _catalyst_asof_year(cp: Any) -> int | None:
+    """The year the catalyst panel's data reaches. `as_of` is a FLOOR (`≥2026-07-21`), which is
+    exactly right here: a guide period must be strictly BEHIND the data we hold before it can be
+    called superseded, and a floor errs toward leaving guidance alone."""
+    a = getattr(cp, "as_of", None)
+    raw = getattr(a, "value", a)
+    m = re.search(r"(20\d\d)-\d\d-\d\d", str(raw or ""))
+    return int(m.group(1)) if m else None
+
+
 def _guidance_bridge_lines(cp: Any) -> list[str]:
     """(H4) Guidance bridge as a table — metric | latest guide | for | dated | age | record | most
     recent — each a RECORDED delivery fact, no reading added. A pre-H4 dossier.json (no rows) falls
-    back to the flat one-line string."""
+    back to the flat one-line string.
+
+    A GUIDE WHOSE PERIOD HAS PASSED DOES NOT LEAD WITH ITS FIGURE. NFLX's table opened with
+    `Gross Margin % — '47.00 - 48.00' for FQ4 2002`: a twenty-four-year-old number in a column
+    headed "Latest guide", with the Age column two places right saying 8686d. The eye takes the
+    figure. The row builder picks the newest guide with a PARSEABLE RANGE, so a company that
+    stopped guiding a metric keeps surfacing whatever it last said.
+
+    THE TEST IS THE GUIDE'S PERIOD, NOT ITS ISSUE AGE (review finding, #423). Age was the first
+    criterion and it is wrong in BOTH directions, with a counterexample each way in the corpus:
+    VITL's gross-margin guide is dated 2023-11-02 (977d) but is **for FY 2027**, still ahead of a
+    2026 as-of — long-term guidance stays applicable without being reissued, and calling it
+    "none current" is simply false. MVST's is only 238d old but is **for FY 2025**, a year already
+    finished and never reguided — genuinely no current guide. Issue date says nothing about
+    applicability; the guided period says everything.
+
+    UNPARSEABLE ERRS TOWARD LEAVING IT ALONE. A period or as-of this cannot read leaves the row
+    untouched: a false demotion actively misleads, while a missed one leaves the Age column still
+    telling the truth.
+
+    NOTHING IS DELETED — the figure stays in the cell, reframed as `none current (last: …)`, and
+    `dossier.json` is untouched: the three-tier rule as written. The demoted rows also sort BELOW
+    the current ones, because sheet order put NFLX's two dead guides at the top of its table.
+    """
     rows_s = getattr(cp, "guidance_bridge_rows", None)
     if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
         return [_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge)]
     cols = ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"]
-    rows = [
-        [r.metric, r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent]
-        for r in rows_s.value
-    ]
+    asof_yr = _catalyst_asof_year(cp)
+
+    def _superseded(r: Any) -> bool:
+        yr = _guide_period_year(r.period)
+        return yr is not None and asof_yr is not None and yr < asof_yr
+
+    def _row(r: Any) -> list[Any]:
+        guide = (f"none current (last: {r.latest_guide})" if _superseded(r) else r.latest_guide)
+        return [r.metric, guide, r.period, r.dated, r.age, r.record, r.most_recent]
+
+    ordered = ([r for r in rows_s.value if not _superseded(r)]
+               + [r for r in rows_s.value if _superseded(r)])
     return _table("Guidance bridge (latest guide + sign-aware delivery track-record)",
-                  rows_s.source_ref, cols, rows)
+                  rows_s.source_ref, cols, [_row(r) for r in ordered])
 
 
 # (T3) headline metric PRIORITY — each tuple is the substrings a metric must contain (all of them).

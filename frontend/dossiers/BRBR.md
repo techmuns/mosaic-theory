@@ -384,7 +384,7 @@ _export date unverified (data ≥ 2026-08-06)_
 | Revenue | '2,335.00 - 2,375.00' | FY 2026 | 2026-08-04 | fresh | actual ≥ floor 9/11 | FY 2025 MET |
 | EBITDA | '275.00 - 295.00' | FY 2026 | 2026-08-04 | fresh | actual ≥ floor 7/7 | FY 2025 MET |
 | Capital Expenditure | -10.0 | FY 2026 | 2026-08-04 | fresh | spend ≤ ceiling 6/6 | FY 2025 MET |
-| Gross Margin % | '28.20 - 32.40' | FQ4 2022 | 2022-08-05 | 1454d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
+| Gross Margin % | none current (last: '28.20 - 32.40') | FQ4 2022 | 2022-08-05 | 1454d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-06 · export date unverified] [23]
 - **Revision-event log (250 events · 5 broker-days)** — [45]  <!-- ds-table -->
