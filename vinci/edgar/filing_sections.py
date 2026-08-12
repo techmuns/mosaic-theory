@@ -250,20 +250,65 @@ def _attr_subject(text: str, start: int) -> str:
     return " ".join(text[_attr_lo(text, start, back=90):start].split())[-70:].strip()
 
 
+#: MEASURED ON THE LIVE CORPUS, not chosen — all 14 committed names' 10-Q primary documents,
+#: 40 attribution rows (2026-08-12). Distance from the causal clause to its own sentence end:
+#: p50 138 · p90 285 · MAX 477. Full subject→sentence-end fragment: p50 324 · p90 482 · MAX 633.
+#:
+#: The previous pair (170 / 340) covered 68% and 78% of those, and cut **16 of the 40 rows
+#: mid-word — 40% of the corpus, across four names** (UBER 12, SMPL 2, MVST 1, VRRM 1). Four of
+#: the cuts severed a dollar figure, including the one that matters most on UBER: the sentence
+#: quantifying the UK model change ended at "…negatively impacted reven", dropping "by $1.1
+#: billion" — the number that explains why Mobility revenue grew 1% against bookings up 22%.
+#:
+#: WIDENING CANNOT REACH INTO A SECOND SENTENCE, which is what makes it safe rather than merely
+#: bigger: ``text.find(". ", cause_end)`` returns the FIRST boundary after the cause, so the
+#: window only decides whether that boundary is ACCEPTED or replaced by a raw offset cut. A wider
+#: window accepts the true sentence end more often; it never extends past it.
+_ATTR_SENTENCE_WINDOW = 520   # accept the sentence end this far past the cause (max observed 477)
+_ATTR_VERBATIM_CAP = 700      # ceiling on the emitted fragment (max observed 633)
+
+
+def _clip(frag: str, cap: int, *, incomplete: bool = False) -> str:
+    """Cut at a WORD boundary and SAY SO — the invisibility was the defect, not the length.
+
+    A silent mid-word cut reads as the filer's own sentence ending there, so a reader cannot tell a
+    complete quote from a severed one; that is what let a truncated verbatim carry a number-free
+    clause onto the page while every quote-fidelity guard passed (the quoted text really was in the
+    filing — it just was not the whole claim). The ellipsis makes the remaining cases legible
+    instead of eliminating them, because no bound drawn from today's corpus can promise tomorrow's
+    filings fit inside it.
+
+    ``incomplete`` marks a fragment whose SENTENCE never ended inside the window, which is a second
+    and independent way to be cut short: it can be well under ``cap`` and still stop mid-clause.
+    Marking only the cap would have left that branch exactly as silent as the bug being fixed —
+    caught by the run-on test, not by reading.
+    """
+    frag = frag.strip()
+    if len(frag) <= cap and not incomplete:
+        return frag
+    body = frag[:cap].rsplit(" ", 1)[0] if len(frag) > cap else frag
+    return f"{body.rstrip(' ,;:')} …".strip()
+
+
 def _attr_verbatim(text: str, start: int, cause_end: int) -> str:
     """The real attribution sentence — subject start (tight) THROUGH the sentence carrying the cause
     (whose clause may trail into the next sentence, e.g. MVST's 'This decrease was driven by …'),
     single-spaced, with leading table-cell numerics stripped. Never the table-wide window a generic
     sentence-snap would grab. ``cause_end`` is the absolute end of the matched causal clause."""
     lo = _attr_lo(text, start, back=90)
-    hi = text.find(". ", cause_end)
-    hi = (hi + 1) if hi != -1 and hi < cause_end + 170 else min(len(text), cause_end + 170)
+    end = text.find(". ", cause_end)
+    # TWO WAYS TO END, and only one of them is a real sentence. When the boundary is found inside
+    # the window the quote is COMPLETE; otherwise this is a raw offset and the fragment is
+    # known-truncated however short it is, so it gets marked rather than passed off as the filer's
+    # own full stop.
+    complete = end != -1 and end < cause_end + _ATTR_SENTENCE_WINDOW
+    hi = (end + 1) if complete else min(len(text), cause_end + _ATTR_SENTENCE_WINDOW)
     frag = " ".join(text[lo:hi].split())
     # drop leading table-cell debris: numeric cells, and a short lowercase word-FRAGMENT ('venue',
     # a split 're|venue') that is itself glued in front of more table cells. Repeat until a real
     # (capitalized) subject word or the sentence body remains.
     frag = re.sub(r"^(?:[\d\s.,$%()\-]+|[a-z]{1,7}\s+(?=[\d$(]))+", "", frag)
-    return frag[:340].strip()
+    return _clip(frag, _ATTR_VERBATIM_CAP, incomplete=not complete)
 
 
 def results_attribution(text: str, *, source_ref: str) -> list[OperatingDriver]:
