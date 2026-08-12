@@ -11834,6 +11834,22 @@ opening the dossier — which is the week of work the queue exists to protect.
   mutation-tested by merging instead of replacing.
 - **This is a DECISION-PATH change, unlike everything else in #420** — it moves names in the queue
   rather than describing them. Taken on explicit operator instruction, recorded here as such.
+- **REVIEW FIX (#431): "replace" had to learn what the scan actually LOOKED AT.** `scan_structural`
+  fails SOFT per name, and worse, `_filings_for`/`_shares_for` CAUGHT their own HTTP errors and
+  returned `[]` — so an EDGAR outage classified the name clean without even reaching the outer
+  guard, and was indistinguishable from an issuer that genuinely filed nothing. Replacing flags
+  wholesale on that result meant **one bad response could erase a real 8-K disqualifier and lift
+  the name back above its 0.05 cap — the #420 failure, reintroduced by the fix for it.** Both
+  helpers now return `None` for "never found out" vs `[]` for "looked, found nothing", and
+  `scan_structural` returns a `StructuralScan(flags, covered)`. Prior flags survive for exactly the
+  names the scan did not cover. The `[]`-vs-`None` distinction was the one guard the first
+  mutation sweep did NOT catch — it needed its own outage test, with a quiet-issuer control so the
+  fix cannot degrade into never trusting a clean result.
+- **REVIEW FIX (#431): an empty universe rebuild now RAISES.** `build_universe()` has already
+  cleared and exported `universe_snapshot.jsonl` by the time the check runs, so a soft return
+  exited 0, and the workflow's next step commits `data/snapshots` — publishing a blank universe
+  beside the previous candidates and queue **while reporting a clean run**. The commit step has no
+  `if: always()`, so raising is sufficient to stop it. Pinned.
 
 **`build-universe` WAS ON NO SCHEDULE — FIXED (operator instruction, same pass).** The universe is
 the screen's INPUT: it decides which names are eligible to be screened at all (cap band, ADV floor,

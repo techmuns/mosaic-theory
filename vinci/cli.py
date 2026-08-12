@@ -221,9 +221,12 @@ def _cmd_rank(args: argparse.Namespace) -> int:
                 f"scanning {len(cands)} candidates for structural disqualifiers "
                 f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
             )
+            # `.flags` only: a MANUAL run is the operator asking for this scan's verdict outright,
+            # so there is no prior assessment to preserve. Coverage matters on the SCHEDULED path,
+            # which replaces flags and must not read an unscanned name as clean (orchestrator).
             structural_flags = scan_structural(
                 cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
-            )
+            ).flags
 
     ranked = rank_from_snapshots(
         cfg, annotations=annotations, structural_flags=structural_flags or None,

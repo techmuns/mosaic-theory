@@ -157,13 +157,28 @@ def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
     flag resurrected underneath it. The carry-forward exists for the runs that DON'T scan.
     """
     flags, causes = carry_forward_assessment(cfg)
+    scanned = 0
     if structural:
         records = cfg.snapshots_dir / "candidate_records.jsonl"
         cands = load_candidates_from_snapshot(records) if records.exists() else []
         if cands:
-            flags = scan_structural(
+            scan = scan_structural(
                 cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
             )
+            scanned = len(scan.covered)
+            # REPLACE ONLY WHERE THE SCAN ACTUALLY LOOKED. `scan_structural` fails soft per name, so
+            # a transient EDGAR outage yields no flag for that name — indistinguishable from a clean
+            # result unless coverage is consulted. A blanket replacement would therefore let one bad
+            # response erase a real 8-K disqualifier and lift the name back above its 0.05 cap: the
+            # #420 failure, reintroduced by the fix for it (review, #431). Prior flags survive for
+            # every name the scan did not cover; covered names take the scan's verdict, flag or
+            # no flag.
+            by_id = {c.data_record.identity.internal_id: c.data_record.identity.ticker
+                     for c in cands}
+            covered_tickers = {by_id[i] for i in scan.covered if i in by_id}
+            flags = {t: f for t, f in flags.items() if t not in covered_tickers}
+            for iid, flag in scan.flags.items():
+                flags[by_id.get(iid, iid)] = flag
     ranked = rank_from_snapshots(cfg, annotations=causes or None, structural_flags=flags or None)
     # WRITE EVEN WHEN EMPTY. The screen has completed by this point, so no candidates is an ANSWER —
     # the latest screen rejected everything — not a failure to produce one. Skipping the write left
@@ -175,7 +190,8 @@ def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
     # an existing queue; a PRESENT-but-empty one is a real screen result and must replace it.
     if (cfg.snapshots_dir / "candidate_records.jsonl").exists():
         write_queue_snapshots(cfg, ranked)
-    return {"ranked": len(ranked),
+    return {"ranked": len(ranked), "structural_scanned": scanned,
+            "structural_flagged": sum(1 for r in ranked if r.structurally_disqualified),
             "carried_structural": len(flags), "carried_cause": len(causes)}
 
 
@@ -210,8 +226,16 @@ def run_weekly(
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
         if not any(not s.internal_id.startswith("IDX-") for s in store.iter_securities()):
-            # the build above just ran, so an empty universe is a FAILURE, not a missing input
-            return {"status": "universe rebuilt EMPTY — screen skipped", "universe": universe}
+            # RAISE, never return. build_universe has ALREADY cleared and exported
+            # universe_snapshot.jsonl, so a soft return would exit 0, and the workflow's next step
+            # commits data/snapshots — publishing a blank universe beside the previous candidates
+            # and queue while reporting a clean run. A transient resolver/price/shares outage must
+            # fail the job before that commit (review, #431).
+            raise RuntimeError(
+                f"universe rebuilt EMPTY at {end} ({universe}) — refusing to continue: the "
+                "snapshot has already been cleared and exported, so proceeding would commit a "
+                "blank universe over a good one"
+            )
         _cands, stats = screen_universe(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,

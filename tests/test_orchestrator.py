@@ -330,6 +330,7 @@ def test_a_live_structural_scan_replaces_the_carry_forward_rather_than_merging(
     from vinci import orchestrator
     from vinci.config import Config
     from vinci.rank import RankedCandidate, StructuralDisqualifier
+    from vinci.rank.structural import StructuralScan
 
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
@@ -341,9 +342,17 @@ def test_a_live_structural_scan_replaces_the_carry_forward_rather_than_merging(
         (snaps / "ranked_queue.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
 
         # the live scan clears `stale` and fires on `fresh` instead
-        monkeypatch.setattr(orchestrator, "scan_structural", lambda *a, **k: {
-            fresh: StructuralDisqualifier(
-                signal="delisting/deficiency notice (3.01)", detail="d", source="8-K new")})
+        # A scan that COVERED every candidate, cleared `stale`, and fired on `fresh`. Keyed by
+        # internal_id off the real candidates — the same key scan_structural returns, so the stub
+        # cannot pass by using a key the production mapping would never see.
+        def _fake_scan(cands, **_k):  # type: ignore[no-untyped-def]
+            by_ticker = {c.data_record.identity.ticker: c.data_record.identity.internal_id
+                         for c in cands}
+            return StructuralScan(
+                flags={by_ticker[fresh]: StructuralDisqualifier(
+                    signal="delisting/deficiency notice (3.01)", detail="d", source="8-K new")},
+                covered=frozenset(by_ticker.values()))
+        monkeypatch.setattr(orchestrator, "scan_structural", _fake_scan)
         monkeypatch.setattr(
             orchestrator.EdgarClient, "from_config", classmethod(lambda cls, c: None))
         monkeypatch.setattr(orchestrator, "build_sec_http", lambda cfg: None)
@@ -358,3 +367,80 @@ def test_a_live_structural_scan_replaces_the_carry_forward_rather_than_merging(
             "so a disqualifier can never be cleared by the scan meant to re-evaluate it")
         assert after[fresh].structurally_disqualified, f"{fresh}: the live scan's verdict was lost"
         assert after[fresh].priority_score <= 0.05
+
+
+def test_a_name_the_scan_could_not_reach_keeps_its_prior_flag(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE FAILURE-MODE REGRESSION (#431). `scan_structural` fails SOFT per name — a transient EDGAR
+    or cache error yields no flag for that name, which is indistinguishable from a clean result
+    unless coverage is consulted. Replacing prior flags wholesale therefore let ONE bad response
+    erase a real 8-K disqualifier and lift the name back above its 0.05 cap: the #420 failure,
+    reintroduced by the fix for it.
+
+    Prior flags must survive for exactly the names the scan did not cover, and nothing else."""
+    import json
+    import tempfile
+
+    from vinci import orchestrator
+    from vinci.config import Config
+    from vinci.rank import RankedCandidate
+    from vinci.rank.structural import StructuralScan
+
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        snaps = _stage(tmp)
+        rows = [json.loads(x) for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x]
+        unreachable = rows[0]["ticker"]
+        rows[0]["structural_flag"] = {
+            "signal": "going-concern", "detail": "substantial doubt",
+            "source": "8-K 0000000000-26-000001 item 8.01 filed 2026-08-01"}
+        rows[0]["structurally_disqualified"] = True
+        (snaps / "ranked_queue.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+
+        # the scan reaches every name EXCEPT `unreachable`, and finds nothing on the ones it reached
+        def _partial_scan(cands, **_k):  # type: ignore[no-untyped-def]
+            reached = frozenset(c.data_record.identity.internal_id for c in cands
+                                if c.data_record.identity.ticker != unreachable)
+            return StructuralScan(flags={}, covered=reached)
+        monkeypatch.setattr(orchestrator, "scan_structural", _partial_scan)
+        monkeypatch.setattr(
+            orchestrator.EdgarClient, "from_config", classmethod(lambda cls, c: None))
+        monkeypatch.setattr(orchestrator, "build_sec_http", lambda cfg: None)
+
+        out = orchestrator.refresh_queue(Config(data_dir=tmp), structural=True)
+        assert out["structural_scanned"] > 0
+        after = {r.ticker: r for r in (
+            RankedCandidate.model_validate_json(x)
+            for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x.strip())}
+        assert after[unreachable].structurally_disqualified, (
+            f"{unreachable} was never scanned, yet its 8-K disqualifier was erased and the name "
+            "lifted back above the 0.05 cap — a transient EDGAR failure must not clear a flag")
+        assert after[unreachable].priority_score <= 0.05
+        # and the names the scan DID reach came back clean, so a stale flag is not made permanent
+        assert sum(1 for r in after.values() if r.structurally_disqualified) == 1
+
+
+def test_an_empty_universe_rebuild_fails_the_run_instead_of_reporting_success(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`build_universe()` CLEARS and exports `universe_snapshot.jsonl` before returning. If an empty
+    rebuild were a soft return, `_cmd_run_weekly` would print the status and exit 0, and the
+    workflow's next step commits `data/snapshots` — publishing a blank universe beside the previous
+    candidates and queue while reporting a clean run. A transient resolver/price/shares outage must
+    fail the job BEFORE that commit (#431)."""
+    import tempfile
+
+    from vinci import orchestrator
+    from vinci.config import Config
+
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        (tmp / "snapshots").mkdir(parents=True)
+        monkeypatch.setattr(orchestrator, "build_universe", lambda cfg, **k: {"admitted": 0})
+        monkeypatch.setattr(
+            orchestrator.PolygonEodClient, "from_config", classmethod(lambda cls, c: None))
+        monkeypatch.setattr(
+            orchestrator.EdgarClient, "from_config", classmethod(lambda cls, c: None))
+        with pytest.raises(RuntimeError, match="universe rebuilt EMPTY"):
+            orchestrator.run_weekly(Config(data_dir=tmp), end=date(2026, 8, 12))
