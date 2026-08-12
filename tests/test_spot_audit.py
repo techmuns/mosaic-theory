@@ -27,6 +27,7 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -237,3 +238,117 @@ def test_no_committed_records_spot_as_of_was_taken_from_a_multi_dated_source_lin
         assert stated == {str(rec.spot_as_of)}, (
             f"{p.stem}: spot_as_of {rec.spot_as_of} against a source line naming {sorted(stated)} "
             f"— a date was taken from prose that names more than one")
+
+
+# ─── THE CALL SITES, because a check nobody calls is not a check ──────────────────────────────
+#
+# REVIEW FINDING, and it is this repo's most-repeated rung: `test_stated_limit.py` names it as
+# "the rung this repo has hit four times", and it was hit a fifth here. Every behaviour above was
+# pinned on the HELPERS — `spot_notes`, `close_on`, `price_frontier_for`, `_price_store_line` —
+# and NOT ONE of the three places that call them. Proven by mutation, not by inspection: deleting
+# `price_store=_price_store_stamp(cfg)` from `assemble_one` left the suite at 2173 passed. The
+# PR's second deliverable could be removed entirely without reddening anything.
+
+def test_the_price_store_stamp_follows_a_symlink_rather_than_naming_the_link(
+    tmp_path: Path,
+) -> None:
+    """EXECUTED, not inspected — the resolve is the whole reason both paths are stored.
+
+    A real symlinked store: `declared/` points at `real/`. The stamp must record BOTH, or two
+    dossiers built from ONE store compare as two. This is the case that made a corroboration check
+    report "the store cannot see $11.56" while asking a store it had not identified."""
+    from vinci.config import Config
+    from vinci.dossier.assemble import _price_store_stamp
+
+    real = tmp_path / "real-worktree" / "data"
+    real.mkdir(parents=True)
+    Store(real / "vinci.db").write_prices([
+        PriceBar(internal_id=IID, bar_date=date(2026, 8, 4), open=1, high=1, low=1,
+                 close=11.33, volume=1.0, source="polygon-grouped")])
+    link = tmp_path / "link-worktree" / "data"
+    link.mkdir(parents=True)
+    (link / "vinci.db").symlink_to(real / "vinci.db")
+
+    stamp = _price_store_stamp(Config(data_dir=link))
+    assert stamp.declared_path != stamp.resolved_path, "the symlink was not followed"
+    assert "link-worktree" in stamp.declared_path, "the declaring worktree was lost"
+    assert "real-worktree" in stamp.resolved_path, "the bytes' worktree was lost"
+    assert stamp.frontier == date(2026, 8, 4), "the stamp did not read the store's reach"
+    assert "link-worktree → real-worktree" in _price_store_line(stamp)
+
+
+def test_the_stamp_is_wired_into_the_assembler() -> None:
+    """A SOURCE PIN, and deliberately so — the same trade `test_no_false_unknown.py` documents for
+    `assemble_one`, which cannot be driven offline (CIQ + EDGAR + LLM). So the helper above is
+    EXECUTED and only the wiring is observed. Matches the exact call rather than the bare name: a
+    comment naming the helper would satisfy a name search while the call sat nowhere.
+
+    This is the assertion the surviving mutation proves is needed."""
+    import inspect
+
+    import vinci.dossier.assemble as asm
+    assert "price_store=_price_store_stamp(cfg)" in inspect.getsource(asm.assemble_one), (
+        "the store stamp is not wired into assemble_one — every new dossier would say 'unstamped' "
+        "forever, and no committed artifact would show the difference")
+
+
+def test_the_spot_check_is_wired_into_the_supersede_write_path() -> None:
+    """The write-path seat, pinned the same way and for the same reason: `_cmd_scenario_supersede`
+    needs a record, a ledger, a store and a resolver to drive. What must not silently vanish is the
+    CALL — and that it prints rather than joining `problems`, because a refusal here would block
+    the two correct records the corpus measurement found."""
+    import inspect
+
+    import vinci.cli as cli
+    src = inspect.getsource(cli._cmd_scenario_supersede)
+    assert "sc.spot_notes(" in src, "the spot check is no longer called at the write path"
+    i = src.index("sc.spot_notes(")
+    assert "problems" not in src[i:i + 400], (
+        "spot notes joined `problems` — that turns a note into a refusal, which the measurement "
+        "specifically rejected")
+
+
+def test_the_audit_subcommand_runs_end_to_end_and_never_changes_the_exit_code(
+    tmp_path: Path, monkeypatch: Any, capsys: Any,
+) -> None:
+    """DRIVEN THROUGH THE REAL PARSER — this one CAN be executed, so it is.
+
+    Two records against one store: one whose date the store holds (silent) and one dated past the
+    frontier (a note). The exit code must stay 0 with a note outstanding, which is the property
+    that makes this an audit rather than a gate."""
+    import json
+
+    import vinci.cli as cli
+    from vinci.config import Config
+
+    data = tmp_path / "data"
+    data.mkdir()
+    Store(data / "vinci.db").write_prices([
+        PriceBar(internal_id=IID, bar_date=date(2026, 8, 4), open=1, high=1, low=1,
+                 close=11.33, volume=1.0, source="polygon-grouped")])
+    (tmp_path / "scenarios").mkdir()
+    base = json.loads(Path("scenarios/SMPL.json").read_text())
+    for tk, asof in (("CLEAN", "2026-08-04"), ("LAGGED", "2026-08-07")):
+        rec = {**base, "ticker": tk, "spot": 11.33, "spot_as_of": asof}
+        (tmp_path / "scenarios" / f"{tk}.json").write_text(json.dumps(rec))
+
+    class _Ident:
+        internal_id = IID
+
+    class _Res:
+        @staticmethod
+        def resolve_ticker(t: str) -> Any:
+            return _Ident()
+
+    monkeypatch.setattr(cli, "get_config", lambda: Config(data_dir=data))
+    monkeypatch.setattr(cli.EntityResolver, "from_config", staticmethod(lambda cfg: _Res()))
+    monkeypatch.chdir(tmp_path)
+
+    args = cli.build_parser().parse_args(["audit", "spot"])
+    assert args.func is cli._cmd_audit_spot, "the `audit spot` subcommand is not registered"
+    assert args.func(args) == 0, "a note changed the exit code — this is a gate, not an audit"
+
+    out = capsys.readouterr().out
+    assert "CLEAN" in out and "matches this store's bar exactly" in out
+    assert "reaches only to 2026-08-04" in out, "the lagged record produced no note"
+    assert "1 clean · 1 note(s)" in out, out
