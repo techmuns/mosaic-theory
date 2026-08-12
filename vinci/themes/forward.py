@@ -263,6 +263,24 @@ def freeze_baskets(
 #: and that was not what was decided here.
 BASKETS_SUBDIR = "themes/baskets"
 
+#: The COMMITTED home for a driver's ratification ledger — operator decision 2026-08-12, extending
+#: the basket decision to the record the basket is DERIVED FROM. The basket says which names are in
+#: which cohort; the ledger says WHY, in the analyst's own words, one appended row at a time. Losing
+#: it loses the judgment and keeps only its conclusion.
+#:
+#: THE THREE JULY 2026 LEDGERS ARE GONE and are NOT reconstructed here. A ledger is an APPEND-ONLY
+#: record whose value is that it records what was appended and when; a rebuild from the published
+#: mirror would carry one synthetic timestamp for every row and no correction history, and
+#: committing that as "the ledger" would misrepresent the artifact at the moment it starts being
+#: trusted. Their dispositions survive in the mirrors (`rationale`, `gradeFact`, `accession` per
+#: name) — that is the honest surviving record, and it is named as such rather than dressed up.
+LEDGER_SUBDIR = "themes/ledgers"
+
+
+def ledger_path(driver: str, *, data_dir: Path) -> Path:
+    """The committed ratification ledger for one driver."""
+    return data_dir / LEDGER_SUBDIR / f"{driver}.jsonl"
+
 
 def baskets_path(driver: str, *, data_dir: Path) -> Path:
     """The committed basket for one driver, under the configured DATA DIR.
@@ -272,6 +290,25 @@ def baskets_path(driver: str, *, data_dir: Path) -> Path:
     four synthetic names straight over the real committed baskets in the repo. Every other durable
     artifact here is located through config; this one is too."""
     return data_dir / BASKETS_SUBDIR / f"{driver}.json"
+
+
+def assert_basket_writable(driver: str, *, data_dir: Path, supersede: bool = False) -> None:
+    """Raise if freezing ``driver`` would overwrite an existing basket. NO SIDE EFFECTS.
+
+    SPLIT OUT SO THE FREEZE CAN PREFLIGHT IT (operator review P1 on #424). The ledger append used
+    to run BEFORE the basket write, so a refused re-freeze left the now-COMMITTED ledger carrying
+    dispositions for a basket that was never frozen — and the retry with --supersede-basket
+    appended the same judgment a third time. Measured: 1 row, then 2, then 3. Making the ledger
+    durable is what turned a harmless local side effect into a corrupted permanent record; the
+    write order had to follow.
+    """
+    p = baskets_path(driver, data_dir=data_dir)
+    if p.exists() and not supersede:
+        prior = load_baskets(p)
+        raise FileExistsError(
+            f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
+            f"replace the entry dates the forward accrual is measured from. Pass "
+            f"supersede=True to archive it and re-freeze deliberately.")
 
 
 def write_baskets(
@@ -297,13 +334,11 @@ def write_baskets(
     """
     p = baskets_path(baskets.driver, data_dir=data_dir)
     p.parent.mkdir(parents=True, exist_ok=True)
+    # The same check the caller should have PREFLIGHTED — kept here as the backstop, so a caller
+    # that skips the preflight still cannot overwrite.
+    assert_basket_writable(baskets.driver, data_dir=data_dir, supersede=supersede)
     if p.exists():
         prior = load_baskets(p)
-        if not supersede:
-            raise FileExistsError(
-                f"{p} already exists (frozen {prior.freeze_timestamp[:10]}) — re-freezing would "
-                f"replace the entry dates the forward accrual is measured from. Pass "
-                f"supersede=True to archive it and re-freeze deliberately.")
         # THE ARCHIVE NAME IS DATE-KEYED and the freeze timestamp is date-only, so two
         # supersessions on the SAME DAY would collide and the second would overwrite the first
         # archive — losing exactly what archiving exists to keep. Disambiguated rather than

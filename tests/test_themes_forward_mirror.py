@@ -168,13 +168,15 @@ def test_the_reached_horizon_does_produce_a_number(tmp_path: pathlib.Path) -> No
 
 
 def _forward_args(**kwargs: object) -> object:
+    """Namespace with every flag the command reads. Per-case kwargs OVERRIDE the defaults rather
+    than being passed alongside them — argparse.Namespace(**a, **b) raises on a duplicate key."""
     import argparse
 
     base = {"driver": "truckload-supply-purge", "measure": False, "as_of": None,
             "horizons": "30", "ratify_date": None, "baskets_out": None, "exposure_names": None,
             "watchlist": None, "watchlist_triggers": None, "avoid_controls": None,
-            "real_tier": None}
-    return argparse.Namespace(**base, **kwargs)
+            "real_tier": None, "from_baskets": None, "supersede_basket": False}
+    return argparse.Namespace(**{**base, **kwargs})
 
 
 def test_the_cli_refuses_both_paths_and_neither_path() -> None:
@@ -188,33 +190,29 @@ def test_the_cli_refuses_both_paths_and_neither_path() -> None:
                    # --from-baskets is the third source; any two together are ambiguous
                    {"worksheet": None, "ledger": None, "from_mirror": "m.json",
                     "from_baskets": "b.json"}):
-        kwargs = {"from_baskets": None, **kwargs}
+
         with pytest.raises(SystemExit, match="EXACTLY ONE source"):
             cli._cmd_themes_forward(_forward_args(**kwargs))  # type: ignore[arg-type]
 
 
-@pytest.mark.parametrize(
-    ("kwargs", "expect"),
-    [
-        ({"worksheet": "w.csv", "ledger": None, "from_mirror": None}, "--ledger"),
-        ({"worksheet": None, "ledger": "l.jsonl", "from_mirror": None}, "--worksheet"),
-    ],
-    ids=["worksheet-without-ledger", "ledger-without-worksheet"],
-)
-def test_a_half_specified_freeze_path_is_rejected_before_any_path_is_built(
-    kwargs: dict[str, object], expect: str,
-) -> None:
-    """REVIEW P2 ON #412. The either/or read `worksheet OR ledger` as "a freeze was requested", so
-    `--worksheet rows.csv` alone satisfied it, fell through to the freeze branch, and died on
-    `Path(None)` with a TypeError naming NoneType — an error that tells the operator nothing about
-    which flag they forgot. The ledger-only case was symmetric.
+def test_a_bare_ledger_without_a_worksheet_is_rejected_before_any_path_is_built() -> None:
+    """REVIEW P2 ON #412, HALF OF IT NOW OBSOLETE BY DESIGN — recorded rather than deleted.
 
-    Asserted on the MISSING flag's name, so a guard that merely raises SystemExit without saying
-    what is absent still fails here."""
+    The either/or once read `worksheet OR ledger` as "a freeze was requested", so each flag alone
+    fell through to the freeze branch and died on `Path(None)` with a TypeError naming NoneType.
+    Both halves were pinned.
+
+    `--worksheet` ALONE IS NOW THE NORMAL PATH: the ledger defaults to its committed home
+    (data/themes/ledgers/<driver>.jsonl), which is the fix for how the three July 2026 ledgers were
+    lost — `--ledger` was required and arbitrary, so the dispositions went somewhere git-ignored.
+    That half of this pin is therefore gone on purpose.
+
+    The reverse still has nothing to act on, and still must not reach `Path(None)`."""
     from vinci import cli
 
-    with pytest.raises(SystemExit, match=expect):
-        cli._cmd_themes_forward(_forward_args(**kwargs))  # type: ignore[arg-type]
+    with pytest.raises(SystemExit, match="nothing to write"):
+        cli._cmd_themes_forward(  # type: ignore[arg-type]
+            _forward_args(worksheet=None, ledger="l.jsonl", from_mirror=None))
 
 
 def test_reconstruction_logs_no_disposition_of_its_own(

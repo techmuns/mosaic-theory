@@ -2667,13 +2667,14 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
     # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
     # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
-    if bool(args.worksheet) != bool(args.ledger):
-        given, missing = (("--worksheet", "--ledger") if args.worksheet
-                          else ("--ledger", "--worksheet"))
+    # --ledger WITHOUT --worksheet is still meaningless (nothing to append); the reverse is not,
+    # because the ledger now defaults to its committed home. Reversing this check rather than
+    # deleting it: a bare --ledger used to die on `Path(None)` (review P2 on #412) and still would.
+    if args.ledger and not args.worksheet:
         raise SystemExit(
-            f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
-            f"carries the analyst's dispositions and the ledger is where they are appended. "
-            f"To re-measure an already-frozen theme instead, use --from-mirror.")
+            "--ledger was given without --worksheet — the ledger is where the worksheet's "
+            "dispositions are appended, so there is nothing to write. To re-measure an "
+            "already-frozen theme, use --from-baskets (or --from-mirror).")
     sources = [bool(args.worksheet), bool(args.from_mirror), bool(args.from_baskets)]
     if sum(sources) != 1:
         raise SystemExit(
@@ -2735,7 +2736,13 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
             return 0
         return _themes_forward_measure(args, fwd, baskets, watchlist)
 
-    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    # THE LEDGER DEFAULTS TO ITS COMMITTED HOME, so a freeze cannot land the analyst's
+    # dispositions somewhere that is never kept — which is how the three July 2026 ledgers were
+    # lost. An explicit --ledger still wins, for ad-hoc runs.
+    ws = Path(args.worksheet)
+    ledger = (Path(args.ledger) if args.ledger
+              else fwd.ledger_path(driver, data_dir=get_config().data_dir))
+    ledger.parent.mkdir(parents=True, exist_ok=True)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
     all_committed = [r["ticker"] for r in rows]
@@ -2744,8 +2751,6 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
     ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
     records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
-    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
-        fwd.append_record(ledger, rec)
     counts = Counter(r.disposition.value for r in records)
     print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
     print(f"worksheet {ws}\nledger {ledger} (append-only)")
@@ -2777,13 +2782,24 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     baskets = baskets.model_copy(update={"provenance": (
         f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
         f"worksheet, appended to the ratification ledger at {ledger}")})
+    # PREFLIGHT BEFORE ANY WRITE (review P1 on #424). The ledger append used to run FIRST, so a
+    # refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that was
+    # never frozen, and the retry appended the same judgment again — 1 row, then 2, then 3.
+    # Everything that can fail is checked here; the ledger and the basket then land together as ONE
+    # successful freeze. (`records_from_worksheet` and `freeze_baskets` above are already pure —
+    # they parse and validate without writing, which is what makes this ordering possible.)
     try:
-        canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
-                                      supersede=args.supersede_basket)
+        fwd.assert_basket_writable(driver, data_dir=get_config().data_dir,
+                                   supersede=args.supersede_basket)
     except FileExistsError as exc:
         print(f"REFUSED: {exc}\n  Re-run with --supersede-basket to archive the existing basket "
-              f"under data/themes/baskets/archive/ and freeze again.")
+              f"under data/themes/baskets/archive/ and freeze again. NOTHING was written — the "
+              f"ledger is untouched.")
         return 1
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
+                                  supersede=args.supersede_basket)
     print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
@@ -3559,7 +3575,11 @@ def build_parser() -> argparse.ArgumentParser:
     # two must be given; the parser enforces it rather than discovering it mid-run.
     p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
-    p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ledger",
+                       help="append-only ratification ledger JSONL path. Defaults to the COMMITTED "
+                            "home, data/themes/ledgers/<driver>.jsonl — the record the basket is "
+                            "derived from, kept because the basket says which names are in which "
+                            "cohort while the ledger says why, in the analyst's own words.")
     p_fwd.add_argument("--supersede-basket", dest="supersede_basket", action="store_true",
                        help="deliberately re-freeze a driver that already has a committed basket: "
                             "archives the existing one under baskets/archive/ first. Without this "

@@ -8577,6 +8577,39 @@ ledger and `data/forward/` are still ignored and that allowing `data/themes/` di
 directory. The baskets qualify under the private-repo rule as DERIVED analysis: tickers, dates,
 cohorts and layer labels only — no verbatim filing text (`watchlist_triggers` is empty by
 construction and pinned so), no CIQ, checked on the FILES.
+**AND THE RATIFICATION LEDGER IS COMMITTED TOO (2026-08-12, second decision).** The basket says
+which names are in which cohort; the LEDGER says WHY, in the analyst's own words, one appended row
+at a time. `--ledger` was REQUIRED and ARBITRARY, so the dispositions went wherever the command line
+pointed — which was somewhere git-ignored. It now defaults to `data/themes/ledgers/<driver>.jsonl`,
+and an explicit `--ledger` still wins for ad-hoc runs (pinned that it does NOT also write the
+canonical file: two ledgers for one freeze is two records of one judgment). Only the LOOSE
+`forward_*` names stay ignored.
+**THE THREE JULY 2026 LEDGERS ARE GONE AND ARE NOT RECONSTRUCTED — deliberately, and pinned so the
+gap is not later filled in quietly.** A ledger is an APPEND-ONLY record whose value is that it
+records what was appended and WHEN; a rebuild from the published mirror would carry one synthetic
+timestamp for every row and no correction history, and committing that as "the ledger" would
+misrepresent the artifact at the moment it starts being trusted. Their dispositions survive in the
+mirrors (`rationale`, `gradeFact`, `accession` per name) — the honest surviving record, named as
+such. **What was lost is the judgment; what remains is the conclusion.**
+**MAKING THE LEDGER DURABLE CREATED A TORN WRITE — review P1 on #424, and the lesson generalises.**
+The ledger append ran BEFORE the basket write, and the basket write can REFUSE (the #422 supersede
+guard). So a refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that
+was never frozen, and the retry appended the same judgment a third time: measured 1 row, then 2,
+then 3. **The durability decision changed the cost of a side effect the write order had always
+had.** Fixed by preflighting everything that can fail (`assert_basket_writable`, side-effect-free)
+before any append, so the ledger and basket land as ONE successful freeze; the NOT-READY early exit
+now writes nothing either, since an un-frozen tier should not record partial judgment.
+*When an artifact becomes durable, re-read every path that writes it — the ordering that was
+harmless while it was scratch is now the ordering of a permanent record.*
+**AND A FIFTH PIN ASSERTING THE WRONG PROPERTY**, same family as the other four: the preflight's
+no-side-effects test asserted the FILE was absent, so a mutation that `mkdir`s the parent stayed
+green while the check touched the tree. Asserted on "creates nothing" instead of one visible
+consequence of it.
+**ONE PIN RETIRED BY DESIGN, recorded rather than deleted:** #412's P2 pinned that `--worksheet`
+without `--ledger` must be refused. That half is now the NORMAL path — it is the whole point of the
+default — so it was removed with its reason written where the pin used to be. The reverse (a bare
+`--ledger`, nothing to append) still refuses.
+
 **EVERY COMMITTED BASKET STATES ITS PROVENANCE**, because a basket written by the freeze and one
 RECONSTRUCTED from the published mirror hold the same names and are NOT the same evidence. All three
 today say RECONSTRUCTED — the freeze-time files were local-only and are gone. The freeze now writes
