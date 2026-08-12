@@ -11235,6 +11235,10 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    write `spot_as_of: "2026-08-07"` on each and re-run — both should go silent.** BRBR needs a
    HUMAN read either way: its `spot_source` names three dates and no rule picks the right one.
    (`null` here means *we looked and cannot state one HERE* — the records predate nothing.)
+   **NOT URGENT AFTER PR-7, and the reason is worth keeping:** the schema-1.5 gate binds only
+   records CREATED at 1.5+, and `write_record` PRESERVES an existing record's `schema_version`
+   (driven, not assumed). Both stay at 1.3, so both remain writable indefinitely. Stamping them is
+   an accuracy improvement, not an unblock.
 
 5. **VISA's ANCHOR IS NOT ONE MISSING FIELD, AND THE OBVIOUS FIX IS A 4× TRAP.** Opened 2026-08-11.
    Netflix and Visa were assumed to share a cause; they do not.
@@ -12999,6 +13003,34 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **A SPOT THAT NAMES NO DAY IS NOW UNRECORDABLE — schema 1.5 (2026-08-12, PR-7).**
+  `vinci audit spot` can check a stated date against the store; against a record naming none it
+  checks NOTHING and reports UNAUDITABLE forever. `write_record` now refuses a record created at
+  **1.5+** without `spot_as_of`, and `scenario-propose` pre-fills it from the dossier's own
+  `stock_info.as_of` — the bar date the price came from — so the requirement is satisfiable from
+  the one path that creates records. `SCHEMA_VERSION` bumped 1.4 → 1.5.
+  **THE ADOPTION TRAP WAS CHECKED BEFORE THE DESIGN, and does not exist.** Every committed record
+  is schema **1.3** (8 live + 3 archived, one at 1.2), and `write_record` **PRESERVES** an existing
+  record's version — driven through the real path, not read off the code. So BRBR and EPAM, which
+  legitimately carry no date (struck at 2026-08-07, visible only to `-sl`), stay at 1.3 and remain
+  writable indefinitely. The premise is pinned, because the gate's safety rests on it: if a write
+  path ever re-stamps the version those two become unwritable, and the failure would surface far
+  from here looking like a bug in something else.
+  **THE COHERENCE HALF IS NOT VERSION-GATED** — a stated `spot_as_of` AFTER its own underwrite is
+  refused at any schema, since legs cannot have been struck against a close that had not happened.
+  #416's lookahead lesson moved to the WRITE seat. Costs no committed record: all six stamped
+  spots precede their underwrite by 1–3 days.
+  **WHAT IT DOES NOT DO:** it does not verify the date — that stays `vinci audit spot`'s job and
+  deliberately a flag, because a refusal there would block correct records whose bar this worktree
+  cannot see. The gate requires the CLAIM so that something exists to check.
+  **AND IT SURFACED AN ORPHAN-ARCHIVE WINDOW IN `scenario-supersede`** (self-review): that command
+  writes the ARCHIVE first and the live record second, so a refusal on the second left a superseded
+  record with no successor and an un-updated seal manifest. The window PREDATES this change — the
+  basis and fielded-ref gates raise at the same point — but the spot gate makes it far likelier to
+  fire, since a fresh hand-written payload commonly omits `spot_as_of` until the field is habit.
+  Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
+  `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
+  gate added later cannot be enforced at the write and skipped at the pre-check.
 - **THE DEBT SCHEDULE HAD NO AGE, AND ONE STILL LISTS A DEAD FACILITY —
   `capital_structure.panel_vintage` (2026-08-12, PR-3).** NFLX's page lists the Warner Bros.
   Discovery bridge facility; its commitments were terminated **2026-02-27** and the panel is dated

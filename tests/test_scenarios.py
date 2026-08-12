@@ -20,7 +20,7 @@ def _rec(**over: object) -> sc.ScenarioRecord:
         "ticker": "TEST", "recipe_id": sc.RECIPE_R1,
         "recipe_desc": "mid-cycle operating margin x exit EV/EBITDA",
         "multiple_basis": "EV/EBITDA", "underwrite_date": "2026-07-19", "analyst": "tester",
-        "spot": 46.0, "spot_source": "test",
+        "spot": 46.0, "spot_source": "test", "spot_as_of": "2026-07-10",
         "facts": {
             "d_and_a": sc.Fact(value=286.321, unit="$M", basis="consolidated FY2025",
                                source="10-K"),

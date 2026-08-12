@@ -1277,6 +1277,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             multiple_basis=str(tpl["multiple_basis"]),
             underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
             spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
+        # (PR-7) carried through from the template; `write_record` refuses without it from
+        # schema 1.5, and a create that silently dropped it would make the gate
+        # unsatisfiable from the one path that is supposed to satisfy it.
+        spot_as_of=(date.fromisoformat(str(tpl["spot_as_of"])[:10])
+                    if tpl.get("spot_as_of") else None),
             facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
             scenarios={leg: sc.ScenarioInput(
                 revenue=float(c["revenue"]), margin=float(c["margin"]),
@@ -1509,6 +1514,15 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     if args.dry_run:
         print("  --dry-run: nothing written")
         return 0
+    # PRE-CHECK BEFORE EITHER WRITE. The archive lands first, so a refusal on the live
+    # record used to leave an orphan archive — a superseded record with no successor and an
+    # un-updated seal manifest. Validating here makes the pair atomic in the only way that
+    # matters: nothing is written unless both can be.
+    try:
+        sc.validate_for_write(live)
+    except ValueError as exc:
+        print(f"=== scenario-supersede {t_up}: REFUSED ===\n  {exc}")
+        return 2
     ap = sc.write_archived(archived, root=root)
     lp = sc.write_record(live, root=root)
     (root / "scenarios" / seal.SEAL_FILE).write_text(_json.dumps(man, indent=2, sort_keys=True)

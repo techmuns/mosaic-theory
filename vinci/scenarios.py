@@ -38,7 +38,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from vinci.dossier.midcycle import BAR, R1_FORMULA
 from vinci.prose_lint import ProseRegisterWarning, lint_record
 
-SCHEMA_VERSION = "1.4"
+SCHEMA_VERSION = "1.5"   # 1.5 makes `spot_as_of` required — see SPOT_AS_OF_REQUIRED_FROM
 
 # WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
 # is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
@@ -1107,6 +1107,51 @@ def spot_notes(
             f"this store has a hole in its coverage."]
 
 
+#: `spot_as_of` becomes REQUIRED from this schema forward — the write refuses without it.
+#:
+#: WHY A VERSION GATE AND NOT A PLAIN REQUIREMENT. Every committed record is schema 1.3 and two of
+#: them (BRBR, EPAM) legitimately carry no date: they are struck at 2026-08-07, which only the
+#: `-sl` worktree's store can see, and writing a date this checkout cannot verify would assert from
+#: another store's authority. A blanket requirement would make those two unwritable — the adoption
+#: trap. CHECKED, not assumed: `write_record` PRESERVES an existing record's `schema_version`
+#: (driven, not read), so a 1.3 record stays 1.3 through every re-write and can never fall into
+#: this gate. Only records created at 1.5+ are bound.
+SPOT_AS_OF_REQUIRED_FROM = "1.5"
+
+
+def _require_spot_as_of(rec: ScenarioRecord) -> None:
+    """A spot must name the day it is a close of — refused at the write, from schema 1.5 forward.
+
+    THE POINT IS TO MAKE AN UNAUDITABLE SPOT UNRECORDABLE. `vinci audit spot` can check a stated
+    date against the store; it can check NOTHING against a record that names none, and the fleet
+    measurement was blunt about the consequence — every committed spot is a real EOD close, but the
+    two carrying no date cannot be shown to be. This does not verify the date (that is the audit's
+    job, and deliberately a flag rather than a refusal); it requires the CLAIM, so there is
+    something to check.
+
+    THE COHERENCE HALF IS NOT VERSION-GATED, because a stated date that postdates its own
+    underwrite is wrong at any schema and costs nothing to refuse: measured across the six stamped
+    records, every spot precedes its underwrite by 1-3 days, so no committed record pays for it.
+    That is the #416 lookahead lesson applied at the seat where the value is written rather than
+    where it is rendered.
+    """
+    if (rec.spot_as_of is not None and rec.underwrite_date
+            and str(rec.spot_as_of) > str(rec.underwrite_date)[:10]):
+        raise ValueError(
+            f"{rec.ticker}: spot_as_of {rec.spot_as_of} is AFTER the underwrite date "
+            f"{rec.underwrite_date} — the legs cannot have been struck against a close that had "
+            f"not happened. One of the two dates is wrong.")
+    if _schema_ver(rec.schema_version) < _schema_ver(SPOT_AS_OF_REQUIRED_FROM):
+        return
+    if rec.spot_as_of is None:
+        raise ValueError(
+            f"{rec.ticker}: schema {rec.schema_version} requires `spot_as_of` — the DAY the spot "
+            f"${rec.spot:,.4g} is a close of. Without it no store can check the price, and "
+            f"`vinci audit spot` reports it UNAUDITABLE forever. `scenario-propose` pre-fills it "
+            f"from the dossier's own `stock_info.as_of`; if the spot did not come from a close, "
+            f"it does not belong in a record.")
+
+
 def horizon_problems(rec: ScenarioRecord) -> list[str]:
     """The stated-horizon requirement, as `validate_legs` returns problems — empty when satisfied.
 
@@ -1424,6 +1469,22 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     return out
 
 
+def validate_for_write(rec: ScenarioRecord) -> None:
+    """Every REFUSAL a write must clear, in one callable — so a caller can check before it writes.
+
+    `write_record` runs this, and that is enough for a single-file write. `scenario-supersede` is
+    not one: it writes the ARCHIVE first and the live record second, so a refusal on the second
+    left an orphan archive on disk — a superseded record with no successor, and a seal manifest
+    never updated. The window was always there (the basis and fielded-ref gates raise at the same
+    point); PR-7 made it far likelier to fire, because a fresh hand-written payload commonly omits
+    `spot_as_of` until the field is habit. Extracted rather than duplicated: two call sites, one
+    definition, so a gate added later cannot be enforced at the write and skipped at the pre-check.
+    """
+    _require_bear_basis(rec)
+    require_fielded_refs(rec)
+    _require_spot_as_of(rec)
+
+
 def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads.
 
@@ -1435,8 +1496,7 @@ def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     d = records_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{rec.ticker.upper()}.json"
-    _require_bear_basis(rec)
-    require_fielded_refs(rec)
+    validate_for_write(rec)
     _warn_admissibility(rec)
     flags = lint_record(rec)
     if flags:
