@@ -546,6 +546,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-24M against $355M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "24 Credit Agreement - Revolving Credit Facility (Revolving Credit) undrawn/– @ 5.230% Due 2029; 3.625% Senior Notes Due 2029 (Bonds and Notes) 600 @ 3.625% Due 2029; 3.75% Senior Notes Due 2030 (Bonds and Notes) 800 @ 3.750% Due 2030; 4.50% Senior Notes Due 2028 (Bonds and Notes) 800 @ 4.500% Due 2028; 4.95% Senior Notes Due 2031 (Bonds and Notes) 350 @ 4.950% Due 2031; 5.60% Senior Notes Due 2035 (Bonds and Notes) 450 @ 5.600% Due 2035; Operating Lease Liabilities (Capital Lease) 366 @ 5.600%; State of Connecticut Economic Development Loan (Term Loans) 5 @ 1.750%",
         "source_ref": "CIQ Financials→Capital Structure Details",

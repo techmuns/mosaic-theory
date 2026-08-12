@@ -258,6 +258,14 @@ class Quality(BaseModel):
     survival_capacity: Sourced[str]
     interest_coverage: Sourced[float]
     share_count_trend: Sourced[str]
+    # (PR-4) How much of the LATEST QUARTER's pre-tax result arrived from below the operating line
+    # — `pretax − operating`, derived rather than picked (see `_nonoperating_earnings`). The
+    # question it answers is whether GAAP EPS for the period is an operating anchor at all: NFLX's
+    # Q1-2026 carries a $2.59bn WBD termination fee (40% of pre-tax) and UBER's Q2-2026 ~$1.39bn of
+    # investment revaluation, and neither had ANY route onto a page before this — the CIQ
+    # unusual-items block is annual-only, so a quarterly one-off stayed invisible until it landed
+    # in a fiscal year. Optional-with-default so committed JSON predating the field round-trips.
+    nonoperating_earnings: Sourced[str] | None = None
     liquidity_covenant_flags: Sourced[str]
     multi_year_trajectory: Sourced[str]  # 5y arc of revenue/EBITDA/segment-EBITDA/ROIC (per period)
     # (Phase-3) STRUCTURED per-period ROIC series — the numbers behind multi_year_trajectory's ROIC

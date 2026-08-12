@@ -426,6 +426,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-28 — in the latest, $-1M against $-41M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-29..2026-06-28",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "Finance Lease Liabilities (Capital Lease) 11 @ 6.730%; JPMorgan Credit Facility (Revolving Credit) undrawn/– @ NA Due 2029; Operating Lease Liabilities (Capital Lease) 43 @ 4.770%",
         "source_ref": "CIQ Financials→Capital Structure Details",

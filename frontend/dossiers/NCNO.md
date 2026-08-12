@@ -338,6 +338,7 @@ _NM = a real state (negative base), not missing_
 _Revenue YoY (latest same-quarter): +10.6% (Q1 Apr-30-2026 vs Q1 Apr-30-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
 - **Share-count trend:** buying back (trailing ~1.7y): 115,559,517 (2024-08-22) → 109,552,950 (2026-05-22), -5.2% [41]
+- **Non-operating earnings:** _UNKNOWN_ — no quarterly pre-tax income in EDGAR XBRL — the non-operating share cannot be derived without all three from ONE period
 - **Return ratios — per fiscal period** — [42]  <!-- ds-table -->
 
 |  | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | FY26 | LTM |

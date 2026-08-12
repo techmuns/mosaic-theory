@@ -3285,6 +3285,12 @@ def _trajectory_section_lines(m: MechanicalLayer) -> list[str]:
     out.append("## Operating trajectory")
     out += _trajectory_table_lines(m)
     out.append(_fact("Share-count trend", m.quality.share_count_trend))
+    # (PR-4) MAIN BODY, beside the trajectory it qualifies — this decides whether the EPS a reader
+    # is about to divide by means anything, so it is a decision value rather than audit context.
+    # Rendered only when the field exists: dossiers assembled before it carry None, and printing
+    # "unknown" for them would claim we looked.
+    if m.quality.nonoperating_earnings is not None:
+        out.append(_fact("Non-operating earnings", m.quality.nonoperating_earnings))
     if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
         out += _fin_table_lines("Return ratios — per fiscal period", m.return_ratios)
     out.append("")

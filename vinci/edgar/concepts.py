@@ -31,6 +31,21 @@ CONCEPT_ALIASES: dict[str, list[str]] = {
         "SalesRevenueNet",
     ],
     "operating_income": ["OperatingIncomeLoss"],
+    # PRE-TAX, and it exists to be SUBTRACTED FROM rather than read on its own: pre-tax minus
+    # operating IS the non-operating block, by the arithmetic of the income statement. That
+    # derivation is the whole reason this concept is here — the obvious alternative, reading a
+    # one-off gain tag directly, is what the corpus refuses. UBER's Q2-2026 revaluation is carried
+    # by THREE overlapping tags at three DIFFERENT values (EquitySecuritiesFvNiUnrealizedGainLoss
+    # 1,727M · DebtAndEquitySecuritiesGainLoss 1,612M · OtherNonoperatingIncomeExpense 1,342M), and
+    # the aggregate `NonoperatingIncomeExpense` is absent for roughly half the fleet and was
+    # abandoned by UBER itself after 2025-09-30. Choosing among those is same-window/different-basis
+    # — the class the buyback average was refused for. Subtracting two totals the filer states is
+    # not a choice at all.
+    "pretax_income": [
+        "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterest"
+        "AndIncomeLossFromEquityMethodInvestments",
+    ],
     "net_income": ["NetIncomeLoss", "ProfitLoss"],
     "eps_diluted": [
         "EarningsPerShareDiluted",
