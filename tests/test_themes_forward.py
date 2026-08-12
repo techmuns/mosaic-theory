@@ -433,11 +433,25 @@ def test_diagnostic_confound_names_the_driver() -> None:
     assert "NAIVE-4" in d.detail                       # committed-tier size, not hardcoded 56
 
 
-def test_themes_forward_cli_multi_cohort(tmp_path: Path) -> None:
+def test_themes_forward_cli_multi_cohort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """FIX 2 — the themes-forward CLI freezes a SECOND driver in ONE command (was script-only):
     --driver + --watchlist / --watchlist-triggers / --avoid-controls / --real-tier all land in the
-    frozen baskets, reading the demand-shaped ('category') worksheet schema."""
+    frozen baskets, reading the demand-shaped ('category') worksheet schema.
+
+    THE CONFIG IS REDIRECTED TO tmp_path because the freeze now also writes the CANONICAL committed
+    basket (data/themes/baskets/<driver>.json, operator decision 2026-08-12). Without this, running
+    the SUITE writes this test's four synthetic names over the real committed basket in the repo —
+    which is exactly what happened the first time, and is why the path is keyed on the configured
+    data dir rather than the process's cwd."""
+    from vinci import cli
     from vinci.cli import build_parser
+    from vinci.config import Config
+
+    cfg = Config(data_dir=tmp_path / "data")
+    cfg.ensure_dirs()
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
     ws = tmp_path / "ws.csv"
     ws.write_text(
         "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
@@ -464,6 +478,11 @@ def test_themes_forward_cli_multi_cohort(tmp_path: Path) -> None:
     assert set(b.layer_of.values()) == {"attritable-air", "munitions-scale", "counter-uas",
                                         "defense-autonomy"}  # schema-flex 'category' -> layer_of
     assert len(load_ledger(ledger)) == 4                 # one command, no bespoke script
+    # the canonical committed basket is written too, under the CONFIGURED data dir
+    canonical = cfg.data_dir / "themes" / "baskets" / "defense-demand-shift.json"
+    assert canonical.is_file(), "the freeze did not write the durable basket"
+    assert "written by the freeze" in FrozenBaskets.model_validate_json(
+        canonical.read_text()).provenance
 
 
 def test_themes_forward_driver_required_and_choices_gated(

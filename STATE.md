@@ -8563,11 +8563,49 @@ does not regenerate it, so the test stayed green while the logic was wrong. The 
 KEPT beside it: one catches the logic, the other catches what shipped. *An artifact pin proves what
 was written; it cannot prove what the code would write next time.*
 
-**OPERATOR TO-DO:** decide whether the frozen baskets become a committed artifact. They are derived
-analysis and would be committable under the private-repo rule, but `.gitignore` names them
-never-committed, so this build did NOT override that. Until it is decided the reconstruction path is
-the only route to an accrual, and it works ONLY for hold-none (zero-RATIFIED) freezes — the first
-RATIFIED theme will have no durable record of its BUY leg's entry dates at all.
+**~~OPERATOR TO-DO: decide whether the frozen baskets become a committed artifact.~~ DECIDED
+2026-08-12 — THEY ARE COMMITTED** (`data/themes/baskets/<driver>.json`), reversing the standing
+`.gitignore` rule for that artifact only. The reason the rule changed: Stage-4's entire product is a
+number that accrues over CALENDAR TIME and its input existed on exactly ONE machine, so on any other
+checkout the accrual could not be computed at all — two themes passed their 30-day horizon with
+their diagnostics still reading "0 days forward from freeze" for precisely that reason. The
+reconstruction path (#412) works ONLY for hold-none freezes, so the first RATIFIED theme would have
+had no durable record of its BUY leg's entry dates anywhere.
+**SCOPED, AND THE SCOPE IS PINNED.** The ratification LEDGER stays git-ignored — it is the analyst's
+raw dispositioned worksheet output and committing it was not what was decided; a test asserts the
+ledger and `data/forward/` are still ignored and that allowing `data/themes/` did not open the whole
+directory. The baskets qualify under the private-repo rule as DERIVED analysis: tickers, dates,
+cohorts and layer labels only — no verbatim filing text (`watchlist_triggers` is empty by
+construction and pinned so), no CIQ, checked on the FILES.
+**EVERY COMMITTED BASKET STATES ITS PROVENANCE**, because a basket written by the freeze and one
+RECONSTRUCTED from the published mirror hold the same names and are NOT the same evidence. All three
+today say RECONSTRUCTED — the freeze-time files were local-only and are gone. The freeze now writes
+the canonical file itself, and `themes-forward --from-baskets` re-measures from it (preferred over
+`--from-mirror`, which recovers from a summary and refuses a BUY leg).
+**A WRITE THAT ESCAPED ITS CONFIG, caught by the suite within minutes.** The canonical path first
+resolved from `Path.cwd()`, so an existing CLI test freezing a tmp worksheet wrote its four
+synthetic names straight over the real committed basket in the repo. Keyed on the configured data
+dir now, like every other durable artifact here, and the CLI test redirects config to a tmp tree.
+**A COMMITTED BASKET WAS STILL SILENTLY REWRITABLE — review P1 on #422.** Every later
+`themes-forward --worksheet …` for the same driver wrote a newly frozen object over the same
+filename: measured, re-freezing defense moved `entry_dates` from {2026-07-03} to {2026-08-12},
+shifting the forward window's start by 40 days with nothing said. The append-only ledger does not
+protect this artifact, and committing it made the rewrite WORSE — the file now looks authoritative.
+**This is the same class as the monitor-snapshot overwrite fixed hours earlier (#418), and this
+module did not learn from it.** A second freeze now REFUSES; `--supersede-basket` archives the
+existing basket under `baskets/archive/<driver>-<its freeze date>.json` first, so a supersession is
+never destructive. A HOLE IN THAT FIX, found by reading the archive name back: the freeze timestamp
+is DATE-ONLY, so two supersessions in one day collided and the second overwrote the first archive —
+disambiguated, because re-dispositioning a tier twice in a session is normal.
+**AND `--from-baskets` ACCEPTED ANY DRIVER (P2).** Passing the defense basket with
+`--driver ai-datacenter` printed an AI-datacenter header over 108 defense names and measured them.
+Unlike the mirror — which carries only a human label and can therefore only WARN — this artifact
+holds the canonical registry key, so the mismatch is CHECKABLE and is now refused.
+**AND THE FOURTH PIN-THAT-PROVED-NOTHING in this sequence, same root cause each time:** the
+round-trip compared `write_baskets(...)` to `baskets_path(...)`, two values that MOVE TOGETHER — 
+point the helper back at cwd and both change identically while every write lands in the repo. The
+lesson generalises past artifacts: *a pin that compares two outputs of the same broken assumption
+cannot fail; assert the property, not the agreement.*
 
 **THE DECISION CHAIN WAS THREE PIECES THAT NEVER TOUCHED (2026-08-12, operator-reported). Each
 worked; nothing joined them.** Diagnosed on a copy of the committed tree, measured not read:

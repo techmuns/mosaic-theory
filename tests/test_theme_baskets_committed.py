@@ -1,0 +1,230 @@
+"""The frozen theme baskets are a COMMITTED artifact — operator decision 2026-08-12.
+
+WHY THE STANDING RULE WAS REVERSED. `.gitignore` named the ratification ledger and the frozen
+baskets local-only. Stage-4's entire product is a number that accrues over CALENDAR TIME, and its
+input therefore existed on exactly one machine: on any other checkout the accrual could not be
+computed at all. Three themes froze in July 2026 and two passed their 30-day horizon in early
+August with their diagnostics still reading "0 days forward from freeze" for precisely that reason.
+The reconstruction path that closed the gap (#412) works ONLY for hold-none freezes, so the first
+RATIFIED theme would have had no durable record of its BUY leg's entry dates anywhere.
+
+REVERSED FOR THE BASKETS ONLY. The ledger stays git-ignored — it is the analyst's raw dispositioned
+worksheet output, and that is not what was decided.
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+import subprocess
+
+import pytest
+
+from vinci.themes.forward import BASKETS_SUBDIR, baskets_path, load_baskets, write_baskets
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+BASKETS = ROOT / "data" / BASKETS_SUBDIR
+
+#: The three frozen drivers, by their REGISTRY key (not the mirror slug — `defense` vs
+#: `defense-demand-shift` differ, which is the binding gap recorded on #412).
+FROZEN = ("ai-datacenter", "defense-demand-shift", "truckload-supply-purge")
+
+
+@pytest.mark.parametrize("driver", FROZEN)
+def test_every_frozen_theme_has_a_committed_basket(driver: str) -> None:
+    """THE POINT OF THE DECISION: the accrual's input exists on every checkout, not one machine."""
+    p = BASKETS / f"{driver}.json"
+    assert p.is_file(), f"{driver} has no committed basket — the accrual has no durable input"
+    b = load_baskets(p)
+    assert b.driver == driver, f"{p.name} carries driver {b.driver!r}"
+    assert b.all_committed, f"{driver}: an empty basket is not a record"
+    assert b.freeze_timestamp, f"{driver}: no freeze timestamp"
+
+
+@pytest.mark.parametrize("driver", FROZEN)
+def test_a_committed_basket_states_where_it_came_from(driver: str) -> None:
+    """A basket written by the FREEZE and one RECONSTRUCTED from the published mirror hold the same
+    names and are not the same evidence. Committing both without saying which is which would make
+    the durable record unauditable at exactly the point it starts being trusted.
+
+    All three today are reconstructions — the freeze-time files were local-only and are gone."""
+    b = load_baskets(BASKETS / f"{driver}.json")
+    assert b.provenance, f"{driver}: a committed basket with no stated provenance"
+    assert "RECONSTRUCTED" in b.provenance, (
+        f"{driver}: provenance no longer says this is a reconstruction — if a freeze has since "
+        f"rewritten it that is good, but re-read this pin rather than deleting it: {b.provenance}")
+
+
+@pytest.mark.parametrize("driver", FROZEN)
+def test_the_committed_basket_agrees_with_the_frontend_mirror(driver: str) -> None:
+    """CROSS-CHECK AGAINST THE OTHER DURABLE ARTIFACT. The basket was derived from the mirror, so
+    they must still agree on membership — if they drift, one of the two has been edited by hand."""
+    slug = {"defense-demand-shift": "defense"}.get(driver, driver)
+    mirror = json.loads((ROOT / "frontend" / "themes" / f"{slug}.json").read_text())
+    b = load_baskets(BASKETS / f"{driver}.json")
+    names = {str(n["ticker"]) for n in mirror["names"]}
+    assert set(b.all_committed) == names, (
+        f"{driver}: the committed basket and the frontend mirror disagree on membership — "
+        f"basket-only {sorted(set(b.all_committed) - names)}, "
+        f"mirror-only {sorted(names - set(b.all_committed))}")
+    assert len(b.ratified) == int(str(mirror["ratifiedCount"]))
+    assert set(b.watchlist) == {str(n["ticker"]) for n in mirror["names"]
+                                if "watchlist" in (n.get("cohorts") or [])}
+
+
+def test_the_committed_baskets_carry_no_licensed_or_verbatim_filing_text() -> None:
+    """SECURITY / LICENSING, checked on the FILES rather than assumed from the schema. A basket is
+    tickers, dates, cohorts and layer labels — derived analysis, which is what the private-repo rule
+    permits. The verbatim 10-K grade facts and the watchlist trigger prose live in the mirror and
+    the ledger, and must not have followed the names in here."""
+    for p in sorted(BASKETS.glob("*.json")):
+        raw = p.read_text()
+        low = raw.lower()
+        for marker in ("ciq", "capital iq", "api_key", "secret", "bearer "):
+            assert marker not in low, f"{p.name} contains {marker!r}"
+        doc = json.loads(raw)
+        assert doc["watchlist_triggers"] == {}, (
+            f"{p.name} carries verbatim trigger prose — the basket is a membership record; the "
+            f"trigger text belongs to the mirror and the ledger")
+        # a crude length guard: any single string long enough to be a filing quote
+        longest = max((len(v) for v in doc["layer_of"].values()), default=0)
+        assert longest < 60, f"{p.name}: a layer label of {longest} chars looks like prose"
+
+
+def test_the_ledger_is_still_ignored_and_the_basket_path_is_not() -> None:
+    """THE DECISION WAS SCOPED TO THE BASKETS. A `.gitignore` edit that swept the ratification
+    ledger in with them would commit the analyst's raw dispositioned worksheet output, which is not
+    what was decided — and the ledger is the one artifact that could carry a name's disposition
+    before the operator has published it."""
+    def ignored(rel: str) -> bool:
+        return subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT).returncode == 0
+
+    assert not ignored(f"data/{BASKETS_SUBDIR}/ai-datacenter.json"), (
+        "the committed basket path is ignored — the artifact would silently never be tracked")
+    assert ignored("forward_ai-datacenter_ledger.jsonl"), "the ratification ledger became tracked"
+    assert ignored("data/forward/anything.json"), "the local-only forward dir became tracked"
+    assert ignored("data/themes/scratch.json"), (
+        "allowing data/themes/ opened the whole directory — only the baskets subdir is tracked")
+
+
+def test_write_then_load_round_trips(tmp_path: pathlib.Path) -> None:
+    """The durable record must survive the trip it exists to make."""
+    b = load_baskets(BASKETS / "truckload-supply-purge.json")
+    p = write_baskets(b, data_dir=tmp_path)
+    assert p == baskets_path(b.driver, data_dir=tmp_path)
+    assert load_baskets(p) == b
+
+
+def test_the_basket_is_written_under_the_given_data_dir(tmp_path: pathlib.Path) -> None:
+    """MUTATION FINDING — the fourth pin in this sequence that proved nothing, same root cause.
+
+    The round-trip above compares `write_baskets(...)` to `baskets_path(...)`, and those two move
+    TOGETHER: point the path helper back at `Path.cwd()` and both answers change identically, so
+    the assertion holds while every write lands in the repo instead of the caller's directory. That
+    is not hypothetical — the first cut of this feature did exactly that, and an existing CLI test
+    wrote four synthetic names over the real committed basket.
+
+    Asserted on the property that matters: the file is UNDER the data dir it was handed."""
+    b = load_baskets(BASKETS / "truckload-supply-purge.json")
+    p = write_baskets(b, data_dir=tmp_path)
+    assert p.is_relative_to(tmp_path), (
+        f"the basket was written to {p}, outside the data dir it was given ({tmp_path}) — a write "
+        f"that escapes its configured root lands in the repo when a test or a script runs it")
+    assert not (ROOT / "data" / BASKETS_SUBDIR / "should-not-exist.json").exists()
+
+
+# --------------------------------------------------------------------------------------------
+# Review findings on #422
+# --------------------------------------------------------------------------------------------
+
+def test_a_second_freeze_refuses_and_leaves_the_original_basket_intact(
+    tmp_path: pathlib.Path,
+) -> None:
+    """OPERATOR REVIEW P1 ON #422. These are the IMMUTABLE frozen references and their per-name
+    entry dates are the input to a calendar-time accrual — but every later `--worksheet` freeze
+    wrote a new object over the same filename. Measured before the fix: re-freezing defense moved
+    `entry_dates` from {2026-07-03} to {2026-08-12}, shifting the forward window's start by 40 days
+    with nothing said. The append-only ledger does not protect this artifact, and committing it made
+    the silent rewrite worse — the file now looks authoritative.
+
+    THE SAME CLASS AS THE MONITOR SNAPSHOT OVERWRITE (#418), which this module did not learn from.
+    """
+    original = load_baskets(BASKETS / "truckload-supply-purge.json")
+    write_baskets(original, data_dir=tmp_path)
+    later = original.model_copy(update={
+        "freeze_timestamp": "2026-09-01T00:00:00",
+        "entry_dates": dict.fromkeys(original.entry_dates, "2026-09-01")})
+
+    with pytest.raises(FileExistsError, match="entry dates"):
+        write_baskets(later, data_dir=tmp_path)
+    assert load_baskets(baskets_path(original.driver, data_dir=tmp_path)) == original, (
+        "a refused re-freeze still altered the basket on disk")
+
+
+def test_a_deliberate_supersession_archives_the_basket_it_replaces(
+    tmp_path: pathlib.Path,
+) -> None:
+    """Re-freezing IS legitimate when the analyst re-dispositions a tier; losing the window it
+    replaces is not. `supersede=True` archives first, so a supersession is never destructive."""
+    original = load_baskets(BASKETS / "truckload-supply-purge.json")
+    write_baskets(original, data_dir=tmp_path)
+    later = original.model_copy(update={
+        "freeze_timestamp": "2026-09-01T00:00:00",
+        "entry_dates": dict.fromkeys(original.entry_dates, "2026-09-01")})
+
+    write_baskets(later, data_dir=tmp_path, supersede=True)
+    live = load_baskets(baskets_path(original.driver, data_dir=tmp_path))
+    assert live == later, "the supersession did not take effect"
+    archived = sorted((tmp_path / BASKETS_SUBDIR / "archive").glob("*.json"))
+    assert len(archived) == 1, f"expected one archived basket, found {[a.name for a in archived]}"
+    assert load_baskets(archived[0]) == original, "the archive does not hold what was replaced"
+    assert original.freeze_timestamp[:10] in archived[0].name, (
+        f"the archive is not named for the window it holds: {archived[0].name}")
+
+
+def test_two_supersessions_on_one_day_do_not_collide_in_the_archive(
+    tmp_path: pathlib.Path,
+) -> None:
+    """A HOLE IN MY OWN FIX, found by reading the archive name back. The freeze timestamp is
+    DATE-ONLY, so two supersessions on the same day produced the same archive filename and the
+    second overwrote the first — losing precisely what archiving exists to keep. Re-dispositioning
+    a tier twice in one session is a normal thing to do, so this is disambiguated rather than
+    assumed rare."""
+    a = load_baskets(BASKETS / "truckload-supply-purge.json")
+    b = a.model_copy(update={"entry_dates": dict.fromkeys(a.entry_dates, "2026-09-01")})
+    c = a.model_copy(update={"entry_dates": dict.fromkeys(a.entry_dates, "2026-09-02")})
+    write_baskets(a, data_dir=tmp_path)
+    write_baskets(b, data_dir=tmp_path, supersede=True)   # archives `a`
+    write_baskets(c, data_dir=tmp_path, supersede=True)   # archives `b`, SAME freeze date
+    archived = sorted((tmp_path / BASKETS_SUBDIR / "archive").glob("*.json"))
+    assert len(archived) == 2, (
+        f"a same-day supersession overwrote the earlier archive: {[p.name for p in archived]}")
+    # membership, not order: FrozenBaskets is unhashable (it holds dicts) and the archive
+    # filenames do not sort in write order ("-2.json" precedes ".json"). What matters is that
+    # BOTH replaced windows survived.
+    contents = [load_baskets(p) for p in archived]
+    assert a in contents and b in contents, "an archived window was lost"
+
+
+def test_from_baskets_refuses_a_driver_that_is_not_the_baskets_own(
+    tmp_path: pathlib.Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """OPERATOR REVIEW P2 ON #422. Unlike the mirror — which carries only a human label and can
+    therefore only WARN — this artifact holds the canonical registry key, so a mismatch is
+    checkable. Before the fix, passing the defense basket with `--driver ai-datacenter` printed an
+    AI-datacenter header over 108 defense names and measured them."""
+    import argparse
+
+    from vinci import cli
+
+    args = argparse.Namespace(
+        driver="ai-datacenter", worksheet=None, ledger=None, from_mirror=None,
+        from_baskets=str(BASKETS / "defense-demand-shift.json"), measure=False, as_of=None,
+        horizons="30", ratify_date=None, baskets_out=None, supersede_basket=False,
+        exposure_names=None, watchlist=None, watchlist_triggers=None, avoid_controls=None,
+        real_tier=None)
+    assert cli._cmd_themes_forward(args) == 1
+    out = capsys.readouterr().out
+    assert "is the 'defense-demand-shift' basket, not 'ai-datacenter'" in out, out
+
+    args.driver = "defense-demand-shift"          # the matching driver still works
+    assert cli._cmd_themes_forward(args) == 0
