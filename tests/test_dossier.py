@@ -1306,7 +1306,7 @@ def test_covenant_pointers_reject_cross_cik_and_locate_the_wu_execution_8k() -> 
                      file_date=date(2024, 6, 4), display_names=["Microvast"])])
     got = dm._covenant_pointers(
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
-        "0001760689", insts)
+        "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     accs = {r.accession for r in got.value}
     assert "0001193125-05-034397" not in accs  # cross-CIK AXESSTEL 2005 REJECTED (the bug it fixes)
@@ -1330,7 +1330,7 @@ def test_audit_covenant_pointers_accept_html_named_agreement_exhibit() -> None:
         file_date=date(2024, 6, 4), display_names=["Microvast"])])
     got = dm._covenant_pointers(
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
-        "0001760689", insts)
+        "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     wu = next(r for r in got.value if r.accession == "0001760689-24-000021")
     assert any(e.endswith(".html") for e in wu.exhibits)  # the .html agreement exhibit is kept
@@ -1803,7 +1803,7 @@ def test_covenant_pointers_real_mvst_cik_scoped_finds_wu_8k_no_cross_cik() -> No
     edgar, http = EdgarClient.from_config(), build_sec_http()
     insts = [_inst("Convertible Loan With Shareholder - Initial Term Loan", 12.0, "2026-05-28"),
              _inst("Notes Payable", 78.3, None, type="Bonds and Notes", secured=False)]
-    got = dm._covenant_pointers(edgar, http, "0001760689", insts)
+    got = dm._covenant_pointers(edgar, http, "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     accs = [r.accession for r in got.value if r.accession]
     assert "0001760689-24-000021" in accs  # the Wu execution 8-K

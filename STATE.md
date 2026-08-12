@@ -13240,16 +13240,50 @@ sign-off.**
   REAL and will surface when those names are re-assembled at a later as-of (item 7). A FLAG, never
   a deletion, and never a claim about WHICH instrument died: matching a termination to a facility
   means reading the 8-K, and a wrong match is worse than an honest "something ended".
-- **COVENANT POINTERS FIND NOTHING FOR 4 OF 14 NAMES — wider than the one name it was raised as
-  (2026-08-12, PR-3; NOT FIXED).** FUBO, SMPL, **UBER** and VITL all return **zero**
-  `covenant_pointer_rows`, and all four carry exactly 116 covenant terms — a suspiciously identical
-  count worth its own look. UBER has **15 instruments** and finds no pointer at all. This is the
-  find-NOTHING failure, distinct from EPAM's four-years-wrong and AORT's five-and-a-half-year-stale
-  maturities, which are find-the-WRONG-one. **PR-3's warning is silent on it by construction** —
-  the vintage note keys on the CIQ panel, not on pointers, so those four names DO get an age and a
-  termination check; what they lack is any located agreement exhibit to read terms from. Diagnosing
-  it means exercising the efts full-text path (`mechanical.py:2187-2220`), which is a network
-  investigation rather than a code fix, and wants its own brief.
+- **COVENANT POINTERS FOUND NOTHING FOR 4 OF 14 NAMES — DIAGNOSED AND FIXED (2026-08-12).** FUBO,
+  SMPL, UBER and VITL returned **zero** `covenant_pointer_rows`. **ROOT CAUSE: `ex-?10\d` demands a
+  DIGIT immediately after "10"**, so it matched only the compacted filename form (`ex102` = exhibit
+  10.2) — the MINORITY convention. Real filenames in this fleet's own filings: `vitl-ex10_10.htm`,
+  `aort-…xexx1032.htm`, `fubo-…exx1026.htm`, `f8k032018ex10-1_simplygood.htm`, `a19-22146_1ex10d1
+  .htm`. **NFLX was the only name it matched, and only by its filing agent's naming style.**
+  **THE FAILURE WAS TOTAL RATHER THAN PARTIAL** because the fragment appears in BOTH passes — the
+  10-K exhibit index filter AND `_AGREEMENT_EXHIBIT_RE` for the efts hits — so one flaw closed both
+  routes on the same names. Now one shared `_EX10_RE`, pinned to stay shared.
+  **WHAT IT WAS NOT**, each eliminated before landing on the regex: efts works (UBER 17 hits, SMPL
+  46, AORT 16); the instruments do qualify for a query (all four generate one); the exhibits exist
+  (SMPL's 8-K hits carry a real credit agreement the filter rejected). Nothing to do with company
+  type — purely filing-agent filename convention.
+  **MEASURED LIVE, all 14: FUBO 0→6 · SMPL 0→3 · UBER 0→8 · VITL 0→3**, and seven already-working
+  names gained pointers too (AORT 9→13 · CNXC 5→9 · MVST 6→9 · IT 6→7 · EPAM 4→5 · NCNO 4→5 ·
+  VRRM 5→6). `10` stays pinned so exhibit 19.1/21.1 still correctly miss.
+  **SECONDARY, also fixed:** `_covenant_query` had no `note` branch, so convertible notes queried
+  "Loan Agreement" instead of "Indenture". Not the binding constraint (querying "Indenture" for
+  UBER still returned zero exhibit-bearing hits before the regex fix) but it decides what the
+  search ASKS.
+  **THIRD, also fixed — two failures that read alike:** `covenant_pointers` said "no CIK-scoped
+  agreement exhibit located" while `covenant_terms` two fields away said "extraction failed: no
+  covenant terms extracted from LOCATED exhibits". One page asserting both, pointing at opposite
+  remedies (the LLM phase vs the pointer search). The digest now keys on whether a pointer exists.
+  **CORRECTION TO THE ORIGINAL ENTRY:** the "exactly 116 covenant terms" flagged as suspicious was
+  `len()` on a STRING — the character count of a shared failure message, not a count of terms. That
+  measurement error is what made four names look like they shared a data shape when what they
+  shared was a code path.
+  **AS-OF BOUNDED (review finding, #426):** `_covenant_pointers` took `tenks[0]` from TODAY's
+  submissions index and accepted all efts hits, so re-assembling a historical dossier could attach
+  an agreement filed after its own reference date — the #416 lookahead class again, and **the
+  widened matcher made it REACHABLE** for the four names that previously located nothing. Both
+  passes now bound to `reference_date`. On today's data the bound changes nothing (bounded and
+  unbounded runs are identical across all 14), so it is protective rather than corrective — pinned
+  by a fixture whose newest filing postdates the as-of.
+  **THREE STATES, NOT TWO (review finding, #426):** the digest keyed on `bool(ptrs.value)`, which is
+  falsy for BOTH "the search ran and found nothing" AND "the search could not run" (no CIK, EDGAR
+  unreachable) — so a lookup that never happened reported a COMPLETED search. Introduced WHILE
+  fixing a two-states-must-not-read-alike bug. Now keyed on `COVENANT_SEARCH_FOUND_NOTHING`, a
+  shared constant rather than a duplicated literal, so the two cannot drift.
+  **ARTIFACTS NOT UPDATED (deliberate):** pointers are ASSEMBLED, not refreshable, and the terms
+  they unlock are LLM-extracted. Injecting rows via the transform seam would leave a page carrying
+  pointers beside a digest still saying none were located — the PR-1 half-refresh incoherence. The
+  committed pages gain this at the next **re-assembly**, which is where the terms arrive too.
 - **QUARTERLY ONE-OFFS HAD NO ROUTE ONTO A PAGE — `quality.nonoperating_earnings` (2026-08-12,
   PR-4).** NFLX's Q1-2026 carries a **$2.59bn** Warner Bros. Discovery termination fee below the
   operating line (40% of pre-tax, 21% of revenue) and UBER's Q2-2026 ~**$1.39bn** of investment
