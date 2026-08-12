@@ -333,9 +333,9 @@ _export date unverified (data ≥ 2026-08-05)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | EPS Normalized | '0.84 - 0.88' | FQ3 2026 | 2026-08-05 | fresh | actual ≥ floor 2/2 | FQ2 2026 MET |
-| Revenue | '3,077.00 - 3,082.00' | FQ1 2020 | 2020-04-17 | 2294d (stale) | actual ≥ floor 2/3 | FQ1 2020 MET |
 | EBITDA | '2,860.00 - 2,960.00' | FQ3 2026 | 2026-08-05 | fresh | actual ≥ floor 23/23 | FQ2 2026 MET |
-| Capital Expenditure | '(550.00) - (600.00)' | FY 2020 | 2020-05-07 | 2274d (stale) | spend ≤ ceiling 0/1 | FY 2020 MISSED |
+| Revenue | none current (last: '3,077.00 - 3,082.00') | FQ1 2020 | 2020-04-17 | 2294d (stale) | actual ≥ floor 2/3 | FQ1 2020 MET |
+| Capital Expenditure | none current (last: '(550.00) - (600.00)') | FY 2020 | 2020-05-07 | 2274d (stale) | spend ≤ ceiling 0/1 | FY 2020 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $101.61, median $105.00, high/low 150.00/70.00, N 47/47; Ratings: Buy 34, Outperform 9, Hold 6, Underperform 0, Sell 1, No Opinion 2, Buy 6, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-05 · export date unverified] [23]
 - **Revision-event log (250 events · 33 broker-days)** — [49]  <!-- ds-table -->

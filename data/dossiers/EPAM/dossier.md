@@ -397,8 +397,8 @@ _export date unverified (data ≥ 2026-08-09)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | Revenue | '1,410.00 - 1,425.00' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 67/68 | FQ2 2026 MET |
-| Capital Expenditure | '(19.00) - (20.00)' | FY 2016 | 2016-02-18 | 3814d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 | EPS Normalized | '3.38 - 3.46' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 64/65 | FQ2 2026 MET |
+| Capital Expenditure | none current (last: '(19.00) - (20.00)') | FY 2016 | 2016-02-18 | 3814d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $122.24, median $120.00, high/low 200.00/85.00, N 17/17; Ratings: Buy 7, Outperform 3, Hold 9, Underperform 0, Sell 0, No Opinion 0, Buy 0, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-08-09 · export date unverified] [25]
 - **Revision-event log (250 events · 11 broker-days)** — [45]  <!-- ds-table -->

@@ -400,11 +400,11 @@ _export date unverified (data ≥ 2026-07-21)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| EPS Normalized | 1.69 | FY 2023 | 2023-06-29 | 1103d (stale) | actual ≥ floor 2/3 | FY 2023 MISSED |
 | Revenue | '322.00 - 332.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 9/11 | FQ3 2026 MET |
 | EBITDA | '52.00 - 57.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 7/10 | FQ3 2026 MET |
 | Capital Expenditure | '(20.00) - (25.00)' | FY 2026 | 2026-07-09 | fresh | spend ≤ ceiling 6/8 | FY 2025 MISSED |
 | Gross Margin % | 32.5 | FY 2026 | 2026-07-09 | fresh | actual ≥ floor 4/10 | FQ2 2026 MISSED |
+| EPS Normalized | none current (last: 1.69) | FY 2023 | 2023-06-29 | 1103d (stale) | actual ≥ floor 2/3 | FY 2023 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $14.88, median $14.00, high/low 20.00/12.00, N 8/8; Ratings: Buy 4, Outperform 0, Hold 7, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-07-21 · export date unverified] [25]
 - **Revision-event log (250 events · 10 broker-days)** — [50]  <!-- ds-table -->

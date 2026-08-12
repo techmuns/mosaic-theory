@@ -334,10 +334,10 @@ _export date unverified (data ≥ 2026-08-07)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Gross Margin % | '47.00 - 48.00' | FQ4 2002 | 2002-10-17 | 8686d (stale) | — | — |
-| EBITDA | '14.50 - 16.50' | FQ2 2003 | 2003-06-09 | 8451d (stale) | actual ≥ floor 1/2 | FQ2 2003 MISSED |
 | Revenue | 12,860.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 70/83 | FQ2 2026 MISSED |
 | EPS Normalized | 0.82 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 30/40 | FQ2 2026 MET |
+| Gross Margin % | none current (last: '47.00 - 48.00') | FQ4 2002 | 2002-10-17 | 8686d (stale) | — | — |
+| EBITDA | none current (last: '14.50 - 16.50') | FQ2 2003 | 2003-06-09 | 8451d (stale) | actual ≥ floor 1/2 | FQ2 2003 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $94.04, median $93.00, high/low 135.00/70.00, N 45/45; Ratings: Buy 29, Outperform 7, Hold 15, Underperform 0, Sell 0, No Opinion 1, Buy 3, Outperform 0, Hold 4, Underperform 0, Sell 0, Buy 3, Outperform 0, Hold 4, Underperform 0, Sell 0, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0, No Opinion 0, Buy 3, Outperform 0, Hold 4, Underperform 0, Sell 0  [data ≥ 2026-08-07 · export date unverified] [26]
 - **Revision-event log (250 events · 19 broker-days)** — [48]  <!-- ds-table -->
