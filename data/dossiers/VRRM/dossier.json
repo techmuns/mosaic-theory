@@ -354,7 +354,7 @@
         "value": 53.9,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $233.7M − capex $129.1M = $104.6M — 0.52x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
         "value": "EBITDA margin: Dec-31-2021 (R) 42% → Dec-31-2022 (R) 41% → Dec-31-2023 (R) 37% → Dec-31-2024 (R) 39% → Dec-31-2025 37% → Mar-31-2026 (LTM) 37%; gross margin: Dec-31-2021 (R) 64% → Dec-31-2022 (R) 63% → Dec-31-2023 (R) 62% → Dec-31-2024 (R) 61% → Dec-31-2025 58% → Mar-31-2026 (LTM) 57%; absolute EBITDA: Dec-31-2021 (R) 229 → Dec-31-2022 (R) 304 → Dec-31-2023 (R) 306 → Dec-31-2024 (R) 342 → Dec-31-2025 362 → Mar-31-2026 (LTM) 358; absolute revenue: Dec-31-2021 (R) 551 → Dec-31-2022 (R) 742 → Dec-31-2023 (R) 817 → Dec-31-2024 (R) 879 → Dec-31-2025 979 → Mar-31-2026 (LTM) 979  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -395,6 +395,12 @@
       "share_count_trend": {
         "value": "buying back (trailing ~1.7y): 164,658,507 (2024-08-31) → 151,906,653 (2026-05-31), -7.7%",
         "source_ref": "EDGAR XBRL shares, trailing 2024-08-31..2026-05-31",
+        "status": "present",
+        "note": null
+      },
+      "nonoperating_earnings": {
+        "value": "$-11M of the quarter ended 2026-03-31 came from BELOW the operating line — 28% of pre-tax income, and 5% of revenue. Operating income $52M → pre-tax $40M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "status": "present",
         "note": null
       },
@@ -4168,7 +4174,13 @@
         "status": "present",
         "note": null
       },
-      "maturity_event": null
+      "maturity_event": null,
+      "panel_vintage": {
+        "value": "the debt schedule is 132d old (source filed 2026-02-24); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-24-2026",
+        "status": "present",
+        "note": null
+      }
     },
     "capital_allocation": {
       "goodwill": {
@@ -4749,7 +4761,16 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                193.171,
+                218.337,
+                206.101,
+                223.642,
+                255.802,
+                233.678,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -4764,7 +4785,16 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -25.0,
+                -48.2,
+                -57.0,
+                -70.9,
+                -119.1,
+                -129.1,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -4779,7 +4809,16 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                197.5185,
+                183.050125,
+                139.2395,
+                145.748,
+                82.9445,
+                53.916,
+                null,
+                null
+              ],
               "material": false
             }
           ],
@@ -6875,7 +6914,7 @@
           "value": "$4.1 million, or 4.4%",
           "value_num": 4.4,
           "unit": "%",
-          "verbatim": "Government Solutions service revenue increased by $4.1 million, or 4.4%, from $94.0 million for the three months ended March 31, 2025, to $98.1 million for the three months ended March 31, 2026. The increase was primarily driven by $7.5 million in revenue from expansions in speed, red light and bus lane programs outside of NYCDOT, partial",
+          "verbatim": "Government Solutions service revenue increased by $4.1 million, or 4.4%, from $94.0 million for the three months ended March 31, 2025, to $98.1 million for the three months ended March 31, 2026. The increase was primarily driven by $7.5 million in revenue from expansions in speed, red light and bus lane programs outside of NYCDOT, partially offset by a $3.4 million decrease in revenue primarily driven by the pricing change, net of installation revenue from new camera installations under the new NYCDOT contract.",
           "following_context": null,
           "source_ref": "10-Q 0001193125-26-209227",
           "tier": "anchored"
@@ -7342,6 +7381,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-07-30T07:59:48.312188Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Industrials",
   "industry": {
     "value": "Data Processing and Outsourced Services",

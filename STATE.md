@@ -8388,8 +8388,12 @@ DR-2. **N1, N3, N4, N5, N6 — FIVE AUDIT FINDINGS WITH NO QUEUE HOME** (disposi
     **N5 is the cheapest** — the surprise record renders the ANNUAL GAAP series only ("FY2025 −36%")
     while the last three quarters beat normalized EPS +8.3/+12.5/+20.0%; it is a second read off a
     sheet already being opened, not a judgment.
-    **N3 is now checkable** — base 1,330 vs `consensus_levels` FY2028 median 1,339.5 (7 est, 07-30);
-    home is the two-clocks note, and A1 supplies the comparison.
+    **N3 is CLOSED — consciously accepted risk, operator ruling 2026-08-11** (see the edge-shape
+    decisions entry below for the falsifier). It was checkable by then: base 1,330 vs
+    `consensus_levels` FY2028 median 1,339.5 (7 est, 07-30), 0.7%. The finding is not disputed and
+    the arithmetic stands — it is the two-clocks note's live instance, and the ruling is the same
+    one the operator gave R2 on 2026-07-24: **the valuation clock is not shortened to the holding
+    period.** N3 is therefore a duration mismatch we hold deliberately, not a defect awaiting a fix.
     **N4** — bear multiple 7.0x sits above the 5.34x the market pays, sixty lines from the page's own
     `0%ile → near-floor`; neither references the other.
     **N1** — the thesis frames category decline while the page's own bear point [5] states
@@ -8421,6 +8425,357 @@ DR-5. **ONLY 6 OF 11 DOSSIERS CARRY SCENARIO RECORDS** (operator, carried across
     empty — which is the correct behaviour, not a bug, but it must be a stated expectation before the
     render ships rather than a surprise when five cards come back blank. Same population drives the
     covenant-basis three-state branch (5 no-record names take the legacy line by design).
+
+**EDGE-SHAPE DECISIONS — 2026-08-11, operator-directed. A CATALYST GATE WAS PROPOSED AND DECLINED;
+N3 CLOSES AS CONSCIOUSLY ACCEPTED RISK.** The question put to the operator: does an overshoot BUY
+with no catalyst and no cohort attention earn the analyst hours, when the market is not talking
+about the CPG/GLP-1 names the screen surfaces (SMPL, BRBR) — or should those hours go to megacaps
+and tailwind-carried cohorts that would pay out inside the measurement window and give the engine
+faster reps? Four rulings:
+(1) **NO CATALYST REQUIREMENT — A GATE WAS DECLINED, AND A TILT ALREADY EXISTS.** Nothing gates a
+name on having an identifiable event. **This entry must not be read as saying the ranker is
+catalyst-blind, because it is not:** `vinci/rank/ranker.py`'s CHARACTER AXIS *is* a catalyst axis —
+25% of the Tier-1 score, scoring a grind/bleed with no discrete gap-down at `_CHAR_BLEED = 0.30`
+against `_CHAR_DISCRETE_BASE = 0.80` rising toward ~1.0 with recency. An uncatalyzed name therefore
+gives up ~0.175 of its rank score (0.25 × 0.70) before any human judgment is applied. The ruling
+removes the HARD requirement and leaves the tilt standing: uncatalyzed names are disfavoured in the
+queue's ORDER, not excluded from it. (2) **THE SPEED GOALS ARE ALL THREE** — numbers to show
+investors, proof the calls are right, and reps for the team; selected together and NOT ranked
+against each other, so nothing here licenses trading one off against the others. (3) **ANALYST
+HOURS** go to the UBER/V/NFLX verdicts and to picking within the three frozen theme baskets — the
+two options chosen from those put; no new sleeve and no new screen was among them. (4) **PRICE
+STATES MAY NEVER SINK OR MOVE A RANK** (the concurrent price-states session's ruling, same date;
+binding fund-wide, and the constraint the signal work below is written under).
+**SCOPE QUESTION ON (4), FLAGGED NOT RESOLVED — it collides with (1) at the edges.** That ruling was
+measured and made over MA/RSI states (`BINARY_STATES` = `above_ma50`, `above_ma200`, `ma50_rising`,
+`rsi_oversold`). The character axis is ALSO price-derived — its "catalyst" is read from the EOD
+gap-down detector, never from filing text, as the axis's own comment says — and it moves ranks
+today. Whether "price state" reaches a pre-existing event-geometry axis is unstated by both
+sessions. **Not a contradiction to fix here**; a boundary the operator should draw before the next
+ranker change leans on either half of it.
+
+**WHAT (1) COSTS, STATED RATHER THAN NETTED.** N3 is the live instance: SMPL's base revenue 1,330
+is the street's FY2028 figure, carried against a **180-day** ledger horizon. Declining the gate
+means the fund knowingly scores theses whose payoff sits outside the window it measures in — a BUY
+can be right on the business and still resolve flat on the clock. **FALSIFIER (pre-registered):**
+if resolved BUYs cluster at ~zero excess AND a material share of them re-rate AFTER their horizon
+closes, the horizon is measuring the wrong thing and the gate comes back to the table. **Read it
+knowing the population is ALREADY TILTED:** per (1) the character axis pushes uncatalyzed names
+down the queue, so few of them may reach a BUY at all — a null result would then be weak evidence
+rather than exoneration, and the honest reading is to count how many uncatalyzed BUYs the sample
+actually contains before concluding anything from it. Checkable
+off the ledger with no new instrument, only the discipline to look — but **not soon, and the dates
+are worth knowing before anyone waits on it.** The committed ledger holds four decisions and two
+closes. First resolution of any kind is **VRRM (AVOID) 2026-12-14**; the first BUY horizons pass
+**2027-01-16** (IT and SMPL); the only BUY still open runs to **2028-02-04**.
+
+**OPERATOR TO-DO — ONE QUESTION THIS FALSIFIER CANNOT ANSWER FOR ITSELF, surfaced now rather than
+argued about on the day it is first read.** Both 2027-01-16 BUYs were CLOSED in July 2026, so do
+they count as "resolved BUYs" here? The code's current behaviour, read rather than assumed
+(`vinci/scoring/harness.py`): the close row is skipped and the DECISION row is still scored at its
+original horizon, against the market price on that date — **the realized exit price never enters
+the spread at all.** So today the answer is implicitly "yes, they count, at a price the fund did not
+receive." *Proposed* (the machine's read, for the operator to confirm or override): they count, on
+the grounds that the horizon is what the thesis was scored against and closing early is a separate
+decision that does not retire the prediction. Waiting instead for the sole open BUY would leave the
+falsifier unreadable until 2028. **Not ruled here** — a falsifier whose population is chosen after
+the returns are visible is not a falsifier, so this wants an answer BEFORE 2027-01-16.
+
+**ROUND-2 RESEARCH RECORD (literature, read 2026-08-10/11. NOT measured on our data; the one thing
+that was measured here says so explicitly).**
+**Three corrections to round 1.** (a) **Long-only was under-weighted** — AVOIDs prove the
+discriminator, only BUYs pay LPs, so the ROI question is a BUY-side question and time-to-payment is
+the whole IRR. (b) **"Down a lot" is an anti-signal on its own**: George–Hwang's 52-week-high
+anchoring finds far-below-high names keep underperforming, while nearness-to-low predicts nothing.
+The screen carries no stabilisation element, so the raw pool tilts toward continued losers. (c)
+**Do not buy while estimates are still falling** (Chan–Jegadeesh–Lakonishok revisions drift, slowest
+to update on the worst performers). Revisions are already extracted, and display-only today.
+**Confirmed from round 1.** The POOL is right (Brandes' falling-knives work: a losing majority with
+a fat right tail still compounds, so selection is everything — which is precisely what this fund
+claims to supply); megacaps remain the thinnest-coverage edge we can reach; tailwind-riding carries
+documented crash risk at regime turns (Daniel–Moskowitz, momentum crashes); and classic technicals
+fail data-snooping controls (Sullivan–Timmermann–White, Bajgrowicz–Scaillet). **That last finding
+was independently reproduced ON OUR OWN DATA** by the price-states session in the same week — RSI
+null, the 200d-MA filter degenerate — which makes it convergent evidence from two directions rather
+than a citation we happen to like.
+**Evidence-graded signal table, retained for the record** (now the price-states session's input):
+buyback-after-crash ~30% abnormal / 3–4y (Peyer–Vermaelen) · insider clusters 4–8% / 6–12mo
+(Lakonishok–Lee, Seyhun, Cohen–Malloy–Pomorski) · F-score +7.5%/yr (Piotroski) · revisions drift
+(CJL 1996) · distress → anomalously LOW returns (Campbell–Hilscher–Szilagyi 2008) · short interest
+(Rapach–Ringgenberg–Zhou) · 13D catalysts compress gaps to 3–18 months.
+
+**AND ONE CORRECTION TO THIS SESSION'S OWN EARLIER REASONING, because it was repeated more than
+once before it was checked against the code.** "The proof spread nets out tailwinds by
+construction" is TRUE ONLY OF A MARKET-WIDE TAILWIND. `vinci/scoring/metrics.py` `aggregate`
+computes `buy_mean − avoid_mean` on **raw** `name_return`, not on benchmark excess: a rise common to
+both legs does subtract out, but a tailwind concentrated in the BUY leg — which is exactly what
+deliberately picking a hot cohort produces — lands in the primary number looking like
+discrimination. The beta it is carrying shows up only one line down, in `buy_excess_gross` and the
+beta/alpha regression. **Consequence for ruling (3):** buying tailwind names to reach resolutions
+faster would inflate the one number the fund exists to prove. Read the excess and beta lines beside
+the spread before believing any cohort-timed improvement in it.
+
+**HANDOFF TO THE PRICE-STATES / EVIDENCE-STRIP SESSION (PR #405 and its Phase B/C).** Their measured
+result STRENGTHENS ruling (1) rather than competing with it: waiting for the 50d-MA reclaim is free
+(+0.5 to +1.3 pts vs MDY at every horizon), **0 of 297 eventual ≥+50% winners were missed by
+waiting**, and the median winner had earned only 2% of its total gain before the reclaim. If there
+is no rush to catch the knife, then a missing catalyst costs entry TIMING, not the trade — which is
+the empirical half of the ruling this entry records.
+**TWO SIGNALS THEIR PHASE B/C LIST DOES NOT CARRY** — offered for their consideration, deliberately
+not built here, since the queue/dossier surface is theirs: (a) **a buyback ANNOUNCED AFTER the
+crash** (Peyer–Vermaelen; strongest in precisely this pool, and 8-K parsing already exists), and
+(b) **revision-breadth INFLECTION rather than level** (CJL drift; already extracted, display-only).
+Both are filing/estimate-sourced, so both clear their own price-states ruling — that ruling bars a
+PRICE state from moving a rank, and neither of these is one.
+
+**NO MACHINE CHECK SHIPS WITH THIS ENTRY, deliberately, and the INVARIANT RULE is satisfied by
+saying so rather than by inventing one.** A gate that was declined has nothing to enforce; the only
+enforceable version — "warn when a base year sits beyond the horizon" — is the same gate in a softer
+costume, and it would fire on every R1 record by construction (R1 is timeless; see the two-clocks
+note). The pre-registered falsifier above is the control, and it reads off the ledger.
+
+**OPERATOR CONTRACT CHANGE — `data/followed.json` ENTRIES ARE NOW DATED (PR #409, operator review
+P1).** The quality sleeve's kill test compares its BUY leg against indexing the follow list, and the
+first cut read the roster as "whatever is in the file today" and applied it to every historical
+verdict. On an APPEND-ONLY ledger that is non-reproducible: adding a quality name next month
+silently rewrites the comparator for a BUY recorded last month — over a window in which that name
+was not followed at all — so the kill test's historical answer would depend on future roster edits.
+Two rules follow, and they are the operator's to keep:
+1. **Every follow entry states `followed_since`** (ISO date). It is REQUIRED — a name that cannot
+   be placed in time cannot be placed in a basket, and "assume always followed" is the look-ahead
+   itself. The three committed entries were backfilled from `git log -- data/followed.json`, not
+   chosen: **UBER 2026-08-07** (`fdb95f4`), **V 2026-08-10** (`63dc405`), **NFLX 2026-08-10**
+   (`b939ede`).
+2. **Removing a name is a TOMBSTONE, never a delete** — set `followed_until` (EXCLUSIVE; the last
+   day held is the day before it). A deleted entry takes its history with it and silently re-dates
+   every past basket that contained it.
+**CONSEQUENCE, STATED SO IT IS NOT MISREAD AS A BUG:** the quality book has no basket history yet.
+The roster as of 2026-08-06 is EMPTY, so any quality verdict entered before 2026-08-07 refuses its
+comparator with that reason rather than back-dating today's three names onto it. The kill test
+starts producing numbers once quality verdicts are entered after the follow dates and their
+horizons pass — which is the correct behaviour and the point of the fix.
+
+**THEME FORWARD ACCRUAL — FIRST NUMBERS, AND THE PREMISE THAT WAS WRONG (2026-08-12, PR #411).**
+A plan item asserted the theme ratification ledger "has never been written once", inferred from
+`ratifiedCount: 0` across all three frontend mirrors. **That inference was wrong, and the reasoning
+is worth keeping:** `ratifiedCount: 0` is the documented EMPTY-BUY reality (every committed name
+PASSED, zero RATIFIED), not an unexercised path. All three themes DID freeze through
+`append_record` → `freeze_baskets` → `measure_hold_none` — the mirrors carry `undefinedMeasures`,
+cohort splits and honesty labels that only that path emits. The ledger and baskets are git-ignored
+BY DESIGN (`.gitignore`: "derived, LOCAL-only … never committed").
+**THE REAL GAP, which the wrong premise was pointing at from the side:** because those inputs are
+local-only they were gone, so the forward measurement — the entire point of Stage 4, a number that
+accrues over CALENDAR TIME — **could not be recomputed on any machine that did not run the freeze.**
+Two themes passed their 30-day horizon in early August with their committed diagnostics still
+reading `0 days forward from freeze`. Closed by `baskets_from_mirror` + `themes-forward
+--from-mirror`, which rebuilds the baskets from the one durable artifact. **The ledger stays
+un-committed — that remains the operator's call**, and the tension is real: the mirror is now
+load-bearing for measurement, and nothing pins it against the ledger it was derived from.
+**FIRST MEASURED READS (as-of 2026-08-11, 30d horizon, Polygon EOD, benchmark IWM):**
+- **ai-datacenter** (frozen 07-02, 56 names): NAIVE-56 **−11.1%** raw, **−8.9%** vs IWM →
+  declining to buy the tier was VINDICATED in this window. Exposure-carry divergence **−2.4%**
+  (5 genuine-exposure −11.1% vs 51 other-PASSED −8.7%) — the exposure grade carried NO positive
+  forward information here; it pointed slightly the wrong way.
+- **defense-demand-shift** (frozen 07-03, 108 names): NAIVE-108 **−7.0%** raw, **−4.9%** vs IWM.
+  Exposure-carry divergence **−1.0%**. Category split runs from `counter-uas` −0.2% and
+  `munitions-scale` +0.3% to `unspecified` −9.5%.
+- **truckload-supply-purge** (frozen 07-14): 30d horizon NOT reached at 29 days → every diagnostic
+  `pending`, n=0. Correct, and kept as a negative pin.
+**READ THESE AS THE HARNESS LABELS THEM, NOT AS AN EDGE RESULT.** Both diagnostics are
+BETA-CONFOUNDED, the BUY leg does not exist so every RATIFIED-dependent spread is UNDEFINED, and one
+30-day window on two drivers is far under the a-priori power floor (8 theme-quarters, 4 drivers).
+The exposure-carry sign is the one genuinely informative datum, and it is NEGATIVE on both drivers
+— worth watching, not concluding from.
+**A MIRROR CARRIES NO REGISTRY KEY, so nothing binds a mirror file to a driver (review finding on
+#412).** `ai-datacenter`'s mirror `driver` field reads **"AI-datacenter value chain"** — a human
+label, not the key — and `defense`'s slug is `defense` against the registry key
+`defense-demand-shift`. Two consequences: (a) taking the mirror's field as identity made ONE report
+name two drivers (the CLI header printed the key, every confound string printed the label), now
+fixed by making the caller's registry key authoritative; (b) **`--from-mirror <wrong file> --driver
+<name>` cannot be caught by any machine check** — the CLI echoes the mirror's own slug/driver on
+line two and asks the operator to confirm, which is mitigation, not a guard. Closing it properly
+means the mirror carrying its registry key; do it when the mirror builder is next touched (there is
+no mirror builder in `vinci/` today — the three mirrors were hand-built).
+
+**RULED 2026-08-12 — A CLOSED POSITION'S DECISION KEEPS ACCRUING (decision-queue item 1), AND THE
+HEADLINE MUST DECOMPOSE.** The question was whether a decision closed early still counts toward the
+spread. **It does, and nothing changed about that:** the spread measures the DISCRIMINATOR, and
+closing is a capital decision that does not retract the call — the same rule the scoring harness
+already followed. What the ruling does NOT license is a headline the reader cannot take apart. On
+2026-08-11 the book read **+9.54 pp**, and **+29.00 pts of the BUY leg came from IT — a position
+closed at the entry price on 2026-07-21, realized P&L +0.0%.** Over the rows still held the same
+spread is **−1.56 pp**. THE SIGN FLIPS, so both now print, neither labelled the "real" one: the
+headline answers *was the call right*, the second answers *did the book hold it*. Keyed on the
+DECISION's entry_id, never the ticker — SMPL is closed AND re-entered, so a ticker-keyed flag would
+mark the live re-entry closed and silently drop it from the held figure.
+**THE SAME SPLIT NOW ON THE SCORING REPORT (2026-08-12).** The monitor showed the decomposition
+from #418 and the scoring report — the LP-facing artifact — did not, which is the surface-gap #378
+was about: a number correct in one place and absent from the other. `ScoreReport` now carries
+`n_closed` / `buy_avoid_spread_open_only` and renders them beside the headline, computed off the
+SAME `primary` set so the two are comparable by construction. The headline is unchanged; the ruling
+is unchanged. **The as-of filter on closes was applied from the start here rather than re-learned**
+— #418's P1 (a close dated after the scoring date has not happened yet) transferred directly.
+**A COUNT THAT COULD CONTRADICT ITS OWN BREAKDOWN, found reviewing my own diff.** `n_closed` was
+summed over `primary` — every screen-origin resolved row — while the rendered "still held" figure
+subtracted it from the two LEGS. Origin and sleeve are ORTHOGONAL, so a quality `PASS` can carry
+screen origin (the model permits it), landing in `primary` and in neither leg; closing one printed
+**"1 still held" beside "BUY n=1 · AVOID n=1"**. Counted over the legs the spread actually uses now,
+so the line cannot disagree with its own breakdown. Also: the ledger is read ONCE per scoring run
+(`iter_ledger` re-validates every row since #417, so a second scan doubled that for nothing), and
+the as-of filter now REQUIRES a dated close rather than treating an undated one as already-happened
+— the schema refuses an undated close outright, so the branch was unreachable and now says so.
+**THE LIVE REPORT STILL PRINTS NOTHING, and that is correct:** zero verdicts have resolved (the
+first BUY horizon passes 2027-01-16), so the split has nothing to decompose and stays silent. My
+earlier objection — that this was "untestable scaffolding" — was too strong and is worth correcting:
+the ARTIFACT is blank, the LOGIC is exercised on fixtures where rows resolve, exactly as
+`test_scoring_close_rows.py` already does. *"The artifact is blank" and "the logic is unverifiable"
+are different claims.*
+**AND THE REALIZED BOOK IS TYPED (item 4).** It reached the snapshot only as free-text `notes`, so
+the one view saying what the fund actually EARNED was unreadable by anything not parsing English,
+while the marked-to-market rows beside it were fully structured. `MonitorSnapshot.realized` now
+carries it, and the note line is RENDERED from the typed row (`RealizedRow.note`) so display cannot
+drift from data — the standing rule that display formatting is never load-bearing.
+**LOOK-AHEAD IN THE HISTORICAL BOOK — REVIEW P1 ON #418, AND IT WAS BROADER THAN REPORTED.** The
+monitor's price path carefully refuses a future bar; the LEDGER path did not. `monitor --ref <past
+date>` counted every close in today's ledger regardless of when it happened (at ref 2026-07-20 it
+reported 2 closes against a truth of 0), AND — the half the review did not see, found by comparing a
+re-run against the original file — it counted every DECISION too, marking SMPL's 2026-08-04
+re-entry into the 2026-07-20 book with **`days_elapsed: -15`**, a position that did not exist yet.
+Both halves now read the ledger as of the snapshot date (`monitor.decisions_as_of`,
+`pair_closes(as_of=)`, `closed_decision_ids(as_of=)`), filtering AFTER pairing so the
+unpairable/duplicate-close refusals still see the whole ledger. **VERIFIED BY REPRODUCTION:
+re-running 2026-07-20 today now returns the original day's three rows and its spread to full
+precision** (0.1442638831149694 both ways), with zero realized rows — both exits were still in the
+future then.
+**AND THE BOOK HISTORY HAD NO WRITE PROTECTION.** `write_snapshot`'s docstring claimed the history
+is "never overwritten across days" and nothing enforced it — I silently replaced the committed
+2026-07-20 snapshot while testing, which is how the decision look-ahead surfaced. It now refuses to
+rewrite a SUPERSEDED day. The rule is deliberately "superseded", not "not today": the normal daily
+run resolves to the LAST TRADING DAY, so a not-today rule refuses the routine re-run — the first cut
+of the guard did exactly that.
+**A PIN THAT COULD NOT FAIL, caught by mutation for the third time in this sequence.** The
+re-entry guard was asserted against the COMMITTED ARTIFACT, which is static — mutating the keying
+does not regenerate it, so the test stayed green while the logic was wrong. The keying moved to
+`monitor.closed_decision_ids` and is now exercised against the real ledger, with the artifact pin
+KEPT beside it: one catches the logic, the other catches what shipped. *An artifact pin proves what
+was written; it cannot prove what the code would write next time.*
+
+**~~OPERATOR TO-DO: decide whether the frozen baskets become a committed artifact.~~ DECIDED
+2026-08-12 — THEY ARE COMMITTED** (`data/themes/baskets/<driver>.json`), reversing the standing
+`.gitignore` rule for that artifact only. The reason the rule changed: Stage-4's entire product is a
+number that accrues over CALENDAR TIME and its input existed on exactly ONE machine, so on any other
+checkout the accrual could not be computed at all — two themes passed their 30-day horizon with
+their diagnostics still reading "0 days forward from freeze" for precisely that reason. The
+reconstruction path (#412) works ONLY for hold-none freezes, so the first RATIFIED theme would have
+had no durable record of its BUY leg's entry dates anywhere.
+**SCOPED, AND THE SCOPE IS PINNED.** The ratification LEDGER stays git-ignored — it is the analyst's
+raw dispositioned worksheet output and committing it was not what was decided; a test asserts the
+ledger and `data/forward/` are still ignored and that allowing `data/themes/` did not open the whole
+directory. The baskets qualify under the private-repo rule as DERIVED analysis: tickers, dates,
+cohorts and layer labels only — no verbatim filing text (`watchlist_triggers` is empty by
+construction and pinned so), no CIQ, checked on the FILES.
+**AND THE RATIFICATION LEDGER IS COMMITTED TOO (2026-08-12, second decision).** The basket says
+which names are in which cohort; the LEDGER says WHY, in the analyst's own words, one appended row
+at a time. `--ledger` was REQUIRED and ARBITRARY, so the dispositions went wherever the command line
+pointed — which was somewhere git-ignored. It now defaults to `data/themes/ledgers/<driver>.jsonl`,
+and an explicit `--ledger` still wins for ad-hoc runs (pinned that it does NOT also write the
+canonical file: two ledgers for one freeze is two records of one judgment). Only the LOOSE
+`forward_*` names stay ignored.
+**THE THREE JULY 2026 LEDGERS ARE GONE AND ARE NOT RECONSTRUCTED — deliberately, and pinned so the
+gap is not later filled in quietly.** A ledger is an APPEND-ONLY record whose value is that it
+records what was appended and WHEN; a rebuild from the published mirror would carry one synthetic
+timestamp for every row and no correction history, and committing that as "the ledger" would
+misrepresent the artifact at the moment it starts being trusted. Their dispositions survive in the
+mirrors (`rationale`, `gradeFact`, `accession` per name) — the honest surviving record, named as
+such. **What was lost is the judgment; what remains is the conclusion.**
+**MAKING THE LEDGER DURABLE CREATED A TORN WRITE — review P1 on #424, and the lesson generalises.**
+The ledger append ran BEFORE the basket write, and the basket write can REFUSE (the #422 supersede
+guard). So a refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that
+was never frozen, and the retry appended the same judgment a third time: measured 1 row, then 2,
+then 3. **The durability decision changed the cost of a side effect the write order had always
+had.** Fixed by preflighting everything that can fail (`assert_basket_writable`, side-effect-free)
+before any append, so the ledger and basket land as ONE successful freeze; the NOT-READY early exit
+now writes nothing either, since an un-frozen tier should not record partial judgment.
+*When an artifact becomes durable, re-read every path that writes it — the ordering that was
+harmless while it was scratch is now the ordering of a permanent record.*
+**AND A FIFTH PIN ASSERTING THE WRONG PROPERTY**, same family as the other four: the preflight's
+no-side-effects test asserted the FILE was absent, so a mutation that `mkdir`s the parent stayed
+green while the check touched the tree. Asserted on "creates nothing" instead of one visible
+consequence of it.
+**ONE PIN RETIRED BY DESIGN, recorded rather than deleted:** #412's P2 pinned that `--worksheet`
+without `--ledger` must be refused. That half is now the NORMAL path — it is the whole point of the
+default — so it was removed with its reason written where the pin used to be. The reverse (a bare
+`--ledger`, nothing to append) still refuses.
+
+**EVERY COMMITTED BASKET STATES ITS PROVENANCE**, because a basket written by the freeze and one
+RECONSTRUCTED from the published mirror hold the same names and are NOT the same evidence. All three
+today say RECONSTRUCTED — the freeze-time files were local-only and are gone. The freeze now writes
+the canonical file itself, and `themes-forward --from-baskets` re-measures from it (preferred over
+`--from-mirror`, which recovers from a summary and refuses a BUY leg).
+**A WRITE THAT ESCAPED ITS CONFIG, caught by the suite within minutes.** The canonical path first
+resolved from `Path.cwd()`, so an existing CLI test freezing a tmp worksheet wrote its four
+synthetic names straight over the real committed basket in the repo. Keyed on the configured data
+dir now, like every other durable artifact here, and the CLI test redirects config to a tmp tree.
+**A COMMITTED BASKET WAS STILL SILENTLY REWRITABLE — review P1 on #422.** Every later
+`themes-forward --worksheet …` for the same driver wrote a newly frozen object over the same
+filename: measured, re-freezing defense moved `entry_dates` from {2026-07-03} to {2026-08-12},
+shifting the forward window's start by 40 days with nothing said. The append-only ledger does not
+protect this artifact, and committing it made the rewrite WORSE — the file now looks authoritative.
+**This is the same class as the monitor-snapshot overwrite fixed hours earlier (#418), and this
+module did not learn from it.** A second freeze now REFUSES; `--supersede-basket` archives the
+existing basket under `baskets/archive/<driver>-<its freeze date>.json` first, so a supersession is
+never destructive. A HOLE IN THAT FIX, found by reading the archive name back: the freeze timestamp
+is DATE-ONLY, so two supersessions in one day collided and the second overwrote the first archive —
+disambiguated, because re-dispositioning a tier twice in a session is normal.
+**AND `--from-baskets` ACCEPTED ANY DRIVER (P2).** Passing the defense basket with
+`--driver ai-datacenter` printed an AI-datacenter header over 108 defense names and measured them.
+Unlike the mirror — which carries only a human label and can therefore only WARN — this artifact
+holds the canonical registry key, so the mismatch is CHECKABLE and is now refused.
+**AND THE FOURTH PIN-THAT-PROVED-NOTHING in this sequence, same root cause each time:** the
+round-trip compared `write_baskets(...)` to `baskets_path(...)`, two values that MOVE TOGETHER — 
+point the helper back at cwd and both change identically while every write lands in the repo. The
+lesson generalises past artifacts: *a pin that compares two outputs of the same broken assumption
+cannot fail; assert the property, not the agreement.*
+
+**THE DECISION CHAIN WAS THREE PIECES THAT NEVER TOUCHED (2026-08-12, operator-reported). Each
+worked; nothing joined them.** Diagnosed on a copy of the committed tree, measured not read:
+1. **`log-verdict` wrote to the working DB and stopped.** The DB is a CACHE — the durable record is
+   `data/snapshots/decision_ledger.jsonl`, which is what `vinci monitor`, the frontend mirror and
+   every fresh clone read (`_cmd_monitor`'s own docstring says so). **After a ledger write the DB
+   held 7 rows and the committed snapshot still held 6, byte-identical.** A logged verdict reached
+   no reader until somebody happened to run the weekly screen or the monthly score — both of which
+   export only as a SIDE EFFECT of doing something else. No data was lost (`rebuild_from_snapshots`
+   is INSERT-OR-REPLACE, so a local row survives a rebuild) but it never left that machine.
+2. **There was no close command at all.** `4f34c11` shipped the close-row SCHEMA, the readers
+   (`monitor.close_rows` / `pair_closes`), the display and the id helper — everything except a
+   writer. **Both committed closes were therefore hand-authored JSON**: rows that reached an
+   append-only record without passing one guard.
+3. **Nothing rebuilt the frontend.** `frontend/` is derived from committed data by
+   `frontend/build.py`, and Cloudflare Pages serves it AS COMMITTED — so a stale mirror IS the
+   product. It stayed correct only because whoever changed data remembered to rebuild.
+**FIXED:** every ledger-writing command now flushes the ledger table to the committed snapshot
+(`_export_ledger`, ledger-table-only so a half-populated working DB cannot rewrite the universe
+snapshots); `vinci close-position` is the missing writer, with the guards the hand path never had
+(unknown candidate · second close · exit-before-entry · blank reason, each pinned and each writing
+nothing on refusal); and the CI gate now fails a PR whose `frontend/` is stale — a CHECK, not an
+auto-commit, because CI holds `contents: read` and a workflow pushing generated files back would
+make main move under review. The class rule is AST-pinned: a `_cmd_*` that reaches a ledger writer
+without `_export_ledger` fails the suite.
+**THE FIX'S OWN P1 — A POISON ROW COULD ENTER THE APPEND-ONLY RECORD (operator review on #417).**
+`model_copy(update=…)` runs NO model validators and `Store.append_ledger` only serialized, so
+`close-position --exit-price -1` passed every guard, **printed success (exit 0), wrote the row, and
+made the next `iter_ledger()` RAISE** — one flag rendering the whole decision ledger unreadable, in
+a record from which nothing can be deleted. Reproduced before fixing: snapshot 6→7 rows, then
+`ValidationError` on read. **Two layers now:** `close_position` re-validates the built row and
+refuses at the command, and **`Store.append_ledger` re-validates on the way in as the backstop for
+every writer, including ones not yet written** — a `LedgerEntry` argument looks like proof of
+validity and is not. INVARIANT: no unvalidated row reaches the append-only ledger; machine-checked
+at the store, so it holds for callers this file has never seen.
+**ONE TEST IN THIS BUILD PROVED NOTHING AND WAS CAUGHT BY MUTATION.** `assert close.facts == {}`
+ran against a corpus where **no decision carries a fact at all** (all six rows: zero), so deleting
+the writer's clear left it green. Re-pinned on a seeded fact-bearing decision. This is the
+CORPUS-BEFORE-SYNTHETIC rule biting in the direction it usually does not — the corpus was too thin
+to exercise the guard, and only the mutation said so.
 
 43. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
     memo answers the review with what was verified, what was refuted, what changed, and what the
@@ -11081,6 +11436,111 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    number means. Append-only-safe as an optional field with a default (the `disposition`/`facts`
    precedent). Operator decision 2026-08-07.
 
+4. **STAMP BRBR's AND EPAM's `spot_as_of` FROM THE `-sl` WORKTREE — the only checkout that can.**
+   Opened 2026-08-11 by the `spot_as_of` PR. Both records carry `"spot_as_of": null` and both are
+   struck at **2026-08-07**, a date only `-sl` holds (`-wb` reaches 08-04, primary 08-05). The
+   backfill deliberately declined to write a date this worktree cannot verify: doing so would
+   assert from another store's authority, which is the same assumption a refuse-on-mismatch check
+   would encode and which was rejected for the same reason. **From `-sl`: `vinci audit spot`, then
+   write `spot_as_of: "2026-08-07"` on each and re-run — both should go silent.** BRBR needs a
+   HUMAN read either way: its `spot_source` names three dates and no rule picks the right one.
+   (`null` here means *we looked and cannot state one HERE* — the records predate nothing.)
+   **NOT URGENT AFTER PR-7, and the reason is worth keeping:** the schema-1.5 gate binds only
+   records CREATED at 1.5+, and `write_record` PRESERVES an existing record's `schema_version`
+   (driven, not assumed). Both stay at 1.3, so both remain writable indefinitely. Stamping them is
+   an accuracy improvement, not an unblock.
+
+5. **VISA's ANCHOR IS NOT ONE MISSING FIELD, AND THE OBVIOUS FIX IS A 4× TRAP.** Opened 2026-08-11.
+   Netflix and Visa were assumed to share a cause; they do not.
+   - **NFLX** — `net_debt: None`, and the reason is a REFUSAL rather than a gap. Its `source` reads
+     in full: *"total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) —
+     **UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total;
+     pull CIQ**"*. The extractor caught its own under-capture and declined to publish a number it
+     could see was too small — fail-loud working as designed. `diluted_shares` is present at
+     4,261,300,000 off `WeightedAverageNumberOfDilutedSharesOutstanding`. **So NFLX's unblock is a
+     DATA PULL with a stated remedy, not a code fix** — the extractor already names what it needs.
+   - **V** — `net_debt` is FINE at 12,485.0 (source complete, no caveat). The missing input is
+     **`diluted_shares`**, and the committed evidence is the extractor's own stamp:
+     `anchor.diluted_shares.source` = *"UNKNOWN — no diluted WA tag"* — accurate REPORTING, not a
+     lookup failure. A live companyfacts read (2026-08-11) found **zero** occurrences of
+     `WeightedAverageNumberOfDilutedSharesOutstanding` for Visa, against NFLX's populated tag.
+     **EVIDENCE CAVEAT — do not re-derive this from the fixture:** `tests/fixtures/companyfacts/
+     V.json` is a CURATED 15-TAG SUBSET (`FIXTURE_TAGS`), so absence there proves nothing and would
+     be the "absence asserted from a scoped search" error. Re-check against live companyfacts.
+     Working hypothesis: Visa's counts are DIMENSIONAL (Class A/B/C) and companyfacts carries
+     undimensioned facts. **So Visa needs a different SOURCE**: the 10-Q cover, a dimensional XBRL
+     query, or CIQ.
+   - **THE TRAP, and whoever takes this must read it before writing a line:**
+     `dei:EntityCommonStockSharesOutstanding` — the tag anyone reaches for first — is last stamped
+     **2010-01-27 at 469,280,842** (corroborated in the committed fixture, which DOES carry `dei`)
+     against an actual count near **1.836bn**. A **4× error on the fund's largest name**, and the
+     `dep_amort` abandoned-tag class sixteen years wide.
+   - **AND THE ANSWER MAY ALREADY BE ON THE PAGE.** `mechanical.stock_info.shares_out` carries
+     **1,835,600,000**, source-stamped *"CIQ Comparable Analysis→Financial Data (Shares Outstanding
+     Latest) · as-of 2026-08-10"*. **So the first question is not which tag to substitute but
+     whether the anchor may read the CIQ figure** — and note it is SHARES OUTSTANDING, not the
+     DILUTED WEIGHTED AVERAGE the anchor's own basis line asks for ("diluted weighted-average
+     (latest 10-Q)"). Substituting one for the other is the same-window/different-BASIS class that
+     refused the buyback average; if it is used, the basis change is the decision, not a detail.
+
+6. **RE-ASSEMBLE UBER AND SMPL — the verbatim fix corrects the EVIDENCE, not the syntheses written
+   against it.** Opened 2026-08-12 by PR-2. The artifact pass lengthened 15 attribution quotes on
+   three names (UBER 12, SMPL 2, VRRM 1) through the `refresh_dossier` transform seam, which
+   deliberately PRESERVES the stored synthesis. But those syntheses were composed while the
+   quantifications were invisible — UBER's live bull point reads *"Q2 2026 revenue grew 12%
+   ($1.5bn) driven primarily by a 24% rise in Gross Bookings — a validated volume mechanism"*,
+   written without ever seeing that the UK model change cut revenue by **$1.1bn**. The claim is
+   not false; it is under-informed, and only a re-synthesis fixes that. **Needs CIQ + LLM, so it is
+   an operator action.** Both names' workbooks are stale anyway (item 7), so do it in one pass.
+7. **RE-PULL THE NFLX AND UBER CIQ WORKBOOKS — both predate material filings.** NFLX's
+   capital-structure panel is stamped *"A 2025 filed Jan-23-2026"* (the FY25 10-K, ~6 months old),
+   so the page still carries the **terminated WBD bridge facility** and lacks the **5.250% 2036
+   notes** issued 2026-07-22 to repay the Nov-2026 maturity. UBER's folder is Aug 5–6, two days
+   before the Delivery Hero 8-K (2026-08-07). Re-pull → re-assemble retires all three staleness
+   findings without any code change.
+8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
+   2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
+   *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point
+   QUOTES the old figure (*"shown diluting from 427,458,114 to 4,163,939,676, +874.1%"*). Applying
+   the transform produced a page whose prose cited numbers its own table no longer showed, so it was
+   reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
+   that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
+   **Bundle with item 7's NFLX re-pull — one pass.**
+
+### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
+
+- **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
+  `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
+  synthesis quoted its old text verbatim — exactly the "page citing numbers its own tables no longer
+  show" state the refusal exists to prevent (item 19c). It passed because the guard tracks numeric
+  figures and this field is prose-shaped. Caught by reading the result, not by the guard. Every
+  string-valued mechanical field is currently outside that refusal.
+- **THE LLM CAUGHT WHAT THE DETERMINISTIC LAYER MISSED, on this name.** NFLX's committed bear point
+  already reads *"a share-basis change (stock split ~10.02x) sits inside the window and must be
+  reconciled before reading per-share history"* — written against a mechanical field that said
+  "diluting +874.1%" with `qa_flags: []`. So the reader was not misled here, and the harm was
+  bounded by the synthesis rather than by any control. **That is not a reason to weaken the fix**:
+  relying on an LLM to catch a deterministic error is the inverse of this repo's division of labour,
+  and it is luck that it fired. Worth remembering as evidence about where the checks actually are.
+
+- **The following-paragraph carry reaches only 3 of 12 names.** 41 of 530 committed driver rows
+  carry a `following_context` (EPAM 13, NFLX 18, V 10); **BRBR — the name the fix was built for —
+  has 0 of 31**, on a dossier assembled 2026-08-10. Either those quotes all genuinely end their
+  paragraphs, or the carry is not reaching the seat that mattered. Cheap to settle: re-run
+  `_following_paragraph` against BRBR's transcript slices and count.
+- **MVST — and ONLY MVST — loses attribution rows between extraction and the record.** Its
+  `primary_source.filing` names 10-Q 0001628280-26-033590 and its `operating_drivers.rows` is
+  EMPTY, while running `results_attribution` directly over that same filing yields **5 rows**
+  (one of which the old bound severed). Checked per-name across all 14: every other zero is the
+  extractor honestly finding nothing (AORT/EPAM/FUBO/IT/NCNO/NFLX/V/VITL yield 0 and carry 0), and
+  the seven non-zero names match exactly. So this is one name's dropped rows, not a fleet-wide
+  pipeline gap — the first draft of this entry claimed the latter and was wrong.
+  **Upstream of PR-2 and unaffected by it**: PR-2 only lengthens rows that survive.
+- **UBER carries zero covenant pointer rows** — the third name in that subsystem after EPAM's
+  four-years-wrong maturity and AORT's five-and-a-half-year-stale one. EPAM/AORT find the WRONG
+  facility; UBER finds NONE. A "flag the facility" fix is silent on the find-nothing case, so the
+  covenant work needs both halves.
+
 ## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
 
 0. **PRINT-LAYOUT PASS — 2026-07-29 (operator: "this looks really bad and unprofessionally
@@ -12740,6 +13200,234 @@ sign-off.**
   documented defaults ARE the canonical set; their values live on the argparse subparser, not
   re-hardcoded). **Reminder is display-only:** the (future) Radar screen shows last-run / next-due (+30d)
   from the `component-a` scan_history manifest, amber when overdue — nothing fires automatically.
+- **THE THREE-STORE SPREAD IS THE DESIGN, NOT DRIFT — so the fix is a STAMP, not a sync (established
+  2026-08-11, PR `spot_as_of` / `price_store`).** The spread had been called a hazard twice without
+  anyone checking whether it was one. It is not: the DATA-TOPOLOGY entry directly below already
+  records `data/` as PER-WORKTREE, so three checkouts holding three frontiers (`wb` 2026-08-04, `sl`
+  2026-08-07, primary 2026-08-05) is the documented arrangement working. **What DOES follow is that
+  a reader cannot infer the data behind an artifact from the artifact.** Two names assembled the
+  same day out of different worktrees are struck days apart with nothing saying so; comparability
+  today rests on reference dates happening to lag every frontier — a coincidence, not a guarantee.
+  Hence `Dossier.price_store` (declared path + RESOLVED path + frontier), stamped at assembly.
+  **The resolved path is load-bearing:** `-pg`'s `data/vinci.db` is a SYMLINK into `-wb`, so a stamp
+  carrying only the declared path would make two dossiers built from ONE store look like two — the
+  same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
+  store it had not identified.
+- **A SPOT THAT NAMES NO DAY IS NOW UNRECORDABLE — schema 1.5 (2026-08-12, PR-7).**
+  `vinci audit spot` can check a stated date against the store; against a record naming none it
+  checks NOTHING and reports UNAUDITABLE forever. `write_record` now refuses a record created at
+  **1.5+** without `spot_as_of`, and `scenario-propose` pre-fills it from the dossier's own
+  `stock_info.as_of` — the bar date the price came from — so the requirement is satisfiable from
+  the one path that creates records. `SCHEMA_VERSION` bumped 1.4 → 1.5.
+  **THE ADOPTION TRAP WAS CHECKED BEFORE THE DESIGN, and does not exist.** Every committed record
+  is schema **1.3** (8 live + 3 archived, one at 1.2), and `write_record` **PRESERVES** an existing
+  record's version — driven through the real path, not read off the code. So BRBR and EPAM, which
+  legitimately carry no date (struck at 2026-08-07, visible only to `-sl`), stay at 1.3 and remain
+  writable indefinitely. The premise is pinned, because the gate's safety rests on it: if a write
+  path ever re-stamps the version those two become unwritable, and the failure would surface far
+  from here looking like a bug in something else.
+  **THE COHERENCE HALF IS NOT VERSION-GATED** — a stated `spot_as_of` AFTER its own underwrite is
+  refused at any schema, since legs cannot have been struck against a close that had not happened.
+  #416's lookahead lesson moved to the WRITE seat. Costs no committed record: all six stamped
+  spots precede their underwrite by 1–3 days.
+  **WHAT IT DOES NOT DO:** it does not verify the date — that stays `vinci audit spot`'s job and
+  deliberately a flag, because a refusal there would block correct records whose bar this worktree
+  cannot see. The gate requires the CLAIM so that something exists to check.
+  **AND IT SURFACED AN ORPHAN-ARCHIVE WINDOW IN `scenario-supersede`** (self-review): that command
+  writes the ARCHIVE first and the live record second, so a refusal on the second left a superseded
+  record with no successor and an un-updated seal manifest. The window PREDATES this change — the
+  basis and fielded-ref gates raise at the same point — but the spot gate makes it far likelier to
+  fire, since a fresh hand-written payload commonly omits `spot_as_of` until the field is habit.
+  Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
+  `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
+  gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
+  opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
+  column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
+  guide with a PARSEABLE RANGE, so a company that STOPPED guiding a metric keeps surfacing whatever
+  it last said — NFLX 2002/2003, EPAM 2016, AORT 2019, UBER 2020 (×2), V 2020.
+  **THE TEST IS THE GUIDE'S PERIOD, NOT ITS ISSUE AGE** (review finding, #423). Age was the first
+  criterion — a measured 365d bound sitting in the corpus's empty 238d–969d band — and it is WRONG
+  IN BOTH DIRECTIONS, with a counterexample each way in the same corpus: **VITL**'s gross-margin
+  guide is dated 2023-11-02 (977d) but is **for FY 2027**, still ahead of a 2026 as-of — long-term
+  guidance stays applicable without being reissued, so "none current" is simply false. **MVST**'s is
+  only **238d** old but is **for FY 2025**, a year already closed and never reguided — genuinely no
+  current guide, and the age rule MISSED it. The issue date says nothing about applicability. The
+  switch keeps all 10 true positives, drops the VITL false positive, and catches MVST.
+  An unreadable period is LEFT ALONE: a false demotion misleads, a missed one leaves the Age column
+  still telling the truth.
+  **DISPLAY-ONLY, AND NOTHING IS DELETED:** the figure stays in its cell reframed as `none current
+  (last: …)`, demoted rows sort BELOW current ones (sheet order put NFLX's two dead guides first),
+  and `dossier.json` is byte-untouched — verified, 0 JSON files changed by the pass. Checked before
+  choosing that surface: no committed synthesis quotes a figure from any >1y-stale guide, so the
+  harm was to a human reader and the fix belongs where a human reads.
+- **"FREE CASH FLOW" MEANT TWO DIFFERENT THINGS AND THE PAGE NAMED NEITHER (2026-08-12, PR-5).**
+  `quality.free_cash_flow` reads CIQ's `Levered Free Cash Flow`. Against the SAME sheet's
+  `Cash from Ops. − Capital Expenditure` the two agree on **exactly one** committed name (V, 0.97×);
+  the other thirteen run **NFLX 2.28× · MVST 1.54 · CNXC 1.51 · EPAM 1.35 · NCNO 1.25 · SMPL 0.89 ·
+  IT 0.85 · UBER 0.72 · BRBR 0.70 · VITL 0.60 · VRRM 0.51 · FUBO 0.27 · AORT −0.47 (OPPOSITE
+  SIGNS)**. So this is not a content-company quirk — they are different measures nearly everywhere.
+  **NFLX is why it reaches a reader:** the page carried **$25,388M** against CFO−capex of
+  **$11,152M** while management guides ≈$12.5bn, under a synthesis quoting it as self-funding
+  evidence. FY17 makes it unmistakable: **+$6,673M** levered while CFO that year was **−$1,786M**.
+  **The CIQ figure is KEPT, not replaced** — it is the panel's own measure, consistent across the
+  comp set; swapping it for our arithmetic would put a derived number where a reader takes the
+  vendor's. Both stated, each named.
+- **THE CASH-FLOW ROWS WERE DISPLAY-ONLY — a house-rule violation found while fixing the above
+  (2026-08-12, PR-5).** `Revenue ($M)` carried 12 structured `values`; `CFO`/`Capex`/`FCF` carried
+  **ZERO** — `cells` only. Anything wanting CFO−capex had to re-parse `"11,971"` out of rendered
+  text, which is the forbidden shape ("parsers consume structured values, never rendered strings")
+  and the class of the thousands-blind `$1,101.80M` incident. `clean_num` already produced the
+  number; the row builder formatted it and discarded it. Fixed at source (`cf_num` returns the
+  number, the call site formats), so the basis note derives from values rather than strings.
+- **`_fact` DROPS THE NOTE ON A *PRESENT* FACT — 55 of NFLX's 135 present facts carry one nobody
+  renders (found 2026-08-12, PR-5; NOT FIXED).** The note reaches `dossier.json` and never the
+  page. PR-5 renders the FCF line specially rather than changing `_fact`, because rendering all of
+  them would add ~55 mostly-verbatim lines to every page — but some look decision-relevant
+  (`valuation.ev_ebitda`: *"trailing only — no forward basis; cannot distinguish a temporarily
+  depressed…"*). Wants a curation pass of its own: which of the 55 are decision values and which
+  are audit context.
+- **THE DEBT SCHEDULE HAD NO AGE, AND ONE STILL LISTS A DEAD FACILITY —
+  `capital_structure.panel_vintage` (2026-08-12, PR-3).** NFLX's page lists the Warner Bros.
+  Discovery bridge facility; its commitments were terminated **2026-02-27** and the panel is dated
+  **2026-01-23**, so the page cannot know.
+  **THE AGE WAS INVISIBLE TO A FORMAT MISMATCH.** `freshness._PANEL_KEY` DOES match
+  `detail_as_of` — but `freshness._ISO` wants `2026-01-23` and CIQ writes `Jan-23-2026`, so the key
+  was found and the date never extracted. Measured across all 14 committed dossiers, source filings
+  run **82–280 days** behind their own build (SMPL 280 · V 277 · BRBR 265 · NFLX 199).
+  **THE OBVIOUS FIX IS REFUSED, ON THE MEASUREMENT.** Teaching `_ISO` the CIQ format routes the
+  panel into `panel_age(kind="export")` → `check_freshness`, a GATE whose ceiling is **45 days**
+  that **all fourteen names are past** — it would raise `FreshnessError` on the entire fleet. That
+  is the failure `check_freshness`'s own docstring names ("a guard that stops every build is a
+  freeze wearing a guard's name"). The age is rendered beside the schedule instead, and
+  `test_the_panel_is_deliberately_kept_out_of_the_freshness_gate` pins the decision WITH its
+  measurement so a later "improvement" has to confront the number.
+  **THE TERMINATION HALF NEEDS NO FILING READ:** item **1.02** is carried in the filer's own
+  submissions index, so a 1.02 filed AFTER the panel's source date proves the panel cannot reflect
+  it, from dates alone. **BOUNDED AT BOTH ENDS — `panel filed < 1.02 <= reference_date`** (review
+  finding, #416): the first cut had no upper bound, and since `recent_filings` returns the CURRENT
+  submissions index it reported whatever existed when the code RAN. Two of three committed warnings
+  were LOOKAHEAD — UBER's 2026-07-29 record flagged by an 8-K filed 2026-08-07 (+9d), VITL's
+  2026-07-06 record by one filed 2026-08-06 (+31d) — the class `close_as_of` refuses one module
+  over, arriving through a different door, and it also made the artifacts irreproducible.
+  **Fleet as-of-bounded: 1 of 14 warns** — NFLX (WBD, 2026-02-27), the only one that had happened
+  by its record's date. UBER's Delivery Hero (2026-08-07) and VITL's refinancing (2026-08-06) are
+  REAL and will surface when those names are re-assembled at a later as-of (item 7). A FLAG, never
+  a deletion, and never a claim about WHICH instrument died: matching a termination to a facility
+  means reading the 8-K, and a wrong match is worse than an honest "something ended".
+- **COVENANT POINTERS FOUND NOTHING FOR 4 OF 14 NAMES — DIAGNOSED AND FIXED (2026-08-12).** FUBO,
+  SMPL, UBER and VITL returned **zero** `covenant_pointer_rows`. **ROOT CAUSE: `ex-?10\d` demands a
+  DIGIT immediately after "10"**, so it matched only the compacted filename form (`ex102` = exhibit
+  10.2) — the MINORITY convention. Real filenames in this fleet's own filings: `vitl-ex10_10.htm`,
+  `aort-…xexx1032.htm`, `fubo-…exx1026.htm`, `f8k032018ex10-1_simplygood.htm`, `a19-22146_1ex10d1
+  .htm`. **NFLX was the only name it matched, and only by its filing agent's naming style.**
+  **THE FAILURE WAS TOTAL RATHER THAN PARTIAL** because the fragment appears in BOTH passes — the
+  10-K exhibit index filter AND `_AGREEMENT_EXHIBIT_RE` for the efts hits — so one flaw closed both
+  routes on the same names. Now one shared `_EX10_RE`, pinned to stay shared.
+  **WHAT IT WAS NOT**, each eliminated before landing on the regex: efts works (UBER 17 hits, SMPL
+  46, AORT 16); the instruments do qualify for a query (all four generate one); the exhibits exist
+  (SMPL's 8-K hits carry a real credit agreement the filter rejected). Nothing to do with company
+  type — purely filing-agent filename convention.
+  **MEASURED LIVE, all 14: FUBO 0→6 · SMPL 0→3 · UBER 0→8 · VITL 0→3**, and seven already-working
+  names gained pointers too (AORT 9→13 · CNXC 5→9 · MVST 6→9 · IT 6→7 · EPAM 4→5 · NCNO 4→5 ·
+  VRRM 5→6). `10` stays pinned so exhibit 19.1/21.1 still correctly miss.
+  **SECONDARY, also fixed:** `_covenant_query` had no `note` branch, so convertible notes queried
+  "Loan Agreement" instead of "Indenture". Not the binding constraint (querying "Indenture" for
+  UBER still returned zero exhibit-bearing hits before the regex fix) but it decides what the
+  search ASKS.
+  **THIRD, also fixed — two failures that read alike:** `covenant_pointers` said "no CIK-scoped
+  agreement exhibit located" while `covenant_terms` two fields away said "extraction failed: no
+  covenant terms extracted from LOCATED exhibits". One page asserting both, pointing at opposite
+  remedies (the LLM phase vs the pointer search). The digest now keys on whether a pointer exists.
+  **CORRECTION TO THE ORIGINAL ENTRY:** the "exactly 116 covenant terms" flagged as suspicious was
+  `len()` on a STRING — the character count of a shared failure message, not a count of terms. That
+  measurement error is what made four names look like they shared a data shape when what they
+  shared was a code path.
+  **AS-OF BOUNDED (review finding, #426):** `_covenant_pointers` took `tenks[0]` from TODAY's
+  submissions index and accepted all efts hits, so re-assembling a historical dossier could attach
+  an agreement filed after its own reference date — the #416 lookahead class again, and **the
+  widened matcher made it REACHABLE** for the four names that previously located nothing. Both
+  passes now bound to `reference_date`. On today's data the bound changes nothing (bounded and
+  unbounded runs are identical across all 14), so it is protective rather than corrective — pinned
+  by a fixture whose newest filing postdates the as-of.
+  **THREE STATES, NOT TWO (review finding, #426):** the digest keyed on `bool(ptrs.value)`, which is
+  falsy for BOTH "the search ran and found nothing" AND "the search could not run" (no CIK, EDGAR
+  unreachable) — so a lookup that never happened reported a COMPLETED search. Introduced WHILE
+  fixing a two-states-must-not-read-alike bug. Now keyed on `COVENANT_SEARCH_FOUND_NOTHING`, a
+  shared constant rather than a duplicated literal, so the two cannot drift.
+  **ARTIFACTS NOT UPDATED (deliberate):** pointers are ASSEMBLED, not refreshable, and the terms
+  they unlock are LLM-extracted. Injecting rows via the transform seam would leave a page carrying
+  pointers beside a digest still saying none were located — the PR-1 half-refresh incoherence. The
+  committed pages gain this at the next **re-assembly**, which is where the terms arrive too.
+- **QUARTERLY ONE-OFFS HAD NO ROUTE ONTO A PAGE — `quality.nonoperating_earnings` (2026-08-12,
+  PR-4).** NFLX's Q1-2026 carries a **$2.59bn** Warner Bros. Discovery termination fee below the
+  operating line (40% of pre-tax, 21% of revenue) and UBER's Q2-2026 ~**$1.39bn** of investment
+  revaluation. Neither reached any surface: the CIQ unusual-items block is **ANNUAL-only**, so a
+  quarterly one-off stays invisible until it lands in a fiscal year, and **no XBRL non-operating
+  concept was read at all** (verified across two search vocabularies).
+  **DERIVED, NOT PICKED — the corpus forced it.** Reading a one-off gain tag directly does not
+  survive the filings: UBER's Q2-2026 revaluation is carried by THREE overlapping tags at THREE
+  values (`EquitySecuritiesFvNiUnrealizedGainLoss` 1,727M · `DebtAndEquitySecuritiesGainLoss`
+  1,612M · `OtherNonoperatingIncomeExpense` 1,342M), and the aggregate `NonoperatingIncomeExpense`
+  is absent for ~half the fleet and was abandoned by UBER after 2025-09-30. `pretax − operating` is
+  the same block by income-statement arithmetic, from two totals the filer states.
+  **BOTH PLANNED PREMISES WERE FALSIFIED BY MEASUREMENT** and the build followed the data instead:
+  (a) "add the two XBRL concepts" — there is no stable pair, per above; (b) "reuse the existing
+  10%-of-market-cap floor" — **it fires on NEITHER target case** (both ≈1% of cap), because that
+  floor was calibrated for balance-sheet-scale impairments, not earnings-scale one-offs. Shipped
+  instead: 20% of pre-tax AND 5% of revenue, measured on 13 names × 4 quarters.
+  **AN OUTLIER-VS-OWN-HISTORY TEST WAS TRIED FIRST AND REJECTED.** It catches NFLX (19× its median)
+  and **misses UBER (2.6×)** — UBER revalues every quarter, so a large non-operating swing IS its
+  norm and its median rises to meet it. The reader's question is not "is this unusual for them" but
+  "how much of this is operating", which holds however habitual the behaviour. Fleet today: 4 of 15
+  flag, 9 clean, 2 UNKNOWN (NCNO and WERN file no quarterly pre-tax tag).
+- **`extract_points` RETURNS STALE DATA WHEN A FILER ABANDONS ITS PREFERRED ALIAS (found
+  2026-08-12, PR-4; BROADER THAN THAT PR).** It is first-alias-**with-data**-wins, and an abandoned
+  tag still has data — just old data. **UBER stopped filing
+  `RevenueFromContractWithCustomerExcludingAssessedTax` after 2019-06-30** and has used `Revenues`
+  ever since, so asking for "revenue" returns a **seven-year-stale** quarter. PR-4's first cut
+  silently resolved its whole field to 2019 because of it. Worked around LOCALLY there
+  (`_quarterly_map` unions period coverage across aliases, keeping precedence within a period);
+  **the general defect is untouched** — any consumer taking "the latest" from a concept whose
+  preferred alias was abandoned has the same exposure. Same class as the `dep_amort` and Visa-`dei`
+  abandoned-tag findings. Not fixed fleet-wide because it would move revenue everywhere and wants
+  its own brief.
+- **ANCHORED VERBATIMS WERE CUT MID-WORD ON 40% OF THE CORPUS — bounds measured, not chosen
+  (2026-08-12, PR-2).** `_attr_verbatim`'s sentence-end search window (`cause_end + 170`) silently
+  degraded to a raw offset cut whenever the real sentence ended later, and `frag[:340]` cut whatever
+  survived. Measured across all 14 committed names' 10-Q primary documents — 40 attribution rows —
+  **16 were cut mid-word on four names** (UBER 12, SMPL 2, MVST 1, VRRM 1); **four severed a dollar
+  figure.** The worst: UBER's UK sentence ended at *"…negatively impacted reven"*, dropping **"by
+  $1.1 billion"** — the number explaining why Mobility revenue grew 1% against Gross Bookings +22%.
+  A third severed figure surfaced in the fix: a **$808M** Driver-payments offset in cost of revenue.
+  True distributions: cause→sentence-end p50 138 / p90 285 / **MAX 477**; full fragment p50 324 /
+  p90 482 / **MAX 633** — so 170 and 340 sat *below the p90 of the thing they bounded*. New:
+  window **520**, cap **700**, and any cut that still happens is at a WORD boundary with an
+  ellipsis. **The second branch was the near-miss**: marking only the cap left the window-bounded
+  fallback exactly as silent as the bug — caught by the run-on test, not by reading.
+  **WHY WIDENING IS SAFE STRUCTURALLY:** `text.find(". ", cause_end)` returns the FIRST boundary
+  after the cause, so the window only decides ACCEPT-vs-offset-cut; it can never reach a second
+  sentence. **DIFFERENT SEAT FROM THE BRBR FIX** — BellRing's severed reversal was `llm-fenced`
+  (`driver_extract.py`, repaired by the following-paragraph carry); these are `anchored`
+  (`filing_sections.py`). Same class, two seats, neither fix covers the other.
+  **PRIMARY HARM PATH IS THE SYNTHESIS, not the page**: the rendered `.md` never carried these
+  verbatims, but `_operating_drivers_digest` puts `verbatim` in front of the LLM — so the model
+  reasoned from truncated evidence. That is the BellRing shape exactly.
+- **SPOT WAS UNAUDITABLE, NOT UNVALIDATED — measured across all 8 records × all 3 stores
+  (2026-08-11).** Every committed spot is a REAL EOD close, equal to its stored bar with delta
+  **exactly 0.0**; not one is an analyst's intraday number. What differs is which store can SEE it:
+  BRBR and EPAM are struck at 2026-08-07 and resolve in `-sl` ONLY. **A refuse-on-mismatch check run
+  from `-wb` would therefore have blocked two CORRECT records** — every spot is auditable somewhere,
+  none everywhere, and a refusal encodes an assumption about which store is asking. Notes, never
+  problems. **The nearest-bar VALUE search was designed and then killed by its own corpus:** it is
+  one-to-MANY on real data (AORT's 25.37 → 2 bars sixteen months apart, MVST's 0.9188 → 4 spanning
+  two years, WERN's 46.04 → 2), and on the two records `-wb` cannot reach it returns a coincidental
+  collision (11.55 from June, 97.35 from May) — noise presented as a finding. Keyed by date,
+  `prices` is one-to-one. **And the date was already there, in prose:** all 8 `spot_source` strings
+  name an ISO date, so `spot_as_of` PROMOTES an existing fact rather than adding one — but BRBR's
+  carries THREE (close 08-07, `-wb` frontier 08-04, three-store agreement 07-29), so no regex
+  extracts it and the field is WRITTEN. A live instance of "parsers consume structured values, never
+  rendered strings". Seats: `vinci audit spot` (whole corpus) + `scenario-supersede` (at the write).
 - **DATA-TOPOLOGY of git-ignored artifacts (verified 2026-07-13 by `ls`; `data/` is PER-WORKTREE, NOT
   shared).** `-s2`: `data/assay/` = 14 cards, `data/assay_history/` = 3 driver subdirs + `manifest.jsonl`
   (46 snapshot files), `data/assay_cache/` = 1944 efts files. `-main`: `data/priced_check/report_all.txt`

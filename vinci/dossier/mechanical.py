@@ -10,6 +10,7 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
+import math
 import re
 import statistics
 import time
@@ -64,7 +65,13 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.edgar.concepts import (
+    CONCEPT_ALIASES,
+    ConceptPoint,
+    extract_points,
+    latest_instant,
+    points_for_tag,
+)
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
@@ -770,15 +777,260 @@ def _stock_performance(
     )
 
 
+# --- non-operating earnings share (EDGAR XBRL) ------------------------------------------------
+
+#: A quarter is flagged only when BOTH arms pass, and each exists because the other is blind.
+#:
+#: SHARE OF PRE-TAX says the item is decision-relevant — a fifth or more of the pre-tax result
+#: arriving from below the operating line is enough to make GAAP EPS the wrong operating anchor,
+#: which is the reader's actual question. Alone it is unusable: its denominator passes through
+#: zero, and on the live corpus that yields MVST at 1,833% and AORT at 1,607% on items of $14M
+#: and $5M.
+#:
+#: SHARE OF REVENUE is the stabiliser — revenue does not cross zero, so it says the item is large
+#: in the business's own terms rather than merely large against a thin quarter.
+#:
+#: MEASURED ON 13 NAMES x 4 QUARTERS of live companyfacts (2026-08-12). At 20%/5%: NFLX flags on
+#: 2026-03-31 ALONE (40% of pre-tax, 21% of revenue — the $2.59bn WBD termination fee) and is quiet
+#: on its other three quarters at 3-4%; UBER flags on the three quarters that are genuinely
+#: non-operating-heavy and is quiet at 4% in 2025-06; MVST flags a -$122M charge against $91M of
+#: revenue, a true positive rather than noise.
+#:
+#: AN OUTLIER TEST WAS TRIED FIRST AND REJECTED ON THE MEASUREMENT. Scoring each quarter against
+#: the company's OWN trailing median catches NFLX cleanly (19x) and MISSES UBER (2.6x) — because
+#: UBER revalues its portfolio every quarter, so a large non-operating swing IS its norm and its
+#: median rises to meet it. The reader's question is not "is this unusual for them" but "how much
+#: of this quarter's earnings is operating", which is true whether or not the company does it
+#: habitually. Flagging novelty would have exempted the name that does it every quarter.
+_NONOP_PRETAX_SHARE = 0.20
+_NONOP_REVENUE_SHARE = 0.05
+
+
+def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
+    """``{period_end: value}`` for ~quarterly points, merged ACROSS the concept's aliases.
+
+    DELIBERATELY NOT :func:`extract_points`, which is first-alias-WITH-DATA-wins. That rule is
+    right when reading one number by meaning and wrong when asking which PERIODS a concept covers,
+    because an abandoned tag still has data — just old data. UBER stopped reporting
+    `RevenueFromContractWithCustomerExcludingAssessedTax` after **2019-06-30** and has filed under
+    `Revenues` ever since, so the preferred alias hands back a seven-year-stale quarter and this
+    whole field silently resolved to 2019 (measured, not hypothesised — it is what the first cut
+    did). Alias PRECEDENCE is preserved within a period, via `setdefault`: the first alias to
+    supply a period keeps it, and only period COVERAGE is unioned.
+
+    Duration-bounded at 80-100 days rather than trusting ``fp``: EDGAR stamps quarterly points
+    inside a 10-K with ``fp="FY"``, the trapdoor `ConceptPoint.is_annual` documents at length. A
+    10-Q's own quarter and a 10-K's embedded Q4 both land correctly because DURATION is the check.
+    """
+    out: dict[date, float] = {}
+    for tag in CONCEPT_ALIASES[concept]:
+        for p in points_for_tag(facts, tag):
+            if p.period_start is None or p.value is None:
+                continue
+            if 80 <= (p.period_end - p.period_start).days <= 100:
+                out.setdefault(p.period_end, float(p.value))
+    return out
+
+
+def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
+    """How much of the latest quarter's pre-tax result came from BELOW the operating line.
+
+    DERIVED, NOT PICKED — and that distinction is the whole design. ``pretax - operating`` IS the
+    non-operating block by the arithmetic of the income statement, so it needs no choice among the
+    overlapping one-off tags a filer may or may not use (see `pretax_income` in
+    `vinci.edgar.concepts` for the three-tags-three-values measurement that ruled that route out).
+    Both legs are totals the filer states, for one period, from one filing.
+
+    WHY A READER NEEDS IT: a quarter whose earnings are substantially non-operating cannot anchor a
+    P/E or an EPS-based valuation. NFLX's Q1-2026 carries a $2.59bn Warner Bros. Discovery
+    termination fee booked below the operating line — 40% of pre-tax — and UBER's Q2-2026 carries
+    ~$1.39bn of investment revaluation. Neither is visible anywhere on today's pages: the CIQ
+    unusual-items block is ANNUAL-only, so a quarterly one-off has no route to the surface until it
+    lands in a fiscal year, and no XBRL non-operating concept was read at all before this.
+    """
+    try:
+        facts = edgar.companyfacts(cik)
+    except (HttpError, KeyError):
+        return Sourced.unknown(note="EDGAR companyfacts unavailable")
+    op = _quarterly_map(facts, "operating_income")
+    pre = _quarterly_map(facts, "pretax_income")
+    rev = _quarterly_map(facts, "revenue")
+    missing = " + ".join(n for n, m in (("operating income", op), ("pre-tax income", pre),
+                                        ("revenue", rev)) if not m)
+    if missing:
+        return Sourced.unknown(
+            note=f"no quarterly {missing} in EDGAR XBRL — the non-operating share cannot be "
+                 f"derived without all three from ONE period")
+    # ONE PERIOD BY CONSTRUCTION, not by checking afterwards. Taking each concept's own latest
+    # quarter and then asserting they agree is the same discipline stated worse: one stale
+    # straggler refuses a name whose data is fine (it refused UBER, the case this exists for).
+    # Intersecting first asks the right question — the newest quarter for which ALL THREE totals
+    # were filed — so the subtraction is within one period because there was never another option.
+    common = sorted(d for d in (set(op) & set(pre) & set(rev)) if d <= reference_date)
+    if not common:
+        return Sourced.unknown(
+            note="operating income, pre-tax income and revenue never share a quarter in EDGAR "
+                 "XBRL — subtracting across periods would not be a non-operating figure")
+    # THE TRAILING FOUR QUARTERS, not just the newest — because the figure a reader is about to
+    # divide by is an LTM one. NFLX settled it: the $2.59bn Warner Bros. Discovery termination fee
+    # lands in Q1-2026, so a latest-quarter-only read reports Q2's ordinary -$124M and says
+    # nothing, while the LTM EPS under a P/E still carries the whole fee. The analyst's objection
+    # was to FY26 GAAP EPS, which is exactly this window.
+    window = common[-4:]
+    src = f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}"
+
+    def _arms(d: date) -> tuple[float, float | None, float | None]:
+        """``(gap, share of pre-tax, share of revenue)``.
+
+        A ZERO PRE-TAX QUARTER IS THE MOST RELEVANT CASE, NOT AN ABSENT ONE (review finding, #415).
+        Returning None for the share there dropped the quarter from `material` and printed "no
+        material non-operating item" — but pre-tax of exactly zero with a non-zero gap means the
+        below-the-line block precisely offsets operating income, which is the strongest possible
+        statement that GAAP EPS is not an operating anchor. The share is genuinely undefined, so it
+        is `inf`: the pre-tax arm passes, the REVENUE arm still has to carry the materiality, and
+        the existing >1.5 branch renders the "nets near zero" wording instead of a nonsense
+        percentage. A zero gap on zero pre-tax is a true nothing and stays 0.0.
+        """
+        g = pre[d] - op[d]
+        share = (abs(g) / abs(pre[d]) if pre[d] else (math.inf if g else 0.0))
+        return (g, share, (abs(g) / abs(rev[d]) if rev[d] else None))
+
+    material = [(d, g, s, r) for d, g, s, r in ((d, *_arms(d)) for d in window)
+                if s is not None and r is not None
+                and s >= _NONOP_PRETAX_SHARE and r >= _NONOP_REVENUE_SHARE]
+    if not material:
+        end = window[-1]
+        gap = _arms(end)[0]
+        return Sourced.present(
+            f"no material non-operating item in the four quarters to {end} — in the latest, "
+            f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax", source_ref=src)
+    # THE LARGEST RELATIVE TO REVENUE, not the most recent: with several material quarters the one
+    # that most distorts a trailing figure is the one worth naming, and revenue is the arm that
+    # stays comparable across them — the pre-tax share does not, its denominator moves.
+    end, gap, share, rev_share = max(material, key=lambda m: m[3] or 0.0)
+    assert share is not None and rev_share is not None
+    # THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
+    # pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries
+    # the figure that is real; the revenue-relative half still carries the magnitude.
+    share_txt = (f"{share:.0%} of pre-tax income" if share <= 1.5
+                 else "more than the entire pre-tax result, which nets near zero")
+    where = ("the latest quarter" if end == window[-1]
+             else "an earlier quarter still inside the trailing four")
+    return Sourced.present(
+        f"${gap / 1e6:,.0f}M of the quarter ended {end} came from BELOW the operating line — "
+        f"{share_txt}, and {rev_share:.0%} of revenue. Operating income ${op[end] / 1e6:,.0f}M → "
+        f"pre-tax ${pre[end] / 1e6:,.0f}M. This is {where}, so a trailing EPS or P/E spanning it "
+        f"is not an operating anchor.",
+        source_ref=src)
+
+
 # --- share-count trend + P/E-basis sanity (EDGAR XBRL) ----------------------------------------
 
 _SHARES_WINDOW_DAYS = 730  # trailing ~2y — current capital-allocation posture, not a stale 7y delta
 
 
+#: How far a share-count jump may sit from the filer's OWN stated factor and still be that event —
+#: RELATIVE, and narrow, because the measurement says it can be. NFLX's cover count moves 9.96x
+#: against 10.02x restated in EPS: **0.6% apart**. That gap has a physical cause and therefore a
+#: bound — a cover count is an as-of headcount, so between the two cover dates the ORGANIC change
+#: (NFLX was retiring ~0.7% of its shares per quarter) rides on top of the split factor. One
+#: period's organic drift sits far inside 25%; a different corporate action does not.
+#:
+#: THE FIRST CUT USED A FACTOR OF 2 — 5x through 20x for a stated 10x — AND THAT WAS A DEFECT
+#: rather than merely loose (review finding, #413). A 5x dilutive issuance sitting BEFORE a real
+#: 10x split matched first, and the "post-change" segment then still crossed the true break: the
+#: function emitted `+900.0%` wrapped in a sentence asserting the basis had been accounted for.
+#: That is worse than the bug this code exists to fix, because it reads as checked.
+_SPLIT_RATIO_TOL = 0.25
+
+
+def _basis_break(pts: list[ConceptPoint], factor: float) -> int | None:
+    """Index of the point sitting on the FAR side of a share-basis change, or None.
+
+    ``factor`` is the filer's own restatement ratio (:func:`share_basis_change`, read off annual
+    EPS). This locates WHERE it lands in the share series, which the factor alone cannot say.
+
+    THE BEST MATCH, NOT THE FIRST — the second half of the #413 fix, and independent of the
+    tolerance. Scanning for the first in-range jump makes the answer depend on the ORDER in which
+    corporate actions happened, so a 5x raise preceding a 10x split wins on position rather than on
+    fit. Choosing the closest ratio removes that sensitivity outright: with both a 5x and a 10x jump
+    in a series whose stated factor is 10x, the split wins by an error of 0.6% against 50%.
+
+    DIRECTION-FREE, matching the detector it corroborates: `share_basis_change` returns
+    ``max(a/b, b/a)`` precisely because a reverse split contaminates identically, and it is the
+    commoner event in the $300M-$10B hunting band. A one-directional scan here would re-open that
+    blind spot on the side of the series where it actually bites — MVST trades at $0.92.
+    """
+    best: tuple[float, int] | None = None
+    for i, (a, b) in enumerate(zip(pts, pts[1:], strict=False)):
+        if not a.value or not b.value:
+            continue
+        ratio = max(a.value / b.value, b.value / a.value)
+        err = abs(ratio - factor) / factor
+        if err <= _SPLIT_RATIO_TOL and (best is None or err < best[0]):
+            best = (err, i + 1)
+    return best[1] if best is not None else None
+
+
+def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float) -> Sourced[str]:
+    """The reading for a window a share-basis change runs through — measured on ONE side of it.
+
+    NO CROSS-BASIS PERCENTAGE IS PRINTED, not even a corrected one. Re-scaling the pre-change points
+    by the factor would yield a comparable number, and it would be OUR arithmetic sitting in the
+    slot a reader reads as the filer's — the move the buyback average was refused for. What the
+    filer actually supports is the post-change series, so that is what is quoted, with the change
+    named so the missing earlier half is explained rather than silently dropped.
+    """
+    post = recent[brk:]
+    at = recent[brk].period_end
+    rose = (recent[brk].value or 0) > (recent[brk - 1].value or 0)
+    change = f"~{factor:.1f}x share-basis change at {at} (count {'rose' if rose else 'fell'})"
+    src = f"EDGAR XBRL shares, post-basis-change {post[0].period_end}..{post[-1].period_end}"
+    if len(post) < 2:
+        return Sourced.present(
+            f"NOT COMPARABLE across this window: {change}. Only one share count since it "
+            f"({post[0].value:,.0f} at {post[0].period_end}) — no trend on the current basis yet.",
+            source_ref=src)
+    first, last = post[0], post[-1]
+    pct = (last.value / first.value - 1.0) if first.value else 0.0
+    word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"
+    # THE SPAN IS PRINTED BECAUSE THE BAND DID NOT MOVE. The +-2% label thresholds were set against
+    # a ~2y window; a post-change window is whatever the filer's calendar leaves, and NFLX's is 0.5y
+    # — where -1.4% reads "flat" while the same pace over two years would read "buying back". The
+    # threshold is a face-validity constant and is NOT re-tuned here (that is a separate judgment,
+    # and re-tuning it as a side effect of a split fix is how a calibration quietly drifts); making
+    # the span explicit is what keeps the label honest at a length it was not calibrated for.
+    span = (last.period_end - first.period_end).days / 365.0
+    return Sourced.present(
+        f"{word} over ~{span:.1f}y since a {change}: {first.value:,.0f} ({first.period_end}) → "
+        f"{last.value:,.0f} ({last.period_end}), {pct:+.1%}. The pre-change count is a DIFFERENT "
+        f"BASIS and is not compared — an endpoint delta across the change measures the "
+        f"restatement, not dilution.",
+        source_ref=src)
+
+
 def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
-    """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture."""
+    """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture.
+
+    SPLIT-AWARE, because across a basis change the percentage is a lie of arithmetic. NFLX's
+    committed page read *"diluting (trailing ~1.7y): 427,458,114 → 4,163,939,676, +874.1%"* with no
+    flag anywhere: the filer executed a 10:1 forward split in Nov-2025 and restated its EPS
+    comparatives but never the dei cover count, so the two endpoints are different units. On one
+    basis the count FELL ~1.4% while the company was buying stock back — the label was not merely
+    overstated, it pointed the opposite way.
+
+    THE FACTOR IS READ FROM THE FILER, NEVER INFERRED FROM THE MAGNITUDE. `share_basis_change` finds
+    one fiscal period reported at two values by two filings — a restatement the company itself
+    performed. It is fed the ANNUAL EPS series and not the share series, and that is not an
+    implementation detail: run against these very share points it returns None (a dei cover count is
+    never re-filed for a prior period, so no ratio exists to read), and against the diluted
+    weighted-average series it returns a confidently wrong 7.0x. Only EPS states 10.02x. A guard
+    keyed to either of the other two would have shipped and never fired — which is why this was
+    measured on all three before the branch was written.
+    """
     try:
-        pts = [p for p in extract_points(edgar.companyfacts(cik), "shares") if p.value]
+        facts = edgar.companyfacts(cik)
+        pts = [p for p in extract_points(facts, "shares") if p.value]
     except (HttpError, KeyError):
         return Sourced.unknown(note="EDGAR companyfacts shares unavailable")
     pts.sort(key=lambda p: p.period_end)
@@ -787,6 +1039,13 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
         return Sourced.unknown(
             note=f"<2 XBRL shares points in the trailing ~2y ({len(pts)} total) — no current trend"
         )
+    # A basis change OUTSIDE the window is not this window's problem: every point in it then sits on
+    # one basis and the ordinary reading is correct. Only a break INSIDE it makes the endpoints
+    # incomparable — so the factor alone never suppresses a trend, its LOCATION does.
+    factor = share_basis_change(extract_points(facts, "eps_diluted"))
+    brk = _basis_break(recent, factor) if factor else None
+    if brk is not None:
+        return _split_straddled_trend(recent, brk, factor or 0.0)
     first, last = recent[0], recent[-1]
     pct = (last.value / first.value - 1.0) if first.value else 0.0
     word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"
@@ -1337,6 +1596,11 @@ def _quality(
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
+            if record.identity.cik
+            else Sourced.unknown(note="no CIK")
+        ),
+        nonoperating_earnings=(
+            _nonoperating_earnings(edgar, record.identity.cik, reference_date)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
@@ -2128,8 +2392,30 @@ _COVENANT_CLASS_RE = re.compile(
     r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\b", re.IGNORECASE)
 # an EXECUTION filing carries the agreement as an EXHIBIT — a material-contract ex-10.x or a
 # filename naming the contract; a primary 8-K body ('mvst-20240603.htm') matches none of these.
+#: A MATERIAL-CONTRACT EXHIBIT FILENAME, across the conventions filers actually use.
+#:
+#: The shipped pattern was `ex-?10\d` — a DIGIT immediately after "10" — which matches only the
+#: compacted form (`ex102` = exhibit 10.2). Measured against the real filenames in the fleet's own
+#: filings, that is the minority convention, and the majority use a SEPARATOR:
+#:
+#:     ex102_q425.htm                    NFLX    compact       matched
+#:     vitl-ex10_10.htm                  VITL    underscore    MISSED
+#:     aort-20251231xexx1032.htm         AORT    double-x      MISSED
+#:     fubo-20241231exx1026.htm          FUBO    double-x      MISSED
+#:     f8k032018ex10-1_simplygood.htm    SMPL    hyphen        MISSED
+#:     a19-22146_1ex10d1.htm             SMPL    d-separator   MISSED
+#:
+#: NFLX was the ONLY name it matched, and only by its filing agent's naming style — which is why
+#: four names located no covenant exhibit at all. The fragment appears in BOTH pointer passes (the
+#: 10-K exhibit index and this efts hit filter), so one flaw failed both routes on the same names
+#: and the failure looked total rather than partial.
+#:
+#: `10` STAYS PINNED: exhibit 10.x is the material-contract class. UBER's `exhibit191` (19.1) and
+#: SMPL's `exhibit211` (21.1) must NOT match — those are a clawback policy and a subsidiary list.
+_EX10_RE = r"ex(?:hibit)?[-_x]?10[._\-d]?\d"
 _AGREEMENT_EXHIBIT_RE = re.compile(
-    r"ex-?10\d|loan|credit|facilit|indenture|agreement|secur|pledge|guarant|warrant", re.IGNORECASE)
+    rf"{_EX10_RE}|loan|credit|facilit|indenture|agreement|secur|pledge|guarant|warrant",
+    re.IGNORECASE)
 
 
 def _covenant_query(desc: str) -> str:
@@ -2137,7 +2423,10 @@ def _covenant_query(desc: str) -> str:
     Loan With Shareholder') rarely matches the filing's contract name ('Loan and Security
     Agreement'), so query the class's standard agreement term instead of the raw label."""
     d = desc.lower()
-    if "bond" in d and "loan" not in d:
+    # A NOTE IS AN INDENTURE INSTRUMENT, like a bond. Without this, "2025 Convertible Notes" fell
+    # through every branch to the "Loan Agreement" default — the wrong contract class entirely, and
+    # the query UBER's and FUBO's convertible notes were searched under.
+    if ("bond" in d or "note" in d) and "loan" not in d:
         return "Indenture"
     if "credit" in d:
         return "Credit Agreement"
@@ -2156,8 +2445,105 @@ def _exhibit_names(http: CachedHttp, cik: str, accession: str) -> list[str]:
     return [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
 
 
+#: CIQ writes its panel vintage as "A 2025 filed Jan-23-2026" — a MONTH-NAME date, which is
+#: why `freshness._ISO` never matched it and the debt schedule has never carried an age.
+_CS_FILED = re.compile(r"filed\s+([A-Z][a-z]{2})-(\d{1,2})-(20\d\d)")
+_CS_MONTHS = {m: i for i, m in enumerate(
+    ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), start=1)}
+#: EDGAR item 1.02 — "Termination of a Material Definitive Agreement". The one item code that says,
+#: from the filer's own index and without reading a word of the filing, that an agreement the panel
+#: may still list has ended.
+_ITEM_TERMINATION = "1.02"
+
+
+def _cs_panel_filed(detail_as_of: str) -> date | None:
+    """The date the capital-structure panel's SOURCE FILING was made, or None if unstated."""
+    m = _CS_FILED.search(detail_as_of or "")
+    if m is None:
+        return None
+    try:
+        return date(int(m.group(3)), _CS_MONTHS[m.group(1)], int(m.group(2)))
+    except (KeyError, ValueError):
+        return None
+
+
+def _capital_structure_vintage(
+    edgar: EdgarClient, cik: str, detail_as_of: str, reference_date: date,
+) -> Sourced[str]:
+    """How old the debt schedule is, and whether a TERMINATION has been filed since it was taken.
+
+    THE PANEL HAS NEVER CARRIED AN AGE, and every name's is months old: measured across all 14
+    committed dossiers the source filings run **82 to 280 days** behind their own build (SMPL 280,
+    V 277, BRBR 265, NFLX 199 …). The cause is a format mismatch nobody had cause to notice —
+    `freshness._PANEL_KEY` matches `detail_as_of`, but `freshness._ISO` wants `2026-01-23` and CIQ
+    writes `Jan-23-2026`, so the key was found and the date never extracted.
+
+    IT IS DELIBERATELY NOT ROUTED INTO `panel_age`/`check_freshness`. That was the obvious fix and
+    the measurement refuses it: the export ceiling is **45 days** and ALL FOURTEEN names sit past
+    it, so teaching the freshness gate this format would raise `FreshnessError` on the whole fleet.
+    `check_freshness`'s own docstring names that failure mode — *"a guard that stops every build is
+    a freeze wearing a guard's name"*. The age belongs beside the schedule it describes, where a
+    reader is looking at the instruments, not in a gate that would stop the presses.
+
+    EVERY DATE IS AS-OF-BOUNDED. The window is `panel filed < 1.02 <= reference_date`: an
+    event after the record's as-of is not this record's to report, however true it is today.
+
+    THE TERMINATION HALF IS WHY THIS EXISTS AT ALL. NFLX's committed page still lists the Warner
+    Bros. Discovery bridge facility, whose commitments were terminated on 2026-02-27 — because the
+    panel is dated 2026-01-23 and CANNOT know. Item 1.02 is carried in the filer's own submissions
+    index, so no filing has to be read to see that one was filed after the panel was taken.
+
+    A FLAG, NEVER A DELETION, and never an attempt to say WHICH instrument died: matching a
+    termination to a facility means reading the 8-K, and a wrong match is worse than an honest
+    "something ended after this snapshot — check". The human is told what to check and where.
+    """
+    filed = _cs_panel_filed(detail_as_of)
+    if filed is None:
+        return Sourced.unknown(
+            note=f"the capital-structure panel states no source filing date ({detail_as_of!r}) — "
+                 f"its age cannot be measured, so nothing here says how current the schedule is")
+    age = (reference_date - filed).days
+    src = f"CIQ Capital Structure Details — {detail_as_of}"
+    try:
+        # BOUNDED AT BOTH ENDS, and the upper bound is the one that bit (review finding, #416).
+        # `recent_filings` returns the CURRENT submissions index, so an unbounded ">= filed" test
+        # reports whatever has been filed by the time the code RUNS — not by the record's as-of.
+        # Measured on the committed artifacts: UBER's 2026-07-29 record was flagged by an 8-K filed
+        # 2026-08-07 (+9d) and VITL's 2026-07-06 record by one filed 2026-08-06 (+31d). That is the
+        # lookahead class `close_as_of` exists to refuse one module over — it reports an event the
+        # reader could not have known, and it makes the artifact irreproducible, because
+        # re-assembling at the SAME reference_date yields a different answer as time passes.
+        terminations = [f for f in edgar.recent_filings(cik, forms=("8-K",))
+                        if _ITEM_TERMINATION in (f.items or [])
+                        and filed < f.filing_date <= reference_date]
+    except (HttpError, KeyError, ValueError):
+        return Sourced.present(
+            f"the debt schedule is {age}d old (source filed {filed}) — EDGAR was unreachable, so "
+            f"whether an agreement has been terminated since is UNCHECKED", source_ref=src)
+    if not terminations:
+        return Sourced.present(
+            f"the debt schedule is {age}d old (source filed {filed}); no Item 1.02 "
+            f"(termination of a material agreement) has been filed since", source_ref=src)
+    latest = max(terminations, key=lambda f: f.filing_date)
+    more = f" (+{len(terminations) - 1} more)" if len(terminations) > 1 else ""
+    return Sourced.present(
+        f"the debt schedule is {age}d old (source filed {filed}) AND an Item 1.02 — termination of "
+        f"a material definitive agreement — was filed {latest.filing_date}{more}, accession "
+        f"{latest.accession}. The panel predates it and cannot reflect it: an instrument listed "
+        f"below may already have been terminated. Verify before relying on this schedule.",
+        source_ref=src)
+
+
+#: The note for a search that RAN and located nothing — as opposed to one that could not run
+#: (no CIK, or EDGAR/efts unreachable). Both come back UNKNOWN with a null value, so a caller that
+#: keys on `bool(value)` cannot tell them apart and will report a completed search that never
+#: happened. Shared as a constant rather than matched as a literal, so the two cannot drift.
+COVENANT_SEARCH_FOUND_NOTHING = "no CIK-scoped agreement exhibit located across the filing history"
+
+
 def _covenant_pointers(
-    edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument]
+    edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument],
+    reference_date: date,
 ) -> Sourced[list[CovenantPointer]]:
     """(H1) Locate the EXECUTION filing (the 8-K/10-K carrying the agreement as an exhibit) for each
     AGREEMENT-CLASS instrument, SCOPED to the subject CIK. efts full-text is queried with ciks=<CIK>
@@ -2172,10 +2558,17 @@ def _covenant_pointers(
 
     # (1) latest 10-K material-contract exhibits (ex-10.x) — contracts incorporated by reference
     try:
-        tenks = edgar.recent_filings(cik, forms=("10-K",))
+        # AS-OF BOUNDED (review finding, #426). `recent_filings` returns TODAY's submissions
+        # index, so `tenks[0]` is whatever is newest when the code RUNS — re-assembling a
+        # historical dossier would attach a 10-K filed after its own reference date. Same class as
+        # #416's termination lookahead, and the widened exhibit matcher makes it REACHABLE for the
+        # four names that previously located nothing at all.
+        tenks = [f for f in edgar.recent_filings(cik, forms=("10-K",))
+                 if f.filing_date <= reference_date]
         if tenks:
             acc = tenks[0].accession
-            exs = [n for n in _exhibit_names(http, cik, acc) if re.search(r"ex-?10\d", n, re.I)]
+            exs = [n for n in _exhibit_names(http, cik, acc)
+                   if re.search(_EX10_RE, n, re.I)]
             if exs:
                 rows.append(CovenantPointer(
                     family="material contracts (10-K exhibit index)", filing="latest 10-K",
@@ -2205,6 +2598,9 @@ def _covenant_pointers(
             # (H1a) DEFENSE-IN-DEPTH cross-CIK guard — reject any hit whose filer CIK ≠ the subject
             if h.cik and pad_cik(h.cik) != cik10:
                 continue
+            # …and never an execution filing the record's own as-of could not have seen.
+            if h.file_date and h.file_date > reference_date:
+                continue
             if h.accession in seen:
                 continue
             exs = [n for n in _exhibit_names(http, cik, h.accession)
@@ -2226,8 +2622,7 @@ def _covenant_pointers(
             note="no contract-level filing expected (aggregate line item)"))
 
     if not any(r.accession for r in rows):
-        return Sourced.unknown(
-            note="no CIK-scoped agreement exhibit located across the filing history")
+        return Sourced.unknown(note=COVENANT_SEARCH_FOUND_NOTHING)
     return Sourced.present(
         rows,
         source_ref="EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)")
@@ -2252,7 +2647,9 @@ def _capital_structure(
     insts = (instruments.value
              if instruments.status is SourceStatus.PRESENT and instruments.value else [])
     cik = record.identity.cik
-    pointer_rows = _covenant_pointers(edgar, http, cik or "", insts)
+    pointer_rows = _covenant_pointers(edgar, http, cik or "", insts, reference_date)
+    vintage = (_capital_structure_vintage(edgar, cik, detail_as_of, reference_date)
+               if cik else Sourced.unknown(note="no CIK"))
     located = (pointer_rows.status is SourceStatus.PRESENT
                and any(r.accession for r in (pointer_rows.value or [])))
     summary_str = _covenant_summary(pointer_rows)
@@ -2271,6 +2668,7 @@ def _capital_structure(
         maturity_filings=_maturity_8ks(edgar, cik or "", insts, reference_date),
         covenant_pointers=pointers_str, covenant_pointer_rows=pointer_rows,
         covenant_terms=Sourced.unknown(note=terms_note),
+        panel_vintage=vintage,
     )
 
 

@@ -38,7 +38,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from vinci.dossier.midcycle import BAR, R1_FORMULA
 from vinci.prose_lint import ProseRegisterWarning, lint_record
 
-SCHEMA_VERSION = "1.4"
+SCHEMA_VERSION = "1.5"   # 1.5 makes `spot_as_of` required — see SPOT_AS_OF_REQUIRED_FROM
 
 # WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
 # is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
@@ -663,12 +663,53 @@ class StatedLimit(BaseModel):
     every record is today.
     """
 
-    price: float
-    #: WHEN the analyst stated it — not when the record was written. Compared against the legs'
-    #: vintage so a stale commitment is visible rather than inferred.
+    #: THREE STATES, AND `unstated` IS THE ABSENCE OF THIS OBJECT — `leg_basis`'s shape, and the
+    #: same distinction it exists for: a DELIBERATE absence must not render as an oversight.
+    #:
+    #:   * ``stated``   — the analyst named a price. EPAM: $89.50.
+    #:   * ``deferred`` — the analyst LOOKED and chose not to name one yet, with a reason and a
+    #:     revisit point. SMPL: not before the segment scan says whether a peer is a better use of
+    #:     the same capital. Distinguishable from silence, which is the whole point.
+    #:   * ``unstated`` — no `limit` object at all. Six of seven records, and the honest default.
+    #:
+    #: Why `unstated` is NOT a member here, unlike `leg_basis`: that field is DERIVED and therefore
+    #: always present, so its third state needs a name. This one is analyst-supplied, so absence is
+    #: already expressible and a member would give two ways to say the same thing.
+    state: Literal["stated", "deferred"] = "stated"
+    #: The price — REQUIRED when stated, and REFUSED when deferred. A deferral with a number in it
+    #: is a limit pretending to be a deferral.
+    price: float | None = None
+    #: WHEN the analyst stated (or deferred) it — not when the record was written. Compared against
+    #: the legs' vintage so a stale commitment is visible rather than inferred.
     stated_at: date
-    #: WHY this price rather than the ceiling — the conservatism, in the analyst's words.
+    #: WHY this price rather than the ceiling — the conservatism, in the analyst's words. REQUIRED
+    #: on a deferral, where it carries the reason for not stating one.
     note: str | None = None
+    #: WHEN the deferral is to be revisited. Free text, because the trigger is not always a date
+    #: ("the October print", "after the segment scan") and inventing a date type would force a
+    #: precision the analyst does not have.
+    revisit: str | None = None
+
+    @model_validator(mode="after")
+    def _state_and_price_agree(self) -> StatedLimit:
+        """The state and the fields must say the same thing — declared IS enforced here.
+
+        A deferral carrying a price would be enforced by the log-verdict gate as though it were a
+        commitment, which is exactly the substitution the deferral exists to avoid; and a `stated`
+        limit with no price is a gate that silently enforces nothing while the page claims a limit.
+        """
+        if self.state == "stated" and self.price is None:
+            raise ValueError("a STATED limit needs a price — use state='deferred' to record that "
+                             "the analyst looked and chose not to name one")
+        if self.state == "deferred":
+            if self.price is not None:
+                raise ValueError(f"a DEFERRED limit must not carry a price (got {self.price}) — a "
+                                 "number here would be enforced as a commitment")
+            if not (self.note or "").strip():
+                raise ValueError("a DEFERRED limit needs a note giving the reason — a deferral "
+                                 "without one is indistinguishable from an oversight, which is "
+                                 "the distinction this state exists to make")
+        return self
 
     model_config = {"frozen": True}
 
@@ -690,6 +731,22 @@ class ScenarioRecord(BaseModel):
     analyst: str
     spot: float
     spot_source: str
+    # (spot audit, 2026-08-11) THE DATE THE SPOT IS A CLOSE OF — structured, because the prose
+    # beside it cannot be parsed. All eight committed records already NAME their date inside
+    # `spot_source`, so this is a promotion of an existing fact and not a new one; what none of
+    # them offers is a MACHINE-READABLE date. BRBR is the proof that a regex cannot supply it: its
+    # `spot_source` carries THREE ISO dates (the close 2026-08-07, this worktree's frontier
+    # 2026-08-04, the date all three stores agree 2026-07-29) and no rule picks the right one —
+    # first-date is right only by the accident of how that sentence happens to be worded, and
+    # last-date and max-date each return something else. The house rule ("parsers consume
+    # structured values, never rendered strings") arriving as a live instance: this field is
+    # WRITTEN, never extracted from the sentence beside it.
+    #
+    # Default None so every record predating the field round-trips, and because UNSTATED and
+    # ABSENT are different states. A spot with no date is UNAUDITABLE, which is much narrower than
+    # unvalidated: all eight committed spots are real EOD closes, exact to the stored bar — just
+    # not ones that every store can see.
+    spot_as_of: date | None = None
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
@@ -971,7 +1028,9 @@ def limit_notes(rec: ScenarioRecord) -> list[str]:
         return []                       # unstated is not absent — and is not this function's job
     out: list[str] = []
     ceiling = (rec.result.ceiling2to1 if rec.result is not None else None)
-    if ceiling is not None and lim.price > ceiling:
+    # A DEFERRED limit has no price, so there is nothing to compare against the ceiling. Its
+    # vintage note below still applies — a deferral can go stale exactly as a commitment can.
+    if ceiling is not None and lim.price is not None and lim.price > ceiling:
         out.append(
             f"stated limit ${lim.price:,.2f} is ABOVE the recomputed ceiling ${ceiling:,.2f} — the "
             f"legs moved under a commitment that did not. The limit is the analyst's and is not "
@@ -983,6 +1042,114 @@ def limit_notes(rec: ScenarioRecord) -> list[str]:
             f"stated limit dates from {lim.stated_at} and these legs from {rec.underwrite_date} "
             f"— the limit predates the underwrite it sits beside, so it is unverified against it.")
     return out
+
+
+#: The spot is COPIED from a stored bar, so the two are the same number and not two roundings of
+#: one — measured across the six records this worktree can check, the delta is exactly 0.0 in every
+#: case. The epsilon is float-round-trip insurance, not a tolerance for a real price difference;
+#: anything a cent wide would be inventing slack the data has never needed and would swallow a
+#: genuine mis-transcription.
+_SPOT_EPS = 5e-7
+
+
+def spot_notes(
+    rec: ScenarioRecord, *, bar_close: float | None, name_frontier: date | None, store: str,
+) -> list[str]:
+    """The record's spot against the bar it CLAIMS to be — NOTES, never problems.
+
+    A FLAG AND NOT A REFUSAL, and that is a measured conclusion rather than a cautious one. Run
+    across all eight committed records against all three stores: every spot is a real EOD close,
+    exact to the stored bar — and BRBR's and EPAM's resolve in the ``-sl`` store ONLY, because
+    they are struck at 2026-08-07 while this worktree's frontier is 2026-08-04. A refusal run from
+    here would therefore have blocked two CORRECT records. Every spot is auditable somewhere; none
+    is auditable everywhere, so a refusal encodes an assumption about which store is asking.
+
+    THE LOOKUP IS BY DATE, NEVER BY VALUE. Searching for the nearest bar matching the spot's VALUE
+    was the first design and the corpus killed it: it is one-to-MANY on real data (AORT's 25.37
+    matches two bars sixteen months apart, MVST's 0.9188 four spanning two years, WERN's 46.04 two)
+    and on the two records this store cannot reach it returns a coincidental collision — an 11.55
+    from June for BRBR, a 97.35 from May for EPAM — noise presented as a finding. Keyed by date,
+    ``prices`` is one-to-one and the answer is a lookup instead of a search.
+
+    THE FOUR STATES ARE DELIBERATELY NOT THREE. "This store has not refreshed that far" is benign
+    and says nothing about the record; "this store reaches past that date and still has no bar on
+    it" is a coverage hole or a non-trading day, and is worth a sentence. Collapsing them would put
+    the fleet's ordinary frontier lag and a real gap under one wording — the two-states-that-must-
+    not-render-alike class this repo keeps meeting.
+
+    ``bar_close`` / ``name_frontier`` are RESOLVED BY THE CALLER so this stays a pure function of
+    what a store answered: the store I/O belongs at the call site, and the judgment is testable
+    without one.
+    """
+    asof = rec.spot_as_of
+    if asof is None:
+        # UNSTATED IS NOT WRONG. It is unauditable, which is the narrower claim — and it is the
+        # honest state for a record struck against a store this checkout cannot see.
+        return [f"spot ${rec.spot:,.4g} carries no `spot_as_of` — it names no date, so no store "
+                f"can check it. The date is stated in prose (`spot_source`) and is not machine-"
+                f"readable; it is UNAUDITABLE here, which is narrower than unverified."]
+    if bar_close is not None:
+        if abs(bar_close - rec.spot) <= _SPOT_EPS:
+            return []                       # the clean case is silent, as `limit_notes` is
+        return [f"SPOT DOES NOT MATCH ITS OWN BAR: the record states ${rec.spot:,.4f} as of "
+                f"{asof}, and {store} closed that day at ${bar_close:,.4f}. One of the two is "
+                f"wrong — this is the case the check exists for."]
+    if name_frontier is None:
+        return [f"spot is stated as of {asof} and {store} carries NO bars for this name at all, "
+                f"so it cannot be checked here — a coverage gap in this store, not a finding "
+                f"about the record."]
+    if name_frontier < asof:
+        return [f"spot is stated as of {asof} and {store} reaches only to {name_frontier}, so the "
+                f"bar is not here to check against. Frontier lag in this checkout, not a finding "
+                f"about the record — the store that wrote it may well hold the bar."]
+    return [f"spot is stated as of {asof} and {store} reaches to {name_frontier} — past that date "
+            f"— yet holds no bar ON it. Either {asof} was not a trading day for this name, or "
+            f"this store has a hole in its coverage."]
+
+
+#: `spot_as_of` becomes REQUIRED from this schema forward — the write refuses without it.
+#:
+#: WHY A VERSION GATE AND NOT A PLAIN REQUIREMENT. Every committed record is schema 1.3 and two of
+#: them (BRBR, EPAM) legitimately carry no date: they are struck at 2026-08-07, which only the
+#: `-sl` worktree's store can see, and writing a date this checkout cannot verify would assert from
+#: another store's authority. A blanket requirement would make those two unwritable — the adoption
+#: trap. CHECKED, not assumed: `write_record` PRESERVES an existing record's `schema_version`
+#: (driven, not read), so a 1.3 record stays 1.3 through every re-write and can never fall into
+#: this gate. Only records created at 1.5+ are bound.
+SPOT_AS_OF_REQUIRED_FROM = "1.5"
+
+
+def _require_spot_as_of(rec: ScenarioRecord) -> None:
+    """A spot must name the day it is a close of — refused at the write, from schema 1.5 forward.
+
+    THE POINT IS TO MAKE AN UNAUDITABLE SPOT UNRECORDABLE. `vinci audit spot` can check a stated
+    date against the store; it can check NOTHING against a record that names none, and the fleet
+    measurement was blunt about the consequence — every committed spot is a real EOD close, but the
+    two carrying no date cannot be shown to be. This does not verify the date (that is the audit's
+    job, and deliberately a flag rather than a refusal); it requires the CLAIM, so there is
+    something to check.
+
+    THE COHERENCE HALF IS NOT VERSION-GATED, because a stated date that postdates its own
+    underwrite is wrong at any schema and costs nothing to refuse: measured across the six stamped
+    records, every spot precedes its underwrite by 1-3 days, so no committed record pays for it.
+    That is the #416 lookahead lesson applied at the seat where the value is written rather than
+    where it is rendered.
+    """
+    if (rec.spot_as_of is not None and rec.underwrite_date
+            and str(rec.spot_as_of) > str(rec.underwrite_date)[:10]):
+        raise ValueError(
+            f"{rec.ticker}: spot_as_of {rec.spot_as_of} is AFTER the underwrite date "
+            f"{rec.underwrite_date} — the legs cannot have been struck against a close that had "
+            f"not happened. One of the two dates is wrong.")
+    if _schema_ver(rec.schema_version) < _schema_ver(SPOT_AS_OF_REQUIRED_FROM):
+        return
+    if rec.spot_as_of is None:
+        raise ValueError(
+            f"{rec.ticker}: schema {rec.schema_version} requires `spot_as_of` — the DAY the spot "
+            f"${rec.spot:,.4g} is a close of. Without it no store can check the price, and "
+            f"`vinci audit spot` reports it UNAUDITABLE forever. `scenario-propose` pre-fills it "
+            f"from the dossier's own `stock_info.as_of`; if the spot did not come from a close, "
+            f"it does not belong in a record.")
 
 
 def horizon_problems(rec: ScenarioRecord) -> list[str]:
@@ -1302,6 +1469,22 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     return out
 
 
+def validate_for_write(rec: ScenarioRecord) -> None:
+    """Every REFUSAL a write must clear, in one callable — so a caller can check before it writes.
+
+    `write_record` runs this, and that is enough for a single-file write. `scenario-supersede` is
+    not one: it writes the ARCHIVE first and the live record second, so a refusal on the second
+    left an orphan archive on disk — a superseded record with no successor, and a seal manifest
+    never updated. The window was always there (the basis and fielded-ref gates raise at the same
+    point); PR-7 made it far likelier to fire, because a fresh hand-written payload commonly omits
+    `spot_as_of` until the field is habit. Extracted rather than duplicated: two call sites, one
+    definition, so a gate added later cannot be enforced at the write and skipped at the pre-check.
+    """
+    _require_bear_basis(rec)
+    require_fielded_refs(rec)
+    _require_spot_as_of(rec)
+
+
 def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads.
 
@@ -1313,8 +1496,7 @@ def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     d = records_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{rec.ticker.upper()}.json"
-    _require_bear_basis(rec)
-    require_fielded_refs(rec)
+    validate_for_write(rec)
     _warn_admissibility(rec)
     flags = lint_record(rec)
     if flags:

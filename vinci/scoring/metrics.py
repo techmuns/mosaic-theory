@@ -41,6 +41,18 @@ class VerdictScore:
     # the only route that could reach the ledger, and overshoot the only strategy.
     origin: str = ORIGIN_SCREEN
     sleeve: str = DEFAULT_SLEEVE
+    # The sleeve's PASSIVE comparator over this row's own window (`vinci.scoring.baseline`), and
+    # the reason when there isn't one. Exactly one is non-None; both are None when the caller
+    # supplied no basket for this sleeve at all.
+    basket_return: float | None = None
+    basket_note: str | None = None
+    #: The roster AS OF THIS ROW'S ENTRY DATE — what the comparator was actually computed over.
+    #: Per row, not per sleeve: two verdicts entered either side of a follow-list change are
+    #: measured against different baskets, and the report has to be able to say so.
+    basket_members: tuple[str, ...] = ()
+    #: Has the POSITION been closed? The decision keeps accruing to its horizon regardless (the
+    #: 2026-08-12 ruling), so this only lets the report decompose the spread — it changes no number.
+    closed: bool = False
 
     @property
     def excess_gross(self) -> float:
@@ -134,6 +146,15 @@ class SleeveSpread:
     long_mean: float | None
     short_mean: float | None
     spread: float | None  # None (never 0.0) when either leg is empty — an empty leg is not a zero
+    # THE SLEEVE'S OWN KILL TEST, when the book names a passive comparator (`Sleeve.kill`): the
+    # equal-weight follow basket over the LONG leg's own windows, and the long leg minus it.
+    # `vs_basket <= 0` sustained IS the quality sleeve's kill condition — judgement adding nothing
+    # over indexing a list we chose anyway. None when no basket was supplied or it was refused;
+    # `basket_note` then says which, because a blank comparator reads as a failed one.
+    basket_label: str | None = None
+    basket_mean: float | None = None
+    vs_basket: float | None = None
+    basket_note: str | None = None
 
 
 @dataclass(frozen=True)
@@ -182,6 +203,17 @@ class ScoreReport:
     overrides: tuple[OverrideOutcome, ...] = ()
     # PER-BOOK curves, beside the primary and never inside it (STATE.md §4 SLEEVE ARCHITECTURE).
     by_sleeve: dict[str, SleeveSpread] = field(default_factory=dict)
+    # --- THE PRIMARY, OVER POSITIONS STILL HELD (2026-08-12 ruling; monitor parity since #418) ---
+    # A closed decision keeps accruing to its horizon — the spread measures the DISCRIMINATOR and a
+    # close is a capital decision, not a retraction. The headline above is therefore UNCHANGED. What
+    # this adds is the decomposition the monitor has printed since #418 and this report did not: how
+    # much of the spread is carried by calls the book no longer holds. On the monitor's 2026-08-11
+    # book the two figures were +9.54pp and −1.56pp — the sign flips, so the reader needs both.
+    n_closed: int = 0
+    n_open_buy: int = 0
+    n_open_avoid: int = 0
+    buy_avoid_spread_open_only: float | None = None
+    open_only_note: str | None = None
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -193,7 +225,9 @@ class ScoreReport:
         d["by_sleeve"] = {
             k: {"long_label": v.long_label, "short_label": v.short_label,
                 "n_long": v.n_long, "n_short": v.n_short, "long_mean": v.long_mean,
-                "short_mean": v.short_mean, "spread": v.spread}
+                "short_mean": v.short_mean, "spread": v.spread,
+                "basket_label": v.basket_label, "basket_mean": v.basket_mean,
+                "vs_basket": v.vs_basket, "basket_note": v.basket_note}
             for k, v in self.by_sleeve.items()
         }
         d["overrides"] = [
@@ -227,6 +261,21 @@ class ScoreReport:
             f"- Twin-realisation — BUYs bounced: {self.twin_buy_bounced} · "
             f"AVOIDs kept falling: {self.twin_avoid_fell}",
         ]
+        # THE DECOMPOSITION, printed only when it says something. With nothing closed the two
+        # figures are identical and a second line trains the reader to skip it. The closed rows are
+        # IN the headline by ruling; this says how much of it they carry, so nobody reads a spread
+        # earned on positions the book no longer holds as a spread the book earned.
+        if self.n_closed:
+            held = self.n_open_buy + self.n_open_avoid
+            open_txt = (f"UNDEFINED — {self.open_only_note}"
+                        if self.buy_avoid_spread_open_only is None
+                        else pct(self.buy_avoid_spread_open_only))
+            lines += [
+                f"  _of which **{self.n_closed}** resolved row(s) are CLOSED positions, still "
+                f"marked to horizon — the call is scored; the exit was a capital decision._",
+                f"  _Same spread over the **{held}** still held: **{open_txt}** "
+                f"(BUY n={self.n_open_buy} · AVOID n={self.n_open_avoid})._",
+            ]
         sector_lines = [
             f"- {v.sector}: {('spread ' + pct(v.spread)) if v.sufficient else 'insufficient data'} "
             f"({v.n_buy} buy / {v.n_avoid} avoid)"
@@ -242,17 +291,44 @@ class ScoreReport:
         # `scoring_report.md` — emit ONLY this markdown; JSON is opt-in. So a resolved followed
         # verdict was correctly excluded from the primary and then invisible to every reader, which
         # is worse than pooling it: the row exists, is scored, and appears nowhere.
-        sleeve_lines = [
-            f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
-            f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} resolved)"
-            for v in self.by_sleeve.values()
-        ]
+        sleeve_lines = []
+        for v in self.by_sleeve.values():
+            sleeve_lines.append(
+                f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
+                f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} "
+                f"resolved)")
+            # THE PASSIVE BASELINE, INDENTED UNDER ITS OWN BOOK and never pooled into the spread
+            # above it. Printed even when unavailable, WITH the reason: a baseline that simply
+            # vanishes on a bad window reads as "the judgement didn't beat it", which is the one
+            # misreading this line exists to prevent.
+            #
+            # GATED ON THE BASKET EXISTING, NOT ON THE NUMBER. A book with no followed names has no
+            # indexing comparator to fail — overshoot's kill criterion is the standing fund-wide
+            # falsifier (spread <= 0), not "beat the follow list" — so printing "unavailable" there
+            # would invent a missing measurement for a book that never names one.
+            if v.basket_label is None:
+                continue
+            if v.basket_mean is None:
+                # THE MEMBERS ARE NAMED EVEN WHEN THE NUMBER IS REFUSED. With more than one book
+                # on the page, "unavailable" alone leaves the reader unable to tell which basket
+                # failed, or whether the one they care about was even constituted.
+                sleeve_lines.append(
+                    f"  - vs equal-weight follow basket ({v.basket_label}): unavailable — "
+                    f"{v.basket_note}")
+            else:
+                verdict = "beats" if (v.vs_basket or 0.0) > 0 else "does NOT beat"
+                sleeve_lines.append(
+                    f"  - vs equal-weight follow basket ({v.basket_label}): basket "
+                    f"{pct(v.basket_mean)} → {v.long_label} {verdict} indexing by "
+                    f"**{pct(v.vs_basket)}** _(this book's kill test)_")
         lines += [
             "",
             "## Per-sleeve curves (one book, one composite)",
             "_Each book is measured on ITS OWN legs — overshoot on BUY−AVOID_TERMINAL, quality on_ "
             "_BUY−PASS — because 'terminal decline' is not what a PASS records. The overshoot row_ "
             "_reproduces the primary above; the others accumulate beside it and are never pooled._",
+            "_The indented line is the book's own KILL TEST where it names one: the long leg_ "
+            "_against simply INDEXING the same followed names, over those verdicts' own windows._",
             *(sleeve_lines or ["- (no resolved verdicts yet)"]),
         ]
         override_lines = [
@@ -276,8 +352,15 @@ class ScoreReport:
         return "\n".join(lines)
 
 
-def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
+def spread_by_sleeve(
+    scores: list[VerdictScore],
+    basket_labels: dict[str, str] | None = None,
+) -> dict[str, SleeveSpread]:
     """Each strategy book's own curve, with ITS OWN leg labels read from the registry.
+
+    ``basket_labels`` names each sleeve's passive comparator (e.g. ``"NFLX, UBER, V"``) so the
+    rendered row states WHICH names it was measured against. A number without its membership is
+    unauditable — the reader cannot tell a three-name basket from a one-name one.
 
     THE LEG LABELS ARE NOT HARDCODED, and that is the point of the registry: overshoot measures
     BUY−AVOID_TERMINAL while quality measures BUY−PASS, so a hardcoded `AVOID_TERMINAL` filter
@@ -309,10 +392,53 @@ def spread_by_sleeve(scores: list[VerdictScore]) -> dict[str, SleeveSpread]:
                 f"the curve without appearing anywhere, which is the silent-drop this refuses")
         lm = statistics.fmean(longs) if longs else None
         sm = statistics.fmean(shorts) if shorts else None
+        # THE PASSIVE COMPARATOR, over the LONG leg's rows only — the counterfactual is "hold the
+        # basket instead of these BUYs, across the windows those BUYs were held". Averaging the
+        # PASS rows' windows in as well would compare the judgement to a period it never held.
+        long_rows = [r for r in rows if r.verdict.value == long_label]
+        b_rets = [r.basket_return for r in long_rows if r.basket_return is not None]
+        # A REFUSAL ON ANY ROW REFUSES THE WHOLE MEAN. Averaging only the rows whose basket priced
+        # would silently compare the full BUY leg against a comparator drawn from a subset of its
+        # windows — the same partial-basket substitution `baseline` refuses one level down.
+        notes = sorted({r.basket_note for r in long_rows if r.basket_note is not None})
+        # THE PRINTED MEMBERSHIP COMES FROM THE ROWS, NOT FROM THE FILE. `basket_labels` says only
+        # that this book HAS a comparator; the names shown are the as-of rosters actually measured,
+        # so a follow-list edit cannot retitle a historical result with names it never contained.
+        # Verdicts on either side of a roster change carry different rosters, and that is stated
+        # rather than flattened into one misleading label.
+        rosters = sorted({r.basket_members for r in long_rows if r.basket_members})
+        exists = (basket_labels or {}).get(key)
+        label: str | None
+        if len(rosters) == 1:
+            label = ", ".join(rosters[0])
+        elif len(rosters) > 1:
+            label = f"{len(rosters)} rosters, each as of its verdict's entry date"
+        else:
+            label = exists
+        bm: float | None
+        note: str | None
+        # THREE DISTINCT ABSENCES, kept distinct — an earlier cut collapsed the middle one into the
+        # first and reported "no basket supplied for this sleeve" for a book whose basket WAS
+        # supplied and simply had no resolved BUY yet. That is a false statement in the report, and
+        # it is the quality book's most likely early state: the first resolved quality verdict can
+        # easily be a PASS.
+        if exists is None:
+            bm, note = None, "no basket supplied for this sleeve"
+        elif not long_rows:
+            bm, note = None, f"no resolved {long_label} verdicts to compare against yet"
+        elif notes:
+            extra = f" (+{len(notes) - 1} other reason(s))" if len(notes) > 1 else ""
+            bm, note = None, f"{notes[0]}{extra}"
+        else:
+            bm, note = (statistics.fmean(b_rets) if b_rets else None), None
         out[key] = SleeveSpread(
             sleeve=key, long_label=long_label, short_label=short_label,
             n_long=len(longs), n_short=len(shorts), long_mean=lm, short_mean=sm,
-            spread=(lm - sm if lm is not None and sm is not None else None))
+            spread=(lm - sm if lm is not None and sm is not None else None),
+            basket_label=label,
+            basket_mean=bm,
+            vs_basket=(lm - bm if lm is not None and bm is not None else None),
+            basket_note=note)
     return out
 
 
@@ -323,6 +449,7 @@ def aggregate(
     n_pending: int,
     book_daily: list[float] | None = None,
     bench_daily: list[float] | None = None,
+    basket_labels: dict[str, str] | None = None,
 ) -> ScoreReport:
     """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression."""
     # THE PRIMARY SPREAD IS SCREEN-ORIGIN ONLY (operator decision 2026-08-07). The spread is the
@@ -342,6 +469,25 @@ def aggregate(
     buy_mean = mean([s.name_return for s in buys])
     avoid_mean = mean([s.name_return for s in avoids])
     spread = buy_mean - avoid_mean if buy_mean is not None and avoid_mean is not None else None
+    # THE SAME ARITHMETIC OVER POSITIONS STILL HELD. Computed off `primary` — the identical set the
+    # headline uses — so the two figures are comparable by construction rather than by coincidence.
+    open_buys = [s.name_return for s in buys if not s.closed]
+    open_avoids = [s.name_return for s in avoids if not s.closed]
+    open_bm, open_am = mean(open_buys), mean(open_avoids)
+    spread_open = (open_bm - open_am) if (open_bm is not None and open_am is not None) else None
+    # COUNTED OVER THE LEGS THE SPREAD USES, not over `primary`. A screen-origin row whose verdict
+    # is neither leg (a quality PASS logged with screen origin — the model permits it, since origin
+    # and sleeve are orthogonal) sits in `primary` and in no leg, so counting it here made the
+    # rendered line contradict itself: "1 still held" printed beside "BUY n=1 · AVOID n=1".
+    n_closed = sum(1 for s in (*buys, *avoids) if s.closed)
+    open_note: str | None = None
+    if spread_open is None and n_closed:
+        # Worded for THIS scope: "no AVOID leg" reads very differently when it means "every AVOID
+        # was closed" than when it means "none was ever logged".
+        missing = "BUY" if open_bm is None else "AVOID"
+        n_legs = len(buys) + len(avoids)
+        open_note = (f"no {missing} leg among the {n_legs - n_closed} of {n_legs} resolved rows "
+                     f"still held")
     beta = alpha = None
     if book_daily is not None and bench_daily is not None:
         beta, alpha = ols_beta_alpha(book_daily, bench_daily)
@@ -378,6 +524,11 @@ def aggregate(
         buy_mean_return=buy_mean,
         avoid_mean_return=avoid_mean,
         buy_avoid_spread=spread,
+        n_closed=n_closed,
+        n_open_buy=len(open_buys),
+        n_open_avoid=len(open_avoids),
+        buy_avoid_spread_open_only=spread_open,
+        open_only_note=open_note,
         buy_hit_rate=frac([s.excess_gross > 0 for s in buys]),
         avoid_hit_rate=frac([s.excess_gross < 0 for s in avoids]),
         buy_excess_gross=mean([s.excess_gross for s in buys]),
@@ -387,7 +538,7 @@ def aggregate(
         twin_buy_bounced=(buy_mean > 0) if buy_mean is not None else None,
         twin_avoid_fell=(avoid_mean < 0) if avoid_mean is not None else None,
         by_sector=spread_by_sector(scores),
-        by_sleeve=spread_by_sleeve(scores),
+        by_sleeve=spread_by_sleeve(scores, basket_labels),
         n_machine_buy=len(m_buys),
         n_machine_avoid=len(m_avoids),
         machine_buy_avoid_spread=machine_spread,

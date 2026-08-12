@@ -60,3 +60,26 @@ jobs:
         run: python -m mypy --strict vinci
       - name: pytest (offline)
         run: python -m pytest -m "not network" -p no:warnings --tb=short
+
+      # THE MIRROR IS DERIVED, AND NOTHING WAS ENFORCING THAT. `frontend/` is rebuilt from
+      # committed data by `frontend/build.py`, but the rebuild ran only when a human remembered —
+      # so a PR could change `data/snapshots/` or `data/monitor/` and ship a deployed site still
+      # showing the previous state, with a green gate. Cloudflare Pages serves `frontend/` as
+      # committed, so a stale mirror IS the product.
+      #
+      # A CHECK, NOT AN AUTO-COMMIT: this job has `contents: read`, and a workflow that pushed
+      # generated files back would make main a moving target mid-review. The build is a no-op on
+      # committed data — it SKIPS every local-only source rather than deleting that source's
+      # mirror — so any diff here means the author changed data and did not rebuild.
+      - name: frontend mirror is in sync with committed data
+        run: |
+          python frontend/build.py
+          git diff --exit-code -- frontend/ || {
+            echo "::error::frontend/ is stale — run 'python frontend/build.py' and commit the result"
+            exit 1
+          }
+          test -z "$(git status --porcelain -- frontend/)" || {
+            echo "::error::frontend/ gained untracked files — run the build locally and commit them"
+            git status --porcelain -- frontend/
+            exit 1
+          }

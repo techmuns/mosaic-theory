@@ -178,7 +178,7 @@ def _minimal(**over: object) -> sc.ScenarioRecord:
     base: dict[str, object] = {
         "ticker": "TEST", "recipe_id": sc.RECIPE_R1, "recipe_desc": "d",
         "multiple_basis": "EV/EBITDA", "underwrite_date": "2026-07-21", "analyst": "tester",
-        "spot": 10.0, "spot_source": "test",
+        "spot": 10.0, "spot_source": "test", "spot_as_of": "2026-07-10",
         "facts": {
             "d_and_a": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),
             "net_debt": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),

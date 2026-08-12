@@ -27,6 +27,7 @@ from vinci.dossier.schemas import (
     Dossier,
     FinancialSummary,
     MechanicalLayer,
+    PriceStoreStamp,
     Sourced,
     SourceStatus,
     StockInfo,
@@ -417,20 +418,67 @@ def _ladder_lines(s: Sourced[Any]) -> list[str]:
     return out
 
 
+def _guide_period_year(period: str) -> int | None:
+    """The fiscal year a guide COVERS, from its own period label (`FQ4 2002`, `FY 2027`)."""
+    m = re.search(r"(20\d\d|19\d\d)", str(period or ""))
+    return int(m.group(1)) if m else None
+
+
+def _catalyst_asof_year(cp: Any) -> int | None:
+    """The year the catalyst panel's data reaches. `as_of` is a FLOOR (`≥2026-07-21`), which is
+    exactly right here: a guide period must be strictly BEHIND the data we hold before it can be
+    called superseded, and a floor errs toward leaving guidance alone."""
+    a = getattr(cp, "as_of", None)
+    raw = getattr(a, "value", a)
+    m = re.search(r"(20\d\d)-\d\d-\d\d", str(raw or ""))
+    return int(m.group(1)) if m else None
+
+
 def _guidance_bridge_lines(cp: Any) -> list[str]:
     """(H4) Guidance bridge as a table — metric | latest guide | for | dated | age | record | most
     recent — each a RECORDED delivery fact, no reading added. A pre-H4 dossier.json (no rows) falls
-    back to the flat one-line string."""
+    back to the flat one-line string.
+
+    A GUIDE WHOSE PERIOD HAS PASSED DOES NOT LEAD WITH ITS FIGURE. NFLX's table opened with
+    `Gross Margin % — '47.00 - 48.00' for FQ4 2002`: a twenty-four-year-old number in a column
+    headed "Latest guide", with the Age column two places right saying 8686d. The eye takes the
+    figure. The row builder picks the newest guide with a PARSEABLE RANGE, so a company that
+    stopped guiding a metric keeps surfacing whatever it last said.
+
+    THE TEST IS THE GUIDE'S PERIOD, NOT ITS ISSUE AGE (review finding, #423). Age was the first
+    criterion and it is wrong in BOTH directions, with a counterexample each way in the corpus:
+    VITL's gross-margin guide is dated 2023-11-02 (977d) but is **for FY 2027**, still ahead of a
+    2026 as-of — long-term guidance stays applicable without being reissued, and calling it
+    "none current" is simply false. MVST's is only 238d old but is **for FY 2025**, a year already
+    finished and never reguided — genuinely no current guide. Issue date says nothing about
+    applicability; the guided period says everything.
+
+    UNPARSEABLE ERRS TOWARD LEAVING IT ALONE. A period or as-of this cannot read leaves the row
+    untouched: a false demotion actively misleads, while a missed one leaves the Age column still
+    telling the truth.
+
+    NOTHING IS DELETED — the figure stays in the cell, reframed as `none current (last: …)`, and
+    `dossier.json` is untouched: the three-tier rule as written. The demoted rows also sort BELOW
+    the current ones, because sheet order put NFLX's two dead guides at the top of its table.
+    """
     rows_s = getattr(cp, "guidance_bridge_rows", None)
     if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
         return [_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge)]
     cols = ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"]
-    rows = [
-        [r.metric, r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent]
-        for r in rows_s.value
-    ]
+    asof_yr = _catalyst_asof_year(cp)
+
+    def _superseded(r: Any) -> bool:
+        yr = _guide_period_year(r.period)
+        return yr is not None and asof_yr is not None and yr < asof_yr
+
+    def _row(r: Any) -> list[Any]:
+        guide = (f"none current (last: {r.latest_guide})" if _superseded(r) else r.latest_guide)
+        return [r.metric, guide, r.period, r.dated, r.age, r.record, r.most_recent]
+
+    ordered = ([r for r in rows_s.value if not _superseded(r)]
+               + [r for r in rows_s.value if _superseded(r)])
     return _table("Guidance bridge (latest guide + sign-aware delivery track-record)",
-                  rows_s.source_ref, cols, rows)
+                  rows_s.source_ref, cols, [_row(r) for r in ordered])
 
 
 # (T3) headline metric PRIORITY — each tuple is the substrings a metric must contain (all of them).
@@ -1165,6 +1213,13 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
     surface."""
     inst = cs.instruments
     out: list[str] = []
+    # (PR-3) THE PANEL'S AGE LEADS THE INSTRUMENTS IT DESCRIBES — the stamp-position rule: a vintage
+    # read AFTER the numbers does not work, because by then the reader has already taken them as
+    # current. Every committed schedule is 82-280 days old and the page has never said so, which is
+    # why NFLX still lists a facility terminated in February. Rendered only when the field exists;
+    # dossiers assembled before it carry None, and "unknown" would claim we looked.
+    if cs.panel_vintage is not None:
+        out.append(_fact("Debt schedule vintage", cs.panel_vintage))
     if inst.status is SourceStatus.PRESENT and inst.value:
         near = [i for i in inst.value if _near_dated(i, reference_date)]
         moved = len(inst.value) - len(near)
@@ -3258,7 +3313,19 @@ def _leverage_survival_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     if (m.quality.fcf_sign.status is SourceStatus.PRESENT
             or m.quality.free_cash_flow.status is not SourceStatus.PRESENT):
         out.append(_fact("FCF sign", m.quality.fcf_sign, _signword))
-    out.append(_fact("Free cash flow ($M)", m.quality.free_cash_flow))
+    # (PR-5) THE BASIS TRAVELS WITH THE NUMBER. `_fact` renders a note only when the fact is NOT
+    # present, so a PRESENT figure's note is written to JSON and never reaches the page — 55 of
+    # NFLX's 135 present facts carry one today. That is fine for most, and not for this one: CIQ's
+    # "Levered Free Cash Flow" disagrees with CFO − capex on 13 of 14 committed names (0.27x to
+    # 2.28x, and AORT differs in SIGN), so the figure is unreadable without its basis. Rendered
+    # here rather than by changing `_fact`, which would add ~55 lines of mostly-verbatim notes to
+    # every page.
+    fcf = m.quality.free_cash_flow
+    if fcf.status is SourceStatus.PRESENT and fcf.note:
+        out.append(f"- **Free cash flow ($M):** {fcf.value} — {_clean_note(str(fcf.note))}"
+                   f"{_cite(fcf.source_ref)}")
+    else:
+        out.append(_fact("Free cash flow ($M)", fcf))
     # (E1/E2) structured capital structure + maturity wall replace the flat liquidity string; pre-E
     # dossier.json falls back to the legacy Quality.liquidity_covenant_flags line.
     if m.capital_structure is not None:
@@ -3284,6 +3351,12 @@ def _trajectory_section_lines(m: MechanicalLayer) -> list[str]:
     out.append("## Operating trajectory")
     out += _trajectory_table_lines(m)
     out.append(_fact("Share-count trend", m.quality.share_count_trend))
+    # (PR-4) MAIN BODY, beside the trajectory it qualifies — this decides whether the EPS a reader
+    # is about to divide by means anything, so it is a decision value rather than audit context.
+    # Rendered only when the field exists: dossiers assembled before it carry None, and printing
+    # "unknown" for them would claim we looked.
+    if m.quality.nonoperating_earnings is not None:
+        out.append(_fact("Non-operating earnings", m.quality.nonoperating_earnings))
     if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
         out += _fin_table_lines("Return ratios — per fiscal period", m.return_ratios)
     out.append("")
@@ -3814,6 +3887,29 @@ def _panel_age_line(d: Dossier) -> list[str]:
     return out
 
 
+def _price_store_line(stamp: PriceStoreStamp | None) -> str:
+    """The price store, named by its WORKTREE rather than its absolute path.
+
+    THE READER NEEDS COMPARABILITY, NOT A FILESYSTEM TOUR. `.../mosaic-theory-wb/data/vinci.db`
+    reads as noise; `mosaic-theory-wb` is what tells one page from another, and the full declared
+    and resolved paths stay in `dossier.json` — the machine-complete tier, exactly where the
+    three-tier rule puts the full record behind a curated value.
+
+    THE ARROW IS THE SYMLINK, and it is worth a reader's attention: a worktree whose store points
+    into another's is reading data it did not refresh, which is how a corroboration check once
+    reported that "the store" could not see a price it was never actually asked for.
+    """
+    if stamp is None:
+        # UNSTAMPED IS NOT UNKNOWN-STORE. Every dossier committed before this field predates it;
+        # saying so beats printing nothing, which would read as "no store worth naming".
+        return "unstamped — this dossier predates the store stamp"
+    declared = Path(stamp.declared_path).parent.parent.name or stamp.declared_path
+    resolved = Path(stamp.resolved_path).parent.parent.name or stamp.resolved_path
+    where = declared if declared == resolved else f"{declared} → {resolved}"
+    reach = f"reaching {stamp.frontier}" if stamp.frontier else "holding no bars"
+    return f"`{where}` · {reach}"
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -3828,6 +3924,12 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # a reader meets it; this carries the meaning, which is audit-tier context by the three-tier
         # rule and print-expanded regardless.
         f"- **Extraction:** {stamp_detail(d.extraction_version)}",
+        # (spot audit) WHICH STORE, beside with-what and when. Rendered on every dossier and not
+        # only when it looks unusual: `data/` is per-worktree by design, so two pages built the
+        # same day can be struck days apart, and a reader cannot infer that from anything else on
+        # the page. Absent stamps say "unstamped" rather than nothing — a dossier built before the
+        # field and one built from an unknown store must not read alike.
+        f"- **Price store:** {_price_store_line(d.price_store)}",
         # (item 1) The build's panel spread, rendered on EVERY dossier rather than only when it
         # breaches: the spread is context a reader needs in order to read a multiple at all. Nine
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with

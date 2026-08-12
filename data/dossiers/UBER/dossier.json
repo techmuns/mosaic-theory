@@ -302,7 +302,7 @@
         "value": 7238.8,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM Press Release 12 months Jun-30-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM Press Release 12 months Jun-30-2026], CFO $10,424.0M − capex $308.0M = $10,116.0M — 0.72x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
         "value": "EBITDA margin: Dec-31-2016 (R) -71% → Dec-31-2017 (R) -42% → Dec-31-2018 (R) -23% → Dec-31-2019 (R) -63% → Dec-31-2020 (R) -35% → Dec-31-2021 -17% → Dec-31-2022 -3% → Dec-31-2023 (R) 5% → Dec-31-2024 (R) 8% → Dec-31-2025 12% → Jun-30-2026 (LTM) 14%; gross margin: Dec-31-2016 (R) 19% → Dec-31-2017 (R) 30% → Dec-31-2018 (R) 40% → Dec-31-2019 (R) 36% → Dec-31-2020 (R) 39% → Dec-31-2021 36% → Dec-31-2022 31% → Dec-31-2023 (R) 37% → Dec-31-2024 (R) 38% → Dec-31-2025 38% → Jun-30-2026 (LTM) 41%; absolute EBITDA: Dec-31-2016 (R) -2,715 → Dec-31-2017 (R) -3,361 → Dec-31-2018 (R) -2,422 → Dec-31-2019 (R) -8,146 → Dec-31-2020 (R) -3,926 → Dec-31-2021 -2,932 → Dec-31-2022 -885 → Dec-31-2023 (R) 1,933 → Dec-31-2024 (R) 3,536 → Dec-31-2025 6,312 → Jun-30-2026 (LTM) 7,474; absolute revenue: Dec-31-2016 (R) 3,845 → Dec-31-2017 (R) 7,932 → Dec-31-2018 (R) 10,433 → Dec-31-2019 (R) 13,000 → Dec-31-2020 (R) 11,139 → Dec-31-2021 17,455 → Dec-31-2022 31,877 → Dec-31-2023 (R) 37,281 → Dec-31-2024 (R) 43,978 → Dec-31-2025 52,017 → Jun-30-2026 (LTM) 55,227  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -343,6 +343,12 @@
       "share_count_trend": {
         "value": "buying back (trailing ~2.0y): 2,100,937,229 (2024-08-02) → 2,042,560,121 (2026-07-31), -2.8%",
         "source_ref": "EDGAR XBRL shares, trailing 2024-08-02..2026-07-31",
+        "status": "present",
+        "note": null
+      },
+      "nonoperating_earnings": {
+        "value": "$1,507M of the quarter ended 2025-09-30 came from BELOW the operating line — 58% of pre-tax income, and 11% of revenue. Operating income $1,113M → pre-tax $2,620M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "status": "present",
         "note": null
       },
@@ -4162,7 +4168,13 @@
         "note": null
       },
       "covenant_term_rows": null,
-      "maturity_event": null
+      "maturity_event": null,
+      "panel_vintage": {
+        "value": "the debt schedule is 166d old (source filed 2026-02-13); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-13-2026",
+        "status": "present",
+        "note": null
+      }
     },
     "capital_allocation": {
       "goodwill": {
@@ -4908,7 +4920,21 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -2913.0,
+                -1418.0,
+                -1541.0,
+                -4321.0,
+                -2745.0,
+                -445.0,
+                642.0,
+                3585.0,
+                7137.0,
+                10099.0,
+                10424.0,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -4928,7 +4954,21 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -1629.0,
+                -821.0,
+                -558.0,
+                -588.0,
+                -616.0,
+                -298.0,
+                -252.0,
+                -223.0,
+                -242.0,
+                -336.0,
+                -308.0,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -4948,7 +4988,21 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                null,
+                -3087.0,
+                -1202.5,
+                -472.9,
+                -2172.4,
+                152.875,
+                550.875,
+                2606.125,
+                5267.5,
+                6346.125,
+                7238.75,
+                null,
+                null
+              ],
               "material": false
             }
           ],
@@ -7037,7 +7091,7 @@
           "value": "$204 million, or 3%",
           "value_num": 3.0,
           "unit": "%",
-          "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $204 million or 3% in the three months ended June 30, 2026, primarily attributable to a $545 million increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $320 million increase in Carrier payme",
+          "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $204 million or 3% in the three months ended June 30, 2026, primarily attributable to a $545 million increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $320 million increase in Carrier payments and incentives, as a result of increased Freight Gross Bookings; and a $132 million increase in credit card processing costs, as a result of increased Gross Bookings, partially offset by a $808 million decrease in Driver payments and incentives, as a result of Mobility business model changes in the UK.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7049,7 +7103,7 @@
           "value": "$525 million, or 4%",
           "value_num": 4.0,
           "unit": "%",
-          "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $525 million or 4% in the six months ended June 30, 2026, mainly due to a $1.2 billion increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $400 million increase in Carrier payme",
+          "verbatim": "Cost of revenue, exclusive of depreciation and amortization, increased $525 million or 4% in the six months ended June 30, 2026, mainly due to a $1.2 billion increase in Courier payments and incentives, as a result of increased Delivery Gross Bookings in certain markets; a $400 million increase in Carrier payments and incentives, as a result of increased Freight Gross Bookings; and a $248 million increase in credit card processing costs, as a result of increased Gross Bookings.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7097,7 +7151,7 @@
           "value": "$574 million, or 25%",
           "value_num": 25.0,
           "unit": "%",
-          "verbatim": "Sales and marketing expenses increased $574 million or 25% in the six months ended June 30, 2026, primarily attributable to a $248 million increase in consumer discounts, promotions, credits and refunds, a $231 million increase in indirect advertising and marketing, and a $103 million increas",
+          "verbatim": "Sales and marketing expenses increased $574 million or 25% in the six months ended June 30, 2026, primarily attributable to a $248 million increase in consumer discounts, promotions, credits and refunds, a $231 million increase in indirect advertising and marketing, and a $103 million increase in employee compensation costs including stock-based compensation .",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7133,7 +7187,7 @@
           "value": "$266 million, or 40%",
           "value_num": 40.0,
           "unit": "%",
-          "verbatim": "Percentage of revenue 5 % 7 % 5 % 6 % General and administrative expenses increased $266 million or 40% in the three months ended June 30, 2026, primarily attributable to a $138 million increase in legal-related accruals and expenses, a $66 million increase in employee compensation costs including stock-based compensation and a $53 millio",
+          "verbatim": "Percentage of revenue 5 % 7 % 5 % 6 % General and administrative expenses increased $266 million or 40% in the three months ended June 30, 2026, primarily attributable to a $138 million increase in legal-related accruals and expenses, a $66 million increase in employee compensation costs including stock-based compensation and a $53 million increase in contractor and professional service costs.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7145,7 +7199,7 @@
           "value": "$407 million, or 31%",
           "value_num": 31.0,
           "unit": "%",
-          "verbatim": "General and administrative expenses increased $407 million or 31% in the six months ended June 30, 2026, primarily attributable to a $148 million increase in legal-related accruals and expenses, a $111 million increase in employee compensation costs including stock-based compensation, a $92 million",
+          "verbatim": "General and administrative expenses increased $407 million or 31% in the six months ended June 30, 2026, primarily attributable to a $148 million increase in legal-related accruals and expenses, a $111 million increase in employee compensation costs including stock-based compensation, a $92 million increase in contractor and professional service costs, and a $33 million increase in general insurance expense.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7157,7 +7211,7 @@
           "value": "$75 million, or 1%",
           "value_num": 1.0,
           "unit": "%",
-          "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially o",
+          "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted revenue by $1.1 billion.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7169,7 +7223,7 @@
           "value": "$486 million, or 28%",
           "value_num": 28.0,
           "unit": "%",
-          "verbatim": "Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted reven",
+          "verbatim": "Mobility revenue increased $75 million, or 1%, and Mobility Segment Operating Income increased $486 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 22%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted revenue by $1.1 billion.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7181,7 +7235,7 @@
           "value": "$377 million, or 3%",
           "value_num": 3.0,
           "unit": "%",
-          "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially o",
+          "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted revenue by $2.1 billion.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7193,7 +7247,7 @@
           "value": "$928 million, or 28%",
           "value_num": 28.0,
           "unit": "%",
-          "verbatim": "Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted reven",
+          "verbatim": "Mobility revenue increased $377 million, or 3%, and Mobility Segment Operating Income increased $928 million, or 28%. Mobility revenue increased primarily attributable to an increase in Mobility Gross Bookings of 23%, driven by an increase in Trip volumes, partially offset by business model changes in the UK that negatively impacted revenue by $2.1 billion.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7205,7 +7259,7 @@
           "value": "$1.1 billion, or 28%",
           "value_num": 28.0,
           "unit": "%",
-          "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $1.1 billion, or 28%, and Delivery Segment Operating Income increased $289 million, or 38%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 26%, driven by an increase in Trip volumes, and a $18",
+          "verbatim": "he three months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $1.1 billion, or 28%, and Delivery Segment Operating Income increased $289 million, or 38%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 26%, driven by an increase in Trip volumes, and a $182 million increase in advertising revenue.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7229,7 +7283,7 @@
           "value": "$2.4 billion, or 31%",
           "value_num": 31.0,
           "unit": "%",
-          "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $2.4 billion, or 31%, and Delivery Segment Operating Income increased $579 million, or 40%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 27%, driven by an increase in Trip volumes, and a $362",
+          "verbatim": "the six months ended June 30, 2026 compared to the same period in 2025, Delivery revenue increased $2.4 billion, or 31%, and Delivery Segment Operating Income increased $579 million, or 40%. Delivery revenue increased primarily attributable to an increase in Delivery Gross Bookings of 27%, driven by an increase in Trip volumes, and a $362 million increase in advertising revenue.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -7253,7 +7307,7 @@
           "value": "$322 million, or 26%",
           "value_num": 26.0,
           "unit": "%",
-          "verbatim": "the three months ended June 30, 2026 compared to the same period in 2025, Freight revenue increased $322 million or 26% , and Freight Segment Operating Loss decreased $2 million , or 8% . Freight revenue increased primarily attributable to a 25% increase in Freight Gross Bookings due to an increase in gross booking per trip and trip volum",
+          "verbatim": "the three months ended June 30, 2026 compared to the same period in 2025, Freight revenue increased $322 million or 26% , and Freight Segment Operating Loss decreased $2 million , or 8% . Freight revenue increased primarily attributable to a 25% increase in Freight Gross Bookings due to an increase in gross booking per trip and trip volume.",
           "following_context": null,
           "source_ref": "10-Q 0001543151-26-000032",
           "tier": "anchored"
@@ -8811,6 +8865,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-09T18:28:51.181215Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Unknown",
   "industry": {
     "value": "Passenger Ground Transportation",

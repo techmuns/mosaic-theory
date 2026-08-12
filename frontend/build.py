@@ -329,6 +329,11 @@ def _current_state(rec: dict[str, Any]) -> dict[str, Any]:
         # `scenarios/<T>.json` (tier 3) — emitting them here would put keys on the card that no
         # view renders, which the parity pin correctly refuses.
         out["limit"] = _rd(lim.get("price"), 2)
+    elif lim.get("state") == "deferred":
+        # A DEFERRAL IS NOT SILENCE, and the card has to say so or it renders identically to the
+        # six records that carry no limit at all — which is the oversight/deliberate-absence
+        # collapse this state exists to prevent.
+        out["limitDeferred"] = True
     return out
 
 

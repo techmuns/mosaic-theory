@@ -1306,7 +1306,7 @@ def test_covenant_pointers_reject_cross_cik_and_locate_the_wu_execution_8k() -> 
                      file_date=date(2024, 6, 4), display_names=["Microvast"])])
     got = dm._covenant_pointers(
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
-        "0001760689", insts)
+        "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     accs = {r.accession for r in got.value}
     assert "0001193125-05-034397" not in accs  # cross-CIK AXESSTEL 2005 REJECTED (the bug it fixes)
@@ -1330,7 +1330,7 @@ def test_audit_covenant_pointers_accept_html_named_agreement_exhibit() -> None:
         file_date=date(2024, 6, 4), display_names=["Microvast"])])
     got = dm._covenant_pointers(
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
-        "0001760689", insts)
+        "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     wu = next(r for r in got.value if r.accession == "0001760689-24-000021")
     assert any(e.endswith(".html") for e in wu.exhibits)  # the .html agreement exhibit is kept
@@ -1803,7 +1803,7 @@ def test_covenant_pointers_real_mvst_cik_scoped_finds_wu_8k_no_cross_cik() -> No
     edgar, http = EdgarClient.from_config(), build_sec_http()
     insts = [_inst("Convertible Loan With Shareholder - Initial Term Loan", 12.0, "2026-05-28"),
              _inst("Notes Payable", 78.3, None, type="Bonds and Notes", secured=False)]
-    got = dm._covenant_pointers(edgar, http, "0001760689", insts)
+    got = dm._covenant_pointers(edgar, http, "0001760689", insts, date(2026, 6, 30))
     assert got.status is ds.SourceStatus.PRESENT
     accs = [r.accession for r in got.value if r.accession]
     assert "0001760689-24-000021" in accs  # the Wu execution 8-K
@@ -7445,6 +7445,13 @@ def test_return_ratios_exhibit_no_phantom_negative_tick_e2e() -> None:
     vals = [v for row in rr["value"]["rows"] for v in (row.get("values") or []) if v is not None]
     if not vals or not all(v > 0 for v in vals):
         pytest.skip("IT return ratios not all-positive — invariant N/A")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -7527,6 +7534,13 @@ def test_dossier_page_logs_anchor_and_scenario_panels() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node not available")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -7589,8 +7603,11 @@ def test_opener_narrative_slot_rationale_once_and_conditional_warning_node() -> 
     1. NARRATIVE ONCE, THESIS-FIRST — with an underwrite record carrying a recorded rationale
        (IT), the Brief renders the analyst's words EXACTLY ONCE, as the THESIS block leading the
        narrative column (before the About heading), and NO machine 'Assessment' label. A pending
-       name (EPAM) renders exactly one 'Assessment' and no thesis block — the machine read is
-       never titled as a thesis (authorship stays marked).
+       name renders exactly one 'Assessment' and no thesis block — the machine read is never
+       titled as a thesis (authorship stays marked). THE PENDING EXEMPLAR IS DERIVED, not named:
+       it was hardcoded to EPAM, and recording EPAM's verdict on 2026-08-11 turned this red for a
+       name that had simply been decided. A pin naming a live record as its example of an UNDECIDED
+       one rots the moment that record is decided — the `leg_fy` fleet-pin lesson, one layer over.
     2. CONDITIONAL WARNING — on a FROZEN synthetic dossier, a decision-keyword caveat fires the
        strip once; a RESOLVED caveat and a process caveat fire nothing (living-artifact caveats
        re-word on every assembly, so the strip's fixture is synthetic by the TEST-LAYER rule)."""
@@ -7600,6 +7617,13 @@ def test_opener_narrative_slot_rationale_once_and_conditional_warning_node() -> 
 
     if not shutil.which("node"):
         pytest.skip("node not available")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -7611,8 +7635,8 @@ const rd = (p) => JSON.parse(readFileSync(p));
 const count = (h, n) => h.split(n).length - 1;
 const it = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
   rd("frontend/scenarios/IT.json"));
-const epam = renderDossier(rd("data/dossiers/EPAM/dossier.json"), null,
-  rd("frontend/scenarios/EPAM.json"));
+const epam = renderDossier(rd("data/dossiers/{pend}/dossier.json"), null,
+  rd("frontend/scenarios/{pend}.json"));
 const bare = {{ ticker: "X", name: "X Co", cik: "0", reference_date: "2026-06-01",
   assembled_at: "2026-06-01T12:00:00", mechanical: {{}}, synthesis: null }};
 const warn = renderDossier({{ ...bare, caveats: ["leverage covenant basis — check it"] }}, null);
@@ -7915,6 +7939,13 @@ def test_buyside_cover_and_field_grids_e2e_node() -> None:
     p = Path("data/dossiers/IT/dossier.json")
     if not p.exists():
         pytest.skip("no committed IT dossier.json")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -8049,6 +8080,13 @@ def test_what_broke_restructure_and_survival_columns_e2e_node() -> None:
     p = Path("data/dossiers/IT/dossier.json")
     if not p.exists():
         pytest.skip("no committed IT dossier.json")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -8500,6 +8538,13 @@ def test_one_8k_explaining_two_gap_downs_renders_once_e2e() -> None:
     # web: one .filing card for the shared accession
     if not shutil.which("node"):
         return
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -8575,6 +8620,13 @@ def test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e() -> None:
     if not shutil.which("node"):
         return
     n_expl = sum(1 for f in filings if f.get("explanatory") is not False)
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     scen_path = Path("frontend/scenarios/BRBR.json")
     scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
@@ -8668,6 +8720,13 @@ def test_caveats_collapse_dejargon_and_acronyms_committed_brbr_e2e() -> None:
     # web parity: the count equals the rendered .flag cards, and the duplicate lead renders once
     if not shutil.which("node"):
         return
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     scen_path = Path("frontend/scenarios/BRBR.json")
     scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
@@ -9226,6 +9285,13 @@ def test_catalyst_calendar_js_twin_parity_node() -> None:
     p = Path("data/dossiers/SMPL/dossier.json")
     if not p.exists():
         pytest.skip("no committed SMPL dossier.json")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -9428,6 +9494,13 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node unavailable")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     t = names[0]
     driver = f"""
@@ -9509,6 +9582,13 @@ def test_analysis_tier_reads_in_decision_order_e2e() -> None:
 
     if not shutil.which("node"):
         return
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -9574,6 +9654,13 @@ def test_assumption_methodology_renders_in_both_twins_e2e() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node unavailable")          # skip, never a silent no-op
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     for t in names:                              # EVERY record, not just the first
         driver = f"""
@@ -9628,6 +9715,13 @@ def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
     if not shutil.which("node"):
         pytest.skip("node not available")
     names = ["CNXC", "SMPL", "AORT"]
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -9684,6 +9778,13 @@ def test_two_panels_with_different_as_ofs_each_keep_their_own() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node not available")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     band = {"metric": "EV/EBITDA (TEV/LTM)", "current": 4.0, "low": 3.0, "high": 9.0, "mean": 6.0,
             "median": 6.0, "percentile": 0.1, "n_closes": 12, "as_of": "2026-07-17",
@@ -9732,6 +9833,13 @@ def test_a_band_with_no_as_of_says_undated_rather_than_going_silent() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node not available")
+    # the pending exemplar, chosen at run time from whatever is actually undecided
+    pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
+                 if (Path("scenarios") / f"{f.parent.name}.json").exists()
+                 and (json.loads((Path("scenarios") / f"{f.parent.name}.json").read_text())
+                      .get("verdict") or {}).get("status") == "pending_analyst"), None)
+    if pend is None:
+        pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     band = {"metric": "EV/EBITDA (TEV/LTM)", "current": 4.0, "low": 3.0, "high": 9.0, "mean": 6.0,
             "median": 6.0, "percentile": 0.1, "n_closes": 12, "as_of": None,

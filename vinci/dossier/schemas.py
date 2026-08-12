@@ -258,6 +258,14 @@ class Quality(BaseModel):
     survival_capacity: Sourced[str]
     interest_coverage: Sourced[float]
     share_count_trend: Sourced[str]
+    # (PR-4) How much of the LATEST QUARTER's pre-tax result arrived from below the operating line
+    # — `pretax − operating`, derived rather than picked (see `_nonoperating_earnings`). The
+    # question it answers is whether GAAP EPS for the period is an operating anchor at all: NFLX's
+    # Q1-2026 carries a $2.59bn WBD termination fee (40% of pre-tax) and UBER's Q2-2026 ~$1.39bn of
+    # investment revaluation, and neither had ANY route onto a page before this — the CIQ
+    # unusual-items block is annual-only, so a quarterly one-off stayed invisible until it landed
+    # in a fiscal year. Optional-with-default so committed JSON predating the field round-trips.
+    nonoperating_earnings: Sourced[str] | None = None
     liquidity_covenant_flags: Sourced[str]
     multi_year_trajectory: Sourced[str]  # 5y arc of revenue/EBITDA/segment-EBITDA/ROIC (per period)
     # (Phase-3) STRUCTURED per-period ROIC series — the numbers behind multi_year_trajectory's ROIC
@@ -608,6 +616,13 @@ class CapitalStructure(BaseModel):
     # (e.g. the 2026-05-28 Notice-of-Conversion: full principal → common stock). value = verbatim
     # (≤400c), source_ref = "8-K <accession> (<date>)". Optional so a pre-P3 dossier.json validates.
     maturity_event: Sourced[str] | None = None
+    # (PR-3) HOW OLD THE PANEL IS, and whether a termination has been filed since it was taken.
+    # The panel has never carried an age: `freshness._PANEL_KEY` matches `detail_as_of` but
+    # `freshness._ISO` wants an ISO date and CIQ writes "Jan-23-2026", so the key was found and the
+    # date never extracted — measured, every committed name's schedule is 82-280 DAYS old. Not
+    # routed into `check_freshness`, whose ceiling is 45d: all fourteen are past it, so that gate
+    # would refuse the whole fleet. Optional-with-default so pre-field JSON round-trips.
+    panel_vintage: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
@@ -1381,6 +1396,30 @@ class Synthesis(BaseModel):
     model_config = {"frozen": True}
 
 
+class PriceStoreStamp(BaseModel):
+    """WHICH price store a dossier was built from, and how far it reached.
+
+    THE RESOLVED PATH IS THE IDENTITY, AND THE DECLARED ONE IS ALSO INFORMATION. This checkout's
+    `data/vinci.db` is a SYMLINK to another worktree's store, so the two paths differ while the
+    bytes are the same file. Stamping only the declared path would make two dossiers built from
+    ONE store look like they came from two; stamping only the resolved path would hide that this
+    worktree is reading someone else's data. Both, and a reader can tell either way.
+
+    That symlink is not a hypothetical detail: a corroboration check for BRBR's $11.56 was run
+    against `data/vinci.db` here, reported that the store could not see the price, and was wrong
+    about WHICH store it had just asked.
+
+    `frontier` is the store's newest bar across every name — the last moment its price data
+    actually reaches, and the number that decides whether an as-of can be checked here at all.
+    """
+
+    declared_path: str          # the path as configured, e.g. "<worktree>/data/vinci.db"
+    resolved_path: str          # symlinks followed — the identity two stamps compare on
+    frontier: date | None       # newest bar date in the store; None when it holds no bars
+
+    model_config = {"frozen": True}
+
+
 class Dossier(BaseModel):
     """A per-finalist dossier: source-bound mechanical facts + fenced synthesis. Assembles, cites;
     never concludes. The human's BUY/AVOID verdict is logged separately via the ledger CLI."""
@@ -1419,6 +1458,18 @@ class Dossier(BaseModel):
     # "unstamped" on BOTH twins rather than as nothing, because "vintage unknown" and "no
     # divergence" must not look the same to a reader.
     extraction_version: str | None = None
+    # (spot audit, 2026-08-11) WHICH PRICE STORE produced this document. `extraction_version` says
+    # with WHAT code, `assembled_at` says WHEN — this says FROM WHICH DATA, the third leg of "are
+    # these two dossiers comparable?" and the one nothing recorded.
+    #
+    # IT IS NOT DRIFT, WHICH IS WHY A STAMP IS THE WHOLE ANSWER. `data/` is per-worktree BY DESIGN
+    # (STATE §DATA-TOPOLOGY), so three checkouts holding three frontiers — 2026-08-04, 2026-08-07,
+    # 2026-08-05 — is the documented arrangement working, not divergence to repair. What follows is
+    # that a reader cannot infer the data behind a page FROM the page: two names assembled the same
+    # day out of different worktrees are struck days apart with nothing saying so. Comparability
+    # today rests on reference dates happening to lag every frontier — a coincidence, not a
+    # guarantee. Default None so committed JSON predating the field round-trips byte-identically.
+    price_store: PriceStoreStamp | None = None
     # (teaser/company) Brief-teaser + company-overview context: the SIC-derived coarse sector (the
     # CIQ-GICS fallback), the CIQ GICS Primary Industry Classification (source-bound), the exchange,
     # and the CIQ subject business description. Assemble/inform only — never a gate/rank input.

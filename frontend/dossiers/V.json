@@ -514,7 +514,7 @@
         "value": 20404.0,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow' — on the same sheet and period [LTM 12 months Jun-30-2026], CFO $22,580.0M − capex $1,567.0M = $21,013.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names."
       },
       "margin_trend": {
         "value": "EBITDA margin: Sep-30-2017 (R) 69% → Sep-30-2018 (R) 69% → Sep-30-2019 70% → Sep-30-2020 68% → Sep-30-2021 (R) 69% → Sep-30-2022 (R) 70% → Sep-30-2023 70% → Sep-30-2024 70% → Sep-30-2025 70% → Jun-30-2026 (LTM) 70%; gross margin: Sep-30-2017 (R) 97% → Sep-30-2018 (R) 97% → Sep-30-2019 97% → Sep-30-2020 97% → Sep-30-2021 (R) 97% → Sep-30-2022 (R) 97% → Sep-30-2023 98% → Sep-30-2024 98% → Sep-30-2025 98% → Jun-30-2026 (LTM) 98%; absolute EBITDA: Sep-30-2017 (R) 12,633 → Sep-30-2018 (R) 14,217 → Sep-30-2019 16,094 → Sep-30-2020 14,892 → Sep-30-2021 (R) 16,611 → Sep-30-2022 (R) 20,542 → Sep-30-2023 22,870 → Sep-30-2024 25,030 → Sep-30-2025 28,028 → Jun-30-2026 (LTM) 31,094; absolute revenue: Sep-30-2017 (R) 18,358 → Sep-30-2018 (R) 20,609 → Sep-30-2019 22,977 → Sep-30-2020 21,846 → Sep-30-2021 (R) 24,105 → Sep-30-2022 (R) 29,310 → Sep-30-2023 32,653 → Sep-30-2024 35,926 → Sep-30-2025 40,000 → Jun-30-2026 (LTM) 44,488  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -557,6 +557,12 @@
         "source_ref": null,
         "status": "unknown",
         "note": "<2 XBRL shares points in the trailing ~2y (2 total) — no current trend"
+      },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-03-31 — in the latest, $-60M against $7,174M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-03-31..2026-03-31",
+        "status": "present",
+        "note": null
       },
       "liquidity_covenant_flags": {
         "value": "0.75% Senior Notes Due August 2027 (Bonds and Notes) 500 @ 0.750% Due 2027; 1.10% Senior Notes Due February 2031 (Bonds and Notes) 1,000 @ 1.100% Due 2031; 1.50% Senior Notes Due June 2026 - EUR (Bonds and Notes) 1,587 @ 1.500% Due 2026; 1.90% Senior Notes Due April 2027 (Bonds and Notes) 1,500 @ 1.900% Due 2027; 2.00% Senior Notes Due August 2050 (Bonds and Notes) 1,750 @ 2.000% Due 2050; 2.00% Senior Notes Due June 2029 - EUR (Bonds and Notes) 1,176 @ 2.000% Due 2029; 2.05% Senior Notes Due April 2030 (Bonds and Notes) 1,500 @ 2.050% Due 2030; 2.25% Senior Notes Due May 2028 - EUR (Bonds and Notes) 1,470 @ 2.250% Due 2028; 2.375% Senior Notes Due June 2034 - EUR (Bonds and Notes) 764 @ 2.375% Due 2034; 2.70% Senior Notes Due April 2040 (Bonds and Notes) 1,000 @ 2.700% Due 2040; 2.75% Senior Notes Due September 2027 (Bonds and Notes) 750 @ 2.750% Due 2027",
@@ -4652,6 +4658,12 @@
         "source_ref": null,
         "status": "unknown",
         "note": "(P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event"
+      },
+      "panel_vintage": {
+        "value": "the debt schedule is 265d old (source filed 2025-11-06); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Nov-06-2025",
+        "status": "present",
+        "note": null
       }
     },
     "capital_allocation": {
@@ -5407,7 +5419,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                9317.0,
+                12941.0,
+                12784.0,
+                10440.0,
+                15227.0,
+                18849.0,
+                20755.0,
+                19950.0,
+                23059.0,
+                22580.0,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5426,7 +5451,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -707.0,
+                -718.0,
+                -756.0,
+                -736.0,
+                -705.0,
+                -970.0,
+                -1059.0,
+                -1257.0,
+                -1482.0,
+                -1567.0,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5445,7 +5483,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                7365.375,
+                10562.0,
+                9343.625,
+                8243.625,
+                11931.75,
+                13737.375,
+                16716.875,
+                13144.875,
+                20072.875,
+                20404.0,
+                null,
+                null
+              ],
               "material": false
             }
           ],
@@ -8842,6 +8893,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-10T12:09:34.260734Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Unknown",
   "industry": {
     "value": "Transaction and Payment Processing Services",

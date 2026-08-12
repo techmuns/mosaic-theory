@@ -514,7 +514,7 @@
         "value": 650.2,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $538.8M − capex $56.2M = $482.6M — 1.35x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
         "value": "EBITDA margin: Dec-31-2017 (R) 14% → Dec-31-2018 15% → Dec-31-2019 15% → Dec-31-2020 17% → Dec-31-2021 17% → Dec-31-2022 (R) 17% → Dec-31-2023 (R) 14% → Dec-31-2024 15% → Dec-31-2025 13% → Jun-30-2026 (LTM) 13%; gross margin: Dec-31-2017 (R) 36% → Dec-31-2018 36% → Dec-31-2019 35% → Dec-31-2020 35% → Dec-31-2021 34% → Dec-31-2022 (R) 33% → Dec-31-2023 (R) 31% → Dec-31-2024 31% → Dec-31-2025 29% → Jun-30-2026 (LTM) 29%; absolute EBITDA: Dec-31-2017 (R) 202 → Dec-31-2018 283 → Dec-31-2019 348 → Dec-31-2020 441 → Dec-31-2021 628 → Dec-31-2022 (R) 799 → Dec-31-2023 (R) 652 → Dec-31-2024 693 → Dec-31-2025 707 → Jun-30-2026 (LTM) 753; absolute revenue: Dec-31-2017 (R) 1,450 → Dec-31-2018 1,843 → Dec-31-2019 2,294 → Dec-31-2020 2,659 → Dec-31-2021 3,758 → Dec-31-2022 (R) 4,825 → Dec-31-2023 (R) 4,691 → Dec-31-2024 4,728 → Dec-31-2025 5,457 → Jun-30-2026 (LTM) 5,617  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -555,6 +555,12 @@
       "share_count_trend": {
         "value": "buying back (trailing ~2.0y): 56,935,370 (2024-07-31) → 51,586,981 (2026-07-31), -9.4%",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-07-31",
+        "status": "present",
+        "note": null
+      },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-12M against $141M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "status": "present",
         "note": null
       },
@@ -4465,7 +4471,13 @@
         "status": "present",
         "note": null
       },
-      "maturity_event": null
+      "maturity_event": null,
+      "panel_vintage": {
+        "value": "the debt schedule is 153d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
+        "status": "present",
+        "note": null
+      }
     },
     "capital_allocation": {
       "goodwill": {
@@ -5256,7 +5268,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                192.82,
+                292.218,
+                287.453,
+                544.407,
+                572.327,
+                464.104,
+                562.634,
+                559.168,
+                654.934,
+                538.79,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5275,7 +5300,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -29.8,
+                -37.6,
+                -99.3,
+                -68.8,
+                -111.5,
+                -81.6,
+                -28.4,
+                -32.1,
+                -42.2,
+                -56.2,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5294,7 +5332,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                131.08025,
+                243.0685,
+                220.62025,
+                455.5685,
+                486.3865,
+                412.62725,
+                530.7915,
+                667.423875,
+                725.305375,
+                650.156125,
+                null,
+                null
+              ],
               "material": false
             }
           ],
@@ -7922,6 +7973,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-10T11:26:31.896149Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Technology",
   "industry": {
     "value": "IT Consulting and Other Services",

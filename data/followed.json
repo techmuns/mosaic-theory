@@ -1,14 +1,17 @@
 {
   "UBER": {
     "reason": "Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
+    "sleeve": "quality",
+    "followed_since": "2026-08-07"
   },
   "V": {
     "reason": "Global payments network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
+    "sleeve": "quality",
+    "followed_since": "2026-08-10"
   },
   "NFLX": {
     "reason": "Global streaming network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
+    "sleeve": "quality",
+    "followed_since": "2026-08-10"
   }
 }

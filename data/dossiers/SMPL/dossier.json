@@ -474,7 +474,7 @@
         "value": 107.2,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-30-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months May-30-2026], CFO $147.5M − capex $28.1M = $119.4M — 0.90x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
         "value": "EBITDA margin: Aug-26-2017 (R) 17% → Aug-25-2018 17% → Aug-31-2019 17% → Aug-29-2020 16% → Aug-28-2021 (R) 20% → Aug-27-2022 (R) 19% → Aug-26-2023 (R) 18% → Aug-31-2024 19% → Aug-30-2025 18% → May-30-2026 (LTM) 16%; gross margin: Aug-26-2017 (R) 41% → Aug-25-2018 42% → Aug-31-2019 42% → Aug-29-2020 40% → Aug-28-2021 (R) 41% → Aug-27-2022 (R) 38% → Aug-26-2023 (R) 36% → Aug-31-2024 39% → Aug-30-2025 36% → May-30-2026 (LTM) 33%; absolute EBITDA: Aug-26-2017 (R) 67 → Aug-25-2018 74 → Aug-31-2019 91 → Aug-29-2020 130 → Aug-28-2021 (R) 196 → Aug-27-2022 (R) 222 → Aug-26-2023 (R) 225 → Aug-31-2024 250 → Aug-30-2025 262 → May-30-2026 (LTM) 217; absolute revenue: Aug-26-2017 (R) 396 → Aug-25-2018 438 → Aug-31-2019 524 → Aug-29-2020 817 → Aug-28-2021 (R) 1,006 → Aug-27-2022 (R) 1,169 → Aug-26-2023 (R) 1,243 → Aug-31-2024 1,331 → Aug-30-2025 1,451 → May-30-2026 (LTM) 1,392  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -515,6 +515,12 @@
       "share_count_trend": {
         "value": "buying back (trailing ~1.7y): 100,221,529 (2024-10-18) → 88,460,545 (2026-07-02), -11.7%",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-18..2026-07-02",
+        "status": "present",
+        "note": null
+      },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-02-28 — in the latest, $-5M against $-218M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-03-01..2026-02-28",
         "status": "present",
         "note": null
       },
@@ -4218,7 +4224,13 @@
         "note": null
       },
       "covenant_term_rows": null,
-      "maturity_event": null
+      "maturity_event": null,
+      "panel_vintage": {
+        "value": "the debt schedule is 251d old (source filed 2025-10-28); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Oct-28-2025",
+        "status": "present",
+        "note": null
+      }
     },
     "capital_allocation": {
       "goodwill": {
@@ -5005,7 +5017,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -5.4,
+                61.038,
+                73.042,
+                58.921,
+                132.089,
+                110.639,
+                171.117,
+                215.704,
+                178.457,
+                147.54,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5024,7 +5049,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -1.0,
+                -1.8,
+                -1.0,
+                -1.7,
+                -5.9,
+                -5.2,
+                -11.6,
+                -5.7,
+                -20.5,
+                -28.1,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -5043,7 +5081,20 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                30.839875,
+                45.70025,
+                57.25025,
+                25.3495,
+                104.73725,
+                72.89025,
+                127.920625,
+                165.802125,
+                126.54175,
+                107.168375,
+                null,
+                null
+              ],
               "material": false
             }
           ],
@@ -7255,7 +7306,7 @@
           "value": "$0.8 million, or 1.9%",
           "value_num": -1.9,
           "unit": "%",
-          "verbatim": "General and administrative expenses decreased $0.8 million, or 1.9%, for the thirteen weeks ended May 30, 2026, compared to the thirteen weeks ended May 31, 2025. The decrease was primarily attributable to a decrease of $5.2 million in integration expenses related to the OWYN Acquisition, a decrease of $1.8 million in employee-related cos",
+          "verbatim": "General and administrative expenses decreased $0.8 million, or 1.9%, for the thirteen weeks ended May 30, 2026, compared to the thirteen weeks ended May 31, 2025. The decrease was primarily attributable to a decrease of $5.2 million in integration expenses related to the OWYN Acquisition, a decrease of $1.8 million in employee-related costs, and lower general corporate expenses, partially offset by an increase of $6.2 million in restructuring costs.",
           "following_context": null,
           "source_ref": "10-Q 0001702744-26-000023",
           "tier": "anchored"
@@ -7279,7 +7330,7 @@
           "value": "$2.0 million, or 1.7%",
           "value_num": -1.7,
           "unit": "%",
-          "verbatim": "General and administrative expenses decreased $2.0 million, or 1.7%, for the thirty-nine weeks ended May 30, 2026, compared to the thirty-nine weeks ended May 31, 2025. The decrease was primarily attributable to a decrease of $8.0 million in integration expenses related to the OWYN Acquisition, a decrease of $5.4 million in employee-relat",
+          "verbatim": "General and administrative expenses decreased $2.0 million, or 1.7%, for the thirty-nine weeks ended May 30, 2026, compared to the thirty-nine weeks ended May 31, 2025. The decrease was primarily attributable to a decrease of $8.0 million in integration expenses related to the OWYN Acquisition, a decrease of $5.4 million in employee-related costs, and lower general corporate expenses, partially offset by an increase of $10.8 million in restructuring costs, and an increase of $2.3 million in term loan transaction fees.",
           "following_context": null,
           "source_ref": "10-Q 0001702744-26-000023",
           "tier": "anchored"
@@ -7869,6 +7920,7 @@
   "llm_model": "claude-opus-4-8",
   "assembled_at": "2026-08-04T14:02:49.428086Z",
   "extraction_version": "2026-07-28.1",
+  "price_store": null,
   "sector": "Consumer Staples",
   "industry": {
     "value": "Packaged Foods and Meats",

@@ -260,7 +260,8 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "ceiling2to1": 11.46
+  "ceiling2to1": 11.46,
+  "limitDeferred": true
  },
  "supersedes": "SMPL-2026-07-27",
  "verdict": {

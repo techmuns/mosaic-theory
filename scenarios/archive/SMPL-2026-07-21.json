@@ -16,6 +16,7 @@
   "analyst": "nogods404",
   "spot": 10.53,
   "spot_source": "Polygon daily aggregate close 2026-07-22 (store; machine refresh 2026-07-24)",
+  "spot_as_of": null,
   "facts": {
     "d_and_a": {
       "value": 21.431,

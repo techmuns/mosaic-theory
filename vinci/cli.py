@@ -42,6 +42,7 @@ from vinci.rank import (
 )
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.schemas.ledger import (
+    EVENT_CLOSE,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
@@ -51,6 +52,7 @@ from vinci.schemas.ledger import (
     sleeve_of,
 )
 from vinci.scoring import score_ledger
+from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
 from vinci.sleeves import DEFAULT_SLEEVE
 from vinci.store import Store
@@ -1090,6 +1092,69 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
         f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d "
         f"· {prop_note} → disposition {disp}"
     )
+    _export_ledger(cfg, "log-verdict")
+    return 0
+
+
+def _export_ledger(cfg: Config, what: str) -> None:
+    """Flush the working DB's ledger to the COMMITTED snapshot, and say where it landed.
+
+    WHY EVERY LEDGER WRITE ENDS HERE. `log_verdict` wrote to the working SQLite DB and stopped, but
+    the DB is a CACHE — the durable record is `data/snapshots/decision_ledger.jsonl`, and it is what
+    `vinci monitor`, the frontend mirror and any fresh clone actually read (`_cmd_monitor` says so
+    in its own docstring). So a verdict logged today reached no reader until somebody happened to
+    run the weekly screen or the monthly score, both of which export as a side effect of doing
+    something else. Measured on a copy of the committed tree: after a ledger write the DB held 7
+    rows and the snapshot still held 6, byte-identical.
+
+    Exporting the LEDGER TABLE ONLY, deliberately. A blanket export would also rewrite the
+    universe/candidate snapshots from whatever half-populated state this operator's DB happens to
+    be in, which is a much larger diff than the one decision the command was asked to record.
+    """
+    with Store(cfg.db_path) as store:
+        store.export_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
+    path = cfg.snapshots_dir / "decision_ledger.jsonl"
+    n = len([ln for ln in path.read_text().splitlines() if ln.strip()])
+    print(f"{what}: committed ledger now {n} row(s) → {path}")
+    print("  the frontend mirror is NOT rebuilt by this command — run `python frontend/build.py` "
+          "and commit, or CI's mirror-sync gate will fail the PR.")
+
+
+def _cmd_close_position(args: argparse.Namespace) -> int:
+    """Append the CLOSE row for a decision, then flush the committed ledger.
+
+    THE COMMAND THAT DID NOT EXIST. The close-row schema, readers, display and id helper all
+    shipped in `4f34c11`; the writer did not. Both committed closes were therefore hand-authored
+    JSON — a row reaching an append-only record without passing one guard. This is that writer,
+    with the guards the hand path never had: no unknown candidate, no second close, no exit before
+    entry, and a stated reason (the schema's own rule, enforced where the operator can read it).
+    """
+    from vinci.ledger import close_position
+
+    cfg = get_config()
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    reason = (args.reason or "").strip()
+    if not reason:
+        print("REFUSED: --reason is required — a position closes for a stated reason, or the "
+              "record cannot be reviewed later.")
+        return 1
+    try:
+        with Store(cfg.db_path) as store:
+            close = close_position(
+                store, candidate_id=args.candidate_id, exit_price=args.exit_price,
+                exit_price_as_of=as_of, reason=reason,
+                closed_at=datetime.now(UTC).replace(tzinfo=None))
+    except LedgerError as exc:
+        print(f"could not close: {exc}")
+        return 1
+    realized = close.exit_price / close.entry_price - 1.0 if close.exit_price else 0.0
+    print(
+        f"closed {close.ticker} [{close.verdict.value}] — entry {close.entry_price:.2f} "
+        f"{close.entry_price_as_of} → exit {close.exit_price:.2f} {close.exit_price_as_of} "
+        f"= {realized:+.2%} realized")
+    print(f"  {close.entry_id} closes {close.closes_entry_id}. The DECISION keeps running to its "
+          f"horizon — a close is a portfolio action, not a retraction of the call.")
+    _export_ledger(cfg, "close-position")
     return 0
 
 
@@ -1212,6 +1277,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             multiple_basis=str(tpl["multiple_basis"]),
             underwrite_date=str(tpl["underwrite_date"]), analyst=str(tpl["analyst"]),
             spot=float(tpl["spot"]), spot_source=str(tpl["spot_source"]),
+        # (PR-7) carried through from the template; `write_record` refuses without it from
+        # schema 1.5, and a create that silently dropped it would make the gate
+        # unsatisfiable from the one path that is supposed to satisfy it.
+        spot_as_of=(date.fromisoformat(str(tpl["spot_as_of"])[:10])
+                    if tpl.get("spot_as_of") else None),
             facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
             scenarios={leg: sc.ScenarioInput(
                 revenue=float(c["revenue"]), margin=float(c["margin"]),
@@ -1377,6 +1447,28 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     # beside the write rather than blocking it. Kept OUT of `problems` on purpose.
     for note in sc.limit_notes(incoming):
         print(f"  ⚠ limit: {note}")
+    # THE SPOT NOTES PRINT AND DO NOT REFUSE either, and that is measured rather than cautious:
+    # run from this worktree a refusal would block BRBR and EPAM — both correct, both struck at a
+    # date past this store's frontier. `vinci audit spot` sweeps the committed corpus; this catches
+    # a record at the moment it is written, while the analyst is still holding it.
+    try:
+        _cfg = get_config()
+        with Store(_cfg.db_path) as _store:
+            _iid = EntityResolver.from_config(_cfg).resolve_ticker(
+                incoming.ticker).internal_id
+            _spot_notes = sc.spot_notes(
+                incoming, store=f"`{_cfg.db_path.absolute().parent.parent.name}`",
+                name_frontier=_store.price_frontier_for(_iid),
+                bar_close=(_store.close_on(_iid, incoming.spot_as_of)
+                           if incoming.spot_as_of else None))
+    except Exception as exc:  # noqa: BLE001 — deliberate, and the asymmetry is the point
+        # A NOTE-ONLY CHECK MUST NOT BLOCK A WRITE — the exact OPPOSITE of the rule for
+        # `_committed_limit`, whose bare `except` silently disabled a REFUSAL and let a BUY past a
+        # stated limit. Swallowing here costs a note; swallowing there cost a gate. The failure is
+        # printed rather than hidden, so a check that stopped working still says so.
+        _spot_notes = [f"could not be checked — {type(exc).__name__}: {exc}"]
+    for note in _spot_notes:
+        print(f"  ⚠ spot: {note}")
 
     # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:
     # a confirmed verdict whose decision row carries no close row is an open position.
@@ -1422,6 +1514,15 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     if args.dry_run:
         print("  --dry-run: nothing written")
         return 0
+    # PRE-CHECK BEFORE EITHER WRITE. The archive lands first, so a refusal on the live
+    # record used to leave an orphan archive — a superseded record with no successor and an
+    # un-updated seal manifest. Validating here makes the pair atomic in the only way that
+    # matters: nothing is written unless both can be.
+    try:
+        sc.validate_for_write(live)
+    except ValueError as exc:
+        print(f"=== scenario-supersede {t_up}: REFUSED ===\n  {exc}")
+        return 2
     ap = sc.write_archived(archived, root=root)
     lp = sc.write_record(live, root=root)
     (root / "scenarios" / seal.SEAL_FILE).write_text(_json.dumps(man, indent=2, sort_keys=True)
@@ -1458,7 +1559,6 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
     # stops the run rather than rendering wrong.
     rows_raw = mon.decision_rows(ledger_all)
-    realized = mon.pair_closes(ledger_all)
     assignments = mon.read_assignments(root)
     missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
     if missing:
@@ -1497,9 +1597,27 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         raise RuntimeError(f"no EOD session found within 7 days of {day}")
 
     now_date, now_bars = bars_on_or_before(ref)
-    rows: list[mon.PositionRow] = []
+    # THE BOOK'S CLOSURE STATE IS READ AS OF THE SNAPSHOT DATE, not as of "whatever the ledger holds
+    # now" (review P1 on #418). Anchored on `now_date` rather than `ref` because `now_date` is what
+    # the snapshot claims to BE — a close falling between the last trading bar and a non-trading
+    # `ref` has not happened yet in the book this file describes. Without this, `monitor --ref
+    # <past date>` marked positions closed and printed realized P&L for exits that had not occurred,
+    # so a historical snapshot was not reproducible — while the price path beside it was carefully
+    # refusing future bars.
+    realized = mon.pair_closes(ledger_all, as_of=now_date)
+    closed_entry_ids = mon.closed_decision_ids(ledger_all, as_of=now_date)
     notes: list[str] = []
-    for r in rows_raw:
+    # AND THE DECISIONS THEMSELVES ARE POINT-IN-TIME. The review flagged the CLOSE half; the same
+    # defect sat on the entry half and was louder — re-running `--ref 2026-07-20` marked SMPL's
+    # 2026-08-04 re-entry into that day's book with `days_elapsed: -15`, a position that did not
+    # exist yet. Both halves now read the ledger as of the snapshot date.
+    asof_rows = mon.decisions_as_of(ledger_all, as_of=now_date)
+    if len(asof_rows) != len(rows_raw):
+        notes.append(
+            f"{len(rows_raw) - len(asof_rows)} decision(s) entered after {now_date} are excluded "
+            f"— this book is the state as of that date, not today's ledger re-marked backwards")
+    rows: list[mon.PositionRow] = []
+    for r in asof_rows:
         payload = json.loads(r["payload"])
         # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
         # on the model's helpers, and reading the raw dict here would be a second definition of
@@ -1521,7 +1639,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
             current_price=now_bars[tkr].close, current_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
-            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"]))
+            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
+            # Is the POSITION still held? Read from the close rows, which name the decision they
+            # close — never inferred from the ticker, since a name can be re-entered (SMPL is, and
+            # its two decisions are on opposite sides of this flag).
+            closed=r["entry_id"] in closed_entry_ids))
         if payload.get("benchmark") and payload["benchmark"] != asg.benchmark:
             notes.append(f"{tkr}: benchmark {asg.benchmark} (cap band) SUPERSEDES the ledger "
                          f"row's {payload['benchmark']} — the row itself is never mutated")
@@ -1553,17 +1675,74 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # dropping exited names from calibration would let the discriminator's hit-rate be curated by
     # sell timing. REALIZED P&L (entry→exit) is a SEPARATE, labelled view. Both are shown; neither
     # is allowed to stand in for the other.
-    for r in realized:
-        notes.append(
-            f"{r['ticker']}: REALIZED {r['realized_return']:+.1%} "
-            f"(entry ${r['entry_price']:,.2f} {r['entry_price_as_of']} → exit "
-            f"${r['exit_price']:,.2f} {r['exit_price_as_of']}) — realized P&L, a separate view; "
-            f"the {r['verdict']} call stays in horizon calibration")
+    # TYPED FIRST, PROSE RENDERED FROM IT. The note text used to be composed here from raw dicts,
+    # which made the free-text line the ONLY carrier of the realized book. Now the rows are the
+    # carrier and `RealizedRow.note()` renders them, so display cannot drift from the data.
+    realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
+    notes.extend(r.note() for r in realized_rows)
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
-                               freshness=fresh, notes=notes)
+                               freshness=fresh, notes=notes, realized=realized_rows)
     print(mon.render_table(snap))
+    # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
+    # replacing a day that later snapshots sit on top of would overwrite what the book recorded
+    # then. `write_snapshot` decides which case this is.
     path = mon.write_snapshot(snap, root=root)
     print(f"\nsnapshot written: {path}")
+    return 0
+
+
+def _cmd_audit_spot(args: argparse.Namespace) -> int:
+    """SPOT audit — every committed record's spot against the bar it claims to be. READ-ONLY.
+
+    WHY A FLEET SWEEP AND NOT ONLY A WRITE-PATH CHECK. A gate on `scenario-create` /
+    `scenario-supersede` never looks at a record again after it lands, and all eight committed
+    records predate the field — so a write-path seat alone would leave the corpus permanently
+    unexamined. This is the seat that can actually run against it (CORPUS BEFORE SYNTHETIC).
+
+    IT PRINTS AND NEVER REFUSES, and the corpus is why. Run from this worktree, a
+    refuse-on-mismatch rule would block BRBR and EPAM — both CORRECT, both struck at 2026-08-07,
+    both resolving only in the `-sl` store while this one reaches 2026-08-04. Every spot is
+    auditable somewhere and none is auditable everywhere, so the exit code stays 0 on a note.
+    """
+    import vinci.scenarios as sc
+    from vinci.store.store import Store
+
+    root = Path.cwd()
+    cfg = get_config()
+    resolver = EntityResolver.from_config(cfg)
+    recs = sorted(sc.records_dir(root).glob("*.json"))
+    recs = [p for p in recs if not p.stem.startswith("_")]
+    if not recs:
+        print("no committed scenario records — nothing to audit")
+        return 0
+
+    with Store(cfg.db_path) as store:
+        # ABSOLUTE BEFORE NAMED: `cfg.db_path` is relative ("data/vinci.db"), so naming the
+        # worktree off it directly yields an empty string. `.absolute()` keeps the symlink
+        # (which worktree DECLARED it); `.resolve()` follows it (whose bytes these are).
+        declared, real = cfg.db_path.absolute(), cfg.db_path.resolve()
+        label = f"`{declared.parent.parent.name}`"
+        via = ("" if declared == real
+               else f" → `{real.parent.parent.name}` (symlinked)")
+        print(f"=== spot audit: {len(recs)} record(s) vs {label}{via}, "
+              f"frontier {store.price_frontier()} ===")
+        clean = notes_total = 0
+        for p in recs:
+            rec = sc.ScenarioRecord.model_validate_json(p.read_text())
+            iid = resolver.resolve_ticker(rec.ticker).internal_id
+            bar = (store.close_on(iid, rec.spot_as_of) if rec.spot_as_of else None)
+            notes = sc.spot_notes(rec, bar_close=bar, store=label,
+                                  name_frontier=store.price_frontier_for(iid))
+            if not notes:
+                clean += 1
+                print(f"  {rec.ticker:6} ${rec.spot:<10,.4g} {rec.spot_as_of}  ✓ matches this "
+                      f"store's bar exactly")
+                continue
+            notes_total += len(notes)
+            print(f"  {rec.ticker:6} ${rec.spot:<10,.4g} {rec.spot_as_of or 'unstated':10}")
+            for n in notes:
+                print(f"         ⚠ {n}")
+    print(f"\n{clean} clean · {notes_total} note(s) — notes never change the exit code")
     return 0
 
 
@@ -1620,7 +1799,17 @@ def _watch_tickers(root: Path) -> set[str]:
 
 
 def _cmd_ledger(args: argparse.Namespace) -> int:
-    """List all recorded paper verdicts (BUY and AVOID alike)."""
+    """List every recorded ledger row — the decisions, and the closes that followed them.
+
+    CLOSES ARE SHOWN AND MARKED — never hidden, never bare. This is the append-only record, so
+    dropping close rows would misrepresent it; but a close carries the ORIGINAL verdict for
+    provenance, so printing one unmarked under a VERDICT header shows the same name twice, both
+    reading BUY, with nothing to tell them apart. That is how a reader miscounts the book by hand,
+    and it is the display half of the double-count `score_ledger` was just fixed for.
+
+    Matches the web decision log's rule (2026-07-27): the decision keeps its verdict word, and the
+    close says it is a close beside it.
+    """
     cfg = get_config()
     with Store(cfg.db_path) as store:
         entries = list(store.iter_ledger())
@@ -1629,10 +1818,20 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
         return 0
     print(f"{'TICKER':<7}{'VERDICT':<16}{'ENTRY':>9}{'AS_OF':>13}{'HORIZON':>9}  DECIDED")
     for e in entries:
+        close_mark = (
+            f"  ← CLOSE @ {e.exit_price:.2f} on {e.exit_price_as_of}"
+            if e.event == EVENT_CLOSE and e.exit_price is not None
+            else ""
+        )
         print(
             f"{e.ticker:<7}{e.verdict.value:<16}{e.entry_price:>9.2f}"
             f"{str(e.entry_price_as_of):>13}{e.horizon_days:>8}d  {e.decided_at:%Y-%m-%d}"
+            f"{close_mark}"
         )
+    n_close = sum(1 for e in entries if e.event == EVENT_CLOSE)
+    if n_close:
+        print(f"\n{len(entries) - n_close} decision(s) · {n_close} close(s) — a close is not a "
+              f"second verdict; the spread counts decisions only.")
     return 0
 
 
@@ -1646,6 +1845,11 @@ def _cmd_score(args: argparse.Namespace) -> int:
         _scores, report = score_ledger(
             store, as_of=ref, cost_bps=args.cost_bps,
             benchmark_internal_id=f"IDX-{args.benchmark}",
+            # THE PASSIVE COMPARATOR each sleeve's kill test names. Wired at BOTH default paths
+            # (here and `run_monthly`) deliberately: #378's lesson was that a per-book number
+            # reachable from only one of them is invisible to every reader of the other.
+            baskets=resolve_baskets(
+                cfg.data_dir / "followed.json", store.iter_securities()),
         )
     print(report.to_markdown())
     if args.json:
@@ -2459,7 +2663,86 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         return [t.strip() for t in (s or "").split(",") if t.strip()]
 
     driver = args.driver
-    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    # THE FREEZE PATH IS A PAIR, and it is checked BEFORE the either/or so a half-specified pair
+    # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
+    # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
+    # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
+    # --ledger WITHOUT --worksheet is still meaningless (nothing to append); the reverse is not,
+    # because the ledger now defaults to its committed home. Reversing this check rather than
+    # deleting it: a bare --ledger used to die on `Path(None)` (review P2 on #412) and still would.
+    if args.ledger and not args.worksheet:
+        raise SystemExit(
+            "--ledger was given without --worksheet — the ledger is where the worksheet's "
+            "dispositions are appended, so there is nothing to write. To re-measure an "
+            "already-frozen theme, use --from-baskets (or --from-mirror).")
+    sources = [bool(args.worksheet), bool(args.from_mirror), bool(args.from_baskets)]
+    if sum(sources) != 1:
+        raise SystemExit(
+            "give EXACTLY ONE source: --worksheet + --ledger (freeze from the analyst's "
+            "dispositions), --from-baskets (re-measure from the COMMITTED frozen basket, the "
+            "durable record the freeze wrote), or --from-mirror (recover a basket from the "
+            "published summary — hold-none freezes only).")
+
+    if args.from_baskets:
+        # THE PREFERRED RE-MEASURE PATH now that baskets are committed. Unlike --from-mirror this
+        # reads what the FREEZE wrote, so it carries the BUY leg and its per-name entry dates —
+        # the thing a mirror cannot supply and the reason a reconstruction refuses one.
+        baskets = fwd.load_baskets(Path(args.from_baskets))
+        # THE ARTIFACT KNOWS ITS OWN DRIVER, so unlike the mirror path this is CHECKABLE rather
+        # than a printed warning (review P2 on #422): passing the defense basket with
+        # --driver ai-datacenter produced an AI-datacenter-labelled re-measurement of 108 defense
+        # names. The mirror carries only a human label and cannot be bound; this can, so it is.
+        if baskets.driver != driver:
+            print(f"REFUSED: {args.from_baskets} is the {baskets.driver!r} basket, not "
+                  f"{driver!r}. The re-measurement would be labelled with one driver and computed "
+                  f"over another's names.")
+            return 1
+        watchlist = list(baskets.watchlist)
+        print(f"\n=== Stage-4 forward RE-MEASURE (committed basket) · {driver} ===")
+        print(f"basket {args.from_baskets} · frozen {baskets.freeze_timestamp}")
+        unstated = "(unstated — written before provenance was recorded)"
+        print(f"provenance: {baskets.provenance or unstated}")
+        print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+              f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+        if not args.measure:
+            print("\n(no --measure: basket loaded only)")
+            return 0
+        return _themes_forward_measure(args, fwd, baskets, watchlist)
+
+    if args.from_mirror:
+        # THE RE-MEASURE PATH. No worksheet, no ledger write, no re-freeze: the baskets are
+        # reconstructed from the committed mirror so an accrual that has been sitting unmeasured
+        # since the freeze can finally be computed. Nothing here logs a disposition.
+        mirror = json.loads(Path(args.from_mirror).read_text())
+        baskets = fwd.baskets_from_mirror(mirror, driver=driver)
+        watchlist = list(baskets.watchlist)
+        print(f"\n=== Stage-4 forward RE-MEASURE (from mirror) · {driver} ===")
+        # THE MIRROR'S OWN LABELS ARE ECHOED because nothing can verify this file belongs to
+        # `--driver`: mirrors carry no registry key (ai-datacenter's `driver` field reads
+        # "AI-datacenter value chain"; defense's slug is "defense" against the key
+        # "defense-demand-shift"). Printing them puts a wrong-file mistake on the first line.
+        print(f"mirror {args.from_mirror} · frozen {baskets.freeze_timestamp} · "
+              f"mirror says slug={mirror.get('slug')!r} driver={mirror.get('driver')!r} "
+              f"— CONFIRM this is the {driver} theme; no machine check binds the two")
+        print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+              f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+        if baskets.watchlist:
+            print(f"WATCHLIST (re-underwrite cohort): {list(baskets.watchlist)}")
+        if baskets.avoid_controls:
+            print("AVOID-CONTROLS (near-miss control, within PASSED): "
+                  f"{list(baskets.avoid_controls)}")
+        if not args.measure:
+            print("\n(no --measure: baskets rebuilt only)")
+            return 0
+        return _themes_forward_measure(args, fwd, baskets, watchlist)
+
+    # THE LEDGER DEFAULTS TO ITS COMMITTED HOME, so a freeze cannot land the analyst's
+    # dispositions somewhere that is never kept — which is how the three July 2026 ledgers were
+    # lost. An explicit --ledger still wins, for ad-hoc runs.
+    ws = Path(args.worksheet)
+    ledger = (Path(args.ledger) if args.ledger
+              else fwd.ledger_path(driver, data_dir=get_config().data_dir))
+    ledger.parent.mkdir(parents=True, exist_ok=True)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
     all_committed = [r["ticker"] for r in rows]
@@ -2468,8 +2751,6 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
     ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
     records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
-    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
-        fwd.append_record(ledger, rec)
     counts = Counter(r.disposition.value for r in records)
     print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
     print(f"worksheet {ws}\nledger {ledger} (append-only)")
@@ -2494,6 +2775,32 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         records, all_committed, driver=driver, freeze_timestamp=freeze_ts, layer_of=layer_of,
         watchlist=watchlist or None, watchlist_triggers=triggers,
         avoid_controls=avoid_controls or None, real_tier=real_tier or None)
+    # THE DURABLE RECORD, written every freeze rather than only when someone remembers a flag.
+    # `--baskets-out` predates this and stays as an extra copy for ad-hoc use; the canonical file is
+    # committed, because the Stage-4 accrual is a calendar-time number whose input previously
+    # existed on exactly one machine (operator decision 2026-08-12).
+    baskets = baskets.model_copy(update={"provenance": (
+        f"written by the freeze from {ws} on {freeze_ts[:10]} — the analyst's dispositioned "
+        f"worksheet, appended to the ratification ledger at {ledger}")})
+    # PREFLIGHT BEFORE ANY WRITE (review P1 on #424). The ledger append used to run FIRST, so a
+    # refused re-freeze left the now-COMMITTED ledger holding dispositions for a basket that was
+    # never frozen, and the retry appended the same judgment again — 1 row, then 2, then 3.
+    # Everything that can fail is checked here; the ledger and the basket then land together as ONE
+    # successful freeze. (`records_from_worksheet` and `freeze_baskets` above are already pure —
+    # they parse and validate without writing, which is what makes this ordering possible.)
+    try:
+        fwd.assert_basket_writable(driver, data_dir=get_config().data_dir,
+                                   supersede=args.supersede_basket)
+    except FileExistsError as exc:
+        print(f"REFUSED: {exc}\n  Re-run with --supersede-basket to archive the existing basket "
+              f"under data/themes/baskets/archive/ and freeze again. NOTHING was written — the "
+              f"ledger is untouched.")
+        return 1
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    canonical = fwd.write_baskets(baskets, data_dir=get_config().data_dir,
+                                  supersede=args.supersede_basket)
+    print(f"frozen basket written: {canonical}")
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
     print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
@@ -2507,6 +2814,20 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     print(f"deferred control: {baskets.deferred_controls[0]}")
     if not args.measure:
         return 0
+    return _themes_forward_measure(args, fwd, baskets, watchlist)
+
+
+def _themes_forward_measure(
+    args: argparse.Namespace, fwd: Any, baskets: Any, watchlist: list[str],
+) -> int:
+    """The forward measurement, shared by the FREEZE path and the RE-MEASURE path.
+
+    Extracted rather than copied: two printers of one measurement is how a re-measure comes to
+    disagree with the freeze it is supposed to continue, and this report is the fund's only forward
+    read on a theme.
+    """
+    from datetime import date
+
     from vinci.eod.client import PolygonEodClient
     price_fn = fwd.eod_close_fn(PolygonEodClient.from_config(get_config()))
     as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
@@ -2958,6 +3279,20 @@ def build_parser() -> argparse.ArgumentParser:
                             "Use when running outside the primary worktree.")
     p_ohr.set_defaults(func=_cmd_own_history_refresh)
 
+    p_close = sub.add_parser(
+        "close-position",
+        help="append the CLOSE row for a logged decision (the realized-P&L half)")
+    p_close.add_argument("candidate_id", help="candidate id of the decision being closed")
+    p_close.add_argument("--exit-price", dest="exit_price", type=float, required=True,
+                         help="the price the position actually exited at")
+    p_close.add_argument("--as-of", dest="as_of",
+                         help="exit date YYYY-MM-DD (default: today). Must not precede the "
+                              "frozen entry date.")
+    p_close.add_argument("--reason", required=True,
+                         help="why the position was closed — the schema refuses a close without "
+                              "one, because an unexplained exit cannot be reviewed later")
+    p_close.set_defaults(func=_cmd_close_position)
+
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
     p_log.add_argument("--verdict", required=True, choices=[v.value for v in Verdict])
@@ -3048,6 +3383,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_r1.add_argument("--as-of", dest="as_of", help="date stamp for the report (default: today)")
     p_r1.add_argument("--out", type=Path, help="write the report here as well as printing it")
     p_r1.set_defaults(func=_cmd_audit_r1)
+    p_spot = audit_sub.add_parser(
+        "spot", help="every record's spot against the bar it claims to be (read-only; notes print)")
+    p_spot.set_defaults(func=_cmd_audit_spot)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)
@@ -3231,9 +3569,32 @@ def build_parser() -> argparse.ArgumentParser:
         "themes-forward",
         help="Stage-4 forward-validation: log dispositions, freeze baskets, measure spreads",
     )
-    p_fwd.add_argument("--worksheet", required=True,
+    # --worksheet/--ledger are the FREEZE path. --from-mirror is the RE-MEASURE path: the ledger and
+    # baskets are git-ignored local-only artifacts, so on any machine that did not run the freeze
+    # the accrual has no input — and the accrual is the whole point of Stage 4. Exactly one of the
+    # two must be given; the parser enforces it rather than discovering it mid-run.
+    p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
-    p_fwd.add_argument("--ledger", required=True, help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ledger",
+                       help="append-only ratification ledger JSONL path. Defaults to the COMMITTED "
+                            "home, data/themes/ledgers/<driver>.jsonl — the record the basket is "
+                            "derived from, kept because the basket says which names are in which "
+                            "cohort while the ledger says why, in the analyst's own words.")
+    p_fwd.add_argument("--supersede-basket", dest="supersede_basket", action="store_true",
+                       help="deliberately re-freeze a driver that already has a committed basket: "
+                            "archives the existing one under baskets/archive/ first. Without this "
+                            "a second freeze REFUSES rather than silently moving the entry dates "
+                            "the forward accrual is measured from.")
+    p_fwd.add_argument("--from-baskets", dest="from_baskets",
+                       help="re-measure from a COMMITTED frozen basket "
+                            "(data/themes/baskets/<driver>.json) — the durable input written by "
+                            "the freeze. Preferred over --from-mirror, which recovers a basket "
+                            "from a published summary and only works for hold-none freezes.")
+    p_fwd.add_argument("--from-mirror", dest="from_mirror",
+                       help="re-measure an ALREADY-FROZEN theme from its committed "
+                            "frontend/themes/<slug>.json instead of re-freezing. Hold-none "
+                            "(zero-RATIFIED) freezes only — the mirror carries no per-name "
+                            "ratification date, so a BUY leg cannot be re-dated from it.")
     p_fwd.add_argument("--ratify-date", dest="ratify_date",
                        help="ratification date YYYY-MM-DD (default: today)")
     p_fwd.add_argument("--baskets-out", dest="baskets_out", help="write frozen baskets JSON")
