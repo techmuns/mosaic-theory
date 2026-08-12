@@ -146,6 +146,11 @@ export async function render(root, _params, { item, frame }) {
     else { state.sort = k; state.dir = (k === "rank" || k === "ticker" || k === "depthBand" || k === "state") ? 1 : -1; }
     renderHead();
     renderRows();
+    // renderHead() replaced the whole row, so the button just activated no longer exists. Without
+    // this a KEYBOARD sort drops focus to <body> and the next Tab restarts from the top of the
+    // page — the sort would be reachable but unusable. :focus-visible keeps the ring off for mice.
+    const again = document.querySelector(`#rk-head th[data-sort="${k}"] button`);
+    if (again) again.focus();
   });
 }
 
@@ -153,9 +158,17 @@ function renderHead() {
   const head = document.getElementById("rk-head");
   if (!head) return;
   head.innerHTML = COLS.map((c) => {
-    const arrow = state.sort === c.key ? (state.dir > 0 ? " ▲" : " ▼") : "";
+    const active = state.sort === c.key;
+    const arrow = active ? (state.dir > 0 ? " ▲" : " ▼") : "";
     const tip = c.title ? ` title="${escapeHtml(c.title)}"` : "";
-    return `<th data-sort="${c.key}" class="${c.num ? "num" : ""}"${tip} style="cursor:pointer; user-select:none;">${c.label}${arrow}</th>`;
+    // The control is a real <button>, not the <th> itself: a th with a click handler is not
+    // focusable and has no activation semantics, so all 13 columns were mouse-ONLY. The button
+    // brings native focus + Enter/Space for free; `aria-sort` on the th is what announces WHICH
+    // column is sorted and which way — the ▲/▼ is decoration and hidden from assistive tech.
+    const sort = active ? (state.dir > 0 ? "ascending" : "descending") : "none";
+    return `<th scope="col" data-sort="${c.key}" class="${c.num ? "num" : ""}" aria-sort="${sort}"`
+      + ` style="user-select:none;"><button type="button" class="col-sort"${tip}>${c.label}`
+      + `<span aria-hidden="true">${arrow}</span></button></th>`;
   }).join("");
 }
 

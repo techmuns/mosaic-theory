@@ -145,8 +145,12 @@ def test_the_volume_header_discloses_that_it_is_a_single_session() -> None:
     A reader comparing it to its neighbours will assume a window unless told, so the disclosure
     rides on the header itself, not on a doc nobody opens."""
     head = _render()["head"]
-    m = re.search(r'<th[^>]*data-sort="volumeSpike"[^>]*title="([^"]+)"', head)
-    assert m, f"the volume header carries no title attribute:\n{head[:600]}"
+    # markup-agnostic: take that header's whole cell, then find its tip wherever inside it sits (on
+    # the <button> since the a11y change — the pin should not have to move every time the tag does)
+    cell = re.search(r'<th[^>]*data-sort="volumeSpike".*?</th>', head, re.S)
+    assert cell, f"no volumeSpike header in the thead:\n{head[:600]}"
+    m = re.search(r'title="([^"]+)"', cell.group(0))
+    assert m, f"the volume header carries no title attribute:\n{cell.group(0)[:400]}"
     tip = m.group(1).lower()
     assert "session" in tip, f"the header tip does not say it is a single session: {m.group(1)}"
     assert "90-day" in tip or "90d" in tip, f"the header tip does not state the basis: {m.group(1)}"
@@ -279,3 +283,52 @@ def test_a_snapshot_without_the_trend_series_still_renders_the_ratio() -> None:
     assert "<polyline" not in body, "a sparkline was drawn with no series behind it"
     cells = _vol_cells(body)
     assert cells[:3] == ["3.75×", "0.40×", "12.4×"], f"the ratio did not survive: {cells[:3]}"
+
+
+def test_every_column_can_be_sorted_from_the_keyboard() -> None:
+    """A <th> with a click handler is not focusable and has no activation semantics, so all 13
+    columns were mouse-ONLY — surfaced by the operator's own inspector reporting the header as not
+    keyboard-focusable. The control is now a real <button> inside a <th> carrying `aria-sort`: the
+    W3C sortable-column-header shape, and the reason the sort is reachable at all.
+
+    Structural, so it guards every column including the next one added."""
+    head = _render()["head"]
+    cells = re.findall(r"<th\b.*?</th>", head, re.S)
+    assert len(cells) >= 13, f"expected the queue's full header set, got {len(cells)}"
+    for th in cells:
+        key = re.search(r'data-sort="([^"]+)"', th)
+        assert key, f"header with no sort key:\n{th[:200]}"
+        assert 'scope="col"' in th, f"{key.group(1)}: header is not scoped to its column"
+        assert re.search(r'<button[^>]*type="button"', th), (
+            f"{key.group(1)}: the sort control is not a button — it cannot be focused or activated "
+            f"from the keyboard:\n{th[:250]}")
+        assert re.search(r'aria-sort="(ascending|descending|none)"', th), (
+            f"{key.group(1)}: no aria-sort, so which column is sorted is invisible to a screen "
+            f"reader — the ▲/▼ is decoration and deliberately aria-hidden")
+
+    active = [t for t in cells if re.search(r'aria-sort="(ascending|descending)"', t)]
+    assert len(active) == 1, (
+        f"{len(active)} columns claim to be the sorted one — aria-sort must name exactly one")
+    arrows = re.findall(r"[▲▼]", head)
+    assert arrows, "no sort direction is drawn at all"
+    for a in arrows:
+        assert re.search(rf'aria-hidden="true"[^>]*>[^<]*{a}', head), (
+            "the ▲/▼ is not aria-hidden — a screen reader reads it as text beside the aria-sort "
+            "that already says the same thing")
+
+
+def test_sorting_from_the_keyboard_does_not_throw_focus_away() -> None:
+    """renderHead() replaces the whole row, destroying the button that was just activated. Without
+    restoring focus a keyboard sort drops the user to <body> and the next Tab restarts at the top
+    of the page — reachable but unusable, which is the failure that makes "technically accessible"
+    meaningless.
+
+    Source-layer, and that is the honest limit: focus is a live-DOM behaviour and the node harness
+    has no focus model. Verified for real in the browser; this stops it being deleted."""
+    src = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    handler = re.search(r'#rk-head"\)\.addEventListener\("click".*?\n  \}\);', src, re.S)
+    assert handler, "the header click handler moved — re-point this pin"
+    body = handler.group(0)
+    assert "renderHead()" in body and ".focus()" in body, (
+        "the sort handler re-renders the header without restoring focus — a keyboard sort silently "
+        f"drops the user to <body>:\n{body}")
