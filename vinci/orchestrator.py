@@ -92,6 +92,41 @@ def rank_from_snapshots(
     ]
 
 
+def carry_forward_assessment(
+    cfg: Config,
+) -> tuple[dict[str, StructuralDisqualifier], dict[str, CauseClass]]:
+    """The last EXPLICIT operator assessment, recovered from the queue about to be replaced.
+
+    `vinci rank --structural` / `--cause-file` write `structural_flag` and `cause_class` into
+    `ranked_queue.jsonl` ONLY — nothing durable upstream holds them. A scheduled refresh that
+    supplied neither would therefore wipe them, and **a name capped at 0.05 by an 8-K disqualifier
+    would climb back to the top of the queue on Monday with no operator action** (review, #420).
+
+    Carrying them is safe in the one direction that matters: the structural channel is DEMOTE-ONLY,
+    so a stale flag can only keep a name down, never lift one. An 8-K does not un-happen, so the
+    flag stays factually true; it is `source_ref`-bound to its accession either way. What this does
+    NOT do is DISCOVER new signals — that still needs an explicit `--structural` run. And it
+    self-clears: if an operator re-scans and the signal no longer fires, the queue they write has no
+    flag, and the next carry-forward reads that absence.
+
+    Keyed by ticker, which is what `rank_candidates` falls back to and what survives a re-screen.
+    """
+    prior = cfg.snapshots_dir / "ranked_queue.jsonl"
+    flags: dict[str, StructuralDisqualifier] = {}
+    causes: dict[str, CauseClass] = {}
+    if not prior.exists():
+        return flags, causes
+    for line in prior.read_text().splitlines():
+        if not line.strip():
+            continue
+        r = RankedCandidate.model_validate_json(line)
+        if r.structural_flag is not None:
+            flags[r.ticker] = r.structural_flag
+        if r.cause_class != CauseClass.UNCLASSIFIED:
+            causes[r.ticker] = r.cause_class
+    return flags, causes
+
+
 def write_queue_snapshots(
     cfg: Config, ranked: list[RankedCandidate], *, md_top: int = QUEUE_MD_TOP
 ) -> tuple[Path, Path]:
@@ -105,6 +140,29 @@ def write_queue_snapshots(
     md = snaps / "ranked_queue.md"
     md.write_text(render_queue_markdown(ranked, top=md_top))
     return jsonl, md
+
+
+def refresh_queue(cfg: Config) -> dict[str, int]:
+    """Rank the screen's committed output and REPLACE the queue. The weekly job's tail.
+
+    Extracted from :func:`run_weekly` so its two dangerous cases are testable without the network —
+    both were review findings on #420, and neither is reachable through a function that builds
+    Polygon and EDGAR clients from config.
+    """
+    flags, causes = carry_forward_assessment(cfg)
+    ranked = rank_from_snapshots(cfg, annotations=causes or None, structural_flags=flags or None)
+    # WRITE EVEN WHEN EMPTY. The screen has completed by this point, so no candidates is an ANSWER —
+    # the latest screen rejected everything — not a failure to produce one. Skipping the write left
+    # the previous week's names served as current, and the staleness banner could not catch it
+    # either: the retained queue is only seven days old, so it reads as fresh (review, #420).
+    #
+    # The two cases are told apart on the INPUT, never on the output being empty: a MISSING
+    # candidate_records.jsonl means nothing has been screened (fresh checkout) and must not clobber
+    # an existing queue; a PRESENT-but-empty one is a real screen result and must replace it.
+    if (cfg.snapshots_dir / "candidate_records.jsonl").exists():
+        write_queue_snapshots(cfg, ranked)
+    return {"ranked": len(ranked),
+            "carried_structural": len(flags), "carried_cause": len(causes)}
 
 
 def run_weekly(
@@ -133,13 +191,12 @@ def run_weekly(
     # uses. Until 2026-08-12 this job stopped at the screen: candidate_records advanced every week
     # while ranked_queue.jsonl only moved when a human remembered to run the ranker, and the served
     # queue had drifted 12 days and 95 names behind the screen that fed it (STATE.md §5).
-    # Defaults reproduce the manual invocation exactly — no cause annotations (they need an operator
-    # -supplied file) and NO --structural, which is a network 8-K scan and is off by default in the
-    # CLI too. Adding the structural scan here would sink names, so it stays an explicit human act.
-    ranked = rank_from_snapshots(cfg)
-    if ranked:
-        write_queue_snapshots(cfg, ranked)
-    return {**stats, "ref": end.isoformat(), "ranked": len(ranked)}
+    #
+    # NO --structural here: it is a network 8-K scan, off by default in the CLI too, and it SINKS
+    # names — putting a demote channel on a cron is a decision-path change and stays a human act.
+    # But the last explicit assessment IS carried forward, because the flags live nowhere but the
+    # artifact this is about to overwrite (see carry_forward_assessment).
+    return {**stats, "ref": end.isoformat(), **refresh_queue(cfg)}
 
 
 def run_monthly(
