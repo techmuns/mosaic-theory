@@ -832,6 +832,20 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
     return out
 
 
+def _nonop_share_txt(share: float, *, compact: bool = False) -> str:
+    """The pre-tax share of a non-operating block, in words.
+
+    THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
+    pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries the
+    figure that is real; the revenue-relative half still carries the magnitude. ``compact`` is the
+    per-item form used when several quarters are listed on one line — same rule, fewer words.
+    """
+    if share <= 1.5:
+        return f"{share:.0%} of pre-tax" if compact else f"{share:.0%} of pre-tax income"
+    return ("exceeds pre-tax" if compact
+            else "more than the entire pre-tax result, which nets near zero")
+
+
 def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
     """How much of the latest quarter's pre-tax result came from BELOW the operating line.
 
@@ -904,16 +918,34 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         return Sourced.present(
             f"no material non-operating item in the four quarters to {end} — in the latest, "
             f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax", source_ref=src)
-    # THE LARGEST RELATIVE TO REVENUE, not the most recent: with several material quarters the one
-    # that most distorts a trailing figure is the one worth naming, and revenue is the arm that
-    # stays comparable across them — the pre-tax share does not, its denominator moves.
-    end, gap, share, rev_share = max(material, key=lambda m: m[3] or 0.0)
+    # EVERY MATERIAL QUARTER, NOT THE LARGEST ONE (2026-08-12). Naming only the biggest was chosen
+    # for a reason that does not survive its own live case: UBER carries THREE material quarters —
+    # 2025-09-30 +$1,507M, 2026-03-31 −$1,427M, 2026-06-30 +$1,387M — and the page named the first,
+    # calling it "an earlier quarter still inside the trailing four". A reader is then told the
+    # distortion sits behind them and the recent quarters are clean; both dropped quarters are the
+    # RECENT ones, and one of them is the $1.4bn revaluation an analyst flagged against this very
+    # field. The figure a reader divides by is an LTM one, so every quarter inside it counts.
+    #
+    # AND THE NET IS THE POINT THE LARGEST CANNOT MAKE. UBER's two unnamed quarters point OPPOSITE
+    # WAYS and very nearly cancel; the trailing sum is what an LTM EPS actually carries, not the
+    # biggest single item. Reporting the maximum implied a distortion the LTM does not have.
+    if len(material) > 1:
+        def signed(v: float) -> str:  # "+$1,507M" — the sign leads, the $ stays on the figure
+            return f"{'+' if v >= 0 else '−'}${abs(v) / 1e6:,.0f}M"
+
+        net = sum(_arms(d)[0] for d in window)
+        items = " · ".join(
+            f"{d} {signed(g)} ({_nonop_share_txt(s, compact=True)} · {r:.0%} of revenue)"
+            for d, g, s, r in material)  # chronological — `material` is built in window order
+        return Sourced.present(
+            f"{len(material)} of the trailing four quarters carry a material block from BELOW the "
+            f"operating line — {items} — netting {signed(net)} across the four. A trailing "
+            f"EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the "
+            f"SUM, not the largest of them.",
+            source_ref=src)
+    end, gap, share, rev_share = material[0]
     assert share is not None and rev_share is not None
-    # THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
-    # pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries
-    # the figure that is real; the revenue-relative half still carries the magnitude.
-    share_txt = (f"{share:.0%} of pre-tax income" if share <= 1.5
-                 else "more than the entire pre-tax result, which nets near zero")
+    share_txt = _nonop_share_txt(share)
     where = ("the latest quarter" if end == window[-1]
              else "an earlier quarter still inside the trailing four")
     return Sourced.present(

@@ -292,7 +292,7 @@ _NM = a real state (negative base), not missing_
 _Revenue YoY (latest same-quarter): +12.2% (Q2 Jun-30-2026 vs Q2 Jun-30-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
 - **Share-count trend:** buying back (trailing ~2.0y): 2,100,937,229 (2024-08-02) → 2,042,560,121 (2026-07-31), -2.8% [45]
-- **Non-operating earnings:** $1,507M of the quarter ended 2025-09-30 came from BELOW the operating line — 58% of pre-tax income, and 11% of revenue. Operating income $1,113M → pre-tax $2,620M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor. [12]
+- **Non-operating earnings:** 3 of the trailing four quarters carry a material block from BELOW the operating line — 2025-09-30 +$1,507M (58% of pre-tax · 11% of revenue) · 2026-03-31 −$1,427M (exceeds pre-tax · 11% of revenue) · 2026-06-30 +$1,387M (42% of pre-tax · 10% of revenue) — netting +$1,521M across the four. A trailing EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the SUM, not the largest of them. [12]
 - **Return ratios — per fiscal period** — [46]  <!-- ds-table -->
 
 |  | FY16 | FY17 | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
