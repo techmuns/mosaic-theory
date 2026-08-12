@@ -57,9 +57,15 @@ globalThis.fetch = async (p) => {
           lines[0].volume_overlay = 0.0;
           delete lines[0].volume_spike;
         } else if (MODE === 'spike') {
-          // the structured field a post-2026-08-12 screen emits, injected onto REAL rows
+          // a snapshot with the RATIO but no series — the state between the field landing and the
+          // next screen. volume_trend must be DELETED, not merely left alone: every committed row
+          // has carried one since the 2026-08-12 re-screen, so omitting this silently turned the
+          // degradation case into the sparkline case (caught by the artifact pass, not by CI).
           const inj = [3.75, 0.4, 12.4];
-          lines.forEach((r, i) => { r.volume_spike = inj[i] !== undefined ? inj[i] : 1.0; });
+          lines.forEach((r, i) => {
+            r.volume_spike = inj[i] !== undefined ? inj[i] : 1.0;
+            delete r.volume_trend;
+          });
         } else if (MODE === 'trend') {
           // what a SCREEN run emits; injected because features.py computes it from bars
           const inj = [0.27, 0.31, 0.21, 3.7, 1.31, 1.09, 0.92, 0.89, 0.53, 0.59, 0.38, 1.1, 0.83];
