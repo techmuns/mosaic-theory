@@ -3029,6 +3029,27 @@ def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
     return None
 
 
+#: The metric names that ARE the revenue line, as filers write them — the CROSS-CHECK's vocabulary,
+#: not the page's.
+#:
+#: THE PARSER KEEPS THE FILER'S OWN WORD AND SHOULD (2026-08-12). `_guide_metric` folds "revenues" /
+#: "total revenues" into `revenue` but leaves **net sales** alone, which is right for display:
+#: BellRing guides "net sales" and its page should say so. The defect was that the guide-verify
+#: consumer matched the string `"revenue"` exactly, so a net-sales guide was invisible to it and the
+#: page reported **"release NO NUMERIC OUTLOOK → not cross-checked"** while the release stated one.
+#:
+#: BRBR IS THE PROOF: CIQ guides **2335.0–2375.0** and the 2026-08-04 release says *"Updated
+#: fiscal year 2026 net sales outlook of $2.335-$2.375 billion"* — the SAME numbers, parsed
+#: correctly, one metric-name away from a cross-source VERIFIED and reported as no outlook at all.
+#: A verification that silently declines to run is worse than one that fails: it reads as
+#: "checked, nothing to say".
+#:
+#: Fixed HERE rather than in `_guide_metric` deliberately — normalising at parse time would rename
+#: the metric on the page, losing the filer's term, and churn every committed artifact and pin
+#: that carries it. The synonym belongs to the consumer that needs it.
+_REVENUE_LINE_METRICS: frozenset[str] = frozenset({"revenue", "net sales"})
+
+
 def _release_revenue_guide(
     releases: list[ReleaseExtract],
 ) -> tuple[float | None, float | None, bool, str, str | None]:
@@ -3045,7 +3066,7 @@ def _release_revenue_guide(
     spans cannot agree no matter how well each is parsed."""
     for r in releases:
         for g in r.guidance:
-            if g.metric == "revenue":
+            if g.metric in _REVENUE_LINE_METRICS:
                 return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"),
                         getattr(g, "period", None))
     return (None, None, False, "level", None)

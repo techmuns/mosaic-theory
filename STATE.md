@@ -11669,6 +11669,18 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    `tests/test_share_basis.py`** (that pin FAILS the moment the artifact lands, so the set cannot
    be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
    that is a separate defect on the same name and stays open.
+11. **RE-ASSEMBLE BRBR AND SMPL — the net-sales cross-check fix is in the CODE and not on the PAGE.
+   Opened 2026-08-12 by `fix/net-sales-is-the-revenue-line`.** Both pages currently read *"release
+   NO NUMERIC OUTLOOK → not cross-checked"* while their releases state a net-sales guide the parser
+   captured. On re-assembly **BRBR becomes cross-source VERIFIED** (CIQ 2335.0–2375.0 vs release
+   2335.0–2375.0 — the same numbers) and **SMPL becomes the PERIOD refusal** (release guides the
+   YEAR 1345–1355, CIQ a QUARTER 322–332), which is the honest reading rather than silence.
+   **A REFRESH CANNOT DO IT** — verified, not assumed: `guide_verification` is computed at assembly
+   and `recompute_derived` rebuilds only TEV + implied levels, so a transform-free pass moved no
+   page. Recomputing it in a one-off transform would duplicate the assembly wiring in a script,
+   which is the drift this repo avoids. **Needs: the CIQ workbooks → re-assemble → confirm BRBR
+   reads VERIFIED and SMPL names the period mismatch.** No test blocks on it (the pins run against
+   the stored RELEASES, which are already correct); this is a page-accuracy item, not a red one.
 
 ### AUDIT — THE TIER-2 VOLUME OVERLAY (2026-08-12, operator-prompted; NO CODE CHANGED)
 
@@ -14004,6 +14016,36 @@ sign-off.**
   sized by signature, **not confirmed**: each needs its own exhibit fetched. NFLX is the one proven
   case. **Nothing was re-assembled here** — the artifacts still carry the old numbers until a
   re-assembly runs.
+  - **ALL FIVE CONFIRMED AGAINST THEIR FILINGS 2026-08-12 — NONE WAS A SUFFIX DROP, and the
+    signature was a FALSE POSITIVE (fix/net-sales-is-the-revenue-line).** Each exhibit fetched and
+    re-parsed with the merged parser: **BRBR** guides *"fiscal year 2026 net sales outlook of
+    $2.335-$2.375 billion"* → parsed correctly as **2335.0–2375.0 $M**; **SMPL** guides *"$1.345 and
+    $1.355 billion"* → **1345.0–1355.0 $M**. Both were extracted ALL ALONG, under the metric name
+    **`net sales`** — and the sweep that produced the five filtered on `metric == "revenue"`, so it
+    reported its own filter as a parser defect. **IT** points the reader to *"an earnings supplement
+    available on the Company's Investor Relations website"* — the guide is not in the 8-K at all;
+    **V** and **FUBO** state no numeric revenue guide in the exhibit. So the suffix fix's blast
+    radius is **NFLX alone**, as proven, and the sentence above overstated it. *(The lesson is the
+    one this repo keeps re-learning: a signature is a hypothesis, and only the filing settles it.)*
+  - **BUT THE CONFIRMATION FOUND A DIFFERENT, REAL DEFECT — "net sales" never reached the
+    cross-check.** `_release_revenue_guide` matched the string `"revenue"` exactly, so a net-sales
+    guide was invisible to it and BRBR's page reads **"CIQ 2335.0–2375.0 vs release NO NUMERIC
+    OUTLOOK → not cross-checked"** — while the release it cites states **2335–2375, the same
+    numbers**. That is a cross-source **VERIFIED** reported as nothing to compare. **A verification
+    that silently declines to run is worse than one that fails:** "not cross-checked" reads as *we
+    looked and there was nothing there*, the false-UNKNOWN shape this repo closes elsewhere.
+    **FIXED IN THE CONSUMER, NOT THE PARSER** (`_REVENUE_LINE_METRICS = {"revenue", "net sales"}`):
+    `_guide_metric` deliberately keeps the filer's own word so BellRing's page says *net sales*;
+    normalising at parse time would rename the metric on every page and churn the artifacts and pins
+    that carry it. The synonym belongs to the consumer that needs it. *SMPL composes with the period
+    refusal: its release guides the YEAR (1345–1355) against a CIQ QUARTER (322–332), so seeing the
+    guide is what lets that refusal fire at all — it previously read "NO NUMERIC OUTLOOK", naming
+    neither. 6 pins, ALL failing on the pre-fix consumer (behavioural, not an ImportError — the new
+    symbol is imported locally so the file still collects). ruff + mypy --strict (124) + pytest
+    2414 green.* **ARTIFACT: NOT LANDED.** `guide_verification` is computed at ASSEMBLY, not by
+    `recompute_derived` (which rebuilds only TEV + implied levels), so a transform-free refresh
+    moves nothing — verified, the pass touched no page. **BRBR and SMPL keep the wrong line until
+    re-assembled** (operator item below).
 - **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
   opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
   column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
@@ -15123,6 +15165,35 @@ move. A reader forming a verdict from this page is reading numbers the company h
 with no internal contradiction would not have surfaced at all — **driver rows carry
 quote-in-transcript and digit-trace validation; synthesis points carry NEITHER.** That asymmetry is
 why this check had to be manual, and it is unclosed.
+
+**THE DIGEST'S CAP WAS ON THE WRONG AXIS — IT DROPPED THE GUIDE HISTORY IT EXISTS TO PRESERVE
+(2026-08-12, fix/brief-template-guidance-parity).** Found while re-assembling BRBR/SMPL: the fresh
+artifacts reddened `test_the_analyst_template_shows_the_same_vintages_as_the_brief`, and the
+diagnosis was not the surfaces but the window. `_primary_source_digest` capped the RAW release list
+(`ps.releases[:4]`), so a release carrying NO guidance could hold a slot while a guidance-bearing
+one fell outside it. **Measured on the committed fleet: AORT −1, CNXC −1, NCNO −2 guidance-bearing
+releases dropped** — and the note said only *"older release(s) omitted"*, never that any of them
+carried a guide. The block's own comment is **"MARK, NEVER DROP … the guidance history IS a bear
+point — SMPL's three-step cut sequence is evidence"**, so the cap was deleting the very evidence the
+vintage marking (the P2 fix above) was built to keep, and a bear case resting on a cut sequence
+could lose it silently. **FIX: two windows.** The CONTENT window stays at 4 (reconciliation,
+one-offs, event impacts are LTM-shaped — widening them would just add tokens); GUIDANCE selects the
+4 most recent releases that actually carry some. They usually coincide; where they do not, this is
+the difference between showing a cut sequence and implying there wasn't one. The note now also says
+how many omitted releases carried guidance.
+**AND THE TEST'S INVARIANT WAS WRONG, not merely stale.** It asserted the template and the brief show
+the SAME vintages — true only while no name had >4 guidance-bearing releases, and broken by richer
+extraction rather than by a defect. The brief caps BY DESIGN and discloses it; the template is the
+analyst surface and carries the full history. Asserting equality would force one of those deliberate
+choices to give way. Replaced with what the old message was reaching for — **ONE DERIVATION**: the
+brief's vintages are a SUBSET of the template's, the CURRENT/SUPERSEDED mark AGREES on every shared
+vintage (a guide current on one surface and superseded on the other is P2 in a new place), and any
+omission is DISCLOSED. The sibling P2 pin was likewise re-pointed at the oldest guidance-bearing
+release **inside the window**, which keeps its coverage exactly.
+*3 pins: the fleet cap-axis pin FAILS on the pre-fix digest naming exactly `AORT, CNXC, NCNO` and
+passes after; the two corrected invariants hold on both. ruff + mypy --strict (124) + pytest 2409
+green. **No artifact moved** — the digest is an LLM INPUT, not a stored field, so this changes what
+the next assembly reads, not any committed page.*
 
 **`scenario-create` NOW REFUSES A NAME THAT ALREADY HAS A RECORD.** `write_record` is an
 unconditional `path.write_text`, so a create on SMPL would have DESTROYED the live record and

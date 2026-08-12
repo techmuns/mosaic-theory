@@ -47,11 +47,18 @@ def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
     d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
     ps = d.mechanical.primary_source
     assert ps is not None
+    # WITHIN THE DIGEST'S OWN WINDOW (corrected 2026-08-12). This took the OLDEST dated
+    # guidance-bearing release and asserted the digest marks it — but the digest shows the four
+    # most recent guidance-bearing releases and DISCLOSES the rest, so on a name with five the
+    # oldest is legitimately absent and the pin reddened on a data event. The defect it exists to
+    # catch is "a superseded guide was dropped or left unmarked", which is observable on any
+    # supersession inside the window; taking the oldest SHOWN one keeps that coverage exactly.
     dated = sorted({r.filed for r in ps.releases if r.guidance and r.filed})
-    assert len(dated) >= 2, (
-        "SMPL no longer carries two dated guidance-bearing releases — this test needs a "
-        "supersession to observe; re-point it at a name that has one")
-    newest, older = dated[-1], dated[0]
+    shown = sorted({r.filed for r in [x for x in ps.releases if x.guidance][:4] if r.filed})
+    assert len(shown) >= 2, (
+        "SMPL no longer carries two dated guidance-bearing releases inside the digest window — "
+        "this test needs a supersession to observe; re-point it at a name that has one")
+    newest, older = dated[-1], shown[0]
 
     def _vals(on: object) -> set[str]:
         return {f"{g.low}–{g.high}" for r in ps.releases if r.filed == on
@@ -203,9 +210,40 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
                     out.add(x.split(m)[1].split("]")[0].split(",")[0].split(" ")[0])
         return out
 
-    assert marks(tmpl) == marks(brief), (
-        f"template and brief disagree on guidance vintages — template {sorted(marks(tmpl))}, "
-        f"brief {sorted(marks(brief))}; they must share one derivation")
+    # SUBSET, NOT EQUALITY (corrected 2026-08-12). The equality held only while no name had more
+    # than four GUIDANCE-BEARING releases, and it broke the moment richer extraction gave SMPL a
+    # fifth — on a data event, not a defect. The brief caps at four BY DESIGN and says so in its own
+    # note; the template is the analyst surface and carries the full history. Asserting they match
+    # would force one of those two deliberate choices to give way.
+    #
+    # WHAT ACTUALLY MUST HOLD is the thing the old message was reaching for — ONE DERIVATION: every
+    # vintage the brief shows must exist in the template, and the CURRENT/SUPERSEDED mark on a
+    # shared vintage must agree. A brief that promoted a superseded guide to current, or invented a
+    # vintage the template does not have, is the P2 defect returning; a brief that shows fewer is
+    # the documented window.
+    assert marks(brief) <= marks(tmpl), (
+        f"the brief shows guidance vintages the template does not — brief {sorted(marks(brief))}, "
+        f"template {sorted(marks(tmpl))}; they must share one derivation")
+
+    def mark_of(lines: list[str], vintage: str) -> set[str]:
+        """Which mark KIND each surface put on a given vintage — the derivation, not the count."""
+        kinds = set()
+        for x in lines:
+            for m in ("[CURRENT GUIDE, filed ", "[SUPERSEDED — filed "):
+                if m in x and x.split(m)[1].startswith(vintage):
+                    kinds.add(m)
+        return kinds
+
+    for v in marks(brief):
+        assert mark_of(tmpl, v) == mark_of(brief, v), (
+            f"template and brief mark vintage {v} differently — template {mark_of(tmpl, v)}, "
+            f"brief {mark_of(brief, v)}; a guide current on one surface and superseded on the "
+            f"other is the P2 defect in a new place")
+
+    # …and anything the brief leaves out must be DISCLOSED, or its window reads as the whole record.
+    if marks(brief) < marks(tmpl):
+        assert any("omitted from the" in x for x in _digest("SMPL").splitlines()), (
+            "the brief dropped a guidance vintage without saying so")
     # Derived, not typed in — same reason as the acceptance case above: hardcoding the July/April
     # figures schedules this to redden on SMPL's next print rather than on a defect.
     ps = Dossier.model_validate(doc).mechanical.primary_source
@@ -319,3 +357,118 @@ def test_the_mark_reaches_the_prompt_synthesize_actually_builds() -> None:
         assert mark_at != -1 and mark_at < pct_at, (
             "the mark trails the numbers it qualifies — a reader meets April's guide first, which "
             "is how it became a bear point")
+
+
+def test_the_cap_never_spends_a_slot_on_a_guidanceless_release() -> None:
+    """THE DEFECT THIS PR FIXES, pinned on the fleet rather than one name.
+
+    The digest capped the RAW release list (`ps.releases[:4]`), so a release carrying no guidance
+    could occupy a slot while a guidance-bearing one fell outside it. Measured on the committed
+    artifacts when this was found: **AORT and CNXC each lost one guidance-bearing release and NCNO
+    lost two**, and the note said only "older release(s) omitted" — never that any of them carried
+    a guide. That defeats the mark's own stated purpose ("the guidance history IS a bear point …
+    superseded releases stay in the digest"): the digest was dropping the evidence it exists to
+    preserve, and the cut sequence a bear case rests on can disappear without a word.
+
+    THE INVARIANT: the guide window holds the most recent guidance-bearing releases, up to its own
+    cap — never fewer because a guidance-less neighbour was newer.
+    """
+    from vinci.dossier.synthesis import _primary_source_digest
+
+    thin: list[tuple[str, int, int]] = []
+    for p in sorted(DOSS.iterdir()):
+        doc = p / "dossier.json"
+        if not doc.is_file():
+            continue
+        ps = Dossier.model_validate(json.loads(doc.read_text())).mechanical.primary_source
+        if ps is None:
+            continue
+        bearing = [r for r in ps.releases if r.guidance and r.filed]
+        if not bearing:
+            continue
+        shown = {ln.split("filed ")[1].split("]")[0].split(",")[0]
+                 for ln in _primary_source_digest(ps).splitlines()
+                 if ln.startswith("guidance (") and "filed " in ln}
+        expect = {str(r.filed) for r in bearing[:4] if r.filed}  # `filed` is a date; marks are text
+        if not expect <= shown:
+            thin.append((p.name, len(shown), len(expect)))
+    assert not thin, (
+        f"the digest dropped guidance-bearing releases that sit inside the guide window: {thin} — "
+        f"a slot went to a release with no guidance while a guide fell out of the digest")
+
+
+def test_the_note_counts_after_the_union_not_the_content_window() -> None:
+    """REVIEW FINDING (#439): the omission note contradicted the digest it annotates.
+
+    THE MIXED WINDOW. The count was `len(releases) - len(recent)` — the CONTENT window's leftovers —
+    but the digest emits `recent ∪ guided`. So a release outside the content window that CARRIES
+    guidance is present, with its guide printed, and the note still called it omitted. The LLM was
+    handed the older outlook and told in the same breath that it had been dropped.
+
+    THE FIXTURE IS THE MIXED CASE ON PURPOSE: six releases, and only the two OLDEST carry guidance.
+    The content window takes the four newest (all guidance-less); the guide window takes the two
+    guidance-bearing ones. Nothing is genuinely absent — every release is in one window or the
+    other — so the note must NOT claim an omission.
+    """
+    import datetime as _dt
+
+    from vinci.dossier.schemas import (
+        GuidanceItem,
+        PrimarySource,
+        ReleaseExtract,
+        Sourced,
+    )
+    from vinci.dossier.synthesis import _primary_source_digest
+
+    def _rel(day: int, *, guides: bool) -> ReleaseExtract:
+        return ReleaseExtract(
+            filed=_dt.date(2026, 1, day), source_ref=f"8-K day{day} EX-99.1",
+            guidance=([GuidanceItem(metric="revenue", period="2026", low=float(day),
+                                    high=float(day) + 10, unit="$M", qualitative=False,
+                                    verbatim="v", source_ref="s")] if guides else []))
+
+    _u = Sourced.unknown(note="not under test")
+    # most-recent first, as the record stores them: 6 newest … 1 oldest; only 2 and 1 guide.
+    releases = [_rel(d, guides=d <= 2) for d in (6, 5, 4, 3, 2, 1)]
+    ps = PrimarySource(releases=releases, self_funding=_u, wall_coherence=_u,
+                       basis_triangulation=_u, guide_verification=_u)
+
+    text = _primary_source_digest(ps)
+    note = [ln for ln in text.splitlines() if ln.startswith("(note:")]
+
+    # the guides from OUTSIDE the content window are in fact present …
+    assert "guidance (" in text, "the guide history the union exists to keep is missing"
+    # … so nothing may be described as contributing nothing.
+    assert not note, (
+        f"every release is in one window or the other, yet the digest claims an omission: {note}")
+
+
+def test_a_guide_that_is_genuinely_dropped_is_disclosed_separately() -> None:
+    """THE OTHER HALF, so the note is not merely silenced. Beyond the guide window's own cap a
+    guidance-bearing release IS lost, and that is a different loss from a release whose
+    non-guidance content falls outside the content window — the note states them apart."""
+    import datetime as _dt
+
+    from vinci.dossier.schemas import (
+        GuidanceItem,
+        PrimarySource,
+        ReleaseExtract,
+        Sourced,
+    )
+    from vinci.dossier.synthesis import _primary_source_digest
+
+    def _rel(day: int) -> ReleaseExtract:
+        return ReleaseExtract(
+            filed=_dt.date(2026, 1, day), source_ref=f"8-K day{day} EX-99.1",
+            guidance=[GuidanceItem(metric="revenue", period="2026", low=float(day),
+                                   high=float(day) + 10, unit="$M", qualitative=False,
+                                   verbatim="v", source_ref="s")])
+
+    _u = Sourced.unknown(note="not under test")
+    ps = PrimarySource(releases=[_rel(d) for d in (6, 5, 4, 3, 2, 1)], self_funding=_u,
+                       wall_coherence=_u, basis_triangulation=_u, guide_verification=_u)
+
+    note = [ln for ln in _primary_source_digest(ps).splitlines() if ln.startswith("(note:")]
+    assert note, "two guidance-bearing releases fall outside both windows and nothing says so"
+    assert "guidance that is NOT shown" in note[0], note
+    assert "content window" in note[0], "the note must name WHICH window it is describing"

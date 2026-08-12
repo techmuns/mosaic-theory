@@ -1033,9 +1033,39 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             out.append(f"customer concentration: {c.name} {c.pct}%{kind}{prior} "
                        f"→ {cc.source_ref if cc is not None else ''}")
     recent = ps.releases[:4]  # the trailing ~year of releases — the LTM window + recent trend
-    if len(ps.releases) > len(recent):
-        out.append(f"(note: {len(ps.releases) - len(recent)} older release(s) omitted from the "
-                   "digest — the four most recent are shown; full set in the JSON)")
+    # THE GUIDE HISTORY GETS ITS OWN WINDOW, because one cap on the raw release list was spending
+    # slots on releases that carry no guidance and dropping ones that do (2026-08-12). Measured on
+    # the committed fleet: AORT and CNXC each lost a guidance-bearing release and **NCNO lost two**,
+    # while guidance-LESS releases sat inside the window. That defeats the mark's own purpose — the
+    # comment below says the guidance history IS a bear point and superseded releases must stay —
+    # so the digest was dropping the evidence it exists to preserve, silently enough that the note
+    # counted "older release(s)" without saying any of them carried a guide.
+    #
+    # TWO WINDOWS, NOT A BIGGER ONE: the content window stays at 4 (reconciliation, one-offs and
+    # event impacts are LTM-shaped and a wider window would just add tokens), and guidance selects
+    # the 4 most recent releases that actually carry some. They usually coincide; where they do
+    # not, this is the difference between showing a cut sequence and implying there wasn't one.
+    guided = [r for r in ps.releases if r.guidance][:4]
+    omitted_guided = sum(1 for r in ps.releases if r.guidance) - len(guided)
+    # COUNTED AFTER THE UNION, AND NAMED AS THE CONTENT WINDOW (review finding, #439). The count was
+    # `len(releases) - len(recent)` — the CONTENT window's leftovers — but the loop below emits
+    # `recent ∪ guided`, so a release outside the content window that CARRIES guidance is in the
+    # digest with its guide printed. Calling it "omitted" told the LLM the older outlook had been
+    # dropped while handing it that very outlook: contradictory evidence, with no way to tell which
+    # half to believe. What is genuinely absent is a release in NEITHER window.
+    shown = [r for r in ps.releases if r in recent or r in guided]
+    omitted = len(ps.releases) - len(shown)
+    if omitted or omitted_guided:
+        parts = []
+        if omitted:
+            parts.append(f"{omitted} older release(s) contribute nothing here")
+        # DISCLOSED SEPARATELY, because it is a different loss: a guide that EXISTS and is not
+        # shown, versus a release whose non-guidance content falls outside the window.
+        if omitted_guided:
+            parts.append(f"{omitted_guided} further release(s) state guidance that is NOT shown")
+        out.append(f"(note: {'; '.join(parts)} — the content window is the 4 most recent releases, "
+                   f"and guidance is carried for the 4 most recent that state any; "
+                   f"full set in the JSON)")
     # WHICH GUIDE IS CURRENT — derived from the filing dates, which are already known.
     #
     # WHY: the digest emitted every release's guidance as `guidance (metric period): low–high →
@@ -1052,7 +1082,10 @@ def _primary_source_digest(ps: PrimarySource) -> str:
     # DATES ONLY, no heuristic and no ranking. A release whose `filed` is absent cannot be ordered,
     # so it is labelled UNDATED rather than assumed current or stale — MVST and FUBO are that case.
     _newest = newest_guidance_date(ps)
-    for r in recent:
+    # The union, in the record's own order (most-recent first). A release earns its place by being
+    # in the content window OR by carrying guidance the guide window keeps; each block below then
+    # asks which window it is in, so neither leaks into the other.
+    for r in [x for x in ps.releases if x in recent or x in guided]:
         # THE MARK GOES ON THE GUIDANCE LINE, NOT ON A BLOCK HEADER — and the first cut of this
         # change got that wrong in a way that would have done real harm. A section header reading
         # "SUPERSEDED … history, NOT the company's current outlook" visually scoped over
@@ -1062,7 +1095,7 @@ def _primary_source_digest(ps: PrimarySource) -> str:
         # next guidance-less release, which emits no header of its own. A per-line mark has no
         # scope to creep and nothing to bleed into.
         _v = guidance_vintage_mark(r.filed, _newest)
-        for g in r.guidance:
+        for g in (r.guidance if r in guided else []):
             # A CHANGE IS LABELLED AS ONE. "-350–-300 bps" printed like a level reads as a gross
             # margin of -350%, which is the 100x error this basis field exists to prevent.
             if g.qualitative:
@@ -1072,11 +1105,14 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             else:
                 v = f"{g.low}–{g.high}"
             out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
-        for rv in r.reconciliation:
+        # THE CONTENT WINDOW, unchanged at 4. A release pulled in only for its guide history does
+        # not also widen the LTM-shaped blocks — that would be a bigger digest by accident rather
+        # than the targeted one this fix intends.
+        for rv in (r.reconciliation if r in recent else []):
             out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value} → {rv.source_ref}")
-        for oo in r.one_offs:
+        for oo in (r.one_offs if r in recent else []):
             out.append(f"one-off charge: ${oo.amount}M {oo.description[:44]} → {oo.source_ref}")
-        for ei in r.event_impacts:
+        for ei in (r.event_impacts if r in recent else []):
             rng = f"{ei.low}–{ei.high}" if ei.low is not None else "unquantified"
             out.append(f"event impact: {ei.effect} {ei.metric} {rng} ({ei.period}) "
                        f"→ {ei.source_ref}")
