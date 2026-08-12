@@ -13166,6 +13166,66 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A QUARTER WAS CHECKED AGAINST A YEAR AND THE PAGE CALLED IT A MISMATCH (2026-08-12,
+  fix/guide-period-and-pctile-window).** Analyst review of the committed NFLX page, post-#426.
+  The dossier printed `guide verification (revenue): CIQ 12860.0–12860.0 vs release 50.7–51.7 →
+  MISMATCH flag`. **Nothing about that was a verification.** CIQ's revenue guide is **FQ3 2026** —
+  one quarter, 12,860.0 — and the release guides **FY2026**. Four quarters at CIQ's own number is
+  **51,440, INSIDE the annual guide**: the two sources CORROBORATE, and the check reported them as
+  contradicting. `guide_verification` compared the numbers and had no idea the periods differed.
+  **WHY IT MATTERS BEYOND A LABEL:** a revenue-guidance MISMATCH reads as management missing its own
+  number — the analyst's finding was raised as evidence of deteriorating execution — so a spurious
+  one manufactures exactly the impression the flag exists to warrant. **NOT NFLX-SPECIFIC:** any
+  name whose CIQ guide period differs from the period its release guides gets one.
+  **THE FIX IS THE REFUSAL ALREADY BESIDE IT.** Cross-basis (LEVEL vs CHANGE) refuses rather than
+  derives; cross-PERIOD now refuses identically. Annualising the quarter to force the comparison
+  would manufacture the base the check exists to verify — a guide is not four equal quarters — which
+  is the same manufactured-base argument the cross-basis refusal already makes. The period now RIDES
+  WITH THE NUMBERS on both sides (`revenue_guide_lohi` → `(lo, hi, period)`, `_release_revenue_guide`
+  → `(lo, hi, qual, basis, period)`), for the reason the BASIS does. **REFUSES ONLY WHEN BOTH LABELS
+  DECIDE A SCOPE AND THEY DIFFER** — an unrecognised label leaves prior behaviour untouched, because
+  inventing a scope would silence REAL mismatches (the opposite failure).
+  *Verified on the committed artifact's own inputs (not synthetic): CIQ `FQ3 2026`→quarter, release
+  `2026`→annual → the shipped MISMATCH becomes "CIQ guides a QUARTER … the release guides a YEAR …
+  NOT CROSS-CHECKED"; same-period pairs still VERIFY and real disagreements still MISMATCH. 16 pins
+  incl. the before/after in one test (withholding the periods reproduces the shipped string) and
+  every period shape in the corpus (`FQ3 2026`/`FY 2026`/`Q3`/`2026`/`Fiscal 2028`/`next-fy`, and
+  `H1 2026`→undecidable). ruff + mypy --strict (124) + pytest 2316 green.*
+  **HALF-YEAR IS A SCOPE, NOT AN UNDECIDABLE (review finding, #429).** The first cut returned `None`
+  for `H1 2026` on the reasoning that a half-year "decides neither" — but it names a determinate
+  six-month span exactly as `FQ3` does, so refusing on it let an H1-vs-FY pair fall straight through
+  to the numeric comparison and print the same false MISMATCH this PR was written to stop. Now a
+  third scope (`H[12]`/`[12]H`/`first|second half`/`six months ended`).
+  **PROTECTIVE, NOT CORRECTIVE — measured, not assumed.** Across every committed dossier the labels
+  that actually REACH `guide_verification` are only `FQ*`/`FY*` (CIQ side, from
+  `guidance_bridge_rows[].period`) and `2024`/`2025`/`2026`/`Fiscal 2028`/`Q1`–`Q4`/`next-fy`
+  (release side, from `primary_source.releases[].guidance[].period`). **No committed name produces a
+  half-year guide period today**, so this repairs no live page — it closes the path before one does,
+  the same footing as #426's as-of bound. The worded half-year labels that DO exist in the corpus
+  (`first half of 2026`, `six months ended June 30, 2026` ×12) sit in `operating_drivers.rows[]`,
+  a different consumer that never calls `period_scope`.
+  **ORDER IS LOAD-BEARING IN BOTH DIRECTIONS**, and pinned: half must beat annual (`H1 fiscal 2026`
+  contains "fiscal", so annual-first would call a six-month guide a YEAR — a wrong scope SILENCES a
+  real mismatch, strictly worse than the undecidable it replaced), and quarter must beat half
+  (`Q2 2026, second half of quarter` is a QUARTER). Mutation-tested by swapping the two branches:
+  `H1 fiscal 2026` → `annual` and the pin reddens. `nine months ended …` stays `None` deliberately —
+  a YTD span is none of the three and guessing one would manufacture a refusal.
+  **NOT FIXED HERE, RECORDED:** the release leg ALSO carried a unit error — `$50.7-$51.7` **billion**
+  parsed as `$M` because the verbatim was truncated before the word "billion". Current
+  `parse_release` scales correctly WHEN the word is present (tested: 50,700–51,700), so this is
+  likely a stale artifact predating #411 — **unverified against the live filing**, and the period
+  refusal above holds either way (it fires on correct units too).
+- **A "5-YEAR" PERCENTILE HELD 9.4 YEARS (same PR).** `ev_ebitda_percentile_5y` is the workbook's
+  FULL quarterly Close history — NFLX's is **38 closes, 2017-03-31..2026-06-30 = 9.2y** — and the
+  source_ref named a COUNT, which does not reveal a span. A reader trusting the field name divides
+  38 quarters into the 5 years it claims and reads a different window than the one that produced the
+  number. **THE VALUE IS UNCHANGED** (full history is the better distribution — more of the name's
+  own cycle — and re-cutting it would move a decision number by relabelling); the SPAN is now stated:
+  `— 38 quarters spanning 2017-03-31..2026-06-30 (9.2y)`. **THE FIELD IS NOT RENAMED:** it is a
+  REQUIRED field on a frozen model that 11 committed dossiers and the suite parse, and this repo has
+  already ruled once that a bare rename breaks committed artifacts (the `ev_ebitda` scalar, §2) —
+  an honest label is the non-breaking half; a true rename needs a schema migration + fleet
+  re-assembly and is NOT done here. An unparseable header omits the span rather than guessing one.
 - **A 24-YEAR-OLD NUMBER SAT UNDER "LATEST GUIDE" (2026-08-12, PR-6).** NFLX's guidance table
   opened with `Gross Margin % — '47.00 - 48.00' for FQ4 2002`, dated **2002-10-17**, with the Age
   column two places right reading `8686d (stale)`. Not one odd row: the builder picks the newest
