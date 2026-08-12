@@ -3309,6 +3309,25 @@ Each line: *what it does* — *verified how*.
     refreshed happily in rehearsal before refusing on the real run. **A rehearsal that copies a
     subset of the inputs does not rehearse the guards that read the rest.** Copy the whole folder,
     or expect the guard to fire first in production.
+- **Queue row shows the Tier-2 volume read** (`frontend/views/edge2/ranker.js`, PR #418) — `Score =
+  quality + volume_overlay` has always been true and the page's own subtitle said so, but the queue
+  had no column for it, so a ±0.05 swing in Score was asserted and unexplainable. `volume_state`
+  was already parsed into the frontend snapshot object (`lib/snapshots.js`) and rendered by nothing.
+  Display-only; nothing about the scorer changed. — *verified by a real render of the committed
+  331-row queue (`tests/test_queue_surface.py`, end-to-end: committed JSONL → the REAL `render()` →
+  assertions on the HTML), plus a browser preview at 1280/1600px in both themes. All four pins
+  mutation-tested: deleting the call site, deleting the COLS entry, re-formatting the label, and
+  printing the UNKNOWN sentinel each redden them.*
+  - **The label is rendered VERBATIM and the sort key is the structured `volumeOverlay`** — the
+    display string is never re-parsed for its multiple. Consequence, accepted: within a band the
+    order is arbitrary, because the overlay is a 4-step function. The clean fix is for the snapshot
+    to emit `volume_spike` as a structured field beside the label; **not done here — the extractor
+    boundary is out of this PR's scope, recorded in §5 as an operator to-do.**
+  - **A 13th column overran the content area by 13px on a 1280px laptop** (`table.data th` is
+    globally `white-space:nowrap`, so the table cannot shrink below its headers — no cell styling
+    fixes it). Wrapped in the `overflow-x:auto` container `uw-card.js`/`dossier.js` already use for
+    wide tables; measured 13px of page scroll before, 0 after, with the wrapper scrolling instead.
+    Pinned — the next column added here cannot silently re-break the page.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -11292,6 +11311,15 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
    that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
    **Bundle with item 7's NFLX re-pull — one pass.**
+
+9. **EMIT `volume_spike` AS A STRUCTURED FIELD ON THE RANKED-QUEUE SNAPSHOT.** Opened 2026-08-12 by
+   PR #418. The snapshot carries `volume_state` (the display string, e.g. `"exhausted (0.39×)"`) and
+   `volume_overlay` (the ±0.05 step) but **not the ratio itself** — so the new queue column can only
+   sort by the 4-step overlay, leaving the order arbitrary within a band. Parsing the multiple back
+   out of the label is exactly the bug class CLAUDE.md forbids ("an extractor that produces a display
+   string ALSO exposes its structured value"), so the column deliberately does not. One field on the
+   writer + the `snapshots.js` allowlist retires it. Small, and it removes a standing contract
+   violation rather than only improving a sort.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 

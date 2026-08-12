@@ -13,6 +13,9 @@ const COLS = [
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
+  // Tier-2, not an axis — sits after the four Tier-1 axes and before the tradeability figures,
+  // mirroring the order the subtitle describes the composite in. Sorts on the STRUCTURED overlay.
+  { key: "volumeOverlay", label: "Volume (T2)" },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
 const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here
@@ -78,7 +81,10 @@ export async function render(root, _params, { item, frame }) {
 
   root.innerHTML = frame(item, {
     bodyHtml: edge + legend + controls
-      + `<table class="data" id="rk-table"><thead><tr id="rk-head"></tr></thead><tbody id="rk-body"></tbody></table>`
+      // 13 columns overruns the content area on a 1280px laptop (th is white-space:nowrap, so the
+      // table cannot shrink below its headers). Scrolls inside its own container rather than
+      // pushing the page sideways — the same wrapper uw-card/dossier use for their wide tables.
+      + `<div style="overflow-x:auto;"><table class="data" id="rk-table"><thead><tr id="rk-head"></tr></thead><tbody id="rk-body"></tbody></table></div>`
       + refreshBlock(),
   });
   renderHead();
@@ -160,6 +166,19 @@ function renderRows() {
     const short = (a.label || "").split(" of ")[0]; // "P/E 0%ile of own 5y range" → "P/E 0%ile"
     return `<td title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${escapeHtml(short)}</td>`;
   };
+  // Tier-2 volume — the one component of Score with no column of its own. The subtitle above
+  // already tells the reader a volume overlay moves the composite, so the ±0.05 it contributed was
+  // asserted but unexplainable on this page. The label is shown VERBATIM as the scorer emitted it
+  // and is never re-parsed for its multiple (display formatting is never load-bearing); the sort
+  // key is the structured volumeOverlay, which orders exhausted → normal → elevated → heavy.
+  const volCell = (r) => {
+    const s = r.volumeState;
+    if (!s || s === "UNKNOWN") return `<td><span class="muted">${DASH}</span></td>`;
+    const adj = r.volumeOverlay;
+    const note = adj == null ? "overlay unavailable"
+      : adj ? `${adj > 0 ? "+" : ""}${adj.toFixed(2)} to quality` : "no adjustment";
+    return `<td style="font-size:12px;" title="current volume vs its 90d average · ${note}">${escapeHtml(s)}</td>`;
+  };
 
   body.innerHTML = rows.map((r) => {
     const sunk = r.structurallyDisqualified;
@@ -175,7 +194,7 @@ function renderRows() {
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>
-        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}
+        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}
         <td class="num">${fmtMoney(r.advUsd)}</td>
         <td class="num">${r.marketCap == null ? `<span class="muted">${DASH}</span>` : fmtMoney(r.marketCap)}</td>
       </tr>`;
