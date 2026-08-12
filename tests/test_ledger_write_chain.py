@@ -166,8 +166,14 @@ def test_facts_are_cleared_because_they_belong_to_the_decision(tree: Config) -> 
     [
         ("unknown candidate", {"candidate_id": "NOPE-1"}, "nothing to close"),
         ("exit before entry", {"as_of": "2020-01-01"}, "cannot close before it opened"),
+        # OPERATOR REVIEW P1 ON #417, covered THROUGH THE CLI as asked. `model_copy(update=...)`
+        # runs no validators and `append_ledger` only serialized, so this exact invocation wrote a
+        # schema-invalid row into an APPEND-ONLY record, printed success, and made every later
+        # `iter_ledger()` raise.
+        ("negative exit price", {"exit_price": -1.0}, "must be positive"),
+        ("zero exit price", {"exit_price": 0.0}, "must be positive"),
     ],
-    ids=["unknown-candidate", "exit-before-entry"],
+    ids=["unknown-candidate", "exit-before-entry", "negative-exit-price", "zero-exit-price"],
 )
 def test_a_refused_close_writes_nothing(
     tree: Config, monkeypatch: pytest.MonkeyPatch, label: str, kw: dict[str, object], expect: str,
@@ -178,6 +184,28 @@ def test_a_refused_close_writes_nothing(
     before = _ledger_rows(tree)
     assert cli._cmd_close_position(_close_args(**kw)) == 1, f"{label} was accepted"
     assert _ledger_rows(tree) == before, f"{label} was refused but still wrote to the record"
+    # AND THE RECORD IS STILL READABLE. This is the half that made the P1 severe: the bad row was
+    # written, so the NEXT read of the ledger raised — one flag rendering the append-only record
+    # unusable, with no way to remove the row.
+    with Store(tree.db_path) as store:
+        assert len(list(store.iter_ledger())) == len(before)
+
+
+def test_the_store_refuses_an_invalid_row_from_any_writer(tree: Config) -> None:
+    """THE BACKSTOP. Validating inside `close_position` fixes the caller that had the hole; this
+    covers every OTHER writer, including ones not yet written.
+
+    A `LedgerEntry` argument LOOKS like proof of validity and is not — `model_copy(update=...)`
+    skips every model validator — so `append_ledger` re-validates on the way in. Cheap here (the
+    ledger is tens of rows) and it is the only place that covers all writers at once."""
+    with Store(tree.db_path) as store:
+        decision = next(r for r in store.iter_ledger() if r.event is None)
+        invalid = decision.model_copy(update={
+            "entry_id": "C-BYPASS", "event": "CLOSE", "closes_entry_id": decision.entry_id,
+            "exit_price": -5.0, "exit_price_as_of": decision.entry_price_as_of, "reason": "r"})
+        with pytest.raises(ValueError, match="append-only"):
+            store.append_ledger(invalid)
+        assert not [r for r in store.iter_ledger() if r.entry_id == "C-BYPASS"]
 
 
 def test_a_second_close_is_refused(tree: Config) -> None:
@@ -193,16 +221,25 @@ def test_a_second_close_is_refused(tree: Config) -> None:
                            closed_at=datetime(2026, 8, 12))
 
 
-def test_a_close_without_a_reason_is_refused(
-    tree: Config, monkeypatch: pytest.MonkeyPatch,
+def test_a_close_without_a_reason_is_refused_in_the_operators_words(
+    tree: Config, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """The schema already refuses it; the command refuses it FIRST, so the operator gets the rule
-    rather than a validation traceback."""
+    """MUTATION FINDING: asserting only the exit code pinned NOTHING here.
+
+    Since `close_position` re-validates (the P1 fix), the schema refuses a blank reason on its own
+    — so deleting the CLI's check left the command still returning 1 and the test still green. The
+    CLI guard's actual contribution is not the refusal, it is the MESSAGE: the operator gets the
+    rule in one line instead of a pydantic traceback quoting the whole row. That is what is pinned.
+    """
     from vinci import cli
 
     monkeypatch.setattr(cli, "get_config", lambda: tree)
     before = _ledger_rows(tree)
     assert cli._cmd_close_position(_close_args(reason="   ")) == 1
+    out = capsys.readouterr().out
+    assert "--reason is required" in out, (
+        f"a blank reason was refused, but not in terms the operator can act on — they got a "
+        f"validation dump instead of the rule:\n{out}")
     assert _ledger_rows(tree) == before
 
 

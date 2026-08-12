@@ -17,6 +17,8 @@ from typing import TYPE_CHECKING, Protocol
 if TYPE_CHECKING:  # annotation only — no runtime import, so no cycle with `vinci.scenarios`
     from vinci.scenarios import StatedLimit
 
+from pydantic import ValidationError
+
 from vinci.labels import resolve_label
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
@@ -308,7 +310,20 @@ def _append_close(
     store: Store, decision: LedgerEntry, exit_price: float, exit_price_as_of: date,
     reason: str, closed_at: datetime,
 ) -> LedgerEntry:
-    """Build and append the close row. Split out so the guards above read as one list."""
+    """Build, VALIDATE and append the close row. Split out so the guards above read as one list.
+
+    THE ROW IS RE-VALIDATED BEFORE IT IS PERSISTED (operator review P1 on #417), and it has to be:
+    ``model_copy(update=...)`` does NOT run the model validators, and ``Store.append_ledger`` only
+    serializes. So `close-position --exit-price -1` sailed past the guards above, printed a success
+    line, and wrote a row the close-row schema forbids straight into an APPEND-ONLY record — where
+    it cannot be deleted. The next ``iter_ledger()`` then raised, which means one bad flag made the
+    whole decision ledger unreadable: every later close, `vinci ledger`, `score`, and the monitor's
+    DB path.
+
+    Validating here converts that into a refusal at the command, before anything is written.
+    ``Store.append_ledger`` also re-validates now, as the backstop for every OTHER writer — this
+    call site is simply the one that had the hole.
+    """
     close = decision.model_copy(update={
         "entry_id": close_entry_id(decision.candidate_id),
         "event": EVENT_CLOSE,
@@ -328,5 +343,13 @@ def _append_close(
         "twin_call": f"n/a - close row; the twin call of record is on {decision.entry_id}",
         "kill_criteria": "n/a - close row",
     })
+    try:
+        close = LedgerEntry.model_validate(close.model_dump())
+    except ValidationError as exc:
+        # Re-raised as the type this module documents, so a caller catching LedgerError does not
+        # silently miss exactly the failure that would have corrupted the record.
+        raise LedgerError(
+            f"the close row for {decision.candidate_id!r} is invalid and was NOT written: {exc}"
+        ) from exc
     store.append_ledger(close)
     return close

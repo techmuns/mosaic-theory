@@ -8551,6 +8551,16 @@ nothing on refusal); and the CI gate now fails a PR whose `frontend/` is stale �
 auto-commit, because CI holds `contents: read` and a workflow pushing generated files back would
 make main move under review. The class rule is AST-pinned: a `_cmd_*` that reaches a ledger writer
 without `_export_ledger` fails the suite.
+**THE FIX'S OWN P1 — A POISON ROW COULD ENTER THE APPEND-ONLY RECORD (operator review on #417).**
+`model_copy(update=…)` runs NO model validators and `Store.append_ledger` only serialized, so
+`close-position --exit-price -1` passed every guard, **printed success (exit 0), wrote the row, and
+made the next `iter_ledger()` RAISE** — one flag rendering the whole decision ledger unreadable, in
+a record from which nothing can be deleted. Reproduced before fixing: snapshot 6→7 rows, then
+`ValidationError` on read. **Two layers now:** `close_position` re-validates the built row and
+refuses at the command, and **`Store.append_ledger` re-validates on the way in as the backstop for
+every writer, including ones not yet written** — a `LedgerEntry` argument looks like proof of
+validity and is not. INVARIANT: no unvalidated row reaches the append-only ledger; machine-checked
+at the store, so it holds for callers this file has never seen.
 **ONE TEST IN THIS BUILD PROVED NOTHING AND WAS CAUGHT BY MUTATION.** `assert close.facts == {}`
 ran against a corpus where **no decision carries a fact at all** (all six rows: zero), so deleting
 the writer's clear left it green. Re-pinned on a seeded fact-bearing decision. This is the

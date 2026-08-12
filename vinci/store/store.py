@@ -16,6 +16,8 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 from vinci.schemas.candidate import CandidateRecord
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
@@ -425,6 +427,24 @@ class Store:
 
     # --- decision ledger (append-only) --------------------------------------------------------
     def append_ledger(self, entry: LedgerEntry) -> None:
+        """Append one ledger row — RE-VALIDATED first, because this record cannot be edited.
+
+        A ``LedgerEntry`` argument looks like proof of validity and is not: ``model_copy(update=)``
+        skips every model validator, so a caller can hand over an instance the schema forbids and
+        this method would serialize it faithfully. That happened (review P1 on #417) — a close row
+        with a negative exit price was written, reported as success, and made ``iter_ledger()``
+        raise from then on: one bad flag rendering the whole APPEND-ONLY ledger unreadable, with no
+        way to remove the row.
+
+        Validating on the way in costs nothing here (the ledger is tens of rows) and is the only
+        place that covers EVERY writer, including ones not yet written.
+        """
+        try:
+            entry = LedgerEntry.model_validate(entry.model_dump())
+        except ValidationError as exc:
+            raise ValueError(
+                f"refusing to append an invalid ledger row {entry.entry_id!r} — the decision "
+                f"ledger is append-only, so an invalid row could never be removed: {exc}") from exc
         self._conn.execute(
             "INSERT INTO decision_ledger "
             "(entry_id, candidate_id, internal_id, ticker, verdict, entry_price, "
