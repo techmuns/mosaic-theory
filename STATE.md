@@ -4585,6 +4585,34 @@ only thing discharging clause (e) — `reconcile_cap`'s result is used solely as
 to have the CIQ cap extractor expose its as-of as a structured value, then bind the label to it.
 Newly urgent because SMPL's cap-vs-spot divergence is now 9.2%, not 0.3%.
 
+**O3 (SECOND HALF) — CLAUSE (e) NOW RENDERS THE MAGNITUDE, NOT ONLY THE VINTAGE (2026-08-12,
+fix/render-cap-drift).** Found by the analyst reading UBER's page, and the sentence above named the
+gap before anyone hit it: *"`reconcile_cap`'s result is used solely as a gate and is NEVER STORED OR
+RENDERED"*. It computes `implied_price` and `gap` on every build; `check_freshness` deliberately
+does not fail on ordinary drift (failing would stop 8 of 14 — "a freeze wearing a guard's name") and
+hands the disclosure to rendering; rendering shipped the DATE and dropped the NUMBER. UBER printed
+`CMP $78.54 · cap $139.3B (2026-08-06)` — two figures 13.2% apart, unreconciled — so the analyst had
+to fetch the share count and recompute to find that NTM EV/EBITDA reads 11.89x where the current
+price gives ~13.6x. **A reader cannot infer 13% from a date.**
+**KEYED ON THE GAP, NOT THE VINTAGE, and that is the load-bearing choice:** 8 of the 14 names carry
+**no `market_cap_as_of` at all**, so a date-keyed caveat renders blank on the three LARGEST drifts
+(AORT −18.4%, VITL −19.0%, MVST +17.6% — all undated). The gap is computable whenever cap, shares
+and spot are present, which is what the reconciliation already requires. Pinned, so a future
+re-keying on the vintage reddens.
+**SILENT INSIDE THE TOLERANCE the guard itself uses** — BRBR/CNXC/EPAM/NFLX/V/VRRM say nothing, so
+the mark means something wherever it appears. **A SHARE-BASIS mismatch is worded differently**
+(FUBO: `⚠ SHARE-BASIS MISMATCH: implies $0.75/sh vs CMP`, no percentage): drift invites re-dating
+the cap and reading on, which is the wrong remedy for a page where no per-share figure holds.
+*DERIVED at render from the three fields already in the JSON — no schema change, no stored field, and
+the machine-complete tier still reproduces it (pinned). Real run over all 14 committed names; the
+ARTIFACT PASS re-rendered the 8 that moved (AORT/FUBO/IT/MVST/NCNO/SMPL/UBER/VITL), render-only via
+`_rerender_only` — `dossier.json` untouched, no synthesis re-rolled, and every artifact diff is
+EXACTLY ONE LINE (the Snapshot). 6 pins incl. the fleet sweep (any name drifting past tolerance whose
+page is silent reddens); 4 of them FAIL without the renderer change. ruff + mypy --strict (124) +
+pytest 2380 green.* **PREVIEW RULE: this is a render change — the preview is in the PR body and it
+awaits approval before merge.** **Does NOT fix O3's original defect** (the label still names another
+panel's date where a vintage exists) — that is blocked on the structured cap as-of, unchanged above.
+
 **OPERATOR ACTIONS — RECORDED 2026-08-06, arising from the rank re-run and the EPAM/IT re-assemblies.**
 
 **O4 — SETTLED, NOT PENDING: WERN FAILS ON ITS OWN NUMBERS AND A HORIZON CHANGES NOTHING

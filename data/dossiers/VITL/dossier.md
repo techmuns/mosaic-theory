@@ -12,7 +12,7 @@ Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs
 - **Segments:** Eggs and Butter — single segment [1]
 - **Geography:** United States — single geography [2]
 - **Customer concentration:** top customer 22% (from 23%) · top-2 ~34% of revenue [3]
-- **Snapshot:** Nasdaq · CMP $13.82 (2026-07-28) · cap $480M · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 [4]
+- **Snapshot:** Nasdaq · CMP $13.82 (2026-07-28) · cap $480M ⚠ implies $11.19/sh vs CMP (-19.0%) · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Is the FY26 earnings collapse a one-year 'low watermark' reset from a reversible price-gap shock (overshoot), or the start of a structural erosion of Vital Farms' premium pricing power (value trap)?**

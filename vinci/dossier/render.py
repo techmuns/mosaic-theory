@@ -23,6 +23,7 @@ from vinci.config import get_config
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import stamp_detail, stamp_label
+from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
     Dossier,
     FinancialSummary,
@@ -2311,6 +2312,41 @@ def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
     return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
 
 
+def _cap_drift(si: StockInfo) -> str:
+    """`" ⚠ implies $68.18/sh vs CMP (-13.2%)"` when the cap and the price disagree, else `""`.
+
+    THE NUMBER ALREADY EXISTED AND NEVER REACHED THE PAGE (2026-08-12). `reconcile_cap` computes
+    this on every build — UBER's cap implies $68.18/sh against the $78.54 close printed two fields
+    to its left — and `check_freshness` deliberately does NOT fail on ordinary drift, because
+    failing would stop 8 of 14 builds. Its own docstring assigns the disclosure to rendering
+    instead ("a rendering obligation, clause (e)"), and clause (e) shipped only HALF of it: the cap
+    got its VINTAGE and never its MAGNITUDE. A reader cannot infer 13% from a date, so the analyst
+    who found this had to fetch the share count and recompute — which is the work the page exists
+    to have already done.
+
+    WHY THE GAP AND NOT THE DATE decides whether this prints: 8 of the 14 committed names carry NO
+    `market_cap_as_of` at all, so a vintage-keyed caveat is blank exactly where the drift is worst
+    (AORT -18.4%, VITL -19.0%, MVST +17.6% — all undated). The gap is computable whenever the three
+    inputs are present, which is the condition the reconciliation already requires.
+
+    Silent inside the tolerance the guard itself uses: a 0.0% name (BRBR, EPAM, NFLX, V, VRRM) says
+    nothing, so the mark means something wherever it appears.
+    """
+    p = SourceStatus.PRESENT
+    if not (si.market_cap.status is p and si.shares_out.status is p and si.price.status is p):
+        return ""
+    recon = reconcile_cap(cap_musd=si.market_cap.value, shares=si.shares_out.value,
+                          spot=si.price.value)
+    if recon is None or abs(recon.gap) <= RECONCILE_TOLERANCE:
+        return ""
+    # A SHARE-BASIS mismatch is not drift and must not read as it: the ratio wording names the
+    # corporate action instead. Unreachable on a passing build (the guard raises on it) — kept
+    # because this renderer also runs over artifacts assembled before that guard existed.
+    if recon.corporate_action:
+        return f" ⚠ SHARE-BASIS MISMATCH: implies ${recon.implied_price:,.2f}/sh vs CMP"
+    return f" ⚠ implies ${recon.implied_price:,.2f}/sh vs CMP ({recon.gap:+.1%})"
+
+
 def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
     """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
     value/sh — the linear-markdown mirror of the web key-figures table (CIK moved to Record &
@@ -2344,7 +2380,7 @@ def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
             cap_iso = si.market_cap_as_of.isoformat() if si.market_cap_as_of is not None else ""
             si_iso = si.as_of.isoformat() if si.as_of is not None else ""
             cap_v = f" ({cap_iso})" if cap_iso and cap_iso != si_iso else ""
-            parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}")
+            parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}{_cap_drift(si)}")
         if (si.low_52w.status is p and si.low_52w.value is not None
                 and si.high_52w.status is p and si.high_52w.value is not None):
             parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")

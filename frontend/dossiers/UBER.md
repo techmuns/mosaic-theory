@@ -9,7 +9,7 @@ Uber Technologies, Inc. develops and operates proprietary technology application
 **Mixed** — operating drivers (gross bookings, segment income, rising returns) still compound, but reported GAAP earnings step down and cost lines outrun revenue.
 - **Segments:** Mobility 57%; Delivery 33%; Freight 10% [1]
 - **Geography:** United States and Canada 51%; Europe, Middle East and Africa (EMEA) 31%; Asia Pacific (APAC) 11%; Latin America (LATAM) 6% [2]
-- **Snapshot:** NYSE · CMP $78.54 (2026-08-11) · cap $139.3B (2026-08-06) · 52-wk $65.41–$101.99 · shares 2.0B · book value/sh $13.41 [3]
+- **Snapshot:** NYSE · CMP $78.54 (2026-08-11) · cap $139.3B (2026-08-06) ⚠ implies $68.18/sh vs CMP (-13.2%) · 52-wk $65.41–$101.99 · shares 2.0B · book value/sh $13.41 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the ~50% discount to its own history and to the peer median a RESIDUAL overshoot on a business whose gross bookings, segment operating income and returns are still compounding — or an EARNED de-rating as reported GAAP earnings step down, non-operating income fades, and cost lines outrun revenue?**
