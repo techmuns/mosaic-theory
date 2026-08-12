@@ -16,7 +16,8 @@ PRE-REGISTration (written into the report header before any number is computed):
   months is DEAD as a filter dimension. R2 (record only) per-state forward SECTOR-relative
   separation at 30/60/120/180d with a 300-shuffle within-month control. R3 cost-of-waiting:
   entry at first appearance vs entry deferred to the first close above the 50d MA (<=126 sessions;
-  never reclaims -> never entered, excess 0), both marked at the same calendar exits, vs MDY.
+  never reclaims -> never entered, so the deferred book holds CASH and its excess is -MDY over the
+  same window, NOT zero), both marked at the same calendar exits, vs MDY.
 
 DATA. Backdated queues (CSV, one per as-of) + full-tape daily bars. Bars come from --bars-dir
 (one gzip per day, lines "ticker,open,high,low,close,volume") or, absent that, from the netcache
@@ -47,6 +48,7 @@ import statistics as st
 import sys
 from array import array
 from collections import defaultdict
+from collections.abc import Sequence
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -219,6 +221,25 @@ def sector_forward(bars: Bars, sym_sec: dict[str, str], i: int, j: int) -> dict[
             continue
         acc[sec].append((a[j] / a[i] - 1) * 100)
     return {s: st.mean(v) for s, v in acc.items() if len(v) >= MIN_SECTOR_MEMBERS}
+
+
+def deferred_excess(
+    a: Sequence[float], mdy: Sequence[float], i: int, j: int, r_idx: int | None
+) -> float:
+    """Excess vs MDY over the window [i, j] for the DEFER-UNTIL-RECLAIM book.
+
+    When the reclaim never lands inside the window the book is never entered and holds CASH: 0% raw
+    while MDY still moved from i to j, so its excess is **minus MDY's return** over the same window.
+
+    The first cut recorded 0.0 here, which claims cash MATCHED the benchmark. That flatters waiting
+    in every rising market — and 2023–2026 rose — i.e. it biased toward the exact conclusion R3
+    reported ("waiting is free"). Review finding on #405; the shorter r_idx→j benchmark is right
+    only when a delayed entry actually occurs.
+    """
+    if r_idx is None or r_idx >= j or a[r_idx] <= 0:
+        return -(mdy[j] / mdy[i] - 1) * 100
+    fwd = (a[j] / a[r_idx] - 1) * 100 if a[j] > 0 else -100.0
+    return fwd - (mdy[j] / mdy[r_idx] - 1) * 100
 
 
 def compute_states(bars: Bars, t: str, i: int) -> dict[str, float | bool] | None:
@@ -472,11 +493,7 @@ def main() -> int:
                 continue
             fwd_a = (a[j] / a[i] - 1) * 100 if a[j] > 0 else -100.0
             strat["appear"][hz].append(fwd_a - (mdy[j] / mdy[i] - 1) * 100)
-            if r_idx is None or r_idx >= j or a[r_idx] <= 0:
-                strat["reclaim"][hz].append(0.0)   # never entered -> no excess either way
-            else:
-                fwd_b = (a[j] / a[r_idx] - 1) * 100 if a[j] > 0 else -100.0
-                strat["reclaim"][hz].append(fwd_b - (mdy[j] / mdy[r_idx] - 1) * 100)
+            strat["reclaim"][hz].append(deferred_excess(a, mdy, i, j, r_idx))
     report.append("| horizon | n | buy at appearance (mean excess vs MDY) | "
                   "wait for reclaim | waiting costs |")
     report.append("|---:|---:|---:|---:|---:|")
