@@ -3309,7 +3309,7 @@ Each line: *what it does* — *verified how*.
     refreshed happily in rehearsal before refusing on the real run. **A rehearsal that copies a
     subset of the inputs does not rehearse the guards that read the rest.** Copy the whole folder,
     or expect the guard to fire first in production.
-- **Queue row shows the Tier-2 volume read** (`frontend/views/edge2/ranker.js`, PR #418) — `Score =
+- **Queue row shows the Tier-2 volume read** (`frontend/views/edge2/ranker.js`, PR #420) — `Score =
   quality + volume_overlay` has always been true and the page's own subtitle said so, but the queue
   had no column for it, so a ±0.05 swing in Score was asserted and unexplainable. `volume_state`
   was already parsed into the frontend snapshot object (`lib/snapshots.js`) and rendered by nothing.
@@ -11313,7 +11313,7 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    **Bundle with item 7's NFLX re-pull — one pass.**
 
 9. **EMIT `volume_spike` AS A STRUCTURED FIELD ON THE RANKED-QUEUE SNAPSHOT.** Opened 2026-08-12 by
-   PR #418. The snapshot carries `volume_state` (the display string, e.g. `"exhausted (0.39×)"`) and
+   PR #420. The snapshot carries `volume_state` (the display string, e.g. `"exhausted (0.39×)"`) and
    `volume_overlay` (the ±0.05 step) but **not the ratio itself** — so the new queue column can only
    sort by the 4-step overlay, leaving the order arbitrary within a band. Parsing the multiple back
    out of the label is exactly the bug class CLAUDE.md forbids ("an extractor that produces a display
