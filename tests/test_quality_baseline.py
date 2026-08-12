@@ -25,7 +25,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from vinci.followed import FollowedListError, followed_by_sleeve
+from vinci.followed import FollowedListError, FollowRecord, followed_by_sleeve
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
 from vinci.schemas.market import PriceBar
@@ -63,11 +63,34 @@ def _entry(ticker: str, iid: str, verdict: Verdict, sleeve: str, origin: str) ->
         origin=origin, sleeve=sleeve)
 
 
-def _followed_file(tmp_path: pathlib.Path, tickers: dict[str, str]) -> pathlib.Path:
-    p = tmp_path / "followed.json"
-    p.write_text(json.dumps(
-        {t: {"reason": "followed for the cross-read", "sleeve": s} for t, s in tickers.items()}))
+#: Every fixture roster starts long before ENTRY_D unless a test says otherwise, so the as-of
+#: machinery is inert in tests that are not about it.
+DEFAULT_SINCE = "2020-01-01"
+
+
+def _followed_file(
+    tmp_path: pathlib.Path,
+    tickers: dict[str, str],
+    *,
+    since: dict[str, str] | None = None,
+    until: dict[str, str] | None = None,
+    name: str = "followed.json",
+) -> pathlib.Path:
+    p = tmp_path / name
+    doc: dict[str, dict[str, str]] = {}
+    for tk, s in tickers.items():
+        doc[tk] = {"reason": "followed for the cross-read", "sleeve": s,
+                   "followed_since": (since or {}).get(tk, DEFAULT_SINCE)}
+        if (until or {}).get(tk):
+            doc[tk]["followed_until"] = (until or {})[tk]
+    p.write_text(json.dumps(doc))
     return p
+
+
+def _records(*tickers: str) -> tuple[FollowRecord, ...]:
+    """Dated follow records for the unit-level baskets — all followed well before ENTRY_D."""
+    return tuple(FollowRecord(ticker=t, sleeve="quality", since=date(2020, 1, 1))
+                 for t in tickers)
 
 
 def _identity(ticker: str) -> Identity:
@@ -164,6 +187,96 @@ def test_a_book_with_no_follow_basket_prints_no_baseline_line(tmp_path: pathlib.
 # 3. The refusal
 # --------------------------------------------------------------------------------------------
 
+def test_a_later_follow_addition_cannot_change_an_earlier_verdicts_basket(
+    tmp_path: pathlib.Path,
+) -> None:
+    """OPERATOR REVIEW P1 ON #409 — the reproducibility pin, and the reason the dates exist.
+
+    The first cut read `followed.json` once per report and applied today's roster to every entry
+    window in an APPEND-ONLY ledger. Adding a quality name next month would then silently rewrite
+    the comparator for a BUY recorded last month — over a window in which that name was not
+    followed at all — so re-running the same ledger would produce a different kill-test answer, and
+    the historical result would depend on future roster edits.
+
+    Asserted by scoring the SAME ledger twice against two follow lists: one where CCC joins after
+    the verdict was entered, one where it was never listed. The earlier verdict's basket return
+    must be byte-identical across both.
+    """
+    rows = [_entry("AAA", "SEC-AAA", Verdict.BUY, "quality", "followed")]
+    ids = [_FakeIdentity(t, f"SEC-{t}") for t in ("AAA", "BBB", "CCC")]
+
+    def run(followed: pathlib.Path) -> tuple[float | None, tuple[str, ...]]:
+        with Store(tmp_path / f"{followed.stem}.db") as store:
+            store.write_prices(_bars("IDX-IWM", 100.0, 105.0))
+            store.write_prices(_bars("SEC-AAA", 100.0, 130.0))
+            store.write_prices(_bars("SEC-BBB", 100.0, 110.0))
+            store.write_prices(_bars("SEC-CCC", 100.0, 400.0))   # a huge mover, if it counted
+            for r in rows:
+                store.append_ledger(r)
+            scores, _rep = score_ledger(
+                store, as_of=EXIT_D,
+                baskets=resolve_baskets(followed, ids))  # type: ignore[arg-type]
+        s = next(x for x in scores if x.entry_id == "V-AAA")
+        return s.basket_return, s.basket_members
+
+    before = _followed_file(
+        tmp_path, {"AAA": "quality", "BBB": "quality"}, name="before.json")
+    # CCC joins the book AFTER the verdict's entry date — and moves +300% over the window.
+    after = _followed_file(
+        tmp_path, {"AAA": "quality", "BBB": "quality", "CCC": "quality"},
+        since={"CCC": (ENTRY_D + timedelta(days=1)).isoformat()}, name="after.json")
+
+    ret_before, members_before = run(before)
+    ret_after, members_after = run(after)
+
+    assert members_before == members_after == ("AAA", "BBB"), (
+        f"the roster for a verdict entered {ENTRY_D} changed when the follow list did: "
+        f"{members_before} → {members_after}")
+    assert ret_before == ret_after, (
+        f"adding CCC to followed.json after the fact moved an already-recorded verdict's "
+        f"comparator ({ret_before} → {ret_after}) — the append-only ledger would no longer "
+        f"re-run to the same numbers")
+
+
+def test_a_removed_name_still_counts_for_the_windows_it_was_followed_in(
+    tmp_path: pathlib.Path,
+) -> None:
+    """THE OTHER HALF OF P1: removing a name must not re-date the baskets that contained it.
+
+    A removal is a TOMBSTONE (`followed_until`), never a delete — a deleted entry takes its history
+    with it, and every past basket silently shrinks."""
+    followed = _followed_file(
+        tmp_path, {"AAA": "quality", "BBB": "quality"},
+        until={"BBB": (ENTRY_D + timedelta(days=30)).isoformat()})
+    ids = [_FakeIdentity(t, f"SEC-{t}") for t in ("AAA", "BBB")]
+    baskets = resolve_baskets(followed, ids)  # type: ignore[arg-type]
+
+    assert baskets["quality"].members_as_of(ENTRY_D) == ("AAA", "BBB"), (
+        "a name followed ON the entry date was excluded from that date's roster")
+    assert baskets["quality"].members_as_of(ENTRY_D + timedelta(days=60)) == ("AAA",), (
+        "a name dropped from the book still appears in a later roster")
+
+
+def test_a_verdict_predating_the_books_first_follow_refuses_rather_than_inventing_a_roster(
+    tmp_path: pathlib.Path,
+) -> None:
+    """A verdict older than the follow list has no basket that could have been held. Refusing says
+    so; back-dating today's roster onto it would be the look-ahead in its purest form."""
+    followed = _followed_file(
+        tmp_path, {"AAA": "quality"},
+        since={"AAA": (ENTRY_D + timedelta(days=10)).isoformat()})
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices(_bars("IDX-IWM", 100.0, 105.0))
+        store.write_prices(_bars("SEC-AAA", 100.0, 130.0))
+        store.append_ledger(_entry("AAA", "SEC-AAA", Verdict.BUY, "quality", "followed"))
+        baskets = resolve_baskets(followed, [_FakeIdentity("AAA", "SEC-AAA")])  # type: ignore[arg-type]
+        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets)
+
+    q = report.by_sleeve["quality"]
+    assert q.basket_mean is None, "a roster was invented for a verdict predating the follow list"
+    assert "as of" in (q.basket_note or ""), f"the refusal does not say why: {q.basket_note!r}"
+
+
 def test_a_supplied_basket_with_no_resolved_long_leg_says_so_truthfully(
     tmp_path: pathlib.Path,
 ) -> None:
@@ -201,10 +314,10 @@ def test_a_supplied_basket_with_no_resolved_long_leg_says_so_truthfully(
 def test_a_partial_basket_is_refused_and_names_the_missing_member() -> None:
     """Reweighting two names into a three-name basket answers a question nobody asked. The reason
     has to name the member, because 'unavailable' alone is indistinguishable from 'it lost'."""
-    basket = Basket("quality", ("AAA", "BBB", "CCC"),
+    basket = Basket("quality", _records("AAA", "BBB", "CCC"),
                     {"AAA": "SEC-AAA", "BBB": "SEC-BBB", "CCC": "SEC-CCC"})
     bars = {"AAA": _bars("SEC-AAA", 100.0, 130.0), "BBB": _bars("SEC-BBB", 100.0, 110.0)}
-    got, note = basket_return(basket, bars, ENTRY_D, EXIT_D)
+    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D)
     assert got is None, f"a 2-of-3 basket was averaged and returned {got}"
     assert note is not None and "CCC" in note, f"the refusal does not name the member: {note!r}"
 
@@ -214,9 +327,9 @@ def test_an_unresolved_ticker_still_counts_as_a_member(tmp_path: pathlib.Path) -
     the comparator to whatever happened to resolve, under the same label."""
     followed = _followed_file(tmp_path, {"AAA": "quality", "GHOST": "quality"})
     baskets = resolve_baskets(followed, [_FakeIdentity("AAA", "SEC-AAA")])  # type: ignore[arg-type]
-    assert baskets["quality"].members == ("AAA", "GHOST")
+    assert baskets["quality"].members_as_of(ENTRY_D) == ("AAA", "GHOST")
     assert "GHOST" not in baskets["quality"].internal_ids
-    got, note = basket_return(
+    got, note, _members = basket_return(
         baskets["quality"], {"AAA": _bars("SEC-AAA", 100.0, 130.0)}, ENTRY_D, EXIT_D)
     assert got is None and note is not None and "GHOST" in note, (
         f"an unresolvable followed name vanished from its own basket instead of refusing it: "
@@ -226,10 +339,11 @@ def test_an_unresolved_ticker_still_counts_as_a_member(tmp_path: pathlib.Path) -
 def test_the_basket_is_equal_weight_not_return_weighted() -> None:
     """Equal DOLLARS at entry — the mean of member returns. A cap- or price-weighted read would
     answer a different counterfactual while printing the same words."""
-    basket = Basket("quality", ("AAA", "BBB"), {"AAA": "SEC-AAA", "BBB": "SEC-BBB"})
+    basket = Basket("quality", _records("AAA", "BBB"),
+                    {"AAA": "SEC-AAA", "BBB": "SEC-BBB"})
     bars = {"AAA": _bars("SEC-AAA", 10.0, 20.0),      # +100%, cheap share price
             "BBB": _bars("SEC-BBB", 1000.0, 1000.0)}  # flat, expensive share price
-    got, note = basket_return(basket, bars, ENTRY_D, EXIT_D)
+    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D)
     assert note is None
     assert got == pytest.approx(0.50), (
         f"read {got} — a price-weighted basket would land near 0.0099 here, an equal-weight one "

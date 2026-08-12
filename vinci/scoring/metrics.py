@@ -46,6 +46,10 @@ class VerdictScore:
     # supplied no basket for this sleeve at all.
     basket_return: float | None = None
     basket_note: str | None = None
+    #: The roster AS OF THIS ROW'S ENTRY DATE — what the comparator was actually computed over.
+    #: Per row, not per sleeve: two verdicts entered either side of a follow-list change are
+    #: measured against different baskets, and the report has to be able to say so.
+    basket_members: tuple[str, ...] = ()
 
     @property
     def excess_gross(self) -> float:
@@ -368,7 +372,20 @@ def spread_by_sleeve(
         # would silently compare the full BUY leg against a comparator drawn from a subset of its
         # windows — the same partial-basket substitution `baseline` refuses one level down.
         notes = sorted({r.basket_note for r in long_rows if r.basket_note is not None})
-        label = (basket_labels or {}).get(key)
+        # THE PRINTED MEMBERSHIP COMES FROM THE ROWS, NOT FROM THE FILE. `basket_labels` says only
+        # that this book HAS a comparator; the names shown are the as-of rosters actually measured,
+        # so a follow-list edit cannot retitle a historical result with names it never contained.
+        # Verdicts on either side of a roster change carry different rosters, and that is stated
+        # rather than flattened into one misleading label.
+        rosters = sorted({r.basket_members for r in long_rows if r.basket_members})
+        exists = (basket_labels or {}).get(key)
+        label: str | None
+        if len(rosters) == 1:
+            label = ", ".join(rosters[0])
+        elif len(rosters) > 1:
+            label = f"{len(rosters)} rosters, each as of its verdict's entry date"
+        else:
+            label = exists
         bm: float | None
         note: str | None
         # THREE DISTINCT ABSENCES, kept distinct — an earlier cut collapsed the middle one into the
@@ -376,7 +393,7 @@ def spread_by_sleeve(
         # supplied and simply had no resolved BUY yet. That is a false statement in the report, and
         # it is the quality book's most likely early state: the first resolved quality verdict can
         # easily be a PASS.
-        if label is None:
+        if exists is None:
             bm, note = None, "no basket supplied for this sleeve"
         elif not long_rows:
             bm, note = None, f"no resolved {long_label} verdicts to compare against yet"

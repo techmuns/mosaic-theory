@@ -47,40 +47,59 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from vinci.followed import followed_by_sleeve
+from vinci.followed import FollowRecord, follow_records
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
 
 
 @dataclass(frozen=True)
 class Basket:
-    """One sleeve's passive comparator: the followed names judged under it."""
+    """One sleeve's passive comparator: the followed names judged under it, WITH THEIR DATES.
+
+    Membership is a function of time, never a snapshot of the file (operator review P1 on #409).
+    Holding the roster fixed at "whatever is in `followed.json` today" and applying it to every
+    historical verdict makes reruns of an append-only ledger non-reproducible: a name added next
+    month would silently rewrite the comparator for a BUY recorded last month, over a window in
+    which that name was not followed.
+    """
 
     sleeve: str
-    members: tuple[str, ...]           # tickers, sorted — the label the report prints
+    records: tuple[FollowRecord, ...]
     internal_ids: dict[str, str]       # ticker → internal_id, for the price lookup
+
+    def members_as_of(self, d: date) -> tuple[str, ...]:
+        """The roster as it stood on ``d`` — what an indexer could actually have held that day."""
+        return tuple(sorted(r.ticker for r in self.records if r.held_on(d)))
 
     @property
     def label(self) -> str:
-        return ", ".join(self.members)
+        """Every name EVER followed under this book — an existence label, not a roster.
+
+        Deliberately not used as the printed comparator membership: the rendered line takes its
+        names from the rows' own as-of rosters, because those are what was measured.
+        """
+        return ", ".join(sorted({r.ticker for r in self.records}))
 
 
 def resolve_baskets(path: Path, securities: Iterable[Identity]) -> dict[str, Basket]:
     """Build each sleeve's basket from the follow list, resolving tickers → internal ids.
 
-    A followed ticker with NO security row stays in ``members`` and out of ``internal_ids``, so it
-    still prints in the basket's label and still forces a refusal downstream. Dropping it instead
-    would silently shrink the basket to the names that happened to resolve — a smaller, different
+    A followed ticker with NO security row stays in ``records`` and out of ``internal_ids``, so it
+    still counts as a member and still forces a refusal downstream. Dropping it instead would
+    silently shrink the basket to the names that happened to resolve — a smaller, different
     comparator wearing the same name.
     """
     by_ticker = {s.ticker.upper(): s.internal_id for s in securities if s.ticker}
+    out: dict[str, list[FollowRecord]] = {}
+    for r in follow_records(path):
+        out.setdefault(r.sleeve, []).append(r)
     return {
         sleeve: Basket(
             sleeve=sleeve,
-            members=tickers,
-            internal_ids={t: by_ticker[t] for t in tickers if t in by_ticker},
+            records=tuple(recs),
+            internal_ids={r.ticker: by_ticker[r.ticker] for r in recs if r.ticker in by_ticker},
         )
-        for sleeve, tickers in followed_by_sleeve(path).items()
+        for sleeve, recs in sorted(out.items())
     }
 
 
@@ -105,19 +124,29 @@ def basket_return(
     bars_by_ticker: dict[str, list[PriceBar]],
     start: date,
     end: date,
-) -> tuple[float | None, str | None]:
-    """Equal-weight total return of ``basket`` over ``[start, end]``.
+) -> tuple[float | None, str | None, tuple[str, ...]]:
+    """Equal-weight total return of ``basket`` over ``[start, end]``, on the roster AS OF ``start``.
 
-    Returns ``(return, refusal_reason)`` — exactly one of the two is None. The reason is carried
-    rather than logged because it has to reach the REPORT: a missing baseline that prints as a
-    blank tells the reader nothing, and "unavailable" without a cause is the kind of silence that
-    gets mistaken for "the judgement didn't beat it".
+    Returns ``(return, refusal_reason, members_used)`` — exactly one of the first two is None. The
+    reason is carried rather than logged because it has to reach the REPORT: a missing baseline
+    that prints as a blank tells the reader nothing, and "unavailable" without a cause is the kind
+    of silence that gets mistaken for "the judgement didn't beat it". The members are carried so
+    the rendered line names the roster that was actually measured, which differs between verdicts
+    entered on either side of a follow-list change.
+
+    THE ROSTER IS FIXED AT ``start``, the verdict's entry date, and held: that is the counterfactual
+    being priced — buy equal dollars of what you were following the day you decided, and hold. A
+    roster re-read at ``end`` would let a name added mid-window into a basket nobody could have
+    bought at the start of it.
     """
-    if not basket.members:
-        return None, "no followed names in this sleeve"
+    members = basket.members_as_of(start)
+    if not members:
+        return None, (
+            f"no name was followed under this sleeve as of {start} — the verdict predates the "
+            f"book's first follow entry, so there is no roster to have indexed"), ()
     rets: list[float] = []
     missing: list[str] = []
-    for ticker in basket.members:
+    for ticker in members:
         bars = bars_by_ticker.get(ticker) or []
         px_in = close_on_or_before(bars, start)
         px_out = close_on_or_before(bars, end)
@@ -128,5 +157,6 @@ def basket_return(
     if missing:
         return None, (
             f"no bars over {start}–{end} for {', '.join(missing)} — an equal-weight basket "
-            f"missing a member is a different basket, so it is refused rather than reweighted")
-    return statistics.fmean(rets), None
+            f"missing a member is a different basket, so it is refused rather than reweighted"
+        ), members
+    return statistics.fmean(rets), None, members

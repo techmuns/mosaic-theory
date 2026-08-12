@@ -108,12 +108,15 @@ def score_ledger(
         # Computed per row (not once per sleeve) precisely because the windows differ: averaging a
         # single basket return across rows entered months apart would compare the judgement's
         # windows to a window nobody held.
+        # THE ROSTER IS TAKEN AS OF `entry_date`, so re-running this report after the follow list
+        # changes cannot move a historical verdict's comparator (operator review P1 on #409).
         b_ret: float | None = None
         b_note: str | None = None
+        b_members: tuple[str, ...] = ()
         sleeve_key = sleeve_of(entry)
         basket = (baskets or {}).get(sleeve_key)
         if basket is not None:
-            b_ret, b_note = basket_return(
+            b_ret, b_note, b_members = basket_return(
                 basket, basket_bars.get(sleeve_key, {}), entry_date, scoring_date)
 
         score = VerdictScore(
@@ -125,6 +128,7 @@ def score_ledger(
             bench_return=total_return(bench_entry, bench_exit),
             basket_return=b_ret,
             basket_note=b_note,
+            basket_members=b_members,
             sector=entry.sector,  # carried through for the per-sector spread read
             machine_proposal=entry.machine_proposal,  # sealed at log time (2026-07-13 pivot)
             disposition=entry.disposition,
