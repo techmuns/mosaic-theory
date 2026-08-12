@@ -13762,6 +13762,37 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **THE GUIDANCE TABLE SHOWED FIVE METRICS OUT OF FIFTEEN (2026-08-12, PR-B).**
+  `_GUIDANCE_METRICS` listed Revenue, Capital Expenditure, Gross Margin %, EBITDA, EPS Normalized.
+  Everything else management guided was **silently absent** — not UNKNOWN, not flagged, never looked
+  for. **THE ONE THAT MATTERS MOST: NFLX guides its own FREE CASH FLOW at 12,500.0 for FY 2026 and
+  the page could not show it** — while #421 had just established that the same page's `Levered Free
+  Cash Flow` read **25,388**, roughly twice management's own number, and wrote a basis note pointing
+  the reader at exactly the figure the whitelist excluded.
+  *MEASURED ACROSS 19 WORKBOOKS: **65 current guides → 138 (+73)**. AORT 5→9 · CNXC 3→8 · IT 4→12 ·
+  CPB 4→12 · NFLX 4→10 · V 3→10 · WERN 2→7; every name gains. (An earlier note in this file estimated
+  +34 — that was wrong; the measured figure is +73.)*
+  **WIDENS WHAT CAN BE READ, NEVER WHAT MUST BE:** a block absent from a workbook is not rendered,
+  every recovered guide carries `GUIDANCE_BASIS_REF` (#427), and each row states its own `age`.
+  **DELIVERY DIRECTION IS A METRIC PROPERTY, NOT A SIGN (review finding, #437).** The delivery read
+  inferred "this is a cost guide" from `range_high < 0`, which holds ONLY because CIQ states capex
+  and interest expense NEGATIVE — a vendor formatting choice, not a semantic. Widening admitted
+  **`Effective Tax Rate %`, cost-like but stated POSITIVE**, so it took the revenue path and a tax
+  rate HIGHER than guided was recorded as **MET**. **MEASURED: all 12 names carrying a tax-rate
+  guide had an INVERTED record** — VRRM `3/3` → `0/3` (a perfect delivery record that was a perfect
+  miss), V `12/32` → `28/32`, WERN `5/13` → `12/13`, NIKE `13/28` → `23/28`, NFLX `0/1` → `1/1`.
+  Now `_GUIDANCE_HIGHER_IS_DELIVERY` decides by NAME. **ABSENT MEANS UNRESOLVED, NEVER GUESSED:**
+  `Depreciation & Amortization` is a consequence of past capital decisions, not a target — its guide
+  still shows and its met/missed record reads `—`. A completeness pin refuses any future whitelist
+  addition that is neither classified nor deliberately listed as undirected, so this cannot recur
+  the way it just did.
+  **REPORTED, NOT DECIDED — a staleness question this makes visible.** More metrics means more names
+  that STOPPED guiding something: **V recovers 10 guides of which 6 are 2114–4767 days old**
+  (Interest Expense FY 2016, Net Income Excl. Excep FY 2013, EPS GAAP FY 2020…). They are LABELLED
+  `(stale)`, so nothing passes as current — but #423's entry argued that an age column two places
+  right is weak medicine for a 24-year-old number under a heading reading "Latest guide", and
+  widening multiplies the rows that rely on it. **Whether stale guides should be filtered rather than
+  labelled is #423's policy, not this whitelist's**, so it is surfaced here and left alone.
 - **FORWARD CASH-FLOW CONSENSUS REACHES THE PAGE — AND TWO METRICS DELIBERATELY DO NOT FUSE
   (2026-08-12, PR-D).** `CFO`/`Capex`/`FCF` carried actuals and nothing forward while
   Estimates→Trends carried a consensus for all of them (Capex/CFO/FCF on 18 of 19 workbooks, D&A on
