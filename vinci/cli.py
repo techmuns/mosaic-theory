@@ -2563,6 +2563,50 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         return [t.strip() for t in (s or "").split(",") if t.strip()]
 
     driver = args.driver
+    # THE FREEZE PATH IS A PAIR, and it is checked BEFORE the either/or so a half-specified pair
+    # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
+    # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
+    # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
+    if bool(args.worksheet) != bool(args.ledger):
+        given, missing = (("--worksheet", "--ledger") if args.worksheet
+                          else ("--ledger", "--worksheet"))
+        raise SystemExit(
+            f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
+            f"carries the analyst's dispositions and the ledger is where they are appended. "
+            f"To re-measure an already-frozen theme instead, use --from-mirror.")
+    if bool(args.from_mirror) == bool(args.worksheet):
+        raise SystemExit(
+            "give EITHER --worksheet + --ledger (freeze from the analyst's dispositions) OR "
+            "--from-mirror (re-measure an already-frozen theme from its committed mirror) — "
+            "not both, and not neither.")
+
+    if args.from_mirror:
+        # THE RE-MEASURE PATH. No worksheet, no ledger write, no re-freeze: the baskets are
+        # reconstructed from the committed mirror so an accrual that has been sitting unmeasured
+        # since the freeze can finally be computed. Nothing here logs a disposition.
+        mirror = json.loads(Path(args.from_mirror).read_text())
+        baskets = fwd.baskets_from_mirror(mirror, driver=driver)
+        watchlist = list(baskets.watchlist)
+        print(f"\n=== Stage-4 forward RE-MEASURE (from mirror) · {driver} ===")
+        # THE MIRROR'S OWN LABELS ARE ECHOED because nothing can verify this file belongs to
+        # `--driver`: mirrors carry no registry key (ai-datacenter's `driver` field reads
+        # "AI-datacenter value chain"; defense's slug is "defense" against the key
+        # "defense-demand-shift"). Printing them puts a wrong-file mistake on the first line.
+        print(f"mirror {args.from_mirror} · frozen {baskets.freeze_timestamp} · "
+              f"mirror says slug={mirror.get('slug')!r} driver={mirror.get('driver')!r} "
+              f"— CONFIRM this is the {driver} theme; no machine check binds the two")
+        print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+              f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+        if baskets.watchlist:
+            print(f"WATCHLIST (re-underwrite cohort): {list(baskets.watchlist)}")
+        if baskets.avoid_controls:
+            print("AVOID-CONTROLS (near-miss control, within PASSED): "
+                  f"{list(baskets.avoid_controls)}")
+        if not args.measure:
+            print("\n(no --measure: baskets rebuilt only)")
+            return 0
+        return _themes_forward_measure(args, fwd, baskets, watchlist)
+
     ws, ledger = Path(args.worksheet), Path(args.ledger)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
@@ -2611,6 +2655,20 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     print(f"deferred control: {baskets.deferred_controls[0]}")
     if not args.measure:
         return 0
+    return _themes_forward_measure(args, fwd, baskets, watchlist)
+
+
+def _themes_forward_measure(
+    args: argparse.Namespace, fwd: Any, baskets: Any, watchlist: list[str],
+) -> int:
+    """The forward measurement, shared by the FREEZE path and the RE-MEASURE path.
+
+    Extracted rather than copied: two printers of one measurement is how a re-measure comes to
+    disagree with the freeze it is supposed to continue, and this report is the fund's only forward
+    read on a theme.
+    """
+    from datetime import date
+
     from vinci.eod.client import PolygonEodClient
     price_fn = fwd.eod_close_fn(PolygonEodClient.from_config(get_config()))
     as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
@@ -3338,9 +3396,18 @@ def build_parser() -> argparse.ArgumentParser:
         "themes-forward",
         help="Stage-4 forward-validation: log dispositions, freeze baskets, measure spreads",
     )
-    p_fwd.add_argument("--worksheet", required=True,
+    # --worksheet/--ledger are the FREEZE path. --from-mirror is the RE-MEASURE path: the ledger and
+    # baskets are git-ignored local-only artifacts, so on any machine that did not run the freeze
+    # the accrual has no input — and the accrual is the whole point of Stage 4. Exactly one of the
+    # two must be given; the parser enforces it rather than discovering it mid-run.
+    p_fwd.add_argument("--worksheet",
                        help="committed_review_worksheet.csv (with the analyst's dispositions)")
-    p_fwd.add_argument("--ledger", required=True, help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ledger", help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--from-mirror", dest="from_mirror",
+                       help="re-measure an ALREADY-FROZEN theme from its committed "
+                            "frontend/themes/<slug>.json instead of re-freezing. Hold-none "
+                            "(zero-RATIFIED) freezes only — the mirror carries no per-name "
+                            "ratification date, so a BUY leg cannot be re-dated from it.")
     p_fwd.add_argument("--ratify-date", dest="ratify_date",
                        help="ratification date YYYY-MM-DD (default: today)")
     p_fwd.add_argument("--baskets-out", dest="baskets_out", help="write frozen baskets JSON")
