@@ -11319,7 +11319,79 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    out of the label is exactly the bug class CLAUDE.md forbids ("an extractor that produces a display
    string ALSO exposes its structured value"), so the column deliberately does not. One field on the
    writer + the `snapshots.js` allowlist retires it. Small, and it removes a standing contract
-   violation rather than only improving a sort.
+   violation rather than only improving a sort. **SEE THE AUDIT BELOW — this is now a prerequisite
+   for displaying the column correctly, not only a sort fix.**
+
+### AUDIT — THE TIER-2 VOLUME OVERLAY (2026-08-12, operator-prompted; NO CODE CHANGED)
+
+Recorded before touching anything, per the operator's instruction. Prompted by a plain question about
+the new queue column — *"what does 'very heavy' mean, relative to what, and is the volume buying or
+selling?"* — which the column could not answer. Corpus: the 36 backdated queues + the committed
+2026-07-29 queue; script `volaudit.py` in the session scratchpad, NOT committed.
+
+**WHAT THE FIELD IS.** `volume_spike = latest session's SHARE volume ÷ the 90-calendar-day average
+share volume` (`vinci/eod/features.py:214`). One day. No price direction, no multi-day trend. Banded
+at 0.80 / 1.50 / 3.00 into +0.05 / 0 / −0.02 / −0.05 (`vinci/rank/ranker.py:252`).
+
+1. **THE LABEL "heavy distribution" IS AFFIRMATIVELY WRONG, demonstrated on the live queue.**
+   Distribution means institutions selling into strength; the input contains no direction, so the
+   word is a guess. On the committed 2026-07-29 queue **2 of the 10 "heavy distribution" names
+   closed UP that session — VRRM +22.0% on 3.6× (RANK 5) and SPRY +2.8% on 3.2×.** A +22% day is the
+   textbook opposite of distribution, and the overlay docked it −0.05. This is a small
+   free-conclusion welded into a label: the machine naming a MECHANISM (who traded, and why) from a
+   MAGNITUDE that cannot contain one. "exhausted" is the same error in the quiet band, milder.
+2. **THE BAND DOES NOT SURVIVE THE DAY — the most serious finding.** Across 78,984 adjacent session
+   pairs, **43.1% change band**. Mean sessions a band had already lasted at the as-of: quiet 3.8
+   (n=3,111) · normal 2.3 (n=4,339) · elevated 1.6 (n=1,135) · **very heavy 1.3 (n=191)**. The
+   penalty bands are ONE-SESSION EVENTS. VRRM's label describes a single day (2026-07-29) and is
+   read on 2026-08-12 — a one-day condition, two weeks stale, moving the score by which day the
+   screen happened to run.
+3. **DIRECTION SEPARATES AT EVERY BAND** (120d forward vs own sector, ex-sunk): quiet +2.07
+   (1,084 up / 1,414 down) · normal +2.49 (1,522/2,082) · elevated +1.51 (389/550) · **very heavy
+   +11.14** (55/104: up-day mean +6.15 vs down-day −4.99). CAVEAT ON THE HEADLINE CELL: n=55, median
+   **−7.42**, up-rate 45% — tail-driven, like every other mean this session. The trustworthy part is
+   the **consistent SIGN of the gap across all four bands**, not the size of any one cell.
+4. **DOLLAR VOLUME BEATS SHARE VOLUME, and we ship shares.** Decile spread vs own sector at 120d:
+   share-volume spike +1.28 (quietest −1.28, heaviest −2.56); **dollar-volume spike +3.07 (quietest
+   **+0.78** — the only positive cell in the audit — heaviest −2.29)**. `adv_90d_usd` is already
+   computed and unused here.
+5. **FALSIFIED — my own hypothesis.** I expected the share ratio to be contaminated by the drawdown
+   (a name down 80% trades more shares for the same dollar interest, so the ratio would partly
+   re-measure the depth axis). `corr(drawdown %, share-volume spike) = −0.022` over 7,200
+   name-months. **Withdrawn.**
+6. **UNMEASURED AND STILL OPEN:** (a) **earnings** — a spike the day after results is mechanical and
+   happens to every issuer 4×/yr; we hold 8-K item 2.02 dates and do not use them; (b) **index
+   events** — Russell reconstitution / S&P adds produce enormous volume carrying nothing about the
+   business; (c) **split-adjustment hazard** — the ratio spans 90 days and `adjusted=true` plus the
+   24h netcache TTL can restate volumes inconsistently mid-window (the documented FUBO reverse-split
+   incident class; a HAZARD here, not a confirmed live bug); (d) **coverage is lopsided** — 122/331
+   names (37%) take the +0.05 bonus and 11/331 (3%) the −0.05 penalty, so the "bonus" is nearly a
+   baseline and the penalty fires too rarely to establish (32nd pct in the 2026-08-12 panel = noise).
+
+**THE STATISTICAL USE AND THE DECISION USE ARE DIFFERENT JOBS, and the field is fit for one.** The
+same one-day input produced the only technical result that cleared the panel's full bar (`≤0.80×` →
++3.58 pts at 180d sector-relative, 100th pct, same sign in all four phase blocks). A noisy signal can
+carry a real mean effect across thousands of observations. It does not follow that a condition which
+lasted 1.3 sessions two weeks ago belongs on a row a human reads to decide where to spend a week.
+
+**⚠ GUARDRAIL — THESE NUMBERS MUST NOT SET THE PARAMETERS.** Every figure above is measured against
+FORWARD RETURNS. CLAUDE.md §Project guardrails: *"Never tune on forward returns … set by
+FACE-VALIDITY — NEVER by what would have paid."* So findings 3 and 4 may NOT be used to add a
+direction term, re-band the thresholds, or switch the unit *because those readings paid better*.
+They say the column is worth fixing; they may not say what it becomes. **The fixes that are
+legitimate stand on face-validity ALONE, with no return data:** a reading that flips 43% of the time
+is too noisy to call a state (a property of the INPUT); "distribution" claims a mechanism the input
+cannot contain (semantics); dollar volume is the right unit for a series whose price moves
+(measurement principle). Anyone implementing this must carry that justification, not this table.
+
+**BEARING ON PR #420 (the queue column), stated plainly by its own author:** #420 does not create
+the wrong label — `"heavy distribution"` has been in the snapshot and the CLI all along — but it
+**does put it in front of the analyst on rank 5**, where it was previously invisible. That is a real
+increase in exposure to a known-wrong string, and it is the operator's call whether #420 merges as
+built (faithful to what the scorer emits today, labels corrected in a follow-up) or waits for the
+label fix. Recommended sequence if it waits: emit `volume_spike` structurally (item 9) → retire the
+band words and lead with the number + its date → only then revisit the scorer, separately and on
+face-validity grounds.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
