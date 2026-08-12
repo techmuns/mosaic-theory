@@ -2563,7 +2563,18 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         return [t.strip() for t in (s or "").split(",") if t.strip()]
 
     driver = args.driver
-    if bool(args.from_mirror) == bool(args.worksheet or args.ledger):
+    # THE FREEZE PATH IS A PAIR, and it is checked BEFORE the either/or so a half-specified pair
+    # gets its own message. `--worksheet` alone used to satisfy the either/or below (worksheet OR
+    # ledger reads as "a freeze was requested"), fall through, and die on `Path(None)` with an
+    # unrelated TypeError — review P2 on #412. The ledger-only case was symmetric.
+    if bool(args.worksheet) != bool(args.ledger):
+        given, missing = (("--worksheet", "--ledger") if args.worksheet
+                          else ("--ledger", "--worksheet"))
+        raise SystemExit(
+            f"{given} was given without {missing} — the freeze path needs BOTH: the worksheet "
+            f"carries the analyst's dispositions and the ledger is where they are appended. "
+            f"To re-measure an already-frozen theme instead, use --from-mirror.")
+    if bool(args.from_mirror) == bool(args.worksheet):
         raise SystemExit(
             "give EITHER --worksheet + --ledger (freeze from the analyst's dispositions) OR "
             "--from-mirror (re-measure an already-frozen theme from its committed mirror) — "
@@ -2574,10 +2585,16 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         # reconstructed from the committed mirror so an accrual that has been sitting unmeasured
         # since the freeze can finally be computed. Nothing here logs a disposition.
         mirror = json.loads(Path(args.from_mirror).read_text())
-        baskets = fwd.baskets_from_mirror(mirror)
+        baskets = fwd.baskets_from_mirror(mirror, driver=driver)
         watchlist = list(baskets.watchlist)
         print(f"\n=== Stage-4 forward RE-MEASURE (from mirror) · {driver} ===")
-        print(f"mirror {args.from_mirror} · frozen {baskets.freeze_timestamp}")
+        # THE MIRROR'S OWN LABELS ARE ECHOED because nothing can verify this file belongs to
+        # `--driver`: mirrors carry no registry key (ai-datacenter's `driver` field reads
+        # "AI-datacenter value chain"; defense's slug is "defense" against the key
+        # "defense-demand-shift"). Printing them puts a wrong-file mistake on the first line.
+        print(f"mirror {args.from_mirror} · frozen {baskets.freeze_timestamp} · "
+              f"mirror says slug={mirror.get('slug')!r} driver={mirror.get('driver')!r} "
+              f"— CONFIRM this is the {driver} theme; no machine check binds the two")
         print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
               f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
         if baskets.watchlist:

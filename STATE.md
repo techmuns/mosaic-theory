@@ -8511,6 +8511,16 @@ BETA-CONFOUNDED, the BUY leg does not exist so every RATIFIED-dependent spread i
 30-day window on two drivers is far under the a-priori power floor (8 theme-quarters, 4 drivers).
 The exposure-carry sign is the one genuinely informative datum, and it is NEGATIVE on both drivers
 — worth watching, not concluding from.
+**A MIRROR CARRIES NO REGISTRY KEY, so nothing binds a mirror file to a driver (review finding on
+#412).** `ai-datacenter`'s mirror `driver` field reads **"AI-datacenter value chain"** — a human
+label, not the key — and `defense`'s slug is `defense` against the registry key
+`defense-demand-shift`. Two consequences: (a) taking the mirror's field as identity made ONE report
+name two drivers (the CLI header printed the key, every confound string printed the label), now
+fixed by making the caller's registry key authoritative; (b) **`--from-mirror <wrong file> --driver
+<name>` cannot be caught by any machine check** — the CLI echoes the mirror's own slug/driver on
+line two and asks the operator to confirm, which is mitigation, not a guard. Closing it properly
+means the mirror carrying its registry key; do it when the mirror builder is next touched (there is
+no mirror builder in `vinci/` today — the three mirrors were hand-built).
 **OPERATOR TO-DO:** decide whether the frozen baskets become a committed artifact. They are derived
 analysis and would be committable under the private-repo rule, but `.gitignore` names them
 never-committed, so this build did NOT override that. Until it is decided the reconstruction path is

@@ -93,6 +93,24 @@ def test_a_mirror_with_a_buy_leg_is_refused_rather_than_dated_from_the_freeze() 
         baskets_from_mirror(m)
 
 
+def test_the_registry_key_wins_over_the_mirrors_human_label() -> None:
+    """REVIEW FINDING (mine, on my own diff). The mirror's `driver` field is a HUMAN LABEL, not the
+    registry key: ai-datacenter's reads "AI-datacenter value chain". Taking it as identity made one
+    report name two different drivers — the CLI header printed the registry key while every
+    confound string printed the label ("AI-datacenter value chain-BETA-CONFOUNDED").
+
+    Checked on the live mirror whose label actually diverges, not on a constructed one.
+    """
+    m = _mirror("ai-datacenter")
+    assert m["driver"] != "ai-datacenter", (
+        "this pin's subject is gone — the ai-datacenter mirror now carries the registry key, so "
+        "re-read whether the divergence it guards still exists")
+    assert baskets_from_mirror(m, driver="ai-datacenter").driver == "ai-datacenter"
+    # and with no caller key the mirror's own field is still the fallback, so the function stays
+    # usable standalone rather than requiring the registry
+    assert baskets_from_mirror(m).driver == m["driver"]
+
+
 def test_a_mirror_with_no_names_is_refused() -> None:
     m = _mirror("truckload-supply-purge")
     m["names"] = []
@@ -149,22 +167,50 @@ def test_the_reached_horizon_does_produce_a_number(tmp_path: pathlib.Path) -> No
     assert hn.avoid_discipline.value == pytest.approx(0.10), hn.avoid_discipline.value
 
 
-def test_the_cli_refuses_both_paths_and_neither_path() -> None:
-    """The freeze path (--worksheet + --ledger) and the re-measure path (--from-mirror) are
-    mutually exclusive. Given both, it is ambiguous which is authoritative; given neither, the old
-    signature would have raised an unrelated TypeError on `Path(None)`."""
+def _forward_args(**kwargs: object) -> object:
     import argparse
-
-    from vinci import cli
 
     base = {"driver": "truckload-supply-purge", "measure": False, "as_of": None,
             "horizons": "30", "ratify_date": None, "baskets_out": None, "exposure_names": None,
             "watchlist": None, "watchlist_triggers": None, "avoid_controls": None,
             "real_tier": None}
+    return argparse.Namespace(**base, **kwargs)
+
+
+def test_the_cli_refuses_both_paths_and_neither_path() -> None:
+    """The freeze path (--worksheet + --ledger) and the re-measure path (--from-mirror) are
+    mutually exclusive. Given both it is ambiguous which is authoritative; given neither there is
+    nothing to act on."""
+    from vinci import cli
+
     for kwargs in ({"worksheet": "w.csv", "ledger": "l.jsonl", "from_mirror": "m.json"},
                    {"worksheet": None, "ledger": None, "from_mirror": None}):
         with pytest.raises(SystemExit, match="EITHER"):
-            cli._cmd_themes_forward(argparse.Namespace(**base, **kwargs))
+            cli._cmd_themes_forward(_forward_args(**kwargs))  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expect"),
+    [
+        ({"worksheet": "w.csv", "ledger": None, "from_mirror": None}, "--ledger"),
+        ({"worksheet": None, "ledger": "l.jsonl", "from_mirror": None}, "--worksheet"),
+    ],
+    ids=["worksheet-without-ledger", "ledger-without-worksheet"],
+)
+def test_a_half_specified_freeze_path_is_rejected_before_any_path_is_built(
+    kwargs: dict[str, object], expect: str,
+) -> None:
+    """REVIEW P2 ON #412. The either/or read `worksheet OR ledger` as "a freeze was requested", so
+    `--worksheet rows.csv` alone satisfied it, fell through to the freeze branch, and died on
+    `Path(None)` with a TypeError naming NoneType — an error that tells the operator nothing about
+    which flag they forgot. The ledger-only case was symmetric.
+
+    Asserted on the MISSING flag's name, so a guard that merely raises SystemExit without saying
+    what is absent still fails here."""
+    from vinci import cli
+
+    with pytest.raises(SystemExit, match=expect):
+        cli._cmd_themes_forward(_forward_args(**kwargs))  # type: ignore[arg-type]
 
 
 def test_reconstruction_logs_no_disposition_of_its_own(

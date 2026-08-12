@@ -247,7 +247,9 @@ def freeze_baskets(
         real_tier=tuple(real_tier or ()), avoid_controls=ac)
 
 
-def baskets_from_mirror(mirror: dict[str, object]) -> FrozenBaskets:
+def baskets_from_mirror(
+    mirror: dict[str, object], *, driver: str | None = None,
+) -> FrozenBaskets:
     """Rebuild the frozen baskets from a COMMITTED ``frontend/themes/<slug>.json`` mirror.
 
     WHY THIS EXISTS. The ratification ledger and the frozen baskets are git-ignored by an explicit
@@ -266,7 +268,17 @@ def baskets_from_mirror(mirror: dict[str, object]) -> FrozenBaskets:
     ``_cohort_fwd_mean`` already defaults to, so nothing is invented. Rebuild the BUY leg from the
     local ledger, or re-freeze from the worksheet.
     """
-    driver = str(mirror["driver"])
+    # ONE DRIVER IDENTITY PER REPORT. The mirror's own `driver` field is a HUMAN LABEL, not the
+    # registry key — ai-datacenter's reads "AI-datacenter value chain" while its key is
+    # "ai-datacenter" — so taking it as identity made the header (CLI key) and the confound strings
+    # (`f"{baskets.driver}-BETA-CONFOUNDED"`) name two different drivers in one report. The caller's
+    # registry key wins when given; the mirror's label is provenance, echoed by the CLI so loading
+    # the wrong file is visible on the first line rather than inferred from the name count.
+    # NOTE (recorded in STATE.md): mirrors carry NO registry key at all — not `driver`, not `slug`
+    # ("defense" vs the key "defense-demand-shift") — so nothing here can VERIFY that this mirror
+    # belongs to `driver`. That binding is operator care, not a machine check, until the mirror
+    # carries its key.
+    driver = driver or str(mirror["driver"])
     n_ratified = int(str(mirror.get("ratifiedCount", 0) or 0))
     if n_ratified:
         raise ValueError(
