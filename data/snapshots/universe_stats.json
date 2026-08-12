@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-07-29",
+  "as_of": "2026-08-12",
   "market_cap_min_usd": 300000000.0,
   "market_cap_max_usd": 10000000000.0,
   "adv_floor_usd": 3000000.0,
-  "considered": 7651,
-  "out_of_band": 2919,
-  "no_shares": 1903,
-  "in_universe": 1780,
-  "non_operating": 37,
-  "below_adv_floor": 431,
+  "considered": 7659,
+  "out_of_band": 2850,
+  "no_shares": 1945,
+  "in_universe": 1802,
+  "below_adv_floor": 445,
   "no_price": 538,
   "unknown_sic": 28,
-  "non_common_equity": 8,
-  "unknown_type": 7
+  "unknown_type": 6,
+  "non_common_equity": 7,
+  "non_operating": 38
 }
