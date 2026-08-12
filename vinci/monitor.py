@@ -48,6 +48,9 @@ SPREAD_CAVEAT = (
     "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). "
     "A leg's excess is price-return vs its assigned benchmark over the same window."
 )
+#: A dated snapshot filename — so a stray file in the directory cannot be read as a day.
+_SNAPSHOT_DAY = re.compile(r"\d{4}-\d{2}-\d{2}")
+
 AVOID_SIGN_NOTE = (
     "BUY−AVOID = mean(BUY excess) − mean(AVOID excess). An AVOID leg falling against its "
     "benchmark carries NEGATIVE excess, so subtracting it makes the spread MORE positive: "
@@ -114,6 +117,10 @@ class PositionRow(BaseModel):
     horizon_days: int
     horizon_date: date
     resolved: bool                   # has the row reached its horizon? (only then is it a result)
+    # Is the POSITION still held? Distinct from ``resolved``, which is about the CALL's clock. A
+    # closed row keeps marking to its horizon (the ruling), so this is the flag that lets a reader
+    # separate "the call was right" from "the book held it" instead of inferring it from a note.
+    closed: bool = False
 
 
 class SpreadDiagnostic(BaseModel):
@@ -138,6 +145,46 @@ class SpreadDiagnostic(BaseModel):
     sign_convention: str = AVOID_SIGN_NOTE
     caveat: str = SPREAD_CAVEAT
     undefined_reason: str | None = None   # set when a leg is empty → spread is None, never 0.0
+    # --- THE SAME SPREAD OVER POSITIONS STILL HELD (operator ruling 2026-08-12) ----------------
+    # A decision keeps accruing to its horizon after the position is closed — the spread measures
+    # the DISCRIMINATOR, and closing early is a portfolio action that does not retract the call.
+    # That ruling stands. What it does NOT license is a headline the reader cannot decompose: on
+    # 2026-08-11 the book read +9.54%, and +29.00 pts of the BUY leg came from IT — a position
+    # closed at the entry price on 2026-07-21 whose REALIZED P&L was +0.0%. On rows still held the
+    # same spread is −1.56%. The sign flips, so both are printed and neither is the "real" one:
+    # the headline answers "was the call right", this answers "did the book hold it".
+    closed_n: int = 0
+    open_buy_n: int = 0
+    open_avoid_n: int = 0
+    spread_open_only: float | None = None
+    open_undefined_reason: str | None = None
+
+
+class RealizedRow(BaseModel):
+    """One closed position's realized P&L — TYPED, not prose (operator to-do, 2026-08-12).
+
+    The realized book reached the snapshot only as free-text ``notes`` strings, so the one view
+    that says what the fund actually EARNED was unreadable by anything that was not parsing
+    English. ``realized_return`` is DERIVED here exactly as ``pair_closes`` derives it — from the
+    two frozen prices, never stored — so there is one definition and the note text below is
+    rendered FROM this row rather than beside it."""
+
+    ticker: str
+    entry_id: str
+    close_id: str
+    verdict: str
+    entry_price: float
+    entry_price_as_of: date
+    exit_price: float
+    exit_price_as_of: date
+    realized_return: float
+
+    def note(self) -> str:
+        """The human line — derived from the typed row, so display can never drift from data."""
+        return (f"{self.ticker}: REALIZED {self.realized_return:+.1%} "
+                f"(entry ${self.entry_price:,.2f} {self.entry_price_as_of} → exit "
+                f"${self.exit_price:,.2f} {self.exit_price_as_of}) — realized P&L, a separate "
+                f"view; the {self.verdict} call stays in horizon calibration")
 
 
 class MonitorSnapshot(BaseModel):
@@ -149,6 +196,12 @@ class MonitorSnapshot(BaseModel):
     spread: SpreadDiagnostic
     freshness: list[FreshnessRow] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    # THE REALIZED BOOK, TYPED. It reached this artifact only as prose inside ``notes``, so the one
+    # view that says what the fund actually EARNED could not be read by anything that was not
+    # parsing English — while the marked-to-market rows beside it were fully structured. The note
+    # lines are now RENDERED from these rows (``RealizedRow.note``), so there is one definition and
+    # the display cannot drift from the data.
+    realized: list[RealizedRow] = Field(default_factory=list)
 
 
 class FreshnessRow(BaseModel):
@@ -213,12 +266,22 @@ def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [r for r in raw if entry_of(r).get("event") == EVENT_CLOSE]
 
 
-def pair_closes(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def pair_closes(
+    raw: list[dict[str, Any]], *, as_of: date | None = None,
+) -> list[dict[str, Any]]:
     """Pair each close to the decision row it closes, and DERIVE the realized return.
 
     Realized return is computed here, never stored: it is ``exit/entry − 1`` from two frozen
     prices, so persisting it would create a second source of truth able to drift from the two
     numbers it came from. The ledger stores facts; views derive.
+
+    ``as_of`` MAKES THE VIEW POINT-IN-TIME (operator review P1 on #418). Without it every close in
+    the ledger counted regardless of when it happened, so `vinci monitor --ref <past date>` marked
+    positions closed — and printed their realized P&L — for exits that had not occurred yet at that
+    point in the book. The price path already refuses a future bar; the close path did not, so a
+    historical snapshot was not reproducible. Filtering happens AFTER pairing, deliberately: the
+    unpairable/duplicated-close refusals below must see the WHOLE ledger, or a malformed close
+    dated past ``as_of`` would slip through unexamined.
 
     Refuses loud on an unpairable or duplicated close — a close pointing at nothing, or two closes
     for one entry, means the realized book is wrong and must not render as though it were right.
@@ -245,10 +308,37 @@ def pair_closes(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "entry_price_as_of": d.get("entry_price_as_of"),
                     "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
                     "realized_return": exit_ / entry - 1.0})    # DERIVED, never stored
-    return out
+    if as_of is None:
+        return out
+    return [r for r in out if date.fromisoformat(str(r["exit_price_as_of"])) <= as_of]
 
 
 # --- spread ------------------------------------------------------------------------------------
+def closed_decision_ids(
+    raw: list[dict[str, Any]], *, as_of: date | None = None,
+) -> set[str]:
+    """The ENTRY IDs of decisions whose position has been closed — never the tickers.
+
+    KEYED ON THE DECISION, because a name can be closed and re-entered: SMPL was closed 2026-07-22
+    and re-entered 2026-08-04, so a ticker-keyed set marks the LIVE re-entry as closed too, drops it
+    out of the still-held spread and changes the number the operator reads. This lives here rather
+    than inline in the CLI so the keying is exercised against the real ledger instead of being
+    re-derived correctly-or-not at each call site."""
+    return {str(r["entry_id"]) for r in pair_closes(raw, as_of=as_of)}
+
+
+def decisions_as_of(raw: list[dict[str, Any]], *, as_of: date) -> list[dict[str, Any]]:
+    """The decision rows that EXISTED on ``as_of`` — entered on or before that date.
+
+    The sibling of ``closed_decision_ids``, and the louder half of the same defect: without it
+    `monitor --ref 2026-07-20` marked SMPL's 2026-08-04 re-entry into that day's book with
+    ``days_elapsed: -15``, a position that did not exist yet. Lives here rather than inline at the
+    call site so the rule is exercised against the real ledger — the CLI's copy could only ever be
+    checked by a static artifact, which cannot catch a change to the code that writes it."""
+    return [r for r in decision_rows(raw)
+            if date.fromisoformat(str(entry_of(r)["entry_price_as_of"])) <= as_of]
+
+
 def _is_buy(verdict: str) -> bool:
     """BUY-family vs the rest — mirrors the frontend isBuyVerdict (family, not equality)."""
     return verdict.upper().startswith("BUY")
@@ -264,16 +354,29 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
     filter a followed quality row landed in the AVOID leg by the BUY-prefix test below (`PASS` does
     not start with "BUY") and moved the fund's proof number on the operator's own console."""
     scoped = [r for r in rows if r.origin == ORIGIN_SCREEN]
-    buys = [r.excess for r in scoped if _is_buy(r.verdict)]
-    avoids = [r.excess for r in scoped if not _is_buy(r.verdict)]
-    buy_mean = sum(buys) / len(buys) if buys else None
-    avoid_mean = sum(avoids) / len(avoids) if avoids else None
-    reason = None
-    if buy_mean is None or avoid_mean is None:
-        missing = "BUY" if buy_mean is None else "AVOID"
-        reason = f"no {missing} legs logged — the spread needs both sides"
+
+    def legs(subset: list[PositionRow]) -> tuple[float | None, float | None, int, int, str | None]:
+        b = [r.excess for r in subset if _is_buy(r.verdict)]
+        a = [r.excess for r in subset if not _is_buy(r.verdict)]
+        bm = sum(b) / len(b) if b else None
+        am = sum(a) / len(a) if a else None
+        why = None
+        if bm is None or am is None:
+            why = (f"no {'BUY' if bm is None else 'AVOID'} legs logged — the spread needs both "
+                   f"sides")
+        return bm, am, len(b), len(a), why
+
+    buy_mean, avoid_mean, n_buy, n_avoid, reason = legs(scoped)
+    # THE SAME ARITHMETIC OVER POSITIONS STILL HELD. Not a competing headline — a decomposition, so
+    # a reader can see how much of the spread is carried by calls the book no longer owns. Its
+    # "needs both sides" reason is worded for THIS scope, because "no AVOID legs" reads very
+    # differently when it means "every AVOID was closed" than when it means "none was ever logged".
+    still_open = [r for r in scoped if not r.closed]
+    o_buy, o_avoid, o_nb, o_na, o_reason = legs(still_open)
+    if o_reason is not None and len(still_open) < len(scoped):
+        o_reason += f" among the {len(still_open)} of {len(scoped)} rows still held"
     return SpreadDiagnostic(
-        buy_n=len(buys), avoid_n=len(avoids),
+        buy_n=n_buy, avoid_n=n_avoid,
         buy_mean_excess=buy_mean, avoid_mean_excess=avoid_mean,
         spread=(buy_mean - avoid_mean) if (buy_mean is not None and avoid_mean is not None)
         else None,
@@ -281,13 +384,19 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
         scoped_n=len(scoped),
         max_days_elapsed=max((r.days_elapsed for r in scoped), default=0),
         undefined_reason=reason,
+        closed_n=sum(1 for r in scoped if r.closed),
+        open_buy_n=o_nb, open_avoid_n=o_na,
+        spread_open_only=(o_buy - o_avoid) if (o_buy is not None and o_avoid is not None)
+        else None,
+        open_undefined_reason=o_reason,
     )
 
 
 def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: float,
                  entry_date: date, current_price: float, current_date: date, benchmark: str,
                  benchmark_entry: float, benchmark_now: float, horizon_days: int,
-                 origin: str = ORIGIN_SCREEN, sleeve: str = DEFAULT_SLEEVE) -> PositionRow:
+                 origin: str = ORIGIN_SCREEN, sleeve: str = DEFAULT_SLEEVE,
+                 closed: bool = False) -> PositionRow:
     """Mark one leg. Fails loud on a non-positive entry or benchmark price — a return computed
     off a zero base is not a number this fund reports."""
     if not entry_price > 0 or not benchmark_entry > 0:
@@ -306,6 +415,7 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
         days_elapsed=(current_date - entry_date).days,
         horizon_days=horizon_days, horizon_date=horizon_date,
         resolved=current_date >= horizon_date,
+        closed=closed,
     )
 
 
@@ -404,11 +514,38 @@ def write_assignments(items: dict[str, BenchmarkAssignment], *, root: Path | Non
     return p
 
 
-def write_snapshot(snap: MonitorSnapshot, *, root: Path | None = None) -> Path:
-    """One dated file per run — the auditable book history (never overwritten across days)."""
+def write_snapshot(
+    snap: MonitorSnapshot, *, root: Path | None = None, rewrite_history: bool = False,
+) -> Path:
+    """One dated file per run — the auditable book history (never overwritten across days).
+
+    REFUSES TO REWRITE A SUPERSEDED DAY. That docstring line claimed the history is never
+    overwritten and nothing enforced it, so re-running `--ref <past date>` silently replaced that
+    day's file. I did exactly that while testing the point-in-time fix, and it is how the decision
+    look-ahead was found.
+
+    THE RULE IS "SUPERSEDED", NOT "NOT TODAY", and the difference matters in practice: the normal
+    daily run resolves to the LAST TRADING DAY, which is usually not today, so a not-today rule
+    would refuse the routine re-run. Rewriting the FRONT of the book is fine — same day, better
+    data. Rewriting a day that later snapshots already sit on top of is the destructive case, and
+    that is what this refuses.
+
+    Note that a past re-run now REPRODUCES: decisions and closes are both read as of the snapshot
+    date. So this is a guard against a future divergence (a code change, a ledger correction),
+    not against a known-bad rewrite.
+    """
     d = monitor_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     p = d / f"{snap.as_of.isoformat()}.json"
+    if p.exists() and not rewrite_history:
+        later = sorted(f.stem for f in d.glob("*.json")
+                       if _SNAPSHOT_DAY.fullmatch(f.stem) and f.stem > snap.as_of.isoformat())
+        if later:
+            raise FileExistsError(
+                f"{p} already exists and {len(later)} later snapshot(s) sit on top of it "
+                f"(next: {later[0]}) — rewriting a superseded day replaces what the book recorded "
+                f"then with what today's code and ledger produce. Pass rewrite_history=True if "
+                f"that is genuinely what you mean.")
     p.write_text(snap.model_dump_json(indent=2) + "\n")
     return p
 
@@ -457,8 +594,26 @@ def render_table(snap: MonitorSnapshot) -> str:
     # only. A legacy snapshot predating `scoped_n` reports 0 → fall back to the row count, which
     # is exactly right for it (every row it holds is screen-origin).
     scoped_n = s.scoped_n or len(snap.rows)
-    out += [f"  resolved {s.resolved_n}/{scoped_n} · max days elapsed {s.max_days_elapsed}",
-            f"  {s.caveat}", f"  {s.sign_convention}"]
+    out += [f"  resolved {s.resolved_n}/{scoped_n} · max days elapsed {s.max_days_elapsed}"]
+    # THE DECOMPOSITION, printed only when it says something — with no closed rows the two numbers
+    # are identical and a second line would be noise. The closed rows are IN the headline by
+    # ruling; this says how much of it they carry, so nobody reads a spread earned on positions the
+    # book no longer holds as a spread the book earned.
+    if s.closed_n:
+        held = scoped_n - s.closed_n
+        open_txt = ("UNDEFINED — " + (s.open_undefined_reason or "")
+                    if s.spread_open_only is None else f"{s.spread_open_only * 100:+.2f} pp")
+        out += [f"  of which {s.closed_n} row(s) are CLOSED positions, still marked to horizon "
+                f"(the call is scored; the exit was a capital decision)",
+                f"  SAME SPREAD OVER THE {held} ROW(S) STILL HELD: {open_txt}"
+                f"  [BUY n={s.open_buy_n} · AVOID n={s.open_avoid_n}]"]
+    out += [f"  {s.caveat}", f"  {s.sign_convention}"]
+    if snap.realized:
+        out += ["", "REALIZED (closed positions — a separate view; never pooled into the spread)"]
+        for rr in snap.realized:
+            out.append(f"  {rr.ticker:<6} {rr.realized_return * 100:>+7.2f}%  "
+                       f"{rr.entry_price:,.2f} {rr.entry_price_as_of} → "
+                       f"{rr.exit_price:,.2f} {rr.exit_price_as_of}")
     if snap.freshness:
         out += ["", "FRESHNESS / TRIGGERS (machine flags; the human concludes)"]
         for f in snap.freshness:

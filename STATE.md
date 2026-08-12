@@ -8521,6 +8521,48 @@ fixed by making the caller's registry key authoritative; (b) **`--from-mirror <w
 line two and asks the operator to confirm, which is mitigation, not a guard. Closing it properly
 means the mirror carrying its registry key; do it when the mirror builder is next touched (there is
 no mirror builder in `vinci/` today — the three mirrors were hand-built).
+
+**RULED 2026-08-12 — A CLOSED POSITION'S DECISION KEEPS ACCRUING (decision-queue item 1), AND THE
+HEADLINE MUST DECOMPOSE.** The question was whether a decision closed early still counts toward the
+spread. **It does, and nothing changed about that:** the spread measures the DISCRIMINATOR, and
+closing is a capital decision that does not retract the call — the same rule the scoring harness
+already followed. What the ruling does NOT license is a headline the reader cannot take apart. On
+2026-08-11 the book read **+9.54 pp**, and **+29.00 pts of the BUY leg came from IT — a position
+closed at the entry price on 2026-07-21, realized P&L +0.0%.** Over the rows still held the same
+spread is **−1.56 pp**. THE SIGN FLIPS, so both now print, neither labelled the "real" one: the
+headline answers *was the call right*, the second answers *did the book hold it*. Keyed on the
+DECISION's entry_id, never the ticker — SMPL is closed AND re-entered, so a ticker-keyed flag would
+mark the live re-entry closed and silently drop it from the held figure.
+**AND THE REALIZED BOOK IS TYPED (item 4).** It reached the snapshot only as free-text `notes`, so
+the one view saying what the fund actually EARNED was unreadable by anything not parsing English,
+while the marked-to-market rows beside it were fully structured. `MonitorSnapshot.realized` now
+carries it, and the note line is RENDERED from the typed row (`RealizedRow.note`) so display cannot
+drift from data — the standing rule that display formatting is never load-bearing.
+**LOOK-AHEAD IN THE HISTORICAL BOOK — REVIEW P1 ON #418, AND IT WAS BROADER THAN REPORTED.** The
+monitor's price path carefully refuses a future bar; the LEDGER path did not. `monitor --ref <past
+date>` counted every close in today's ledger regardless of when it happened (at ref 2026-07-20 it
+reported 2 closes against a truth of 0), AND — the half the review did not see, found by comparing a
+re-run against the original file — it counted every DECISION too, marking SMPL's 2026-08-04
+re-entry into the 2026-07-20 book with **`days_elapsed: -15`**, a position that did not exist yet.
+Both halves now read the ledger as of the snapshot date (`monitor.decisions_as_of`,
+`pair_closes(as_of=)`, `closed_decision_ids(as_of=)`), filtering AFTER pairing so the
+unpairable/duplicate-close refusals still see the whole ledger. **VERIFIED BY REPRODUCTION:
+re-running 2026-07-20 today now returns the original day's three rows and its spread to full
+precision** (0.1442638831149694 both ways), with zero realized rows — both exits were still in the
+future then.
+**AND THE BOOK HISTORY HAD NO WRITE PROTECTION.** `write_snapshot`'s docstring claimed the history
+is "never overwritten across days" and nothing enforced it — I silently replaced the committed
+2026-07-20 snapshot while testing, which is how the decision look-ahead surfaced. It now refuses to
+rewrite a SUPERSEDED day. The rule is deliberately "superseded", not "not today": the normal daily
+run resolves to the LAST TRADING DAY, so a not-today rule refuses the routine re-run — the first cut
+of the guard did exactly that.
+**A PIN THAT COULD NOT FAIL, caught by mutation for the third time in this sequence.** The
+re-entry guard was asserted against the COMMITTED ARTIFACT, which is static — mutating the keying
+does not regenerate it, so the test stayed green while the logic was wrong. The keying moved to
+`monitor.closed_decision_ids` and is now exercised against the real ledger, with the artifact pin
+KEPT beside it: one catches the logic, the other catches what shipped. *An artifact pin proves what
+was written; it cannot prove what the code would write next time.*
+
 **OPERATOR TO-DO:** decide whether the frozen baskets become a committed artifact. They are derived
 analysis and would be committable under the private-repo rule, but `.gitignore` names them
 never-committed, so this build did NOT override that. Until it is decided the reconstruction path is

@@ -21,7 +21,8 @@
       "days_elapsed": 22,
       "horizon_days": 180,
       "horizon_date": "2027-01-16",
-      "resolved": false
+      "resolved": false,
+      "closed": true
     },
     {
       "ticker": "SMPL",
@@ -42,7 +43,8 @@
       "days_elapsed": 22,
       "horizon_days": 180,
       "horizon_date": "2027-01-16",
-      "resolved": false
+      "resolved": false,
+      "closed": true
     },
     {
       "ticker": "SMPL",
@@ -63,7 +65,8 @@
       "days_elapsed": 7,
       "horizon_days": 549,
       "horizon_date": "2028-02-04",
-      "resolved": false
+      "resolved": false,
+      "closed": false
     },
     {
       "ticker": "VRRM",
@@ -84,7 +87,8 @@
       "days_elapsed": 55,
       "horizon_days": 180,
       "horizon_date": "2026-12-14",
-      "resolved": false
+      "resolved": false,
+      "closed": false
     }
   ],
   "spread": {
@@ -98,7 +102,12 @@
     "max_days_elapsed": 55,
     "sign_convention": "BUY−AVOID = mean(BUY excess) − mean(AVOID excess). An AVOID leg falling against its benchmark carries NEGATIVE excess, so subtracting it makes the spread MORE positive: being right about a terminal decline pays in exactly as being right about an overshoot.",
     "caveat": "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). A leg's excess is price-return vs its assigned benchmark over the same window.",
-    "undefined_reason": null
+    "undefined_reason": null,
+    "closed_n": 2,
+    "open_buy_n": 1,
+    "open_avoid_n": 1,
+    "spread_open_only": -0.015632183328803673,
+    "open_undefined_reason": null
   },
   "freshness": [
     {
@@ -260,5 +269,29 @@
     "IT: benchmark MDY (cap band) SUPERSEDES the ledger row's IWM — the row itself is never mutated",
     "IT: REALIZED +0.0% (entry $141.06 2026-07-20 → exit $141.06 2026-07-21) — realized P&L, a separate view; the BUY call stays in horizon calibration",
     "SMPL: REALIZED -3.6% (entry $10.92 2026-07-20 → exit $10.53 2026-07-22) — realized P&L, a separate view; the BUY call stays in horizon calibration"
+  ],
+  "realized": [
+    {
+      "ticker": "IT",
+      "entry_id": "V-IT-screen2-20260706",
+      "close_id": "C-IT-screen2-20260706",
+      "verdict": "BUY",
+      "entry_price": 141.06,
+      "entry_price_as_of": "2026-07-20",
+      "exit_price": 141.06,
+      "exit_price_as_of": "2026-07-21",
+      "realized_return": 0.0
+    },
+    {
+      "ticker": "SMPL",
+      "entry_id": "V-SMPL-screen2-20260706",
+      "close_id": "C-SMPL-screen2-20260706",
+      "verdict": "BUY",
+      "entry_price": 10.92,
+      "entry_price_as_of": "2026-07-20",
+      "exit_price": 10.53,
+      "exit_price_as_of": "2026-07-22",
+      "realized_return": -0.03571428571428581
+    }
   ]
 }
