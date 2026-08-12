@@ -11812,6 +11812,44 @@ would have produced a focusable element that still did nothing on Enter.
 - Four guards, each mutation-tested: reverting to a bare clickable `<th>`; dropping `aria-sort`;
   un-hiding the ▲/▼ from assistive tech; and removing the focus restore.
 
+### THE SCHEDULED SURFACE — audited 2026-08-12 (operator-asked, post-#420)
+
+**THE STRUCTURAL DEMOTE CHANNEL WAS DORMANT IN PRODUCTION, AND NOTHING SAID SO.** `scan_structural`
+(`vinci/rank/structural.py:190`) is built, tested (16 references), source-bound to an 8-K accession
++ item + date, DEMOTE-ONLY, and it is the **only** channel permitted to move a name down. It ran
+only when a human typed `vinci rank --structural`, no workflow passed the flag, and nobody had: the
+2026-08-12 queue carried **0 flags across 284 names**. A company whose auditor resigned last month
+could therefore sit at rank 5 looking like a bargain, and the analyst would find out only after
+opening the dossier — which is the week of work the queue exists to protect.
+- **FIXED:** `weekly-screen.yml` now runs `vinci run-weekly --structural`, and the flag is threaded
+  through `run_weekly` → `refresh_queue`. Cost: EDGAR 8-K text + shares per candidate, on top of
+  the existing screen.
+- **A LIVE SCAN REPLACES THE CARRY-FORWARD, it does not merge with it.** The carry-forward added in
+  #420 exists for runs that do NOT scan. When a scan runs it is authoritative — it re-checks all
+  five signals against current filings, so a name whose signal no longer fires must come back
+  CLEAN. Merging would make a flag permanent: a disqualifier could never be cleared by the very
+  scan designed to re-evaluate it, and the demote would outlive its own evidence. Pinned, and
+  mutation-tested by merging instead of replacing.
+- **This is a DECISION-PATH change, unlike everything else in #420** — it moves names in the queue
+  rather than describing them. Taken on explicit operator instruction, recorded here as such.
+
+**STILL OPEN — `build-universe` IS ON NO SCHEDULE, and the universe is the screen's INPUT.** No
+workflow runs it (searched `.github/` for `build-universe`). The committed `universe_snapshot.jsonl`
+is stamped **2026-07-29** while the screen that consumed it ran **2026-08-12** — a 14-day gap, on
+the artifact that decides *which names are eligible to be screened at all* (cap band, ADV floor,
+operating-co gates). Consequences while it drifts: a name that fell into the $300M–$10B band since
+the last build is never screened; a name that left the band still is; and the market caps banding
+them are two weeks stale. Not fixed here — rebuilding the universe changes WHAT gets screened, so
+its cadence is an operator decision, and the runbook does not currently document one. Options:
+add it to the weekly job before the screen; give it its own monthly cron; or keep it manual and
+put its as-of on the queue page beside the screen date, so the drift is at least visible.
+
+**NOT A GAP, checked:** `vinci monitor` is marked *manual* in its own CLI help ("mark the book to
+market vs benchmarks (manual)") — operator-driven by design, not an omission. `run-monthly` is
+scheduled (1st, 07:00 UTC). The weekly snapshot commit cannot desync the committed frontend mirror,
+because `frontend/snapshots/` is git-ignored (0 tracked files) — the gate's mirror check covers
+`frontend/dossiers`, which a screen run does not touch.
+
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**

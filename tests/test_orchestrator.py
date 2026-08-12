@@ -303,3 +303,50 @@ def test_a_manual_structural_disqualifier_survives_the_weekly_refresh() -> None:
         assert got.priority_score <= 0.05, (
             f"{victim} kept its flag but not its cap — score {got.priority_score}")
         assert got.rank > len(after) // 2, f"{victim} is still ranked {got.rank} of {len(after)}"
+
+
+def test_a_live_structural_scan_replaces_the_carry_forward_rather_than_merging(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The carry-forward exists for runs that DON'T scan. When a scan DOES run it is authoritative:
+    it re-checks all five signals against current filings, so a name whose signal no longer fires
+    must come back CLEAN. Merging instead would make a flag permanent — an 8-K disqualifier could
+    never be cleared by the very scan designed to re-evaluate it, and the demote would outlive its
+    own evidence.
+
+    The scan itself is network; only the compose-with-carry-forward decision is under test, so
+    `scan_structural` is stubbed to return a DIFFERENT verdict from the one on the prior queue."""
+    import json
+    import tempfile
+
+    from vinci import orchestrator
+    from vinci.config import Config
+    from vinci.rank import RankedCandidate, StructuralDisqualifier
+
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        snaps = _stage(tmp)
+        rows = [json.loads(x) for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x]
+        stale, fresh = rows[0]["ticker"], rows[1]["ticker"]
+        rows[0]["structural_flag"] = {"signal": "going-concern", "detail": "d", "source": "8-K old"}
+        rows[0]["structurally_disqualified"] = True
+        (snaps / "ranked_queue.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+
+        # the live scan clears `stale` and fires on `fresh` instead
+        monkeypatch.setattr(orchestrator, "scan_structural", lambda *a, **k: {
+            fresh: StructuralDisqualifier(
+                signal="delisting/deficiency notice (3.01)", detail="d", source="8-K new")})
+        monkeypatch.setattr(
+            orchestrator.EdgarClient, "from_config", classmethod(lambda cls, c: None))
+        monkeypatch.setattr(orchestrator, "build_sec_http", lambda cfg: None)
+
+        out = orchestrator.refresh_queue(Config(data_dir=tmp), structural=True)
+        assert out["carried_structural"] == 1  # the prior flag WAS read...
+        after = {r.ticker: r for r in (
+            RankedCandidate.model_validate_json(x)
+            for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x.strip())}
+        assert not after[stale].structurally_disqualified, (
+            f"{stale} kept a flag the live scan no longer fires — the carry-forward was merged in, "
+            "so a disqualifier can never be cleared by the scan meant to re-evaluate it")
+        assert after[fresh].structurally_disqualified, f"{fresh}: the live scan's verdict was lost"
+        assert after[fresh].priority_score <= 0.05

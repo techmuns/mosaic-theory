@@ -42,7 +42,12 @@ jobs:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
-        run: python -m vinci run-weekly
+        # --structural runs the Tier-3 disqualifier scan (EDGAR 8-K text + shares series) as part
+        # of the job. It was previously reachable ONLY by a human typing `vinci rank --structural`,
+        # and nobody had: the 2026-08-12 queue carried 0 flags across 284 names, so the one channel
+        # permitted to demote a name was dormant in production. DEMOTE-ONLY and source-bound to an
+        # accession, so it can sink a structurally-dead name but never lift one.
+        run: python -m vinci run-weekly --structural
 
       - name: Commit refreshed snapshots
         run: |

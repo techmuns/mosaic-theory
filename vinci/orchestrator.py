@@ -27,10 +27,12 @@ from vinci.rank import (
     load_market_caps_from_snapshot,
     rank_candidates,
     render_queue_markdown,
+    scan_structural,
 )
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
+from vinci.sec import build_sec_http
 from vinci.store import Store
 from vinci.universe import benchmark_identity
 
@@ -142,14 +144,26 @@ def write_queue_snapshots(
     return jsonl, md
 
 
-def refresh_queue(cfg: Config) -> dict[str, int]:
+def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
     """Rank the screen's committed output and REPLACE the queue. The weekly job's tail.
 
-    Extracted from :func:`run_weekly` so its two dangerous cases are testable without the network —
-    both were review findings on #420, and neither is reachable through a function that builds
+    Extracted from :func:`run_weekly` so its dangerous cases are testable without the network —
+    they were review findings on #420, and none is reachable through a function that builds
     Polygon and EDGAR clients from config.
+
+    ``structural=True`` runs the deterministic 8-K disqualifier scan (network). A LIVE SCAN IS
+    AUTHORITATIVE AND REPLACES THE CARRY-FORWARD outright — it re-checks all five signals against
+    current filings, so a name that no longer fires must come back clean rather than have a stale
+    flag resurrected underneath it. The carry-forward exists for the runs that DON'T scan.
     """
     flags, causes = carry_forward_assessment(cfg)
+    if structural:
+        records = cfg.snapshots_dir / "candidate_records.jsonl"
+        cands = load_candidates_from_snapshot(records) if records.exists() else []
+        if cands:
+            flags = scan_structural(
+                cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
+            )
     ranked = rank_from_snapshots(cfg, annotations=causes or None, structural_flags=flags or None)
     # WRITE EVEN WHEN EMPTY. The screen has completed by this point, so no candidates is an ANSWER —
     # the latest screen rejected everything — not a failure to produce one. Skipping the write left
@@ -171,6 +185,7 @@ def run_weekly(
     end: date,
     benchmark: str = "IWM",
     lookback_days: int = _SCREEN_LOOKBACK_DAYS,
+    structural: bool = False,
     progress: ProgressFn | None = None,
 ) -> dict[str, object]:
     """Weekly: refresh the universe's prices and lazily run Screen 2; persist candidates."""
@@ -196,7 +211,7 @@ def run_weekly(
     # names — putting a demote channel on a cron is a decision-path change and stays a human act.
     # But the last explicit assessment IS carried forward, because the flags live nowhere but the
     # artifact this is about to overwrite (see carry_forward_assessment).
-    return {**stats, "ref": end.isoformat(), **refresh_queue(cfg)}
+    return {**stats, "ref": end.isoformat(), **refresh_queue(cfg, structural=structural)}
 
 
 def run_monthly(
