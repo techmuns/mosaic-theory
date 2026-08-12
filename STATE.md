@@ -6559,6 +6559,36 @@ Every one is deferred for a stated reason, and one of them is not a build at all
   breaks the R2 terminal bridge (the NCI item). Labelling the gate's refusal "the Class A/B ≈5x
   case" merged two diagnoses; the ratio is the field that distinguishes corporate action from
   drift, so it has to be right.
+  - **FIXED AT THE SOURCE 2026-08-12 (fix/shares-staleness-fubo) — the staleness bound was
+    ACCOMMODATING this defect.** `_SHARES_MAX_AGE_DAYS` was **540**, chosen (per its own pin) to
+    clear a fleet whose counts ran "10–375 days old" — **but the 375 WAS FUBO**, so the bound was
+    sized around the one name it needed to catch. Visa's SIXTEEN YEARS was refused and FUBO's ONE
+    was not, though both are the same thing: a filer that moved to PER-CLASS tagging, after which
+    the undimensioned `dei:EntityCommonStockSharesOutstanding` simply stops and the extractor keeps
+    serving its final pre-change value.
+    **EVIDENCE (verified this build, refining the note above rather than contradicting it):** the
+    10-Q of **2026-08-05** states **30,204,277 Class A + 78,992,518 Class B**; a FRESH companyfacts
+    pull (not the cache) confirms `dei` genuinely ends at **2025-07-31 / 342,433,118**. So the
+    11.13x is between an EDGAR SINGLE-CLASS total and a Class-A-basis CIQ cap. Whether a reverse
+    split also occurred is not what our extractor tripped on — per-class tagging is.
+    **THE FIX IS ONE CONSTANT, because the architecture already had the answer:** at 180d FUBO is
+    refused and falls to the **CIQ bridge** that Visa already uses — shares taken from the SAME ROW
+    as the cap, so `cap ÷ shares` reproduces that panel's own close and the reconciliation is
+    coherent **by construction**. No new code path. **180 = two quarters**, by face-validity: a
+    cover-page count is restated in every 10-Q, so two quarters of silence means the tag stopped
+    being maintained. Measured, not assumed — the healthy fixtures run **10–101d** (AORT/WERN at
+    101) and the next value is FUBO's **375d**; the bound sits in that empty band, 1.8x above the
+    fleet and 2.1x below the defect. **Blast radius: FUBO only** — V was already bridged, no other
+    name moves (pinned).
+    *Regression-pinned on FUBO's REAL committed fixture (`test_fubos_pre_restructuring_count_is_
+    refused_at_the_new_bound`): it FAILS at the old 540 bound and passes at 180, and asserts the
+    bound stays inside the 101–375 band so a future widening cannot silently re-admit the defect.
+    ruff + mypy --strict (124) + pytest 2374 green.*
+    **NOT FIXED, AND NOT CLAIMED:** the ≈5x NCI / economic-share problem (§ item 29) is untouched —
+    this makes the SHARE BASIS coherent, it does not give FUBO an economic share count. **The
+    committed FUBO page still carries the old basis** until the operator re-assembles it: the build
+    could not run here (its licensed CIQ workbook is not in this worktree), so the artifact pin
+    records the owed state via `BRIDGED_PENDING_REASSEMBLY` and fails the moment it lands.
 - **GUIDANCE EXTRACTION — FOUR MODES BUILT 2026-07-29 at the ASSEMBLY layer (operator ruling).**
   Derive-at-render was rejected for a better reason than mine: it would add a SIXTH composition
   site across both twins — the exact surface that produced five twin-drift instances — trading a
@@ -11598,6 +11628,19 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    writer + the `snapshots.js` allowlist retires it. Small, and it removes a standing contract
    violation rather than only improving a sort. **SEE THE AUDIT BELOW — this is now a prerequisite
    for displaying the column correctly, not only a sort fix.**
+10. **RE-ASSEMBLE FUBO — the share-basis fix is in the CODE and not yet on the PAGE. Opened
+   2026-08-12 by `fix/shares-staleness-fubo`.** The staleness bound moved 540d → 180d, so FUBO's
+   pre-restructuring `dei` count (342,433,118 @ 2025-07-31, 375d stale and single-class against a
+   now dual-class filer) is refused and the name falls to the CIQ bridge Visa already uses. **The
+   committed page still carries the old basis** — cap $256.4M ÷ 342.4M shares = $0.75/sh implied
+   against an $8.33 close, 11.13x wrong on every per-share and EV figure. The build could NOT be run
+   here: FUBO's licensed CIQ workbook is absent from this worktree, and the bridge reads
+   `comps→Financial Data`, so the fix is unverifiable end-to-end without it. **Needs: the FUBO CIQ
+   workbook on disk → re-assemble → confirm `shares_out.source_ref` names CIQ and `reconcile_cap`
+   drops from 11.13x to ordinary drift → drop FUBO from `BRIDGED_PENDING_REASSEMBLY` in
+   `tests/test_share_basis.py`** (that pin FAILS the moment the artifact lands, so the set cannot
+   be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
+   that is a separate defect on the same name and stays open.
 
 ### AUDIT — THE TIER-2 VOLUME OVERLAY (2026-08-12, operator-prompted; NO CODE CHANGED)
 

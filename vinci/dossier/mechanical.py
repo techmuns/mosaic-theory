@@ -2027,7 +2027,65 @@ def _short_interest(
 #: ~6,040 days old. The bound clears the fleet's maximum by 165 days and still catches the case it
 #: exists for by more than a decade, so it changes no existing name — verified by re-deriving all
 #: twelve before and after.
-_SHARES_MAX_AGE_DAYS = 540
+#: How old a cover-page share count may be before it is REFUSED as a different share basis.
+#:
+#: 180 DAYS, AND THE PREVIOUS 540 IS WHY (2026-08-12). The bound was first set to clear the whole
+#: committed fleet, whose counts ran 10–375 days old — but the 375 was FUBO, and FUBO is exactly the
+#: name the bound needed to catch. It went dual-class in the intervening year (10-Q of 2026-08-05
+#: states 30,204,277 Class A and 78,992,518 Class B), the undimensioned `dei` tag stopped being
+#: populated at 2025-07-31, and the extractor kept serving that final single-class total of
+#: 342,433,118. Divided into a Class-A-basis CIQ cap of $256.4M it implied $0.75/sh against an
+#: $8.33 close — an 11.1x error, and `reconcile_cap` reads it as a corporate action, which it is.
+#: So the bound was accommodating the defect it existed to prevent: Visa's 16 YEARS was caught and
+#: FUBO's ONE was not, though both are the same thing — a filer that moved to per-class tagging.
+#:
+#: 180 is two quarters. A cover-page count is restated in every 10-Q, so two quarters of silence
+#: means the tag stopped being maintained, not that the filer is slow. Measured rather than assumed:
+#: on the committed fixtures the healthy names run 10–101 days (AORT/WERN at 101) and the next value
+#: is FUBO's 375 — an empty band between them, so this sits 1.8x above the fleet and 2.1x below the
+#: defect. Face-validity, not a number tuned to an outcome.
+_SHARES_MAX_AGE_DAYS = 180
+
+#: The same bound for a filer that reports ANNUALLY — a foreign private issuer on Form 20-F (or a
+#: Canadian one on 40-F). This is the pre-2026-08-12 value, kept for exactly the population it was
+#: safe for.
+#:
+#: 180 DAYS IS A 10-Q CADENCE, AND ASSUMING IT GLOBALLY BREAKS A REAL NAME (review finding, #432).
+#: A 20-F filer restates its cover-page count ONCE a year and may file up to four months after its
+#: fiscal year end, so a perfectly current count is routinely 181–365+ days old. Measured on our own
+#: universe rather than argued: **ONON (On Holding, Swiss) files 20-F and 6-K and NO 10-Q**, and its
+#: dei count is dated 2025-12-31 — **224 days** at a 2026-08-12 reference. A flat 180 would REFUSE a
+#: current fact and strip its per-share and EV figures, usually to an unavailable CIQ bridge. The
+#: defect this bound exists for is unaffected: FUBO (377d) files 10-Q so still gets 180, and Visa
+#: (6,041d) is caught by either.
+#: 540 = one annual cycle (365) + the 4-month FPI filing window + margin, and still 11x tighter than
+#: Visa's gap.
+_SHARES_MAX_AGE_ANNUAL_DAYS = 540
+
+
+def _shares_max_age(edgar: EdgarClient, cik: str | None, as_of: date) -> int:
+    """How stale a cover-page share count may be, given how often this filer actually reports.
+
+    QUARTERLY IS THE STRICT DEFAULT, INCLUDING WHEN THE LOOKUP FAILS, and the asymmetry is
+    deliberate: refusing a good count yields UNKNOWN, which is honest and recoverable; accepting a
+    stale one puts a wrong share basis behind every per-share and EV figure on the page, which is
+    the ~4x Visa error and the 11.1x FUBO one. When we cannot establish the cadence we take the
+    tighter bound.
+
+    A filer is treated as ANNUAL only on positive evidence — a 20-F/40-F on file and no 10-Q in the
+    same window. The window is three years so a name that changed status is judged on its recent
+    behaviour, not on one old filing.
+    """
+    if not cik:
+        return _SHARES_MAX_AGE_DAYS
+    try:
+        recent = edgar.recent_filings(
+            cik, forms=("10-Q", "20-F", "40-F"), since=as_of - timedelta(days=3 * 365))
+    except Exception:
+        return _SHARES_MAX_AGE_DAYS      # cadence unknown ⇒ the strict bound, never the loose one
+    forms = {f.form for f in recent}
+    annual_only = bool(forms & {"20-F", "40-F"}) and "10-Q" not in forms
+    return _SHARES_MAX_AGE_ANNUAL_DAYS if annual_only else _SHARES_MAX_AGE_DAYS
 
 
 def _edgar_shares_outstanding(
@@ -2054,9 +2112,8 @@ def _edgar_shares_outstanding(
     if pt is None:
         return None
     end = getattr(pt, "period_end", None)
-    if isinstance(end, date) and (as_of or date.today()) - end > timedelta(
-        days=_SHARES_MAX_AGE_DAYS
-    ):
+    ref = as_of or date.today()
+    if isinstance(end, date) and ref - end > timedelta(days=_shares_max_age(edgar, cik, ref)):
         return None
     return pt.value
 
