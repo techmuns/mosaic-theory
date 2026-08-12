@@ -1166,6 +1166,13 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
     surface."""
     inst = cs.instruments
     out: list[str] = []
+    # (PR-3) THE PANEL'S AGE LEADS THE INSTRUMENTS IT DESCRIBES — the stamp-position rule: a vintage
+    # read AFTER the numbers does not work, because by then the reader has already taken them as
+    # current. Every committed schedule is 82-280 days old and the page has never said so, which is
+    # why NFLX still lists a facility terminated in February. Rendered only when the field exists;
+    # dossiers assembled before it carry None, and "unknown" would claim we looked.
+    if cs.panel_vintage is not None:
+        out.append(_fact("Debt schedule vintage", cs.panel_vintage))
     if inst.status is SourceStatus.PRESENT and inst.value:
         near = [i for i in inst.value if _near_dated(i, reference_date)]
         moved = len(inst.value) - len(near)

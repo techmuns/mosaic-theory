@@ -369,7 +369,8 @@ _+12 more broker-days in JSON_
 
 - **FCF sign:** positive [9]
 - **Free cash flow ($M):** 20404.0 [49]
-- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Nov-06-2025** — [50]  <!-- ds-table -->
+- **Debt schedule vintage:** the debt schedule is 265d old (source filed 2025-11-06); no Item 1.02 (termination of a material agreement) has been filed since [50]
+- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Nov-06-2025** — [51]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -401,7 +402,7 @@ _16 undated / later aggregate line item(s) in the appendix panel_
   - due 2050: $1,750.0M
   - undated (floor — no panel maturity): $913.0M — Commercial Paper –, Operating Leases $913.0M
   - _reconciliation: itemized $26,305.0M (panel A 2025 filed Nov-06-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months Jun-30-2026) ($M) [51]
+- **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months Jun-30-2026) ($M) [52]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event
 - **Covenants — Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Conversion:** VI Preferred Stock: 2,480,500 shares of Series B Convertible Participating Preferred Stock (UK&I Members) and 3,157,000…
@@ -412,8 +413,8 @@ _16 undated / later aggregate line item(s) in the appendix panel_
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [52]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [53]
+- **Going-concern language:** none in latest 10-Q — checked, absent [53]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [54]
   - net debt / EBITDA (CIQ, GAAP basis): 0.3x
   - total debt / EBITDA (CIQ comps, GAAP basis): 0.8x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -468,7 +469,7 @@ _3 to verify._
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-09; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [54]  <!-- ds-table -->
+- **Quarterly financials** — [55]  <!-- ds-table -->
 
 |  | FY16 | FY17 | FY17 | FY17 | FY17 | FY18 | FY18 (R) | FY18 (R) | FY18 | FY19 (R) | FY19 (R) | FY19 (R) | FY19 | FY20 | FY20 | FY20 | FY20 | FY21 | FY21 | FY21 (R) | FY21 | FY22 | FY22 | FY22 (R) | FY22 | FY23 | FY23 | FY23 | FY23 | FY24 | FY24 (R) | FY24 (R) | FY24 | FY25 | FY25 | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -482,12 +483,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-09; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 13,792; total debt 23,858; net debt 10,066; equity 34,664; net working capital -465; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $13,792M / bridge $13,792M; debt BS $23,858M / bridge $23,858M — reconcile with the implied-valuation bridge. [56]
+- **Posture:** as of FY26 ($M): cash & ST inv 13,792; total debt 23,858; net debt 10,066; equity 34,664; net working capital -465; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [56]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $13,792M / bridge $13,792M; debt BS $23,858M / bridge $23,858M — reconcile with the implied-valuation bridge. [57]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Nov-06-2025** — [50]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Nov-06-2025** — [51]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -513,8 +514,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Operating Leases | Capital Lease | $913.0M | 4.110% | NA | undated | Y | N | USD |
 | Unsecured Revolving Credit Facility | Revolving Credit | – | NA | Benchmark | 2028-05-31 | N | N | USD |
 
-- **8-Ks at instrument maturities:** 8-K at maturity 2025-12-14: filed 2025-12-23 [0001403161-25-000134] 8.01 Other Events — read for resolution [57]
-- **Covenant / contract pointers (CIK-verified execution filings)** — [58]  <!-- ds-table -->
+- **8-Ks at instrument maturities:** 8-K at maturity 2025-12-14: filed 2025-12-23 [0001403161-25-000134] 8.01 Other Events — read for resolution [58]
+- **Covenant / contract pointers (CIK-verified execution filings)** — [59]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -525,7 +526,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 1.50% Senior Notes Due June 2026 | — | — | no contract-level filing expected (aggregate line item) |
 | 1.90% Senior Notes Due April 2027 | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Unsecured Revolving Credit Facility (governing agreement)** — [59]  <!-- ds-table -->
+- **Covenant terms — Unsecured Revolving Credit Facility (governing agreement)** — [60]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -543,9 +544,9 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 665407.2 [60]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $13,792.00M, − total debt $23,858.00M [61]
-- **Implied equity at peer-median ($M, CIQ)** — [62]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 665407.2 [61]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $13,792.00M, − total debt $23,858.00M [62]
+- **Implied equity at peer-median ($M, CIQ)** — [63]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -555,15 +556,15 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [63]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [64]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 9 (5 insiders, $46.73M) — in the last 182 days · no purchase in the 3y scanned · last sale $13.61M, VICE CHAIR, CHF PPL & CORP AFF, 2026-07-30 (~0mo ago) · grants 22 · last filing 2026-07-31 · other filings 201 [64]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-15): 20.7M → 23.6M sh (+14.1%, rising) · DTC 2.8d · recent: 2026-07-15 23.6M · 2026-06-30 20.7M · 2026-06-15 21.3M · 2026-05-29 21.4M [65]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 9 (5 insiders, $46.73M) — in the last 182 days · no purchase in the 3y scanned · last sale $13.61M, VICE CHAIR, CHF PPL & CORP AFF, 2026-07-30 (~0mo ago) · grants 22 · last filing 2026-07-31 · other filings 201 [65]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-15): 20.7M → 23.6M sh (+14.1%, rising) · DTC 2.8d · recent: 2026-07-15 23.6M · 2026-06-30 20.7M · 2026-06-15 21.3M · 2026-05-29 21.4M [66]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [66]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 45200.0 vs release NO NUMERIC OUTLOOK → not cross-checked [67]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [67]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 45200.0 vs release NO NUMERIC OUTLOOK → not cross-checked [68]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-29 · assembled 2026-08-10 12:09 UTC
@@ -629,21 +630,22 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 [47] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
 [48] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
 [49] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[50] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)`
-[51] `CIQ Financials→Capital Structure Summary`
-[52] `10-Q 0001403161-26-000104`
-[53] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[54] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[55] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[57] `EDGAR 8-K submissions (±10d of instrument maturities)`
-[58] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[59] `fenced Tier-2 extraction (verbatim, source-bound)`
-[60] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10`
-[61] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-10`
-[62] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-10`
-[63] `CIQ transcript(s): Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf`
-[64] `EDGAR Form 4 (latest 0001403161-26-000107; 145 filings in the 1095d scanned; counts over 182d)`
-[65] `FINRA consolidated short interest (settle 2026-07-15); DTC = 23,581,970 short ÷ 8,303,812 screen 90d ADV`
-[66] `10-Q maturity wall vs CIQ capital panel (same window)`
-[67] `CIQ revenue guide vs release actual/outlook`
+[50] `CIQ Capital Structure Details — A 2025 filed Nov-06-2025`
+[51] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)`
+[52] `CIQ Financials→Capital Structure Summary`
+[53] `10-Q 0001403161-26-000104`
+[54] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[55] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[56] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[57] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[58] `EDGAR 8-K submissions (±10d of instrument maturities)`
+[59] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[60] `fenced Tier-2 extraction (verbatim, source-bound)`
+[61] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10`
+[62] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-10`
+[63] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-10`
+[64] `CIQ transcript(s): Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf`
+[65] `EDGAR Form 4 (latest 0001403161-26-000107; 145 filings in the 1095d scanned; counts over 182d)`
+[66] `FINRA consolidated short interest (settle 2026-07-15); DTC = 23,581,970 short ÷ 8,303,812 screen 90d ADV`
+[67] `10-Q maturity wall vs CIQ capital panel (same window)`
+[68] `CIQ revenue guide vs release actual/outlook`

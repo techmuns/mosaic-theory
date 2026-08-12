@@ -2420,6 +2420,95 @@ def _exhibit_names(http: CachedHttp, cik: str, accession: str) -> list[str]:
     return [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
 
 
+#: CIQ writes its panel vintage as "A 2025 filed Jan-23-2026" — a MONTH-NAME date, which is
+#: why `freshness._ISO` never matched it and the debt schedule has never carried an age.
+_CS_FILED = re.compile(r"filed\s+([A-Z][a-z]{2})-(\d{1,2})-(20\d\d)")
+_CS_MONTHS = {m: i for i, m in enumerate(
+    ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), start=1)}
+#: EDGAR item 1.02 — "Termination of a Material Definitive Agreement". The one item code that says,
+#: from the filer's own index and without reading a word of the filing, that an agreement the panel
+#: may still list has ended.
+_ITEM_TERMINATION = "1.02"
+
+
+def _cs_panel_filed(detail_as_of: str) -> date | None:
+    """The date the capital-structure panel's SOURCE FILING was made, or None if unstated."""
+    m = _CS_FILED.search(detail_as_of or "")
+    if m is None:
+        return None
+    try:
+        return date(int(m.group(3)), _CS_MONTHS[m.group(1)], int(m.group(2)))
+    except (KeyError, ValueError):
+        return None
+
+
+def _capital_structure_vintage(
+    edgar: EdgarClient, cik: str, detail_as_of: str, reference_date: date,
+) -> Sourced[str]:
+    """How old the debt schedule is, and whether a TERMINATION has been filed since it was taken.
+
+    THE PANEL HAS NEVER CARRIED AN AGE, and every name's is months old: measured across all 14
+    committed dossiers the source filings run **82 to 280 days** behind their own build (SMPL 280,
+    V 277, BRBR 265, NFLX 199 …). The cause is a format mismatch nobody had cause to notice —
+    `freshness._PANEL_KEY` matches `detail_as_of`, but `freshness._ISO` wants `2026-01-23` and CIQ
+    writes `Jan-23-2026`, so the key was found and the date never extracted.
+
+    IT IS DELIBERATELY NOT ROUTED INTO `panel_age`/`check_freshness`. That was the obvious fix and
+    the measurement refuses it: the export ceiling is **45 days** and ALL FOURTEEN names sit past
+    it, so teaching the freshness gate this format would raise `FreshnessError` on the whole fleet.
+    `check_freshness`'s own docstring names that failure mode — *"a guard that stops every build is
+    a freeze wearing a guard's name"*. The age belongs beside the schedule it describes, where a
+    reader is looking at the instruments, not in a gate that would stop the presses.
+
+    EVERY DATE IS AS-OF-BOUNDED. The window is `panel filed < 1.02 <= reference_date`: an
+    event after the record's as-of is not this record's to report, however true it is today.
+
+    THE TERMINATION HALF IS WHY THIS EXISTS AT ALL. NFLX's committed page still lists the Warner
+    Bros. Discovery bridge facility, whose commitments were terminated on 2026-02-27 — because the
+    panel is dated 2026-01-23 and CANNOT know. Item 1.02 is carried in the filer's own submissions
+    index, so no filing has to be read to see that one was filed after the panel was taken.
+
+    A FLAG, NEVER A DELETION, and never an attempt to say WHICH instrument died: matching a
+    termination to a facility means reading the 8-K, and a wrong match is worse than an honest
+    "something ended after this snapshot — check". The human is told what to check and where.
+    """
+    filed = _cs_panel_filed(detail_as_of)
+    if filed is None:
+        return Sourced.unknown(
+            note=f"the capital-structure panel states no source filing date ({detail_as_of!r}) — "
+                 f"its age cannot be measured, so nothing here says how current the schedule is")
+    age = (reference_date - filed).days
+    src = f"CIQ Capital Structure Details — {detail_as_of}"
+    try:
+        # BOUNDED AT BOTH ENDS, and the upper bound is the one that bit (review finding, #416).
+        # `recent_filings` returns the CURRENT submissions index, so an unbounded ">= filed" test
+        # reports whatever has been filed by the time the code RUNS — not by the record's as-of.
+        # Measured on the committed artifacts: UBER's 2026-07-29 record was flagged by an 8-K filed
+        # 2026-08-07 (+9d) and VITL's 2026-07-06 record by one filed 2026-08-06 (+31d). That is the
+        # lookahead class `close_as_of` exists to refuse one module over — it reports an event the
+        # reader could not have known, and it makes the artifact irreproducible, because
+        # re-assembling at the SAME reference_date yields a different answer as time passes.
+        terminations = [f for f in edgar.recent_filings(cik, forms=("8-K",))
+                        if _ITEM_TERMINATION in (f.items or [])
+                        and filed < f.filing_date <= reference_date]
+    except (HttpError, KeyError, ValueError):
+        return Sourced.present(
+            f"the debt schedule is {age}d old (source filed {filed}) — EDGAR was unreachable, so "
+            f"whether an agreement has been terminated since is UNCHECKED", source_ref=src)
+    if not terminations:
+        return Sourced.present(
+            f"the debt schedule is {age}d old (source filed {filed}); no Item 1.02 "
+            f"(termination of a material agreement) has been filed since", source_ref=src)
+    latest = max(terminations, key=lambda f: f.filing_date)
+    more = f" (+{len(terminations) - 1} more)" if len(terminations) > 1 else ""
+    return Sourced.present(
+        f"the debt schedule is {age}d old (source filed {filed}) AND an Item 1.02 — termination of "
+        f"a material definitive agreement — was filed {latest.filing_date}{more}, accession "
+        f"{latest.accession}. The panel predates it and cannot reflect it: an instrument listed "
+        f"below may already have been terminated. Verify before relying on this schedule.",
+        source_ref=src)
+
+
 def _covenant_pointers(
     edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument]
 ) -> Sourced[list[CovenantPointer]]:
@@ -2517,6 +2606,8 @@ def _capital_structure(
              if instruments.status is SourceStatus.PRESENT and instruments.value else [])
     cik = record.identity.cik
     pointer_rows = _covenant_pointers(edgar, http, cik or "", insts)
+    vintage = (_capital_structure_vintage(edgar, cik, detail_as_of, reference_date)
+               if cik else Sourced.unknown(note="no CIK"))
     located = (pointer_rows.status is SourceStatus.PRESENT
                and any(r.accession for r in (pointer_rows.value or [])))
     summary_str = _covenant_summary(pointer_rows)
@@ -2535,6 +2626,7 @@ def _capital_structure(
         maturity_filings=_maturity_8ks(edgar, cik or "", insts, reference_date),
         covenant_pointers=pointers_str, covenant_pointer_rows=pointer_rows,
         covenant_terms=Sourced.unknown(note=terms_note),
+        panel_vintage=vintage,
     )
 
 

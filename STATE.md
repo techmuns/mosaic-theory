@@ -12959,6 +12959,44 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **THE DEBT SCHEDULE HAD NO AGE, AND ONE STILL LISTS A DEAD FACILITY —
+  `capital_structure.panel_vintage` (2026-08-12, PR-3).** NFLX's page lists the Warner Bros.
+  Discovery bridge facility; its commitments were terminated **2026-02-27** and the panel is dated
+  **2026-01-23**, so the page cannot know.
+  **THE AGE WAS INVISIBLE TO A FORMAT MISMATCH.** `freshness._PANEL_KEY` DOES match
+  `detail_as_of` — but `freshness._ISO` wants `2026-01-23` and CIQ writes `Jan-23-2026`, so the key
+  was found and the date never extracted. Measured across all 14 committed dossiers, source filings
+  run **82–280 days** behind their own build (SMPL 280 · V 277 · BRBR 265 · NFLX 199).
+  **THE OBVIOUS FIX IS REFUSED, ON THE MEASUREMENT.** Teaching `_ISO` the CIQ format routes the
+  panel into `panel_age(kind="export")` → `check_freshness`, a GATE whose ceiling is **45 days**
+  that **all fourteen names are past** — it would raise `FreshnessError` on the entire fleet. That
+  is the failure `check_freshness`'s own docstring names ("a guard that stops every build is a
+  freeze wearing a guard's name"). The age is rendered beside the schedule instead, and
+  `test_the_panel_is_deliberately_kept_out_of_the_freshness_gate` pins the decision WITH its
+  measurement so a later "improvement" has to confront the number.
+  **THE TERMINATION HALF NEEDS NO FILING READ:** item **1.02** is carried in the filer's own
+  submissions index, so a 1.02 filed AFTER the panel's source date proves the panel cannot reflect
+  it, from dates alone. **BOUNDED AT BOTH ENDS — `panel filed < 1.02 <= reference_date`** (review
+  finding, #416): the first cut had no upper bound, and since `recent_filings` returns the CURRENT
+  submissions index it reported whatever existed when the code RAN. Two of three committed warnings
+  were LOOKAHEAD — UBER's 2026-07-29 record flagged by an 8-K filed 2026-08-07 (+9d), VITL's
+  2026-07-06 record by one filed 2026-08-06 (+31d) — the class `close_as_of` refuses one module
+  over, arriving through a different door, and it also made the artifacts irreproducible.
+  **Fleet as-of-bounded: 1 of 14 warns** — NFLX (WBD, 2026-02-27), the only one that had happened
+  by its record's date. UBER's Delivery Hero (2026-08-07) and VITL's refinancing (2026-08-06) are
+  REAL and will surface when those names are re-assembled at a later as-of (item 7). A FLAG, never
+  a deletion, and never a claim about WHICH instrument died: matching a termination to a facility
+  means reading the 8-K, and a wrong match is worse than an honest "something ended".
+- **COVENANT POINTERS FIND NOTHING FOR 4 OF 14 NAMES — wider than the one name it was raised as
+  (2026-08-12, PR-3; NOT FIXED).** FUBO, SMPL, **UBER** and VITL all return **zero**
+  `covenant_pointer_rows`, and all four carry exactly 116 covenant terms — a suspiciously identical
+  count worth its own look. UBER has **15 instruments** and finds no pointer at all. This is the
+  find-NOTHING failure, distinct from EPAM's four-years-wrong and AORT's five-and-a-half-year-stale
+  maturities, which are find-the-WRONG-one. **PR-3's warning is silent on it by construction** —
+  the vintage note keys on the CIQ panel, not on pointers, so those four names DO get an age and a
+  termination check; what they lack is any located agreement exhibit to read terms from. Diagnosing
+  it means exercising the efts full-text path (`mechanical.py:2187-2220`), which is a network
+  investigation rather than a code fix, and wants its own brief.
 - **QUARTERLY ONE-OFFS HAD NO ROUTE ONTO A PAGE — `quality.nonoperating_earnings` (2026-08-12,
   PR-4).** NFLX's Q1-2026 carries a **$2.59bn** Warner Bros. Discovery termination fee below the
   operating line (40% of pre-tax, 21% of revenue) and UBER's Q2-2026 ~**$1.39bn** of investment

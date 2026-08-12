@@ -4658,6 +4658,12 @@
         "source_ref": null,
         "status": "unknown",
         "note": "(P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event"
+      },
+      "panel_vintage": {
+        "value": "the debt schedule is 265d old (source filed 2025-11-06); no Item 1.02 (termination of a material agreement) has been filed since",
+        "source_ref": "CIQ Capital Structure Details — A 2025 filed Nov-06-2025",
+        "status": "present",
+        "note": null
       }
     },
     "capital_allocation": {

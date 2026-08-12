@@ -391,17 +391,18 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 - **FCF sign:** negative [10]
 - **Free cash flow ($M):** -53.9 [12]
-- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [51]
+- **Debt schedule vintage:** the debt schedule is 130d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since [51]
+- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [52]
 - **Maturity wall** · vs the 2026-07-06 reference:
   - due 2029: $0.0M
   - undated (floor — no panel maturity): $53.5M — Finance Lease Liabilities $10.8M, Operating Lease Liabilities $42.7M
   - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [52]
+- **Capital-structure aggregates:** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [53]
 
 ### Filing cross-checks — going concern · leverage basis
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [3]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [53]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [54]
   - net debt / EBITDA (CIQ, GAAP basis): 0.0x
   - total debt / EBITDA (CIQ comps, GAAP basis): 0.1x
   - net debt / company-adjusted LTM EBITDA ($6.7M): ~0.4x
@@ -464,7 +465,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclas
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 24 of D&A against 4 in the actuals (5.38x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [54]  <!-- ds-table -->
+- **Quarterly financials** — [55]  <!-- ds-table -->
 
 |  | Q1-19 | Q2-19 | Q3-19 | Q4-19 | Q1-20 | Q2-20 (R) | Q3-20 | Q4-20 (R) | Q1-21 | Q2-21 | Q3-21 | Q4-21 | Q1-22 | Q2-22 | Q3-22 | Q4-22 | Q1-23 | Q2-23 | Q3-23 | Q4-23 | Q1-24 | Q2-24 | Q3-24 | Q4-24 | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -478,12 +479,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [56]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [56]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [57]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [51]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [52]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -493,14 +494,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [57]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [58]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 479.5 [58]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $51.40M, − total debt $54.20M [59]
-- **Implied equity at peer-median ($M, CIQ)** — [60]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 479.5 [59]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $51.40M, − total debt $54.20M [60]
+- **Implied equity at peer-median ($M, CIQ)** — [61]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -510,15 +511,15 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [61]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [62]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 13 (12 insiders, $0.61M) · sells 3 (1 insider, $0.96M) — in the last 182 days · last purchase $0.02M, Chief People Officer, 2026-05-19 (~2mo ago) · largest purchase $0.10M, Chief Supply Chain Officer, 2026-05-14 (~3mo ago) · last sale $0.41M, 10% owner, 2026-03-02 (~5mo ago) · largest sale $188.51M, EXECUTIVE CHAIRPERSON, 2024-04-05 (~28mo ago) · grants 76 · last filing 2026-06-12 · other filings 132 [62]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.5d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M [63]
+- **Insider activity (Form 4):** Open-market buys 13 (12 insiders, $0.61M) · sells 3 (1 insider, $0.96M) — in the last 182 days · last purchase $0.02M, Chief People Officer, 2026-05-19 (~2mo ago) · largest purchase $0.10M, Chief Supply Chain Officer, 2026-05-14 (~3mo ago) · last sale $0.41M, 10% owner, 2026-03-02 (~5mo ago) · largest sale $188.51M, EXECUTIVE CHAIRPERSON, 2024-04-05 (~28mo ago) · grants 76 · last filing 2026-06-12 · other filings 132 [63]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 11.4M → 7.4M sh (-35.0%, falling) · 17.3% of shares out (EDGAR XBRL) · DTC 2.5d · recent: 2026-06-30 7.4M · 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M [64]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [64]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 775.0–800.0 vs release 775.0–800.0 → cross-source VERIFIED [65]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [65]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 775.0–800.0 vs release 775.0–800.0 → cross-source VERIFIED [66]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 07:54 UTC
@@ -585,18 +586,19 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [48] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-29-2026]`
 [49] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
 [50] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-29`
-[51] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
-[52] `CIQ Financials→Capital Structure Summary`
-[53] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[54] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[55] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[57] `fenced Tier-2 digest (P1)`
-[58] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-29`
-[59] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-29`
-[60] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-29`
-[61] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`
-[62] `EDGAR Form 4 (latest 0001193125-26-269633; 235 filings in the 1095d scanned; counts over 182d)`
-[63] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,412,289 short ÷ 3,025,106 screen 90d ADV`
-[64] `10-Q maturity wall vs CIQ capital panel (same window)`
-[65] `CIQ revenue guide vs release actual/outlook`
+[51] `CIQ Capital Structure Details — A 2025 filed Feb-26-2026`
+[52] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
+[53] `CIQ Financials→Capital Structure Summary`
+[54] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[55] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[56] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[57] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[58] `fenced Tier-2 digest (P1)`
+[59] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-29`
+[60] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-29`
+[61] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-29`
+[62] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`
+[63] `EDGAR Form 4 (latest 0001193125-26-269633; 235 filings in the 1095d scanned; counts over 182d)`
+[64] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,412,289 short ÷ 3,025,106 screen 90d ADV`
+[65] `10-Q maturity wall vs CIQ capital panel (same window)`
+[66] `CIQ revenue guide vs release actual/outlook`
