@@ -2900,15 +2900,21 @@ def _implied_expectations(
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
 
     def _direct_anchors(metric: str) -> Sourced[str]:
-        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric=metric, fy_label=fy))
-                for lab, fy in (("FY26E", "FY 2026"), ("FY27E", "FY 2027"))]
-        if all(v is None for _, v in vals):
+        # SAME DERIVATION AS THE SUMMARY COLUMNS — one helper, not a second literal pair. Two
+        # hardcoded (FY 2026, FY 2027) tuples is how the anchors and the table come to name
+        # different years on one page. NCNO/NIKE had already REPORTED FY2026, so asking Trends for
+        # it returned nothing AND the failure note named years the sheet never offered.
+        pairs = ciq_sheets.forward_estimate_fys(bundle)
+        span = "/".join(display for _t, display in pairs) or "forward-year"
+        vals = [(display, ciq_sheets.trends_fy_level(bundle, metric=metric, fy_label=trends_label))
+                for trends_label, display in pairs]
+        if not vals or all(v is None for _, v in vals):
             return Sourced.unknown(
-                note=f"no direct FY26/FY27 {metric} consensus in Estimates→Trends")
+                note=f"no direct {span} {metric} consensus in Estimates→Trends")
         txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
         return Sourced.present(
             txt + f" (direct consensus {metric} — CIQ Estimates→Trends latest snapshot)",
-            source_ref=f"CIQ Estimates→Trends (FY26/FY27 consensus {metric}, latest snapshot)")
+            source_ref=f"CIQ Estimates→Trends ({span} consensus {metric}, latest snapshot)")
 
     a26 = _anchor("FY 2026")  # LADDER-derived FY26 — kept ONLY for the G5 vintage-guard probe below
     anchors = _direct_anchors("EBITDA")  # (H7) direct Trends, the single source of truth

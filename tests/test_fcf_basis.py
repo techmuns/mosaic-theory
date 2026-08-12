@@ -174,19 +174,35 @@ def test_free_cash_flow_attaches_the_basis_note_to_the_fact_it_returns() -> None
 
 
 def test_the_row_builder_keeps_the_number_beside_the_display_string() -> None:
-    """THE OTHER WIRING. `financial_summary_annual` needs three books and a full estimates fuse, so
-    it is not drivable from a one-sheet stub; this pins the exact construction instead — the same
-    trade `test_no_false_unknown.py` documents for `assemble_one`. It matches the CALL, not a bare
-    name, so a comment mentioning `values` cannot satisfy it."""
-    import inspect
+    """THE OTHER WIRING: `CFO`/`Capex`/`FCF` must carry structured values, not just rendered cells,
+    or a consumer wanting CFO − capex is back to re-parsing "11,971" out of a string — the shape the
+    house rule forbids, and the thousands-blind `$1,101.80M` re-parse is what it costs.
 
-    from vinci.dossier import ciq_sheets
-    src = inspect.getsource(ciq_sheets.financial_summary_annual)
-    assert "values=[*nums, None, None]" in src, (
-        "the cash-flow rows no longer carry structured values — a consumer is back to re-parsing "
-        "display strings, which is the shape the house rule forbids")
-    assert "def cf_num(" in src, (
-        "the cell helper formats before returning again, so the number is discarded at source")
+    REWRITTEN TO OBSERVE THE ROW, NOT THE SOURCE (2026-08-12, PR-C). The first version asserted the
+    literal call `values=[*nums, None, None]`, and PR-C had to change that expression — the estimate
+    columns are no longer a fixed pair, so the padding became `[None] * n_est`. The pin reddened for
+    a reason with nothing to do with the behaviour it protects, which is the standing hazard of a
+    test that reads code instead of running it. It now builds the real table and checks the rows
+    themselves: a re-spelling cannot break it, and dropping the values genuinely does.
+    """
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.ciq_sheets import financial_summary_annual
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    files = LocalFolderStore(get_config().data_dir / "manual" / "ciq").files("NFLX")
+    if not files:
+        pytest.skip("licensed CIQ bundle for NFLX unavailable (never committed)")
+    table = financial_summary_annual(CiqBundle.from_files("NFLX", files)).value
+    assert table is not None
+    by_label = {r.label: r for r in table.rows}
+    for label in ("CFO ($M)", "Capex ($M)", "FCF ($M)"):
+        row = by_label.get(label)
+        assert row is not None, f"{label} is missing from the summary entirely"
+        assert row.values, f"{label} carries no structured values — a consumer must re-parse cells"
+        assert len(row.values) == len(table.columns), (
+            f"{label} carries {len(row.values)} values against {len(table.columns)} columns")
+        assert any(v is not None for v in row.values), f"{label}'s values are all None"
 
 
 def test_the_two_legs_are_read_from_the_levered_column_not_each_rows_own_latest() -> None:
