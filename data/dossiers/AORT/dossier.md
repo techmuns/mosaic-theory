@@ -433,7 +433,7 @@ _S&P issuer rating NR · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** -7.3 [12]
+- **Free cash flow ($M):** -7.3 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex — and the two carry OPPOSITE SIGNS: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $58.0M − capex $43.4M = $14.6M. One says the business generated cash this period and the other says it consumed it; the basis decides which, so name it before quoting either. [12]
 - **Debt schedule vintage:** the debt schedule is 138d old (source filed 2026-02-18); no Item 1.02 (termination of a material agreement) has been filed since [54]
 - **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-18-2026** — [55]  <!-- ds-table -->
 

@@ -207,7 +207,7 @@
         "value": 39.6,
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "status": "present",
-        "note": null
+        "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $45.9M − capex $20.3M = $25.6M — 1.55x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
       },
       "margin_trend": {
         "value": "EBITDA margin: Dec-31-2021 -118% → Dec-31-2022 (R) -68% → Dec-31-2023 (R) -28% → Dec-31-2024 1% → Dec-31-2025 17% → Mar-31-2026 (LTM) 14%; gross margin: Dec-31-2021 -28% → Dec-31-2022 (R) 4% → Dec-31-2023 (R) 19% → Dec-31-2024 31% → Dec-31-2025 36% → Mar-31-2026 (LTM) 35%; absolute EBITDA: Dec-31-2021 -180 → Dec-31-2022 (R) -140 → Dec-31-2023 (R) -85 → Dec-31-2024 5 → Dec-31-2025 74 → Mar-31-2026 (LTM) 52; absolute revenue: Dec-31-2021 152 → Dec-31-2022 (R) 204 → Dec-31-2023 (R) 307 → Dec-31-2024 380 → Dec-31-2025 428 → Mar-31-2026 (LTM) 372  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -2823,7 +2823,19 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -5.5,
+                13.371,
+                15.556,
+                -45.0,
+                -53.9,
+                -75.3,
+                2.814,
+                75.908,
+                45.943,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -2841,7 +2853,19 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                -29.8,
+                -20.3,
+                -18.6,
+                -87.9,
+                -150.9,
+                -186.8,
+                -27.7,
+                -19.8,
+                -20.3,
+                null,
+                null
+              ],
               "material": false
             },
             {
@@ -2859,7 +2883,19 @@
                 "—",
                 "—"
               ],
-              "values": [],
+              "values": [
+                null,
+                null,
+                15.626875,
+                -174.7,
+                -136.5,
+                -117.4,
+                -65.2,
+                18.443875,
+                39.62025,
+                null,
+                null
+              ],
               "material": false
             }
           ],

@@ -3266,7 +3266,19 @@ def _leverage_survival_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     if (m.quality.fcf_sign.status is SourceStatus.PRESENT
             or m.quality.free_cash_flow.status is not SourceStatus.PRESENT):
         out.append(_fact("FCF sign", m.quality.fcf_sign, _signword))
-    out.append(_fact("Free cash flow ($M)", m.quality.free_cash_flow))
+    # (PR-5) THE BASIS TRAVELS WITH THE NUMBER. `_fact` renders a note only when the fact is NOT
+    # present, so a PRESENT figure's note is written to JSON and never reaches the page — 55 of
+    # NFLX's 135 present facts carry one today. That is fine for most, and not for this one: CIQ's
+    # "Levered Free Cash Flow" disagrees with CFO − capex on 13 of 14 committed names (0.27x to
+    # 2.28x, and AORT differs in SIGN), so the figure is unreadable without its basis. Rendered
+    # here rather than by changing `_fact`, which would add ~55 lines of mostly-verbatim notes to
+    # every page.
+    fcf = m.quality.free_cash_flow
+    if fcf.status is SourceStatus.PRESENT and fcf.note:
+        out.append(f"- **Free cash flow ($M):** {fcf.value} — {_clean_note(str(fcf.note))}"
+                   f"{_cite(fcf.source_ref)}")
+    else:
+        out.append(_fact("Free cash flow ($M)", fcf))
     # (E1/E2) structured capital structure + maturity wall replace the flat liquidity string; pre-E
     # dossier.json falls back to the legacy Quality.liquidity_covenant_flags line.
     if m.capital_structure is not None:

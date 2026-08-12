@@ -421,7 +421,7 @@ _+11 more broker-days in JSON_
 - **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [48]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
-- **Free cash flow ($M):** 1064.2 [29]
+- **Free cash flow ($M):** 1064.2 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $1,367.9M − capex $110.0M = $1,257.9M — 0.85x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [29]
 - **Debt schedule vintage:** the debt schedule is 167d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since [49]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 8 undated / later aggregate line item(s) in the appendix panel [50]
 - **Maturity wall** · vs the 2026-07-29 reference:
