@@ -12959,6 +12959,39 @@ sign-off.**
   carrying only the declared path would make two dossiers built from ONE store look like two — the
   same confusion that had a corroboration check report "the store cannot see $11.56" while asking a
   store it had not identified.
+- **QUARTERLY ONE-OFFS HAD NO ROUTE ONTO A PAGE — `quality.nonoperating_earnings` (2026-08-12,
+  PR-4).** NFLX's Q1-2026 carries a **$2.59bn** Warner Bros. Discovery termination fee below the
+  operating line (40% of pre-tax, 21% of revenue) and UBER's Q2-2026 ~**$1.39bn** of investment
+  revaluation. Neither reached any surface: the CIQ unusual-items block is **ANNUAL-only**, so a
+  quarterly one-off stays invisible until it lands in a fiscal year, and **no XBRL non-operating
+  concept was read at all** (verified across two search vocabularies).
+  **DERIVED, NOT PICKED — the corpus forced it.** Reading a one-off gain tag directly does not
+  survive the filings: UBER's Q2-2026 revaluation is carried by THREE overlapping tags at THREE
+  values (`EquitySecuritiesFvNiUnrealizedGainLoss` 1,727M · `DebtAndEquitySecuritiesGainLoss`
+  1,612M · `OtherNonoperatingIncomeExpense` 1,342M), and the aggregate `NonoperatingIncomeExpense`
+  is absent for ~half the fleet and was abandoned by UBER after 2025-09-30. `pretax − operating` is
+  the same block by income-statement arithmetic, from two totals the filer states.
+  **BOTH PLANNED PREMISES WERE FALSIFIED BY MEASUREMENT** and the build followed the data instead:
+  (a) "add the two XBRL concepts" — there is no stable pair, per above; (b) "reuse the existing
+  10%-of-market-cap floor" — **it fires on NEITHER target case** (both ≈1% of cap), because that
+  floor was calibrated for balance-sheet-scale impairments, not earnings-scale one-offs. Shipped
+  instead: 20% of pre-tax AND 5% of revenue, measured on 13 names × 4 quarters.
+  **AN OUTLIER-VS-OWN-HISTORY TEST WAS TRIED FIRST AND REJECTED.** It catches NFLX (19× its median)
+  and **misses UBER (2.6×)** — UBER revalues every quarter, so a large non-operating swing IS its
+  norm and its median rises to meet it. The reader's question is not "is this unusual for them" but
+  "how much of this is operating", which holds however habitual the behaviour. Fleet today: 4 of 15
+  flag, 9 clean, 2 UNKNOWN (NCNO and WERN file no quarterly pre-tax tag).
+- **`extract_points` RETURNS STALE DATA WHEN A FILER ABANDONS ITS PREFERRED ALIAS (found
+  2026-08-12, PR-4; BROADER THAN THAT PR).** It is first-alias-**with-data**-wins, and an abandoned
+  tag still has data — just old data. **UBER stopped filing
+  `RevenueFromContractWithCustomerExcludingAssessedTax` after 2019-06-30** and has used `Revenues`
+  ever since, so asking for "revenue" returns a **seven-year-stale** quarter. PR-4's first cut
+  silently resolved its whole field to 2019 because of it. Worked around LOCALLY there
+  (`_quarterly_map` unions period coverage across aliases, keeping precedence within a period);
+  **the general defect is untouched** — any consumer taking "the latest" from a concept whose
+  preferred alias was abandoned has the same exposure. Same class as the `dep_amort` and Visa-`dei`
+  abandoned-tag findings. Not fixed fleet-wide because it would move revenue everywhere and wants
+  its own brief.
 - **ANCHORED VERBATIMS WERE CUT MID-WORD ON 40% OF THE CORPUS — bounds measured, not chosen
   (2026-08-12, PR-2).** `_attr_verbatim`'s sentence-end search window (`cause_end + 170`) silently
   degraded to a raw offset cut whenever the real sentence ended later, and `frag[:340]` cut whatever

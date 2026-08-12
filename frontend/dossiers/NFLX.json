@@ -554,6 +554,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "$2,590M of the quarter ended 2026-03-31 came from BELOW the operating line — 40% of pre-tax income, and 21% of revenue. Operating income $3,957M → pre-tax $6,547M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "3.000% Senior Notes (Bonds and Notes) undrawn/– @ 3.000% Due 2025; 3.625% Senior Notes (Bonds and Notes) 1,526 @ 3.625% Due 2027; 3.625% Senior Notes (Bonds and Notes) 1,292 @ 3.625% Due 2030; 3.625% Senior Notes (Bonds and Notes) undrawn/– @ 3.625% Due 2025; 3.875% Senior Notes (Bonds and Notes) 1,409 @ 3.875% Due 2029; 4.375% Senior Notes (Bonds and Notes) 1,000 @ 4.375% Due 2026; 4.625% Senior Notes (Bonds and Notes) 1,292 @ 4.625% Due 2029; 4.875% Senior Notes (Bonds and Notes) 1,600 @ 4.875% Due 2028; 4.875% Senior Notes (Bonds and Notes) 1,000 @ 4.875% Due 2030; 4.900% Senior Notes (Bonds and Notes) 1,000 @ 4.900% Due 2034; 5.375% Senior Notes (Bonds and Notes) 900 @ 5.375% Due 2029",
         "source_ref": "CIQ Financials→Capital Structure Details",

@@ -466,6 +466,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-3M against $-12M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank (Term Loans) undrawn/– @ 1.400%; Convertible Senior Notes (Bonds and Notes) undrawn/– @ 4.250% Due 2025; Finance Lease Obligation (Capital Lease) 3 @ 2.400%; New Delayed Draw Term Loan Facility (Term Loans) undrawn/– @ NA Due 2031; Notes Payable (Bonds and Notes) 1 @ 6.050% Due 2026; Operating Lease Liabilities (Capital Lease) 39 @ 5.900%; Secured Revolving Credit Facility (Revolving Credit) 30 @ 7.160% Due 2031; Secured Term Loan Facility (Term Loans) 190 @ 8.410% Due 2031",
         "source_ref": "CIQ Financials→Capital Structure Details",

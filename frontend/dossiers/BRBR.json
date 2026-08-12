@@ -470,6 +470,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-20M against $46M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "7.00% Senior Notes Maturing in March 2030 (Bonds and Notes) 840 @ 7.000% Due 2030; Operating Lease Liabilities (Capital Lease) 30 @ 7.000%; Revolving Credit Facility (Revolving Credit) 250 @ 5.620% Due 2030",
         "source_ref": "CIQ Financials→Capital Structure Details",

@@ -398,6 +398,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "$-11M of the quarter ended 2026-03-31 came from BELOW the operating line — 28% of pre-tax income, and 5% of revenue. Operating income $52M → pre-tax $40M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "2021 Term Loan Due 2028 (Term Loans) 687 @ 5.700% Due 2028; Operating Lease (Capital Lease) 38 @ 6.500% Due 2037; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2030; Senior Notes Due 2029 (Bonds and Notes) 350 @ 5.500% Due 2029",
         "source_ref": "CIQ Financials→Capital Structure Details",

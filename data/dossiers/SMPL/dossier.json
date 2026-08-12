@@ -518,6 +518,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-02-28 — in the latest, $-5M against $-218M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-03-01..2026-02-28",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "Credit Agreement With Barclays Bank PLC and Other Parties - Revolving Credit Facility (Revolving Credit) undrawn/– @ 4.200% Due 2029; Credit Agreement With Barclays Bank PLC and Other Parties - Term Loan (Term Loans) 249 @ 5.700% Due 2030; Operating Lease (Capital Lease) 55 @ 6.000%",
         "source_ref": "CIQ Financials→Capital Structure Details",

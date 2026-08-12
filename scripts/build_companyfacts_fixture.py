@@ -54,6 +54,12 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "SalesRevenueNet",
     # operating income + D&A
     "OperatingIncomeLoss",
+    # (PR-4) PRE-TAX income — the OTHER leg of `pretax − operating`, which IS the non-operating
+    # block. Both legs must be in the fixture or `_nonoperating_earnings` reports UNKNOWN offline
+    # and its pins check nothing.
+    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterest"
+    "AndIncomeLossFromEquityMethodInvestments",
     "DepreciationDepletionAndAmortization",
     "DepreciationAmortizationAndAccretionNet",
     "DepreciationAndAmortization",

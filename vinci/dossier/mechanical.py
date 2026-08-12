@@ -10,6 +10,7 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
+import math
 import re
 import statistics
 import time
@@ -64,7 +65,13 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import ConceptPoint, extract_points, latest_instant
+from vinci.edgar.concepts import (
+    CONCEPT_ALIASES,
+    ConceptPoint,
+    extract_points,
+    latest_instant,
+    points_for_tag,
+)
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
@@ -770,6 +777,153 @@ def _stock_performance(
     )
 
 
+# --- non-operating earnings share (EDGAR XBRL) ------------------------------------------------
+
+#: A quarter is flagged only when BOTH arms pass, and each exists because the other is blind.
+#:
+#: SHARE OF PRE-TAX says the item is decision-relevant — a fifth or more of the pre-tax result
+#: arriving from below the operating line is enough to make GAAP EPS the wrong operating anchor,
+#: which is the reader's actual question. Alone it is unusable: its denominator passes through
+#: zero, and on the live corpus that yields MVST at 1,833% and AORT at 1,607% on items of $14M
+#: and $5M.
+#:
+#: SHARE OF REVENUE is the stabiliser — revenue does not cross zero, so it says the item is large
+#: in the business's own terms rather than merely large against a thin quarter.
+#:
+#: MEASURED ON 13 NAMES x 4 QUARTERS of live companyfacts (2026-08-12). At 20%/5%: NFLX flags on
+#: 2026-03-31 ALONE (40% of pre-tax, 21% of revenue — the $2.59bn WBD termination fee) and is quiet
+#: on its other three quarters at 3-4%; UBER flags on the three quarters that are genuinely
+#: non-operating-heavy and is quiet at 4% in 2025-06; MVST flags a -$122M charge against $91M of
+#: revenue, a true positive rather than noise.
+#:
+#: AN OUTLIER TEST WAS TRIED FIRST AND REJECTED ON THE MEASUREMENT. Scoring each quarter against
+#: the company's OWN trailing median catches NFLX cleanly (19x) and MISSES UBER (2.6x) — because
+#: UBER revalues its portfolio every quarter, so a large non-operating swing IS its norm and its
+#: median rises to meet it. The reader's question is not "is this unusual for them" but "how much
+#: of this quarter's earnings is operating", which is true whether or not the company does it
+#: habitually. Flagging novelty would have exempted the name that does it every quarter.
+_NONOP_PRETAX_SHARE = 0.20
+_NONOP_REVENUE_SHARE = 0.05
+
+
+def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
+    """``{period_end: value}`` for ~quarterly points, merged ACROSS the concept's aliases.
+
+    DELIBERATELY NOT :func:`extract_points`, which is first-alias-WITH-DATA-wins. That rule is
+    right when reading one number by meaning and wrong when asking which PERIODS a concept covers,
+    because an abandoned tag still has data — just old data. UBER stopped reporting
+    `RevenueFromContractWithCustomerExcludingAssessedTax` after **2019-06-30** and has filed under
+    `Revenues` ever since, so the preferred alias hands back a seven-year-stale quarter and this
+    whole field silently resolved to 2019 (measured, not hypothesised — it is what the first cut
+    did). Alias PRECEDENCE is preserved within a period, via `setdefault`: the first alias to
+    supply a period keeps it, and only period COVERAGE is unioned.
+
+    Duration-bounded at 80-100 days rather than trusting ``fp``: EDGAR stamps quarterly points
+    inside a 10-K with ``fp="FY"``, the trapdoor `ConceptPoint.is_annual` documents at length. A
+    10-Q's own quarter and a 10-K's embedded Q4 both land correctly because DURATION is the check.
+    """
+    out: dict[date, float] = {}
+    for tag in CONCEPT_ALIASES[concept]:
+        for p in points_for_tag(facts, tag):
+            if p.period_start is None or p.value is None:
+                continue
+            if 80 <= (p.period_end - p.period_start).days <= 100:
+                out.setdefault(p.period_end, float(p.value))
+    return out
+
+
+def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
+    """How much of the latest quarter's pre-tax result came from BELOW the operating line.
+
+    DERIVED, NOT PICKED — and that distinction is the whole design. ``pretax - operating`` IS the
+    non-operating block by the arithmetic of the income statement, so it needs no choice among the
+    overlapping one-off tags a filer may or may not use (see `pretax_income` in
+    `vinci.edgar.concepts` for the three-tags-three-values measurement that ruled that route out).
+    Both legs are totals the filer states, for one period, from one filing.
+
+    WHY A READER NEEDS IT: a quarter whose earnings are substantially non-operating cannot anchor a
+    P/E or an EPS-based valuation. NFLX's Q1-2026 carries a $2.59bn Warner Bros. Discovery
+    termination fee booked below the operating line — 40% of pre-tax — and UBER's Q2-2026 carries
+    ~$1.39bn of investment revaluation. Neither is visible anywhere on today's pages: the CIQ
+    unusual-items block is ANNUAL-only, so a quarterly one-off has no route to the surface until it
+    lands in a fiscal year, and no XBRL non-operating concept was read at all before this.
+    """
+    try:
+        facts = edgar.companyfacts(cik)
+    except (HttpError, KeyError):
+        return Sourced.unknown(note="EDGAR companyfacts unavailable")
+    op = _quarterly_map(facts, "operating_income")
+    pre = _quarterly_map(facts, "pretax_income")
+    rev = _quarterly_map(facts, "revenue")
+    missing = " + ".join(n for n, m in (("operating income", op), ("pre-tax income", pre),
+                                        ("revenue", rev)) if not m)
+    if missing:
+        return Sourced.unknown(
+            note=f"no quarterly {missing} in EDGAR XBRL — the non-operating share cannot be "
+                 f"derived without all three from ONE period")
+    # ONE PERIOD BY CONSTRUCTION, not by checking afterwards. Taking each concept's own latest
+    # quarter and then asserting they agree is the same discipline stated worse: one stale
+    # straggler refuses a name whose data is fine (it refused UBER, the case this exists for).
+    # Intersecting first asks the right question — the newest quarter for which ALL THREE totals
+    # were filed — so the subtraction is within one period because there was never another option.
+    common = sorted(d for d in (set(op) & set(pre) & set(rev)) if d <= reference_date)
+    if not common:
+        return Sourced.unknown(
+            note="operating income, pre-tax income and revenue never share a quarter in EDGAR "
+                 "XBRL — subtracting across periods would not be a non-operating figure")
+    # THE TRAILING FOUR QUARTERS, not just the newest — because the figure a reader is about to
+    # divide by is an LTM one. NFLX settled it: the $2.59bn Warner Bros. Discovery termination fee
+    # lands in Q1-2026, so a latest-quarter-only read reports Q2's ordinary -$124M and says
+    # nothing, while the LTM EPS under a P/E still carries the whole fee. The analyst's objection
+    # was to FY26 GAAP EPS, which is exactly this window.
+    window = common[-4:]
+    src = f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}"
+
+    def _arms(d: date) -> tuple[float, float | None, float | None]:
+        """``(gap, share of pre-tax, share of revenue)``.
+
+        A ZERO PRE-TAX QUARTER IS THE MOST RELEVANT CASE, NOT AN ABSENT ONE (review finding, #415).
+        Returning None for the share there dropped the quarter from `material` and printed "no
+        material non-operating item" — but pre-tax of exactly zero with a non-zero gap means the
+        below-the-line block precisely offsets operating income, which is the strongest possible
+        statement that GAAP EPS is not an operating anchor. The share is genuinely undefined, so it
+        is `inf`: the pre-tax arm passes, the REVENUE arm still has to carry the materiality, and
+        the existing >1.5 branch renders the "nets near zero" wording instead of a nonsense
+        percentage. A zero gap on zero pre-tax is a true nothing and stays 0.0.
+        """
+        g = pre[d] - op[d]
+        share = (abs(g) / abs(pre[d]) if pre[d] else (math.inf if g else 0.0))
+        return (g, share, (abs(g) / abs(rev[d]) if rev[d] else None))
+
+    material = [(d, g, s, r) for d, g, s, r in ((d, *_arms(d)) for d in window)
+                if s is not None and r is not None
+                and s >= _NONOP_PRETAX_SHARE and r >= _NONOP_REVENUE_SHARE]
+    if not material:
+        end = window[-1]
+        gap = _arms(end)[0]
+        return Sourced.present(
+            f"no material non-operating item in the four quarters to {end} — in the latest, "
+            f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax", source_ref=src)
+    # THE LARGEST RELATIVE TO REVENUE, not the most recent: with several material quarters the one
+    # that most distorts a trailing figure is the one worth naming, and revenue is the arm that
+    # stays comparable across them — the pre-tax share does not, its denominator moves.
+    end, gap, share, rev_share = max(material, key=lambda m: m[3] or 0.0)
+    assert share is not None and rev_share is not None
+    # THE PERCENTAGE IS SUPPRESSED WHEN ITS DENOMINATOR IS THIN. A quarter netting to near-zero
+    # pre-tax yields a share in the hundreds or thousands, which reads as a data error and buries
+    # the figure that is real; the revenue-relative half still carries the magnitude.
+    share_txt = (f"{share:.0%} of pre-tax income" if share <= 1.5
+                 else "more than the entire pre-tax result, which nets near zero")
+    where = ("the latest quarter" if end == window[-1]
+             else "an earlier quarter still inside the trailing four")
+    return Sourced.present(
+        f"${gap / 1e6:,.0f}M of the quarter ended {end} came from BELOW the operating line — "
+        f"{share_txt}, and {rev_share:.0%} of revenue. Operating income ${op[end] / 1e6:,.0f}M → "
+        f"pre-tax ${pre[end] / 1e6:,.0f}M. This is {where}, so a trailing EPS or P/E spanning it "
+        f"is not an operating anchor.",
+        source_ref=src)
+
+
 # --- share-count trend + P/E-basis sanity (EDGAR XBRL) ----------------------------------------
 
 _SHARES_WINDOW_DAYS = 730  # trailing ~2y — current capital-allocation posture, not a stale 7y delta
@@ -1442,6 +1596,11 @@ def _quality(
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
+            if record.identity.cik
+            else Sourced.unknown(note="no CIK")
+        ),
+        nonoperating_earnings=(
+            _nonoperating_earnings(edgar, record.identity.cik, reference_date)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),

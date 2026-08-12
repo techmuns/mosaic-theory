@@ -558,6 +558,12 @@
         "status": "unknown",
         "note": "<2 XBRL shares points in the trailing ~2y (2 total) — no current trend"
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-03-31 — in the latest, $-60M against $7,174M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-03-31..2026-03-31",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "0.75% Senior Notes Due August 2027 (Bonds and Notes) 500 @ 0.750% Due 2027; 1.10% Senior Notes Due February 2031 (Bonds and Notes) 1,000 @ 1.100% Due 2031; 1.50% Senior Notes Due June 2026 - EUR (Bonds and Notes) 1,587 @ 1.500% Due 2026; 1.90% Senior Notes Due April 2027 (Bonds and Notes) 1,500 @ 1.900% Due 2027; 2.00% Senior Notes Due August 2050 (Bonds and Notes) 1,750 @ 2.000% Due 2050; 2.00% Senior Notes Due June 2029 - EUR (Bonds and Notes) 1,176 @ 2.000% Due 2029; 2.05% Senior Notes Due April 2030 (Bonds and Notes) 1,500 @ 2.050% Due 2030; 2.25% Senior Notes Due May 2028 - EUR (Bonds and Notes) 1,470 @ 2.250% Due 2028; 2.375% Senior Notes Due June 2034 - EUR (Bonds and Notes) 764 @ 2.375% Due 2034; 2.70% Senior Notes Due April 2040 (Bonds and Notes) 1,000 @ 2.700% Due 2040; 2.75% Senior Notes Due September 2027 (Bonds and Notes) 750 @ 2.750% Due 2027",
         "source_ref": "CIQ Financials→Capital Structure Details",

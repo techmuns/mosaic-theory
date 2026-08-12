@@ -558,6 +558,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-12M against $141M pre-tax",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "Long Term Debt - Other (Other Borrowings) 0 @ NA; Operating Lease Liabilities (Capital Lease) 119 @ 4.800%; Revolving Credit Facility (Revolving Credit) 25 @ 4.500% Due 2030",
         "source_ref": "CIQ Financials→Capital Structure Details",

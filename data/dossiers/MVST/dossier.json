@@ -251,6 +251,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": "$-122M of the quarter ended 2025-06-30 came from BELOW the operating line — 115% of pre-tax income, and 134% of revenue. Operating income $16M → pre-tax $-106M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor.",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2024-09-30..2025-09-30",
+        "status": "present",
+        "note": null
+      },
       "liquidity_covenant_flags": {
         "value": "Convertible Bond - CNY (Bonds and Notes) 42 @ 3.000% - 4.000% Due 2027; Convertible Loan With Shareholder - Delayed Draw Term Loan (Term Loans) 13 @ NA Due 2026; Convertible Loan With Shareholder - Initial Term Loan (Term Loans) 12 @ NA Due 2026; Loan Facilities Agreement With a Group of Lenders Led by a Bank in China (Term Loans) 43 @ NA Due 2026; Long-term Loan Agreement With a Chinese Bank (Term Loans) 14 @ 2.700% Due 2027; Notes Payable (Bonds and Notes) 78 @ NA; Operating Lease Liabilities (Capital Lease) 17 @ 5.000%; Short-term Loan Agreements and Bank Facilities With Chinese Banks (Term Loans) 50 @ 2.400% - 4.850% Due 2027",
         "source_ref": "CIQ Financials→Capital Structure Details",

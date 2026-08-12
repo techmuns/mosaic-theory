@@ -267,6 +267,12 @@
         "status": "present",
         "note": null
       },
+      "nonoperating_earnings": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no quarterly pre-tax income in EDGAR XBRL — the non-operating share cannot be derived without all three from ONE period"
+      },
       "liquidity_covenant_flags": {
         "value": "Financing Obligations - Lease (Capital Lease) 51 @ 6.800%; Operating Lease Liabilities (Capital Lease) 14 @ 6.800% Due 2034; Senior Secured Revolving Credit Facility (Revolving Credit) 214 @ 5.680% Due 2029",
         "source_ref": "CIQ Financials→Capital Structure Details",
