@@ -236,3 +236,108 @@ def test_reconstruction_logs_no_disposition_of_its_own(
     b = baskets_from_mirror(_mirror("defense"))
     assert b.ratified == (), "a BUY leg appeared out of a mirror that has none"
     assert set(b.passed) == set(b.all_committed)
+
+
+# --------------------------------------------------------------------------------------------
+# The mirror↔driver binding (the gap recorded on #412, closed 2026-08-12)
+# --------------------------------------------------------------------------------------------
+
+def test_every_declared_binding_points_at_a_mirror_that_exists() -> None:
+    """A DECLARED binding must point somewhere real — a driver naming a mirror that does not exist
+    passes import and only surfaces when someone re-measures.
+
+    RESTRICTED TO DECLARED BINDINGS (review P2 on #444). `mirror_slug` is OPTIONAL precisely
+    because a real driver can be registered before its theme page is built, and
+    `baskets_from_mirror` refuses that driver at USE time. Requiring every spec to resolve a file
+    here re-imposed at import the very requirement the optional field removed: adding a legitimate
+    pre-page driver failed this test. The run-time refusal is pinned separately, so nothing is lost
+    by skipping the undeclared ones here."""
+    from vinci.themes.drivers import DRIVER_SPECS
+
+    declared = {k: s for k, s in DRIVER_SPECS.items() if s.mirror_slug}
+    assert declared, "no driver declares a mirror — this pin is checking an empty set"
+    for key, spec in sorted(declared.items()):
+        p = MIRRORS / f"{spec.mirror_slug}.json"
+        assert p.is_file(), f"{key} is bound to {p.name}, which does not exist"
+        assert json.loads(p.read_text())["slug"] == spec.mirror_slug, (
+            f"{key}: the file at {p.name} carries a different slug than the registry expects — "
+            f"the binding reads the slug FIELD, not the filename, so this would refuse every "
+            f"legitimate re-measure")
+
+
+def test_the_binding_is_injective_no_two_drivers_share_a_mirror() -> None:
+    """Two drivers pointing at one mirror would make the check pass for both while the measurement
+    is right for at most one of them."""
+    from vinci.themes.drivers import DRIVER_SPECS
+
+    # DECLARED bindings only: two UNDECLARED drivers both carry "", which is not two drivers
+    # claiming one mirror — it is two drivers claiming none (review P2 on #444).
+    slugs = [s.mirror_slug for s in DRIVER_SPECS.values() if s.mirror_slug]
+    assert len(slugs) == len(set(slugs)), f"a mirror is claimed by more than one driver: {slugs}"
+
+
+def test_a_mirror_measured_under_another_drivers_key_is_refused() -> None:
+    """THE DEFECT ITSELF (#412). Before this, `--from-mirror frontend/themes/defense.json
+    --driver ai-datacenter` printed an AI-datacenter header over 108 DEFENSE names and measured
+    them — and nothing could catch it, because the mirror carries no registry key: its `driver`
+    field is a human label ("AI-datacenter value chain") and its `slug` is not the key either
+    ("defense" vs "defense-demand-shift").
+
+    The binding lives in `DriverSpec.mirror_slug` rather than in the mirrors, because the three
+    frozen `themes/*.json` are byte-identical thereafter by rule (RUNBOOKS §e), and a driver's
+    identity is the registry's business."""
+    with pytest.raises(ValueError, match="bound to"):
+        baskets_from_mirror(_mirror("defense"), driver="ai-datacenter")
+
+    # the RIGHT pairing still reconstructs
+    b = baskets_from_mirror(_mirror("defense"), driver="defense-demand-shift")
+    assert b.driver == "defense-demand-shift" and len(b.all_committed) == 108
+
+
+@pytest.mark.parametrize("slug", FROZEN)
+def test_each_committed_mirror_binds_to_exactly_one_driver(slug: str) -> None:
+    """Corpus check, both directions: each mirror reconstructs under its own driver and is refused
+    under every other."""
+    from vinci.themes.drivers import DRIVER_SPECS
+
+    owner = next(k for k, s in DRIVER_SPECS.items() if s.mirror_slug == slug)
+    assert baskets_from_mirror(_mirror(slug), driver=owner).driver == owner
+    for other in DRIVER_SPECS:
+        if other == owner:
+            continue
+        with pytest.raises(ValueError, match="bound to"):
+            baskets_from_mirror(_mirror(slug), driver=other)
+
+
+def test_a_registered_driver_with_no_declared_mirror_is_refused(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """MUTATION FINDING — the sixth pin in this session that proved nothing, same family as the
+    rest: it exercised an ADJACENT case rather than the one the guard handles.
+
+    The first version passed a driver ABSENT from the registry, so `spec is None` and NEITHER
+    branch ran — deleting the undeclared-binding check left it green. The case that matters is a
+    driver that IS registered and declares no `mirror_slug`: `mirror_slug` is optional (a
+    DriverSpec can exist before its theme page does), so "cannot be verified" must refuse rather
+    than read as "verified" — that is how a guard stops guarding.
+    """
+    from vinci.themes import drivers
+    from vinci.themes.schemas import DriverSpec
+
+    unbound = DriverSpec(key="unbound-driver", description="d", tie_taxonomy="t",
+                         prefilter_terms=("x",))
+    assert unbound.mirror_slug == "", "the default is no longer the undeclared case"
+    monkeypatch.setitem(drivers.DRIVER_SPECS, "unbound-driver", unbound)
+
+    with pytest.raises(ValueError, match="declares no `mirror_slug`"):
+        baskets_from_mirror(_mirror("defense"), driver="unbound-driver")
+
+
+def test_an_unregistered_driver_key_is_carried_not_replaced() -> None:
+    """A driver absent from the registry has nothing to bind against. `--driver` is gated on the
+    registry by argparse `choices`, so this is unreachable through the CLI; asserted because the
+    function is callable directly and the caller's key must not be silently swapped for the
+    mirror's human label."""
+    b = baskets_from_mirror(_mirror("defense"), driver="not-a-registered-driver")
+    assert b.driver == "not-a-registered-driver", (
+        "the caller's key was silently replaced rather than carried")
