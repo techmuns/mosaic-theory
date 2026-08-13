@@ -12055,7 +12055,18 @@ one evidence-backed leg at a time.
   covenant work needs both halves. **CLOSED 2026-08-12 by the NFLX/UBER re-assembly: UBER now
   carries 8 rows** — 4 accession-bound (2028/2025 convertible-note credit agreements, each with an
   `ex10-1` exhibit) + 4 honestly marked *"no contract-level filing expected (aggregate line item)"*.
-- **`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE (found 2026-08-12,
+- **~~`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE~~ — FIXED
+  2026-08-13, and it was never merely local.** Recorded as a local-only quirk that "passes in CI";
+  #442's artifact commit then reddened CI itself, because the 2026-08-12 screen admitted a name
+  whose SIC label reads *"other building materials dealers"*. The scan was at the WRONG LAYER — it
+  word-searched the entire rendered queue body for direction words, so any other column's text was
+  a false positive. `_vol_cells` already isolated the column the rule is about; the scan now uses
+  it, plus the sparkline's `aria-label` (a direction smuggled into the accessible name is the same
+  claim). Both surfaces mutation-tested: a direction word in the cell reddens 3 tests, one in the
+  label reddens with `'building' names a direction in the sparkline's accessible label`.
+  **THE LESSON: "fails only on my machine" was a misdiagnosis of "scans the wrong thing".**
+  Original entry:
+- **`test_the_volume_cell_draws_a_trend_sparkline…` WAS STORE-STATE SENSITIVE (found 2026-08-12,
   PR-C).** It scans the whole rendered queue body for direction words (`building`, `fading`,
   `rising`…) and reddens on the SIC label *"other building materials dealers"* — an industry
   description, not a claim derived from the volume series. The string is in NO committed file; it is

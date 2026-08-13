@@ -276,9 +276,23 @@ def test_the_volume_cell_draws_a_trend_sparkline_when_the_series_is_present() ->
         "the sparkline is a silent decoration — it needs a role and a described series")
     for c in cells[:5]:
         assert re.fullmatch(r"\d+\.\d+×", c), f"the cell text is no longer the bare ratio: {c!r}"
-    for word in ("building", "fading", "rising", "falling", "accumulat"):
-        assert word not in body.lower(), (
-            f"'{word}' derived from the volume series — draw the line, do not name a direction")
+    # SCANNED IN THE VOLUME CELL, NOT THE WHOLE PAGE (2026-08-13). The claim is that the volume
+    # column DRAWS rather than names a direction; scanning the entire rendered body made any other
+    # column's text a false positive, and the 2026-08-12 screen admitted a name whose SIC label
+    # reads "other building materials dealers" — an INDUSTRY description, nothing to do with the
+    # volume series. That reddened CI on an artifact commit and said nothing about the rule.
+    # `_vol_cells` already isolates the column this test is about.
+    for cell in cells:
+        for word in ("building", "fading", "rising", "falling", "accumulat"):
+            assert word not in cell.lower(), (
+                f"'{word}' derived from the volume series — draw the line, do not name a "
+                f"direction: {cell!r}")
+    # …and the aria-label describes the SERIES, so a direction word smuggled in there would be the
+    # same claim through the accessible name. Checked on the label text alone.
+    for label in re.findall(r'aria-label="([^"]*)"', body):
+        for word in ("building", "fading", "rising", "falling", "accumulat"):
+            assert word not in label.lower(), (
+                f"'{word}' names a direction in the sparkline's accessible label: {label!r}")
 
 
 def test_a_snapshot_without_the_trend_series_still_renders_the_ratio() -> None:
