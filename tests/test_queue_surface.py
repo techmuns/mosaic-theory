@@ -40,14 +40,26 @@ VOL_COLUMN_LABEL = "Volume vs 90d"
 RETIRED_WORDS = ("distribution", "exhausted")
 
 # The renderer touches only `root.innerHTML` plus two document sinks, so a handful of plain objects
-# stands in for the DOM. `fetch` is redirected onto the committed files: ./snapshots/x is served
-# from data/snapshots/x, so this runs without a build.py deploy copy in the worktree.
+# stands in for the DOM. `fetch` is redirected onto the repo: ./views/x from frontend/, and
+# ./snapshots/x from data/snapshots/ — so this runs without a build.py deploy copy in the worktree.
+#
+# SNAPSHOTS COME FROM THE COMMITTED FILES ONLY, NEVER frontend/snapshots/ (2026-08-13). That
+# directory is a gitignored scratch copy written by `frontend/build.py`, and it used to win the
+# lookup: CI (which never builds) read the committed queue while any developer who had built the
+# frontend read their scratch copy, so THE SAME TEST ON THE SAME COMMIT MEASURED DIFFERENT DATA.
+# Measured at the time of this change: scratch 331 rows, committed 292 — the scratch copy was also
+# STALE, predating two re-screens. That divergence is how the "building" industry-label collision
+# stayed invisible to CI for a day and then reddened the gate on an unrelated PR, and it cuts the
+# other way too: a test can pass locally while broken in CI. The committed file is the artifact the
+# deploy serves, so it is the one worth asserting on.
 _DRIVER = """
 import { readFile } from 'node:fs/promises';
 const ROOT = __ROOT__, DATA = __DATA__, MODE = __MODE__;
 globalThis.fetch = async (p) => {
   const rel = String(p).replace(/^\\.\\//, '').replace(/^\\//, '');
-  for (const base of [ROOT, DATA]) {
+  // snapshots: committed only. Everything else (views, libs) legitimately lives under frontend/.
+  const bases = rel.startsWith('snapshots/') ? [DATA] : [ROOT, DATA];
+  for (const base of bases) {
     try {
       let buf = await readFile(base + '/' + rel, 'utf8');
       if (MODE && rel.endsWith('ranked_queue.jsonl')) {
@@ -99,14 +111,17 @@ console.log(JSON.stringify({
 """
 
 
-def _render(mode: str = "") -> dict[str, str]:
-    """Run the real ranker view over the committed queue; return its head/body/page html."""
+def _render(mode: str = "", *, root: pathlib.Path | None = None) -> dict[str, str]:
+    """Run the real ranker view over the committed queue; return its head/body/page html.
+
+    ``root`` overrides the frontend directory — used ONLY by the determinism pin, which points it
+    at a decoy carrying its own `snapshots/` to prove that directory is never read."""
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     if not QUEUE.exists():
         pytest.skip("no committed ranked_queue.jsonl in this worktree")
     script = (_DRIVER
-              .replace("__ROOT__", json.dumps(str(FRONTEND)))
+              .replace("__ROOT__", json.dumps(str(root or FRONTEND)))
               .replace("__DATA__", json.dumps(str(ROOT / "data")))
               .replace("__MODE__", json.dumps(mode)))
     proc = subprocess.run(["node", "--input-type=module", "-e", script],
@@ -352,3 +367,37 @@ def test_sorting_from_the_keyboard_does_not_throw_focus_away() -> None:
     assert "renderHead()" in body and ".focus()" in body, (
         "the sort handler re-renders the header without restoring focus — a keyboard sort silently "
         f"drops the user to <body>:\n{body}")
+
+
+def test_the_render_never_reads_the_gitignored_scratch_snapshots(
+    tmp_path: pathlib.Path,
+) -> None:
+    """THE DETERMINISM PIN (2026-08-13). `frontend/snapshots/` is a gitignored scratch copy written
+    by `frontend/build.py`, and it used to WIN the fetch lookup over the committed file. CI never
+    builds, so CI read `data/snapshots/`; any developer who had built the frontend read their own
+    copy — so the same test on the same commit measured different data. Measured when this was
+    fixed: scratch 331 rows against committed 292, and the scratch copy was STALE, predating two
+    re-screens.
+
+    That is how the "building" industry-label collision stayed invisible to CI for a day and then
+    reddened the gate on an unrelated PR. It cuts the other way too: a test can pass locally while
+    broken in CI, and neither result can be trusted alone.
+
+    Pinned FUNCTIONALLY rather than by reading the driver's source: a decoy root carries its own
+    `snapshots/ranked_queue.jsonl` holding ONE row, and the render must still produce the committed
+    queue. A source-level assertion would rot on any reformatting and would not prove the fetch
+    actually ignores the directory."""
+    decoy = tmp_path / "frontend"
+    (decoy / "snapshots").mkdir(parents=True)
+    # the views and libs must still resolve — only the snapshot lookup is under test
+    for name in ("views", "lib"):
+        (decoy / name).symlink_to(FRONTEND / name)
+    one_row = QUEUE.read_text().splitlines()[0]
+    (decoy / "snapshots" / "ranked_queue.jsonl").write_text(one_row + "\n")
+
+    committed_rows = len([ln for ln in QUEUE.read_text().splitlines() if ln.strip()])
+    body = _render("trend", root=decoy)["body"]
+    assert len(_rows(body)) == committed_rows, (
+        f"the render produced {len(_rows(body))} rows against {committed_rows} committed — it read "
+        f"the decoy scratch snapshot (1 row) instead of data/snapshots/, so this test file means "
+        f"something different on a machine that has run frontend/build.py than it does in CI")
