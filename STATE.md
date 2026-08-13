@@ -13860,6 +13860,65 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **A POINT GUIDE INSIDE ITS OWN ROUNDING NOISE IS REFUSED, NOT ADJUDICATED (2026-08-13, #443).**
+  Analyst finding on the committed NFLX page: the guidance table read `FQ2 2026 MISSED` for revenue
+  while Netflix's own filing called the quarter in line. **VERIFIED AGAINST THE RAW SHEET:** CIQ
+  states the guide as a POINT (12,574.0) and the actual landed 0.11% below (12,559.9); the delivery
+  rule was `actual ≥ floor` with ZERO tolerance, so a sub-rounding shortfall printed as a miss.
+  Same shape FQ3-2025 (−0.14%).
+  **THE APPROVED FIX (refuse the point CLASS) WAS MEASURED AND REJECTED.** Fleet census across all
+  19 workbooks, taken BEFORE any rule was written: **2,067 resolved calls · 941 (46%) on point
+  guides · 142 inside ±0.5% of the point (25 MISSED / 117 MET) · 119 point-misses worse than −5%.**
+  A blanket refusal erases 46% of the fleet's delivery evidence, hides all 119 real misses, and
+  zeroes ONON outright (its guides are ALL points → record 0/0). **The undecidable thing is the
+  CALL IN THE BAND, not the point class.**
+  **THE RULE:** `_POINT_DECISION_BAND = 0.005` — an in-band point call leaves the record's
+  numerator AND denominator, is disclosed on the record line (`60/65 · 18 at-guide (±0.5% of a
+  point, not adjudicated)`), and `AT GUIDE` is a THIRD most-recent state. Ranges are untouched — the
+  company stated its own band, and the band IS the tolerance. Direction still comes from
+  `_GUIDANCE_HIGHER_IS_DELIVERY` (#437); a zero point adjudicates by sign.
+  **NOT OUTCOME-TUNED, AND THE DIRECTION PROVES IT:** the band strips 117 METs vs 25 MISSes, so
+  fleet hit-rates FALL on net. 0.5% is face-validity — the scale of a company's own "in line"
+  language, with both live false-MISSes well inside it.
+  **A THIRD STATE ANNOUNCED UNDER THE SECOND STATE'S NAME IS TWO STATES (review finding).** The
+  summary introduced every verdict with `most recent resolved:`, so the new state printed
+  `most recent resolved: FQ2 2026 AT GUIDE (… not adjudicated)` — self-contradictory, and it implied
+  the refused call had entered the delivery record. One NEUTRAL label
+  (`most recent guidance outcome:`) now carries all three.
+  **MUTATION-TESTED AGAINST BOTH REJECTED DESIGNS:** zero-tolerance restored → 5 pins redden;
+  blanket class-refusal → 4 redden (incl. ONON-keeps-a-record). Artifact pass under the PR-A guard:
+  14/14 updated, **0 latest_guide moved**.
+  **FLEET SCALABILITY OF THE UBER/NFLX FIXES, swept in the same diagnosis (all 14 names):** FCF
+  basis note 14/14 · multi-quarter non-op live on TWO names (UBER 3, MVST 4) · every snapshot
+  reconciles or states its cap gap (VITL +18.5%, UBER −13.2%, VRRM −11.1%) · split flag on NFLX
+  alone (correct) · panel vintage 14/14 with Item 1.02 flags on NFLX/UBER/VITL · P/E percentile
+  withheld on 7, computed on 7. **No fix is name-shaped.**
+- **FLEET RE-ASSEMBLED ON THE MERGED FIXES (2026-08-13, #447).** All 14 names clean at
+  **reference_date 2026-08-12** (`{'2026-08-12': 14}`), carrying #442/#443/#444/#446. The
+  point-guide refusal is now LIVE on the pages: **20 at-guide disclosures across 8 names** (AORT 1 ·
+  CNXC 2 · EPAM 4 · IT 3 · NFLX 3 · SMPL 3 · V 2 · VRRM 2); NFLX reads `actual ≥ floor 60/65 · 18
+  at-guide` with `FQ2 2026 AT GUIDE` in place of the false MISSED; no page says "most recent
+  resolved". Preconditions checked first: the as-of resolves from a real screen-run manifest and
+  #442's guard found no identities `first_seen` after it.
+  **ONE PIN MOVED, AND ITS PREMISE WAS AN LLM CHOICE.** `test_p6_ordered_points_…` asserted that
+  **MVST** carries a cited EX-99.1-reconciliation bear point; its re-rolled synthesis cited the 10-Q
+  instead (MVST still carries 9 cited bear points — the machinery is fine, the SOURCE moved). The
+  ORDERING invariants (rank monotonicity, crux prefix, py↔js parity) are structural and passed
+  throughout. The presence clause now ACCUMULATES across the tickers under test and asserts the
+  shape exists SOMEWHERE (VRRM 3, EPAM 1), with a message to re-point rather than delete if both
+  stop citing releases. Mutation-tested: an unmatchable shape reddens instead of passing vacuously.
+  **Which company supplies an LLM-composed shape is not an invariant; that some name does, is.**
+- **STATE ENTRIES WERE LOST TWICE BY REBASE, AND THE RECORD WAS LYING (2026-08-13).** Both entries
+  above were written at build time and **silently dropped when their branches were rebased onto a
+  moved `main`** — #443 MERGED with no STATE entry at all (its merge commit does not touch
+  STATE.md), and #447's went the same way. Caught only by reviewing my own PR's file list and
+  noticing STATE.md absent from a 58-file artifact pass.
+  **WHY IT HAPPENS:** every build appends near the same region, so a rebase onto a `main` that
+  gained entries conflicts there every time, and resolving toward the incoming side drops the local
+  addition without a conflict marker surviving to review.
+  **THE CHECK THAT CATCHES IT:** after any rebase, `git diff origin/main -- STATE.md` must be
+  non-empty for a build that changed reality. A green suite does NOT catch this — no test reads
+  STATE.md — which is exactly why the session ritual makes it a standing step rather than a guard.
 - **THE RETENTION LAYER WAS DARK IN PRODUCTION — NOW WIRED INTO `run_weekly` (2026-08-13).**
   Diagnosed after #441 recorded "`write_manifest` has no production caller" and recommended wiring
   it into `_cmd_screen`. **THE RECOMMENDATION WAS WRONG ON BOTH COUNTS, and the diagnosis is the
