@@ -1513,6 +1513,26 @@ _GUIDANCE_HIGHER_IS_DELIVERY: dict[str, bool] = {
     "Effective Tax Rate %": False,
     # "Depreciation & Amortization" is deliberately ABSENT — direction undefined.
 }
+
+#: The zone in which a POINT guide's MET/MISSED is REFUSED as undecidable — |actual − point| within
+#: this fraction of the point. A point guide is a FORECAST, not a floor: NFLX guided FQ2-2026
+#: revenue at 12,574 (a point), delivered 12,559.9 — 0.11% below — and the page printed "MISSED"
+#: while the company's own filing called the quarter in line with guidance. Adjudicating a point
+#: with zero tolerance manufactures verdicts at sub-rounding magnitudes, IN BOTH DIRECTIONS.
+#:
+#: MEASURED ACROSS ALL 19 WORKBOOKS BEFORE THE RULE WAS WRITTEN: 2,067 resolved calls, 941 (46%) on
+#: point guides; 142 sit inside ±0.5% of the point — 25 read MISSED and 117 read MET. Removing the
+#: band therefore LOWERS the fleet's hit-rates on net (117 METs stripped vs 25 MISSes), which is
+#: the direction that rules out outcome-flattering. The 119 point-misses worse than −5% keep their
+#: verdicts: the refusal is of the CALL IN THE BAND, never of the point class — a blanket refusal
+#: would erase 46% of the fleet's delivery evidence and hide every one of those real misses (and
+#: ONON, whose guides are all points, would lose its record entirely).
+#:
+#: 0.5% is face-validity, not a tuned number: it is the scale at which a company's own language
+#: ("in line", "approximately") covers a point forecast, and both live false-MISSes (−0.11%,
+#: −0.14%) sit well inside it. RANGE guides are untouched — the company stated its own band, and
+#: the band IS the tolerance.
+_POINT_DECISION_BAND = 0.005
 _REV_WINDOWS: tuple[tuple[str, str], ...] = (
     ("1m", "Last Month"), ("2m", "Last 2 Months"), ("3m", "Last 3 Months"),
 )
@@ -2204,10 +2224,11 @@ class _GuidanceRead(NamedTuple):
     dated: date  # the latest guide's date
     stale_days: int | None  # days old when older than stale_after_days (else None = fresh)
     cost_like: bool  # a spend/cost guide (met when spend ≤ ceiling) vs revenue-like (≥ floor)
-    resolved: int  # periods with both a range AND an actual
+    resolved: int  # ADJUDICATED periods (both a range AND an actual, outside the point band)
     met_n: int  # of those, how many met
-    recent_period: str | None  # the most-recent RESOLVED period
-    recent_met: bool | None  # whether it met
+    at_guide_n: int  # point-guide periods refused as undecidable (within ±0.5% of the point)
+    recent_period: str | None  # the most-recent RESOLVED period (adjudicated OR at-guide)
+    recent_verdict: str | None  # "met" / "missed" / "at_guide" — formatters phrase the display
 
 
 def _guidance_reads(
@@ -2225,8 +2246,8 @@ def _guidance_reads(
         if gdate is None or guide is None or header is None:
             continue
         latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
-        recent: tuple[date, str, bool] | None = None  # date, period, met — most-recent resolved
-        resolved = met_n = 0
+        recent: tuple[date, str, str] | None = None  # date, period, verdict — most-recent resolved
+        resolved = met_n = at_guide_n = 0
         # DIRECTION BY METRIC, NEVER BY SIGN (#437) — see `_GUIDANCE_HIGHER_IS_DELIVERY`. A metric
         # absent from the map has no defined delivery direction, so this block records its GUIDE and
         # NO met/missed outcome; guessing one is worse than withholding it.
@@ -2244,13 +2265,25 @@ def _guidance_reads(
                 latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
             av = _cell_at(rows, actual, j)
             if av is not None and higher_is_delivery is not None:
+                # A POINT GUIDE INSIDE ITS OWN ROUNDING NOISE IS REFUSED, NOT ADJUDICATED — see
+                # `_POINT_DECISION_BAND`. Outside the band a point call is as decidable as a range
+                # call (a −20% shortfall against a forecast is a miss on any reading), so only the
+                # undecidable zone is refused. A zero point cannot carry a relative band and stays
+                # adjudicated by sign.
+                bound = rng[0] if higher_is_delivery else rng[1]
+                if (rng[0] == rng[1] and bound
+                        and abs(av - bound) / abs(bound) < _POINT_DECISION_BAND):
+                    at_guide_n += 1
+                    if gd is not None and (recent is None or gd > recent[0]):
+                        recent = (gd, per_j, "at_guide")
+                    continue
                 resolved += 1
                 # ≥ floor when higher is delivery (revenue, and signed-negative capex alike);
                 # ≤ ceiling when lower is (a tax RATE, stated positive).
                 met = av >= rng[0] if higher_is_delivery else av <= rng[1]
                 met_n += int(met)
                 if gd is not None and (recent is None or gd > recent[0]):
-                    recent = (gd, per_j, met)
+                    recent = (gd, per_j, "met" if met else "missed")
         if latest is None:
             continue
         gd, per, rng_s, cost_like = latest
@@ -2261,7 +2294,7 @@ def _guidance_reads(
         stale = ((reference_date - gd).days if reference_date is not None
                  and (reference_date - gd).days > stale_after_days else None)
         reads.append(_GuidanceRead(
-            metric, gval, gnum, grange, per, gd, stale, cost_like, resolved, met_n,
+            metric, gval, gnum, grange, per, gd, stale, cost_like, resolved, met_n, at_guide_n,
             recent[1] if recent is not None else None, recent[2] if recent is not None else None))
     return reads
 
@@ -2289,12 +2322,18 @@ def guidance_bridge(
         seg = f"{r.metric}: latest guide {r.guide} for {r.period} (dated {r.dated.isoformat()})"
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
-        if r.resolved:
+        if r.resolved or r.at_guide_n:
             sem = "spend ≤ guided ceiling" if r.cost_like else "actual ≥ guided floor"
-            seg += f"; {sem} {r.met_n}/{r.resolved} resolved"
+            seg += (f"; {sem} {r.met_n}/{r.resolved} resolved" if r.resolved
+                    else "; none adjudicated")
+            if r.at_guide_n:
+                seg += (f" · {r.at_guide_n} at guide (within ±0.5% of a point guide — "
+                        f"not adjudicated: a point is a forecast, not a floor)")
             if r.recent_period is not None:
-                seg += (f"; most recent resolved: {r.recent_period} "
-                        f"{'MET' if r.recent_met else 'MISSED'}")
+                word = {"met": "MET", "missed": "MISSED",
+                        "at_guide": "AT GUIDE (±0.5% of a point — not adjudicated)"}[
+                            r.recent_verdict or "met"]
+                seg += f"; most recent resolved: {r.recent_period} {word}"
         lines.append(seg)
     if not lines:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
@@ -2351,9 +2390,12 @@ def guidance_bridge_rows(
     out: list[GuidanceRow] = []
     for r in reads:
         age = f"{r.stale_days}d (stale)" if r.stale_days is not None else "fresh"
-        record = (f"{'spend ≤ ceiling' if r.cost_like else 'actual ≥ floor'} {r.met_n}/{r.resolved}"
-                  if r.resolved else "—")
-        recent = (f"{r.recent_period} {'MET' if r.recent_met else 'MISSED'}"
+        base = (f"{'spend ≤ ceiling' if r.cost_like else 'actual ≥ floor'} {r.met_n}/{r.resolved}"
+                if r.resolved else "—")
+        record = (f"{base} · {r.at_guide_n} at-guide (±0.5% of a point, not adjudicated)"
+                  if r.at_guide_n else base)
+        word = {"met": "MET", "missed": "MISSED", "at_guide": "AT GUIDE (±0.5% of a point)"}
+        recent = (f"{r.recent_period} {word[r.recent_verdict or 'met']}"
                   if r.recent_period is not None else "—")
         out.append(GuidanceRow(
             metric=r.metric, latest_guide=r.guide, period=r.period, dated=r.dated.isoformat(),

@@ -383,7 +383,7 @@ _export date unverified (data ≥ 2026-06-30)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Revenue | '480.00 - 496.00' | FY 2026 | 2026-05-07 | 97d (stale) | actual ≥ floor 28/41 | FY 2025 MET |
+| Revenue | '480.00 - 496.00' | FY 2026 | 2026-05-07 | 97d (stale) | actual ≥ floor 28/39 · 2 at-guide (±0.5% of a point, not adjudicated) | FY 2025 MET |
 | EBITDA | '100.00 - 107.00' | FY 2026 | 2026-05-07 | 97d (stale) | actual ≥ floor 3/4 | FY 2025 MET |
 | Capital Expenditure | -50.0 | FY 2026 | 2026-02-12 | 181d (stale) | — | — |
 | Gross Margin % | 64.9 | FY 2026 | 2026-02-12 | 181d (stale) | actual ≥ floor 3/6 | FY 2024 MISSED |

@@ -1170,7 +1170,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Gross Margin %: latest guide '47.00 - 48.00' for FQ4 2002 (dated 2002-10-17) (stale — 8700d old); Effective Tax Rate %: latest guide 48.0 for FQ2 2019 (dated 2019-04-16) (stale — 2675d old); spend ≤ guided ceiling 1/1 resolved; most recent resolved: FQ2 2019 MET; EBITDA: latest guide '14.50 - 16.50' for FQ2 2003 (dated 2003-06-09) (stale — 8465d old); actual ≥ guided floor 1/2 resolved; most recent resolved: FQ2 2003 MISSED; Revenue: latest guide 12,860.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 70/83 resolved; most recent resolved: FQ2 2026 MISSED; EBIT: latest guide 4,268.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 43/52 resolved; most recent resolved: FQ2 2026 MET; Net Income (GAAP): latest guide 3,452.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 77/89 resolved; most recent resolved: FQ2 2026 MET; Net Income (Excl. Excep): latest guide 3,452.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 31/41 resolved; most recent resolved: FQ2 2026 MET; Free Cash Flow: latest guide 12,500.0 for FY 2026 (dated 2026-07-16); actual ≥ guided floor 7/9 resolved; most recent resolved: FY 2025 MET; EPS (GAAP): latest guide 0.82 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 64/83 resolved; most recent resolved: FQ2 2026 MET; EPS Normalized: latest guide 0.82 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 30/40 resolved; most recent resolved: FQ2 2026 MET  [data ≥ 2026-08-07 · export date unverified]",
+        "value": "Gross Margin %: latest guide '47.00 - 48.00' for FQ4 2002 (dated 2002-10-17) (stale — 8700d old); Effective Tax Rate %: latest guide 48.0 for FQ2 2019 (dated 2019-04-16) (stale — 2675d old); spend ≤ guided ceiling 1/1 resolved; most recent resolved: FQ2 2019 MET; EBITDA: latest guide '14.50 - 16.50' for FQ2 2003 (dated 2003-06-09) (stale — 8465d old); actual ≥ guided floor 1/2 resolved; most recent resolved: FQ2 2003 MISSED; Revenue: latest guide 12,860.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 60/65 resolved · 18 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent resolved: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated); EBIT: latest guide 4,268.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 43/52 resolved; most recent resolved: FQ2 2026 MET; Net Income (GAAP): latest guide 3,452.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 77/89 resolved; most recent resolved: FQ2 2026 MET; Net Income (Excl. Excep): latest guide 3,452.0 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 31/41 resolved; most recent resolved: FQ2 2026 MET; Free Cash Flow: latest guide 12,500.0 for FY 2026 (dated 2026-07-16); actual ≥ guided floor 7/9 resolved; most recent resolved: FY 2025 MET; EPS (GAAP): latest guide 0.82 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 61/80 resolved · 3 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent resolved: FQ2 2026 MET; EPS Normalized: latest guide 0.82 for FQ3 2026 (dated 2026-07-16); actual ≥ guided floor 29/39 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent resolved: FQ2 2026 MET",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1210,8 +1210,8 @@
             "period": "FQ3 2026",
             "dated": "2026-07-16",
             "age": "fresh",
-            "record": "actual ≥ floor 70/83",
-            "most_recent": "FQ2 2026 MISSED"
+            "record": "actual ≥ floor 60/65 · 18 at-guide (±0.5% of a point, not adjudicated)",
+            "most_recent": "FQ2 2026 AT GUIDE (±0.5% of a point)"
           },
           {
             "metric": "EBIT",
@@ -1255,7 +1255,7 @@
             "period": "FQ3 2026",
             "dated": "2026-07-16",
             "age": "fresh",
-            "record": "actual ≥ floor 64/83",
+            "record": "actual ≥ floor 61/80 · 3 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2026 MET"
           },
           {
@@ -1264,7 +1264,7 @@
             "period": "FQ3 2026",
             "dated": "2026-07-16",
             "age": "fresh",
-            "record": "actual ≥ floor 30/40",
+            "record": "actual ≥ floor 29/39 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2026 MET"
           }
         ],

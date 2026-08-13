@@ -720,7 +720,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EBITDA: latest guide '90.00 - 100.00' for FY 2026 (dated 2026-08-05); Free Cash Flow: latest guide 0.00 for FY 2027 (dated 2026-08-05)  [data ≥ 2026-08-11 · export date unverified]",
+        "value": "EBITDA: latest guide '90.00 - 100.00' for FY 2026 (dated 2026-08-05); Free Cash Flow: latest guide 0.00 for FY 2027 (dated 2026-08-05)",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null

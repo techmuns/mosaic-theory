@@ -332,9 +332,9 @@ _export date unverified (data ≥ 2026-08-09)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | Effective Tax Rate % | 19.0 | FQ4 2026 | 2026-07-28 | fresh | spend ≤ ceiling 28/32 | FQ3 2026 MET |
-| Revenue | 45,200.0 | FY 2026 | 2026-07-28 | fresh | actual ≥ floor 21/23 | FQ3 2026 MET |
+| Revenue | 45,200.0 | FY 2026 | 2026-07-28 | fresh | actual ≥ floor 20/22 · 1 at-guide (±0.5% of a point, not adjudicated) | FQ3 2026 MET |
 | EPS Normalized | 3.43 | FQ4 2026 | 2026-07-28 | fresh | actual ≥ floor 18/19 | FQ3 2026 MET |
-| DPS | 0.67 | FQ4 2026 | 2026-07-28 | fresh | actual ≥ floor 17/20 | FQ2 2026 MET |
+| DPS | 0.67 | FQ4 2026 | 2026-07-28 | fresh | actual ≥ floor 4/7 · 13 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 AT GUIDE (±0.5% of a point) |
 | Interest Expense | none current (last: -390.0) | FY 2016 | 2016-04-21 | 3765d (stale) | spend ≤ ceiling 0/1 | FY 2016 MISSED |
 | Free Cash Flow | none current (last: 12,000.0) | FY 2020 | 2020-04-30 | 2295d (stale) | actual ≥ floor 4/7 | FY 2020 MISSED |
 | EBIT | none current (last: 13,529.8) | FY 2018 | 2018-07-25 | 2940d (stale) | actual ≥ floor 9/9 | FY 2018 MET |

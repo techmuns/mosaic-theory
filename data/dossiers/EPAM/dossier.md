@@ -389,11 +389,11 @@ _export date unverified (data ≥ 2026-08-09)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Effective Tax Rate % | 25.0 | FQ3 2026 | 2026-08-06 | fresh | spend ≤ ceiling 21/47 | FQ1 2026 MISSED |
-| Revenue | '1,410.00 - 1,425.00' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 67/68 | FQ2 2026 MET |
+| Effective Tax Rate % | 25.0 | FQ3 2026 | 2026-08-06 | fresh | spend ≤ ceiling 20/45 · 2 at-guide (±0.5% of a point, not adjudicated) | FQ1 2026 MISSED |
+| Revenue | '1,410.00 - 1,425.00' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 62/63 · 5 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MET |
 | EBIT | '219.80 - 233.98' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 45/45 | FQ2 2026 MET |
-| EPS Normalized | '3.38 - 3.46' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 64/65 | FQ2 2026 MET |
-| EPS (GAAP) | '2.33 - 2.41' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 41/56 | FQ2 2026 MET |
+| EPS Normalized | '3.38 - 3.46' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 61/62 · 3 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MET |
+| EPS (GAAP) | '2.33 - 2.41' | FQ3 2026 | 2026-08-06 | fresh | actual ≥ floor 39/54 · 2 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MET |
 | Net Income (Excl. Excep) | none current (last: 138.2) | FY 2015 | 2015-11-04 | 3934d (stale) | actual ≥ floor 4/4 | FY 2015 MET |
 | Capital Expenditure | none current (last: '(19.00) - (20.00)') | FY 2016 | 2016-02-18 | 3828d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 

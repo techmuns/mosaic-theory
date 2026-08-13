@@ -390,14 +390,14 @@ _export date unverified (data ≥ 2026-07-27)_
 |---|---|---|---|---|---|---|
 | EPS Normalized | 13.2 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 28/30 | FY 2025 MET |
 | EPS (GAAP) | 12.4 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 29/32 | FY 2025 MET |
-| Revenue | 6,405.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 27/28 | FY 2025 MET |
+| Revenue | 6,405.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 25/26 · 2 at-guide (±0.5% of a point, not adjudicated) | FY 2025 AT GUIDE (±0.5% of a point) |
 | EBITDA | 425.0 | FQ2 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 42/46 | FQ1 2026 MET |
 | EBIT | 1,195.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 6/10 | FY 2025 MET |
 | Net Income (GAAP) | 849.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 8/8 | FY 2025 MET |
-| Capital Expenditure | -105.0 | FY 2026 | 2026-05-05 | 99d (stale) | spend ≤ ceiling 15/19 | FY 2025 MET |
+| Capital Expenditure | -105.0 | FY 2026 | 2026-05-05 | 99d (stale) | spend ≤ ceiling 14/18 · 1 at-guide (±0.5% of a point, not adjudicated) | FY 2025 MET |
 | Cash From Operations | 1,265.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 15/19 | FY 2025 MET |
 | Effective Tax Rate % | 23.0 | FY 2026 | 2026-05-05 | 99d (stale) | spend ≤ ceiling 12/18 | FY 2025 MET |
-| Interest Expense | -95.0 | FY 2026 | 2026-05-05 | 99d (stale) | spend ≤ ceiling 9/13 | FY 2025 MISSED |
+| Interest Expense | -95.0 | FY 2026 | 2026-05-05 | 99d (stale) | spend ≤ ceiling 8/12 · 1 at-guide (±0.5% of a point, not adjudicated) | FY 2025 MISSED |
 | Depreciation & Amortization | 183.0 | FY 2026 | 2026-05-05 | 99d (stale) | — | — |
 | Free Cash Flow | 1,160.0 | FY 2026 | 2026-05-05 | 99d (stale) | actual ≥ floor 9/15 | FY 2025 MET |
 

@@ -1070,7 +1070,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '0.28 - 0.32' for FY 2019 (dated 2019-10-30) (stale — 2478d old); actual ≥ guided floor 5/7 resolved; most recent resolved: FY 2019 MET; EPS (GAAP): latest guide '0.09 - 0.11' for FY 2015 (dated 2015-10-27) (stale — 3942d old); actual ≥ guided floor 5/8 resolved; most recent resolved: FY 2015 MET; Revenue: latest guide '480.00 - 496.00' for FY 2026 (dated 2026-05-07) (stale — 97d old); actual ≥ guided floor 28/41 resolved; most recent resolved: FY 2025 MET; EBITDA: latest guide '100.00 - 107.00' for FY 2026 (dated 2026-05-07) (stale — 97d old); actual ≥ guided floor 3/4 resolved; most recent resolved: FY 2025 MET; EBIT: latest guide 13.7 for FY 2009 (dated 2009-07-30) (stale — 6222d old); actual ≥ guided floor 1/1 resolved; most recent resolved: FY 2009 MET; Capital Expenditure: latest guide -50.0 for FY 2026 (dated 2026-02-12) (stale — 181d old); Gross Margin %: latest guide 64.9 for FY 2026 (dated 2026-02-12) (stale — 181d old); actual ≥ guided floor 3/6 resolved; most recent resolved: FY 2024 MISSED; Effective Tax Rate %: latest guide 20.0 for FY 2018 (dated 2018-10-31) (stale — 2842d old); spend ≤ guided ceiling 7/10 resolved; most recent resolved: FY 2018 MISSED; Free Cash Flow: latest guide 0.00 for FY 2026 (dated 2026-02-12) (stale — 181d old)  [data ≥ 2026-06-30 · export date unverified]",
+        "value": "EPS Normalized: latest guide '0.28 - 0.32' for FY 2019 (dated 2019-10-30) (stale — 2478d old); actual ≥ guided floor 5/7 resolved; most recent resolved: FY 2019 MET; EPS (GAAP): latest guide '0.09 - 0.11' for FY 2015 (dated 2015-10-27) (stale — 3942d old); actual ≥ guided floor 5/8 resolved; most recent resolved: FY 2015 MET; Revenue: latest guide '480.00 - 496.00' for FY 2026 (dated 2026-05-07) (stale — 97d old); actual ≥ guided floor 28/39 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent resolved: FY 2025 MET; EBITDA: latest guide '100.00 - 107.00' for FY 2026 (dated 2026-05-07) (stale — 97d old); actual ≥ guided floor 3/4 resolved; most recent resolved: FY 2025 MET; EBIT: latest guide 13.7 for FY 2009 (dated 2009-07-30) (stale — 6222d old); actual ≥ guided floor 1/1 resolved; most recent resolved: FY 2009 MET; Capital Expenditure: latest guide -50.0 for FY 2026 (dated 2026-02-12) (stale — 181d old); Gross Margin %: latest guide 64.9 for FY 2026 (dated 2026-02-12) (stale — 181d old); actual ≥ guided floor 3/6 resolved; most recent resolved: FY 2024 MISSED; Effective Tax Rate %: latest guide 20.0 for FY 2018 (dated 2018-10-31) (stale — 2842d old); spend ≤ guided ceiling 7/10 resolved; most recent resolved: FY 2018 MISSED; Free Cash Flow: latest guide 0.00 for FY 2026 (dated 2026-02-12) (stale — 181d old)",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1101,7 +1101,7 @@
             "period": "FY 2026",
             "dated": "2026-05-07",
             "age": "97d (stale)",
-            "record": "actual ≥ floor 28/41",
+            "record": "actual ≥ floor 28/39 · 2 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MET"
           },
           {

@@ -335,13 +335,13 @@ _export date unverified (data ≥ 2026-08-07)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Revenue | 12,860.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 70/83 | FQ2 2026 MISSED |
+| Revenue | 12,860.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 60/65 · 18 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 AT GUIDE (±0.5% of a point) |
 | EBIT | 4,268.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 43/52 | FQ2 2026 MET |
 | Net Income (GAAP) | 3,452.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 77/89 | FQ2 2026 MET |
 | Net Income (Excl. Excep) | 3,452.0 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 31/41 | FQ2 2026 MET |
 | Free Cash Flow | 12,500.0 | FY 2026 | 2026-07-16 | fresh | actual ≥ floor 7/9 | FY 2025 MET |
-| EPS (GAAP) | 0.82 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 64/83 | FQ2 2026 MET |
-| EPS Normalized | 0.82 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 30/40 | FQ2 2026 MET |
+| EPS (GAAP) | 0.82 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 61/80 · 3 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MET |
+| EPS Normalized | 0.82 | FQ3 2026 | 2026-07-16 | fresh | actual ≥ floor 29/39 · 1 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MET |
 | Gross Margin % | none current (last: '47.00 - 48.00') | FQ4 2002 | 2002-10-17 | 8700d (stale) | — | — |
 | Effective Tax Rate % | none current (last: 48.0) | FQ2 2019 | 2019-04-16 | 2675d (stale) | spend ≤ ceiling 1/1 | FQ2 2019 MET |
 | EBITDA | none current (last: '14.50 - 16.50') | FQ2 2003 | 2003-06-09 | 8465d (stale) | actual ≥ floor 1/2 | FQ2 2003 MISSED |
