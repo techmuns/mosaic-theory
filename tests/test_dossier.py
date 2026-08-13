@@ -4758,10 +4758,13 @@ def test_guidance_bridge_sign_aware_recency_and_stale_guide() -> None:
     v = s.value or ""
     assert "Revenue: latest guide '290.0 - 310.0' for FY 2025 (dated 20" in v  # range kept verbatim
     assert "actual ≥ guided floor 1/2 resolved" in v  # revenue-like; resolved-only (FY25 excluded)
-    assert "most recent resolved: FY 2024 MISSED" in v  # Fix 2c — max-dated resolved is a miss
+    # "guidance outcome", not "resolved" (#443): the at-guide third state is EXCLUDED from
+    # `resolved`, so one label has to carry all three or the summary contradicts itself. The
+    # VERDICT this pin owns is unchanged — only the phrase introducing it moved.
+    assert "most recent guidance outcome: FY 2024 MISSED" in v  # Fix 2c — max-dated is a miss
     assert "Capital Expenditure: latest guide '(120.00) - (150.00)'" in v
     assert "spend ≤ guided ceiling 1/1 resolved" in v  # Fix 2b — cost-like (negative) guide label
-    assert "most recent resolved: FY 2023 MET" in v
+    assert "most recent guidance outcome: FY 2023 MET" in v
     # R3: '(stale — Nd old)' once, no duplicated date; capex 2023 guide is far older than 45d
     import re as _re
     assert _re.search(r"Capital Expenditure:.*\(stale — \d+d old\)", v)

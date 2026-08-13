@@ -331,12 +331,12 @@ _export date unverified (data ≥ 2026-07-06)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | EPS Normalized | '2.65 - 2.77' | FQ3 2026 | 2026-06-29 | fresh | actual ≥ floor 12/13 | FQ2 2026 MET |
-| DPS | 0.36 | FQ3 2026 | 2026-06-29 | fresh | actual ≥ floor 7/8 | FQ2 2026 MET |
+| DPS | 0.36 | FQ3 2026 | 2026-06-29 | fresh | actual ≥ floor 4/5 · 3 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 AT GUIDE (±0.5% of a point) |
 | Revenue | '2,465.00 - 2,490.00' | FQ3 2026 | 2026-06-29 | fresh | actual ≥ floor 22/26 | FQ2 2026 MET |
 | EBIT | '295.00 - 305.00' | FQ3 2026 | 2026-06-29 | fresh | actual ≥ floor 21/26 | FQ2 2026 MET |
 | Capital Expenditure | '(200.70) - (254.50)' | FY 2026 | 2026-01-13 | 211d (stale) | — | — |
 | Effective Tax Rate % | 25.0 | FQ3 2026 | 2026-06-29 | fresh | spend ≤ ceiling 15/23 | FQ2 2026 MET |
-| Interest Expense | -65.0 | FQ3 2026 | 2026-06-29 | fresh | spend ≤ ceiling 6/16 | FQ2 2026 MISSED |
+| Interest Expense | -65.0 | FQ3 2026 | 2026-06-29 | fresh | spend ≤ ceiling 6/14 · 2 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MISSED |
 | Free Cash Flow | '630.00 - 650.00' | FY 2026 | 2026-06-29 | fresh | actual ≥ floor 0/4 | FY 2025 MISSED |
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._

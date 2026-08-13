@@ -957,7 +957,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '1.19 - 1.25' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 3/3 resolved; most recent resolved: FY 2025 MET; Revenue: latest guide '985.00 - 995.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 8/10 resolved; most recent resolved: FY 2025 MET; EBITDA: latest guide '380.00 - 385.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 8/10 resolved; most recent resolved: FY 2025 MET; Capital Expenditure: latest guide -125.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 5/6 resolved; most recent resolved: FY 2025 MISSED; Cash From Operations: latest guide 190.0 for FY 2021 (dated 2022-02-28) (stale — 1626d old); actual ≥ guided floor 1/1 resolved; most recent resolved: FY 2021 MET; Effective Tax Rate %: latest guide '28.00 - 29.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 0/3 resolved; most recent resolved: FY 2025 MISSED; Interest Expense: latest guide -62.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 2/2 resolved; most recent resolved: FY 2025 MET; Depreciation & Amortization: latest guide 125.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); Free Cash Flow: latest guide '140.00 - 150.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 1/4 resolved; most recent resolved: FY 2025 MISSED  [data ≥ 2026-07-13 · export date unverified]",
+        "value": "EPS Normalized: latest guide '1.19 - 1.25' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FY 2025 MET; Revenue: latest guide '985.00 - 995.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 7/8 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; EBITDA: latest guide '380.00 - 385.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 7/9 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; Capital Expenditure: latest guide -125.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 5/6 resolved; most recent guidance outcome: FY 2025 MISSED; Cash From Operations: latest guide 190.0 for FY 2021 (dated 2022-02-28) (stale — 1626d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2021 MET; Effective Tax Rate %: latest guide '28.00 - 29.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 0/3 resolved; most recent guidance outcome: FY 2025 MISSED; Interest Expense: latest guide -62.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); spend ≤ guided ceiling 2/2 resolved; most recent guidance outcome: FY 2025 MET; Depreciation & Amortization: latest guide 125.0 for FY 2026 (dated 2026-05-26) (stale — 78d old); Free Cash Flow: latest guide '140.00 - 150.00' for FY 2026 (dated 2026-05-26) (stale — 78d old); actual ≥ guided floor 1/4 resolved; most recent guidance outcome: FY 2025 MISSED",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -979,7 +979,7 @@
             "period": "FY 2026",
             "dated": "2026-05-26",
             "age": "78d (stale)",
-            "record": "actual ≥ floor 8/10",
+            "record": "actual ≥ floor 7/8 · 2 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MET"
           },
           {
@@ -988,7 +988,7 @@
             "period": "FY 2026",
             "dated": "2026-05-26",
             "age": "78d (stale)",
-            "record": "actual ≥ floor 8/10",
+            "record": "actual ≥ floor 7/9 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MET"
           },
           {

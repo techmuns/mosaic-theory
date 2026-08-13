@@ -340,8 +340,8 @@ _export date unverified (data ≥ 2026-07-13)_
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
 | EPS Normalized | '1.19 - 1.25' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 3/3 | FY 2025 MET |
-| Revenue | '985.00 - 995.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 8/10 | FY 2025 MET |
-| EBITDA | '380.00 - 385.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 8/10 | FY 2025 MET |
+| Revenue | '985.00 - 995.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 7/8 · 2 at-guide (±0.5% of a point, not adjudicated) | FY 2025 MET |
+| EBITDA | '380.00 - 385.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 7/9 · 1 at-guide (±0.5% of a point, not adjudicated) | FY 2025 MET |
 | Capital Expenditure | -125.0 | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 5/6 | FY 2025 MISSED |
 | Effective Tax Rate % | '28.00 - 29.00' | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 0/3 | FY 2025 MISSED |
 | Interest Expense | -62.0 | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 2/2 | FY 2025 MET |

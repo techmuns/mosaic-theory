@@ -396,10 +396,10 @@ _export date unverified (data ≥ 2026-07-21)_
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Revenue | '322.00 - 332.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 9/11 | FQ3 2026 MET |
-| EBITDA | '52.00 - 57.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 7/10 | FQ3 2026 MET |
+| Revenue | '322.00 - 332.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 8/9 · 2 at-guide (±0.5% of a point, not adjudicated) | FQ3 2026 MET |
+| EBITDA | '52.00 - 57.00' | FQ4 2026 | 2026-07-09 | fresh | actual ≥ floor 6/9 · 1 at-guide (±0.5% of a point, not adjudicated) | FQ3 2026 MET |
 | Capital Expenditure | '(20.00) - (25.00)' | FY 2026 | 2026-07-09 | fresh | spend ≤ ceiling 6/8 | FY 2025 MISSED |
-| Gross Margin % | 32.5 | FY 2026 | 2026-07-09 | fresh | actual ≥ floor 4/10 | FQ2 2026 MISSED |
+| Gross Margin % | 32.5 | FY 2026 | 2026-07-09 | fresh | actual ≥ floor 4/9 · 1 at-guide (±0.5% of a point, not adjudicated) | FQ2 2026 MISSED |
 | Effective Tax Rate % | 25.0 | FQ4 2026 | 2026-07-09 | fresh | spend ≤ ceiling 2/5 | FY 2025 MISSED |
 | Interest Expense | '(19.00) - (21.00)' | FY 2026 | 2026-07-09 | fresh | spend ≤ ceiling 1/6 | FY 2025 MISSED |
 | EPS Normalized | none current (last: 1.69) | FY 2023 | 2023-06-29 | 1140d (stale) | actual ≥ floor 2/3 | FY 2023 MISSED |

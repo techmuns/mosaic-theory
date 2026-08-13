@@ -1134,7 +1134,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Effective Tax Rate %: latest guide 19.0 for FQ4 2026 (dated 2026-07-28); spend ≤ guided ceiling 28/32 resolved; most recent resolved: FQ3 2026 MET; Interest Expense: latest guide -390.0 for FY 2016 (dated 2016-04-21) (stale — 3765d old); spend ≤ guided ceiling 0/1 resolved; most recent resolved: FY 2016 MISSED; Free Cash Flow: latest guide 12,000.0 for FY 2020 (dated 2020-04-30) (stale — 2295d old); actual ≥ guided floor 4/7 resolved; most recent resolved: FY 2020 MISSED; Revenue: latest guide 45,200.0 for FY 2026 (dated 2026-07-28); actual ≥ guided floor 21/23 resolved; most recent resolved: FQ3 2026 MET; EBIT: latest guide 13,529.8 for FY 2018 (dated 2018-07-25) (stale — 2940d old); actual ≥ guided floor 9/9 resolved; most recent resolved: FY 2018 MET; Net Income (Excl. Excep): latest guide '5,043.60 - 5,169.69' for FY 2013 (dated 2013-07-24) (stale — 4767d old); actual ≥ guided floor 0/2 resolved; most recent resolved: FY 2013 MISSED; Capital Expenditure: latest guide -700.0 for FY 2021 (dated 2020-10-28) (stale — 2114d old); spend ≤ guided ceiling 3/7 resolved; most recent resolved: FY 2021 MISSED; EPS Normalized: latest guide 3.43 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 18/19 resolved; most recent resolved: FQ3 2026 MET; EPS (GAAP): latest guide '6.12 - 6.22' for FY 2020 (dated 2019-10-24) (stale — 2484d old); actual ≥ guided floor 4/6 resolved; most recent resolved: FY 2020 MISSED; DPS: latest guide 0.67 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 17/20 resolved; most recent resolved: FQ2 2026 MET  [data ≥ 2026-08-09 · export date unverified]",
+        "value": "Effective Tax Rate %: latest guide 19.0 for FQ4 2026 (dated 2026-07-28); spend ≤ guided ceiling 28/32 resolved; most recent guidance outcome: FQ3 2026 MET; Interest Expense: latest guide -390.0 for FY 2016 (dated 2016-04-21) (stale — 3765d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2016 MISSED; Free Cash Flow: latest guide 12,000.0 for FY 2020 (dated 2020-04-30) (stale — 2295d old); actual ≥ guided floor 4/7 resolved; most recent guidance outcome: FY 2020 MISSED; Revenue: latest guide 45,200.0 for FY 2026 (dated 2026-07-28); actual ≥ guided floor 20/22 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ3 2026 MET; EBIT: latest guide 13,529.8 for FY 2018 (dated 2018-07-25) (stale — 2940d old); actual ≥ guided floor 9/9 resolved; most recent guidance outcome: FY 2018 MET; Net Income (Excl. Excep): latest guide '5,043.60 - 5,169.69' for FY 2013 (dated 2013-07-24) (stale — 4767d old); actual ≥ guided floor 0/2 resolved; most recent guidance outcome: FY 2013 MISSED; Capital Expenditure: latest guide -700.0 for FY 2021 (dated 2020-10-28) (stale — 2114d old); spend ≤ guided ceiling 3/7 resolved; most recent guidance outcome: FY 2021 MISSED; EPS Normalized: latest guide 3.43 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 18/19 resolved; most recent guidance outcome: FQ3 2026 MET; EPS (GAAP): latest guide '6.12 - 6.22' for FY 2020 (dated 2019-10-24) (stale — 2484d old); actual ≥ guided floor 4/6 resolved; most recent guidance outcome: FY 2020 MISSED; DPS: latest guide 0.67 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 4/7 resolved · 13 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1174,7 +1174,7 @@
             "period": "FY 2026",
             "dated": "2026-07-28",
             "age": "fresh",
-            "record": "actual ≥ floor 21/23",
+            "record": "actual ≥ floor 20/22 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ3 2026 MET"
           },
           {
@@ -1228,8 +1228,8 @@
             "period": "FQ4 2026",
             "dated": "2026-07-28",
             "age": "fresh",
-            "record": "actual ≥ floor 17/20",
-            "most_recent": "FQ2 2026 MET"
+            "record": "actual ≥ floor 4/7 · 13 at-guide (±0.5% of a point, not adjudicated)",
+            "most_recent": "FQ2 2026 AT GUIDE (±0.5% of a point)"
           }
         ],
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
