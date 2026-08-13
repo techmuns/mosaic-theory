@@ -13838,6 +13838,33 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **THE RETENTION LAYER WAS DARK IN PRODUCTION — NOW WIRED INTO `run_weekly` (2026-08-13).**
+  Diagnosed after #441 recorded "`write_manifest` has no production caller" and recommended wiring
+  it into `_cmd_screen`. **THE RECOMMENDATION WAS WRONG ON BOTH COUNTS, and the diagnosis is the
+  useful part.**
+  **IT IS NOT JUST THE MANIFEST.** `build_universe` AND `screen_universe` each take
+  `retain_run_id`/`retain_dir` ("both or neither, enforced"), and no production path supplied them
+  — so universe rows, candidate rows AND the manifest were all uncollected. The three committed
+  2026-07-29 runs came from a worktree (`bbcb3e0`: *"existed only in one worktree… removing it would
+  have destroyed the fund's only screen evidence"*), never from a wired path.
+  **IT IS NOT AN AFTER-THE-FACT LOG.** `screen_universe` READS the manifest back and REFUSES a run
+  whose `routing_policy` disagrees with its own record. The manifest is a PRE-COMMITMENT; writing it
+  after the screen would leave that check reading nothing and passing vacuously on every run.
+  **AND `_cmd_screen` IS THE WRONG HOME.** It runs the screen alone, so a run_id filed there carries
+  candidate rows and NO universe rows. The manifest's own `universe_as_of` field exists because run
+  `2026-07-29-01` screened the **2026-07-06** universe while `build_universe` wrote the 2026-07-29
+  one, leaving **72 tickers in both grains** — and that field's docstring names the cause exactly:
+  *"nothing binds that to a `build_universe` run in the same session (the build is a separate CLI
+  subcommand)"*. Wiring per-subcommand IS the disease. `run_weekly` is that session.
+  **THE ORDER IS THE CONTRACT:** `build_universe` (so `universe_as_of` names the population the
+  gates will judge) → `write_manifest` → `screen_universe` (which reads it back). Pinned, and
+  mutation-tested in both shapes: stripping `retain_*` from a call site reddens, and moving the
+  manifest after the screen reddens.
+  **NOT YET PROVEN BY A REAL RUN.** `run_weekly` costs a universe rebuild plus a full screen; the
+  wiring is pinned at the call-site layer because what regressed is a call site losing its
+  arguments, but **the first real weekly run is the verification that still owes** — it should file
+  `<date>-01` with a manifest, ~1,800 candidate rows and the universe drops, and `_fleet_reference_
+  date` should then track it without anyone filing anything by hand.
 - **FLEET RE-ASSEMBLED ON ONE AS-OF, AND THE TWO CLOCKS RECONCILED (2026-08-13).** All 14 names
   re-assembled clean at **reference_date 2026-08-12** (`{'2026-08-12': 14}`), the first time the
   fleet has sat on a single as-of since the split opened.
