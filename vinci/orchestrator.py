@@ -33,9 +33,17 @@ from vinci.rank import (
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
+from vinci.screens.retention import (
+    BandConfig,
+    RunManifest,
+    ScreenConfig,
+    next_run_id,
+    write_manifest,
+)
+from vinci.screens.screen2 import Screen2Thresholds
 from vinci.sec import build_sec_http
 from vinci.store import Store
-from vinci.universe import benchmark_identity, build_universe
+from vinci.universe import DROP_STAGES, benchmark_identity, build_universe
 
 # ~5y: enough history for the 52w drawdown AND the G3 multiple-at-floor range (Polygon Starter).
 _SCREEN_LOOKBACK_DAYS = 1825
@@ -226,7 +234,38 @@ def run_weekly(
     #    consuming it ran 2026-08-12, so a name that fell into the band in between was never
     #    screened and one that left it still was. It writes its own snapshots and closes its own
     #    Store, so the rebuild below reads the universe this just produced.
-    universe = build_universe(cfg, reference_date=end)
+    # RETENTION IS ON, AND ONE RUN ID SPANS BOTH GRAINS. `build_universe` and `screen_universe`
+    # each accept `retain_run_id`/`retain_dir` and NO production path supplied them, so the whole
+    # retention layer — universe rows, candidate rows, and the write-once manifest — was dark:
+    # `write_manifest` had no caller outside its own tests, and `_fleet_reference_date` (which reads
+    # `screen_runs/*.manifest.json`) therefore sat frozen on whatever manifest last reached the repo
+    # by hand while `ranked_queue`'s `screen_run_at` moved on. That divergence split the fleet
+    # across two as-ofs on 2026-08-12.
+    #
+    # THE RUN IS THE WEEK, NOT THE SUBCOMMAND. Wiring this into `vinci screen` would file a run_id
+    # carrying candidate rows and no universe rows — and the manifest's own `universe_as_of` field
+    # exists because run `2026-07-29-01` screened the 2026-07-06 universe while `build_universe`
+    # wrote the 2026-07-29 one, leaving 72 tickers in both grains. That field's docstring names the
+    # cause exactly: "nothing binds that to a `build_universe` run in the same session (the build is
+    # a separate CLI subcommand)". This function IS that session, so the binding belongs here.
+    # NO FUTURE IDENTITIES IN A BACKDATED RUN (review finding, #442). The store is mutable and
+    # SHARED, so a forward-dated attempt that died mid-flight leaves its upserts behind: a
+    # `--end 2026-08-13` abort left BBAR/SSMR/AADX at `first_seen 2026-08-13`, and the re-run at
+    # `--end 2026-08-12` admitted all three to the 2026-08-12 universe and filed them under that
+    # run's manifest. RAISE rather than filter: silently dropping them would make the leak
+    # invisible and the operator would never learn the store needs rolling back.
+    with Store(cfg.db_path) as _s:
+        ahead = _s.identities_first_seen_after(end)
+    if ahead:
+        raise RuntimeError(
+            f"{len(ahead)} identities in the store were first seen AFTER {end} "
+            f"({', '.join(ahead[:5])}{'…' if len(ahead) > 5 else ''}) — a later-dated run wrote "
+            f"them and a run claiming {end} must not judge names it could not have known. Roll "
+            f"those identities back before re-running at this date."
+        )
+    run_id = next_run_id(end, cfg.snapshots_dir)
+    universe = build_universe(cfg, reference_date=end,
+                              retain_run_id=run_id, retain_dir=cfg.snapshots_dir)
     eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
     with Store(cfg.db_path) as store:
@@ -242,9 +281,29 @@ def run_weekly(
                 "snapshot has already been cleared and exported, so proceeding would commit a "
                 "blank universe over a good one"
             )
+        # THE MANIFEST IS A PRE-COMMITMENT, WRITTEN BEFORE THE SCREEN READS IT BACK.
+        # `screen_universe` refuses a run whose `routing_policy` disagrees with its own record, so
+        # this cannot be an after-the-fact log. It is written HERE — after the universe exists, so
+        # `universe_as_of` names the population the gates will actually judge rather than a guess.
+        write_manifest(
+            RunManifest(
+                run_id=run_id, reference_date=end,
+                screen=ScreenConfig(
+                    thresholds=Screen2Thresholds().model_dump(),
+                    benchmark=benchmark, lookback_days=lookback_days),
+                band=BandConfig(
+                    market_cap_min_usd=cfg.universe.market_cap_min_usd,
+                    market_cap_max_usd=cfg.universe.market_cap_max_usd,
+                    exchanges=tuple(cfg.universe.exchanges)),
+                universe_as_of=store.latest_universe_as_of(end),
+                stages=DROP_STAGES,
+            ),
+            snapshots_dir=cfg.snapshots_dir,
+        )
         _cands, stats = screen_universe(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
+            retain_run_id=run_id, retain_dir=cfg.snapshots_dir,
         )
         store.export_snapshots(cfg.snapshots_dir)
     # 3. RANK + the structural scan, from the snapshot the screen just exported, through the same

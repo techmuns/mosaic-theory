@@ -89,6 +89,25 @@ class Store:
         self.close()
 
     # --- entity master ------------------------------------------------------------------------
+    def identities_first_seen_after(self, reference_date: date) -> list[str]:
+        """Securities whose ``first_seen`` postdates ``reference_date`` — identities this store
+        learned AFTER the moment a run claims to judge.
+
+        THE FAILED-FORWARD-RUN LEAK (review finding, #442). A `run-weekly --end 2026-08-13` aborted
+        after `build_universe` had already upserted three securities (BBAR, SSMR, AADX) with
+        `first_seen 2026-08-13`. The backdated re-run at `--end 2026-08-12` then found them ALREADY
+        IN THE STORE, admitted all three to the 2026-08-12 universe and filed candidate rows for
+        them under that run's manifest — a committed historical screen containing names it could
+        not have known. The store is mutable and shared; "I re-ran at the earlier date" does not
+        undo what the later attempt wrote.
+        """
+        return [
+            str(r["internal_id"]) for r in self._conn.execute(
+                "SELECT internal_id FROM securities WHERE first_seen > ? ORDER BY internal_id",
+                (_iso(reference_date),),
+            )
+        ]
+
     def upsert_security(self, identity: Identity, *, first_seen: date | None = None) -> None:
         self._conn.execute(
             "INSERT OR REPLACE INTO issuers "

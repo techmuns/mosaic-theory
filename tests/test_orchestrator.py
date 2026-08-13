@@ -456,3 +456,127 @@ def test_an_empty_universe_rebuild_fails_the_run_instead_of_reporting_success(
             orchestrator.EdgarClient, "from_config", classmethod(lambda cls, c: None))
         with pytest.raises(RuntimeError, match="universe rebuilt EMPTY"):
             orchestrator.run_weekly(Config(data_dir=tmp), end=date(2026, 8, 12))
+
+
+# ─── retention is WIRED, and one run id spans both grains (2026-08-13) ────────────────────────────
+
+def test_the_weekly_run_files_a_manifest_and_retains_both_grains() -> None:
+    """THE DARK LAYER, pinned shut.
+
+    `build_universe` and `screen_universe` each accept `retain_run_id`/`retain_dir`, and for months
+    NO production path supplied them: `write_manifest` had no caller outside its own tests, so
+    `screen_runs/` only ever grew when someone wrote a manifest by hand. `_fleet_reference_date`
+    reads those manifests, so it froze at the last hand-filed date while `ranked_queue`'s
+    `screen_run_at` advanced — and on 2026-08-12 the fleet split across two as-ofs, followed names
+    on one clock and queued names on the other.
+
+    THE RUN IS THE WEEK, NOT THE SUBCOMMAND. A source pin is the right layer here: `run_weekly`
+    costs a universe rebuild plus a full screen, so driving it in a unit test would be theatre, and
+    what actually regressed is a CALL SITE losing its arguments. Both grains must file under ONE id
+    — the manifest's `universe_as_of` exists because run `2026-07-29-01` screened the 2026-07-06
+    universe while `build_universe` wrote the 2026-07-29 one, putting 72 tickers in both grains.
+    """
+    import ast
+    import inspect
+
+    from vinci import orchestrator
+
+    src = inspect.getsource(orchestrator.run_weekly)
+    tree = ast.parse(inspect.cleandoc(src.split("\n", 1)[1]) if False else src.lstrip())
+
+    calls = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            calls.setdefault(node.func.id, []).append(
+                {kw.arg for kw in node.keywords if kw.arg})
+
+    assert "next_run_id" in calls, (
+        "run_weekly does not mint a run id — retention cannot file under anything")
+    assert "write_manifest" in calls, (
+        "run_weekly files no manifest, so `_fleet_reference_date` has nothing to read and the "
+        "fleet as-of freezes while the queue advances — the 2026-08-12 split")
+
+    for fn in ("build_universe", "screen_universe"):
+        assert fn in calls, f"run_weekly no longer calls {fn}"
+        kwargs = calls[fn][0]
+        missing = {"retain_run_id", "retain_dir"} - kwargs
+        assert not missing, (
+            f"{fn} is called without {sorted(missing)} — retention silently collects nothing for "
+            f"that grain, and `screen_universe` refuses one argument without the other")
+
+
+def test_the_manifest_is_written_before_the_screen_reads_it_back() -> None:
+    """ORDER IS THE CONTRACT. `screen_universe` reads the manifest and REFUSES a run whose
+    `routing_policy` disagrees with its own record, so the manifest is a PRE-COMMITMENT rather than
+    an after-the-fact log. Writing it afterwards would leave that check with nothing to read — the
+    guard would pass vacuously on every run, which is how a policy mismatch would ship.
+
+    It must also come AFTER `build_universe`, so `universe_as_of` names the population the gates
+    actually judged instead of guessing at one.
+    """
+    import inspect
+
+    from vinci import orchestrator
+
+    src = inspect.getsource(orchestrator.run_weekly)
+    order = [src.index(name) for name in
+             ("build_universe(", "write_manifest(", "screen_universe(")]
+    assert order == sorted(order), (
+        "run_weekly's order must be build_universe -> write_manifest -> screen_universe: the "
+        "manifest needs the universe's as_of, and the screen reads the manifest back")
+
+
+def test_a_manifest_only_id_is_reserved_not_reissued(tmp_path: Path) -> None:
+    """REVIEW FINDING (#442). `next_run_id` scanned `*.jsonl` only, so an id whose run wrote a
+    manifest and then failed before appending rows was INVISIBLE and got reissued.
+
+    THE ORDER IS WHY THAT CORRUPTS RATHER THAN ANNOYS: `build_universe` appends retention rows
+    under the id BEFORE `write_manifest` raises on the existing write-once file. The retry dies at
+    the manifest AND leaves partial rows filed under a DIFFERENT run's recorded configuration —
+    the exact "rows attributed to a config that did not produce them" the manifest exists to stop.
+    Reachable for real: `2026-08-12-01.manifest.json` sat committed with no row file beside it.
+    """
+    from datetime import date as _date
+
+    from vinci.screens.retention import next_run_id, retention_dir
+
+    d = retention_dir(tmp_path)
+    d.mkdir(parents=True)
+    ref = _date(2026, 8, 12)
+    assert next_run_id(ref, tmp_path) == "2026-08-12-01", "an empty date must start at -01"
+
+    (d / "2026-08-12-01.manifest.json").write_text("{}")      # manifest, NO rows — the real case
+    assert next_run_id(ref, tmp_path) == "2026-08-12-02", (
+        "a manifest-only id was reissued — a retry would append rows under another run's config")
+
+    (d / "2026-08-12-02.jsonl").write_text("")
+    (d / "2026-08-12-03.caveat.json").write_text("{}")        # every artifact kind occupies an id
+    assert next_run_id(ref, tmp_path) == "2026-08-12-04"
+
+    assert next_run_id(_date(2026, 9, 1), tmp_path) == "2026-09-01-01", "other dates unaffected"
+
+
+def test_a_backdated_run_refuses_identities_the_store_learned_later() -> None:
+    """REVIEW FINDING (#442): a failed forward-dated run leaks state into a backdated one.
+
+    `run-weekly --end 2026-08-13` aborted AFTER `build_universe` upserted BBAR/SSMR/AADX with
+    `first_seen 2026-08-13`. The re-run at `--end 2026-08-12` found them already in the store,
+    admitted all three to the 2026-08-12 universe and filed candidate rows for them under that
+    run's manifest — a committed historical screen carrying names it could not have known. The
+    store is mutable and SHARED; re-running at the earlier date does not undo the later write.
+
+    RAISES rather than filters: silently dropping them hides the leak and leaves the store dirty.
+    """
+    import inspect
+
+    from vinci import orchestrator
+
+    src = inspect.getsource(orchestrator.run_weekly)
+    assert "identities_first_seen_after(end)" in src, (
+        "run_weekly no longer checks for identities the store learned after its own as-of")
+    assert src.index("identities_first_seen_after") < src.index("build_universe("), (
+        "the check must run BEFORE build_universe — after it, the leaked identities are already "
+        "in the universe snapshot and filed under the run's id")
+    assert "raise RuntimeError" in src.split("identities_first_seen_after")[1][:900], (
+        "the leak must RAISE; filtering it silently leaves the store dirty and the operator "
+        "unaware that a rollback is owed")

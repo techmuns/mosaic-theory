@@ -4,13 +4,13 @@
   "market_cap_max_usd": 10000000000.0,
   "adv_floor_usd": 3000000.0,
   "considered": 7659,
-  "out_of_band": 2850,
-  "no_shares": 1945,
+  "out_of_band": 2857,
+  "no_shares": 1939,
   "in_universe": 1802,
   "below_adv_floor": 445,
   "no_price": 538,
   "unknown_sic": 28,
-  "unknown_type": 6,
+  "unknown_type": 5,
   "non_common_equity": 7,
   "non_operating": 38
 }

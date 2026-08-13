@@ -12055,7 +12055,18 @@ one evidence-backed leg at a time.
   covenant work needs both halves. **CLOSED 2026-08-12 by the NFLX/UBER re-assembly: UBER now
   carries 8 rows** — 4 accession-bound (2028/2025 convertible-note credit agreements, each with an
   `ex10-1` exhibit) + 4 honestly marked *"no contract-level filing expected (aggregate line item)"*.
-- **`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE (found 2026-08-12,
+- **~~`test_the_volume_cell_draws_a_trend_sparkline…` IS STORE-STATE SENSITIVE~~ — FIXED
+  2026-08-13, and it was never merely local.** Recorded as a local-only quirk that "passes in CI";
+  #442's artifact commit then reddened CI itself, because the 2026-08-12 screen admitted a name
+  whose SIC label reads *"other building materials dealers"*. The scan was at the WRONG LAYER — it
+  word-searched the entire rendered queue body for direction words, so any other column's text was
+  a false positive. `_vol_cells` already isolated the column the rule is about; the scan now uses
+  it, plus the sparkline's `aria-label` (a direction smuggled into the accessible name is the same
+  claim). Both surfaces mutation-tested: a direction word in the cell reddens 3 tests, one in the
+  label reddens with `'building' names a direction in the sparkline's accessible label`.
+  **THE LESSON: "fails only on my machine" was a misdiagnosis of "scans the wrong thing".**
+  Original entry:
+- **`test_the_volume_cell_draws_a_trend_sparkline…` WAS STORE-STATE SENSITIVE (found 2026-08-12,
   PR-C).** It scans the whole rendered queue body for direction words (`building`, `fading`,
   `rising`…) and reddens on the SIC label *"other building materials dealers"* — an industry
   description, not a claim derived from the volume series. The string is in NO committed file; it is
@@ -13838,6 +13849,67 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **THE RETENTION LAYER WAS DARK IN PRODUCTION — NOW WIRED INTO `run_weekly` (2026-08-13).**
+  Diagnosed after #441 recorded "`write_manifest` has no production caller" and recommended wiring
+  it into `_cmd_screen`. **THE RECOMMENDATION WAS WRONG ON BOTH COUNTS, and the diagnosis is the
+  useful part.**
+  **IT IS NOT JUST THE MANIFEST.** `build_universe` AND `screen_universe` each take
+  `retain_run_id`/`retain_dir` ("both or neither, enforced"), and no production path supplied them
+  — so universe rows, candidate rows AND the manifest were all uncollected. The three committed
+  2026-07-29 runs came from a worktree (`bbcb3e0`: *"existed only in one worktree… removing it would
+  have destroyed the fund's only screen evidence"*), never from a wired path.
+  **IT IS NOT AN AFTER-THE-FACT LOG.** `screen_universe` READS the manifest back and REFUSES a run
+  whose `routing_policy` disagrees with its own record. The manifest is a PRE-COMMITMENT; writing it
+  after the screen would leave that check reading nothing and passing vacuously on every run.
+  **AND `_cmd_screen` IS THE WRONG HOME.** It runs the screen alone, so a run_id filed there carries
+  candidate rows and NO universe rows. The manifest's own `universe_as_of` field exists because run
+  `2026-07-29-01` screened the **2026-07-06** universe while `build_universe` wrote the 2026-07-29
+  one, leaving **72 tickers in both grains** — and that field's docstring names the cause exactly:
+  *"nothing binds that to a `build_universe` run in the same session (the build is a separate CLI
+  subcommand)"*. Wiring per-subcommand IS the disease. `run_weekly` is that session.
+  **THE ORDER IS THE CONTRACT:** `build_universe` (so `universe_as_of` names the population the
+  gates will judge) → `write_manifest` → `screen_universe` (which reads it back). Pinned, and
+  mutation-tested in both shapes: stripping `retain_*` from a call site reddens, and moving the
+  manifest after the screen reddens.
+  **PROVEN BY A REAL RUN (2026-08-13).** `vinci run-weekly --end 2026-08-12`, exit 0, filed
+  `2026-08-12-01.manifest.json` **and** `2026-08-12-01.jsonl` — **5,857 universe rows + 1,802
+  candidate rows under ONE run id**, every name the screen touched rather than the 292 survivors.
+  The manifest carries `universe_as_of: 2026-08-12`, which is only correct because it is written
+  AFTER `build_universe`; the policy check fired for real and passed (`routing_policy:
+  carry_not_evaluated` on both the run and its record). `_fleet_reference_date` now reads
+  2026-08-12 from a run that happened.
+  **THE CONTRAST IS THE EVIDENCE:** the hand-filed `2026-08-12-01.manifest.json` sat on disk with
+  NO `.jsonl` beside it — a record of a run that collected nothing. It has been REMOVED and replaced
+  by the real one; a stopgap for a broken pipeline has no reason to outlive the pipeline's repair.
+  **TWO GAPS THE RUN EXPOSED — BOTH NOW FIXED, and the review showed one was worse than I filed
+  it.** I recorded them as notes; #442's review showed the first is a P1:
+  - **`next_run_id` scanned `*.jsonl` only**, so a MANIFEST-ONLY id was invisible and got reissued.
+    I called that a deadlock. **The ORDER makes it corrupting**: `build_universe` appends retention
+    rows under the reused id BEFORE `write_manifest` raises on the write-once file — so the retry
+    dies AND leaves partial rows filed under a DIFFERENT run's recorded configuration, the exact
+    misattribution the manifest exists to prevent. Now every artifact kind (`.jsonl`,
+    `.manifest.json`, `.caveat.json`) reserves its id.
+  - **A FAILED FORWARD-DATED RUN LEAKED INTO A BACKDATED ONE.** My aborted `--end 2026-08-13`
+    attempt had already upserted **BBAR, SSMR, AADX at `first_seen 2026-08-13`**; the re-run at
+    `--end 2026-08-12` found them in the store, admitted all three to the 2026-08-12 universe and
+    filed candidate rows under that manifest — **a committed historical screen carrying names it
+    could not have known.** The store is mutable and SHARED: re-running at the earlier date does
+    not undo the later write, and I asserted a clean re-run without checking that.
+    **RESOLVED BY ROLLBACK + RE-RUN, and the outcome is the honest one:** the three identities were
+    deleted from store AND snapshots, the weekly re-run at 2026-08-12 re-discovered them on its own
+    evidence, and they now carry `first_seen 2026-08-12`. Their MEMBERSHIP was never wrong — the
+    STAMP was. **`Store.identities_first_seen_after` + a `run_weekly` RAISE** now refuse a backdated
+    run outright (47 identities would refuse a run dated 2026-08-01); it raises rather than filters,
+    because silently dropping them hides the leak and leaves the store dirty.
+  **SUPERSEDED — the note below is what I filed before the review:**
+  - **`run-weekly --end` defaults to `date.today()`.** My first invocation used `--end 2026-08-13`
+    while the price data reaches 2026-08-12, so the fleet as-of outran its own prices and
+    `test_the_wall_clock_is_unreachable_from_the_reference_date` refused it — correctly. A cron
+    firing before the day's bars settle would do the same every time. `end` should be clamped to
+    the store's price frontier.
+  - **`next_run_id` scans `*.jsonl` only**, so a manifest with NO rows is invisible to the id
+    allocator and its id can be reissued — which `write_manifest` then refuses, deadlocking the
+    date. Only reachable via a hand-written manifest, which is now unnecessary.
 - **FLEET RE-ASSEMBLED ON ONE AS-OF, AND THE TWO CLOCKS RECONCILED (2026-08-13).** All 14 names
   re-assembled clean at **reference_date 2026-08-12** (`{'2026-08-12': 14}`), the first time the
   fleet has sat on a single as-of since the split opened.
