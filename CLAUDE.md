@@ -40,6 +40,13 @@ verdict placement.
    unlock trigger. A build that changes reality without updating STATE.md leaves the record lying.
 3. Keep STATE.md accuracy-first: falsified is falsified, unproven is unproven. Never upgrade a hedged
    claim to a confident one to make progress look better.
+4. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
+   `git diff origin/main -- STATE.md`: it must be NON-EMPTY for a build that changed reality, and
+   STATE.md must appear in the PR's own file list before you merge. Every build appends near the
+   same region, so a rebase onto a moved `main` conflicts there almost every time, and resolving
+   toward the incoming side drops the local addition leaving no marker that survives to review.
+   Twice already: **#443 MERGED with no STATE entry at all**, and #447 nearly did. **The suite
+   cannot catch this — no test reads STATE.md** — so it is a step here, not a guard.
 
 ## Non-negotiable behavior (every build)
 
