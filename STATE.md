@@ -13872,6 +13872,17 @@ sign-off.**
   phrasing-independent invariants (no accession appears twice; DECOMPOSED and SUPPRESSED stay
   disjoint; the footer names *an* accession and *an* exhibit); **(D)** one sibling pin asserting
   #439's old note wording.
+  **A DERIVED POPULATION THAT EMPTIES IS A PIN THAT STOPS TESTING (review finding, #441).**
+  Rewriting the share-basis-mismatch pin to find its own subjects was right; letting it SKIP when
+  the fleet is clean was not. FUBO's repair emptied the population permanently, so the renderer
+  branch that prints `SHARE-BASIS MISMATCH` — the human-facing warning — went unexercised, and the
+  constructed pins in `test_freshness.py` cover `reconcile_cap`, the COMPUTATION, not the label.
+  The mismatch is now MANUFACTURED from a real record: shares solved so `spot/implied` lands exactly
+  on 11 (scaling an existing count inherits the host's own drift — AORT landed at 11.485 and missed
+  the integer tolerance). Mutation-tested by deleting the branch: the break then renders
+  `⚠ implies $2.60/sh vs CMP (-90.9%)` — drift wording with a percentage, which is precisely the
+  reading the label exists to prevent. **GENERAL RULE: when a pin's population is derived, assert it
+  is NON-EMPTY or construct the case; a skip is a guard that has quietly stopped guarding.**
   **TWO FIXTURES HAD TO BE REGENERATED IN THE SAME PASS, and both said so themselves.** AORT's and
   VRRM's committed anchors diverged from a fresh recompute (+10.64% / −1.64%) — NOT the stale
   `computed_at` (identical at both dates), but the assembly reading LIVE companyfacts against a

@@ -94,22 +94,56 @@ def test_a_share_basis_mismatch_is_not_worded_as_drift() -> None:
     Calling it drift would invite the reader to mentally re-date the cap and carry on — the wrong
     remedy for a page where no per-share figure can be trusted.
 
-    FOUND, NOT NAMED (2026-08-13). This read FUBO, whose cap and count sat 11.13x apart — and the
-    2026-08-12 re-assembly FIXED that: FUBO now reads the CIQ bridge, 30.2M shares against a $293M
-    cap, reconciling to 0.03%. Its mismatch WAS the defect, so the pin outliving it is the good
-    outcome; the wording rule still has to hold for the next name that lands in that state.
+    CONSTRUCTED, AND THEREFORE UNCONDITIONAL (review finding, #441). This read FUBO, whose cap and
+    count sat 11.13x apart; the 2026-08-12 re-assembly FIXED that, so a first rewrite derived the
+    population and SKIPPED when the fleet was clean — which is now always. A skipping pin leaves the
+    renderer branch that prints this warning unexercised, and the constructed pins in
+    `test_freshness.py` cover `reconcile_cap` (the COMPUTATION) rather than the human-facing label.
+
+    So the mismatch is MANUFACTURED here: a real committed record whose share count sits a whole
+    number away from its cap, which is exactly what a split straddling the two panels does. Nothing
+    has to stay broken in the fleet for the warning to keep being tested.
     """
-    mismatched = [f.name for f in sorted(DOSSIERS.iterdir())
-                  if (f / "dossier.json").is_file()
-                  and "SHARE-BASIS MISMATCH" in _snapshot(f.name)]
-    if not mismatched:
-        pytest.skip("no committed name is on a mismatched share basis — the fleet reconciles")
-    for ticker in mismatched:
-        line = _snapshot(ticker)
-        assert "/sh" in line, f"{ticker}: a mismatch must state the implied per-share figure"
-        assert "%" not in line.split("cap ")[-1].split("· 52-wk")[0], (
-            f"{ticker}: a share-basis mismatch must not print a drift percentage — the ratio is "
-            f"the diagnostic, and a percentage invites the reader to re-date the cap and carry on")
+    from vinci.dossier.freshness import reconcile_cap
+
+    host = next((f.name for f in sorted(DOSSIERS.iterdir())
+                 if (f / "dossier.json").is_file()), None)
+    assert host is not None, "no committed dossier to build a mismatch from"
+    d = _dossier(host)
+    si = d.mechanical.stock_info
+    assert si.shares_out.value and si.market_cap.value and si.price.value, (
+        f"{host}: needs cap, shares and price present to construct a basis mismatch")
+
+    # SOLVED, NOT SCALED. `reconcile_cap` keys on the ratio sitting ON a whole number, so simply
+    # multiplying an existing count by 11 inherits whatever drift the host already carries (AORT
+    # landed at 11.485 and missed the tolerance). Deriving the count that makes spot/implied exactly
+    # 11 — shares = cap x 11 / spot — is what a pre-split count against a post-split cap IS.
+    split_factor = 11
+    split = si.model_copy(update={
+        "shares_out": si.shares_out.model_copy(update={
+            "value": si.market_cap.value * 1e6 * split_factor / si.price.value})})
+    recon = reconcile_cap(cap_musd=split.market_cap.value, shares=split.shares_out.value,
+                          spot=split.price.value)
+    assert recon is not None and recon.corporate_action, (
+        "the constructed record is not a basis break — the fixture no longer exercises the branch")
+
+    line = render_mod._brief_snapshot(d.exchange, split)[0]
+    assert "SHARE-BASIS MISMATCH" in line, (
+        f"a whole-number basis break rendered without the mismatch label: {line}")
+    assert "/sh" in line, "a mismatch must state the implied per-share figure"
+    cap_seg = line.split("cap ")[-1].split("· 52-wk")[0]
+    assert "%" not in cap_seg, (
+        f"a share-basis mismatch must not print a drift percentage — the ratio is the diagnostic, "
+        f"and a percentage invites the reader to re-date the cap and carry on: {cap_seg}")
+
+    # …and the ORDINARY case still reads as drift, so the two states stay distinguishable.
+    drift = si.model_copy(update={
+        "price": si.price.model_copy(update={"value": si.price.value * 1.25})})
+    drift_line = render_mod._brief_snapshot(d.exchange, drift)[0]
+    if "implies" in drift_line:
+        assert "SHARE-BASIS MISMATCH" not in drift_line, (
+            "ordinary price drift is being labelled a corporate action")
+        assert "%" in drift_line.split("cap ")[-1], "ordinary drift must state its percentage"
 
 
 def test_the_undated_names_are_exactly_why_the_gap_keys_this() -> None:
