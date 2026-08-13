@@ -11813,6 +11813,18 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    is what re-assembly can and cannot be expected to preserve. **If the tier ever trends DOWN across
    consecutive passes** (rather than oscillating around zero as here), that is a different signal
    and worth a real look.
+   **SECOND DATA POINT (artifact pass on #453, 2026-08-13) — the oscillation prediction HELD at the
+   name level, and the falsifier is not yet cleared at the fleet level.** Deterministic tiers were
+   byte-stable for a THIRD consecutive pass (instruments 114, covenant pointers 97, peers 161,
+   deterministic drivers 324 — all unchanged). LLM-fenced drivers moved **289 → 287 (−2)** against
+   **−15** the pass before. **AORT, the −42% outlier last time, came back +15** — oscillation, as
+   predicted, and the clearest evidence the tail is noise rather than decay.
+   **BUT BOTH PASSES ARE NEGATIVE AT THE FLEET LEVEL (304 → 289 → 287, −6% cumulative), so the
+   two-consecutive-down condition is technically MET.** Not calling it a trend on n=2 with the
+   second step inside noise and per-name signs mixed (+15 AORT, +3 UBER, +2 BRBR vs −10 NFLX,
+   −4 EPAM) — recorded so the next pass is read against three points rather than rediscovered.
+   Synthesis re-roll moved too: **bull 105 → 99, bear 104 → 91**, spread across names rather than
+   concentrated; LLM-composed by design and not pinned anywhere, per the test-layer rule.
    **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
    `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
    `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach
@@ -12294,6 +12306,41 @@ one evidence-backed leg at a time.
   **THE SWEEP IS NOW A TEST**, because patching the reported instance is what caused this
   round-trip: an AST check refuses any `reversed(row[1:])` over a sheet row outside the guard, so a
   FIFTH reader fails at the diff. Mutation-confirmed — restoring the per-row scan reddens it.
+  **ON THE PAGES 2026-08-13 (`artifacts/fleet-post-453`) — 14/14 assembled without error, all at
+  2026-08-12.** *(Not "clean" — see the uncited-synthesis entry below. Calling the pass clean on
+  the strength of a 0-error exit was wrong: the assembler exiting 0 says nothing about whether the
+  claims it wrote are source-bound.)*
+  Every book-value stamp is dated (`… Book Value/Share (2026-06-30)`); **0 of 14 still read
+  `(latest)`**. UBER's `(Press Release Jun-30-2026)` is now visible on the page — the basis
+  difference the undated stamp hid. **The two mixed-period names are corrected:** BRBR's phantom
+  **RoE 61.5%** (drawn from a different column than its RoCE/RoA/current ratio and printed as
+  latest) is gone, replaced by *"not reported this period: RoE, total debt/equity
+  [LTM 12 months Jun-30-2026]"*; FUBO likewise loses RoE/RoCE/RoA to attribution. NFLX, a control
+  that never split, kept every value and only gained its period stamp. **#451's capital-structure
+  stamps did not move on any name** — checked, since this pass touched the same module.
+  **UNCITED SYNTHESIS POINTS SHIP ON EVERY PASS AND NOTHING GATES THEM (review of #454) — the
+  first measurement, and it turned up one CHRONIC case that re-rolling cannot fix.**
+  The reviewer flagged three `⚠ uncited` / `MISMATCH` investment assertions in the refresh and
+  objected to the pass being called "14/14 clean". The objection was right on both counts: two of
+  the three were genuinely NEW (MVST, UBER), and "clean" described the assembler's exit code, not
+  the artifacts.
+  **HISTORICAL RATE, measured across the last 8 artifact commits: 0 · 2 · 2 · 2 · 4 · 5 · 5 and
+  this pass's 3 — mean ~2.9, and NOTHING gates it.** Every pass ships whatever the re-roll
+  produces. #447 hit 0, so zero is reachable; it happened once in eight.
+  **RE-ROLL-UNTIL-CLEAN IS PRACTICAL FOR THE RANDOM CASES — tested, not assumed:** one re-roll
+  cleared MVST and UBER outright (fleet 4 → 3 → 1).
+  **BUT FUBO IS CHRONIC AND STRUCTURAL, NOT CHURN.** It carries an uncited flag in EVERY historical
+  artifact commit, and re-rolling it produced *a different instance of the same class* — a
+  `bull_point` about `TEV/Revenue` became a `bear_point` about `TEV/EBITDA NM`. The cause is an
+  interaction, not luck: FUBO genuinely carries **NM** valuation metrics, the model keeps reaching
+  for them, and the validator correctly refuses a claim that asserts missing data while citing a
+  present field. Re-rolling that name is whack-a-mole against a reproducible pattern.
+  **OPERATOR DECISION OWED — three options, and only the first is free:** (a) gate the artifact
+  pass at zero and re-roll offending names, accepting that FUBO would loop forever and needs an
+  exemption or a real fix; (b) let the synthesis prompt handle NM metrics explicitly so the model
+  states them as unknowns rather than source-binding them; (c) accept-and-disclose, which is
+  today's de-facto behaviour but has never been a decision. **Recorded rather than chosen — a gate
+  on artifact content is a policy call, not a build call.**
   **STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current` and
   `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date — under
   `Close (latest)` stamps. **0 of 19 bundles have out-of-order Multiples columns**, so there is no

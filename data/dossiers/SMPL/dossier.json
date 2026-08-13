@@ -4275,7 +4275,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Agreement · 0001104659-19-060856 · amended by 0001104659-19-060856]\n  Principal / commitment amount: $460,000,000 (2019 Incremental Term Loan Commitment; Barclays Bank PLC $460,000,000;…\n  Interest / coupon rate: On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum;…\n  Maturity date: July 7, 2024\n  Financial-maintenance covenants: Total Net Leverage Ratio no greater than 5.00 to 1.00 (stated as a condition to…\n  Amortization / scheduled principal payments: Quarterly amortization of $1,676,470.59 on the last day of each March, June,…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Agreement · 0001104659-19-060856 · amended by 0001104659-19-060856]\n  Principal / commitment amount: $460,000,000 (2019 Incremental Term Loan Commitment; Barclays Bank PLC / Total)\n  Interest / coupon rate: On and after Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar…\n  Maturity date: July 7, 2024\n  Financial-maintenance covenants: Total Net Leverage Ratio no greater than 5.00 to 1.00 (as an Investment condition…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4358,7 +4358,7 @@
               "value": "reaffirms and confirms that each Loan Document to which it is a party or is otherwise bound, each Lien granted by it to the Collateral Agent for the benefit of the Secured Parties pursuant to any such Loan Document and all Collateral encumbered thereby continues to guarantee or secure ... and hereby ratifies the security interests in the Collateral (as defined in the Credit Agreement) granted by it pursuant to the Security Documents",
               "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
               "status": "present",
-              "note": "verbatim: “(iii) reaffirms and confirms that each Loan Document to which it is a party or is otherwise bound, each Lien granted by it to the Collateral Agent for the benefit of the Secured Parties pursuant to any such Loan Document and all Collateral encumbered thereby continues to guarantee or secure, as the case may be, in accordance with the terms of the applicable Loan Documents the payment and performance of all “Secured Obligations” under the Credit Agreement, and hereby ratifies the security interests in the Collateral (as defined in the Credit Agreement) granted by it pursuant to the Security Documents; [signature blocks: “ATKINS INTERMEDIATE HOLDINGS, LLC, as Holdings and a Guarantor”; “CONYERS PARK ACQUISITION CORP., as Parent and a Guarantor”]”"
+              "note": "verbatim: “reaffirms and confirms that each Loan Document to which it is a party or is otherwise bound, each Lien granted by it to the Collateral Agent for the benefit of the Secured Parties pursuant to any such Loan Document and all Collateral encumbered thereby continues to guarantee or secure, as the case may be, in accordance with the terms of the applicable Loan Documents the payment and performance of all “Secured Obligations” under the Credit Agreement, and hereby ratifies the security interests in the Collateral (as defined in the Credit Agreement) granted by it pursuant to the Security Documents”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4369,10 +4369,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is six months after the 2018 Amendment Effective Date, the Borrower (x) makes any prepayment of Initial Term Loans in connection with any Repricing Transaction or (y) effects any amendment of this Agreement resulting in a Repricing Transaction or (z) makes a mandatory prepayment of Initial Term Loans pursuant to Section 2.11(c) in connection with a Prepayment Event described in clause (b) of the definition of “Prepayment Event” ... the Borrower shall pay ... (I) a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid in connection with such Repricing Transaction and (II) in the case of clause (y), an amount equal to 1.00% of the aggregate amount of the applicable Initial Term Loans of non-consenting Lenders outstanding immediately prior to such amendment that are subject to an effective pricing reduction pursuant to such amendment.",
+              "value": "The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is six months after the 2018 Amendment Effective Date, the Borrower (x) makes any prepayment of Initial Term Loans in connection with any Repricing Transaction or (y) effects any amendment ... or (z) makes a mandatory prepayment of Initial Term Loans pursuant to Section 2.11(c) in connection with a Prepayment Event described in clause (b) ... the Borrower shall pay ... (I) a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid ... and (II) ... an amount equal to 1.00% of the aggregate amount of the applicable Initial Term Loans of non-consenting Lenders",
               "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
               "status": "present",
-              "note": "verbatim: “Section 2.11(a) of the Credit Agreement is hereby amended by deleting clause (i) of said Section in its entirety and inserting the following text in lieu thereof: “The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is six months after the 2018 Amendment Effective Date, the Borrower (x) makes any prepayment of Initial Term Loans in connection with any Repricing Transaction or (y) effects any amendment of this Agreement resulting in a Repricing Transaction or (z) makes a mandatory prepayment of Initial Term Loans pursuant to Section 2.11(c) in connection with a Prepayment Event described in clause (b) of the definition of “Prepayment Event”, in either case, the Borrower shall pay to the Administrative Agent, for the ratable account of each of the applicable Term Lenders holding Initial Term Loans, (I) a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid in connection with such Repricing Transaction and (II) in the case of clause (y), an amount equal to 1.00% of the aggregate amount of the applicable Initial Term Loans of non-consenting Lenders outstanding immediately prior to such amendment that are subject to an effective pricing reduction pursuant to such amendment.””"
+              "note": "verbatim: “The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is six months after the 2018 Amendment Effective Date, the Borrower (x) makes any prepayment of Initial Term Loans in connection with any Repricing Transaction or (y) effects any amendment of this Agreement resulting in a Repricing Transaction or (z) makes a mandatory prepayment of Initial Term Loans pursuant to Section 2.11(c) in connection with a Prepayment Event described in clause (b) of the definition of “ Prepayment Event ”, in either case, the Borrower shall pay to the Administrative Agent, for the ratable account of each of the applicable Term Lenders holding Initial Term Loans, (I) a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid in connection with such Repricing Transaction and (II) in the case of clause (y), an amount equal to 1.00% of the aggregate amount of the applicable Initial Term Loans of non-consenting Lenders outstanding immediately prior to such amendment that are subject to an effective pricing reduction pursuant to such amendment.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4395,40 +4395,12 @@
             "pik_pct": null
           },
           {
-            "name": "ABR Loan Applicable Rate (post-amendment)",
-            "value": {
-              "value": "2.50% per annum",
-              "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
-              "status": "present",
-              "note": "verbatim: “with respect to any Initial Term Loan that is an ABR Loan, 2.50% per annum”"
-            },
-            "base_rate_label": "ABR",
-            "margin_pct": 2.5,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
             "name": "Governing law",
             "value": {
               "value": "THE LAW OF THE STATE OF NEW YORK",
               "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
               "status": "present",
               "note": "verbatim: “THIS AMENDMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Underlying Credit Agreement date",
-            "value": {
-              "value": "July 7, 2017",
-              "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
-              "status": "present",
-              "note": "verbatim: “reference is hereby made to the Credit Agreement, dated as of July 7, 2017, among the Borrowers, Holdings, Parent, the lenders party thereto from time to time...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4453,7 +4425,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$460,000,000 (2019 Incremental Term Loan Commitment; Barclays Bank PLC $460,000,000; Total: $460,000,000)",
+              "value": "$460,000,000 (2019 Incremental Term Loan Commitment; Barclays Bank PLC / Total)",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
               "note": "verbatim: “Name of 2019 Incremental Term Loan Lenders 2019 Incremental Term Loan Commitment Barclays Bank PLC $ 460,000,000 Total: $ 460,000,000”"
@@ -4467,12 +4439,12 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior: ABR 2.50%, Eurodollar 3.50%)",
+              "value": "On and after Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior: ABR 2.50%, Eurodollar 3.50%)",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “The definition of \"Applicable Rate\" is amended by replacing clause (b) of such definition with following: \"(b) (i) prior to the Amendment No. 2 Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.50% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.50% per annum, and (ii) on and after the Amendment No. 2 Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.75% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.75% per annum:”"
+              "note": "verbatim: “The definition of “Applicable Rate” is amended by replacing clause (b) of such definition with following: “(b) ... (ii) on and after the Amendment No. 2 Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.75% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.75% per annum”"
             },
-            "base_rate_label": "Eurodollar (LIBO Rate)",
+            "base_rate_label": "LIBO Rate / ABR",
             "margin_pct": 3.75,
             "margin_bps": null,
             "floor_pct": null,
@@ -4495,7 +4467,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Total Net Leverage Ratio no greater than 5.00 to 1.00 (stated as a condition to certain Investments under Section 6.04(bb)); also Investment basket of greater of (A) $100,000,000 and (B) 66% of Consolidated EBITDA for the Test Period then last ended (Section 6.04(c))",
+              "value": "Total Net Leverage Ratio no greater than 5.00 to 1.00 (as an Investment condition under Section 6.04(bb)); Investment basket the greater of $100,000,000 and 66% of Consolidated EBITDA under Section 6.04(c)",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
               "note": "verbatim: “provided that such Investments pursuant to clause (B) of this Section 6.04(bb) shall only be permitted to the extent that at the time of any such Investment and after giving effect thereto, on a Pro Forma Basis, the Total Net Leverage Ratio is no greater than 5.00 to 1.00”"
@@ -4509,7 +4481,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2019 Incremental Term Loans rank equal in right of payment and equal in right of security with the Initial Term Loans; \"Holdings and the Borrowers shall have satisfied the Collateral and Guarantee Requirement and, substantially simultaneously with the consummation of the Quest Acquisition the Loan Guarantors shall have satisfied the Collateral and Guarantee Requirement\"; Loan Parties include Atkins Intermediate Holdings, LLC (Holdings), Conyers Park Acquisition Corp. (Parent), and Borrowers ANI, ANH, ANH II and NCP",
+              "value": "2019 Incremental Term Loans rank equal in right of payment and security with Initial Term Loans; Holdings and Borrowers shall have satisfied the Collateral and Guarantee Requirement, and substantially simultaneously with the Quest Acquisition the Loan Guarantors shall have satisfied the Collateral and Guarantee Requirement",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
               "note": "verbatim: “Ranking and Security. The 2019 Incremental Term Loans shall rank equal in right of payment and equal in right of security with the Initial Term Loans.”"
@@ -4523,10 +4495,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Voluntary prepayment permitted at any time without premium or penalty, subject to a 1.00% Repricing Transaction prepayment premium if within 12 months after the Amendment No. 2 Effective Date; \"Scheduled installments of principal of the Incremental Term Increase set forth above shall be reduced in connection with any voluntary or mandatory prepayments of the Initial Term Loans in accordance with Sections 2.10 and 2.11 of the Amended Credit Agreement\"; mandatory prepayment references Section 2.11(c) Prepayment Event. (Events of default not enumerated in this exhibit.)",
+              "value": "Voluntary prepayment permitted without premium/penalty; within 12 months of Amendment No. 2 Effective Date a Repricing Transaction (incl. mandatory prepayment under Section 2.11(c) in connection with a Prepayment Event) incurs a 1.00% prepayment premium. Scheduled installments reduced by voluntary or mandatory prepayments per Sections 2.10 and 2.11.",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is 12 months after the Amendment No. 2 Effective Date, the Borrower (x) makes any prepayment of Initial Term Loans in connection with any Repricing Transaction ... the Borrower shall pay to the Administrative Agent, for the ratable account of each of the applicable Term Lenders holding Initial Term Loans, (I) a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid in connection with such Repricing Transaction”"
+              "note": "verbatim: “The Borrower shall have the right at any time and from time to time to prepay any Borrowing in whole or in part, without premium or penalty; provided that in the event that, on or prior to the date that is 12 months after the Amendment No. 2 Effective Date, the Borrower ... makes a mandatory prepayment of Initial Term Loans pursuant to Section 2.11(c) in connection with a Prepayment Event ... resulting in a Repricing Transaction ... the Borrower shall pay ... a prepayment premium of 1.00% of the principal amount of the Initial Term Loans being prepaid”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4535,12 +4507,12 @@
             "pik_pct": null
           },
           {
-            "name": "Amortization / scheduled principal payments",
+            "name": "Scheduled amortization",
             "value": {
-              "value": "Quarterly amortization of $1,676,470.59 on the last day of each March, June, September and December commencing March 31, 2020 through June 30, 2024",
+              "value": "$1,676,470.59 per quarter, commencing March 31, 2020 through June 30, 2024",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower shall repay Initial Term Loans on the last day of each March, June, September and December (commencing on March 31, 2020) in the principal amount of Term Loans as follows ... March 31, 2020 $ 1,676,470.59 ... June 30, 2024 $ 1,676,470.59”"
+              "note": "verbatim: “the Borrower shall repay Initial Term Loans on the last day of each March, June, September and December (commencing on March 31, 2020) ... Payment Date Amortization Payment March 31, 2020 $ 1,676,470.59 ... June 30, 2024 $ 1,676,470.59”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4549,26 +4521,12 @@
             "pik_pct": null
           },
           {
-            "name": "Closing / funding fee",
+            "name": "Closing fee",
             "value": {
-              "value": "Closing fee equal to 0.50% of the stated principal amount of the 2019 Incremental Term Loan",
+              "value": "0.50% of stated principal amount of the 2019 Incremental Term Loan",
               "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “a closing fee in an amount equal to 0.50% of the stated principal amount of such 2019 Incremental Term Lender's 2019 Incremental Term Loan.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Most Favored Nation (MFN) yield protection",
-            "value": {
-              "value": "MFN: 0.50% per annum (50 bps) Effective Yield cushion",
-              "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
-              "status": "present",
-              "note": "verbatim: “in the event that the Effective Yield for any such Incremental Term Loans is greater than the Effective Yield for the Initial Term Loans by more than 0.50% per annum, then the Effective Yield for the Initial Term Loans shall be increased to the extent necessary so that the Effective Yield for the Initial Term Loans is equal to the Effective Yield for such Incremental Term Loans minus 0.50% per annum”"
+              "note": "verbatim: “a closing fee in an amount equal to 0.50% of the stated principal amount of such 2019 Incremental Term Lender’s 2019 Incremental Term Loan”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -6416,8 +6374,8 @@
       "note": null
     },
     "key_ratios": {
-      "value": "RoE -12.2%; RoCE 6.0%; RoA 5.4%; total debt/equity 0.32; current ratio 4.80; dividend: none (latest)",
-      "source_ref": "CIQ Financials→Ratios (latest period)",
+      "value": "RoE -12.2%; RoCE 6.0%; RoA 5.4%; total debt/equity 0.32; current ratio 4.80; dividend: none [LTM 12 months May-30-2026]",
+      "source_ref": "CIQ Financials→Ratios [LTM 12 months May-30-2026]",
       "status": "present",
       "note": null
     },
@@ -6628,7 +6586,7 @@
       },
       "book_value_ps": {
         "value": 16.03,
-        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (latest)",
+        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (2026-05-30)",
         "status": "present",
         "note": null
       },
@@ -8067,8 +8025,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail takeaway (total company)",
-          "period": "Q2 2026 (New Year, New Year promotional period)",
+          "metric": "total retail takeaway (New Year, New Year promotional period)",
+          "period": "Q2 2026",
           "value": "declining 6.4% year-over-year",
           "value_num": null,
           "unit": null,
@@ -8079,7 +8037,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Quest consumption growth",
+          "metric": "Quest consumption",
           "period": "Q2 2026",
           "value": "grew 2.4%",
           "value_num": null,
@@ -8091,7 +8049,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Salty consumption growth",
+          "metric": "Salty consumption",
           "period": "Q2 2026",
           "value": "grew 14%",
           "value_num": null,
@@ -8127,7 +8085,7 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "category composition (branded vs private label)",
+          "metric": "category composition (private label / branded)",
           "period": null,
           "value": "predominantly branded category with limited private label",
           "value_num": null,
@@ -8138,56 +8096,20 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "retail scale / category advisership",
-          "period": null,
-          "value": "significant retail scale within the category aisle and serve as a category adviser to many of our largest retail customers",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Importantly, we also have significant retail scale within the category aisle and serve as a category adviser to many of our largest retail customers.",
-          "following_context": "However, it's clear that our performance has not reflected the strength of our company or the potential of our brands. Strategy shifted, priorities were not always clear and execution did not consistently meet the standard required to compete at a time when competitive activity was increasing, particularly on Bars. As a result, we made some strategic choices that ultimately weakened our performance and limited our ability to fully capitalize on the opportunities in front of us.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "pricing_action",
-          "metric": "portfolio price increase",
-          "period": "effective September",
-          "value": "high single-digit price increase across most of our portfolio that will become effective in September",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Given the significant cost inflation we are experiencing this fiscal year and believe will continue into the next year, we recently announced a high single-digit price increase across most of our portfolio that will become effective in September.",
-          "following_context": "This increase is necessary to offset inflation we are experiencing across proteins, packaging, and other key cost inputs. While we remain focused on productivity initiatives and cost reduction efforts, rebuilding margins requires decisive action on pricing, and we believe this increase is appropriate.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
-          "metric": "total company retail takeaway",
+          "metric": "net sales",
           "period": "Q3 2026",
-          "value": "declined 6.7%",
+          "value": "declined 6.3% to $357 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter.",
-          "following_context": "The purposeful nutrition category grew 10% during the same time frame.",
+          "verbatim": "Net sales declined 6.3% to $357 million.",
+          "following_context": "Gross margin declined 390 basis points to 32.5%. And adjusted EBITDA declined 22.5% to $57.2 million. Quest and OWYN net sales grew 1.1% and 3.6% versus prior year, respectively, and both brands performed slightly better than we expected. We continue to see encouraging momentum in some parts of the portfolio, particularly Quest chips and milkshakes. Atkins net sales declined 24.6% in the quarter, reflecting continued pressure from declining household penetration as a result of insufficient marketing support behind the brand. Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter. The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "purposeful nutrition category growth",
-          "period": "Q3 2026",
-          "value": "grew 10%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "The purposeful nutrition category grew 10% during the same time frame.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Quest net sales growth",
+          "metric": "Quest net sales",
           "period": "Q3 2026",
           "value": "grew 1.1%",
           "value_num": null,
@@ -8199,7 +8121,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "OWYN net sales growth",
+          "metric": "OWYN net sales",
           "period": "Q3 2026",
           "value": "grew 3.6%",
           "value_num": null,
@@ -8223,7 +8145,43 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Quest retail takeaway growth",
+          "metric": "total retail takeaway",
+          "period": "Q3 2026",
+          "value": "declined 6.7%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter.",
+          "following_context": "The purposeful nutrition category grew 10% during the same time frame.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "purposeful nutrition category growth",
+          "period": "Q3 2026",
+          "value": "grew 10%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The purposeful nutrition category grew 10% during the same time frame.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "portfolio price increase",
+          "period": null,
+          "value": "high single-digit price increase across most of our portfolio that will become effective in September",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Given the significant cost inflation we are experiencing this fiscal year and believe will continue into the next year, we recently announced a high single-digit price increase across most of our portfolio that will become effective in September.",
+          "following_context": "This increase is necessary to offset inflation we are experiencing across proteins, packaging, and other key cost inputs. While we remain focused on productivity initiatives and cost reduction efforts, rebuilding margins requires decisive action on pricing, and we believe this increase is appropriate.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Quest retail takeaway",
           "period": "Q3 2026",
           "value": "grew 1.4%",
           "value_num": null,
@@ -8246,20 +8204,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Quest core bar and chip share of brand",
-          "period": null,
-          "value": "represent 80% of the brand",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Our challenge today is to refocus on our core bar and chip segments that represent 80% of the brand, while improving buy rate, particularly within bars.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
-          "metric": "Quest chips consumption growth",
+          "metric": "Quest chips consumption",
           "period": "Q3 2026",
           "value": "grew by over 17%",
           "value_num": null,
@@ -8321,7 +8267,7 @@
           "kind": "leading_indicator",
           "metric": "Atkins total brand household penetration",
           "period": "Q3 2026",
-          "value": "stands at 8.5%, down 220 basis points from last year",
+          "value": "8.5%, down 220 basis points from last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Total brand household penetration currently stands at 8.5%, down 220 basis points from last year.",
@@ -8336,7 +8282,7 @@
           "value": "declined 1.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "OWYN retail takeaway declined 1.3% in the third quarter compared to a decline of 2.4% last quarter.",
+          "verbatim": "Turning to OWYN, OWYN retail takeaway declined 1.3% in the third quarter compared to a decline of 2.4% last quarter.",
           "following_context": "Total brand household penetration currently stands at 4.3%, flat year over year. As we reported last quarter, the combination of a product quality issue and ineffective marketing execution negatively impacted performance on a number of OWYN products. We have addressed the product issue, but do expect distribution losses over the next 6 to 12 months because of poor marketplace performance. With that said, we continue to believe OWYN has meaningful long-term potential.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
           "tier": "llm-fenced"
@@ -8345,7 +8291,7 @@
           "kind": "leading_indicator",
           "metric": "OWYN total brand household penetration",
           "period": "Q3 2026",
-          "value": "stands at 4.3%, flat year over year",
+          "value": "4.3%, flat year over year",
           "value_num": null,
           "unit": null,
           "verbatim": "Total brand household penetration currently stands at 4.3%, flat year over year.",
@@ -8360,78 +8306,88 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — solid balance sheet and category growth versus broad share loss, a 24.6% Atkins decline and a $391.9M brand impairment.",
+    "evidence_balance": "mixed — a self-funding, durably profitable franchise with a growing Quest core, offset by secular Atkins erosion, ongoing impairments and still-falling estimates.",
     "bull_points": [
       {
-        "claim": "Leverage is conservative and the business self-funds — net-debt/EBITDA 1.5x with interest coverage 10.9x, well below the peer-median total-debt/EBITDA of 3.3x, so this is a de-rating without a solvency crisis.",
-        "source_ref": "CIQ Net Debt $325M [FQ3/CQ2 May-30-2026] ÷ CIQ EBITDA $218M [LTM 12 months May-30-2026]",
+        "claim": "The trailing EV/EBITDA sits at 5.6x against a peer median of 8.8x (-36%), but the paired fundamental deltas show the discount is not obviously earned on profitability — the name's EBITDA margin is 16% vs a peer median of 13% — posing whether the gap is residual overshoot rather than a value trap.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "The company remains FCF-positive and self-funding, generating $107.2M LTM levered FCF, giving it runway to fund a turnaround without external capital.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "The absolute EBITDA reconciler shows the multi-year franchise trend is up, not collapsing: EBITDA rose from 57 (FY16) to a 262 (FY25) peak before easing to 217 LTM — a step-down off a high, not a secular erosion to zero.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Management has taken a concrete margin-repair action — a high single-digit portfolio price increase effective September — the causal lever intended to rebuild gross margin against protein/packaging inflation.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The largest brand Quest is still recruiting consumers, with retail takeaway +1.4% and household penetration up 120bps YoY to 20.5% in Q3, and Quest chips consumption +17% — evidence the core growth engine is not broken.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "On the peer-comp inputs the discount is not obviously earned: SMPL's EBITDA margin 16% exceeds the peer-median 13%, leverage 1.9x is far below the peer-median 3.3x, and LT EPS growth 2% beats the peer-median -8% — pose whether the discount is RESIDUAL rather than a value trap, noting the peer set is flagged heterogeneous.",
+        "claim": "On the fundamental_deltas, the name carries LOWER leverage (Debt/EBITDA 1.9x vs peer-median 3.3x), a lower beta (0.1 vs 0.4) and a HIGHER LT EPS growth estimate (2% vs peer-median -8%) than the peer set, so the discount is not explained by worse balance-sheet or growth fundamentals across the board — the human must judge earned vs residual against a heterogeneous roster.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Insiders bought — two open-market director purchases totalling $1.11M in the last 182 days with zero sells, a posture signal from those closest to the turnaround.",
+        "claim": "Absolute EBITDA has stepped up the entire history (FY21 196 → FY22 222 → FY24 250 → FY25 262) with only a modest LTM dip to 217, so the enterprise is a durably profitable cash generator, not a melting asset — the margin-percent softening sits against a much larger absolute base than five years ago.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The business is FCF-positive and self-funding (LTM levered FCF $107.2M) with net-debt/EBITDA of 1.5x and interest coverage of 10.9x, so it can fund its own turnaround without forced dilution or refinancing distress.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-30-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Quest — the largest brand — grew retail takeaway 1.4% with household penetration up 120bps to 20.5%, and Quest chips consumption grew over 17% and milkshakes ~50%, evidence the core growth engine is still recruiting consumers within a purposeful-nutrition category that grew 10%.",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Management announced a high single-digit price increase across most of the portfolio effective September to offset input inflation, a concrete margin-rebuild mechanism on a timetable rather than a hope.",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Q3 came in ahead of the company's own expectations — net sales declined 6.3% to $357M and adjusted EBITDA declined 22.5% to $57.2M, both better than the Q2-guided Q3 range — an early inflection versus a bleaker prior guide.",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Insiders were net buyers on the open market (2 buys, ~$1.11M, zero sells in the last 182 days, largest a $0.99M director purchase 2026-04-23) around the drawdown lows, a directional signal from those closest to the business.",
         "source_ref": "EDGAR Form 4 (latest 0002076611-26-000003; 110 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Retail takeaway is declining across the whole company — down 6.4% in Q2 and 6.7% in Q3 — while the purposeful-nutrition category itself grew 10%, so the business is losing share to its own category, a demand/execution signal not an optical one.",
+        "claim": "The de-rating is idiosyncratic, not market-driven: SMPL returned -31.4% over 180d while its small-cap benchmark IWM rose +15.1%, a -46.5% relative gap that points to a company-specific impairment of the thesis, not a beta washout.",
+        "source_ref": "EOD SMPL−IWM 180d to 2026-08-12 (assembly, cap-band)",
+        "cited": true
+      },
+      {
+        "claim": "The trailing 5.6x is at its own 0th percentile over 8.5 years (range 6.1–28.9x, median 17.9x) and the forward NTM basis is barely higher at 5.9x — so this is NOT merely a trailing optical low; consensus is pricing a durably lower multiple, consistent with the terminal-impairment read rather than a timing dip.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 35 quarters spanning 2017-12-29..2026-06-30 (8.5y) (partial last column excluded from the distribution)",
+        "cited": true
+      },
+      {
+        "claim": "Atkins — a core legacy brand — is in secular decline: retail takeaway fell 23.9% in Q3 with household penetration down 220bps to 8.5%, a real signal of demand erosion, not an optical artifact.",
         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Atkins is in structural decline — net sales -24.6% and household penetration down 220bps to 8.5% in Q3 — a real erosion of a core brand, not a timing artefact.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+        "claim": "Revenue and EBITDA growth are negative and worse than peers on fundamental_deltas (rev growth -4% vs peer 0%; EBITDA growth -19% vs peer -14%), so part of the peer discount is EARNED by inferior top-line and EBITDA momentum — a value-trap risk the human must weigh.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "The margin decline is REAL, not merely an optical percentage: gross margin fell from 36% (FY25) to 33% LTM AND absolute EBITDA fell from the 262 peak to 217 LTM — the % and the dollars are moving down together, driven by cocoa/whey/tariff input inflation.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "The company wrote down $391.9M of goodwill and intangibles across Atkins and OWYN, validating that acquired brand value has been permanently impaired — the accounting confirms the demand erosion is judged durable, not transient.",
+        "claim": "The company took $391.9M of asset writedowns (goodwill + intangible impairment across Atkins and OWYN) in the trailing period, driving a GAAP net loss of -$199M and confirming acquired brand value was permanently destroyed, not merely re-timed.",
         "source_ref": "EDGAR companyfacts ImpairmentOfIntangibleAssetsExcludingGoodwill (2025-08-31→2026-05-30, 272d)",
         "cited": true
       },
       {
-        "claim": "Consensus forward estimates were slashed — FY26 EBITDA cut from 285.6 to 222.1 (-22%) and FY26 GAAP net income crossed zero to -153.5 over the 12m revision path — the sell-side has repriced the earnings base downward, not just the multiple.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "Gross margin has compressed hard — 33% LTM vs 39% in FY24 — driven by inflationary cocoa, whey and tariff costs, and management guides a further 375bps next-fy gross-margin decline, so the margin damage is ongoing and cost-driven, not one-off.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "OWYN, a recent acquisition, is still deteriorating with management explicitly guiding to distribution losses over the next 6-12 months from poor marketplace performance — the newest growth leg is impaired near-term.",
+        "claim": "Forward estimate breadth is sharply negative: FQ4 2026 and FQ1 2027 revisions run 0↑ against 4–7↓ across EPS, EBITDA, revenue and net income at the 2m/3m horizons, and the FY26 EBITDA path fell -22% (285.6 → 222.1) over 12 months — a still-deteriorating consensus.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "cited": true
+      },
+      {
+        "claim": "OWYN — the recent acquisition — still faces expected distribution losses over the next 6–12 months from a product-quality issue and poor marketplace performance, a forward drag on top line, not a healed problem.",
         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Guidance delivery on the metrics that matter for the thesis is weak — Gross Margin actual≥floor only 4/9 with the most recent FQ2 2026 MISSED, and the buyback averaged $18.29 vs an $10.94 current price, capital deployed above the market's re-rating.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "cited": true
       }
     ],
@@ -8439,75 +8395,92 @@
       {
         "name": "BellRing Brands",
         "outcome": "recovered",
-        "distinguishing_fact": "A focused branded-nutrition/protein peer in the same roster that leaned into a single high-momentum shake franchise and re-rated on volume-led category tailwinds — the analogue for SMPL if Quest and the category growth carry the portfolio.",
+        "distinguishing_fact": "Same purposeful-nutrition/protein aisle and in the peer set; a focused single-category nutrition player that compounded on brand momentum — the pattern SMPL's Quest engine would need to reassert.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Hain Celestial Group",
         "outcome": "went terminal",
-        "distinguishing_fact": "A branded better-for-you peer in the roster that impaired repeatedly across multiple years while volumes eroded and leverage climbed — the analogue for SMPL if brand impairments and takeaway declines prove structural rather than fixable.",
+        "distinguishing_fact": "In-peer natural/better-for-you brand company whose acquired brand portfolio impaired repeatedly over years with eroding takeaway — the terminal analogue for SMPL's Atkins/OWYN writedown path.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Kraft Heinz Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "A branded-food name whose serial goodwill/intangible write-downs marked acquired-brand value as permanently impaired amid secular demand erosion — the analogue for the Atkins/OWYN impairment path if the reset is durable.",
+        "distinguishing_fact": "In-peer packaged-food acquirer that took massive multi-year goodwill/intangible impairments on over-paid brands and de-rated persistently — the 'acquired brand value permanently destroyed' pattern.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Central Garden & Pet",
+        "name": "Utz Brands",
         "outcome": "recovered",
-        "distinguishing_fact": "A branded consumer-staples company that suffered a demand-and-margin air-pocket, cut costs and re-priced, then normalized once input inflation eased — the analogue if SMPL's price increase and cost program restore margins.",
+        "distinguishing_fact": "In-peer salty-snacks player that carried heavy leverage and depressed margins through an operational reset while retaining brand relevance — a turnaround-execution analogue.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Medifast",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Weight-management brand whose demand base eroded sharply amid GLP-1 adoption and a lost core consumer — the demand-erosion analogue most relevant to Atkins.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the collapse in retail takeaway an execution problem that management's pricing, cost and brand-investment actions can reverse (overshoot), or the start of durable brand/demand erosion that the $391.9M impairment already anticipates (value trap)?",
+      "question": "Is the de-rating an overshoot on a durably profitable, self-funding franchise whose growth engine (Quest) plus pricing can rebuild margins — or a terminal re-rating as legacy Atkins demand secularly erodes, OWYN distribution unwinds, and cost inflation permanently resets margins lower?",
       "evidence_for": [
         {
-          "claim": "Management frames the challenges as execution-driven not category-driven, with Quest still recruiting consumers (takeaway +1.4%, penetration +120bps to 20.5%) and a September price increase and cost program in flight to rebuild margins.",
+          "claim": "Quest retail takeaway grew 1.4% with household penetration up 120bps to 20.5% and Quest chips up over 17%, showing the core engine still recruits consumers in a category that grew 10%.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The category itself grew 10% and margin/leverage fundamentals still beat the peer median (EBITDA margin 16% vs 13%, leverage 1.9x vs 3.3x), consistent with a fixable share/execution gap rather than a broken franchise.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "A high single-digit portfolio-wide price increase effective September is a committed mechanism to offset the protein/packaging inflation that drove margin compression.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "The franchise is self-funding — LTM FCF +$107.2M, net-debt/EBITDA 1.5x, interest coverage 10.9x — giving it runway to execute a turnaround without distress.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-30-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Total-company takeaway fell 6.7% AGAINST a category that grew 10%, Atkins net sales fell 24.6%, and OWYN faces guided distribution losses over 6-12 months — the demand erosion is broad and management-acknowledged.",
+          "claim": "Atkins takeaway fell 23.9% with penetration down 220bps to 8.5%, and management ties it to lost household penetration and distribution — a secular demand drain on a core brand.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The $391.9M Atkins/OWYN write-down and consensus FY26 EBITDA cut to 222.1 (-22%) with GAAP net income crossing to -153.5 show the earnings base itself has been repriced down, not just the multiple.",
+          "claim": "$391.9M of Atkins/OWYN brand impairment confirms acquired value was permanently written down, and OWYN faces further 6–12 month distribution losses.",
           "source_ref": "EDGAR companyfacts ImpairmentOfIntangibleAssetsExcludingGoodwill (2025-08-31→2026-05-30, 272d)",
+          "cited": true
+        },
+        {
+          "claim": "Forward estimate breadth remains one-sidedly negative (0↑ vs 4–7↓) and the FY26 EBITDA consensus path fell -22% over 12 months, with the NTM multiple (5.9x) barely above trailing — consensus is pricing a durably lower level.",
+          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Forward-adjusted EBITDA and adjusted EPS are UNKNOWN — not disclosed in the 99.1 revised guidance — so trailing EV/EBITDA 5.6x cannot be cleanly separated from a forward basis (note: NTM TEV/EBITDA is 5.9x per the ladder).",
-      "Segment/brand-level EBITDA is UNKNOWN — single-segment reporting means the market cannot see whether Quest's profitability is subsidising a loss-making Atkins/OWYN; this opacity is a bearish disclosure gap.",
-      "The per-brand impairment split ($391.9M across Atkins vs OWYN) is footnote prose with no XBRL axis — the 10-K impairment note is unread here, so which brand is judged most impaired is unresolved.",
-      "Whether the September high-single-digit price increase holds volume or accelerates takeaway declines is untested — the next print (est. 2026-10-08) is the checkpoint.",
-      "Covenant headroom on the Barclays term loan (Total Net Leverage ≤5.00x per the stale 2019 digest) versus current terms is UNKNOWN for this vintage; the debt schedule is 288d old.",
-      "The CIQ export date is unverified (a floor ≥2026-07-21), so consensus/multiple snapshots may lag the current price of $10.94."
+      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised guidance, and no company-adjusted LTM EBITDA — the overshoot-vs-terminal multiple read cannot be cleanly gated on a forward adjusted basis (opacity to surface, not fill).",
+      "No segment-level EBITDA (single-segment reporting) and no XBRL per-brand split of the $391.9M impairment across Atkins vs OWYN — the profitability and value destruction by brand is footnote-prose only, obscuring which brand is dragging.",
+      "Whether the September high-single-digit price increase holds without accelerating volume/distribution losses — elasticity in a declining-takeaway environment is untested in the data provided.",
+      "How much of Atkins' decline is GLP-1-driven secular versus fixable marketing under-investment — management asserts execution-driven, but provides no data separating the two.",
+      "The peer set is HETEROGENEOUS (caps $49M–$29.2B, 599x span; name $961M) — every peer-median stat is a confidence-gated input, not a clean benchmark, so the -36% EV/EBITDA discount cannot be read as clean mispricing.",
+      "The next results print (~2026-10-08) is the checkpoint that confirms or refutes the committed revised outlook and the early Q3 inflection — unresolved until then.",
+      "The 5.6x trailing multiple sits at its own 0th percentile over 8.5y — a floor reading that is itself neutral (overshoot-vs-terminal unresolved) and must be judged against the mechanism, not read directionally on its own."
     ]
   },
   "caveats": [
     "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
     "EDGAR P/E 10.7x does not rest on LTM GAAP earnings — LTM GAAP diluted EPS is NEGATIVE (-2.08), so a positive multiple must use some other denominator (an EPS from a non-current period, or a normalized/adjusted figure — the displayed basis does not say which). Do not read it as a GAAP trailing multiple.",
-    "Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage."
+    "Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.",
+    "Unreconciled margin-compression (a bear point): 'Gross margin has compressed hard — 33% LTM vs 39% in FY24 — driven by inflationary cocoa, whey and tariff costs, and management guides a further 375bps next-fy gross-margin decline, so the margin damage is ongoing and cost-driven, not one-off.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
-    "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "TWIN ampersand-name 'Central Garden & Pet' — verify it is a single entity (kept)"
+    "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T15:39:57.660091Z",
+  "assembled_at": "2026-08-13T17:10:02.271121Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -8533,7 +8506,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T15:42:09.510384Z",
+    "computed_at": "2026-08-13T17:12:13.409356Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

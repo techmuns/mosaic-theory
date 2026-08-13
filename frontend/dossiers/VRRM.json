@@ -4103,7 +4103,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2021 Term Loan Due 2028 · 0001104659-18-041476]\n  Principal / commitment amount: $9.20 per share; Aggregate Purchase Price = aggregate number of Acquired Shares…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2021 Term Loan Due 2028 · 0001104659-18-041476]\n  Principal / commitment amount: $9.20 per share; aggregate Purchase Price = number of Acquired Shares subscribed for…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4127,10 +4127,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$9.20 per share; Aggregate Purchase Price = aggregate number of Acquired Shares subscribed for multiplied by the price per Acquired Share of $9.20, without rounding",
+              "value": "$9.20 per share; aggregate Purchase Price = number of Acquired Shares subscribed for multiplied by the price per Acquired Share of $9.20 (set forth on signature page)",
               "source_ref": "8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “Subscriber desires to subscribe for and purchase from the Company that number of shares of the Company's Class A common stock, par value $0.0001 per share set forth on the signature page hereto (the \" Acquired Shares \"), for a purchase price of $9.20 per share, or the aggregate purchase price set forth on the signature page hereto (the \" Purchase Price \")”"
+              "note": "verbatim: “Subscriber desires to subscribe for and purchase from the Company that number of shares of the Company's Class A common stock, par value $0.0001 per share set forth on the signature page hereto (the \"Acquired Shares\"), for a purchase price of $9.20 per share, or the aggregate purchase price set forth on the signature page hereto (the \"Purchase Price\")”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4209,26 +4209,12 @@
             "pik_pct": null
           },
           {
-            "name": "Closing / settlement mechanics",
-            "value": {
-              "value": "Closing contingent upon substantially concurrent consummation of the Transactions and shall occur immediately prior thereto; Purchase Price wired to escrow at least 2 business days prior to Closing Date; Acquired Shares delivered in book entry form on Closing Date",
-              "source_ref": "8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm",
-              "status": "present",
-              "note": "verbatim: “Not less than seven (7) business days prior to the scheduled closing date of the Transactions (the \" Closing Date \"), the Company shall provide written notice to Subscriber ... Subscriber shall deliver to the Company at least two (2) business days prior to the Closing Date, to be held in escrow until the Closing, the Purchase Price for the Acquired Shares by wire transfer of United States dollars in immediately available funds to the account specified by the Company in the Closing Notice. On the Closing Date, the Company shall deliver to Subscriber the Acquired Shares in book entry form”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
             "name": "Termination",
             "value": {
-              "value": "Earlier of: (a) termination of the Merger Agreement; (b) mutual written agreement; or (c) conditions to Closing not satisfied on or prior to Closing",
+              "value": "Terminates upon earliest of: (a) termination of the Merger Agreement; (b) mutual written agreement of the parties; or (c) failure of Section 2 Closing conditions to be satisfied on or prior to Closing",
               "source_ref": "8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “This Subscription Agreement shall terminate and be void and of no further force and effect ... upon the earlier to occur of (a) such date and time as the Merger Agreement is terminated in accordance with its terms, (b) upon the mutual written agreement of each of the parties hereto to terminate this Subscription Agreement or (c) if any of the conditions to Closing set forth in Section 2 of this Subscription Agreement are not satisfied on or prior to the Closing and, as a result thereof, the transactions contemplated by this Subscription Agreement are not or will not be consummated at the Closing”"
+              "note": "verbatim: “This Subscription Agreement shall terminate and be void and of no further force and effect... upon the earlier to occur of (a) such date and time as the Merger Agreement is terminated in accordance with its terms, (b) upon the mutual written agreement of each of the parties hereto to terminate this Subscription Agreement or (c) if any of the conditions to Closing set forth in Section 2 of this Subscription Agreement are not satisfied on or prior to the Closing”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4239,10 +4225,10 @@
           {
             "name": "Registration rights",
             "value": {
-              "value": "File registration statement within 30 calendar days after consummation of the Transactions (Filing Deadline); effective no later than 60 calendar days following Filing Deadline (Effectiveness Deadline), extended to 90 calendar days if reviewed/commented by SEC",
+              "value": "File registration statement within 30 calendar days after consummation of the Transactions (Filing Deadline); effectiveness no later than 60 calendar days following Filing Deadline (extended to 90 days if SEC-reviewed)",
               "source_ref": "8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “The Company agrees that, within thirty (30) calendar days after the consummation of the Transactions (the \" Filing Deadline \"), the Company will file with the U.S. Securities and Exchange Commission ... a registration statement ... The Company shall use its commercially reasonable efforts to have the Registration Statement declared effective by the SEC as soon as practicable after the filing thereof, but no later than the sixty (60) calendar days following the Filing Deadline (the \" Effectiveness Deadline \"); provided , that the Effectiveness Deadline shall be extended to ninety (90) calendar days after the Filing Deadline if the Registration Statement is reviewed by, and receives comments from, the SEC”"
+              "note": "verbatim: “The Company agrees that, within thirty (30) calendar days after the consummation of the Transactions (the \"Filing Deadline\"), the Company will file with the U.S. Securities and Exchange Commission (the \"SEC\")... a registration statement to register... the offer, sale and distribution of all Registrable Securities... on Form S-3”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4265,12 +4251,12 @@
             "pik_pct": null
           },
           {
-            "name": "Trust Account waiver",
+            "name": "Security type",
             "value": {
-              "value": "Subscriber irrevocably waives all rights/claims to monies held in the Trust Account and agrees not to seek recourse against the Trust Account",
+              "value": "Class A common stock, par value $0.0001 per share (Acquired Shares)",
               "source_ref": "8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm",
               "status": "present",
-              "note": "verbatim: “Subscriber, on behalf of itself and its representatives, hereby irrevocably waives any and all right, title and interest, or any claim of any kind they have or may have in the future, in or to any monies held in the Trust Account, and agrees not to seek recourse against the Trust Account as a result of, or arising out of, this Subscription Agreement.”"
+              "note": "verbatim: “Subscriber desires to subscribe for and purchase from the Company that number of shares of the Company's Class A common stock, par value $0.0001 per share”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5657,8 +5643,8 @@
       "note": null
     },
     "key_ratios": {
-      "value": "RoE 45.9%; RoCE 11.1%; RoA 9.2%; total debt/equity 4.05; current ratio 1.89; dividend: none (latest)",
-      "source_ref": "CIQ Financials→Ratios (latest period)",
+      "value": "RoE 45.9%; RoCE 11.1%; RoA 9.2%; total debt/equity 4.05; current ratio 1.89; dividend: none [LTM 12 months Mar-31-2026]",
+      "source_ref": "CIQ Financials→Ratios [LTM 12 months Mar-31-2026]",
       "status": "present",
       "note": null
     },
@@ -5814,7 +5800,7 @@
       },
       "book_value_ps": {
         "value": 1.79,
-        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (latest)",
+        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (2026-03-31)",
         "status": "present",
         "note": null
       },
@@ -7277,7 +7263,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Government Solutions new bookings (awards)",
+          "metric": "Government Solutions new bookings (Q1)",
           "period": "Q1 2026",
           "value": "up to $13 million in new awards",
           "value_num": null,
@@ -7289,7 +7275,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Government Solutions trailing 12-month new bookings",
+          "metric": "Government Solutions new bookings (trailing 12 months)",
           "period": "trailing 12 months",
           "value": "approximately $71 million",
           "value_num": null,
@@ -7301,25 +7287,49 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. traffic fatalities change",
+          "metric": "traffic fatalities change",
           "period": "2025",
           "value": "decreased significantly in 2025 by more than 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "we are energized by the latest reporting for the National Highway Safety Administration, which indicates that traffic fatalities decreased significantly in 2025 by more than 6%.",
+          "verbatim": "the latest reporting for the National Highway Safety Administration, which indicates that traffic fatalities decreased significantly in 2025 by more than 6%.",
           "following_context": "This is a great indication that safety measures are working. And in the vein of safe, smart and connected, we believe continued deployment of automated enforcement will make significant impact on safety and ultimately saving lives.",
+          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Commercial Services revenue growth",
+          "period": "Q1 2026 vs Q1 2025",
+          "value": "declined 4% compared to the first quarter of 2025",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Moving on to Commercial Services revenue declined 4% compared to the first quarter of 2025 due primarily to prior period churn in our fleet management business.",
+          "following_context": "Looking at the remainder of the year, while the price of fuel and events in the Middle East could weigh on travel, household budgets and consumer assessment, we are cautiously optimistic about travel trends. Consumers and business traveler demand for domestic travel continues to be resilient so far, and we remain hopeful that airfare pricing remains affordable and travel volumes remain consistent with the performance year-to-date. As a reminder, significant customer relationship which represents over 10% of our revenue is currently operating under a short-term contract extension. This contract extension enables us to continue to serve the customer without interruption while we continue to negotiate a long-term renewal. These discussions are ongoing and constructive.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
           "metric": "significant customer relationship share of revenue",
-          "period": "Q1 2026",
+          "period": null,
           "value": "over 10% of our revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "As a reminder, significant customer relationship which represents over 10% of our revenue is currently operating under a short-term contract extension.",
           "following_context": "This contract extension enables us to continue to serve the customer without interruption while we continue to negotiate a long-term renewal. These discussions are ongoing and constructive.",
+          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "workforce reduction / annualized cost savings",
+          "period": "first quarter",
+          "value": "reduce our workforce by approximately 5%; approximately $10 million in annualized cost savings",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "we made the difficult decision to reduce our workforce by approximately 5% in the first quarter, which we expect will generate approximately $10 million in annualized cost savings.",
+          "following_context": "Importantly, these savings are being actively redeployed into the business to drive top line growth and reinforce our technology leadership. We are investing in strategic areas where we have clear competitive advantages, including large-scale fleet management and deep interoperability with cities, courts and law enforcement. Our priority investments areas include AI-driven capabilities across both hardware and software, autonomous vehicle ecosystems, ride share solutions and emerging technologies such as drone applications. A key pillar of this reinvestment is the expanded use of AI across our business directly supporting our smart mobility strategy. In the near term, we are focused on using AI to improve internal workflows and automate processes to drive efficiency and scalability. In parallel, we are embedding AI capability into our products through targeted R&D investments to enhance customer value and differentiate our offerings.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7361,7 +7371,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Commercial Services revenue change",
+          "metric": "Commercial Services revenue growth",
           "period": "Q1 2026",
           "value": "declined about 4% year-over-year",
           "value_num": null,
@@ -7385,8 +7395,20 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Total revenue growth",
-          "period": "Q4 2025",
+          "metric": "total product revenue",
+          "period": "Q1 2026",
+          "value": "$10 million for the quarter",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Total product revenue was $10 million for the quarter, Government Solutions contributed roughly $7 million and T2 delivered about $3 million in product sales overall for the quarter.",
+          "following_context": "Consolidated adjusted EBITDA for the quarter was $86 million, modestly stronger than our internal expectations as New York City camera installations were better than expected once the weather improved in March. We reported net income of $27 million for the quarter, including a tax provision of about $14 million, representing an effective tax rate of 34%. The effective tax rate is temporarily higher this quarter due to the year-over-year impact of stock-based compensation and reserve timing. We expect the full year effective tax rate to be 28% to 29",
+          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total revenue growth",
+          "period": "Q4 2025 vs Q4 2024",
           "value": "increased 16% from the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
@@ -7409,9 +7431,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Revenue attributable to NYC Red-Light camera installations",
+          "metric": "New York City Red-Light camera installation revenue",
           "period": "Q4 2025",
-          "value": "$22 million of revenue, of which approximately $14 million was installation services revenue and about $8 million was product revenue",
+          "value": "$22 million of revenue attributable to the Red-Light camera installations",
           "value_num": null,
           "unit": null,
           "verbatim": "Under our then existing contract with New York City Department of Transportation, we generated $22 million of revenue attributable to the Red-Light camera installations in the fourth quarter of 2025, of which approximately $14 million was installation services revenue and about $8 million was product revenue.",
@@ -7422,7 +7444,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Government Solutions total revenue growth",
-          "period": "Q4 2025",
+          "period": "Q4 2025 vs Q4 2024",
           "value": "increased 25% over the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
@@ -7433,21 +7455,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Government Solutions incremental annual recurring revenue bookings",
-          "period": "Q4 2025",
-          "value": "about $23 million of incremental annual recurring revenue based on a full run rate",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "we entered into bookings of about $23 million of incremental annual recurring revenue based on a full run rate, bringing the full year 2025 total to about $64 million in bookings.",
-          "following_context": "Notable fourth quarter bookings included school zone speed program in Orlando, Florida, our Red-Light enforcement program in Pittsburgh, Pennsylvania and a speed enforcement program across the state of Hawaii. These recent wins reinforce our structural advantage serving cities and public sector partners. Moreover, our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
-          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Government Solutions full year bookings",
-          "period": "full year 2025",
-          "value": "about $64 million in bookings",
+          "metric": "Government Solutions bookings (incremental annual recurring revenue)",
+          "period": "Q4 2025 / full year 2025",
+          "value": "about $23 million of incremental annual recurring revenue based on a full run rate; full year 2025 total to about $64 million",
           "value_num": null,
           "unit": null,
           "verbatim": "we entered into bookings of about $23 million of incremental annual recurring revenue based on a full run rate, bringing the full year 2025 total to about $64 million in bookings.",
@@ -7459,7 +7469,7 @@
           "kind": "competitive_position",
           "metric": "U.S. addressable market expansion",
           "period": "over the past 3 years",
-          "value": "expanded by approximately $365 million, with potential to expand to about $500 million if California passes additional enabling legislation",
+          "value": "expanded by approximately $365 million; potential to expand to about $500 million if California passes additional enabling legislation",
           "value_num": null,
           "unit": null,
           "verbatim": "our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
@@ -7471,35 +7481,11 @@
           "kind": "competitive_position",
           "metric": "crash reduction from speed cameras",
           "period": null,
-          "value": "14% reduction in crashes in major cities",
+          "value": "a 14% reduction in crashes in major cities",
           "value_num": null,
           "unit": null,
           "verbatim": "Speed cameras contribute to significant declines in violations as well as a 14% reduction in crashes in major cities.",
           "following_context": "National safety authorities, including the United States Department of Transportation's Federal Highway Administration and the National Highway Traffic Safety Administration recognize that automated speed enforcement is a proven safety countermeasure that can reduce fatalities and serious injuries by meaningful margins.",
-          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "consumer survey support for school bus stop-arm cameras",
-          "period": "late last year",
-          "value": "82% of respondents supported safety cameras",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "which showed 82% of respondents supported safety cameras to monitor and penalize drivers who illegally pass stop school buses and 70% of respondents favor automated enforcement in school zones.",
-          "following_context": "Automated enforcement remains a core catalyst for driver safety, which continues to be a top public priority.",
-          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "consumer survey support for school zone automated enforcement",
-          "period": "late last year",
-          "value": "70% of respondents favor automated enforcement in school zones",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "which showed 82% of respondents supported safety cameras to monitor and penalize drivers who illegally pass stop school buses and 70% of respondents favor automated enforcement in school zones.",
-          "following_context": "Automated enforcement remains a core catalyst for driver safety, which continues to be a top public priority.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -7517,9 +7503,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Commercial Services revenue growth",
-          "period": "Q4 2025",
-          "value": "increased about 10%",
+          "metric": "Commercial Services revenue and segment profit growth",
+          "period": "Q4 2025 vs prior year period",
+          "value": "increased about 10% and 7%, respectively",
           "value_num": null,
           "unit": null,
           "verbatim": "Fourth quarter revenue and segment profit increased about 10% and 7%, respectively, over the prior year period.",
@@ -7529,19 +7515,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Commercial Services segment profit growth",
-          "period": "Q4 2025",
-          "value": "increased about 7%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Fourth quarter revenue and segment profit increased about 10% and 7%, respectively, over the prior year period.",
-          "following_context": "Rental car or RAC tolling increased 16% over the prior year period, driven by increased travel volume and product adoption as well as higher tolling activity compared to the fourth quarter of last year. The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call. Strategically, Commercial Services remains a durable cash-generative business with clear competitive advantage, while the operating environment is more normalized relative to recent years, we believe that the fundamentals of the business remain solid.",
-          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Rental car (RAC) tolling revenue growth",
+          "metric": "RAC tolling revenue growth",
           "period": "Q4 2025",
           "value": "increased 16% over the prior year period",
           "value_num": null,
@@ -7554,8 +7528,8 @@
         {
           "kind": "leading_indicator",
           "metric": "fleet management revenue change",
-          "period": "Q4 2025",
-          "value": "decline in fleet management revenue of about 8% compared to the fourth quarter of 2024",
+          "period": "Q4 2025 vs Q4 2024",
+          "value": "a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
           "verbatim": "The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call.",
@@ -7564,10 +7538,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
+          "kind": "leading_indicator",
           "metric": "capital returned to shareholders via buybacks",
-          "period": "past 5 years",
-          "value": "over $650 million to shareholders through buybacks over the past 5 years",
+          "period": "over the past 5 years",
+          "value": "over $650 million",
           "value_num": null,
           "unit": null,
           "verbatim": "share repurchases remain an available tool within our capital allocation framework, and we have returned over $650 million to shareholders through buybacks over the past 5 years.",
@@ -7577,9 +7551,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "service revenue growth",
+          "metric": "consolidated service and total revenue growth",
           "period": "Q4 2025",
-          "value": "14% service revenue growth",
+          "value": "14% service revenue growth and 16% total revenue growth year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "Our Q4 revenue performance, which included 14% service revenue growth and 16% total revenue growth year-over-year exceeded our internal expectations.",
@@ -7594,185 +7568,187 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a genuine growing Government franchise and self-funding cash flow offset against a quantified >10%-revenue customer loss, an impairment and repeatedly cut guidance.",
+    "evidence_balance": "strongly-bearish — a permanent >10%-of-revenue customer loss plus repeated guidance cuts and a segment impairment outweigh a growing but smaller Government book.",
     "bull_points": [
       {
-        "claim": "Government Solutions — the largest segment at 47% of revenue — grew service revenue 17.4% ($17.1M) in Q2 2026, led by a $12.0M lift in New York City from new camera installations under the new contract, a durable long-term-recurring driver.",
+        "claim": "Government Solutions — the growth engine at 47% of revenue — grew service revenue 17.4% YoY in Q2 2026, driven by a $12.0M increase in New York City revenues from new camera installations net of the pricing change.",
         "source_ref": "10-Q 0001193125-26-335490",
         "cited": true
       },
       {
-        "claim": "Government Solutions carried $71M of trailing-12-month new bookings across red-light, speed, work-zone and school-bus programs — long-term recurring contracts that give forward revenue visibility.",
-        "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+        "claim": "Six-month Government Solutions service revenue rose 11.0% YoY, driven by $12.6M from speed, bus lane, school bus, red light and other services — a diversified, recurring-contract book beyond the concentrated Commercial Services line.",
+        "source_ref": "10-Q 0001193125-26-335490",
         "cited": true
       },
       {
-        "claim": "The addressable U.S. market has expanded by ~$365M over three years on new enabling legislation, with potential to reach ~$500M if California passes statewide speed-enforcement legislation — a structural tailwind behind the Government engine.",
-        "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding on the current guide: latest-Q OCF > 0 and LTM FCF > 0, with FY26 free-cash-flow guidance of $105–115M even after the Avis loss.",
-        "source_ref": "8-K 0001193125-26-335111 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA rose across the period ($229M FY21 → $362M FY25 → $358M LTM) even as the margin % drifted from 42% to 37% — the % compression reflects revenue-mix (installation/product) not EBITDA erosion.",
+        "claim": "Consolidated absolute EBITDA has RISEN across the window (229 → 304 → 306 → 342 → 362) even as the EBITDA margin % slid from 42% to 37%, so the margin optics understate a business whose earnings dollars kept growing.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "ROIC improved steadily from 5.1% (FY21) to 11.1% LTM, indicating the capital deployed into the enforcement franchise is compounding, not decaying.",
+        "claim": "The business is self-funding — FCF-positive with net-debt/EBITDA ~2.6x on forward-adjusted EBITDA and 5.6x interest coverage — so leverage is serviceable rather than a near-term solvency threat.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "ROIC improved steadily from 5.1% (FY21) to 11.5% (FY25), a rising return-on-capital trajectory inconsistent with a terminally decaying franchise.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The company is buying back stock (share count -7.7% over ~2 years) and has returned over $650M via buybacks over five years, and paid $51.6M in the FY26 first half — a capital-return posture inconsistent with a terminal read.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-08-31..2026-08-31",
+        "claim": "Government Solutions bookings show durable demand — ~$71M new bookings over the trailing 12 months plus recent multi-year wins (Los Angeles speed-safety, a five-year $998M New York City DOT contract) that provide forward revenue visibility.",
+        "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Interest coverage is 5.6x and net-debt/EBITDA ~2.9x (≈2.6x fwd-adj), leaving no near-term maturity wall until the 2028 term loan — the filing states no ≤12m maturity.",
-        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]",
+        "claim": "The reported P/E of ~5x rests on a one-time-distorted GAAP EPS and a trailing quarter carrying $-11M of below-the-operating-line drag, so the headline multiple overstates cheapness against a cleaner adjusted-earnings base ($1.19–$1.25 FY26 guide, superseded lower since).",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Avis Budget — a Commercial Services customer representing over 10% of total revenue — issued a contract termination notice effective September 2026, a genuine and load-bearing loss of a top customer.",
+        "claim": "Avis Budget — a Commercial Services customer representing over 10% of total revenue — sent a contract termination notice effective September 2026, a permanent loss of a top account rather than a timing wobble.",
         "source_ref": "CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · May-26-2026",
         "cited": true
       },
       {
-        "claim": "The Avis termination is quantified by management to reduce 2026-annualized revenue $135–145M and segment profit $120–125M — a direct hit to the profit engine, not an optical artifact.",
+        "claim": "Management quantified the Avis loss as reducing 2026-annualized revenue by $135–145M and segment profit by $120–125M — a large structural earnings hole in the Commercial Services franchise.",
         "source_ref": "8-K 0001193125-26-239351 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The most-current guide (filed 2026-08-05) cuts FY26 revenue to $945–965M, adjusted EBITDA to $360–370M and FCF to $105–115M — successively lower than the $1,020–1,030M / $405–415M / $150–160M guided in February, showing a genuine deterioration in earnings power, not just multiple compression.",
+        "claim": "Guidance has been cut repeatedly and steeply: the current 2026 revenue guide filed 2026-08-05 is $945–965M, below the earlier $985–995M and far below the original $1,020–1,030M — a deteriorating, not stabilising, outlook.",
         "source_ref": "8-K 0001193125-26-335111 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The P/E of 5.1x vs peer median 18.1x is not a clean cheapness signal: the trailing EPS spans a quarter where $-11M (28% of pre-tax income) came from below the operating line, so a trailing P/E is not an operating anchor — the optical multiple overstates the discount.",
-        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
-        "cited": true
-      },
-      {
-        "claim": "The company took a $94.3M one-off charge — $64.0M goodwill and $40.4M intangible impairment in Parking Solutions — signalling written-down value in a segment, and impairment (12.6% of acquired) far exceeds the peer-median write-down rate.",
+        "claim": "Current guidance also cut adjusted EBITDA to $360–370M and free cash flow to $105–115M — the FCF guide roughly a third below the original $150–160M, so the self-funding cushion is shrinking materially.",
         "source_ref": "8-K 0001193125-26-335111 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The CEO departed with an interim appointment on June 1, 2026, adding leadership uncertainty at the moment guidance was being cut.",
-        "source_ref": "5.02 Departure/Election of Directors or Certain Officers",
-        "cited": false
-      },
-      {
-        "claim": "Consensus EBITDA is guided to fall FY26→FY27 ($382M → $330M) and FY26 EBITDA consensus was cut ~16% over 12 months, so forward numbers are still declining, not stabilising.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "The Parking Solutions segment was written down by $104.4M in H1 2026 ($64.0M goodwill + $40.4M intangibles), a management admission of overpaid, impaired capital in that segment.",
+        "source_ref": "8-K 0001193125-26-335111 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The stock fell 74% over 180 days and 90 percentage points relative to IWM, driven by discrete gap-downs on earnings, the Avis termination and the management change — an idiosyncratic collapse, not a market move.",
-        "source_ref": "EOD VRRM−IWM 180d to 2026-08-12 (assembly, cap-band)",
+        "claim": "The CEO departed with an interim appointment effective the same window as the guidance cut and Avis loss — leadership instability layered on top of the operating shock.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       },
       {
-        "claim": "The company-defined FCF has fallen sharply ($198M FY21 → $54M LTM) as capex rose ($25M → $129M), pressuring the self-funding claim as installation-heavy government contracts consume cash.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
-        "cited": true
-      },
-      {
-        "claim": "Long-term EPS growth is a meagre 2% vs peer-median 10%, and EBITDA growth 4% vs 9%, so part of the discount is earned by structurally slower growth.",
+        "claim": "Consensus long-term EPS growth is only 2% vs a 10% peer median and EBITDA growth 4% vs 9%, so on a like-for-like read the discount is partly EARNED by inferior forward growth rather than pure overshoot.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Leverage screens worse than peers — total-debt/EBITDA 3.0x vs peer-median 1.9x, with an S&P BB- issuer rating and weak solvency sub-score — against a shrinking EBITDA base.",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
+        "cited": true
+      },
+      {
+        "claim": "The stock is down ~81% over the trailing year vs IWM +31%, an overwhelmingly idiosyncratic collapse concentrated on discrete event-driven gap-downs, not a market drawdown.",
+        "source_ref": "EOD VRRM vs IWM rebased to 100, 2025-08-13..2026-08-12",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Concentrix Corporation",
-        "outcome": "went terminal",
-        "distinguishing_fact": "In-set peer that took a very large goodwill write-down and trades at a deeply compressed multiple after a customer/demand shock — the pattern of impairment plus de-rating that the bear case fears here.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "TaskUs",
         "outcome": "recovered",
-        "distinguishing_fact": "In-set small-cap peer trading at a similarly low EBITDA/PE multiple yet posting the fastest revenue and EBITDA growth in the set — the analogue for a small name whose low multiple proves an overshoot rather than terminal decay.",
+        "distinguishing_fact": "In-peer-set small-cap outsourced-services name trading at a similarly compressed EBITDA and P/E multiple; a fellow low-multiple survivor rather than a terminal case.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Gentex",
-        "outcome": "recovered",
-        "distinguishing_fact": "Single-customer/end-market concentration scare de-rated the stock, but a diversified recurring installed base absorbed the loss and the multiple re-rated — analogue for surviving a top-customer termination.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Cimpress",
-        "outcome": "recovered",
-        "distinguishing_fact": "Leveraged, cash-generative roll-up that de-rated hard on a growth stumble and an impairment, then re-rated as free cash flow serviced the debt without a refinancing crisis — analogue for the self-funding-through-leverage bull path.",
-        "source": "[LLM-suggested, unverified]"
+        "name": "Concentrix Corporation",
+        "outcome": "went terminal",
+        "distinguishing_fact": "In-peer-set name that took a very large goodwill impairment on acquired capital and trades at a depressed multiple, mirroring the subject's segment write-down and de-rate.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Conduent",
         "outcome": "went terminal",
-        "distinguishing_fact": "Government/commercial BPO-style contractor where recurring contracts masked slow structural growth, customer losses compounded, and the discount proved earned rather than an overshoot — analogue for the value-trap read.",
+        "distinguishing_fact": "Government-services/BPO provider whose loss of concentrated large contracts and levered balance sheet drove a persistent de-rate without mean-reversion.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Cardtronics",
+        "outcome": "recovered",
+        "distinguishing_fact": "Levered, recurring-transaction infrastructure operator that de-rated on a demand scare yet the durable recurring franchise supported a recovery/takeout.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Cerence",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Single-large-customer-dependent technology vendor whose concentrated contract renewal risk crystallised into a severe, sustained re-rating.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Does the durable, growing Government Solutions franchise (bookings, NYC contract, expanding legislated TAM) more than replace the profit lost to the Avis termination — so the collapse is an overshoot — or is the compounding of a >10%-of-revenue customer loss, a Parking impairment, cut guidance and a CEO change evidence of terminal earnings decay?",
+      "question": "Does the diversified, growing Government Solutions book (recurring municipal contracts, rising bookings) offset the permanent loss of the >10%-of-revenue Avis account and the cascade of guidance cuts — i.e. is the de-rate a mean-revert overshoot or an EARNED repricing of a structurally smaller, lower-growth earnings base?",
       "evidence_for": [
         {
-          "claim": "Government Solutions grew service revenue 17.4% in Q2 2026 on NYC camera installations, with $71M trailing-12-month bookings and a ~$365M legislated TAM expansion — a mechanism that can absorb the Avis loss over time.",
+          "claim": "Government Solutions service revenue grew 17.4% YoY in Q2 2026 on New York City camera installations, and six-month growth was 11.0% across a broad enforcement portfolio — a segment adding revenue as Commercial Services shrinks.",
           "source_ref": "10-Q 0001193125-26-335490",
           "cited": true
         },
         {
-          "claim": "The business remains self-funding (OCF>0, LTM FCF>0) with FY26 FCF still guided positive at $105–115M and no near-term maturity wall, buying time for Government growth to offset the loss.",
-          "source_ref": "8-K 0001193125-26-335111 EX-99.1",
+          "claim": "Bookings momentum (~$71M trailing-12-month new awards plus the five-year $998M NYC DOT contract) points to forward visibility in recurring government contracts.",
+          "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Absolute EBITDA rose through the window despite the margin-% slide, and ROIC climbed to 11.5% (FY25) — evidence the core is compounding, not decaying.",
+          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management itself quantifies the Avis termination as removing $135–145M of annualized revenue and $120–125M of segment profit — a hit that dwarfs recent Government incremental bookings.",
+          "claim": "The Avis termination removes an account representing over 10% of total revenue, quantified at $135–145M of 2026-annualized revenue and $120–125M of segment profit.",
           "source_ref": "8-K 0001193125-26-239351 EX-99.1",
           "cited": true
         },
         {
-          "claim": "The current guide steps revenue, EBITDA and FCF all lower again (revenue $945–965M; EBITDA $360–370M; FCF $105–115M), showing the offset has not yet materialised in the forward numbers.",
+          "claim": "The current guide ($945–965M revenue, $360–370M adjusted EBITDA, $105–115M FCF, filed 2026-08-05) steps down again from prior cuts — a still-deteriorating outlook, not a floor.",
           "source_ref": "8-K 0001193125-26-335111 EX-99.1",
+          "cited": true
+        },
+        {
+          "claim": "Consensus LT EPS growth of 2% vs 10% peer-median and a $104.4M Parking Solutions impairment argue the lower forward growth and impaired capital are real, EARNED features.",
+          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the >10%-of-revenue significant customer under short-term extension (distinct from Avis) renews long-term — its loss would compound the Commercial Services hit; renewal status is UNKNOWN.",
-      "Covenant basis and headroom on the 2021 Term Loan / Senior Notes are NOT disclosed (covenant basis UNKNOWN) — an opaque leg of the survival read given ~2.9x leverage and falling EBITDA.",
-      "The revenue-guide MISMATCH flag (CIQ shows $985–995M vs release $945–965M) means the CIQ-derived multiples and consensus levels may be stale versus the true current outlook — which figure the human anchors to changes the discount materially.",
-      "No per-brand split of the $94.3M Parking impairment is available from XBRL; whether it signals a one-off or ongoing decay in that segment requires the 10-K impairment note.",
-      "The new interim CEO's strategic posture and whether a permanent CEO reverses or deepens the transformation/cost actions is unresolved.",
-      "FY27+ consensus is thin (1–4 estimates beyond FY27) and EBITDA is guided down FY26→FY27, so the trajectory past the Avis exit is poorly covered."
+      "The current 2026 guide (revenue $945–965M) filed 2026-08-05 MISMATCHES the CIQ consensus/comparable inputs (which still carry $985–995M) — several valuation multiples and consensus figures in this dossier are built on the stale, higher numbers and must be re-based to the current guide before use.",
+      "Whether the >10%-of-revenue Commercial Services account still under a short-term extension (referenced on the Q1 call) is being renewed or also lost — a second concentration risk not yet resolved.",
+      "The covenant basis and covenant-adjusted leverage headroom are UNKNOWN/not disclosed — an opacity around debt terms that matters given BB- rating and the shrinking EBITDA base (bearish gap).",
+      "No forward FCF or D&A actuals beyond guidance; the company-defined FCF vs levered-FCF basis differs by ~0.5x, so the self-funding read depends on which basis is used.",
+      "Whether the Avis segment-profit hole ($120–125M) is partly recoverable via the stated cost re-allocation and ~5% workforce reduction (~$10M annualized savings), or whether it is a permanent margin step-down.",
+      "Peer set is HETEROGENEOUS (caps span $568M–$18.8B, 33x) — every peer multiple is a confidence-gated input, not a clean benchmark, so the peer discount cannot be read as a clean overshoot signal.",
+      "Permanence of the CEO transition — whether the interim appointment resolves into stable leadership or signals deeper strategic uncertainty.",
+      "The 2028 Term Loan ($687M) wall: no near-term maturity is stated in the latest filing, but refinance terms/appetite at BB- against declining EBITDA are unresolved."
     ]
   },
   "caveats": [
     "primary-source: 8-K 0001193125-26-260606 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.9s fetch)",
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
     "RESOLVED (P/E basis) — trailing GAAP P/E 5.5x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.5x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.9x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.",
     "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x is priced at its last Close 2026-03-31, 134d before the 2026-08-12 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 4.6x on a current price — prefer that figure and re-pull the Financials multiple.",
-    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 23d: valuation multiples as-of 2026-07-13; implied-TEV inputs as-of 2026-07-28. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
+    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 23d: valuation multiples as-of 2026-07-13; implied-TEV inputs as-of 2026-07-28. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.",
+    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (7 bull vs 9 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "(E5) covenant exhibit too large for single-pass extraction (800894 chars) — extract by hand: 8-K 0001193125-25-242530 · vrrm-ex10_1.htm",
     "(E5) covenant exhibit too large for single-pass extraction (684229 chars) — extract by hand: 8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
-    "(E5) covenant exhibit too large for single-pass extraction (720756 chars) — extract by hand: 8-K 0000950170-25-072679 · vrrm-ex10_1.htm",
-    "UNCITED bear_point: 'The CEO departed with an interim appointment on June 1, 2026, adding…' (ref not in mechanical facts)"
+    "(E5) covenant exhibit too large for single-pass extraction (720756 chars) — extract by hand: 8-K 0000950170-25-072679 · vrrm-ex10_1.htm"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T15:49:26.611411Z",
+  "assembled_at": "2026-08-13T17:18:59.809583Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -7798,7 +7774,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T15:51:17.124129Z",
+    "computed_at": "2026-08-13T17:20:43.502117Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
