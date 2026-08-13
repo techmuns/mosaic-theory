@@ -2878,11 +2878,33 @@ Each line: *what it does* — *verified how*.
   recipe tag, and AORT's is `R2_NEEDED`. **The R2 record governs AORT**; the R1 anchor is an
   attention filter already superseded for this name.
 
-- **FUBO — STANDING RULE (2026-07-22).** No record is written until a **post-combination
-  re-assembly** exists. The committed dossier was assembled 2026-07-10 and contains no `Hulu`, no
-  `noncontrolling`, no `Newco`, no `Class B`, no reverse split — it describes the pre-combination
-  entity throughout. **The entity-gate build gates this**: until an NCI/share-class check runs, a
-  FUBO record could pass every existing check while resting on the wrong share base.
+- **FUBO — STANDING RULE (2026-07-22). ~~ACTIVE~~ → CLEARED 2026-08-13 (operator ruling).** No
+  record was written until a **post-combination re-assembly** existed. The 2026-07-10 dossier
+  contained no `Hulu`, no `noncontrolling`, no `Newco`, no `Class B`, no reverse split — it
+  described the pre-combination entity throughout, and could have passed every existing check while
+  resting on the wrong share base.
+  **THE CONDITION WAS MET AND VERIFIED BEFORE THE SEAL CAME OFF.** The sidecar's own clearing
+  condition read *"a post-combination re-assembly exists. Until then this file stands and
+  `dossier.json` stays sealed."* The 2026-08-12 re-assembly is that record, and four of the five
+  sealed items were checked against the FRESH artifact rather than assumed:
+  - `share-count` — `shares_out` **30,200,000** from the CIQ bridge (`Comparable Analysis→Financial
+    Data`), and 30.2M × $9.70 = **$292.9M** against a stated cap of **$293.0M**, 0.03% apart. That
+    was the 11.1x error the seal existed for. Corroborated independently: the freshness suite now
+    reports **no name fails on share basis**, and its own message calls that "genuinely the goal".
+  - `caveat-text-pre-fix` — the P/E caveat asserting a normalized/adjusted denominator is gone.
+  - `agreement-bug` — `13.1x rest on` appears nowhere in the page BODY. **Checked with the banner's
+    own blockquote stripped**: a first pass matched the marker QUOTING ITSELF, which is the seal's
+    text and not the page's — a check that would have "confirmed" a defect the page no longer has.
+  - `pre-combination-entity` — Hulu, Newco, Class B, reverse split and noncontrolling interest are
+    all present. The page describes the post-combination issuer.
+  - `g3-never-valued` was a READING CAUTION ("FUBO's admission is not a valuation judgment"), not a
+    known-false figure, and retired with the rest.
+  **THE MECHANISM SURVIVES THE INSTANCE.** `known_wrong.json` is general infrastructure, so
+  `tests/test_known_wrong_marker.py` was REWRITTEN rather than deleted: it now exercises the sidecar
+  on a TEMPORARY marker (banner renders, leads the page, and a corrupt marker still fails loud per
+  #308) and adds a roster pin asserting **no** record is sealed — so the next seal has to be
+  declared here with its evidence instead of appearing silently. The retired sidecar's text is
+  preserved in this entry and in git history.
 
 - **`event_impacts` CONFIRMED EMPTY (2026-07-22).** The assembler's structured perimeter field is
   empty on **every release of every name**. The audit's perimeter check therefore runs on a TEXT
@@ -13816,6 +13838,47 @@ sign-off.**
   Closed by `validate_for_write`, the write's own refusal set as ONE callable, called by
   `write_record` AND by supersede before it touches disk; extracted rather than duplicated so a
   gate added later cannot be enforced at the write and skipped at the pre-check.
+- **FLEET RE-ASSEMBLED ON ONE AS-OF, AND THE TWO CLOCKS RECONCILED (2026-08-13).** All 14 names
+  re-assembled clean at **reference_date 2026-08-12** (`{'2026-08-12': 14}`), the first time the
+  fleet has sat on a single as-of since the split opened.
+  **THE SPLIT'S ROOT CAUSE: `write_manifest` HAS NO PRODUCTION CALLER.** Verified across two
+  vocabularies plus `git log -S` — it is called only from `tests/test_retention.py`. So
+  `_fleet_reference_date` reads `screen_runs/*.manifest.json`, which NOTHING writes, and was frozen
+  at 2026-07-29 forever; meanwhile #431 advanced `ranked_queue.jsonl`'s `screen_run_at` to
+  2026-08-12. Queued names took the queue's date and FOLLOWED names took the stale manifest's —
+  hence 8 names at 08-12, 5 at 07-29, MVST at 07-06. **`vinci screen` does not file a manifest**;
+  a real `vinci screen --ref 2026-08-12` (exit 0) was run and its manifest filed through the
+  sanctioned write-once `write_manifest`, every field read from the live config. **WIRING
+  `write_manifest` INTO `_cmd_screen` IS NOT DONE HERE** — it is a decision-path change owed its own
+  PR, and until it lands every screen run leaves the same gap.
+  **A FAIL-LOUD GUARD DID ITS JOB EN ROUTE:** the first screen aborted with `ROW-DROP on
+  issuers.jsonl: writing 2251 row(s) over 2289 would drop 42` — the local store had fewer issuers
+  than the committed accumulate-only master. Seeded via `rebuild_from_snapshots` (INSERT OR REPLACE;
+  the 2.1M price rows untouched) and re-run.
+  **AND ONE SELF-INFLICTED FAULT, CAUGHT BY THE INVARIANT IT VIOLATED:** the 2026-08-12 manifest put
+  the fleet as-of AHEAD of the committed price fixture's frontier (2026-08-07) — exactly the state
+  `_fleet_reference_date`'s docstring forbids ("a 5-day staleness window would still call that
+  fresh"). `test_the_wall_clock_is_unreachable_from_the_reference_date` reads the COMMITTED FIXTURE
+  (deliberately — its docstring records main running red for eleven merges when it read the
+  git-ignored DB), so the fix was `scripts/build_price_fixture.py`, the repo's own remedy.
+  **TWENTY-ONE PINS WENT RED ON THE RE-DRAWN FLEET; ALL RESOLVED, NONE SUPPRESSED.** They sorted
+  into four causes, and the pattern is worth keeping: **(A) seal retirement propagating** —
+  exemption lists that named FUBO, each of which had anticipated clearing; **(B) the fleet
+  legitimately improving** — `NO name fails on the share basis` (the goal, and its constructed
+  refusal pins already existed), BRBR now drifting, AORT gaining a cap vintage, 13/14 panels past
+  the ceiling instead of 14/14; **(C) VALUE PINS ON LIVING ARTIFACTS** — a broker-day count, three
+  CNXC accessions, MVST's exact covenant source line, an ev_gap coverage tally, `>= 3` negative-EPS
+  names: every one the class the TEST-LAYER RULE puts on FROZEN fixtures, rewritten as
+  phrasing-independent invariants (no accession appears twice; DECOMPOSED and SUPPRESSED stay
+  disjoint; the footer names *an* accession and *an* exhibit); **(D)** one sibling pin asserting
+  #439's old note wording.
+  **TWO FIXTURES HAD TO BE REGENERATED IN THE SAME PASS, and both said so themselves.** AORT's and
+  VRRM's committed anchors diverged from a fresh recompute (+10.64% / −1.64%) — NOT the stale
+  `computed_at` (identical at both dates), but the assembly reading LIVE companyfacts against a
+  stale committed fixture. `build_companyfacts_fixture.py`'s own message demands it run "in the SAME
+  PR that re-assembles the name, so the fixture cannot drift from the artifacts the pins check it
+  against". That is the lesson: **a fleet re-assembly is not done until the fixtures the pins read
+  are regenerated with it.**
 - **THE GUIDANCE TABLE SHOWED FIVE METRICS OUT OF FIFTEEN (2026-08-12, PR-B).**
   `_GUIDANCE_METRICS` listed Revenue, Capital Expenditure, Gross Margin %, EBITDA, EPS Normalized.
   Everything else management guided was **silently absent** — not UNKNOWN, not flagged, never looked

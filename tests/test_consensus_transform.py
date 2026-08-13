@@ -74,15 +74,34 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
     assert model.mechanical.consensus_context.consensus_levels is not None
 
 
-def test_an_unrefreshed_dossier_reads_as_none_not_empty(tmp_path) -> None:  # type: ignore[no-untyped-def]
-    """`None` means NOT REFRESHED; `[]` would mean THE STREET HAS NO VIEW. Different claims, and
-    the committed eleven are all in the first state until the fleet pass runs."""
-    # FUBO, not AORT. AORT received the fleet pass; FUBO is sealed by its standing rule and is
-    # therefore the ONLY name still in the unrefreshed state — which also makes it the only name
-    # exercising omit-when-None on the write path.
-    src = ROOT / "data" / "dossiers" / "FUBO" / "dossier.json"
-    model = Dossier.model_validate_json(src.read_text())
-    assert model.mechanical.consensus_context.consensus_levels is None
+def test_an_unrefreshed_dossier_reads_as_none_not_empty() -> None:
+    """`None` means NOT REFRESHED; `{}` would mean THE STREET HAS NO VIEW. Different claims.
+
+    DRIVEN ON A CONSTRUCTED RECORD, NOT ON WHICHEVER NAME HAPPENS TO BE STALE (2026-08-13). This
+    used FUBO because its standing rule made it "the ONLY name still in the unrefreshed state" —
+    then the rule cleared, the fleet re-assembled, and the pin had no unrefreshed name left to
+    stand on. A semantic distinction between two states of a FIELD must not depend on some company
+    being behind: that is a premise the next successful pass deletes.
+
+    Both directions are asserted, because the whole point is that they are distinguishable.
+    """
+    # BUILT FROM A REAL COMMITTED CONTEXT, then varied — `ConsensusContext()` has required fields,
+    # and hand-rolling them would let the fixture dictate a production signature (#305).
+    live = Dossier.model_validate_json(
+        next(iter(sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")))).read_text()
+    ).mechanical.consensus_context
+
+    assert live.model_copy(update={"consensus_levels": None}).consensus_levels is None, (
+        "an unrefreshed context must read None — `{}` would claim the street has no view")
+    empty = live.model_copy(update={"consensus_levels": {}})
+    assert empty.consensus_levels == {}, "an explicit empty must survive, not collapse to None"
+
+    # …and the committed fleet is now on the refreshed side of that distinction, which is what the
+    # FUBO-shaped version of this pin was really observing.
+    refreshed = [p.parent.name for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+                 if Dossier.model_validate_json(p.read_text())
+                 .mechanical.consensus_context.consensus_levels is not None]
+    assert refreshed, "no committed dossier carries consensus levels — the fleet pass never ran"
 
 
 def test_a_broken_bundle_fails_loud_and_a_missing_one_skips(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
@@ -121,9 +140,11 @@ def test_every_dossier_carries_levels_except_the_standing_rule_exemptions() -> N
     thin coverage as missing would delete the evidence that coverage is thin."""
     import json
 
-    #: WHY each name is exempt — never a bare list. FUBO's record is sealed by its standing rule
-    #: (STATE.md 2026-07-22) until a post-combination re-assembly exists, so it cannot receive A1.
-    exempt = {"FUBO": "standing rule: no record written until a post-combination re-assembly"}
+    #: WHY each name is exempt — never a bare list. EMPTY since 2026-08-13: FUBO's standing rule
+    #: cleared when its post-combination re-assembly landed, so it now carries levels like every
+    #: other name. The dict stays (rather than the check losing its exemption mechanism) because the
+    #: next sealed record needs somewhere to be named WITH ITS REASON.
+    exempt: dict[str, str] = {}
 
     missing = []
     for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):

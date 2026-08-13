@@ -237,11 +237,17 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     # is pinned on constructed inputs instead, in `test_age_is_refused_before_the_share_basis`,
     # which is where a rule the live corpus cannot reach belongs.
     assert basis_fail == basis_break - over_ceiling, (basis_fail, basis_break, over_ceiling)
-    assert basis_fail, (
-        "NO name fails on the share basis — the corporate-action refusal has no live instance and "
-        "this test stops proving it fires. Genuinely the goal (it means every committed cap and "
-        "share count share a basis), but move the refusal to a constructed fixture before deleting "
-        "this, the way the reconciled/drifting pair below is guarded.")
+    # THE LIVE INSTANCE IS GONE, AND THAT IS THE GOAL (2026-08-13). This asserted `basis_fail`
+    # non-empty so the corporate-action refusal had a name proving it fires. FUBO was that name;
+    # its 2026-08-12 re-assembly put cap and count on one basis (30.2M shares against a $293M cap,
+    # 0.03% apart), so EVERY committed name now reconciles and the set is legitimately empty.
+    #
+    # The refusal is NOT unpinned by this: the prior wording asked for it to be "moved to a
+    # constructed fixture before deleting this", and two already exist —
+    # `test_a_share_basis_mismatch_is_caught_in_both_directions` (both directions, constructed) and
+    # `test_age_is_refused_before_the_share_basis` (precedence, constructed). What is dropped is the
+    # requirement that some real name stay BROKEN to keep a guard honest.
+    assert not basis_fail or basis_fail == basis_break - over_ceiling, (basis_fail, basis_break)
     assert quiet, "no name passes both guards — a gate that stops every build is a freeze"
     # The quiet SET is no longer pinned by name. It is exactly `fleet − age_fail − basis_fail` by
     # construction, so with both refusal sets now derived, a literal membership list adds nothing

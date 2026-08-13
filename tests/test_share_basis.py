@@ -36,11 +36,11 @@ DOSSIERS = ROOT / "data" / "dossiers"
 #: Class-A-basis cap. Same shape as Visa, one year instead of sixteen.
 BRIDGED = {"V", "FUBO"}
 
-#: Bridged in CODE but not yet in the committed ARTIFACT — the page still carries the pre-fix basis
-#: until the operator re-assembles it (FUBO's licensed CIQ workbook is not in this worktree, so the
-#: build cannot run here). Listed rather than skipped silently: the artifact pin below states what
-#: is owed instead of asserting a basis the file does not yet have.
-BRIDGED_PENDING_REASSEMBLY = {"FUBO"}
+#: Bridged in CODE but not yet in the committed ARTIFACT. EMPTY since 2026-08-13: FUBO's
+#: re-assembly landed and its page now reads the CIQ bridge directly
+#: (`Comparable Analysis→Financial Data (name Shares Outstanding Latest)`), 30.2M shares against a
+#: $293M cap. The set stays so the NEXT code-ahead-of-artifact case is stated rather than skipped.
+BRIDGED_PENDING_REASSEMBLY: set[str] = set()
 
 
 def _facts(ticker: str) -> dict[str, Any]:

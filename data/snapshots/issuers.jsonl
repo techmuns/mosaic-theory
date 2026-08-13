@@ -726,8 +726,10 @@
 {"cik": "0001062822", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001062822", "name": "LEXICON PHARMACEUTICALS, INC.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001063259", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001063259", "name": "DENISON MINES CORP.", "sic": "1090", "sic_description": "Miscellaneous Metal Ores"}
 {"cik": "0001064728", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001064728", "name": "PEABODY ENERGY CORP", "sic": "1221", "sic_description": "Bituminous Coal & Lignite Surface Mining"}
+{"cik": "0001065280", "country": "US", "first_seen": null, "issuer_id": "ISS-0001065280", "name": "NETFLIX INC", "sic": null, "sic_description": null}
 {"cik": "0001065696", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001065696", "name": "LKQ CORP", "sic": "5010", "sic_description": "Wholesale-Motor Vehicles & Motor Vehicle Parts & Supplies"}
 {"cik": "0001067294", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001067294", "name": "CRACKER BARREL OLD COUNTRY STORE, INC", "sic": "5812", "sic_description": "Retail-Eating  Places"}
+{"cik": "0001067839", "country": "US", "first_seen": null, "issuer_id": "ISS-0001067839", "name": "INVESCO QQQ TRUST, SERIES 1", "sic": null, "sic_description": null}
 {"cik": "0001068851", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001068851", "name": "PROSPERITY BANCSHARES INC", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001069258", "country": "US", "first_seen": "2026-07-29", "issuer_id": "ISS-0001069258", "name": "KRATOS DEFENSE & SECURITY SOLUTIONS, INC.", "sic": "3760", "sic_description": "Guided Missiles & Space Vehicles & Parts"}
 {"cik": "0001069878", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001069878", "name": "TREX CO INC", "sic": "2400", "sic_description": "Lumber & Wood Products (No Furniture)"}
@@ -1108,6 +1110,7 @@
 {"cik": "0001401521", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001401521", "name": "AMERICAN COASTAL INSURANCE Corp", "sic": "6331", "sic_description": "Fire, Marine & Casualty Insurance"}
 {"cik": "0001401667", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001401667", "name": "PUMA BIOTECHNOLOGY, INC.", "sic": null, "sic_description": null}
 {"cik": "0001402829", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001402829", "name": "Orion Group Holdings Inc", "sic": "1600", "sic_description": "Heavy Construction Other Than Bldg Const - Contractors"}
+{"cik": "0001403161", "country": "US", "first_seen": null, "issuer_id": "ISS-0001403161", "name": "VISA INC.", "sic": null, "sic_description": null}
 {"cik": "0001403475", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001403475", "name": "Bank of Marin Bancorp", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001404281", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001404281", "name": "Eledon Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001404644", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001404644", "name": "Neurogene Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
@@ -1365,6 +1368,7 @@
 {"cik": "0001539190", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001539190", "name": "SPROTT PHYSICAL PLATINUM & PALLADIUM TRUST", "sic": null, "sic_description": null}
 {"cik": "0001539638", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001539638", "name": "Triumph Financial, Inc.", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001540171", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0001540171", "name": "Avalyn Pharma Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001543151", "country": "US", "first_seen": null, "issuer_id": "ISS-0001543151", "name": "Uber Technologies, Inc", "sic": null, "sic_description": null}
 {"cik": "0001543418", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001543418", "name": "Trilogy Metals Inc.", "sic": "1040", "sic_description": "Gold and Silver Ores"}
 {"cik": "0001544206", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001544206", "name": "Carlyle Secured Lending, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001546417", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001546417", "name": "Bloomin' Brands, Inc.", "sic": "5812", "sic_description": "Retail-Eating  Places"}

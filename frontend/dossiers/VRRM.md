@@ -1,27 +1,27 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_July 30, 2026 · extraction 2026-07-28.1_
+_August 13, 2026 · extraction 2026-07-28.1_
 
 # Brief — first cut
 
 ## At a glance
 Verra Mobility Corporation provides smart mobility technology solutions in the United States, Australia, Europe, and Canada.
-**Mixed** — a large, verified, structural Avis revenue loss offsets a genuinely cash-generative, self-funding, high-margin business trading at a floor multiple.
+**Mixed** — a permanent >10%-revenue customer loss and stair-step guidance cuts offset a genuinely growing, recurring Government segment and preserved self-funding.
 - **Segments:** Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [1]
 - **Geography:** United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [2]
-- **Customer concentration:** top customer 15% (from 15%) of revenue [3]
-- **Snapshot:** Nasdaq · CMP $4.18 (2026-07-28) · cap $635M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
+- **Customer concentration:** top customer ≥10% of revenue [3]
+- **Snapshot:** Nasdaq · CMP $4.70 (2026-08-12) · cap $635M (2026-07-29) ⚠ implies $4.18/sh vs CMP (-11.1%) · 52-wk $3.40–$25.57 · shares 152.0M · book value/sh $1.79 [4]
 
 **The crux — what decides this, and what would change our mind**
-**Is the Avis termination a one-time revenue hole that a growing Government Solutions book plus cost cuts can grow through (overshoot), or the first crack in a broader Commercial Services / contract-pricing erosion that permanently resets earnings power lower (value trap)?**
-_7 key unknowns + the evidence for/against — in Analysis_
-**Next catalyst:** Next results print ~2026-08-05 `[cadence-estimate]` — calendar in Analysis
+**Does the Government Solutions growth engine (recurring municipal backlog + expanding legislated TAM) offset the permanent loss of the Avis/Commercial revenue and profit, or does the step-down in EBITDA and Commercial churn mark a durable reset in earnings power?**
+_6 key unknowns + the evidence for/against — in Analysis_
+**Next catalyst:** effective September 2026 ~2026-09 `[stated]` — calendar in Analysis
 
 ## What happened — and can it survive?
 - **Shape:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
-- **Price (180d):** -81.1% [6]
-- **Market (IWM) 180d:** 17.0% [7]
-- **vs market (180d):** -98.1% [8]
+- **Price (180d):** -74.4% [6]
+- **Market (IWM) 180d:** 15.1% [7]
+- **vs market (180d):** -89.5% [8]
 - **Net debt / EBITDA:** 2.9x [9]
 - **Free cash flow:** positive [10]
 
@@ -37,7 +37,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 20.9% | 8y history · weak |
 | Median multiple, own history | 13.6x | 19 closes · weak · EV/EBITDA |
-| Screen value / share | $21.40 | spot-independent · EV/EBIT 21.2x |
+| Screen value / share | $21.75 | spot-independent · EV/EBIT 21.2x |
 | Overall confidence | weak |  |
 
 **data_quality: revenue_tag_conflict**
@@ -52,13 +52,13 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
-- Government Solutions service revenue grew 4.4% ($4.1M) in the quarter driven by expansions in speed, red-light and bus-lane programs outside NYCDOT, a genuine operating offset to Commercial Services churn. [3]
-- The Government Solutions engine is booking durable long-dated recurring contracts — the finalized $998M five-year NYC DOT deal plus the Los Angeles award (largest speed-safety program in California) — pointing to a growing, non-Avis revenue base. [11]
-- The company still guides FY26 adjusted EPS of $1.19–$1.25 AFTER absorbing the Avis loss, implying adjusted earnings power well above the one-time-distorted GAAP basis and an adj P/E of roughly 3.3x at the print price. [12]
+- Government Solutions — 47% of revenue and the stated value-creation engine — is compounding: service revenue rose 17.4% ($17.1M) in the latest quarter driven by New York City new-camera installations net of pricing. [3]
+- Large new Government wins landed after the drawdown — the Los Angeles City Council speed-safety award (design/build/operate/maintain) — extending the recurring backlog beyond the Avis loss. [11]
+- Government Solutions bookings show durable, recurring pipeline: ~$71M of trailing-12-month new awards from long-term recurring municipal contracts that give forward revenue visibility. [12]
 _Bear case — the decline is real:_
-- The peer discount (TEV/EBITDA 4.6x vs median 11.6x) is at least partly EARNED, not pure residual overshoot: the fundamental deltas show the name with worse EBITDA growth (4% vs peer 9%), far worse LT EPS growth (2% vs 10%), and higher leverage (Debt/EBITDA 3.0 vs 1.9) — a value-trap signature the human must weigh, though offset by a much higher margin (37% vs 18%) and lower beta (0.4 vs 0.8). [13]
-- Leverage is above peers and credit quality is weaker: net-debt/EBITDA 2.9x (peer median 1.9x total-debt basis) with an S&P BB- issuer rating and weaker solvency scores, leaving less cushion if the post-Avis base erodes further before the 2028 term-loan wall. [14]
-- Even the core NYC engine has a hidden drag: within New York City incremental new-camera installation growth was more than offset by the updated contract pricing change, so the flagship $998M contract carries a pricing reset that caps the segment's revenue upside. [15]
+- Leverage runs above peers (total-debt/EBITDA 3.0x vs 1.9x median) with a BB- issuer rating and weaker solvency score, and FCF has fallen sharply ($198M FY21 → $54M LTM) as capex climbed — thinning the self-funding cushion just as EBITDA is guided lower. [13]
+- Management quantified the Avis hit as removing ~$135–145M of annualized revenue and ~$120–125M of segment profit — a large, load-bearing profit impairment, not a timing item. [14]
+- The core de-rate driver is a genuine loss, not optics: Avis Budget — over 10% of total revenue — served a contract termination notice effective September 2026, a permanent removal from Commercial Services. [15]
 
 ## Financial snapshot
 - **Financial snapshot** — [16]  <!-- ds-table -->
@@ -135,9 +135,9 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
   - 2026-06-02 **-14.9%** → management change + Reg-FD
 
 _Company-specific or market-wide?_
-- **Name 180d return:** -81.1% [6]
-- **Market (IWM) 180d return:** 17.0% [7]
-- **Relative vs market:** -98.1% [8]
+- **Name 180d return:** -74.4% [6]
+- **Market (IWM) 180d return:** 15.1% [7]
+- **Relative vs market:** -89.5% [8]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-25 → filed 2026-02-24 [`0001193125-26-067015`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526067015/vrrm-20260224.htm)
@@ -145,94 +145,90 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
     - **what the results showed:** adj EBITDA 2025 $101.8M; adj EPS 2025 $1.30; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted EBITDA outlook: $405.0–$415.0M; next-fy adjusted EPS outlook: $1.32–$1.38/sh; 2026 free cash flow outlook: $150.0–$160.0M [29]
   - gap-down 2026-05-27 → filed 2026-05-26 [`0001193125-26-239351`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116d8k.htm)
     - items: 8.01 Other Events
-    - **what the results showed:** adj EBITDA 2026 $38.0M; adj EPS 2026 $1.10; 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted EBITDA outlook: $380.0–$385.0M; next-fy adjusted EPS outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M [30]
+    - **what the results showed:** adj EBITDA 2026 $38.0M; adj EPS 2026 $1.10; 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted EBITDA outlook: $380.0–$385.0M; next-fy adjusted EPS outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M [14]
     - 8.01 Other Events: On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget’s contract with the Company. Avis Budget is one of the Company’s significant Commercial Services customers and represented over 10% of the Company’s total revenue for the three months ended March 31, 2026 and year ended December 31, 2025
   - gap-down 2026-06-02 → filed 2026-06-01 [`0001193125-26-251522`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526251522/d39754d8k.htm)
     - items: 5.02 Departure/Election of Directors or Certain Officers
     - 5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation announced that the Board of Directors of the Company approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May
 - **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**
-  - reduce revenue by $135–145M (2026 annualized) — [30]
-  - reduce segment profit by $120–125M (2026 annualized) — [30]
+  - reduce revenue by $135–145M (2026 annualized) — [14]
+  - reduce segment profit by $120–125M (2026 annualized) — [14]
 
 ## Business quality
 - **Segments (revenue share):** Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [1]
-- **Segments (EBITDA share — where profit sits):** Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate) [31]
-- **Customers:** 4 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [32]
+- **Segments (EBITDA share — where profit sits):** Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate) [30]
+- **Customers:** 4 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
 - **Geographic:** United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [2]
 
 ## The argument
 
-**Evidence balance:** mixed — a large, verified, structural Avis revenue loss offsets a genuinely cash-generative, self-funding, high-margin business trading at a floor multiple.
+**Evidence balance:** mixed — a permanent >10%-revenue customer loss and stair-step guidance cuts offset a genuinely growing, recurring Government segment and preserved self-funding.
 
 ### Bull case — the decline is overdone
-- Government Solutions service revenue grew 4.4% ($4.1M) in the quarter driven by expansions in speed, red-light and bus-lane programs outside NYCDOT, a genuine operating offset to Commercial Services churn. [3]
-- The Government Solutions engine is booking durable long-dated recurring contracts — the finalized $998M five-year NYC DOT deal plus the Los Angeles award (largest speed-safety program in California) — pointing to a growing, non-Avis revenue base. [11]
-- The company still guides FY26 adjusted EPS of $1.19–$1.25 AFTER absorbing the Avis loss, implying adjusted earnings power well above the one-time-distorted GAAP basis and an adj P/E of roughly 3.3x at the print price. [12]
-- The revised FY26 guide (revenue $985–995M, adj-EBITDA $380–385M) is cross-source VERIFIED against the release and sits on a track record of meeting the EBITDA/revenue floor (8/10) with FY25 MET, so the post-Avis floor is credible rather than aspirational. [33]
-- Absolute EBITDA rose across the window even as margin % slipped (FY21 229 → FY25 362; LTM 358), so the headline margin compression is a mix/reclassification effect, not shrinking cash earnings. [34]
-- The business is self-funding: LTM FCF is positive ($53.9M) and OCF is positive, so leverage is being carried by real cash generation rather than refinanced hope. [35]
-- The de-rate is idiosyncratic and event-driven, not a slow bleed: three discrete gap-downs (Feb-25 earnings, May-27 Avis termination, Jun-2 CEO change) drove a -81% 180-day return versus a +17% small-cap benchmark, consistent with an overshoot around specific shocks rather than a diffuse secular decline. [5]
+- Government Solutions — 47% of revenue and the stated value-creation engine — is compounding: service revenue rose 17.4% ($17.1M) in the latest quarter driven by New York City new-camera installations net of pricing. [3]
+- Large new Government wins landed after the drawdown — the Los Angeles City Council speed-safety award (design/build/operate/maintain) — extending the recurring backlog beyond the Avis loss. [11]
+- Government Solutions bookings show durable, recurring pipeline: ~$71M of trailing-12-month new awards from long-term recurring municipal contracts that give forward revenue visibility. [12]
+- The addressable government market has structurally expanded ~$365M over three years on new enabling legislation, with potential to ~$500M if California enacts statewide speed enforcement — a secular tailwind behind the growth segment. [32]
+- Absolute EBITDA has RISEN through the de-rate window even as the margin % optically slipped — $229M (FY21) → $362M (FY25) → $358M LTM — so the earnings base is not contracting. [33]
+- On peers the discount is only PARTLY earned: the name's 37% EBITDA margin doubles the 18% peer median and its beta (0.4) is well below the 0.8 median, so its EV/EBITDA of 4.6x vs an 11.6x median poses a residual-vs-earned question rather than a clean value-trap verdict — but the peer set is heterogeneous (caps $568M–$18.8B, 33x) so this is a confidence-gated input, not a benchmark. [34]
+- The name is FCF-positive and self-funding with 5.6x interest coverage and net-debt/EBITDA ~2.9x, so leverage is serviceable rather than distressed. [35]
+- The company is buying back stock through the fall (share count -7.7% over ~2 years), signalling management's capital-return conviction into weakness. [36]
 
 ### Bear case — the decline is real
-- The peer discount (TEV/EBITDA 4.6x vs median 11.6x) is at least partly EARNED, not pure residual overshoot: the fundamental deltas show the name with worse EBITDA growth (4% vs peer 9%), far worse LT EPS growth (2% vs 10%), and higher leverage (Debt/EBITDA 3.0 vs 1.9) — a value-trap signature the human must weigh, though offset by a much higher margin (37% vs 18%) and lower beta (0.4 vs 0.8). [13]
-- Leverage is above peers and credit quality is weaker: net-debt/EBITDA 2.9x (peer median 1.9x total-debt basis) with an S&P BB- issuer rating and weaker solvency scores, leaving less cushion if the post-Avis base erodes further before the 2028 term-loan wall. [14]
-- Even the core NYC engine has a hidden drag: within New York City incremental new-camera installation growth was more than offset by the updated contract pricing change, so the flagship $998M contract carries a pricing reset that caps the segment's revenue upside. [15]
-- The Avis Budget contract termination is a real structural loss, not optical: Avis represented over 10% of total revenue and management guides the loss to reduce 2026 annualized revenue $135–145M and segment profit $120–125M — this is the load-bearing bear fact, a permanent hole in Commercial Services, not a timing item. [30]
-- The forward trajectory is a genuine step-down, not just a de-rate: consensus FY26→FY27 shows revenue falling to $945M and EBITDA to $331M, so forward earnings power is being marked down, reinforcing that the Avis loss compounds an already-decelerating base. [36]
-- The consensus path collapsed hard across the year (FY26 EBITDA 453 → 382, -16%; GAAP EPS -23%; EBT -28%) and near-quarter breadth is overwhelmingly downward (FQ3 revenue 0↑/7↓, EBITDA 0↑/5↓), evidence the cuts reflect real deterioration analysts are still chasing down. [37]
+- Leverage runs above peers (total-debt/EBITDA 3.0x vs 1.9x median) with a BB- issuer rating and weaker solvency score, and FCF has fallen sharply ($198M FY21 → $54M LTM) as capex climbed — thinning the self-funding cushion just as EBITDA is guided lower. [13]
+- Management quantified the Avis hit as removing ~$135–145M of annualized revenue and ~$120–125M of segment profit — a large, load-bearing profit impairment, not a timing item. [14]
+- The core de-rate driver is a genuine loss, not optics: Avis Budget — over 10% of total revenue — served a contract termination notice effective September 2026, a permanent removal from Commercial Services. [15]
+- Guidance has collapsed in stair-steps: the CURRENT guide (filed 2026-08-05) is revenue $945–965M, adj-EBITDA $360–370M and adj-EPS $1.11–1.17 — materially below the $1,020–1,030M / $405–415M outlook reaffirmed just weeks earlier in May. [37]
+- Parking Solutions goodwill/intangibles were written down $94.3M in H1 2026 ($64.0M goodwill + $40.4M intangibles), a real admission of impaired value in an acquired segment. [37]
+- The June CEO departure (interim CEO appointed) stacks a governance/leadership shock onto the operating shock during the same drawdown window. [5]
+- The trailing P/E of ~5.1x is NOT a clean multiple — the underlying EPS is one-time-distorted, and consensus forward EBITDA falls FY26 $382M → FY27 $330M, so the trailing cheapness partly reflects an earnings base set to step DOWN, not a stable floor. [38]
 
 ### Decisive question
-**Is the Avis termination a one-time revenue hole that a growing Government Solutions book plus cost cuts can grow through (overshoot), or the first crack in a broader Commercial Services / contract-pricing erosion that permanently resets earnings power lower (value trap)?**
+**Does the Government Solutions growth engine (recurring municipal backlog + expanding legislated TAM) offset the permanent loss of the Avis/Commercial revenue and profit, or does the step-down in EBITDA and Commercial churn mark a durable reset in earnings power?**
 
 ### …evidence for
-- Government Solutions is adding durable long-dated recurring revenue — the finalized $998M five-year NYC DOT contract — that can backfill the lost Avis base over time. [38]
-- Government Solutions service revenue already grew 4.4% ($4.1M) on speed/red-light/bus-lane expansions outside NYCDOT, showing the non-Avis engine is live and compounding. [3]
-- Management is actively offsetting the loss with a ~5% workforce reduction expected to yield ~$10M annualized cost savings, defending margin as revenue resets. [15]
+- Government Solutions service revenue grew 17.4% ($17.1M) in the latest quarter on NYC camera installations, and trailing-12-month bookings of ~$71M are long-term recurring contracts with forward visibility. [3]
+- The Los Angeles City Council award post-drawdown adds a large new operate-and-maintain program, and the legislated addressable market expanded ~$365M over three years. [11]
 
 ### …evidence against
-- The Avis loss is quantified and large — $135–145M annualized revenue and $120–125M segment profit removed — a hole too big to be absorbed by incremental Government bookings in the near term. [30]
-- Commercial Services was already declining (service revenue -3.5% / -$3.6M on FMC customer churn) before Avis, suggesting the segment weakness is a pattern, not a single event. [3]
-- Another over-10%-of-revenue relationship is itself only on a short-term contract extension under ongoing renewal negotiation, so a second concentrated loss is a live risk. [15]
+- Avis termination removes ~$135–145M annualized revenue and ~$120–125M segment profit — a large chunk of Commercial Services profit that Government growth must first backfill before net growth resumes. [14]
+- Consensus EBITDA is guided to step DOWN FY26 $382M → FY27 $330M, and Commercial Services revenue already declined ~4% on fleet-management churn — evidence the reset is flowing through the base, not reversing. [38]
 
 ### Key unknowns
-- Covenant terms on the 2021 Term Loan and Revolving Credit Facility are UNKNOWN (extraction failed) and the covenant leverage basis is not disclosed — a material opacity: cannot confirm headroom against 2.9x net-debt/EBITDA if the post-Avis base erodes (bearish risk until resolved).
-- Whether the second over-10%-of-revenue customer (short-term extension, ongoing negotiation) renews or follows Avis out — the single largest swing factor for Commercial Services and unresolved.
-- The full economics of the NYC contract-pricing reset: how much the updated pricing caps the $998M contract's revenue contribution versus the installation-growth offset.
-- Refinance/repay plan for the $687M 2021 Term Loan maturing 2028-03-24 is not disclosed; filing states no near-term maturity but the wall coherence check is UNKNOWN.
-- The Aug-05-2026 next print is the first checkpoint that confirms or refutes the revised FY26 guide post-Avis — unresolved at dossier date.
-- The EV/EBITDA 8.5x at 0th percentile of its own 19-quarter history is a trailing-only floor reading; whether that reflects overshoot or a justified terminal re-rate is unresolved and belongs to the human.
-- Rising short interest (7.7M → 11.1M sh, +42.8%; 7.3% of float) signals building bearish positioning but its directional read is ambiguous — pressure vs squeeze fuel.
+- Whether the significant customer relationship (>10% of revenue) beyond Avis renews — the Q1 call flagged one such contract on a short-term extension under 'ongoing' negotiation; the renewal outcome is undisclosed.
+- The company-adjusted LTM EBITDA on a covenant basis, and the covenant thresholds themselves, are NOT disclosed — leaving true headroom against the 2028 term-loan wall unquantified (an opacity risk).
+- The revised current guide (revenue $945–965M, filed 2026-08-05) MISMATCHES the older CIQ-carried $985–995M guide; consensus tables in the dossier partly predate the latest cut, so the forward multiples may be stale.
+- No forward FCF guide reconciles cleanly: the current FCF guide is $105–115M vs prior $140–150M — the pace of the self-funding cushion's erosion under lower EBITDA is not fully visible.
+- Whether Parking Solutions stabilises after the $94.3M H1-2026 impairment, or faces further write-downs — no per-brand goodwill detail is available from XBRL.
+- The interim-CEO situation: whether a permanent CEO and a settled strategy arrive before the 2026-11-04 print, and what that means for the transformation/MOSAIC margin plan.
 
 ### Twin reference cases
-- **Herbalife** — recovered (LLM-claimed — verify)
-  - distinguished by: Cash-generative, high-margin operating business that de-rated to a distressed low-single-digit multiple on leverage fears and a single overhang; the cash engine kept servicing debt while the multiple normalized.
-  - source: [LLM-suggested, unverified]
-- **Endurance International Group** — went terminal (LLM-claimed — verify)
-  - distinguished by: Levered services roll-up where a large recurring-customer cohort churned away, and the loss proved structural rather than one-time, permanently resetting the revenue base lower.
+- **Concentrix Corporation** — went terminal
+  - distinguished by: In-peer-set name that took a large goodwill impairment on an acquired business and trades at a trough EV/EBITDA — the pattern of a levered services roll-up whose acquired segment value was written down.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **TaskUs** — recovered
+  - distinguished by: In-peer-set small-cap outsourced-services name at a trough single-digit EV/EBITDA that kept growing — the pattern of a de-rated small-cap where the discount proved residual rather than a signal of collapse.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Cardtronics** — recovered (LLM-claimed — verify)
+  - distinguished by: Contract-heavy transaction-processing operator with recurring municipal/retail relationships and a single large customer risk, where durable recurring contracts underpinned the franchise through a customer-loss scare.
   - source: [LLM-suggested, unverified]
 - **Conduent** — went terminal (LLM-claimed — verify)
-  - distinguished by: Government/commercial BPO with concentrated large contracts and a pricing-reset dynamic on renewal; contract economics eroded even as the company retained the flagship relationships.
+  - distinguished by: Government-and-commercial BPO with heavy customer concentration whose loss of a marquee contract plus leverage and leadership churn led to persistent de-rating rather than mean reversion.
   - source: [LLM-suggested, unverified]
-- **Cardtronics** — recovered (LLM-claimed — verify)
-  - distinguished by: Infrastructure-like recurring-revenue operator dependent on a handful of large customers; a customer-loss scare drove a sharp de-rate before the durable contracted base reasserted itself.
-  - source: [LLM-suggested, unverified]
-- **TaskUs** — recovered
-  - distinguished by: Small-cap outsourced-services name in this very peer set trading at a comparably compressed low-single-digit EBITDA multiple, a source-bound analogue for how the market prices small levered services businesses.
-  - source: CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **Next results print** — ~2026-08-05 `[cadence-estimate]` — the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it) [39]
-- **effective September 2026** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [40]
-- **2021 Term Loan Due 2028 $687.1M matures** — ~2028-03-24 `[stated]` — refinance / repay / convert before the wall — the survival read [41]
+- **effective September 2026** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [15]
+- **Next results print** — ~2026-11-04 `[cadence-estimate]` — the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it) [39]
+- **2021 Term Loan Due 2028 $687.1M matures** — ~2028-03-24 `[stated]` — refinance / repay / convert before the wall — the survival read [40]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.6x vs peer median 11.6x (-60%); P/E 5.1x vs peer median 18.1x (-72%) [26]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-07-29 · multiples as-of 2026-07-13 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [42]  <!-- ds-table -->
+  - _TEV as-of 2026-07-28 · multiples as-of 2026-07-13 · † at the name's own multiple the implied level is consensus by identity_
+- **Price-implied levels (at each stated multiple)** — [41]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -250,8 +246,8 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 _No gap is struck for this name: no scenario record for this name — the route is known, the gap is not. The consensus side alone still routes to **three-ratio** at FY2026, so the form is known even though the comparison is not._
 
-- **EV/EBITDA (adjusted, forward):** ~4.2x (fwd, at current $4.05; EV $1,624M / FY26 adj-EBITDA $380–$385M) [43]
-- **Adjusted EPS (earnings power):** FY26 guide $1.19–$1.25; adj P/E ~3.3x at $4.05 — earnings power above the GAAP basis [12]
+- **EV/EBITDA (adjusted, forward):** ~4.4x (fwd, at current $4.70; EV $1,699M / FY26 adj-EBITDA $380–$385M) [42]
+- **Adjusted EPS (earnings power):** FY26 guide $1.19–$1.25; adj P/E ~3.9x at $4.70 — earnings power above the GAAP basis [43]
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.5x as-of 2026-03-31 — trailing range 10.4–23.2x (median 13.6x) over 19 closes → 0%ile → near-floor; P/LTM EPS 16.8x [25]
 
 ## Peer comps
@@ -296,7 +292,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [34]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [33]  <!-- ds-table -->
 
 |  | Dec-2021 (R) | Dec-2022 (R) | Dec-2023 (R) | Dec-2024 (R) | Dec-2025 | Mar-2026 (LTM) |
 |---|---|---|---|---|---|---|
@@ -304,9 +300,9 @@ _NM = a real state (negative base), not missing_
 
 _Revenue YoY (latest same-quarter): +0.1% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** buying back (trailing ~1.7y): 164,658,507 (2024-08-31) → 151,906,653 (2026-05-31), -7.7% [47]
-- **Non-operating earnings:** $-11M of the quarter ended 2026-03-31 came from BELOW the operating line — 28% of pre-tax income, and 5% of revenue. Operating income $52M → pre-tax $40M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor. [48]
-- **Return ratios — per fiscal period** — [49]  <!-- ds-table -->
+- **Share-count trend:** buying back (trailing ~2.0y): 164,658,507 (2024-08-31) → 151,982,804 (2026-08-31), -7.7% [36]
+- **Non-operating earnings:** $-11M of the quarter ended 2026-03-31 came from BELOW the operating line — 28% of pre-tax income, and 5% of revenue. Operating income $52M → pre-tax $40M. This is an earlier quarter still inside the trailing four, so a trailing EPS or P/E spanning it is not an operating anchor. [47]
+- **Return ratios — per fiscal period** — [48]  <!-- ds-table -->
 
 |  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|---|
@@ -320,7 +316,7 @@ _Revenue YoY (latest same-quarter): +0.1% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 
 ## The street — estimates & guidance
 _export date unverified (data ≥ 2026-07-13)_
-- **Horizon read (FQ — next-2Q revision breadth)** — [50]:
+- **Horizon read (FQ — next-2Q revision breadth)** — [49]:
   - EPS (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/2↓
   - EPS (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/6↓
   - Revenue FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/4↓
@@ -330,23 +326,28 @@ _export date unverified (data ≥ 2026-07-13)_
   - EBIT FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 2↑/2↓
   - EBIT FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/4↓
   - _+8 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): 1.11 (12m) → 1.05 (9m) → 0.99 (6m) → 0.96 (3m) → 0.87 (2m) → 0.85 (1m) → 0.85 (latest); net -23% (12m→latest) | FY 2026 EPS Normalized: 1.50 (12m) → 1.47 (9m) → 1.36 (6m) → 1.35 (3m) → 1.24 (2m) → 1.23 (1m) → 1.23 (latest); net -18% (12m→latest) | FY 2026 Revenue: 998.8 (12m) → 999.1 (9m) → 1,023.6 (6m) → 1,025.2 (3m) → 992.7 (2m) → 988.8 (1m) → 988.8 (latest); net -1% (12m→latest) | FY 2026 EBITDA: 453.3 (12m) → 455.7 (9m) → 415.2 (6m) → 409.7 (3m) → 387.1 (2m) → 382.4 (1m) → 382.4 (latest); net -16% (12m→latest) | FY 2026 EBIT: 307.8 (12m) → 299.1 (9m) → 266.4 (6m) → 250.1 (3m) → 229.0 (2m) → 229.0 (1m) → 229.0 (latest); net -26% (12m→latest) | FY 2026 Interest Expense: -67.4 (12m) → -65.3 (9m) → -61.7 (6m) → -59.1 (3m) → -61.1 (2m) → -61.1 (1m) → -61.1 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 EBT (GAAP): 253.3 (12m) → 234.2 (9m) → 217.3 (6m) → 208.2 (3m) → 187.4 (2m) → 182.6 (1m) → 182.6 (latest); net -28% (12m→latest) | FY 2026 Net Income (Excl. Excep): 243.6 (12m) → 232.4 (9m) → 214.8 (6m) → 207.9 (3m) → 189.7 (2m) → 186.2 (1m) → 186.2 (latest); net -24% (12m→latest) | FY 2026 Net Income (GAAP): 179.7 (12m) → 167.3 (9m) → 155.2 (6m) → 148.9 (3m) → 131.2 (2m) → 127.7 (1m) → 127.7 (latest); net -29% (12m→latest)  [data ≥ 2026-07-13 · export date unverified] [37]
+- **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): 1.11 (12m) → 1.05 (9m) → 0.99 (6m) → 0.96 (3m) → 0.87 (2m) → 0.85 (1m) → 0.85 (latest); net -23% (12m→latest) | FY 2026 EPS Normalized: 1.50 (12m) → 1.47 (9m) → 1.36 (6m) → 1.35 (3m) → 1.24 (2m) → 1.23 (1m) → 1.23 (latest); net -18% (12m→latest) | FY 2026 Revenue: 998.8 (12m) → 999.1 (9m) → 1,023.6 (6m) → 1,025.2 (3m) → 992.7 (2m) → 988.8 (1m) → 988.8 (latest); net -1% (12m→latest) | FY 2026 EBITDA: 453.3 (12m) → 455.7 (9m) → 415.2 (6m) → 409.7 (3m) → 387.1 (2m) → 382.4 (1m) → 382.4 (latest); net -16% (12m→latest) | FY 2026 EBIT: 307.8 (12m) → 299.1 (9m) → 266.4 (6m) → 250.1 (3m) → 229.0 (2m) → 229.0 (1m) → 229.0 (latest); net -26% (12m→latest) | FY 2026 Interest Expense: -67.4 (12m) → -65.3 (9m) → -61.7 (6m) → -59.1 (3m) → -61.1 (2m) → -61.1 (1m) → -61.1 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 EBT (GAAP): 253.3 (12m) → 234.2 (9m) → 217.3 (6m) → 208.2 (3m) → 187.4 (2m) → 182.6 (1m) → 182.6 (latest); net -28% (12m→latest) | FY 2026 Net Income (Excl. Excep): 243.6 (12m) → 232.4 (9m) → 214.8 (6m) → 207.9 (3m) → 189.7 (2m) → 186.2 (1m) → 186.2 (latest); net -24% (12m→latest) | FY 2026 Net Income (GAAP): 179.7 (12m) → 167.3 (9m) → 155.2 (6m) → 148.9 (3m) → 131.2 (2m) → 127.7 (1m) → 127.7 (latest); net -29% (12m→latest)  [data ≥ 2026-07-13 · export date unverified] [50]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [51]:
   - NTM: TEV/REV 1.85 · TEV/EBITDA 4.98 · TEV/EBIT 8.99 · Price/Earnings 6.38 · PEG 3.37 · P/BV –
   - FY 2026: TEV/REV 1.84 · TEV/EBITDA 4.76 · TEV/EBIT 7.95 · Price/Earnings 6.02 · PEG 3.18 · P/BV 2.12
   - FY 2027: TEV/REV 1.93 · TEV/EBITDA 5.51 · TEV/EBIT 10.12 · Price/Earnings 7.10 · PEG 3.75 · P/BV 1.64
   - FY 2028: TEV/REV 1.91 · TEV/EBITDA 5.26 · TEV/EBIT 9.32 · Price/Earnings 6.48 · PEG 3.43 · P/BV 1.29
   - _+2 later fiscal years in JSON_
-- **Guidance at the drawdown (8-K 99.1):** revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adjustments is provided in the Reconciliation of Net Income to Adjusted Net Income and Calculation of Adjusted EPS in our most recent earnings press release dated May 6, 2026. • Depreciation and [12]
-- **Current guide (latest results filing):** revenue 2026: 985.0–995.0 $M; adjusted ebitda next-fy: 380.0–385.0 $M; adjusted eps next-fy: 1.2–1.2 $/sh; free cash flow 2026: 140.0–150.0 $M [52]
+- **Guidance at the drawdown (8-K 99.1):** revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adjustments is provided in the Reconciliation of Net Income to Adjusted Net Income and Calculation of Adjusted EPS in our most recent earnings press release dated May 6, 2026. • Depreciation and [43]
+- **Current guide (latest results filing):** revenue 2026: 945.0–965.0 $M; adjusted ebitda next-fy: 360.0–370.0 $M; adjusted eps next-fy: 1.1–1.2 $/sh; free cash flow 2026: 105.0–115.0 $M [52]
 - **Guidance bridge (latest guide + sign-aware delivery track-record)** — [53]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| EPS Normalized | '1.19 - 1.25' | FY 2026 | 2026-05-26 | fresh | actual ≥ floor 3/3 | FY 2025 MET |
-| Revenue | '985.00 - 995.00' | FY 2026 | 2026-05-26 | fresh | actual ≥ floor 8/10 | FY 2025 MET |
-| EBITDA | '380.00 - 385.00' | FY 2026 | 2026-05-26 | fresh | actual ≥ floor 8/10 | FY 2025 MET |
-| Capital Expenditure | -125.0 | FY 2026 | 2026-05-26 | fresh | spend ≤ ceiling 5/6 | FY 2025 MISSED |
+| EPS Normalized | '1.19 - 1.25' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 3/3 | FY 2025 MET |
+| Revenue | '985.00 - 995.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 8/10 | FY 2025 MET |
+| EBITDA | '380.00 - 385.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 8/10 | FY 2025 MET |
+| Capital Expenditure | -125.0 | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 5/6 | FY 2025 MISSED |
+| Effective Tax Rate % | '28.00 - 29.00' | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 0/3 | FY 2025 MISSED |
+| Interest Expense | -62.0 | FY 2026 | 2026-05-26 | 78d (stale) | spend ≤ ceiling 2/2 | FY 2025 MET |
+| Depreciation & Amortization | 125.0 | FY 2026 | 2026-05-26 | 78d (stale) | — | — |
+| Free Cash Flow | '140.00 - 150.00' | FY 2026 | 2026-05-26 | 78d (stale) | actual ≥ floor 1/4 | FY 2025 MISSED |
+| Cash From Operations | none current (last: 190.0) | FY 2021 | 2022-02-28 | 1626d (stale) | actual ≥ floor 1/1 | FY 2021 MET |
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
@@ -368,12 +369,12 @@ _+5 more broker-days in JSON_
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** 2.9x [9]
-- **Total debt / EBITDA vs peers:** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [56]
-- **Net debt / OCF:** 4.5x [57]
-- **Net debt / EBITDA [FWD-ADJ]:** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) [58]
-- **Interest coverage:** 5.6x [59]
-- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [60]
-- **Credit health** — [14]  <!-- ds-table -->
+- **Total debt / EBITDA vs peers:** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [13]
+- **Net debt / OCF:** 4.5x [56]
+- **Net debt / EBITDA [FWD-ADJ]:** ~2.6x fwd-adj (net debt $985M / FY26 adj-EBITDA $380–$385M) [57]
+- **Interest coverage:** 5.6x [35]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [58]
+- **Credit health** — [59]  <!-- ds-table -->
 
 |  | Name | Peer median |
 |---|---:|---:|
@@ -386,16 +387,16 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [10]
-- **Free cash flow ($M):** 53.9 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $233.7M − capex $129.1M = $104.6M — 0.52x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [35]
-- **Debt schedule vintage:** the debt schedule is 132d old (source filed 2026-02-24); no Item 1.02 (termination of a material agreement) has been filed since [61]
+- **Free cash flow ($M):** 53.9 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $233.7M − capex $129.1M = $104.6M — 0.52x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [60]
+- **Debt schedule vintage:** the debt schedule is 169d old (source filed 2026-02-24); no Item 1.02 (termination of a material agreement) has been filed since [61]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 4 undated / later aggregate line item(s) in the appendix panel [62]
-- **Maturity wall** · vs the 2026-07-06 reference:
+- **Maturity wall** · vs the 2026-08-12 reference:
   - due 2028: $687.1M
   - due 2029: $350.0M
   - due 2030: $0.0M
   - due 2037: $38.1M
   - _reconciliation: itemized $1,075.2M (panel A 2025 filed Feb-24-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** term loans 685.4 (687.1→685.4 QoQ); senior bonds 350.0; leases 46.2; total principal 1,110.4; total debt 1,101.8 (latest quarter) ($M) [63]
+- **Capital-structure aggregates:** term loans 685.4 (12 months Dec-31-2025 687.1 → 3 months Mar-31-2026 685.4); senior bonds 350.0; leases 46.2; total principal 1,110.4; total debt 1,101.8 (3 months Mar-31-2026) ($M) [63]
 
 ### Filing cross-checks — going concern · leverage basis
 
@@ -406,14 +407,15 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 - **Customer concentration (latest 10-Q):** [3]
-  - City of New York Department of Transportation: 15.2% (prior 15.4%)
+  - Government Solutions customer: 10.0% _(disclosed floor)_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_2 to verify._
+_3 to verify._
 
-- RESOLVED (P/E basis) — trailing GAAP P/E 4.8x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 4.8x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.3x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.
-- EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x is priced at its last Close 2026-03-31, 97d before the 2026-07-06 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 4.6x on a current price — prefer that figure and re-pull the Financials multiple.
+- RESOLVED (P/E basis) — trailing GAAP P/E 5.5x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.5x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.9x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.
+- EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x is priced at its last Close 2026-03-31, 134d before the 2026-08-12 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 4.6x on a current price — prefer that figure and re-pull the Financials multiple.
+- Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 23d: valuation multiples as-of 2026-07-13; implied-TEV inputs as-of 2026-07-28. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.
 
 # Appendix — data & audit
 
@@ -443,9 +445,12 @@ _2 to verify._
 | Impairment of Goodwill ($M) | — | — | — | -97 | — | — | — | — |
 | Asset Writedown ($M) | — | -1 | -4 | -0 | -2 | -2 | — | — |
 | Other Unusual Items ($M) | -5 | 3 | -4 | -2 | -1 | -1 | — | — |
-| CFO ($M) | 193 | 218 | 206 | 224 | 256 | 234 | — | — |
-| Capex ($M) | -25 | -48 | -57 | -71 | -119 | -129 | — | — |
+| CFO ($M) | 193 | 218 | 206 | 224 | 256 | 234 | 272 | 262 |
+| Capex ($M) | -25 | -48 | -57 | -71 | -119 | -129 | -123 | -107 |
 | FCF (levered, CIQ) | 198 | 183 | 139 | 146 | 83 | 54 | — | — |
+| D&A ($M) | 117 | 139 | 113 | 109 | 114 | 116 | — | — |
+| FCF (consensus basis) ($M) | — | — | — | — | — | — | 153 | 170 |
+| D&A (consensus basis) ($M) | — | — | — | — | — | — | 123 | 124 |
 
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-13; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
@@ -483,9 +488,10 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
-| 2021 Term Loan Due 2028 | 8-K | 2018-10-22 | 0001564590-18-024644 — vrrm-ex1010_20.htm, vrrm-ex1011_16.htm, vrrm-ex1012_17.htm |
-| 2021 Term Loan Due 2028 | 8-K | 2021-03-29 | 0001564590-21-015880 — vrrm-ex101_62.htm |
-| Revolving Credit Facility | 8-K | 2020-02-25 | 0001564590-20-006447 — vrrm-ex101_6.htm |
+| 2021 Term Loan Due 2028 | 8-K | 2025-10-17 | 0001193125-25-242530 — vrrm-ex10_1.htm, vrrm-ex10_2.htm |
+| 2021 Term Loan Due 2028 | 8-K | 2018-06-21 | 0001104659-18-041476 — a18-15692_1ex10d1.htm, a18-15692_1ex10d2.htm |
+| Revolving Credit Facility | 8-K | 2021-03-29 | 0001564590-21-015880 — vrrm-ex101_62.htm |
+| Revolving Credit Facility | 8-K | 2025-05-15 | 0000950170-25-072679 — vrrm-ex10_1.htm |
 | Operating Lease | — | — | no contract-level filing expected (aggregate line item) |
 | Senior Notes Due 2029 | — | — | no contract-level filing expected (aggregate line item) |
 
@@ -493,17 +499,21 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
-| Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Principal / commitment amount | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Interest / coupon rate | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Maturity date | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Security / collateral / guarantors | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
-| Mandatory prepayment / events of default | UNKNOWN | not stated in 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm |
+| Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Principal / commitment amount | Purchase price of $9.20 per share; aggregate Purchase Price = number of Acquired Shares subscribed for multiplied by $9.20 per share (aggregate amount set forth on signature page) | base (footer) |
+| Interest / coupon rate | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Maturity date | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Security / collateral / guarantors | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Mandatory prepayment / events of default | UNKNOWN | not stated in 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm |
+| Termination | Terminates upon earlier of (a) termination of the Merger Agreement, (b) mutual written agreement, or (c) failure of Closing conditions in Section 2 | base (footer) |
+| Registration rights | Company to file registration statement within 30 calendar days after consummation of Transactions (Filing Deadline); Effectiveness Deadline no later than 60 calendar days after Filing Deadline (exten… — full verbatim in JSON | base (footer) |
+| Governing law | State of New York | base (footer) |
+| Security type / instrument | Class A common stock, par value $0.0001 per share (equity subscription — not a debt instrument) | base (footer) |
 
-_Source §: fenced Tier-2 extraction (verbatim, source-bound)_
+_Source §: 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm_
 
-- _2 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001564590-20-006447, 0001564590-21-015880_
+- _3 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0000950170-25-072679, 0001193125-25-242530, 0001564590-21-015880_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
@@ -523,22 +533,22 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [73]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 0 — in the last 182 days · no purchase in the 3y scanned · last sale $0.15M, director, 2025-05-21 (~14mo ago) · largest sale $3.12M, President and CEO, 2023-11-14 (~32mo ago) · grants 10 · last filing 2026-06-18 · other filings 138 [74]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 7.7M → 11.1M sh (+42.8%, rising) · 7.3% of shares out (EDGAR XBRL) · DTC 1.6d · recent: 2026-06-30 11.1M · 2026-06-15 7.7M · 2026-05-29 5.0M · 2026-05-15 3.4M [75]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 0 — in the last 182 days · no purchase in the 3y scanned · last sale $0.15M, director, 2025-05-21 (~15mo ago) · largest sale $3.12M, President and CEO, 2023-11-14 (~33mo ago) · grants 10 · last filing 2026-08-11 · other filings 144 [74]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 11.0M → 12.2M sh (+11.4%, rising) · 8.1% of shares out (EDGAR XBRL) · DTC 1.5d · recent: 2026-07-31 12.2M · 2026-07-15 11.0M · 2026-06-30 11.1M · 2026-06-15 7.7M [75]
 
 ### Assembly verification — filing vs panel
 - **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [76]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 985.0–995.0 vs release 985.0–995.0 → cross-source VERIFIED [77]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 985.0–995.0 vs release 945.0–965.0 → MISMATCH flag [77]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-07-06 · assembled 2026-07-30 07:59 UTC
+- **Data window:** screened as of 2026-08-12 · assembled 2026-08-13 06:08 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
-- **Price store:** unstamped — this dossier predates the store stamp
-- **Panel age:** oldest panel 2d old — 2026-07-28 (stock_info.as_of), against a 2026-07-30 build
-- **Consensus age:** consensus 17d old (2026-07-13, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-12
+- **Panel age:** oldest panel 16d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-13 build
+- **Consensus age:** consensus 31d old (2026-07-13, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001682745` · Nasdaq : VRRM
-- **Assembly log:** primary-source: 8-K 0001193125-26-260606 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.7s fetch)
+- **Assembly log:** primary-source: 8-K 0001193125-26-260606 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)
 - **Re-run:** `python -m vinci dossier --ticker VRRM` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -547,19 +557,19 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 
 [1] `CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)`
 [2] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)`
-[3] `10-Q 0001193125-26-209227`
+[3] `10-Q 0001193125-26-335490`
 [4] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [5] `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-[6] `EOD VRRM 180d to 2026-07-06`
-[7] `EOD IWM 180d to 2026-07-06 (cap-band: $0.6B @ 2026-07-06 → small (<$4B) → IWM)`
-[8] `EOD VRRM−IWM 180d to 2026-07-06 (assembly, cap-band)`
+[6] `EOD VRRM 180d to 2026-08-12`
+[7] `EOD IWM 180d to 2026-08-12 (cap-band: $0.6B @ 2026-08-12 → small (<$4B) → IWM)`
+[8] `EOD VRRM−IWM 180d to 2026-08-12 (assembly, cap-band)`
 [9] `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ EBITDA $358M [LTM 12 months Mar-31-2026]`
 [10] `EDGAR XBRL FCF sign (screen data-record)`
 [11] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Jun-15-2026`
-[12] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
-[13] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[14] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29`
-[15] `CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf`
+[12] `CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf`
+[13] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-07-29`
+[14] `8-K 0001193125-26-239351 EX-99.1`
+[15] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · May-26-2026`
 [16] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [17] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
 [18] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
@@ -574,37 +584,37 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [27] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [28] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
 [29] `8-K 0001193125-26-067015 EX-99.1`
-[30] `8-K 0001193125-26-239351 EX-99.1`
-[31] `CIQ Financials→Segments (EBITDA, latest annual column, Dec-31-2025) + Income Statement (consolidated EBITDA)`
-[32] `CIQ Customers&Suppliers Verra Mobility Corporation NasdaqCM VRRM Customers.rtf`
-[33] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
-[34] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[35] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-[36] `CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)`
-[37] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[38] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Feb-11-2026`
-[39] `cadence: EDGAR submissions (median 91d gap over 32 results 8-Ks; last print 2026-05-06) · guide: EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
-[40] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · May-26-2026`
-[41] `CIQ capital-structure panel (maturity_date)`
-[42] `TEV = mcap 635.0 + net debt 1046.3 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-07-29) — simple-TEV basis`
-[43] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares`
+[30] `CIQ Financials→Segments (EBITDA, latest annual column, Dec-31-2025) + Income Statement (consolidated EBITDA)`
+[31] `CIQ Customers&Suppliers Verra Mobility Corporation NasdaqCM VRRM Customers.rtf`
+[32] `CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf`
+[33] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[34] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+[35] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
+[36] `EDGAR XBRL shares, trailing 2024-08-31..2026-08-31`
+[37] `8-K 0001193125-26-335111 EX-99.1`
+[38] `CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)`
+[39] `cadence: EDGAR submissions (median 91d gap over 33 results 8-Ks; last print 2026-08-05) · guide: EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
+[40] `CIQ capital-structure panel (maturity_date)`
+[41] `TEV = mcap 635.0 + net debt 1046.3 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-07-28, exported 2026-07-29) — simple-TEV basis`
+[42] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares`
+[43] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
 [44] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [45] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [46] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29`
-[47] `EDGAR XBRL shares, trailing 2024-08-31..2026-05-31`
-[48] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
-[49] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[50] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[47] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
+[48] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[49] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[50] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [51] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[52] `8-K 0001193125-26-239351 EX-99.1 (filed 2026-05-26)`
+[52] `8-K 0001193125-26-335111 EX-99.1 (filed 2026-08-05)`
 [53] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
 [54] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-07-13 · export date unverified]`
 [55] `CIQ Estimates→Surprise (annual)`
-[56] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-07-29`
-[57] `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ OCF $234M [LTM 12 months Mar-31-2026]`
-[58] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt`
-[59] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
-[60] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[56] `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ OCF $234M [LTM 12 months Mar-31-2026]`
+[57] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt`
+[58] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[59] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29`
+[60] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 [61] `CIQ Capital Structure Details — A 2025 filed Feb-24-2026`
 [62] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-24-2026)`
 [63] `CIQ Financials→Capital Structure Summary`
@@ -618,7 +628,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [71] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
 [72] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
 [73] `CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf`
-[74] `EDGAR Form 4 (latest 0001123292-26-000914; 80 filings in the 1095d scanned; counts over 182d)`
-[75] `FINRA consolidated short interest (settle 2026-06-30); DTC = 11,053,056 short ÷ 6,856,243 screen 90d ADV`
+[74] `EDGAR Form 4 (latest 0001123292-26-001091; 82 filings in the 1095d scanned; counts over 182d)`
+[75] `FINRA consolidated short interest (settle 2026-07-31); DTC = 12,240,853 short ÷ 7,916,152 screen 90d ADV`
 [76] `10-Q maturity wall vs CIQ capital panel (same window)`
 [77] `CIQ revenue guide vs release actual/outlook`

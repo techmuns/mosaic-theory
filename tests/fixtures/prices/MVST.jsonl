@@ -416,3 +416,9 @@
 {"bar_date": "2026-07-31", "close": 0.8071, "high": 0.87, "internal_id": "SEC-0001760689-MVST", "low": 0.8011, "open": 0.8312, "source": "polygon-grouped", "volume": 4589484.902846}
 {"bar_date": "2026-08-03", "close": 0.8212, "high": 0.8497, "internal_id": "SEC-0001760689-MVST", "low": 0.8051, "open": 0.8237, "source": "polygon-grouped", "volume": 7358670.055654}
 {"bar_date": "2026-08-04", "close": 0.8637, "high": 0.8987, "internal_id": "SEC-0001760689-MVST", "low": 0.8365, "open": 0.8365, "source": "polygon-grouped", "volume": 5794010.631663}
+{"bar_date": "2026-08-05", "close": 0.8431, "high": 0.8677, "internal_id": "SEC-0001760689-MVST", "low": 0.8317, "open": 0.865, "source": "polygon-grouped", "volume": 9682963.00009}
+{"bar_date": "2026-08-06", "close": 0.7822, "high": 0.84, "internal_id": "SEC-0001760689-MVST", "low": 0.7782, "open": 0.84, "source": "polygon-grouped", "volume": 4535606.21149}
+{"bar_date": "2026-08-07", "close": 0.906, "high": 0.9125, "internal_id": "SEC-0001760689-MVST", "low": 0.8, "open": 0.82805, "source": "polygon-grouped", "volume": 9194815.159469}
+{"bar_date": "2026-08-10", "close": 0.8748, "high": 0.966, "internal_id": "SEC-0001760689-MVST", "low": 0.8433, "open": 0.9531, "source": "polygon-grouped", "volume": 9617452.687865}
+{"bar_date": "2026-08-11", "close": 0.8643, "high": 1.02, "internal_id": "SEC-0001760689-MVST", "low": 0.8228, "open": 0.8521, "source": "polygon-grouped", "volume": 11411446.530104}
+{"bar_date": "2026-08-12", "close": 0.92, "high": 0.9296, "internal_id": "SEC-0001760689-MVST", "low": 0.8475, "open": 0.8748, "source": "polygon-grouped", "volume": 6352294.323039}

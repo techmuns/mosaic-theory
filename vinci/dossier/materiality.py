@@ -263,8 +263,19 @@ def mark_material_rows(table: Any, *, market_cap: float | None, revenue: float |
 
 
 # The rows the brief already carries by construction. A material flag on these would be noise.
+#
+# THIS SET MUST TRACK `_C1_CF` / `_C1_CF_CONSENSUS_ONLY` (2026-08-12). #436 added `D&A ($M)` and the
+# two consensus-basis rows to the annual summary and did NOT add them here, so `D&A ($M)` — a
+# CURATED row, in the same tuple as CFO/Capex/FCF — began clearing the materiality floor and
+# demanding that the argument address it. **CNXC's re-assembly failed outright** on exactly that:
+# *"the synthesis never states 2 MATERIAL figure(s) … D&A ($M) FY24 (R) = 705.8; D&A ($M) LTM =
+# 653.9"*. D&A is a consequence of past capital decisions, not an event a reader must be made to
+# meet — the same reasoning that keeps it out of `_GUIDANCE_HIGHER_IS_DELIVERY` (#437).
+# The guard exists for SURFACED UNUSUAL ITEMS (impairments, writedowns); a curated cash-flow row is
+# not one, and a guard that fires on every large routine line stops meaning anything.
 _CORE_BRIEF_LABELS = frozenset({
     "Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin", "EBIT ($M)",
     "Net income ($M)", "EPS (GAAP, dil.)", "EPS (Normalized)", "CFO ($M)", "Capex ($M)",
     "FCF ($M)", "FCF (levered, CIQ)",
+    "D&A ($M)", "FCF (consensus basis) ($M)", "D&A (consensus basis) ($M)",
 })
