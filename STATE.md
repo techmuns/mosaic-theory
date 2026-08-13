@@ -11667,6 +11667,69 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    **SEPARATELY WORTH DOING (own change, not this item):** prefer the NEWER of the annual/quarterly
    capital-structure panels — 6 months of vintage on NFLX, ~3 on UBER. It makes the staleness
    visibly smaller even though it retires neither finding.
+   **BUILT 2026-08-13 (`newer-capital-panel`) — and it was BIGGER than the two names that prompted
+   it.** `_capital_panel_freq` picks the later-FILED Details panel; `capital_structure_ciq` and
+   `_capital_summary` both read at that frequency, deliberately coupled so instruments and the
+   aggregates that reconcile against them cannot land on two different filings. Measured over all
+   19 committed bundles: **16 names move to a newer panel, median ~150 days** (V +265d, CPB +263d,
+   BRBR/PENG +259d, SMPL +254d, NFLX +175d, UBER +82d), instrument counts identical on every one —
+   same debts, fresher filing. **3 names correctly DO NOT move**, which is the whole reason the
+   rule is "newer" and not "quarterly": **NIKE's annual panel (Jul-15-2026) is newer than its
+   quarterly one (Apr-01-2026), and ONON's (Mar-03-2026) beats a quarterly export from
+   Aug-12-2025** — a blanket switch would have made those two STALER while improving sixteen.
+   FUBO ties and holds. **This does NOT retire the NFLX findings** (the bridge and the 2036 notes),
+   exactly as recorded above — it only shrinks the staleness.
+   **A SECOND, UNLOOKED-FOR FIX CAME WITH IT: 16 of 19 names were stepping a MIXED BASIS.** The
+   term-loan movement takes the sheet's last two period columns, and in the ANNUAL workbook those
+   are a 12-month column beside a 3-month one. SMPL printed
+   `term loans 397.0 (12 months Aug-30-2025 249.1 → 3 months May-30-2026 397.0)` —
+   a twelve-month endpoint stepped to a three-month one.
+   The labels were honest (R3 made them name their columns), so it was visible
+   rather than hidden, but the comparison still spanned two windows. 18 of 19 are now like-for-like.
+   **RESIDUAL, recorded not fixed:** FUBO ties, stays annual, and keeps 12/3 columns — harmless
+   TODAY because it carries no term loans and prints no step, LATENT if it ever takes one on.
+   **A THIRD THING THIS TURNED UP, and the reason the diff touches `mechanical`:** the panel stamp
+   already had a parser there (`_cs_panel_filed`, anchored on "filed"), and the obvious in-module
+   helper (`_cs_col_date`) searches for a BARE `Mon-DD-YYYY`. On a note reading
+   `A 2025 (Dec-31-2025) filed Jan-23-2026`
+   they disagree — period-end vs filing date — so the picker would have ranked
+   panels by a different date than the staleness banner reports. The parser moved DOWN into
+   `ciq_sheets` (the layer that produces the stamp) with `mechanical` re-exporting it, so there is
+   ONE parser for one string. Pinned by identity (`cs._cs_panel_filed is mechanical._cs_panel_filed`)
+   plus the divergent case.
+   **VERIFIED:** ruff + `mypy --strict` clean, `pytest -m "not network"` 2544 passed / 15 skipped;
+   real run over all 19 bundles printing the picked panel per name; and **five mutations each shown
+   to redden a specific test** — always-quarterly, tie-flips-to-quarterly, fallback-guard-removed,
+   summary-loses-its-freq, picker-repointed-at-the-column-parser. The first cut of the fallback
+   test was GREEN under its own mutation (it asserted through a local re-implementation of the
+   guard, on an annual-only bundle where guarded and unguarded agree); the quarterly-only bundle
+   is what separates them.
+   **REVIEW FINDING (#450, P2) — THE COUPLING MISSED A THIRD CONSUMER, and coupling two of three
+   MOVED the mismatch rather than removing it.** `liquidity_covenant_flags` reads the same Details
+   panel and stayed on `freq="annual"`. Both survive into `mechanical` (structured
+   `capital_structure` + `quality.liquidity_covenant_flags`) and `synthesize` dumps the whole
+   mechanical layer, so on the 16 quarterly names the MODEL received a fresh schedule beside a
+   stale annual debt list — under the same **undated** `CIQ Financials→Capital Structure Details`
+   label, with nothing in either to tell them apart. Fixed: it reads the picked panel, and its
+   `source_ref` now carries the panel's own as-of. Verified across all 19 names — every one's
+   legacy line now cites the same stamp as its structured schedule.
+   **THE PIN IS OVER THE CALL SITES, NOT THE OUTPUT**
+   (`test_every_details_panel_consumer_reads_the_same_frequency`):
+   the bug was an UNENUMERATED consumer, so a test checking the two known
+   readers would have passed while the third was wrong. It walks the module AST for every Details
+   read and requires each to consult the picker, so a FOURTH consumer on a bare `freq="annual"`
+   fails at the diff instead of in a synthesis months later.
+   **MY OWN PROCESS FAILURE, worth recording:** I grepped for callers of `capital_structure_ciq` /
+   `_capital_summary` and never for readers of the SHEET. The house rule against asserting absence
+   off one search applies to "I have found all the consumers" just as much as to "this capability
+   does not exist".
+   **ARTIFACT NOTE: the committed dossiers still carry the OLD annual panels** — this is a code
+   change only, and the debt schedules move on the next re-assembly pass, not before.
+   **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
+   `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
+   `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach
+   the live SEC ticker endpoint. It passes locally only because the store already holds those
+   identities; on a clean machine it blocks the offline suite. Own change — the marker is the fix.
 8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
    2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
    *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point
