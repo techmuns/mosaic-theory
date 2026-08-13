@@ -11794,6 +11794,25 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    ARTIFACTS** (the artifact-pass rule — a re-assembled dossier can redden a pinned test, so green
    applies to artifact commits too); preconditions re-checked before assembling (fleet as-of
    resolves from a real screen-run manifest; #442's `identities_first_seen_after` guard clean).
+   **FIRST MEASUREMENT OF RE-ASSEMBLY DRIVER VARIANCE (review of #452) — the deterministic tiers do
+   not drift at all, and every bit of the movement is the LLM-fenced one.** Surfaced by a
+   before/after field-population sweep, which is worth keeping as the standard artifact-pass check:
+   a schema-valid artifact can lose a third of a block and still validate, so counting fields
+   catches what "semantically valid" cannot.
+   - **deterministic tiers (EX-99.1 / 10-Q `results_attribution` + CIQ Key Developments):
+     324 → 324 rows, byte-stable on ALL 14 names.** Regex + workbook parses, and they reproduce
+     exactly. That is the control, and it is what makes the other number readable.
+   - **LLM-fenced tier (`driver_extract.py`, over call transcripts): 304 → 289, −5% fleet-wide**,
+     moving BOTH directions per name — VITL +5, NFLX +4, MVST +2, against AORT −17, BRBR −8,
+     UBER −4. **AORT's single-name swing is −42% (40 → 23 transcript rows)**, the tail of the
+     distribution rather than a systematic loss.
+   **NOT A DEFECT, and the reason is the validator:** every kept row is quote-contained and
+   digit-traced against the slice, so a re-roll drops rows the model can no longer quote verbatim
+   rather than inventing any. Fewer rows is the failure mode working. **Recorded because nobody had
+   ever bounded it** — a future reader meeting AORT's −42% would reasonably suspect a bug, and this
+   is what re-assembly can and cannot be expected to preserve. **If the tier ever trends DOWN across
+   consecutive passes** (rather than oscillating around zero as here), that is a different signal
+   and worth a real look.
    **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
    `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
    `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach
