@@ -125,11 +125,31 @@ def _rows(body: str) -> list[str]:
 
 def _vol_cells(body: str) -> list[str]:
     """The 11th cell of every row — the volume column, by position."""
+    return [re.sub(r"<[^>]+>", "", td).strip() for td in _vol_cells_html(body)]
+
+
+def _industry_cells(body: str) -> list[str]:
+    """The 3rd cell of every row — the resolved industry label, by position."""
+    out = []
+    for row in _rows(body):
+        tds = re.findall(r"<td\b[^>]*>(.*?)</td>", row, re.S)
+        if len(tds) >= 3:
+            out.append(re.sub(r"<[^>]+>", "", tds[2]).strip())
+    return out
+
+
+def _vol_cells_html(body: str) -> list[str]:
+    """The volume column's RAW html — ATTRIBUTES INCLUDED, unlike `_vol_cells`.
+
+    The sparkline's direction, if it ever named one, would surface in the `aria-label` that
+    describes the series — an attribute, which tag-stripping removes. So the no-direction-word
+    guard scans this rather than the stripped text, and rather than the whole page (see the guard's
+    own note on why the page is the wrong scope)."""
     out = []
     for row in _rows(body):
         tds = re.findall(r"<td\b[^>]*>(.*?)</td>", row, re.S)
         if len(tds) >= 11:
-            out.append(re.sub(r"<[^>]+>", "", tds[10]).strip())
+            out.append(tds[10])
     return out
 
 
@@ -276,9 +296,39 @@ def test_the_volume_cell_draws_a_trend_sparkline_when_the_series_is_present() ->
         "the sparkline is a silent decoration — it needs a role and a described series")
     for c in cells[:5]:
         assert re.fullmatch(r"\d+\.\d+×", c), f"the cell text is no longer the bare ratio: {c!r}"
+    # SCOPED TO THE VOLUME COLUMN, not the whole page. The claim is about what the VOLUME SERIES
+    # says, so the page was always the wrong scope — and it collided with a legitimate SIC industry
+    # label: FND renders "Retail-Lumber & Other Building Materials Dealers" in cell 3, which
+    # contains "building" and has nothing to do with the sparkline. Scanning the volume cell's RAW
+    # html keeps the guard at full strength (the aria-label that describes the series is an
+    # attribute, and is in scope here) while an industry description cannot trip it.
+    vol_html = " ".join(_vol_cells_html(body)).lower()
     for word in ("building", "fading", "rising", "falling", "accumulat"):
-        assert word not in body.lower(), (
+        assert word not in vol_html, (
             f"'{word}' derived from the volume series — draw the line, do not name a direction")
+
+
+def test_an_industry_label_may_contain_a_direction_word_without_tripping_the_guard() -> None:
+    """THE PIN THAT WOULD HAVE CAUGHT IT. The no-direction-word guard above scanned the WHOLE page,
+    so any cell containing one of its words tripped it — and a real SIC industry description does:
+    FND renders "Retail-Lumber & Other Building Materials Dealers" in the industry column.
+
+    It stayed invisible because the page prefers `frontend/snapshots/` (a gitignored artifact from
+    `frontend/build.py`) over the committed queue, and CI never builds it — so CI rendered a row set
+    that excluded FND while any developer who had built the frontend hit it. That ended when the
+    committed queue grew to include FND: the gate went red on a PR that had nothing to do with the
+    volume column.
+
+    This asserts the guard's scope directly, so it holds whichever row set is rendered."""
+    body = _render("trend")["body"]
+    industry = [c for c in _industry_cells(body)
+                if any(w in c.lower()
+                       for w in ("building", "fading", "rising", "falling", "accumulat"))]
+    if not industry:
+        pytest.skip("no rendered industry label currently contains one of the guarded words")
+    vol = " ".join(_vol_cells_html(body)).lower()
+    for word in ("building", "fading", "rising", "falling", "accumulat"):
+        assert word not in vol, f"the volume column itself names a direction: {word!r}"
 
 
 def test_a_snapshot_without_the_trend_series_still_renders_the_ratio() -> None:
