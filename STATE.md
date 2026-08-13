@@ -12249,6 +12249,37 @@ one evidence-backed leg at a time.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
+- **~~The two audit P2s — `_latest_col`'s unchecked "rightmost = latest" and
+  `book_value_per_share`'s undated `(latest)` stamp~~ — CLOSED 2026-08-13
+  (`fix/latest-col-provenance`).** One root: *"the last column is the latest"* was a claim about
+  the export that nothing checked, inherited from how CIQ happens to write the file. Nine
+  decision-path extractors take that value as the latest AND stamp it with the period label beside
+  it — if an export ever ran right-to-left, the figure and its label would be wrong together. It is
+  the shape `_capital_summary` already refuses on and the one item 20 records arriving through the
+  DATA PROVIDER (`source_ref="Close (latest)"` on a months-old value in three dossiers);
+  `book_value_per_share` carried the literal remaining `(latest)` instance.
+  **MEASURED FIRST: the convention holds on all 19 bundles** (Balance Sheet / Income Statement /
+  Cash Flow × both frequencies — 0 violations), so the guard is DEFENSIVE, exactly as
+  `_capital_summary`'s was when it shipped, and free: all nine callers already handle the `None`
+  returned for an empty row, so a refusal travels an existing path. **Blast radius verified on the
+  corpus: 76 extractor reads, 1 UNKNOWN — FUBO's missing EBITDA row, a pre-existing absence with a
+  different note. Guard-induced refusals: 0.**
+  **A PROVEN violation is required, never an unreadable header** — only decodable dates are
+  compared, so `LTM` / `Press Release …` columns still resolve. Refusing on those would blank real
+  values fleet-wide to guard an ordering nobody has demonstrated.
+  **WHAT THE UNDATED STAMP WAS HIDING, and why this half was not cosmetic: on 2 of 19 names (ONON,
+  UBER) the landed Balance-Sheet column is a `Press Release` column, not a fiscal period** — a
+  pre-filing figure on a different basis from the audited sheet beside it, and under `(latest)` the
+  two read identically. Every stamp now names its period (`… (2026-06-30)`), and those two keep
+  their own words so the basis is visible.
+  **MY OWN SLIP, caught by the corpus run and worth the record:** the first cut decoded the period
+  from `_latest_col`'s RENDERED label, so it stamped raw Excel serials — `(46112.0)` — which is
+  worse for a reader than `(latest)` was. The structured cell was one index away. That is the
+  display-formatting-as-load-bearing rule, broken while fixing a provenance bug; it is now pinned
+  by a test that rejects an all-digit period.
+  Four mutations each redden a specific test: guard removed · guard over-firing on undated headers
+  · stamp reverting to `(latest)` · stamp re-parsing the rendered label.
+
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
   synthesis quoted its old text verbatim — exactly the "page citing numbers its own tables no longer
