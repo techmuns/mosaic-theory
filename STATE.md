@@ -12249,6 +12249,58 @@ one evidence-backed leg at a time.
 
 ### OPEN OBSERVATIONS — surfaced by PR-2's corpus sweep, not yet diagnosed (2026-08-12)
 
+- **~~The two audit P2s — `_latest_col`'s unchecked "rightmost = latest" and
+  `book_value_per_share`'s undated `(latest)` stamp~~ — CLOSED 2026-08-13
+  (`fix/latest-col-provenance`).** One root: *"the last column is the latest"* was a claim about
+  the export that nothing checked, inherited from how CIQ happens to write the file. Nine
+  decision-path extractors take that value as the latest AND stamp it with the period label beside
+  it — if an export ever ran right-to-left, the figure and its label would be wrong together. It is
+  the shape `_capital_summary` already refuses on and the one item 20 records arriving through the
+  DATA PROVIDER (`source_ref="Close (latest)"` on a months-old value in three dossiers);
+  `book_value_per_share` carried the literal remaining `(latest)` instance.
+  **MEASURED FIRST: the convention holds on all 19 bundles** (Balance Sheet / Income Statement /
+  Cash Flow × both frequencies — 0 violations), so the guard is DEFENSIVE, exactly as
+  `_capital_summary`'s was when it shipped, and free: all nine callers already handle the `None`
+  returned for an empty row, so a refusal travels an existing path. **Blast radius verified on the
+  corpus: 76 extractor reads, 1 UNKNOWN — FUBO's missing EBITDA row, a pre-existing absence with a
+  different note. Guard-induced refusals: 0.**
+  **A PROVEN violation is required, never an unreadable header** — only decodable dates are
+  compared, so `LTM` / `Press Release …` columns still resolve. Refusing on those would blank real
+  values fleet-wide to guard an ordering nobody has demonstrated.
+  **WHAT THE UNDATED STAMP WAS HIDING, and why this half was not cosmetic: on 2 of 19 names (ONON,
+  UBER) the landed Balance-Sheet column is a `Press Release` column, not a fiscal period** — a
+  pre-filing figure on a different basis from the audited sheet beside it, and under `(latest)` the
+  two read identically. Every stamp now names its period (`… (2026-06-30)`), and those two keep
+  their own words so the basis is visible.
+  **MY OWN SLIP, caught by the corpus run and worth the record:** the first cut decoded the period
+  from `_latest_col`'s RENDERED label, so it stamped raw Excel serials — `(46112.0)` — which is
+  worse for a reader than `(latest)` was. The structured cell was one index away. That is the
+  display-formatting-as-load-bearing rule, broken while fixing a provenance bug; it is now pinned
+  by a test that rejects an all-digit period.
+  Four mutations each redden a specific test: guard removed · guard over-firing on undated headers
+  · stamp reverting to `(latest)` · stamp re-parsing the rendered label.
+  **REVIEW FINDING (#453) — I FIXED THE READERS I KNEW ABOUT AND MISSED A FOURTH.** `key_ratios`
+  scanned `reversed(r[1:])` on its own, outside `_latest_col`, emitting an undated
+  `Ratios (latest period)`. Same failure mode as #450's P2: I enumerated the consumers of a helper
+  instead of sweeping for readers of the PATTERN.
+  **AND IT WAS TWO DEFECTS, NOT THE ONE REPORTED.** The scan ran **per ROW**, so every ratio took
+  its own rightmost populated cell — **BRBR and FUBO drew their ratios from TWO DIFFERENT COLUMNS**,
+  printed together under one `(latest)` stamp (BRBR's RoE from one period beside RoCE/RoA/current
+  ratio from another). That is the #421 same-window defect, live on two names.
+  Fixed on #421's own pattern: pin ONE column, read every row from it with `_cell_at`, and **NAME
+  what the column does not report** rather than back-filling from an earlier one — BRBR now reads
+  *"…; not reported this period: RoE, total debt/equity [LTM 12 months Jun-30-2026]"*. Dropping
+  those silently would have traded a wrong number for a missing one nobody can see.
+  **THE SWEEP IS NOW A TEST**, because patching the reported instance is what caused this
+  round-trip: an AST check refuses any `reversed(row[1:])` over a sheet row outside the guard, so a
+  FIFTH reader fails at the diff. Mutation-confirmed — restoring the per-row scan reddens it.
+  **STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current` and
+  `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date — under
+  `Close (latest)` stamps. **0 of 19 bundles have out-of-order Multiples columns**, so there is no
+  live exposure, and the pairs already carry decoded dates so the fix is `max(by date)` rather than
+  a refusal. **The AST sweep does NOT catch this shape** (it is a subscript, not `reversed`), which
+  is worth knowing before trusting that guard as complete.
+
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
   synthesis quoted its old text verbatim — exactly the "page citing numbers its own tables no longer

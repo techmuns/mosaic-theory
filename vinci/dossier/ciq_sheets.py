@@ -115,7 +115,31 @@ def _pct1(v: float | None) -> str:  # a fraction → "1.9%" (one decimal), or em
 
 
 def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] | None:
-    """The rightmost column of row ``ri`` carrying a value → (col, value, period-label)."""
+    """The rightmost column of row ``ri`` carrying a value → (col, value, period-label).
+
+    "RIGHTMOST" IS A CLAIM ABOUT THE EXPORT, SO IT IS CHECKED (audit P2). Nine decision-path call
+    sites take this value as the LATEST and stamp it with the period label returned beside it —
+    both of which are wrong together if the export ever runs right-to-left. Nothing asserted the
+    ascending convention; it was inherited from how CIQ happens to write the file.
+
+    It is the same unasserted-convention shape :func:`_capital_summary` already refuses on, and the
+    same one item 20 records arriving through the DATA PROVIDER rather than through the code —
+    `source_ref="Close (latest)"` sitting on a months-old value in three dossiers. A guard here is
+    the generalisation of that fix to every consumer of "the last column".
+
+    REFUSE RATHER THAN MISLABEL, matching the house pattern and costing nothing today: the
+    convention holds across all 19 committed bundles (Balance Sheet / Income Statement / Cash Flow,
+    both frequencies — 0 violations), and every caller already handles the ``None`` this returns
+    when a row is empty, so refusal travels an existing path rather than a new one.
+
+    A PROVEN violation is required, never an unreadable header. Only columns whose dates DECODE are
+    compared, exactly as `_capital_summary` does — a header naming no date degrades to "order
+    unknown" for that column and cannot by itself trigger a refusal."""
+    if hdr is not None:
+        known = [d for j in range(1, len(rows[hdr]))
+                 if (d := excel_date(rows[hdr][j])) is not None]
+        if len(known) > 1 and known != sorted(known):
+            return None
     valid = [(j, clean_num(rows[ri][j])) for j in range(1, len(rows[ri]))]
     present = [(j, v) for j, v in valid if v is not None]
     if not present:
@@ -3251,63 +3275,131 @@ def gics_industry(bundle: CiqBundle) -> Sourced[str]:
     return Sourced.unknown(note="no Primary Industry Classification in the CIQ profile")
 
 
+_KEY_RATIO_ROWS = (
+    ("Return on Equity %", "RoE", True),
+    ("Return on Capital %", "RoCE", True),
+    ("Return on Assets %", "RoA", True),
+    ("Total Debt/Equity", "total debt/equity", False),
+    ("Current Ratio", "current ratio", False),
+)
+
+
 def key_ratios(bundle: CiqBundle) -> Sourced[str]:
-    """The Motilal-style 'Ratios' panel — latest-period RoE / RoCE / RoA, total-debt/equity, current
-    ratio, and dividend status — from the CIQ Ratios sheet. Each a STORED CIQ value (never computed
-    here); fail-loud UNKNOWN when the sheet is absent. Latest = the rightmost numeric column."""
+    """The Motilal-style 'Ratios' panel — RoE / RoCE / RoA, total-debt/equity, current ratio and
+    dividend status — from the CIQ Ratios sheet. Each a STORED CIQ value (never computed here);
+    fail-loud UNKNOWN when the sheet is absent.
+
+    ONE COLUMN FOR EVERY RATIO, AND THE COLUMN IS NAMED (review finding, #453 — and it was two
+    defects, not one). This read used to scan `reversed(r[1:])` **per row**, so each ratio took its
+    own rightmost populated cell and they need not be the same period. Measured on the committed
+    corpus: **BRBR and FUBO drew their ratios from TWO different columns**, printed together under
+    a single `(latest)` stamp — BRBR's RoE from one period beside its RoCE, RoA and current ratio
+    from another. That is the #421 same-window defect (see `_fcf_basis_note`), repeated here.
+
+    It is fixed the way #421 fixed it: pin ONE column and read every row from it with the existing
+    :func:`_cell_at`. **A ratio with no value in the pinned column is OMITTED, never back-filled
+    from an older one** — #421's rule that comparing against a different period is not the check
+    you claimed to make. Column selection goes through :func:`_latest_col`, so this also inherits
+    the ascending-order guard instead of trusting the rightmost cell.
+
+    The stamp names the period, replacing an undated `Ratios (latest period)` — the same
+    unverifiable recency claim item 20 records."""
     try:
         rs = bundle.sheet("financials", "Ratios", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-
-    def latest(label: str) -> float | None:
-        for r in rs:
-            if r and str(r[0]).strip() == label:
-                for c in reversed(r[1:]):
-                    v = clean_num(c)
-                    if v is not None:
-                        return v
-        return None
-
-    def has_row(label: str) -> bool:
-        return any(r and str(r[0]).strip() == label for r in rs)
+    hdr = _period_header(rs)
+    rows_by_label = {
+        lbl: next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
+        for lbl, _n, _p in (*_KEY_RATIO_ROWS, ("Dividend per Share", "", False))
+    }
+    # THE PINNED COLUMN is the rightmost one any key ratio populates — the latest period this panel
+    # actually reports — resolved through `_latest_col` so an out-of-order export refuses here too.
+    landed = [
+        got[0] for lbl, _n, _p in _KEY_RATIO_ROWS
+        if (ri := rows_by_label[lbl]) is not None and (got := _latest_col(rs, ri, hdr)) is not None
+    ]
+    if not landed:
+        return Sourced.unknown(
+            note="no key ratios found in the CIQ Ratios sheet, or its period columns are not in "
+                 "ascending date order (so the last column is not the latest)")
+    col = max(landed)
 
     parts: list[str] = []
-    for label, name, is_pct in (
-        ("Return on Equity %", "RoE", True),
-        ("Return on Capital %", "RoCE", True),
-        ("Return on Assets %", "RoA", True),
-        ("Total Debt/Equity", "total debt/equity", False),
-        ("Current Ratio", "current ratio", False),
-    ):
-        v = latest(label)
+    # ABSENCE IS ATTRIBUTED, NOT SILENT. Dropping a ratio that the pinned column does not report
+    # would leave a shorter list that reads like the panel simply carries fewer ratios for this
+    # name — when the truth is it reports them in an EARLIER period only, which is exactly the
+    # thing this fix refuses to print as "latest". BRBR (RoE, total debt/equity) and FUBO
+    # (RoE, RoCE, RoA) are the live instances; naming them keeps the omission legible instead of
+    # trading a wrong number for a missing one nobody can see.
+    missing: list[str] = []
+    for label, name, is_pct in _KEY_RATIO_ROWS:
+        ri = rows_by_label[label]
+        v = _cell_at(rs, ri, col)
         if v is not None:
             parts.append(f"{name} {v * 100:.1f}%" if is_pct else f"{name} {v:.2f}")
-    if has_row("Dividend per Share") and latest("Dividend per Share") is None:
+        elif ri is not None:
+            missing.append(name)
+    if rows_by_label["Dividend per Share"] is not None and (
+            _cell_at(rs, rows_by_label["Dividend per Share"], col) is None):
         parts.append("dividend: none")
+    if missing:
+        parts.append(f"not reported this period: {', '.join(missing)}")
     if not parts:
         return Sourced.unknown(note="no key ratios found in the CIQ Ratios sheet")
+    period = ""
+    if hdr is not None and col < len(rs[hdr]):
+        d = excel_date(rs[hdr][col])
+        period = d.isoformat() if d else _cs_col_label(rs[hdr][col])
     return Sourced.present(
-        "; ".join(parts) + " (latest)", source_ref="CIQ Financials→Ratios (latest period)")
+        "; ".join(parts) + (f" [{period}]" if period else ""),
+        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")))
 
 
 def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:
-    """(Phase-2) Latest book value per share from the CIQ Balance Sheet — a STORED CIQ value (never
-    computed here). Fail-loud UNKNOWN when the sheet or the row is absent. Latest = the rightmost
-    numeric column (annual)."""
+    """(Phase-2) Book value per share from the CIQ Balance Sheet — a STORED CIQ value (never
+    computed here). Fail-loud UNKNOWN when the sheet or the row is absent.
+
+    THE STAMP NAMES THE PERIOD IT CAME FROM (audit P2). It used to read
+    ``Book Value/Share (latest)`` — an UNDATED claim, and the literal `…(latest)` false-provenance
+    shape item 20 records: a stamp asserting recency while naming no period, so a reader cannot
+    tell WHICH column it is and cannot catch it when it is stale.
+
+    THE BASIS ALSO VARIES, which the old stamp hid entirely. Measured across the 19 committed
+    bundles the landed column is usually a fiscal period, but on **2 names (ONON, UBER) it is a
+    `Press Release` column** — a pre-filing figure on a different basis from the audited balance
+    sheet beside it, presented identically. Naming the column is what makes those two visible.
+
+    Selection now goes through :func:`_latest_col`, so this inherits the ascending-order guard
+    rather than re-implementing `reversed()` — one rightmost-column rule, checked once."""
     try:
         bs = bundle.sheet("financials", "Balance Sheet", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    for r in bs:
-        if r and str(r[0]).strip() == "Book Value/Share":
-            for c in reversed(r[1:]):
-                v = clean_num(c)
-                if v is not None:
-                    return Sourced.present(
-                        v, source_ref="CIQ Financials→Balance Sheet→Book Value/Share (latest)")
-            break
-    return Sourced.unknown(note="no Book Value/Share row in the CIQ Balance Sheet")
+    ri = next((i for i, r in enumerate(bs) if r and str(r[0]).strip() == "Book Value/Share"), None)
+    if ri is None:
+        return Sourced.unknown(note="no Book Value/Share row in the CIQ Balance Sheet")
+    hdr = _bs_period_header(bs)
+    latest = _latest_col(bs, ri, hdr)
+    if latest is None:
+        return Sourced.unknown(
+            note="Book Value/Share has no value in any period, or the Balance Sheet's period "
+                 "columns are not in ascending date order (so the last column is not the latest)")
+    col, value, period = latest
+    # DECODE FROM THE RAW CELL, NEVER THE RENDERED LABEL. `_latest_col` hands back a stringified
+    # header, and CIQ writes most of these columns as Excel SERIALS — so parsing the label yields
+    # "46112.0" and stamps a raw serial where a reader needs a date. The structured value is one
+    # index away; taking the string instead is the display-formatting-as-load-bearing bug this
+    # repo names explicitly. A non-serial header ("Press Release Jun-30-2026") has no structured
+    # date and keeps its own words, which is what makes that BASIS visible rather than hidden.
+    stamp = ""
+    if hdr is not None and col < len(bs[hdr]):
+        d = excel_date(bs[hdr][col])
+        stamp = d.isoformat() if d else _cs_col_label(period)
+    return Sourced.present(
+        value,
+        source_ref=("CIQ Financials→Balance Sheet→Book Value/Share"
+                    + (f" ({stamp})" if stamp else "")))
 
 
 _DESC_SENTENCE_CAP = 160  # clause-boundary cap when the first sentence runs long
