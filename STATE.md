@@ -12279,6 +12279,27 @@ one evidence-backed leg at a time.
   by a test that rejects an all-digit period.
   Four mutations each redden a specific test: guard removed · guard over-firing on undated headers
   · stamp reverting to `(latest)` · stamp re-parsing the rendered label.
+  **REVIEW FINDING (#453) — I FIXED THE READERS I KNEW ABOUT AND MISSED A FOURTH.** `key_ratios`
+  scanned `reversed(r[1:])` on its own, outside `_latest_col`, emitting an undated
+  `Ratios (latest period)`. Same failure mode as #450's P2: I enumerated the consumers of a helper
+  instead of sweeping for readers of the PATTERN.
+  **AND IT WAS TWO DEFECTS, NOT THE ONE REPORTED.** The scan ran **per ROW**, so every ratio took
+  its own rightmost populated cell — **BRBR and FUBO drew their ratios from TWO DIFFERENT COLUMNS**,
+  printed together under one `(latest)` stamp (BRBR's RoE from one period beside RoCE/RoA/current
+  ratio from another). That is the #421 same-window defect, live on two names.
+  Fixed on #421's own pattern: pin ONE column, read every row from it with `_cell_at`, and **NAME
+  what the column does not report** rather than back-filling from an earlier one — BRBR now reads
+  *"…; not reported this period: RoE, total debt/equity [LTM 12 months Jun-30-2026]"*. Dropping
+  those silently would have traded a wrong number for a missing one nobody can see.
+  **THE SWEEP IS NOW A TEST**, because patching the reported instance is what caused this
+  round-trip: an AST check refuses any `reversed(row[1:])` over a sheet row outside the guard, so a
+  FIFTH reader fails at the diff. Mutation-confirmed — restoring the per-row scan reddens it.
+  **STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current` and
+  `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date — under
+  `Close (latest)` stamps. **0 of 19 bundles have out-of-order Multiples columns**, so there is no
+  live exposure, and the pairs already carry decoded dates so the fix is `max(by date)` rather than
+  a refusal. **The AST sweep does NOT catch this shape** (it is a subscript, not `reversed`), which
+  is worth knowing before trusting that guard as complete.
 
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored

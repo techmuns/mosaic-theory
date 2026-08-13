@@ -140,6 +140,104 @@ def test_the_book_value_stamp_names_its_period_and_never_says_latest() -> None:
     assert seen, "no name yielded a book value — the assertion never ran"
 
 
+def test_key_ratios_reads_one_named_column_and_attributes_what_is_missing() -> None:
+    """REVIEW FINDING (#453), and it was TWO defects rather than the one reported.
+
+    `key_ratios` scanned `reversed(r[1:])` **per row**, so every ratio took its own rightmost
+    populated cell — and they need not be the same period. Measured: **BRBR and FUBO drew their
+    ratios from two different columns**, printed together under one `(latest)` stamp. That is the
+    #421 same-window defect repeated, on top of the undated stamp that was actually reported.
+
+    Now one pinned column feeds every row (via `_cell_at`, as #421 does), and a ratio the column
+    does not report is NAMED rather than dropped — a shorter list would otherwise read as "this
+    name has fewer ratios" when the truth is "reported in an earlier period only", which is the
+    very thing the fix refuses to print as latest."""
+    checked = 0
+    for tk, b in _bundles():
+        s = cs.key_ratios(b)
+        if s.value is None:
+            continue
+        checked += 1
+        assert "(latest)" not in s.value, f"{tk}: the value still claims bare recency — {s.value!r}"
+        ref = s.source_ref or ""
+        assert "(latest period)" not in ref, f"{tk}: the undated stamp is back — {ref!r}"
+        assert "→Ratios [" in ref, f"{tk}: the stamp names no period — {ref!r}"
+    assert checked, "no name produced key ratios — the assertion never ran"
+
+
+def test_key_ratios_never_mixes_two_periods_in_one_line() -> None:
+    """THE SAME-WINDOW HALF, asserted against the SHEET rather than the rendered string: every
+    ratio printed must have a value in the ONE pinned column. Reading it back out of the line would
+    be a second parser of a value this function just formatted."""
+    from vinci.dossier.ciq import CiqUnavailableError
+
+    checked = splits = 0
+    for tk, b in _bundles():
+        try:
+            rs = b.sheet("financials", "Ratios", freq="annual")
+        except CiqUnavailableError:
+            continue
+        hdr = cs._period_header(rs)
+        landed = []
+        for lbl, _n, _p in cs._KEY_RATIO_ROWS:
+            ri = next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
+            if ri is None:
+                continue
+            got = cs._latest_col(rs, ri, hdr)
+            if got is not None:
+                landed.append((lbl, got[0]))
+        if len(landed) < 2:
+            continue
+        checked += 1
+        pinned = max(c for _l, c in landed)
+        printed = cs.key_ratios(b).value or ""
+        display = {lbl: name for lbl, name, _pct in cs._KEY_RATIO_ROWS}
+        for lbl, own in landed:
+            if own == pinned:
+                continue
+            splits += 1
+            # this row's own latest is an EARLIER column — it must not appear as a figure
+            name = display[lbl]
+            before, _, after = printed.partition("not reported this period:")
+            assert name not in before, (
+                f"{tk}: {name} lands on column {own} but the panel is pinned to {pinned}, and it "
+                f"is printed as a current figure — two periods in one 'latest' line")
+            assert name in after, f"{tk}: {name} was dropped silently instead of attributed"
+    assert checked, "no name had enough ratio rows to test the pinning"
+    assert splits, (
+        "no committed name still splits its ratios across two columns, so the same-window half is "
+        "asserted vacuously — BRBR and FUBO were the instances; re-measure before trusting this")
+
+
+def test_no_extractor_reads_the_rightmost_column_outside_the_guard() -> None:
+    """THE SWEEP, because patching the reported instance is how this round-trip happened.
+
+    #453's first cut fixed `_latest_col`'s consumers and `book_value_per_share` and left
+    `key_ratios` scanning `reversed()` on its own — a FOURTH reader nobody had enumerated. This
+    walks the package AST for any `reversed(...)` over a sheet row and requires the ordering guard
+    to be reached instead, so a FIFTH one fails here rather than in a review."""
+    import ast
+    import pathlib
+
+    pkg = pathlib.Path(cs.__file__).parent
+    offenders = []
+    for py in sorted(pkg.glob("*.py")):
+        tree = ast.parse(py.read_text())
+        for fn in [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]:
+            for node in ast.walk(fn):
+                if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                        and node.func.id == "reversed" and node.args):
+                    a = node.args[0]
+                    # `reversed(row[1:])` — a row sliced from its label cell onward is a
+                    # rightmost-column scan; anything else (a list of filings, say) is not.
+                    if isinstance(a, ast.Subscript) and isinstance(a.slice, ast.Slice):
+                        offenders.append(f"{py.name}:{fn.name}")
+    assert not offenders, (
+        f"these scan a sheet row right-to-left outside the checked selector: {offenders}. "
+        f"Route the read through `_latest_col`, which verifies the export's column ORDER before "
+        f"'rightmost' is allowed to mean 'latest'")
+
+
 def test_a_press_release_basis_is_visible_in_the_stamp() -> None:
     """WHAT THE UNDATED STAMP HID. Some names' rightmost Balance-Sheet column is a `Press Release`
     column — a pre-filing figure on a different basis from the audited sheet beside it. Under
