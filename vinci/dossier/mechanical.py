@@ -2543,7 +2543,7 @@ def _exhibit_names(http: CachedHttp, cik: str, accession: str) -> list[str]:
 #:
 #: THE PARSER MOVED to `ciq_sheets` (imported at the top of this module and re-exported, so callers
 #: and the existing test import are unchanged). It moved because a SECOND consumer appeared —
-#: `_capital_panel_freq` ranks the annual and quarterly panels by this same date — and two regexes
+#: `_cs_details_freq` reads this same stamp when selecting a panel — and two regexes
 #: over one string is the divergence this repo has paid for before: an unanchored `Mon-DD-YYYY`
 #: search reads `A 2025 (Dec-31-2025) filed Jan-23-2026` as the PERIOD END, so the picker would
 #: have ranked panels by a different date than the staleness banner below reports.

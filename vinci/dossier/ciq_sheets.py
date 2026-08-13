@@ -781,18 +781,15 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
     """The legacy flat debt-instrument line, read from the SAME panel the structured extractor uses.
 
     REVIEW FINDING (#450, P2). This is the THIRD consumer of the Details panel, and it was left on
-    `freq="annual"` when the other two moved to :func:`_capital_panel_freq`. Both survive into
-    `mechanical` — the structured schedule as `capital_structure`, this string as
-    `quality.liquidity_covenant_flags` — and `synthesize` dumps the whole mechanical layer, so on
-    the 16 names that pick quarterly the model was handed a FRESH schedule and a STALE debt list
-    **under the same source label**, with nothing in either to tell them apart. Coupling the
-    Details and Summary reads while a third reader stayed on annual did not remove the basis
-    mismatch; it moved it.
+    a hardcoded `freq="annual"` when the other two moved to the selector. All of them now go
+    through :func:`_cs_details_freq`, so a fourth consumer cannot quietly read a different panel
+    than the structured schedule — `synthesize` dumps the whole mechanical layer, and two debt
+    lists from two panels under one label is unreadable to the model and to a human.
 
-    The `source_ref` now carries the panel's own as-of for the same reason. An undated
+    The `source_ref` carries the panel's own as-of for the same reason: an undated
     `CIQ Financials→Capital Structure Details` cannot distinguish two vintages of one sheet, which
-    is precisely how this was invisible."""
-    freq = _capital_panel_freq(bundle)
+    is precisely how the mis-stamp stayed invisible."""
+    freq = _cs_details_freq(bundle)
     try:
         rows = (bundle.sheet("financials", "Capital Structure Details", freq="quarterly")
                 if freq == "quarterly"
@@ -922,41 +919,114 @@ def _cs_summary_rows(bundle: CiqBundle, freq: str) -> Rows:
     return bundle.sheet("financials", "Capital Structure Summary", freq="annual")
 
 
-def _capital_panel_freq(bundle: CiqBundle) -> str:
-    """Which financials frequency carries the LATER-FILED Capital-Structure Details panel.
+#: The period a Details `Source` note names ("A 2025 filed …", "Q3 2026 filed …") and the period its
+#: instrument SECTION names ("FY 2025 (Dec-31-2025) Capital Structure As Reported Details",
+#: "FQ3 2026 (Jun-30-2026) …"). Compared as (kind, fiscal-year) with FY↔A and FQn↔Qn.
+_CS_NOTE_PERIOD = re.compile(r"\b(?:A|Q([1-4]))\s+(\d{4})")
+_CS_SECTION_PERIOD = re.compile(r"\bF(?:Y|Q([1-4]))\s+(\d{4})")
+_CS_SECTION_MARK = "Capital Structure As Reported"
 
-    WHY THIS EXISTS. Both extractors below used to open their sheet with `freq="annual"` as a
-    hardcoded literal — not a decision anyone made, and the quarterly workbook sat unread in the
-    same bundle. Measured over the 19 committed bundles, that cost real vintage: 16 names carry a
-    NEWER quarterly panel, by a median of ~150 days (V +265d, CPB +263d, BRBR/PENG +259d, SMPL
-    +254d, NFLX +175d). Same instruments, staler filing.
 
-    THE RULE IS "NEWER", NOT "QUARTERLY", and the corpus is why. **NIKE's annual panel (filed
-    Jul-15-2026) is newer than its quarterly one (Apr-01-2026), and ONON's (Mar-03-2026) beats a
-    quarterly export from Aug-12-2025** — a year stale. A blanket switch to quarterly would have
-    made those two names WORSE while improving sixteen, which is the shape of a fix that reads as a
-    win in aggregate and is a regression on the names it touches.
+def _cs_period_key(m: re.Match[str] | None) -> tuple[str, str] | None:
+    """(period-kind, fiscal-year) from either pattern above; None when nothing matched."""
+    return (m.group(1) or "A", m.group(2)) if m else None
 
-    THE SILENT-FALLBACK GUARD. :meth:`CiqBundle.workbook` answers a `freq=` request it cannot
-    satisfy with `cands[0]` rather than None, so asking for "quarterly" can hand back the ANNUAL
-    workbook. Comparing that against itself would "prove" the quarterly panel is exactly as fresh
-    and pick on a tie. So each candidate is checked against its own resolved `.freq` before it is
-    allowed into the comparison — the request is never taken as evidence of what came back.
 
-    A TIE KEEPS ANNUAL — written out below rather than left implicit in a comparison. FUBO is the
-    live instance, its two workbooks carrying the same `Q3 2026 filed Aug-05-2026` panel. Nothing is
-    gained by moving, so nothing moves.
+def _cs_note_describes_section(rows: Rows | None) -> bool:
+    """Does this panel's `Source` note name the SAME period as the section it sits above?
 
-    Provenance needs no separate care: every caller stamps the panel's OWN `Source` note, read from
-    the rows it actually parsed, so the recorded as-of cannot disagree with the panel behind it
-    whatever this function returns."""
+    THE CHECK #450 NEEDED AND DIDN'T HAVE. The note is a WORKBOOK-level stamp; the sections are
+    per-fiscal-period. In the annual export they coincide, so the note is real provenance. In the
+    quarterly export they do NOT: CIQ ships no quarterly capital-structure detail, so that workbook
+    carries the SAME `FY 2025` section under a `Q2 2026 filed Jul-17-2026` note. Measured across
+    the 19 committed bundles — **annual 19/19 consistent, quarterly 18/19 mismatched** (FUBO the
+    lone agreement, its annual export already holding an `FQ3 2026` section because the
+    post-combination entity has no FY yet).
+    """
+    if rows is None:
+        return False
+    note = _cs_detail_asof(rows)
+    section = next((str(r[0]) for r in rows if r and _CS_SECTION_MARK in str(r[0])), "")
+    key = _cs_period_key(_CS_NOTE_PERIOD.search(note))
+    return key is not None and key == _cs_period_key(_CS_SECTION_PERIOD.search(section))
+
+
+def _cs_details_freq(bundle: CiqBundle) -> str:
+    """Which workbook's Capital-Structure DETAILS panel is stamped with its own provenance.
+
+    THIS REPLACES #450's "later-filed panel" RULE, WHICH RESTED ON A FALSE PREMISE. That change
+    read the Details panel from whichever workbook carried the newer `Source` note and reported 16
+    names getting ~150 days fresher. They did not. **CIQ exports no quarterly capital-structure
+    detail**: both workbooks carry the identical per-fiscal-year sections (verified field-by-field
+    across all 19 bundles — same instruments, same principals, same maturities), and only the note
+    differs. So the "fresher panel" was the same data wearing a newer date.
+
+    THE HARM WAS NOT COSMETIC. `_capital_structure_vintage` computes the schedule's age from this
+    stamp and bounds its Item-1.02 termination search by it (`panel_filed < 1.02 <= as-of`). Under
+    the quarterly stamp NFLX's debt schedule reported **26d old instead of 201d**, and the window
+    moved past 2026-02-27 — **silently dropping the warning that the listed WBD bridge facility had
+    been terminated**, which is the exact disclosure STATE item 7 designates as the remedy for that
+    finding. A newer date on older data does not just overstate freshness; it retires the checks
+    that depend on knowing how old the data is.
+
+    PROVENANCE IS THE GATE; RECENCY IS THE TIE-BREAK AMONG WHAT PASSES IT. Take the panel whose
+    note DESCRIBES its own section, and when BOTH do, take the later-filed of them. That picks
+    annual on 18 names and either on FUBO (both agree, and the rows are identical anyway) — but it
+    is not a hardcoded `freq="annual"` in disguise. If CIQ ever does ship a true quarterly panel,
+    its note and section will agree, it will be the later-filed valid candidate, and it is selected
+    automatically with a stamp that means what it says. Preferring annual is the CONSEQUENCE of the
+    rule, not the rule.
+
+    THE TWO-VALID-PANELS CLAUSE IS NOT HYPOTHETICAL HOUSEKEEPING (review finding, #451). The
+    first cut implemented only the gate — `if annual is valid: return "annual"` — so annual
+    short-circuited before a valid quarterly panel was ever considered, and the paragraph above
+    was a promise the code did not keep. Recency was never the enemy; recency SUBSTITUTING for
+    provenance was. Once both candidates carry notes that describe them, later-filed is exactly
+    the right discriminator.
+    **A TIE KEEPS ANNUAL** — the live FUBO case, both workbooks holding the same
+    `Q3 2026 filed Aug-05-2026` panel with nothing to choose between them.
+
+    WHEN NEITHER PANEL IS SELF-CONSISTENT it falls back to whichever one EXISTS, annual first —
+    the long-standing behaviour, and no worse than it. That clause is not decoration either: a
+    bundle holding only the quarterly workbook has no self-consistent panel at all, and returning
+    "annual" there would name a frequency the name has no workbook for. The corpus test pins that
+    the selected panel IS self-consistent on every committed name, so an export that breaks the
+    assumption reddens CI rather than quietly re-mis-stamping the fleet."""
     annual = _cs_details_rows(bundle, "annual")
     quarterly = _cs_details_rows(bundle, "quarterly")
-    a = _cs_panel_filed(_cs_detail_asof(annual)) if annual is not None else None
-    q = _cs_panel_filed(_cs_detail_asof(quarterly)) if quarterly is not None else None
-    if q is not None and (a is None or q > a):
+    annual_ok = _cs_note_describes_section(annual)
+    quarterly_ok = _cs_note_describes_section(quarterly)
+    if annual_ok and quarterly_ok:
+        a = _cs_panel_filed(_cs_detail_asof(annual)) if annual is not None else None
+        q = _cs_panel_filed(_cs_detail_asof(quarterly)) if quarterly is not None else None
+        return "quarterly" if q is not None and (a is None or q > a) else "annual"
+    if annual_ok:
+        return "annual"
+    if quarterly_ok:
+        return "quarterly"
+    if annual is None and quarterly is not None:
         return "quarterly"
     return "annual"
+
+
+def _cs_summary_freq(bundle: CiqBundle) -> str:
+    """Which workbook's Capital-Structure SUMMARY gives a like-for-like term-loan step.
+
+    DELIBERATELY A SEPARATE QUESTION FROM :func:`_cs_details_freq`, and #450's error was fusing
+    them. This module's own contract already says why they differ: *the itemized detail is
+    panel-dated, the aggregates are stamped with the period column they were actually read from.*
+    Two objects, two vintages, each self-describing — so forcing them onto "one filing" was
+    coupling that the data never asked for.
+
+    The Summary's aggregates come from its LATEST period column, and that column is the same date
+    in both workbooks on all 19 committed names — so this choice cannot make any figure staler.
+    What it changes is the term-loan STEP's other endpoint: the annual sheet's last two columns are
+    a 12-month beside a 3-month on 16 of 19 names, so the movement compared two different windows
+    (SMPL printed `12 months Aug-30-2025 249.1 → 3 months May-30-2026 397.0`). The quarterly sheet
+    gives two 3-month columns. That half of #450 measured something real and is kept.
+    """
+    wb = bundle.workbook("financials", freq="quarterly")
+    return "quarterly" if (wb is not None and wb.freq == "quarterly") else "annual"
 
 
 def _cs_col_label(header: Any) -> str:
@@ -987,12 +1057,14 @@ def _capital_summary(bundle: CiqBundle, *, freq: str = "annual") -> Sourced[str]
     fifteen lines later the code asserted a frequency it could not prove. The guard checked the
     ORDER premise and never the PERIOD premise.
 
-    THE FREQUENCY IS THE CALLER'S, and it must be the SAME ONE the Details panel was read at
-    (:func:`_capital_panel_freq`). Splitting them would put itemized instruments on one filing and
-    the aggregates that reconcile against them on another — a basis mismatch inside a single
-    capital-structure block, which is worse than either panel being stale on its own.
+    THE FREQUENCY IS THE CALLER'S, and it is chosen by :func:`_cs_summary_freq` — deliberately a
+    DIFFERENT question from the Details panel's, which #450 got wrong by fusing them. The paragraph
+    above already states why they differ: the detail is PANEL-dated while these aggregates are
+    stamped with the period column they were read from. Two self-describing objects, two vintages;
+    forcing them onto "one filing" was coupling the data never asked for, and the Details panel's
+    stamp is not even a property of the figures here.
 
-    MOVING TO QUARTERLY ALSO FIXES A LIVE MIXED-BASIS STEP, found when this parameter was added.
+    MOVING TO QUARTERLY FIXES A LIVE MIXED-BASIS STEP, found when this parameter was added.
     The term-loan movement takes the last two period columns of whatever sheet it opens, and in the
     ANNUAL workbook those two columns need not share a window — SMPL's printed
     `term loans 397.0 (12 months Aug-30-2025 249.1 → 3 months May-30-2026 397.0)`, stepping a
@@ -1067,10 +1139,10 @@ def capital_structure_ciq(
     aggregates. Returns (instruments, summary-line, detail-as-of). Maturity is decoded from the
     serial to an ISO date, or None when the panel gives '-' (undated).
 
-    THE PANEL IS THE LATER-FILED OF THE TWO WORKBOOKS (:func:`_capital_panel_freq`), not a
-    hardcoded `freq="annual"`. The aggregates are read at the SAME frequency deliberately: the
-    summary reconciles against these instruments, so the two belong on one filing."""
-    freq = _capital_panel_freq(bundle)
+    THE PANEL IS THE ONE WHOSE `Source` NOTE DESCRIBES ITS OWN SECTION (:func:`_cs_details_freq`) —
+    provenance, not recency. The aggregates are chosen SEPARATELY (:func:`_cs_summary_freq`),
+    because they are column-stamped rather than panel-stamped; see both docstrings."""
+    freq = _cs_details_freq(bundle)
     try:
         # Re-read through the fail-loud address rather than reusing the picker's tolerant one: an
         # unreadable panel must still raise here, exactly as it did before the picker existed.
@@ -1120,7 +1192,7 @@ def capital_structure_ciq(
         return u3, u3, detail_as_of
     instruments = Sourced.present(
         insts, source_ref=f"CIQ Financials→Capital Structure Details ({detail_as_of})")
-    return instruments, _capital_summary(bundle, freq=freq), detail_as_of
+    return instruments, _capital_summary(bundle, freq=_cs_summary_freq(bundle)), detail_as_of
 
 
 # --- concentration: Segments ------------------------------------------------------------------
