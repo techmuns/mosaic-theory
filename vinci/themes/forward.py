@@ -381,6 +381,31 @@ def baskets_from_mirror(
     ``_cohort_fwd_mean`` already defaults to, so nothing is invented. Rebuild the BUY leg from the
     local ledger, or re-freeze from the worksheet.
     """
+    # THE MIRROR IS NOW BOUND TO ITS DRIVER (the gap recorded on #412, closed here). The mirror
+    # carries no registry key and cannot be made to — its `driver` field is a human label and its
+    # `slug` is not the key either ("defense" against "defense-demand-shift") — so the binding lives
+    # in the DriverSpec registry as `mirror_slug`, and this is where it is enforced. Before this,
+    # `--from-mirror <wrong file> --driver <name>` measured one theme's names under another's label
+    # and no machine check was possible.
+    if driver is not None:
+        from vinci.themes.drivers import DRIVER_SPECS
+
+        spec = DRIVER_SPECS.get(driver)
+        got = str(mirror.get("slug", "")) or "(none)"
+        # AN UNDECLARED BINDING IS REFUSED, not waved through. `mirror_slug` is optional because a
+        # DriverSpec can legitimately have no theme page yet, but "cannot be verified" must not
+        # read as "verified" — that is how a guard stops guarding.
+        if spec is not None and not spec.mirror_slug:
+            raise ValueError(
+                f"driver {driver!r} declares no `mirror_slug`, so no mirror can be bound to it and "
+                f"this file cannot be verified as its theme. Set it on the DriverSpec — the "
+                f"mirrors carry no registry key of their own.")
+        if spec is not None and got != spec.mirror_slug:
+            raise ValueError(
+                f"this mirror is slug {got!r}, but driver {driver!r} is bound to "
+                f"{spec.mirror_slug!r} (frontend/themes/{spec.mirror_slug}.json). Re-measuring it "
+                f"under {driver!r} would label one theme's names with another's driver.")
+
     # ONE DRIVER IDENTITY PER REPORT. The mirror's own `driver` field is a HUMAN LABEL, not the
     # registry key — ai-datacenter's reads "AI-datacenter value chain" while its key is
     # "ai-datacenter" — so taking it as identity made the header (CLI key) and the confound strings

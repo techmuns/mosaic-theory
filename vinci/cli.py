@@ -2710,13 +2710,13 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
         baskets = fwd.baskets_from_mirror(mirror, driver=driver)
         watchlist = list(baskets.watchlist)
         print(f"\n=== Stage-4 forward RE-MEASURE (from mirror) · {driver} ===")
-        # THE MIRROR'S OWN LABELS ARE ECHOED because nothing can verify this file belongs to
-        # `--driver`: mirrors carry no registry key (ai-datacenter's `driver` field reads
-        # "AI-datacenter value chain"; defense's slug is "defense" against the key
-        # "defense-demand-shift"). Printing them puts a wrong-file mistake on the first line.
+        # THE BINDING IS NOW MACHINE-CHECKED, so this line reports rather than asks. The mirror
+        # carries no registry key of its own (its `driver` field is a human label and its `slug` is
+        # not the key either), so `DriverSpec.mirror_slug` holds the mapping and
+        # `baskets_from_mirror` refuses a mismatch before anything is measured.
         print(f"mirror {args.from_mirror} · frozen {baskets.freeze_timestamp} · "
-              f"mirror says slug={mirror.get('slug')!r} driver={mirror.get('driver')!r} "
-              f"— CONFIRM this is the {driver} theme; no machine check binds the two")
+              f"slug={mirror.get('slug')!r} bound to driver {driver!r} via "
+              f"DriverSpec.mirror_slug (verified)")
         print(f"REBUILT: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
               f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
         if baskets.watchlist:

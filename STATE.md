@@ -8703,9 +8703,20 @@ label, not the key — and `defense`'s slug is `defense` against the registry ke
 name two drivers (the CLI header printed the key, every confound string printed the label), now
 fixed by making the caller's registry key authoritative; (b) **`--from-mirror <wrong file> --driver
 <name>` cannot be caught by any machine check** — the CLI echoes the mirror's own slug/driver on
-line two and asks the operator to confirm, which is mitigation, not a guard. Closing it properly
-means the mirror carrying its registry key; do it when the mirror builder is next touched (there is
-no mirror builder in `vinci/` today — the three mirrors were hand-built).
+line two and asks the operator to confirm, which is mitigation, not a guard.
+**~~CLOSING IT MEANS THE MIRROR CARRYING ITS REGISTRY KEY~~ — CLOSED 2026-08-12, THE OTHER WAY
+ROUND.** The binding lives in the REGISTRY as `DriverSpec.mirror_slug`, not in the mirrors, for two
+reasons: the three frozen `themes/*.json` are byte-identical thereafter by rule (RUNBOOKS §e), and a
+driver's identity is the registry's business anyway. `baskets_from_mirror` now refuses a mismatch
+before anything is measured — `--from-mirror frontend/themes/defense.json --driver ai-datacenter`
+printed an AI-datacenter header over 108 DEFENSE names and now says so and stops. The check reads
+the mirror's `slug` FIELD, not its filename, so a renamed file still binds correctly, and the three
+bindings are pinned to exist, to point at a real file whose slug matches, and to be INJECTIVE.
+**THE FIELD IS OPTIONAL AND ITS DEFAULT IS THE STRICT CASE.** Required looked stricter and was wrong
+about the domain — the suite said so within a minute: `TOY_SPEC` in `test_themes_exposure.py` is a
+synthetic driver proving the classifier is driver-agnostic, and a real driver exists before its
+theme page is built. So an UNDECLARED binding cannot be verified and is REFUSED, rather than a
+missing field failing at import for specs that will never have a mirror.
 
 **RULED 2026-08-12 — A CLOSED POSITION'S DECISION KEEPS ACCRUING (decision-queue item 1), AND THE
 HEADLINE MUST DECOMPOSE.** The question was whether a decision closed early still counts toward the

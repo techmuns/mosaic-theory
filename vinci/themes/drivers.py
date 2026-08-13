@@ -61,6 +61,7 @@ _AI_DC_LAYERS: tuple[tuple[str, tuple[str, ...]], ...] = (
 
 AI_DATACENTER = DriverSpec(
     key="ai-datacenter",
+    mirror_slug="ai-datacenter",   # frontend/themes/ai-datacenter.json
     description=_AI_DC_DESCRIPTION,
     tie_taxonomy=_AI_DC_TIE_TAXONOMY,
     prefilter_terms=_AI_DC_PREFILTER,
@@ -78,6 +79,7 @@ AI_DATACENTER = DriverSpec(
 # --------------------------------------------------------------------------------------------------
 DEFENSE_DEMAND_SHIFT = DriverSpec(
     key="defense-demand-shift",
+    mirror_slug="defense",   # frontend/themes/defense.json
     description=(
         "the COMPOSITIONAL SHIFT in defense demand — spending moving FROM exquisite, few, "
         "crewed/legacy platforms TOWARD attritable, mass-producible, autonomous, and "
@@ -133,6 +135,7 @@ DEFENSE_DEMAND_SHIFT = DriverSpec(
 # --------------------------------------------------------------------------------------------------
 TRUCKLOAD_SUPPLY_PURGE = DriverSpec(
     key="truckload-supply-purge",
+    mirror_slug="truckload-supply-purge",   # frontend/themes/truckload-supply-purge.json
     description=(
         "the TRUCKLOAD SUPPLY PURGE — a regulatory-driven contraction of US for-hire truckload "
         "capacity: FMCSA enforcement removing non-domiciled CDL holders (final rule live "

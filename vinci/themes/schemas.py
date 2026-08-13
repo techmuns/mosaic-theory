@@ -371,6 +371,25 @@ class DriverSpec(BaseModel, frozen=True):
     deliberately ADDITIVE: a later theme adds a field it needs; it does not retrofit this one."""
 
     key: str  # stable id, e.g. "ai-datacenter"
+    #: WHICH FRONTEND MIRROR IS THIS DRIVER'S — `frontend/themes/<mirror_slug>.json`.
+    #:
+    #: The mirrors carry no registry key of their own and cannot be made to: their `driver` field is
+    #: a HUMAN LABEL (ai-datacenter's reads "AI-datacenter value chain") and their `slug` is not the
+    #: key either (`defense` against the key `defense-demand-shift`). So nothing bound a mirror FILE
+    #: to a driver, and `themes-forward --from-mirror <wrong file> --driver <name>` measured one
+    #: theme's names under another's label with no machine check possible (recorded on #412).
+    #:
+    #: The binding lives HERE rather than in the mirrors because the three frozen `themes/*.json`
+    #: are byte-identical thereafter by rule (RUNBOOKS §e), and because a driver's identity is the
+    #: registry's business anyway.
+    #:
+    #: OPTIONAL, and the default is the STRICT case rather than the lax one. Not every DriverSpec
+    #: HAS a mirror — `tests/test_themes_exposure.py`'s TOY_SPEC is a synthetic driver proving the
+    #: classifier is driver-agnostic, and a real driver exists before its theme page is built. A
+    #: required field was therefore wrong about the domain, and the suite said so immediately.
+    #: Instead: an UNDECLARED binding cannot be verified, so `baskets_from_mirror` REFUSES rather
+    #: than passing — forgetting this is loud at the point of use, not silent.
+    mirror_slug: str = ""
     description: str  # what the driver IS + its exposure structure (the user-message driver text)
     tie_taxonomy: str  # what driver-specific / indirect / not-driver MEAN for THIS driver
     prefilter_terms: tuple[str, ...]  # pre-filter vocabulary (shape-agnostic; whatever fits)
