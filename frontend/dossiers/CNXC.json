@@ -3,7 +3,7 @@
   "name": "Concentrix Corp",
   "cik": "0001803599",
   "reference_date": "2026-08-12",
-  "rank": 79,
+  "rank": 64,
   "sleeve": "overshoot",
   "mechanical": {
     "valuation": {
@@ -954,7 +954,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '2.65 - 2.77' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 12/13 resolved; most recent guidance outcome: FQ2 2026 MET; DPS: latest guide 0.36 for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 4/5 resolved · 3 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '2,465.00 - 2,490.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 22/26 resolved; most recent guidance outcome: FQ2 2026 MET; EBIT: latest guide '295.00 - 305.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 21/26 resolved; most recent guidance outcome: FQ2 2026 MET; Capital Expenditure: latest guide '(200.70) - (254.50)' for FY 2026 (dated 2026-01-13) (stale — 211d old); Effective Tax Rate %: latest guide 25.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 15/23 resolved; most recent guidance outcome: FQ2 2026 MET; Interest Expense: latest guide -65.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 6/14 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MISSED; Free Cash Flow: latest guide '630.00 - 650.00' for FY 2026 (dated 2026-06-29); actual ≥ guided floor 0/4 resolved; most recent guidance outcome: FY 2025 MISSED",
+        "value": "EPS Normalized: latest guide '2.65 - 2.77' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 12/13 resolved; most recent guidance outcome: FQ2 2026 MET; DPS: latest guide 0.36 for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 4/5 resolved · 3 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '2,465.00 - 2,490.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 22/26 resolved; most recent guidance outcome: FQ2 2026 MET; EBIT: latest guide '295.00 - 305.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 21/26 resolved; most recent guidance outcome: FQ2 2026 MET; Capital Expenditure: latest guide '(200.70) - (254.50)' for FY 2026 (dated 2026-01-13) (stale — 211d old); Effective Tax Rate %: latest guide 25.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 15/23 resolved; most recent guidance outcome: FQ2 2026 MET; Interest Expense: latest guide -65.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 6/14 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MISSED; Free Cash Flow: latest guide '630.00 - 650.00' for FY 2026 (dated 2026-06-29); actual ≥ guided floor 0/4 resolved; most recent guidance outcome: FY 2025 MISSED  [data ≥ 2026-07-06 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -2307,7 +2307,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Facility · 0001803599-23-000091]\n  Principal / commitment amount: Sellers' Note aggregate principal amount of €700,000,000.00; Closing Cash Payment…\n  Interest / coupon rate: 2.0% per annum (fixed); default rate increases by 2.0% per annum during a continuing…\n  Maturity date: The second anniversary of the Closing Date\n[Senior Unsecured Revolving Credit Facility · 0001803599-21-000215]\n  Principal / commitment amount: Term A Loan Commitments: $2,100,000,000; Aggregate Revolving Commitments:…\n  Interest / coupon rate: Term SOFR Loans: Term SOFR plus Applicable Rate (per Pricing Tier: 2.00% / 1.75% /…\n  Maturity date: December 27, 2026 (as to Revolving Loans, Swing Line Loans, Letters of Credit and…\n  Financial-maintenance covenants: Consolidated Leverage Ratio: not greater than 3.75:1.0 as of end of any fiscal…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Facility · 0001803599-23-000091]\n  Principal / commitment amount: €700,000,000 (Sellers' Note aggregate principal amount); Cash Purchase Price for…\n  Interest / coupon rate: 2.0% per annum (fixed). Default rate: upon an Event of Default continuing, the…\n  Maturity date: The second anniversary of the Closing Date\n[Senior Unsecured Revolving Credit Facility · 0001803599-21-000215]\n  Principal / commitment amount: Term A Loan: $2,100,000,000; Aggregate Revolving Commitments: ONE BILLION DOLLARS…\n  Interest / coupon rate: Term SOFR Loans plus Applicable Rate (1.25%–2.00% per annum based on Consolidated…\n  Maturity date: December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A…\n  Financial-maintenance covenants: Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -2429,10 +2429,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Sellers' Note aggregate principal amount of €700,000,000.00; Closing Cash Payment consideration for Acquired Shares of €500,000,000.00 in cash (minus the Leakage Amount, minus the Aggregate Exit Option Exercise Price)",
+              "value": "€700,000,000 (Sellers' Note aggregate principal amount); Cash Purchase Price for Acquired Shares: €500,000,000.00 in cash (Closing Cash Payment, before deductions) plus the Sellers' Note with an aggregate principal amount of €700,000,000.00; Closing Share Payment: 14,861,885 newly-issued shares of Parent Common Stock; Earnout Shares: 750,000 shares of Parent Common Stock",
               "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “CONCENTRIX CORPORATION PROMISSORY NOTE €700,000,000 ... in order to evidence loans deemed to have been extended by the Noteholders to the Maker in the aggregate principal amount of €700,000,000 for purposes of financing, in part, the acquisition of the Acquired Shares”"
+              "note": "verbatim: “CONCENTRIX CORPORATION PROMISSORY NOTE €700,000,000 ... in order to evidence loans deemed to have been extended by the Noteholders to the Maker in the aggregate principal amount of €700,000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2443,10 +2443,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "2.0% per annum (fixed); default rate increases by 2.0% per annum during a continuing Event of Default",
+              "value": "2.0% per annum (fixed). Default rate: upon an Event of Default continuing, the Interest Rate shall increase by 2.0% per annum. Interest computed on a year of 365 or 366 days, paid in cash in Euros.",
               "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “From and including the date hereof through but excluding the Maturity Date, interest on this Note shall accrue on the unpaid principal amount of this Note outstanding from time to time at a rate per annum equal to 2.0% (the \"Interest Rate\"). ... If any Event of Default (as defined below) has occurred and is continuing, then, for so long as such Event of Default is continuing, to the extent permitted by applicable Law, the Interest Rate shall increase by 2.0% per annum.”"
+              "note": "verbatim: “From and including the date hereof through but excluding the Maturity Date, interest on this Note shall accrue on the unpaid principal amount of this Note outstanding from time to time at a rate per annum equal to 2.0% (the “ Interest Rate ”).”"
             },
             "base_rate_label": null,
             "margin_pct": 2.0,
@@ -2460,7 +2460,7 @@
               "value": "The second anniversary of the Closing Date",
               "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “FOR VALUE RECEIVED, the Maker hereby promises to pay to the Noteholders, on the second anniversary of the Closing Date (the \"Maturity Date\") the outstanding principal amount of this Note”"
+              "note": "verbatim: “FOR VALUE RECEIVED, the Maker hereby promises to pay to the Noteholders, on the second anniversary of the Closing Date (the “ Maturity Date ”) the outstanding principal amount of this Note”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2485,10 +2485,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantees provision is a bracketed placeholder [Guarantees] in the form Sellers' Note; conditional Subsidiary guarantees to be added at Closing only if the Maker issues Senior Notes that are guaranteed; note otherwise unsecured (100% of principal, without premium or penalty; no collateral pledge stated)",
+              "value": "Sellers' Note is unsecured as drafted; a guarantee is a bracketed placeholder [Guarantees] contingent on the Maker issuing Senior Notes with Subsidiary guarantees, in which case this Note would be guaranteed by the same Subsidiary guarantors. No collateral/security granted.",
               "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “5.5    [Guarantees] ... To the extent the Maker issues Senior Notes (as defined in the Commitment Letter) on or prior to the Closing Date to finance any portion of the Closing Cash Payment or to refinance any portion of the Acquisition Transaction (as defined in the Commitment Letter) after the Closing Date and, in either case, any Subsidiary of the Maker provides guarantees in respect of such Senior Notes, the form of this Note shall be amended so that when it is issued on the Closing Date, it is guaranteed in a manner reasonably acceptable to the Required Noteholders by all such Subsidiary guarantors of the Senior Notes”"
+              "note": "verbatim: “5.5 [Guarantees] ... To the extent the Maker issues Senior Notes ... and, in either case, any Subsidiary of the Maker provides guarantees in respect of such Senior Notes, the form of this Note shall be amended so that when it is issued on the Closing Date, it is guaranteed in a manner reasonably acceptable to the Required Noteholders by all such Subsidiary guarantors of the Senior Notes”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2499,10 +2499,52 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory repurchase upon Change of Control at 100% of unpaid principal plus accrued interest; mandatory repurchase upon receipt of net cash proceeds in excess of $500,000,000 from refinancing of the Note (100% of net cash proceeds). Events of Default include: payment default (principal/Redemption/Repurchase Price when due; interest within 3 Business Days); covenant defaults under Sections 5.1/5.3 (10-day cure) and other covenants (30-day cure); voluntary bankruptcy/reorganization/assignment; involuntary bankruptcy order not dismissed within 60 days; failure of representation/warranty to be true and correct in material respects; challenge to validity/enforceability; cross-default/cross-acceleration on Material Indebtedness. Acceleration automatic upon bankruptcy EoD; otherwise upon Required Noteholder declaration.",
+              "value": "Mandatory repurchase upon Change of Control at 100% of unpaid principal plus accrued interest (Repurchase Price); mandatory repurchase from net cash proceeds in excess of $500,000,000 from a refinancing transaction. Events of Default (Section 6.1) include: payment default (principal/Redemption/Repurchase Price when due; interest within 3 Business Days); breach of Section 5.1/5.3 covenants (10-day cure); breach of other covenants (30-day cure); bankruptcy/insolvency/Reorganization of Maker; appointment of custodian/receiver; material misrepresentation; challenge to validity/enforceability of Note; cross-default/cross-acceleration on Material Indebtedness. Acceleration under Section 6.2 (automatic for insolvency Events of Default; by Required Noteholder notice otherwise).",
               "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “3.5.1. Upon a Change of Control. Upon the occurrence of a Change of Control, the Maker shall repurchase the outstanding Note in cash, without premium or penalty, at a price equal to 100% of the entire unpaid principal amount of the Note, together with all accrued and unpaid interest thereon through the date of redemption ... 3.5.2. Net Cash Proceeds of Note Refinancing. If, after the Closing Date and at any time that the bridge facility contemplated by the Commitment Letter (if funded) has been repaid in full, the Maker actually receives net cash proceeds ... in excess of $500,000,000 in the aggregate from the issuance of any debt securities or instruments or the incurrence of other debt for borrowed money ... pursuant to a refinancing transaction whose stated purpose is to refinance all or a portion of this Note, the Maker shall repurchase this Note in cash ... in an amount equal to 100% of any net cash proceeds actually received in such refinancing ... 6.1 An \"Event of Default\" shall exist if any of the following conditions or events shall occur and be continuing: (a) Maker defaults in the payment of (x) principal, Redemption Price or Repurchase Price ... or (y) interest ... within three (3) Business Days ...”"
+              "note": "verbatim: “3.5.1. Upon a Change of Control . Upon the occurrence of a Change of Control, the Maker shall repurchase the outstanding Note in cash, without premium or penalty, at a price equal to 100% of the entire unpaid principal amount of the Note, together with all accrued and unpaid interest thereon ... 3.5.2. Net Cash Proceeds of Note Refinancing. ... the Maker shall repurchase this Note in cash ... in an amount equal to 100% of any net cash proceeds actually received in such refinancing”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Optional redemption",
+            "value": {
+              "value": "At any time, in whole or ratably in part, without premium or penalty, at 100% of principal redeemed plus accrued and unpaid interest; notice not fewer than 3 Business Days before redemption date",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “3.2 Optional Redemption . The Maker may at any time and from time to time redeem this Note, in whole or ratably in part, at any time without premium or penalty at a price equal to 100% of the principal amount of the Note so redeemed, together with all accrued and unpaid interest on the principal amount of the Note so redeemed.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York (Sellers' Note); the SPA is governed by the Laws of the State of Delaware",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “The provisions of this Note shall be governed by, and construed and enforced in accordance with, the laws of the State of New York”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Termination fee",
+            "value": {
+              "value": "Parent Termination Fee: $110,000,000; Parent Expense Reimbursement: up to $31,000,000 (SPA). Put Option Letter: Beneficiaries Termination Fee US$110,000,000; Promisor Initial Expense Reimbursement up to US$31,000,000; Promisor Additional Expense Reimbursement up to US$110,000,000.",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “If this Agreement is terminated by Seller Representatives or Parent pursuant to Section 8.1(g) ( Parent Adverse Recommendation Change ), then Parent shall pay to the Company $110,000,000 (the “ Parent Termination Fee ”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2527,7 +2569,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Term A Loan Commitments: $2,100,000,000; Aggregate Revolving Commitments: $1,000,000,000 (\"The amount of the Aggregate Revolving Commitments in effect on the First Amendment Effective Date is ONE BILLION DOLLARS ($1,000,000,000).\"); Letter of Credit Sublimit: $75,000,000; Swing Line Sublimit: $50,000,000",
+              "value": "Term A Loan: $2,100,000,000; Aggregate Revolving Commitments: ONE BILLION DOLLARS ($1,000,000,000); Letter of Credit Sublimit: $75,000,000; Swing Line Sublimit: $50,000,000",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
               "note": "verbatim: “The aggregate principal amount of the Term A Loan Commitments of all of the Lenders as in effect on the First Amendment Effective Date is TWO BILLION ONE HUNDRED MILLION DOLLARS ($2,100,000,000).”"
@@ -2541,7 +2583,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loans: Term SOFR plus Applicable Rate (per Pricing Tier: 2.00% / 1.75% / 1.50% / 1.25% based on Consolidated Leverage Ratio); Base Rate Loans: Base Rate plus Applicable Rate (1.00% / 0.75% / 0.50% / 0.25%); Swing Line Loans: Daily Simple SOFR plus Applicable Rate for Term SOFR Loans. Commitment Fee: 0.300% / 0.275% / 0.250% / 0.225%. Applicable Rate from First Amendment Effective Date until first Compliance Certificate for second full fiscal quarter determined based on Pricing Tier 3.",
+              "value": "Term SOFR Loans plus Applicable Rate (1.25%–2.00% per annum based on Consolidated Leverage Ratio pricing tiers); Base Rate Loans plus Applicable Rate (0.25%–1.00%); Commitment Fee 0.225%–0.300%",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
               "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans.”"
@@ -2555,10 +2597,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "December 27, 2026 (as to Revolving Loans, Swing Line Loans, Letters of Credit and the Term A Loan); Incremental Term Loan: as specified in applicable Incremental Amendment",
+              "value": "December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A Loan)",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
-              "note": "verbatim: ““ Maturity Date ” means (a) as to the Revolving Loans, Swing Line Loans, Letters of Credit (and the related L/C Obligations) and the Term A Loan, December 27, 2026 and (b) as to an Incremental Term Loan, the final maturity date applicable thereto as specified in the applicable Incremental Amendment; provided , that , in each case, if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+              "note": "verbatim: ““ Maturity Date ” means (a) as to the Revolving Loans, Swing Line Loans, Letters of Credit (and the related L/C Obligations) and the Term A Loan, December 27, 2026 and (b) as to an Incremental Term Loan, the final maturity date applicable thereto as specified in the applicable Incremental Amendment”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2569,10 +2611,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Leverage Ratio: not greater than 3.75:1.0 as of end of any fiscal quarter (increased to 4.25:1.0 during a Leverage Increase Period following a Qualified Acquisition); Consolidated Interest Coverage Ratio: not less than 3.00:1.0 as of end of any fiscal quarter",
+              "value": "Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during a Leverage Increase Period following a Qualified Acquisition); Consolidated Interest Coverage Ratio not less than 3.00:1.0",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
-              "note": "verbatim: “(a) Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio as of the end of any fiscal quarter of the Borrower to be greater than 3.75:1.0; provided , that , upon the consummation of a Qualified Acquisition ... the ratio set forth above shall be increased to 4.25:1.0 ... (b) Consolidated Interest Charge Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any fiscal quarter of the Borrower to be less than 3.00:1.0.”"
+              "note": "verbatim: “(a) Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio as of the end of any fiscal quarter of the Borrower to be greater than 3.75:1.0 ... (b) Consolidated Interest Charge Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any fiscal quarter of the Borrower to be less than 3.00:1.0.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2583,10 +2625,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured and guaranteed. Guarantors: Domestic Subsidiaries identified under \"Guarantors\"/\"New Loan Parties\" on signature pages (incl. Concentrix Solutions Corporation, Concentrix CVG Corporation, Concentrix CVG Customer Management Group Inc., Convergys Customer Management International Inc., Convergys Customer Management Group Canada Holding Inc., Concentrix CVG Customer Management Delaware LLC, Concentrix CVG Delaware International Inc., Concentrix Services US, Inc., Stream Holdings Corporation, SGS Holdings, Inc., Stream Global Services, Inc., ProKarma Holdings Inc., ProKarma, Inc.). Collateral: continuing security interest in Collateral pursuant to Security Agreement (dated Nov 30, 2020). Pledged Equity: 100% of issued and outstanding Equity Interests of each directly-owned Domestic Subsidiary and 65% of voting / 100% of non-voting Equity Interests in each directly-owned Foreign Subsidiary (other than Immaterial Foreign Subsidiary).",
+              "value": "Secured by Collateral under the Security and Pledge Agreement, including Pledged Equity (100% of Equity Interests of each directly owned Domestic Subsidiary and 65% of voting/100% of non-voting Equity Interests of each directly owned Foreign Subsidiary other than Immaterial Foreign Subsidiaries). Guaranteed jointly and severally by the Guarantors party thereto and the New Loan Parties (ProKarma Holdings Inc. and ProKarma, Inc.) pursuant to Article IV.",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
-              "note": "verbatim: “Such New Loan Party hereby jointly and severally together with the other Guarantors, guarantees to the Administrative Agent, each Lender (including each New Lender) and each other holder of the Obligations, as provided in Article IV of the Amended Credit Agreement, as primary obligor and not as surety, the prompt payment and performance of the Obligations in full when due ... to secure the prompt payment and performance in full when due ... of the Secured Obligations ... such New Loan Party hereby grants, pledges and assigns to the Administrative Agent, for the benefit of the holders of the Secured Obligations, a continuing security interest in ... the Collateral ... of such New Loan Party.”"
+              "note": "verbatim: “to secure the prompt payment and performance in full when due ... such New Loan Party hereby grants, pledges and assigns to the Administrative Agent, for the benefit of the holders of the Secured Obligations, a continuing security interest in, and a right of set off against any and all right, title and interest of such New Loan Party in and to the Collateral (as such term is defined in Section 2 of the Security Agreement) of such New Loan Party.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2597,10 +2639,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments (Section 2.05(b)): (i) revolving over-advance excess; (ii) 100% of Net Cash Proceeds of Material Disposition or Material Recovery Event not reinvested within 365 days; (iii) 100% of Net Cash Proceeds of any Debt Issuance. Events of Default (Section 9.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults (30-day cure); (d) Representations and Warranties; (e) Cross-Default (Material Indebtedness = Threshold Amount $150,000,000); (f) Insolvency Proceedings; (g) Inability to Pay Debts/Attachment; (h) Judgments; (i) ERISA; (j) Invalidity of Loan Documents; (k) Change of Control (40% Voting Equity Interests); (l) Invalidity of Subordination Provisions.",
+              "value": "Mandatory prepayments: revolving overadvance; 100% of Net Cash Proceeds from Material Dispositions/Material Recovery Events (subject to 365-day reinvestment); 100% of Net Cash Proceeds from Debt Issuances. Events of Default set forth in Section 9.01 include Non-Payment, breach of Specific/Other Covenants, incorrect Representations and Warranties, Cross-Default (Material Indebtedness, Threshold Amount $150,000,000), Insolvency Proceedings, Inability to Pay Debts/Attachment, Judgments, ERISA, Invalidity of Loan Documents, Change of Control, and Invalidity of Subordination Provisions.",
               "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
               "status": "present",
-              "note": "verbatim: “(b) Mandatory Prepayments of Loans . (i) Revolving Commitments . If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay Revolving Loans and/or Swing Line Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess ... (ii) Dispositions and Recovery Events . The Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of the Net Cash Proceeds received by any Loan Party from any Material Disposition or Material Recovery Event to the extent such Net Cash Proceeds are not reinvested ... within 365 days ... (iii) Debt Issuances . Immediately upon receipt by any Loan Party of the Net Cash Proceeds of any Debt Issuance by any Loan Party, the Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of such Net Cash Proceeds.”"
+              "note": "verbatim: “(b) Mandatory Prepayments of Loans . (i) Revolving Commitments . If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay Revolving Loans ... (ii) Dispositions and Recovery Events . The Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of the Net Cash Proceeds received by any Loan Party from any Material Disposition or Material Recovery Event ... (iii) Debt Issuances . Immediately upon receipt by any Loan Party of the Net Cash Proceeds of any Debt Issuance ... the Borrower shall prepay the Loans ... equal to 100% of such Net Cash Proceeds.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5748,8 +5790,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "wins with Technology (year-over-year growth)",
-          "period": "first quarter",
+          "metric": "wins with Technology (year-over-year)",
+          "period": "first quarter 2026",
           "value": "up more than 61% year-over-year",
           "value_num": null,
           "unit": null,
@@ -5761,7 +5803,7 @@
         {
           "kind": "leading_indicator",
           "metric": "signed annual contract value for solutions including AI (quarter-on-quarter)",
-          "period": "quarter-on-quarter",
+          "period": "first quarter 2026",
           "value": "more than doubled",
           "value_num": null,
           "unit": null,
@@ -5773,7 +5815,7 @@
         {
           "kind": "leading_indicator",
           "metric": "enterprise iX Suite deals closed",
-          "period": "the quarter",
+          "period": "the quarter (Q1 2026)",
           "value": "close to 60 enterprise iX Suite deals",
           "value_num": null,
           "unit": null,
@@ -5784,8 +5826,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "banking and financial services revenue growth (constant currency)",
-          "period": "first quarter (Q1 2026)",
+          "metric": "revenue growth by vertical — banking and financial services (constant currency, year-over-year)",
+          "period": "first quarter 2026",
           "value": "grew 13% year-over-year",
           "value_num": null,
           "unit": null,
@@ -5796,8 +5838,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "retail, travel and e-commerce revenue growth (constant currency)",
-          "period": "first quarter (Q1 2026)",
+          "metric": "revenue growth by vertical — retail, travel and e-commerce (constant currency)",
+          "period": "first quarter 2026",
           "value": "grew 6%",
           "value_num": null,
           "unit": null,
@@ -5808,8 +5850,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "media and communications revenue growth (constant currency)",
-          "period": "first quarter (Q1 2026)",
+          "metric": "revenue growth by vertical — Media and Communications",
+          "period": "first quarter 2026",
           "value": "grew 3%",
           "value_num": null,
           "unit": null,
@@ -5820,8 +5862,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "technology and consumer electronics and health care verticals revenue change (constant currency)",
-          "period": "first quarter (Q1 2026)",
+          "metric": "revenue change by vertical — technology and consumer electronics and health care",
+          "period": "first quarter 2026",
           "value": "both decreased about 6%",
           "value_num": null,
           "unit": null,
@@ -5833,12 +5875,24 @@
         {
           "kind": "leading_indicator",
           "metric": "total revenue growth (constant currency and reported)",
-          "period": "first quarter (Q1 2026)",
+          "period": "first quarter 2026",
           "value": "an increase of 1.9% on a constant currency basis and over 5% on a reported basis",
           "value_num": null,
           "unit": null,
           "verbatim": "We delivered revenue of approximately $2.5 billion, an increase of 1.9% on a constant currency basis and over 5% on a reported basis.",
           "following_context": "Looking at constant currency growth by vertical. Revenue from banking and financial services clients grew 13% year-over-year. Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients. Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "competitive position",
+          "period": null,
+          "value": "strong competitive position to drive long-term outperformance",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We're confident in the continued strong free cash flow generation of the business and our plan to reduce net leverage over the balance of the year, and we are in a strong competitive position to drive long-term outperformance.",
+          "following_context": "Now, operator, please open the line for questions.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5858,7 +5912,7 @@
           "kind": "leading_indicator",
           "metric": "onshore business moved to offshore centers",
           "period": "2025",
-          "value": "4% of our onshore business",
+          "value": "4% of our onshore business to offshore centers",
           "value_num": null,
           "unit": null,
           "verbatim": "This helped move 4% of our onshore business to offshore centers.",
@@ -5868,7 +5922,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "increase in annual contract value of deals in pipeline",
+          "metric": "increase in annual contract value of deals in the pipeline",
           "period": "as we exited this year (2025)",
           "value": "a 6% increase",
           "value_num": null,
@@ -5928,9 +5982,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "top 50 clients relying on Concentrix for more than one solution",
+          "metric": "top 50 clients relying on more than one solution",
           "period": "2025",
-          "value": "98% of our top 50 clients",
+          "value": "98% of our top 50 clients now rely on Concentrix for more than one solution",
           "value_num": null,
           "unit": null,
           "verbatim": "Within our existing base, 98% of our top 50 clients now rely on Concentrix for more than one solution.",
@@ -5952,9 +6006,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "new business including own technology (attach rate)",
+          "metric": "share of new business including own technology",
           "period": "2025",
-          "value": "more than 40% of our new business",
+          "value": "more than 40% of our new business includes some form of our own technology",
           "value_num": null,
           "unit": null,
           "verbatim": "Now more than 40% of our new business includes some form of our own technology as part of the solution.",
@@ -5964,7 +6018,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "total revenue growth (constant currency), full year and Q4 exit",
+          "metric": "total revenue growth (constant currency)",
           "period": "fiscal year 2025 / Q4 2025",
           "value": "2% total growth in constant currency and exited Q4 with constant currency revenue growth above 3%",
           "value_num": null,
@@ -5978,7 +6032,7 @@
           "kind": "leading_indicator",
           "metric": "growth rate of newer adjacent offerings",
           "period": "2025",
-          "value": "reaching high single digits in aggregate",
+          "value": "growth rate reaching high single digits in aggregate",
           "value_num": null,
           "unit": null,
           "verbatim": "Our newer adjacent offerings have a growth rate reaching high single digits in aggregate and now represent a meaningful part of our business.",
@@ -5993,151 +6047,177 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a still-growing, self-funding EBITDA base offset by 4.1x leverage and a still-falling forward earnings path.",
+    "evidence_balance": "mixed — a real $1.5B impairment and rising leverage sit against stable dollar EBITDA, positive FCF, and an unproven but inflecting AI mix-shift.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA is not in decline: it rose from $1,266M (FY25) to $1,275M LTM even as the EBITDA margin held flat at ~13%, so the low headline multiple prices a business whose cash-generative core is still growing, not contracting.",
+        "claim": "Absolute EBITDA has held up despite margin optics — LTM EBITDA is ~$1,275M on ~$9,999M revenue, and the FY26 consensus points to ~$1,430M, so the business generates rising dollar profit even as the % margin sits flat at 13%.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The name is FCF-positive at $775.6M LTM and self-funding, giving it a survival cushion that a terminal thesis has to overcome.",
+        "claim": "The business is FCF-positive and self-funding at the LTM level — Levered Free Cash Flow $775.6M — supporting deleveraging and buybacks without external capital.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-31-2026]",
         "cited": true
       },
       {
-        "claim": "The discount to peers may be partly RESIDUAL rather than fully EARNED: on the fundamental_deltas the name's rev growth (4% vs 6%) and EBITDA growth (2% vs 5%) gaps are modest, yet it trades at TEV/EBITDA 3.9x vs peer median 5.4x — the human must judge whether that gap is justified by the margin/leverage deficit alone or is overshoot.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Credit health is investment-grade and stronger than the peer median (S&P issuer BBB-; Overall/Operational/Solvency/Liquidity 4/4/4/4 vs peer-median 3/3/3/3 on the S&P-MI PD model), tempering the terminal-distress reading despite elevated leverage.",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
         "cited": true
       },
       {
-        "claim": "The revenue mix is shifting to higher-value work with real leading indicators: signed annual contract value for AI solutions more than doubled QoQ, supporting a case that reported softness is deliberate re-mix rather than demand loss.",
+        "claim": "Management reports a genuine mix-shift toward higher-value technology/AI work — first-quarter wins with Technology up more than 61% year-over-year — a mechanism that could arrest the margin/ROIC slide if it scales.",
         "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The AI platform exited 2025 at over $60M annualized revenue at breakeven, and >40% of new business now attaches own technology — evidence the strategic pivot is producing revenue, not just narrative.",
-        "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+        "claim": "AI-inclusive bookings are inflecting — signed annual contract value for solutions including AI more than doubled quarter-on-quarter — evidence the strategic pivot is winning demand, not just rhetoric.",
+        "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Credit health is investment-grade (S&P BBB-) and the delivery record on guided revenue/EBIT/EPS is strong (revenue actual≥floor 22/26, EPS 12/13), tempering an imminent-distress read.",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
+        "claim": "The company is buying back stock into the drawdown (share count -5.9% over ~1.7y) and short interest is falling (10.9M→10.3M sh, -5.7%), signals of self-funded capital return rather than forced retrenchment.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-09-30..2026-06-30",
+        "cited": true
+      },
+      {
+        "claim": "On a forward basis the name screens materially below peers (NTM TEV/EBITDA name 4.65 vs peer median 5.8; NTM TEV/Rev name 0.68 vs peer median 1.12) — but the peer set is HETEROGENEOUS (caps $119M–$28.9B, 243x), so the human must judge whether that forward gap is EARNED by weaker fundamentals or RESIDUAL overshoot, not read it as a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The de-rate is not merely optical: GAAP net income swung to -$1,314M LTM driven by a $1,523M goodwill impairment, a management admission that prior acquisition value was overstated — P/E is NM on a genuinely negative base, not a missing figure.",
+        "claim": "The de-rate is a real earnings-quality event, not just multiple compression: FY25 booked a $1,523M goodwill impairment, driving GAAP net income to -$1,279M and RoE to -37.7% — a genuine write-down of prior M&A, not an optical charge.",
         "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2024-12-01→2025-11-30, 364d)",
-        "cited": false
+        "cited": true
       },
       {
-        "claim": "Leverage is the dominant load-bearing risk: net-debt/EBITDA 4.1x and net-debt/OCF 7.1x are well above the peer-median total-debt/EBITDA 2.0x, and this is the REAL signal (absolute net debt $5,249M), not an optical margin artifact.",
+        "claim": "The falling trailing multiple is arguably the REAL signal, not a misread: EV/EBITDA 3.9x sits at the 0th percentile of its own 5.5-year history (range 4.4–12.8x, median 6.9x) — and it is trailing-only with no forward reconciler in guidance, so a permanently-impaired level cannot be distinguished from a temporarily depressed one.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "cited": true
+      },
+      {
+        "claim": "Leverage is high and above peers — net-debt/EBITDA 4.1x and net-debt/OCF 7.1x, vs total-debt/EBITDA 3.2x for the name against a 2.0x peer median — an EARNED discount driver, and management's own target is only to reach <2.6x by end-FY26.",
         "source_ref": "CIQ Net Debt $5,249M [Q2 May-31-2026] ÷ CIQ EBITDA $1,275M [LTM 12 months May-31-2026]",
         "cited": true
       },
       {
-        "claim": "The consensus forward trajectory is deteriorating hard: FY26 EBITDA revised -10%, GAAP EPS -43% and EBT -52% (12m→latest), so the low trailing multiple sits on a still-falling numerator — the discount reflects earned estimate cuts, not a stale panic.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
-        "cited": true
-      },
-      {
-        "claim": "The margin gap to peers is EARNED, not optical: EBITDA margin 13% vs peer-median 18% is a structural 5-point deficit that justifies part of the multiple discount — a value-trap tell rather than a clean overshoot.",
+        "claim": "Fundamentals are decomposably worse than peers on multiple axes: EBITDA margin 13% vs peer-median 18%, rev growth 4% vs 6%, EBITDA growth 2% vs 5%, Debt/EBITDA 3.2 vs 2.0 — inputs that make much of the discount look EARNED (value-trap) rather than pure overshoot.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Estimate breadth is uniformly negative — FY26 Revenue 0↑/3↓ and EPS 0↑/2↓ last month, with the two 2026 gap-downs tied to a securitization amendment and the Q2 earnings print — the market is repricing on fresh, name-specific information.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "claim": "Consensus is cutting hard and uniformly: FY26 GAAP EPS revised -43% (5.60→3.19) and FY26 EBITDA -10% (1,594→1,430) over 12m→latest, with FY26 revenue breadth 0↑/3↓ and EBITDA breadth 0↑/3↓ last month — a downward, not stabilising, trajectory.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "ROIC has fallen to 4.2% LTM from ~9% in FY22 and RoE is -37.7%, so returns on the heavily-levered capital base are thin — reinforcing an earned-discount reading.",
+        "claim": "ROIC has structurally faded from ~9% (FY22) to 4.2% (LTM) — barely above the cost of the 6.6–6.85% coupon debt — consistent with capital deployed into acquisitions (FY23 $1,914M) that were subsequently impaired.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "A single $133.5M insider sale by a 10% owner dwarfs the trivial ~$0.12M of open-market buys, an unsupportive ownership signal alongside the de-rate.",
-        "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 140 filings in the 1095d scanned; counts over 182d)",
+        "claim": "The stock is idiosyncratically weak, not just a market victim: -19.3% over 180d vs IWM +15.1%, a -34.5% relative deficit, with two discrete gap-downs (2026-03-24 material agreement, 2026-06-30 earnings).",
+        "source_ref": "EOD CNXC−IWM 180d to 2026-08-12 (assembly, cap-band)",
+        "cited": true
+      },
+      {
+        "claim": "Delivery on cash guidance is weak: Free Cash Flow actual ≥ guided floor 0/4 resolved with FY2025 MISSED, and Interest Expense most-recent FQ2 2026 MISSED — the self-funding thesis rests on a cash metric management has not been hitting.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "Teleperformance SE",
-        "outcome": "recovered",
-        "distinguishing_fact": "Peer CX/BPO operator that de-rated hard on AI-disruption fear and slowing organic growth; a same-industry analogue for whether the outsourcing-services multiple is a permanent AI-victim discount or an overshoot.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Same-industry CX/BPO peer facing the identical AI-disruption overhang; a de-rated, low-multiple incumbent whose top line stalled while the market debated whether AI is tailwind or existential threat.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "TTEC Holdings",
         "outcome": "went terminal",
-        "distinguishing_fact": "Same-sector CX operator carrying the highest peer leverage and repeated goodwill write-downs into a shrinking-cap; the cautionary analogue where a levered outsourcer's discount proved earned.",
+        "distinguishing_fact": "Smallest CX peer with the highest leverage and repeated goodwill write-downs — the value-trap archetype of a levered outsourcer whose impairments and shrinking revenue compounded.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Cognizant Technology Solutions Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "Larger IT/BPO peer that traded through an AI-substitution scare with a clean balance sheet; analogue for how a lower-leverage services franchise re-rated once growth stabilized.",
+        "distinguishing_fact": "Larger IT-services peer that navigated a growth slowdown with low leverage and re-rated as it stabilised margins — the pattern of a services incumbent whose discount proved residual, not earned.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Conduent",
+        "name": "Genpact Limited",
+        "outcome": "recovered",
+        "distinguishing_fact": "BPO peer that repositioned toward higher-value digital/analytics work and held a mid-teens multiple — the successful mix-shift analogue for the AI-pivot thesis.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "DXC Technology",
         "outcome": "went terminal",
-        "distinguishing_fact": "Post-spin business-process outsourcer where high leverage plus flat organic growth kept the multiple structurally depressed despite optical cheapness — the levered-BPO value-trap pattern.",
+        "distinguishing_fact": "Roll-up of legacy services acquisitions that carried heavy debt and serial goodwill impairments; secular revenue erosion overwhelmed self-help, and the cheap multiple stayed cheap.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the sub-4x trailing EV/EBITDA an overshoot on a still-growing, self-funding cash engine whose reported softness reflects a deliberate high-value re-mix — or an earned discount on a 4.1x-levered business whose forward estimates are still being cut as the goodwill write-down confirmed impaired past growth?",
+      "question": "Is the high-value/AI mix-shift scaling fast enough to re-accelerate revenue and lift margins/ROIC before leverage and consensus cuts confirm a permanent impairment — i.e., is the trailing 0th-percentile multiple an overshoot or the true steady state?",
       "evidence_for": [
         {
-          "claim": "Absolute EBITDA rose to $1,275M LTM and FCF is $775.6M positive, and management points to AI-solution ACV more than doubling QoQ and >40% new-business technology attach — an overshoot-on-re-mix mechanism.",
+          "claim": "Technology wins up more than 61% YoY and AI-inclusive signed ACV more than doubled QoQ point to a demand inflection in the higher-value mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The name delivers against guidance (revenue 22/26, EPS 12/13 actual≥floor) and carries a BBB- investment-grade credit rating, arguing the low multiple is not a distress print.",
-          "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
+          "claim": "Absolute EBITDA is stable-to-rising (LTM $1,275M; FY26E $1,430M) and the business is LFCF-positive at $775.6M, giving time for the pivot to scale.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-31-2026]",
+          "cited": true
+        },
+        {
+          "claim": "Newer adjacent offerings are growing at high-single-digit rates and >40% of new business now includes the company's own technology — a mechanism for margin-accretive mix over time.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "FY26 consensus EBITDA (-10%), GAAP EPS (-43%) and EBT (-52%) are still being cut, with all last-month FY revenue revisions downward (0↑/3↓) — the numerator the cheap multiple rests on is falling, driven by lighter tech/healthcare volumes and shore-mix margin compression.",
+          "claim": "Consensus is still cutting: FY26 GAAP EPS -43% and EBITDA -10% over 12m→latest, with FY26 revenue and EBITDA breadth 0↑/3↓ last month — no sign estimates have found a floor.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Net-debt/EBITDA 4.1x against a 13%-vs-18% margin deficit means the leverage magnifies any forward shortfall — an earned-discount / value-trap mechanism.",
-          "source_ref": "CIQ Net Debt $5,249M [Q2 May-31-2026] ÷ CIQ EBITDA $1,275M [LTM 12 months May-31-2026]",
+          "claim": "Two of the offsetting verticals (technology/consumer electronics and health care) each declined ~6% on lighter volumes and shore mix, and onshore-to-offshore migration itself compresses margin — so the mix-shift is currently a drag, not yet a lift.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Leverage at 4.1x net-debt/EBITDA with a 0/4 FCF-guidance-floor delivery record limits the runway if the re-acceleration slips.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA or adjusted EPS is disclosed in the revised 99.1 guidance — the trailing 3.9x cannot be reconciled to a forward basis, leaving overshoot-vs-terminal unresolved (a bearish opacity, not a neutral gap).",
-      "Covenant leverage basis and headroom are UNKNOWN (not disclosed); a fenced Consolidated Leverage Ratio ceiling of 3.75:1.0 exists but the current covenant-basis leverage is not stated — a survival-capacity leg left dark.",
-      "Self-funding is MIXED: latest-quarter OCF is negative while LTM FCF is positive; the seasonality claim (Q1 negative, later quarters robust) is management posture that the human must verify against actual cash conversion.",
-      "Single-segment (Software & Programming) reporting means no segment EBITDA breakout — the margin-compressing shore-mix/re-mix cannot be isolated from the growing verticals; an opacity risk.",
-      "Whether the guided path to <2.6x net leverage by end-FY26 and the AI re-mix accretion actually materialize — both are management commitments, not yet delivered facts.",
-      "The $1,523M goodwill impairment leaves $3,653M goodwill + $1,750M intangibles still on the balance sheet — further write-down risk is undisclosed."
+      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised 99.1 guidance — the trailing 3.9x cannot be reconciled to a forward basis, leaving overshoot-vs-terminal unresolved (a bearish opacity risk on the core valuation anchor).",
+      "Covenant basis and headroom are UNKNOWN (not disclosed); the disclosed maintenance covenant (Consolidated Leverage Ratio ≤3.75x, stepping to 4.25x) is from a 2021 filing and its current governing terms/headroom against 4.1x reported leverage are not visible — a bearish disclosure gap given elevated leverage.",
+      "Segment EBITDA is not broken out — single-segment (Software & Programming) reporting means the profitability of the growing AI/adjacent mix versus the declining legacy verticals cannot be isolated (opacity risk).",
+      "P/E is NM and the last positive annual EPS predates the impairment; there is no meaningful trailing earnings anchor, and the GAAP path to sustained positive EPS is unconfirmed.",
+      "The near-term self-funding read is MIXED: latest-quarter OCF was negative while LTM FCF is positive — seasonality (Q1 negative FCF) per management, but the FY26 FCF guide ($630–650M) has a 0/4 floor-delivery record.",
+      "Debt schedule is ~196d old (filed 2026-01-28); management stated on the Q1 call that $200M of 6.65% notes remained outstanding for FY26 repayment — the current maturity wall and refinancing status past that are not freshly confirmed in the panel.",
+      "Peer set is flagged HETEROGENEOUS (243x cap span); every peer multiple and the earned-vs-residual discount decomposition must be treated as confidence-gated, not a clean benchmark."
     ]
   },
   "caveats": [
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+7.0s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.7s fetch)",
     "Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage.",
-    "Unreconciled margin-compression (a decisive-against point): 'FY26 consensus EBITDA (-10%), GAAP EPS (-43%) and EBT (-52%) are still being cut, with all last-month FY revenue revisions downward (0↑/3↓) — the numerator the cheap multiple rests on is falling, driven by lighter tech/healthcare volumes and shore-mix margin compression.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+    "Unreconciled margin-compression (a decisive-against point): 'Two of the offsetting verticals (technology/consumer electronics and health care) each declined ~6% on lighter volumes and shore mix, and onshore-to-offshore migration itself compresses margin — so the mix-shift is currently a drag, not yet a lift.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "(E5) covenant exhibit too large for single-pass extraction (656746 chars) — extract by hand: 8-K 0001803599-25-000111 · exhibit101041125.htm",
-    "(E5) covenant exhibit too large for single-pass extraction (654179 chars) — extract by hand: 8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
-    "MISMATCH bear_point: 'The de-rate is not merely optical: GAAP net income…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it"
+    "(E5) covenant exhibit too large for single-pass extraction (654179 chars) — extract by hand: 8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T05:32:32.401723Z",
+  "assembled_at": "2026-08-13T10:01:13.832246Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -6163,7 +6243,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T05:35:25.294309Z",
+    "computed_at": "2026-08-13T10:03:46.884137Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
