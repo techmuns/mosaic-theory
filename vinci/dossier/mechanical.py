@@ -26,6 +26,10 @@ from vinci.dossier.capital_allocation import (
     build_peer_capital_intensity,
 )
 from vinci.dossier.ciq import CiqBundle
+
+# Re-exported: the panel-stamp parser lives in `ciq_sheets`, the layer that produces the stamp.
+# See the note at `_ITEM_TERMINATION` for why it moved.
+from vinci.dossier.ciq_sheets import _cs_panel_filed
 from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
 from vinci.dossier.schemas import (
@@ -2536,24 +2540,18 @@ def _exhibit_names(http: CachedHttp, cik: str, accession: str) -> list[str]:
 
 #: CIQ writes its panel vintage as "A 2025 filed Jan-23-2026" — a MONTH-NAME date, which is
 #: why `freshness._ISO` never matched it and the debt schedule has never carried an age.
-_CS_FILED = re.compile(r"filed\s+([A-Z][a-z]{2})-(\d{1,2})-(20\d\d)")
-_CS_MONTHS = {m: i for i, m in enumerate(
-    ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), start=1)}
+#:
+#: THE PARSER MOVED to `ciq_sheets` (imported at the top of this module and re-exported, so callers
+#: and the existing test import are unchanged). It moved because a SECOND consumer appeared —
+#: `_capital_panel_freq` ranks the annual and quarterly panels by this same date — and two regexes
+#: over one string is the divergence this repo has paid for before: an unanchored `Mon-DD-YYYY`
+#: search reads `A 2025 (Dec-31-2025) filed Jan-23-2026` as the PERIOD END, so the picker would
+#: have ranked panels by a different date than the staleness banner below reports.
+#:
 #: EDGAR item 1.02 — "Termination of a Material Definitive Agreement". The one item code that says,
 #: from the filer's own index and without reading a word of the filing, that an agreement the panel
 #: may still list has ended.
 _ITEM_TERMINATION = "1.02"
-
-
-def _cs_panel_filed(detail_as_of: str) -> date | None:
-    """The date the capital-structure panel's SOURCE FILING was made, or None if unstated."""
-    m = _CS_FILED.search(detail_as_of or "")
-    if m is None:
-        return None
-    try:
-        return date(int(m.group(3)), _CS_MONTHS[m.group(1)], int(m.group(2)))
-    except (KeyError, ValueError):
-        return None
 
 
 def _capital_structure_vintage(

@@ -118,15 +118,23 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         module="Financials — Quarterly",
         workbook_kind="financials",
         freq="quarterly",
-        sheets=("Multiples", "Income Statement", "Balance Sheet", "Cash Flow"),
+        sheets=(
+            "Multiples", "Income Statement", "Balance Sheet", "Cash Flow",
+            "Capital Structure Details", "Capital Structure Summary",
+        ),
         used_for=(
             "valuation-range position / multiple percentiles (ev_ebitda_current, "
             "ev_ebitda_percentile, range_position, pe_ltm_current), the freshest CIQ Net/Total "
             "Debt for net-debt/EBITDA (net_debt / total_debt), the clean same-quarter YoY "
-            "revenue trajectory (margin_trend / multi_year_trajectory), and the DEPTH-STAGE "
+            "revenue trajectory (margin_trend / multi_year_trajectory), the DEPTH-STAGE "
             "balance-sheet bridge that unblocks a name EDGAR cannot supply — cash, total debt, "
             "leases, depreciation, operating cash flow, capital expenditure and diluted shares "
-            "(ciq_balance.extract), used only where the EDGAR tag is absent or stale"
+            "(ciq_balance.extract), used only where the EDGAR tag is absent or stale — and the "
+            "CAPITAL-STRUCTURE panel whenever this workbook's is the later-filed one "
+            "(capital_structure_ciq via _capital_panel_freq: 16 of 19 committed names, by a "
+            "median of ~150 days). The annual module below declares the same two sheets because "
+            "either workbook can win; which one is read is decided per name at extraction, never "
+            "by frequency"
         ),
         granularity=Granularity.QUARTERLY,
         lookback=(
