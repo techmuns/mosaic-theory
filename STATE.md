@@ -11813,6 +11813,18 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    is what re-assembly can and cannot be expected to preserve. **If the tier ever trends DOWN across
    consecutive passes** (rather than oscillating around zero as here), that is a different signal
    and worth a real look.
+   **SECOND DATA POINT (artifact pass on #453, 2026-08-13) — the oscillation prediction HELD at the
+   name level, and the falsifier is not yet cleared at the fleet level.** Deterministic tiers were
+   byte-stable for a THIRD consecutive pass (instruments 114, covenant pointers 97, peers 161,
+   deterministic drivers 324 — all unchanged). LLM-fenced drivers moved **289 → 287 (−2)** against
+   **−15** the pass before. **AORT, the −42% outlier last time, came back +15** — oscillation, as
+   predicted, and the clearest evidence the tail is noise rather than decay.
+   **BUT BOTH PASSES ARE NEGATIVE AT THE FLEET LEVEL (304 → 289 → 287, −6% cumulative), so the
+   two-consecutive-down condition is technically MET.** Not calling it a trend on n=2 with the
+   second step inside noise and per-name signs mixed (+15 AORT, +3 UBER, +2 BRBR vs −10 NFLX,
+   −4 EPAM) — recorded so the next pass is read against three points rather than rediscovered.
+   Synthesis re-roll moved too: **bull 105 → 99, bear 104 → 91**, spread across names rather than
+   concentrated; LLM-composed by design and not pinned anywhere, per the test-layer rule.
    **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
    `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
    `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach
@@ -12294,6 +12306,15 @@ one evidence-backed leg at a time.
   **THE SWEEP IS NOW A TEST**, because patching the reported instance is what caused this
   round-trip: an AST check refuses any `reversed(row[1:])` over a sheet row outside the guard, so a
   FIFTH reader fails at the diff. Mutation-confirmed — restoring the per-row scan reddens it.
+  **ON THE PAGES 2026-08-13 (`artifacts/fleet-post-453`) — 14/14 clean, all at 2026-08-12.**
+  Every book-value stamp is dated (`… Book Value/Share (2026-06-30)`); **0 of 14 still read
+  `(latest)`**. UBER's `(Press Release Jun-30-2026)` is now visible on the page — the basis
+  difference the undated stamp hid. **The two mixed-period names are corrected:** BRBR's phantom
+  **RoE 61.5%** (drawn from a different column than its RoCE/RoA/current ratio and printed as
+  latest) is gone, replaced by *"not reported this period: RoE, total debt/equity
+  [LTM 12 months Jun-30-2026]"*; FUBO likewise loses RoE/RoCE/RoA to attribution. NFLX, a control
+  that never split, kept every value and only gained its period stamp. **#451's capital-structure
+  stamps did not move on any name** — checked, since this pass touched the same module.
   **STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current` and
   `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date — under
   `Close (latest)` stamps. **0 of 19 bundles have out-of-order Multiples columns**, so there is no

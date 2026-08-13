@@ -5,14 +5,16 @@ _August 13, 2026 · extraction 2026-07-28.1_
 # Brief — first cut
 
 ## At a glance
+> ⚠ **Verify before the verdict:** Bare peer-comparison (a decisive-against point): 'The forward multiple (NTM TEV/EBITDA 19.33x, NTM P/E 25.07x) remain…; Heterogeneous-peer benchmark (a decisive-against point): 'The forward multiple (NTM TEV/EBITDA 19.33x, NTM P/E 25.07x… — full caveats in Analysis.
+
 Visa Inc. operates as a payment technology company in the United States and internationally.
-**Strongly-bullish** — durable double-digit volume/VAS/Visa Direct growth on rising ~30% ROIC with a self-funding balance sheet; the premium is largely earned, not residual.
+**Strongly-bullish** — a still-compounding, self-funding franchise (VAS +34%, RoC 30.3%) whose premium is largely earned by superior economics, though growth is moderating.
 - **Segments:** Payment Services — single segment [1]
 - **Geography:** International 61%; United States (U.S.) 39% [2]
 - **Snapshot:** NYSE · CMP $362.82 (2026-08-11) · cap $665.4B (2026-08-10) · 52-wk $293.89–$373.97 · shares 1.8B · book value/sh $18.87 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Is the double-digit volume, value-added-services and Visa Direct growth durable enough over the next several years to justify a forward multiple (NTM ~19x EBITDA / ~25x P/E) that already prices a long compounding runway?**
+**Is the reinvestment runway (VAS at 30%+ of revenue growing 34%, Visa Direct/commercial new flows, agentic and stablecoin optionality) long and high-returning enough to beat the long-duration premium already embedded in a ~21.6x trailing / 19.3x forward EV/EBITDA — or is that premium the return, leaving little upside as growth moderates?**
 _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-10-27 `[cadence-estimate]` — calendar in Analysis
 
@@ -44,16 +46,16 @@ _R1 inputs incomplete — see per-input source stamps_
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the runway outlasts the price:_
-- Payments volume crossed $4 trillion for the first time in Visa's history in Q3 2026, growing 10% year-over-year in constant dollars alongside 10% processed-transaction growth — the core network engine is still compounding at scale. [10]
-- Value-added services grew revenue 34% in constant dollars in Q3 2026 with the vast majority linked to transactions, cards and accounts — a durable, higher-growth layer expanding the runway beyond raw volume. [10]
-- Commercial & money-movement revenue grew 17% in constant dollars in Q3 2026 on 13% commercial payments-volume growth, and Visa Direct transactions grew 21% to $4 billion — new use-cases (e.g. DoorDash Crimson) keep opening incremental TAM. [10]
+- Payments volume crossed $4 trillion for the first time in Q3 FY26, up 10% YoY in constant dollars, with processed transactions up 10% to $72B — the core network engine is still compounding at scale. [10]
+- Value-added services revenue grew 34% in constant dollars in Q3 FY26 with the vast majority linked to transactions/cards/accounts, evidencing a higher-return reinvestment leg beyond the core rails. [10]
+- Commercial and money-movement revenue grew 17% YoY with 13% commercial payments volume growth in Q3 FY26, and Visa Direct transactions grew 21% YoY to $4B — durable new-flow runway on top of consumer card. [10]
 _Bear case — the price already pays for it:_
-- On EV/EBITDA the name trades at 21.6x vs a peer median of 11.0x (+96%), but the paired reconciler shows this is largely EARNED not residual — the name's EBITDA margin is 70% vs a 29% peer median, so a %-multiple premium sits on a genuinely superior absolute-EBITDA base and the raw gap overstates true richness. [11]
-- Peer-multiple readings are confidence-gated, not clean: the peer set spans market caps of $1.7B to $493.1B (297x) against the name's $665.4B and mixes sub-scale processors with Mastercard, so any 'cheap/rich vs peers' read must be discounted for heterogeneity. [12]
-- Consensus GAAP-EPS breadth is negative in the last month (0 up / 16 down for FY2026) and FY26 GAAP net income has been revised down net -2%, a genuine near-term downgrade — but OUTWEIGHED by revenue breadth (30 up / 3 down) and normalized-EPS drift up +3%, so the cut is basis-driven not demand-driven. [13]
+- The peer discount is at least partly EARNED, not pure residual overshoot: Visa's 70% EBITDA margin vastly exceeds the 29% peer median and its 0.8x debt/EBITDA beats the 3.8x peer median, yet its rev growth (14% vs 17%) and LT EPS growth (13% vs 14%) trail the peer median — so superior economics, not superior growth, justify part of the premium. [11]
+- Q3 FY26 EPS growth (+11%) decelerated from Q2's +20% and net revenue growth eased from 17% to 14% YoY, so the very acceleration underpinning the premium is already moderating quarter-over-quarter. [10]
+- The forward path prices in continued premium: NTM TEV/EBITDA 19.33x and NTM P/E 25.07x sit far above peer medians of 7.57x and 12.06x, so much of the quality is already paid for and expectations must be beaten, not merely met. [12]
 
 ## Financial snapshot
-- **Financial snapshot** — [14]  <!-- ds-table -->
+- **Financial snapshot** — [13]  <!-- ds-table -->
 
 |  | FY22 (R) | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -70,17 +72,17 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill + intangibles remaining:** $48,641.0M [15]
-- **Goodwill:** $20,891.0M [15]
-- **Intangibles (net):** $27,750.0M [16]
+- **Impairment headroom — goodwill + intangibles remaining:** $48,641.0M [14]
+- **Goodwill:** $20,891.0M [14]
+- **Intangibles (net):** $27,750.0M [15]
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the last such charge covers 2021-10-01→2022-09-30, 364d, 3.5 years before the balance beside it (as at 2026-03-31), so it measures no current period. Nothing has been written down since
-- **Buyback — cash:** $11,625.0M [17]
+- **Buyback — cash:** $11,625.0M [16]
 - **Buyback — shares repurchased:** _UNKNOWN_ — no annual repurchased-share count under TreasuryStockSharesAcquired — EDGAR XBRL companyfacts
-- **Buyback — average cost/share:** $65.98 — **fiscal-period average over 2014-10-01→2015-06-30, 272d; NOT a purchase price** and not evidence of when they bought [18]
+- **Buyback — average cost/share:** $65.98 — **fiscal-period average over 2014-10-01→2015-06-30, 272d; NOT a purchase price** and not evidence of when they bought [17]
   - ⚠ **PERIOD MISMATCH** — this average covers 2014-10-01→2015-06-30, 272d while the repurchase cash beside it covers 2025-10-01→2026-03-31, 181d; they are not two views of one window and must not be divided into each other
-- **Acquisition consideration:** $9,082.0M [19]
+- **Acquisition consideration:** $9,082.0M [18]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
-- **Peer acquired-asset intensity — goodwill + intangibles** — [20]  <!-- ds-table -->
+- **Peer acquired-asset intensity — goodwill + intangibles** — [19]  <!-- ds-table -->
 
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap |
 |---|---:|---:|---:|---:|---:|
@@ -99,7 +101,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **Median — all peers (n=10):** 35% of assets · 33% of market cap
 - **Median — peers ≥ $1,000M market cap (n=10):** 35% of assets · 33% of market cap
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
-- **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [21]  <!-- ds-table -->
+- **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [20]  <!-- ds-table -->
 
 |  | state | yrs charged | window $M | % acquired | last charge (any date) | live YTD $M |
 |---|---|---|---|---:|---:|---|
@@ -119,9 +121,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
-- **vs own trading history:** EV/EBITDA (TEV/LTM) 21.6x as-of 2026-08-07 — trailing range 17.5–32.2x (median 22.4x) over 38 closes → 45%ile → below-center; P/LTM EPS 30.9x [22]
-- **vs peers:** EV/EBITDA 21.6x vs peer median 11.0x (+96%); P/E 30.9x vs peer median 27.4x (+13%) [23]
-- **Comparability:** market caps span $1.7B–$493.1B (297x); the name is $665.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [12]
+- **vs own trading history:** EV/EBITDA (TEV/LTM) 21.6x as-of 2026-08-07 — trailing range 17.5–32.2x (median 22.4x) over 38 closes → 45%ile → below-center; P/LTM EPS 30.9x [21]
+- **vs peers:** EV/EBITDA 21.6x vs peer median 11.0x (+96%); P/E 30.9x vs peer median 27.4x (+13%) [22]
+- **Comparability:** market caps span $1.7B–$493.1B (297x); the name is $665.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [23]
 - **The street, for contrast (target · ratings):** Target price: mean $416.20, median $420.00, high/low 450.00/330.00, N 37/37; Ratings: Buy 28, Outperform 9, Hold 3, Underperform 0, Sell 0, No Opinion 1, Buy 4, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 4, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-09 · export date unverified] [24]
 
 # Analysis — full dossier
@@ -144,77 +146,79 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ## The argument
 
-**Evidence balance:** strongly-bullish — durable double-digit volume/VAS/Visa Direct growth on rising ~30% ROIC with a self-funding balance sheet; the premium is largely earned, not residual.
+**Evidence balance:** strongly-bullish — a still-compounding, self-funding franchise (VAS +34%, RoC 30.3%) whose premium is largely earned by superior economics, though growth is moderating.
 
 ### Bull case — the runway outlasts the price
-- Payments volume crossed $4 trillion for the first time in Visa's history in Q3 2026, growing 10% year-over-year in constant dollars alongside 10% processed-transaction growth — the core network engine is still compounding at scale. [10]
-- Value-added services grew revenue 34% in constant dollars in Q3 2026 with the vast majority linked to transactions, cards and accounts — a durable, higher-growth layer expanding the runway beyond raw volume. [10]
-- Commercial & money-movement revenue grew 17% in constant dollars in Q3 2026 on 13% commercial payments-volume growth, and Visa Direct transactions grew 21% to $4 billion — new use-cases (e.g. DoorDash Crimson) keep opening incremental TAM. [10]
-- In Europe, credentials grew by more than 40 million in the last 12 months — over 70% faster than the FY2019-2024 annualized pace — with a further 30 million-plus expected from wins alone, including NatWest's entire consumer credit portfolio, showing a live share-gain runway. [10]
-- Return on capital has climbed steadily from 15.5% (FY17) to 30.3% (LTM Jun-30-2026), evidence the incremental capital is being deployed at rising, not falling, returns. [26]
-- Consensus embeds a long runway — revenue estimates run to $107bn by FY2035 and LT growth mean 13.5% — with a Buy consensus (1.00) and 28 Buy / 9 Outperform ratings, framing the price as backed by durable forward expectations rather than trailing optics. [27]
-- Absolute EBITDA has risen every year from $12,633M (FY17) to $31,094M (LTM Jun-30-2026) with EBITDA margin steady at ~70%, so the reinvestment is not diluting unit economics. [28]
-- The balance sheet is self-funding: net-debt/EBITDA 0.3x, interest coverage 40.1x and FCF-positive, so growth reinvestment and $11.6bn of trailing buybacks require no external capital. ⚠ uncited [29]
+- Payments volume crossed $4 trillion for the first time in Q3 FY26, up 10% YoY in constant dollars, with processed transactions up 10% to $72B — the core network engine is still compounding at scale. [10]
+- Value-added services revenue grew 34% in constant dollars in Q3 FY26 with the vast majority linked to transactions/cards/accounts, evidencing a higher-return reinvestment leg beyond the core rails. [10]
+- Commercial and money-movement revenue grew 17% YoY with 13% commercial payments volume growth in Q3 FY26, and Visa Direct transactions grew 21% YoY to $4B — durable new-flow runway on top of consumer card. [10]
+- Europe credentials grew by more than 40 million in the last 12 months, over 70% faster than the FY19-24 annualized pace, with 30 million more expected from wins alone — a concrete multi-year expansion, e.g. winning NatWest's entire consumer credit portfolio. [10]
+- Return on capital rose every year from 15.5% (FY17) to 30.3% (LTM), a rising-returns profile consistent with a long, high-return reinvestment runway rather than a maturing franchise. [26]
+- Consensus models the runway extending for years — revenue rising to $107,237M by FY2035 and EBITDA to $47,723M by FY2030 in the estimate ladder — a long-duration path the price is being asked to beat. [27]
+- Absolute EBITDA rose every year from $12,633M (FY17) to $31,094M (LTM Jun-30-2026) at a steady ~70% margin, so the trailing multiple sits atop rising, not eroding, cash generation. [28]
+- The balance sheet is self-funding: net-debt/EBITDA 0.3x, interest coverage 40.1x and FCF-positive, giving ample capacity to fund reinvestment and buybacks without stressing the runway. [29]
 
 ### Bear case — the price already pays for it
-- On EV/EBITDA the name trades at 21.6x vs a peer median of 11.0x (+96%), but the paired reconciler shows this is largely EARNED not residual — the name's EBITDA margin is 70% vs a 29% peer median, so a %-multiple premium sits on a genuinely superior absolute-EBITDA base and the raw gap overstates true richness. [11]
-- Peer-multiple readings are confidence-gated, not clean: the peer set spans market caps of $1.7B to $493.1B (297x) against the name's $665.4B and mixes sub-scale processors with Mastercard, so any 'cheap/rich vs peers' read must be discounted for heterogeneity. [12]
-- Consensus GAAP-EPS breadth is negative in the last month (0 up / 16 down for FY2026) and FY26 GAAP net income has been revised down net -2%, a genuine near-term downgrade — but OUTWEIGHED by revenue breadth (30 up / 3 down) and normalized-EPS drift up +3%, so the cut is basis-driven not demand-driven. [13]
-- The stock underperformed its benchmark over the trailing year (name +5.9% vs SPY +19.6% rebased), so the expectations premium has been de-rating even as fundamentals compounded — a genuine counter to the runway thesis, but OUTWEIGHED by the still-rising absolute EBITDA (LTM $31,094M) that keeps the compounding intact. [30]
-- The forward multiple compresses only slowly — NTM TEV/EBITDA 19.33x and NTM P/E 25.07x — so even on forward numbers the price demands years of sustained double-digit compounding, and the trailing 21.6x carries no forward basis that would distinguish a temporarily depressed level from a permanently rich one. [31]
+- The peer discount is at least partly EARNED, not pure residual overshoot: Visa's 70% EBITDA margin vastly exceeds the 29% peer median and its 0.8x debt/EBITDA beats the 3.8x peer median, yet its rev growth (14% vs 17%) and LT EPS growth (13% vs 14%) trail the peer median — so superior economics, not superior growth, justify part of the premium. [11]
+- Q3 FY26 EPS growth (+11%) decelerated from Q2's +20% and net revenue growth eased from 17% to 14% YoY, so the very acceleration underpinning the premium is already moderating quarter-over-quarter. [10]
+- The forward path prices in continued premium: NTM TEV/EBITDA 19.33x and NTM P/E 25.07x sit far above peer medians of 7.57x and 12.06x, so much of the quality is already paid for and expectations must be beaten, not merely met. [12]
+- On the consensus-comp read Visa trades at EV/EBITDA 21.6x vs peer median 11.0x (+96%), but the peer set spans $1.7B-$493.1B caps (297x) against Visa's $665.4B and is HETEROGENEOUS — so the gap is a low-comparability optic, not a clean 'expensive vs peers' signal, and must be decomposed into earned vs residual before use. [22]
+- FY26 EPS-GAAP revision breadth is one-sided negative (0 up / 16 down last month) and the FY26 EBT (GAAP) consensus path fell ~4% over 12 months, a genuine near-term downgrade pulse against a full-priced name. [30]
 
 ### Decisive question
-**Is the double-digit volume, value-added-services and Visa Direct growth durable enough over the next several years to justify a forward multiple (NTM ~19x EBITDA / ~25x P/E) that already prices a long compounding runway?**
+**Is the reinvestment runway (VAS at 30%+ of revenue growing 34%, Visa Direct/commercial new flows, agentic and stablecoin optionality) long and high-returning enough to beat the long-duration premium already embedded in a ~21.6x trailing / 19.3x forward EV/EBITDA — or is that premium the return, leaving little upside as growth moderates?**
 
 ### …evidence for
-- Q3 2026 payments volume crossed $4tn (+10% cc) and Visa Direct transactions grew 21% to $4bn, with value-added services +34% cc — the load-bearing drivers are all still accelerating or holding double digits. [10]
-- Europe credentials grew 40M+ in 12 months (70%+ faster than the FY19-24 pace) with 30M+ more expected from wins alone including NatWest — a concrete, dated pipeline extending the runway. [10]
-- ROIC rose to 30.3% LTM from 26.9% a year earlier, showing incremental reinvestment is still earning well above cost of capital. [26]
+- Value-added services already represents 30% of net revenue and grew 34% in constant dollars in Q3 FY26, with the majority linked to existing transactions/cards/accounts — a compounding, high-margin reinvestment leg. [10]
+- Visa Direct transactions grew 21% YoY to $4B and commercial payments volume grew 13% in Q3 FY26, evidencing new-flow runway well beyond mature consumer card. [10]
+- Return on capital has risen every year to 30.3% LTM, consistent with reinvestment still earning above cost of capital. [26]
 
 ### …evidence against
-- Q3 net revenue growth decelerated to 14% from the 17% 'strongest since 2013' print in Q2, and EPS growth slowed to 11% from 20% — a one-quarter step-down in the very momentum the price capitalises. [10]
-- FY26 GAAP net income consensus drifted down net -2% and last-month GAAP-EPS breadth is 0 up / 16 down, so near-term earnings revisions are pointing the wrong way. [13]
-- The stock lagged SPY badly over the trailing year (+5.9% vs +19.6%), evidence the market is already re-pricing the growth premium lower. [30]
+- The forward multiple (NTM TEV/EBITDA 19.33x, NTM P/E 25.07x) remains a large premium to peer medians, so the runway must exceed an already-optimistic embedded expectation. [12]
+- Growth is already moderating — Q3 net revenue growth eased to 14% from Q2's 17% and EPS to +11% from +20% — and FY26 GAAP-EPS revisions ran 0 up / 16 down last month. [10]
 
 ### Key unknowns
-- No forward/adjusted EV-EBITDA or adjusted EPS is tagged (99.1 revised guidance omits them), so the trailing 21.6x cannot be cleanly reconciled to a company-adjusted forward basis — an expected-disclosure gap that leaves the overshoot-vs-terminal question unresolved.
-- The EBITDA-basis triangulation flags GAAP actuals vs possibly-adjusted estimates sitting in the 1.5-2.0x implied-D&A band where an unflagged basis change has occurred on this fleet — reconcile the estimate rows against the company's own guidance basis before comparing across the boundary.
-- Single-segment (Payment Services) reporting with no segment-EBITDA breakout — consumer vs commercial vs value-added-services and cross-border economics cannot be separated, so the mix behind the headline growth is opaque.
-- Share-count trend is UNKNOWN (<2 XBRL points in ~2y) — buyback pace ($11.6bn trailing) cannot be converted into per-share accretion or timing quality.
-- Management announced role eliminations 'majority in technology and product' in Q3 2026 — the operating/margin implication (cost-out vs capability loss) is not quantified.
-- Insider activity is one-sided: 0 open-market buys vs 9 sells ($46.73M, 5 insiders) in 182 days, with the latest a $13.61M sale — directionally worth the human's attention though not adjudicated here.
-- Covenant maintenance ratio (Consolidated Indebtedness/EBITDA ≤ 3.75x) vs current basis, and the near-term 2026-2027 note maturities, are well inside capacity but the covenant/credit-health panel is not disclosed.
+- Whether the peer EV/EBITDA discount is EARNED (Visa's slower-than-median rev/EPS growth) or RESIDUAL (unexplained by fundamentals) is not computed here and must be judged by the human, especially given the flagged HETEROGENEOUS peer set (caps span 297x).
+- Trailing-only valuation flag: EV/EBITDA 21.6x sits at its own 45th percentile / P/LTM EPS at 24th percentile of 9+ years — whether that is a temporarily-depressed level or a fair terminal level is unresolved (no adjusted-forward EV/EBITDA in the revised guidance).
+- No adjusted EPS or adjusted EBITDA in the 99.1 revised guidance, and the EBITDA-basis triangulation flags GAAP-actuals-vs-adjusted-estimates as UNRESOLVED (implied D&A ratio 1.69x sits in a band where a real basis change has gone unflagged) — cross-basis comparisons are not clean.
+- Share-count trend is UNKNOWN (<2 XBRL shares points in ~2y), so the buyback's per-share accretion cannot be verified despite $11,625M repurchase cash in the half.
+- Regulatory/interchange and litigation exposure: FY25 legal settlements were -$2,562M and LTM -$2,193M, a recurring drag whose forward path is not quantified in the supplied facts.
+- Durability of the agentic-commerce and stablecoin optionality (OpenAI, Meta, 160+ stablecoin card programs) is qualitative posture only — no revenue contribution is quantified in the supplied facts.
+- Insider posture: 0 open-market buys vs 9 sells ($46.73M) over 182 days, with no purchase in the 3y scanned — a signal the human must weigh, not resolved here.
 
 ### Twin reference cases
 - **Mastercard Incorporated** — kept compounding
-  - distinguished by: The closest in-roster analogue: a duopoly card network with near-identical margin structure and beta that has sustained a premium multiple on long-duration volume and value-added-services growth rather than re-rating to the processor median.
+  - distinguished by: The closest true structural analogue on the roster — a global card network with near-identical margin, leverage and beta profile that has sustained a premium multiple on a long volume-and-VAS runway.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Fidelity National Information Services** — re-rated to fair value
-  - distinguished by: An in-roster payments-tech name whose growth stalled (negative revenue growth, a large goodwill write-down in the window) and whose multiple collapsed toward the low end — the value-trap outcome if the runway proves shorter than priced.
-  - source: CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10
+  - distinguished by: A payments-adjacent peer whose growth stalled and which took a large impairment, a reminder that a rich payments multiple can compress when the reinvestment runway disappoints.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Moody's Corporation** — kept compounding (LLM-claimed — verify)
-  - distinguished by: A toll-booth franchise with recurring, transaction-linked revenue that held a persistently high multiple for years because reinvestment stayed high-return — the pattern bulls argue applies here.
+  - distinguished by: A toll-booth franchise with structurally high margins and returns that held a persistent premium multiple because reinvestment and pricing power kept extending the runway.
+  - source: [LLM-suggested, unverified]
+- **S&P Global Inc.** — kept compounding (LLM-claimed — verify)
+  - distinguished by: A duopoly data/rails franchise whose durable pricing and add-on services justified a sustained premium rather than mean-reverting to a broad peer median.
   - source: [LLM-suggested, unverified]
 - **PayPal Holdings** — re-rated to fair value
-  - distinguished by: An in-roster payments platform that once carried a rich multiple, then de-rated sharply (now ~8x EV/EBITDA, negative EBITDA growth) as competitive pressure slowed growth — the cautionary case for paying up on a payments narrative.
-  - source: CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10
+  - distinguished by: A payments name that de-rated hard when growth slowed and margins came under pressure, showing how quickly a payments premium unwinds once the runway narrative breaks.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **Next results print** — ~2026-10-27 `[cadence-estimate]` — the next reported quarter against the committed trajectory [32]
-- **1.90% Senior Notes Due April 2027 $1,500.0M matures** — ~2027-04-15 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
-- **0.75% Senior Notes Due August 2027 $500.0M matures** — ~2027-08-15 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
-- **2.75% Senior Notes Due September 2027 $750.0M matures** — ~2027-09-15 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
-- **2.25% Senior Notes Due May 2028 - EUR $1,470.0M matures** — ~2028-05-15 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
-- **Unsecured Revolving Credit Facility matures** — ~2028-05-31 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
+- **Next results print** — ~2026-10-27 `[cadence-estimate]` — the next reported quarter against the committed trajectory [31]
+- **1.90% Senior Notes Due April 2027 $1,500.0M matures** — ~2027-04-15 `[stated]` — refinance / repay / convert before the wall — the survival read [32]
+- **0.75% Senior Notes Due August 2027 $500.0M matures** — ~2027-08-15 `[stated]` — refinance / repay / convert before the wall — the survival read [32]
+- **2.75% Senior Notes Due September 2027 $750.0M matures** — ~2027-09-15 `[stated]` — refinance / repay / convert before the wall — the survival read [32]
+- **2.25% Senior Notes Due May 2028 - EUR $1,470.0M matures** — ~2028-05-15 `[stated]` — refinance / repay / convert before the wall — the survival read [32]
+- **Unsecured Revolving Credit Facility matures** — ~2028-05-31 `[stated]` — refinance / repay / convert before the wall — the survival read [32]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 21.6x vs peer median 11.0x (+96%); P/E 30.9x vs peer median 27.4x (+13%) [23]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 21.6x vs peer median 11.0x (+96%); P/E 30.9x vs peer median 27.4x (+13%) [22]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _TEV as-of 2026-08-07 · multiples as-of 2026-08-09 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [34]  <!-- ds-table -->
+- **Price-implied levels (at each stated multiple)** — [33]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -233,10 +237,10 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 _No gap is struck for this name: no scenario record for this name — the route is known, the gap is not. The consensus side alone still routes to **three-ratio** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
-- **Own-history range position:** EV/EBITDA (TEV/LTM) 21.6x as-of 2026-08-07 — trailing range 17.5–32.2x (median 22.4x) over 38 closes → 45%ile → below-center; P/LTM EPS 30.9x [22]
+- **Own-history range position:** EV/EBITDA (TEV/LTM) 21.6x as-of 2026-08-07 — trailing range 17.5–32.2x (median 22.4x) over 38 closes → 45%ile → below-center; P/LTM EPS 30.9x [21]
 
 ## Peer comps
-- **Peer set (roster · caps · business)** — [35]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [34]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -253,8 +257,8 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 _the name: $665.4B_
 
-- **Comparability (confidence gate):** market caps span $1.7B–$493.1B (297x); the name is $665.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [12]
-- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [36]  <!-- ds-table -->
+- **Comparability (confidence gate):** market caps span $1.7B–$493.1B (297x); the name is $665.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [23]
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [12]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
@@ -264,7 +268,7 @@ _the name: $665.4B_
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [37]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [35]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -292,8 +296,8 @@ _NM = a real state (negative base), not missing_
 _R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
 - **Share-count trend:** _UNKNOWN_ — <2 XBRL shares points in the trailing ~2y (2 total) — no current trend
-- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-03-31 — in the latest, $-60M against $7,174M pre-tax [38]
-- **Return ratios — per fiscal period** — [39]  <!-- ds-table -->
+- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-03-31 — in the latest, $-60M against $7,174M pre-tax [36]
+- **Return ratios — per fiscal period** — [37]  <!-- ds-table -->
 
 |  | FY17 | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -308,7 +312,7 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 
 ## The street — estimates & guidance
 _export date unverified (data ≥ 2026-08-09)_
-- **Horizon read (FQ — next-2Q revision breadth)** — [40]:
+- **Horizon read (FQ — next-2Q revision breadth)** — [38]:
   - EPS Normalized FQ4 2026: 1m 9↑/14↓, 2m 9↑/13↓, 3m 10↑/13↓
   - EPS Normalized FQ1 2027: 1m 21↑/4↓, 2m 19↑/4↓, 3m 20↑/4↓
   - EPS (GAAP) FQ4 2026: 1m 1↑/1↓, 2m 1↑/1↓, 3m 1↑/1↓
@@ -320,15 +324,15 @@ _export date unverified (data ≥ 2026-08-09)_
   - EBIT FQ4 2026: 1m 16↑/8↓, 2m 14↑/10↓, 3m 13↑/11↓
   - EBIT FQ1 2027: 1m 15↑/2↓, 2m 14↑/2↓, 3m 14↑/2↓
   - _+7 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 12.8 (12m) → 12.8 (9m) → 12.8 (6m) → 13.1 (3m) → 13.2 (2m) → 13.1 (1m) → 13.2 (latest); net +3% (12m→latest) | FY 2026 EPS (GAAP): 12.7 (12m) → 12.7 (9m) → 12.6 (6m) → 12.7 (3m) → 12.8 (2m) → 12.8 (1m) → 12.5 (latest); net -1% (12m→latest) | FY 2026 Revenue: 44,080.3 (12m) → 44,435.9 (9m) → 44,614.9 (6m) → 45,462.3 (3m) → 45,568.1 (2m) → 45,562.4 (1m) → 45,743.6 (latest); net +4% (12m→latest) | FY 2026 EBITDA: 31,171.7 (12m) → 31,302.0 (9m) → 31,386.1 (6m) → 31,955.5 (3m) → 32,089.9 (2m) → 32,089.1 (1m) → 32,193.1 (latest); net +3% (12m→latest) | FY 2026 EBIT: 30,012.0 (12m) → 30,085.6 (9m) → 30,123.3 (6m) → 30,574.9 (3m) → 30,675.7 (2m) → 30,637.8 (1m) → 30,841.8 (latest); net +3% (12m→latest) | FY 2026 Interest Expense: -679.8 (12m) → -745.2 (9m) → -735.8 (6m) → -752.8 (3m) → -746.9 (2m) → -743.0 (1m) → -756.2 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 29,995.1 (12m) → 29,926.2 (9m) → 29,303.8 (6m) → 29,346.0 (3m) → 29,367.4 (2m) → 29,361.1 (1m) → 28,719.6 (latest); net -4% (12m→latest) | FY 2026 Net Income (Excl. Excep): 24,663.2 (12m) → 24,547.2 (9m) → 24,592.5 (6m) → 25,018.9 (3m) → 25,094.0 (2m) → 25,084.2 (1m) → 25,202.9 (latest); net +2% (12m→latest) | FY 2026 Net Income (GAAP): 24,465.5 (12m) → 24,420.9 (9m) → 24,177.1 (6m) → 24,297.9 (3m) → 24,371.0 (2m) → 24,361.0 (1m) → 23,940.1 (latest); net -2% (12m→latest)  [data ≥ 2026-08-09 · export date unverified] [41]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [42]:
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 12.8 (12m) → 12.8 (9m) → 12.8 (6m) → 13.1 (3m) → 13.2 (2m) → 13.1 (1m) → 13.2 (latest); net +3% (12m→latest) | FY 2026 EPS (GAAP): 12.7 (12m) → 12.7 (9m) → 12.6 (6m) → 12.7 (3m) → 12.8 (2m) → 12.8 (1m) → 12.5 (latest); net -1% (12m→latest) | FY 2026 Revenue: 44,080.3 (12m) → 44,435.9 (9m) → 44,614.9 (6m) → 45,462.3 (3m) → 45,568.1 (2m) → 45,562.4 (1m) → 45,743.6 (latest); net +4% (12m→latest) | FY 2026 EBITDA: 31,171.7 (12m) → 31,302.0 (9m) → 31,386.1 (6m) → 31,955.5 (3m) → 32,089.9 (2m) → 32,089.1 (1m) → 32,193.1 (latest); net +3% (12m→latest) | FY 2026 EBIT: 30,012.0 (12m) → 30,085.6 (9m) → 30,123.3 (6m) → 30,574.9 (3m) → 30,675.7 (2m) → 30,637.8 (1m) → 30,841.8 (latest); net +3% (12m→latest) | FY 2026 Interest Expense: -679.8 (12m) → -745.2 (9m) → -735.8 (6m) → -752.8 (3m) → -746.9 (2m) → -743.0 (1m) → -756.2 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 29,995.1 (12m) → 29,926.2 (9m) → 29,303.8 (6m) → 29,346.0 (3m) → 29,367.4 (2m) → 29,361.1 (1m) → 28,719.6 (latest); net -4% (12m→latest) | FY 2026 Net Income (Excl. Excep): 24,663.2 (12m) → 24,547.2 (9m) → 24,592.5 (6m) → 25,018.9 (3m) → 25,094.0 (2m) → 25,084.2 (1m) → 25,202.9 (latest); net +2% (12m→latest) | FY 2026 Net Income (GAAP): 24,465.5 (12m) → 24,420.9 (9m) → 24,177.1 (6m) → 24,297.9 (3m) → 24,371.0 (2m) → 24,361.0 (1m) → 23,940.1 (latest); net -2% (12m→latest)  [data ≥ 2026-08-09 · export date unverified] [39]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [40]:
   - NTM: TEV/REV 13.67 · TEV/EBITDA 19.33 · TEV/EBIT 20.21 · Price/Earnings 25.07 · PEG 1.86 · P/BV –
   - FY 2026: TEV/REV 14.78 · TEV/EBITDA 21.00 · TEV/EBIT 21.92 · Price/Earnings 27.43 · PEG 2.03 · P/BV 18.87
   - FY 2027: TEV/REV 13.31 · TEV/EBITDA 18.88 · TEV/EBIT 19.68 · Price/Earnings 24.20 · PEG 1.79 · P/BV 17.07
   - FY 2028: TEV/REV 12.06 · TEV/EBITDA 17.05 · TEV/EBIT 17.77 · Price/Earnings 21.34 · PEG 1.58 · P/BV 14.94
   - _+5 later fiscal years in JSON_
 - **Current guide (latest results filing):** _UNKNOWN_ — no guide in any of the 3 parsed release(s)
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [43]  <!-- ds-table -->
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [41]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -346,7 +350,7 @@ _export date unverified (data ≥ 2026-08-09)_
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
 - **Consensus stats (target + ratings):** Target price: mean $416.20, median $420.00, high/low 450.00/330.00, N 37/37; Ratings: Buy 28, Outperform 9, Hold 3, Underperform 0, Sell 0, No Opinion 1, Buy 4, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 4, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-09 · export date unverified] [24]
-- **Revision-event log (250 events · 18 broker-days)** — [44]  <!-- ds-table -->
+- **Revision-event log (250 events · 18 broker-days)** — [42]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
@@ -359,20 +363,20 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 
 _+12 more broker-days in JSON_
 
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2008 -51%, FY2009 +1%, FY2010 +3%, FY2011 +1%, FY2012 +46%, FY2013 +0%, FY2014 -4%, FY2015 -0%, FY2016 +3%, FY2017 +2%, FY2018 +1%, FY2019 -1%, FY2020 -2%, FY2021 +1%, FY2022 -0%, FY2023 +0%, FY2024 +1%, FY2025 -4%; Revenue surprise: FY2008 +1%, FY2009 +1%, FY2010 +0%, FY2011 -0%, FY2012 +1%, FY2013 -0%, FY2014 -1%, FY2015 +0%, FY2016 +0%, FY2017 +1%, FY2018 -0%, FY2019 +0%, FY2020 +0%, FY2021 +0%, FY2022 +1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [45]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2008 -51%, FY2009 +1%, FY2010 +3%, FY2011 +1%, FY2012 +46%, FY2013 +0%, FY2014 -4%, FY2015 -0%, FY2016 +3%, FY2017 +2%, FY2018 +1%, FY2019 -1%, FY2020 -2%, FY2021 +1%, FY2022 -0%, FY2023 +0%, FY2024 +1%, FY2025 -4%; Revenue surprise: FY2008 +1%, FY2009 +1%, FY2010 +0%, FY2011 -0%, FY2012 +1%, FY2013 -0%, FY2014 -1%, FY2015 +0%, FY2016 +0%, FY2017 +1%, FY2018 -0%, FY2019 +0%, FY2020 +0%, FY2021 +0%, FY2022 +1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [43]
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** 0.3x [8]
-- **Total debt / EBITDA vs peers:** name 0.8x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [46]
-- **Net debt / OCF:** 0.4x [47]
-- **Interest coverage:** 40.1x [48]
-- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [49]
+- **Total debt / EBITDA vs peers:** name 0.8x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [44]
+- **Net debt / OCF:** 0.4x [45]
+- **Interest coverage:** 40.1x [46]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [47]
 - **Credit health:** _UNKNOWN_ — comps workbook Company Comparable Analysis Visa Inc.xls has no 'Credit Health Panel' sheet
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** 20404.0 — basis: CIQ 'Levered Free Cash Flow' — on the same sheet and period [LTM 12 months Jun-30-2026], CFO $22,580.0M − capex $1,567.0M = $21,013.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [50]
-- **Debt schedule vintage:** the debt schedule is 279d old (source filed 2025-11-06); no Item 1.02 (termination of a material agreement) has been filed since [51]
-- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Nov-06-2025** — [52]  <!-- ds-table -->
+- **Free cash flow ($M):** 20404.0 — basis: CIQ 'Levered Free Cash Flow' — on the same sheet and period [LTM 12 months Jun-30-2026], CFO $22,580.0M − capex $1,567.0M = $21,013.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [48]
+- **Debt schedule vintage:** the debt schedule is 279d old (source filed 2025-11-06); no Item 1.02 (termination of a material agreement) has been filed since [49]
+- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Nov-06-2025** — [50]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -404,19 +408,19 @@ _16 undated / later aggregate line item(s) in the appendix panel_
   - due 2050: $1,750.0M
   - undated (floor — no panel maturity): $913.0M — Commercial Paper –, Operating Leases $913.0M
   - _reconciliation: itemized $26,305.0M (panel A 2025 filed Nov-06-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months FQ3/CQ2 Jun-30-2026) ($M) [53]
+- **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months FQ3/CQ2 Jun-30-2026) ($M) [51]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event
 - **Covenants — Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Conversion:** (x) 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share; and…
-  - **Interest / coupon:** €124,864,000.00 (interest payable on the Pre-Interest Deferred Cash Amount)
+  - **Conversion:** Consideration includes 2,480,500 shares of Series B Convertible Participating Preferred Stock (UK&I Members) and 3,157,…
+  - **Interest / coupon:** Interest payable on the Pre-Interest Deferred Cash Amount equal to €124,864,000.00; no rate/percentage stated
   - **Maturity:** Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside Closing Date
   - **Financial maintenance:** Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal qu…
-  - **Events of default:** Events of Default (Article VII): 7.1 misrepresentation; 7.2 nonpayment of principal when due / interest, commitment fee…
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.5(d)): if Total Outstandings exceed 105% of the Total Commitment (or applicable sub-com…
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [54]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [55]
+- **Going-concern language:** none in latest 10-Q — checked, absent [52]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [53]
   - net debt / EBITDA (CIQ, GAAP basis): 0.3x
   - total debt / EBITDA (CIQ comps, GAAP basis): 0.8x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -424,9 +428,18 @@ _16 undated / later aggregate line item(s) in the appendix panel_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_1 to verify._
+_4 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Global payments network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
+- Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (8 bull vs 5 bear) and the minority bear points aren't qualified-as-outweighed — size the minority against the lean, or it launders a one-sided case
+- **Bare peer-comparison** — The forward multiple (NTM TEV/EBITDA 19.33x, NTM P/E 25.07x) remains a large premium to peer medians, so the runway must exceed an already-optimistic embedded expectation.
+  - _where:_ a decisive-against point
+  - _why it matters:_ presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition
+  - _how to verify:_ POSE justified-vs-residual, never the bare gap
+- **Heterogeneous-peer benchmark** — The forward multiple (NTM TEV/EBITDA 19.33x, NTM P/E 25.07x) remains a large premium to peer medians, so the runway must exceed an already-optimistic embedded expectation.
+  - _where:_ a decisive-against point
+  - _why it matters:_ leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS
+  - _how to verify:_ confidence-gate every peer stat
 
 # Appendix — data & audit
 
@@ -440,7 +453,7 @@ _1 to verify._
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-08-09)
 ### Annual — every exported fiscal year + LTM + consensus
-- **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
+- **Annual financials ($M; E = consensus)** — [13]  <!-- ds-table -->
 
 |  | FY17 (R) | FY18 (R) | FY19 | FY20 | FY21 (R) | FY22 (R) | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -466,7 +479,7 @@ _1 to verify._
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-09; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [56]  <!-- ds-table -->
+- **Quarterly financials** — [54]  <!-- ds-table -->
 
 |  | FY16 | FY17 | FY17 | FY17 | FY17 | FY18 | FY18 (R) | FY18 (R) | FY18 | FY19 (R) | FY19 (R) | FY19 (R) | FY19 | FY20 | FY20 | FY20 | FY20 | FY21 | FY21 | FY21 (R) | FY21 | FY22 | FY22 | FY22 (R) | FY22 | FY23 | FY23 | FY23 | FY23 | FY24 | FY24 (R) | FY24 (R) | FY24 | FY25 | FY25 | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -480,12 +493,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-09; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 13,792; total debt 23,858; net debt 10,066; equity 34,664; net working capital -465; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [57]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $13,792M / bridge $13,792M; debt BS $23,858M / bridge $23,858M — reconcile with the implied-valuation bridge. [58]
+- **Posture:** as of FY26 ($M): cash & ST inv 13,792; total debt 23,858; net debt 10,066; equity 34,664; net working capital -465; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $13,792M / bridge $13,792M; debt BS $23,858M / bridge $23,858M — reconcile with the implied-valuation bridge. [56]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Nov-06-2025** — [52]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Nov-06-2025** — [50]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -511,8 +524,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Operating Leases | Capital Lease | $913.0M | 4.110% | NA | undated | Y | N | USD |
 | Unsecured Revolving Credit Facility | Revolving Credit | – | NA | Benchmark | 2028-05-31 | N | N | USD |
 
-- **8-Ks at instrument maturities:** 8-K at maturity 2025-12-14: filed 2025-12-23 [0001403161-25-000134] 8.01 Other Events — read for resolution [59]
-- **Covenant / contract pointers (CIK-verified execution filings)** — [60]  <!-- ds-table -->
+- **8-Ks at instrument maturities:** 8-K at maturity 2025-12-14: filed 2025-12-23 [0001403161-25-000134] 8.01 Other Events — read for resolution [57]
+- **Covenant / contract pointers (CIK-verified execution filings)** — [58]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -523,20 +536,17 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 1.50% Senior Notes Due June 2026 | — | — | no contract-level filing expected (aggregate line item) |
 | 1.90% Senior Notes Due April 2027 | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Unsecured Revolving Credit Facility (governing agreement)** — [61]  <!-- ds-table -->
+- **Covenant terms — Unsecured Revolving Credit Facility (governing agreement)** — [59]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
-| Conversion price / mechanics | (x) 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share; and (y) 3,157,000 shares of Visa Inc. Series C Convertible Participating Preferred S… — full verbatim in JSON | base (footer) |
-| Principal / commitment amount | €1,000,000,000.00 (Pre-Interest Deferred Cash Amount, being the principal amount of the Deferred Cash Consideration). Also: Option Exercise Price cash components of €11,500,000,000 minus Leakage Amou… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
-| Interest / coupon rate | €124,864,000.00 (interest payable on the Pre-Interest Deferred Cash Amount) | 8-K 0001193125-13-032823 · d476341dex101.htm |
+| Conversion price / mechanics | Consideration includes 2,480,500 shares of Series B Convertible Participating Preferred Stock (UK&I Members) and 3,157,000 shares of Series C Convertible Participating Preferred Stock (Europe Members… — full verbatim in JSON | base (footer) |
+| Principal / commitment amount | Pre-Interest Deferred Cash Amount (principal amount of the Deferred Cash Consideration) of €1,000,000,000.00; Deferred Cash Consideration of €1,124,864,000; Option Exercise Price cash components of €… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
+| Interest / coupon rate | Interest payable on the Pre-Interest Deferred Cash Amount equal to €124,864,000.00; no rate/percentage stated | 8-K 0001193125-13-032823 · d476341dex101.htm |
 | Maturity date | Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside Closing Date | 8-K 0001193125-13-032823 · d476341dex101.htm |
 | Financial-maintenance covenants | Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal quarter (Section 6.17). | 8-K 0001193125-13-032823 · d476341dex101.htm |
-| Security / collateral / guarantors | Guarantee by Visa Inc. of the Guaranteed Obligations (the Obligations owing by Visa International and Visa U.S.A.) (Article XI). No security/collateral stated; facility is unsecured (negative pledge… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
-| Mandatory prepayment / events of default | Events of Default (Article VII): 7.1 misrepresentation; 7.2 nonpayment of principal when due / interest, commitment fee or other obligation within 5 Business Days; 7.3 covenant breaches (Sections 6.2… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
-| Termination | Automatic termination and rescission of this Amendment upon proper termination of the Transaction Agreement prior to Closing under Section 8.1; Option Agreement re-instated in full | base (footer) |
-| Governing law | State of New York | base (footer) |
-| Amendments and waivers | Amendments/waivers must be in writing and signed by each named party (pre-Option Closing); post-Option Closing amendments/waivers effective against the VE Member Representative or any Visa Europe Sha… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | Guarantor: Visa Inc. guarantees the Guaranteed Obligations (Obligations owing by Visa International and Visa U.S.A.) under Article XI. No collateral/security is granted; facility is unsecured, subjec… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
+| Mandatory prepayment / events of default | acceleration · Mandatory prepayment (Section 2.5(d)): if Total Outstandings exceed 105% of the Total Commitment (or applicable sub-commitment), Borrower must within two Business Days repay to eliminate the excess a… — full verbatim in JSON | 8-K 0001193125-13-032823 · d476341dex101.htm |
 
 _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by 0001403161-16-000027_
 
@@ -544,9 +554,9 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 665407.2 [62]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $13,792.00M, − total debt $23,858.00M [63]
-- **Implied equity at peer-median ($M, CIQ)** — [64]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 665407.2 [60]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $13,792.00M, − total debt $23,858.00M [61]
+- **Implied equity at peer-median ($M, CIQ)** — [62]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -556,18 +566,18 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [65]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [63]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 9 (5 insiders, $46.73M) — in the last 182 days · no purchase in the 3y scanned · last sale $13.61M, VICE CHAIR, CHF PPL & CORP AFF, 2026-07-30 (~0mo ago) · grants 22 · last filing 2026-07-31 · other filings 200 [66]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 23.6M → 20.8M sh (-11.8%, falling) · DTC 2.6d · recent: 2026-07-31 20.8M · 2026-07-15 23.6M · 2026-06-30 20.7M · 2026-06-15 21.3M [67]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 9 (5 insiders, $46.73M) — in the last 182 days · no purchase in the 3y scanned · last sale $13.61M, VICE CHAIR, CHF PPL & CORP AFF, 2026-07-30 (~0mo ago) · grants 22 · last filing 2026-07-31 · other filings 200 [64]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 23.6M → 20.8M sh (-11.8%, falling) · DTC 2.6d · recent: 2026-07-31 20.8M · 2026-07-15 23.6M · 2026-06-30 20.7M · 2026-06-15 21.3M [65]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [68]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 45200.0 vs release NO NUMERIC OUTLOOK → not cross-checked [69]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [66]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 45200.0 vs release NO NUMERIC OUTLOOK → not cross-checked [67]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-08-12 · assembled 2026-08-13 15:45 UTC
+- **Data window:** screened as of 2026-08-12 · assembled 2026-08-13 17:15 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-12
 - **Panel age:** oldest panel 6d old — 2026-08-07 (valuation.implied_expectations.tev_as_of), against a 2026-08-13 build
@@ -592,61 +602,59 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 [9] `EDGAR XBRL FCF sign (screen data-record)`
 [10] `CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf`
 [11] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[12] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
-[13] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-[14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[15] `EDGAR companyfacts Goodwill (as at 2026-03-31)`
-[16] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-03-31)`
-[17] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-03-31, 181d)`
-[18] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2014-10-01→2015-06-30, 272d)`
-[19] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2015-10-01→2016-09-30, 365d)`
-[20] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
-[21] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[22] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
-[23] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
+[12] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
+[14] `EDGAR companyfacts Goodwill (as at 2026-03-31)`
+[15] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-03-31)`
+[16] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-03-31, 181d)`
+[17] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2014-10-01→2015-06-30, 272d)`
+[18] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2015-10-01→2016-09-30, 365d)`
+[19] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
+[20] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
+[21] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
+[22] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
+[23] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [24] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
 [25] `CIQ Customers&Suppliers Visa Inc NYSE V Customers.rtf`
 [26] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[27] `CIQ Estimates→Consensus`
+[27] `CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)`
 [28] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[29] `CIQ Net Debt → CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
-[30] `EOD V vs SPY rebased to 100, 2025-08-13..2026-08-11`
-[31] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-[32] `cadence: EDGAR submissions (median 91d gap over 47 results 8-Ks; last print 2026-07-28)`
-[33] `CIQ capital-structure panel (maturity_date)`
-[34] `TEV = mcap 665407.2 + net debt 10066.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-07, exported 2026-08-10) — simple-TEV basis`
-[35] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[36] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-[37] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10`
-[38] `EDGAR XBRL pre-tax − operating, quarters 2025-03-31..2026-03-31`
-[39] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[40] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[41] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[42] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[43] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
-[44] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-09 · export date unverified]`
-[45] `CIQ Estimates→Surprise (annual)`
-[46] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-10`
-[47] `CIQ Net Debt $10,066M [FQ3/CQ2 Jun-30-2026] ÷ CIQ OCF $22,580M [LTM 12 months Jun-30-2026]`
-[48] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
-[49] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[50] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[51] `CIQ Capital Structure Details — A 2025 filed Nov-06-2025`
-[52] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)`
-[53] `CIQ Financials→Capital Structure Summary`
-[54] `10-Q 0001403161-26-000104`
-[55] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[56] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[57] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[58] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[59] `EDGAR 8-K submissions (±10d of instrument maturities)`
-[60] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[61] `fenced Tier-2 extraction (verbatim, source-bound)`
-[62] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10`
-[63] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-10`
-[64] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-10`
-[65] `CIQ transcript(s): Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf`
-[66] `EDGAR Form 4 (latest 0001403161-26-000107; 144 filings in the 1095d scanned; counts over 182d)`
-[67] `FINRA consolidated short interest (settle 2026-07-31); DTC = 20,789,298 short ÷ 8,147,224 screen 90d ADV`
-[68] `10-Q maturity wall vs CIQ capital panel (same window)`
-[69] `CIQ revenue guide vs release actual/outlook`
+[29] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
+[30] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
+[31] `cadence: EDGAR submissions (median 91d gap over 47 results 8-Ks; last print 2026-07-28)`
+[32] `CIQ capital-structure panel (maturity_date)`
+[33] `TEV = mcap 665407.2 + net debt 10066.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-07, exported 2026-08-10) — simple-TEV basis`
+[34] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[35] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10`
+[36] `EDGAR XBRL pre-tax − operating, quarters 2025-03-31..2026-03-31`
+[37] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[38] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[39] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[40] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[41] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[42] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-09 · export date unverified]`
+[43] `CIQ Estimates→Surprise (annual)`
+[44] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-10`
+[45] `CIQ Net Debt $10,066M [FQ3/CQ2 Jun-30-2026] ÷ CIQ OCF $22,580M [LTM 12 months Jun-30-2026]`
+[46] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
+[47] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[48] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
+[49] `CIQ Capital Structure Details — A 2025 filed Nov-06-2025`
+[50] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)`
+[51] `CIQ Financials→Capital Structure Summary`
+[52] `10-Q 0001403161-26-000104`
+[53] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[54] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[55] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[57] `EDGAR 8-K submissions (±10d of instrument maturities)`
+[58] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[59] `fenced Tier-2 extraction (verbatim, source-bound)`
+[60] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10`
+[61] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-10`
+[62] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-10`
+[63] `CIQ transcript(s): Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf; Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf`
+[64] `EDGAR Form 4 (latest 0001403161-26-000107; 144 filings in the 1095d scanned; counts over 182d)`
+[65] `FINRA consolidated short interest (settle 2026-07-31); DTC = 20,789,298 short ÷ 8,147,224 screen 90d ADV`
+[66] `10-Q maturity wall vs CIQ capital panel (same window)`
+[67] `CIQ revenue guide vs release actual/outlook`

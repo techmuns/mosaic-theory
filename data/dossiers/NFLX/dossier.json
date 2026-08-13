@@ -4628,7 +4628,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Senior Unsecured Bridge Term Loan Facility · 0001193125-18-134734]\n  Principal / commitment amount: $1,900,000,000\n  Interest / coupon rate: 5.875%\n  Maturity date: November 15, 2028\n  Interest Payment Dates: May 15 and November 15 of each year, commencing November 15, 2018\n[Senior Unsecured Revolving Credit Facility · 0001193125-25-327462]\n  Principal / commitment amount: The Aggregate Commitments on the Signing Date are $5,000,000,000.\n  Interest / coupon rate: ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing:…\n  Maturity date: (i) the earliest of (a) the third anniversary of the Acquisition Closing Date, (b)…\n  Financial-maintenance covenants: Consolidated EBITDA to Consolidated Interest Expense ratio, as of the end of each…\n[Unsecured Delayed Draw Term Loan Credit Facility · 0001193125-25-308651]\n  Principal / commitment amount: $59.0 billion (aggregate principal amount of the Bridge Facility); commitments:…\n  Interest / coupon rate: ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin.…\n  Maturity date: The date that is 364 days after the Closing Date\n  Financial-maintenance covenants: Financial Covenants: Substantially the same as the Existing Credit Agreement,…\n[Unsecured Revolving Credit Facility · 0001193125-21-193187]\n… (+4 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Senior Unsecured Bridge Term Loan Facility · 0001193125-18-134734]\n  Principal / commitment amount: $1,900,000,000 principal amount of its 5.875% Senior Notes due 2028\n  Interest / coupon rate: 5.875%\n  Maturity date: November 15, 2028\n  Yield to Maturity: 5.875%\n  Interest Payment Dates: May 15 and November 15 of each year, commencing November 15, 2018\n[Senior Unsecured Revolving Credit Facility · 0001193125-25-327462]\n  Principal / commitment amount: The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit…\n  Interest / coupon rate: ABR Loans: Alternate Base Rate plus Applicable Rate (ABR margin 0.00% to 0.10% by…\n  Maturity date: The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the…\n  Financial-maintenance covenants: Consolidated EBITDA to Consolidated Interest Expense ratio, as of the end of each…\n[Unsecured Delayed Draw Term Loan Credit Facility · 0001193125-25-308651]\n  Principal / commitment amount: $59.0 billion (aggregate principal amount of the Bridge Facility)\n  Interest / coupon rate: ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin…\n  Maturity date: The date that is 364 days after the Closing Date\n  Financial-maintenance covenants: Financial Covenants: Substantially the same as the Existing Credit Agreement,…\n… (+5 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4652,10 +4652,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,900,000,000",
+              "value": "$1,900,000,000 principal amount of its 5.875% Senior Notes due 2028",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
               "status": "present",
-              "note": "verbatim: “Netflix, Inc., a Delaware corporation (the “ Company ”), proposes to issue and sell to the several initial purchasers listed in Schedule 1 hereto (the “ Initial Purchasers ”) ... $1,900,000,000 principal amount of its 5.875% Senior Notes due 2028 (the “ Securities ”).”"
+              "note": "verbatim: “Netflix, Inc., a Delaware corporation (the “ Company ”), proposes to issue and sell to the several initial purchasers listed in Schedule 1 hereto (the “ Initial Purchasers ”), for whom you are acting as representative (the “ Representative ”), $1,900,000,000 principal amount of its 5.875% Senior Notes due 2028 (the “ Securities ”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4669,10 +4669,10 @@
               "value": "5.875%",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
               "status": "present",
-              "note": "verbatim: “Coupon: 5.875% ... Yield to Maturity: 5.875%”"
+              "note": "verbatim: “Coupon: 5.875%”"
             },
             "base_rate_label": null,
-            "margin_pct": 5.875,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
@@ -4708,10 +4708,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Security Description: Senior Unsecured Notes; Guarantees: The notes generally are not required to be guaranteed by any subsidiaries. In the future, the notes may be guaranteed on a senior unsecured basis by certain domestic subsidiaries.",
+              "value": "Security Description: Senior Unsecured Notes. Guarantees: The notes generally are not required to be guaranteed by any subsidiaries. In the future, the notes may be guaranteed on a senior unsecured basis by certain domestic subsidiaries.",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
               "status": "present",
-              "note": "verbatim: “Guarantees: The notes generally are not required to be guaranteed by any subsidiaries. In the future, the notes may be guaranteed on a senior unsecured basis by certain domestic subsidiaries. ... Security Description: Senior Unsecured Notes”"
+              "note": "verbatim: “Guarantees: The notes generally are not required to be guaranteed by any subsidiaries. In the future, the notes may be guaranteed on a senior unsecured basis by certain domestic subsidiaries. Security Description: Senior Unsecured Notes”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4750,10 +4750,38 @@
           {
             "name": "Offering Price",
             "value": {
-              "value": "99.25% of principal amount to Initial Purchasers; Offering Price: 100% plus accrued interest, if any, from April 26, 2018",
+              "value": "100% plus accrued interest, if any, from April 26, 2018",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
               "status": "present",
-              "note": "verbatim: “a price equal to 99.25% of the principal amount of the Securities, plus accrued interest, if any, from April 26, 2018 to the Closing Date”"
+              "note": "verbatim: “Offering Price: 100% plus accrued interest, if any, from April 26, 2018”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Purchase price to Initial Purchasers",
+            "value": {
+              "value": "99.25% of the principal amount of the Securities, plus accrued interest",
+              "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
+              "status": "present",
+              "note": "verbatim: “agrees, severally and not jointly, to purchase from the Company the respective principal amount of the Securities set forth opposite such Initial Purchaser’s name in Schedule 1 hereto at a price equal to 99.25% of the principal amount of the Securities, plus accrued interest, if any, from April 26, 2018 to the Closing Date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Yield to Maturity",
+            "value": {
+              "value": "5.875%",
+              "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
+              "status": "present",
+              "note": "verbatim: “Yield to Maturity: 5.875%”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4783,20 +4811,6 @@
               "status": "present",
               "note": "verbatim: “Spread to Treasury: +291 basis points”"
             },
-            "base_rate_label": "UST 5.25% due November 15, 2028",
-            "margin_pct": null,
-            "margin_bps": 291.0,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Indenture / Trustee",
-            "value": {
-              "value": "Indenture dated April 26, 2018; Wells Fargo Bank, National Association, as Trustee",
-              "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Securities will be issued pursuant to an Indenture to be dated as of April 26, 2018 (the “ Indenture ”) between the Company and Wells Fargo Bank, National Association, as trustee (the “ Trustee ”).”"
-            },
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
@@ -4804,7 +4818,7 @@
             "pik_pct": null
           },
           {
-            "name": "Denominations",
+            "name": "Denominations/Multiples",
             "value": {
               "value": "2,000 x 1,000",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
@@ -4818,12 +4832,26 @@
             "pik_pct": null
           },
           {
-            "name": "Clear Market / lock-up",
+            "name": "Governing law",
             "value": {
-              "value": "90 days after the date hereof",
+              "value": "State of New York",
               "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
               "status": "present",
-              "note": "verbatim: “During the period from the date hereof through and including the date that is 90 days after the date hereof, the Company will not, without the prior written consent of the Representative, offer, sell, contract to sell or otherwise dispose of any debt securities issued or guaranteed by the Company and having a tenor of more than one year”"
+              "note": "verbatim: “This Agreement and any claim, controversy or dispute arising under or related to this Agreement shall be governed by and construed in accordance with the laws of the State of New York.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Trustee",
+            "value": {
+              "value": "Wells Fargo Bank, National Association, as trustee",
+              "source_ref": "8-K 0001193125-18-134734 · d567970dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Securities will be issued pursuant to an Indenture to be dated as of April 26, 2018 (the “ Indenture ”) between the Company and Wells Fargo Bank, National Association, as trustee (the “ Trustee ”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4848,7 +4876,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The Aggregate Commitments on the Signing Date are $5,000,000,000.",
+              "value": "The Aggregate Commitments on the Signing Date are $5,000,000,000. (Letter of Credit Sublimit $200,000,000, part of and not in addition to the Aggregate Commitments)",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means the Revolving Commitments of all the Lenders. The Aggregate Commitments on the Signing Date are $5,000,000,000.”"
@@ -4862,7 +4890,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing: Term SOFR Rate for the Interest Period plus the Applicable Rate. Applicable Rate for SOFR Loans ranges 0.600% to 1.10% based on Debt Rating pricing levels; Applicable Rate for ABR Loans 0.00% to 0.10%.",
+              "value": "ABR Loans: Alternate Base Rate plus Applicable Rate (ABR margin 0.00% to 0.10% by Debt Rating). Term SOFR Loans: Term SOFR Rate plus Applicable Rate (SOFR margin 0.600% to 1.10% by Debt Rating). Floor: 0.00%. Default Rate: 2% plus otherwise applicable rate.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Term SOFR Borrowing shall bear interest at the Term SOFR Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -4876,7 +4904,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "(i) the earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the fifth anniversary of the Signing Date (Signing Date is December 19, 2025), or (ii) such later date as extended pursuant to Section 2.22",
+              "value": "The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the fifth anniversary of the Signing Date (Signing Date is December 19, 2025); extendable per Section 2.22 (no more than two times, not more than once in any twelve-month period, and no later than five years from effectiveness of such extension)",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means (i) the earliest of (a) the date that is the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the date that is the fifth anniversary of the Signing Date, or (ii) such later date to which the Maturity Date may be extended pursuant to Section 2.22 ; provided that, if any such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
@@ -4904,10 +4932,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Titled 'SENIOR UNSECURED REVOLVING CREDIT AGREEMENT'. No collateral or guarantors provided (unsecured); Section 6.01 (Liens) is a negative pledge, not a grant of security. Cash Collateral applies only to L/C Obligations / Defaulting Lender / Fronting Exposure per Section 2.21.",
+              "value": "Senior Unsecured facility (no dedicated collateral or guarantors; negative pledge on Principal Property with equal-and-ratable clause under Section 6.01). Cash Collateral provisions apply only to L/C Obligations / Defaulting Lenders per Section 2.21.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
-              "note": "verbatim: “SENIOR UNSECURED REVOLVING CREDIT AGREEMENT”"
+              "note": "verbatim: “SENIOR UNSECURED REVOLVING CREDIT AGREEMENT ... The Borrower will not, and will not permit any of its Domestic Restricted Subsidiaries, to enter into, create, incur or assume any Lien on any Principal Property, whether now owned or hereafter acquired, in order to secure any Indebtedness (the “ Initial Lien ”), without effectively providing that the Obligations shall be equally and ratably secured ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4918,10 +4946,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Revolving Commitments then in effect, Borrower shall promptly prepay Revolving Loans to eliminate the excess. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees/other amounts, 5 Business Day grace; (c) incorrect representation/warranty in material respect; (d) breach of Section 5.02, 5.03 (existence), 5.07 or Article 6; (e) other covenant breach, 30 day cure; (f) failure to pay principal >$250,000,000 of Material Indebtedness; (g) cross-acceleration events; (h) involuntary bankruptcy proceeding, 60 days; (i) voluntary bankruptcy; (j) inability to pay debts; (k) judgments >$250,000,000, 60 consecutive days; (l) ERISA Events; (m) Loan Document ceases to be in full force / contest of validity; (n) Change of Control Triggering Event.",
+              "value": "Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Revolving Commitments, prompt prepayment of Revolving Loans to eliminate excess. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees (5 Business Day grace); (c) incorrect representation/warranty; (d) failure to observe covenants in Sec 5.02, 5.03 (existence), 5.07 or Article 6; (e) failure to observe other covenants (30-day cure); (f) failure to pay Material Indebtedness >$250,000,000; (g) Material Indebtedness cross-acceleration; (h)/(i) bankruptcy/insolvency events; (j) inability to pay debts; (k) judgments >$250,000,000; (l) ERISA Events (MAE); (m) Loan Document invalidity; (n) Change of Control Triggering Event.",
               "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
               "status": "present",
-              "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Revolving Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Revolving Commitments then in effect.”"
+              "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Revolving Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Revolving Commitments then in effect. ... Section 7.01 Events of Default. If any of the following events (each, an “ Event of Default ”) shall occur: (a) the Borrower shall fail to pay any principal ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4946,10 +4974,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$59.0 billion (aggregate principal amount of the Bridge Facility); commitments: WFBNA 33.898%, WFSCI 16.102%, BNPP 35%, HSBC USA 3.559%, HSBC Europe 4.746%, HSBC Bank 5.085%, HSBC Middle East 1.610%",
+              "value": "$59.0 billion (aggregate principal amount of the Bridge Facility)",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “in each case of the aggregate principal amount of a senior unsecured bridge facility as further described in Exhibit B (the “ Term Sheet ”) in an aggregate principal amount of $59.0 billion (the “Bridge Facility”)”"
+              "note": "verbatim: “a senior unsecured bridge facility as further described in Exhibit B (the “ Term Sheet ”) in an aggregate principal amount of $59.0 billion (the “Bridge Facility”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4960,10 +4988,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin. Applicable Margin for Term Benchmark Loans: Category 1 (A2/A or higher) 0.75%, Category 2 (A3/A- or lower) 0.875%; increases by 0.25% per annum 90 days after Closing Date and by an additional 0.25% per annum at the end of each 90-day period thereafter",
+              "value": "ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin (Applicable Margin per pricing grid: Term Benchmark Loans 0.75% (Category 1 A2/A or higher) / 0.875% (Category 2 A3/A- or lower); ABR Loans 0.0%; increases by 0.25% per annum 90 days after Closing Date and an additional 0.25% at the end of each 90-day period thereafter)",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “The Borrower may elect that the Bridge Loans bear interest at a rate per annum equal to: the ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin.”"
+              "note": "verbatim: “The Borrower may elect that the Bridge Loans bear interest at a rate per annum equal to: the ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin. ... “ Applicable Margin ” means a percentage determined in accordance with the pricing grid ... Applicable Margin for Term Benchmark Loans ... Category 1 A2/A or higher ... 0.75% ... Category 2 A3/A- or lower ... 0.875% ... shall increase by 0.25% per annum on the date that is 90 days after the Closing Date and by an additional 0.25% per annum at the end of each 90-day period thereafter.”"
             },
             "base_rate_label": "Term SOFR Rate",
             "margin_pct": 0.75,
@@ -5002,10 +5030,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Senior unsecured bridge facility (364-day senior unsecured bridge loan credit facility); no collateral or guarantors stated",
+              "value": "Senior unsecured (a 364-day senior unsecured bridge loan credit facility); no collateral or guarantors stated",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “A 364-day senior unsecured bridge loan credit facility (the “ Bridge Facility ”)”"
+              "note": "verbatim: “A 364-day senior unsecured bridge loan credit facility (the “ Bridge Facility ”) in an aggregate principal amount of $59.0 billion”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5016,10 +5044,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment/commitment reduction on Dollar-for-Dollar basis within 3 Business Days for: (1) Incurrence of Indebtedness (100% of commitments/net cash proceeds, with exclusions and $500.0 million basket), (2) Equity Offerings (100% of net cash proceeds, with exclusions and $500.0 million basket), (3) Asset Sales (100% of net cash proceeds outside ordinary course, with exclusions and $500.0 million basket). Events of Default: Substantially the same as the Existing Credit Agreement, subject to the Documentation Principles.",
+              "value": "Mandatory Commitment Reduction/Prepayment triggered by (1) Incurrence of Indebtedness (100% of commitments/net cash proceeds, subject to exclusions), (2) Equity Offerings (100% of net cash proceeds, subject to exclusions), (3) Asset Sales (100% of net cash proceeds, subject to exclusions and $500.0 million basket/reinvestment). Events of Default: Substantially the same as the Existing Credit Agreement, subject to the Documentation Principles.",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “Mandatory Commitment Reduction/Prepayment of Bridge Facility: From and after the date of signing of the Commitment Letter, the aggregate Bridge Commitments shall be permanently reduced, and after the funding of the Bridge Loans on the Closing Date, the aggregate Bridge Loans shall be prepaid, in each case, on a Dollar-for-Dollar basis ... by the following amounts ... 1. Incurrence of Indebtedness ... 2. Equity Offerings: 100% of the net cash proceeds ... 3. Asset Sales: 100% of the net cash proceeds”"
+              "note": "verbatim: “Mandatory Commitment Reduction/Prepayment of Bridge Facility: From and after the date of signing of the Commitment Letter, the aggregate Bridge Commitments shall be permanently reduced, and after the funding of the Bridge Loans on the Closing Date, the aggregate Bridge Loans shall be prepaid ... by the following amounts ... 1. Incurrence of Indebtedness ... 2. Equity Offerings ... 3. Asset Sales ... Events of Default: Substantially the same as the Existing Credit Agreement, subject, in each case, to the Documentation Principles.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5028,9 +5056,9 @@
             "pik_pct": null
           },
           {
-            "name": "Optional prepayments",
+            "name": "Optional prepayment",
             "value": {
-              "value": "Bridge Loans may be prepaid and commitments reduced in minimum amounts to be agreed, without premium or penalty (subject to break-funding payments); may not be reborrowed/reinstated",
+              "value": "Bridge Loans may be prepaid and commitments reduced in minimum amounts to be agreed, without premium or penalty (subject to break-funding); may not be reborrowed/reinstated",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
               "note": "verbatim: “Optional Prepayments and Commitment Reductions: Bridge Loans may be prepaid by the Borrower and commitments may be reduced by the Borrower in minimum amounts to be agreed, but, in the case of prepayments, without premium or penalty (but subject to break-funding payments).”"
@@ -5056,12 +5084,12 @@
             "pik_pct": null
           },
           {
-            "name": "Ticking Fees",
+            "name": "Ticking fee",
             "value": {
-              "value": "Ticking Fee Rate per pricing grid: Category 1 0.05%, Category 2 0.07%; accrues from 120 days after date of Commitment Letter until earlier of Closing Date or termination of Bridge Commitments",
+              "value": "Ticking Fee Rate: 0.05% (Category 1) / 0.07% (Category 2); accrues commencing 120 days after date of Commitment Letter until earlier of Closing Date and termination of Bridge Commitments",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “The Borrower will pay ticking fees (the “ Ticking Fees ”) equal to an amount set forth in the pricing grid ... times the actual daily undrawn amount of the aggregate Bridge Commitments ... will accrue during the period commencing on the date that is 120 days after the date of the Commitment Letter”"
+              "note": "verbatim: “The Borrower will pay ticking fees (the “ Ticking Fees ”) equal to an amount set forth in the pricing grid ... which ticking fees will accrue during the period commencing on the date that is 120 days after the date of the Commitment Letter ... Category 1 ... 0.05% ... Category 2 ... 0.07%”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5070,12 +5098,12 @@
             "pik_pct": null
           },
           {
-            "name": "Duration Fees",
+            "name": "Duration fees",
             "value": {
-              "value": "(a) 0.50% at 90 days after Closing Date, (b) 0.75% at 180 days, (c) 1.0% at 270 days",
+              "value": "(a) 0.50% at 90 days after Closing Date; (b) 0.75% at 180 days after Closing Date; (c) 1.0% at 270 days after Closing Date",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a) 0.50% of the aggregate principal amount of the Bridge Loans held by such Lender on the date that is 90 days after the Closing Date, (b) 0.75% ... 180 days after the Closing Date and (c) 1.0% ... 270 days after the Closing Date.”"
+              "note": "verbatim: “duration fees (the “ Duration Fee ”) as follows: (a) 0.50% of the aggregate principal amount of the Bridge Loans held by such Lender on the date that is 90 days after the Closing Date, (b) 0.75% ... on the date that is 180 days after the Closing Date and (c) 1.0% ... on the date that is 270 days after the Closing Date.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5084,40 +5112,12 @@
             "pik_pct": null
           },
           {
-            "name": "ABR floor",
+            "name": "Default rate",
             "value": {
-              "value": "ABR floor of 1.0% per annum; Term SOFR Rate Floor initially 0.0%",
+              "value": "Same as the Existing Credit Agreement",
               "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
               "status": "present",
-              "note": "verbatim: “If the ABR as determined pursuant to the foregoing would be less than 1.0% per annum, such rate shall be deemed to be 1.0% per annum for purposes of the Bridge Credit Documentation.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Borrower",
-            "value": {
-              "value": "Netflix, Inc., a Delaware corporation",
-              "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Borrower: Netflix, Inc., a Delaware corporation (the “ Borrower ”).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Availability",
-            "value": {
-              "value": "Single drawing on the Closing Date; funded in U.S. dollars",
-              "source_ref": "8-K 0001193125-25-308651 · d65144dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Bridge Loan Availability: The Bridge Facility shall be available in a single drawing on the Closing Date. The Bridge Facility shall be funded in U.S. dollars (“ Dollars ”) to the Borrower.”"
+              "note": "verbatim: “Default Rate: Same as the Existing Credit Agreement.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5142,10 +5142,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The aggregate amount of the Lenders' Revolving Commitments as of the Second Amendment Effective Date is $1,000,000,000 (increased from $750,000,000)",
+              "value": "The aggregate amount of the Lenders' Revolving Commitments as of the Second Amendment Effective Date is $1,000,000,000 (increased from $750,000,000). Per Schedule 2.01: Morgan Stanley Senior Funding, Inc. $125,000,000; Morgan Stanley Bank, N.A. $125,000,000; Goldman Sachs Bank USA $250,000,000; JPMorgan Chase Bank, N.A. $250,000,000; Wells Fargo Bank, N.A. $250,000,000; Total $1,000,000,000. Incremental Facility: New Commitments 'by an amount not in excess of $250,000,000 in the aggregate'.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
-              "note": "verbatim: “The initial amount of each Lender's Revolving Commitment as of the First Second Amendment Effective Date is set forth on Schedule 2.01. The aggregate amount of the Lenders' Revolving Commitments as of the First Second Amendment Effective Date is $ 750,000,000. 1,000,000,000.”"
+              "note": "verbatim: “The aggregate amount of the Lenders' Revolving Commitments as of the First Second Amendment Effective Date is $ 750,000,000. 1,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5156,7 +5156,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Loans: Alternate Base Rate plus Applicable Rate; Eurodollar Loans: Adjusted LIBO Rate plus Applicable Rate. \"Applicable Rate\" means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan.",
+              "value": "ABR Borrowing: Alternate Base Rate plus Applicable Rate. Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate. 'Applicable Rate' means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan. Adjusted LIBO Rate floor: 'in no event shall the Adjusted LIBO Rate be less than 0.00%.' Default rate: 2% plus the otherwise applicable rate. Commitment Fee: 0.10% per annum.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -5164,7 +5164,7 @@
             "base_rate_label": "Adjusted LIBO Rate",
             "margin_pct": 0.75,
             "margin_bps": null,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null
           },
           {
@@ -5173,7 +5173,7 @@
               "value": "June 17, 2026 (amended from March 29, 2024)",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
-              "note": "verbatim: “\"Maturity Date\" means March 29, 2024 . June 17, 2026.”"
+              "note": "verbatim: ““ Maturity Date ” means March 29, 2024 . June 17, 2026.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5184,10 +5184,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "No financial-maintenance covenant (e.g., leverage ratio to be maintained). The Agreement uses incurrence-based tests: Aggregate Debt not to exceed the greater of (a) $6,000,000,000 and (b) 3.50 times Consolidated EBITDA (used in Sections 6.01 Subsidiary Indebtedness, 6.02 Liens, and 6.04 Sale and Lease-back).",
+              "value": "No traditional financial-maintenance covenant (e.g., leverage ratio tested each quarter) is stated. Incurrence-based Aggregate Debt basket used in Sections 6.01(b), 6.02(c), and 6.04(c): Aggregate Debt not to exceed the greater of (a) $6,000,000,000 (amended from $3,750,000,000) and (b) 3.50 (amended from 2.75) times Consolidated EBITDA for the Measurement Period immediately preceding the incurrence. Affirmative covenants (Article 5) include financial statement delivery; negative covenants (Article 6) cover Subsidiary Indebtedness, Liens, Fundamental Changes, Sale and Lease-back, Use of Proceeds. Solvency required at effectiveness.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
-              "note": "verbatim: “Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt that would otherwise be subject to the restrictions set forth in Section 6.01(a) , without Guaranteeing the payment of the Obligations, if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 3,750,000,000, 6,000,000,000, and (b) 2.75 3.50 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
+              "note": "verbatim: “Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt ... if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 3,750,000,000, 6,000,000,000, and (b) 2.75 3.50 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5198,10 +5198,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "No collateral or guarantors required at closing; springing/contingent structure. Guarantors: a Domestic Restricted Subsidiary must Guarantee the Obligations on an unsecured unsubordinated basis if it incurs Subsidiary Debt (Section 6.01/5.10(a)). Collateral: Borrower/Domestic Restricted Subsidiary must grant a pari passu security interest to secure the Obligations upon a \"Collateral Trigger Event\" if it grants an Initial Lien on Principal Property to secure Indebtedness (Sections 6.02 / 5.10(b)).",
+              "value": "Facility is initially unsecured with no standing guarantors; Guaranty and Collateral obligations are springing/conditional. Guarantors: a Domestic Restricted Subsidiary must enter a Guaranty only if required to Guarantee the Obligations pursuant to Section 6.01 (Subsidiary Debt) on an unsecured, unsubordinated basis. Collateral: upon a 'Collateral Trigger Event' (Borrower or Domestic Restricted Subsidiary required to grant a Lien on Principal Property under Section 6.02), Borrower must grant the Administrative Agent a valid pari passu security interest and equally and ratably secure the Obligations. 'Collateral' means all property subject to security interests granted under any Collateral Document.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
-              "note": "verbatim: “(a) The Borrower will not permit any of its Domestic Restricted Subsidiaries to create, assume, incur, Guarantee or otherwise become liable for any Indebtedness (any such Indebtedness or Guarantee, \" Subsidiary Debt \"), without Guaranteeing the payment of the Obligations on an unsecured unsubordinated basis until such time as such Subsidiary Debt is no longer outstanding.”"
+              "note": "verbatim: “(a) If any Domestic Restricted Subsidiary is required to Guarantee the Obligations pursuant to Section 6.01 , then the Borrower shall (i) ... cause such Domestic Restricted Subsidiary to enter into a Guaranty ... (b) If the Borrower or any Domestic Restricted Subsidiary is required to grant a Lien on any Principal Property to secure the Obligations pursuant to Section 6.02 (a “ Collateral Trigger Event ”), then the Borrower shall ... grant to the Administrative Agent ... a valid pari passu security interest in the property or assets subject to the applicable Initial Lien”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5212,7 +5212,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Commitments, Borrower shall promptly prepay. Section 2.08(d): prepayment upon Change of Control Triggering Event commitment termination. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees (5 Business Day grace); (c) breach of representation/warranty; (d) breach of specified covenants; (e) breach of other covenants (30-day cure); (f) failure to pay Material Indebtedness (>$250,000,000); (g) cross-acceleration of Material Indebtedness; (h)-(j) bankruptcy/insolvency of Borrower or Significant Subsidiary; (k) judgments in excess of $250,000,000; (l) ERISA Events; (m) Loan Document ceases to be in full force.",
+              "value": "Mandatory prepayment: (Section 2.08(c)) if Aggregate Total Exposure exceeds total Commitments, Borrower shall promptly prepay to eliminate the excess; (Section 2.08(d)) prepayment upon commitment termination following a Change of Control Triggering Event. Events of Default (Section 7.01): (a) failure to pay principal; (b) failure to pay interest/fees/other amounts unremedied for 5 Business Days; (c) incorrect representation/warranty in material respect; (d) failure to perform covenants in 5.02, 5.03 (existence), 5.09 or Article 6; (e) other covenant breach unremedied 30 days; (f) failure to pay Material Indebtedness >$250,000,000; (g) cross-acceleration of Material Indebtedness; (h)/(i) bankruptcy/insolvency proceedings; (j) inability to pay debts; (k) judgments >$250,000,000 undischarged 60 days; (l) ERISA Events; (m) Loan Document ceases to be in full force. 'Material Indebtedness' threshold is $250,000,000.",
               "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
               "status": "present",
               "note": "verbatim: “(c) If at any time the Aggregate Total Exposure exceeds the total Commitments then in effect, the Borrower shall promptly prepay the Revolving Loans to the extent necessary so that the Aggregate Total Exposure shall not exceed the Commitments then in effect.”"
@@ -6543,8 +6543,8 @@
       "note": null
     },
     "key_ratios": {
-      "value": "RoE 49.5%; RoCE 20.2%; RoA 16.1%; total debt/equity 0.55; current ratio 1.14; dividend: none (latest)",
-      "source_ref": "CIQ Financials→Ratios (latest period)",
+      "value": "RoE 49.5%; RoCE 20.2%; RoA 16.1%; total debt/equity 0.55; current ratio 1.14; dividend: none [LTM 12 months Jun-30-2026]",
+      "source_ref": "CIQ Financials→Ratios [LTM 12 months Jun-30-2026]",
       "status": "present",
       "note": null
     },
@@ -6744,7 +6744,7 @@
       },
       "book_value_ps": {
         "value": 7.24,
-        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (latest)",
+        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (2026-06-30)",
         "status": "present",
         "note": null
       },
@@ -8275,7 +8275,7 @@
         {
           "kind": "leading_indicator",
           "metric": "paid members",
-          "period": "end of last year (2025)",
+          "period": "end of 2025",
           "value": "more than 325 million paid members",
           "value_num": null,
           "unit": null,
@@ -8287,7 +8287,7 @@
         {
           "kind": "competitive_position",
           "metric": "addressable household penetration",
-          "period": "2026",
+          "period": null,
           "value": "under 45% penetrated",
           "value_num": null,
           "unit": null,
@@ -8298,44 +8298,20 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "addressable households",
-          "period": "2026",
-          "value": "roughly 800 million",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We think that number is roughly 800 million, and it grows every year, obviously.",
-          "following_context": "We've captured about 7% of addressable revenue. This is countries and categories that we currently directly participate in. We now estimate that's USD 670 billion as of 2026, and that number grows, of course, year-over-year as well. And we estimate that we account for only 5% of TV view share globally. So you can pretty much use any measure and say we've got tons of room for growth still ahead of us.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q1 2026 Earnings Call, Apr 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
           "metric": "addressable revenue captured",
-          "period": "2026",
+          "period": "as of 2026",
           "value": "about 7% of addressable revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've captured about 7% of addressable revenue.",
-          "following_context": "This is countries and categories that we currently directly participate in. We now estimate that's USD 670 billion as of 2026, and that number grows, of course, year-over-year as well. And we estimate that we account for only 5% of TV view share globally. So you can pretty much use any measure and say we've got tons of room for growth still ahead of us.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q1 2026 Earnings Call, Apr 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "addressable revenue market size",
-          "period": "2026",
-          "value": "USD 670 billion as of 2026",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We now estimate that's USD 670 billion as of 2026, and that number grows, of course, year-over-year as well.",
+          "verbatim": "We've captured about 7% of addressable revenue. This is countries and categories that we currently directly participate in. We now estimate that's USD 670 billion as of 2026, and that number grows, of course, year-over-year as well.",
           "following_context": "And we estimate that we account for only 5% of TV view share globally. So you can pretty much use any measure and say we've got tons of room for growth still ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q1 2026 Earnings Call, Apr 16, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "global TV view share",
-          "period": "2026",
+          "metric": "TV view share globally",
+          "period": null,
           "value": "only 5% of TV view share globally",
           "value_num": null,
           "unit": null,
@@ -8360,7 +8336,7 @@
           "kind": "leading_indicator",
           "metric": "primary member quality metric",
           "period": "Q1 2026",
-          "value": "another all-time high",
+          "value": "hit another all-time high",
           "value_num": null,
           "unit": null,
           "verbatim": "And in Q1, that primary member quality metric that you referenced, it hit another all-time high.",
@@ -8371,23 +8347,11 @@
         {
           "kind": "competitive_position",
           "metric": "addressable household penetration",
-          "period": "2026",
+          "period": null,
           "value": "under 45% penetrated",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're under 45% penetrated into addressable households around the world.",
-          "following_context": "It's roughly 800 million addressable households. We're capturing, we think, just 7% of addressable revenue market. It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "addressable households",
-          "period": "2026",
-          "value": "roughly 800 million addressable households",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "It's roughly 800 million addressable households.",
+          "verbatim": "We're under 45% penetrated into addressable households around the world. It's roughly 800 million addressable households.",
           "following_context": "We're capturing, we think, just 7% of addressable revenue market. It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
@@ -8395,31 +8359,19 @@
         {
           "kind": "competitive_position",
           "metric": "addressable revenue captured",
-          "period": "2026",
+          "period": null,
           "value": "just 7% of addressable revenue market",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're capturing, we think, just 7% of addressable revenue market.",
-          "following_context": "It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "addressable revenue market size",
-          "period": "2026",
-          "value": "about $670 billion of addressable revenue",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "It's about $670 billion of addressable revenue in the countries and categories in which we operate today.",
+          "verbatim": "We're capturing, we think, just 7% of addressable revenue market. It's about $670 billion of addressable revenue in the countries and categories in which we operate today.",
           "following_context": "And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "global TV view share",
-          "period": "2026",
+          "metric": "TV view share globally",
+          "period": null,
           "value": "only about 5% of TV view share globally",
           "value_num": null,
           "unit": null,
@@ -8429,34 +8381,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "price adjustments",
-          "period": "Q2/Q3 2026",
-          "value": "recent price adjustments are going well",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We continue to see healthy acquisition and retention trends on the membership side and our recent price adjustments are going well on the pricing side.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "leading_indicator",
-          "metric": "live programming share of content budget",
-          "period": "2026",
-          "value": "5% of our content budget this year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "So live, we expect will be 5% of our content budget this year, but we think that will only be 1% of view hours.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "live programming share of view hours",
-          "period": "2026",
-          "value": "1% of view hours",
+          "metric": "live content share of budget vs view hours",
+          "period": "this year (2026)",
+          "value": "5% of our content budget this year, but we think that will only be 1% of view hours",
           "value_num": null,
           "unit": null,
           "verbatim": "So live, we expect will be 5% of our content budget this year, but we think that will only be 1% of view hours.",
@@ -8478,21 +8406,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "animation/kids family TV share of content spend",
-          "period": "2026",
-          "value": "about 5% of our content spend",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
-          "following_context": "So same spend and 8x the Raw view hours. You can see the differences there, even though because as indicated by the amount that we're investing in both those categories being the same, we think they're doing the same value for the business.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "animation/kids family TV share of view hours",
-          "period": "2026",
-          "value": "8% of view hours",
+          "metric": "animation/kids family content share of spend vs view hours",
+          "period": "this year (2026)",
+          "value": "about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours",
           "value_num": null,
           "unit": null,
           "verbatim": "take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
@@ -8504,34 +8420,10 @@
           "kind": "leading_indicator",
           "metric": "view hours growth",
           "period": "first half of 2026",
-          "value": "grew 2% in the first half of 2026",
+          "value": "grew 2% in the first half of 2026 ... an incremental 1.5 billion hours",
           "value_num": null,
           "unit": null,
-          "verbatim": "And then on quantity, view hours grew 2% in the first half of 2026.",
-          "following_context": "That's an incremental 1.5 billion hours relative to the same period last year. It's a slight acceleration compared to 1.5% growth in 2025. And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "incremental view hours",
-          "period": "first half of 2026",
-          "value": "an incremental 1.5 billion hours relative to the same period last year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "That's an incremental 1.5 billion hours relative to the same period last year.",
-          "following_context": "It's a slight acceleration compared to 1.5% growth in 2025. And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "view hours growth (prior year)",
-          "period": "2025",
-          "value": "1.5% growth in 2025",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "It's a slight acceleration compared to 1.5% growth in 2025.",
+          "verbatim": "And then on quantity, view hours grew 2% in the first half of 2026. That's an incremental 1.5 billion hours relative to the same period last year. It's a slight acceleration compared to 1.5% growth in 2025.",
           "following_context": "And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
@@ -8539,35 +8431,23 @@
         {
           "kind": "leading_indicator",
           "metric": "content expense growth",
-          "period": "2026",
+          "period": "this year (2026)",
           "value": "up about 10% this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we're forecasting content expense up about 10% this year.",
-          "following_context": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "content expense growth (historical average)",
-          "period": "last 5 years",
-          "value": "8% we averaged over the last 5 years",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
+          "verbatim": "So we're forecasting content expense up about 10% this year. It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
           "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "content expense growth (historical average)",
-          "period": "past decade",
-          "value": "14% that we averaged over the past decade",
+          "kind": "pricing_action",
+          "metric": "price adjustments",
+          "period": null,
+          "value": "our recent price adjustments are going well",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
+          "verbatim": "We continue to see healthy acquisition and retention trends on the membership side and our recent price adjustments are going well on the pricing side.",
           "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "tier": "llm-fenced"
@@ -8580,153 +8460,143 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a self-funding, high-ROIC compounder with a long stated runway, but decelerating growth and negative revisions repricing a long-duration expectation.",
+    "evidence_balance": "mixed — a genuinely compounding, self-funding franchise with real runway, set against a price embedding long-duration growth and sharply negative near-term revisions.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from $911M (FY17) to $14,727M (LTM Jun-30-2026) with EBITDA margin rising to 30% and gross margin to 49%, so the profit engine is expanding in dollars and rate together, not merely optically.",
+        "claim": "Absolute EBITDA has compounded from $911M (FY17) to $14,727M LTM Jun-30-2026 with margin rising to 30%, evidencing a durable, widening operating engine rather than a plateau.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Returns on capital have improved every recent year to RoCE 20.2% LTM (from 9.8% in FY22), evidencing that reinvestment is earning above cost — the core requirement of a durable compounder.",
+        "claim": "Management frames a long reinvestment runway: under 45% of ~800M addressable households penetrated, only ~7% of a ~$670B addressable revenue market captured, and only ~5% of global TV view share — the mechanism behind a longer-than-priced growth thesis.",
+        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "First-half 2026 view hours grew 2% (an incremental ~1.5 billion hours), a slight acceleration over 1.5% in 2025, and price adjustments are reported going well — volume and pricing both supporting revenue.",
+        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Returns on capital have climbed steadily to 20.2% RoCE LTM (from 6.5% FY17), with RoE 49.5% — the reinvestment is being deployed at rising, high returns.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Management frames a long reinvestment runway grounded in specific penetration data — under 45% of ~800M addressable households, ~7% of a ~$670B addressable-revenue market, and only ~5% of global TV view share.",
-        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Pricing power is live and working: management states recent price adjustments are going well alongside healthy acquisition and retention, supporting the revenue-per-member leg of the runway.",
-        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Content spend is being grown slower than revenue (≈+10% this year vs the +13% FY26E revenue growth), a discipline mechanism that widens the margin gap rather than chasing hours.",
-        "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding with net-debt/EBITDA 0.5x, interest coverage 17.4x and LTM levered FCF positive, so the runway need not be financed by dilution or leverage.",
+        "claim": "The business is self-funding with net-debt/EBITDA 0.5x, interest coverage 17.4x and LTM levered FCF positive, giving balance-sheet room to fund the runway without dilution.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "On the forward ladder the name's NTM TEV/EBITDA is 17.07x vs LTM 20.5x, and the multiple steps down to ~8.5x by FY33 on consensus EBITDA of $37.2B — posing whether the trailing print overstates how richly the runway is priced.",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "claim": "On fundamentals the name out-earns the peer median on margin (EBITDA 30% vs 18%) and growth (rev 16% vs 13%) at equal leverage/beta, posing whether any peer premium is EARNED rather than an overpay — but the peer set is HETEROGENEOUS (caps $161M–$4,328.5B), so the comp is a confidence-gated input, not a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The share underperformed the market by ~16 points over 180 days (NFLX -2.7% vs SPY +13.1%) and fell ~38% over 52 weeks, a gradual bleed of relative confidence with no single gap-down to blame.",
-        "source_ref": "EOD NFLX−SPY 180d to 2026-08-12 (assembly, cap-band)",
+        "claim": "The consensus forward-multiple ladder shows the price embedding a long-duration expectation: TEV/EBITDA compresses only gradually from 18.55x (FY26) to 8.51x (FY33) on rising consensus EBITDA, so the runway must actually be delivered for the current price to be justified.",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       },
       {
-        "claim": "The trailing EV/EBITDA of 20.5x sits at the 8th percentile of the name's own 9.2-year range — but this is a NEUTRAL not a bull tell: the source flags it trailing-only with no forward basis, so a depressed-vs-terminal read is unresolved and the low percentile could be a de-rate toward maturity rather than an overshoot.",
+        "claim": "The EV/EBITDA 20.5x at the 8th percentile of its own 9.2y range looks cheap-vs-history, but this is a trailing-only figure with no forward basis and its own median (43.3x) reflects a de-rating from a far higher regime — the near-floor reading is the consensus MISREAD unless one can distinguish a temporarily depressed level from a permanently reset one.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "cited": true
       },
       {
-        "claim": "Estimate breadth is broadly negative — FY26 revenue revisions 6↑/36↓ and EPS 12↑/24↓ last month — the marginal analyst is cutting, not raising, near-term expectations.",
+        "claim": "The 'cheap vs peer median' framing (EV/EBITDA 20.5x vs 19.4x is actually a slight PREMIUM; NTM 17.07x vs 12.14x a larger premium) is the consensus comp read to resist — and it rests on a HETEROGENEOUS roster spanning $161M–$4,328.5B, so the peer median is not a clean benchmark for a $308.7B single-segment streamer.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "cited": true
+      },
+      {
+        "claim": "Near-term consensus breadth is decisively negative — FY26 revenue revisions ran 6↑/36↓ and EPS 12↑/24↓ last month — signalling estimates drifting down into the print, a genuine counter to the runway story.",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       },
       {
-        "claim": "Consensus target price has been marked down hard (mean $94.04, with numerous brokers cutting from $110–136 to $75–100), evidence the long-duration thesis is being repriced lower by the sell side.",
-        "source_ref": "CIQ Estimates→Consensus",
-        "cited": true
-      },
-      {
-        "claim": "Reported EBITDA growth of 17% actually trails the peer-median 20% even though the margin (30%) is far above the peer-median 18% — so on the growth axis the premium is not obviously earned versus peers.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "A trailing quarter (ended 2026-03-31) drew $2,590M — 40% of pre-tax income — from below the operating line, so any trailing EPS or P/E spanning it is not a clean operating anchor for the premium.",
+        "claim": "The trailing EPS/P/E is not a clean operating anchor: $2,590M (40% of pre-tax income, 21% of revenue) in the quarter ended 2026-03-31 came from BELOW the operating line and sits inside the trailing four quarters.",
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "cited": true
       },
       {
-        "claim": "Insiders sold $184.2M across 30 sales by 7 insiders over 182 days with zero open-market buys in the 3-year scan, a one-directional signal from those closest to the runway.",
-        "source_ref": "EDGAR Form 4 (latest 0001065280-26-000249; 636 filings in the 1095d scanned; counts over 182d)",
+        "claim": "Broker target prices have been cut hard into the window (multiple houses from $102–$136 to $75–$100; consensus mean $94.04), and insiders sold $184.2M over 182 days with zero open-market buys in the 3-year scan — sentiment and insider signal both softening.",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-07 · export date unverified]",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Amazon.com",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "Large-cap platform that reinvested through a high-multiple period and let absolute profit dollars, not margin optics, validate the runway — the same margin-%-vs-absolute-EBITDA read at issue here.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "Meta Platforms",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A high-margin consumer platform that de-rated sharply when spend/engagement fears dominated, then re-rated as monetization delivered — the peer whose multiple compression mirrors the runway-vs-priced debate.",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "A high-margin, single-lens consumer-attention platform that de-rated sharply on growth/spend fears, then re-accelerated as engagement and monetization reasserted — the pattern of a quality franchise mistaken for maturing.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Walt Disney Company",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A streaming rival where content investment and subscriber economics were reset by the market; the in-roster analogue for how the same category can trade to a value-trap read.",
+        "distinguishing_fact": "A legacy content owner whose streaming push carried heavy content amortization and lower margins/growth than the leader — the analogue for content spend outrunning monetization in a maturing subscriber base.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Spotify Technology S.A.",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Subscription-audio streamer that carried a rich multiple on the strength of pricing power and operating leverage rather than headline margin level — the runway-priced-but-delivering pattern.",
+        "distinguishing_fact": "A single-vertical subscription-streaming platform whose margin inflection and pricing power arrived later than skeptics assumed — the analogue for engagement/pricing quietly driving the model even as headline growth cooled.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Adobe Systems",
+        "outcome": "kept compounding",
+        "distinguishing_fact": "A subscription franchise repeatedly priced for a shorter runway than it delivered, compounding through recurring price and unit growth while the market debated saturation.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the runway (household penetration, pricing power, disciplined content spend) large enough to keep absolute EBITDA compounding fast enough to justify the premium, or has near-term growth deceleration begun to reset a long-duration expectation the price still embeds?",
+      "question": "Is the long runway management describes (household penetration, addressable revenue, view-share headroom, working pricing) real and large enough to grow into the price's embedded long-duration expectation — or has the trailing multiple's 'near-floor' look and negative near-term revision breadth already told the true story of a maturing subscriber base?",
       "evidence_for": [
         {
-          "claim": "Management reiterates a long runway with hard penetration figures — under 45% of ~800M households, ~7% of ~$670B addressable revenue, ~5% of global TV view share — and states the 2026 plan is on track.",
+          "claim": "Management quantifies large unmet demand — under 45% of ~800M households, ~7% of ~$670B revenue, ~5% of global TV view share — with H1-2026 view hours +2% and price adjustments 'going well'.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Pricing is delivering — recent price adjustments are going well with healthy acquisition/retention — the driver that lets revenue outgrow content spend (+10%) and expand margin.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "Absolute EBITDA is still rising ($13,660M FY25 → $14,727M LTM) and consensus carries it to $20,082M FY27, so the compounding leg remains intact on the numbers.",
+          "claim": "Absolute EBITDA rose to $14,727M LTM at 30% margin with RoCE at 20.2%, evidence the reinvestment continues to compound at rising returns.",
           "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "cited": true
+        },
+        {
+          "claim": "Consensus revenue is modeled to keep climbing to FY33 (~$97.1B), the trajectory the runway thesis requires.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "FX-neutral revenue growth is decelerating — management confirms the Q3 guide slows to 11% FX-neutral from 12% — the near-term slope the premium is sensitive to.",
-          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "Near-term revenue and EPS revision breadth is negative (6↑/36↓ revenue, 12↑/24↓ EPS last month) and targets have been cut to a $94.04 mean, showing the sell side trimming the trajectory.",
+          "claim": "FY26 estimate breadth is heavily negative (revenue 6↑/36↓, EPS 12↑/24↓ last month), the near-term signal the runway story must overcome.",
           "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
           "cited": true
         },
         {
-          "claim": "Reported EBITDA growth (17%) already lags the peer-median (20%), so if deceleration continues the growth premium versus peers narrows further.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Content expense is guided up ~10% this year — above the 8% five-year average — while revenue growth guides to ~11–14%, so the spend/monetization gap the bear case turns on is live.",
+          "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Broker targets were cut sharply into the window (to a $94.04 consensus mean, some to $75), signalling eroding conviction in the forward path.",
+          "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-07 · export date unverified]",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Trailing EV/EBITDA is trailing-only with no forward basis on the same sheet — whether the 8th-percentile print is a temporary depression or a permanent de-rate toward maturity is unresolved (an opacity that cuts bearish until a forward basis reconciles it).",
-      "The P/E 5-year percentile cannot be built: a ~10.02x share-basis change (split) inside the window divides split-adjusted prices against as-filed older EPS, so no historical valuation range exists to place the current multiple.",
-      "The consensus/estimate EBITDA row implies 3.49x more D&A than the actual row, so trailing-vs-forward multiples are struck off DIFFERENT bases — a trailing 20.5x and a forward 17.07x are not cleanly comparable.",
-      "The peer set is HETEROGENEOUS (market caps span $161M–$4,328.5B, 26,935x); every peer multiple and the earned-vs-residual discount question is confidence-gated, not a clean benchmark.",
-      "No company-adjusted LTM EBITDA and no covenant basis are disclosed, so net-debt/adjusted-EBITDA and covenant headroom are UNKNOWN — a missing leverage view.",
-      "Segment EBITDA is not broken out (single Streaming segment) — no sub-unit visibility into where profit is earned or at risk.",
-      "The capital-structure panel is 201 days old and predates a Feb-27-2026 Item 1.02 material-agreement termination, so a listed instrument may already be gone — verify before relying on the debt schedule.",
-      "The CIQ export date is unverified (a floor ≥ 2026-08-07); a dated sibling export is weeks newer, so estimate/consensus snapshots may be stale."
+      "No forward EV/EBITDA on an adjusted basis and no adjusted-EPS in the revised guidance — the trailing 20.5x cannot be judged temporarily-depressed vs permanently-reset (overshoot-vs-terminal unresolved).",
+      "The 5y P/E percentile cannot be built because a ~10.02x share-basis change (split) falls inside the window — the trailing valuation range is not comparable across bases.",
+      "EBITDA-basis mismatch: consensus estimate columns imply ~937 of D&A vs ~269 in actuals (3.49x), so trailing multiples struck off actuals are NOT the same basis as forward multiples struck off estimates — do not compare across the boundary.",
+      "Segment EBITDA is UNKNOWN (single-segment reporting) — no breakout to test where profitability and the runway actually sit (ads vs core, by region).",
+      "Whether the 2026 price adjustments and content-spend step-up (+10%) convert to accelerating revenue/margin, or into a widening spend-vs-monetization gap — not disclosed at line-item level.",
+      "Capital-structure panel is 201d old and predates a 2026-02-27 Item 1.02 termination of a material agreement — a listed instrument may already be terminated; verify before relying on the schedule.",
+      "Export date on the CIQ estimates/catalyst data is unverified (a floor ≥ 2026-08-07); the true snapshot may be weeks newer.",
+      "Insider posture: $184.2M sold over 182d with zero open-market buys in 3y — read against routine 10b5-1 grants/dispositions before treating as directional."
     ]
   },
   "caveats": [
@@ -8734,8 +8604,7 @@
     "primary-source: 8-K 0001193125-26-312575 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001065280-26-000189 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001065280-26-000139 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.9s fetch)",
-    "Heterogeneous-peer benchmark (a decisive-against point): 'Reported EBITDA growth (17%) already lags the peer-median (20%), so if deceleration continues the growth premium versus peers narrows further.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -8745,11 +8614,11 @@
     "(E5) exhibit not extracted (cost bound): Senior Unsecured Revolving Credit Facility·dex101.htm",
     "(E5) exhibit not extracted (cost bound): Unsecured Delayed Draw Term Loan Credit Facility·d721020dex101.htm",
     "(E5) exhibit not extracted (cost bound): Unsecured Revolving Credit Facility·d37713dex101.htm",
-    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)"
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T15:36:48.608268Z",
+  "assembled_at": "2026-08-13T17:07:13.576754Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -8775,7 +8644,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T15:39:54.802430Z",
+    "computed_at": "2026-08-13T17:09:59.324378Z",
     "reason": "R1 inputs incomplete — see per-input source stamps",
     "data_quality": null,
     "data_quality_detail": [],
