@@ -386,16 +386,23 @@ def test_the_render_never_reads_the_gitignored_scratch_snapshots(
     Pinned FUNCTIONALLY rather than by reading the driver's source: a decoy root carries its own
     `snapshots/ranked_queue.jsonl` holding ONE row, and the render must still produce the committed
     queue. A source-level assertion would rot on any reformatting and would not prove the fetch
-    actually ignores the directory."""
+    actually ignores the directory.
+
+    WHAT THIS PROVES, EXACTLY: the routing rule is a single prefix test over `snapshots/`, so it
+    governs all six files the frontend reads from there (manifest, ranked_queue, decision_ledger,
+    graph, g3_reasons, universe_stats). This exercises the QUEUE, the only one whose contents this
+    view renders observably — the others are not visible in its output, so a decoy for them could
+    not be asserted on without inventing a signal. A wholesale revert of the rule is caught here; a
+    hypothetical regression that special-cased ONLY the queue path would not be."""
     decoy = tmp_path / "frontend"
     (decoy / "snapshots").mkdir(parents=True)
     # the views and libs must still resolve — only the snapshot lookup is under test
     for name in ("views", "lib"):
         (decoy / name).symlink_to(FRONTEND / name)
-    one_row = QUEUE.read_text().splitlines()[0]
-    (decoy / "snapshots" / "ranked_queue.jsonl").write_text(one_row + "\n")
+    committed = [ln for ln in QUEUE.read_text().splitlines() if ln.strip()]
+    (decoy / "snapshots" / "ranked_queue.jsonl").write_text(committed[0] + "\n")
 
-    committed_rows = len([ln for ln in QUEUE.read_text().splitlines() if ln.strip()])
+    committed_rows = len(committed)
     body = _render("trend", root=decoy)["body"]
     assert len(_rows(body)) == committed_rows, (
         f"the render produced {len(_rows(body))} rows against {committed_rows} committed — it read "
