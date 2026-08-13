@@ -45,8 +45,11 @@ verdict placement.
    STATE.md must appear in the PR's own file list before you merge. Every build appends near the
    same region, so a rebase onto a moved `main` conflicts there almost every time, and resolving
    toward the incoming side drops the local addition leaving no marker that survives to review.
-   Twice already: **#443 MERGED with no STATE entry at all**, and #447 nearly did. **The suite
-   cannot catch this — no test reads STATE.md** — so it is a step here, not a guard.
+   Twice already: **#443 MERGED with no STATE entry at all**, and #447 nearly did.
+   `tests/test_state_identifiers.py` DOES read STATE.md — but it lints identifier uniqueness and
+   reference resolution, and **a dropped entry leaves a smaller file that is still internally
+   consistent, so it passes.** Completeness is not lintable (nothing knows which builds owed an
+   entry), so this is a step here rather than a guard.
 
 ## Non-negotiable behavior (every build)
 
