@@ -11613,10 +11613,19 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    written without ever seeing that the UK model change cut revenue by **$1.1bn**. The claim is
    not false; it is under-informed, and only a re-synthesis fixes that. **Needs CIQ + LLM, so it is
    an operator action.** Both names' workbooks are stale anyway (item 7), so do it in one pass.
-   **CLOSED 2026-08-13 — both re-assembled by the fleet pass (#447) at reference_date 2026-08-12.**
-   **UBER HALF DONE 2026-08-12** — re-assembled, synthesis re-rolled; its bull point now reads
+   ~~**UBER HALF DONE 2026-08-12** — re-assembled, synthesis re-rolled; its bull point now reads
    *"reported Mobility revenue rose only 1% due to UK model changes"*, so the mechanism is no
-   longer invisible to the argument. **SMPL still open** (not re-assembled in this pass).
+   longer invisible to the argument. **SMPL still open** (not re-assembled in this pass).~~
+   **CLOSED 2026-08-13 (#447) — SUPERSEDING THE HALF-DONE LINE ABOVE: SMPL is no longer open.**
+   Both names are at `reference_date` 2026-08-12, and the closure was checked on the criterion this
+   item actually names — **a RE-SYNTHESIS, not a re-assembly.** That distinction matters here
+   because `refresh_dossier`'s transform seam deliberately PRESERVES the stored synthesis, so
+   "re-assembled" would not have closed it. Verified by diffing the synthesis block across #447
+   (`0d827a6~1` → `0d827a6`): **SMPL's bull points changed 8 → 7 and UBER's 12 → 9, with every
+   surviving point re-composed** — both genuinely re-rolled against the lengthened quotes rather
+   than carried over. UBER's re-rolled bull point now reads *"Mobility Segment Operating Income rose
+   $486M or 28% in the quarter even as Mobility revenue rose only 1%, because UK business-model
+   changes cut revenue"* — the $1.1bn mechanism is now inside the argument, not invisible to it.
 7. **RE-PULL THE NFLX AND UBER CIQ WORKBOOKS — both predate material filings. STILL OPEN
    2026-08-12 — the workbooks on disk were NEVER re-pulled**, and file mtimes (Aug 7 / Aug 10) are
    when the folders were copied locally, not the CIQ export vintage. Read the panels directly:
@@ -11666,26 +11675,45 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
    that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
    **Bundle with item 7's NFLX re-pull — one pass.**
-   **RE-CONFIRMED CLOSED 2026-08-13 (#447): NFLX at 2026-08-12, no point quotes the old figure.**
    **CLOSED 2026-08-12.** NFLX re-assembled; the mechanical field now reads *"flat over ~0.5y since
    a ~10.0x share-basis change at 2025-12-31 (count rose): 4,222,162,150 → 4,163,939,676, −1.4%"*
    and **no synthesis point quotes the old figure any more** — scanned for `874.1`,
    `4,163,939,676` and `427,458,114` across every bull/bear point: zero hits. Both halves land
    together, which was the whole reason this was held back from the transform seam.
+   **STILL TRUE AFTER #447's re-assembly (re-checked 2026-08-13)** — NFLX is at `reference_date`
+   2026-08-12 and the same scan is still clean, so the fix survived a second synthesis re-roll
+   rather than merely holding on the one artifact it was verified against.
    **A PREREQUISITE NOBODY HAD RECORDED: the store held no NFLX bars at all** — no `securities`
    row, so `_standalone_record` refused outright (*"no price history in the store"*). Backfilled
    5y via `vinci refresh --aggs` (1,253 bars, through 2026-08-11) before the assembly could run.
    UBER's bars were present but ended 2026-08-04 and were topped up in the same call. **A
    maintained name can be missing from the price store entirely and nothing says so until an
    assembly refuses** — the same gap #367/#369 hit for UBER and SPY, now a third time.
-9. **THE AS-OF LEAK — LARGELY RESOLVED 2026-08-13, remedy (b) having arrived as a SIDE EFFECT.**
-   Measured on the re-assembled pages: post-as-of observation dates fell **NFLX 79 → 1** and
-   **UBER 117 → 0**. The leak was mostly the fleet sitting at 2026-07-29 while the data reached
-   August; wiring retention (#442) filed a real screen-run manifest, the fleet as-of advanced to
-   2026-08-12, and those observations came into scope. **The ~12-extractor bound — remedy (a) — is
-   no longer urgent**, and #442's `identities_first_seen_after` guard refuses a backdated run that
-   inherited future identities. The decision below stands for the residual (NFLX 1) and for the
-   historical-re-assembly case, which still has no bound.
+9. **THE AS-OF LEAK — RESOLVED FOR TODAY'S PAGES 2026-08-13, remedy (b) having arrived as a SIDE
+   EFFECT.** Measured across the as-of advance (`513b2a9~1` → HEAD), counting post-`reference_date`
+   dates in this entry's own leaking-field list: **NFLX 58 → 0** and **UBER 91 → 0**, with NFLX's
+   58 concentrated in `catalyst_path.revision_events` (46) and UBER's 91 likewise (75). The leak was
+   the fleet sitting at 2026-07-29 while the data reached August; wiring retention (#442) filed a
+   real screen-run manifest, the fleet as-of advanced to 2026-08-12, and those observations came
+   legitimately into scope. **The ~12-extractor bound — remedy (a) — is no longer urgent**, and
+   #442's `identities_first_seen_after` guard refuses a backdated run that inherited future
+   identities.
+   **MEASUREMENT NOTE, and the reason the figures here differ from the 79/118 recorded on
+   2026-08-12 below.** Those were re-derived on review of this entry and could NOT be reproduced;
+   the numbers above come from a re-run whose method is stated so the next reader can repeat it —
+   under `mechanical`, scan these fields for ISO dates greater than the record's own
+   `reference_date` — `catalyst_path.revision_events`, `valuation.own_history`,
+   `implied_valuation`, `ev_gap.vintages`, `catalyst_path.insider_activity`, `peer_comps`,
+   `operating_drivers`, `catalyst_path.guidance_bridge`, `catalyst_path.guidance_bridge_rows`,
+   `quality.share_count_trend`. The earlier figures used field
+   paths (`range_position`, `implied_expectations.{tev_as_of,multiples_as_of}`) that do not resolve
+   against the committed layout, which is the likely source of the gap. **The DIRECTION and the
+   CAUSE were never in doubt — only the magnitudes — and an unreproducible number in the
+   authoritative record is worse than a reproducible one carrying its method.**
+   **THE DECISION BELOW IS STILL LIVE**, on a narrower footing: today's pages leak nothing, but
+   that is because the as-of caught up with the data, NOT because any source is bounded. **The
+   historical-re-assembly case still has no bound**, and the next time the data outruns the fleet
+   as-of the leak returns — so remedy (a) is deferred, not retired.
    **ORIGINAL ENTRY — opened 2026-08-12 by review #428:**
    Every dossier publishes observations dated after its own `reference_date` (NFLX 79, UBER 117;
    measured, and pre-existing — see §OPEN OBSERVATIONS for the field list and the before/after).
@@ -11719,9 +11747,13 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    violation rather than only improving a sort. **SEE THE AUDIT BELOW — this is now a prerequisite
    for displaying the column correctly, not only a sort fix.**
 10. **RE-ASSEMBLE FUBO — the share-basis fix is in the CODE and not yet on the PAGE. Opened
-   **CLOSED 2026-08-13 (#447): FUBO at 2026-08-12, `shares_out` 30,200,000 from the CIQ
-   bridge (30.2M × $9.70 = $292.9M vs a $293.0M cap); its known-wrong seal is retired (§2).**
-   2026-08-12 by `fix/shares-staleness-fubo`.** The staleness bound moved 540d → 180d, so FUBO's
+   2026-08-12 by `fix/shares-staleness-fubo`.**
+   **CLOSED 2026-08-13 (#447): FUBO at `reference_date` 2026-08-12, with
+   `mechanical.stock_info.shares_out` = 30,200,000 and its `source_ref` naming
+   *"CIQ Comparable Analysis→Financial Data (name Shares Outstanding Latest) · as-of 2026-08-12"* —
+   30.2M × $9.70 = $292.9M against a $293.0M stated cap, 0.03% apart, so the 11.13x error is gone.
+   Its known-wrong seal is retired (§2).**
+   The staleness bound moved 540d → 180d, so FUBO's
    pre-restructuring `dei` count (342,433,118 @ 2025-07-31, 375d stale and single-class against a
    now dual-class filer) is refused and the name falls to the CIQ bridge Visa already uses. **The
    committed page still carries the old basis** — cap $256.4M ÷ 342.4M shares = $0.75/sh implied
@@ -11734,8 +11766,9 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
    that is a separate defect on the same name and stays open.
 11. **RE-ASSEMBLE BRBR AND SMPL — the net-sales cross-check fix is in the CODE and not on the PAGE.
-   **CLOSED 2026-08-13 (#447): both at reference_date 2026-08-12.**
-   Opened 2026-08-12 by `fix/net-sales-is-the-revenue-line`.** Both pages currently read *"release
+   Opened 2026-08-12 by `fix/net-sales-is-the-revenue-line`.**
+   **CLOSED 2026-08-13 (#447): both at `reference_date` 2026-08-12.**
+   Both pages previously read *"release
    NO NUMERIC OUTLOOK → not cross-checked"* while their releases state a net-sales guide the parser
    captured. On re-assembly **BRBR becomes cross-source VERIFIED** (CIQ 2335.0–2375.0 vs release
    2335.0–2375.0 — the same numbers) and **SMPL becomes the PERIOD refusal** (release guides the
