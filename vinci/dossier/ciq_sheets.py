@@ -2333,7 +2333,12 @@ def guidance_bridge(
                 word = {"met": "MET", "missed": "MISSED",
                         "at_guide": "AT GUIDE (±0.5% of a point — not adjudicated)"}[
                             r.recent_verdict or "met"]
-                seg += f"; most recent resolved: {r.recent_period} {word}"
+                # "most recent guidance OUTCOME", never "resolved" (review finding, #443). The
+                # at-guide state is deliberately EXCLUDED from `r.resolved`, so labelling it
+                # "most recent resolved" printed a self-contradiction — `most recent resolved:
+                # FQ2 2026 AT GUIDE (… not adjudicated)` — and implied the refused call had
+                # entered the delivery record after all. One neutral label carries all three.
+                seg += f"; most recent guidance outcome: {r.recent_period} {word}"
         lines.append(seg)
     if not lines:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")

@@ -174,3 +174,38 @@ def test_real_misses_survive_across_the_fleet() -> None:
         at_guide += sum("at-guide" in (r.record or "") for r in rows)
     assert missed, "no MISSED anywhere in the fleet — the band refusal erased real verdicts"
     assert at_guide, "no at-guide disclosure anywhere — the refusal never fires on the live corpus"
+
+
+def test_the_summary_never_calls_an_at_guide_period_resolved() -> None:
+    """REVIEW FINDING (#443). The at-guide state is deliberately EXCLUDED from `resolved`, but the
+    summary string still introduced it with "most recent resolved:" — printing
+
+        most recent resolved: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)
+
+    which contradicts itself and implies the refused call entered the delivery record after all.
+    A third state that is announced under the second state's name is two states again.
+
+    ONE NEUTRAL LABEL CARRIES ALL THREE, and this pins the OUTPUT rather than the wording of any
+    single verdict — asserted on the rendered string, which is what a reader receives.
+    """
+    from datetime import date as _d
+
+    from vinci.dossier.ciq_sheets import guidance_bridge
+
+    text = guidance_bridge(_bundle("NFLX"), reference_date=_d(2026, 8, 12)).value or ""
+    assert "AT GUIDE" in text, "the at-guide state never reaches the summary string"
+    assert "most recent resolved" not in text, (
+        "an at-guide period is announced as 'resolved' — the very distinction the third state "
+        "exists to preserve")
+    assert "most recent guidance outcome:" in text
+
+    # …and the neutral label serves the adjudicated states too, so the three are phrased alike and
+    # differ only in the VERDICT — never in whether they are introduced at all.
+    other = next((t for t in ("V", "AORT", "CNXC")
+                  if "MET" in (guidance_bridge(_bundle(t), reference_date=_d(2026, 8, 12)).value
+                               or "")), None)
+    if other is None:
+        pytest.skip("no committed name carries an adjudicated MET in its summary")
+    met_text = guidance_bridge(_bundle(other), reference_date=_d(2026, 8, 12)).value or ""
+    assert "most recent guidance outcome:" in met_text
+    assert "most recent resolved" not in met_text
