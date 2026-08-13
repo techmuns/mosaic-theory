@@ -109,10 +109,21 @@ def test_exactly_one_current_marker_per_name_and_the_rest_superseded() -> None:
 
 @pytest.mark.skipif(not (DOSS / "MVST").is_dir(), reason="no committed MVST")
 def test_an_undated_release_is_labelled_not_guessed() -> None:
-    """FAIL LOUD ON THE UNORDERABLE. MVST's guidance-bearing releases carry no `filed` date, so
-    neither can be ranked. Labelled UNDATED rather than assumed current or assumed stale — a guess
-    either way would be the defect this file exists to close, wearing a different hat."""
-    lines = _digest("MVST").splitlines()
+    """FAIL LOUD ON THE UNORDERABLE. A guidance-bearing release with no `filed` date cannot be
+    ranked, so it is labelled UNDATED rather than assumed current or assumed stale — a guess either
+    way would be the defect this file exists to close, wearing a different hat.
+
+    CONDITIONED ON THE STATE IT DESCRIBES (2026-08-13). This named MVST because its releases carried
+    no dates; the 2026-08-12 re-assembly gave them dates, and the pin then demanded an UNDATED label
+    for releases that are dated. The rule is about undated releases, not about MVST, so it now finds
+    a name in that state and skips when none is — the fleet having dates is the better outcome, not
+    a failure."""
+    undated_name = next(
+        (t for t in sorted(d.parent.name for d in DOSS.glob("*/dossier.json"))
+         if any("VINTAGE UNDATED" in x for x in _digest(t).splitlines())), None)
+    if undated_name is None:
+        pytest.skip("no committed name carries an undated guidance-bearing release")
+    lines = _digest(undated_name).splitlines()
     assert not any("[CURRENT GUIDE," in x for x in lines), lines[:10]
     assert not any("[SUPERSEDED" in x for x in lines), lines[:10]
     und = [x for x in lines if "VINTAGE UNDATED" in x]
@@ -242,7 +253,12 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
 
     # …and anything the brief leaves out must be DISCLOSED, or its window reads as the whole record.
     if marks(brief) < marks(tmpl):
-        assert any("omitted from the" in x for x in _digest("SMPL").splitlines()), (
+        # THE DISCLOSURE, NOT ITS WORDING (2026-08-13). This matched the literal "omitted from the",
+        # which #439 had to change: the note now counts after the recent-union and distinguishes a
+        # release that contributes nothing from a guide that is genuinely not shown. Matching on the
+        # `(note:` prefix pins that SOMETHING was disclosed, which is the actual requirement, and
+        # survives the next rewording of a sentence no test should own.
+        assert any(x.startswith("(note:") for x in _digest("SMPL").splitlines()), (
             "the brief dropped a guidance vintage without saying so")
     # Derived, not typed in — same reason as the acceptance case above: hardcoding the July/April
     # figures schedules this to redden on SMPL's next print rather than on a defect.

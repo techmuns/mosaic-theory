@@ -60,36 +60,112 @@ def test_ubers_drift_is_stated_on_the_page_not_left_to_the_reader() -> None:
 
 def test_a_reconciling_name_says_nothing() -> None:
     """The mark must mean something wherever it appears. A name whose cap and price agree carries
-    no caveat at all — otherwise this becomes furniture and stops being read."""
-    for ticker in ("NFLX", "BRBR", "V"):
-        line = _snapshot(ticker)
-        assert "implies" not in line, f"{ticker} reconciles; it must not carry a drift mark"
+    no caveat at all — otherwise this becomes furniture and stops being read.
+
+    MEASURED, NOT LISTED (2026-08-13). This named NFLX/BRBR/V as the reconciling three; the
+    2026-08-12 re-assembly moved BRBR into DRIFT (+6.5%), so a roster written when the fleet looked
+    one way failed on a page that had simply changed. Whether a given name reconciles is data, and
+    the rule — reconciling names carry no mark — is what this owns."""
+    from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
+    from vinci.dossier.schemas import SourceStatus
+
+    checked = 0
+    for folder in sorted(DOSSIERS.iterdir()):
+        if not (folder / "dossier.json").is_file():
+            continue
+        si = _dossier(folder.name).mechanical.stock_info
+        if not all(f.status is SourceStatus.PRESENT
+                   for f in (si.market_cap, si.shares_out, si.price)):
+            continue
+        recon = reconcile_cap(cap_musd=si.market_cap.value, shares=si.shares_out.value,
+                              spot=si.price.value)
+        if recon.gap is None or abs(recon.gap) > RECONCILE_TOLERANCE:
+            continue                       # drifting names are the other test's subject
+        checked += 1
+        line = _snapshot(folder.name)
+        assert "implies" not in line, f"{folder.name} reconciles; it must not carry a drift mark"
         assert "⚠" not in line.split("· 52-wk")[0].split("cap ")[-1], (
-            f"{ticker}: a clean cap carries a warning mark")
+            f"{folder.name}: a clean cap carries a warning mark")
+    assert checked, "no committed name reconciles — this pin checked nothing"
 
 
 def test_a_share_basis_mismatch_is_not_worded_as_drift() -> None:
-    """FUBO's cap and count are on different share bases (11.13x), which is a corporate action, not
-    a price that moved. Calling it drift would invite the reader to mentally re-date the cap and
-    carry on — the wrong remedy for a page where no per-share figure can be trusted."""
-    line = _snapshot("FUBO")
-    assert "SHARE-BASIS MISMATCH" in line
-    assert "implies $0.75/sh" in line
-    assert "%" not in line.split("cap ")[-1].split("· 52-wk")[0], (
-        "a share-basis mismatch must not print a drift percentage — the ratio is the diagnostic")
+    """A cap and count on different share bases is a CORPORATE ACTION, not a price that moved.
+    Calling it drift would invite the reader to mentally re-date the cap and carry on — the wrong
+    remedy for a page where no per-share figure can be trusted.
+
+    CONSTRUCTED, AND THEREFORE UNCONDITIONAL (review finding, #441). This read FUBO, whose cap and
+    count sat 11.13x apart; the 2026-08-12 re-assembly FIXED that, so a first rewrite derived the
+    population and SKIPPED when the fleet was clean — which is now always. A skipping pin leaves the
+    renderer branch that prints this warning unexercised, and the constructed pins in
+    `test_freshness.py` cover `reconcile_cap` (the COMPUTATION) rather than the human-facing label.
+
+    So the mismatch is MANUFACTURED here: a real committed record whose share count sits a whole
+    number away from its cap, which is exactly what a split straddling the two panels does. Nothing
+    has to stay broken in the fleet for the warning to keep being tested.
+    """
+    from vinci.dossier.freshness import reconcile_cap
+
+    host = next((f.name for f in sorted(DOSSIERS.iterdir())
+                 if (f / "dossier.json").is_file()), None)
+    assert host is not None, "no committed dossier to build a mismatch from"
+    d = _dossier(host)
+    si = d.mechanical.stock_info
+    assert si.shares_out.value and si.market_cap.value and si.price.value, (
+        f"{host}: needs cap, shares and price present to construct a basis mismatch")
+
+    # SOLVED, NOT SCALED. `reconcile_cap` keys on the ratio sitting ON a whole number, so simply
+    # multiplying an existing count by 11 inherits whatever drift the host already carries (AORT
+    # landed at 11.485 and missed the tolerance). Deriving the count that makes spot/implied exactly
+    # 11 — shares = cap x 11 / spot — is what a pre-split count against a post-split cap IS.
+    split_factor = 11
+    split = si.model_copy(update={
+        "shares_out": si.shares_out.model_copy(update={
+            "value": si.market_cap.value * 1e6 * split_factor / si.price.value})})
+    recon = reconcile_cap(cap_musd=split.market_cap.value, shares=split.shares_out.value,
+                          spot=split.price.value)
+    assert recon is not None and recon.corporate_action, (
+        "the constructed record is not a basis break — the fixture no longer exercises the branch")
+
+    line = render_mod._brief_snapshot(d.exchange, split)[0]
+    assert "SHARE-BASIS MISMATCH" in line, (
+        f"a whole-number basis break rendered without the mismatch label: {line}")
+    assert "/sh" in line, "a mismatch must state the implied per-share figure"
+    cap_seg = line.split("cap ")[-1].split("· 52-wk")[0]
+    assert "%" not in cap_seg, (
+        f"a share-basis mismatch must not print a drift percentage — the ratio is the diagnostic, "
+        f"and a percentage invites the reader to re-date the cap and carry on: {cap_seg}")
+
+    # …and the ORDINARY case still reads as drift, so the two states stay distinguishable.
+    drift = si.model_copy(update={
+        "price": si.price.model_copy(update={"value": si.price.value * 1.25})})
+    drift_line = render_mod._brief_snapshot(d.exchange, drift)[0]
+    if "implies" in drift_line:
+        assert "SHARE-BASIS MISMATCH" not in drift_line, (
+            "ordinary price drift is being labelled a corporate action")
+        assert "%" in drift_line.split("cap ")[-1], "ordinary drift must state its percentage"
 
 
 def test_the_undated_names_are_exactly_why_the_gap_keys_this() -> None:
     """THE DESIGN DECISION, pinned. These names carry NO cap vintage, so a date-keyed caveat would
     render blank on the three largest drifts in the fleet. Keying on the computed gap reaches them.
     If a future change re-keys this on the vintage, this pin is what should stop it."""
-    for ticker, expected in (("AORT", "-18.4%"), ("VITL", "-19.0%"), ("MVST", "+17.6%")):
-        d = _dossier(ticker)
-        si = d.mechanical.stock_info
-        assert si.market_cap_as_of is None, (
-            f"{ticker} now carries a cap vintage — this pin's premise is gone; re-read the fleet "
-            f"before concluding a date-keyed caveat would be sufficient")
-        assert expected in _snapshot(ticker), f"{ticker}: the drift is not disclosed"
+    # DERIVED (2026-08-13): the three were AORT/VITL/MVST when this was written, and the
+    # 2026-08-12 re-assembly gave AORT a cap vintage (2026-07-30). The DESIGN CLAIM is not about
+    # those tickers — it is that names WITHOUT a vintage still get their drift disclosed, which a
+    # date-keyed caveat could not do. So the population is computed and the claim asserted over it.
+    undated = [f.name for f in sorted(DOSSIERS.iterdir())
+               if (f / "dossier.json").is_file()
+               and _dossier(f.name).mechanical.stock_info.market_cap_as_of is None]
+    if not undated:
+        pytest.skip("every committed name now carries a cap vintage — the premise has cleared")
+    for ticker in undated:
+        line = _snapshot(ticker)
+        if "implies" not in line:
+            continue                        # undated AND reconciling — nothing owed
+        assert "%" in line.split("cap ")[-1], (
+            f"{ticker} has NO cap vintage and drifts, yet the page states no gap — a date-keyed "
+            f"caveat would render blank here, which is exactly why this keys on the computed gap")
 
 
 def test_every_committed_name_either_reconciles_or_says_why() -> None:

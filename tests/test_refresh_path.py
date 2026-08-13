@@ -56,13 +56,21 @@ def test_a_sealed_record_re_renders_its_page_but_never_its_record(tmp_path: path
     POSITIVE: a no-transform call re-renders `dossier.md` and leaves `dossier.json` BYTE-IDENTICAL.
     NEGATIVE: a transform — an actual data refresh — still RAISES, which is the seal's real job.
     """
-    sealed = _sealed()
-    assert sealed, "no sealed name in the corpus — this pin has nothing to drive"
-    name = sealed[0]
+    # THE SEAL IS CONSTRUCTED HERE, NOT BORROWED FROM A LIVE NAME (2026-08-13). This required a
+    # sealed name in the corpus and took `sealed[0]` — FUBO, the only one. Its standing rule then
+    # CLEARED, no name was sealed, and a pin guarding the seal mechanism died with the instance it
+    # happened to be watching. The mechanism outlives any one record, so the fixture builds its own.
+    assert not _sealed(), (
+        f"{_sealed()} are sealed — if that is intended, this pin should exercise a live seal; "
+        f"if not, a stray known_wrong.json is telling readers those figures are false")
+    name = next(d.parent.name for d in sorted(DOSS.glob("*/dossier.json")))
     folder = tmp_path / name
     folder.mkdir()
-    for f in ("dossier.json", "known_wrong.json", "dossier.md"):
+    for f in ("dossier.json", "dossier.md"):
         shutil.copy(DOSS / name / f, folder / f)
+    (folder / "known_wrong.json").write_text(json.dumps(
+        {"ticker": name, "kind": "known_wrong", "recorded": "2026-08-13",
+         "items": [{"claim": "placeholder", "known_false": "replaced by the sentinel below"}]}))
     copy = folder / "dossier.json"
     record_before = copy.read_bytes()
     stale = "stale page — the renderer has moved on\n"

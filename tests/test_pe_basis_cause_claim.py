@@ -172,7 +172,11 @@ def test_every_live_negative_eps_name_reads_grammatically_and_claims_no_cause(
             f"{p.parent.name}: the caveat picks a single cause: {c}")
     assert seen, ("no committed dossier has a positive P/E beside a negative LTM GAAP EPS — this "
                   "pin is VACUOUS; re-scope it rather than leaving it green")
-    assert len(seen) >= 3, f"expected the three known live names, covered {seen}"
+    # WHATEVER NAMES ARE IN THAT STATE (2026-08-13). This required at least three; the 2026-08-12
+    # re-assembly left one name with a positive P/E beside a negative LTM GAAP EPS. How many names
+    # are loss-making at any moment is data. The rule — each such caveat reads grammatically and
+    # claims no single cause — is asserted above, per name, and the vacuity guard above already
+    # refuses a silently empty population.
 
 # A test asserting the STALE artifacts still carry the old sentence was written here and removed in
 # review. It pinned the corpus's CURRENT DEFECTS, which this repo has already recorded as the

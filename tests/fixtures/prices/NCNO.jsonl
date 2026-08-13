@@ -416,3 +416,9 @@
 {"bar_date": "2026-07-31", "close": 18.46, "high": 18.7, "internal_id": "SEC-0001902733-NCNO", "low": 17.955, "open": 18.11, "source": "polygon-grouped", "volume": 1805530.451052}
 {"bar_date": "2026-08-03", "close": 19.2, "high": 19.39, "internal_id": "SEC-0001902733-NCNO", "low": 18.84, "open": 19.03, "source": "polygon-grouped", "volume": 2312260.875489}
 {"bar_date": "2026-08-04", "close": 19.5, "high": 19.58, "internal_id": "SEC-0001902733-NCNO", "low": 18.91, "open": 18.91, "source": "polygon-grouped", "volume": 1843212.194286}
+{"bar_date": "2026-08-05", "close": 19.23, "high": 19.705, "internal_id": "SEC-0001902733-NCNO", "low": 19.13, "open": 19.53, "source": "polygon-grouped", "volume": 1845046.110043}
+{"bar_date": "2026-08-06", "close": 18.99, "high": 19.02, "internal_id": "SEC-0001902733-NCNO", "low": 18.35, "open": 18.7, "source": "polygon-grouped", "volume": 1654386.755203}
+{"bar_date": "2026-08-07", "close": 19.17, "high": 19.5223, "internal_id": "SEC-0001902733-NCNO", "low": 18.96, "open": 19.14, "source": "polygon-grouped", "volume": 1121186.704801}
+{"bar_date": "2026-08-10", "close": 18.97, "high": 19.29, "internal_id": "SEC-0001902733-NCNO", "low": 18.9, "open": 18.94, "source": "polygon-grouped", "volume": 1310141.468485}
+{"bar_date": "2026-08-11", "close": 19.16, "high": 19.53, "internal_id": "SEC-0001902733-NCNO", "low": 18.86, "open": 18.97, "source": "polygon-grouped", "volume": 1689565.83777}
+{"bar_date": "2026-08-12", "close": 19.0, "high": 19.21, "internal_id": "SEC-0001902733-NCNO", "low": 18.58, "open": 18.91, "source": "polygon-grouped", "volume": 1449185.7384}

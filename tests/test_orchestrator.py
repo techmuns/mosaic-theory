@@ -340,6 +340,14 @@ def test_a_live_structural_scan_replaces_the_carry_forward_rather_than_merging(
         tmp = Path(td)
         snaps = _stage(tmp)
         rows = [json.loads(x) for x in (snaps / "ranked_queue.jsonl").read_text().splitlines() if x]
+        # ISOLATE THE FIXTURE (2026-08-13). This staged the REAL committed queue and set ONE flag,
+        # then asserted exactly one was carried — true only while no other row carried one. The
+        # 2026-08-12 screen wrote a queue in which three do, so `carried_structural` read 3 and a
+        # pin about CARRY-vs-MERGE reddened on unrelated fleet data. The rows this test reasons
+        # about are the two it names, so every other row starts clean.
+        for r in rows:
+            r["structural_flag"] = None          # the field is REQUIRED — cleared, not removed
+            r["structurally_disqualified"] = False
         stale, fresh = rows[0]["ticker"], rows[1]["ticker"]
         rows[0]["structural_flag"] = {"signal": "going-concern", "detail": "d", "source": "8-K old"}
         rows[0]["structurally_disqualified"] = True

@@ -122,3 +122,30 @@ def test_the_fuse_table_records_which_metrics_are_fusable() -> None:
     assert {label for label, _m in _C1_CF_CONSENSUS_ONLY} == {
         "FCF (consensus basis)", "D&A (consensus basis)"}, (
         "every non-fusable metric needs its own row, or the consensus is silently dropped")
+
+
+def test_every_curated_cash_flow_row_is_exempt_from_the_materiality_flag() -> None:
+    """THE SET THAT MUST TRACK THIS ONE, and the incident that proves it.
+
+    `materiality._CORE_BRIEF_LABELS` names the rows the brief carries BY CONSTRUCTION, which the
+    material-figure guard must not fire on. This PR added `D&A ($M)` and the two consensus-basis
+    rows to the summary and did not add them there — so `D&A ($M)`, a curated row sitting in the
+    same tuple as CFO/Capex/FCF, started clearing the floor and demanding the argument address it.
+    **CNXC's re-assembly failed outright**: *"the synthesis never states 2 MATERIAL figure(s) …
+    D&A ($M) FY24 (R) = 705.8; D&A ($M) LTM = 653.9"*.
+
+    The guard exists for SURFACED UNUSUAL ITEMS — impairments, writedowns, the things a reader must
+    be made to meet. A guard that also fires on every large routine cash-flow line stops meaning
+    anything, and D&A is a consequence of past capital decisions rather than an event.
+
+    Pinned as a SET RELATION, not a literal list, so adding a row to `_C1_CF` without deciding its
+    materiality fate fails here instead of failing a fleet re-assembly hours later.
+    """
+    from vinci.dossier.materiality import _CORE_BRIEF_LABELS
+
+    curated = {f"{display} ($M)" for display, _cf, _est in _C1_CF}
+    curated |= {f"{label} ($M)" for label, _m in _C1_CF_CONSENSUS_ONLY}
+    unexempt = sorted(curated - set(_CORE_BRIEF_LABELS))
+    assert not unexempt, (
+        f"{unexempt} are curated summary rows but are not exempt from the materiality flag — a "
+        f"large routine value there will demand the synthesis address it and fail the assembly")

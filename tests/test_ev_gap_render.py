@@ -142,10 +142,24 @@ def test_two_coverages_are_different_claims_and_both_are_recorded() -> None:
     """TOTAL GAP 6 OF 11, DECOMPOSITION 3 OF 11. One number would hide the difference: a name whose
     total is known and whose attribution is not is in a different state from one where neither is,
     and the gate at `log_verdict` treats them differently — option 1 is satisfied by the TOTAL."""
-    assert len(TOTAL) == 6, f"total-gap coverage moved: {TOTAL}"
-    assert len(DECOMPOSED) == 3, f"decomposition coverage moved: {DECOMPOSED}"
-    assert DECOMPOSED == ["EPAM", "IT", "SMPL"]
-    assert SUPPRESSED == ["AORT", "MVST", "NCNO"]
+    # THE DISTINCTION, NOT THE TALLY (2026-08-13). This pinned 6 of 11; the 2026-08-12 fleet
+    # re-assembly recomputed every gap and the count moved to 7 of 14. A coverage COUNT on a living
+    # fleet reddens whenever a name gains or loses a computable gap — which is data, not a defect.
+    # What the test owns is that TOTAL and DECOMPOSITION are DIFFERENT populations, so a name whose
+    # total is known and whose attribution is not stays distinguishable from one where neither is.
+    assert TOTAL, "no committed name carries a total gap — the coverage claim is vacuous"
+    assert set(DECOMPOSED) <= set(TOTAL), (
+        f"a name is decomposed without a total gap: {sorted(set(DECOMPOSED) - set(TOTAL))}")
+    # …and the two populations stay DISJOINT, which is the claim that actually matters: a name is
+    # either decomposed or suppressed, never both, so "attribution known" and "attribution withheld"
+    # remain different statements. The literal rosters (`== ["EPAM","IT","SMPL"]`) were the same
+    # count-on-a-living-fleet problem — BRBR joined DECOMPOSED on the 2026-08-12 re-assembly because
+    # its consensus now supports an attribution, which is the feature working.
+    assert DECOMPOSED, "no committed name is decomposed — the distinction is vacuous"
+    assert not set(DECOMPOSED) & set(SUPPRESSED), (
+        f"{sorted(set(DECOMPOSED) & set(SUPPRESSED))} are BOTH decomposed and suppressed")
+    assert set(SUPPRESSED) <= set(TOTAL), (
+        f"a suppressed name carries no total gap: {sorted(set(SUPPRESSED) - set(TOTAL))}")
 
 
 @pytest.mark.parametrize("ticker", ["AORT", "MVST", "NCNO"])

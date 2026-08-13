@@ -419,3 +419,5 @@
 {"bar_date": "2026-08-05", "close": 74.2, "high": 75.3, "internal_id": "SEC-0001065280-NFLX", "low": 73.155, "open": 75.11, "source": "polygon-aggs", "volume": 28969444.346141}
 {"bar_date": "2026-08-06", "close": 73.69, "high": 75.21, "internal_id": "SEC-0001065280-NFLX", "low": 73.1002, "open": 75.14, "source": "polygon-aggs", "volume": 28892688.841822}
 {"bar_date": "2026-08-07", "close": 74.14, "high": 74.5, "internal_id": "SEC-0001065280-NFLX", "low": 73.075, "open": 73.12, "source": "polygon-aggs", "volume": 24818997.375467}
+{"bar_date": "2026-08-10", "close": 76.29, "high": 76.32, "internal_id": "SEC-0001065280-NFLX", "low": 73.57, "open": 73.795, "source": "polygon-aggs", "volume": 26959937.66762}
+{"bar_date": "2026-08-11", "close": 74.79, "high": 76.895, "internal_id": "SEC-0001065280-NFLX", "low": 74.48, "open": 76.2, "source": "polygon-aggs", "volume": 27840513.399947}

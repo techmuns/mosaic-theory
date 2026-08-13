@@ -2,8 +2,8 @@
   "ticker": "CNXC",
   "name": "Concentrix Corp",
   "cik": "0001803599",
-  "reference_date": "2026-07-06",
-  "rank": 10,
+  "reference_date": "2026-08-12",
+  "rank": 79,
   "sleeve": "overshoot",
   "mechanical": {
     "valuation": {
@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 5.997304582210242,
-        "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
-        "status": "present",
-        "note": "distorted — P/E rests on a non-current positive EPS; latest annual EPS is negative (-20.36). Not a meaningful multiple — see the P/E-basis flag"
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings"
       },
       "pe_percentile_5y": {
-        "value": 0.0044444444444444444,
-        "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
-        "status": "present",
-        "note": null
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings"
       },
       "ev_ebitda": {
         "value": 3.9,
@@ -33,7 +33,7 @@
       },
       "ev_ebitda_percentile_5y": {
         "value": 0.0,
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 23 quarters (partial last column excluded from the distribution)",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 23 quarters spanning 2020-12-31..2026-06-30 (5.5y) (partial last column excluded from the distribution)",
         "status": "present",
         "note": null
       },
@@ -343,24 +343,24 @@
         ],
         "tev": {
           "value": 6799.2,
-          "source_ref": "TEV = mcap 1550.5 + net debt 5248.7 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-07-29) — simple-TEV basis",
+          "source_ref": "TEV = mcap 1550.5 + net debt 5248.7 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-07-28, exported 2026-07-29) — simple-TEV basis",
           "status": "present",
           "note": null
         },
         "anchors": {
           "value": "FY26E $1430.0M · FY27E $1484.0M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
-          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
           "status": "present",
           "note": null
         },
         "rev_anchors": {
           "value": "FY26E $9966.8M · FY27E $10090.7M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
-          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
           "status": "present",
           "note": null
         },
         "heterogeneity_gate": "market caps span $119M–$28.9B (243x); the name is $1.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
-        "tev_as_of": "2026-07-29",
+        "tev_as_of": "2026-07-28",
         "multiples_as_of": "2026-07-06",
         "vintage_coherent": true,
         "coherence_note": "vintage-coherent: derived FY26 $1416.5M vs direct consensus $1430.0M (residual 0.009 ≤ 0.10 tolerance)",
@@ -508,7 +508,7 @@
     },
     "ev_gap": {
       "vintages": {
-        "tev_as_of": "2026-07-29",
+        "tev_as_of": "2026-07-28",
         "consensus_as_of": "≥2026-07-06"
       },
       "d_and_a_convention": null,
@@ -757,16 +757,13 @@
     },
     "drawdown_cause": {
       "shape": {
-        "value": "discrete gap-downs — 2026-01-28 no company filing; 2026-02-11 debt offering (8.01); 2026-02-12 debt offering (8.01); 2026-03-24 material agreement (1.01); 2026-06-30 earnings (2.02)",
+        "value": "discrete gap-downs — 2026-03-24 material agreement (1.01); 2026-06-30 earnings (2.02)",
         "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "status": "present",
         "note": null
       },
       "gap_down_dates": {
         "value": [
-          "2026-01-28",
-          "2026-02-11",
-          "2026-02-12",
           "2026-03-24",
           "2026-06-30"
         ],
@@ -775,46 +772,6 @@
         "note": null
       },
       "filings": [
-        {
-          "gap_date": "2026-02-11",
-          "filing_date": "2026-02-13",
-          "form": "8-K",
-          "items": [
-            "8.01",
-            "9.01"
-          ],
-          "item_types": [
-            "8.01 Other Events",
-            "9.01 Financial Statements and Exhibits"
-          ],
-          "accession": "0001803599-26-000068",
-          "url": "https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm",
-          "events": [
-            "8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The "
-          ],
-          "drivers": null,
-          "explanatory": true
-        },
-        {
-          "gap_date": "2026-02-12",
-          "filing_date": "2026-02-13",
-          "form": "8-K",
-          "items": [
-            "8.01",
-            "9.01"
-          ],
-          "item_types": [
-            "8.01 Other Events",
-            "9.01 Financial Statements and Exhibits"
-          ],
-          "accession": "0001803599-26-000068",
-          "url": "https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm",
-          "events": [
-            "8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The "
-          ],
-          "drivers": null,
-          "explanatory": true
-        },
         {
           "gap_date": "2026-03-24",
           "filing_date": "2026-03-23",
@@ -868,27 +825,27 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no revised-outlook block matched in the parsed 99.1 for 8-Ks ['0001803599-26-000068', '0001803599-26-000133']"
+        "note": "no revised-outlook block matched in the parsed 99.1 for 8-Ks ['0001803599-26-000133']"
       },
       "gap_threshold": -0.1,
       "gap_window_days": 180
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.4539519701562136,
-        "source_ref": "EOD CNXC 180d to 2026-07-06",
+        "value": -0.19335198288629252,
+        "source_ref": "EOD CNXC 180d to 2026-08-12",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.16995459527164547,
-        "source_ref": "EOD IWM 180d to 2026-07-06 (cap-band: $1.6B @ 2026-07-06 → small (<$4B) → IWM)",
+        "value": 0.1511636750836629,
+        "source_ref": "EOD IWM 180d to 2026-08-12 (cap-band: $1.6B @ 2026-08-12 → small (<$4B) → IWM)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.623906565427859,
-        "source_ref": "EOD CNXC−IWM 180d to 2026-07-06 (assembly, cap-band)",
+        "value": -0.3445156579699554,
+        "source_ref": "EOD CNXC−IWM 180d to 2026-08-12 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -905,7 +862,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "IWM",
-      "benchmark_basis": "cap-band: $1.6B @ 2026-07-06 → small (<$4B) → IWM"
+      "benchmark_basis": "cap-band: $1.6B @ 2026-08-12 → small (<$4B) → IWM"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -997,7 +954,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '2.65 - 2.77' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 12/13 resolved; most recent resolved: FQ2 2026 MET; Revenue: latest guide '2,465.00 - 2,490.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 22/26 resolved; most recent resolved: FQ2 2026 MET; Capital Expenditure: latest guide '(200.70) - (254.50)' for FY 2026 (dated 2026-01-13) (stale — 174d old)  [data ≥ 2026-07-06 · export date unverified]",
+        "value": "EPS Normalized: latest guide '2.65 - 2.77' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 12/13 resolved; most recent resolved: FQ2 2026 MET; DPS: latest guide 0.36 for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 7/8 resolved; most recent resolved: FQ2 2026 MET; Revenue: latest guide '2,465.00 - 2,490.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 22/26 resolved; most recent resolved: FQ2 2026 MET; EBIT: latest guide '295.00 - 305.00' for FQ3 2026 (dated 2026-06-29); actual ≥ guided floor 21/26 resolved; most recent resolved: FQ2 2026 MET; Capital Expenditure: latest guide '(200.70) - (254.50)' for FY 2026 (dated 2026-01-13) (stale — 211d old); Effective Tax Rate %: latest guide 25.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 15/23 resolved; most recent resolved: FQ2 2026 MET; Interest Expense: latest guide -65.0 for FQ3 2026 (dated 2026-06-29); spend ≤ guided ceiling 6/16 resolved; most recent resolved: FQ2 2026 MISSED; Free Cash Flow: latest guide '630.00 - 650.00' for FY 2026 (dated 2026-06-29); actual ≥ guided floor 0/4 resolved; most recent resolved: FY 2025 MISSED  [data ≥ 2026-07-06 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1014,6 +971,15 @@
             "most_recent": "FQ2 2026 MET"
           },
           {
+            "metric": "DPS",
+            "latest_guide": "0.36",
+            "period": "FQ3 2026",
+            "dated": "2026-06-29",
+            "age": "fresh",
+            "record": "actual ≥ floor 7/8",
+            "most_recent": "FQ2 2026 MET"
+          },
+          {
             "metric": "Revenue",
             "latest_guide": "'2,465.00 - 2,490.00'",
             "period": "FQ3 2026",
@@ -1023,13 +989,49 @@
             "most_recent": "FQ2 2026 MET"
           },
           {
+            "metric": "EBIT",
+            "latest_guide": "'295.00 - 305.00'",
+            "period": "FQ3 2026",
+            "dated": "2026-06-29",
+            "age": "fresh",
+            "record": "actual ≥ floor 21/26",
+            "most_recent": "FQ2 2026 MET"
+          },
+          {
             "metric": "Capital Expenditure",
             "latest_guide": "'(200.70) - (254.50)'",
             "period": "FY 2026",
             "dated": "2026-01-13",
-            "age": "174d (stale)",
+            "age": "211d (stale)",
             "record": "—",
             "most_recent": "—"
+          },
+          {
+            "metric": "Effective Tax Rate %",
+            "latest_guide": "25.0",
+            "period": "FQ3 2026",
+            "dated": "2026-06-29",
+            "age": "fresh",
+            "record": "spend ≤ ceiling 15/23",
+            "most_recent": "FQ2 2026 MET"
+          },
+          {
+            "metric": "Interest Expense",
+            "latest_guide": "-65.0",
+            "period": "FQ3 2026",
+            "dated": "2026-06-29",
+            "age": "fresh",
+            "record": "spend ≤ ceiling 6/16",
+            "most_recent": "FQ2 2026 MISSED"
+          },
+          {
+            "metric": "Free Cash Flow",
+            "latest_guide": "'630.00 - 650.00'",
+            "period": "FY 2026",
+            "dated": "2026-06-29",
+            "age": "fresh",
+            "record": "actual ≥ floor 0/4",
+            "most_recent": "FY 2025 MISSED"
           }
         ],
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
@@ -1941,14 +1943,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 4 (2 insiders, $0.16M) · sells 1 (1 insider, $133.50M) — in the last 182 days · last purchase $0.02M, President and CEO, 2026-07-08 (~1mo ago) · largest purchase $0.08M, President and CEO, 2025-10-30 (~9mo ago) · last sale $133.50M, 10% owner, 2026-04-29 (~3mo ago) · grants 54 · last filing 2026-07-09 · other F×76/G×1/M×6",
+        "value": "Open-market buys 3 (2 insiders, $0.12M) · sells 1 (1 insider, $133.50M) — in the last 182 days · last purchase $0.02M, President and CEO, 2026-07-08 (~1mo ago) · largest purchase $0.08M, President and CEO, 2025-10-30 (~9mo ago) · last sale $133.50M, 10% owner, 2026-04-29 (~3mo ago) · grants 54 · last filing 2026-07-09 · other F×76/G×1/M×6",
         "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 140 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-06-30): 10.1M → 11.9M sh (+18.4%, rising) · 19.5% of shares out (EDGAR XBRL) · DTC 6.3d · recent: 2026-06-30 11.9M · 2026-06-15 10.1M · 2026-05-29 10.4M · 2026-05-15 10.5M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 11,905,838 short ÷ 1,890,557 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-07-31): 10.9M → 10.3M sh (-5.7%, falling) · 16.9% of shares out (EDGAR XBRL) · DTC 6.1d · recent: 2026-07-31 10.3M · 2026-07-15 10.9M · 2026-06-30 11.9M · 2026-06-15 10.1M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-07-31); DTC = 10,306,285 short ÷ 1,695,389 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -2192,7 +2194,7 @@
         "note": null
       },
       "summary": {
-        "value": "term loans 1,837.5 (1,965.6→1,837.5 QoQ); senior bonds 2,150.0; leases 919.4; total principal 5,519.4; total debt 5,504.3 (latest quarter) ($M)",
+        "value": "term loans 1,837.5 (12 months Nov-30-2025 1,965.6 → 3 months May-31-2026 1,837.5); senior bonds 2,150.0; leases 919.4; total principal 5,519.4; total debt 5,504.3 (3 months May-31-2026) ($M)",
         "source_ref": "CIQ Financials→Capital Structure Summary",
         "status": "present",
         "note": null
@@ -2205,7 +2207,7 @@
         "note": null
       },
       "covenant_pointers": {
-        "value": "Credit Facility [0001803599-23-000177]",
+        "value": "material contracts (10-K exhibit i [0001803599-26-000027]; Credit Facility [0001803599-25-000111]; Credit Facility [0001803599-23-000091]; Senior Unsecured Revolving Credit  [0001803599-23-000107]; Senior Unsecured Revolving Credit  [0001803599-21-000215]",
         "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
         "status": "present",
         "note": null
@@ -2213,12 +2215,57 @@
       "covenant_pointer_rows": {
         "value": [
           {
+            "family": "material contracts (10-K exhibit index)",
+            "filing": "latest 10-K",
+            "filing_date": "2026-01-28",
+            "accession": "0001803599-26-000027",
+            "exhibits": [
+              "exhibit1022-2025form10k.htm",
+              "exhibit1023-202510xk.htm",
+              "exhibit1024-2025form10xk.htm"
+            ],
+            "note": ""
+          },
+          {
             "family": "Credit Facility",
             "filing": "8-K",
-            "filing_date": "2023-08-02",
-            "accession": "0001803599-23-000177",
+            "filing_date": "2025-04-11",
+            "accession": "0001803599-25-000111",
             "exhibits": [
-              "exhibit41indenture.htm"
+              "exhibit101041125.htm",
+              "exhibit102041125.htm"
+            ],
+            "note": ""
+          },
+          {
+            "family": "Credit Facility",
+            "filing": "8-K",
+            "filing_date": "2023-03-31",
+            "accession": "0001803599-23-000091",
+            "exhibits": [
+              "a033123exhibit101.htm",
+              "a033123exhibit102.htm",
+              "a033123exhibit103.htm"
+            ],
+            "note": ""
+          },
+          {
+            "family": "Senior Unsecured Revolving Credit Facility",
+            "filing": "8-K",
+            "filing_date": "2023-04-26",
+            "accession": "0001803599-23-000107",
+            "exhibits": [
+              "form8-k04x26x23exhibit101.htm"
+            ],
+            "note": ""
+          },
+          {
+            "family": "Senior Unsecured Revolving Credit Facility",
+            "filing": "8-K",
+            "filing_date": "2021-12-30",
+            "accession": "0001803599-21-000215",
+            "exhibits": [
+              "exhibit101122721.htm"
             ],
             "note": ""
           },
@@ -2260,7 +2307,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Facility · 0001803599-23-000177]\n  Principal / commitment amount: unlimited aggregate principal amount to be issued from time to time in one or more…\n  Interest / coupon rate: Rate to be established per series pursuant to Section 3.01; base indenture does not…\n  Maturity date: Maturity date to be established per series pursuant to Section 3.01; no specific…\n  Financial-maintenance covenants: Exempted Debt does not exceed 15% of Consolidated Tangible Assets (basket for Liens…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Facility · 0001803599-23-000091]\n  Principal / commitment amount: Sellers' Note aggregate principal amount of €700,000,000.00; Closing Cash Payment…\n  Interest / coupon rate: 2.0% per annum (fixed); default rate increases by 2.0% per annum during a continuing…\n  Maturity date: The second anniversary of the Closing Date\n[Senior Unsecured Revolving Credit Facility · 0001803599-21-000215]\n  Principal / commitment amount: Term A Loan Commitments: $2,100,000,000; Aggregate Revolving Commitments:…\n  Interest / coupon rate: Term SOFR Loans: Term SOFR plus Applicable Rate (per Pricing Tier: 2.00% / 1.75% /…\n  Maturity date: December 27, 2026 (as to Revolving Loans, Swing Line Loans, Letters of Credit and…\n  Financial-maintenance covenants: Consolidated Leverage Ratio: not greater than 3.75:1.0 as of end of any fiscal…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -2273,7 +2320,7 @@
               "value": null,
               "source_ref": null,
               "status": "unknown",
-              "note": "not stated in 8-K 0001803599-23-000177 · exhibit41indenture.htm"
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2284,10 +2331,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "unlimited aggregate principal amount to be issued from time to time in one or more series",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
-              "status": "present",
-              "note": "verbatim: “The aggregate principal amount of Securities which may be authenticated and delivered under this Indenture is unlimited. The Securities may be issued from time to time in one or more series.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2298,10 +2345,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Rate to be established per series pursuant to Section 3.01; base indenture does not state a numeric rate. Interest computed on the basis of a 360-day year of twelve 30-day months.",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
-              "status": "present",
-              "note": "verbatim: “the rate or rates at which the Securities of the series shall bear interest, if any, or the method by which such rate or rates shall be determined, the date or dates from which such interest shall accrue... Except as otherwise specified pursuant to Section 3.01 for Securities of any series, interest on the Securities of each series shall be computed on the basis of a 360-day year of twelve 30-day months.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2312,10 +2359,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Maturity date to be established per series pursuant to Section 3.01; no specific date stated in the base indenture",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
-              "status": "present",
-              "note": "verbatim: ““ Maturity ” means, with respect to any Security, the date on which the principal of such Security shall become due and payable as therein and herein provided, whether by declaration, call for redemption or otherwise.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2326,10 +2373,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Exempted Debt does not exceed 15% of Consolidated Tangible Assets (basket for Liens under Section 6.09 and for sale and lease-back transactions under Section 6.10); Restrictions on Liens (Section 6.09) and Restrictions on Sale and Lease-back Transactions (Section 6.10). No financial ratio maintenance covenant otherwise stated.",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
-              "status": "present",
-              "note": "verbatim: “Notwithstanding the foregoing, the Company or any Restricted Subsidiary may create or assume Liens in addition to those permitted by this Section 6.09... provided that at the time of and after giving effect to the creation or assumption of such Liens... Exempted Debt does not exceed 15% of Consolidated Tangible Assets of the Company and its Subsidiaries.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2340,10 +2387,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Whether Securities are secured and whether guaranteed by any other Person is to be established per series pursuant to Section 3.01. Base indenture states no specific collateral or guarantors; equal-and-ratable Lien mechanic under Section 6.09; supplemental indentures may add guarantees, co-obligors and collateral (Section 14.01(g)-(h)).",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
-              "status": "present",
-              "note": "verbatim: “whether the Securities of such series shall be secured;... whether the payment of principal of, and premium, if any, or interest on, the Securities of the series will be guaranteed by any other Person; ... The Company shall not, and shall not permit any Restricted Subsidiary to, create or incur any Lien on any shares of stock of a Restricted Subsidiary or Principal Property... unless the Company secures or causes the applicable Restricted Subsidiary to secure the Securities outstanding under this Indenture...”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2354,10 +2401,206 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Change of Control Triggering Event repurchase offer at 101% of aggregate principal amount plus accrued and unpaid interest (Section 6.08). Events of Default (Section 7.01): (a) interest payment default (30-day grace); (b) principal payment default; (d) covenant default (90-day grace after notice); (e)/(f) bankruptcy/insolvency (90-day continuance for involuntary); (g) failure to purchase in Change of Control Offer; (h) cross-default/cross-acceleration of Indebtedness aggregating in excess of $400,000,000.",
-              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in latest 10-K 0001803599-26-000027 · exhibit1022-2025form10k.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Conversion price / mechanics",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001803599-23-000091 · a033123exhibit101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Principal / commitment amount",
+            "value": {
+              "value": "Sellers' Note aggregate principal amount of €700,000,000.00; Closing Cash Payment consideration for Acquired Shares of €500,000,000.00 in cash (minus the Leakage Amount, minus the Aggregate Exit Option Exercise Price)",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
               "status": "present",
-              "note": "verbatim: “If a Change of Control Triggering Event occurs with respect to the Securities of a series, unless the Company has exercised its right to redeem the Securities of such series, the Company shall make an offer to each Holder of Securities of that series to purchase all or any part... of that Holder’s Securities at a purchase price in cash equal to 101% of the aggregate principal amount thereof, plus accrued and unpaid interest... The term “ Event of Default ”... shall mean one of the following described events... (a) the failure of the Company to pay any installment of interest... continued unremedied for a period of 30 calendar days; (b) the failure of the Company to pay the principal of, and premium, if any... (d)... failure to perform any covenants... not remedied for a period of 90 calendar days after written notice... (e)/(f) bankruptcy events... (g) a failure to purchase the series of Securities tendered for purchase in respect of a Change of Control Offer as required under Section 6.08; (h) a default under any... Indebtedness for money borrowed... which... results in the acceleration... aggregates in excess of $400,000,000”"
+              "note": "verbatim: “CONCENTRIX CORPORATION PROMISSORY NOTE €700,000,000 ... in order to evidence loans deemed to have been extended by the Noteholders to the Maker in the aggregate principal amount of €700,000,000 for purposes of financing, in part, the acquisition of the Acquired Shares”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate",
+            "value": {
+              "value": "2.0% per annum (fixed); default rate increases by 2.0% per annum during a continuing Event of Default",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “From and including the date hereof through but excluding the Maturity Date, interest on this Note shall accrue on the unpaid principal amount of this Note outstanding from time to time at a rate per annum equal to 2.0% (the \"Interest Rate\"). ... If any Event of Default (as defined below) has occurred and is continuing, then, for so long as such Event of Default is continuing, to the extent permitted by applicable Law, the Interest Rate shall increase by 2.0% per annum.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": 2.0,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "The second anniversary of the Closing Date",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “FOR VALUE RECEIVED, the Maker hereby promises to pay to the Noteholders, on the second anniversary of the Closing Date (the \"Maturity Date\") the outstanding principal amount of this Note”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001803599-23-000091 · a033123exhibit101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": "Guarantees provision is a bracketed placeholder [Guarantees] in the form Sellers' Note; conditional Subsidiary guarantees to be added at Closing only if the Maker issues Senior Notes that are guaranteed; note otherwise unsecured (100% of principal, without premium or penalty; no collateral pledge stated)",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “5.5    [Guarantees] ... To the extent the Maker issues Senior Notes (as defined in the Commitment Letter) on or prior to the Closing Date to finance any portion of the Closing Cash Payment or to refinance any portion of the Acquisition Transaction (as defined in the Commitment Letter) after the Closing Date and, in either case, any Subsidiary of the Maker provides guarantees in respect of such Senior Notes, the form of this Note shall be amended so that when it is issued on the Closing Date, it is guaranteed in a manner reasonably acceptable to the Required Noteholders by all such Subsidiary guarantors of the Senior Notes”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Mandatory repurchase upon Change of Control at 100% of unpaid principal plus accrued interest; mandatory repurchase upon receipt of net cash proceeds in excess of $500,000,000 from refinancing of the Note (100% of net cash proceeds). Events of Default include: payment default (principal/Redemption/Repurchase Price when due; interest within 3 Business Days); covenant defaults under Sections 5.1/5.3 (10-day cure) and other covenants (30-day cure); voluntary bankruptcy/reorganization/assignment; involuntary bankruptcy order not dismissed within 60 days; failure of representation/warranty to be true and correct in material respects; challenge to validity/enforceability; cross-default/cross-acceleration on Material Indebtedness. Acceleration automatic upon bankruptcy EoD; otherwise upon Required Noteholder declaration.",
+              "source_ref": "8-K 0001803599-23-000091 · a033123exhibit101.htm",
+              "status": "present",
+              "note": "verbatim: “3.5.1. Upon a Change of Control. Upon the occurrence of a Change of Control, the Maker shall repurchase the outstanding Note in cash, without premium or penalty, at a price equal to 100% of the entire unpaid principal amount of the Note, together with all accrued and unpaid interest thereon through the date of redemption ... 3.5.2. Net Cash Proceeds of Note Refinancing. If, after the Closing Date and at any time that the bridge facility contemplated by the Commitment Letter (if funded) has been repaid in full, the Maker actually receives net cash proceeds ... in excess of $500,000,000 in the aggregate from the issuance of any debt securities or instruments or the incurrence of other debt for borrowed money ... pursuant to a refinancing transaction whose stated purpose is to refinance all or a portion of this Note, the Maker shall repurchase this Note in cash ... in an amount equal to 100% of any net cash proceeds actually received in such refinancing ... 6.1 An \"Event of Default\" shall exist if any of the following conditions or events shall occur and be continuing: (a) Maker defaults in the payment of (x) principal, Redemption Price or Repurchase Price ... or (y) interest ... within three (3) Business Days ...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Conversion price / mechanics",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001803599-21-000215 · exhibit101122721.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Principal / commitment amount",
+            "value": {
+              "value": "Term A Loan Commitments: $2,100,000,000; Aggregate Revolving Commitments: $1,000,000,000 (\"The amount of the Aggregate Revolving Commitments in effect on the First Amendment Effective Date is ONE BILLION DOLLARS ($1,000,000,000).\"); Letter of Credit Sublimit: $75,000,000; Swing Line Sublimit: $50,000,000",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: “The aggregate principal amount of the Term A Loan Commitments of all of the Lenders as in effect on the First Amendment Effective Date is TWO BILLION ONE HUNDRED MILLION DOLLARS ($2,100,000,000).”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate",
+            "value": {
+              "value": "Term SOFR Loans: Term SOFR plus Applicable Rate (per Pricing Tier: 2.00% / 1.75% / 1.50% / 1.25% based on Consolidated Leverage Ratio); Base Rate Loans: Base Rate plus Applicable Rate (1.00% / 0.75% / 0.50% / 0.25%); Swing Line Loans: Daily Simple SOFR plus Applicable Rate for Term SOFR Loans. Commitment Fee: 0.300% / 0.275% / 0.250% / 0.225%. Applicable Rate from First Amendment Effective Date until first Compliance Certificate for second full fiscal quarter determined based on Pricing Tier 3.",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans.”"
+            },
+            "base_rate_label": "Term SOFR",
+            "margin_pct": 2.0,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "December 27, 2026 (as to Revolving Loans, Swing Line Loans, Letters of Credit and the Term A Loan); Incremental Term Loan: as specified in applicable Incremental Amendment",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: ““ Maturity Date ” means (a) as to the Revolving Loans, Swing Line Loans, Letters of Credit (and the related L/C Obligations) and the Term A Loan, December 27, 2026 and (b) as to an Incremental Term Loan, the final maturity date applicable thereto as specified in the applicable Incremental Amendment; provided , that , in each case, if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": "Consolidated Leverage Ratio: not greater than 3.75:1.0 as of end of any fiscal quarter (increased to 4.25:1.0 during a Leverage Increase Period following a Qualified Acquisition); Consolidated Interest Coverage Ratio: not less than 3.00:1.0 as of end of any fiscal quarter",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: “(a) Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio as of the end of any fiscal quarter of the Borrower to be greater than 3.75:1.0; provided , that , upon the consummation of a Qualified Acquisition ... the ratio set forth above shall be increased to 4.25:1.0 ... (b) Consolidated Interest Charge Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any fiscal quarter of the Borrower to be less than 3.00:1.0.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": "Secured and guaranteed. Guarantors: Domestic Subsidiaries identified under \"Guarantors\"/\"New Loan Parties\" on signature pages (incl. Concentrix Solutions Corporation, Concentrix CVG Corporation, Concentrix CVG Customer Management Group Inc., Convergys Customer Management International Inc., Convergys Customer Management Group Canada Holding Inc., Concentrix CVG Customer Management Delaware LLC, Concentrix CVG Delaware International Inc., Concentrix Services US, Inc., Stream Holdings Corporation, SGS Holdings, Inc., Stream Global Services, Inc., ProKarma Holdings Inc., ProKarma, Inc.). Collateral: continuing security interest in Collateral pursuant to Security Agreement (dated Nov 30, 2020). Pledged Equity: 100% of issued and outstanding Equity Interests of each directly-owned Domestic Subsidiary and 65% of voting / 100% of non-voting Equity Interests in each directly-owned Foreign Subsidiary (other than Immaterial Foreign Subsidiary).",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: “Such New Loan Party hereby jointly and severally together with the other Guarantors, guarantees to the Administrative Agent, each Lender (including each New Lender) and each other holder of the Obligations, as provided in Article IV of the Amended Credit Agreement, as primary obligor and not as surety, the prompt payment and performance of the Obligations in full when due ... to secure the prompt payment and performance in full when due ... of the Secured Obligations ... such New Loan Party hereby grants, pledges and assigns to the Administrative Agent, for the benefit of the holders of the Secured Obligations, a continuing security interest in ... the Collateral ... of such New Loan Party.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Mandatory prepayments (Section 2.05(b)): (i) revolving over-advance excess; (ii) 100% of Net Cash Proceeds of Material Disposition or Material Recovery Event not reinvested within 365 days; (iii) 100% of Net Cash Proceeds of any Debt Issuance. Events of Default (Section 9.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults (30-day cure); (d) Representations and Warranties; (e) Cross-Default (Material Indebtedness = Threshold Amount $150,000,000); (f) Insolvency Proceedings; (g) Inability to Pay Debts/Attachment; (h) Judgments; (i) ERISA; (j) Invalidity of Loan Documents; (k) Change of Control (40% Voting Equity Interests); (l) Invalidity of Subordination Provisions.",
+              "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+              "status": "present",
+              "note": "verbatim: “(b) Mandatory Prepayments of Loans . (i) Revolving Commitments . If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay Revolving Loans and/or Swing Line Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess ... (ii) Dispositions and Recovery Events . The Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of the Net Cash Proceeds received by any Loan Party from any Material Disposition or Material Recovery Event to the extent such Net Cash Proceeds are not reinvested ... within 365 days ... (iii) Debt Issuances . Immediately upon receipt by any Loan Party of the Net Cash Proceeds of any Debt Issuance by any Loan Party, the Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of such Net Cash Proceeds.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2377,7 +2620,7 @@
         "note": "(P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event"
       },
       "panel_vintage": {
-        "value": "the debt schedule is 159d old (source filed 2026-01-28); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 196d old (source filed 2026-01-28); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Jan-28-2026",
         "status": "present",
         "note": null
@@ -2675,20 +2918,20 @@
           "ticker": "TTEC",
           "is_subject": false,
           "market_cap": 119.2,
-          "acquired": 501.873,
-          "total_assets": 1412.615,
-          "pct_assets": 0.355279393182148,
-          "pct_market_cap": 4.210343959731543,
+          "acquired": 501.59,
+          "total_assets": 1373.647,
+          "pct_assets": 0.36515203687701425,
+          "pct_market_cap": 4.207969798657718,
           "note": null,
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
-            "window_start": "2021-03-31",
-            "window_end": "2026-03-31",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
             "observations": 2,
             "charged_years": 2,
             "total": 438.899,
-            "pct_acquired": 0.8745220404365248,
+            "pct_acquired": 0.8750154508662454,
             "last_charge_end": "2025-12-31",
             "last_charge_amount": 205.367,
             "pending": null,
@@ -2701,7 +2944,7 @@
       "size_floor": 1000.0,
       "subject_pct_assets": 0.5139805611172692,
       "subject_pct_market_cap": 3.484939696871977,
-      "median_all_assets": 0.35913871577536816,
+      "median_all_assets": 0.36407503762280125,
       "median_all_market_cap": 0.5111350871489606,
       "median_large_assets": 0.4471219512195122,
       "median_large_market_cap": 0.38447341487558934,
@@ -3247,6 +3490,70 @@
                 775.55175,
                 null,
                 null
+              ],
+              "material": false
+            },
+            {
+              "label": "D&A ($M)",
+              "cells": [
+                "130",
+                "155",
+                "306",
+                "277",
+                "277",
+                "310",
+                "388",
+                "706",
+                "660",
+                "654",
+                "—",
+                "—"
+              ],
+              "values": [
+                129.868,
+                154.598,
+                305.78,
+                276.566,
+                277.175,
+                309.537,
+                388.295,
+                705.845,
+                660.433,
+                653.896,
+                null,
+                null
+              ],
+              "material": false
+            },
+            {
+              "label": "D&A (consensus basis) ($M)",
+              "cells": [
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "214",
+                "212"
+              ],
+              "values": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                213.8,
+                211.6
               ],
               "material": false
             }
@@ -4025,22 +4332,22 @@
     },
     "stock_info": {
       "price": {
-        "value": 25.41,
+        "value": 24.51,
         "source_ref": "EOD CNXC last close",
         "status": "present",
         "note": null
       },
       "high_52w": {
-        "value": 62.14,
+        "value": 57.875,
         "source_ref": "EOD CNXC 52-week high",
         "status": "present",
-        "note": null
+        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
       },
       "low_52w": {
         "value": 19.12,
         "source_ref": "EOD CNXC 52-week low",
         "status": "present",
-        "note": null
+        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
       },
       "shares_out": {
         "value": 61018350.0,
@@ -4060,1274 +4367,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-28",
-      "market_cap_as_of": null
+      "as_of": "2026-08-12",
+      "market_cap_as_of": "2026-07-29"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-07-07",
+          "date": "2025-08-13",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-07-08",
-          "name": 106.74,
-          "benchmark": 100.69
-        },
-        {
-          "date": "2025-07-09",
-          "name": 105.8,
-          "benchmark": 101.78
-        },
-        {
-          "date": "2025-07-10",
-          "name": 105.12,
-          "benchmark": 102.31
-        },
-        {
-          "date": "2025-07-11",
-          "name": 103.42,
-          "benchmark": 100.9
-        },
-        {
-          "date": "2025-07-14",
-          "name": 99.59,
-          "benchmark": 101.57
-        },
-        {
-          "date": "2025-07-15",
-          "name": 97.78,
-          "benchmark": 99.59
-        },
-        {
-          "date": "2025-07-16",
-          "name": 98.75,
-          "benchmark": 100.59
-        },
-        {
-          "date": "2025-07-17",
-          "name": 101.5,
-          "benchmark": 101.91
-        },
-        {
-          "date": "2025-07-18",
-          "name": 102.91,
-          "benchmark": 101.18
-        },
-        {
-          "date": "2025-07-21",
-          "name": 102.01,
-          "benchmark": 100.77
-        },
-        {
-          "date": "2025-07-22",
-          "name": 107.41,
-          "benchmark": 101.61
-        },
-        {
-          "date": "2025-07-23",
-          "name": 109.39,
-          "benchmark": 103.16
-        },
-        {
-          "date": "2025-07-24",
-          "name": 107.23,
-          "benchmark": 101.74
-        },
-        {
-          "date": "2025-07-25",
-          "name": 106.83,
-          "benchmark": 102.12
-        },
-        {
-          "date": "2025-07-28",
-          "name": 105.52,
-          "benchmark": 102.0
-        },
-        {
-          "date": "2025-07-29",
-          "name": 102.05,
-          "benchmark": 101.35
-        },
-        {
-          "date": "2025-07-30",
-          "name": 97.58,
-          "benchmark": 100.83
-        },
-        {
-          "date": "2025-07-31",
-          "name": 91.69,
-          "benchmark": 99.85
-        },
-        {
-          "date": "2025-08-01",
-          "name": 81.55,
-          "benchmark": 97.81
-        },
-        {
-          "date": "2025-08-04",
-          "name": 81.14,
-          "benchmark": 100.0
-        },
-        {
-          "date": "2025-08-05",
-          "name": 83.52,
-          "benchmark": 100.51
-        },
-        {
-          "date": "2025-08-06",
-          "name": 82.41,
-          "benchmark": 100.38
-        },
-        {
-          "date": "2025-08-07",
-          "name": 81.51,
-          "benchmark": 100.05
-        },
-        {
-          "date": "2025-08-08",
-          "name": 83.08,
-          "benchmark": 100.27
-        },
-        {
-          "date": "2025-08-11",
-          "name": 81.05,
-          "benchmark": 100.25
-        },
-        {
-          "date": "2025-08-12",
-          "name": 81.83,
-          "benchmark": 103.22
-        },
-        {
-          "date": "2025-08-13",
-          "name": 86.79,
-          "benchmark": 105.23
-        },
-        {
           "date": "2025-08-14",
-          "name": 86.19,
-          "benchmark": 103.87
+          "name": 99.31,
+          "benchmark": 98.71
         },
         {
           "date": "2025-08-15",
-          "name": 85.02,
-          "benchmark": 103.37
+          "name": 97.97,
+          "benchmark": 98.23
         },
         {
           "date": "2025-08-18",
-          "name": 84.97,
-          "benchmark": 103.75
+          "name": 97.91,
+          "benchmark": 98.59
         },
         {
           "date": "2025-08-19",
-          "name": 86.03,
-          "benchmark": 102.95
+          "name": 99.13,
+          "benchmark": 97.83
         },
         {
           "date": "2025-08-20",
-          "name": 87.1,
-          "benchmark": 102.58
+          "name": 100.37,
+          "benchmark": 97.49
         },
         {
           "date": "2025-08-21",
-          "name": 87.58,
-          "benchmark": 102.84
+          "name": 100.91,
+          "benchmark": 97.73
         },
         {
           "date": "2025-08-22",
-          "name": 91.87,
-          "benchmark": 106.87
+          "name": 105.85,
+          "benchmark": 101.56
         },
         {
           "date": "2025-08-25",
-          "name": 90.4,
-          "benchmark": 105.75
+          "name": 104.17,
+          "benchmark": 100.49
         },
         {
           "date": "2025-08-26",
-          "name": 88.27,
-          "benchmark": 106.62
+          "name": 101.71,
+          "benchmark": 101.32
         },
         {
           "date": "2025-08-27",
-          "name": 89.61,
-          "benchmark": 107.38
+          "name": 103.25,
+          "benchmark": 102.04
         },
         {
           "date": "2025-08-28",
-          "name": 88.85,
-          "benchmark": 107.5
+          "name": 102.38,
+          "benchmark": 102.16
         },
         {
           "date": "2025-08-29",
-          "name": 93.08,
-          "benchmark": 107.03
+          "name": 107.26,
+          "benchmark": 101.71
         },
         {
           "date": "2025-09-02",
-          "name": 91.27,
-          "benchmark": 106.45
+          "name": 105.16,
+          "benchmark": 101.16
         },
         {
           "date": "2025-09-03",
-          "name": 91.69,
-          "benchmark": 106.34
+          "name": 105.65,
+          "benchmark": 101.06
         },
         {
           "date": "2025-09-04",
-          "name": 92.55,
-          "benchmark": 107.67
+          "name": 106.65,
+          "benchmark": 102.32
         },
         {
           "date": "2025-09-05",
-          "name": 94.95,
-          "benchmark": 108.21
+          "name": 109.41,
+          "benchmark": 102.83
         },
         {
           "date": "2025-09-08",
-          "name": 92.7,
-          "benchmark": 108.43
+          "name": 106.81,
+          "benchmark": 103.04
         },
         {
           "date": "2025-09-09",
-          "name": 94.5,
-          "benchmark": 107.79
+          "name": 108.88,
+          "benchmark": 102.43
         },
         {
           "date": "2025-09-10",
-          "name": 91.11,
-          "benchmark": 107.6
+          "name": 104.98,
+          "benchmark": 102.25
         },
         {
           "date": "2025-09-11",
-          "name": 95.29,
-          "benchmark": 109.59
+          "name": 109.8,
+          "benchmark": 104.14
         },
         {
           "date": "2025-09-12",
-          "name": 95.22,
-          "benchmark": 108.47
+          "name": 109.72,
+          "benchmark": 103.08
         },
         {
           "date": "2025-09-15",
-          "name": 94.64,
-          "benchmark": 108.93
+          "name": 109.05,
+          "benchmark": 103.52
         },
         {
           "date": "2025-09-16",
-          "name": 96.67,
-          "benchmark": 108.44
+          "name": 111.38,
+          "benchmark": 103.05
         },
         {
           "date": "2025-09-17",
-          "name": 97.9,
-          "benchmark": 108.72
+          "name": 112.81,
+          "benchmark": 103.32
         },
         {
           "date": "2025-09-18",
-          "name": 100.74,
-          "benchmark": 111.43
+          "name": 116.08,
+          "benchmark": 105.89
         },
         {
           "date": "2025-09-19",
-          "name": 100.51,
-          "benchmark": 110.58
+          "name": 115.82,
+          "benchmark": 105.09
         },
         {
           "date": "2025-09-22",
-          "name": 97.97,
-          "benchmark": 111.22
+          "name": 112.89,
+          "benchmark": 105.7
         },
         {
           "date": "2025-09-23",
-          "name": 97.19,
-          "benchmark": 110.97
+          "name": 111.99,
+          "benchmark": 105.46
         },
         {
           "date": "2025-09-24",
-          "name": 98.09,
-          "benchmark": 109.95
+          "name": 113.03,
+          "benchmark": 104.49
         },
         {
           "date": "2025-09-25",
-          "name": 97.02,
-          "benchmark": 108.9
+          "name": 111.79,
+          "benchmark": 103.49
         },
         {
           "date": "2025-09-26",
-          "name": 84.09,
-          "benchmark": 109.83
+          "name": 96.89,
+          "benchmark": 104.38
         },
         {
           "date": "2025-09-29",
-          "name": 84.39,
-          "benchmark": 109.96
+          "name": 97.24,
+          "benchmark": 104.5
         },
         {
           "date": "2025-09-30",
-          "name": 81.42,
-          "benchmark": 110.12
+          "name": 93.82,
+          "benchmark": 104.64
         },
         {
           "date": "2025-10-01",
-          "name": 85.07,
-          "benchmark": 110.36
+          "name": 98.03,
+          "benchmark": 104.87
         },
         {
           "date": "2025-10-02",
-          "name": 84.4,
-          "benchmark": 111.05
+          "name": 97.26,
+          "benchmark": 105.54
         },
         {
           "date": "2025-10-03",
-          "name": 85.14,
-          "benchmark": 111.88
+          "name": 98.11,
+          "benchmark": 106.32
         },
         {
           "date": "2025-10-06",
-          "name": 83.87,
-          "benchmark": 112.32
+          "name": 96.65,
+          "benchmark": 106.74
         },
         {
           "date": "2025-10-07",
-          "name": 84.26,
-          "benchmark": 111.12
+          "name": 97.09,
+          "benchmark": 105.6
         },
         {
           "date": "2025-10-08",
-          "name": 84.79,
-          "benchmark": 112.28
+          "name": 97.7,
+          "benchmark": 106.7
         },
         {
           "date": "2025-10-09",
-          "name": 84.7,
-          "benchmark": 111.56
+          "name": 97.6,
+          "benchmark": 106.02
         },
         {
           "date": "2025-10-10",
-          "name": 79.0,
-          "benchmark": 108.22
+          "name": 91.03,
+          "benchmark": 102.84
         },
         {
           "date": "2025-10-13",
-          "name": 79.08,
-          "benchmark": 111.23
+          "name": 91.12,
+          "benchmark": 105.7
         },
         {
           "date": "2025-10-14",
-          "name": 79.25,
-          "benchmark": 112.82
+          "name": 91.32,
+          "benchmark": 107.21
         },
         {
           "date": "2025-10-15",
-          "name": 78.33,
-          "benchmark": 113.93
+          "name": 90.26,
+          "benchmark": 108.26
         },
         {
           "date": "2025-10-16",
-          "name": 79.16,
-          "benchmark": 111.53
+          "name": 91.22,
+          "benchmark": 105.99
         },
         {
           "date": "2025-10-17",
-          "name": 79.13,
-          "benchmark": 110.78
+          "name": 91.18,
+          "benchmark": 105.27
         },
         {
           "date": "2025-10-20",
-          "name": 79.61,
-          "benchmark": 112.94
+          "name": 91.74,
+          "benchmark": 107.33
         },
         {
           "date": "2025-10-21",
-          "name": 82.59,
-          "benchmark": 112.41
+          "name": 95.16,
+          "benchmark": 106.82
         },
         {
           "date": "2025-10-22",
-          "name": 83.49,
-          "benchmark": 110.75
+          "name": 96.2,
+          "benchmark": 105.24
         },
         {
           "date": "2025-10-23",
-          "name": 83.96,
-          "benchmark": 112.15
+          "name": 96.75,
+          "benchmark": 106.57
         },
         {
           "date": "2025-10-24",
-          "name": 82.8,
-          "benchmark": 113.52
+          "name": 95.41,
+          "benchmark": 107.88
         },
         {
           "date": "2025-10-27",
-          "name": 81.23,
-          "benchmark": 113.91
+          "name": 93.6,
+          "benchmark": 108.25
         },
         {
           "date": "2025-10-28",
-          "name": 80.01,
-          "benchmark": 113.3
+          "name": 92.19,
+          "benchmark": 107.67
         },
         {
           "date": "2025-10-29",
-          "name": 75.25,
-          "benchmark": 112.34
+          "name": 86.7,
+          "benchmark": 106.76
         },
         {
           "date": "2025-10-30",
-          "name": 72.27,
-          "benchmark": 111.43
+          "name": 83.27,
+          "benchmark": 105.89
         },
         {
           "date": "2025-10-31",
-          "name": 71.12,
-          "benchmark": 112.06
+          "name": 81.95,
+          "benchmark": 106.49
         },
         {
           "date": "2025-11-03",
-          "name": 69.87,
-          "benchmark": 111.7
+          "name": 80.5,
+          "benchmark": 106.15
         },
         {
           "date": "2025-11-04",
-          "name": 68.81,
-          "benchmark": 109.77
+          "name": 79.28,
+          "benchmark": 104.32
         },
         {
           "date": "2025-11-05",
-          "name": 67.4,
-          "benchmark": 111.35
+          "name": 77.66,
+          "benchmark": 105.82
         },
         {
           "date": "2025-11-06",
-          "name": 64.63,
-          "benchmark": 109.38
+          "name": 74.47,
+          "benchmark": 103.95
         },
         {
           "date": "2025-11-07",
-          "name": 61.33,
-          "benchmark": 109.96
+          "name": 70.66,
+          "benchmark": 104.49
         },
         {
           "date": "2025-11-10",
-          "name": 60.89,
-          "benchmark": 111.06
+          "name": 70.16,
+          "benchmark": 105.54
         },
         {
           "date": "2025-11-11",
-          "name": 60.73,
-          "benchmark": 111.15
+          "name": 69.97,
+          "benchmark": 105.63
         },
         {
           "date": "2025-11-12",
-          "name": 62.37,
-          "benchmark": 110.88
+          "name": 71.86,
+          "benchmark": 105.37
         },
         {
           "date": "2025-11-13",
-          "name": 63.27,
-          "benchmark": 107.76
+          "name": 72.9,
+          "benchmark": 102.41
         },
         {
           "date": "2025-11-14",
-          "name": 62.23,
-          "benchmark": 108.08
+          "name": 71.7,
+          "benchmark": 102.71
         },
         {
           "date": "2025-11-17",
-          "name": 59.1,
-          "benchmark": 105.93
+          "name": 68.1,
+          "benchmark": 100.67
         },
         {
           "date": "2025-11-18",
-          "name": 57.34,
-          "benchmark": 106.25
+          "name": 66.07,
+          "benchmark": 100.97
         },
         {
           "date": "2025-11-19",
-          "name": 58.06,
-          "benchmark": 106.23
+          "name": 66.9,
+          "benchmark": 100.96
         },
         {
           "date": "2025-11-20",
-          "name": 58.86,
-          "benchmark": 104.27
+          "name": 67.82,
+          "benchmark": 99.09
         },
         {
           "date": "2025-11-21",
-          "name": 62.86,
-          "benchmark": 107.22
+          "name": 72.43,
+          "benchmark": 101.89
         },
         {
           "date": "2025-11-24",
-          "name": 62.37,
-          "benchmark": 109.18
+          "name": 71.86,
+          "benchmark": 103.75
         },
         {
           "date": "2025-11-25",
-          "name": 63.06,
-          "benchmark": 111.56
+          "name": 72.66,
+          "benchmark": 106.02
         },
         {
           "date": "2025-11-26",
-          "name": 62.65,
-          "benchmark": 112.55
+          "name": 72.19,
+          "benchmark": 106.95
         },
         {
           "date": "2025-11-28",
-          "name": 63.88,
-          "benchmark": 113.21
+          "name": 73.61,
+          "benchmark": 107.58
         },
         {
           "date": "2025-12-01",
-          "name": 64.43,
-          "benchmark": 111.78
+          "name": 74.24,
+          "benchmark": 106.23
         },
         {
           "date": "2025-12-02",
-          "name": 64.22,
-          "benchmark": 111.58
+          "name": 74.0,
+          "benchmark": 106.03
         },
         {
           "date": "2025-12-03",
-          "name": 65.16,
-          "benchmark": 113.61
+          "name": 75.08,
+          "benchmark": 107.96
         },
         {
           "date": "2025-12-04",
-          "name": 65.21,
-          "benchmark": 114.6
+          "name": 75.14,
+          "benchmark": 108.91
         },
         {
           "date": "2025-12-05",
-          "name": 66.35,
-          "benchmark": 114.13
+          "name": 76.46,
+          "benchmark": 108.46
         },
         {
           "date": "2025-12-08",
-          "name": 67.41,
-          "benchmark": 114.17
+          "name": 77.68,
+          "benchmark": 108.5
         },
         {
           "date": "2025-12-09",
-          "name": 67.24,
-          "benchmark": 114.41
+          "name": 77.48,
+          "benchmark": 108.72
         },
         {
           "date": "2025-12-10",
-          "name": 68.3,
-          "benchmark": 115.97
+          "name": 78.69,
+          "benchmark": 110.2
         },
         {
           "date": "2025-12-11",
-          "name": 69.74,
-          "benchmark": 117.33
+          "name": 80.36,
+          "benchmark": 111.5
         },
         {
           "date": "2025-12-12",
-          "name": 69.81,
-          "benchmark": 115.53
+          "name": 80.44,
+          "benchmark": 109.79
         },
         {
           "date": "2025-12-15",
-          "name": 68.42,
-          "benchmark": 114.65
+          "name": 78.84,
+          "benchmark": 108.96
         },
         {
           "date": "2025-12-16",
-          "name": 69.6,
-          "benchmark": 113.73
+          "name": 80.2,
+          "benchmark": 108.08
         },
         {
           "date": "2025-12-17",
-          "name": 70.55,
-          "benchmark": 112.52
+          "name": 81.3,
+          "benchmark": 106.93
         },
         {
           "date": "2025-12-18",
-          "name": 70.92,
-          "benchmark": 113.19
+          "name": 81.72,
+          "benchmark": 107.56
         },
         {
           "date": "2025-12-19",
-          "name": 73.41,
-          "benchmark": 114.14
+          "name": 84.59,
+          "benchmark": 108.46
         },
         {
           "date": "2025-12-22",
-          "name": 72.0,
-          "benchmark": 115.41
+          "name": 82.96,
+          "benchmark": 109.67
         },
         {
           "date": "2025-12-23",
-          "name": 70.94,
-          "benchmark": 114.72
+          "name": 81.74,
+          "benchmark": 109.02
         },
         {
           "date": "2025-12-24",
-          "name": 73.55,
-          "benchmark": 115.01
+          "name": 84.75,
+          "benchmark": 109.29
         },
         {
           "date": "2025-12-26",
-          "name": 74.03,
-          "benchmark": 114.42
+          "name": 85.3,
+          "benchmark": 108.74
         },
         {
           "date": "2025-12-29",
-          "name": 74.7,
-          "benchmark": 113.72
+          "name": 86.07,
+          "benchmark": 108.07
         },
         {
           "date": "2025-12-30",
-          "name": 73.62,
-          "benchmark": 112.88
+          "name": 84.83,
+          "benchmark": 107.27
         },
         {
           "date": "2025-12-31",
-          "name": 73.36,
-          "benchmark": 112.03
+          "name": 84.53,
+          "benchmark": 106.46
         },
         {
           "date": "2026-01-02",
-          "name": 72.71,
-          "benchmark": 113.22
+          "name": 83.78,
+          "benchmark": 107.59
         },
         {
           "date": "2026-01-05",
-          "name": 75.23,
-          "benchmark": 115.02
+          "name": 86.68,
+          "benchmark": 109.3
         },
         {
           "date": "2026-01-06",
-          "name": 77.42,
-          "benchmark": 116.54
+          "name": 89.21,
+          "benchmark": 110.75
         },
         {
           "date": "2026-01-07",
-          "name": 75.67,
-          "benchmark": 116.27
+          "name": 87.19,
+          "benchmark": 110.49
         },
         {
           "date": "2026-01-08",
-          "name": 77.75,
-          "benchmark": 117.54
+          "name": 89.59,
+          "benchmark": 111.7
         },
         {
           "date": "2026-01-09",
-          "name": 77.73,
-          "benchmark": 118.43
+          "name": 89.57,
+          "benchmark": 112.55
         },
         {
           "date": "2026-01-12",
-          "name": 71.42,
-          "benchmark": 119.01
+          "name": 82.29,
+          "benchmark": 113.1
         },
         {
           "date": "2026-01-13",
-          "name": 69.12,
-          "benchmark": 118.94
+          "name": 79.65,
+          "benchmark": 113.03
         },
         {
           "date": "2026-01-14",
-          "name": 73.08,
-          "benchmark": 119.78
+          "name": 84.2,
+          "benchmark": 113.83
         },
         {
           "date": "2026-01-15",
-          "name": 74.42,
-          "benchmark": 120.83
+          "name": 85.75,
+          "benchmark": 114.83
         },
         {
           "date": "2026-01-16",
-          "name": 76.13,
-          "benchmark": 120.95
+          "name": 87.72,
+          "benchmark": 114.94
         },
         {
           "date": "2026-01-20",
-          "name": 70.77,
-          "benchmark": 119.5
+          "name": 81.54,
+          "benchmark": 113.56
         },
         {
           "date": "2026-01-21",
-          "name": 73.64,
-          "benchmark": 121.87
+          "name": 84.85,
+          "benchmark": 115.82
         },
         {
           "date": "2026-01-22",
-          "name": 76.82,
-          "benchmark": 122.78
+          "name": 88.51,
+          "benchmark": 116.68
         },
         {
           "date": "2026-01-23",
-          "name": 76.25,
-          "benchmark": 120.52
+          "name": 87.86,
+          "benchmark": 114.53
         },
         {
           "date": "2026-01-26",
-          "name": 75.32,
-          "benchmark": 120.14
+          "name": 86.79,
+          "benchmark": 114.17
         },
         {
           "date": "2026-01-27",
-          "name": 73.41,
-          "benchmark": 120.48
+          "name": 84.59,
+          "benchmark": 114.49
         },
         {
           "date": "2026-01-28",
-          "name": 64.08,
-          "benchmark": 119.83
+          "name": 73.84,
+          "benchmark": 113.87
         },
         {
           "date": "2026-01-29",
-          "name": 68.14,
-          "benchmark": 119.86
+          "name": 78.51,
+          "benchmark": 113.9
         },
         {
           "date": "2026-01-30",
-          "name": 65.9,
-          "benchmark": 118.17
+          "name": 75.93,
+          "benchmark": 112.3
         },
         {
           "date": "2026-02-02",
-          "name": 69.99,
-          "benchmark": 119.32
+          "name": 80.65,
+          "benchmark": 113.39
         },
         {
           "date": "2026-02-03",
-          "name": 65.83,
-          "benchmark": 119.59
+          "name": 75.85,
+          "benchmark": 113.65
         },
         {
           "date": "2026-02-04",
-          "name": 68.3,
-          "benchmark": 118.56
+          "name": 78.69,
+          "benchmark": 112.67
         },
         {
           "date": "2026-02-05",
-          "name": 66.09,
-          "benchmark": 116.43
-        },
-        {
-          "date": "2026-02-06",
-          "name": 70.45,
-          "benchmark": 120.61
-        },
-        {
-          "date": "2026-02-09",
-          "name": 68.88,
-          "benchmark": 121.46
-        },
-        {
-          "date": "2026-02-10",
-          "name": 69.28,
-          "benchmark": 121.13
-        },
-        {
-          "date": "2026-02-11",
-          "name": 61.33,
-          "benchmark": 120.58
-        },
-        {
-          "date": "2026-02-12",
-          "name": 53.36,
-          "benchmark": 118.12
-        },
-        {
-          "date": "2026-02-13",
-          "name": 53.61,
-          "benchmark": 119.67
-        },
-        {
-          "date": "2026-02-17",
-          "name": 56.07,
-          "benchmark": 119.71
-        },
-        {
-          "date": "2026-02-18",
-          "name": 58.45,
-          "benchmark": 120.14
-        },
-        {
-          "date": "2026-02-19",
-          "name": 57.2,
-          "benchmark": 120.42
-        },
-        {
-          "date": "2026-02-20",
-          "name": 57.96,
-          "benchmark": 120.43
-        },
-        {
-          "date": "2026-02-23",
-          "name": 52.54,
-          "benchmark": 118.55
-        },
-        {
-          "date": "2026-02-24",
-          "name": 53.69,
-          "benchmark": 119.84
-        },
-        {
-          "date": "2026-02-25",
-          "name": 55.12,
-          "benchmark": 120.41
-        },
-        {
-          "date": "2026-02-26",
-          "name": 56.56,
-          "benchmark": 121.05
-        },
-        {
-          "date": "2026-02-27",
-          "name": 57.87,
-          "benchmark": 118.97
-        },
-        {
-          "date": "2026-03-02",
-          "name": 56.05,
-          "benchmark": 120.06
-        },
-        {
-          "date": "2026-03-03",
-          "name": 57.46,
-          "benchmark": 117.98
-        },
-        {
-          "date": "2026-03-04",
-          "name": 58.15,
-          "benchmark": 119.13
-        },
-        {
-          "date": "2026-03-05",
-          "name": 60.87,
-          "benchmark": 116.85
-        },
-        {
-          "date": "2026-03-06",
-          "name": 62.03,
-          "benchmark": 114.18
-        },
-        {
-          "date": "2026-03-09",
-          "name": 59.88,
-          "benchmark": 115.42
-        },
-        {
-          "date": "2026-03-10",
-          "name": 56.85,
-          "benchmark": 115.31
-        },
-        {
-          "date": "2026-03-11",
-          "name": 58.47,
-          "benchmark": 115.07
-        },
-        {
-          "date": "2026-03-12",
-          "name": 55.96,
-          "benchmark": 112.6
-        },
-        {
-          "date": "2026-03-13",
-          "name": 55.88,
-          "benchmark": 112.22
-        },
-        {
-          "date": "2026-03-16",
-          "name": 56.39,
-          "benchmark": 113.28
-        },
-        {
-          "date": "2026-03-17",
-          "name": 58.05,
-          "benchmark": 113.8
-        },
-        {
-          "date": "2026-03-18",
-          "name": 54.3,
-          "benchmark": 111.96
-        },
-        {
-          "date": "2026-03-19",
-          "name": 56.32,
-          "benchmark": 112.7
-        },
-        {
-          "date": "2026-03-20",
-          "name": 55.61,
-          "benchmark": 110.24
-        },
-        {
-          "date": "2026-03-23",
-          "name": 58.29,
-          "benchmark": 112.62
-        },
-        {
-          "date": "2026-03-24",
-          "name": 46.72,
-          "benchmark": 113.22
-        },
-        {
-          "date": "2026-03-25",
-          "name": 43.53,
-          "benchmark": 114.6
-        },
-        {
-          "date": "2026-03-26",
-          "name": 48.91,
-          "benchmark": 112.61
-        },
-        {
-          "date": "2026-03-27",
-          "name": 46.61,
+          "name": 76.15,
           "benchmark": 110.64
         },
         {
+          "date": "2026-02-06",
+          "name": 81.18,
+          "benchmark": 114.62
+        },
+        {
+          "date": "2026-02-09",
+          "name": 79.37,
+          "benchmark": 115.42
+        },
+        {
+          "date": "2026-02-10",
+          "name": 79.83,
+          "benchmark": 115.11
+        },
+        {
+          "date": "2026-02-11",
+          "name": 70.66,
+          "benchmark": 114.59
+        },
+        {
+          "date": "2026-02-12",
+          "name": 61.49,
+          "benchmark": 112.25
+        },
+        {
+          "date": "2026-02-13",
+          "name": 61.77,
+          "benchmark": 113.73
+        },
+        {
+          "date": "2026-02-17",
+          "name": 64.61,
+          "benchmark": 113.76
+        },
+        {
+          "date": "2026-02-18",
+          "name": 67.35,
+          "benchmark": 114.17
+        },
+        {
+          "date": "2026-02-19",
+          "name": 65.91,
+          "benchmark": 114.44
+        },
+        {
+          "date": "2026-02-20",
+          "name": 66.78,
+          "benchmark": 114.44
+        },
+        {
+          "date": "2026-02-23",
+          "name": 60.54,
+          "benchmark": 112.66
+        },
+        {
+          "date": "2026-02-24",
+          "name": 61.86,
+          "benchmark": 113.89
+        },
+        {
+          "date": "2026-02-25",
+          "name": 63.51,
+          "benchmark": 114.43
+        },
+        {
+          "date": "2026-02-26",
+          "name": 65.18,
+          "benchmark": 115.04
+        },
+        {
+          "date": "2026-02-27",
+          "name": 66.68,
+          "benchmark": 113.06
+        },
+        {
+          "date": "2026-03-02",
+          "name": 64.59,
+          "benchmark": 114.09
+        },
+        {
+          "date": "2026-03-03",
+          "name": 66.21,
+          "benchmark": 112.12
+        },
+        {
+          "date": "2026-03-04",
+          "name": 67.01,
+          "benchmark": 113.21
+        },
+        {
+          "date": "2026-03-05",
+          "name": 70.14,
+          "benchmark": 111.05
+        },
+        {
+          "date": "2026-03-06",
+          "name": 71.48,
+          "benchmark": 108.51
+        },
+        {
+          "date": "2026-03-09",
+          "name": 69.0,
+          "benchmark": 109.69
+        },
+        {
+          "date": "2026-03-10",
+          "name": 65.5,
+          "benchmark": 109.58
+        },
+        {
+          "date": "2026-03-11",
+          "name": 67.37,
+          "benchmark": 109.35
+        },
+        {
+          "date": "2026-03-12",
+          "name": 64.48,
+          "benchmark": 107.0
+        },
+        {
+          "date": "2026-03-13",
+          "name": 64.38,
+          "benchmark": 106.65
+        },
+        {
+          "date": "2026-03-16",
+          "name": 64.97,
+          "benchmark": 107.66
+        },
+        {
+          "date": "2026-03-17",
+          "name": 66.88,
+          "benchmark": 108.14
+        },
+        {
+          "date": "2026-03-18",
+          "name": 62.57,
+          "benchmark": 106.4
+        },
+        {
+          "date": "2026-03-19",
+          "name": 64.89,
+          "benchmark": 107.1
+        },
+        {
+          "date": "2026-03-20",
+          "name": 64.08,
+          "benchmark": 104.76
+        },
+        {
+          "date": "2026-03-23",
+          "name": 67.17,
+          "benchmark": 107.02
+        },
+        {
+          "date": "2026-03-24",
+          "name": 53.83,
+          "benchmark": 107.59
+        },
+        {
+          "date": "2026-03-25",
+          "name": 50.15,
+          "benchmark": 108.91
+        },
+        {
+          "date": "2026-03-26",
+          "name": 56.35,
+          "benchmark": 107.01
+        },
+        {
+          "date": "2026-03-27",
+          "name": 53.71,
+          "benchmark": 105.14
+        },
+        {
           "date": "2026-03-30",
-          "name": 47.07,
-          "benchmark": 109.05
+          "name": 54.24,
+          "benchmark": 103.63
         },
         {
           "date": "2026-03-31",
-          "name": 48.27,
-          "benchmark": 112.87
+          "name": 55.62,
+          "benchmark": 107.26
         },
         {
           "date": "2026-04-01",
-          "name": 46.88,
-          "benchmark": 113.58
+          "name": 54.02,
+          "benchmark": 107.93
         },
         {
           "date": "2026-04-02",
-          "name": 48.11,
-          "benchmark": 114.36
+          "name": 55.44,
+          "benchmark": 108.68
         },
         {
           "date": "2026-04-06",
-          "name": 48.48,
-          "benchmark": 114.85
+          "name": 55.87,
+          "benchmark": 109.14
         },
         {
           "date": "2026-04-07",
-          "name": 48.85,
-          "benchmark": 115.1
+          "name": 56.29,
+          "benchmark": 109.38
         },
         {
           "date": "2026-04-08",
-          "name": 48.92,
-          "benchmark": 118.54
+          "name": 56.37,
+          "benchmark": 112.65
         },
         {
           "date": "2026-04-09",
-          "name": 50.28,
-          "benchmark": 119.22
+          "name": 57.94,
+          "benchmark": 113.29
         },
         {
           "date": "2026-04-10",
-          "name": 46.08,
-          "benchmark": 118.92
+          "name": 53.1,
+          "benchmark": 113.01
         },
         {
           "date": "2026-04-13",
-          "name": 49.15,
-          "benchmark": 120.63
+          "name": 56.64,
+          "benchmark": 114.64
         },
         {
           "date": "2026-04-14",
-          "name": 49.89,
-          "benchmark": 122.3
+          "name": 57.49,
+          "benchmark": 116.22
         },
         {
           "date": "2026-04-15",
-          "name": 50.83,
-          "benchmark": 122.6
+          "name": 58.57,
+          "benchmark": 116.51
         },
         {
           "date": "2026-04-16",
-          "name": 52.22,
-          "benchmark": 122.86
+          "name": 60.17,
+          "benchmark": 116.75
         },
         {
           "date": "2026-04-17",
-          "name": 52.93,
-          "benchmark": 125.51
+          "name": 60.99,
+          "benchmark": 119.27
         },
         {
           "date": "2026-04-20",
-          "name": 53.56,
-          "benchmark": 126.22
+          "name": 61.72,
+          "benchmark": 119.95
         },
         {
           "date": "2026-04-21",
-          "name": 52.13,
-          "benchmark": 124.93
+          "name": 60.07,
+          "benchmark": 118.72
         },
         {
           "date": "2026-04-22",
-          "name": 51.08,
-          "benchmark": 125.83
+          "name": 58.85,
+          "benchmark": 119.57
         },
         {
           "date": "2026-04-23",
-          "name": 47.24,
-          "benchmark": 125.39
+          "name": 54.43,
+          "benchmark": 119.16
         },
         {
           "date": "2026-04-24",
-          "name": 46.17,
-          "benchmark": 125.9
+          "name": 53.2,
+          "benchmark": 119.65
         },
         {
           "date": "2026-04-27",
-          "name": 43.3,
-          "benchmark": 126.13
+          "name": 49.89,
+          "benchmark": 119.86
         },
         {
           "date": "2026-04-28",
-          "name": 44.21,
-          "benchmark": 124.66
+          "name": 50.95,
+          "benchmark": 118.46
         },
         {
           "date": "2026-04-29",
-          "name": 43.84,
-          "benchmark": 123.82
+          "name": 50.52,
+          "benchmark": 117.67
         },
         {
           "date": "2026-04-30",
-          "name": 42.03,
-          "benchmark": 126.51
+          "name": 48.42,
+          "benchmark": 120.22
         },
         {
           "date": "2026-05-01",
-          "name": 43.28,
-          "benchmark": 127.1
+          "name": 49.87,
+          "benchmark": 120.79
         },
         {
           "date": "2026-05-04",
-          "name": 41.48,
-          "benchmark": 126.46
+          "name": 47.79,
+          "benchmark": 120.18
         },
         {
           "date": "2026-05-05",
-          "name": 42.08,
-          "benchmark": 128.59
+          "name": 48.49,
+          "benchmark": 122.2
         },
         {
           "date": "2026-05-06",
-          "name": 41.85,
-          "benchmark": 130.52
+          "name": 48.22,
+          "benchmark": 124.04
         },
         {
           "date": "2026-05-07",
-          "name": 44.92,
-          "benchmark": 128.46
+          "name": 51.76,
+          "benchmark": 122.07
         },
         {
           "date": "2026-05-08",
-          "name": 42.82,
-          "benchmark": 129.33
+          "name": 49.34,
+          "benchmark": 122.9
         },
         {
           "date": "2026-05-11",
-          "name": 41.0,
-          "benchmark": 129.85
+          "name": 47.25,
+          "benchmark": 123.4
         },
         {
           "date": "2026-05-12",
-          "name": 40.4,
-          "benchmark": 128.6
+          "name": 46.55,
+          "benchmark": 122.21
         },
         {
           "date": "2026-05-13",
-          "name": 41.02,
-          "benchmark": 128.64
+          "name": 47.27,
+          "benchmark": 122.25
         },
         {
           "date": "2026-05-14",
-          "name": 41.32,
-          "benchmark": 129.45
+          "name": 47.61,
+          "benchmark": 123.02
         },
         {
           "date": "2026-05-15",
-          "name": 42.4,
-          "benchmark": 126.34
+          "name": 48.85,
+          "benchmark": 120.06
         },
         {
           "date": "2026-05-18",
-          "name": 42.24,
-          "benchmark": 125.6
+          "name": 48.67,
+          "benchmark": 119.35
         },
         {
           "date": "2026-05-19",
-          "name": 42.84,
-          "benchmark": 124.24
+          "name": 49.36,
+          "benchmark": 118.07
         },
         {
           "date": "2026-05-20",
-          "name": 43.93,
-          "benchmark": 127.37
+          "name": 50.62,
+          "benchmark": 121.04
         },
         {
           "date": "2026-05-21",
-          "name": 45.66,
-          "benchmark": 128.56
+          "name": 52.61,
+          "benchmark": 122.17
         },
         {
           "date": "2026-05-22",
-          "name": 46.47,
-          "benchmark": 129.76
+          "name": 53.55,
+          "benchmark": 123.31
         },
         {
           "date": "2026-05-26",
-          "name": 45.7,
-          "benchmark": 132.21
+          "name": 52.66,
+          "benchmark": 125.64
         },
         {
           "date": "2026-05-27",
-          "name": 46.31,
-          "benchmark": 132.15
+          "name": 53.36,
+          "benchmark": 125.58
         },
         {
           "date": "2026-05-28",
-          "name": 46.72,
-          "benchmark": 132.9
+          "name": 53.83,
+          "benchmark": 126.3
         },
         {
           "date": "2026-05-29",
-          "name": 49.91,
-          "benchmark": 132.18
+          "name": 57.51,
+          "benchmark": 125.61
         },
         {
           "date": "2026-06-01",
-          "name": 52.98,
-          "benchmark": 131.52
+          "name": 61.05,
+          "benchmark": 124.98
         },
         {
           "date": "2026-06-02",
-          "name": 50.26,
-          "benchmark": 132.74
+          "name": 57.92,
+          "benchmark": 126.14
         },
         {
           "date": "2026-06-03",
-          "name": 48.84,
-          "benchmark": 130.92
+          "name": 56.27,
+          "benchmark": 124.41
         },
         {
           "date": "2026-06-04",
-          "name": 50.41,
-          "benchmark": 132.89
+          "name": 58.08,
+          "benchmark": 126.29
         },
         {
           "date": "2026-06-05",
-          "name": 49.08,
-          "benchmark": 128.18
+          "name": 56.56,
+          "benchmark": 121.81
         },
         {
           "date": "2026-06-08",
-          "name": 48.31,
-          "benchmark": 129.3
+          "name": 55.66,
+          "benchmark": 122.87
         },
         {
           "date": "2026-06-09",
-          "name": 48.15,
-          "benchmark": 129.71
+          "name": 55.48,
+          "benchmark": 123.27
         },
         {
           "date": "2026-06-10",
-          "name": 45.43,
-          "benchmark": 128.36
+          "name": 52.35,
+          "benchmark": 121.98
         },
         {
           "date": "2026-06-11",
-          "name": 46.35,
-          "benchmark": 132.17
+          "name": 53.41,
+          "benchmark": 125.6
         },
         {
           "date": "2026-06-12",
-          "name": 46.22,
-          "benchmark": 133.32
+          "name": 53.26,
+          "benchmark": 126.7
         },
         {
           "date": "2026-06-15",
-          "name": 46.21,
-          "benchmark": 134.09
+          "name": 53.24,
+          "benchmark": 127.43
         },
         {
           "date": "2026-06-16",
-          "name": 46.97,
-          "benchmark": 132.93
+          "name": 54.12,
+          "benchmark": 126.32
         },
         {
           "date": "2026-06-17",
-          "name": 44.85,
-          "benchmark": 131.93
+          "name": 51.68,
+          "benchmark": 125.37
         },
         {
           "date": "2026-06-18",
-          "name": 44.25,
-          "benchmark": 134.52
+          "name": 50.99,
+          "benchmark": 127.84
         },
         {
           "date": "2026-06-22",
-          "name": 42.22,
-          "benchmark": 135.7
+          "name": 48.65,
+          "benchmark": 128.96
         },
         {
           "date": "2026-06-23",
-          "name": 42.94,
-          "benchmark": 134.4
+          "name": 49.48,
+          "benchmark": 127.72
         },
         {
           "date": "2026-06-24",
-          "name": 42.77,
-          "benchmark": 135.02
+          "name": 49.28,
+          "benchmark": 128.32
         },
         {
           "date": "2026-06-25",
-          "name": 39.73,
-          "benchmark": 136.04
+          "name": 45.78,
+          "benchmark": 129.28
         },
         {
           "date": "2026-06-26",
-          "name": 44.11,
-          "benchmark": 136.45
+          "name": 50.82,
+          "benchmark": 129.67
         },
         {
           "date": "2026-06-29",
-          "name": 44.51,
-          "benchmark": 136.06
+          "name": 51.29,
+          "benchmark": 129.3
         },
         {
           "date": "2026-06-30",
-          "name": 39.53,
-          "benchmark": 136.74
+          "name": 45.55,
+          "benchmark": 129.94
         },
         {
           "date": "2026-07-01",
-          "name": 43.07,
-          "benchmark": 136.22
+          "name": 49.62,
+          "benchmark": 129.45
         },
         {
           "date": "2026-07-02",
-          "name": 41.64,
-          "benchmark": 135.43
+          "name": 47.98,
+          "benchmark": 128.7
         },
         {
           "date": "2026-07-06",
-          "name": 41.32,
-          "benchmark": 136.03
+          "name": 47.61,
+          "benchmark": 129.27
+        },
+        {
+          "date": "2026-07-07",
+          "name": 46.45,
+          "benchmark": 128.1
+        },
+        {
+          "date": "2026-07-08",
+          "name": 43.46,
+          "benchmark": 126.93
+        },
+        {
+          "date": "2026-07-09",
+          "name": 42.63,
+          "benchmark": 128.55
+        },
+        {
+          "date": "2026-07-10",
+          "name": 45.13,
+          "benchmark": 128.01
+        },
+        {
+          "date": "2026-07-13",
+          "name": 50.58,
+          "benchmark": 126.93
+        },
+        {
+          "date": "2026-07-14",
+          "name": 47.92,
+          "benchmark": 127.37
+        },
+        {
+          "date": "2026-07-15",
+          "name": 50.52,
+          "benchmark": 127.92
+        },
+        {
+          "date": "2026-07-16",
+          "name": 52.08,
+          "benchmark": 127.84
+        },
+        {
+          "date": "2026-07-17",
+          "name": 49.66,
+          "benchmark": 127.17
+        },
+        {
+          "date": "2026-07-20",
+          "name": 49.28,
+          "benchmark": 126.42
+        },
+        {
+          "date": "2026-07-21",
+          "name": 48.36,
+          "benchmark": 128.25
+        },
+        {
+          "date": "2026-07-22",
+          "name": 48.57,
+          "benchmark": 127.06
+        },
+        {
+          "date": "2026-07-23",
+          "name": 44.6,
+          "benchmark": 126.33
+        },
+        {
+          "date": "2026-07-24",
+          "name": 45.23,
+          "benchmark": 125.93
+        },
+        {
+          "date": "2026-07-27",
+          "name": 49.93,
+          "benchmark": 126.68
+        },
+        {
+          "date": "2026-07-28",
+          "name": 51.66,
+          "benchmark": 126.88
+        },
+        {
+          "date": "2026-07-29",
+          "name": 53.99,
+          "benchmark": 124.8
+        },
+        {
+          "date": "2026-07-30",
+          "name": 50.62,
+          "benchmark": 126.54
+        },
+        {
+          "date": "2026-07-31",
+          "name": 50.01,
+          "benchmark": 125.94
+        },
+        {
+          "date": "2026-08-03",
+          "name": 50.72,
+          "benchmark": 128.11
+        },
+        {
+          "date": "2026-08-04",
+          "name": 51.84,
+          "benchmark": 130.49
+        },
+        {
+          "date": "2026-08-05",
+          "name": 52.98,
+          "benchmark": 129.65
+        },
+        {
+          "date": "2026-08-06",
+          "name": 53.55,
+          "benchmark": 128.99
+        },
+        {
+          "date": "2026-08-07",
+          "name": 52.29,
+          "benchmark": 130.42
+        },
+        {
+          "date": "2026-08-10",
+          "name": 51.84,
+          "benchmark": 129.74
+        },
+        {
+          "date": "2026-08-11",
+          "name": 52.23,
+          "benchmark": 130.17
+        },
+        {
+          "date": "2026-08-12",
+          "name": 49.83,
+          "benchmark": 130.92
         }
       ],
       "name_symbol": "CNXC",
       "benchmark_symbol": "IWM",
-      "as_of": "2026-07-06",
+      "as_of": "2026-08-12",
       "window_days": 364,
-      "name_return": -0.586803105151729,
-      "benchmark_return": 0.360305829882128,
-      "source_ref": "EOD CNXC vs IWM rebased to 100, 2025-07-07..2026-07-06"
+      "name_return": -0.5017279934946126,
+      "benchmark_return": 0.3091860565695008,
+      "source_ref": "EOD CNXC vs IWM rebased to 100, 2025-08-13..2026-08-12"
     },
     "operating_drivers": {
       "rows": [
@@ -5441,8 +5748,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "wins with Technology",
-          "period": "first quarter 2026",
+          "metric": "wins with Technology (year-over-year growth)",
+          "period": "first quarter",
           "value": "up more than 61% year-over-year",
           "value_num": null,
           "unit": null,
@@ -5453,13 +5760,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "signed annual contract value for solutions including AI",
+          "metric": "signed annual contract value for solutions including AI (quarter-on-quarter)",
           "period": "quarter-on-quarter",
           "value": "more than doubled",
           "value_num": null,
           "unit": null,
           "verbatim": "When we look at our bookings quarter-on-quarter, our signed annual contract value for solutions including AI more than doubled, and we're seeing sequential increases in expanding AI license consumption across our client base.",
-          "following_context": null,
+          "following_context": "Our pipeline of opportunities to continue to be solid and represent a continued progression and shift to a higher solution mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5467,54 +5774,54 @@
           "kind": "leading_indicator",
           "metric": "enterprise iX Suite deals closed",
           "period": "the quarter",
-          "value": "close to 60",
+          "value": "close to 60 enterprise iX Suite deals",
           "value_num": null,
           "unit": null,
           "verbatim": "As an example, we closed close to 60 enterprise iX Suite deals in the quarter including our largest iX Hero contracts to date with 2 Fortune 50 companies.",
-          "following_context": null,
+          "following_context": "Both clients will use our proprietary AI technologies to modernize their ability to create more efficient, personalized and effective interactions with their customers while allowing us to sell additional solutions into these accounts.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "banking and financial services revenue growth (constant currency)",
-          "period": "Q1 2026",
+          "period": "first quarter (Q1 2026)",
           "value": "grew 13% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue from banking and financial services clients grew 13% year-over-year.",
-          "following_context": null,
+          "following_context": "Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients. Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "retail, travel and e-commerce revenue growth (constant currency)",
-          "period": "Q1 2026",
+          "period": "first quarter (Q1 2026)",
           "value": "grew 6%",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients.",
-          "following_context": null,
+          "following_context": "Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Media and Communications revenue growth (constant currency)",
-          "period": "Q1 2026",
+          "metric": "media and communications revenue growth (constant currency)",
+          "period": "first quarter (Q1 2026)",
           "value": "grew 3%",
           "value_num": null,
           "unit": null,
           "verbatim": "Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies.",
-          "following_context": null,
+          "following_context": "Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "technology and consumer electronics vertical and health care vertical revenue change (constant currency)",
-          "period": "Q1 2026",
+          "metric": "technology and consumer electronics and health care verticals revenue change (constant currency)",
+          "period": "first quarter (Q1 2026)",
           "value": "both decreased about 6%",
           "value_num": null,
           "unit": null,
@@ -5525,13 +5832,25 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "non-complex work as share of revenue",
+          "metric": "total revenue growth (constant currency and reported)",
+          "period": "first quarter (Q1 2026)",
+          "value": "an increase of 1.9% on a constant currency basis and over 5% on a reported basis",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We delivered revenue of approximately $2.5 billion, an increase of 1.9% on a constant currency basis and over 5% on a reported basis.",
+          "following_context": "Looking at constant currency growth by vertical. Revenue from banking and financial services clients grew 13% year-over-year. Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients. Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "reduction of non-complex work as share of revenue",
           "period": "2025",
-          "value": "reducing our non-complex work from 7% to 5% of our revenue",
+          "value": "from 7% to 5% of our revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "This year, we were successful in reducing our non-complex work from 7% to 5% of our revenue.",
-          "following_context": null,
+          "following_context": "What we are most happy about is we did the majority of this by putting in our own technology to automate work. We also worked with clients to optimize their cost structure by re-solutioning existing work to take advantage of technology and our global footprint.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5539,11 +5858,11 @@
           "kind": "leading_indicator",
           "metric": "onshore business moved to offshore centers",
           "period": "2025",
-          "value": "moved 4% of our onshore business to offshore centers",
+          "value": "4% of our onshore business",
           "value_num": null,
           "unit": null,
           "verbatim": "This helped move 4% of our onshore business to offshore centers.",
-          "following_context": null,
+          "following_context": "This migration does result in some margin compression as we incur additional and duplicate costs for a period of time. However, by doing so, we captured share, drove new solution sales, attracted new talent and strengthened our position with our client base while providing a foundation for further growth into 2026.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5554,20 +5873,20 @@
           "value": "a 6% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "a 6% increase in the annual contract value of deals in the pipeline as we exited this year;",
-          "following_context": null,
+          "verbatim": "A few data points: a 6% increase in the annual contract value of deals in the pipeline as we exited this year; a 9% increase in new wins year-on-year; a 14% increase in transformational deal values this year; a 23% increase in cross-sell/upsell deals this year; and a 37% increase in values for our new service areas this year.",
+          "following_context": "These data points help illustrate the business mix evolving more to technology-enabled specialist and adjacent services. We are now being recognized in enterprise circles as being a trusted end-to-end solutions partner.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "increase in new wins year-on-year",
-          "period": "2025 year-on-year",
+          "period": "year-on-year (2025)",
           "value": "a 9% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "a 9% increase in new wins year-on-year;",
-          "following_context": null,
+          "verbatim": "A few data points: a 6% increase in the annual contract value of deals in the pipeline as we exited this year; a 9% increase in new wins year-on-year; a 14% increase in transformational deal values this year; a 23% increase in cross-sell/upsell deals this year; and a 37% increase in values for our new service areas this year.",
+          "following_context": "These data points help illustrate the business mix evolving more to technology-enabled specialist and adjacent services. We are now being recognized in enterprise circles as being a trusted end-to-end solutions partner.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5578,8 +5897,92 @@
           "value": "a 14% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "a 14% increase in transformational deal values this year;",
-          "following_context": null,
+          "verbatim": "A few data points: a 6% increase in the annual contract value of deals in the pipeline as we exited this year; a 9% increase in new wins year-on-year; a 14% increase in transformational deal values this year; a 23% increase in cross-sell/upsell deals this year; and a 37% increase in values for our new service areas this year.",
+          "following_context": "These data points help illustrate the business mix evolving more to technology-enabled specialist and adjacent services. We are now being recognized in enterprise circles as being a trusted end-to-end solutions partner.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "increase in cross-sell/upsell deals",
+          "period": "this year (2025)",
+          "value": "a 23% increase",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "A few data points: a 6% increase in the annual contract value of deals in the pipeline as we exited this year; a 9% increase in new wins year-on-year; a 14% increase in transformational deal values this year; a 23% increase in cross-sell/upsell deals this year; and a 37% increase in values for our new service areas this year.",
+          "following_context": "These data points help illustrate the business mix evolving more to technology-enabled specialist and adjacent services. We are now being recognized in enterprise circles as being a trusted end-to-end solutions partner.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "increase in values for new service areas",
+          "period": "this year (2025)",
+          "value": "a 37% increase",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "A few data points: a 6% increase in the annual contract value of deals in the pipeline as we exited this year; a 9% increase in new wins year-on-year; a 14% increase in transformational deal values this year; a 23% increase in cross-sell/upsell deals this year; and a 37% increase in values for our new service areas this year.",
+          "following_context": "These data points help illustrate the business mix evolving more to technology-enabled specialist and adjacent services. We are now being recognized in enterprise circles as being a trusted end-to-end solutions partner.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "top 50 clients relying on Concentrix for more than one solution",
+          "period": "2025",
+          "value": "98% of our top 50 clients",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Within our existing base, 98% of our top 50 clients now rely on Concentrix for more than one solution.",
+          "following_context": "Going into 2026, we believe we have the foundation to gain market and wallet share with the right clients doing the right business.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "annualized AI revenue of AI platform",
+          "period": "exited 2025",
+          "value": "over $60 million in annualized AI revenue",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We exited 2025 with over $60 million in annualized AI revenue of just our AI platform, reaching breakeven as we committed to at the start of the year.",
+          "following_context": "This is in addition to us selling third-party AI solutions and helping clients deploy their own AI investments. Now more than 40% of our new business includes some form of our own technology as part of the solution. This attach rate is well ahead of our expectations. Most importantly, our clients are realizing tangible results, an impressive feat amidst a market backdrop of AI noise and failed promises.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "new business including own technology (attach rate)",
+          "period": "2025",
+          "value": "more than 40% of our new business",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Now more than 40% of our new business includes some form of our own technology as part of the solution.",
+          "following_context": "This attach rate is well ahead of our expectations. Most importantly, our clients are realizing tangible results, an impressive feat amidst a market backdrop of AI noise and failed promises.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total revenue growth (constant currency), full year and Q4 exit",
+          "period": "fiscal year 2025 / Q4 2025",
+          "value": "2% total growth in constant currency and exited Q4 with constant currency revenue growth above 3%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "For the fiscal year, we delivered 2% total growth in constant currency and exited Q4 with constant currency revenue growth above 3%.",
+          "following_context": "This growth was achieved even as we reduced the amount of low-complexity work in our business by 2% year-on-year, moved 4% of our onshore business to offshore and acted selectively in the business we took on.",
+          "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "growth rate of newer adjacent offerings",
+          "period": "2025",
+          "value": "reaching high single digits in aggregate",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Our newer adjacent offerings have a growth rate reaching high single digits in aggregate and now represent a meaningful part of our business.",
+          "following_context": "The quality of revenue has never been stronger. Before I hand over to Andre, I would like to highlight a few key wins in 2025 to bring life for investors how we have seen our offerings evolve.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -5590,187 +5993,157 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a self-funding, guidance-meeting, near-floor-multiple business against a goodwill-impaired, 4.1x-levered, hard-de-rating consensus with an earned peer discount.",
+    "evidence_balance": "mixed — a still-growing, self-funding EBITDA base offset by 4.1x leverage and a still-falling forward earnings path.",
     "bull_points": [
       {
-        "claim": "The EV/EBITDA has fallen to 3.9x (near its own 5.5-year floor) even as absolute EBITDA has stayed near record levels — the falling multiple is an optical de-rate against a business whose LTM EBITDA is $1,275M, above every prior year except FY24's $1,295M.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
-        "cited": true
-      },
-      {
-        "claim": "The margin %-versus-absolute reconciler shows EBITDA margin flat at ~13% while absolute EBITDA rose FY17 246 → LTM 1,275 and revenue rose 1,990 → 9,999 — the margin optic masks a business several times larger in absolute cash terms.",
+        "claim": "Absolute EBITDA is not in decline: it rose from $1,266M (FY25) to $1,275M LTM even as the EBITDA margin held flat at ~13%, so the low headline multiple prices a business whose cash-generative core is still growing, not contracting.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The company is free-cash-flow positive at $775.6M LTM and buying back stock (share count -5.9% over ~1.7y), consistent with a self-funding, not distressed, capital posture.",
+        "claim": "The name is FCF-positive at $775.6M LTM and self-funding, giving it a survival cushion that a terminal thesis has to overcome.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-31-2026]",
         "cited": true
       },
       {
-        "claim": "Management's mix-shift mechanism is showing leading traction: signed annual contract value for AI-inclusive solutions more than doubled QoQ, the causal 'why' behind a claimed accretive-after-scale revenue mix.",
+        "claim": "The discount to peers may be partly RESIDUAL rather than fully EARNED: on the fundamental_deltas the name's rev growth (4% vs 6%) and EBITDA growth (2% vs 5%) gaps are modest, yet it trades at TEV/EBITDA 3.9x vs peer median 5.4x — the human must judge whether that gap is justified by the margin/leverage deficit alone or is overshoot.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The revenue mix is shifting to higher-value work with real leading indicators: signed annual contract value for AI solutions more than doubled QoQ, supporting a case that reported softness is deliberate re-mix rather than demand loss.",
         "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Bookings momentum is corroborated by a 9% YoY rise in new wins and a 14% rise in transformational deal values exiting 2025 — forward demand indicators, not just trailing revenue.",
+        "claim": "The AI platform exited 2025 at over $60M annualized revenue at breakeven, and >40% of new business now attaches own technology — evidence the strategic pivot is producing revenue, not just narrative.",
         "source_ref": "CIQ transcript: Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The guidance track record is intact — revenue actual ≥ guided floor 22/26 resolved quarters, EPS 12/13, and the most recent FQ2 2026 print MET — arguing the de-rate is not a delivery-failure story.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
-        "cited": true
-      },
-      {
-        "claim": "S&P issuer rating is BBB- (investment grade) with credit-health scores 4/4/4/4 recorded, and interest coverage is 4.6x — a solvency profile inconsistent with a terminal read at face value.",
+        "claim": "Credit health is investment-grade (S&P BBB-) and the delivery record on guided revenue/EBIT/EPS is strong (revenue actual≥floor 22/26, EPS 12/13), tempering an imminent-distress read.",
         "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "GAAP net income swung to -$1,314M LTM driven by a -$1,523M goodwill impairment — a write-down of prior acquisition value that is the load-bearing signal the market is pricing, not an optical artifact.",
-        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
-        "cited": true
+        "claim": "The de-rate is not merely optical: GAAP net income swung to -$1,314M LTM driven by a $1,523M goodwill impairment, a management admission that prior acquisition value was overstated — P/E is NM on a genuinely negative base, not a missing figure.",
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2024-12-01→2025-11-30, 364d)",
+        "cited": false
       },
       {
-        "claim": "Leverage is genuinely elevated and is the real signal, not an optic: net-debt/EBITDA 4.1x vs peer-median total-debt/EBITDA 2.0x, with $5,249M net debt against a $1,550M market cap — the equity is a thin sliver atop a large debt stack.",
+        "claim": "Leverage is the dominant load-bearing risk: net-debt/EBITDA 4.1x and net-debt/OCF 7.1x are well above the peer-median total-debt/EBITDA 2.0x, and this is the REAL signal (absolute net debt $5,249M), not an optical margin artifact.",
         "source_ref": "CIQ Net Debt $5,249M [Q2 May-31-2026] ÷ CIQ EBITDA $1,275M [LTM 12 months May-31-2026]",
         "cited": true
       },
       {
-        "claim": "The peer discount is at least partly EARNED: EBITDA margin 13% vs peer-median 18%, revenue growth 4% vs 6%, and Debt/EBITDA 3.2 vs 2.0 — worse on margin, growth and leverage simultaneously, the classic value-trap fingerprint.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus is cutting hard, not stabilizing: FY26 GAAP EPS revised -43% (5.60→3.19) and FY26 EBT (GAAP) -52% (12m→latest), with the crux LT-growth assumption slashed 6.3%→4.27% — forward-estimate deterioration, not a trailing snapshot.",
+        "claim": "The consensus forward trajectory is deteriorating hard: FY26 EBITDA revised -10%, GAAP EPS -43% and EBT -52% (12m→latest), so the low trailing multiple sits on a still-falling numerator — the discount reflects earned estimate cuts, not a stale panic.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Two of the highest-mix verticals — technology/consumer-electronics and healthcare — each declined ~6% in constant currency on lighter-than-expected volumes and shore mix, undercutting the accretive-mix thesis at the top line.",
-        "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+        "claim": "The margin gap to peers is EARNED, not optical: EBITDA margin 13% vs peer-median 18% is a structural 5-point deficit that justifies part of the multiple discount — a value-trap tell rather than a clean overshoot.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "ROIC has compressed to 4.2% LTM (from 9.0% in FY22) — returns on the acquisition-inflated capital base are structurally below prior levels, consistent with the impairment rather than a temporary dip.",
+        "claim": "Estimate breadth is uniformly negative — FY26 Revenue 0↑/3↓ and EPS 0↑/2↓ last month, with the two 2026 gap-downs tied to a securitization amendment and the Q2 earnings print — the market is repricing on fresh, name-specific information.",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "cited": true
+      },
+      {
+        "claim": "ROIC has fallen to 4.2% LTM from ~9% in FY22 and RoE is -37.7%, so returns on the heavily-levered capital base are thin — reinforcing an earned-discount reading.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The stock fell -45% over 180d while its small-cap benchmark rose +17% (rel -62%), and short interest is rising to 19.5% of shares out — an idiosyncratic, deepening bearish positioning, not a market-wide drawdown.",
-        "source_ref": "EOD CNXC−IWM 180d to 2026-07-06 (assembly, cap-band)",
-        "cited": true
-      },
-      {
-        "claim": "Every gap-down clusters on debt/financing and earnings filings (two Feb debt-offering 8-Ks, a March securitization-facility amendment, a June earnings print) — the drawdown is anchored to balance-sheet and results events, not noise.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "A single $133.5M insider sale by a 10% owner dwarfs the trivial ~$0.12M of open-market buys, an unsupportive ownership signal alongside the de-rate.",
+        "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 140 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "Teleperformance SE",
+        "outcome": "recovered",
+        "distinguishing_fact": "Peer CX/BPO operator that de-rated hard on AI-disruption fear and slowing organic growth; a same-industry analogue for whether the outsourcing-services multiple is a permanent AI-victim discount or an overshoot.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "TTEC Holdings",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster CX/BPO peer facing the same AI-disruption narrative and a de-rate to a low single-digit EBITDA multiple; the closest direct-model analogue for whether the sector fear is structural.",
+        "distinguishing_fact": "Same-sector CX operator carrying the highest peer leverage and repeated goodwill write-downs into a shrinking-cap; the cautionary analogue where a levered outsourcer's discount proved earned.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Cognizant Technology Solutions Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "Roster IT-services peer that absorbed AI-disruption fears yet sustained mid-single-digit growth and positive EBITDA growth, illustrating the mean-revert path if demand proves resilient.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29"
-      },
-      {
-        "name": "TTEC Holdings",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Roster CX peer that combined declining revenue with the roster's highest leverage and NM P/E — the pattern of a levered, shrinking outsourcer sliding toward distress.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29"
+        "distinguishing_fact": "Larger IT/BPO peer that traded through an AI-substitution scare with a clean balance sheet; analogue for how a lower-leverage services franchise re-rated once growth stabilized.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Conduent",
         "outcome": "went terminal",
-        "distinguishing_fact": "Post-spin BPO carrier of a heavy debt load and serial goodwill write-downs whose equity stayed a thin sliver atop the debt stack — the levered-rollup-impairment analogue.",
+        "distinguishing_fact": "Post-spin business-process outsourcer where high leverage plus flat organic growth kept the multiple structurally depressed despite optical cheapness — the levered-BPO value-trap pattern.",
         "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Genpact Limited",
-        "outcome": "recovered",
-        "distinguishing_fact": "Roster BPO peer that repositioned toward higher-value digital/AI-adjacent work and held mid-single-digit growth, the model for a successful mix-shift out of commoditized process work.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29"
       }
     ],
     "decisive_question": {
-      "question": "Is the accretive-mix shift toward AI/complex work real enough to re-accelerate revenue and margin fast enough to de-lever the $5.2B debt stack before it becomes the dominant fact — or is the goodwill impairment plus earned peer-discount telling the truer story of structural erosion?",
+      "question": "Is the sub-4x trailing EV/EBITDA an overshoot on a still-growing, self-funding cash engine whose reported softness reflects a deliberate high-value re-mix — or an earned discount on a 4.1x-levered business whose forward estimates are still being cut as the goodwill write-down confirmed impaired past growth?",
       "evidence_for": [
         {
-          "claim": "AI-inclusive signed ACV more than doubled QoQ and new wins rose 9% YoY, evidence the mix shift is booking forward demand.",
+          "claim": "Absolute EBITDA rose to $1,275M LTM and FCF is $775.6M positive, and management points to AI-solution ACV more than doubling QoQ and >40% new-business technology attach — an overshoot-on-re-mix mechanism.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "FCF is positive at $775.6M LTM, giving the company internally-generated cash to service and pay down debt while investing in the shift.",
-          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-31-2026]",
-          "cited": true
-        },
-        {
-          "claim": "Guidance has been met on the most recent print and delivered against floor in a large majority of resolved quarters, supporting management's execution credibility.",
-          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+          "claim": "The name delivers against guidance (revenue 22/26, EPS 12/13 actual≥floor) and carries a BBB- investment-grade credit rating, arguing the low multiple is not a distress print.",
+          "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-07-29",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The two highest-mix verticals (tech/consumer-electronics and healthcare) each fell ~6% in constant currency, showing the shift is not yet lifting the verticals it must.",
-          "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "FY26 GAAP EPS consensus was cut -43% and LT-growth slashed to 4.27%, i.e. the analyst base is de-rating the very re-acceleration the bull case needs.",
+          "claim": "FY26 consensus EBITDA (-10%), GAAP EPS (-43%) and EBT (-52%) are still being cut, with all last-month FY revenue revisions downward (0↑/3↓) — the numerator the cheap multiple rests on is falling, driven by lighter tech/healthcare volumes and shore-mix margin compression.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Net-debt/EBITDA of 4.1x against a $1.55B equity cushion leaves little margin for a slow de-lever if revenue does not re-accelerate.",
+          "claim": "Net-debt/EBITDA 4.1x against a 13%-vs-18% margin deficit means the leverage magnifies any forward shortfall — an earned-discount / value-trap mechanism.",
           "source_ref": "CIQ Net Debt $5,249M [Q2 May-31-2026] ÷ CIQ EBITDA $1,275M [LTM 12 months May-31-2026]",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA basis is supplied (ev_ebitda_adjusted_fwd UNKNOWN and adjusted_eps UNKNOWN not in the 99.1 guidance) — the trailing 3.9x alone cannot distinguish cheap-overshoot from cheap-terminal.",
-      "Covenant basis and net-debt/company-adjusted-EBITDA are UNKNOWN (not disclosed) — the true covenant headroom on a $5.2B debt stack is an unresolved BEARISH-leaning gap, not a neutral one.",
-      "Single-segment (Software & Programming) reporting means NO segment-EBITDA breakout — cannot isolate which verticals or the AI/iX Suite line actually earn vs burn; a missing expected disclosure that skews bearish.",
-      "Self-funding is MIXED: latest-quarter OCF is negative while LTM FCF is positive — seasonality per management is claimed but the intra-year cash bridge is unresolved.",
-      "Management targets net leverage below 2.6x by end-FY26, but the path from 4.1x rests on unverified asset-sale proceeds and second-half profitability ramp not yet in results.",
-      "The heterogeneous peer set (caps $119M–$28.9B, 243x span) means every peer multiple is a confidence-gated input; whether the discount to a $1.6B name is truly EARNED vs RESIDUAL is unresolved and must be judged, not read off the median.",
-      "Export/as-of dating is a FLOOR (≥2026-07-06, unverified) — the currency of the consensus path and multiples ladder cannot be pinned."
+      "No forward/adjusted EV/EBITDA or adjusted EPS is disclosed in the revised 99.1 guidance — the trailing 3.9x cannot be reconciled to a forward basis, leaving overshoot-vs-terminal unresolved (a bearish opacity, not a neutral gap).",
+      "Covenant leverage basis and headroom are UNKNOWN (not disclosed); a fenced Consolidated Leverage Ratio ceiling of 3.75:1.0 exists but the current covenant-basis leverage is not stated — a survival-capacity leg left dark.",
+      "Self-funding is MIXED: latest-quarter OCF is negative while LTM FCF is positive; the seasonality claim (Q1 negative, later quarters robust) is management posture that the human must verify against actual cash conversion.",
+      "Single-segment (Software & Programming) reporting means no segment EBITDA breakout — the margin-compressing shore-mix/re-mix cannot be isolated from the growing verticals; an opacity risk.",
+      "Whether the guided path to <2.6x net leverage by end-FY26 and the AI re-mix accretion actually materialize — both are management commitments, not yet delivered facts.",
+      "The $1,523M goodwill impairment leaves $3,653M goodwill + $1,750M intangibles still on the balance sheet — further write-down risk is undisclosed."
     ]
   },
   "caveats": [
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
-    "P/E may be distorted by non-recurring EPS — latest annual EPS -20.36 vs recent median 4.71; verify against normalized/forward EPS (CIQ)",
-    "EDGAR P/E 6.0x does not rest on LTM GAAP earnings — LTM GAAP diluted EPS is NEGATIVE (-21.35), so a positive multiple must use some other denominator (an EPS from a non-current period, or a normalized/adjusted figure — the displayed basis does not say which). Do not read it as a GAAP trailing multiple.",
-    "Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage."
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+7.0s fetch)",
+    "Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage.",
+    "Unreconciled margin-compression (a decisive-against point): 'FY26 consensus EBITDA (-10%), GAAP EPS (-43%) and EBT (-52%) are still being cut, with all last-month FY revenue revisions downward (0↑/3↓) — the numerator the cheap multiple rests on is falling, driven by lighter tech/healthcare volumes and shore-mix margin compression.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "operating-drivers: Tier-B rows capped at 12 — increase in cross-sell/upsell deals dropped",
-    "operating-drivers: Tier-B rows capped at 12 — increase in values for new service areas dropped",
-    "operating-drivers: Tier-B rows capped at 12 — top 50 clients using more than one solution dropped",
-    "operating-drivers: Tier-B rows capped at 12 — annualized AI revenue of AI platform dropped",
-    "operating-drivers: Tier-B rows capped at 12 — new business including own technology (attach rate) dropped",
-    "operating-drivers: Tier-B rows capped at 12 — full year total revenue growth (constant currency) dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Q4 exit constant currency revenue growth dropped",
-    "operating-drivers: Tier-B rows capped at 12 — reduction of low-complexity work year-on-year dropped",
-    "operating-drivers: Tier-B rows capped at 12 — newer adjacent offerings growth rate dropped"
+    "(E5) covenant exhibit too large for single-pass extraction (656746 chars) — extract by hand: 8-K 0001803599-25-000111 · exhibit101041125.htm",
+    "(E5) covenant exhibit too large for single-pass extraction (654179 chars) — extract by hand: 8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+    "MISMATCH bear_point: 'The de-rate is not merely optical: GAAP net income…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-30T10:36:17.059161Z",
+  "assembled_at": "2026-08-13T05:32:32.401723Z",
   "extraction_version": "2026-07-28.1",
-  "price_store": null,
+  "price_store": {
+    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
+    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",
+    "frontier": "2026-08-12"
+  },
   "sector": "Technology",
   "industry": {
     "value": "Data Processing and Outsourced Services",
@@ -5790,7 +6163,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-31T07:30:15.009626Z",
+    "computed_at": "2026-08-13T05:35:25.294309Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
