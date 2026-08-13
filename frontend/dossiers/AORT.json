@@ -474,7 +474,7 @@
       },
       "liquidity_covenant_flags": {
         "value": "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank (Term Loans) undrawn/– @ 1.400%; Convertible Senior Notes (Bonds and Notes) undrawn/– @ 4.250% Due 2025; Finance Lease Obligation (Capital Lease) 3 @ 2.400%; New Delayed Draw Term Loan Facility (Term Loans) undrawn/– @ NA Due 2031; Notes Payable (Bonds and Notes) 1 @ 6.050% Due 2026; Operating Lease Liabilities (Capital Lease) 39 @ 5.900%; Secured Revolving Credit Facility (Revolving Credit) 30 @ 7.160% Due 2031; Secured Term Loan Facility (Term Loans) 190 @ 8.410% Due 2031",
-        "source_ref": "CIQ Financials→Capital Structure Details",
+        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-18-2026)",
         "status": "present",
         "note": null
       },
@@ -4173,7 +4173,7 @@
         "note": null
       },
       "summary": {
-        "value": "term loans 190.0 (12 months Dec-31-2025 190.0 → 3 months Mar-31-2026 190.0); leases 42.8; total principal 262.8; total debt 258.2 (3 months Mar-31-2026) ($M)",
+        "value": "term loans 190.0 (3 months Q4 Dec-31-2025 190.0 → 3 months Q1 Mar-31-2026 190.0); leases 42.8; total principal 262.8; total debt 258.2 (3 months Q1 Mar-31-2026) ($M)",
         "source_ref": "CIQ Financials→Capital Structure Summary",
         "status": "present",
         "note": null
@@ -4329,7 +4329,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank · 0001628280-26-035798]\n  Principal / commitment amount: up to $15 million (the “Buyer Loan”), funded in tranches; initial tranche of…\n[Convertible Senior Notes · 0001193125-20-176533]\n  Conversion price / mechanics: ⇒ ~$23.46/sh at 42.6203 sh per $1,000 · Initial Conversion Rate: 42.6203 shares of…\n  Principal / commitment amount: $100,000,000, plus up to an additional $15,000,000 principal amount pursuant to the…\n  Interest / coupon rate: 4.250% per year\n  Maturity date: July 1, 2025, unless earlier repurchased, redeemed or converted\n  Make-whole fundamental change conversion rate increase: If the effective date of a make-whole fundamental change occurs prior to maturity or…\n[New Delayed Draw Term Loan Facility · 0000784199-15-000171]\n  Principal / commitment amount: $95,000,000 senior secured credit facilities: $75,000,000 Term Loan Facility and…\n  Interest / coupon rate: Base Rate + Applicable Margin, or LIBOR + Applicable Margin; Applicable Margin…\n  Maturity date: Term Loan: term of five years; Revolving Credit Facility: until the fifth…\n  Financial-maintenance covenants: Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (levels…\n[Secured Revolving Credit Facility · 0000784199-16-000175]\n… (+4 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank · 0001628280-26-035798]\n  Principal / commitment amount: up to $15 million (the “Buyer Loan”); initial tranche of $5,000,000 (“Initial Loan…\n[Convertible Senior Notes · 0001193125-20-176533]\n  Conversion price / mechanics: ⇒ ~$23.46/sh at 42.6203 sh per $1,000 · Initial Conversion Rate: 42.6203 shares of…\n  Principal / commitment amount: $100,000,000, plus up to an additional $15,000,000 principal amount pursuant to the…\n  Interest / coupon rate: 4.250% per year\n  Maturity date: July 1, 2025\n  Make-whole fundamental change conversion rate increase: in no event will the conversion rate per $1,000 principal amount of Notes exceed…\n[New Delayed Draw Term Loan Facility · 0000784199-15-000171]\n  Principal / commitment amount: $95,000,000 total ($75,000,000 Term Loan Facility; $20,000,000 Revolving Credit…\n  Interest / coupon rate: At Borrowers' option: Base Rate + Applicable Margin, or LIBOR + Applicable Margin.…\n  Maturity date: Term Loan: term of five years from the Closing Date. Revolving Credit Facility:…\n  Financial-maintenance covenants: Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (levels…\n[Secured Revolving Credit Facility · 0000784199-16-000175]\n… (+4 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4353,10 +4353,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "up to $15 million (the “Buyer Loan”), funded in tranches; initial tranche of $5,000,000 (“Initial Loan Tranche”)",
+              "value": "up to $15 million (the “Buyer Loan”); initial tranche of $5,000,000 (“Initial Loan Tranche”)",
               "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
               "status": "present",
-              "note": "verbatim: “Buyer undertakes to extend a loan to the Company and the Company shall borrow from Buyer up to $15 million (the “ Buyer Loan ”), which is to be funded in tranches”"
+              "note": "verbatim: “Buyer and the Company are entering into a Loan Agreement (the “ Loan Agreement ”), pursuant to which Buyer undertakes to extend a loan to the Company and the Company shall borrow from Buyer up to $15 million (the “ Buyer Loan ”), which is to be funded in tranches”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4409,7 +4409,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Debenture granting Buyer a perfected security interest in all of the Company's assets (other than the Horizon Assets); junior in priority to the JLL charge",
+              "value": "Debenture granting Buyer a perfected security interest in all of the Company's assets (other than the Horizon Assets), junior in priority to the charge granted to JLL under the JLL Loan",
               "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
               "status": "present",
               "note": "verbatim: “the Company is entering into a debenture pursuant to which the Company grants Buyer a perfected security interest in all of the Company’s assets (other than the Horizon Assets) (the “ Debenture ”), which shall be junior in priority with respect to the charge on the Company’s assets that the Company granted to JLL in connection with the JLL Loan.”"
@@ -4435,12 +4435,12 @@
             "pik_pct": null
           },
           {
-            "name": "Buyer Option / Fee",
+            "name": "Option Fee",
             "value": {
-              "value": "Buyer Option to purchase 100% of Company Securities; Fee of $1,000,000 within 14 Business Days of the Effective Time",
+              "value": "$1,000,000 payable within fourteen (14) Business Days of the Effective Time",
               "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
               "status": "present",
-              "note": "verbatim: “in consideration of and subject to Buyer’s payment to the Company of $1,000,000 within fourteen (14) Business Days of the Effective Time (the “ Fee ”) ... the Company and the Securityholders hereby irrevocably and unconditionally grant to Buyer the right and option (but not the obligation) to purchase ... 100%, but not less than 100%, of the Company Securities”"
+              "note": "verbatim: “in consideration of and subject to Buyer’s payment to the Company of $1,000,000 within fourteen (14) Business Days of the Effective Time (the “ Fee ”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4449,9 +4449,9 @@
             "pik_pct": null
           },
           {
-            "name": "Base Amount / Acquisition Consideration",
+            "name": "Acquisition Consideration / Base Amount",
             "value": {
-              "value": "Base Amount $250,000,000 in cash; Additional Consideration Amount (min $100,000,000, capped at $200,000,000)",
+              "value": "Base Amount = $250,000,000 in cash",
               "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
               "status": "present",
               "note": "verbatim: ““ Base Amount ” shall mean an amount equal to $250,000,000 in cash.”"
@@ -4463,12 +4463,82 @@
             "pik_pct": null
           },
           {
+            "name": "Additional Consideration Amount",
+            "value": {
+              "value": "Greater of Additional Consideration Minimum Amount ($100,000,000) or 5x the specified revenue increase; capped at $200,000,000",
+              "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Additional Consideration Amount ” shall mean an amount of cash in U.S. Dollars equal to the greater of (a) the Additional Consideration Minimum Amount; or (b) an amount ... equal to five (5) times the amount by which ... provided , however , that neither the Additional Consideration Base Amount nor the Additional Consideration Amount shall be greater than $200,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Indemnity Escrow Amount",
+            "value": {
+              "value": "$23,500,000 plus Additional Indemnity Escrow Amount",
+              "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Indemnity Escrow Amount ” shall mean an amount in cash equal to $23,500,000 plus , following the Additional Consideration Payment Date, the Additional Indemnity Escrow Amount deposited by Buyer with the Escrow Agent pursuant to Section 4.2(c) .”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Adjustment Escrow Amount",
+            "value": {
+              "value": "$1,000,000",
+              "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Adjustment Escrow Amount ” shall mean an amount in cash equal to $1,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of Delaware",
+              "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
+              "status": "present",
+              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the Laws of the State of Delaware, regardless of the Laws that might otherwise govern under applicable principles of conflicts of laws thereof.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Termination / Option Period",
+            "value": {
+              "value": "Option Period beginning as of Effective Time and ending 90 days following the Company's receipt of FDA Approval",
+              "source_ref": "8-K 0001628280-26-035798 · aort-2026x8k03312026ex101.htm",
+              "status": "present",
+              "note": "verbatim: ““ Option Period ” shall mean the period beginning as of the Effective Time and ending on the date that is ninety (90) days following the Company’s receipt of FDA Approval”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
             "name": "Conversion price / mechanics",
             "value": {
-              "value": "Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conversion Price: Approximately $23.46 per share of the Issuer's common stock. In no event will the conversion rate per $1,000 principal amount of Notes exceed 57.5373 shares.",
+              "value": "Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conversion Price: Approximately $23.46 per share of the Issuer's common stock. Conversion Premium: Approximately 35.0% above the last reported sale price ... on June 18, 2020.",
               "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
               "status": "present",
-              "note": "verbatim: “Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conversion Price: Approximately $23.46 per share of the Issuer's common stock. ... Notwithstanding the foregoing, in no event will the conversion rate per $1,000 principal amount of Notes exceed 57.5373 shares of the Issuer's common stock, subject to adjustment in the same manner as the conversion rate as set forth under \"Description of Notes—Conversion Rights—Conversion Rate Adjustments\" in the Preliminary Offering Memorandum.”"
+              "note": "verbatim: “Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conversion Price: Approximately $23.46 per share of the Issuer's common stock. ... Notwithstanding the foregoing, in no event will the conversion rate per $1,000 principal amount of Notes exceed 57.5373 shares of the Issuer's common stock ... The Securities will be convertible into cash, shares of Common Stock (the \"Underlying Securities\") or a combination of cash and Underlying Securities, at the Company's election, in accordance with the terms of the Indenture.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4498,8 +4568,8 @@
               "status": "present",
               "note": "verbatim: “Interest Rate: 4.250% per year. Interest Payment Dates: Interest will accrue from June 23, 2020 and will be payable semiannually in arrears on January 1 and July 1 of each year, beginning on January 1, 2021.”"
             },
-            "base_rate_label": null,
-            "margin_pct": null,
+            "base_rate_label": "Fixed",
+            "margin_pct": 4.25,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
@@ -4507,7 +4577,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "July 1, 2025, unless earlier repurchased, redeemed or converted",
+              "value": "July 1, 2025",
               "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
               "status": "present",
               "note": "verbatim: “Maturity: July 1, 2025, unless earlier repurchased, redeemed or converted.”"
@@ -4561,9 +4631,37 @@
             "pik_pct": null
           },
           {
-            "name": "Purchase Price",
+            "name": "Optional redemption",
             "value": {
-              "value": "97.00% of the principal amount thereof plus accrued interest, if any, to the Closing Date",
+              "value": "The Issuer may not redeem the Notes prior to July 5, 2023. The Issuer may redeem for cash all or part of the Notes ... on or after July 5, 2023 if the last reported sale price ... has been at least 130% of the conversion price ... at a redemption price equal to 100% of the principal amount ... plus accrued and unpaid interest",
+              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
+              "status": "present",
+              "note": "verbatim: “Redemption at Our Option: The Issuer may not redeem the Notes prior to July 5, 2023. The Issuer may redeem for cash all or part of the Notes, at the Issuer's option, on or after July 5, 2023 if the last reported sale price of the Issuer's common stock has been at least 130% of the conversion price then in effect for at least 20 trading days (whether or not consecutive) during any 30 consecutive trading day period ... at a redemption price equal to 100% of the principal amount of the Notes to be redeemed, plus accrued and unpaid interest to, but excluding, the redemption date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Ranking / seniority",
+            "value": {
+              "value": "4.250% Convertible Senior Notes due 2025",
+              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
+              "status": "present",
+              "note": "verbatim: “CRYOLIFE, INC. 4.250% CONVERTIBLE SENIOR NOTES DUE 2025”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Purchase price / discount",
+            "value": {
+              "value": "97.00% of the principal amount thereof (the \"Purchase Price\") plus accrued interest",
               "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
               "status": "present",
               "note": "verbatim: “agrees to purchase from the Company, the principal amount of Firm Securities set forth in Schedule I hereto opposite its name at a purchase price of 97.00% of the principal amount thereof (the \"Purchase Price\") plus accrued interest, if any, to the Closing Date.”"
@@ -4575,12 +4673,12 @@
             "pik_pct": null
           },
           {
-            "name": "Optional redemption",
+            "name": "Make-whole fundamental change conversion rate increase",
             "value": {
-              "value": "The Issuer may not redeem the Notes prior to July 5, 2023. The Issuer may redeem for cash all or part of the Notes on or after July 5, 2023 if the last reported sale price has been at least 130% of the conversion price then in effect for at least 20 trading days during any 30 consecutive trading day period, at a redemption price equal to 100% of the principal amount plus accrued and unpaid interest",
+              "value": "in no event will the conversion rate per $1,000 principal amount of Notes exceed 57.5373 shares",
               "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
               "status": "present",
-              "note": "verbatim: “Redemption at Our Option: The Issuer may not redeem the Notes prior to July 5, 2023. The Issuer may redeem for cash all or part of the Notes, at the Issuer's option, on or after July 5, 2023 if the last reported sale price of the Issuer's common stock has been at least 130% of the conversion price then in effect for at least 20 trading days (whether or not consecutive) during any 30 consecutive trading day period ... at a redemption price equal to 100% of the principal amount of the Notes to be redeemed, plus accrued and unpaid interest to, but excluding, the redemption date.”"
+              "note": "verbatim: “If the effective date of a \"make-whole fundamental change\" ... occurs prior to the maturity date of the Notes or if the Issuer gives a notice of redemption ... the Issuer will, in certain circumstances, increase the conversion rate for a holder who elects to convert its Notes ... Notwithstanding the foregoing, in no event will the conversion rate per $1,000 principal amount of Notes exceed 57.5373 shares of the Issuer's common stock”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4603,68 +4701,12 @@
             "pik_pct": null
           },
           {
-            "name": "Ranking / seniority",
+            "name": "Denominations",
             "value": {
-              "value": "4.250% Convertible Senior Notes due 2025",
+              "value": "$1,000 and multiples of $1,000 in excess thereof",
               "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
               "status": "present",
-              "note": "verbatim: “$100,000,000 CRYOLIFE, INC. 4.250% CONVERTIBLE SENIOR NOTES DUE 2025”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Make-whole fundamental change conversion rate increase",
-            "value": {
-              "value": "If the effective date of a make-whole fundamental change occurs prior to maturity or if the Issuer gives a notice of redemption, the Issuer will, in certain circumstances, increase the conversion rate (per table of additional shares by stock price and effective date)",
-              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
-              "status": "present",
-              "note": "verbatim: “If the effective date of a \"make-whole fundamental change\" (as defined in the Preliminary Offering Memorandum) occurs prior to the maturity date of the Notes or if the Issuer gives a notice of redemption with respect to any or all of the Notes, the Issuer will, in certain circumstances, increase the conversion rate for a holder who elects to convert its Notes in connection with such a make-whole fundamental change or notice of redemption”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Settlement method",
-            "value": {
-              "value": "Convertible into cash, shares of Common Stock or a combination of cash and Underlying Securities, at the Company's election",
-              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Securities will be convertible into cash, shares of Common Stock (the \"Underlying Securities\") or a combination of cash and Underlying Securities, at the Company's election, in accordance with the terms of the Indenture.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Use of proceeds",
-            "value": {
-              "value": "Approximately $96.5 million net proceeds (or approximately $111.1 million if option exercised in full); general corporate purposes, including the repayment of approximately $30 million in outstanding borrowings under its revolving credit facility",
-              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Issuer expects to use the net proceeds from this offering for general corporate purposes, including the repayment of approximately $30 million in outstanding borrowings under its revolving credit facility.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the internal laws of the State of New York.”"
+              "note": "verbatim: “Denominations: $1,000 and multiples of $1,000 in excess thereof.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4689,10 +4731,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$95,000,000 senior secured credit facilities: $75,000,000 Term Loan Facility and $20,000,000 Revolving Credit Facility (commitments: HFS $40,000,000; Fifth Third $40,000,000; Citizens $15,000,000)",
+              "value": "$95,000,000 total ($75,000,000 Term Loan Facility; $20,000,000 Revolving Credit Facility; $4,000,000 Letter of Credit sub-facility; $3,000,000 Swing Line sub-facility). Initial Lender commitments: HFS $40,000,000; Fifth Third $40,000,000; Citizens $15,000,000",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “$95,000,000 in senior secured credit facilities (the “ Credit Facilities ”) consisting of the following: Term Loan Facility: A senior secured term loan facility ... of $75,000,000 ... Revolving Credit Facility: A revolving credit facility of $20,000,000”"
+              "note": "verbatim: “$95,000,000 in senior secured credit facilities (the “ Credit Facilities ”) consisting of the following: Term Loan Facility: A senior secured term loan facility ... of $75,000,000 will be advanced in one drawing on the Closing Date ... Revolving Credit Facility: A revolving credit facility of $20,000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4703,10 +4745,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate + Applicable Margin, or LIBOR + Applicable Margin; Applicable Margin (initial): Base Rate 2.50%, LIBOR 3.50% (subject to Pricing Grid ranging LIBOR 2.75%-3.75% / Base Rate 1.75%-2.75% by Total Leverage Ratio); Default Rate additional 2% per annum",
+              "value": "At Borrowers' option: Base Rate + Applicable Margin, or LIBOR + Applicable Margin. Initial Applicable Margin: 2.50% (Base Rate) / 3.50% (LIBOR) for both Term Loan and Revolving. Thereafter set per Pricing Grid by Total Leverage Ratio (Base Rate 1.75%–2.75%; LIBOR 2.75%–3.75%). Default Rate: additional 2% per annum.",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “Interest will be payable on the unpaid principal amount of all Loans ... at a rate per annum equal to, at the option of Borrowers, (a) the Base Rate ... plus the Applicable Margin ... or (b) LIBOR ... plus the Applicable Margin ... The “ Applicable Margin ” means: with respect to the Term Loan, 2.50% per annum, in the case of Base Rate Loans, and 3.50% per annum, in the case of LIBOR Loans; and with respect to Loans under the Revolving Credit Facility, 2.50% per annum, in the case of Base Rate Loans ..., and 3.50% per annum, in the case of LIBOR Loans.”"
+              "note": "verbatim: “Interest will be payable on the unpaid principal amount of all Loans ... at a rate per annum equal to, at the option of Borrowers, (a) the Base Rate (as defined below) plus the Applicable Margin (as defined below) ... or (b) LIBOR (as defined below) plus the Applicable Margin ... The “ Applicable Margin ” means: with respect to the Term Loan, 2.50% per annum, in the case of Base Rate Loans, and 3.50% per annum, in the case of LIBOR Loans; and with respect to Loans under the Revolving Credit Facility, 2.50% per annum, in the case of Base Rate Loans ... and 3.50% per annum, in the case of LIBOR Loans.”"
             },
             "base_rate_label": "LIBOR",
             "margin_pct": 3.5,
@@ -4717,10 +4759,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Term Loan: term of five years; Revolving Credit Facility: until the fifth anniversary of the Closing Date (no calendar date stated)",
+              "value": "Term Loan: term of five years from the Closing Date. Revolving Credit Facility: until the fifth anniversary of the Closing Date. (No calendar date stated.)",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “A senior secured term loan facility ... of $75,000,000 will be advanced in one drawing on the Closing Date ... and have a term of five years ... A revolving credit facility of $20,000,000 ... under which borrowings may be made from time to time during the period from the Closing Date until the fifth anniversary of the Closing Date”"
+              "note": "verbatim: “A senior secured term loan facility ... of $75,000,000 will be advanced in one drawing on the Closing Date (as defined below) and have a term of five years ... A revolving credit facility of $20,000,000 ... under which borrowings may be made from time to time during the period from the Closing Date until the fifth anniversary of the Closing Date”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4731,10 +4773,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (levels to be agreed, reflecting a 25% to 30% cushion to the financial model)",
+              "value": "Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (levels to be agreed, reflecting a cushion to the financial model of 25% to 30%). Cure right per Section 7.3 of the Negotiated Credit Agreement.",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “The financial performance covenants (the “ Financial Performance Covenants ”) included in the Credit Agreement will be limited to the following ... : minimum interest coverage of 3.00:1.00; and maximum total leverage multiple.”"
+              "note": "verbatim: “The financial performance covenants (the “ Financial Performance Covenants ”) included in the Credit Agreement will be limited to the following ... minimum interest coverage of 3.00:1.00; and maximum total leverage multiple.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4745,10 +4787,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "First priority perfected security interests in substantially all existing and after-acquired real and personal property of Borrowers and each Guarantor, including 100% of outstanding equity interests in subsidiaries (excluding Excluded Equity/Property). Guarantors: each Borrower and each existing/subsequently acquired or formed subsidiary required to be a guarantor",
+              "value": "Collateral: first priority perfected security interests (subject to permitted liens) in substantially all existing and after-acquired real and personal property of Borrowers and each Guarantor, including 100% of all outstanding equity interests in their subsidiaries (excluding Excluded Equity and Excluded Property). Guarantors: each Borrower and each existing and subsequently acquired or formed subsidiary of a Borrower required to be a guarantor under the Negotiated Credit Agreement.",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “all obligations of Borrowers under the Credit Facilities ... and of the Guarantors under the guarantees, will be secured by first priority perfected security interests (subject to permitted liens) in substantially all existing and after-acquired real and personal property of Borrowers and each Guarantor, including, without limitation, 100% of all outstanding equity interests in their subsidiaries ... Guarantors : Each Borrower and each existing and subsequently acquired or formed subsidiary of a Borrower required to be a guarantor under the Negotiated Credit Agreement”"
+              "note": "verbatim: “all obligations of Borrowers under the Credit Facilities ... will be secured by first priority perfected security interests (subject to permitted liens) in substantially all existing and after-acquired real and personal property of Borrowers and each Guarantor, including, without limitation, 100% of all outstanding equity interests in their subsidiaries ... Guarantors : Each Borrower and each existing and subsequently acquired or formed subsidiary of a Borrower required to be a guarantor under the Negotiated Credit Agreement”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4759,10 +4801,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments: (a) Excess Cash Flow – 50% (stepping down to 25% at total leverage 2.50x and 0% at 1.50x) less voluntary prepayments; (b) Debt Issuances – 100% of net cash proceeds; (c) Asset Sales – 100% of net cash proceeds. Events of Default: failure to pay principal/interest/amounts when due; misrepresentation; covenant breach; cross-default; judgments; bankruptcy/insolvency; invalidity/impairment of Credit Documentation or liens; invalidity of subordination provisions; certain healthcare events; change of ownership or control",
+              "value": "Mandatory prepayments (per Section 2.8 of Negotiated Credit Agreement): (a) Excess Cash Flow – 50% (reducing to 25% at total leverage 2.50x and 0% at 1.50x), less voluntary prepayments; (b) Debt Issuances – 100% of net cash proceeds of non-permitted debt; (c) Asset Sales – 100% of net cash proceeds. Events of Default (per Article VIII): failure to pay principal/interest/other amount when due; incorrect representations/warranties; failure to comply with covenants; cross-default to other indebtedness and certain contingent obligations; judgment defaults; bankruptcy or insolvency; invalidity/impairment of Credit Documentation (including failure of any lien to remain perfected); invalidity of subordination provisions; certain healthcare events; and change of ownership or control.",
               "source_ref": "8-K 0000784199-15-000171 · c199-20151222ex101949499.htm",
               "status": "present",
-              "note": "verbatim: “Borrowers shall make the mandatory prepayments set forth in Section 2.8 of the Negotiated Credit Agreement ... including: (a) Excess Cash Flow. Annual prepayments in an amount equal to (i) 50% of Excess Cash Flow ... (b) Debt Issuances. Prepayments in an amount equal to 100% of the net cash proceeds of issuances or incurrences of debt obligations ... (c) Asset Sales. Prepayments in an amount equal to 100% of the net cash proceeds of the sale or other disposition of any property or assets ... Events of Default: ... Failure to pay principal, interest or any other amount when due; representations and warranties incorrect in any material respect ...; failure to comply with covenants ...; cross-default to other indebtedness ...; failure to satisfy or stay execution of judgments; bankruptcy or insolvency; ... change of ownership or control.”"
+              "note": "verbatim: “Borrowers shall make the mandatory prepayments set forth in Section 2.8 of the Negotiated Credit Agreement ... including: (a) Excess Cash Flow. Annual prepayments in an amount equal to (i) 50% of Excess Cash Flow ... with a reduction to 25% based upon achievement and maintenance of a total leverage multiple of 2.50x ... and to 0% upon achievement and maintenance of a total leverage multiple of 1.50x ... (b) Debt Issuances. Prepayments in an amount equal to 100% of the net cash proceeds of issuances or incurrences of debt obligations ... (c) Asset Sales. Prepayments in an amount equal to 100% of the net cash proceeds of the sale or other disposition of any property or assets ... Events of Default: The Credit Agreement will contain the events of default set forth in Article VIII of the Negotiated Credit Agreement including the following ... Failure to pay principal, interest or any other amount when due; representations and warranties incorrect ...; failure to comply with covenants ...; cross-default to other indebtedness ...; failure to satisfy or stay execution of judgments; bankruptcy or insolvency; actual or asserted invalidity or impairment of any part of the Credit Documentation ...; invalidity of subordination provisions, certain healthcare events and change of ownership or control.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4787,10 +4829,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$95,000,000 credit facility comprised of $75,000,000 Aggregate Term Loan Commitment and $20,000,000 Aggregate Revolving Loan Commitment (Swingline Commitment $3,000,000; L/C Sublimit $4,000,000)",
+              "value": "$95,000,000 Credit Facility; Aggregate Term Loan Commitment $75,000,000; Aggregate Revolving Loan Commitment $20,000,000; Swingline Commitment $3,000,000; L/C Sublimit $4,000,000",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: “$95,000,000 CREDIT FACILITY THIRD AMENDED AND RESTATED CREDIT AGREEMENT ... “ Aggregate Revolving Loan Commitment ” means the combined Revolving Loan Commitments of the Lenders, which as of the Closing Date, shall be $20,000,000 ... “ Aggregate Term Loan Commitment ” means the combined Term Loan Commitments of the Lenders, which as of the Closing Date, shall be $75,000,000”"
+              "note": "verbatim: “$95,000,000 CREDIT FACILITY ... “Aggregate Revolving Loan Commitment” means the combined Revolving Loan Commitments of the Lenders, which as of the Closing Date, shall be $20,000,000 ... “Aggregate Term Loan Commitment” means the combined Term Loan Commitments of the Lenders, which as of the Closing Date, shall be $75,000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4801,10 +4843,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "LIBOR or Base Rate plus Applicable Margin. Initial: Base Rate Loan 2.50% per annum; LIBOR Rate Loan 3.50% per annum. Thereafter grid by Leverage Ratio: LIBOR Margin 2.75%–3.75%, Base Rate Margin 1.75%–2.75%",
+              "value": "LIBOR or Base Rate plus Applicable Margin. Initial Applicable Margin: Base Rate Loan 2.50%, LIBOR Rate Loan 3.50%; thereafter grid based on Leverage Ratio (LIBOR Margin 2.75%–3.75%; Base Rate Margin 1.75%–2.75%). Default rate: additional 2.0% per annum.",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: “each Loan shall bear interest on the outstanding principal amount thereof from the date when made ... at a rate per annum equal to the LIBOR or the Base Rate, as the case may be, plus the Applicable Margin ... (a) ... (i) if a Base Rate Loan, two and one half percent (2.50%) per annum and (ii) if a LIBOR Rate Loan, three and one half percent (3.50%) per annum”"
+              "note": "verbatim: “each Loan shall bear interest on the outstanding principal amount thereof from the date when made ... at a rate per annum equal to the LIBOR or the Base Rate, as the case may be, plus the Applicable Margin ... “Applicable Margin” means: (a) ... (i) if a Base Rate Loan, two and one half percent (2.50%) per annum and (ii) if a LIBOR Rate Loan, three and one half percent (3.50%) per annum; (b) thereafter ... Greater than or equal to 3.25:1.00: [LIBOR Margin] 3.75% [Base Rate Margin] 2.75% ... Less than 2.25:1.00: 2.75% 1.75%”"
             },
             "base_rate_label": "LIBOR",
             "margin_pct": 3.5,
@@ -4815,10 +4857,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Revolving Termination Date: January 20, 2021; Term Loan final installment due January 20, 2021 ($56,250,000.00)",
+              "value": "Revolving Termination Date: January 20, 2021; final Term Loan installment due January 20, 2021 ($56,250,000.00)",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: ““ Revolving Termination Date ” means the earlier to occur of: (a) January 20, 2021 ... The principal amount of the Term Loans shall be paid in installments ... January 20, 2021 $56,250,000.00”"
+              "note": "verbatim: ““Revolving Termination Date” means the earlier to occur of: (a) January 20, 2021; and (b) the date on which the Aggregate Revolving Loan Commitment shall terminate ... [Term Loan scheduled installments] January 20, 2021 $56,250,000.00”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4829,10 +4871,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Leverage Ratio (max: 3.50:1.00 through 12/31/2016; 3.25:1.00; 3.00:1.00; stepping to 2.75:1.00 from 12/31/2017); Interest Coverage Ratio (min 3.00:1.00); Equity Cure provision (Section 7.3)",
+              "value": "Leverage Ratio (max 3.50:1.00 stepping down to 2.75:1.00 by 12/31/2017); Interest Coverage Ratio (min 3.00:1.00); Equity Cure (Section 7.3)",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: “ARTICLE VII FINANCIAL COVENANTS ... 7.1 Leverage Ratio. The Credit Parties shall not permit the Leverage Ratio for the twelve month period ending as of any date to be greater than the maximum ratio set forth in the table below ... 7.2 Interest Coverage Ratio. The Credit Parties shall not suffer or permit the Interest Coverage Ratio for the twelve fiscal month period ending on the last day of any Fiscal Quarter to be less than 3.00:1.00”"
+              "note": "verbatim: “7.1 Leverage Ratio. The Credit Parties shall not permit the Leverage Ratio for the twelve month period ending as of any date to be greater than the maximum ratio set forth in the table below ... March 31, 2016 3.50:1.00 ... December 31, 2017 and the end of each Fiscal Quarter thereafter: 2.75:1.00 ... 7.2 Interest Coverage Ratio. The Credit Parties shall not suffer or permit the Interest Coverage Ratio for the twelve fiscal month period ending on the last day of any Fiscal Quarter to be less than 3.00:1.00.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4843,10 +4885,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured by Liens on all/substantially all Property of Credit Parties pursuant to Guaranty and Security Agreement, Mortgages, and Control Agreements; guaranteed by Credit Parties (Domestic Subsidiaries other than Excluded Subsidiaries); pledge of 100% Stock of Domestic Subsidiaries and 65% voting Stock of Foreign Subsidiaries",
+              "value": "Secured by Liens on substantially all assets of the Credit Parties (Guaranty and Security Agreement, Mortgages, Control Agreements); guaranteed by Borrowers and Domestic Subsidiary Credit Parties; pledge of 100% Stock of Domestic Subsidiaries and 65% voting Stock of Foreign Subsidiaries",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: ““ Guaranty and Security Agreement ” means that certain Guaranty and Security Agreement, dated as of the Initial Closing Date, made by the Credit Parties in favor of the Agent, for the benefit of the Secured Parties ... “ Credit Parties ” means each Borrower and each other Person (i) which executes a guaranty of the Obligations and (ii) which grants a Lien on all or substantially all of its assets to secure payment of the Obligations ... each Credit Party shall pledge all of the Stock and Stock Equivalents of each of its Domestic Subsidiaries (other than Excluded Domestic Subsidiaries) and sixty-five percent (65%) of the outstanding voting Stock and Stock Equivalents ... of each Foreign Subsidiary”"
+              "note": "verbatim: ““Credit Parties” means each Borrower and each other Person (i) which executes a guaranty of the Obligations and (ii) which grants a Lien on all or substantially all of its assets to secure payment of the Obligations. ... the Credit Parties shall cause each of their Domestic Subsidiaries (other than Excluded Subsidiaries) promptly after formation or acquisition thereof, to guaranty the Obligations and to cause each such Subsidiary to grant to the Agent, for the benefit of the Secured Parties, a security interest in ... all of such Subsidiary’s Property ... each Credit Party shall pledge all of the Stock and Stock Equivalents of each of its Domestic Subsidiaries ... and sixty-five percent (65%) of the outstanding voting Stock and Stock Equivalents ... of each Foreign Subsidiary”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4857,10 +4899,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments: scheduled Term Loan installments (Section 2.8(a)); asset dispositions/Events of Loss above $1,500,000 (2.8(c)); incurrence of debt/Specified Equity Raises (2.8(d)); Excess Cash Flow sweep 50%/25%/0% by Leverage Ratio (2.8(e)). Events of Default (Section 8.1): non-payment; representation/warranty; specific/other defaults; cross-default ($2,500,000); insolvency (voluntary/involuntary); monetary judgments ($2,500,000); non-monetary judgments; collateral invalidity; change of ownership (35%); government authority actions",
+              "value": "Mandatory prepayments: scheduled Term Loan amortization (Sec 2.8(a)); Revolving overadvance; Asset Dispositions/Events of Loss (>$1,500,000, subject to reinvestment); Incurrence of Debt/Specified Equity Raises; Excess Cash Flow (0%/25%/50% based on Leverage Ratio). Events of Default (Sec 8.1(a)-(l)): non-payment, breach of rep/warranty, specific/other defaults, cross-default (>$2,500,000), insolvency, involuntary proceedings, monetary judgments (>$2,500,000), non-monetary judgments, collateral invalidity, change of ownership (35% voting stock), government/FDA enforcement",
               "source_ref": "8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm",
               "status": "present",
-              "note": "verbatim: “2.8 Mandatory Prepayments of Loans and Commitment Reductions ... (c) Asset Dispositions; Events of Loss ... (d) Incurrence of Debt; Specified Equity Raises ... (e) Excess Cash Flow ... 8.1 Event of Default. Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (e) Cross-Default ... (f) Insolvency; Voluntary Proceedings ... (g) Involuntary Proceedings ...”"
+              "note": "verbatim: “2.8 Mandatory Prepayments of Loans and Commitment Reductions ... (c) Asset Dispositions; Events of Loss ... (d) Incurrence of Debt; Specified Equity Raises ... (e) Excess Cash Flow ... 8.1 Event of Default. Any of the following shall constitute an “Event of Default”: (a) Non-Payment ... (b) Representation or Warranty ... (c) Specific Defaults ... (d) Other Defaults ... (e) Cross-Default ... (f) Insolvency; Voluntary Proceedings ... (g) Involuntary Proceedings ... (h) Monetary Judgments ... (i) Non-Monetary Judgments ... (j) Collateral ... (k) Ownership ... (l) Government Authorities”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -8163,25 +8205,13 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "On-X revenue growth (constant currency)",
-          "period": "Q1 2026",
-          "value": "17% year-over-year growth",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Meanwhile, our Q1 On-X revenue was 17% year-over-year growth on a constant currency basis.",
-          "following_context": "This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
-          "metric": "On-X market share gains",
+          "metric": "On-X market share",
           "period": "Q1 2026",
-          "value": "further global market share gains",
+          "value": "17% year-over-year growth on a constant currency basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
+          "verbatim": "Meanwhile, our Q1 On-X revenue was 17% year-over-year growth on a constant currency basis. This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
           "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
@@ -8212,7 +8242,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "BioGlue revenue (constant currency)",
+          "metric": "BioGlue revenue growth (constant currency)",
           "period": "Q1 2026",
           "value": "relatively flat",
           "value_num": null,
@@ -8260,21 +8290,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "adjusted EBITDA margin",
+          "metric": "regional revenue growth",
           "period": "Q1 2026",
-          "value": "19%, an approximate 130 basis point improvement",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Adjusted EBITDA margin was 19% in the first quarter of 2026, an approximate 130 basis point improvement over the prior year, driven by leverage in SG&A and gross margin improvement.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Asia Pacific revenue growth",
-          "period": "Q1 2026",
-          "value": "increased 6%",
+          "value": "Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%",
           "value_num": null,
           "unit": null,
           "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
@@ -8284,68 +8302,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "North America revenue growth",
-          "period": "Q1 2026",
-          "value": "23%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "EMEA revenue growth",
-          "period": "Q1 2026",
-          "value": "increased 5%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Latin America revenue growth",
-          "period": "Q1 2026",
-          "value": "decreased 23%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "gross margin",
-          "period": "Q1 2026",
-          "value": "64.9%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Q1 gross margins were 64.9% in Q1, an increase from 64.2% in the first quarter of 2025, primarily due to favorable product and geographic mix.",
-          "following_context": "General and administrative and marketing expenses in the first quarter were $60.8 million compared to $54.7 million in the first quarter of 2025.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "net leverage ratio",
-          "period": "As of March 31, 2026",
-          "value": "1.8, down from 4.0",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "At the end of the first quarter, our net leverage ratio was 1.8, down from 4.0 in the prior year.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "full year adjusted constant currency revenue growth",
-          "period": "Full year 2025",
+          "metric": "full year constant currency revenue growth",
+          "period": "full year 2025",
           "value": "13%",
           "value_num": null,
           "unit": null,
@@ -8367,38 +8325,14 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "On-X revenue growth (constant currency)",
-          "period": "Q4 2025",
-          "value": "grew 24% year-over-year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Also in Q4, our On-X revenues grew 24% year-over-year on a constant currency basis.",
-          "following_context": "Growth was driven by our continued global market share gains and early traction in our new $100 million U.S. market opportunity unlocked by recently published data. As previously discussed, the clinical evidence supported by two leading journals demonstrated improved outcomes with mechanical versus bioprosthetic valves for younger patients. As a result, we maintain a strong conviction that On-X is the best aortic valve on the market for patients under the age of 65 and that we'll continue to take market share worldwide in that product line.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
-          "metric": "On-X market share gains",
+          "metric": "On-X market share",
           "period": "Q4 2025",
-          "value": "continued global market share gains",
+          "value": "grew 24% year-over-year on a constant currency basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "Growth was driven by our continued global market share gains and early traction in our new $100 million U.S. market opportunity unlocked by recently published data.",
+          "verbatim": "Also in Q4, our On-X revenues grew 24% year-over-year on a constant currency basis. Growth was driven by our continued global market share gains and early traction in our new $100 million U.S. market opportunity unlocked by recently published data.",
           "following_context": "As previously discussed, the clinical evidence supported by two leading journals demonstrated improved outcomes with mechanical versus bioprosthetic valves for younger patients. As a result, we maintain a strong conviction that On-X is the best aortic valve on the market for patients under the age of 65 and that we'll continue to take market share worldwide in that product line.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "On-X positioning for patients under 65",
-          "period": "Q4 2025",
-          "value": "best aortic valve on the market for patients under the age of 65",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "As a result, we maintain a strong conviction that On-X is the best aortic valve on the market for patients under the age of 65 and that we'll continue to take market share worldwide in that product line.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8416,7 +8350,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "BioGlue revenue (constant currency)",
+          "metric": "BioGlue revenue growth (constant currency)",
           "period": "Q4 2025",
           "value": "relatively flat",
           "value_num": null,
@@ -8442,7 +8376,7 @@
           "kind": "leading_indicator",
           "metric": "total adjusted revenues",
           "period": "Q4 2025",
-          "value": "$118.3 million, up 18.5%",
+          "value": "$118.3 million",
           "value_num": null,
           "unit": null,
           "verbatim": "Total adjusted revenues were $118.3 million for the fourth quarter of 2025, excluding the Italian payback adjustment, up 18.5% compared to Q4 of 2024.",
@@ -8464,49 +8398,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "adjusted EBITDA margin",
-          "period": "Q4 2025",
-          "value": "19.2%, an approximately 110 basis point improvement",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Adjusted EBITDA margin was 19.2% in the fourth quarter of 2025, an approximately 110 basis point improvement over the prior year, driven by leverage in SG&A.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "total adjusted revenues",
-          "period": "Full year 2025",
-          "value": "$443.6 million, up 13%",
+          "metric": "full year total adjusted revenues",
+          "period": "full year 2025",
+          "value": "$443.6 million",
           "value_num": null,
           "unit": null,
           "verbatim": "For the full year, total adjusted revenues were $443.6 million, up 13% compared to full year 2024.",
           "following_context": "Adjusted EBITDA grew 26% for the full year, twice the rate of adjusted revenue growth. This resulted in an adjusted EBITDA margin of 20.2%, a 190 basis point improvement from 2024. Before the detailed review of our results, I would like to comment on the impact of the Italian government's payback legislation to our 2025 financials. You may be familiar with this as it impacts a number of medical device companies.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "adjusted EBITDA growth",
-          "period": "Full year 2025",
-          "value": "grew 26%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Adjusted EBITDA grew 26% for the full year, twice the rate of adjusted revenue growth.",
-          "following_context": "This resulted in an adjusted EBITDA margin of 20.2%, a 190 basis point improvement from 2024. Before the detailed review of our results, I would like to comment on the impact of the Italian government's payback legislation to our 2025 financials. You may be familiar with this as it impacts a number of medical device companies.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "adjusted EBITDA margin",
-          "period": "Full year 2025",
-          "value": "20.2%, a 190 basis point improvement",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "This resulted in an adjusted EBITDA margin of 20.2%, a 190 basis point improvement from 2024.",
-          "following_context": "Before the detailed review of our results, I would like to comment on the impact of the Italian government's payback legislation to our 2025 financials. You may be familiar with this as it impacts a number of medical device companies.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -8536,20 +8434,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "tissue processing revenue growth excluding cyber impact",
-          "period": "Q4 2025",
-          "value": "declined 4%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Excluding the previously discussed impact of the cyber incident from our prior year results, our fourth quarter stent graft revenues increased 28% and our tissue processing revenues declined 4%.",
-          "following_context": "I would like to note that tissue processing growth for the full year declined 3% compared to 2024. This came in below our expectations, driven primarily by the lingering impact of the cybersecurity incident in Q1.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "tissue processing full year growth",
-          "period": "Full year 2025",
+          "metric": "full year tissue processing growth",
+          "period": "full year 2025",
           "value": "declined 3%",
           "value_num": null,
           "unit": null,
@@ -8560,61 +8446,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Asia Pacific revenue growth",
+          "metric": "regional revenue growth",
           "period": "Q4 2025",
-          "value": "increased 32%",
+          "value": "Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
           "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "North America revenue growth",
-          "period": "Q4 2025",
-          "value": "increased 18%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "EMEA revenue growth",
-          "period": "Q4 2025",
-          "value": "increased 17%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Latin America revenue growth",
-          "period": "Q4 2025",
-          "value": "increased 9%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
-          "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "gross margin",
-          "period": "Q4 2025",
-          "value": "63% in both 2025 and 2024",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Q4 gross margins were 63% in both 2025 and 2024.",
-          "following_context": "As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8626,78 +8464,93 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a real FY26 earnings reset and stent-graft miss offset by rapidly rising absolute EBITDA, share gains, and a decompressing forward multiple.",
+    "evidence_balance": "mixed — a real EBITDA re-inflection and live pipeline against a guidance cut, an 82% forward-EPS collapse, above-peer leverage and an On-X recall.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA is rising fast even as the headline margin % looks middling — $15M (FY23) → $52M (FY24) → $54M (FY25) → $61M LTM, so the low-teens margin masks a doubling-plus of dollar EBITDA off a growing revenue base ($354M → $459M).",
+        "claim": "Absolute EBITDA has re-inflected sharply — from a $15M trough at Dec-31-2023 to $52M/$54M/$61M (LTM) — so the low headline margin masks a real earnings-base recovery, not decline.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Management reports adjusted EBITDA growing at roughly twice revenue: Q1 2026 adjusted EBITDA up ~26% to $22.1M on 12% cc revenue growth, with adjusted EBITDA margin ~19% (+130bps), evidencing operating leverage, not decay.",
+        "claim": "Q1 2026 delivered 12% constant-currency revenue growth and ~26% adjusted EBITDA growth year-over-year, EBITDA outgrowing revenue.",
         "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "On-X grew 17% cc in Q1 2026 driven by continued global share gains and a newly-opened ~$100M U.S. mechanical-valve opportunity, a genuine volume/mix driver behind the top line.",
+        "claim": "On-X grew 17% year-over-year (constant currency) in Q1 2026 on global share gains plus a new ~$100M U.S. mechanical-valve opportunity, a durable share-taking driver.",
         "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The FDA approval of Endospan's NEXUS Aortic Arch system and Artivion's option exercise adds a purpose-built product to a ~$150M U.S. addressable arch market, a dated, filing-anchored pipeline catalyst.",
+        "claim": "FDA approval of the NEXUS Aortic Arch System (Apr-07-2026) let Artivion exercise its option to acquire Endospan, completing a three-pronged aortic-arch portfolio — a concrete pipeline catalyst.",
         "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Apr-07-2026",
         "cited": true
       },
       {
-        "claim": "Forward multiples decompress sharply on the consensus growth path — NTM TEV/EBITDA 15.66x vs FY27 13.33x vs FY30 7.45x — indicating a trailing multiple struck off depressed dollar EBITDA rather than a permanently impaired level.",
+        "claim": "Forward multiples step down steeply on the consensus growth path (NTM TEV/EBITDA 15.66x → FY27 13.33x → FY28 11.03x), so the near-floor trailing multiple sits against a rising earnings base rather than a static one.",
         "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       },
       {
-        "claim": "Sell-side is unanimous on direction with 8 Buy/Outperform and mean target $42 vs the ~$29 price, and revenue guidance was cross-source VERIFIED at $480-496M — the de-rate is an earnings-quality/EPS reset, not a revenue collapse.",
-        "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
+        "claim": "On the comps grid Artivion's revenue growth (17.6%) and EBITDA growth (42.2%) both exceed the peer median (13.4% / 23.2%), a growth profile that argues part of the peer discount may be residual rather than earned — the human judges justified-vs-residual against the fundamental_deltas.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "On a residual-vs-earned read, AORT trades at EV/EBITDA 22.3x below the peer median 27.1x while posting FASTER growth than the median (rev 18% vs 13%, EBITDA 42% vs 23%), posing whether the discount is unearned overshoot — but the peer set is HETEROGENEOUS so this is a confidence-gated input, not a clean benchmark.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Sell-side remains constructive post-derate — target mean $42 / median $43 versus a ~$28.64 price, with 6 Buy / 2 Outperform / 0 Hold and no negative ratings.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The de-rate was a discrete guidance-lowering event: on 2026-05-08 the stock gapped down after Artivion lowered FY2026 earnings guidance, a real signal of an operating shortfall, not noise.",
-        "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-07-2026",
+        "claim": "Management LOWERED full-year 2026 earnings guidance on May-07-2026, and the current guide (adj EBITDA $92–99M) has been cut again from the prior $100–107M — a genuine downshift, not optical.",
+        "source_ref": "8-K 0001628280-26-054294 EX-99.1",
         "cited": true
       },
       {
-        "claim": "The core stent-graft engine missed: Q1 2026 stent-graft cc growth was only 10% and fell below expectations on lower U.S. AMDS set sales and soft Middle East/international performance — a genuine demand-mechanism miss in the segment management calls foundational.",
-        "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Consensus FY26 GAAP EPS was cut ~82% (0.45→0.08) and EBT ~79% over the revision window, a broad, deep, near-unanimous downgrade cycle across every broker — the EPS reset is real and load-bearing, not optical.",
+        "claim": "The FY26 GAAP EPS consensus path collapsed -82% (0.45 → 0.08 latest) and GAAP net income -79%, so the earnings the stock is priced on have been materially marked down; this is the REAL signal, not a stale trailing artifact.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "On-X issued a voluntary product recall on 2026-05-23 (valves released before all required testing complete), an idiosyncratic operational risk to the fastest-growing product line.",
+        "claim": "The trailing P/E of 114.3x is a distorted, near-meaningless multiple because trailing EPS $0.21 is anomalous — the OPTICAL headline; the load-bearing bear read is the collapsed forward path (NTM P/E 222.54x on cut estimates), not the trailing figure.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "cited": true
+      },
+      {
+        "claim": "On-X Life Technologies issued a voluntary product recall on May-23-2026 (heart valves distributed before all required testing complete), a live operational/regulatory risk to a core growth line.",
         "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-23-2026",
         "cited": true
       },
       {
-        "claim": "Leverage is above peers on a total-debt basis (3.7x vs peer median 2.0x) and interest coverage is thin at 2.5x, so the discount is at least partly EARNED on balance-sheet risk — though a floating-rate stack (SOFR+4.75% term loan) means rate sensitivity, not covenant breach on the record.",
+        "claim": "Leverage runs above peers — total debt/EBITDA 3.7x vs peer median 2.0x and net-debt/EBITDA 3.3x with interest coverage only 2.5x — a genuine balance-sheet constraint, part of the EARNED discount.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-07-30",
         "cited": true
       },
       {
-        "claim": "The P/E is uninformative and flashing distress: reported P/E 114.3x on anomalous trailing EPS $0.21, with the trailing EPS history too short to judge — an optical figure that reflects near-zero GAAP earnings, not a premium franchise.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "Q1 2026 stent-graft growth of only 10% cc fell below expectations on lower-than-expected U.S. AMDS set sales and soft international demand — a mechanism-level miss in the segment framed as foundational to growth.",
+        "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The share count is diluting — up 16.3% over ~1.7 years to 48.8M shares — and insiders sold (0 buys, 28 sells, $5.92M) over the last 182 days, pressuring per-share value.",
+        "claim": "Estimate breadth is uniformly negative — EBITDA FQ2/FQ3 2026 3-month revisions 0 up / 6 down, EPS 0 up / 7 down — confirming a broad-based downgrade cycle, not a single broker's cut.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "cited": true
+      },
+      {
+        "claim": "Shares diluted +16.3% over ~1.7 years (41.9M → 48.8M), steadily eroding per-share claims on the recovering EBITDA base.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-11-01..2026-07-31",
+        "cited": true
+      },
+      {
+        "claim": "LTM levered free cash flow is negative (-$7.3M) even as the business grows, so growth is not yet self-funding on that basis.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "The stock fell ~37% relative to its small-cap benchmark over 180 days (name -21.7% vs IWM +15.1%), an idiosyncratic de-rate, not a market move.",
+        "source_ref": "EOD AORT−IWM 180d to 2026-08-12 (assembly, cap-band)",
         "cited": true
       }
     ],
@@ -8705,63 +8558,80 @@
       {
         "name": "AtriCure",
         "outcome": "recovered",
-        "distinguishing_fact": "In-peer-set cardiac-device name that traded at a very high headline multiple on thin GAAP earnings while absolute revenue and dollar profitability kept compounding — the same 'optical P/E vs rising dollar EBITDA' pattern.",
+        "distinguishing_fact": "In-roster cardiac-device peer that traded on optically extreme earnings multiples through a thin-margin ramp while revenue compounded; the human can weigh whether Artivion's distorted trailing P/E is a similar early-profitability artifact.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "LeMaitre Vascular",
         "outcome": "recovered",
-        "distinguishing_fact": "In-peer-set vascular device maker that sustained a premium multiple on steady share-gain-driven growth and margin expansion, the recovery template if AORT's operating leverage converts.",
+        "distinguishing_fact": "In-roster small-cap vascular-device peer that sustained premium multiples on steady share-gain-driven growth and margin expansion — the pattern Artivion's bull case leans on if the EBITDA re-inflection holds.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "AngioDynamics",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-peer-set device name whose margin never durably inflected, carrying elevated leverage and repeated goodwill/intangible write-downs — the value-trap analogue where a low absolute-profit device business stays depressed.",
-        "source": "CIQ peer_capital_intensity rows (AngioDynamics impairment: wrote down)"
+        "distinguishing_fact": "In-roster device peer whose acquired-growth strategy produced repeated goodwill/intangible write-downs and stalled revenue — the value-trap pattern if Artivion's Endospan and prior deal goodwill fails to earn its keep.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Endospan Ltd.",
+        "name": "Boston Scientific Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "The acquired-pipeline dependency: a single-technology partner whose regulatory approval unlocks a new addressable market — execution/integration risk cuts both ways for the arch-portfolio thesis.",
-        "source": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Apr-07-2026"
+        "distinguishing_fact": "Large-cap device compounder that levered up for M&A and grew into the balance sheet; an analogue for whether Artivion's above-peer leverage is a temporary funding of a growth platform rather than distress.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "NuVasive",
+        "outcome": "recovered",
+        "distinguishing_fact": "Mid-cap specialty implant/device maker that carried elevated leverage and thin GAAP earnings while product launches drove share gains before re-rating — a qualitative analogue for a growth-plus-debt device name.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the sharp FY26 earnings reset a temporary, mix/timing-driven pothole in an accelerating dollar-EBITDA story (overshoot), or the first evidence that the core stent-graft growth engine is structurally slowing while leverage and dilution erode per-share value (value trap)?",
+      "question": "Is the collapsed forward-earnings path a durable impairment of the growth thesis (guidance cut, AMDS/stent-graft shortfall, On-X recall), or a temporary reset around near-floor trailing valuation while the EBITDA base and pipeline keep compounding?",
       "evidence_for": [
         {
-          "claim": "Absolute EBITDA has more than quadrupled off the FY23 trough ($15M→$61M LTM) while revenue kept compounding to $459M, and management reports adjusted EBITDA growing ~2x revenue with margin expansion.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Guidance was lowered and cut again to adj EBITDA $92–99M, and the FY26 GAAP EPS path fell -82%, marking down the very earnings the equity is priced on.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Management frames the stent-graft shortfall as timing (AMDS starter-set sales, VAC-process delays, imminent PMA) with encouraging reorder patterns and international normalization expected over the year, plus On-X 17% cc growth intact.",
+          "claim": "The core stent-graft line grew only 10% cc in Q1, below expectations on weak U.S. AMDS set sales and soft Middle East demand — the load-bearing driver disappointing.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "An On-X voluntary recall (May-23-2026) directly threatens the second growth engine the bull case relies on.",
+          "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-23-2026",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The foundational stent-graft segment grew only 10% cc and fell below expectations on genuinely soft U.S. AMDS and international demand, and consensus FY26 GAAP EPS was cut ~82% across the board.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "claim": "Absolute EBITDA still re-inflected to $61M LTM from a $15M trough, and Q1 adjusted EBITDA rose ~26% — the earnings base is expanding despite the guidance cut.",
+          "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "A voluntary On-X product recall on 2026-05-23 threatens the other fast-growing line, compounding the demand miss with an operational-quality question.",
-          "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-23-2026",
+          "claim": "On-X still grew 17% cc in Q1 on share gains and a new ~$100M U.S. opportunity, and NEXUS FDA approval completed the aortic-arch portfolio — the pipeline drivers remain live.",
+          "source_ref": "CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · Apr-07-2026",
+          "cited": true
+        },
+        {
+          "claim": "Forward multiples fall steeply on the consensus path (NTM 15.66x → FY28 11.03x), consistent with a base that keeps compounding rather than a permanent impairment.",
+          "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Segment EBITDA is not disclosed (revenue segmented into Products 78% / Preservation Services 22% but no segment profitability) — an opacity that hides whether the fast-growing stent-graft/On-X lines actually carry the margin; treat as a bearish disclosure gap.",
-      "No adjusted-EBITDA or adjusted-EPS figure is in the revised guidance, and net-debt/adjusted-EBITDA is UNKNOWN — the covenant-basis leverage cannot be checked against the 3.3-3.7x GAAP figures.",
-      "The two free-cash-flow bases carry OPPOSITE signs on the same period (CIQ Levered FCF –$7.3M vs CFO−capex +$14.6M); self-funding read is MIXED (latest-Q OCF>0, LTM FCF<0), so cash generation is genuinely ambiguous.",
-      "Magnitude and financial impact of the On-X voluntary recall (units, remediation cost, revenue exposure) are not quantified in the supplied facts.",
-      "Whether U.S. AMDS PMA approval and NEXUS commercial launch (guided Jan-2027) land on schedule — the near-term catalysts management leans on — is unresolved.",
-      "The peer set is HETEROGENEOUS (market caps $28M–$68.4B, 2488x span), so every peer-median multiple and the EARNED-vs-RESIDUAL discount read is confidence-gated, not a clean benchmark.",
-      "Trailing EV/EBITDA sits at its own 7th percentile (near-floor) but is tagged trailing-only with no forward basis — overshoot-vs-terminal is unresolved on the multiple alone."
+      "Adjusted/forward EV/EBITDA and adjusted EPS are not in the revised 99.1 guidance, so a clean forward multiple on the company's own adjusted basis cannot be struck (ev_ebitda_adjusted_fwd and adjusted_eps both UNKNOWN).",
+      "Segment EBITDA is not disclosed — only segment revenue (Products 78% / Preservation 22%) — an expected-disclosure gap that hides where profitability actually sits; treat as a bearish opacity risk.",
+      "The actual/estimate EBITDA basis diverges (estimate columns imply 2.65x the D&A of actuals), so trailing-vs-forward multiples are part definitional and not directly comparable — the human must reconcile before leaning on either.",
+      "Self-funding is MIXED: latest-quarter OCF is positive but LTM levered FCF is negative; whether the business self-funds through the Endospan integration is unresolved.",
+      "The debt schedule is 175 days old and no structured covenant-basis leverage figure exists for this vintage; headroom against the 3.00:1 interest-coverage / max-leverage covenants on the credit facilities is not verifiable from the supplied facts.",
+      "The Endospan acquisition consideration/financing terms and integration cost trajectory are only partially visible; the $116.7M acquisition-consideration line and its impact on leverage and FCF are not fully specified.",
+      "The peer set is HETEROGENEOUS (caps $28M–$68.4B, 2488x span), so every peer-median multiple is a confidence-gated input, not a clean benchmark for a $1.3B name.",
+      "Magnitude and duration of the On-X recall's revenue/margin impact are not quantified in the supplied facts."
     ]
   },
   "caveats": [
@@ -8779,13 +8649,11 @@
     "(E5) exhibit not extracted (cost bound): Convertible Senior Notes·ex-101.htm",
     "(E5) exhibit not extracted (cost bound): New Delayed Draw Term Loan Facility·ex10-1.htm",
     "(E5) exhibit not extracted (cost bound): Secured Revolving Credit Facility·fp0029473_ex101.htm",
-    "TWIN 'AngioDynamics' source doesn't trace — should be tagged unverified",
-    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
     "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
-    "VERIFICATION-CLAIM bull_point: 'Sell-side is unanimous on direction with 8 Buy/Outperform and mean…' — the dossier cites, it does not verify; confirm against the source (cited ≠ verified)"
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T09:56:03.680455Z",
+  "assembled_at": "2026-08-13T15:17:00.272224Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -8811,7 +8679,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T09:59:07.065881Z",
+    "computed_at": "2026-08-13T15:19:59.853226Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

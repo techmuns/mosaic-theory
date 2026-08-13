@@ -11769,6 +11769,31 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    does not exist".
    **ARTIFACT NOTE: the committed dossiers still carry the OLD annual panels** — this is a code
    change only, and the debt schedules move on the next re-assembly pass, not before.
+   **ARTIFACT PASS RUN 2026-08-13 (`artifacts/fleet-post-451`) — 14/14 clean, 0 errors, all at
+   `reference_date` 2026-08-12, and the P0 fix is PROVEN on the pages rather than asserted.**
+   **NOT ONE `detail_as_of` MOVED.** Every name's stamp is byte-identical to the pre-#450 artifact,
+   which is what "no artifact ever shipped with the mis-stamp" has to look like when you check it:
+   the committed pages were assembled BEFORE #450 merged, so a correct fix leaves them alone and
+   a broken one flips 16 of them to a quarterly stamp. The before/after was captured BEFORE the
+   run for exactly this reason — a post-hoc read of the new artifact could not have told the two
+   outcomes apart.
+   **THE THREE ITEM-1.02 DISCLOSURES ALL SURVIVED** (NFLX, UBER, VITL). NFLX still reads *"the debt
+   schedule is 201d old (source filed 2026-01-23) AND an Item 1.02 … was filed 2026-02-27,
+   accession 0001193125-26-08224…"* with the terminated WBD bridge still listed beside it — the
+   disclosure #450 would have erased while leaving the dead facility on the page.
+   **BLAST-RADIUS CORRECTION, measured not assumed:** three names carry a 1.02 warning, but only
+   **NFLX** would have LOST one. UBER's (2026-08-07) and VITL's (2026-08-06) terminations post-date
+   even their quarterly stamps, so they would have survived either way. #450's false AGE hit 16
+   names; the silenced disclosure was exactly the one name the audit found.
+   **#450's SURVIVING HALF LANDED TOO — 6 names' term-loan steps became like-for-like**, and two
+   of them now read materially differently: **SMPL** `249.1 → 397.0` (+59%, reading as a fresh
+   drawdown) is really `396.9 → 397.0` — FLAT, the 12-month endpoint having made a financing event
+   that predates the window look like last quarter's; **MVST** `131.3 → 118.5` (−10%) is really
+   `215.2 → 118.5`, a 45% paydown the mixed basis understated. Also AORT, CNXC, IT, VRRM.
+   **VERIFIED:** `pytest -m "not network"` **2548 passed / 15 skipped ON THE FRESHLY-WRITTEN
+   ARTIFACTS** (the artifact-pass rule — a re-assembled dossier can redden a pinned test, so green
+   applies to artifact commits too); preconditions re-checked before assembling (fleet as-of
+   resolves from a real screen-run manifest; #442's `identities_first_seen_after` guard clean).
    **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
    `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
    `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach

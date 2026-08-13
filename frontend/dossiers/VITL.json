@@ -434,7 +434,7 @@
       },
       "liquidity_covenant_flags": {
         "value": "Finance Lease Liabilities (Capital Lease) 11 @ 6.730%; JPMorgan Credit Facility (Revolving Credit) undrawn/– @ NA Due 2029; Operating Lease Liabilities (Capital Lease) 43 @ 4.770%",
-        "source_ref": "CIQ Financials→Capital Structure Details",
+        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)",
         "status": "present",
         "note": null
       },
@@ -4014,7 +4014,7 @@
         "note": null
       },
       "summary": {
-        "value": "leases 54.2; total principal 54.2; total debt 54.2 (3 months Mar-29-2026) ($M)",
+        "value": "leases 54.2; total principal 54.2; total debt 54.2 (3 months Q1 Mar-29-2026) ($M)",
         "source_ref": "CIQ Financials→Capital Structure Summary",
         "status": "present",
         "note": null
@@ -7377,21 +7377,33 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "share of consumers that were new households",
-          "period": "first quarter of 2026",
-          "value": "more than 55% in 2024 and 2025, dropped to just 50% in the first quarter of 2026",
+          "metric": "share of consumers that are new households",
+          "period": "2024 and 2025",
+          "value": "more than 55%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2024 and 2025, more than 55% of our consumers were households that had not bought us previously. That dropped to just 50% in the first quarter of 2026.",
+          "verbatim": "In 2024 and 2025, more than 55% of our consumers were households that had not bought us previously.",
+          "following_context": "That dropped to just 50% in the first quarter of 2026. This demonstrates our reduced ability to convert growing brand awareness into trial at these price gap levels. In contrast, our consumer data also shows that our existing consumers continue to be loyal and have generally resisted trading down to lower priced alternatives. Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters. In other words, the larger-than-expected price gaps have led to a slowdown in new consumer acquisition, which shows up in market data as a slowdown in velocity.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "share of consumers that are new households",
+          "period": "first quarter of 2026",
+          "value": "just 50%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "That dropped to just 50% in the first quarter of 2026.",
           "following_context": "This demonstrates our reduced ability to convert growing brand awareness into trial at these price gap levels. In contrast, our consumer data also shows that our existing consumers continue to be loyal and have generally resisted trading down to lower priced alternatives. Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters. In other words, the larger-than-expected price gaps have led to a slowdown in new consumer acquisition, which shows up in market data as a slowdown in velocity.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "units per retained household (buy rates)",
+          "metric": "units per retained household",
           "period": "first quarter",
-          "value": "2% higher in the first quarter than the average for the prior 8 quarters",
+          "value": "2% higher",
           "value_num": null,
           "unit": null,
           "verbatim": "Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters.",
@@ -7403,7 +7415,7 @@
           "kind": "pricing_action",
           "metric": "price gap to competing premium branded outdoor access eggs at a top 10 customer",
           "period": "recently",
-          "value": "from about 35% above to about 25%, volumes increased by 18% after just 2 weeks compared to the prior 4 weeks",
+          "value": "from about 35% above ... to about 25%",
           "value_num": null,
           "unit": null,
           "verbatim": "For example, we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
@@ -7413,8 +7425,20 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "TDP increase secured with a top 3 customer",
-          "period": "2026",
+          "metric": "volume increase after price gap reduction at a top 10 customer",
+          "period": "after just 2 weeks compared to the prior 4 weeks",
+          "value": "increased by 18% after just 2 weeks compared to the prior 4 weeks",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "For example, we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
+          "following_context": "Even with price reductions, we believe we still command a meaningful premium to our most direct competitors and can earn an attractive margin. It will take time to fully align the cost structure with these price levels, but we believe that we can generate the gross margins and EBITDA margins necessary to deliver strong shareholder value.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "TDP increase with a top 3 customer",
+          "period": null,
           "value": "at least 50% TDP increase",
           "value_num": null,
           "unit": null,
@@ -7425,7 +7449,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "TDP additions over 2026",
+          "metric": "TDP additions",
           "period": "over the course of 2026",
           "value": "20 to 30 TDPs or 15% to 25%",
           "value_num": null,
@@ -7438,8 +7462,8 @@
         {
           "kind": "leading_indicator",
           "metric": "quarterly average TDPs",
-          "period": "first quarter 2026 / fourth quarter 2026",
-          "value": "ended Q1 at 149.8 PDPs vs Q4 2025 average of 144.8 and 115.8 in Q1 2025; expect Q4 2026 could be between 170 to 175",
+          "period": "first quarter",
+          "value": "149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025",
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
@@ -7449,9 +7473,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "volume share gain within all outlets of MULO+ (Circana), full year 2025",
+          "metric": "feed costs in COGS",
+          "period": "Last year",
+          "value": "roughly $125 million",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Last year, feed accounted for roughly $125 million in COGS.",
+          "following_context": "Work is underway to lower our expenses, and we expect improvements to flow through our P&L in 2027.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "volume share gain within all outlets of MULO+",
           "period": "2025",
-          "value": "gained 25 basis points of volume share",
+          "value": "25 basis points",
           "value_num": null,
           "unit": null,
           "verbatim": "In 2025, we gained 25 basis points of volume share within all outlets of MULO+ according to Circana, making us the top share gainer in premium shell egg brands.",
@@ -7461,9 +7497,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "top share gainer in premium shell egg brands",
+          "metric": "premium shell egg brand share ranking",
           "period": "2025",
-          "value": "the top share gainer in premium shell egg brands",
+          "value": "top share gainer in premium shell egg brands",
           "value_num": null,
           "unit": null,
           "verbatim": "In 2025, we gained 25 basis points of volume share within all outlets of MULO+ according to Circana, making us the top share gainer in premium shell egg brands.",
@@ -7473,9 +7509,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "volume share gain (Circana), year-to-date through February 15",
+          "metric": "volume share gain",
           "period": "year-to-date through February 15",
-          "value": "gained 35 basis points of volume share",
+          "value": "35 basis points",
           "value_num": null,
           "unit": null,
           "verbatim": "According to the same data source, year-to-date through February 15, we gained 35 basis points of volume share, again, positioning us as one of the top share gainers in premium shell egg brands.",
@@ -7485,9 +7521,33 @@
         },
         {
           "kind": "leading_indicator",
+          "metric": "farm network size",
+          "period": null,
+          "value": "more than 600 small farms",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Third, our farm network expanded to more than 600 small farms committed to our pasture-ais standards, where hands roam freely on open pastures with year-round outdoor access.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "farms added",
+          "period": "in a single year",
+          "value": "approximately 175 farms",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Adding approximately 175 farms in a single year is a testament to the trust we built in the agricultural community around our unwavering commitment to humane animal care.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
           "metric": "brand awareness",
           "period": "2025",
-          "value": "34%, an increase of 8 percentage points in 2025",
+          "value": "34%, an increase of 8 percentage points",
           "value_num": null,
           "unit": null,
           "verbatim": "And finally, our recent marketing campaigns have driven brand awareness to 34%, an increase of 8 percentage points in 2025, widening the gap between our closest competitors and us.",
@@ -7496,8 +7556,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "households served and retail locations",
+          "kind": "leading_indicator",
+          "metric": "households served / retail locations",
           "period": null,
           "value": "nearly 16 million households through approximately 24,000 retail locations",
           "value_num": null,
@@ -7509,9 +7569,9 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "price increase (May) benefits to net revenue",
-          "period": "full year 2025",
-          "value": "Benefits from our May price increase",
+          "metric": "price increase",
+          "period": "May",
+          "value": "May price increase",
           "value_num": null,
           "unit": null,
           "verbatim": "Benefits from our May price increase and ongoing shift to the organic portfolio were partially offset by increased promotional activity to drive consumer trial.",
@@ -7526,187 +7586,168 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a violent event-driven EBITDA collapse and cash burn set against an intact balance sheet, loyal base, and early, mechanism-specific recovery evidence.",
+    "evidence_balance": "mixed — an intact, un-levered, still-growing franchise with elastic demand, offset by a ~97% forward-EBITDA collapse and cash burn whose fix is deferred to 2027.",
     "bull_points": [
       {
-        "claim": "The de-rate is a discrete, event-driven collapse (Feb-26 earnings/management-change and May-07 earnings/restructuring gap-downs), not a slow secular bleed — pointing to a repricing of a specific pricing-gap shock rather than a business unwind.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "Net-debt/EBITDA is 0.0x with total debt/EBITDA 0.1x versus a peer median of 3.4x, so the balance sheet carries no leverage stress even through a cash-burn year — but read against a HETEROGENEOUS peer set, this is a genuine relative strength, not a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-07-30",
         "cited": true
       },
       {
-        "claim": "Management identifies a specific, addressable mechanism — price gaps to competing outdoor-access eggs widened beyond what the brand could sustain, throttling new-household trial (new-buyer share fell from >55% to 50% in Q1 2026) — a demand-mix problem, not a demand-destruction one.",
+        "claim": "The de-rating is idiosyncratic: VITL fell ~59% over 180d while its small-cap benchmark IWM rose ~15%, a ~-75% relative move, signalling a name-specific reset rather than a sector rout.",
+        "source_ref": "EOD VITL−IWM 180d to 2026-08-12 (assembly, cab-band)",
+        "cited": false
+      },
+      {
+        "claim": "Management's mechanism for recovery is evidenced: reducing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks, suggesting velocity is price-elastic and recoverable rather than structurally lost.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Early evidence the fix works: narrowing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks versus the prior four — a real driver the recovery case turns on.",
+        "claim": "Distribution momentum is concrete and forward-loaded: an at-least-50% TDP increase with a top-3 customer plus category-captain assignment, with quarterly-average TDPs guided from 149.8 in Q1 toward 170-175 by Q4 2026 — a capacity-to-shelf pipeline that supports the top-line reset.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Existing-consumer loyalty held: units per retained household ran 2% above the prior 8-quarter average even through the price-gap shock, so the base is intact.",
-        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Distribution momentum is expanding into the downturn — a secured ≥50% TDP increase with a top-3 customer, category-captain role at another top-3 banner, and 20–30 TDP (15–25%) adds planned over 2026 — supporting a volume-led recovery independent of price.",
-        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet gives runway to fund the reset: net-debt/EBITDA 0.0x, interest coverage 99.4x, and the credit-health panel scores the name stronger than peers (Overall/Op/Solvency 2/1/2 vs peer 3/3/3).",
-        "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]",
-        "cited": true
-      },
-      {
-        "claim": "The peer discount is at least partly RESIDUAL rather than earned on top-line: the name grows revenue 26% vs a peer-median 2% with far lower leverage (Debt/EBITDA 0.1 vs 3.4), so the human must judge whether the TEV/EBITDA gap reflects a temporary margin trough rather than an inferior franchise.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA scaled from $41M (FY23) to $103M (FY25) with revenue $472M→$759M before the FY26 trough, and ROIC held double-digit (15.9% FY25), evidencing a franchise that earned real returns pre-shock.",
+        "claim": "The absolute EBITDA base is not impaired: LTM EBITDA is $79M on $784M revenue (10% margin) with revenue still growing 15.4% YoY in Q1, so the collapse is in forward estimates, not in the trailing operating base.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Consensus still carries an FY27 EBITDA rebound to ~$46–$50.5M and a Buy-tilted target of ~$12 (vs $11.52 price), consistent with the market treating FY26 as a low-watermark rather than a permanent impairment.",
-        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+        "claim": "Existing-consumer loyalty is holding: units per retained household ran 2% higher in Q1 than the prior-8-quarter average, so the demand shock is concentrated in new-household trial (price-gap driven), not in erosion of the core franchise.",
+        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The FY26 earnings collapse is severe and consensus-validated: FY26 EBITDA consensus fell from $123M (12m ago) to $3.4M (-97%) and FY26 EBIT/EPS crossed into negative territory — this is the REAL signal, not an optical artefact, because absolute EBITDA itself is guided to ~$3.4M.",
+        "claim": "The forward earnings power has collapsed, not merely dipped: FY26 consensus EBITDA fell from ~$123M (12m ago) to $3.4M (net -97%) and FY26 EPS crossed from +1.54 to -0.42 — the trailing 1.5x EV/EBITDA is a trailing-only optical artefact that MISREADS the business, since the forward NTM TEV/EBITDA is 89.3x, far ABOVE the peer median 12.1x.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The 1.5x TEV/LTM EBITDA is a trailing-only near-floor optic that MISLEADS on cheapness: struck off collapsing forward EBITDA the NTM TEV/EBITDA is 89.3x and FY26 172x, so the low trailing multiple is a denominator about to fall, not a bargain.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
-        "cited": true
-      },
-      {
-        "claim": "The margin trend is the REAL signal not just a percentage optic: EBITDA margin fell 14% (FY25) → 0% (FY26E) AND absolute EBITDA collapsed from $103M to ~$3.4M together — both fell, confirming genuine earnings impairment.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "The company is burning cash: LTM levered FCF is -$53.9M and self-funding is MIXED (latest-Q OCF<0 and LTM FCF<0), so the reset consumes cash while EBITDA is near zero.",
+        "claim": "The company is burning cash: LTM levered FCF is -$53.9M and FY26 consensus FCF is ~-$89M, so the de-rating reflects a real self-funding failure, not merely a multiple reset — the near-zero leverage cushion is being consumed.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
         "cited": true
       },
       {
-        "claim": "The core problem is that the brand hit a price-premium ceiling — management concedes price gaps 'reached levels our brand could not sustain', so the recovery requires permanently lower prices AND an as-yet-unbuilt lower cost structure (most cost savings only land in 2027+).",
+        "claim": "The margin compression is REAL, not optical: Q1-26 EBITDA margin fell to 1% (EBITDA $2M) versus 15% a year earlier, and management calls 2026 a 'low watermark for margins,' so the falling % is confirmed by the falling absolute EBITDA — both moving down together.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The demand shock is mechanism-confirmed: the share of buyers that are new households dropped from >55% (2024-25) to 50% in Q1-26 as price gaps reached 'levels our brand could not sustain,' evidencing eroding trial conversion at the current price premium.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Estimate revisions are relentlessly one-way: FY26 revenue 0↑/3↓ and EPS 0↑/1↓ in the last month, with brokers cutting to Hold and target prices slashed (e.g. Telsey 26→11, Craig-Hallum 20→10) — the tape is still deteriorating, not stabilising.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-        "cited": true
-      },
-      {
-        "claim": "The business is single-segment, single-geography egg-and-butter (butter now being wound down), giving no diversification cushion against the egg-category pricing shock.",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-28-2025)",
-        "cited": true
-      },
-      {
-        "claim": "Guidance credibility just cracked: FY26 revenue guide was cut from $900–920M (Feb) to $775–800M (May) and the most-recent FY2025 EBITDA guidance outcome MISSED — the outlook the recovery rests on has already been revised down hard once.",
+        "claim": "Guidance has been cut repeatedly in a single year: FY26 revenue was guided $900-920M in Feb-2026, then cut to $775-800M by May-2026, and the most recent FY25 EBITDA guidance outcome was MISSED — a deteriorating delivery track-record on the metric that matters.",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
+        "cited": true
+      },
+      {
+        "claim": "Concurrent shocks compound the reset: the founder/Executive Chairperson resigned (Feb-2026 8-K item 5.02), the butter line was wound down (May-2026 restructuring, item 2.05), and short interest is rising to 20.4% of shares out.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "The recovery to profit is deferred to 2027+: management states cost-structure fixes (feed ~$125M in COGS, ECS staffing) will mostly flow through 'in 2027 and beyond,' so FY26 offers no earnings support and the recovery thesis rests on unproven out-year execution.",
+        "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Freshpet",
+        "name": "The Simply Good Foods Company",
         "outcome": "recovered",
-        "distinguishing_fact": "Premium single-category US food brand that de-rated hard on a growth/margin scare, then recovered as volume-led distribution gains and cost normalization restored the margin trajectory.",
+        "distinguishing_fact": "A single-category branded consumer-food name in the same peer roster that took a goodwill/intangible write-down yet operates a durable premium brand — the pattern of a brand-led packaged-food name absorbing a discrete impairment without terminal impairment.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "The Simply Good Foods Company",
+        "name": "Freshpet",
         "outcome": "recovered",
-        "distinguishing_fact": "Mid-cap branded better-for-you food name that absorbed a demand/impairment shock yet retained a loyal core-consumer base and moderate leverage, supporting a franchise-intact re-rate.",
+        "distinguishing_fact": "A high-growth, premium-positioned single-category food name in the roster that ran heavy capex and low near-term profitability while building capacity ahead of demand — the pattern of a growth-mode brand valued on future volume, not trailing margin.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Cal-Maine Foods",
         "outcome": "recovered",
-        "distinguishing_fact": "Direct shell-egg peer whose earnings swing violently with egg-category pricing cycles, illustrating that a one-year earnings collapse in eggs can be cyclical rather than terminal.",
+        "distinguishing_fact": "The direct shell-egg comparable whose earnings swing violently with commodity egg-price cycles — the pattern of an egg-exposed name whose margin collapses on a pricing-environment turn and normalises as the cycle turns.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Kraft Heinz Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "Packaged-food name where a premium/brand-value reset proved structural, with repeated write-downs confirming an earned, persistent discount rather than an overshoot.",
-        "source": "CIQ peer_capital_intensity impairment panel (KHC wrote down, charged 5/5 years)"
+        "distinguishing_fact": "A branded packaged-food name whose premium eroded structurally, requiring repeated multi-year impairments as brand pricing power failed to recover — the pattern of a brand whose price premium proves unsustainable rather than cyclical.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Utz Brands",
+        "name": "Beyond Meat",
         "outcome": "went terminal",
-        "distinguishing_fact": "Small-cap single-category branded-snack name where thin margins and heavy leverage left little room to fund a reset, a cautionary analogue for a low-margin trough that persists.",
-        "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+        "distinguishing_fact": "A premium single-category food brand whose new-consumer trial stalled as the price gap to conventional alternatives widened, turning a growth story into structural cash burn — the pattern of premium demand failing at a price ceiling.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is FY26 a genuine low-watermark trough that reverses as price gaps narrow and distribution wins convert to volume (overshoot), or has the brand hit a permanent price-premium ceiling that structurally resets margins and earnings power (value trap)?",
+      "question": "Is the FY26 profit collapse a cyclical, price-gap-driven trough that narrowing gaps and 2027 cost cuts reverse (overshoot), or a structural failure of the brand's price premium that permanently resets earning power (value trap)?",
       "evidence_for": [
         {
-          "claim": "Narrowing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks — direct evidence the demand throttle is price-gap-driven and reversible.",
+          "claim": "Narrowing the price gap at a top-10 customer from ~35% to ~25% lifted volumes 18% in two weeks, indicating demand is price-elastic and recoverable when gaps close.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Secured distribution wins (≥50% TDP increase with a top-3 customer; 20–30 TDP adds over 2026) provide a volume path back to growth independent of chasing price.",
+          "claim": "Existing consumers stayed loyal with units per retained household 2% above the prior-8-quarter average, so the core franchise is intact and the shock is concentrated in new-household trial.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Consensus rebuilds EBITDA to ~$46–$50.5M in FY27, treating FY26 as a trough rather than a new baseline.",
-          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+          "claim": "Revenue still grew 15.4% YoY in Q1-26 and distribution is expanding (TDPs guided 149.8→170-175 by Q4-26), supporting a volume-led top-line recovery.",
+          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management concedes price gaps reached levels the brand 'could not sustain', implying a permanently lower price ceiling, and most offsetting cost savings only arrive in 2027+.",
+          "claim": "New-household share fell from >55% to 50% because price gaps reached 'levels our brand could not sustain,' pointing to a ceiling on the brand's premium rather than a temporary dip.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "New-household acquisition fell (>55% to 50% of buyers) even as brand awareness rose to 34% — awareness is no longer converting to trial at premium price gaps, a structural conversion problem.",
-          "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "FY26 EBITDA consensus collapsed 97% and EBIT/EPS went negative while FCF is -$53.9M, so the reset is cash-consuming and forward multiples (89x NTM) are unsupportive.",
+          "claim": "FY26 consensus EBITDA collapsed ~97% to $3.4M and the company is burning cash (LTM FCF -$53.9M), so the margin fix is entirely deferred to 2027+ and unproven.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "cited": true
+        },
+        {
+          "claim": "The forward NTM TEV/EBITDA of 89.3x versus peer median 12.1x shows the market is not pricing VITL as cheap on forward earnings — the 1.5x trailing multiple is an artefact of a near-zero forward EBITDA base.",
+          "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash runway is not derived: the dossier flags FCF-negative with 'cash not derived — a risk' — how many quarters of -$54M-scale burn the ~$51M cash + undrawn JPMorgan revolver can absorb before external financing is required is unresolved (a bearish opacity gap).",
-      "An Item 1.02 termination of a material definitive agreement was filed 2026-08-06; the debt schedule predates it and may not reflect a terminated instrument — the current capital structure is not confirmed.",
-      "The covenant digest extraction FAILED (terms UNKNOWN) — whether the undrawn JPMorgan revolver carries financial covenants that could bind while EBITDA is near zero is unknown (a bearish opacity gap).",
-      "No forward/adjusted EBITDA figure was given in the 99.1 revised guidance and adjusted-EPS is UNKNOWN, so a clean forward valuation basis is missing.",
-      "The current guide (filed 2026-08-06, revenue $775–800M / adj-EBITDA $0–10M) is the checkpoint but has not yet been tested against a print — the next results date (~2026-11-05) will confirm or refute the recovery narrative.",
-      "Whether the FY27 margin/EBITDA rebuild depends on cost actions that are still only 'underway' (feed costs, ECS staffing, 10% SG&A headcount cut) actually landing as modeled is unverified.",
-      "The peer set is HETEROGENEOUS (caps $67M–$82.9B, 1231x span); every peer multiple is a confidence-gated input, so the earned-vs-residual discount split cannot be read off the peer median cleanly."
+      "Cash runway: cash is not derived in the facts and the company is FCF-negative; how many quarters of burn the $51M cash / $113M securities base supports before financing is needed is unresolved (a bearish opacity risk).",
+      "Adjusted forward EBITDA and adjusted EPS are NOT in the revised guidance, so the forward NTM 89.3x TEV/EBITDA cannot be triangulated against a company-adjusted basis — the overshoot-vs-terminal read on the multiple is unresolved.",
+      "The current guide (filed 2026-08-06, adj EBITDA $0-10M) post-dates most of the estimate panel; the 2027 margin-recovery bridge (feed cost cuts, ECS staffing) is management assertion, not yet delivered.",
+      "Covenant terms are UNKNOWN (extraction failed) and an Item 1.02 termination of a material agreement was filed 2026-08-06 that the debt panel predates — the current credit-facility posture is not verifiable from the facts.",
+      "EBITDA-basis divergence: the estimate columns imply ~24 of D&A against ~4 in actuals (5.38x), so trailing vs forward EBITDA are not the same basis — any multiple comparison across the boundary is part-definitional.",
+      "The peer set is HETEROGENEOUS (caps span $67M-$82.9B, 1231x); no clean benchmark exists to judge whether the discount is earned or residual.",
+      "Whether the 18% two-week volume lift at one top-10 customer generalises across geographies/retailers, or is an isolated data point, is unresolved."
     ]
   },
   "caveats": [
     "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+0.9s fetch)",
-    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-06, EDGAR 8-K item 2.02), the oldest by 16d: valuation multiples as-of 2026-07-21; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
+    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-06, EDGAR 8-K item 2.02), the oldest by 16d: valuation multiples as-of 2026-07-21; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.",
+    "Unreconciled margin-compression (a bear point): 'The margin compression is REAL, not optical: Q1-26 EBITDA margin fell to 1% (EBITDA $2M) versus 15% a year earlier, and management calls 2026 a 'low watermark for margins,' so the falling % is confirmed by the falling absolute EBITDA — both moving down together.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "Bare peer-comparison (a decisive-against point): 'The forward NTM TEV/EBITDA of 89.3x versus peer median 12.1x shows the market is not pricing VITL as cheap on forward earnings — the 1.5x trailing multiple is an artefact of a near-zero forward EBITDA base.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a decisive-against point): 'The forward NTM TEV/EBITDA of 89.3x versus peer median 12.1x shows the market is not pricing VITL as cheap on forward earnings — the 1.5x trailing multiple is an artefact of a near-zero forward EBITDA base.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "operating-drivers: Tier-B row dropped — value figure 175 not in its quote (farm network size)",
-    "TWIN 'The Kraft Heinz Company' source doesn't trace — should be tagged unverified",
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
+    "UNCITED bull_point: 'The de-rating is idiosyncratic: VITL fell ~59% over 180d while its…' (ref not in mechanical facts)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T10:25:40.916491Z",
+  "assembled_at": "2026-08-13T15:47:53.367998Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -7732,7 +7773,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T10:27:19.403929Z",
+    "computed_at": "2026-08-13T15:49:23.518364Z",
     "reason": "own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced",
     "data_quality": "band_incoherent+band_unreconciled",
     "data_quality_detail": [
