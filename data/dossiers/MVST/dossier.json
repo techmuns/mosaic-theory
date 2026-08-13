@@ -259,7 +259,7 @@
       },
       "liquidity_covenant_flags": {
         "value": "Convertible Bond - CNY (Bonds and Notes) 42 @ 3.000% - 4.000% Due 2027; Convertible Loan With Shareholder - Delayed Draw Term Loan (Term Loans) 13 @ NA Due 2026; Convertible Loan With Shareholder - Initial Term Loan (Term Loans) 12 @ NA Due 2026; Loan Facilities Agreement With a Group of Lenders Led by a Bank in China (Term Loans) 43 @ NA Due 2026; Long-term Loan Agreement With a Chinese Bank (Term Loans) 14 @ 2.700% Due 2027; Notes Payable (Bonds and Notes) 78 @ NA; Operating Lease Liabilities (Capital Lease) 17 @ 5.000%; Short-term Loan Agreements and Bank Facilities With Chinese Banks (Term Loans) 50 @ 2.400% - 4.850% Due 2027",
-        "source_ref": "CIQ Financials→Capital Structure Details",
+        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Mar-16-2026)",
         "status": "present",
         "note": null
       },
@@ -1575,7 +1575,7 @@
         "note": null
       },
       "summary": {
-        "value": "term loans 118.5 (12 months Dec-31-2025 131.3 → 3 months Jun-30-2026 118.5); senior bonds 56.9; leases 17.5; total principal 192.9; total debt 193.0 (3 months Jun-30-2026) ($M)",
+        "value": "term loans 118.5 (3 months Q1 Mar-31-2026 215.2 → 3 months Q2 Jun-30-2026 118.5); senior bonds 56.9; leases 17.5; total principal 192.9; total debt 193.0 (3 months Q2 Jun-30-2026) ($M)",
         "source_ref": "CIQ Financials→Capital Structure Summary",
         "status": "present",
         "note": null
@@ -1704,7 +1704,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Convertible Bond · 0001213900-21-007125]\n  Conversion price / mechanics: any conversion of the Convertible Loans into Conversion Shares pursuant to Section…\n  Principal / commitment amount: Convertible Loan Amount = RMB 204,500,000 (CDH 1 CL Amount RMB 137,500,000; CDH 2 CL…\n  Interest / coupon rate: non-interest bearing term loan facility\n[Convertible Loan · 0000947871-25-000313]\n  Maturity date: “November 28, 2025” in clause (a) of the definition of “Maturity Date” is deleted…\n[Loan Facilities Agreement · 0001760689-22-000094]\n  Principal / commitment amount: RMB 800,000,000.00 yuan (Eight hundred million). Initial Commitments per Annex I:…\n  Interest / coupon rate: Floating rate: one year LPR published by the National Interbank Funding Center, Plus…\n  Maturity date: December 10, 2026 (5 years)\n  Financial-maintenance covenants: Article 14.1 Clause 9 (Financial indicator): 'The Borrower shall meet the following…\nMaturity event (8-K 0000947871-26-000585 (2026-05-28)): On May 28, 2026, Mr. Wu delivered a Notice of Conversion in respect of the full $25.0 million principal amount outstanding under the Loan Agreement. Such principal amount will be converted into shares of common stock of the Company in accordance with the terms of the Loan Agreement.",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Convertible Bond · 0001213900-21-007125]\n  Conversion price / mechanics: any conversion of the Convertible Loans into Conversion Shares pursuant to Section…\n  Principal / commitment amount: the total amount of Convertible Loans outstanding under the Convertible Loan…\n  Interest / coupon rate: non-interest bearing term loan facility\n[Convertible Loan · 0000947871-25-000313]\n  Maturity date: clause (a) of the definition of “Maturity Date” amended: “November 28, 2025” deleted…\n[Loan Facilities Agreement · 0001760689-22-000094]\n  Principal / commitment amount: RMB 800,000,000.00 yuan (Eight hundred million). Annex I Initial Commitments: Bank…\n  Interest / coupon rate: Floating rate: one-year LPR published by the National Interbank Funding Center plus…\n  Default Interest Rate: Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation…\n  Maturity date: December 10, 2026 (Loan Term 5 years). Availability Period ends 9 June 2023.\n  Financial-maintenance covenants: Article 14.1 Clause 9 (Financial indicator): 'The Borrower shall meet the following…\nMaturity event (8-K 0000947871-26-000585 (2026-05-28)): On May 28, 2026, Mr. Wu delivered a Notice of Conversion in respect of the full $25.0 million principal amount outstanding under the Loan Agreement. Such principal amount will be converted into shares of common stock of the Company in accordance with the terms of the Loan Agreement.",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -1714,10 +1714,10 @@
           {
             "name": "Conversion price / mechanics",
             "value": {
-              "value": "any conversion of the Convertible Loans into Conversion Shares pursuant to Section 3.2(c)(iii) will only occur in connection with a CL Share Sale; \"Conversion Documents\" has the meaning set forth in the Convertible Loan Agreement; \"Conversion Share\" has the meaning set forth in the Convertible Loan Agreement",
+              "value": "any conversion of the Convertible Loans into Conversion Shares pursuant to Section 3.2(c)(iii) will only occur in connection with a CL Share Sale; conversion registered with applicable governmental authorities within 30 days after the date of the notice; \"Conversion Share\" has the meaning set forth in the Convertible Loan Agreement; \"Conversion Documents\" has the meaning set forth in the Convertible Loan Agreement",
               "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
               "status": "present",
-              "note": "verbatim: “(iii) received certain conversion rights pursuant to Clause 5 of the Convertible Loan Agreement that give the CL Investors the right to (i) convert the outstanding Convertible Loans into certain equity interests of MPS ... (such rights, “CL Conversion Rights”); ... (iii) any conversion of the Convertible Loans into Conversion Shares pursuant to Section 3.2(c)(iii) will only occur in connection with a CL Share Sale ... may at any time notify MPS of its intention to convert a specified amount of the Convertible Loans held by such CL Investor (relative to the bona fide estimate of the total number of CL Shares sold and/or intended to be sold by its CL SPV) into Conversion Shares pursuant to the applicable Conversion Documents ... Immediately following the acquisition by a CL SPV of all Conversion Shares issued or issuable to the applicable CL Investor, such CL Investor shall enter into an equity purchase agreement with Holdings and such CL SPV ... pursuant to which Holdings shall purchase all of the equity interests of such CL SPV in exchange for $1.00”"
+              "note": "verbatim: “if a CL Investor has either (x) not obtained the applicable Required Approvals prior to the Approval Deadline or (y) has otherwise notified Holdings in writing that it is no longer seeking the applicable Required Approvals, then in each case ... may at any time notify MPS of its intention to convert a specified amount of the Convertible Loans held by such CL Investor (relative to the bona fide estimate of the total number of CL Shares sold and/or intended to be sold by its CL SPV) into Conversion Shares pursuant to the applicable Conversion Documents, and the conversion of the specified amount of the Convertible Loans shall be registered with the applicable governmental authorities ... within 30 days after the date of the notice (each a “Convertible Loan Conversion”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1728,10 +1728,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Convertible Loan Amount = RMB 204,500,000 (CDH 1 CL Amount RMB 137,500,000; CDH 2 CL Amount RMB 37,000,000; HHEIP CL Amount RMB 30,000,000). CL Promissory Notes: CDH Subscription Amount RMB174,5000,000 [as stated]; HHEIP Subscription Amount RMB 30,000,000; CL Subscription Amount = the Convertible Loan Amount",
+              "value": "the total amount of Convertible Loans outstanding under the Convertible Loan Agreement is equal to RMB 204,500,000 (“Convertible Loan Amount”); CDH 1 CL Amount RMB 137,500,000; CDH 2 CL Amount RMB 37,000,000; HHEIP CL Amount RMB 30,000,000; CL Promissory Notes total aggregate principal: CDH Subscription Amount RMB174,5000,000 and HHEIP Subscription Amount RMB 30,000,000",
               "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
               "status": "present",
-              "note": "verbatim: “as of the Effective Date, the total amount of Convertible Loans outstanding under the Convertible Loan Agreement is equal to RMB 204,500,000 (“Convertible Loan Amount”), held respectively by (a) Ningbo CDH 1 in an amount equal to RMB 137,500,000 (“CDH 1 CL Amount”), Ningbo CDH 2 in an amount equal to RMB 37,000,000 (“CDH 2 CL Amount”), and HHEIP Investor in an amount equal to RMB 30,000,000 (“HHEIP CL Amount”) ... a promissory note in favor of Holdings ... with a total aggregate principal amount equal to, (A) in the case of the CDH Promissory Note, RMB174,5000,000 (“CDH Subscription Amount”) and (B) in the case of the HHEIP Promissory Note, RMB 30,000,000 (“HHEIP Subscription Amount”)”"
+              "note": "verbatim: “as of the Effective Date, the total amount of Convertible Loans outstanding under the Convertible Loan Agreement is equal to RMB 204,500,000 (“Convertible Loan Amount”), held respectively by (a) Ningbo CDH 1 in an amount equal to RMB 137,500,000 (“CDH 1 CL Amount”), Ningbo CDH 2 in an amount equal to RMB 37,000,000 (“CDH 2 CL Amount”), and HHEIP Investor in an amount equal to RMB 30,000,000 (“HHEIP CL Amount” ...)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1745,7 +1745,7 @@
               "value": "non-interest bearing term loan facility",
               "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
               "status": "present",
-              "note": "verbatim: “the CL Investors (a) committed to make available to MPS a non-interest bearing term loan facility in an aggregate amount equal to the Total Commitments (as defined in the Convertible Loan Agreement)”"
+              "note": "verbatim: “the CL Investors (a) committed to make available to MPS a non-interest bearing term loan facility in an aggregate amount equal to the Total Commitments (as defined in the Convertible Loan Agreement) on one or more instalments as contemplated thereunder (collectively, “Convertible Loans”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1784,10 +1784,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "CL Stock Pledge of CL Shares as collateral for the applicable CL Promissory Note; Holdings/subsidiaries/MVST SPV/Microvast Parties liable jointly and severally for indemnities",
+              "value": "each CL SPV shall pledge such CL Shares pursuant to the applicable CL Stock Pledge as collateral for the applicable CL Promissory Note; a stock pledge (each, a “CL Stock Pledge”)",
               "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
               "status": "present",
-              "note": "verbatim: “(ii) pledge such CL Shares pursuant to the applicable CL Stock Pledge, in each case, as collateral for the applicable CL Promissory Note ... For any liabilities or indemnities that shall be borne by Holdings or any of its subsidiaries, the MVST SPV or the Microvast Parties, all of them shall bear such liabilities or indemnities jointly and severally.”"
+              "note": "verbatim: “each CL SPV shall (i) subscribe for the applicable CL Shares issued by Holdings in exchange for the applicable CL Promissory Note (each, a “CL Share Subscription”), ... (ii) pledge such CL Shares pursuant to the applicable CL Stock Pledge, in each case, as collateral for the applicable CL Promissory Note”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1798,10 +1798,24 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "MPS shall repay in full any remaining portion of the CL Amount upon a CL Investor's receipt of Required Approvals; CL Investor shall use those proceeds to repay in full the CL Subscription Amount under the CL Promissory Note",
+              "value": "As soon as practicable following the receipt by a CL Investor of the applicable Required Approvals, but in any event within five Business Days of such CL Investor’s receipt of such Required Approvals, (A) MPS shall repay in full any remaining portion of the CL Amount held by such CL Investor and substantially concurrently therewith, (B) such CL Investor shall use the same proceeds received from such repayment of such applicable CL Amount to repay in full any portion of the applicable CL Subscription Amount that remains outstanding under the applicable CL Promissory Note",
               "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
               "status": "present",
               "note": "verbatim: “As soon as practicable following the receipt by a CL Investor of the applicable Required Approvals, but in any event within five Business Days of such CL Investor’s receipt of such Required Approvals, (A) MPS shall repay in full any remaining portion of the CL Amount held by such CL Investor and substantially concurrently therewith, (B) such CL Investor shall use the same proceeds received from such repayment of such applicable CL Amount to repay in full any portion of the applicable CL Subscription Amount that remains outstanding under the applicable CL Promissory Note.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "the Laws of the State of Delaware",
+              "source_ref": "8-K 0001213900-21-007125 · ea134382ex10-1_tuscanhold.htm",
+              "status": "present",
+              "note": "verbatim: “This Framework Agreement and, unless otherwise expressly specified therein, each of the Transaction Agreements shall be governed by and construed in accordance with the Laws of the State of Delaware without giving effect to any choice or conflict of law provision or rule”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1854,7 +1868,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "“November 28, 2025” in clause (a) of the definition of “Maturity Date” is deleted and replaced with “May 28, 2026”",
+              "value": "clause (a) of the definition of “Maturity Date” amended: “November 28, 2025” deleted and replaced with “May 28, 2026”",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
               "note": "verbatim: ““November 28, 2025” in clause (a) of the definition of “ Maturity Date ” is deleted and replaced with “May 28, 2026”.”"
@@ -1882,10 +1896,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors: Microvast Holdings, Inc. (Holdings), Microvast Advanced Materials Inc., Microvast Advanced Membrane Inc., Microvast Energy, Inc., Microvast Power Solutions, Inc., Microvast GmbH; Agent: Acquiom Agency Services LLC, as administrative agent and collateral agent. “[T]his Amendment in no way acts as a release or relinquishment of the Liens and rights securing payment of the Obligations and that the Liens and rights securing payment of the Obligations are hereby ratified and confirmed by each Loan Party in all respects”",
+              "value": "Guarantors (per signature pages): MICROVAST HOLDINGS, INC. (Holdings and a Guarantor); MICROVAST ADVANCED MATERIALS INC.; MICROVAST ADVANCED MEMBRANE INC.; MICROVAST ENERGY, INC.; MICROVAST POWER SOLUTIONS, INC.; MICROVAST GMBH. Agent/collateral agent: ACQUIOM AGENCY SERVICES LLC. Liens securing the Obligations ratified and confirmed.",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
-              "note": "verbatim: “each of the Subsidiaries of Holdings listed as a “Guarantor” on the signature pages hereto ... GUARANTORS : MICROVAST HOLDINGS, INC., as Holdings and a Guarantor ... MICROVAST ADVANCED MATERIALS INC., as a Guarantor ... MICROVAST ADVANCED MEMBRANE INC., as a Guarantor ... MICROVAST ENERGY, INC., as a Guarantor ... MICROVAST POWER SOLUTIONS, INC., as a Guarantor ... MICROVAST GMBH, as a Guarantor”"
+              "note": "verbatim: “agrees that this Amendment in no way acts as a release or relinquishment of the Liens and rights securing payment of the Obligations and that the Liens and rights securing payment of the Obligations are hereby ratified and confirmed by each Loan Party in all respects”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1896,10 +1910,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "References to “Default or Event of Default” (as conditions/representations); terms defined in the Loan Agreement, not restated in this Amendment. No mandatory prepayment terms stated.",
+              "value": "Condition to effectiveness: no Default or Event of Default shall have occurred and be continuing or be caused by this Amendment (defined terms per Loan Agreement; no prepayment terms stated)",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
-              "note": "verbatim: “no Default or Event of Default shall have occurred and be continuing or shall be caused by this Amendment; and ... there exists no Default or Event of Default, in each case, after giving effect to this Amendment.”"
+              "note": "verbatim: “no Default or Event of Default shall have occurred and be continuing or shall be caused by this Amendment”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1924,7 +1938,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "RMB 800,000,000.00 yuan (Eight hundred million). Initial Commitments per Annex I: Bank of China, Huzhou Branch RMB 250 million; China Construction Bank, Huzhou Branch RMB 250 million; Bank of Huzhou, Co. RMB 150 million; China Zheshang Bank, Huzhou Branch RMB 150 million",
+              "value": "RMB 800,000,000.00 yuan (Eight hundred million). Annex I Initial Commitments: Bank of China, Huzhou Branch RMB 250 million; China Construction Bank, Huzhou Branch RMB 250 million; Bank of Huzhou, Co. RMB 150 million; China Zheshang Bank, Huzhou Branch RMB 150 million",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “All the Lenders agree to make available to the Borrower a medium / long-term loan facility in an aggregate amount up to RMB [800,000,000.00] yuan (In words: RMB [Eight hundred million] yuan) in accordance with the terms hereof.”"
@@ -1938,7 +1952,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Floating rate: one year LPR published by the National Interbank Funding Center, Plus 115 bps; reset every 12 months (each anniversary of the first disbursement date)",
+              "value": "Floating rate: one-year LPR published by the National Interbank Funding Center plus 115 bps, reset every 12 months",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “the applicable rate for the first period (from the first actual disbursement date to the end of the first floating period) will be the latest √ one year / x 5+ year LPR published by the National Interbank Funding Center one Business Day before the first actual disbursement date  √Plus x Minus (chose one) 115 bps”"
@@ -1950,12 +1964,26 @@
             "pik_pct": null
           },
           {
-            "name": "Maturity date",
+            "name": "Default Interest Rate",
             "value": {
-              "value": "December 10, 2026 (5 years)",
+              "value": "Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation Default Interest Rate: 200% of applicable Interest Rate",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
-              "note": "verbatim: “Term of the loans under this Contract is a period commencing from (and including) the first Disbursement Date / Effective Date ending on (and including) [December 10, 2026], [5] years in total (\"Loan Term\")”"
+              "note": "verbatim: “If the Borrower fails to pay any amount due and payable in accordance with this Contract, interest shall accrue on such due and unpaid amount at a rate of [150% of applicable Interest Rate] (“Late Default Interest Rate”) from the due date up to the full repayment of such amount. If the Borrower misappropriates any proceeds of any Loan, interest shall accrue on such misappropriated proceeds of Loan at a rate of [200% of applicable Interest Rate] (“Misappropriation Default Interest Rate”)”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "December 10, 2026 (Loan Term 5 years). Availability Period ends 9 June 2023.",
+              "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
+              "status": "present",
+              "note": "verbatim: “Term of the loans under this Contract is a period commencing from (and including) the first Disbursement Date / Effective Date ending on (and including) [December 10, 2026], [5] years in total (“Loan Term’).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1966,7 +1994,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Article 14.1 Clause 9 (Financial indicator): 'The Borrower shall meet the following financial indicators: [/]' — the specific indicators are left blank ([/]). Related stated covenants: '3) the Borrower shall ensure that the final total financing balance for the Project does not exceed RMB 800 million, and the final proportion of equity funds is not less than 45%'; '10. Equity fund The Borrower shall ensure that the equity fund of the Project in an amount of RMB 500 million is in place before the disbursement of Loans'",
+              "value": "Article 14.1 Clause 9 (Financial indicator): 'The Borrower shall meet the following financial indicators: [/]' — specific indicators left blank. Related covenant: 'the Borrower shall ensure that the final total financing balance for the Project does not exceed RMB 800 million, and the final proportion of equity funds is not less than 45%'",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “9. Financial indicator The Borrower shall meet the following financial indicators: [/]”"
@@ -1980,7 +2008,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Mortgagor/Pledgor: Microvast Power Systems Co., Ltd. Three mortgage contracts (#HuKai 2022 C113, #HuKai 2022 C114, #HuKai 2022 C115) dated 1 September 2022. Guarantor: [/] (blank); Guarantee Contract: [/] (blank); Pledge Contract: [/] (blank). Article 14 covenants: '1) The property and equipment of the Project will be mortgaged to the syndicate when they are available for the mortgage'. Article 14.1 Clause 13 Security or Support: mortgage under Mortgage Contract/Maximum Mortgage Contract and pledge under Pledge Contract/Maximum Pledge Contract",
+              "value": "Mortgagor / Pledgor: Microvast Power Systems Co., Ltd. Three Mortgage Contracts #HuKai 2022 C113, C114, C115 dated 1 September 2022. Guarantor means [/] (blank). Security Documents: Guarantee Contract/Maximum Guarantee Contract, Mortgage Contract/Maximum Mortgage Contract and/or Pledge Contract/Maximum Pledge Contract. Covenant: property and equipment of the Project to be mortgaged to the syndicate when available.",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “Mortgage Contract means three mortgage contracts (with contract NO. of # HuKai 2022 C113, #HuKai 2022 C114 ,# HuKai 2022 C115 respectively) signed by the Mortgagor and the Agent on 1 September 2022. Mortgagor means [Microvast Power Systems Co., Ltd.]”"
@@ -1994,10 +2022,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Events of Default (Art. 15.1): Misrepresentation; Breach of contract/other obligations; Payment default; Material payment default (two consecutive times or three times in total); Misappropriation of loans; Cross default (RMB 1000 or more); Insolvency (RMB 1,000,000 or more); Liquidation and bankruptcy events; Enforcement events (RMB 30,000,000 or more, not released within 90 Business Days); Financial indicators failure; Material Adverse Effects; Invalidity of Finance Documents. Remedies (Art. 15.2) include declaring acceleration. Compulsory cancellation on change of control (Art. 7.4): Agent (acting on instructions of all Lenders), after 10 Business Days' prior notice, may require Borrower to prepay the loans. Change in law prepayment (Art. 11): Borrower shall within 10 Business Days prepay Lenders Affected by Change in Law. Covenant 10): if agreement may damage creditors' rights, Lenders have right to require Borrower to prepay all the syndicated loan",
+              "value": "Events of Default (Art. 15.1): Misrepresentation; Breach of covenants/obligations; Payment default; Material payment default (two consecutive/three total); Misappropriation of loans; Cross default (RMB 1000 or more); Insolvency (RMB 1,000,000 or more); Liquidation/bankruptcy; Enforcement events (assets RMB 30,000,000 or more sealed/frozen, not released within 90 Business Days); Financial indicators failure; Material Adverse Effect; Invalidity of Finance Documents. Mandatory/compulsory prepayment: change of control (Art. 7.4) — Agent may require Borrower to prepay loans and cancel Total Commitments; change in law (Art. 11) prepayment; remedies include declaring acceleration of Outstanding Loans.",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
-              "note": "verbatim: “15.1 Event of Default Any of the following circumstances constitutes an Event of Default : 1. Misrepresentation ... 3. Payment default ... 6. Cross default The Borrower fails to repay any due Indebtedness with a total amount of RMB [1000] yuan or more. ... 12. Invalidity of Finance Documents The Finance Documents become invalid or unenforceable.”"
+              "note": "verbatim: “Any of the following circumstances constitutes an Event of Default: 1. Misrepresentation ... 2. Breach of contract or other obligations ... 3. Payment default ... 6. Cross default The Borrower fails to repay any due Indebtedness with a total amount of RMB [1000] yuan or more. ... 10. Financial indicators ... 12. Invalidity of Finance Documents”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5371,26 +5399,26 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "annual production capacity added by Phase 3.2",
-          "period": "SOP in 2026",
-          "value": "up to 2 gigawatt hours",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Phase 3.2 is expected to add up to 2 gigawatt hours of annual production capacity and is anticipated to be modular across our LBC platform.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
           "metric": "patents granted or pending",
           "period": null,
-          "value": "over 890 patents",
+          "value": "over 890 patents granted or pending",
           "value_num": null,
           "unit": null,
           "verbatim": "Founded in Texas in 2006, Microvast has grown into a global leader in advanced battery technologies with over 890 patents granted or pending and our electrified solutions successfully deployed worldwide.",
           "following_context": "We are proud to contribute to the global energy transition, building a more sustainable future, one battery at a time. Innovation is core to our operations and always on display at Microvast. And I'm excited to announce our next-generation 290Ah LFP-based battery packs as high-performance modular battery solutions designed for a wide range of commercial and heavy-duty industry applications.",
+          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "annual production capacity added (Phase 3.2)",
+          "period": "SOP expected 2026",
+          "value": "up to 2 gigawatt hours of annual production capacity",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Phase 3.2 is expected to add up to 2 gigawatt hours of annual production capacity and is anticipated to be modular across our LBC platform.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5420,21 +5448,45 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "European share of quarterly revenue",
+          "metric": "European revenue share of quarterly revenue",
           "period": "Q2 2026",
-          "value": "61% of quarterly revenue, up from 43%",
+          "value": "61% of quarterly revenue, up from 43% last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "European sales increased 35% in the quarter compared to prior year period. The region accounted for 61% of quarterly revenue, up from 43% last year.",
+          "verbatim": "The region accounted for 61% of quarterly revenue, up from 43% last year.",
           "following_context": "Year-to-date sales were down 3%, impacted by customer platform rollout delays in the previous quarter. APAC sales declined 23% in the quarter compared to the prior year period, with the year-to-date sales down 45%. The reduced sales performance in APAC is primarily due to shifting regulatory and geopolitical dynamics and a demand shift towards lower-cost products in India.",
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "European sales growth",
+          "period": "Q2 2026",
+          "value": "increased 35% in the quarter",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "European sales increased 35% in the quarter compared to prior year period.",
+          "following_context": "The region accounted for 61% of quarterly revenue, up from 43% last year. Year-to-date sales were down 3%, impacted by customer platform rollout delays in the previous quarter. APAC sales declined 23% in the quarter compared to the prior year period, with the year-to-date sales down 45%. The reduced sales performance in APAC is primarily due to shifting regulatory and geopolitical dynamics and a demand shift towards lower-cost products in India.",
+          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "APAC sales decline",
+          "period": "Q2 2026",
+          "value": "declined 23% in the quarter",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "APAC sales declined 23% in the quarter compared to the prior year period, with the year-to-date sales down 45%.",
+          "following_context": "The reduced sales performance in APAC is primarily due to shifting regulatory and geopolitical dynamics and a demand shift towards lower-cost products in India.",
+          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
-          "metric": "annual production capacity added by Phase 3.2",
-          "period": "SOP in 2026",
-          "value": "up to 2 gigawatt-hour",
+          "metric": "annual production capacity added (Phase 3.2)",
+          "period": "SOP expected 2026",
+          "value": "up to 2 gigawatt-hour of annual production capacity",
           "value_num": null,
           "unit": null,
           "verbatim": "Installation and commissioning of the production equipment is completed, with production capacity ramping up, we expect the SOP in 2026 and Phase 3.2 is expected to add up to 2 gigawatt-hour of annual production capacity and anticipated to be modular across our large battery cell platform.",
@@ -5449,152 +5501,143 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — management-stated going-concern doubt plus a ~$104M twelve-month maturity wall against thin cash and falling volume dominate the optical cheapness.",
+    "evidence_balance": "strongly-bearish — an explicit going-concern doubt with a ~$104M sub-12-month maturity wall, negative operating cash flow, and 24% volume decline.",
     "bull_points": [
       {
-        "claim": "Gross margin has held resilient through a severe volume decline — 29.5% in Q2 2026 vs 34.7% a year earlier despite a 4.5% revenue drop, evidence the pricing/mix premium survives the downturn rather than collapsing.",
-        "source_ref": "10-Q 0001628280-26-055372",
-        "cited": true
-      },
-      {
-        "claim": "The margin-percentage compression is partly optical: the trailing EBITDA margin fell to 11% (LTM) but absolute EBITDA rose from deeply negative through 2018-2023 to positive $5M (FY24), $74M (FY25), demonstrating a genuine multi-year swing to profitability, not a business in absolute decline.",
+        "claim": "The EBITDA margin trajectory is a genuine turnaround: from -28% (2023) to +1% (2024) to +17% (2025), with absolute EBITDA swinging from -$85M to +$74M over the same span — the % improvement is corroborated by rising absolute dollars, not an optical artefact.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The trailing EV/EBITDA of 9.4x screens below the peer median of 12.6x, and the discount is only a possible overshoot IF unexplained by fundamentals — the human must decompose it against the deltas below, not read the gap as a clean signal.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "Gross margin held at 29.5% in Q2 2026 despite volume falling, with management attributing the resilience to premium positioning under lower fixed-cost absorption — a mechanism, not a bare margin observation.",
+        "source_ref": "10-Q 0001628280-26-055372",
         "cited": true
       },
       {
-        "claim": "European demand is a genuine offset to the APAC collapse: European sales rose 35% in Q2 2026 and reached 61% of quarterly revenue (up from 43%), showing a live regional pillar rather than uniform deterioration.",
+        "claim": "European sales grew 35% in Q2 2026 and rose to 61% of quarterly revenue (from 43%), showing the core demand engine is intact even as the consolidated top line dipped.",
         "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Consensus projects a sharp reacceleration — FY26E revenue $444.4M rising to FY27E $591.5M with EBITDA $62.1M→$147.7M — a materially higher forward trajectory than the trailing base, if it materialises.",
-        "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
+        "claim": "The Q2 2026 revenue decline was only 4.5% and largely a $2.7M tariff-refund reduction rather than lost demand, and the six-month volume drop was partly a customer pulling product into 2025 ahead of tariffs — a timing distortion, not structural erosion; a genuine counter to the terminal read but OUTWEIGHED by the stated going-concern doubt.",
+        "source_ref": "10-Q 0001628280-26-055372",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The latest 10-Q states SUBSTANTIAL DOUBT about going concern — a direct management admission that survival is in question, the load-bearing terminal signal that dominates every optical valuation read.",
+        "claim": "The latest 10-Q states SUBSTANTIAL DOUBT about the company's ability to continue as a going concern — the single most load-bearing terminal signal on file.",
         "source_ref": "10-Q 0001628280-26-055372",
         "cited": true
       },
       {
-        "claim": "A $104.2M maturity wall falls due within twelve months on a filing basis against only $128M cash, and the going-concern flag says that wall is not comfortably covered — this is the real signal, not an optical timing quirk.",
+        "claim": "A $104.2M debt maturity wall falls due within 12 months (filing basis), against $128M cash and negative operating cash flow — a survival test, not a liquidity cushion.",
         "source_ref": "10-Q 0001628280-26-055372",
         "cited": true
       },
       {
-        "claim": "Customer concentration has spiked to Customer A at 46.0% of revenue (from 18.0% prior), so nearly half the top line now rests on a single relationship — a genuine fragility, not a trailing artifact.",
+        "claim": "The trailing EV/EBITDA of 9.4x is trailing-only with no forward basis, so it cannot distinguish a temporarily depressed level from a permanently impaired one — this is the consensus 'cheap' MISREAD, not a clean signal.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "cited": true
+      },
+      {
+        "claim": "Six-month sales volume fell 24.3% (947 MWh to 717 MWh), so the revenue decline is a real demand/volume contraction beneath the small headline % — the volume driver is the REAL signal, worse than the 4.5% quarterly optic suggests.",
+        "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Adjusted EBITDA collapsed from $25.9M (Q2 2025) to $3.6M (Q2 2026), and six-month adjusted EBITDA turned negative -$1.9M vs +$54.4M — the operating economics deteriorated sharply year-over-year.",
+        "source_ref": "8-K 0001628280-26-055471 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "Customer concentration spiked to 46.0% for a single customer (from 18.0% prior), so the top line now hinges on one relationship — a fragility that magnifies the going-concern risk.",
         "source_ref": "10-Q 0001628280-26-055372",
         "cited": true
       },
       {
-        "claim": "Self-funding fails on a two-input test: latest-quarter operating cash flow is negative even though the LTM 'Levered Free Cash Flow' prints +$63.4M — and on the same sheet CFO −capex = −$30.5M, so the headline FCF-positive claim is basis-dependent and the current-quarter reality is cash consumption.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
+        "claim": "Total debt/EBITDA is 4.3x versus a peer median of 1.6x, and share count diluted +18.8% over ~1.7 years, so leverage is high and equity holders are being diluted into the maturity wall.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-13",
         "cited": true
       },
       {
-        "claim": "Volume is falling hard, not just price: six-month sales volume dropped 24.3% (947.2 MWh→717.2 MWh), so the revenue decline reflects lost demand and under-absorbed fixed cost, not a one-off refund.",
-        "source_ref": "10-Q 0001628280-26-055372",
-        "cited": true
-      },
-      {
-        "claim": "The trailing P/E is NM because the business has never earned a positive annual GAAP EPS, and reported LTM net income is inflated by non-operating swings netting −$87M across four quarters (including a −$122M block at 134% of one quarter's revenue), so no trailing earnings multiple is an operating anchor.",
-        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2024-09-30..2025-09-30",
-        "cited": true
-      },
-      {
-        "claim": "Leverage on the comps' total-debt basis is 4.3x vs a peer median of 1.6x, well above peers even before the going-concern context — an earned discount input, not an overshoot.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The name is diluting steadily — shares up 18.8% over ~1.7 years — and a $25.0M shareholder loan was converted into common stock at maturity, so equity holders absorb balance-sheet repair.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-11-08..2026-08-03",
-        "cited": true
-      },
-      {
-        "claim": "The stock fell 61% over 180 days while the small-cap benchmark rose 15% (−76pt relative), driven by discrete earnings gap-downs on 2026-03-17 and 2026-05-12 — an idiosyncratic, event-driven de-rate, not a sector wash-out.",
-        "source_ref": "EOD MVST−IWM 180d to 2026-08-12 (assembly, cap-band)",
+        "claim": "The stock fell 61% over 180 days against a +15% market, and consensus FY26 revenue was cut -25% and FY26 EBITDA -53% (12m→latest) — the de-rating tracks genuine estimate cuts, not sentiment alone.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Forsee Power S.A.",
+        "name": "A123 Systems",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster micro-cap battery-systems peer with negative EBITDA margin and shrinking revenue — the pattern of a sub-scale electromobility battery maker unable to reach durable profitability.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Leclanché SA",
-        "outcome": "went terminal",
-        "distinguishing_fact": "In-roster small-cap energy-storage battery maker with deeply negative EBITDA and heavy debt — the analogue of a specialty battery firm carrying a maturity/liquidity overhang against a thin equity base.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Amprius Technologies",
-        "outcome": "recovered",
-        "distinguishing_fact": "In-roster US lithium-ion battery developer still pre-profit but re-rated on triple-digit revenue growth — the pattern where a capacity/technology story outruns current losses if volume ramps.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "US advanced-battery maker that scaled capacity into commercial/EV demand but hit a cash wall against near-term maturities before the volume ramp funded itself.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Romeo Power",
         "outcome": "went terminal",
-        "distinguishing_fact": "US commercial-EV battery-pack SPAC-era name that ran out of cash amid customer concentration and a funding wall before its volume ramp arrived.",
+        "distinguishing_fact": "SPAC-listed commercial-vehicle battery-pack maker with customer concentration and a going-concern warning that could not bridge to scale before liquidity ran out.",
         "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Plug Power",
+        "outcome": "recovered",
+        "distinguishing_fact": "Clean-energy hardware name that repeatedly carried going-concern doubt and heavy dilution yet refinanced/raised to survive while volumes grew.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Leclanche SA",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Peer-roster energy-storage maker running deeply negative EBITDA margin and stretched leverage, illustrating the value-trap end of this cohort.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Can the company refinance or clear the ~$104M twelve-month maturity wall and re-ramp volume before the going-concern doubt becomes terminal — or does the funding wall force dilution/restructuring first?",
+      "question": "Can Microvast refinance/convert the ~$104M of debt maturing within 12 months and reverse the volume decline before the going-concern doubt becomes terminal?",
       "evidence_for": [
         {
-          "claim": "Phase 3.2 is expected to add up to 2 GWh of annual capacity with SOP in 2026, giving a volume lever to re-ramp revenue toward the higher forward consensus.",
+          "claim": "Phase 3.2 is expected to add up to 2 GWh of annual capacity with SOP in 2026, and management frames Q1's dip as temporary with a revenue ramp through 2026.",
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "European sales grew 35% in Q2 2026 to 61% of revenue, showing at least one region can offset the APAC decline if it holds.",
-          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
-          "cited": true
-        },
-        {
-          "claim": "A prior shareholder loan of $25.0M was resolved by conversion to equity rather than a cash default, indicating maturities can be worked out non-cash.",
+          "claim": "A $25.0M shareholder convertible loan was converted to equity at the May 2026 maturity rather than demanding cash, showing a path to defuse near-term obligations without cash outflow.",
           "source_ref": "8-K 0000947871-26-000585 (2026-05-28)",
+          "cited": true
+        },
+        {
+          "claim": "Interest coverage is 8.2x and net-debt/EBITDA is 1.6x on a CIQ basis, so debt service is not itself the binding constraint if EBITDA holds.",
+          "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management's own 10-Q states substantial doubt about going concern, directly flagging survival risk.",
+          "claim": "The 10-Q itself states substantial doubt about going-concern, the company's own assessment that survival is not assured.",
           "source_ref": "10-Q 0001628280-26-055372",
           "cited": true
         },
         {
-          "claim": "A $104.2M maturity wall is due within twelve months against $128M cash, while six-month operating cash flow was negative.",
-          "source_ref": "10-Q 0001628280-26-055372",
+          "claim": "Six-month volume fell 24.3% year-over-year, so the demand base needed to fund the ramp is contracting, not expanding.",
+          "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Sales volume fell 24.3% over six months, so the revenue base the refinance case depends on is contracting, not growing.",
+          "claim": "Latest-quarter operating cash flow was negative (six-month OCF -$33.3M), so the business consumed cash into the maturity window rather than generating it.",
           "source_ref": "10-Q 0001628280-26-055372",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the ~$104M near-term maturities can be refinanced, repaid, or converted — the covenant terms and any refinance progress are not disclosed in the supplied facts; the debt panel is 149 days stale (filed 2026-03-16).",
-      "The identity and durability of Customer A (46% of revenue) — no customer-name-to-share mapping is disclosed, so the concentration risk cannot be sized.",
-      "Cash-runway visibility beyond the balance-sheet snapshot: no forward operating-cash-flow guide is given, and the current-quarter OCF is negative — an opaque runway is a bearish gap, not neutral.",
-      "No numeric FY26 revenue guidance was issued (management guidance is qualitative-only); the CIQ 427.5 'guide' is a stale vendor echo of the prior-year actual, so there is no verifiable forward number from management.",
-      "The peer set is HETEROGENEOUS (market caps $32M–$274.1B, 8591x span), so the 9.4x-vs-12.6x discount cannot be read as a clean benchmark — the human must judge whether it is EARNED (worse leverage/growth/beta) or RESIDUAL.",
-      "The trailing EV/EBITDA floor read is low-confidence (only 6 quarterly closes, <2y), so 'at the bottom of its own range' cannot distinguish a depressed level from a permanently impaired one.",
-      "Forward vs trailing EBITDA basis diverge (consensus adds back ~2.9x the D&A of actuals), so trailing and forward multiples are not struck on the same basis and should not be compared directly."
+      "Refinancing/repayment plan for the ~$104M (filing basis) / $98.5M (CIQ panel) maturing within 12 months — the wall coherence check shows the filing and CIQ panel DIVERGE (5.5% > tolerance), so the exact size and terms are unresolved.",
+      "Whether the single customer at 46.0% of revenue is contracted forward or at risk of loss — no forward customer disclosure is provided (an opaque, bearish-leaning gap).",
+      "No numeric FY2026 revenue guidance: the current outlook is QUALITATIVE-only (vendor-echo/stale carry-forward flagged), so the committed trajectory is undisclosed.",
+      "No forward EV/EBITDA on the reported basis and an adjusted figure absent from the revised guidance; the trailing 9.4x cannot resolve overshoot vs impairment, and own-history percentile is low-confidence (only 6 closes).",
+      "Peer set is HETEROGENEOUS (market caps span $32M–$274.1B, 8591x) so the 25% discount to peer median cannot be read as a clean benchmark; whether the discount is EARNED (worse growth -13% vs +3%, higher leverage 4.3x vs 1.6x, beta 3.6 vs 1.1) or RESIDUAL is for the human to judge.",
+      "Whether Phase 3.2 SOP and the KAF school-bus/robotics programs convert to booked orders and volume — capacity added is disclosed but demand pull-through is not.",
+      "The self-funding read is MIXED: LTM FCF positive but latest-quarter OCF negative — which basis governs going forward is unresolved.",
+      "Two earnings-call transcripts are on file but not excerpted for full management posture; read in full."
     ]
   },
   "caveats": [
@@ -5604,21 +5647,19 @@
     "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
     "Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.",
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-15 (the latest embedded revision event), so it is up to 89d before the 2026-08-12 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).",
-    "Panel-freshness caveat — 1 CIQ valuation panel(s) predate the latest earnings print (2026-08-11, EDGAR 8-K item 2.02), the oldest by 88d: valuation multiples as-of 2026-05-15. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.",
-    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (5 bull vs 9 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case",
-    "Heterogeneous-peer benchmark (a bull point): 'The trailing EV/EBITDA of 9.4x screens below the peer median of 12.6x, and the discount is only a possible overshoot IF unexplained by fundamentals — the human must decompose it against the deltas below, not read the gap as a clean signal.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "Panel-freshness caveat — 1 CIQ valuation panel(s) predate the latest earnings print (2026-08-11, EDGAR 8-K item 2.02), the oldest by 88d: valuation multiples as-of 2026-05-15. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "(E5) exhibit not extracted (cost bound): Convertible Bond·f8k030519ex10-1_tuscan.htm",
     "(E5) exhibit not extracted (cost bound): Convertible Loan·wu_microvast-loanandsecuri.htm",
     "(E5) exhibit not extracted (cost bound): Loan Facilities Agreement·ea144448ex10-13_microvast.htm",
-    "TWIN 'Microvast Holdings, Inc.' has numbers ['2018', '2023'] — must be non-numeric",
-    "TWIN self-referential 'Microvast Holdings, Inc.' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "TWIN 'Microvast Holdings' has numbers ['2025'] — must be non-numeric",
+    "TWIN self-referential 'Microvast Holdings' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
     "TWIN 1 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T10:10:38.266812Z",
+  "assembled_at": "2026-08-13T15:32:20.910458Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -5644,7 +5685,7 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T10:12:48.309941Z",
+    "computed_at": "2026-08-13T15:34:28.013888Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
