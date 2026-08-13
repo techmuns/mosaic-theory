@@ -11682,6 +11682,16 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    the window — silently dropping the warning that the listed WBD bridge facility was terminated**,
    which is the exact disclosure item 7 designates as the remedy for that finding. Same false-age
    class on 15 other names. Caught in a pre-re-assembly audit; **no artifact ever shipped with it.**
+   **REVIEW FINDING (#451): PROVENANCE IS THE GATE, RECENCY THE TIE-BREAK AMONG WHAT PASSES IT —
+   and the first cut shipped only the gate.** `if annual is valid: return "annual"` short-circuited
+   before a valid quarterly panel was ever considered, so the docstring's promise that a genuine
+   quarterly panel "is selected automatically" was one the code did not keep — it was a hardcoded
+   annual in all but name. Reproduced by the reviewer and confirmed here on a real NFLX panel with
+   its note and section header rewritten to agree on `Q2 2026`: both candidates valid, quarterly
+   filed six months later, selector still returned annual. Fixed by comparing `_cs_panel_filed`
+   when BOTH are provenance-valid; a tie still keeps annual (FUBO). **No committed name reaches
+   that branch** — no bundle has two valid panels with different dates — which is exactly why the
+   corpus could not surface it and the regression test forges the case from a real panel.
    **THE CORRECTED RULE IS PROVENANCE, NOT RECENCY:** take the panel whose note names the same
    period as the section beneath it. Measured — **annual 19/19 self-consistent, quarterly 18/19
    MISMATCHED** (V the clearest: a `Q3 2026 filed Jul-29-2026` note over an `FY 2025 (Sep-30-2025)`

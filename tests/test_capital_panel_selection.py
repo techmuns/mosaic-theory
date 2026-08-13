@@ -39,6 +39,7 @@ panel-dated, the aggregates are stamped with the period column they were actuall
 """
 from __future__ import annotations
 
+import copy
 import re
 from datetime import date
 
@@ -126,6 +127,74 @@ def test_a_later_filed_quarterly_note_does_not_win_because_recency_is_not_proven
     assert tempting, (
         "no committed name still has a later-filed-but-mis-stamped quarterly note, so the rejected "
         "design is untested here — re-measure the corpus before trusting this rule's negative half")
+
+
+def test_a_genuine_newer_quarterly_panel_is_selected_when_both_are_valid() -> None:
+    """REVIEW FINDING (#451). The rule is *provenance is the GATE, recency the TIE-BREAK among what
+    passes it* — and the first cut implemented only the gate. `if annual is valid: return "annual"`
+    short-circuited before a valid quarterly panel was ever considered, so the docstring's promise
+    that a real quarterly panel "is selected automatically" was one the code did not keep. Every
+    committed bundle hides this: no name has two VALID panels with different dates, so the corpus
+    cannot reach the branch on its own.
+
+    THE FIXTURE IS A REAL PANEL WITH TWO HEADER CELLS EDITED, not a hand-rolled shape: the rows the
+    extractor parses today, with the `Source` note and the section header rewritten so they AGREE
+    on a later period. That is precisely the export CIQ would ship if it began publishing quarterly
+    capital detail — the case this rule exists to be ready for.
+    """
+    b = dict(_bundles()).get("NFLX")
+    if b is None:
+        pytest.skip("NFLX bundle unavailable (licensed workbooks are never committed)")
+    annual = b.sheet("financials", "Capital Structure Details", freq="annual")
+
+    future = copy.deepcopy(annual)
+    for row in future:
+        for j, cell in enumerate(row):
+            if isinstance(cell, str) and "filed" in cell:
+                row[j] = "Q2 2026 filed Jul-17-2026"
+            elif isinstance(cell, str) and "Capital Structure As Reported" in cell:
+                row[j] = "FQ2 2026 (Jun-30-2026) Capital Structure As Reported Details"
+
+    class _TwoValidPanels:
+        """The real bundle, with only the quarterly Details address answered by the forged panel."""
+
+        def __init__(self, inner: CiqBundle, quarterly_rows: list) -> None:
+            self._inner, self._q = inner, quarterly_rows
+
+        def workbook(self, kind: str, *, freq: str | None = None):
+            return self._inner.workbook(kind, freq=freq)
+
+        def sheet(self, kind: str, name: str, *, freq: str | None = None):
+            if name == "Capital Structure Details" and freq == "quarterly":
+                return self._q
+            return self._inner.sheet(kind, name, freq=freq)
+
+        def __getattr__(self, k: str):
+            return getattr(self._inner, k)
+
+    assert cs._cs_note_describes_section(annual), "the real annual panel stopped being valid"
+    assert cs._cs_note_describes_section(future), "the forged panel is not self-consistent"
+
+    stub = _TwoValidPanels(b, future)
+    assert cs._cs_details_freq(stub) == "quarterly", (  # type: ignore[arg-type]
+        "a genuine quarterly panel — note and section agreeing, filed six months later — lost to "
+        "annual, so the rule is a hardcoded 'annual' in all but name and the docstring's promise "
+        "that such a panel is selected automatically is false")
+
+
+def test_two_equally_valid_panels_keep_annual() -> None:
+    """THE TIE HALF of the same clause, and why the comparison is a strict `>`. FUBO is the live
+    instance: both its workbooks carry the identical `Q3 2026 filed Aug-05-2026` panel, both
+    self-consistent. Nothing is gained by moving, so nothing moves — and a name whose two panels
+    agree must not flip frequency on a re-pull that changed nothing about it."""
+    ties = [(tk, b) for tk, b in _bundles()
+            if cs._cs_note_describes_section(cs._cs_details_rows(b, "annual"))
+            and cs._cs_note_describes_section(cs._cs_details_rows(b, "quarterly"))
+            and _filed(b, "annual") == _filed(b, "quarterly")]
+    if not ties:
+        pytest.skip("no name currently carries two equally-dated valid panels (FUBO was the one)")
+    for tk, b in ties:
+        assert cs._cs_details_freq(b) == "annual", f"{tk}: a tie moved off the status quo"
 
 
 def test_the_selected_stamp_keeps_a_real_termination_inside_its_window() -> None:

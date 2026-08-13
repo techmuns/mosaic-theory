@@ -969,23 +969,40 @@ def _cs_details_freq(bundle: CiqBundle) -> str:
     finding. A newer date on older data does not just overstate freshness; it retires the checks
     that depend on knowing how old the data is.
 
-    THE RULE IS PROVENANCE, NOT RECENCY: take the panel whose note DESCRIBES its own section. That
-    picks annual on 18 names and either on FUBO (both agree, and the rows are identical anyway) —
-    but it is not a hardcoded `freq="annual"` in disguise. If CIQ ever does ship a true quarterly
-    panel, its note and section will agree and this selects it automatically, with a stamp that
-    means what it says. Preferring annual is the CONSEQUENCE of the rule, not the rule.
+    PROVENANCE IS THE GATE; RECENCY IS THE TIE-BREAK AMONG WHAT PASSES IT. Take the panel whose
+    note DESCRIBES its own section, and when BOTH do, take the later-filed of them. That picks
+    annual on 18 names and either on FUBO (both agree, and the rows are identical anyway) — but it
+    is not a hardcoded `freq="annual"` in disguise. If CIQ ever does ship a true quarterly panel,
+    its note and section will agree, it will be the later-filed valid candidate, and it is selected
+    automatically with a stamp that means what it says. Preferring annual is the CONSEQUENCE of the
+    rule, not the rule.
+
+    THE TWO-VALID-PANELS CLAUSE IS NOT HYPOTHETICAL HOUSEKEEPING (review finding, #451). The
+    first cut implemented only the gate — `if annual is valid: return "annual"` — so annual
+    short-circuited before a valid quarterly panel was ever considered, and the paragraph above
+    was a promise the code did not keep. Recency was never the enemy; recency SUBSTITUTING for
+    provenance was. Once both candidates carry notes that describe them, later-filed is exactly
+    the right discriminator.
+    **A TIE KEEPS ANNUAL** — the live FUBO case, both workbooks holding the same
+    `Q3 2026 filed Aug-05-2026` panel with nothing to choose between them.
 
     WHEN NEITHER PANEL IS SELF-CONSISTENT it falls back to whichever one EXISTS, annual first —
-    the long-standing behaviour, and no worse than it. That second clause is not decoration: a
+    the long-standing behaviour, and no worse than it. That clause is not decoration either: a
     bundle holding only the quarterly workbook has no self-consistent panel at all, and returning
     "annual" there would name a frequency the name has no workbook for. The corpus test pins that
     the selected panel IS self-consistent on every committed name, so an export that breaks the
     assumption reddens CI rather than quietly re-mis-stamping the fleet."""
     annual = _cs_details_rows(bundle, "annual")
     quarterly = _cs_details_rows(bundle, "quarterly")
-    if _cs_note_describes_section(annual):
+    annual_ok = _cs_note_describes_section(annual)
+    quarterly_ok = _cs_note_describes_section(quarterly)
+    if annual_ok and quarterly_ok:
+        a = _cs_panel_filed(_cs_detail_asof(annual)) if annual is not None else None
+        q = _cs_panel_filed(_cs_detail_asof(quarterly)) if quarterly is not None else None
+        return "quarterly" if q is not None and (a is None or q > a) else "annual"
+    if annual_ok:
         return "annual"
-    if _cs_note_describes_section(quarterly):
+    if quarterly_ok:
         return "quarterly"
     if annual is None and quarterly is not None:
         return "quarterly"
