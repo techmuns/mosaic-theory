@@ -11704,8 +11704,32 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    test was GREEN under its own mutation (it asserted through a local re-implementation of the
    guard, on an annual-only bundle where guarded and unguarded agree); the quarterly-only bundle
    is what separates them.
+   **REVIEW FINDING (#450, P2) — THE COUPLING MISSED A THIRD CONSUMER, and coupling two of three
+   MOVED the mismatch rather than removing it.** `liquidity_covenant_flags` reads the same Details
+   panel and stayed on `freq="annual"`. Both survive into `mechanical` (structured
+   `capital_structure` + `quality.liquidity_covenant_flags`) and `synthesize` dumps the whole
+   mechanical layer, so on the 16 quarterly names the MODEL received a fresh schedule beside a
+   stale annual debt list — under the same **undated** `CIQ Financials→Capital Structure Details`
+   label, with nothing in either to tell them apart. Fixed: it reads the picked panel, and its
+   `source_ref` now carries the panel's own as-of. Verified across all 19 names — every one's
+   legacy line now cites the same stamp as its structured schedule.
+   **THE PIN IS OVER THE CALL SITES, NOT THE OUTPUT**
+   (`test_every_details_panel_consumer_reads_the_same_frequency`):
+   the bug was an UNENUMERATED consumer, so a test checking the two known
+   readers would have passed while the third was wrong. It walks the module AST for every Details
+   read and requires each to consult the picker, so a FOURTH consumer on a bare `freq="annual"`
+   fails at the diff instead of in a synthesis months later.
+   **MY OWN PROCESS FAILURE, worth recording:** I grepped for callers of `capital_structure_ciq` /
+   `_capital_summary` and never for readers of the SHEET. The house rule against asserting absence
+   off one search applies to "I have found all the consumers" just as much as to "this capability
+   does not exist".
    **ARTIFACT NOTE: the committed dossiers still carry the OLD annual panels** — this is a code
    change only, and the debt schedules move on the next re-assembly pass, not before.
+   **OBSERVATION, pre-existing and NOT fixed here (raised by the #450 reviewer):**
+   `tests/test_maintenance_path.py` carries **no `network` marker** while line 317 calls
+   `EntityResolver.from_config(cfg).resolve_ticker(...)`, so `pytest -m "not network"` can reach
+   the live SEC ticker endpoint. It passes locally only because the store already holds those
+   identities; on a clean machine it blocks the offline suite. Own change — the marker is the fix.
 8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
    2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
    *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point

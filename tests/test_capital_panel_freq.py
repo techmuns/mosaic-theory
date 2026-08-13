@@ -258,6 +258,68 @@ def test_the_instruments_and_the_aggregates_are_read_at_one_frequency() -> None:
         f"instruments came from quarterly — the two halves of one block on two filings")
 
 
+def test_every_details_panel_consumer_reads_the_same_frequency() -> None:
+    """REVIEW FINDING (#450, P2) — the coupling has to cover ALL consumers, not the two I coupled.
+
+    `liquidity_covenant_flags` is the THIRD reader of the Details panel and was left on
+    `freq="annual"` while `capital_structure_ciq` and `_capital_summary` moved to the picker. Both
+    reach `mechanical` (as `capital_structure` and as `quality.liquidity_covenant_flags`) and
+    `synthesize` dumps the whole mechanical layer, so on the 16 names that pick quarterly the model
+    got a FRESH structured schedule beside a STALE annual debt list, under the same source label.
+    Coupling two of three readers moved the basis mismatch rather than removing it.
+
+    THIS ASSERTS OVER THE CALL SITES, not over one function's output, because the bug was an
+    UNENUMERATED consumer: a test that checked the two known readers would have passed while the
+    third was wrong. It walks the module's AST for every `Capital Structure Details` read and
+    requires each to sit behind the picker — so a FOURTH consumer added on a bare `freq="annual"`
+    fails here rather than in a synthesis six months later."""
+    import ast
+    import pathlib
+
+    src = pathlib.Path(cs.__file__).read_text()
+    tree = ast.parse(src)
+    offenders = []
+    for fn in [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]:
+        reads = [
+            n for n in ast.walk(fn)
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "sheet" and len(n.args) >= 2
+            and isinstance(n.args[1], ast.Constant)
+            and n.args[1].value == "Capital Structure Details"
+        ]
+        if not reads:
+            continue
+        # A reader is coupled if it consults the picker, or IS one of the picker's own helpers.
+        calls_picker = any(
+            isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+            and n.func.id == "_capital_panel_freq" for n in ast.walk(fn))
+        if fn.name not in ("_cs_details_rows", "_capital_panel_freq") and not calls_picker:
+            offenders.append(fn.name)
+    assert not offenders, (
+        f"these read the Capital Structure Details panel without consulting _capital_panel_freq: "
+        f"{offenders}. Every consumer must land on ONE filing — a fresh schedule beside a stale "
+        f"debt list is the mismatch this picker exists to prevent")
+
+
+def test_the_legacy_debt_line_is_dated_and_tracks_the_picked_panel() -> None:
+    """THE OTHER HALF OF #450's P2: an UNDATED source_ref cannot distinguish two vintages of one
+    sheet, which is exactly why a stale line sat beside a fresh one unnoticed. The legacy string
+    now carries the panel's own as-of, and it must be the SAME panel the structured extractor read.
+
+    Asserted on the live corpus so it is the real stamps being compared, not a fixture's."""
+    checked = 0
+    for tk, b in _bundles():
+        liq = cs.liquidity_covenant_flags(b)
+        _, _, structured_as_of = cs.capital_structure_ciq(b)
+        if not liq.value or not structured_as_of:
+            continue
+        checked += 1
+        assert structured_as_of in (liq.source_ref or ""), (
+            f"{tk}: the legacy debt line cites {liq.source_ref!r} while the structured schedule "
+            f"was read from {structured_as_of!r} — two vintages of one panel on one record")
+    assert checked, "no name exercised both readers — the coupling was not actually observed"
+
+
 def test_a_printed_term_loan_step_compares_two_like_windows() -> None:
     """THE MIXED-BASIS FIX, asserted where it matters: a printed STEP.
 

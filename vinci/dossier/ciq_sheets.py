@@ -778,8 +778,25 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
 
 
 def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
+    """The legacy flat debt-instrument line, read from the SAME panel the structured extractor uses.
+
+    REVIEW FINDING (#450, P2). This is the THIRD consumer of the Details panel, and it was left on
+    `freq="annual"` when the other two moved to :func:`_capital_panel_freq`. Both survive into
+    `mechanical` — the structured schedule as `capital_structure`, this string as
+    `quality.liquidity_covenant_flags` — and `synthesize` dumps the whole mechanical layer, so on
+    the 16 names that pick quarterly the model was handed a FRESH schedule and a STALE debt list
+    **under the same source label**, with nothing in either to tell them apart. Coupling the
+    Details and Summary reads while a third reader stayed on annual did not remove the basis
+    mismatch; it moved it.
+
+    The `source_ref` now carries the panel's own as-of for the same reason. An undated
+    `CIQ Financials→Capital Structure Details` cannot distinguish two vintages of one sheet, which
+    is precisely how this was invisible."""
+    freq = _capital_panel_freq(bundle)
     try:
-        rows = bundle.sheet("financials", "Capital Structure Details", freq="annual")
+        rows = (bundle.sheet("financials", "Capital Structure Details", freq="quarterly")
+                if freq == "quarterly"
+                else bundle.sheet("financials", "Capital Structure Details", freq="annual"))
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
     hdr = _find_row(rows, "Description")  # the latest FY section's instrument table
@@ -807,7 +824,11 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
         insts.append(f"{desc} ({typ}) {amt} @ {coupon}{due}")
     if not insts:
         return Sourced.unknown(note="no debt instruments parsed")
-    return Sourced.present("; ".join(insts), source_ref="CIQ Financials→Capital Structure Details")
+    as_of = _cs_detail_asof(rows)
+    return Sourced.present(
+        "; ".join(insts),
+        source_ref=("CIQ Financials→Capital Structure Details"
+                    + (f" ({as_of})" if as_of else "")))
 
 
 # --- E1: STRUCTURED capital structure (instruments + summary aggregates) -----------------------
