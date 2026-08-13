@@ -1134,7 +1134,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Effective Tax Rate %: latest guide 19.0 for FQ4 2026 (dated 2026-07-28); spend ≤ guided ceiling 28/32 resolved; most recent guidance outcome: FQ3 2026 MET; Interest Expense: latest guide -390.0 for FY 2016 (dated 2016-04-21) (stale — 3765d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2016 MISSED; Free Cash Flow: latest guide 12,000.0 for FY 2020 (dated 2020-04-30) (stale — 2295d old); actual ≥ guided floor 4/7 resolved; most recent guidance outcome: FY 2020 MISSED; Revenue: latest guide 45,200.0 for FY 2026 (dated 2026-07-28); actual ≥ guided floor 20/22 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ3 2026 MET; EBIT: latest guide 13,529.8 for FY 2018 (dated 2018-07-25) (stale — 2940d old); actual ≥ guided floor 9/9 resolved; most recent guidance outcome: FY 2018 MET; Net Income (Excl. Excep): latest guide '5,043.60 - 5,169.69' for FY 2013 (dated 2013-07-24) (stale — 4767d old); actual ≥ guided floor 0/2 resolved; most recent guidance outcome: FY 2013 MISSED; Capital Expenditure: latest guide -700.0 for FY 2021 (dated 2020-10-28) (stale — 2114d old); spend ≤ guided ceiling 3/7 resolved; most recent guidance outcome: FY 2021 MISSED; EPS Normalized: latest guide 3.43 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 18/19 resolved; most recent guidance outcome: FQ3 2026 MET; EPS (GAAP): latest guide '6.12 - 6.22' for FY 2020 (dated 2019-10-24) (stale — 2484d old); actual ≥ guided floor 4/6 resolved; most recent guidance outcome: FY 2020 MISSED; DPS: latest guide 0.67 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 4/7 resolved · 13 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)",
+        "value": "Effective Tax Rate %: latest guide 19.0 for FQ4 2026 (dated 2026-07-28); spend ≤ guided ceiling 28/32 resolved; most recent guidance outcome: FQ3 2026 MET; Interest Expense: latest guide -390.0 for FY 2016 (dated 2016-04-21) (stale — 3765d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2016 MISSED; Free Cash Flow: latest guide 12,000.0 for FY 2020 (dated 2020-04-30) (stale — 2295d old); actual ≥ guided floor 4/7 resolved; most recent guidance outcome: FY 2020 MISSED; Revenue: latest guide 45,200.0 for FY 2026 (dated 2026-07-28); actual ≥ guided floor 20/22 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ3 2026 MET; EBIT: latest guide 13,529.8 for FY 2018 (dated 2018-07-25) (stale — 2940d old); actual ≥ guided floor 9/9 resolved; most recent guidance outcome: FY 2018 MET; Net Income (Excl. Excep): latest guide '5,043.60 - 5,169.69' for FY 2013 (dated 2013-07-24) (stale — 4767d old); actual ≥ guided floor 0/2 resolved; most recent guidance outcome: FY 2013 MISSED; Capital Expenditure: latest guide -700.0 for FY 2021 (dated 2020-10-28) (stale — 2114d old); spend ≤ guided ceiling 3/7 resolved; most recent guidance outcome: FY 2021 MISSED; EPS Normalized: latest guide 3.43 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 18/19 resolved; most recent guidance outcome: FQ3 2026 MET; EPS (GAAP): latest guide '6.12 - 6.22' for FY 2020 (dated 2019-10-24) (stale — 2484d old); actual ≥ guided floor 4/6 resolved; most recent guidance outcome: FY 2020 MISSED; DPS: latest guide 0.67 for FQ4 2026 (dated 2026-07-28); actual ≥ guided floor 4/7 resolved · 13 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-08-09 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -4508,7 +4508,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Unsecured Revolving Credit Facility · 0001403161-16-000027 · amended by 0001403161-16-000027]\n  Conversion price / mechanics: VI Preferred Stock: 2,480,500 shares of Series B Convertible Participating Preferred…\n  Principal / commitment amount: Option Exercise Price components: (i)(a) €11,500,000,000 minus Leakage Amount, plus…\n  Interest / coupon rate: Interest payable on the Pre-Interest Deferred Cash Amount = €124,864,000.00…\n  Maturity date: Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside…\n  Financial-maintenance covenants: Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0…\n  Default interest: During the continuance of an Event of Default under Section 7.2 (and automatically…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Unsecured Revolving Credit Facility · 0001403161-16-000027 · amended by 0001403161-16-000027]\n  Conversion price / mechanics: VI Preferred Stock component: 2,480,500 shares of Series B Convertible Participating…\n  Principal / commitment amount: €1,000,000,000.00 (Pre-Interest Deferred Cash Amount) as the principal amount of the…\n  Interest / coupon rate: €124,864,000.00 interest payable on the Pre-Interest Deferred Cash Amount (no…\n  Maturity date: Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside…\n  Financial-maintenance covenants: Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4532,10 +4532,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The initial Total Commitment is U.S.$3,000,000,000. (may be increased to an amount not exceeding U.S.$5,000,000,000 pursuant to Section 2.27)",
+              "value": "The initial Total Commitment is U.S.$3,000,000,000. [May be increased to an amount not to exceed U.S.$5,000,000,000 pursuant to Section 2.27; SCHEDULE 1 TOTAL $3,000,000,000]",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
-              "note": "verbatim: ““Total Commitment” means the aggregate amount of the Revolving Commitments of all Revolving Lenders, as increased or reduced from time to time pursuant to the terms hereof. The initial Total Commitment is U.S.$3,000,000,000.”"
+              "note": "verbatim: “\"Total Commitment\" means the aggregate amount of the Revolving Commitments of all Revolving Lenders, as increased or reduced from time to time pursuant to the terms hereof. The initial Total Commitment is U.S.$3,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4546,24 +4546,24 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate Advances: Base Rate plus Applicable Margin; Eurocurrency Advances: Eurocurrency Rate plus Applicable Margin. Applicable Margin per Pricing Schedule (Schedule 2): Eurocurrency Advances 0.625%–1.125%; Base Rate Advances 0.000%–0.125% depending on Status.",
+              "value": "Base Rate Advance: Base Rate + Applicable Margin. Eurocurrency Advance: Eurocurrency Rate + Applicable Margin (+ Mandatory Cost Rate for Sterling/Euros). Applicable Margin per Pricing Schedule (Schedule 2): Eurocurrency Advances 0.625%/0.750%/0.875%/1.000%/1.125% (Levels I-V); Swing Loans 0.585%/0.700%/0.815%/0.920%/1.025%; Base Rate Advances 0.000%/0.000%/0.000%/0.000%/0.125%. Commitment Fee 0.040%/0.050%/0.060%/0.080%/0.100%.",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
-              "note": "verbatim: “Each Base Rate Advance shall bear interest on the outstanding principal amount thereof ... at a rate per annum equal to (x) the Base Rate for such day plus (y) the Applicable Margin in effect from time to time. ... Each Eurocurrency Advance shall bear interest on the outstanding principal amount thereof ... at a rate per annum equal to (x) the Eurocurrency Rate plus (y) the Applicable Margin in effect from time to time”"
+              "note": "verbatim: “Each Base Rate Advance shall bear interest ... at a rate per annum equal to (x) the Base Rate for such day plus (y) the Applicable Margin in effect from time to time. ... Each Eurocurrency Advance shall bear interest ... at a rate per annum equal to (x) the Eurocurrency Rate plus (y) the Applicable Margin in effect from time to time ... plus, in the case of a Multi-Currency Revolving Loan denominated in Pounds Sterling or Euros, the applicable Mandatory Cost Rate.”"
             },
             "base_rate_label": "Eurocurrency Rate",
             "margin_pct": 0.625,
             "margin_bps": null,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: 364 days from the date of this Agreement (dated as of January 31, 2013). (For Swing Loans, “Maturity Date” means the earlier of the fourth Business Day after the making of such Loan and the Termination Date.)",
+              "value": "Termination Date: 364 days from the date of this Agreement (dated as of January 31, 2013). All outstanding Revolving Loans and all other unpaid Obligations shall be paid in full on the Termination Date. (Swing Loan \"Maturity Date\" = earlier of fourth Business Day after making of such Loan and the Termination Date.)",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
-              "note": "verbatim: ““Termination Date” means 364 days from the date of this Agreement, or, if such day is not a Business Day, the next preceding Business Day or any earlier date on which the Total Commitment is reduced to zero or otherwise terminated pursuant to the terms hereof.”"
+              "note": "verbatim: “\"Termination Date\" means 364 days from the date of this Agreement, or, if such day is not a Business Day, the next preceding Business Day or any earlier date on which the Total Commitment is reduced to zero or otherwise terminated pursuant to the terms hereof.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4574,7 +4574,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal quarter.",
+              "value": "Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal quarter (Section 6.17).",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
               "note": "verbatim: “6.17 Consolidated Indebtedness to Consolidated EBITDA Ratio. Visa Inc. will not permit the Consolidated Indebtedness to Consolidated EBITDA Ratio to be greater than 3.75 to 1.0 as of the last day of any fiscal quarter.”"
@@ -4588,10 +4588,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantor: Visa Inc. guarantees the Guaranteed Obligations (Obligations owing by Visa International and Visa U.S.A.). No collateral/security is granted — facility is unsecured (Section 6.12 is a negative pledge, not a grant of security).",
+              "value": "Guarantor: Visa Inc. guarantees the Guaranteed Obligations (Obligations owing by Visa International and Visa U.S.A.) per Article XI. No collateral/security interest granted; facility is unsecured subject to negative pledge (Section 6.12 Liens). \"Guaranteed Obligations\" means the Obligations owing by Visa International and Visa U.S.A.",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
-              "note": "verbatim: “11.1 Guarantee. Visa Inc. hereby guarantees to the Lenders and the Administrative Agent the prompt payment in full when due (whether at stated maturity, by acceleration or otherwise) of the Guaranteed Obligations. ... “Guaranteed Obligations” means the Obligations owing by Visa International and Visa U.S.A.”"
+              "note": "verbatim: “11.1 Guarantee. Visa Inc. hereby guarantees to the Lenders and the Administrative Agent the prompt payment in full when due (whether at stated maturity, by acceleration or otherwise) of the Guaranteed Obligations.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4602,66 +4602,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Section 2.5(d) — if Total Outstandings exceed 105% of Total Commitment, Borrower must within two Business Days repay to eliminate the excess above 100%. Events of Default: Article VII (7.1 misrepresentation; 7.2 nonpayment; 7.3 covenant breaches; 7.4 cross-default on Indebtedness ≥ U.S.$150,000,000; 7.5 insolvency/bankruptcy; 7.6 judgment in excess of U.S.$150,000,000; 7.7 ERISA Event ≥ U.S.$150,000,000; 7.8 guarantee unenforceability; 7.9 Change of Control).",
+              "value": "Events of Default (Article VII): 7.1 material misrepresentation; 7.2 nonpayment of principal when due or interest/fees within 5 Business Days; 7.3 breach of specified covenants (6.2, 6.3, 6.4(b), 6.10, 6.12, 6.17) or other covenant unremedied 30 days; 7.4 cross-default on Indebtedness of at least U.S.$150,000,000; 7.5 bankruptcy/insolvency; 7.6 final judgment in excess of U.S.$150,000,000; 7.7 ERISA Event reasonably likely to result in liability over U.S.$150,000,000; 7.8 unenforceability/contest of Article XI Guarantee; 7.9 Change of Control. Mandatory prepayment: if Dollar Amount of Total Outstandings exceeds 105% of Dollar Amount of Total Commitment, Borrower shall within two Business Days repay to eliminate the excess above 100% (Section 2.5(d)). Acceleration per Section 8.1.",
               "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Borrowers at any time that the Dollar Amount of the Total Outstandings ... exceeds 105% of the Dollar Amount of the Total Commitment ... the applicable Borrower shall, within two Business Days after such notice, repay the applicable outstanding Revolving Advances or Swing Loans in an aggregate principal amount sufficient to eliminate the excess above 100%. ... ARTICLE VII - EVENTS OF DEFAULT The occurrence of any one or more of the following events shall constitute an Event of Default”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Commitment Fee",
-            "value": {
-              "value": "Commitment Fee Rate per Pricing Schedule (Schedule 2): 0.040%–0.100% per annum on the aggregate unused Commitment, depending on Status.",
-              "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Borrowers jointly and severally agree to pay ... a commitment fee on the aggregate unused amount of such Revolving Lender’s Commitment from the date hereof until the Termination Date at a rate per annum equal to the Commitment Fee Rate, payable on each Payment Date and on the Termination Date.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Default interest",
-            "value": {
-              "value": "During the continuance of an Event of Default under Section 7.2 (and automatically under 7.5), the applicable rate plus 2% per annum.",
-              "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
-              "status": "present",
-              "note": "verbatim: “any unpaid amount of each Base Rate Advance and each U.S. Swing Loan shall bear interest at the rate otherwise applicable ... from time to time plus 2% per annum”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Negative pledge (Liens)",
-            "value": {
-              "value": "Section 6.12 negative pledge with enumerated permitted Liens (including a U.S.$500,000,000 basket for real estate/buildings/equipment and a basket of the greater of U.S.$1,500,000,000 or 4% of total assets).",
-              "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
-              "status": "present",
-              "note": "verbatim: “6.12 Liens. No Borrower will, nor will it permit any of its Subsidiaries to, create, incur, assume or suffer to exist, unless such Borrower’s obligations under this Agreement and the Notes are secured equally and ratably therewith, any Lien on or with respect to any of its properties of any character ... whether now owned or hereafter acquired”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
-              "status": "present",
-              "note": "verbatim: “THIS AGREEMENT AND ALL OF THE OTHER LOAN DOCUMENTS SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+              "note": "verbatim: “ARTICLE VII - EVENTS OF DEFAULT The occurrence of any one or more of the following events shall constitute an Event of Default: 7.1 Any representation or warranty ... 7.2 Nonpayment of principal ... 7.3 ... 7.4 ... 7.5 ... 7.6 ... 7.7 ... 7.8 ... 7.9 A Change of Control occurs.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4672,10 +4616,10 @@
           {
             "name": "Conversion price / mechanics",
             "value": {
-              "value": "VI Preferred Stock: 2,480,500 shares of Series B Convertible Participating Preferred Stock (UK&I Members) and 3,157,000 shares of Series C Convertible Participating Preferred Stock (Europe Members), par value $0.0001 per share, subject to adjustment for the Fractional Share Cash Amount; conversion rate/price not stated herein",
+              "value": "VI Preferred Stock component: 2,480,500 shares of Series B Convertible Participating Preferred Stock (par $0.0001) for UK&I Members; 3,157,000 shares of Series C Convertible Participating Preferred Stock (par $0.0001) for Europe Members; subject to adjustment for the Fractional Share Cash Amount",
               "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
               "status": "present",
-              "note": "verbatim: “shares in the capital stock of Visa Inc. consisting of (x) for the UK&I Members (as defined in the Transaction Agreement), 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share, and (y) for the Europe Members (as defined in the Transaction Agreement), 3,157,000 shares of Visa Inc. Series C Convertible Participating Preferred Stock, par value $0.0001 per share (with (x) and (y) together being the “ VI Preferred Stock ”); provided that , such number of shares of VI Preferred Stock may be adjusted to reflect the Fractional Share Cash Amount (as defined in the Transaction Agreement) to be paid pursuant to Section 2.2(b) of the Transaction Agreement”"
+              "note": "verbatim: “shares in the capital stock of Visa Inc. consisting of (x) for the UK&I Members (as defined in the Transaction Agreement), 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share, and (y) for the Europe Members (as defined in the Transaction Agreement), 3,157,000 shares of Visa Inc. Series C Convertible Participating Preferred Stock, par value $0.0001 per share (with (x) and (y) together being the “VI Preferred Stock”); provided that, such number of shares of VI Preferred Stock may be adjusted to reflect the Fractional Share Cash Amount (as defined in the Transaction Agreement) to be paid pursuant to Section 2.2(b) of the Transaction Agreement”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4686,10 +4630,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Option Exercise Price components: (i)(a) €11,500,000,000 minus Leakage Amount, plus (b) €750,000,000; (ii) VI Preferred Stock; (iii) Deferred Cash Consideration of €1,124,864,000, of which the Pre-Interest Deferred Cash Amount (principal) is €1,000,000,000.00",
+              "value": "€1,000,000,000.00 (Pre-Interest Deferred Cash Amount) as the principal amount of the Deferred Cash Consideration. Total Option Exercise Price includes: (i)(a) €11,500,000,000 minus the Leakage Amount, plus (b) €750,000,000; (ii) VI Preferred Stock; and (iii) €1,124,864,000 Deferred Cash Consideration",
               "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
               "status": "present",
-              "note": "verbatim: “of (i) (a) Eleven Billion Five Hundred Million Euros (€11,500,000,000) minus the Leakage Amount (as defined in the Transaction Agreement), if any, plus (b) Seven Hundred Fifty Million Euros (€750,000,000) ... and (iii) One Billion One Hundred Twenty-Four Million Eight Hundred Sixty-Four Thousand Euros (€1,124,864,000) (the “ Deferred Cash Consideration ”) ... One Billion Euros (€1,000,000,000.00) (the “ Pre-Interest Deferred Cash Amount ”), shall represent the principal amount of the Deferred Cash Consideration”"
+              "note": "verbatim: “One Billion Euros (€1,000,000,000.00) (the “Pre-Interest Deferred Cash Amount”), shall represent the principal amount of the Deferred Cash Consideration”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4700,7 +4644,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Interest payable on the Pre-Interest Deferred Cash Amount = €124,864,000.00 (difference between Deferred Cash Consideration and Pre-Interest Deferred Cash Amount); no rate percentage stated",
+              "value": "€124,864,000.00 interest payable on the Pre-Interest Deferred Cash Amount (no rate/percentage stated)",
               "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
               "status": "present",
               "note": "verbatim: “the difference between the Deferred Cash Consideration and the Pre-Interest Deferred Cash Amount, equal to One Hundred Twenty-Four Million, Eight Hundred Sixty-Four Thousand Euros (€124,864,000.00), shall be the interest payable on the Pre-Interest Deferred Cash Amount.”"
@@ -4717,7 +4661,7 @@
               "value": "Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside Closing Date",
               "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
               "status": "present",
-              "note": "verbatim: “One Billion One Hundred Twenty-Four Million Eight Hundred Sixty-Four Thousand Euros (€1,124,864,000) (the “ Deferred Cash Consideration ”), payable on the third (3 rd ) anniversary of the Outside Closing Date pursuant to Section 2.6 ( Deferred Cash Consideration ) of the Transaction Agreement.”"
+              "note": "verbatim: “One Billion One Hundred Twenty-Four Million Eight Hundred Sixty-Four Thousand Euros (€1,124,864,000) (the “Deferred Cash Consideration”), payable on the third (3rd) anniversary of the Outside Closing Date pursuant to Section 2.6 (Deferred Cash Consideration) of the Transaction Agreement.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4760,6 +4704,34 @@
               "source_ref": null,
               "status": "unknown",
               "note": "not stated in 8-K 0001403161-16-000027 · exh22aroptionagreement.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Termination",
+            "value": {
+              "value": "Automatic termination and rescission of this Amendment, and re-instatement of the Option Agreement, if the Transaction Agreement is properly terminated prior to Closing under Section 8.1 of the Transaction Agreement",
+              "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
+              "status": "present",
+              "note": "verbatim: “If the Transaction Agreement is properly terminated prior to the Closing (as defined in the Transaction Agreement) in accordance with Section 8.1 (Grounds for Termination) of the Transaction Agreement, (a) this Amendment shall automatically terminate and be rescinded in its entirety and (b) the Option Agreement shall be re-instated in full, without giving effect to this Amendment or the Original Amendment”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York",
+              "source_ref": "8-K 0001403161-16-000027 · exh22aroptionagreement.htm",
+              "status": "present",
+              "note": "verbatim: “This Amendment shall be governed by and construed in accordance with the Laws of the State of New York applicable to contracts entered into and to be entirely performed within such State.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -8605,7 +8577,7 @@
         {
           "kind": "leading_indicator",
           "metric": "payments volume",
-          "period": "fiscal second quarter (Q2 2026)",
+          "period": "fiscal second quarter",
           "value": "$3.7 trillion, up 9% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
@@ -8617,7 +8589,7 @@
         {
           "kind": "leading_indicator",
           "metric": "processed transactions",
-          "period": "fiscal second quarter (Q2 2026)",
+          "period": "fiscal second quarter",
           "value": "$66 billion, up 9% year-over-year",
           "value_num": null,
           "unit": null,
@@ -8628,9 +8600,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "value-added services share of net revenue",
-          "period": "Q2 2026",
-          "value": "30% of our net revenue, growing at 25% plus in constant dollars",
+          "metric": "value-added services net revenue share and growth",
+          "period": "fiscal second quarter",
+          "value": "30% of net revenue, growing at 25% plus in constant dollars",
           "value_num": null,
           "unit": null,
           "verbatim": "value-added services is an even bigger opportunity and has demonstrated its value as a key driver of our growth, now representing 30% of our net revenue, growing at 25% plus in constant dollars.",
@@ -8640,8 +8612,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "commercial and money movement revenue growth",
-          "period": "Q2 2026",
+          "metric": "commercial and money movement solutions revenue growth",
+          "period": "fiscal second quarter",
           "value": "grew 24% in constant dollars",
           "value_num": null,
           "unit": null,
@@ -8653,7 +8625,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct endpoints",
-          "period": "Q2 2026",
+          "period": "Q2",
           "value": "more than 18 billion endpoints",
           "value_num": null,
           "unit": null,
@@ -8665,7 +8637,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions",
-          "period": "Q2 2026",
+          "period": "Q2",
           "value": "3.7 billion transactions, up 23% year-over-year",
           "value_num": null,
           "unit": null,
@@ -8677,7 +8649,7 @@
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume growth",
-          "period": "Q2 2026",
+          "period": "this quarter (Q2)",
           "value": "11% payments volume growth in constant dollars",
           "value_num": null,
           "unit": null,
@@ -8688,19 +8660,19 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "UnionPay debit cardholder reach",
-          "period": null,
-          "value": "more than 95% of their debit cardholders through a single integration",
+          "metric": "commercial cross-border volume share of volume",
+          "period": "this quarter (Q2)",
+          "value": "highest percentage of both commercial volume and total cross-border volume in Visa's history",
           "value_num": null,
           "unit": null,
-          "verbatim": "UnionPay International will connect Visa Direct with UnionPay's Moneyexpress, enabling real-time cross-border remittances and payouts to reach more than 95% of their debit cardholders through a single integration.",
+          "verbatim": "Commercial cross-border volume now represents the highest percentage of both commercial volume and total cross-border volume in Visa's history.",
           "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "competitive_position",
-          "metric": "network scale (seller locations, credentials, clients)",
+          "metric": "network scale (seller locations, credentials, FI clients)",
           "period": null,
           "value": "more than 175 million seller locations, 5 billion credentials in 200 countries and territories with nearly 14,500 financial institution clients",
           "value_num": null,
@@ -8724,21 +8696,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "stablecoin card programs",
+          "metric": "stablecoin card programs and payment volume",
           "period": null,
-          "value": "over 160 stablecoin card programs globally",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "And we now have over 160 stablecoin card programs globally with key partners such as Rain, Reap and Bridge, and the payment volume continues to grow at a very strong rate, up nearly 200% year-over-year in",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "stablecoin-linked payment volume growth",
-          "period": null,
-          "value": "up nearly 200% year-over-year",
+          "value": "over 160 stablecoin card programs globally; payment volume up nearly 200% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "And we now have over 160 stablecoin card programs globally with key partners such as Rain, Reap and Bridge, and the payment volume continues to grow at a very strong rate, up nearly 200% year-over-year in",
@@ -8749,8 +8709,8 @@
         {
           "kind": "leading_indicator",
           "metric": "payments volume",
-          "period": "fiscal third quarter (Q3 2026)",
-          "value": "cross $4 trillion, up 10% year-over-year in constant dollars",
+          "period": "fiscal third quarter",
+          "value": "cross $4 trillion, grew 10% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
           "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
@@ -8761,8 +8721,8 @@
         {
           "kind": "leading_indicator",
           "metric": "processed transactions",
-          "period": "fiscal third quarter (Q3 2026)",
-          "value": "$72 billion, up 10% year-over-year",
+          "period": "fiscal third quarter",
+          "value": "$72 billion, grew 10% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
@@ -8773,8 +8733,8 @@
         {
           "kind": "competitive_position",
           "metric": "Net Promoter Score",
-          "period": "third consecutive year",
-          "value": "a score of 76",
+          "period": "annual global client engagement survey",
+          "value": "a score of 76, for the third consecutive year",
           "value_num": null,
           "unit": null,
           "verbatim": "For the third consecutive year, we received a score of 76 in our annual global client engagement survey, an enviable number in any industry.",
@@ -8785,7 +8745,7 @@
         {
           "kind": "leading_indicator",
           "metric": "credentials growth",
-          "period": "third quarter (Q3 2026)",
+          "period": "third quarter",
           "value": "growing 8% year-over-year",
           "value_num": null,
           "unit": null,
@@ -8797,7 +8757,7 @@
         {
           "kind": "leading_indicator",
           "metric": "tokenized penetration of e-commerce transactions",
-          "period": "Q3 2026",
+          "period": "third quarter",
           "value": "nearing 60% of our e-commerce transactions globally",
           "value_num": null,
           "unit": null,
@@ -8810,10 +8770,10 @@
           "kind": "leading_indicator",
           "metric": "Europe credentials growth",
           "period": "last 12 months",
-          "value": "grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth",
+          "value": "grown credentials by more than 40 million in the last 12 months, over 70% faster than the annualized credentials growth from fiscal year 2019 to 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "in Europe, through portfolio migrations and organic expansion, we have grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth we saw in the region from fiscal year 2019 to 2024.",
+          "verbatim": "First, in Europe, through portfolio migrations and organic expansion, we have grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth we saw in the region from fiscal year 2019 to 2024.",
           "following_context": "And in the next several years, we expect over 30 million more credentials from wins alone in Europe. An example from this quarter is NatWest, where we have won the entire consumer credit portfolio of their retail bank, demonstrating the strength of our strategic partnership that has been restored over the past 5 years.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
           "tier": "llm-fenced"
@@ -8822,7 +8782,7 @@
           "kind": "competitive_position",
           "metric": "Colombia processing penetration",
           "period": null,
-          "value": "now above 90%",
+          "value": "now above 90%, which was in the single digits 5 years ago",
           "value_num": null,
           "unit": null,
           "verbatim": "Our processing penetration in the country, which was in the single digits 5 years ago, is now above 90%.",
@@ -8833,8 +8793,8 @@
         {
           "kind": "leading_indicator",
           "metric": "commercial and money movement solutions revenue growth",
-          "period": "Q3 2026",
-          "value": "grew 17% year-over-year, with 13% year-over-year commercial payments volume growth, both in constant dollars",
+          "period": "third quarter",
+          "value": "grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars",
           "value_num": null,
           "unit": null,
           "verbatim": "Our commercial and money movement solutions revenue grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars, as our product development continued to help us win business.",
@@ -8845,8 +8805,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions",
-          "period": "Q3 2026",
-          "value": "$4 billion, up 21% year-over-year",
+          "period": "this quarter (Q3)",
+          "value": "$4 billion, grew 21% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "In money movement, Visa Direct transactions grew 21% year-over-year this quarter to $4 billion.",
@@ -8858,10 +8818,10 @@
           "kind": "leading_indicator",
           "metric": "agentic tool chain productivity",
           "period": null,
-          "value": "80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, which has translated to 65% plus faster feature development",
+          "value": "80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, translated to 65% plus faster feature development",
           "value_num": null,
           "unit": null,
-          "verbatim": "the results are meaningful for those teams that are using the agentic tool chain with 80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, which has translated to 65% plus faster feature development.",
+          "verbatim": "And the results are meaningful for those teams that are using the agentic tool chain with 80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, which has translated to 65% plus faster feature development.",
           "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
           "tier": "llm-fenced"
@@ -8869,7 +8829,7 @@
         {
           "kind": "leading_indicator",
           "metric": "AI-powered applications and product releases",
-          "period": null,
+          "period": "last 12 months",
           "value": "more than 150 AI-powered applications; more than 300 major product releases over the last 12 months",
           "value_num": null,
           "unit": null,
@@ -8881,7 +8841,7 @@
         {
           "kind": "leading_indicator",
           "metric": "value-added services revenue growth",
-          "period": "Q3 2026",
+          "period": "Q3",
           "value": "grew revenue by 34% in constant dollars",
           "value_num": null,
           "unit": null,
@@ -8897,14 +8857,14 @@
           "value": "2 billion credentials enrolled",
           "value_num": null,
           "unit": null,
-          "verbatim": "2 of our most popular network products, Subscription Manager and Stop Payment Services, which help cardholders view and decide where their card is on file for a subscription or recurring payment, now have 2 billion credentials enrolled.",
+          "verbatim": "For example, 2 of our most popular network products, Subscription Manager and Stop Payment Services, which help cardholders view and decide where their card is on file for a subscription or recurring payment, now have 2 billion credentials enrolled.",
           "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Unified Checkout adoption",
+          "metric": "Unified Checkout enablement",
           "period": null,
           "value": "Over 4,500 sellers and acquirers globally have enabled this",
           "value_num": null,
@@ -8922,62 +8882,72 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a genuinely high-return, still-compounding network, but long-duration growth is already capitalised in the price and the GAAP revision tape is softening.",
+    "evidence_balance": "strongly-bullish — core volume still compounding ($4T, +10% cc) with faster-growing VAS and rising ROIC, though the durability is largely priced in.",
     "bull_points": [
       {
-        "claim": "Payments volume crossed $4 trillion for the first time in Q3 2026, up 10% YoY in constant dollars, with processed transactions up 10% to $72 billion — the core network is still compounding, not maturing.",
+        "claim": "Payments volume crossed $4 trillion for the first time in Visa's history in fiscal Q3, growing 10% year-over-year in constant dollars with processed transactions up 10% to $72 billion — the core engine is still compounding at scale.",
         "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Value-added services grew revenue 34% in constant dollars in Q3 2026, with the vast majority linked to transactions, cards and accounts — a durable, transaction-tethered growth lever above the network base.",
+        "claim": "Value-added services grew revenue 34% in constant dollars in Q3 with the vast majority linked to transactions, cards and accounts — a durable, higher-growth layer diversifying the runway beyond raw volume.",
         "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Commercial and money-movement revenue grew 17% YoY in Q3 2026 on 13% commercial payments-volume growth, and Visa Direct transactions grew 21% YoY to $4 billion — an above-core reinvestment runway inside the same rails.",
+        "claim": "Commercial and money-movement revenue grew 17% year-over-year with 13% commercial payments volume growth, and Visa Direct transactions grew 21% to $4 billion — new-flow adjacencies extending the addressable market.",
         "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Europe credentials grew by more than 40 million in the last 12 months, over 70% faster than the FY2019–2024 annualized pace, with 30 million more expected from wins alone — evidence the runway is lengthening in a share-gain region.",
+        "claim": "Europe credentials grew by more than 40 million in the last 12 months — over 70% faster than the FY2019–2024 annualized pace — with a further 30 million-plus expected from wins alone, evidencing a lengthening reinvestment runway from share gains.",
         "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA rose from $12,633M (FY17) to $31,094M (LTM) while EBITDA margin held ~70% throughout, and ROCE climbed from 15.5% (FY17) to 30.3% (LTM) — a high-return compounder whose returns are still rising.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "claim": "Absolute EBITDA rose every year from $12,633M (FY17) to $31,094M (LTM Jun-30-2026) while margin held at ~70%, so the ~70% margin is not a peak being defended but a stable ceiling on a growing base.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Net-debt/EBITDA is 0.3x and interest coverage 40.1x with FCF-positive self-funding, giving ample capacity to reinvest and repurchase without balance-sheet strain.",
+        "claim": "ROIC climbed steadily from 15.5% (FY17) to 30.3% (LTM Jun-30-2026), showing incremental capital is being deployed at rising, high returns — the hallmark of a genuine compounder.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "The forward-multiple ladder de-rates as consensus EBITDA compounds — NTM TEV/EBITDA 19.33x falling to FY29 15.12x — implying the durable growth is not fully captured by the trailing print.",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "cited": true
+      },
+      {
+        "claim": "Leverage is minimal at net-debt/EBITDA 0.3x with interest coverage 40.1x and positive FCF, so the business self-funds its reinvestment without balance-sheet strain.",
         "source_ref": "CIQ Net Debt $10,066M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $31,094M [LTM 12 months Jun-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "On the fundamentals that would justify a premium, the name carries a 70% EBITDA margin vs 29% peer-median and 0.8x debt/EBITDA vs 3.8x peer-median — so the peer multiple gap must be weighed against materially better economics, not read as pure overvaluation.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "EV/EBITDA is 21.6x vs a peer median of 11.0x (+96%) — but the peer set spans $1.7B–$493.1B caps (297x) against a $665.4B name and is flagged HETEROGENEOUS, so the raw gap is a low-comparability read, not a clean overvaluation signal, and must be decomposed into earned (70% vs 29% margin, 0.8x vs 3.8x leverage) versus residual before it can bite.",
+        "claim": "On EV/EBITDA the name trades at 21.6x vs a peer median of 11.0x (+96%), and the paired reconciler shows this is not an optical distortion — the discount case fails because Visa is at a large PREMIUM, so quality here is being paid for, not offered cheap.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "The price already discounts long-duration growth: the forward multiple ladder only de-rates gradually (FY2026 TEV/EBITDA 21.0x → FY2029 15.1x; P/E 27.4x → 18.3x), meaning consensus long-run compounding is capitalised into today's price and must be beaten, not merely met.",
+        "claim": "The premium is only partly earned by fundamentals: EBITDA margin 70% vs peer-median 29% and Debt/EBITDA 0.8 vs 3.8 justify some gap, but revenue growth 14% vs 17% and LT EPS growth 13% vs 14% run BELOW the peer median — so the human must judge whether the ~2x EBITDA premium is fully earned or partly residual optimism.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The forward path itself prices durability: FY26E TEV/EBITDA 21.00x only falls to FY29 15.12x on consensus growth, meaning several years of high-teens compounding are already embedded in today's price.",
         "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       },
       {
-        "claim": "FY2026 GAAP EPS breadth is 0 up / 16 down over the last month and GAAP-EPS/EBT/Net-Income consensus paths have net-drifted down (EBT (GAAP) -4% 12m→latest) even as normalized EPS ticked +3% — the bottom-line revision tape is deteriorating on the GAAP basis at a full price.",
+        "claim": "Consensus GAAP-EPS breadth is one-sided negative — FY2026 revisions were 0 up / 16 down over the last month — a genuine near-term deceleration signal against a fully-priced name.",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       },
       {
-        "claim": "The stock returned only 5.9% over the trailing 52 weeks vs SPY's 19.6% — a full-multiple name that has already given back relative performance, so the fully-priced quality has not been rewarding recently.",
+        "claim": "The stock underperformed its benchmark over the trailing year (name +5.9% vs SPY +19.6% rebased), a genuine counter-point that the high-return story is not translating into relative price gains — OUTWEIGHED by the still-compounding $4-trillion volume and 34% VAS growth on the majority side.",
         "source_ref": "EOD V vs SPY rebased to 100, 2025-08-13..2026-08-11",
         "cited": true
       }
@@ -8986,69 +8956,75 @@
       {
         "name": "Mastercard Incorporated",
         "outcome": "kept compounding",
-        "distinguishing_fact": "The nearest true comparable in the roster — same duopoly network model, similar margin profile and premium multiple; the analogue for whether a high-return payments network sustains its rating rather than mean-reverting to a heterogeneous peer median.",
+        "distinguishing_fact": "The closest structural twin — a global card network with near-identical margin profile, low leverage and the same volume-driven, VAS-expanding runway; the direct read-across for whether a network premium keeps compounding.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Moody's Corporation",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Toll-booth duopoly with pricing power and asset-light, high-margin economics that held a persistent premium multiple for years as reinvestment runway stayed long.",
+        "distinguishing_fact": "A duopolistic, asset-light, high-margin tollbooth that traded at a persistent premium and kept compounding as its data/analytics (value-added) layer grew faster than the core rated-issuance volume.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "S&P Global Inc.",
+        "name": "S&P Global",
         "outcome": "kept compounding",
-        "distinguishing_fact": "Network/data franchise where value-added, transaction-linked services expanded the addressable market beyond the core, defending a premium rating.",
+        "distinguishing_fact": "Another index/ratings tollbooth where a high headline multiple persisted while a faster-growing analytics segment lengthened the runway beyond the cyclical core flow.",
         "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "PayPal Holdings",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A payments name in the same roster whose growth decelerated and margin compressed, and whose multiple compressed toward the peer median — the cautionary path if network growth stalls.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Fidelity National Information Services",
         "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A payments-technology peer that took a large goodwill impairment and de-rated sharply — the value-trap outcome when an acquired, lower-return model disappoints.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A payments-adjacent peer whose growth stalled (revenue -1%, EBITDA -18%) and which took a large goodwill write-down — the cautionary case of a payments name whose durability premium evaporated when volume decelerated.",
+        "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+      },
+      {
+        "name": "PayPal Holdings",
+        "outcome": "re-rated to fair value",
+        "distinguishing_fact": "A former high-multiple payments favorite that de-rated hard (now 8.1x TEV/EBITDA) as growth slowed to mid-single digits — the reminder that a payments premium re-rates when the growth narrative breaks.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10"
       }
     ],
     "decisive_question": {
-      "question": "Is the long-duration growth already capitalised in the ~21.6x EV/EBITDA / gradually-de-rating forward ladder going to be BEATEN by the emerging drivers (value-added services 34%, commercial/money-movement, agentic & stablecoin optionality), or merely MET — in which case a full-price name mean-reverts as the GAAP revision tape softens?",
+      "question": "Is the multi-year, high-teens compounding already embedded in Visa's forward multiple durable enough (volume growth + faster value-added services + credential wins) to be BEATEN, or is the price fully paying for a runway that is already showing revenue growth below peers and one-sided negative EPS revisions?",
       "evidence_for": [
         {
-          "claim": "Value-added services grew 34% in constant dollars in Q3 2026 and commercial/money-movement revenue grew 17% on 13% commercial volume growth — above-core engines that could out-run the capitalised path.",
+          "claim": "Payments volume crossed $4 trillion (+10% cc) with processed transactions +10% to $72 billion, and value-added services grew 34% in constant dollars — the compounding engine and its faster adjacency are both intact.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Payments volume crossed $4 trillion up 10% YoY with tokenized penetration nearing 60% of global e-commerce transactions and credentials up 8% YoY — the base is still expanding, supporting the runway case.",
+          "claim": "Europe credential growth of 40M+ in 12 months (70%+ faster than the FY19-24 pace) plus 30M+ more expected from wins evidences a lengthening, share-gain-driven runway.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "ROIC rising to 30.3% LTM shows incremental capital compounds at high returns, supporting a durable-runway read.",
+          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The forward multiple ladder de-rates only gradually (FY2026 21.0x → FY2029 15.1x EV/EBITDA), meaning years of compounding are already priced in and must be exceeded to earn a return.",
-          "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+          "claim": "Revenue growth 14% vs peer-median 17% and LT EPS growth 13% vs 14% sit below the peer median, so part of the ~2x EBITDA premium may rest on durability the recent growth does not out-clock.",
+          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         },
         {
-          "claim": "FY2026 GAAP EPS revision breadth is 0 up / 16 down last month, with the GAAP EBT consensus path net -4% — the bottom-line tape is softening, not accelerating, against a full price.",
+          "claim": "FY2026 GAAP-EPS revision breadth was 0 up / 16 down in the last month, a one-sided near-term downgrade against a price that embeds years of compounding.",
           "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the trailing EV/EBITDA of 21.6x (own-history 45th percentile, own range 17.5–32.2x) reflects a temporarily depressed level or a permanently different terminal multiple — no forward/adjusted EV/EBITDA basis is tagged to resolve overshoot-vs-terminal.",
-      "The GAAP-vs-adjusted EBITDA basis is UNRESOLVED: implied D&A is 1.69x higher in estimates than actuals, sitting in the band where a real basis change (GAAP actuals vs adjusted estimates) has gone unflagged — reconcile the estimate row to the company's guidance basis before comparing across the boundary.",
-      "No adjusted EPS, adjusted EV/EBITDA, or adjusted net-debt/EBITDA is disclosed in the 99.1 revised guidance, and no covenant leverage basis is stated — the premium-vs-peer read cannot be normalised.",
-      "Single-segment (Payment Services) reporting with no segment-EBITDA breakout — the mix between the maturing core network and the fast-growing value-added/money-movement engines cannot be independently sized from the filings.",
-      "Share-count trend is UNKNOWN (<2 XBRL share points in trailing ~2y) and buyback share count is unavailable, so per-share accretion from the $11,625M repurchase cannot be verified.",
-      "Magnitude and monetisation of the agentic-commerce and stablecoin optionality (OpenAI, Meta, 160+ stablecoin card programs, VSP) is qualitative posture only — no revenue contribution is quantified in the source facts.",
-      "Insider activity is one-sided: 0 open-market buys vs 9 sells ($46.73M across 5 insiders) in 182 days, with no purchase in the 3-year scan — a posture signal the human must weigh."
+      "Whether the ~70% EBITDA margin holds as management 'eliminates roles' and reinvests heavily into stablecoin/agentic — the margin-vs-reinvestment trade-off is not quantified in the disclosed data.",
+      "The EBITDA-basis triangulation is UNRESOLVED: implied D&A is 832 in actuals vs 1,404 in estimates (1.69x), sitting in the band where a GAAP-vs-adjusted basis change has gone unflagged — reconcile the estimate EBITDA row to the company's own guidance basis before leaning on forward multiples.",
+      "No forward/adjusted EV/EBITDA, adjusted EPS or adjusted net-debt/EBITDA is in the revised guidance — the trailing 21.6x cannot be cleanly separated from a temporarily-depressed vs permanently-impaired read.",
+      "P/E percentile and 5y P/E context are UNKNOWN (no diluted EPS valuation input tagged), limiting the own-history earnings-multiple check.",
+      "The revenue guidance could not be cross-checked — CIQ shows a $45,200 point guide but the release carries NO NUMERIC OUTLOOK, so the guide-vs-actual comparison is not verified.",
+      "Whether OpenAI/Meta agentic-commerce and stablecoin initiatives convert to material revenue or are early-stage optionality — the transcript describes launches and pilots, not sized contribution.",
+      "Insider posture is one-directional: 0 open-market buys vs 9 sells ($46.73M, 5 insiders) over 182 days — a signal to weigh but not sized against intent.",
+      "The peer set is flagged HETEROGENEOUS (caps span $1.7B–$493.1B, 297x; name $665.4B), so every peer-median statistic is a confidence-gated input, not a clean benchmark."
     ]
   },
   "caveats": [
@@ -9057,16 +9033,20 @@
     "primary-source: 8-K 0001193125-26-219432 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001403161-26-000063 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001628280-26-007709 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+1.0s fetch)"
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+1.0s fetch)",
+    "Bare peer-comparison (a bear point): 'On EV/EBITDA the name trades at 21.6x vs a peer median of 11.0x (+96%), and the paired reconciler shows this is not an optical distortion — the discount case fails because Visa is at a large PREMIUM, so quality here is being paid for, not offered cheap.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'On EV/EBITDA the name trades at 21.6x vs a peer median of 11.0x (+96%), and the paired reconciler shows this is not an optical distortion — the discount case fails because Visa is at a large PREMIUM, so quality here is being paid for, not offered cheap.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "TWIN 'Fidelity National Information Services' has numbers ['1', '18'] — must be non-numeric",
+    "TWIN 'PayPal Holdings' has numbers ['8.1'] — must be non-numeric",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
-    "TWIN ampersand-name 'S&P Global Inc.' — verify it is a single entity (kept)"
+    "TWIN ampersand-name 'S&P Global' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T06:04:54.694763Z",
+  "assembled_at": "2026-08-13T10:23:15.446119Z",
   "extraction_version": "2026-07-28.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -9092,7 +9072,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T06:07:13.244492Z",
+    "computed_at": "2026-08-13T10:25:37.766231Z",
     "reason": "R1 inputs incomplete — see per-input source stamps",
     "data_quality": null,
     "data_quality_detail": [],

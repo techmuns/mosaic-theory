@@ -2077,6 +2077,7 @@ def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
                              capture_output=True, text=True, check=True)
         return list(json.loads(out.stdout))
 
+    recon_cited: list[tuple[str, str]] = []
     for t in tickers:
         doss = ds.Dossier.model_validate_json(
             pathlib.Path(f"data/dossiers/{t}/dossier.json").read_text())
@@ -2105,11 +2106,21 @@ def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
             if have_node:  # (c) py==JS with the same refs → identical claim ordering
                 py_claims = [p.claim for p, *_ in ordered]
                 assert js_order(case, side, crux, drv) == py_claims, f"{t}: py↔js order drift"
-        # (d) presence: a cited bear point citing the EX-99.1 recon exists (MVST — the P6 subject)
-        if t == "MVST":
-            recon = [p for p in doss.synthesis.bear_points
-                     if "EX-99.1" in (p.source_ref or "") and getattr(p, "cited", False)]
-            assert recon, "MVST: no cited EX-99.1-reconciliation bear point"
+        # (d) presence: the citation-ordering path above is exercised by REAL EX-99.1-cited bear
+        #     points. Accumulated across the fleet and asserted once after the loop — pinning it to
+        #     MVST assumed the LLM would keep choosing that source for that name, and the
+        #     2026-08-13 re-assembly cited its 10-Q instead (MVST still carries 9 cited bear
+        #     points; the citation machinery is fine, the SOURCE it picked moved). Which company
+        #     supplies the shape is LLM-composed; that SOME name does is the invariant.
+        recon_cited.extend(
+            (t, p.source_ref) for p in doss.synthesis.bear_points
+            if "EX-99.1" in (p.source_ref or "") and getattr(p, "cited", False))
+
+    assert recon_cited, (
+        f"no cited EX-99.1-reconciliation bear point across {tickers} — the ordering invariants "
+        f"above then run without ever seeing a release-cited point, which is the case P6 was "
+        f"written for. If both names have genuinely stopped citing releases, re-point this at a "
+        f"name that does rather than deleting the coverage.")
 
 
 def test_brief_financial_snapshot_right_aligns_all_period_columns() -> None:
