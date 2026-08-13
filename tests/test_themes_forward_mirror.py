@@ -242,14 +242,21 @@ def test_reconstruction_logs_no_disposition_of_its_own(
 # The mirror↔driver binding (the gap recorded on #412, closed 2026-08-12)
 # --------------------------------------------------------------------------------------------
 
-def test_every_driver_names_a_mirror_that_exists() -> None:
-    """THE BINDING, AND THAT IT POINTS SOMEWHERE REAL. `mirror_slug` is REQUIRED on `DriverSpec`
-    with no default, so a new driver that forgets it fails at import — but a driver that names a
-    mirror which does not exist would still pass import and only surface when someone re-measures.
-    """
+def test_every_declared_binding_points_at_a_mirror_that_exists() -> None:
+    """A DECLARED binding must point somewhere real — a driver naming a mirror that does not exist
+    passes import and only surfaces when someone re-measures.
+
+    RESTRICTED TO DECLARED BINDINGS (review P2 on #444). `mirror_slug` is OPTIONAL precisely
+    because a real driver can be registered before its theme page is built, and
+    `baskets_from_mirror` refuses that driver at USE time. Requiring every spec to resolve a file
+    here re-imposed at import the very requirement the optional field removed: adding a legitimate
+    pre-page driver failed this test. The run-time refusal is pinned separately, so nothing is lost
+    by skipping the undeclared ones here."""
     from vinci.themes.drivers import DRIVER_SPECS
 
-    for key, spec in sorted(DRIVER_SPECS.items()):
+    declared = {k: s for k, s in DRIVER_SPECS.items() if s.mirror_slug}
+    assert declared, "no driver declares a mirror — this pin is checking an empty set"
+    for key, spec in sorted(declared.items()):
         p = MIRRORS / f"{spec.mirror_slug}.json"
         assert p.is_file(), f"{key} is bound to {p.name}, which does not exist"
         assert json.loads(p.read_text())["slug"] == spec.mirror_slug, (
@@ -263,7 +270,9 @@ def test_the_binding_is_injective_no_two_drivers_share_a_mirror() -> None:
     is right for at most one of them."""
     from vinci.themes.drivers import DRIVER_SPECS
 
-    slugs = [s.mirror_slug for s in DRIVER_SPECS.values()]
+    # DECLARED bindings only: two UNDECLARED drivers both carry "", which is not two drivers
+    # claiming one mirror — it is two drivers claiming none (review P2 on #444).
+    slugs = [s.mirror_slug for s in DRIVER_SPECS.values() if s.mirror_slug]
     assert len(slugs) == len(set(slugs)), f"a mirror is claimed by more than one driver: {slugs}"
 
 
