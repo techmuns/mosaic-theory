@@ -11667,6 +11667,40 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    **SEPARATELY WORTH DOING (own change, not this item):** prefer the NEWER of the annual/quarterly
    capital-structure panels — 6 months of vintage on NFLX, ~3 on UBER. It makes the staleness
    visibly smaller even though it retires neither finding.
+   **>>> THE #450 ENTRY BELOW IS FALSIFIED IN ITS DETAILS HALF — read this first. <<<**
+   **FALSIFIED AND CORRECTED 2026-08-13 (`fix/details-panel-stamp`), before any re-assembly.**
+   #450 claimed 16 names got a capital-structure panel ~150 days fresher. **They did not. CIQ
+   exports NO quarterly capital-structure detail.** Both workbooks carry the IDENTICAL
+   per-fiscal-year sections — verified field-by-field across all 19 bundles (same instruments,
+   principals, maturities, coupons) — and only the workbook-level `Source` note differs. The
+   "fresher panel" was the same data wearing a newer date. The identical instrument counts I
+   reported as *confirmation* were the anomaly: identical data with different dates is the tell,
+   and I filed it under "same debts, fresher filing".
+   **THE HARM WAS NOT COSMETIC.** `_capital_structure_vintage` derives the schedule's AGE from that
+   stamp and bounds its Item-1.02 search by it (`panel_filed < event <= as-of`). Under the
+   quarterly stamp **NFLX read 26d old instead of 201d, and the 2026-02-27 termination fell OUT of
+   the window — silently dropping the warning that the listed WBD bridge facility was terminated**,
+   which is the exact disclosure item 7 designates as the remedy for that finding. Same false-age
+   class on 15 other names. Caught in a pre-re-assembly audit; **no artifact ever shipped with it.**
+   **THE CORRECTED RULE IS PROVENANCE, NOT RECENCY:** take the panel whose note names the same
+   period as the section beneath it. Measured — **annual 19/19 self-consistent, quarterly 18/19
+   MISMATCHED** (V the clearest: a `Q3 2026 filed Jul-29-2026` note over an `FY 2025 (Sep-30-2025)`
+   section, ten months of false freshness; FUBO the lone quarterly agreement, its annual export
+   already holding an `FQ3 2026` section). Not a hardcoded `freq="annual"` in disguise: a genuine
+   quarterly panel would be self-consistent and selected automatically.
+   **THE SUMMARY HALF OF #450 SURVIVES AND IS KEPT** — and the two are now chosen by SEPARATE
+   rules, which is what the module's own contract said all along (*the itemized detail is
+   panel-dated, the aggregates are stamped with the period column they were read from*). #450's
+   "they must sit on one filing" coupling was the wrong idea, not an incomplete one. The Summary's
+   latest column is the same date in both workbooks on all 19 names, so preferring quarterly there
+   stales nothing (verified: no headline aggregate moves); it only gives the term-loan step two
+   like-for-like endpoints.
+   **REGRESSION PINNED END-TO-END, at the layer the harm lives:** the selected stamp must keep a
+   known Item 1.02 inside its window. A stamp-level test would have called #450 harmless — it
+   changed only a date. Mutation-checked: reproducing #450's rule reddens three pins, including
+   the termination window.
+   **ORIGINAL (FALSIFIED) ENTRY FOLLOWS —** its Summary/mixed-basis measurements hold; every
+   "fresher panel" claim does not.
    **BUILT 2026-08-13 (`newer-capital-panel`) — and it was BIGGER than the two names that prompted
    it.** `_capital_panel_freq` picks the later-FILED Details panel; `capital_structure_ciq` and
    `_capital_summary` both read at that frequency, deliberately coupled so instruments and the

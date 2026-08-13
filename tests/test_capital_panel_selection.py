@@ -1,29 +1,41 @@
-"""The capital-structure panel is the LATER-FILED of the two workbooks, not the annual one.
+"""The DETAILS panel is the one whose stamp describes it; the SUMMARY is chosen separately.
 
-WHAT WAS WRONG. `capital_structure_ciq` and `_capital_summary` both opened their sheet with
-`freq="annual"` as a hardcoded literal. Nobody chose it, and the quarterly workbook sat unread in
-the same bundle. Measured over the 19 committed bundles, 16 names carry a NEWER quarterly panel —
-median ~150 days, up to 265 (V), 263 (CPB), 259 (BRBR/PENG), 254 (SMPL), 175 (NFLX). Same
-instruments, staler filing: the debt table described a company as it stood six months ago while a
-July panel sat in the folder.
+WHAT #450 GOT WRONG, AND WHY IT MATTERED. That change read the Capital-Structure Details panel from
+whichever workbook carried the later-filed `Source` note, and reported 16 names getting ~150 days
+fresher. **They did not get fresher. CIQ exports no quarterly capital-structure detail.** Both
+workbooks carry the identical per-fiscal-year sections — verified field-by-field across all 19
+bundles: same instruments, same principals, same maturities, same coupons — and only the
+workbook-level note differs. The "fresher panel" was the same data wearing a newer date.
 
-THE RULE IS "NEWER", NOT "QUARTERLY", AND THE CORPUS IS WHY. **NIKE's annual panel (Jul-15-2026)
-is newer than its quarterly one (Apr-01-2026), and ONON's (Mar-03-2026) beats a quarterly export
-from Aug-12-2025 — a year stale.** A blanket switch to quarterly improves sixteen names and makes
-two WORSE, which is the shape of a change that reads as a win in aggregate and is a regression on
-the names it touches. The negative pins below are those two, and they are real observed shapes
-rather than invented ones.
+Measured, note-period vs section-period: **annual 19/19 consistent, quarterly 18/19 MISMATCHED**
+(FUBO the lone agreement, its annual export already holding an `FQ3 2026` section because the
+post-combination entity has no FY yet). V is the clearest shape — a `Q3 2026 filed Jul-29-2026`
+note sitting over an `FY 2025 (Sep-30-2025)` section, ten months of false freshness.
 
-THE SECOND FINDING, which arrived with the first. The term-loan movement steps the last two period
-columns of whatever sheet it opens, and in the ANNUAL workbook those two need not share a window:
-**16 of 19 names had a 12-month column sitting next to a 3-month one.** SMPL printed
+THE HARM WAS NOT COSMETIC, which is the part a "same numbers, newer date" change hides.
+`_capital_structure_vintage` derives the schedule's AGE from this stamp and bounds its Item-1.02
+termination search by it (`panel_filed < event <= reference_date`). Under the quarterly stamp:
 
-    term loans 397.0 (12 months Aug-30-2025 249.1 → 3 months May-30-2026 397.0)
+    NFLX age 201d -> 26d, and the 2026-02-27 Item 1.02 fell OUT of the window,
+    silently dropping the warning that the listed WBD bridge facility was terminated
 
-stepping a TWELVE-month endpoint to a THREE-month one. The labels were honest — they name the
-columns, per the R3 fix — so the mismatch was visible rather than hidden, but the comparison was
-still between two different windows. At quarterly it reads `(3 months … 396.9 → 3 months … 397.0)`.
-After the change 18 of 19 names are like-for-like.
+— the exact disclosure STATE item 7 designates as the remedy for that finding. A newer date on
+older data does not merely overstate freshness: it retires the checks that depend on knowing how
+old the data is. That is why the regression pin here is the TERMINATION WINDOW, not the stamp.
+
+THE RULE IS PROVENANCE, NOT RECENCY, and it is not a hardcoded `freq="annual"` in disguise: if CIQ
+ever ships a true quarterly panel its note and section will agree and it is selected automatically.
+Annual winning today is the consequence of the rule, not the rule.
+
+WHAT SURVIVES FROM #450: the Summary half. Its aggregates come from dated period COLUMNS, not from
+the panel note, and its latest column is the same date in both workbooks on all 19 names — so
+preferring quarterly there cannot stale any figure (verified: no headline aggregate moves). What it
+fixes is the term-loan STEP, whose two endpoints in the annual sheet are a 12-month column beside a
+3-month one on 16 of 19 names — SMPL printed
+`term loans 397.0 (12 months Aug-30-2025 249.1 → 3 months May-30-2026 397.0)`, stepping a
+TWELVE-month endpoint to a THREE-month one. Details and Summary are therefore chosen by SEPARATE
+rules, which is what this module's own contract said all along: *the itemized detail is
+panel-dated, the aggregates are stamped with the period column they were actually read from.*
 """
 from __future__ import annotations
 
@@ -74,65 +86,73 @@ def _filed(bundle: CiqBundle, freq: str) -> date | None:
     return cs._cs_panel_filed(cs._cs_detail_asof(rows))
 
 
-# ─── the rule itself, asserted RELATIONALLY so a re-pull cannot rot it ───────────────────────────
-def test_the_picked_panel_is_always_the_later_filed_one() -> None:
-    """THE WHOLE RULE, over every committed bundle. Stated as a relation between the two panels'
-    filed dates rather than as a table of expected answers, so re-pulling the workbooks changes the
-    data without changing this test's truth — and any name that acquires a newer annual export is
-    covered the day it lands, not the day someone remembers to add it."""
-    checked = 0
+# ─── the rule ───────────────────────────────────────────────────────────────────────────────────
+def test_the_selected_details_panel_is_stamped_with_its_own_provenance() -> None:
+    """THE WHOLE RULE, on every committed bundle: the panel actually read must carry a `Source`
+    note naming the same period as the instrument section beneath it.
+
+    Stated as a property of the SELECTION rather than a table of expected frequencies, so it stays
+    true through a re-pull — and so it keeps meaning the right thing if CIQ ever does ship a
+    genuine quarterly panel."""
+    for tk, b in _bundles():
+        chosen = cs._cs_details_freq(b)
+        rows = cs._cs_details_rows(b, chosen)
+        assert rows is not None, f"{tk}: selected {chosen!r} but that panel does not read"
+        assert cs._cs_note_describes_section(rows), (
+            f"{tk}: the selected {chosen} panel's note {cs._cs_detail_asof(rows)!r} does not "
+            f"describe the section it stamps — this is the #450 mis-stamp, and every age and "
+            f"termination window derived from it would be wrong")
+
+
+def test_a_later_filed_quarterly_note_does_not_win_because_recency_is_not_provenance() -> None:
+    """THE NEGATIVE PIN — the rejected design, which is what #450 actually shipped.
+
+    On most names the quarterly workbook's note is MONTHS newer than the annual one, so a
+    recency rule picks it. It must lose anyway: its note describes a quarterly FILING while the
+    section beneath it is still the fiscal-year panel. Asserted as "such names exist, and every one
+    of them keeps annual", so a re-pull that reshuffles the population cannot quietly empty the
+    case — an assertion with nothing left to test has stopped testing."""
+    tempting = []
     for tk, b in _bundles():
         a, q = _filed(b, "annual"), _filed(b, "quarterly")
-        picked = cs._capital_panel_freq(b)
-        if a is None and q is None:
-            assert picked == "annual", f"{tk}: no readable panel, must fall back to the status quo"
+        if a is None or q is None or q <= a:
             continue
-        checked += 1
-        if q is not None and (a is None or q > a):
-            assert picked == "quarterly", f"{tk}: quarterly is later-filed ({q} > {a}) yet {picked}"
-        else:
-            assert picked == "annual", (
-                f"{tk}: annual is later-or-equal ({a} vs {q}) yet the picker took {picked} — this "
-                f"is the 'always prefer quarterly' regression, which makes this name STALER")
-    assert checked, "no bundle exercised the rule — the corpus read yielded nothing"
+        if cs._cs_note_describes_section(cs._cs_details_rows(b, "quarterly")):
+            continue  # a genuine quarterly panel would be a legitimate win, not this shape
+        tempting.append((tk, a, q))
+        assert cs._cs_details_freq(b) == "annual", (
+            f"{tk}: took the quarterly panel because its note is newer ({q} > {a}), but that note "
+            f"stamps a filing the section below it does not come from")
+    assert tempting, (
+        "no committed name still has a later-filed-but-mis-stamped quarterly note, so the rejected "
+        "design is untested here — re-measure the corpus before trusting this rule's negative half")
 
 
-def test_a_newer_annual_panel_is_kept_because_the_rule_is_not_prefer_quarterly() -> None:
-    """THE NEGATIVE PIN, and the rejected design it rules out. Blanket-preferring quarterly was the
-    obvious implementation and it is WRONG on the live corpus: at least one committed name files its
-    annual panel LATER than its quarterly one. Observed instances when this shipped — NIKE
-    (annual Jul-15-2026 vs quarterly Apr-01-2026) and ONON (Mar-03-2026 vs a quarterly export from
-    Aug-12-2025, a year stale).
+def test_the_selected_stamp_keeps_a_real_termination_inside_its_window() -> None:
+    """THE HARM, pinned END TO END rather than at the stamp — because #450 changed only a date and
+    a stamp-level test would have called that harmless.
 
-    Asserted as "at least one such name exists and every one of them keeps annual", so the pin
-    survives a re-pull that reshuffles which names are in that state — but fails loudly if the
-    population empties, because a rule with nothing left to test has stopped testing anything."""
-    keepers = []
-    for tk, b in _bundles():
-        a, q = _filed(b, "annual"), _filed(b, "quarterly")
-        if a is not None and q is not None and a > q:
-            keepers.append((tk, a, q))
-            assert cs._capital_panel_freq(b) == "annual", (
-                f"{tk}: annual panel filed {a} is NEWER than quarterly {q}, so preferring "
-                f"quarterly would move this name BACKWARDS in time")
-    assert keepers, (
-        "no committed name has a newer ANNUAL panel any more, so the negative case is untested — "
-        "re-measure the corpus and pin a name that still exercises it, or this rule is only "
-        "asserted by its positive half")
+    `_capital_structure_vintage` searches for an Item 1.02 in `panel_filed < event <= as-of`. The
+    committed NFLX record carries the real instance: the WBD bridge facility is still listed in the
+    panel and its termination was filed **2026-02-27**. Under the quarterly stamp the window opened
+    at Jul-17-2026 and the event fell outside it — the warning vanished while the dead facility
+    stayed on the page.
 
+    Pinned on the ARITHMETIC of the window against the selected stamp, so it needs no network and
+    no committed artifact, and reddens for the right reason: a stamp that post-dates a known
+    termination cannot report it."""
+    b = dict(_bundles()).get("NFLX")
+    if b is None:
+        pytest.skip("NFLX bundle unavailable (licensed workbooks are never committed)")
+    _, _, as_of = cs.capital_structure_ciq(b)
+    filed = cs._cs_panel_filed(as_of)
+    assert filed is not None, f"the selected panel states no filing date ({as_of!r})"
 
-def test_a_tie_keeps_the_annual_panel() -> None:
-    """EQUAL FILING DATES CHANGE NOTHING. FUBO is the live instance — both its workbooks carry the
-    same `Q3 2026 filed Aug-05-2026` panel, because CIQ put a quarterly panel in the annual export.
-    Nothing is gained by moving, so the status quo holds and the diff stays smaller."""
-    ties = []
-    for tk, b in _bundles():
-        a, q = _filed(b, "annual"), _filed(b, "quarterly")
-        if a is not None and a == q:
-            ties.append(tk)
-            assert cs._capital_panel_freq(b) == "annual", f"{tk}: a tie moved off the status quo"
-    if not ties:
-        pytest.skip("no tied pair in the corpus right now (FUBO was the instance at build time)")
+    wbd_termination, reference = date(2026, 2, 27), date(2026, 8, 12)
+    assert filed < wbd_termination <= reference, (
+        f"the selected panel is stamped {filed} — at or after the 2026-02-27 Item 1.02 — so "
+        f"_capital_structure_vintage cannot report it, and the page lists a terminated facility "
+        f"with nothing saying so. Stamp was {as_of!r}")
 
 
 # ─── the trap this had to be written around ─────────────────────────────────────────────────────
@@ -152,10 +172,10 @@ def test_a_missing_quarterly_workbook_cannot_pose_as_a_fresh_one() -> None:
     rather than through the production one, so it was testing itself.
 
     Quarterly-only separates them: WITH the guard the annual request is rejected and the picker
-    answers "quarterly"; WITHOUT it the fallback panel is admitted as an annual reading, takes the
-    first slot, and the strict `>` then leaves the answer at "annual" — a name labelled from a
-    workbook it does not have. Built from the REAL type by handing `from_files` only the quarterly
-    path."""
+    answers "quarterly"; WITHOUT it the annual request returns the quarterly panel, that panel is
+    self-consistent (it is the only one there), and the selector answers "annual" — naming a
+    frequency this bundle has no workbook for. Built from the REAL type by handing `from_files`
+    only the quarterly path."""
     root = _root()
     ms = LocalFolderStore(root)
     quarterly_only = None
@@ -173,9 +193,9 @@ def test_a_missing_quarterly_workbook_cannot_pose_as_a_fresh_one() -> None:
         "workbook() stopped falling back — if it now returns None the guard can be simplified, "
         "but the picker must be re-read before that is assumed")
 
-    # …and the PRODUCTION picker is not fooled by it. This is the assertion the guard owns.
-    assert cs._capital_panel_freq(quarterly_only) == "quarterly", (
-        "the fallback workbook was admitted as an ANNUAL panel, so the picker named a frequency "
+    # …and the PRODUCTION selector is not fooled by it. This is the assertion the guard owns.
+    assert cs._cs_details_freq(quarterly_only) == "quarterly", (
+        "the fallback workbook was admitted as an ANNUAL panel, so the selector named a frequency "
         "this bundle has no workbook for")
 
 
@@ -194,7 +214,7 @@ def test_the_panel_stamp_has_exactly_one_parser_and_it_anchors_on_filed() -> Non
 
     So the stamp parser moved down into `ciq_sheets` (the layer that produces the stamp) and
     `mechanical` re-exports it. This pins the distinction rather than the file layout — if someone
-    re-points the picker at the column parser, the divergent case below reddens."""
+    re-points the selector at the column parser, the divergent case below reddens."""
     from vinci.dossier.mechanical import _cs_panel_filed as via_mechanical
 
     assert cs._cs_panel_filed is via_mechanical, (
@@ -202,7 +222,7 @@ def test_the_panel_stamp_has_exactly_one_parser_and_it_anchors_on_filed() -> Non
         "not define its own")
 
     divergent = "A 2025 (Dec-31-2025) filed Jan-23-2026"
-    assert cs._cs_panel_filed(divergent) == date(2026, 1, 23), "the FILING date is the ranking key"
+    assert cs._cs_panel_filed(divergent) == date(2026, 1, 23), "the FILING date is the age key"
     assert cs._cs_col_date(divergent) == (2025, 12, 31), (
         "the column parser stopped reading the bare date — if that is deliberate, this test's "
         "premise needs re-reading, because the two helpers no longer differ")
@@ -215,21 +235,25 @@ def test_the_panel_stamp_has_exactly_one_parser_and_it_anchors_on_filed() -> Non
     assert cs._cs_panel_filed("") is None and cs._cs_panel_filed("A 2025") is None
 
 
-# ─── the coupling, which is what keeps the block on ONE basis ───────────────────────────────────
-def test_the_instruments_and_the_aggregates_are_read_at_one_frequency() -> None:
-    """THE BASIS-MISMATCH GUARD, and the reason the summary took a `freq` parameter at all.
+# ─── the SPLIT, which is what #450 got backwards ────────────────────────────────────────────────
+def test_the_two_sheets_are_read_at_their_own_correct_frequencies() -> None:
+    """THE INVERSION OF #450's COUPLING, which was the wrong idea rather than an incomplete one.
 
-    Reading the Details panel at quarterly while the Summary stayed annual would put itemized
-    instruments on one filing and the aggregates that reconcile against them on another — inside a
-    single capital-structure block. That is worse than either panel being stale on its own, because
-    the two are meant to tie out.
+    #450 argued the Details and Summary "must sit on one filing" and forced both onto the picker.
+    They must not. The two are different objects with different provenance, and this module's own
+    contract already said so: the itemized DETAIL is panel-dated, while the AGGREGATES are stamped
+    with the period column they were read from. Fusing them dragged the Details panel onto a
+    quarterly stamp that did not describe it, in service of a consistency the data never required.
 
-    Pinned by RECORDING what the production call site asks for, so deleting the `freq=` argument
-    reddens this. A test that only read the outputs would stay green through exactly that edit."""
+    So the pin is the SPLIT: Details from the self-consistent panel (annual today), Summary from
+    the sheet whose columns give a like-for-like step (quarterly). Recorded at the CALL SITE rather
+    than read off the outputs, because the failure mode is an argument being dropped — a test on
+    outputs alone stays green through exactly that edit."""
     tk, b = next(((t, x) for t, x in _bundles()
-                  if cs._capital_panel_freq(x) == "quarterly"), (None, None))
+                  if cs._cs_details_freq(x) == "annual"
+                  and cs._cs_summary_freq(x) == "quarterly"), (None, None))
     if b is None:
-        pytest.skip("no bundle currently picks quarterly, so the coupling cannot be observed")
+        pytest.skip("no committed bundle currently splits the two frequencies")
 
     asked: list[tuple[str, str | None]] = []
 
@@ -251,11 +275,15 @@ def test_the_instruments_and_the_aggregates_are_read_at_one_frequency() -> None:
 
     cs.capital_structure_ciq(_Recorder(b))  # type: ignore[arg-type]
 
-    freqs = {name: freq for name, freq in asked if name.startswith("Capital Structure")}
-    assert freqs.get("Capital Structure Details") == "quarterly", freqs
-    assert freqs.get("Capital Structure Summary") == "quarterly", (
-        f"{tk}: the aggregates were read at {freqs.get('Capital Structure Summary')!r} while the "
-        f"instruments came from quarterly — the two halves of one block on two filings")
+    # The LAST read of each sheet is the one whose rows were used (selection reads both Details
+    # candidates first, which is why this takes the last rather than the first).
+    used = {name: freq for name, freq in asked if name.startswith("Capital Structure")}
+    assert used.get("Capital Structure Details") == "annual", (
+        f"{tk}: the instruments came from {used.get('Capital Structure Details')!r} — the "
+        f"quarterly workbook repeats the annual section under a note that does not describe it")
+    assert used.get("Capital Structure Summary") == "quarterly", (
+        f"{tk}: the aggregates came from {used.get('Capital Structure Summary')!r}, so the "
+        f"term-loan step is back to comparing a 12-month column with a 3-month one")
 
 
 def test_every_details_panel_consumer_reads_the_same_frequency() -> None:
@@ -292,13 +320,13 @@ def test_every_details_panel_consumer_reads_the_same_frequency() -> None:
         # A reader is coupled if it consults the picker, or IS one of the picker's own helpers.
         calls_picker = any(
             isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
-            and n.func.id == "_capital_panel_freq" for n in ast.walk(fn))
-        if fn.name not in ("_cs_details_rows", "_capital_panel_freq") and not calls_picker:
+            and n.func.id == "_cs_details_freq" for n in ast.walk(fn))
+        if fn.name not in ("_cs_details_rows", "_cs_details_freq") and not calls_picker:
             offenders.append(fn.name)
     assert not offenders, (
-        f"these read the Capital Structure Details panel without consulting _capital_panel_freq: "
-        f"{offenders}. Every consumer must land on ONE filing — a fresh schedule beside a stale "
-        f"debt list is the mismatch this picker exists to prevent")
+        f"these read the Capital Structure Details panel without consulting _cs_details_freq: "
+        f"{offenders}. Every consumer must read the SELECTED panel — a second reader on a "
+        f"hardcoded freq is how a stale debt list came to sit beside a fresh schedule")
 
 
 def test_the_legacy_debt_line_is_dated_and_tracks_the_picked_panel() -> None:
@@ -336,7 +364,7 @@ def test_a_printed_term_loan_step_compares_two_like_windows() -> None:
     live, and recorded here so it is not rediscovered as a surprise."""
     mixed_with_step, checked = [], 0
     for tk, b in _bundles():
-        freq = cs._capital_panel_freq(b)
+        freq = cs._cs_summary_freq(b)
         try:
             s = b.sheet("financials", "Capital Structure Summary", freq=freq)
         except CiqUnavailableError:

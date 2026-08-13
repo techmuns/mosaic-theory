@@ -129,12 +129,14 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
             "revenue trajectory (margin_trend / multi_year_trajectory), the DEPTH-STAGE "
             "balance-sheet bridge that unblocks a name EDGAR cannot supply — cash, total debt, "
             "leases, depreciation, operating cash flow, capital expenditure and diluted shares "
-            "(ciq_balance.extract), used only where the EDGAR tag is absent or stale — and the "
-            "CAPITAL-STRUCTURE panel whenever this workbook's is the later-filed one "
-            "(capital_structure_ciq via _capital_panel_freq: 16 of 19 committed names, by a "
-            "median of ~150 days). The annual module below declares the same two sheets because "
-            "either workbook can win; which one is read is decided per name at extraction, never "
-            "by frequency"
+            "(ciq_balance.extract), used only where the EDGAR tag is absent or stale — the "
+            "CAPITAL-STRUCTURE SUMMARY, whose quarterly columns give the term-loan step two "
+            "like-for-like endpoints (_cs_summary_freq; the annual sheet pairs a 12-month column "
+            "with a 3-month one on 16 of 19 committed names) — and the Capital Structure DETAILS "
+            "sheet, declared because it is READ during selection even though it is almost never "
+            "the one used: CIQ ships no quarterly capital detail, so this workbook repeats the "
+            "annual sections under a newer workbook-level note, and _cs_details_freq rejects it "
+            "for exactly that reason (see the annual module below)"
         ),
         granularity=Granularity.QUARTERLY,
         lookback=(
