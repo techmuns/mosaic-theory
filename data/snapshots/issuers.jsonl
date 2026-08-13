@@ -533,7 +533,7 @@
 {"cik": "0000912728", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000912728", "name": "FORWARD AIR CORP", "sic": "4731", "sic_description": "Arrangement of  Transportation of  Freight & Cargo"}
 {"cik": "0000912766", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000912766", "name": "LAUREATE EDUCATION, INC.", "sic": "8200", "sic_description": "Services-Educational Services"}
 {"cik": "0000912767", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000912767", "name": "UFP INDUSTRIES INC", "sic": "2421", "sic_description": "Sawmills & Planting Mills, General"}
-{"cik": "0000913059", "country": "US", "first_seen": "2026-08-13", "issuer_id": "ISS-0000913059", "name": "Banco BBVA Argentina S.A.", "sic": "6029", "sic_description": "Commercial Banks, NEC"}
+{"cik": "0000913059", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0000913059", "name": "Banco BBVA Argentina S.A.", "sic": "6029", "sic_description": "Commercial Banks, NEC"}
 {"cik": "0000913142", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000913142", "name": "BELDEN INC.", "sic": "3357", "sic_description": "Drawing & Insulating of  Nonferrous Wire"}
 {"cik": "0000913241", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000913241", "name": "STEVEN MADDEN, LTD.", "sic": "3140", "sic_description": "Footwear, (No Rubber)"}
 {"cik": "0000913290", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000913290", "name": "Frontline plc", "sic": "4412", "sic_description": "Deep Sea Foreign Transportation of  Freight"}
@@ -2272,7 +2272,7 @@
 {"cik": "0002087587", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002087587", "name": "CoinShares PLC", "sic": null, "sic_description": null}
 {"cik": "0002089661", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002089661", "name": "SunocoCorp LLC", "sic": "2911", "sic_description": "Petroleum Refining"}
 {"cik": "0002090312", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002090312", "name": "Mobility Global Inc.", "sic": "7389", "sic_description": "Services-Business Services, NEC"}
-{"cik": "0002091017", "country": "US", "first_seen": "2026-08-13", "issuer_id": "ISS-0002091017", "name": "Sunshine Silver Mining & Refining Co", "sic": "1040", "sic_description": "Gold and Silver Ores"}
+{"cik": "0002091017", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002091017", "name": "Sunshine Silver Mining & Refining Co", "sic": "1040", "sic_description": "Gold and Silver Ores"}
 {"cik": "0002091176", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002091176", "name": "Idea Acquisition Corp.", "sic": null, "sic_description": null}
 {"cik": "0002091349", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002091349", "name": "First Tracks Biotherapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002091467", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002091467", "name": "Boyd Group Services Inc.", "sic": "7500", "sic_description": "Services-Automotive Repair, Services & Parking"}
@@ -2291,6 +2291,6 @@
 {"cik": "0002107018", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002107018", "name": "DPC Holdings Ltd", "sic": "3360", "sic_description": "Nonferrous Foundries (Castings)"}
 {"cik": "0002114044", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002114044", "name": "Hemab Therapeutics Holdings, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0002115119", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002115119", "name": "Columbia Financial, Inc./MD/", "sic": "6035", "sic_description": "Savings Institution, Federally Chartered"}
-{"cik": "0002118195", "country": "US", "first_seen": "2026-08-13", "issuer_id": "ISS-0002118195", "name": "Applied Aerospace & Defense, Inc.", "sic": "3728", "sic_description": "Aircraft Parts & Auxiliary Equipment, NEC"}
+{"cik": "0002118195", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002118195", "name": "Applied Aerospace & Defense, Inc.", "sic": "3728", "sic_description": "Aircraft Parts & Auxiliary Equipment, NEC"}
 {"cik": "0002123613", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002123613", "name": "Kardigan, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002126198", "country": "US", "first_seen": "2026-08-12", "issuer_id": "ISS-0002126198", "name": "Expro Ltd", "sic": "1389", "sic_description": "Oil & Gas Field Services, NEC"}

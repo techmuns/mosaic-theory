@@ -334,10 +334,29 @@ def next_run_id(reference_date: date, snapshots_dir: Path) -> str:
     thing (a re-run after a fixed input), and they must be distinguishable AND orderable. Scans the
     directory rather than tracking a counter, so a partially-copied checkout cannot silently reissue
     an id that already has rows under it.
+
+    EVERY ARTIFACT AN ID CAN OWN COUNTS AS OCCUPYING IT, not just its rows (review finding, #442).
+    Scanning `*.jsonl` alone made a MANIFEST-ONLY id invisible: an id whose run wrote a manifest and
+    then failed before appending would be reissued, and the ORDER makes that corrupting rather than
+    merely awkward — `build_universe` appends retention rows under the id BEFORE `write_manifest`
+    raises on the existing write-once file. The retry therefore dies at the manifest AND leaves
+    partial rows filed under a DIFFERENT run's recorded configuration, which is precisely the
+    "rows attributed to a config that did not produce them" failure the manifest exists to prevent.
+    Reachable for real: `2026-08-12-01.manifest.json` sat committed with no row file.
     """
     d = retention_dir(snapshots_dir)
-    used = [int(m.group(2)) for p in (d.glob(f"{reference_date.isoformat()}-*.jsonl") if d.is_dir()
-                                      else []) if (m := _RUN_ID.match(p.stem))]
+    if not d.is_dir():
+        return f"{reference_date.isoformat()}-01"
+    used = [
+        int(m.group(2))
+        for pattern in (f"{reference_date.isoformat()}-*.jsonl",
+                        f"{reference_date.isoformat()}-*.manifest.json",
+                        f"{reference_date.isoformat()}-*.caveat.json")
+        for p in d.glob(pattern)
+        # `.manifest`/`.caveat` land in `.stem` (Path strips only the LAST suffix), so strip any
+        # trailing qualifier before matching the id itself.
+        if (m := _RUN_ID.match(p.stem.removesuffix(".manifest").removesuffix(".caveat")))
+    ]
     return f"{reference_date.isoformat()}-{max(used, default=0) + 1:02d}"
 
 

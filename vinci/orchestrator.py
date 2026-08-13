@@ -248,6 +248,21 @@ def run_weekly(
     # wrote the 2026-07-29 one, leaving 72 tickers in both grains. That field's docstring names the
     # cause exactly: "nothing binds that to a `build_universe` run in the same session (the build is
     # a separate CLI subcommand)". This function IS that session, so the binding belongs here.
+    # NO FUTURE IDENTITIES IN A BACKDATED RUN (review finding, #442). The store is mutable and
+    # SHARED, so a forward-dated attempt that died mid-flight leaves its upserts behind: a
+    # `--end 2026-08-13` abort left BBAR/SSMR/AADX at `first_seen 2026-08-13`, and the re-run at
+    # `--end 2026-08-12` admitted all three to the 2026-08-12 universe and filed them under that
+    # run's manifest. RAISE rather than filter: silently dropping them would make the leak
+    # invisible and the operator would never learn the store needs rolling back.
+    with Store(cfg.db_path) as _s:
+        ahead = _s.identities_first_seen_after(end)
+    if ahead:
+        raise RuntimeError(
+            f"{len(ahead)} identities in the store were first seen AFTER {end} "
+            f"({', '.join(ahead[:5])}{'…' if len(ahead) > 5 else ''}) — a later-dated run wrote "
+            f"them and a run claiming {end} must not judge names it could not have known. Roll "
+            f"those identities back before re-running at this date."
+        )
     run_id = next_run_id(end, cfg.snapshots_dir)
     universe = build_universe(cfg, reference_date=end,
                               retain_run_id=run_id, retain_dir=cfg.snapshots_dir)

@@ -13870,7 +13870,27 @@ sign-off.**
   **THE CONTRAST IS THE EVIDENCE:** the hand-filed `2026-08-12-01.manifest.json` sat on disk with
   NO `.jsonl` beside it — a record of a run that collected nothing. It has been REMOVED and replaced
   by the real one; a stopgap for a broken pipeline has no reason to outlive the pipeline's repair.
-  **TWO GAPS THE RUN EXPOSED, recorded not fixed:**
+  **TWO GAPS THE RUN EXPOSED — BOTH NOW FIXED, and the review showed one was worse than I filed
+  it.** I recorded them as notes; #442's review showed the first is a P1:
+  - **`next_run_id` scanned `*.jsonl` only**, so a MANIFEST-ONLY id was invisible and got reissued.
+    I called that a deadlock. **The ORDER makes it corrupting**: `build_universe` appends retention
+    rows under the reused id BEFORE `write_manifest` raises on the write-once file — so the retry
+    dies AND leaves partial rows filed under a DIFFERENT run's recorded configuration, the exact
+    misattribution the manifest exists to prevent. Now every artifact kind (`.jsonl`,
+    `.manifest.json`, `.caveat.json`) reserves its id.
+  - **A FAILED FORWARD-DATED RUN LEAKED INTO A BACKDATED ONE.** My aborted `--end 2026-08-13`
+    attempt had already upserted **BBAR, SSMR, AADX at `first_seen 2026-08-13`**; the re-run at
+    `--end 2026-08-12` found them in the store, admitted all three to the 2026-08-12 universe and
+    filed candidate rows under that manifest — **a committed historical screen carrying names it
+    could not have known.** The store is mutable and SHARED: re-running at the earlier date does
+    not undo the later write, and I asserted a clean re-run without checking that.
+    **RESOLVED BY ROLLBACK + RE-RUN, and the outcome is the honest one:** the three identities were
+    deleted from store AND snapshots, the weekly re-run at 2026-08-12 re-discovered them on its own
+    evidence, and they now carry `first_seen 2026-08-12`. Their MEMBERSHIP was never wrong — the
+    STAMP was. **`Store.identities_first_seen_after` + a `run_weekly` RAISE** now refuse a backdated
+    run outright (47 identities would refuse a run dated 2026-08-01); it raises rather than filters,
+    because silently dropping them hides the leak and leaves the store dirty.
+  **SUPERSEDED — the note below is what I filed before the review:**
   - **`run-weekly --end` defaults to `date.today()`.** My first invocation used `--end 2026-08-13`
     while the price data reaches 2026-08-12, so the fleet as-of outran its own prices and
     `test_the_wall_clock_is_unreachable_from_the_reference_date` refused it — correctly. A cron
