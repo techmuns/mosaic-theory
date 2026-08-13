@@ -13860,11 +13860,25 @@ sign-off.**
   gates will judge) → `write_manifest` → `screen_universe` (which reads it back). Pinned, and
   mutation-tested in both shapes: stripping `retain_*` from a call site reddens, and moving the
   manifest after the screen reddens.
-  **NOT YET PROVEN BY A REAL RUN.** `run_weekly` costs a universe rebuild plus a full screen; the
-  wiring is pinned at the call-site layer because what regressed is a call site losing its
-  arguments, but **the first real weekly run is the verification that still owes** — it should file
-  `<date>-01` with a manifest, ~1,800 candidate rows and the universe drops, and `_fleet_reference_
-  date` should then track it without anyone filing anything by hand.
+  **PROVEN BY A REAL RUN (2026-08-13).** `vinci run-weekly --end 2026-08-12`, exit 0, filed
+  `2026-08-12-01.manifest.json` **and** `2026-08-12-01.jsonl` — **5,857 universe rows + 1,802
+  candidate rows under ONE run id**, every name the screen touched rather than the 292 survivors.
+  The manifest carries `universe_as_of: 2026-08-12`, which is only correct because it is written
+  AFTER `build_universe`; the policy check fired for real and passed (`routing_policy:
+  carry_not_evaluated` on both the run and its record). `_fleet_reference_date` now reads
+  2026-08-12 from a run that happened.
+  **THE CONTRAST IS THE EVIDENCE:** the hand-filed `2026-08-12-01.manifest.json` sat on disk with
+  NO `.jsonl` beside it — a record of a run that collected nothing. It has been REMOVED and replaced
+  by the real one; a stopgap for a broken pipeline has no reason to outlive the pipeline's repair.
+  **TWO GAPS THE RUN EXPOSED, recorded not fixed:**
+  - **`run-weekly --end` defaults to `date.today()`.** My first invocation used `--end 2026-08-13`
+    while the price data reaches 2026-08-12, so the fleet as-of outran its own prices and
+    `test_the_wall_clock_is_unreachable_from_the_reference_date` refused it — correctly. A cron
+    firing before the day's bars settle would do the same every time. `end` should be clamped to
+    the store's price frontier.
+  - **`next_run_id` scans `*.jsonl` only**, so a manifest with NO rows is invisible to the id
+    allocator and its id can be reissued — which `write_manifest` then refuses, deadlocking the
+    date. Only reachable via a hand-written manifest, which is now unnecessary.
 - **FLEET RE-ASSEMBLED ON ONE AS-OF, AND THE TWO CLOCKS RECONCILED (2026-08-13).** All 14 names
   re-assembled clean at **reference_date 2026-08-12** (`{'2026-08-12': 14}`), the first time the
   fleet has sat on a single as-of since the split opened.
