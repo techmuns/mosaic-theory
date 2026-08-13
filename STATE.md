@@ -11613,6 +11613,7 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    written without ever seeing that the UK model change cut revenue by **$1.1bn**. The claim is
    not false; it is under-informed, and only a re-synthesis fixes that. **Needs CIQ + LLM, so it is
    an operator action.** Both names' workbooks are stale anyway (item 7), so do it in one pass.
+   **CLOSED 2026-08-13 — both re-assembled by the fleet pass (#447) at reference_date 2026-08-12.**
    **UBER HALF DONE 2026-08-12** — re-assembled, synthesis re-rolled; its bull point now reads
    *"reported Mobility revenue rose only 1% due to UK model changes"*, so the mechanism is no
    longer invisible to the argument. **SMPL still open** (not re-assembled in this pass).
@@ -11638,6 +11639,25 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    takes the newest screen run's own reference date and never the wall clock, deliberately.
    **So this item now has three prerequisites, not one: re-pull CIQ · advance the fleet as-of ·
    re-assemble.** Doing only the third (today) moved neither staleness finding.
+   **FALSIFIED 2026-08-13 — NO RE-PULL FIXES THIS, and the original claim ("re-pull → re-assemble
+   retires all three staleness findings without any code change") WAS WRONG ON BOTH HALVES.**
+   Measured on the workbooks in hand: the ESTIMATES books are already fresh (NFLX ≥2026-08-07,
+   UBER ≥2026-08-05) — nothing to re-pull there. The stale reading is the capital-structure panel,
+   and `capital_structure_ciq` reads `freq="annual"` HARDCODED while a QUARTERLY panel sits unread
+   in the same bundle: **NFLX `Q2 2026 filed Jul-17-2026` vs the annual `A 2025 filed Jan-23-2026`
+   (6 months newer); UBER `Q1 2026 filed May-06-2026` vs `A 2025 filed Feb-13-2026`.**
+   **BUT READING IT WOULD NOT RETIRE THE FINDINGS EITHER — checked, not assumed:** NFLX's QUARTERLY
+   panel STILL lists `Senior Unsecured Bridge Term Loan Facility` and STILL carries no 2036 notes.
+   Those notes were issued 2026-07-22, AFTER the Jul-17 filing the quarterly panel draws from, and
+   CIQ still carries the bridge in a panel filed four months after the Item 1.02 terminated it. A
+   pull TODAY gains nothing: Q3 is not filed, so today's export yields the same Q2 panel.
+   **WHAT ACTUALLY CLOSES IT:** the 2036 notes arrive with NFLX's Q3 10-Q, not with any pull we can
+   make now. Until then **PR-3's termination flag IS the remedy** — the page states the panel
+   predates the Item 1.02 and cannot reflect it, which is the honest disclosure of a fact CIQ has
+   not yet published.
+   **SEPARATELY WORTH DOING (own change, not this item):** prefer the NEWER of the annual/quarterly
+   capital-structure panels — 6 months of vintage on NFLX, ~3 on UBER. It makes the staleness
+   visibly smaller even though it retires neither finding.
 8. **RE-ASSEMBLE NFLX — PR-1's fix is deliberately NOT applied to the committed artifact.** Opened
    2026-08-12. The split-aware trend changes NFLX's mechanical field from *"diluting … +874.1%"* to
    *"flat over ~0.5y since a ~10.0x share-basis change … −1.4%"* — but its synthesis bear point
@@ -11646,6 +11666,7 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    reverted: **today's committed page is internally coherent** (a wrong mechanical label with prose
    that corrects it), and a half-refreshed one would not be. Only a re-synthesis fixes both halves.
    **Bundle with item 7's NFLX re-pull — one pass.**
+   **RE-CONFIRMED CLOSED 2026-08-13 (#447): NFLX at 2026-08-12, no point quotes the old figure.**
    **CLOSED 2026-08-12.** NFLX re-assembled; the mechanical field now reads *"flat over ~0.5y since
    a ~10.0x share-basis change at 2025-12-31 (count rose): 4,222,162,150 → 4,163,939,676, −1.4%"*
    and **no synthesis point quotes the old figure any more** — scanned for `874.1`,
@@ -11657,7 +11678,15 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    UBER's bars were present but ended 2026-08-04 and were topped up in the same call. **A
    maintained name can be missing from the price store entirely and nothing says so until an
    assembly refuses** — the same gap #367/#369 hit for UBER and SPY, now a third time.
-9. **THE AS-OF LEAK NEEDS A DECISION BEFORE IT NEEDS CODE — opened 2026-08-12 by review #428.**
+9. **THE AS-OF LEAK — LARGELY RESOLVED 2026-08-13, remedy (b) having arrived as a SIDE EFFECT.**
+   Measured on the re-assembled pages: post-as-of observation dates fell **NFLX 79 → 1** and
+   **UBER 117 → 0**. The leak was mostly the fleet sitting at 2026-07-29 while the data reached
+   August; wiring retention (#442) filed a real screen-run manifest, the fleet as-of advanced to
+   2026-08-12, and those observations came into scope. **The ~12-extractor bound — remedy (a) — is
+   no longer urgent**, and #442's `identities_first_seen_after` guard refuses a backdated run that
+   inherited future identities. The decision below stands for the residual (NFLX 1) and for the
+   historical-re-assembly case, which still has no bound.
+   **ORIGINAL ENTRY — opened 2026-08-12 by review #428:**
    Every dossier publishes observations dated after its own `reference_date` (NFLX 79, UBER 117;
    measured, and pre-existing — see §OPEN OBSERVATIONS for the field list and the before/after).
    **The operator picks the remedy, because they cost differently and only one is an engineering
@@ -11690,6 +11719,8 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    violation rather than only improving a sort. **SEE THE AUDIT BELOW — this is now a prerequisite
    for displaying the column correctly, not only a sort fix.**
 10. **RE-ASSEMBLE FUBO — the share-basis fix is in the CODE and not yet on the PAGE. Opened
+   **CLOSED 2026-08-13 (#447): FUBO at 2026-08-12, `shares_out` 30,200,000 from the CIQ
+   bridge (30.2M × $9.70 = $292.9M vs a $293.0M cap); its known-wrong seal is retired (§2).**
    2026-08-12 by `fix/shares-staleness-fubo`.** The staleness bound moved 540d → 180d, so FUBO's
    pre-restructuring `dei` count (342,433,118 @ 2025-07-31, 375d stale and single-class against a
    now dual-class filer) is refused and the name falls to the CIQ bridge Visa already uses. **The
@@ -11703,6 +11734,7 @@ The follow key ships the CAPABILITY; three obligations follow from actually USIN
    be forgotten). **Does NOT retire the ≈5x NCI / economic-share problem** (§ queue A item 29) —
    that is a separate defect on the same name and stays open.
 11. **RE-ASSEMBLE BRBR AND SMPL — the net-sales cross-check fix is in the CODE and not on the PAGE.
+   **CLOSED 2026-08-13 (#447): both at reference_date 2026-08-12.**
    Opened 2026-08-12 by `fix/net-sales-is-the-revenue-line`.** Both pages currently read *"release
    NO NUMERIC OUTLOOK → not cross-checked"* while their releases state a net-sales guide the parser
    captured. On re-assembly **BRBR becomes cross-source VERIFIED** (CIQ 2335.0–2375.0 vs release
