@@ -12335,6 +12335,27 @@ one evidence-backed leg at a time.
   interaction, not luck: FUBO genuinely carries **NM** valuation metrics, the model keeps reaching
   for them, and the validator correctly refuses a claim that asserts missing data while citing a
   present field. Re-rolling that name is whack-a-mole against a reproducible pattern.
+  **REVIEW FINDING (#455) — A SECOND, WORSE DEFECT IN THE SAME AREA: the twin validator said
+  "should be tagged unverified" AND NOTHING TAGGED IT.** The loop appended a flag and left the twin
+  holding whatever source the model wrote. `render._twin_outcome` keys on the source STRING
+  (`[LLM-suggested, unverified]`), not on whether the source TRACED — so a plausible-but-invented
+  citation (`CIQ peer_capital_intensity impairment (per-peer grid)`, for a Starz twin) skipped the
+  unverified path entirely, and the page printed *"Starz Entertainment Corp. — went terminal"* in
+  the same shape as the properly-sourced Paramount twin above it. **Detected, recorded in
+  `qa_flags`, and invisible to the reader** — two-states-must-not-render-alike, in the layer that
+  decides what a human sees. Fixed: an untraceable twin source is replaced with the `_UNVERIFIED`
+  marker, so the existing render path fires. The twin, outcome and reasoning are kept verbatim;
+  only the SOURCE changes, and the flag still records the original string.
+  **AND MY OWN COUNT WAS FILTERED, WHICH IS WHY I MISSED IT.** I reported "exactly one warning" on
+  FUBO having counted only flags prefixed `UNCITED`/`MISMATCH` — `TWIN …` flags were invisible to
+  my own measurement. Same error class as enumerating a helper's consumers instead of sweeping the
+  pattern: **the filter matched what I expected to find.** Any future flag-count over `qa_flags`
+  reads the WHOLE list.
+  **FUBO NOW CARRIES 0 citation/twin-trace flags** (re-assembled): the roll produced traceable
+  sources for Roku/Paramount/Sirius and honestly self-tagged Chegg + WeWork, and the page shows the
+  difference — *"Chegg — went terminal (LLM-claimed — verify)"* against *"Paramount … — went
+  terminal"*. The tagging code did NOT fire on this roll because the model behaved; the mechanism
+  is proven by unit test rather than by that luck.
   **PARTIALLY CLOSED 2026-08-13 (`fix/nm-is-not-missing`) — the FIRST false-positive class is
   fixed; a SECOND one is now identified and is why FUBO stays chronic.**
   Root cause of the reported instance was not the prose at all: `_MISSING_CLAIM` matched the

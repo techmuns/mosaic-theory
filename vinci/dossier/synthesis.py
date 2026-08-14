@@ -625,12 +625,31 @@ def _validate(
             ],
         }
     )
+    # THE FLAG SAID "should be tagged unverified" AND NOTHING TAGGED IT (review finding, #455).
+    # This loop only APPENDED a flag; `tw` kept whatever source the model wrote. When that source is
+    # plausible-looking but untraceable — FUBO drew `CIQ peer_capital_intensity impairment
+    # (per-peer grid)` for a Starz twin — the renderer's unverified path never fires, because it
+    # keys on the source STRING (`_UNVERIFIED`) rather than on whether the source TRACED. The page
+    # then printed "Starz Entertainment Corp. — went terminal" in the same shape as the properly
+    # sourced Paramount twin directly above it, and a reader had no way to tell an evidence-bound
+    # twin from an invented one. Detected-but-invisible is the two-states-must-not-render-alike
+    # defect, sitting in the layer that decides what a human actually sees.
+    #
+    # TAGGING IS NOT REWRITING THE MODEL'S CLAIM. The twin, its outcome and its reasoning are kept
+    # verbatim; only the SOURCE is replaced, with the marker stating exactly what the validator has
+    # just established — this did not trace. `qa_flags` still records the original string, and
+    # `check_point` above already sets `cited = False` on the same principle.
+    twins = []
     for tw in synth.twin_reference_cases:
         if tw.source != _UNVERIFIED and not _traces(tw.source, refs):
-            flags.append(f"TWIN '{tw.name}' source doesn't trace — should be tagged unverified")
+            flags.append(
+                f"TWIN '{tw.name}' source {tw.source!r} doesn't trace — tagged unverified")
+            tw = tw.model_copy(update={"source": _UNVERIFIED})
         numeric = _twin_numbers(f"{tw.outcome} {tw.distinguishing_fact}")
         if numeric:
             flags.append(f"TWIN '{tw.name}' has numbers {sorted(numeric)} — must be non-numeric")
+        twins.append(tw)
+    synth = synth.model_copy(update={"twin_reference_cases": twins})
     blob = " ".join(
         [p.claim for p in [*bull, *bear, *dq.evidence_for, *dq.evidence_against]]
         + [dq.question, *synth.key_unknowns]

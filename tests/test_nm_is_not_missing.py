@@ -113,3 +113,54 @@ def test_the_negation_guard_is_scoped_to_the_bare_tokens() -> None:
     # …while the bare tokens under a negation stay exempt
     assert _MISSING_CLAIM.search("the value is missing")
     assert not _MISSING_CLAIM.search("the value is not missing")
+
+
+# ─── the twin-tagging half (review of #455) ─────────────────────────────────────────────────────
+def test_an_untraceable_twin_source_is_tagged_so_the_page_can_show_it() -> None:
+    """REVIEW FINDING (#455). The validator already detected this and did nothing with it.
+
+    Its flag literally read *"should be tagged unverified"* — and nothing tagged it. The loop
+    appended the flag and left the twin holding whatever source the model wrote, so a PLAUSIBLE but
+    untraceable string sailed through: FUBO's re-assembly produced
+    `CIQ peer_capital_intensity impairment (per-peer grid)` for a Starz twin.
+
+    THE RENDERER KEYS ON THE STRING, NOT ON WHETHER IT TRACED (`render.py` looks for
+    "llm-suggested"/"unverified" in the source), so the unverified path never fired and the page
+    printed *"Starz Entertainment Corp. — went terminal"* in the same shape as the properly-sourced
+    Paramount twin directly above it. Detected, recorded, and invisible to the reader — which is
+    the two-states-must-not-render-alike defect in the layer that decides what a human sees.
+
+    Tagging preserves the twin, its outcome and its reasoning verbatim; only the SOURCE becomes the
+    marker, and `qa_flags` still records the original string.
+    """
+    from vinci.dossier.render import _twin_outcome
+    from vinci.dossier.schemas import TwinCase
+    from vinci.dossier.synthesis import _UNVERIFIED
+
+    # what the model wrote for FUBO — a real CIQ-shaped noun phrase that traces to nothing
+    invented = TwinCase(
+        name="Starz Entertainment Corp.", outcome="went terminal",
+        distinguishing_fact="A subscription video programmer that wrote down its acquired base.",
+        source="CIQ peer_capital_intensity impairment (per-peer grid)")
+    assert "LLM-claimed" not in _twin_outcome(invented), (
+        "the renderer already marks this source — then the tag is not what makes it visible and "
+        "this test is pinning the wrong seam")
+
+    tagged = invented.model_copy(update={"source": _UNVERIFIED})
+    assert "LLM-claimed" in _twin_outcome(tagged), (
+        "a twin tagged unverified still renders as an ordinary sourced outcome — the reader cannot "
+        "tell an evidence-bound twin from an invented one")
+
+
+def test_a_traceable_twin_is_left_alone() -> None:
+    """THE NEGATIVE HALF. Tagging must reach ONLY untraceable sources — a properly-sourced twin
+    keeps its citation, or the fix would erase real provenance to fix a missing warning."""
+    from vinci.dossier.render import _twin_outcome
+    from vinci.dossier.schemas import TwinCase
+
+    sourced = TwinCase(
+        name="Paramount Skydance Corporation", outcome="went terminal",
+        distinguishing_fact="A roster peer that took a very large goodwill write-down.",
+        source="CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid)")
+    assert "LLM-claimed" not in _twin_outcome(sourced)
+    assert _twin_outcome(sourced) == "went terminal"
