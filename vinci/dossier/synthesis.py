@@ -58,9 +58,25 @@ _DIRECTIONAL = re.compile(
     re.IGNORECASE,
 )
 # a claim ABOUT data being absent — it must bind to that field's MISSING marker, not a present field
+#
+# NEGATED MENTIONS DO NOT COUNT, and FUBO is why. `NM` ("not meaningful") is a REAL STATE this repo
+# preserves deliberately — never collapsed into "missing" — so a careful synthesis point explains
+# the difference, and the only way to explain it is to use the word:
+#
+#     "…trailing EBITDA is negative (a real NM state, NOT MISSING); the forward view is …"
+#
+# The bare pattern matched the `missing` inside `not missing` and flagged the point for asserting
+# absent data — penalising the model for being PRECISE about the distinction the codebase itself
+# draws. FUBO carried that flag in every historical artifact commit, and re-rolling only produced a
+# fresh instance of the same class, because the cause is the check rather than the prose.
+#
+# The lookbehinds are fixed-width (4 chars each) so Python accepts them, and IGNORECASE covers
+# "NOT MISSING". They guard ONLY the bare tokens: `not disclosed` / `not available` / `not
+# provided` / `not reported` still MEAN missing and must keep matching, which is why those stay
+# spelled out as their own alternative rather than inheriting the guard.
 _MISSING_CLAIM = re.compile(
-    r"\b(missing|unavailable|not (disclosed|available|provided|reported)|no .{0,15}data|"
-    r"absent|undisclosed|MISSING|UNKNOWN)\b",
+    r"\b((?<!not )(?<!n't )(?:missing|unavailable|absent|undisclosed|MISSING|UNKNOWN)|"
+    r"not (disclosed|available|provided|reported)|no .{0,15}data)\b",
     re.IGNORECASE,
 )
 # analyst-RATING / external-posture context: a directional-looking token here REPORTS the consensus
