@@ -27,7 +27,8 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e .
+          # `[dev]` for the pre-push gate below — this job now runs the offline suite itself.
+          python -m pip install -e ".[dev]"
 
       - name: Restore EOD cache
         uses: actions/cache@v4
@@ -43,10 +44,21 @@ jobs:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: python -m vinci run-monthly
 
+      - name: Rebuild the derived frontend mirror
+        run: python frontend/build.py
+
+      # SAME GATE, SAME REASON AS `weekly-screen.yml` — read the long note there. This job commits
+      # the scoring report, the surface the BUY−AVOID spread is READ from, so a pass that breaks a
+      # pin must fail here rather than on the next unrelated PR.
+      - name: Gate the refreshed artifacts before they can reach main
+        run: |
+          if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
+          python -m pytest -m "not network" -p no:warnings --tb=short
+
       - name: Commit scoring report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/snapshots
-          git diff --staged --quiet || git commit -m "monthly score: update report [skip ci]"
+          git add data/snapshots frontend
+          git diff --staged --quiet || git commit -m "monthly score: update report"
           git push

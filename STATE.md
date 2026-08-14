@@ -4487,8 +4487,10 @@ PR-B2 dossier twin, Phase C F-Score display pending separate operator green-ligh
 **SCREEN-PATH ITEMS — RECORDED 2026-07-31, ahead of the build (operator).** Four items that
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
 
-**OPERATOR TO-DO — THE WEEKLY SCREEN CAN TURN THE FLEET RED WITH `[skip ci]`, AND NOTHING GATES IT
-(2026-08-10).** Recorded per the OPERATOR-ACTION RULE: this was raised in chat during #393/#394 and
+**~~OPERATOR TO-DO — THE WEEKLY SCREEN CAN TURN THE FLEET RED WITH `[skip ci]`, AND NOTHING GATES
+IT~~ — RULED AND CLOSED 2026-08-14 (PR #TBD). The ruling is at the foot of this entry; everything
+between is the diagnosis as written on 2026-08-10 and is left unedited.**
+(2026-08-10.) Recorded per the OPERATOR-ACTION RULE: this was raised in chat during #393/#394 and
 chat is not a ledger.
 
 **WHAT HAPPENED.** The scheduled weekly screen pushed `607e7d1 weekly screen: refresh snapshots
@@ -4516,6 +4518,53 @@ itself and goes red at the CAUSE; (b) have the workflow run the fixture builder 
 changes the maintained set — it needs a populated EOD store, which the workflow has; (c) leave it
 and accept that the next PR after a routing change pays the toll, now that the shape is written
 down. **Nothing was changed in the workflow by the build that found this.**
+
+**RULING (operator, 2026-08-14): (a), PLUS THE PREVENTION (a) ALONE DOES NOT BUY. (b) IS NOT
+TAKEN.** PR #TBD.
+
+**WHAT SHIPPED — TWO STEPS, and the second is the one that matters.** (1) `[skip ci]` is gone from
+both scheduled commits, so main carries its own attestation at the commit that changed routing —
+that is option (a), and by itself it only fixes ATTRIBUTION: main still goes red, just honestly.
+(2) Each scheduled job now runs `python -m pytest -m "not network"` on its freshly-built artifacts
+**BEFORE the push**, so an artifact that breaks a pin fails ITS OWN job and never reaches main.
+This is the **ARTIFACT-PASS RULE**, which has bound every human artifact pass since it was written
+and did not bind the two passes no human runs. The store is moved aside first (`data/vinci.db` →
+`$RUNNER_TEMP`) so the pre-push gate runs under the conditions `gate.yml` runs under — a populated
+DB is precisely what let the maintenance-path pins pass on every laptop while main ran red for
+eleven consecutive merges. Each job also rebuilds `frontend/` and stages it, because since #417 a
+stale mirror is itself a gate failure, and a scheduled commit that moved the data and not the
+mirror would have reproduced the same misattribution through a different door.
+
+**THE CONSEQUENCE IS DELIBERATE AND IS A TRADE, NOT A FREE WIN. A broken artifact now FREEZES THE
+QUEUE INSTEAD OF REDDENING MAIN.** The weekly job goes red, nothing is pushed, the served queue
+stops advancing, and no PR is blocked. That is the better failure — it is loud, it is attributed to
+the run that caused it, and main stays green for everyone else — but it needs an operator to look
+at the Actions tab, which nothing forces. **OPERATOR TO-DO (standing): a red weekly-screen run means
+the queue did not advance that week.** No notification ships with this entry.
+
+**(b) WAS CONSIDERED AND REFUSED, with a reason that is not "scope".** Having the workflow run
+`build_price_fixture.py` would discharge the obligation automatically — but the builder filters
+bars to `_WINDOW_START` and fails only on an EMPTY result, so a run whose store happened to be
+shallower would SILENTLY REWRITE every committed fixture shorter and the 52-week pins would start
+meaning less than they say. Auto-generating the input a pin reads is also the shape where a guard
+stops being able to fail. **UNLOCK TRIGGER: if queue freezes from a missing fixture happen more
+than once, revisit (b) — scoped to names with NO fixture yet, never a fleet-wide rebuild.**
+
+**INVARIANT SHIPPED (INVARIANT RULE) — `tests/test_scheduled_workflows.py`, 6 pins.** A text lint
+over every workflow containing `git push`: no skip-CI marker on a non-comment line, and a
+`python -m pytest` step at a LOWER line number than the push. **Its negative pin is the real
+failure, not a mutation of its own marker list** — it reads `607e7d1:.github/workflows/
+weekly-screen.yml` out of git and asserts both violations are reported (skips on a shallow clone,
+the `test_state_identifiers` precedent; `gate.yml` checks out at `fetch-depth: 0`). Verified by
+mutating the LIVE files on disk: the incident file, the marker alone, the gate step deleted, and
+the monthly file — each produced exactly one failure, on the live-corpus pin.
+
+**MONTHLY-SCORE.YML GOT THE SAME TREATMENT, and this was not separately asked for.** The guard is
+written class-wide over workflows that push, which is the only form that closes the class; scoping
+it to the weekly file would have shipped a guard with an exemption, the exact shape that let this
+live. `monthly-score.yml` had the identical two defects and commits `scoring_report.md` — the
+surface the BUY−AVOID spread is read from. Fixing it is entailed by the invariant, not adjacent
+cleanup, but it is a second file and is recorded here as such.
 
 **FLEET AS-OF IS SPLIT — READ THIS BEFORE ANY CROSS-SECTIONAL COMPARISON (2026-08-06).**
 The names do **NOT** share a reference date. `ranked_queue.jsonl` stamps every one of its 331 rows

@@ -27,7 +27,8 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e .
+          # `[dev]` for the pre-push gate below — this job now runs the offline suite itself.
+          python -m pip install -e ".[dev]"
 
       # Immutable per-day grouped-daily responses are cached, so only new days hit the network.
       - name: Restore EOD cache
@@ -49,10 +50,40 @@ jobs:
         # disqualifiers (0 flags across 284 names). See STATE.md §5.
         run: python -m vinci run-weekly
 
+      # THE DERIVED MIRROR MOVES WITH THE DATA IT MIRRORS. `frontend/` is rebuilt from committed
+      # data and gate.yml fails a stale one, so a scheduled commit that refreshed the snapshots and
+      # left the mirror behind would red every PR that came after it — the same misattribution the
+      # skipped gate below used to cause. Reads committed data only: no store, no keys, no network,
+      # and it SKIPS every local-only source rather than deleting that source's mirror.
+      - name: Rebuild the derived frontend mirror
+        run: python frontend/build.py
+
+      # THE ARTIFACT-PASS RULE, APPLIED TO THE PASS THAT IS NOT A HUMAN'S.
+      #
+      # This job's commit is the one that changes the fleet's ROUTING — a name leaving the candidate
+      # band takes the MAINTENANCE route, which needs committed price bars — and until 2026-08-14 it
+      # was the one commit nothing gated. On 2026-08-10 it moved NCNO onto that route with no
+      # fixture, and five maintenance pins then failed ON EVERY OPEN PR REGARDLESS OF ITS CONTENTS;
+      # a docs-only PR went red identically to a code one, and main's own last gate had run BEFORE
+      # the push and stayed green. So the breakage read as the innocent PR's regression.
+      #
+      # GATE BEFORE PUSH, NOT ONLY AFTER: a snapshot that breaks a pin now fails THIS job and never
+      # reaches main, so the queue stops advancing loudly instead of main going red quietly. The
+      # push below also no longer skips CI, so main carries its own attestation either way.
+      #
+      # THE STORE IS MOVED ASIDE FIRST so this runs under the conditions gate.yml runs under. A
+      # populated `data/vinci.db` makes some pins mean something different here than on main — the
+      # property that let the maintenance-path pins pass on every laptop while main ran red for
+      # eleven consecutive merges. Nothing below this step reads it.
+      - name: Gate the refreshed artifacts before they can reach main
+        run: |
+          if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
+          python -m pytest -m "not network" -p no:warnings --tb=short
+
       - name: Commit refreshed snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/snapshots
-          git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots [skip ci]"
+          git add data/snapshots frontend
+          git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots"
           git push
