@@ -2505,11 +2505,11 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
     # page. Only the four names that happen to have both rendered it, and those are exactly the
     # four the first verification sampled: checking where it works cannot find this.
     ca = m.capital_allocation
-    if ca is None and m.peer_capital_intensity is None:
+    if ca is None and m.peer_capital_intensity is None and m.dilution_pipeline is None:
         return []
     out: list[str] = ["", "**Capital allocation — created or destroyed**", ""]
     if ca is None:
-        return out + _peer_capital_intensity_lines(m)
+        return out + _dilution_pipeline_lines(m) + _peer_capital_intensity_lines(m)
 
     gw, intang = ca.goodwill, ca.intangibles
     if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
@@ -2564,6 +2564,7 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
 
     out.append(_fact("Acquisition consideration", ca.acquisition_consideration,
                      lambda v: f"${v:,.1f}M"))
+    out += _dilution_pipeline_lines(m)
     gap = _clean_note(str(ca.brand_split.note)).removeprefix("NOT AVAILABLE FROM XBRL — ")
     out.append(f"- **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — {gap}")
     # THE PEER COMPARISON SITS INSIDE THIS BLOCK, not beside it. "Is $1.5bn a lot?" is unanswerable
@@ -2572,6 +2573,18 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
     out += _peer_capital_intensity_lines(m)
     return out
 
+
+
+def _dilution_pipeline_lines(m: MechanicalLayer) -> list[str]:
+    """FORWARD dilution capacity, one MAIN-BODY line — the buyback block's mirror side.
+
+    Renders the composed counts line with its endnote cite. "None on file" prints (it is a stated
+    fact about the register); only a None FIELD — a dossier predating the extractor — renders
+    nothing, so committed pages are unchanged until their next assembly."""
+    dp = m.dilution_pipeline
+    if dp is None:
+        return []
+    return [_fact("Registered offering pipeline (equity/debt not distinguished)", dp.line)]
 
 
 def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:

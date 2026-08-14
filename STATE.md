@@ -12389,6 +12389,31 @@ one evidence-backed leg at a time.
   a refusal. **The AST sweep does NOT catch this shape** (it is a subscript, not `reversed`), which
   is worth knowing before trusting that guard as complete.
 
+- **DILUTION PIPELINE BUILT 2026-08-13 (`feat/dilution-pipeline`) — the first Tier-1 item from the
+  coverage audit, closing the sharpest gap it found: the stack measured REALIZED dilution and
+  buybacks while NOTHING watched the register.** New `MechanicalLayer.dilution_pipeline` — S-3/F-3
+  shelfs, 424B supplements, S-1/F-1, S-8 from the EDGAR filing index, 3y window (an S-3's own
+  effectiveness horizon, so the window IS the relevance test), **upper-bounded at `reference_date`
+  in code** because `recent_filings` has only a lower bound — the item-9 leak class, pinned as its
+  own test. Assemble-and-cite: counts, forms, dates; no reading.
+  **REAL RUN, all 14 names:** FUBO **2 shelfs + 3 supplements (424B5/424B7 — the equity
+  machinery) + 3 S-8**; MVST S-3 + 424B5; VRRM **nothing on file** (renders as the stated finding,
+  never silence); BRBR/NCNO/SMPL/VITL S-8-only (headline says the shelf groups are empty; S-8
+  counted as routine, never in the headline).
+  **THE RUN SET THE LABEL, not the plan: V's six supplements are 424B2/424B3 BOND takedowns.** The
+  index cannot tell an ATM draw from a debt deal, so the rendered label reads **"Registered
+  offering pipeline (equity/debt not distinguished)"** — asserting "dilution" for what may be
+  bonds would be a false claim. Classifying draws needs the prospectus text: recorded as the
+  follow-up, not guessed.
+  **TWO STATES PINNED APART AT THE WRAPPER:** "none on file" is PRESENT (a fact about the
+  register); UNKNOWN is reserved for no-CIK / failed fetch. The first cut pinned the empty state
+  on the pure composer only and a wrapper mutation collapsing the two passed green —
+  pin-the-artifact-not-the-helper, caught by the mutation sweep and re-pinned through the wrapper.
+  **BACK-COMPAT via the EXISTING precedent:** the field registered in `_DROP_WHEN_NONE`
+  (the `consensus_levels` / #303 principle), so a no-op refresh stays byte-identical on all 14
+  committed dossiers — the pages change on their next assembly, not on merge. Five mutations each
+  redden a named test. **Remaining Tier-1 queue: 13D/G events → KD types batch → SBC line.**
+
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
   synthesis quoted its old text verbatim — exactly the "page citing numbers its own tables no longer

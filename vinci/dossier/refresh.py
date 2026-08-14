@@ -241,6 +241,7 @@ _DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("financial_summary", "ebitda_basis"),
     ("", "capital_allocation"),
     ("", "peer_capital_intensity"),
+    ("", "dilution_pipeline"),
 )
 
 

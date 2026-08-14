@@ -1113,6 +1113,46 @@ class StockInfo(BaseModel):
     model_config = {"frozen": True}
 
 
+class RegistrationFiling(BaseModel):
+    """One registration statement / prospectus supplement from the EDGAR filing index — form,
+    date, accession only. The INDEX is the source; no document body is parsed, so no dollar size
+    is asserted (a size would need the prospectus text, and a half-parsed size is worse than a
+    dated pointer the human can open)."""
+
+    form: str          # "S-3" / "S-3ASR" / "424B5" / "S-1" / "S-8" …
+    filing_date: str   # ISO
+    accession: str
+
+    model_config = {"frozen": True}
+
+
+class DilutionPipeline(BaseModel):
+    """FORWARD dilution capacity on file — registration statements and prospectus supplements
+    from the EDGAR filing index, over a stated trailing window bounded at the record's as-of.
+
+    THE GAP THIS CLOSES: the stack measured REALIZED dilution (share-count trend) and buybacks,
+    but nothing watched the pipeline — an effective shelf, prospectus supplements drawing on it,
+    a fresh S-1. For a drawdown name, issuance into the drawdown is the recovery-killer, and it
+    is announced in exactly these filings. Assemble-and-cite only: counts, forms and dates — the
+    READING (how much risk the pipeline is) stays the human's.
+
+    "NONE ON FILE" IS A FINDING, NOT AN UNKNOWN: an empty window means no registered capacity,
+    which is decision-relevant the same way EPAM's never-impaired goodwill is. UNKNOWN is reserved
+    for a failed fetch / missing CIK, and the two must never render alike.
+
+    EQUITY AND DEBT ARE NOT DISTINGUISHED, AND THE LABEL SAYS SO. A universal shelf registers
+    both, and the index alone cannot tell a 424B5 ATM draw from a 424B2 bond takedown — V's six
+    supplements are debt issuance, FUBO's are the equity machinery, and the index shape is
+    identical. Asserting "dilution" for a bond deal would be a false claim; reading the prospectus
+    to classify is a follow-up, not a reason to guess."""
+
+    filings: list[RegistrationFiling]  # newest first, window-bounded, machine-complete
+    line: Sourced[str]                 # the composed MAIN-BODY line (counts + dates, no reading)
+    window_days: int                   # the trailing scan the counts describe
+
+    model_config = {"frozen": True}
+
+
 class CapitalAllocation(BaseModel):
     """Capital created or destroyed — EDGAR XBRL only, each value naming the tag that answered."""
 
@@ -1303,6 +1343,12 @@ class MechanicalLayer(BaseModel):
     # answered and every absence names the family tried. Optional-with-default for back-compat:
     # committed dossiers predate it and must round-trip; a FRESH assembly always builds it.
     capital_allocation: CapitalAllocation | None = None
+    # FORWARD dilution capacity — S-3/F-3 shelfs, 424B supplements, S-1/F-1, S-8 — from the EDGAR
+    # filing index, window-bounded at the as-of. The mirror of the buyback block above: one side
+    # retires shares, this side registers the capacity to issue them. Optional-with-default for
+    # back-compat: committed dossiers predate it and must round-trip; a FRESH assembly always
+    # builds it (its absent state is "none on file", never a missing block).
+    dilution_pipeline: DilutionPipeline | None = None
     # Peer acquired-asset intensity — the comparison that says whether the subject's
     # goodwill+intangibles load is unusual for its sector or exactly what it looks like.
     # Optional-with-default for back-compat; a FRESH assembly builds it when the comps
