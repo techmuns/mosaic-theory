@@ -12335,6 +12335,47 @@ one evidence-backed leg at a time.
   interaction, not luck: FUBO genuinely carries **NM** valuation metrics, the model keeps reaching
   for them, and the validator correctly refuses a claim that asserts missing data while citing a
   present field. Re-rolling that name is whack-a-mole against a reproducible pattern.
+  **REVIEW FINDING (#455) — A SECOND, WORSE DEFECT IN THE SAME AREA: the twin validator said
+  "should be tagged unverified" AND NOTHING TAGGED IT.** The loop appended a flag and left the twin
+  holding whatever source the model wrote. `render._twin_outcome` keys on the source STRING
+  (`[LLM-suggested, unverified]`), not on whether the source TRACED — so a plausible-but-invented
+  citation (`CIQ peer_capital_intensity impairment (per-peer grid)`, for a Starz twin) skipped the
+  unverified path entirely, and the page printed *"Starz Entertainment Corp. — went terminal"* in
+  the same shape as the properly-sourced Paramount twin above it. **Detected, recorded in
+  `qa_flags`, and invisible to the reader** — two-states-must-not-render-alike, in the layer that
+  decides what a human sees. Fixed: an untraceable twin source is replaced with the `_UNVERIFIED`
+  marker, so the existing render path fires. The twin, outcome and reasoning are kept verbatim;
+  only the SOURCE changes, and the flag still records the original string.
+  **AND MY OWN COUNT WAS FILTERED, WHICH IS WHY I MISSED IT.** I reported "exactly one warning" on
+  FUBO having counted only flags prefixed `UNCITED`/`MISMATCH` — `TWIN …` flags were invisible to
+  my own measurement. Same error class as enumerating a helper's consumers instead of sweeping the
+  pattern: **the filter matched what I expected to find.** Any future flag-count over `qa_flags`
+  reads the WHOLE list.
+  **FUBO NOW CARRIES 0 citation/twin-trace flags** (re-assembled): the roll produced traceable
+  sources for Roku/Paramount/Sirius and honestly self-tagged Chegg + WeWork, and the page shows the
+  difference — *"Chegg — went terminal (LLM-claimed — verify)"* against *"Paramount … — went
+  terminal"*. The tagging code did NOT fire on this roll because the model behaved; the mechanism
+  is proven by unit test rather than by that luck.
+  **PARTIALLY CLOSED 2026-08-13 (`fix/nm-is-not-missing`) — the FIRST false-positive class is
+  fixed; a SECOND one is now identified and is why FUBO stays chronic.**
+  Root cause of the reported instance was not the prose at all: `_MISSING_CLAIM` matched the
+  `missing` inside **`not missing`**. FUBO's point said *"trailing EBITDA is negative (a real NM
+  state, NOT MISSING)"* — the model being PRECISE about the very distinction this codebase draws
+  (`NM PRESERVED as a real not-meaningful state, never dropped to missing`) — and was flagged for
+  asserting absent data. The pattern cannot see a negation. Fixed with fixed-width lookbehinds on
+  the BARE tokens only; `not disclosed` / `not available` / `not provided` / `not reported` MEAN
+  missing and keep matching, pinned individually so a later edit cannot retire four phrasings while
+  "simplifying". Verified directly: the previous FUBO sentence is CLEAN under the new check.
+  **THE SECOND CLASS, found by re-assembling FUBO and NOT fixed:** the re-roll produced
+  *"…the consensus MISREAD once the **missing margin** is priced"* — `missing` describing the
+  BUSINESS lacking margin, not the DATASET lacking a field. A regex cannot separate those without
+  enumerating business nouns, which would punch holes in a guard that is otherwise doing real work.
+  **So FUBO's page still carries exactly one warning, for a different reason than before**, and the
+  fleet is unchanged at 1.
+  **THIS SHARPENS THE DECISION BELOW RATHER THAN SETTLING IT.** FUBO is chronic because the
+  VOCABULARY OF ABSENCE is intrinsic to describing an unprofitable company — negative EBITDA, no
+  margin, NM multiples — so the model will keep reaching for those words on that name. More regex
+  is the wrong lever; (b) or (c) is.
   **OPERATOR DECISION OWED — three options, and only the first is free:** (a) gate the artifact
   pass at zero and re-roll offending names, accepting that FUBO would loop forever and needs an
   exemption or a real fix; (b) let the synthesis prompt handle NM metrics explicitly so the model
