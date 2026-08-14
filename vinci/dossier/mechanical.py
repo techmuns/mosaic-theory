@@ -43,6 +43,7 @@ from vinci.dossier.schemas import (
     ConsensusContext,
     ConsensusLevel,
     CovenantPointer,
+    DilutionPipeline,
     DrawdownCause,
     FilingRef,
     FilingSectionExtract,
@@ -60,6 +61,7 @@ from vinci.dossier.schemas import (
     PrimarySource,
     Quality,
     ReconciliationValue,
+    RegistrationFiling,
     ReleaseExtract,
     Sourced,
     SourceStatus,
@@ -68,7 +70,7 @@ from vinci.dossier.schemas import (
     Valuation,
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
-from vinci.edgar.client import EdgarClient
+from vinci.edgar.client import EdgarClient, Filing
 from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
     ConceptPoint,
@@ -1785,6 +1787,114 @@ _INSIDER_WINDOW_DAYS = 182
 #: scanned" rather than a bare "none". 3y clears the SMPL case (its selling episode is ~21 months
 #: back) with margin, at ~2 HTTP calls per filing against a cached, paced client.
 _INSIDER_SCAN_DAYS = 1095
+
+#: The dilution-pipeline scan. 3y because an S-3 shelf is effective for three years — a shelf
+#: older than the window could not be drawn on today, so the window IS the relevance test, not a
+#: budget choice. Shares one bounded, cached submissions read with the Form-4 scan above.
+_DILUTION_SCAN_DAYS = 1095
+#: Form families, grouped by WHAT THE FILING IS — the groups are the vocabulary of the composed
+#: line. Shelf = registered capacity; 424B = a draw against it (the ATM/notes/secondary machinery);
+#: S-1/F-1 = fresh registration outside a shelf; S-4 = shares registered to fund an ACQUISITION;
+#: S-8 = employee-plan shares, REAL dilution but routine, so it is counted on its own and never in
+#: the headline.
+#:
+#: THE TAXONOMY IS EXPLICIT AND ITS BOUNDARY IS TESTED (review finding, #457). `recent_filings`
+#: drops any form not LITERALLY in the tuple, so a form missing here is invisible BEFORE
+#: `_dilution_line` runs — and an incomplete list therefore reports a false CLEAN register rather
+#: than an under-count, which is the dangerous direction. Two gaps were found:
+#:
+#: - **MEF variants** (`S-3MEF` etc.) — a Rule 462(b) filing that ADDS securities to an
+#:   already-effective registration. Registered capacity by definition; absent from this fleet's
+#:   3y window, included because absence from one corpus is not absence from the class.
+#: - **S-4 / S-4/A** — measured, and PRESENT: **V carries five in-window** (2026-03-05,
+#:   2026-04-06 + three in 2024). Shares issued to a target's holders dilute exactly like a
+#:   secondary, so this became its own group rather than a silent omission.
+#:
+#: A form outside every tuple below is one this block does not claim to see; the completeness
+#: pin (`test_the_form_taxonomy_covers_the_registration_families`) is what keeps that list honest.
+_DILUTION_SHELF = ("S-3", "S-3/A", "S-3ASR", "S-3MEF", "F-3", "F-3/A", "F-3ASR", "F-3MEF")
+_DILUTION_SUPPLEMENT = ("424B1", "424B2", "424B3", "424B4", "424B5", "424B6", "424B7", "424B8")
+_DILUTION_FRESH = ("S-1", "S-1/A", "S-1MEF", "F-1", "F-1/A", "F-1MEF")
+_DILUTION_MERGER = ("S-4", "S-4/A", "S-4MEF", "F-4", "F-4/A")
+_DILUTION_EMPLOYEE = ("S-8", "S-8 POS")
+
+
+def _dilution_line(filings: list[Filing], reference_date: date) -> tuple[list[Filing], str]:
+    """(window-bounded filings, composed line) — the pure half, so tests drive it with REAL
+    ``Filing`` objects and no network.
+
+    THE UPPER BOUND IS APPLIED HERE AND STATED, not assumed: ``recent_filings`` takes only a
+    ``since`` lower bound, so a filing dated AFTER the record's as-of would otherwise enter the
+    counts — the exact post-as-of leak class item 9 measured (NFLX 58 / UBER 91 dates past their
+    own reference_date). Every count below is over ``filing_date <= reference_date`` only.
+
+    COUNTS, FORMS AND DATES ONLY — no reading. "2 shelfs + 9 supplements" on FUBO and "no shelf on
+    file" on V are the two ends of the same stated fact; which one is a risk is the human's call.
+    """
+    since = reference_date - timedelta(days=_DILUTION_SCAN_DAYS)
+    inwin = sorted(
+        (f for f in filings if since <= f.filing_date <= reference_date),
+        key=lambda f: f.filing_date, reverse=True)
+
+    def part(forms: tuple[str, ...], label: str) -> str | None:
+        hits = [f for f in inwin if f.form in forms]
+        if not hits:
+            return None
+        newest = hits[0].filing_date.isoformat()
+        forms_seen = sorted({f.form for f in hits})
+        return f"{label} {len(hits)} ({'/'.join(forms_seen)}, last {newest})"
+
+    bits = [p for p in (
+        part(_DILUTION_SHELF, "shelf registrations"),
+        part(_DILUTION_SUPPLEMENT, "prospectus supplements"),
+        part(_DILUTION_FRESH, "fresh registrations"),
+        part(_DILUTION_MERGER, "merger registrations"),
+    ) if p]
+    emp = part(_DILUTION_EMPLOYEE, "employee-plan (S-8)")
+    yrs = _DILUTION_SCAN_DAYS // 365
+    if not bits and not emp:
+        line = (f"no registration statements or prospectus supplements on file in the "
+                f"{yrs}y to {reference_date.isoformat()}")
+    else:
+        head = "; ".join(bits) if bits else "no shelf/supplement/fresh registration"
+        tail = f" · {emp} — routine" if emp else ""
+        line = f"{head}{tail} — {yrs}y window to {reference_date.isoformat()}"
+    return inwin, line
+
+
+def _dilution_pipeline(
+    edgar: EdgarClient, cik: str | None, reference_date: date
+) -> DilutionPipeline:
+    """FORWARD dilution capacity from the EDGAR filing index — the fetch half.
+
+    "NONE ON FILE" IS PRESENT, NOT UNKNOWN. An empty window is a stated fact about the register
+    (no standing capacity), decision-relevant exactly like a never-impaired goodwill balance.
+    UNKNOWN is reserved for the states where the register could not be READ — no CIK, or the
+    fetch failing — and the two must never render alike."""
+    all_forms = (_DILUTION_SHELF + _DILUTION_SUPPLEMENT + _DILUTION_FRESH
+                 + _DILUTION_MERGER + _DILUTION_EMPLOYEE)
+    if not cik:
+        return DilutionPipeline(filings=[], window_days=_DILUTION_SCAN_DAYS,
+                                line=Sourced.unknown(note="no CIK for the filing-index lookup"))
+    try:
+        raw = edgar.recent_filings(
+            cik, forms=all_forms,
+            since=reference_date - timedelta(days=_DILUTION_SCAN_DAYS))
+    except HttpError as exc:
+        return DilutionPipeline(
+            filings=[], window_days=_DILUTION_SCAN_DAYS,
+            line=Sourced.unknown(note=f"EDGAR filing-index fetch failed: {exc}"))
+    inwin, line = _dilution_line(raw, reference_date)
+    newest = f" · latest {inwin[0].accession}" if inwin else ""
+    return DilutionPipeline(
+        filings=[RegistrationFiling(form=f.form, filing_date=f.filing_date.isoformat(),
+                                    accession=f.accession) for f in inwin],
+        window_days=_DILUTION_SCAN_DAYS,
+        line=Sourced.present(
+            line,
+            source_ref=("EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window "
+                        f"{(reference_date - timedelta(days=_DILUTION_SCAN_DAYS)).isoformat()}"
+                        f"→{reference_date.isoformat()}{newest}")))
 
 
 class Form4Line(NamedTuple):
@@ -3516,6 +3626,9 @@ def assemble_mechanical(
         # yields a fully-stated block rather than a missing one.
         capital_allocation=build_capital_allocation(
             _companyfacts_or_none(edgar, record.identity.cik) or {}),
+        # FORWARD dilution capacity — the buyback block's mirror. Filing-index only (bounded,
+        # cached); "none on file" is a PRESENT finding, UNKNOWN is reserved for a failed read.
+        dilution_pipeline=_dilution_pipeline(edgar, record.identity.cik, reference_date),
         # Peer acquired-asset intensity. Needs the comps grid (only it carries peer TICKERS) plus
         # one cached EDGAR call per peer; absent grid -> None, which keeps its NOT-BUILT meaning.
         peer_capital_intensity=_peer_capital_intensity(peer_comps, resolver, edgar),

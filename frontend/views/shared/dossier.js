@@ -1739,14 +1739,28 @@ function peerImpairment(pc) {
     <div class="fact-caveat">${base}<b>reports nil</b> is a MEASUREMENT — the filer tags impairment and states zero. <b>no annual obs.</b> and <b>does not tag</b> are not measurements and must not be read as clean years. The <b>live YTD</b> column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities.</div></div></div>`;
 }
 
+// REVIEW FINDING (#457). The md renderer grew a `dilution_pipeline` line and this twin did not,
+// so a populated pipeline printed in the PDF and was SILENTLY ABSENT from the deployed page —
+// which is the surface the human actually reads. The py/JS parity is explicit in this file
+// (see the `capitalAllocation` comment below citing `render._capital_allocation`), and it broke
+// the moment one side moved alone. `fact()` handles PRESENT/UNKNOWN identically to `_fact`, so
+// "none on file" prints as the finding it is rather than vanishing.
+function dilutionPipeline(m) {
+  const dp = m.dilution_pipeline;
+  return dp ? fact("Registered offering pipeline (equity/debt not distinguished)", dp.line) : "";
+}
+
 function capitalAllocation(m) {
   // GATED PER BLOCK — see render._capital_allocation. An early return on `capital_allocation`
   // left seven names carrying `peer_capital_intensity` with nothing on the page.
   const ca = m.capital_allocation;
   const peers = peerCapitalIntensity(m);
+  const dilution = dilutionPipeline(m);
   if (!ca) {
-    return peers
-      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${peers}`
+    // GATED PER BLOCK on ALL THREE, not just peers — a name whose only content is the pipeline
+    // must still get the section, which is the same defect the comment below records.
+    return peers || dilution
+      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${dilution}${peers}`
       : "";
   }
   const usd = (v) => escapeHtml(`$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
@@ -1788,6 +1802,7 @@ function capitalAllocation(m) {
     out.push(fact("Buyback — average cost/share", avg));
   }
   out.push(fact("Acquisition consideration", ca.acquisition_consideration, usd));
+  out.push(dilution);
   const gap = String((ca.brand_split || {}).note || "").replace(/^NOT AVAILABLE FROM XBRL — /, "");
   out.push(`<div class="fact"><div class="fact-label">Per-brand split</div><div class="fact-val muted"><span class="pill unresolved">NOT AVAILABLE FROM XBRL</span> ${escapeHtml(gap)}</div></div>`);
   // HOUSE SUBTITLE SHAPE, not an invented one. `.ds-sub` is a MARGIN UTILITY applied to a
