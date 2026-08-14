@@ -12542,6 +12542,35 @@ one evidence-backed leg at a time.
   the real export's singular `Executive Change - CEO/CFO` where the probe guessed "Changes".
   Corpus pins for BioCatch + Delivery Hero (skip-if-absent, phrasing-independent); four mutations
   each redden — audit reverted, tranche admitted, rumors admitted, private placement admitted.
+  **REVIEW FINDINGS (#458) — TWO CONNECTED P1s: the KD export is NOT issuer-only, and the blanket
+  exclusion was the wrong tool for it.** Widening the filter without subject attribution admitted
+  other companies' events; the fix is attribution, and once attribution exists the exclusion is
+  no longer needed. **TWO NOISE LAYERS, MEASURED, needing DIFFERENT tools:**
+  **L1 — third-party-ATTRIBUTED rows (52 fleet-wide):** UBER's export carries `SMB Holding
+  Corporation` acquiring a Delivery Hero stake, CPB's carries `Campbell Investment Company`.
+  Caught by matching the `Company` column to the issuer — a column `_kd_columns` had always
+  discarded, and the subject-company filter STATE already carried as an outstanding task
+  (2026-07-21 sponsor-PR note).
+  **L2 — subject-attributed rows ABOUT a third party (15, all Private Placement):** Atoms',
+  Lucid's, HysetCo's and Wayve's raises sit under `Company='Uber Technologies, Inc. (NYSE:UBER)'`
+  because Uber PARTICIPATED. The Company filter cannot see these; only the HEADLINE ACTOR can,
+  and a contains-check fails the wrong way (HysetCo's headline names Uber as the investor), so
+  the test is a STARTSWITH on the issuer name-head.
+  **PRIVATE PLACEMENT IS THEREFORE RE-ADMITTED, not excluded** — the reviewer's second point, and
+  correct: a Reg D / §4(a)(2) raise is registration-EXEMPT, so the S-3/424B pipeline structurally
+  CANNOT see it and dropping the row discards the only record of a material financing. It now
+  passes only when the subject is the actor.
+  **3 OF 19 EXPORTS HAVE NO COMPANY COLUMN** (MVST, NFLX, VITL) and carry real subject events, so
+  attribution falls back to the headline actor rather than dropping — a blanket conservative drop
+  would have lost NFLX's Fixed-Income Offerings and VITL's buyback authorization.
+  **A BUG THE CORPUS RUN CAUGHT AND THE FIXTURE COULD NOT:** `_kd_norm` stripped punctuation to a
+  space without COLLAPSING it, so `Netflix, Inc.` normalised to `netflix  inc` (double space),
+  every startswith failed, and **NFLX silently lost all twelve of its corporate events** while the
+  synthetic fixture passed. The pin now uses a company whose punctuation falls INSIDE the compared
+  prefix, so the mutation reddens.
+  **AFTER ATTRIBUTION: fleet 306 → 431 rows** (450 before it — 19 third-party rows removed, and
+  the subject's own placements kept). All three named misses still surface; Atoms/Lucid/SMB/
+  HysetCo/Campbell all gone from the corporate set. Five mutations each redden a named test.
   **Pages change on the next artifact pass, not on merge.**
 
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**

@@ -2222,13 +2222,16 @@ _KD_4COL = (
 )
 
 
-def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str) -> ciq.CiqBundle:
+def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str,
+               filename: str = "Acme Co NasdaqGM ACME Key Developments.rtf") -> ciq.CiqBundle:
     """A bundle carrying one key_developments workbook; read_text is stubbed to `text` (the RTF
-    decode itself is covered by test_ciq — here we pin the parse/filter/header logic)."""
+    decode itself is covered by test_ciq — here we pin the parse/filter/header logic). The
+    filename is REAL-shaped because issuer attribution derives its name-head from it (#458)."""
     from pathlib import Path
     monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
     wb = ciq.CiqWorkbook(
-        kind="key_developments", path=Path("kd.rtf"), fmt=ciq.CiqFormat.RTF_TEXT, freq=None)
+        kind="key_developments", path=Path(filename),
+        fmt=ciq.CiqFormat.RTF_TEXT, freq=None)
     return ciq.CiqBundle(ticker="ACME", workbooks=(wb,))
 
 
@@ -2252,7 +2255,8 @@ def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatc
     assert guid.kind.value == "event" and guid.period == "May-07-2026" and guid.tier == "anchored"
     assert guid.value == "Acme Raises FY2026 Guidance"
     assert "raised its full-year guidance" in guid.verbatim  # the Situation line
-    assert guid.source_ref == "CIQ Key Developments: kd.rtf · May-07-2026"
+    assert guid.source_ref == ("CIQ Key Developments: "
+                               "Acme Co NasdaqGM ACME Key Developments.rtf · May-07-2026")
     # 4-column layout resolves Type at a DIFFERENT index — header-driven, not positional
     rows4 = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_4COL))
     assert [r.metric for r in rows4] == ["Corporate Guidance - New/Confirmed"]  # index add dropped
@@ -2260,26 +2264,36 @@ def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatc
 
 _KD_EVENTS = (
     "Date|Company|Type|Headline|Other Parties|\n"
-    "Aug-03-2026|Subject Co.|M&A Transaction Announcement|Subject signed a definitive agreement "
-    "to acquire Target Ltd. for $2.4 billion|Target Ltd.|\n"
-    "Situation: Subject Co. signed a definitive agreement to acquire Target Ltd. for $2.4 billion "
+    "Aug-03-2026|Acme Co. (NasdaqGM:ACME)|M&A Transaction Announcement|Acme Co. signed a "
+    "definitive agreement to acquire Target Ltd. for $2.4 billion|Target Ltd.|\n"
+    "Situation: Acme Co. signed a definitive agreement to acquire Target Ltd. for $2.4 billion "
     "on August 3, 2026.\n"
-    "May-18-2026|Subject Co.|M&A Transaction Closing|Subject completed the acquisition of "
+    "May-18-2026|Acme Co.|M&A Transaction Closing|Acme Co. completed the acquisition of "
     "Target Ltd.|-|\n"
-    "Feb-27-2026|Subject Co.|M&A Transaction Cancellation|Subject terminated the planned "
-    "combination|-|\n"
-    "May-22-2026|Subject Co.|M&A Rumors and Discussion|Subject reportedly explores options|-|\n"
-    "Jul-16-2026|Subject Co.|M&A Call|Subject M&A Call|-|\n"
-    "Nov-20-2025|Subject Co.|Buyback Transaction Announcements|Subject announces an Equity "
-    "Buyback for $600 million|-|\n"
-    "May-05-2026|Subject Co.|Buyback Tranche Update|Tranche Update on Subject's Equity Buyback "
-    "Plan|-|\n"
-    "Feb-12-2026|Subject Co.|Fixed Income Offering|Subject has completed a Fixed-Income Offering "
-    "of $599.8 million|-|\n"
-    "Jul-22-2026|Subject Co.|Private Placement|Ecosystem Startup announced $1.7 billion in "
-    "funding|Ecosystem Startup|\n"
-    "Jul-08-2026|Subject Co.|Executive Change - CEO|Subject announces CEO transition|-|\n"
-    "Sep-08-2025|Subject Co.|Conference|Bank conference presentation|-|\n"
+    "Feb-27-2026|Acme Co. (NasdaqGM:ACME)|M&A Transaction Cancellation|Acme Co. terminated the "
+    "planned combination|-|\n"
+    # THE REVIEWER'S REGRESSION (#458): a third-party-attributed corporate row must be absent.
+    "Jun-01-2026|Third Party Co.|M&A Transaction Announcement|Third Party Co. agreed to acquire "
+    "Someone Else Inc.|-|\n"
+    "May-22-2026|Acme Co. (NasdaqGM:ACME)|M&A Rumors and Discussion|Acme reportedly explores "
+    "options|-|\n"
+    "Jul-16-2026|Acme Co. (NasdaqGM:ACME)|M&A Call|Acme M&A Call|-|\n"
+    "Nov-20-2025|Acme Co. (NasdaqGM:ACME)|Buyback Transaction Announcements|Acme Co. announces "
+    "an Equity Buyback for $600 million|-|\n"
+    "May-05-2026|Acme Co. (NasdaqGM:ACME)|Buyback Tranche Update|Tranche Update on Acme's Equity "
+    "Buyback Plan|-|\n"
+    "Feb-12-2026|Acme Co. (NasdaqGM:ACME)|Fixed Income Offering|Acme Co. has completed a "
+    "Fixed-Income Offering of $599.8 million|-|\n"
+    # THE L2 SHAPE (the Atoms case): Company says the SUBJECT, the raise is someone else's.
+    "Jul-22-2026|Acme Co. (NasdaqGM:ACME)|Private Placement|Ecosystem Startup announced that it "
+    "has received $1.7 billion in funding|Ecosystem Startup|\n"
+    # the subject's OWN placement — registration-EXEMPT (Reg D), invisible to the S-3/424B
+    # pipeline, so this row is the only record of it (#458 review, second finding).
+    "Jun-30-2026|Acme Co. (NasdaqGM:ACME)|Private Placement|Acme Co. announces a private "
+    "placement of $150 million of convertible notes|-|\n"
+    "Jul-08-2026|Acme Co. (NasdaqGM:ACME)|Executive Change - CEO|Acme Co. announces CEO "
+    "transition|-|\n"
+    "Sep-08-2025|Acme Co. (NasdaqGM:ACME)|Conference|Bank conference presentation|-|\n"
 )
 
 
@@ -2310,10 +2324,57 @@ def test_a3_corporate_events_admitted_and_the_measured_noise_stays_out(
                      "Fixed Income Offering", "Executive Change - CEO"):
         assert admitted in kept, f"{admitted!r} dropped — the audit's admission did not land"
     for excluded in ("M&A Rumors and Discussion", "M&A Call", "Buyback Tranche Update",
-                     "Private Placement", "Conference"):
+                     "Conference"):
         assert excluded not in kept, f"{excluded!r} admitted — measured noise reached the page"
     ma = next(r for r in rows if r.metric == "M&A Transaction Announcement")
     assert "$2.4 billion" in ma.verbatim, "the Situation consideration did not reach the record"
+
+    # SUBJECT ATTRIBUTION (#458 review, both P1s):
+    # (a) the reviewer's regression — a third-party-attributed M&A row is ABSENT…
+    assert not any("Third Party Co." in r.value for r in rows), (
+        "a corporate event attributed to a THIRD PARTY reached the subject's page — the Company "
+        "column is not being matched to the issuer")
+    # (b) …the subject's OWN private placement is KEPT (registration-exempt under Reg D, so the
+    # S-3/424B pipeline cannot see it — this row is the only record of the raise)…
+    assert any(r.metric == "Private Placement" and "convertible notes" in r.value for r in rows), (
+        "the subject's own private placement was dropped — a registration-EXEMPT raise has no "
+        "other source in the stack")
+    # (c) …and the L2 shape is OUT: Company names the subject, the raise is Ecosystem Startup's.
+    assert not any("Ecosystem Startup" in r.value for r in rows), (
+        "a third party's raise reached the page because CIQ attributed the row to the subject — "
+        "the headline-ACTOR gate is not being applied to Private Placement")
+
+
+#: The NFLX shape exactly: a single-word company whose legal name interposes punctuation BETWEEN
+#: the name-head tokens ("Acmecorp, Inc." vs head "acmecorp inc") — the case where an uncollapsed
+#: normaliser leaves a double space INSIDE the compared prefix and every startswith fails.
+_KD_4COL_CORP = (
+    "Date|Type|Headline|Other Parties|\n"
+    "Feb-12-2026|Fixed Income Offering|Acmecorp, Inc. has announced a Fixed-Income Offering.|-|\n"
+    "Jun-01-2026|M&A Transaction Announcement|Rival Corp. agreed to acquire Someone Else Inc.|-|\n"
+)
+
+
+def test_a3_no_company_column_falls_back_to_the_headline_actor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """3 OF 19 COMMITTED EXPORTS (MVST, NFLX, VITL) HAVE NO COMPANY COLUMN, and they carry real
+    subject events — NFLX's Fixed-Income Offerings, VITL's buyback authorization. A conservative
+    blanket drop would lose those, so attribution falls back to the HEADLINE's actor.
+
+    THE PUNCTUATION CASE IS THE PIN'S POINT: 'Acme Co., Inc. has announced…' must normalise to
+    'acme co inc…' with COLLAPSED whitespace — the first cut left a double space behind every
+    stripped comma, every startswith failed, and NFLX silently lost all twelve of its corporate
+    events on the live corpus. Caught by the corpus re-run, pinned here."""
+    rows = cs.key_development_drivers(_kd_bundle(
+        monkeypatch, _KD_4COL_CORP,
+        filename="Acmecorp Inc NasdaqGM ACME Key Developments.rtf"))
+    kept = {r.metric for r in rows}
+    assert "Fixed Income Offering" in kept, (
+        "a subject event in a no-Company export was dropped — the headline-actor fallback (or its "
+        "whitespace normalisation) is broken; NFLX loses its FIOs exactly like this")
+    assert "M&A Transaction Announcement" not in kept, (
+        "a THIRD PARTY's deal passed the headline-actor fallback")
 
 
 def test_a3_the_named_misses_are_on_the_live_corpus(monkeypatch: pytest.MonkeyPatch) -> None:
