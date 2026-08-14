@@ -12,11 +12,25 @@ THE SKIPPED GATE WAS THE HOLE, NOT THE SNAPSHOT. The one commit that changes the
 was the one commit nothing gated, so the breakage landed on main invisibly and first surfaced on
 the next unrelated PR — where it read as that PR's regression.
 
-TWO PROPERTIES, checked on the real committed workflow files:
-  1. no scheduled push hides its commit from CI, so main is gated AT the commit that caused it;
+THERE IS NO SECOND GATE DOWNSTREAM (review finding, #456). A push authenticated with the workflow's
+own GITHUB_TOKEN does not create a new workflow run — GitHub's anti-recursion rule, with only
+`workflow_dispatch` and `repository_dispatch` excepted — so `gate.yml`'s `on: push` never fires for
+a commit these jobs make, whatever its message says. Dropping `[skip ci]` does not buy main an
+attestation; the gating has to happen BEFORE the push or it does not happen at all. That makes
+properties 2 and 3 load-bearing and property 1 hygiene: the marker suppresses nothing today, WOULD
+suppress the gate the day the push moves to an App/PAT token, and meanwhile says a gate is being
+skipped when none would have run.
+
+THREE PROPERTIES, checked on the real committed workflow files:
+  1. no scheduled push carries a skip-CI marker (see above — hygiene, and a live hole if the token
+     ever changes);
   2. the offline suite runs BEFORE the push and not only after it, so an artifact that breaks a pin
      fails its own job and never reaches main at all — the ARTIFACT-PASS RULE, which bound every
-     human artifact pass and not the two that no human runs.
+     human artifact pass and not the two that no human runs;
+  3. the checkout takes FULL HISTORY. Pins reading real historical blobs — `test_state_identifiers`
+     reads `c112f25:STATE.md`, this module reads `607e7d1`'s — SKIP on a shallow clone, so at the
+     default depth 1 the only gate these commits get is quietly weaker than the one every PR gets.
+     A gate that silently checks less than it appears to is how this whole incident happened.
 
 A TEXT LINT, DELIBERATELY. Nothing in this project depends on a YAML parser, and adding one to read
 two files we author ourselves would be the larger change. Steps run in file order, so a line number
@@ -33,7 +47,10 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
 
-#: Every spelling GitHub Actions honours to skip a workflow run on a push.
+#: The five spellings GitHub Actions itself honours, plus two that it does NOT — a hyphenated form
+#: and the Travis/Cloud-Build marker. The near-misses are rejected too: they do not suppress
+#: anything, so a commit carrying one states an intent to skip that the repo has ruled against
+#: while quietly not skipping, which is worse than either.
 SKIP_MARKERS = ("[skip ci]", "[ci skip]", "[no ci]", "[skip actions]", "[actions skip]",
                 "[skip-ci]", "***NO_CI***")
 
@@ -81,6 +98,13 @@ def violations(name: str, text: str) -> list[str]:
         out.append(
             f"{name}: the offline suite runs at line {gate}, AFTER the push at line {push} — a "
             f"gate downstream of the push cannot stop the push")
+
+    if "fetch-depth: 0" not in text:
+        out.append(
+            f"{name} checks out at the default depth 1, so its pre-push gate — the ONLY gate this "
+            f"commit gets — silently skips every pin that reads a historical blob "
+            f"(`test_state_identifiers`, and this module's own negative pin). Add `fetch-depth: 0` "
+            f"to the checkout, as gate.yml does and for the same reason")
     return out
 
 
@@ -144,6 +168,8 @@ def test_the_lint_rejects_the_workflow_that_actually_caused_the_incident() -> No
         f"the lint does not reject the [skip ci] that hid the 2026-08-10 breakage: {found}")
     assert any("without running the offline suite first" in v for v in found), (
         f"the lint does not reject a push with no gate before it: {found}")
+    assert any("default depth 1" in v for v in found), (
+        f"the lint does not reject the shallow checkout that would gut the gate: {found}")
 
 
 def test_a_gate_moved_below_the_push_is_rejected() -> None:
@@ -160,6 +186,17 @@ def test_a_gate_moved_below_the_push_is_rejected() -> None:
     found = violations("mutated", "\n".join(moved))
     assert any("cannot stop the push" in v for v in found), (
         f"a gate running after the push was accepted: {found}")
+
+
+def test_a_shallow_checkout_is_rejected() -> None:
+    """PROPERTY 3 ISOLATED. The default depth is the ABSENCE of a line, so this mutation deletes
+    rather than edits — the failure mode is a checkout nobody thought about, not one written wrong.
+    """
+    text = _compliant_substrate()
+    shallow = "\n".join(ln for ln in text.splitlines() if "fetch-depth: 0" not in ln)
+    found = violations("mutated", shallow)
+    assert any("default depth 1" in v for v in found), (
+        f"a depth-1 checkout was accepted, so the gate could skip its history pins: {found}")
 
 
 def test_a_marker_inside_a_comment_is_not_a_violation() -> None:

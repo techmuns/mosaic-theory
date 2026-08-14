@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the pre-push gate below is this commit's only gate — see weekly-screen.yml
 
       - uses: actions/setup-python@v5
         with:
@@ -47,12 +49,15 @@ jobs:
       - name: Rebuild the derived frontend mirror
         run: python frontend/build.py
 
-      # SAME GATE, SAME REASON AS `weekly-screen.yml` — read the long note there. This job commits
-      # the scoring report, the surface the BUY−AVOID spread is READ from, so a pass that breaks a
-      # pin must fail here rather than on the next unrelated PR.
+      # SAME GATE, SAME REASON AS `weekly-screen.yml` — read the long note there, including why
+      # this is the ONLY gate the commit below gets. This job commits `scoring_report.md`, the
+      # surface the BUY−AVOID spread is READ from, so a pass that breaks a pin must fail here
+      # rather than on the next unrelated PR.
       - name: Gate the refreshed artifacts before they can reach main
         run: |
           if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
+          python -m ruff check vinci tests frontend
+          python -m mypy --strict vinci
           python -m pytest -m "not network" -p no:warnings --tb=short
 
       - name: Commit scoring report

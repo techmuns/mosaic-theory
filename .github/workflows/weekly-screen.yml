@@ -19,6 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # FULL HISTORY, for the same reason gate.yml takes it — and here it is load-bearing,
+          # because the pre-push gate below is the ONLY gate this commit gets. Several pins read
+          # real historical blobs (`test_state_identifiers` reads `c112f25:STATE.md`;
+          # `test_scheduled_workflows` reads the incident workflow out of `607e7d1`) and SKIP on a
+          # shallow clone. At the default depth 1 this job would run a quietly WEAKER suite than
+          # every PR does — "passes everywhere except where it matters", which is the exact shape
+          # of the defect this file is being changed to close. Review finding, #456.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -67,9 +76,17 @@ jobs:
       # a docs-only PR went red identically to a code one, and main's own last gate had run BEFORE
       # the push and stayed green. So the breakage read as the innocent PR's regression.
       #
-      # GATE BEFORE PUSH, NOT ONLY AFTER: a snapshot that breaks a pin now fails THIS job and never
-      # reaches main, so the queue stops advancing loudly instead of main going red quietly. The
-      # push below also no longer skips CI, so main carries its own attestation either way.
+      # THIS IS THE ONLY GATE THIS COMMIT GETS — there is no second one downstream. A push
+      # authenticated with the workflow's own GITHUB_TOKEN does not create a new workflow run
+      # (GitHub's anti-recursion rule; only workflow_dispatch and repository_dispatch are exempt),
+      # so `gate.yml`'s `on: push` will NOT fire for the commit below whatever its message says.
+      # Removing `[skip ci]` therefore deletes a marker that was never doing the work — it is kept
+      # out because it would suppress the gate for real the day this push moves to an App/PAT
+      # token, and because a marker that claims a gate is being skipped when none would have run is
+      # a lie in the record. THE GATING HAPPENS HERE OR NOWHERE. Review finding, #456.
+      #
+      # SO IT RUNS gate.yml's THREE CHECKS, in gate.yml's order, and that file's standing rule
+      # applies to this block too: if you change one, change the other.
       #
       # THE STORE IS MOVED ASIDE FIRST so this runs under the conditions gate.yml runs under. A
       # populated `data/vinci.db` makes some pins mean something different here than on main — the
@@ -78,6 +95,8 @@ jobs:
       - name: Gate the refreshed artifacts before they can reach main
         run: |
           if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
+          python -m ruff check vinci tests frontend
+          python -m mypy --strict vinci
           python -m pytest -m "not network" -p no:warnings --tb=short
 
       - name: Commit refreshed snapshots
