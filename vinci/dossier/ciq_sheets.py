@@ -2929,26 +2929,104 @@ def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
     return "\n\n".join(slices) if slices else None
 
 
-# --- (PR-B A3) CIQ Key Developments — dated, typed operating events ------------------------------
+# --- (PR-B A3) CIQ Key Developments — dated, typed operating + corporate events ------------------
 # The KD export (real RTF; striprtf — no LibreOffice) is a table 'Date | Type | Headline | Other
-# Parties' + a 'Situation:' detail line per row. Only OPERATING-mechanism Types are kept — an
-# INCLUDE list (the long tail is index-constituent / earnings-calendar / governance noise). Set by
-# face-validity; extend on observed misses. NOT a capital-markets or governance event.
+# Parties' + a 'Situation:' detail line per row. An INCLUDE list, set by face-validity and
+# EXTENDED ON OBSERVED MISSES — which is what happened (2026-08-13 audit, prompted by the analyst):
+#
+# THE ORIGINAL FRAME ("operating mechanisms only — NOT a capital-markets or governance event")
+# excluded every M&A row for a locally-good reason while NO OTHER TIER owned the class, and for a
+# sub-8-K-materiality deal the KD export is the ONLY source in the stack that carries the fact.
+# Two live misses proved it: **V's $2.4bn BioCatch agreement (Aug-03, no 8-K exists — press
+# release only)** and **UBER's Delivery Hero Business Combination Agreement (May-23)**, both
+# sitting in exports on disk while the pages said nothing / "qualitative only".
+#
+# ADMITTED (each measured on the 19-workbook corpus before admission):
+#   M&A Transaction Announcement / Closing (12+13 rows) — definitive agreements with consideration
+#     in the Situation line; the class the two misses were in. "M&A Rumors and Discussion" stays
+#     OUT (speculation), "M&A Call" stays OUT (a calendar entry, not an event).
+#   Buyback Transaction Announcements (19) — the AUTHORIZATION, i.e. forward capacity, the
+#     buyback mirror of the dilution pipeline. "Buyback Tranche Update" (56 rows of quarterly
+#     drip) stays OUT: realized buyback is owned by capital_allocation's XBRL, and admitting the
+#     drip would triple the block for facts another tier already states.
+#   Fixed Income Offering (20) — new leverage announced between filings; the survival axis.
+#   Executive/Board Changes (57) — REVERSES a deliberate original exclusion ("governance noise"),
+#     with the analyst's case as the evidence: VRRM's CEO exit was a flagged de-rating driver and
+#     the page had nothing. The 8-K 5.02 path catches only what is 8-K'd.
+# EXCLUDED WITH MEASUREMENT, not by frame:
+#   Private Placement (24) — sampled rows are THIRD-PARTY ecosystem funding (Atoms and ONDC raising
+#     money on UBER's export, not UBER), so admission would put other companies' rounds on the
+#     page. The subject's own raises reach the record via the dilution pipeline (S-1/424B).
+#   Strategic Alliance (31) — softer signal, operator call, unchanged.
 _KD_KEEP = re.compile(
     r"guidance|forecast|product|client\s+announcement|business\s+expansion|capacity|"
-    r"impairment|write[\s-]?off", re.I)
+    r"impairment|write[\s-]?off|m&a\s+transaction|buyback\s+transaction\s+announcement|"
+    r"fixed\s+income\s+offering|executive(?:/board)?\s+chang|private\s+placement", re.I)
 _KD_DATE = re.compile(r"^[A-Z][a-z]{2}-\d{2}-\d{4}$")
 
 
-def _kd_columns(lines: list[str]) -> tuple[int, int] | None:
-    """The (Type, Headline) column indices from the KD table header — the layout VARIES: some
-    exports carry a 'Company' column ('Date|Company|Type|Headline|…'), some do not
-    ('Date|Type|Headline|…'). Read the header, never assume fixed positions. None when absent."""
+def _kd_columns(lines: list[str]) -> tuple[int, int, int | None] | None:
+    """The (Type, Headline, Company|None) column indices from the KD table header — the layout
+    VARIES: some exports carry a 'Company' column ('Date|Company|Type|Headline|…'), some do not
+    ('Date|Type|Headline|…'). Read the header, never assume fixed positions. None when absent.
+    Company is optional BY LAYOUT (3 of 19 committed exports lack it — MVST, NFLX, VITL), which is
+    why attribution has a headline fallback rather than a drop."""
     for ln in lines:
         cells = [c.strip().lower() for c in ln.split("|")]
         if "date" in cells and "type" in cells and "headline" in cells:
-            return cells.index("type"), cells.index("headline")
+            comp = cells.index("company") if "company" in cells else None
+            return cells.index("type"), cells.index("headline"), comp
     return None
+
+
+#: Corporate-event types REQUIRE subject attribution (review finding, #458 — twice over). The KD
+#: export is NOT issuer-only: it carries rows about counterparties and investees. Two noise layers
+#: were MEASURED, and they need different tools:
+#:   L1 — rows whose Company IS a third party (UBER's export lists `SMB Holding Corporation`
+#:        acquiring a Delivery Hero stake; CPB's lists `Campbell Investment Company`): 52 rows
+#:        fleet-wide. Caught by matching Company to the issuer.
+#:   L2 — rows ATTRIBUTED to the subject but ABOUT a third party's event: UBER's export carries
+#:        Atoms', Lucid's, HysetCo's and Wayve's raises under `Company='Uber Technologies, Inc.
+#:        (NYSE:UBER)'` because Uber PARTICIPATED. 15 rows fleet-wide, all Private Placement.
+#:        The Company filter cannot see these; only the HEADLINE ACTOR can.
+#: Operating types (guidance/product/…) keep their original no-attribution behaviour.
+_KD_CORPORATE = re.compile(
+    r"m&a\s+transaction|buyback\s+transaction\s+announcement|fixed\s+income\s+offering|"
+    r"executive(?:/board)?\s+chang|private\s+placement", re.I)
+
+
+def _kd_issuer_head(filename: str, ticker: str) -> str:
+    """The issuer's name-head from the workbook FILENAME ('Microvast Holdings Inc NasdaqCM MVST
+    Key Developments.rtf' → 'microvast holdings'), the one per-name identity available inside this
+    extractor. Normalised: lowercase, punctuation → space. Falls back to the ticker alone when the
+    exchange token is not found (never guesses a name)."""
+    stem = re.split(r"\b(?:NYSE|Nasdaq\w*|AMEX|BATS|OTC\w*)\b", filename, maxsplit=1)[0]
+    head = re.sub(r"[^a-z0-9 ]+", " ", stem.lower()).split()
+    return " ".join(head[:2]) if head else ticker.lower()
+
+
+def _kd_norm(text: str) -> str:
+    # collapse the whitespace: 'Netflix, Inc.' must normalise to 'netflix inc', not 'netflix  inc'
+    # — an uncollapsed run made EVERY startswith fail and silently dropped all of NFLX's events.
+    return " ".join(re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split())
+
+
+def _kd_subject_row(company: str, headline: str, *, ticker: str, name_head: str,
+                    actor_required: bool) -> bool:
+    """Is this KD row the SUBJECT's own event?
+
+    `actor_required` is the L2 tool: for Private Placement the HEADLINE's actor must be the
+    subject even when the Company cell says so — 'Atoms announced that it has received $1.7
+    billion…' sits under Company=UBER, and admitting it would put another company's raise on the
+    page. A contains-check on the ticker would fail the other way (HysetCo's headline names Uber
+    AS THE INVESTOR), so the actor test is a STARTSWITH on the issuer's name-head, never a
+    contains."""
+    if actor_required:
+        return _kd_norm(headline).startswith(name_head)
+    if company:
+        return f":{ticker})" in company or _kd_norm(company).startswith(name_head)
+    # no Company column (3 of 19 exports) → the headline actor is the only attribution there is
+    return _kd_norm(headline).startswith(name_head)
 
 
 def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
@@ -2968,7 +3046,8 @@ def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
     cols = _kd_columns(lines)
     if cols is None:
         return []  # no recognizable header → honest empty (never guess column positions)
-    type_i, head_i = cols
+    type_i, head_i, comp_i = cols
+    name_head = _kd_issuer_head(wb.path.name, bundle.ticker)
     out: list[OperatingDriver] = []
     seen: set[str] = set()
     for i, ln in enumerate(lines):
@@ -2978,6 +3057,16 @@ def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
         date_s, kd_type, headline = cells[0], cells[type_i], cells[head_i]
         if not kd_type or _KD_KEEP.search(kd_type) is None:
             continue
+        # SUBJECT ATTRIBUTION for corporate-event types (#458 review). The export is not
+        # issuer-only, and the two measured noise layers need different tools: Company-match for
+        # third-party-attributed rows, headline-ACTOR for Private Placement (where Company says
+        # UBER while the raise is Atoms'). Operating types keep the original behaviour.
+        if _KD_CORPORATE.search(kd_type):
+            company = cells[comp_i] if comp_i is not None and comp_i < len(cells) else ""
+            if not _kd_subject_row(
+                    company, headline, ticker=bundle.ticker, name_head=name_head,
+                    actor_required=bool(re.search(r"private\s+placement", kd_type, re.I))):
+                continue
         # the 'Situation:' detail is the next non-row line, if present
         situation = ""
         for nxt in lines[i + 1:i + 3]:
