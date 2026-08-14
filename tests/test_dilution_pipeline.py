@@ -158,3 +158,115 @@ class _MechStub:
 
     def __init__(self, dp) -> None:  # noqa: ANN001
         self.dilution_pipeline = dp
+
+
+# ─── the deployed twin (review of #457) ─────────────────────────────────────────────────────────
+def test_the_web_renderer_shows_the_pipeline_too() -> None:
+    """REVIEW FINDING (#457) — the md renderer grew this block and the JS twin did not.
+
+    The site renders `dossier.json` through `frontend/views/shared/dossier.js`, and its
+    `capitalAllocation()` never read `dilution_pipeline`. A populated pipeline therefore printed in
+    the PDF and was **silently absent from the deployed page** — the surface the human actually
+    reads. The parity is explicit in that file (its own comment cites `render._capital_allocation`)
+    and it broke the moment one side moved alone.
+
+    DRIVEN THROUGH THE REAL `renderDossier` ON A REAL COMMITTED DOSSIER, because the block is
+    reachable only inside `financialSnapshot()` — which returns early without a financial summary.
+    A hand-built bare record renders nothing and would have "passed" against a still-broken twin;
+    the committed record is the only fixture that reaches the code under test.
+    """
+    import json as _json
+    import pathlib
+    import shutil
+    import subprocess
+
+    import pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    root = pathlib.Path(__file__).resolve().parents[1]
+    committed = sorted((root / "data" / "dossiers").glob("*/dossier.json"))
+    if not committed:
+        pytest.skip("no committed dossiers in this checkout")
+    doc = _json.loads(committed[0].read_text())
+
+    dj = (root / "frontend" / "views" / "shared" / "dossier.js").resolve().as_uri()
+    line = "shelf registrations 1 (S-3ASR, last 2026-01-23) — 3y window to 2026-08-12"
+    pipeline = {"filings": [], "window_days": _DILUTION_SCAN_DAYS,
+                "line": {"value": line, "source_ref": "EDGAR filing index",
+                         "status": "present", "note": None}}
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const doc = {_json.dumps(doc)};
+const out = {{}};
+out.absent = renderDossier(doc, null);
+const withDp = {{ ...doc, mechanical: {{ ...doc.mechanical,
+                   dilution_pipeline: {_json.dumps(pipeline)} }} }};
+out.present = renderDossier(withDp, null);
+console.log(JSON.stringify(out));
+"""
+    res = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr[-800:]
+    got = _json.loads(res.stdout)
+
+    assert "Registered offering pipeline" in got["present"], (
+        "a populated pipeline is invisible on the deployed page — it renders in the PDF only")
+    assert "equity/debt not distinguished" in got["present"], (
+        "the web label dropped the disclaimer the md label carries — the two surfaces disagree "
+        "about what the number means")
+    assert "shelf registrations 1" in got["present"], "the value itself never reached the HTML"
+    assert "Registered offering pipeline" not in got["absent"], (
+        "a dossier without the field rendered the block — committed pages would change on merge, "
+        "not on their next assembly")
+
+
+def test_the_form_taxonomy_covers_the_registration_families() -> None:
+    """THE ALLOWLIST IS EXACT-MATCH, so a form missing from it is invisible BEFORE `_dilution_line`
+    runs — and the failure direction is a FALSE CLEAN register, not an under-count (review finding,
+    #457). Two gaps were found: MEF variants (Rule 462(b), adding securities to an already-effective
+    registration) and **S-4 — measured and PRESENT: V carries five in-window**, shares issued to a
+    target's holders diluting exactly like a secondary.
+
+    Pins the FAMILIES rather than a frozen list, so adding `424B9` is fine and dropping the whole
+    merger group is not."""
+    from vinci.dossier.mechanical import (
+        _DILUTION_EMPLOYEE,
+        _DILUTION_FRESH,
+        _DILUTION_MERGER,
+        _DILUTION_SHELF,
+        _DILUTION_SUPPLEMENT,
+    )
+
+    every = set(_DILUTION_SHELF + _DILUTION_SUPPLEMENT + _DILUTION_FRESH
+                + _DILUTION_MERGER + _DILUTION_EMPLOYEE)
+    for form in ("S-3", "S-3ASR", "S-3MEF", "F-3", "F-3MEF",       # shelf + 462(b) top-ups
+                 "424B2", "424B5", "424B7",                        # draws
+                 "S-1", "S-1MEF", "F-1",                           # fresh
+                 "S-4", "S-4/A", "F-4",                            # acquisition-funded
+                 "S-8"):                                           # employee plans
+        assert form in every, (
+            f"{form!r} is outside the taxonomy, so `recent_filings` drops it before the composer "
+            f"sees it — a name whose only registered capacity is a {form} reports 'no "
+            f"registration statements on file', a FALSE CLEAN")
+
+    # the groups stay DISJOINT — a form counted twice would double the headline
+    groups = (_DILUTION_SHELF, _DILUTION_SUPPLEMENT, _DILUTION_FRESH,
+              _DILUTION_MERGER, _DILUTION_EMPLOYEE)
+    seen: set[str] = set()
+    for g in groups:
+        assert not (seen & set(g)), f"a form appears in two groups: {sorted(seen & set(g))}"
+        seen |= set(g)
+
+
+def test_an_s4_only_register_is_not_reported_as_clean() -> None:
+    """THE V SHAPE, as a behavioural pin rather than a membership check: five S-4/S-4A in-window,
+    and before the taxonomy fix the same register composed as 'no registration statements … on
+    file'. That wording on a name registering acquisition shares is the false clean this guards."""
+    _, line = _dilution_line([_f("S-4", "2026-03-05"), _f("S-4/A", "2026-04-06")], REF)
+    assert "no registration statements" not in line, (
+        "a register holding two S-4s reported as empty — the false-clean direction")
+    assert "merger registrations 2 (S-4/S-4/A, last 2026-04-06)" in line

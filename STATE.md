@@ -12412,7 +12412,32 @@ one evidence-backed leg at a time.
   **BACK-COMPAT via the EXISTING precedent:** the field registered in `_DROP_WHEN_NONE`
   (the `consensus_levels` / #303 principle), so a no-op refresh stays byte-identical on all 14
   committed dossiers — the pages change on their next assembly, not on merge. Five mutations each
-  redden a named test. **Remaining Tier-1 queue: 13D/G events → KD types batch → SBC line.**
+  redden a named test.
+  **REVIEW FINDINGS (#457), both correctness, both mine:**
+  **(P1) THE DEPLOYED WEB TWIN NEVER GOT THE BLOCK.** The site renders `dossier.json` through
+  `frontend/views/shared/dossier.js`, whose `capitalAllocation()` did not read
+  `dilution_pipeline` — so a populated pipeline printed in the PDF and was **silently absent from
+  the browser**, the surface the human actually reads. The parity is EXPLICIT in that file (its
+  own comment cites `render._capital_allocation`) and broke the moment one side moved alone.
+  Fixed with a `dilutionPipeline(m)` twin, called on both the normal and the no-`capital_allocation`
+  paths, pinned through the REAL `renderDossier`. **My first cut of that pin passed against a
+  still-broken twin** — a hand-built bare record renders nothing because the block is reachable
+  only inside `financialSnapshot()`, which returns early without a financial summary. The pin now
+  drives a REAL COMMITTED DOSSIER, which is the only fixture that reaches the code under test.
+  **(P2) THE EXACT-MATCH FORM LIST COULD REPORT A FALSE CLEAN.** `recent_filings` drops any form
+  not literally in the tuple, so a missing form is invisible BEFORE the composer runs — failing
+  toward "no registration statements on file" rather than an under-count, which is the dangerous
+  direction. The reviewer named the MEF variants (Rule 462(b) top-ups to an effective
+  registration); **the live corpus supplied a different, PRESENT miss: V carries five in-window
+  S-4/S-4A** (2026-03-05, 2026-04-06 + three in 2024) — shares registered to fund an acquisition,
+  diluting exactly like a secondary. Both added, as an explicit taxonomy with a completeness pin
+  and a disjointness pin, plus a behavioural `S-4-only` case. V's line now reads
+  *"…; merger registrations 5 (S-4/S-4/A, last 2026-04-06)"*.
+  **OBSERVED, PRE-EXISTING, NOT FIXED HERE:** the whole capital-allocation section — impairment
+  headroom, buybacks, peer intensity AND this pipeline — renders only inside `financialSnapshot()`,
+  so a name whose financial summary is absent shows none of it on either surface. That predates
+  this PR and applies to three existing blocks; recorded rather than widened into.
+  **Remaining Tier-1 queue: 13D/G events → KD types batch → SBC line.**
 
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored

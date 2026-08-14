@@ -1794,11 +1794,28 @@ _INSIDER_SCAN_DAYS = 1095
 _DILUTION_SCAN_DAYS = 1095
 #: Form families, grouped by WHAT THE FILING IS — the groups are the vocabulary of the composed
 #: line. Shelf = registered capacity; 424B = a draw against it (the ATM/notes/secondary machinery);
-#: S-1/F-1 = fresh registration outside a shelf; S-8 = employee-plan shares, REAL dilution but
-#: routine, so it is counted on its own and never in the headline.
-_DILUTION_SHELF = ("S-3", "S-3/A", "S-3ASR", "F-3", "F-3/A", "F-3ASR")
+#: S-1/F-1 = fresh registration outside a shelf; S-4 = shares registered to fund an ACQUISITION;
+#: S-8 = employee-plan shares, REAL dilution but routine, so it is counted on its own and never in
+#: the headline.
+#:
+#: THE TAXONOMY IS EXPLICIT AND ITS BOUNDARY IS TESTED (review finding, #457). `recent_filings`
+#: drops any form not LITERALLY in the tuple, so a form missing here is invisible BEFORE
+#: `_dilution_line` runs — and an incomplete list therefore reports a false CLEAN register rather
+#: than an under-count, which is the dangerous direction. Two gaps were found:
+#:
+#: - **MEF variants** (`S-3MEF` etc.) — a Rule 462(b) filing that ADDS securities to an
+#:   already-effective registration. Registered capacity by definition; absent from this fleet's
+#:   3y window, included because absence from one corpus is not absence from the class.
+#: - **S-4 / S-4/A** — measured, and PRESENT: **V carries five in-window** (2026-03-05,
+#:   2026-04-06 + three in 2024). Shares issued to a target's holders dilute exactly like a
+#:   secondary, so this became its own group rather than a silent omission.
+#:
+#: A form outside every tuple below is one this block does not claim to see; the completeness
+#: pin (`test_the_form_taxonomy_covers_the_registration_families`) is what keeps that list honest.
+_DILUTION_SHELF = ("S-3", "S-3/A", "S-3ASR", "S-3MEF", "F-3", "F-3/A", "F-3ASR", "F-3MEF")
 _DILUTION_SUPPLEMENT = ("424B1", "424B2", "424B3", "424B4", "424B5", "424B6", "424B7", "424B8")
-_DILUTION_FRESH = ("S-1", "S-1/A", "F-1", "F-1/A")
+_DILUTION_FRESH = ("S-1", "S-1/A", "S-1MEF", "F-1", "F-1/A", "F-1MEF")
+_DILUTION_MERGER = ("S-4", "S-4/A", "S-4MEF", "F-4", "F-4/A")
 _DILUTION_EMPLOYEE = ("S-8", "S-8 POS")
 
 
@@ -1831,6 +1848,7 @@ def _dilution_line(filings: list[Filing], reference_date: date) -> tuple[list[Fi
         part(_DILUTION_SHELF, "shelf registrations"),
         part(_DILUTION_SUPPLEMENT, "prospectus supplements"),
         part(_DILUTION_FRESH, "fresh registrations"),
+        part(_DILUTION_MERGER, "merger registrations"),
     ) if p]
     emp = part(_DILUTION_EMPLOYEE, "employee-plan (S-8)")
     yrs = _DILUTION_SCAN_DAYS // 365
@@ -1853,8 +1871,8 @@ def _dilution_pipeline(
     (no standing capacity), decision-relevant exactly like a never-impaired goodwill balance.
     UNKNOWN is reserved for the states where the register could not be READ — no CIK, or the
     fetch failing — and the two must never render alike."""
-    all_forms = (_DILUTION_SHELF + _DILUTION_SUPPLEMENT
-                 + _DILUTION_FRESH + _DILUTION_EMPLOYEE)
+    all_forms = (_DILUTION_SHELF + _DILUTION_SUPPLEMENT + _DILUTION_FRESH
+                 + _DILUTION_MERGER + _DILUTION_EMPLOYEE)
     if not cik:
         return DilutionPipeline(filings=[], window_days=_DILUTION_SCAN_DAYS,
                                 line=Sourced.unknown(note="no CIK for the filing-index lookup"))
@@ -1874,7 +1892,7 @@ def _dilution_pipeline(
         window_days=_DILUTION_SCAN_DAYS,
         line=Sourced.present(
             line,
-            source_ref=("EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-8), window "
+            source_ref=("EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window "
                         f"{(reference_date - timedelta(days=_DILUTION_SCAN_DAYS)).isoformat()}"
                         f"→{reference_date.isoformat()}{newest}")))
 
