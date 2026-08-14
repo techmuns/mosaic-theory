@@ -120,15 +120,24 @@ def test_a_scheduled_push_is_gated_before_it_can_reach_main(path: pathlib.Path) 
 def test_the_lint_rejects_the_workflow_that_actually_caused_the_incident() -> None:
     """THE NEGATIVE PIN IS THE REAL FAILURE, not a mutation drawn from the lint's own marker list.
 
-    Skips when the commit is unreachable (a shallow clone), the same way `test_state_identifiers`
-    handles its historical collision — gate.yml checks out at `fetch-depth: 0` for exactly this.
+    Skips ONLY on a genuinely shallow clone, the same way `test_state_identifiers` handles its
+    historical collision — gate.yml checks out at `fetch-depth: 0` for exactly this. The shallowness
+    is CHECKED rather than inferred from the failure: a negative pin that quietly skips itself
+    wherever it cannot read its evidence is a pin that reports green for the wrong reason, which is
+    the defect class this whole module is about. On a full clone an unreadable blob RAISES.
     """
     try:
         text = subprocess.run(
             ["git", "show", f"{INCIDENT_COMMIT}:{INCIDENT_WORKFLOW}"],
             cwd=ROOT, capture_output=True, text=True, check=True).stdout
-    except (subprocess.CalledProcessError, FileNotFoundError):  # pragma: no cover - shallow clone
-        pytest.skip(f"{INCIDENT_COMMIT} unreachable — needs full history")
+    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
+                                 cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        if shallow != "true":
+            raise AssertionError(
+                f"{INCIDENT_COMMIT}:{INCIDENT_WORKFLOW} is unreadable on a FULL clone — the "
+                f"negative pin has no evidence to check and must not pass quietly: {exc}") from exc
+        pytest.skip(f"{INCIDENT_COMMIT} unreachable — shallow clone, needs full history")
 
     found = violations(INCIDENT_WORKFLOW, text)
     assert any("[skip ci]" in v for v in found), (
