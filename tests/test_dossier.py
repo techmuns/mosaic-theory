@@ -2234,13 +2234,20 @@ def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str) -> ciq.CiqBundle:
 
 def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatch) -> None:
     """(PR-B A3) EVENT rows from the KD export: header-driven column detection (5-col vs 4-col
-    layouts), the INCLUDE filter (guidance/product KEPT; index-constituent / exec-change DROPPED),
-    the Situation detail as verbatim, and a source_ref bound to the file + date."""
+    layouts), the INCLUDE filter, the Situation detail as verbatim, and a source_ref bound to the
+    file + date.
+
+    THE EXEC-CHANGE ASSERTION MOVED, WITH ITS REASON (2026-08-13 KD-coverage audit). This pin
+    originally asserted `Executive/Board Change - Other` DROPPED — the tier's first charter classed
+    it "governance noise". The audit reversed that deliberately: VRRM's CEO exit was an
+    analyst-flagged de-rating driver the page never carried, and the 8-K 5.02 path sees only what
+    is 8-K'd. The assertion moves to KEPT rather than silently weakening (the freshness-pin rule).
+    """
     rows = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_5COL))
     kept = {r.metric for r in rows}
     assert "Corporate Guidance - Raised" in kept and "Product-Related Announcement" in kept
     assert "Index Constituent Drop" not in kept  # ⊖ index mechanics dropped
-    assert "Executive/Board Change - Other" not in kept  # ⊖ governance dropped
+    assert "Executive/Board Change - Other" in kept  # ⊕ ADMITTED 2026-08-13 (was ⊖ governance)
     guid = next(r for r in rows if r.metric == "Corporate Guidance - Raised")
     assert guid.kind.value == "event" and guid.period == "May-07-2026" and guid.tier == "anchored"
     assert guid.value == "Acme Raises FY2026 Guidance"
@@ -2249,6 +2256,86 @@ def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatc
     # 4-column layout resolves Type at a DIFFERENT index — header-driven, not positional
     rows4 = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_4COL))
     assert [r.metric for r in rows4] == ["Corporate Guidance - New/Confirmed"]  # index add dropped
+
+
+_KD_EVENTS = (
+    "Date|Company|Type|Headline|Other Parties|\n"
+    "Aug-03-2026|Subject Co.|M&A Transaction Announcement|Subject signed a definitive agreement "
+    "to acquire Target Ltd. for $2.4 billion|Target Ltd.|\n"
+    "Situation: Subject Co. signed a definitive agreement to acquire Target Ltd. for $2.4 billion "
+    "on August 3, 2026.\n"
+    "May-18-2026|Subject Co.|M&A Transaction Closing|Subject completed the acquisition of "
+    "Target Ltd.|-|\n"
+    "Feb-27-2026|Subject Co.|M&A Transaction Cancellation|Subject terminated the planned "
+    "combination|-|\n"
+    "May-22-2026|Subject Co.|M&A Rumors and Discussion|Subject reportedly explores options|-|\n"
+    "Jul-16-2026|Subject Co.|M&A Call|Subject M&A Call|-|\n"
+    "Nov-20-2025|Subject Co.|Buyback Transaction Announcements|Subject announces an Equity "
+    "Buyback for $600 million|-|\n"
+    "May-05-2026|Subject Co.|Buyback Tranche Update|Tranche Update on Subject's Equity Buyback "
+    "Plan|-|\n"
+    "Feb-12-2026|Subject Co.|Fixed Income Offering|Subject has completed a Fixed-Income Offering "
+    "of $599.8 million|-|\n"
+    "Jul-22-2026|Subject Co.|Private Placement|Ecosystem Startup announced $1.7 billion in "
+    "funding|Ecosystem Startup|\n"
+    "Jul-08-2026|Subject Co.|Executive Change - CEO|Subject announces CEO transition|-|\n"
+    "Sep-08-2025|Subject Co.|Conference|Bank conference presentation|-|\n"
+)
+
+
+def test_a3_corporate_events_admitted_and_the_measured_noise_stays_out(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE KD-COVERAGE AUDIT (2026-08-13), pinned type by type. The original frame ("operating
+    mechanisms only — NOT a capital-markets event") excluded every M&A row while NO other tier
+    owned the class — and for a sub-8-K-materiality deal the KD export is the ONLY source in the
+    stack: **V's $2.4bn BioCatch agreement has no 8-K at all** (press release only), and UBER's
+    Delivery Hero Business Combination Agreement sat in the export while the page said
+    "qualitative only". Both were on disk, filtered out.
+
+    EVERY EXCLUSION HERE IS MEASURED, NOT ASSUMED: rumors are speculation; "M&A Call" is a
+    calendar entry; "Buyback Tranche Update" is the realized drip capital_allocation's XBRL
+    already owns (56 fleet rows of repetition); "Private Placement" sampled as THIRD-PARTY
+    ecosystem funding (Atoms/ONDC raising money on UBER's export — not UBER), so admitting it
+    puts other companies' rounds on the page.
+
+    "M&A Transaction Cancellation" is admitted BY THE PREFIX, deliberately: a terminated deal is
+    exactly as decision-relevant as an announced one (NFLX's is the WBD termination, the same
+    event its Item-1.02 flag names). The prefix beat the exact-name list in the live run — the
+    real export says "Executive Change - CEO" (singular) where the probe guessed "Changes"."""
+    rows = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_EVENTS))
+    kept = {r.metric for r in rows}
+    for admitted in ("M&A Transaction Announcement", "M&A Transaction Closing",
+                     "M&A Transaction Cancellation", "Buyback Transaction Announcements",
+                     "Fixed Income Offering", "Executive Change - CEO"):
+        assert admitted in kept, f"{admitted!r} dropped — the audit's admission did not land"
+    for excluded in ("M&A Rumors and Discussion", "M&A Call", "Buyback Tranche Update",
+                     "Private Placement", "Conference"):
+        assert excluded not in kept, f"{excluded!r} admitted — measured noise reached the page"
+    ma = next(r for r in rows if r.metric == "M&A Transaction Announcement")
+    assert "$2.4 billion" in ma.verbatim, "the Situation consideration did not reach the record"
+
+
+def test_a3_the_named_misses_are_on_the_live_corpus(monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE TWO MISSES THAT PROMPTED THE AUDIT, pinned on the LICENSED workbooks (skip-if-absent —
+    raw CIQ is never committed): BioCatch must surface from V's export and the Delivery Hero
+    Business Combination Agreement from UBER's. Phrasing-independent: presence of the counterparty
+    in an admitted row, never an exact string."""
+    from vinci.config import get_config
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    root = get_config().data_dir / "manual" / "ciq"
+    ms = LocalFolderStore(root)
+    for tk, probe in (("V", "biocatch"), ("UBER", "delivery hero")):
+        files = ms.files(tk)
+        if not files:
+            pytest.skip(f"licensed CIQ bundle for {tk} unavailable (never committed)")
+        rows = cs.key_development_drivers(ciq.CiqBundle.from_files(tk, files))
+        hit = [r for r in rows if probe in (r.value + r.verbatim).lower()
+               and r.metric.startswith("M&A Transaction")]
+        assert hit, (
+            f"{tk}: no admitted M&A row mentions {probe!r} — the miss that prompted this audit "
+            f"is still filtered out")
 
 
 def test_a3_headerless_kd_is_honest_empty(monkeypatch: pytest.MonkeyPatch) -> None:

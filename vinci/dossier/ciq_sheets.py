@@ -2929,14 +2929,39 @@ def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
     return "\n\n".join(slices) if slices else None
 
 
-# --- (PR-B A3) CIQ Key Developments — dated, typed operating events ------------------------------
+# --- (PR-B A3) CIQ Key Developments — dated, typed operating + corporate events ------------------
 # The KD export (real RTF; striprtf — no LibreOffice) is a table 'Date | Type | Headline | Other
-# Parties' + a 'Situation:' detail line per row. Only OPERATING-mechanism Types are kept — an
-# INCLUDE list (the long tail is index-constituent / earnings-calendar / governance noise). Set by
-# face-validity; extend on observed misses. NOT a capital-markets or governance event.
+# Parties' + a 'Situation:' detail line per row. An INCLUDE list, set by face-validity and
+# EXTENDED ON OBSERVED MISSES — which is what happened (2026-08-13 audit, prompted by the analyst):
+#
+# THE ORIGINAL FRAME ("operating mechanisms only — NOT a capital-markets or governance event")
+# excluded every M&A row for a locally-good reason while NO OTHER TIER owned the class, and for a
+# sub-8-K-materiality deal the KD export is the ONLY source in the stack that carries the fact.
+# Two live misses proved it: **V's $2.4bn BioCatch agreement (Aug-03, no 8-K exists — press
+# release only)** and **UBER's Delivery Hero Business Combination Agreement (May-23)**, both
+# sitting in exports on disk while the pages said nothing / "qualitative only".
+#
+# ADMITTED (each measured on the 19-workbook corpus before admission):
+#   M&A Transaction Announcement / Closing (12+13 rows) — definitive agreements with consideration
+#     in the Situation line; the class the two misses were in. "M&A Rumors and Discussion" stays
+#     OUT (speculation), "M&A Call" stays OUT (a calendar entry, not an event).
+#   Buyback Transaction Announcements (19) — the AUTHORIZATION, i.e. forward capacity, the
+#     buyback mirror of the dilution pipeline. "Buyback Tranche Update" (56 rows of quarterly
+#     drip) stays OUT: realized buyback is owned by capital_allocation's XBRL, and admitting the
+#     drip would triple the block for facts another tier already states.
+#   Fixed Income Offering (20) — new leverage announced between filings; the survival axis.
+#   Executive/Board Changes (57) — REVERSES a deliberate original exclusion ("governance noise"),
+#     with the analyst's case as the evidence: VRRM's CEO exit was a flagged de-rating driver and
+#     the page had nothing. The 8-K 5.02 path catches only what is 8-K'd.
+# EXCLUDED WITH MEASUREMENT, not by frame:
+#   Private Placement (24) — sampled rows are THIRD-PARTY ecosystem funding (Atoms and ONDC raising
+#     money on UBER's export, not UBER), so admission would put other companies' rounds on the
+#     page. The subject's own raises reach the record via the dilution pipeline (S-1/424B).
+#   Strategic Alliance (31) — softer signal, operator call, unchanged.
 _KD_KEEP = re.compile(
     r"guidance|forecast|product|client\s+announcement|business\s+expansion|capacity|"
-    r"impairment|write[\s-]?off", re.I)
+    r"impairment|write[\s-]?off|m&a\s+transaction|buyback\s+transaction\s+announcement|"
+    r"fixed\s+income\s+offering|executive(?:/board)?\s+chang", re.I)
 _KD_DATE = re.compile(r"^[A-Z][a-z]{2}-\d{2}-\d{4}$")
 
 

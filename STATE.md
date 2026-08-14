@@ -11542,7 +11542,13 @@ confirmed-record mode the directive first assumed.
 
 The follow key ships the CAPABILITY; three obligations follow from actually USING it. Ordered.
 
-1. **ARTIFACT PASS for UBER — carries three roster-pin moves with it.** UBER's `dossier.json` +
+1. ~~**ARTIFACT PASS for UBER — carries three roster-pin moves with it.**~~ **CLOSED 2026-08-13,
+   verified discharged rather than assumed:** (a) `tests/fixtures/companyfacts/UBER.json` is
+   present; (b) `test_ev_gap_routing` now DERIVES membership — its own docstring records the
+   `len(got) == 10` literal it replaced; (c) the `quiet == {…literal tickers…}` pin is gone from
+   `test_freshness.py`. UBER has been in the committed fleet since the 2026-08-12 passes. The
+   entry predated all of that; nothing remained to do.
+   **ORIGINAL ENTRY:** **ARTIFACT PASS for UBER — carries three roster-pin moves with it.** UBER's `dossier.json` +
    `frontend/dossiers/UBER.*` assembled clean and are held OUT of PR #365 on purpose: committing
    them reds three tests that pin the fleet ROSTER by literal name and count. This is the
    ARTIFACT-PASS RULE's own predicted case ("a re-assembled dossier can turn a pinned test red"),
@@ -12514,7 +12520,29 @@ one evidence-backed leg at a time.
   headroom, buybacks, peer intensity AND this pipeline — renders only inside `financialSnapshot()`,
   so a name whose financial summary is absent shows none of it on either surface. That predates
   this PR and applies to three existing blocks; recorded rather than widened into.
-  **Remaining Tier-1 queue: 13D/G events → KD types batch → SBC line.**
+  **Remaining Tier-1 queue: 13D/G events → SBC line** *(KD types batch: BUILT, next line).*
+
+- **KD EVENT COVERAGE BUILT 2026-08-13 (`feat/kd-event-coverage`) — PR-1 of the pre-assembly
+  set; the BioCatch/Delivery Hero seam closed at its filter.** `_KD_KEEP` admits, each measured
+  on the 19-workbook corpus first: **M&A Transaction Announcement/Closing (12+13 rows,
+  consideration in the Situation line) · Buyback Transaction Announcements (19 — the
+  AUTHORIZATION, the buyback mirror of the dilution pipeline) · Fixed Income Offering (20) ·
+  Executive/Board Changes (57)** — the last REVERSING the tier's original "governance noise"
+  exclusion, with VRRM's analyst-flagged CEO exit as the evidence; the old pin moved to KEPT with
+  its reason rather than silently weakening.
+  **EXCLUDED BY MEASUREMENT, not frame: Buyback Tranche Update** (56 rows of realized drip —
+  `capital_allocation`'s XBRL owns realized) and **Private Placement** (24 rows, sampled as
+  THIRD-PARTY ecosystem funding — Atoms/ONDC raising money on UBER's export). Rumors and
+  M&A Call stay out; Strategic Alliance (31) remains the recorded operator call.
+  **REAL RUN, all 19 workbooks: fleet 306 → 450 driver rows (+144), and all three named misses
+  surface** — V's $2.4bn BioCatch (Aug-03, NO 8-K exists — the KD export is the only source in
+  the stack), UBER's Delivery Hero Business Combination Agreement (May-23), AORT's Endospan
+  closing. **The prefix beat the exact-name list twice:** it admitted `M&A Transaction
+  Cancellation` unasked (NFLX — the WBD termination, pairing with its Item-1.02 flag) and caught
+  the real export's singular `Executive Change - CEO/CFO` where the probe guessed "Changes".
+  Corpus pins for BioCatch + Delivery Hero (skip-if-absent, phrasing-independent); four mutations
+  each redden — audit reverted, tranche admitted, rumors admitted, private placement admitted.
+  **Pages change on the next artifact pass, not on merge.**
 
 - **`moved_cited_claims` does not guard STRING-valued mechanical fields (found 2026-08-12, PR-1).**
   `refresh_dossier` ACCEPTED a transform that rewrote `quality.share_count_trend` while the stored
