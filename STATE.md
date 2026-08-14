@@ -4488,7 +4488,7 @@ PR-B2 dossier twin, Phase C F-Score display pending separate operator green-ligh
 existed only in conversation across three sessions that ended mid-queue. Durable-write-first.
 
 **~~OPERATOR TO-DO — THE WEEKLY SCREEN CAN TURN THE FLEET RED WITH `[skip ci]`, AND NOTHING GATES
-IT~~ — RULED AND CLOSED 2026-08-14 (PR #TBD). The ruling is at the foot of this entry; everything
+IT~~ — RULED AND CLOSED 2026-08-14 (PR #456). The ruling is at the foot of this entry; everything
 between is the diagnosis as written on 2026-08-10 and is left unedited.**
 (2026-08-10.) Recorded per the OPERATOR-ACTION RULE: this was raised in chat during #393/#394 and
 chat is not a ledger.
@@ -4520,7 +4520,7 @@ and accept that the next PR after a routing change pays the toll, now that the s
 down. **Nothing was changed in the workflow by the build that found this.**
 
 **RULING (operator, 2026-08-14): (a), PLUS THE PREVENTION (a) ALONE DOES NOT BUY. (b) IS NOT
-TAKEN.** PR #TBD.
+TAKEN.** PR #456.
 
 **WHAT SHIPPED — TWO STEPS, and the second is the one that matters.** (1) `[skip ci]` is gone from
 both scheduled commits, so main carries its own attestation at the commit that changed routing —
