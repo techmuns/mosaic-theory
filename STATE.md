@@ -12465,12 +12465,28 @@ one evidence-backed leg at a time.
   states them as unknowns rather than source-binding them; (c) accept-and-disclose, which is
   today's de-facto behaviour but has never been a decision. **Recorded rather than chosen — a gate
   on artifact content is a policy call, not a build call.**
-  **STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current` and
-  `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date — under
-  `Close (latest)` stamps. **0 of 19 bundles have out-of-order Multiples columns**, so there is no
-  live exposure, and the pairs already carry decoded dates so the fix is `max(by date)` rather than
-  a refusal. **The AST sweep does NOT catch this shape** (it is a subscript, not `reversed`), which
-  is worth knowing before trusting that guard as complete.
+  ~~**STILL UNCOVERED, measured and NOT fixed here (deliberate scope call):** `ev_ebitda_current`
+  and `pe_ltm_current` take `_multiples_close(...)[-1]` — positionally last, not latest-by-date —
+  under `Close (latest)` stamps.~~ **CLOSED 2026-08-13 (`feat/multiples-vintage`, PR-2 of the
+  pre-assembly set), and it was FIVE readers rather than the two recorded here:**
+  `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`, `_own_history_band`'s current/history
+  split, and the NM-at-latest guard in `ev_ebitda_percentile` all take a positional `[-1]`.
+  **FIXED AT THE SOURCE, NOT AT FIVE CALL SITES:** `_multiples_close` now sorts its pairs by date,
+  so positional-last IS latest-by-date and every reader is right by construction — the opposite
+  choice from `_latest_col`, where undecodable headers forced a refusal; here every pair already
+  carries a decoded date, so ordering is a fix rather than a guard. **A PARTIALLY-DATED SERIES IS
+  LEFT ALONE** (the `_cs_col_date` contract — an undated column cannot be PLACED in time).
+  **NO-OP ON TODAY'S CORPUS, verified: 76 metric-series across 19 bundles, 0 out of order, 0
+  undated, and 0 committed multiples move.** A recurrence guard, exactly as `_latest_col`'s was.
+  **AND THE LAST `…(latest)` PAIR IS CLOSED** — both stamps now read `Close [2026-08-07]`, live on
+  all 19 names; the family #453 opened (`book_value_per_share`, `key_ratios`) is finished.
+  Four mutations each redden a named test.
+  **THE AST SWEEP STILL DOES NOT CATCH THIS SHAPE** (a subscript, not `reversed`) — unchanged and
+  worth knowing; what changed is that the shape no longer means "rightmost column".
+  **NOT IN THAT PR — item 34's export-configuration sidecar.** Its remedy is an OPERATOR action
+  (record the config at the next pull) and **no sidecar exists on disk** (checked every bundle);
+  a reader for a file that does not exist is the speculative build the house rules forbid. It
+  stays queued against item 34, unblocked the moment the first sidecar lands.
 
 - **DILUTION PIPELINE BUILT 2026-08-13 (`feat/dilution-pipeline`) — the first Tier-1 item from the
   coverage audit, closing the sharpest gap it found: the stack measured REALIZED dilution and

@@ -14,7 +14,7 @@ import re
 import statistics
 from collections.abc import Callable
 from datetime import date, datetime
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, cast
 
 from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
 from vinci.dossier.ciq import (
@@ -174,7 +174,23 @@ def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
     if close is None:
         return []
     cols = range(2, min(len(rows[hdr]), len(rows[close])))
-    return [(excel_date(rows[hdr][j]), clean_num(rows[close][j])) for j in cols]
+    out = [(excel_date(rows[hdr][j]), clean_num(rows[close][j])) for j in cols]
+    # ORDERED BY DATE AT THE SOURCE, so "the last pair" IS the latest close. Five downstream reads
+    # take a positional `[-1]` — `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`, the
+    # `_own_history_band` current/history split, and the NM-at-latest guard — and every one of
+    # them silently means "rightmost COLUMN" unless the export happens to run chronologically.
+    # Nothing asserted that: it is the same unasserted convention `_latest_col` now refuses on and
+    # item 20 records arriving through the DATA PROVIDER. Sorting here fixes all five by
+    # construction rather than patching each, and is a NO-OP on today's corpus (76 metric-series
+    # across 19 bundles: 0 out of order, 0 undated).
+    #
+    # A PARTIALLY-DATED SERIES IS LEFT ALONE, deliberately — the `_cs_col_date` contract: an
+    # undated column cannot be PLACED in time, so reordering around it would be a guess. Order is
+    # established only when every column carries a date.
+    dated = [d for d, _ in out]
+    if out and all(d is not None for d in dated):
+        out.sort(key=lambda pair: cast("date", pair[0]))
+    return out
 
 
 # --- valuation: Multiples (Financials → Multiples, historical) --------------------------------
@@ -447,12 +463,17 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    ev = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
-    if not ev:
+    kept = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    if not kept:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has no value")
+    # THE STAMP NAMES THE CLOSE IT CAME FROM. `Close (latest)` was an UNDATED recency claim — the
+    # literal `…(latest)` false-provenance shape item 20 records, and the one #453 removed from
+    # `book_value_per_share` and `key_ratios`. This is the last pair of them.
+    d, v = kept[-1]
+    when = f" [{d.isoformat()}]" if d else ""
     return Sourced.present(
-        round(ev[-1], 1),
-        source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        round(v, 1),
+        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close{when} — current multiple",
     )
 
 
@@ -490,8 +511,9 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
             note=("P/LTM EPS Close has no value" if not pairs else
                   "P/LTM EPS is NM at the latest Close — no meaningful trailing P/E")
         )
+    when = f" [{pairs[-1][0].isoformat()}]" if pairs[-1][0] else ""
     return Sourced.present(
-        round(latest, 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
+        round(latest, 1), source_ref=f"CIQ Financials→Multiples 'P/LTM EPS' Close{when}"
     )
 
 
