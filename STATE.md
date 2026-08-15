@@ -12478,9 +12478,37 @@ one evidence-backed leg at a time.
   LEFT ALONE** (the `_cs_col_date` contract — an undated column cannot be PLACED in time).
   **NO-OP ON TODAY'S CORPUS, verified: 76 metric-series across 19 bundles, 0 out of order, 0
   undated, and 0 committed multiples move.** A recurrence guard, exactly as `_latest_col`'s was.
-  **AND THE LAST `…(latest)` PAIR IS CLOSED** — both stamps now read `Close [2026-08-07]`, live on
-  all 19 names; the family #453 opened (`book_value_per_share`, `key_ratios`) is finished.
-  Four mutations each redden a named test.
+  **THE STAMPS NAME THEIR CLOSE** — and the dates are NOT uniform, which is the point: **NINE
+  distinct stamps across the fleet, VRRM's reading `Close [2026-03-31]` — 4.5 months stale**, which
+  the undated form hid. Four mutations each redden a named test.
+  **TWO CORRECTIONS TO THIS ENTRY'S FIRST DRAFT (review of #459), both mine, both accuracy-first:**
+  (a) it recorded *"both stamps now read `Close [2026-08-07]`, live on all 19 names"* — **false**:
+  6 of 19 read that date, `pe_ltm_current` yields no stamp at all on CNXC/MVST/SMPL/WERN/FUBO, and
+  the uniform-date claim would have hidden exactly the VRRM staleness the change exists to expose.
+  (b) it called all five readers *"right by construction"* — **false for `_own_history_band`**, see
+  the open item below.
+  **THE CODE FIX DOES NOT MOVE THE ARTIFACT.** 13 committed dossiers still carry `Close (latest)`;
+  the #453 precedent needed its own pass (1095f9f). Now pinned by a CI-VISIBLE test over committed
+  `data/dossiers/*` — no licensed corpus needed — marked `xfail(strict=True)`, so it fails as an
+  UNEXPECTED PASS the moment the artifact pass lands and the marker must be deleted. Both corpus
+  tests skip in CI by design, which is why the headline claim was ungated on every PR until now.
+  **AN UNDATED CLOSE NOW REFUSES** rather than degrading to a bare `Close` — the first cut's
+  `if d else ""` re-created the same false-provenance shape with the literal word removed, so every
+  `(latest)`-hunting assertion passed over it.
+
+- **BAND BACKWARD-FILL IS LIVE IN COMMITTED ARTIFACTS — NEXT PR, and it is a valuation surface.**
+  `own_history_bands` and `range_position` filter `v is not None` BEFORE `_own_history_band`, so
+  `cur = vals[-1]` is the last SURVIVING close, not the latest one. **CNXC ships a P/LTM EPS band
+  `current 8.766527, as_of 2025-12-31` while the SAME page's `range_position` reads *"P/LTM EPS NM
+  (no meaningful trailing P/E at this close)"*; SMPL ships `15.958736 @ 2026-03-31` with two later
+  NM closes.** One page asserting a P/E and asserting there is no meaningful P/E.
+  **THE ROOT CAUSE IS THE SIGNATURE:** `_own_history_band(pairs: list[tuple[Any, float]])` types
+  the value slot NON-optional, so every caller MUST pre-filter — mypy pushes the next author into
+  the same defect. The fix is `float | None` plus a latest-cell rule inside, letting the helper
+  refuse (it already returns `None`) instead of each caller inventing a policy. Item 20's own guard
+  (`tests/test_no_backfill.py`) parametrises on SMPL/CNXC/WERN and checks only two of the three
+  consumers — the pin is at the wrong layer, which is the second production failure of a pinned
+  behaviour. **Not fixed in #459 — it is a decision-path change needing its own shown run.**
   **THE AST SWEEP STILL DOES NOT CATCH THIS SHAPE** (a subscript, not `reversed`) — unchanged and
   worth knowing; what changed is that the shape no longer means "rightmost column".
   **NOT IN THAT PR — item 34's export-configuration sidecar.** Its remedy is an OPERATOR action

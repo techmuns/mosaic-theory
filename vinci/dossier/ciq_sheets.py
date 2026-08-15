@@ -470,10 +470,19 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
     # literal `…(latest)` false-provenance shape item 20 records, and the one #453 removed from
     # `book_value_per_share` and `key_ratios`. This is the last pair of them.
     d, v = kept[-1]
-    when = f" [{d.isoformat()}]" if d else ""
+    # AN UNDATED CLOSE REFUSES; IT DOES NOT DEGRADE (review finding, #459). The first cut wrote
+    # `when = … if d else ""`, which emits `…Close — current multiple` — a bare recency claim with
+    # no date, no note and no refusal. That is the SAME false-provenance shape `(latest)` was, and
+    # because the literal word is gone every `(latest)`-hunting assertion passes over it. The
+    # sibling #453 code (`_latest_col`, `book_value_per_share`) refuses here; so does this.
+    if d is None:
+        return Sourced.unknown(
+            note="the latest TEV/LTM EBITDA Close sits in an undated column — a current multiple "
+                 "cannot be stamped with a date the sheet does not state")
     return Sourced.present(
         round(v, 1),
-        source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close{when} — current multiple",
+        source_ref=(f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close [{d.isoformat()}]"
+                    " — current multiple"),
     )
 
 
@@ -511,9 +520,13 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
             note=("P/LTM EPS Close has no value" if not pairs else
                   "P/LTM EPS is NM at the latest Close — no meaningful trailing P/E")
         )
-    when = f" [{pairs[-1][0].isoformat()}]" if pairs[-1][0] else ""
+    when_d = pairs[-1][0]
+    if when_d is None:  # same refusal as ev_ebitda_current — never an undated recency claim
+        return Sourced.unknown(
+            note="the latest P/LTM EPS Close sits in an undated column — no dated trailing P/E")
     return Sourced.present(
-        round(latest, 1), source_ref=f"CIQ Financials→Multiples 'P/LTM EPS' Close{when}"
+        round(latest, 1),
+        source_ref=f"CIQ Financials→Multiples 'P/LTM EPS' Close [{when_d.isoformat()}]"
     )
 
 

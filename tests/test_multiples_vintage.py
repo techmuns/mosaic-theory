@@ -5,7 +5,7 @@ PR-2 OF THE PRE-ASSEMBLY SET, and the last of the `…(latest)` family #453 open
 TWO HALVES, ONE SOURCE. `_multiples_close` returns `(date, close)` pairs in COLUMN order, and FIVE
 downstream reads take a positional `[-1]`: `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`,
 `_own_history_band`'s current/history split, and the NM-at-latest guard in `ev_ebitda_percentile`.
-Every one of them silently means "rightmost COLUMN" unless the export happens to run
+Each silently means "rightmost COLUMN" unless the export happens to run
 chronologically — the same unasserted convention `_latest_col` now refuses on, and the one item 20
 records arriving THROUGH THE DATA PROVIDER (`source_ref="Close (latest)"` on a months-old value).
 
@@ -17,7 +17,9 @@ A PARTIALLY-DATED SERIES IS LEFT ALONE (the `_cs_col_date` contract): an undated
 PLACED in time, so reordering around it would be a guess rather than a fix.
 
 AND THE STAMPS NAME THEIR CLOSE. `Close (latest)` was an undated recency claim a reader cannot check
-and that cannot go visibly stale. Live on all 19 names; now `Close [2026-08-07]`.
+and that cannot go visibly stale. The dates are NOT uniform and that is the point: NINE distinct
+stamps across the fleet, VRRM's reading `Close [2026-03-31]` — 4.5 months stale, which the undated
+form hid. An undated close now REFUSES rather than degrading to a bare `Close`.
 
 NOT IN THIS PR: the item-34 export-configuration sidecar. Its remedy is an OPERATOR action (record
 the config at the next pull) and **no sidecar exists on disk** — building a reader for a file that
@@ -25,6 +27,7 @@ does not exist is the speculative build the house rules forbid.
 """
 from __future__ import annotations
 
+import pathlib
 from datetime import date
 
 import pytest
@@ -122,22 +125,60 @@ def test_the_multiples_stamps_name_their_close_and_never_say_latest() -> None:
 
 
 def test_the_sort_moves_no_committed_value() -> None:
-    """THE BLAST-RADIUS PIN. The sort is a recurrence guard, not a re-valuation: on a corpus that
-    is already ascending it must change NOTHING. Compares the freshly-computed multiple against
-    the committed artifact, so a sort that silently re-picked a quarter would redden here."""
-    import json
-    import pathlib
+    """THE BLAST-RADIUS PIN. The sort is a recurrence guard, not a re-valuation: on an already
+    ascending corpus it must change NOTHING.
 
-    moved = []
+    THREE REVIEW FIXES (#459). (a) A COUNTER — it silently `continue`d past every name without a
+    committed dossier and would report success having compared zero; its sibling above already
+    carried `assert seen`. (b) The path resolves from `__file__`, not cwd — the bare
+    `Path("data/dossiers")` made the whole pin a no-op when pytest ran from anywhere else.
+    (c) The tolerance is a ROUNDED comparison: both sides are 1-dp figures, so `abs(...) > 0.05`
+    could let a re-picked adjacent quarter through."""
+    import json
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    moved, compared = [], 0
     for tk, b in _bundles():
-        path = pathlib.Path("data/dossiers") / tk / "dossier.json"
+        path = root / "data" / "dossiers" / tk / "dossier.json"
         if not path.is_file():
             continue
-        committed = (json.loads(path.read_text())["mechanical"]["valuation"].get("ev_ebitda")
-                     or {}).get("value")
-        fresh = cs.ev_ebitda_current(b).value
-        if committed is not None and fresh is not None and abs(committed - fresh) > 0.05:
+        val = (json.loads(path.read_text())["mechanical"]["valuation"].get("ev_ebitda") or {})
+        committed, fresh = val.get("value"), cs.ev_ebitda_current(b).value
+        if committed is None or fresh is None:
+            continue
+        compared += 1
+        if round(committed, 1) != round(fresh, 1):
             moved.append(f"{tk}: {committed} → {fresh}")
+    assert compared, (
+        "no name was compared — the blast-radius pin ran vacuously and proves nothing about the "
+        "sort being a no-op")
     assert not moved, (
         f"the date sort changed a committed multiple: {moved}. On an already-ascending corpus it "
         f"must be a no-op — a move means it is re-picking the current quarter, not guarding order")
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "EXPECTED RED until the artifact pass runs — 13 committed dossiers still carry "
+    "`Close (latest)`. strict=True so this FAILS as an unexpected PASS the moment the pass lands, "
+    "which is the signal to delete this marker; a plain skip would let the obligation rot."))
+def test_no_committed_dossier_still_carries_the_undated_stamp() -> None:
+    """THE CI-VISIBLE PIN, and the one the TEST-LAYER RULE actually asks for.
+
+    The defect was observed IN THE ARTIFACT (item 20: `(latest)` sitting on a months-old value in
+    three dossiers), so the regression belongs on real committed JSON — not on a recomputation from
+    the licensed bundles. Both corpus tests above skip in CI by design (raw CIQ is never
+    committed), which left this PR's headline claim ungated on every pull request. `data/dossiers`
+    IS committed and IS present in CI, so this runs everywhere.
+
+    IT IS EXPECTED TO FAIL UNTIL THE ARTIFACT PASS RUNS — that is the point. STATE recorded the
+    family as closed while 13 committed dossiers still carried `Close (latest)`; a pin that only
+    goes green after the pages are re-assembled is what keeps the record and the artifact honest.
+    """
+    root = pathlib.Path(__file__).resolve().parents[1]
+    stale = sorted(
+        p.parent.name for p in (root / "data" / "dossiers").glob("*/dossier.json")
+        if "Close (latest)" in p.read_text())
+    assert not stale, (
+        f"{stale} still carry `Close (latest)` in a committed source_ref — the undated recency "
+        f"claim this change removes is still on the page a reader meets. Re-run the artifact pass; "
+        f"the code fix alone does not move the artifact (the #453 precedent needed its own pass).")

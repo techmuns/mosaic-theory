@@ -195,21 +195,33 @@ def test_the_web_renderer_shows_the_pipeline_too() -> None:
     pipeline = {"filings": [], "window_days": _DILUTION_SCAN_DAYS,
                 "line": {"value": line, "source_ref": "EDGAR filing index",
                          "status": "present", "note": None}}
-    driver = f"""
+    # THE DOSSIER GOES TO DISK, NOT INTO argv (CI fix). Embedding a full committed dossier in
+    # `node -e` blew Linux's ARG_MAX — `OSError: [Errno 7] Argument list too long` — so this test
+    # reddened every gate run on main from #457 while passing locally on macOS, whose limit is
+    # far higher. The driver reads the JSON with `fs.readFileSync` instead.
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as td:
+        doc_path = pathlib.Path(td) / "doc.json"
+        doc_path.write_text(_json.dumps(doc))
+        pipe_path = pathlib.Path(td) / "dp.json"
+        pipe_path.write_text(_json.dumps(pipeline))
+        driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ readFileSync }} = await import("node:fs");
 const {{ renderDossier }} = await import("{dj}");
-const doc = {_json.dumps(doc)};
+const doc = JSON.parse(readFileSync({_json.dumps(str(doc_path))}, "utf8"));
+const dp = JSON.parse(readFileSync({_json.dumps(str(pipe_path))}, "utf8"));
 const out = {{}};
 out.absent = renderDossier(doc, null);
-const withDp = {{ ...doc, mechanical: {{ ...doc.mechanical,
-                   dilution_pipeline: {_json.dumps(pipeline)} }} }};
-out.present = renderDossier(withDp, null);
+out.present = renderDossier(
+  {{ ...doc, mechanical: {{ ...doc.mechanical, dilution_pipeline: dp }} }}, null);
 console.log(JSON.stringify(out));
 """
-    res = subprocess.run(["node", "--input-type=module", "-e", driver],
-                         capture_output=True, text=True)
+        res = subprocess.run(["node", "--input-type=module", "-e", driver],
+                             capture_output=True, text=True)
     assert res.returncode == 0, res.stderr[-800:]
     got = _json.loads(res.stdout)
 
