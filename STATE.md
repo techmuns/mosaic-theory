@@ -4446,6 +4446,18 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
+13 committed dossiers still carry `Close (latest)` in
+`mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
+precedent needed its own pass, 1095f9f). The re-assembly also lands `EXTRACTION_VERSIONS
+2026-08-16.1` and drops CNXC's and SMPL's phantom P/LTM EPS bands. **This obligation is recorded
+HERE and not as a test marker**: #459's first cut used `xfail(strict=True)`, which would have
+turned main red at exactly the moment the ARTIFACT-PASS RULE requires green — and could never have
+gone green regardless, since `Close (latest)` is SEALED into `synthesis.bear_points[*].source_ref`
+on MVST, NCNO and NFLX (LLM-cited copies; synthesis is not rerolled by an artifact pass). **Those
+three sealed quotes will still read `(latest)` after the pass — that is correct**, a quotation of
+what the stamp said when the synthesis was written, not a live stale claim.
+
 **TWO NUMBER SERIES LIVE IN THIS BLOCK — READ THIS BEFORE QUOTING AN ITEM NUMBER.**
 `### LIVE QUEUE` holds **SERIES A — ENGINEERING / AUDIT-REMEDIATION** (items 1..32: 16, 17, 18a,
 19, 20 … 32) and then **SERIES B — ANALYST / OPERATOR**, which RESTARTS at 13. Numbers **13–32
@@ -12471,32 +12483,52 @@ one evidence-backed leg at a time.
   pre-assembly set), and it was FIVE readers rather than the two recorded here:**
   `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`, `_own_history_band`'s current/history
   split, and the NM-at-latest guard in `ev_ebitda_percentile` all take a positional `[-1]`.
-  **FIXED AT THE SOURCE, NOT AT FIVE CALL SITES:** `_multiples_close` now sorts its pairs by date,
-  so positional-last IS latest-by-date and every reader is right by construction — the opposite
-  choice from `_latest_col`, where undecodable headers forced a refusal; here every pair already
-  carries a decoded date, so ordering is a fix rather than a guard. **A PARTIALLY-DATED SERIES IS
-  LEFT ALONE** (the `_cs_col_date` contract — an undated column cannot be PLACED in time).
-  **NO-OP ON TODAY'S CORPUS, verified: 76 metric-series across 19 bundles, 0 out of order, 0
-  undated, and 0 committed multiples move.** A recurrence guard, exactly as `_latest_col`'s was.
+  split, `range_position`'s P/E tail, and the NM-at-latest guard in `ev_ebitda_percentile` all take
+  a positional `[-1]` — SIX readers, not five.
+  **FIXED WITH ONE SELECTOR, NOT AT SIX CALL SITES:** every reader now asks `_latest_close`, which
+  maxes over the DATED columns and is ORDER-IMMUNE — the `_latest_common_multiples` pattern
+  (`max(shared)`) applied to the readers that used to count columns. Value and as-of resolve the
+  same cell by construction, so they cannot drift.
+  **THE FIRST CUT SHIPPED A SORT AND IT WAS WRONG — caught in review, corrected before merge.**
+  The sort was gated on `all(d is not None)`, and `read_sheets` pads every row to the sheet's
+  uniform width (SMPL/NFLX = 41 cols), so **ONE blank pad column disabled ordering for the whole
+  series** while all six readers still believed positional-last meant latest. Measured, on a
+  descending export with a single blank pad column: `ev_ebitda_current` returned the OLDEST close
+  stamped `Close [2025-09-30] — current multiple`. **A confident ISO date on the wrong cell is
+  HARDER to catch than the `(latest)` it replaced** — the change would have made the defect less
+  visible, not more. The lesson is general: an all-or-nothing precondition is not "degrade, don't
+  guess", it is "stop looking". `_latest_col` and `_capital_summary` compare only the DECODABLE
+  dates; this now does too.
+  **THE FIRST CUT ALSO REGRESSED AGAINST BASE:** its refusal tested the last SURVIVING pair, so a
+  trailing undated column erased the whole `ev_ebitda` field on a name whose dated latest close was
+  sitting right there. Base returned that value. Pinned.
+  **NM AT THE LATEST CLOSE REFUSES AT EVERY READER** — item 20 is "no backward-fill on ANY time
+  series", and `ev_ebitda_current` was the last reader still exempt.
   **THE STAMPS NAME THEIR CLOSE** — and the dates are NOT uniform, which is the point: **NINE
   distinct stamps across the fleet, VRRM's reading `Close [2026-03-31]` — 4.5 months stale**, which
-  the undated form hid. Four mutations each redden a named test.
-  **TWO CORRECTIONS TO THIS ENTRY'S FIRST DRAFT (review of #459), both mine, both accuracy-first:**
-  (a) it recorded *"both stamps now read `Close [2026-08-07]`, live on all 19 names"* — **false**:
-  6 of 19 read that date, `pe_ltm_current` yields no stamp at all on CNXC/MVST/SMPL/WERN/FUBO, and
-  the uniform-date claim would have hidden exactly the VRRM staleness the change exists to expose.
-  (b) it called all five readers *"right by construction"* — **false for `_own_history_band`**, see
-  the open item below.
-  **THE CODE FIX DOES NOT MOVE THE ARTIFACT.** 13 committed dossiers still carry `Close (latest)`;
-  the #453 precedent needed its own pass (1095f9f). Now pinned by a CI-VISIBLE test over committed
-  `data/dossiers/*` — no licensed corpus needed — marked `xfail(strict=True)`, so it fails as an
-  UNEXPECTED PASS the moment the artifact pass lands and the marker must be deleted. Both corpus
-  tests skip in CI by design, which is why the headline claim was ungated on every PR until now.
-  **AN UNDATED CLOSE NOW REFUSES** rather than degrading to a bare `Close` — the first cut's
-  `if d else ""` re-created the same false-provenance shape with the literal word removed, so every
-  `(latest)`-hunting assertion passed over it.
+  the undated form hid.
+  **BLAST RADIUS, MEASURED ON ALL 19 LIVE BUNDLES: exactly 2 names change** — CNXC's and SMPL's
+  phantom P/LTM EPS bands disappear (below). **Every EV/EBITDA value is unchanged, 19/19**, and no
+  as-of moves. Two mutations (positional `[-1]`; restoring the NM pre-filter) each redden named
+  tests.
+  **THE `xfail(strict=True)` ARTIFACT PIN WAS DELETED, not weakened.** It was unresolvable in two
+  independent ways: (1) the artifact pass would have turned it into an XPASS — a hard FAILURE — at
+  exactly the moment the ARTIFACT-PASS RULE requires green, while "never bundle a code change into
+  an artifact commit" forbids deleting the marker there (it also gates `weekly-screen` and
+  `monthly-score`, so it would have read as "the weekly screen is broken"); and (2) it could never
+  have gone green anyway — `Close (latest)` is SEALED into `synthesis.bear_points[*].source_ref` on
+  MVST, NCNO and NFLX as LLM-cited copies of the mechanical stamp, and synthesis is not rerolled by
+  an artifact pass, so its whole-file substring scan would match forever. **A test that fails when
+  things improve is worse than one that decays.** CI coverage of the headline is now carried by
+  five SYNTHETIC public-reader pins that run everywhere, which is what the corpus tests (skipped in
+  CI by design) could never provide.
+  **`EXTRACTION_VERSIONS` BUMPED to `2026-08-16.1`** — output changed on every name, which is the
+  module's stated trigger.
 
-- **BAND BACKWARD-FILL IS LIVE IN COMMITTED ARTIFACTS — NEXT PR, and it is a valuation surface.**
+- ~~**BAND BACKWARD-FILL IS LIVE IN COMMITTED ARTIFACTS.**~~ **CLOSED 2026-08-16 in #459** — it
+  was the same root cause as the entry above (a positional read of an unordered series), so fixing
+  it separately would have meant writing the selector twice and shipping a page that refuses in one
+  place and publishes in another in the meantime.
   `own_history_bands` and `range_position` filter `v is not None` BEFORE `_own_history_band`, so
   `cur = vals[-1]` is the last SURVIVING close, not the latest one. **CNXC ships a P/LTM EPS band
   `current 8.766527, as_of 2025-12-31` while the SAME page's `range_position` reads *"P/LTM EPS NM
@@ -12505,10 +12537,14 @@ one evidence-backed leg at a time.
   **THE ROOT CAUSE IS THE SIGNATURE:** `_own_history_band(pairs: list[tuple[Any, float]])` types
   the value slot NON-optional, so every caller MUST pre-filter — mypy pushes the next author into
   the same defect. The fix is `float | None` plus a latest-cell rule inside, letting the helper
-  refuse (it already returns `None`) instead of each caller inventing a policy. Item 20's own guard
-  (`tests/test_no_backfill.py`) parametrises on SMPL/CNXC/WERN and checks only two of the three
-  consumers — the pin is at the wrong layer, which is the second production failure of a pinned
-  behaviour. **Not fixed in #459 — it is a decision-path change needing its own shown run.**
+  refuse (it already returns `None`) instead of each caller inventing a policy. **DONE: the slot is
+  `float | None`, the latest-cell rule lives in the helper, and BOTH callers stopped pre-filtering.**
+  **SHOWN RUN, all 19 live bundles: the contradiction is gone** — CNXC, SMPL, MVST and WERN now
+  refuse on the band AND the text together; the diff against the committed artifacts is **exactly 2
+  names** (CNXC `8.766527 → absent`, SMPL `15.958736 → absent`) with **every EV/EBITDA unchanged,
+  19/19**. Pinned end-to-end on the live corpus by `test_no_band_outlives_the_close_it_reports`,
+  which asserts the band and its reader AGREE rather than pinning values — so a re-pull moves the
+  data without rotting the test.
   **THE AST SWEEP STILL DOES NOT CATCH THIS SHAPE** (a subscript, not `reversed`) — unchanged and
   worth knowing; what changed is that the shape no longer means "rightmost column".
   **NOT IN THAT PR — item 34's export-configuration sidecar.** Its remedy is an OPERATOR action

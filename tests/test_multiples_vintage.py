@@ -1,103 +1,167 @@
-""""The last pair is the latest close" was a claim about the export; now it is true by construction.
+""""The last pair is the latest close" was a claim about the export. Now nobody makes it.
 
 PR-2 OF THE PRE-ASSEMBLY SET, and the last of the `…(latest)` family #453 opened.
 
-TWO HALVES, ONE SOURCE. `_multiples_close` returns `(date, close)` pairs in COLUMN order, and FIVE
-downstream reads take a positional `[-1]`: `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`,
-`_own_history_band`'s current/history split, and the NM-at-latest guard in `ev_ebitda_percentile`.
-Each silently means "rightmost COLUMN" unless the export happens to run
-chronologically — the same unasserted convention `_latest_col` now refuses on, and the one item 20
-records arriving THROUGH THE DATA PROVIDER (`source_ref="Close (latest)"` on a months-old value).
+ONE SELECTOR, NOT A SORT. `_multiples_close` returns pairs in COLUMN order — the sheet's order,
+which is not a time order and never was asserted to be one. SIX reads used to take a positional
+`[-1]` off it: `ev_ebitda_current`, `pe_ltm_current`, `ev_ebitda_asof`, `_own_history_band`'s
+current/history split, `range_position`'s P/E tail, and the NM-at-latest guard in
+`ev_ebitda_percentile`. Each silently meant "rightmost COLUMN". They now all ask `_latest_close`,
+which maxes over the DATED columns and is order-immune by construction.
 
-FIXED AT THE SOURCE rather than at five call sites: the pairs are sorted by date, so positional-last
-IS latest-by-date. **A no-op on today's corpus — 76 metric-series across 19 bundles, 0 out of order,
-0 undated** — which makes it a recurrence guard, exactly as `_latest_col`'s was when it shipped.
+WHY NOT THE SORT THIS PR FIRST SHIPPED (#459 review): it could only fire when EVERY column carried
+a date, and `read_sheets` pads every row to the sheet's uniform width — so ONE blank pad column
+disabled it and left all six readers believing positional-last meant latest. Measured on a
+descending export with a single blank pad column: `ev_ebitda_current` returned the OLDEST close,
+stamped `Close [2025-09-30] — current multiple`. A confident ISO date on the wrong cell is HARDER
+to catch than the `(latest)` it replaced, not easier. An all-or-nothing gate is not "degrade,
+don't guess" — it is "stop looking".
 
-A PARTIALLY-DATED SERIES IS LEFT ALONE (the `_cs_col_date` contract): an undated column cannot be
-PLACED in time, so reordering around it would be a guess rather than a fix.
+AND THE LATEST CELL IS THE LATEST CELL. NM at the latest close is a REAL state (the FUBO rule),
+so every reader refuses on it rather than reaching back for an older quarter. The non-Optional
+value slot on `_own_history_band` was the defect GENERATOR — it forced each caller to pre-filter,
+which IS the backward-fill — so the rule moved INSIDE the helper and both callers stopped filtering.
 
-AND THE STAMPS NAME THEIR CLOSE. `Close (latest)` was an undated recency claim a reader cannot check
-and that cannot go visibly stale. The dates are NOT uniform and that is the point: NINE distinct
-stamps across the fleet, VRRM's reading `Close [2026-03-31]` — 4.5 months stale, which the undated
-form hid. An undated close now REFUSES rather than degrading to a bare `Close`.
+AND THE STAMPS NAME THEIR CLOSE. `Close (latest)` was an undated recency claim a reader cannot
+check and that cannot go visibly stale. An undated close now REFUSES rather than degrading.
 
 NOT IN THIS PR: the item-34 export-configuration sidecar. Its remedy is an OPERATOR action (record
 the config at the next pull) and **no sidecar exists on disk** — building a reader for a file that
 does not exist is the speculative build the house rules forbid.
 """
+
 from __future__ import annotations
 
 import pathlib
 from datetime import date
+from typing import Any
 
 import pytest
 
-from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
 
 #: A Multiples sheet in the REAL shape `_multiples_close` parses: a header row whose first cell
-#: starts with one of `_MULT_HEADER`, then the metric label, then its `Close` row. Columns start at
-#: index 2 (0 = label, 1 = the Close/Average/High/Low sub-label).
-_HDR = next(iter(cs._MULT_HEADER))
+#: starts with one of `_MULT_HEADER`, then each metric label followed by its `Close` row. Columns
+#: start at index 2 (0 = label, 1 = the Close/Average/High/Low sub-label).
+_HDR = cs._MULT_HEADER[0]
 
 
-def _sheet(dates: list[str], closes: list[float | str]) -> list[list[object]]:
-    serial = [(date.fromisoformat(d) - date(1899, 12, 30)).days for d in dates]
-    return [
-        [f"{_HDR} (test)", "", *serial],
-        ["TEV/LTM EBITDA", "", *[""] * len(serial)],
-        ["", "Close", *closes],
+def _serial(iso: str) -> int:
+    return (date.fromisoformat(iso) - date(1899, 12, 30)).days
+
+
+def _bundle(headers: list[object], ev: list[object], pe: list[object]) -> Any:
+    """A stub carrying ONE Multiples sheet in the real shape. `headers` takes serials for dated
+    columns and a raw string ("" for a blank pad column, "LTM" for an undated one) otherwise."""
+    rows: list[list[object]] = [
+        [f"{_HDR} (test)", "", *headers],
+        ["TEV/LTM EBITDA", "", *[""] * len(headers)],
+        ["", "Close", *ev],
+        ["P/LTM EPS", "", *[""] * len(headers)],
+        ["", "Close", *pe],
     ]
 
+    class _B:
+        ticker = "TEST"
 
-def test_a_descending_export_is_reordered_so_the_last_pair_is_the_latest() -> None:
-    """THE FIX. A right-to-left export makes the rightmost column the OLDEST, and five positional
-    reads would each take it as current. Sorting at the source makes all five right at once."""
-    rows = _sheet(["2026-06-30", "2026-03-31", "2025-12-31"], [9.0, 8.0, 7.0])
-    pairs = cs._multiples_close(rows, "TEV/LTM EBITDA")
-    assert [d.isoformat() for d, _ in pairs] == ["2025-12-31", "2026-03-31", "2026-06-30"]
-    assert pairs[-1] == (date(2026, 6, 30), 9.0), (
-        "the last pair is not the latest close — every positional `[-1]` downstream is reading a "
-        "stale figure as current")
+        def sheet(self, _kind: str, _name: str, *, freq: str | None = None) -> list[list[object]]:
+            return rows
 
+        def workbook(self, _kind: str, *, freq: str | None = None) -> None:
+            return None
 
-def test_an_ascending_export_is_untouched() -> None:
-    """THE NO-OP CASE, which is every committed bundle today: already ascending, so the sort must
-    not disturb the series a band and its percentile are computed over."""
-    rows = _sheet(["2025-12-31", "2026-03-31", "2026-06-30"], [7.0, 8.0, 9.0])
-    pairs = cs._multiples_close(rows, "TEV/LTM EBITDA")
-    assert [v for _, v in pairs] == [7.0, 8.0, 9.0]
+    return _B()
 
 
-def test_a_partially_dated_series_is_left_in_column_order() -> None:
-    """DEGRADE, DON'T GUESS — the `_cs_col_date` contract. An undated column cannot be placed in
-    time, so a series carrying one keeps its column order rather than being reordered AROUND the
-    hole, which would assert a position the sheet never stated."""
-    rows = _sheet(["2026-06-30", "2026-03-31"], [9.0, 8.0])
-    rows[0].append("LTM")            # an undated column
-    rows[2].append(10.0)
-    pairs = cs._multiples_close(rows, "TEV/LTM EBITDA")
-    assert [v for _, v in pairs] == [9.0, 8.0, 10.0], (
-        "a series with an undated column was reordered — the sort guessed where the undated "
-        "column belongs in time")
+def test_a_descending_export_resolves_the_latest_close_at_every_reader() -> None:
+    """THE FIX. A right-to-left export makes the rightmost column the OLDEST, and six positional
+    reads would each take it as current. Asserted through the PUBLIC readers, not the parser: the
+    first cut of this PR pinned `_multiples_close` alone and shipped two unguarded refusals."""
+    b = _bundle([_serial("2026-06-30"), _serial("2026-03-31"), _serial("2025-12-31"),
+                 _serial("2025-09-30")],
+                [9.0, 8.0, 7.0, 6.0], [19.0, 18.0, 17.0, 16.0])
+    ev = cs.ev_ebitda_current(b)
+    assert ev.value == 9.0, f"the OLDEST close was published as current — {ev.value}"
+    assert "Close [2026-06-30]" in (ev.source_ref or ""), ev.source_ref
+    assert cs.ev_ebitda_asof(b) == date(2026, 6, 30)
+    assert cs.pe_ltm_current(b).value == 19.0
+    assert "as-of 2026-06-30" in (cs.range_position(b).value or "")
 
 
-def test_nm_maps_to_none_and_still_holds_its_place_after_sorting() -> None:
-    """NM IS A REAL STATE, not a gap (the FUBO rule), and the NM-at-latest guard in
-    `ev_ebitda_percentile` reads `pairs[-1][1] is None` POSITIONALLY. Sorting must carry the None
-    with its date, or that guard starts inspecting the wrong quarter."""
-    rows = _sheet(["2026-06-30", "2026-03-31"], ["NM", 8.0])
-    pairs = cs._multiples_close(rows, "TEV/LTM EBITDA")
-    assert pairs[-1][0] == date(2026, 6, 30) and pairs[-1][1] is None, (
-        "the NM latest close lost its position after sorting — the percentile guard would now "
-        "refuse (or accept) on the wrong quarter")
+def test_one_blank_pad_column_cannot_disable_the_selection() -> None:
+    """THE #459 REVIEW DEFECT, pinned. `read_sheets` pads every row to the sheet's uniform width,
+    so a single blank column is the ORDINARY case — and the sort this PR first shipped was gated
+    on `all(d is not None)`, which that one blank cell defeated. It then published the oldest
+    close under `Close [2025-09-30] — current multiple`: a confident date on the wrong cell."""
+    b = _bundle([_serial("2026-06-30"), _serial("2026-03-31"), _serial("2025-12-31"),
+                 _serial("2025-09-30"), ""],
+                [9.0, 8.0, 7.0, 6.0, ""], [19.0, 18.0, 17.0, 16.0, ""])
+    ev = cs.ev_ebitda_current(b)
+    assert (ev.value, cs.ev_ebitda_asof(b)) == (9.0, date(2026, 6, 30)), (
+        f"one blank pad column re-armed the positional read — got {ev.value} "
+        f"stamped {ev.source_ref!r}")
+
+
+def test_an_undated_trailing_column_does_not_erase_a_dated_close() -> None:
+    """DEGRADE, DON'T GUESS — but degrading is not ERASING. The first cut refused whenever the
+    last SURVIVING pair was undated, so a trailing `LTM` column blanked the whole ev_ebitda field
+    on a name whose dated latest close was sitting right there. That is a regression against the
+    behaviour before this PR, which returned a value. The undated column is excluded; the latest
+    DATED close is still reported."""
+    b = _bundle([_serial("2025-09-30"), _serial("2025-12-31"), _serial("2026-03-31"),
+                 _serial("2026-06-30"), "LTM"],
+                [8.0, 10.0, 15.0, 14.0, 13.0], [16.0, 18.0, 22.0, 25.0, 24.0])
+    ev = cs.ev_ebitda_current(b)
+    assert (ev.value, cs.ev_ebitda_asof(b)) == (14.0, date(2026, 6, 30)), (
+        f"an undated trailing column erased a dated close — {ev.value} / {ev.note!r}")
+    assert cs.pe_ltm_current(b).value == 25.0
+    bands = {x.metric: x for x in (cs.own_history_bands(b).value or [])}
+    assert bands["EV/EBITDA (TEV/LTM)"].current == 14.0
+    assert bands["EV/EBITDA (TEV/LTM)"].as_of == "2026-06-30"
+
+
+def test_nm_at_the_latest_close_refuses_at_every_reader() -> None:
+    """NM IS A REAL STATE (the FUBO rule), NOT A GAP — and item 20 is "no backward-fill on ANY
+    time series". Every reader must refuse together, or the page contradicts itself: CNXC shipped
+    a P/LTM EPS band `current 8.766527, as_of 2025-12-31` beside a `range_position` reading
+    "P/LTM EPS NM (no meaningful trailing P/E at this close)". THE NEGATIVE PIN for the guards."""
+    b = _bundle([_serial("2025-09-30"), _serial("2025-12-31"), _serial("2026-03-31"),
+                 _serial("2026-06-30"), _serial("2026-08-11")],
+                [8.0, 10.0, 15.0, 14.0, "NM"], [16.0, 18.0, 22.0, 25.0, "NM"])
+    ev = cs.ev_ebitda_current(b)
+    assert ev.value is None and "NM at the latest Close [2026-08-11]" in (ev.note or ""), (
+        f"an NM latest close backward-filled to an older quarter — {ev.value} / {ev.source_ref!r}")
+    assert cs.ev_ebitda_asof(b) is None, (
+        "the as-of outlived the value it dates — `_ev_ebitda_integrity_flag` reads BOTH and would "
+        "compose a dated staleness caveat about a multiple the page refused to print")
+    assert cs.pe_ltm_current(b).value is None
+    assert cs.ev_ebitda_percentile(b).value is None
+    assert not (cs.own_history_bands(b).value or []), (
+        "a band was published on an NM latest close — the chart would show a current the text "
+        "beside it calls NM")
+
+
+def test_an_all_undated_series_refuses_rather_than_fabricating_nm() -> None:
+    """AN UNDATED COLUMN AND A STATED NM ARE DIFFERENT FACTS. The first cut collapsed them: a
+    blank/undated series came back as "P/LTM EPS is NM at the latest Close", which `range_position`
+    printed to the human as a data state the sheet never carried. Fabricating a STATE is
+    fabrication, exactly as fabricating a number is."""
+    b = _bundle(["LTM", "Current"], [13.0, 12.0], [24.0, 23.0])
+    ev, pe = cs.ev_ebitda_current(b), cs.pe_ltm_current(b)
+    assert ev.value is None and "carries a date" in (ev.note or ""), ev.note
+    assert pe.value is None and "NM" not in (pe.note or ""), (
+        f"an undated series was reported as NM — a data state the sheet never stated: {pe.note!r}")
 
 
 # ─── the stamps, on the live corpus ─────────────────────────────────────────────────────────────
 def _bundles() -> list[tuple[str, CiqBundle]]:
-    root = get_config().data_dir / "manual" / "ciq"
+    # `__file__`-relative, NOT cwd-relative. `get_config().data_dir` is the RELATIVE `Path("data")`,
+    # so running pytest from anywhere but the repo root made both corpus pins SKIP — reporting
+    # "licensed CIQ bundles unavailable" while the corpus sat on disk, and skipping past the
+    # `assert seen` counters that exist to catch exactly that kind of silent no-op.
+    root = pathlib.Path(__file__).resolve().parents[1] / "data" / "manual" / "ciq"
     if not root.is_dir() or not any(root.iterdir()):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     ms = LocalFolderStore(root)
@@ -124,61 +188,54 @@ def test_the_multiples_stamps_name_their_close_and_never_say_latest() -> None:
     assert seen, "no name yielded a multiple — the assertion never ran"
 
 
-def test_the_sort_moves_no_committed_value() -> None:
-    """THE BLAST-RADIUS PIN. The sort is a recurrence guard, not a re-valuation: on an already
-    ascending corpus it must change NOTHING.
+def test_the_value_and_its_as_of_resolve_the_same_close() -> None:
+    """THE INVARIANT THAT BROKE, pinned on the live corpus. `ev_ebitda_current` and
+    `ev_ebitda_asof` are read TOGETHER by `_ev_ebitda_integrity_flag`, which composes a staleness
+    caveat from the pair. The first cut of this PR gave one a refusal and not the other, so they
+    could resolve DIFFERENT cells — and the caveat then rendered a literal `?` where the multiple
+    belongs, dating a value the page had refused to print. They share `_latest_close` now.
 
-    THREE REVIEW FIXES (#459). (a) A COUNTER — it silently `continue`d past every name without a
-    committed dossier and would report success having compared zero; its sibling above already
-    carried `assert seen`. (b) The path resolves from `__file__`, not cwd — the bare
-    `Path("data/dossiers")` made the whole pin a no-op when pytest ran from anywhere else.
-    (c) The tolerance is a ROUNDED comparison: both sides are 1-dp figures, so `abs(...) > 0.05`
-    could let a re-picked adjacent quarter through."""
-    import json
-
-    root = pathlib.Path(__file__).resolve().parents[1]
-    moved, compared = [], 0
+    PHRASING-INDEPENDENT, so a re-pull moves the data without rotting this: it asserts the two
+    agree, never that either equals a particular number. (The prior form pinned committed VALUES
+    against a fresh recompute — both sides living — so an ordinary CIQ re-pull failed it while
+    naming the sort as the culprit.)"""
+    seen = 0
     for tk, b in _bundles():
-        path = root / "data" / "dossiers" / tk / "dossier.json"
-        if not path.is_file():
+        s, asof = cs.ev_ebitda_current(b), cs.ev_ebitda_asof(b)
+        assert (s.value is None) == (asof is None), (
+            f"{tk}: value and as-of disagree about whether a current multiple exists — "
+            f"value={s.value!r} as_of={asof!r}. A dated staleness caveat about a refused multiple "
+            f"is exactly what this pair being out of step produces.")
+        if s.value is None:
             continue
-        val = (json.loads(path.read_text())["mechanical"]["valuation"].get("ev_ebitda") or {})
-        committed, fresh = val.get("value"), cs.ev_ebitda_current(b).value
-        if committed is None or fresh is None:
+        seen += 1
+        assert asof is not None and f"Close [{asof.isoformat()}]" in (s.source_ref or ""), (
+            f"{tk}: the stamp names a different close than the as-of — {s.source_ref!r} vs {asof}")
+    assert seen, "no name yielded a multiple — the assertion never ran"
+
+
+def test_no_band_outlives_the_close_it_reports() -> None:
+    """THE BACKWARD-FILL, pinned on the live corpus. A band's `current` must BE the latest close,
+    never the last one that happened to report. Live in the committed artifacts before this fix:
+    CNXC shipped a P/LTM EPS band `current 8.766527, as_of 2025-12-31` on the same page whose
+    `range_position` read "P/LTM EPS NM (no meaningful trailing P/E at this close)"; SMPL shipped
+    `15.958736 @ 2026-03-31` with the identical contradiction.
+
+    Asserted as AGREEMENT BETWEEN THE TWO SURFACES rather than a table of values, so it survives a
+    re-pull: whatever the band calls current, the reader beside it must call current too."""
+    seen = 0
+    for tk, b in _bundles():
+        bands = {x.metric: x for x in (cs.own_history_bands(b).value or [])}
+        pe_band, pe = bands.get("P/LTM EPS"), cs.pe_ltm_current(b)
+        if pe_band is None:
             continue
-        compared += 1
-        if round(committed, 1) != round(fresh, 1):
-            moved.append(f"{tk}: {committed} → {fresh}")
-    assert compared, (
-        "no name was compared — the blast-radius pin ran vacuously and proves nothing about the "
-        "sort being a no-op")
-    assert not moved, (
-        f"the date sort changed a committed multiple: {moved}. On an already-ascending corpus it "
-        f"must be a no-op — a move means it is re-picking the current quarter, not guarding order")
-
-
-@pytest.mark.xfail(strict=True, reason=(
-    "EXPECTED RED until the artifact pass runs — 13 committed dossiers still carry "
-    "`Close (latest)`. strict=True so this FAILS as an unexpected PASS the moment the pass lands, "
-    "which is the signal to delete this marker; a plain skip would let the obligation rot."))
-def test_no_committed_dossier_still_carries_the_undated_stamp() -> None:
-    """THE CI-VISIBLE PIN, and the one the TEST-LAYER RULE actually asks for.
-
-    The defect was observed IN THE ARTIFACT (item 20: `(latest)` sitting on a months-old value in
-    three dossiers), so the regression belongs on real committed JSON — not on a recomputation from
-    the licensed bundles. Both corpus tests above skip in CI by design (raw CIQ is never
-    committed), which left this PR's headline claim ungated on every pull request. `data/dossiers`
-    IS committed and IS present in CI, so this runs everywhere.
-
-    IT IS EXPECTED TO FAIL UNTIL THE ARTIFACT PASS RUNS — that is the point. STATE recorded the
-    family as closed while 13 committed dossiers still carried `Close (latest)`; a pin that only
-    goes green after the pages are re-assembled is what keeps the record and the artifact honest.
-    """
-    root = pathlib.Path(__file__).resolve().parents[1]
-    stale = sorted(
-        p.parent.name for p in (root / "data" / "dossiers").glob("*/dossier.json")
-        if "Close (latest)" in p.read_text())
-    assert not stale, (
-        f"{stale} still carry `Close (latest)` in a committed source_ref — the undated recency "
-        f"claim this change removes is still on the page a reader meets. Re-run the artifact pass; "
-        f"the code fix alone does not move the artifact (the #453 precedent needed its own pass).")
+        seen += 1
+        assert pe.value is not None, (
+            f"{tk}: a P/LTM EPS band reports current={pe_band.current} @ {pe_band.as_of} while "
+            f"`pe_ltm_current` refuses ({pe.note!r}) — the chart shows a multiple the text beside "
+            f"it calls NM. This is the backward-fill.")
+        assert round(pe_band.current, 1) == round(pe.value, 1), (
+            f"{tk}: the band's current ({pe_band.current}) is not the reported latest close "
+            f"({pe.value}) — the band reached back for an older quarter")
+        assert pe_band.as_of is not None, f"{tk}: a band with no as-of — an undated recency claim"
+    assert seen, "no name yielded a P/LTM EPS band — the assertion never ran"

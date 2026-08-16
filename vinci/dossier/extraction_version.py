@@ -49,6 +49,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "unusual-items surfacing in the financial summary (#238) · multiples read from the "
         "latest close, NM rather than a stale figure (#241)",
     ),
+    (
+        "2026-08-16.1",
+        "every Multiples reader selects the latest close BY DATE, never by column position, and "
+        "refuses on an NM or undated one rather than reaching back a quarter (#459) · the "
+        "multiples stamps name their close (`Close [ISO]`) instead of claiming a bare `(latest)`",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
