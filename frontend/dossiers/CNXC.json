@@ -27,13 +27,13 @@
       },
       "ev_ebitda": {
         "value": 3.9,
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close [2026-07-17] — current multiple",
         "status": "present",
         "note": "trailing only — no forward basis; cannot distinguish a temporarily depressed level from a permanently impaired one"
       },
       "ev_ebitda_percentile_5y": {
         "value": 0.0,
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 23 quarters spanning 2020-12-31..2026-06-30 (5.5y) (partial last column excluded from the distribution)",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 23 quarters spanning 2020-12-31..2026-06-30 (5.5y) (the latest close = current, excluded from the distribution)",
         "status": "present",
         "note": null
       },
@@ -51,7 +51,7 @@
       },
       "range_position": {
         "value": "EV/EBITDA (TEV/LTM) 3.9x as-of 2026-07-17 — trailing range 4.4–12.8x (median 6.9x) over 23 closes → 0%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close)",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "source_ref": "CIQ Financials→Multiples (Close; latest close = current, excluded from history)",
         "status": "present",
         "note": null
       },
@@ -175,112 +175,9 @@
             "implied_d_and_a_margin": 0.111444,
             "source_sha256": "69c3061346",
             "source_mtime": "2026-07-20T13:15:19+00:00"
-          },
-          {
-            "metric": "P/LTM EPS",
-            "current": 8.766527,
-            "low": 9.730044,
-            "high": 38.620247,
-            "median": 14.953981,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2025-12-31",
-            "mean": 17.78730957894737,
-            "series": [
-              [
-                "2021-03-31",
-                38.620247
-              ],
-              [
-                "2021-06-30",
-                29.791939
-              ],
-              [
-                "2021-09-30",
-                26.7927
-              ],
-              [
-                "2021-12-31",
-                27.054978
-              ],
-              [
-                "2022-03-31",
-                20.558701
-              ],
-              [
-                "2022-06-30",
-                15.640525
-              ],
-              [
-                "2022-09-30",
-                12.931337
-              ],
-              [
-                "2022-12-30",
-                15.425829
-              ],
-              [
-                "2023-03-31",
-                15.44103
-              ],
-              [
-                "2023-06-30",
-                11.167989
-              ],
-              [
-                "2023-09-30",
-                12.008496
-              ],
-              [
-                "2023-12-29",
-                14.702725
-              ],
-              [
-                "2024-03-31",
-                14.038634
-              ],
-              [
-                "2024-06-30",
-                14.953981
-              ],
-              [
-                "2024-09-30",
-                16.650784
-              ],
-              [
-                "2024-12-31",
-                14.058135
-              ],
-              [
-                "2025-03-31",
-                13.915761
-              ],
-              [
-                "2025-06-30",
-                14.475047
-              ],
-              [
-                "2025-09-30",
-                9.730044
-              ],
-              [
-                "2025-12-31",
-                8.766527
-              ]
-            ],
-            "periodicity_days_median": 91.0,
-            "window_span_years": 4.75,
-            "periodicity": "quarterly",
-            "data_quality": null,
-            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
-            "implied_ebitda_margin": null,
-            "implied_ebit_margin": null,
-            "implied_d_and_a_margin": null,
-            "source_sha256": "69c3061346",
-            "source_mtime": "2026-07-20T13:15:19+00:00"
           }
         ],
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "source_ref": "CIQ Financials→Multiples (Close; latest close = current, excluded from history)",
         "status": "present",
         "note": null
       },

@@ -9918,7 +9918,14 @@ def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node not available")
-    names = ["CNXC", "SMPL", "AORT"]
+    # WIDENED with the #459 artifact pass. CNXC and SMPL were the P5 exemplars BECAUSE each shipped
+    # a phantom P/LTM EPS band beside text reading "P/LTM EPS NM"; the pass removed both, so they
+    # now contribute ONE panel each and the `checked >= 6` floor stopped being reachable off three
+    # names. The floor is the right instinct — it stops the pin passing vacuously — so the fix is to
+    # restore COVERAGE, never to lower the bar: NFLX and BRBR each carry two bands with DIFFERING
+    # as_ofs, which is the discriminating shape (a single-band name cannot show a panel wearing
+    # another band's date). CNXC and SMPL stay: one-band names pin that the count still matches.
+    names = ["CNXC", "SMPL", "AORT", "NFLX", "BRBR"]
     # the pending exemplar, chosen at run time from whatever is actually undecided
     pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
                  if (Path("scenarios") / f"{f.parent.name}.json").exists()

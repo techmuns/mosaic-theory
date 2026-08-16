@@ -730,7 +730,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [16] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
 [17] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [18] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[19] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
+[19] `CIQ Financials→Multiples (Close; latest close = current, excluded from history)`
 [20] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [21] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [22] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`

@@ -4446,6 +4446,33 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
+2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
+old before it reached STATE).** Agreed after the operator's push-back that a full fleet assembly
+per fix is wasteful — validate on 1–2 names, batch the fixes, assemble ONCE:
+- **PR-1 — KD event coverage.** MERGED #458.
+- **PR-2 — the `(latest)` family / Multiples vintage.** MERGED #459 (and it absorbed the band
+  backward-fill, same root cause).
+- **PR-3 — as-of bounding.** **RE-SCOPED 2026-08-16 on measurement, NOT dropped.** The ~12-field
+  sweep this set was sized against is a 2026-07-29 figure; against the current as-of the live leak
+  is MVST's CIQ panel (8 fields, 1 day) and VRRM's future-dated share count. Build against those,
+  not against the July number. Still the highest-stakes class in the queue — the fund's edge is
+  FORWARD-validated, so lookahead is the one defect that can invalidate the track record itself.
+- **PR-4 — the capital-allocation render gate.** **DROPPED 2026-08-16, measured:** the whole
+  section renders only inside `financialSnapshot()`, but **all 14 committed dossiers carry a
+  financial summary**, so the gate hides nothing from anyone today. It is a guard against a name
+  not in the universe. Re-open if a name ever assembles without a financial summary.
+**THE ORDERING LESSON.** PRs 1–2 were recurrence guards for shapes the corpus does not contain
+(76/76 metric-series already dated and ascending). **PR-2 ALONE consumed ~1.7M review tokens across
+two `/code-review` rounds** — and earned them: round 2 caught a fatal defect in round 1's own fix,
+where a single blank pad column disabled the sort and published the OLDEST close under a confident
+ISO date. The deeper cost is structural, though: when a guard targets a shape the corpus does not
+contain, neither the build nor the review can be settled by looking at the data, so review reasons
+hypothetically — and hypothetical space is unbounded. Each fix adds new hypothetical surface and the
+next pass finds more. **That is the fix→review→fix loop, and it is a property of SPECULATIVE
+TARGETS, not of the reviewer.** The artifact pass below is backed by a defect a reader meets TODAY.
+**Observed defects outrank latent guards in the queue order** — the correction this set earned.
+
 **OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
 13 committed dossiers still carry `Close (latest)` in
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
@@ -12733,6 +12760,23 @@ one evidence-backed leg at a time.
   observation dates BEFORE the pass and 79 AFTER**; UBER **118 → 117**. The only movement is the
   newest date, 08-10 → 08-11, and it is the PRICE-STORE FRONTIER from the bar backfill, not a new
   fact — bars themselves are already filtered (`_standalone_record`: `b.bar_date <= reference_date`).
+  **⚠ THOSE FIGURES ARE AS-OF-2026-07-29 AND ARE NO LONGER THE CURRENT STATE (re-measured
+  2026-08-16).** They are kept because they record what the #428 review found, but read as current
+  they overstate the live leak by two orders of magnitude. **The fleet as-of has since advanced to
+  2026-08-12, and re-measuring all 14 committed dossiers against each page's OWN `reference_date`
+  — same method, excluding forward-looking catalyst/maturity fields — gives 12 dates on 2 names:**
+  - **MVST — 8 fields reading a CIQ Comparable-Analysis panel stamped `2026-08-13`, one day past
+    its own as-of** (`stock_info.market_cap{,_as_of}`, `implied_expectations.tev`,
+    `implied_valuation.{implied_equity,bridge,market_cap}`, `leverage_survival.{total_debt_to_ebitda,
+    credit_health}`, `peer_comps.peer_grid`). Cause is DATA VINTAGE — that workbook was pulled on
+    08-13 — **not** the unbounded-selection path this entry describes.
+  - **VRRM — `quality.share_count_trend` running to `2026-08-31`**, a future-dated share count.
+  - **NFLX and UBER are now 0, and `primary_source` is clean on all 14** — the headline case (UBER
+    reading a 10-Q filed 7d past its as-of) no longer fires.
+  **THE DEFECT WAS OUTRUN, NOT FIXED, and that distinction is the whole point.** No as-of bound was
+  added; the as-of moved past the leak. `_fleet_reference_date` only advances on a SCREEN RUN, so a
+  lagging as-of is the NORMAL state between runs — the leak returns on its own, and the next
+  measurement must be taken against the then-current as-of rather than quoted from here.
   **THE TWO REMEDIES BOTH COST MORE THAN THIS PR CAN SPEND**, which is why it is recorded rather
   than fixed: (a) bounding every source is a decision-path change across ~12 extractors, each owing
   its own shown run; (b) advancing the fleet as-of needs a SCREEN RUN — the monthly operating loop —

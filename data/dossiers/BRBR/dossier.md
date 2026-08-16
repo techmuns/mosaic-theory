@@ -669,7 +669,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [19] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2025-10-01→2026-03-31, 181d)`
 [20] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [21] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[22] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
+[22] `CIQ Financials→Multiples (Close; latest close = current, excluded from history)`
 [23] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [24] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [25] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
