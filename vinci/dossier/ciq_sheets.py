@@ -174,7 +174,42 @@ def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
     if close is None:
         return []
     cols = range(2, min(len(rows[hdr]), len(rows[close])))
-    return [(excel_date(rows[hdr][j]), clean_num(rows[close][j])) for j in cols]
+    out = [(excel_date(rows[hdr][j]), clean_num(rows[close][j])) for j in cols]
+    # PAIRS COME BACK IN COLUMN ORDER, which is the SHEET's order and not a time order — nothing
+    # in the export asserts one. Never take a positional `[-1]` off this, here or downstream; ask
+    # `_latest_close` for the latest close BY DATE.
+    #
+    # A SORT WAS THE FIRST CUT OF THIS FIX AND WAS WRONG (#459 review). It could only run when
+    # EVERY column carried a date, and `read_sheets` pads every row to the sheet's uniform width
+    # (SMPL/NFLX = 41 cols), so ONE blank pad column left the series in column order while each
+    # reader still believed positional-last meant latest. Measured, on a descending export with a
+    # single blank pad column: `ev_ebitda_current` returned the OLDEST close, stamped
+    # `Close [2025-09-30] — current multiple`. An all-or-nothing gate is not "degrade, don't
+    # guess" — it is "stop looking", and it put a confident ISO date on the wrong cell, which is
+    # strictly harder to catch than the `(latest)` it replaced.
+    return out
+
+
+def _latest_close(pairs: list[tuple[Any, float | None]]) -> tuple[date, float | None] | None:
+    """THE LATEST CLOSE, BY DATE — the one selector every Multiples reader shares.
+
+    ORDER-IMMUNE BY CONSTRUCTION: it maxes over the DATED columns, so a descending export, a
+    re-ordered one, or one carrying undated pad/LTM columns all yield the same answer. This is the
+    `_latest_common_multiples` pattern (``max(shared)``), applied to the readers that used to take
+    a positional ``[-1]``: `ev_ebitda_current`, `ev_ebitda_asof`, `pe_ltm_current`, the
+    NM-at-latest guard in `ev_ebitda_percentile`, and `_own_history_band`'s current/history split.
+    One helper, so the value and its as-of cannot drift apart.
+
+    Returns None when NO column carries a date — an undated close cannot be PLACED in time, so it
+    cannot be stamped as current (the `_cs_col_date` contract, refusing rather than degrading).
+
+    THE VALUE SLOT STAYS OPTIONAL, deliberately. NM at the latest close is a REAL state (the FUBO
+    rule), not a gap, so the latest cell is returned AS IT IS and each caller refuses on it. That
+    is item 20's "no backward-fill on ANY time series": skipping an NM latest to reach an older
+    quarter is precisely the backward-fill, and pre-filtering the Nones is how each caller used to
+    re-create it."""
+    dated = [(d, v) for d, v in pairs if isinstance(d, date)]
+    return max(dated, key=lambda pair: pair[0]) if dated else None
 
 
 # --- valuation: Multiples (Financials → Multiples, historical) --------------------------------
@@ -216,23 +251,28 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    # (item 20, review) THE LATEST cell, never the last SURVIVING one. `ev_ebitda_current` gets
-    # away with filtering because `ev_ebitda_asof` filters IDENTICALLY, so its value and date move
-    # together and the pair stays honest. THIS function has no as-of anywhere — its source_ref
-    # names a quarter COUNT, not a date — so a filtered `[-1]` would compute a percentile against a
-    # stale "current" with nothing on the page to reveal it. Latent today (no committed name has an
-    # NM latest TEV/LTM EBITDA), fixed because item 20 is "no backward-fill on ANY time series"
-    # and a latent instance of the exact class the item closes is not a reason to leave it.
+    # (item 20, review) THE LATEST cell BY DATE, never the last SURVIVING one and never the
+    # rightmost COLUMN. THIS function has no as-of anywhere — its source_ref names a quarter
+    # COUNT, not a date — so scoring against the wrong "current" leaves nothing on the page to
+    # reveal it. `_latest_close` is the shared selector, so this guard and the multiple it ranks
+    # can no longer inspect different quarters.
     pairs_ev = _multiples_close(rows, "TEV/LTM EBITDA")
-    if pairs_ev and pairs_ev[-1][1] is None:
+    latest_ev = _latest_close(pairs_ev)
+    if latest_ev is not None and latest_ev[1] is None:
         return Sourced.unknown(
             note="TEV/LTM EBITDA is NM at the latest Close — a percentile against an older close "
                  "would carry no date to reveal it")
-    kept = [(d, v) for d, v in pairs_ev if v is not None]
+    # DATED AND IN TIME ORDER, so `current` below is the latest close and the span label describes
+    # the window that actually produced the number. Pre-#459 both were positional: on a series
+    # carrying one undated column the scored current fell OUTSIDE the span its own source_ref
+    # advertised (measured: percentile 0.0 — "at its own floor" — where the true latest close was
+    # the range TOP). Undated columns cannot be placed in the distribution, so they are excluded.
+    kept = sorted(((d, v) for d, v in pairs_ev if v is not None and isinstance(d, date)),
+                  key=lambda pair: pair[0])
     series = [v for _, v in kept]
     if len(series) < 4:
         return Sourced.unknown(note=f"TEV/LTM EBITDA Close <4 quarters ({len(series)}) — no pctile")
-    current, history = series[-1], series[:-1]  # partial last col = current, excluded from history
+    current, history = series[-1], series[:-1]  # latest close = current, excluded from history
     pct = sum(1 for h in history if h <= current) / len(history)
     # THE WINDOW SAYS HOW LONG IT IS (2026-08-12). The field this lands in is named
     # `ev_ebitda_percentile_5y`, and the distribution is every quarterly Close the workbook carries
@@ -245,7 +285,7 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
     return Sourced.present(
         round(pct, 3),
         source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters"
-        f"{span} (partial last column excluded from the distribution)",
+        f"{span} (the latest close = current, excluded from the distribution)",
     )
 
 
@@ -255,7 +295,12 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
 _MIN_CONFIDENT_CLOSES = 8
 
 
-_OWN_HISTORY_SRC = "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+#: "last col = current" was the PRE-#459 rule and describes a selection this code no longer makes:
+#: the current close is the latest BY DATE, wherever it sits in the export. A reader following the
+#: old stamp to the sheet's last column would land on a different number and conclude the extractor
+#: is broken — the same false-provenance class `(latest)` was.
+_OWN_HISTORY_SRC = ("CIQ Financials→Multiples (Close; latest close = current, "
+                    "excluded from history)")
 # (Phase-3) the own-history metrics: (display metric, Multiples-sheet row label)
 _OWN_HISTORY_METRICS = (("EV/EBITDA (TEV/LTM)", "TEV/LTM EBITDA"), ("P/LTM EPS", "P/LTM EPS"))
 # (coherence) the three TEV/LTM rows whose RATIOS pin the EV/EBITDA denominator against the same
@@ -330,7 +375,7 @@ def file_provenance(path: Any) -> tuple[str | None, str | None]:
 
 
 def _own_history_band(
-    metric: str, pairs: list[tuple[Any, float]], *, source_file: str | None = None,
+    metric: str, pairs: list[tuple[Any, float | None]], *, source_file: str | None = None,
     source_sha256: str | None = None, source_mtime: str | None = None,
     coherence: SheetCoherence | None = None,
 ) -> OwnHistoryBand | None:
@@ -340,22 +385,41 @@ def _own_history_band(
 
     Stamps SELF-DESCRIBING periodicity/span metadata + ``source_file`` (the 2026-07-21 window-
     staleness fix) so a band can never again be read as more history than it holds, and — EV/EBITDA
-    band only — the ``coherence`` read of whether the sheet's own rows agree (VITL, same day)."""
-    if len(pairs) < 4:
-        return None
-    vals = [v for _, v in pairs]
-    cur, hist = vals[-1], vals[:-1]
-    d = pairs[-1][0]
+    band only — the ``coherence`` read of whether the sheet's own rows agree (VITL, same day).
+
+    THE VALUE SLOT IS OPTIONAL AND THE LATEST-CELL RULE LIVES HERE (#459 review). It used to be
+    ``list[tuple[Any, float]]``, and that non-Optional slot was the defect GENERATOR: mypy forced
+    every caller to pre-filter the NM closes away, so ``vals[-1]`` was the last SURVIVING close and
+    the band silently backward-filled onto an older quarter. Live in the committed artifacts when
+    this was written: CNXC shipped a P/LTM EPS band ``current 8.766527, as_of 2025-12-31`` on the
+    same page whose `range_position` read "P/LTM EPS NM (no meaningful trailing P/E at this
+    close)"; SMPL shipped ``15.958736 @ 2026-03-31`` with the identical contradiction. Refusing
+    HERE — one helper, not two call sites — is what makes the page tell one story."""
+    latest = _latest_close(pairs)
+    if latest is None:
+        return None  # no dated close — a band cannot be placed in time
+    d, cur = latest
+    if cur is None:
+        return None  # NM at the latest close — a band needs a current, and an older close is not
+        #              one (item 20: no backward-fill on ANY time series)
+    # DATED, IN TIME ORDER, current EXCLUDED — history is every OTHER dated close that reported.
+    # Undated columns cannot be placed on a time axis, so they are not plotted or counted.
+    dated: list[tuple[date, float]] = sorted(
+        ((p, v) for p, v in pairs if isinstance(p, date) and v is not None),
+        key=lambda pair: pair[0])
+    hist = [v for p, v in dated if p != d]
+    if len(hist) < 3:
+        return None  # <4 closes all told — no meaningful range
     # full (date, multiple) close path for the line (current = last point; dates label the x-axis).
     # mean/min/max are over history (current excluded), like low/high.
-    series = [(p.isoformat() if p is not None else "", v) for p, v in pairs]
-    per_days, span_years, per_label, dq = _periodicity([p for p, _ in pairs])
+    series = [(p.isoformat(), v) for p, v in dated]
+    per_days, span_years, per_label, dq = _periodicity([p for p, _ in dated])
     # both flags ride together — an incoherent band that is ALSO annual-mislabelled must show both
     dq = compose_flag(dq, coherence.flag if coherence else None)
     return OwnHistoryBand(
         metric=metric, current=cur, low=min(hist), high=max(hist),
         median=statistics.median(hist), percentile=sum(1 for h in hist if h <= cur) / len(hist),
-        n_closes=len(hist), as_of=d.isoformat() if d is not None else None,
+        n_closes=len(hist), as_of=d.isoformat(),
         mean=statistics.mean(hist), series=series,
         periodicity_days_median=per_days, window_span_years=span_years, periodicity=per_label,
         data_quality=dq, source_file=source_file,
@@ -375,7 +439,11 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    ev_pairs = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    # NO PRE-FILTER (#459 review). Dropping the NM closes here and letting the band take what
+    # survived WAS the backward-fill: the band's `current` became an older quarter while its as-of
+    # followed. `_own_history_band` now applies the latest-cell rule itself, so both halves of this
+    # string and the chart beside it resolve the same close.
+    ev_pairs = _multiples_close(rows, "TEV/LTM EBITDA")
     # (item 20, audit P5) The P/LTM EPS tail reports the LATEST cell — never the last SURVIVING one.
     # The old form filtered the Nones away and then took `pe[-1]`, which is backward-fill by a
     # different route than the audit described (`_multiples_close` is correct: it maps NM → None).
@@ -384,11 +452,22 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     # under the EV reading's as-of. SMPL printed "P/LTM EPS 16.0x" beside "as-of 2026-07-23" while
     # that 16.0x was the 2026-03-31 close and the two most recent cells were NM. Live on THREE
     # names at the fix: SMPL 16.0x, CNXC 8.8x, WERN 72.8x.
-    pe_pairs = _multiples_close(rows, "P/LTM EPS")
-    pe_latest = pe_pairs[-1][1] if pe_pairs else None
+    #
+    # BOTH HALVES NOW RESOLVE THROUGH `_latest_close`, so the tail cannot sit a quarter away from
+    # the as-of it renders under — the two used to reach `[-1]` through DIFFERENT filters, which
+    # left the P/E leg free to be newer or older than the EV leg's date on a fully-dated sheet.
+    pe_latest_pair = _latest_close(_multiples_close(rows, "P/LTM EPS"))
+    pe_latest = pe_latest_pair[1] if pe_latest_pair is not None else None
     b = _own_history_band("EV/EBITDA (TEV/LTM)", ev_pairs)
     if b is None:
-        return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
+        # THE NOTE NAMES THE ACTUAL CAUSE. A flat "<4 quarters" was wrong whenever the band
+        # refused for a different reason — an NM latest close on a name with plenty of history
+        # read as "not enough data", which is a claim about the workbook that isn't true.
+        ev_latest = _latest_close(ev_pairs)
+        why = ("no TEV/LTM EBITDA Close carries a date" if ev_latest is None else
+               f"TEV/LTM EBITDA is NM at the latest Close [{ev_latest[0].isoformat()}]"
+               if ev_latest[1] is None else "TEV/LTM EBITDA Close has <4 quarters")
+        return Sourced.unknown(note=f"{why} — no range position")
     cur, lo, hi, med, pct, n = b.current, b.low, b.high, b.median, b.percentile, b.n_closes
     if n < _MIN_CONFIDENT_CLOSES:
         where = (
@@ -398,12 +477,18 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     else:
         band = next(bnd for t, bnd in _RANGE_BANDS if pct <= t)
         where = f"{pct:.0%}ile → {band}"
-    asof = f" as-of {b.as_of}" if b.as_of is not None else ""
+    # ALWAYS DATED NOW: `_own_history_band` refuses without a dated latest close, so this string
+    # can no longer print a bare recency claim with no as-of — the shape the undated-close refusal
+    # was added for, which used to reach the page through this exact degrade.
+    asof = f" as-of {b.as_of}"
     # NM is stated, not silently dropped: an absent tail reads as "no P/E was available to look at",
     # which is a different claim from "the trailing P/E is not meaningful because LTM EPS is
     # negative". The absence is visible and attributed (the visible-absence rule, item 22).
+    # NM vs ABSENT is decided on the latest DATED close: `pe_pairs` truthiness used to call an
+    # undated-only series "NM", stating a data state the sheet never carried.
     tail = (f"; P/LTM EPS {pe_latest:.1f}x" if pe_latest is not None
-            else ("; P/LTM EPS NM (no meaningful trailing P/E at this close)" if pe_pairs else ""))
+            else ("; P/LTM EPS NM (no meaningful trailing P/E at this close)"
+                  if pe_latest_pair is not None else ""))
     return Sourced.present(
         f"EV/EBITDA (TEV/LTM) {cur:.1f}x{asof} — trailing range {lo:.1f}–{hi:.1f}x "
         f"(median {med:.1f}x) over {n} closes → {where}{tail}",
@@ -429,7 +514,9 @@ def own_history_bands(bundle: CiqBundle) -> Sourced[list[OwnHistoryBand]]:
                           mult_ebit=common[0]["ebit"], as_of=common[1]) if common else None
     bands: list[OwnHistoryBand] = []
     for metric, label in _OWN_HISTORY_METRICS:
-        pairs = [(d, v) for d, v in _multiples_close(rows, label) if v is not None]
+        # NO PRE-FILTER — see `_own_history_band`. This was the second caller re-creating the
+        # backward-fill, and it is the one that shipped CNXC's contradictory P/LTM EPS band.
+        pairs = _multiples_close(rows, label)
         band = _own_history_band(metric, pairs, source_file=src_file,
                                  source_sha256=src_sha, source_mtime=src_mtime,
                                  coherence=coh if label == "TEV/LTM EBITDA" else None)
@@ -447,12 +534,28 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    ev = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
-    if not ev:
-        return Sourced.unknown(note="TEV/LTM EBITDA Close has no value")
+    # THE STAMP NAMES THE CLOSE IT CAME FROM. `Close (latest)` was an UNDATED recency claim — the
+    # literal `…(latest)` false-provenance shape item 20 records, and the one #453 removed from
+    # `book_value_per_share` and `key_ratios`. This is the last pair of them.
+    latest = _latest_close(_multiples_close(rows, "TEV/LTM EBITDA"))
+    if latest is None:
+        return Sourced.unknown(
+            note="no TEV/LTM EBITDA Close carries a date — a current multiple cannot be stamped "
+                 "with a date the sheet does not state")
+    d, v = latest
+    # NM AT THE LATEST CLOSE REFUSES (item 20, #459 review). This reader was the LAST one still
+    # filtering the Nones away and taking what survived, so an NM latest quarter silently demoted
+    # to an older one — and the new dated stamp made that substitution read as verified provenance
+    # (`Close [<older quarter>] — current multiple`). Its siblings `pe_ltm_current` and
+    # `ev_ebitda_percentile` already refuse here; the page now tells one story instead of two.
+    if v is None:
+        return Sourced.unknown(
+            note=f"TEV/LTM EBITDA is NM at the latest Close [{d.isoformat()}] — no meaningful "
+                 "current multiple, and an older quarter is not one")
     return Sourced.present(
-        round(ev[-1], 1),
-        source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        round(v, 1),
+        source_ref=(f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close [{d.isoformat()}]"
+                    " — current multiple"),
     )
 
 
@@ -464,9 +567,13 @@ def ev_ebitda_asof(bundle: CiqBundle) -> date | None:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError:
         return None
-    closes = _multiples_close(rows, "TEV/LTM EBITDA")
-    dated = [d for d, v in closes if v is not None and d is not None]
-    return dated[-1] if dated else None
+    # THE SAME CELL `ev_ebitda_current` READS, via the same selector — so the value and its as-of
+    # move together by construction. They diverged in the first cut of #459 (current gained a
+    # refusal, this kept its own filtered `[-1]`), and `_ev_ebitda_integrity_flag` reads BOTH: it
+    # composed a dated staleness caveat about a multiple the page had refused, rendering the
+    # multiple as a literal `?`. Returning the date only when a current multiple exists closes it.
+    latest = _latest_close(_multiples_close(rows, "TEV/LTM EBITDA"))
+    return latest[0] if latest is not None and latest[1] is not None else None
 
 
 def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
@@ -483,15 +590,22 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
     # returned a months-old close under a source_ref that literally claims "(latest)" — a false
     # provenance stamp on top of a stale value. Missed by the first cut of the fix, which repaired
     # `range_position` only; caught by checking the caveat-banner path that reads THIS function.
-    pairs = _multiples_close(rows, "P/LTM EPS")
-    latest = pairs[-1][1] if pairs else None
+    latest = _latest_close(_multiples_close(rows, "P/LTM EPS"))
     if latest is None:
+        # NOT "NM" — the sheet never said so. An absent/undated column and a stated NM are two
+        # different facts, and the first cut of #459 collapsed them: a blank trailing column came
+        # back as "P/LTM EPS is NM at the latest Close", which `range_position` then printed to the
+        # human as a data state the sheet does not carry. Fabricating a STATE is fabrication.
         return Sourced.unknown(
-            note=("P/LTM EPS Close has no value" if not pairs else
-                  "P/LTM EPS is NM at the latest Close — no meaningful trailing P/E")
-        )
+            note="no P/LTM EPS Close carries a date — no dated trailing P/E")
+    when_d, value = latest
+    if value is None:
+        return Sourced.unknown(
+            note=f"P/LTM EPS is NM at the latest Close [{when_d.isoformat()}] — no meaningful "
+                 "trailing P/E")
     return Sourced.present(
-        round(latest, 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
+        round(value, 1),
+        source_ref=f"CIQ Financials→Multiples 'P/LTM EPS' Close [{when_d.isoformat()}]"
     )
 
 
