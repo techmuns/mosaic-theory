@@ -9918,14 +9918,29 @@ def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
 
     if not shutil.which("node"):
         pytest.skip("node not available")
-    # WIDENED with the #459 artifact pass. CNXC and SMPL were the P5 exemplars BECAUSE each shipped
-    # a phantom P/LTM EPS band beside text reading "P/LTM EPS NM"; the pass removed both, so they
-    # now contribute ONE panel each and the `checked >= 6` floor stopped being reachable off three
-    # names. The floor is the right instinct — it stops the pin passing vacuously — so the fix is to
-    # restore COVERAGE, never to lower the bar: NFLX and BRBR each carry two bands with DIFFERING
-    # as_ofs, which is the discriminating shape (a single-band name cannot show a panel wearing
-    # another band's date). CNXC and SMPL stay: one-band names pin that the count still matches.
-    names = ["CNXC", "SMPL", "AORT", "NFLX", "BRBR"]
+    # ROSTER DERIVED, NOT PINNED BY NAME (#366's convention; the literal list was reintroduced by
+    # the #460 pass and is removed here). A hardcoded roster coupled to a `checked >= N` floor is a
+    # value-level pin on a LIVING artifact, and it broke exactly as docs/engineering.md predicts:
+    # CNXC and SMPL were the P5 exemplars BECAUSE each shipped a phantom P/LTM EPS band, the pass
+    # removed both, the panel count fell below the floor, and the pin REDDENED ON A WIN.
+    #
+    # AND THE WIDENING THAT REPLACED IT WAS JUSTIFIED BY A FALSE CLAIM — recorded so it is not
+    # repeated: it asserted NFLX and BRBR "carry two bands with DIFFERING as_ofs". They do not.
+    # Both read 2026-08-07/2026-08-07, and after the pass **NO committed name has two bands with
+    # differing as_ofs** (CNXC and SMPL were the only two, and their second band is gone). So this
+    # e2e arm can no longer discriminate the P5 defect: within a name every band's as_of is the
+    # same string, and a renderer regressing to `bands[0].as_of` passes it. Mutation-confirmed.
+    # THE DISAGREEMENT CASE IS PINNED ON THE FROZEN FIXTURE BELOW — that is now its ONLY coverage,
+    # which is where the TEST-LAYER RULE puts a value-level pin anyway.
+    #
+    # What this arm still proves, honestly: panel COUNT matches band count, every band carries an
+    # as_of to render, each panel carries one, and the shared caption stays undated. Derived over
+    # the fleet that is 22 bands on 14 names rather than 8 on 5, and it cannot decay silently.
+    names = [d.name for d in sorted(Path("data/dossiers").iterdir())
+             if (d / "dossier.json").is_file()
+             and [b for b in ((json.loads((d / "dossier.json").read_text())["mechanical"]
+                               ["valuation"].get("own_history") or {}).get("value") or [])
+                  if len(b.get("series") or []) >= 2]]
     # the pending exemplar, chosen at run time from whatever is actually undecided
     pend = next((f.parent.name for f in sorted(Path("data/dossiers").glob("*/dossier.json"))
                  if (Path("scenarios") / f"{f.parent.name}.json").exists()
@@ -9967,7 +9982,12 @@ console.log(JSON.stringify(out));
                 f"{name}: panel {panel!r} does not carry ITS OWN band's as_of {want} — a panel "
                 "showing another band's date is the P5 false stamp")
             checked += 1
-    assert checked >= 6, f"only {checked} panels checked — the corpus shrank, so this proves less"
+        # PER-NAME, not a hand-tuned fleet total. The `checked >= 6` floor was 3 names x 2 bands,
+        # and it reddened the moment a real fix removed two phantom bands. This asserts the loop
+        # actually ran for THIS name — which `len(panels) == len(bands)` cannot, since 0 == 0 passes
+        # vacuously (FUBO carries no band at all, and is excluded by the derived roster above).
+        assert bands, f"{name}: selected into the roster but carries no usable band"
+    assert names, "no committed dossier carries a multi-point own-history band — roster is empty"
 
     # the shared caption must carry NO date: one stamp over differing panels IS the defect
     for name in names:
@@ -9979,10 +9999,14 @@ console.log(JSON.stringify(out));
 def test_two_panels_with_different_as_ofs_each_keep_their_own() -> None:
     """The DISAGREEING case, on a CONSTRUCTED fixture — the shape that makes the bug possible.
 
-    Its sibling above reads the committed fleet, where two names happen to disagree today. Both
-    are queued for re-assembly, which would extend their P/E series and converge the dates; the
-    scenario would then vanish from the corpus and the sibling would still pass while pinning
-    nothing about disagreement. Building it here means it cannot decay with the fleet."""
+    THE PREDICTION IN THIS DOCSTRING CAME TRUE — and this is now the ONLY coverage of the shape.
+    It used to read "its sibling above reads the committed fleet, where two names happen to disagree
+    today ... the scenario would then vanish from the corpus and the sibling would still pass while
+    pinning nothing about disagreement". Those two names were CNXC and SMPL; the #460 artifact pass
+    removed the phantom P/LTM EPS band from both, and **no committed name now has two bands with
+    differing as_ofs**. So the live-corpus sibling has gone vacuous with respect to disagreement,
+    exactly as written, and its remaining claims are count/presence only. Building it here means it
+    cannot decay with the fleet — which is now load-bearing rather than belt-and-braces."""
     import json
     import shutil
     import subprocess

@@ -4473,8 +4473,20 @@ next pass finds more. **That is the fix→review→fix loop, and it is a propert
 TARGETS, not of the reviewer.** The artifact pass below is backed by a defect a reader meets TODAY.
 **Observed defects outrank latent guards in the queue order** — the correction this set earned.
 
-**OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
-13 committed dossiers still carry `Close (latest)` in
+**~~OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET~~ DONE 2026-08-17 (#460), PARTIALLY —
+READ THE RESIDUE BELOW BEFORE CLOSING THIS.** The pass ran: mechanical `Close (latest)`
+stamps went 13 → 0 and CNXC's + SMPL's phantom P/LTM EPS bands are gone. **THREE
+OBLIGATIONS SURVIVE IT** and are NOT discharged: (1) `extraction_version` is still
+`2026-07-28.1` on all 14 — the refresh path never stamps it, so the declared
+`2026-08-16.1` reaches no artifact until a name is next assembled with an LLM client;
+(2) the reworded mechanical `source_ref`s BROKE the sealed synthesis citations that
+quote them — 7 names carry a point with `cited: true` whose ref no longer traces to any
+mechanical fact, and EPAM/IT/UBER now render TWO contradictory endnotes for one CIQ
+source (`moved_cited_claims` guards FIGURES only, so nothing refused); (3) the
+`Close [ISO]` stamp reaches ZERO rendered surfaces — `ev_ebitda.source_ref` is cited by
+neither renderer — so on the PDF three names still show only the stale `Close (latest)`.
+**The original text is kept below for the record; its counts are superseded.**
+~~13 committed dossiers still carry `Close (latest)` in~~
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
 precedent needed its own pass, 1095f9f). The re-assembly also lands `EXTRACTION_VERSIONS
 2026-08-16.1` and drops CNXC's and SMPL's phantom P/LTM EPS bands. **This obligation is recorded
@@ -12764,13 +12776,16 @@ one evidence-backed leg at a time.
   2026-08-16).** They are kept because they record what the #428 review found, but read as current
   they overstate the live leak by two orders of magnitude. **The fleet as-of has since advanced to
   2026-08-12, and re-measuring all 14 committed dossiers against each page's OWN `reference_date`
-  — same method, excluding forward-looking catalyst/maturity fields — gives 12 dates on 2 names:**
-  - **MVST — 8 fields reading a CIQ Comparable-Analysis panel stamped `2026-08-13`, one day past
-    its own as-of** (`stock_info.market_cap{,_as_of}`, `implied_expectations.tev`,
+  — same method, excluding forward-looking catalyst/maturity fields — gives 12 date-occurrences on 2 names (10 MVST + 2 VRRM):**
+  - **MVST — 10 field-occurrences reading a CIQ Comparable-Analysis panel stamped `2026-08-13`,
+    one day past its own as-of** (the nine listed below plus
+    `valuation.own_history.value[0].source_mtime`; an earlier draft of this line said "8 fields"
+    and then enumerated nine — corrected 2026-08-17 on re-measurement) (`stock_info.market_cap{,_as_of}`, `implied_expectations.tev`,
     `implied_valuation.{implied_equity,bridge,market_cap}`, `leverage_survival.{total_debt_to_ebitda,
     credit_health}`, `peer_comps.peer_grid`). Cause is DATA VINTAGE — that workbook was pulled on
     08-13 — **not** the unbounded-selection path this entry describes.
-  - **VRRM — `quality.share_count_trend` running to `2026-08-31`**, a future-dated share count.
+  - **VRRM — `quality.share_count_trend` running to `2026-08-31`** (TWO paths, `.value` and
+    `.source_ref`), a future-dated share count.
   - **NFLX and UBER are now 0, and `primary_source` is clean on all 14** — the headline case (UBER
     reading a 10-Q filed 7d past its as-of) no longer fires.
   **THE DEFECT WAS OUTRUN, NOT FIXED, and that distinction is the whole point.** No as-of bound was
