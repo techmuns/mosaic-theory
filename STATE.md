@@ -4554,6 +4554,33 @@ all three axes, every reference value, every note. Of 7 scenario records it is t
   those. **The machine must not write this** — which reference justifies which leg is an
   underwriting argument, and free-writing it is the line the pivot draws. Then delete BRBR from
   `KNOWN_FOREIGN`.
+- **THE GUARDS WERE WEAKER THAN THEIR OWN DOCSTRINGS CLAIMED — FIXED 2026-08-17
+  (`fix/guard-weaknesses`), every fix mutation-verified.** Six items, and the pattern in five of
+  them is the same: I asserted coverage without measuring it.
+  - **SCOPE WAS DECIDED BY A DISPLAY STRING.** `_band_refs` selected on
+    `"own_history" in ref["source"]` — a rendered string made load-bearing, which is the rule this
+    repo enforces everywhere else. Coverage therefore depended on an author's PHRASING: measured, it
+    reached **3 of 8 records**, silently exempting AORT's band median 32.1 and WERN's 6.56.
+    **Re-scoped by AXIS + UNIT** (`multiple` axis, `unit == "x"`) → **9 refs across 6 records**, zero
+    false positives. Widening on the source string instead would have been WORSE: `median` also
+    appears on the MARGIN axis sourced to the anchor block, and those are PERCENTAGES — scoring
+    BRBR's 15.45% against an EV/EBITDA close series is the same category error that made
+    `percentile` a false positive.
+  - **THE LOUD REFUSAL WAS DEAD CODE, and my docstring said it covered WERN.** It didn't: the old
+    predicate filtered WERN out BEFORE the band-availability check. Axis-scoping makes the branch
+    reachable, and WERN now fires it — **a name underwritten with no committed dossier, so its band
+    citations are unverifiable by any means.** Recorded in `NO_COMMITTED_BAND` with its unlock
+    (assemble the name or drop the citation), not skipped.
+  - **GUARD 1 EXEMPTED THE WHOLE SHARED-DIGEST GROUP**, so a THIRD record pasted from BRBR/SMPL's
+    block was waved through for as long as the BRBR entry lived. Now keyed on the EXACT group as a
+    frozenset: mutation-verified, a third joiner reddens with `[['BRBR','IT','SMPL']]`.
+  - **THE TRACE PIN SKIPPED `decisive_question.evidence_for/against` — 77 citations**, so a reworded
+    stamp quoted only there passed. All 77 trace today, so including them was free coverage.
+  - **`assert bands` WAS TAUTOLOGICAL** (the roster pre-selects on that identical filter) and
+    `checked` was dead once its floor went. Replaced with `assert panels` — the RENDERED side, which
+    the roster does not pre-guarantee, so an exhibit that stops emitting panels is caught.
+  - `mypy --strict` clean on the guard file now too (`_ROLE_STAT` was untyped) — outside CI's
+    `vinci`-only gate, fixed anyway.
 - **INVARIANT SHIPPED (INVARIANT RULE) — `tests/test_scenario_reference_binding.py`, 3 pins.**
   (1) no two scenario records share an `assumptions` block — catches the wholesale paste;
   (2) every band reference with a STABLE role (low/median/high) must be REPRODUCIBLE FROM THAT
