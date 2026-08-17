@@ -4446,6 +4446,36 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**EXTRACTION-VINTAGE RESIDUE CLOSED 2026-08-17 (`fix/extraction-vintage-residue`) — one of the two
+was a false claim about to render; the other is ACCEPTED RISK with its unlock, not a fix.**
+- **THE ROW WAS LYING, AND WOULD HAVE PRINTED.** `EXTRACTION_VERSIONS`'s `2026-08-16.1` row still
+  claimed *"the multiples stamps name their close (`Close [ISO]`)"* — behaviour #460 REVERTED. That
+  version is what `assemble.py` stamps, and `render.py` / `dossier.js` print the row's text in the
+  audit tier, so the NEXT full assembly of any name would have rendered a vintage description
+  contradicting the `Close (latest)` stamps on the same page — the same false-provenance class item
+  20 tracks. **AMENDED in both twins** (py + the parity-pinned JS), dropping the reverted clause and
+  keeping the first, which is TRUE: selection-by-date and the NM refusals survived.
+- **AMENDING AN APPEND-ONLY TABLE, JUSTIFIED ONCE AND RECORDED AT THE TABLE.** Append-only exists so
+  a row an ARTIFACT REFERENCES is never rewritten under it, and **no artifact carried
+  `2026-08-16.1` — 0 of 14**. Appending a correction row instead would have declared a vintage that
+  never produced anything and left the false clause standing where a reader greps.
+- **INVARIANT SHIPPED (INVARIANT RULE):** `test_every_committed_stamp_names_a_vintage_this_code_
+  declares` — every committed stamp must resolve to a real row. It enforces the precondition the
+  amendment relied on and was never checked, and it catches a typo'd bump at COMMIT time rather than
+  at render time on one page. Mutation-verified: deleting the row 14 artifacts reference names all
+  14; a one-sided py/js edit fires the existing parity pin.
+- **ACCEPTED RISK, NOT FIXED — THE MIXED-VINTAGE DOSSIER.** `own-history-refresh` re-extracts four
+  valuation fields with current code and never restamps, so #460's 13 refreshed names carry
+  post-#459 valuation output under a `2026-07-28.1` stamp. **NEITHER stamp is honest:** the new one
+  would claim the WHOLE document was re-extracted — the false *"these two are comparable"* this
+  module exists to prevent — and the old one under-claims by four fields. So restamping on refresh
+  is the WRONG fix, not a missing one. **UNLOCK:** the artifact must record that a refresh ran and
+  at which vintage (a schema field + render + JS twin + parity pins) — its own PR. Distinct from
+  queue item 26b, which is *"an extractor change with no bump"*; here the bump exists and the
+  refresh writer does not apply it.
+
+
+
 **OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
 13 committed dossiers still carry `Close (latest)` in
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453

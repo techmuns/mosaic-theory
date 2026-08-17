@@ -235,3 +235,41 @@ console.log(JSON.stringify({{
         "two vintages rendered identically on the web twin — the md surface distinguishes them and "
         "the web does not, which is the #227 asymmetry on the stamp itself")
     assert r["legacyIsVisiblyUnstamped"], "an unstamped record must SAY so on the web twin too"
+
+
+def test_every_committed_stamp_names_a_vintage_this_code_declares() -> None:
+    """A committed stamp must resolve to a REAL row — the check the 2026-08-16.1 amendment owes.
+
+    `EXTRACTION_VERSIONS` is append-only precisely so a row an artifact references is never
+    rewritten under it. The follow-up to #461 AMENDED the `2026-08-16.1` row, because its
+    `Close [ISO]` clause described behaviour #460 reverted. That was legitimate ONLY because no
+    artifact carried that version — measured 0 of 14.
+    IS referenced and the suite names the dossiers left pointing at nothing.
+
+    IT ALSO CATCHES A TYPO'D BUMP. `stamp_detail` degrades gracefully at RENDER time ("not a
+    version this code declares"), right for the reader but it means an invented stamp ships
+    silently, visible only to whoever opens that one page. This fails at COMMIT time instead.
+
+    WHAT IT DELIBERATELY DOES NOT CATCH, recorded as accepted risk in STATE rather than left
+    implied: a MIXED-vintage dossier. `own-history-refresh` re-extracts four valuation fields with
+    current code and never restamps, so the 13 names touched by #460's pass carry post-#459
+    valuation output under a `2026-07-28.1` stamp. NEITHER stamp is honest there — the new one would
+    claim the whole document was re-extracted, which is the false "these two are comparable" this
+    module exists to prevent, and the old one under-claims by four fields. Detecting it needs the
+    artifact to record that a refresh ran: a schema change, and its own PR."""
+    root = Path(__file__).resolve().parents[1]
+    declared = {v for v, _ in EXTRACTION_VERSIONS}
+    orphaned, scanned = [], 0
+    for path in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
+        stamp = (json.loads(path.read_text()).get("extraction_version") or "").strip()
+        if not stamp:
+            continue  # assembled before 26a — `stamp_label` renders "unstamped", which is honest
+        scanned += 1
+        if stamp not in declared:
+            orphaned.append(f"{path.parent.name}={stamp}")
+    assert scanned, "no committed dossier carries a stamp — the guard ran vacuously"
+    assert not orphaned, (
+        f"committed dossier(s) stamp a vintage this code does not declare: {orphaned}. Either a "
+        f"row "
+        f"was amended or deleted while an artifact still referenced it — which is what append-only "
+        f"forbids — or a bump was typo'd. Declared: {sorted(declared)}.")
