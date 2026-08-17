@@ -243,8 +243,9 @@ def test_every_committed_stamp_names_a_vintage_this_code_declares() -> None:
     `EXTRACTION_VERSIONS` is append-only precisely so a row an artifact references is never
     rewritten under it. The follow-up to #461 AMENDED the `2026-08-16.1` row, because its
     `Close [ISO]` clause described behaviour #460 reverted. That was legitimate ONLY because no
-    artifact carried that version — measured 0 of 14.
-    IS referenced and the suite names the dossiers left pointing at nothing.
+    artifact carried that version — measured 0 of 14. Nothing ENFORCED that precondition, so this
+    does: amend or delete a row an artifact still references and the suite names every dossier left
+    pointing at nothing.
 
     IT ALSO CATCHES A TYPO'D BUMP. `stamp_detail` degrades gracefully at RENDER time ("not a
     version this code declares"), right for the reader but it means an invented stamp ships
@@ -257,10 +258,9 @@ def test_every_committed_stamp_names_a_vintage_this_code_declares() -> None:
     claim the whole document was re-extracted, which is the false "these two are comparable" this
     module exists to prevent, and the old one under-claims by four fields. Detecting it needs the
     artifact to record that a refresh ran: a schema change, and its own PR."""
-    root = Path(__file__).resolve().parents[1]
     declared = {v for v, _ in EXTRACTION_VERSIONS}
     orphaned, scanned = [], 0
-    for path in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
+    for path in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         stamp = (json.loads(path.read_text()).get("extraction_version") or "").strip()
         if not stamp:
             continue  # assembled before 26a — `stamp_label` renders "unstamped", which is honest
