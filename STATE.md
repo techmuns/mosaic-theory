@@ -4446,6 +4446,43 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**ANALYST ACTION, OPEN — BRBR's UNDERWRITING CITES SIMPLY GOOD FOODS' TRADING HISTORY
+(found 2026-08-17, guards shipped; the content fix is YOURS, not the machine's).**
+`scenarios/BRBR.json`'s `assumptions` block is a BYTE-IDENTICAL copy of `scenarios/SMPL.json`'s —
+all three axes, every reference value, every note. Of 7 scenario records it is the only shared pair.
+- **THE HARM IS DIRECTIONAL, and it is the dangerous direction for a long-biased book.** BRBR's
+  bear multiple leg is **6.0x**, and the prose justifies it against *"this company's trading-range
+  low"* of **6.11x** — Simply Good Foods' floor. **BRBR's own floor is 4.29x**, so the bear leg sits
+  **1.71x ABOVE** the floor while reading as if stress-tested to it. Downside looks covered when it
+  is not. Same shape on median (17.85x cited vs BRBR's 19.76x) and the history span (8.5y/35 closes
+  cited vs BRBR's 6.6y/27).
+- **THE DECISION IS SOUND; THE AUDIT TRAIL IS NOT.** BRBR's ratified legs are its own and correctly
+  scaled (bear rev 2,250 / margin 8% / 6.0x against ~$2.3bn revenue; SMPL's are 1,200 / 13% / 5.5x).
+  So this is not a mis-valued name — it is a name whose source-bind sends the human to a different
+  company. Someone doing exactly what §Source-bind-everything exists for verifies the bear leg
+  against SMPL and comes away reassured. **That is why it outranks the remaining #460 residue.**
+- **UNLOCK (analyst, not mechanical):** re-derive `assumptions.multiple.references` from BRBR's own
+  committed band (low 4.29 / median 19.76 / current 9.18) and re-state each leg's rationale against
+  those. **The machine must not write this** — which reference justifies which leg is an
+  underwriting argument, and free-writing it is the line the pivot draws. Then delete BRBR from
+  `KNOWN_FOREIGN`.
+- **INVARIANT SHIPPED (INVARIANT RULE) — `tests/test_scenario_reference_binding.py`, 3 pins.**
+  (1) no two scenario records share an `assumptions` block — catches the wholesale paste;
+  (2) every band reference with a STABLE role (low/median/high) must be REPRODUCIBLE FROM THAT
+  NAME'S OWN close series — catches a single hand-edited figure, which (1) cannot see;
+  (3) the allowlist entry must still be EARNED, so it cannot outlive the defect and silently exempt
+  a future regression on the same name.
+  **Scoped by MEASUREMENT, not by frame:** a first cut checked every band-sourced reference and
+  produced two FALSE POSITIVES on correct work — IT's genuine 75th-percentile citation (an arbitrary
+  quantile the check cannot reproduce) and EPAM's `current` multiple (which legitimately drifts with
+  every band refresh). `percentile` and `current` are therefore excluded and the reason is recorded
+  at the constant. Zero false positives now; both guards fire on BRBR with the allowlist emptied,
+  and (2) fires on a planted SMPL floor on IT. **A guard that cries wolf on good work gets
+  switched off, so no-false-positives outranked catching all three of BRBR's foreign figures** —
+  (1) catches BRBR regardless.
+
+
+
 **OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
 13 committed dossiers still carry `Close (latest)` in
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
