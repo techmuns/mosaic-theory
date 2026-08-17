@@ -9968,7 +9968,6 @@ console.log(JSON.stringify(out));
     r = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
                                   capture_output=True, text=True, check=True).stdout)
 
-    checked = 0
     for name in names:
         bands = [b for b in (json.loads(
             Path(f"data/dossiers/{name}/dossier.json").read_text())["mechanical"]["valuation"]
@@ -9981,12 +9980,13 @@ console.log(JSON.stringify(out));
             assert want in panel, (
                 f"{name}: panel {panel!r} does not carry ITS OWN band's as_of {want} — a panel "
                 "showing another band's date is the P5 false stamp")
-            checked += 1
-        # PER-NAME, not a hand-tuned fleet total. The `checked >= 6` floor was 3 names x 2 bands,
-        # and it reddened the moment a real fix removed two phantom bands. This asserts the loop
-        # actually ran for THIS name — which `len(panels) == len(bands)` cannot, since 0 == 0 passes
-        # vacuously (FUBO carries no band at all, and is excluded by the derived roster above).
-        assert bands, f"{name}: selected into the roster but carries no usable band"
+        # PIN THE RENDERED SIDE, which the roster does NOT pre-guarantee. The previous
+        # `assert bands` here was TAUTOLOGICAL: the roster at the top of this test selects a name
+        # only when that identical filter is non-empty, so it asserted a fact already established
+        # and its message described an unreachable state. `panels` comes from the renderer, so an
+        # exhibit that stops emitting panels entirely is caught — which is what `len(panels) ==
+        # len(bands)` cannot catch on its own, since 0 == 0 passes vacuously.
+        assert panels, f"{name}: has {len(bands)} band(s) but the renderer emitted no panel"
     assert names, "no committed dossier carries a multi-point own-history band — roster is empty"
 
     # the shared caption must carry NO date: one stamp over differing panels IS the defect

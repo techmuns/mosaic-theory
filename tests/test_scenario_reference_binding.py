@@ -15,7 +15,7 @@ company and comes away reassured. That is why this is worth a guard rather than 
 
 TWO GUARDS, because either alone is escapable:
   1. no two scenario files share an `assumptions` block — catches the wholesale copy;
-  2. every reference sourced to a committed band must be REPRODUCIBLE FROM THAT NAME'S OWN SERIES —
+  2. every MULTIPLE-axis band statistic must be REPRODUCIBLE FROM THAT NAME'S OWN SERIES —
      catches a single hand-edited figure, which (1) cannot see.
 
 WHY (2) IS "REPRODUCIBLE FROM ITS OWN SERIES" AND NOT "EQUALS THE BAND". Measured first, per
@@ -46,6 +46,7 @@ import hashlib
 import json
 import pathlib
 import statistics
+from collections.abc import Callable, Sequence
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -58,6 +59,18 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: ANALYST action, not a mechanical one, because which reference justifies which leg is an
 #: underwriting argument the machine must not free-write.
 KNOWN_FOREIGN = {"BRBR": "assumptions block copied verbatim from SMPL (found 2026-08-17, #407 era)"}
+
+#: The EXACT shared-digest group that is exempt — not "any group containing an allowlisted name".
+#: The first cut exempted the whole group, so a THIRD record pasted from BRBR/SMPL's block would
+#: have been waved through for as long as the BRBR entry lived. Keyed as a frozenset so a new member
+#: changes the key and reddens.
+KNOWN_SHARED_GROUPS = {frozenset({"BRBR", "SMPL"})}
+
+#: Records that cite a committed band while having NO committed dossier, so their band citations are
+#: unverifiable by any means. Recorded rather than skipped: this is an anomaly in its own right — a
+#: name underwritten without an assembled dossier — and it became VISIBLE only when the axis-scoped
+#: predicate below started reaching WERN at all. UNLOCK: assemble the name, or drop the citation.
+NO_COMMITTED_BAND = {"WERN": "underwritten with no committed dossier (found 2026-08-17)"}
 
 _BAND_METRIC = "EV/EBITDA (TEV/LTM)"
 
@@ -96,7 +109,8 @@ def _own_band(ticker: str) -> dict[str, Any] | None:
 #: role -> the ONE statistic that role names. Cross-kind matching was a real defect in the first
 #: cut: it pooled min/max/median/MEAN into one set, so a `median` reference could be satisfied by
 #: some window's MEAN. Each role now compares against its own statistic only.
-_ROLE_STAT = {"band_low": min, "median": statistics.median, "band_high": max}
+_ROLE_STAT: dict[str, Callable[[Sequence[float]], float]] = {
+    "band_low": min, "median": statistics.median, "band_high": max}
 #: role -> the band field that role cites directly.
 _ROLE_FIELD = {"band_low": "low", "median": "median", "band_high": "high"}
 
@@ -126,17 +140,28 @@ def _reachable(band: dict[str, Any], role: str) -> set[float]:
 
 
 def _band_refs(doc: dict[str, Any]) -> list[dict[str, Any]]:
-    """References whose SOURCE names the committed own-history band — the ones bound to a series."""
-    refs = []
-    for axis in (doc.get("assumptions") or {}).values():
-        for ref in (axis.get("references") or []):
-            if ref.get("excluded"):
-                continue
-            if (str(ref.get("role")) in _STABLE_ROLES
-                    and "own_history" in str(ref.get("source") or "")
-                    and isinstance(ref.get("value"), (int, float))):
-                refs.append(ref)
-    return refs
+    """Stable-role references on the MULTIPLE axis, in turns — what the EV/EBITDA band scores.
+
+    SCOPED BY AXIS AND UNIT, NOT BY THE SOURCE STRING. The first cut used
+    `"own_history" in ref["source"]`, which was wrong twice over. It made a rendered display string
+    load-bearing — the rule this repo enforces everywhere else — and coverage then depended on how
+    an author happened to phrase a citation: measured, it reached 3 of 8 records and silently
+    exempted AORT's band `median` 32.1 ("CIQ Financials->Multiples (42 closes…)") and WERN's 6.56
+    ("same series — derived band statistic").
+
+    WIDENING NAIVELY WOULD HAVE BEEN WORSE, which is why the axis matters and not the wording:
+    `median` also appears on the MARGIN axis, sourced to the anchor block or EDGAR companyfacts, and
+    those values are PERCENTAGES. Scoring BRBR's margin median 15.45 against an EV/EBITDA close
+    series is the same category error that made `percentile` a false positive. Only the `multiple`
+    axis cites this band, and `unit == "x"` is the structural confirmation.
+
+    MEASURED: 9 references across 6 records, up from 7 across 4, with zero false positives."""
+    axis = (doc.get("assumptions") or {}).get("multiple") or {}
+    return [ref for ref in (axis.get("references") or [])
+            if not ref.get("excluded")
+            and str(ref.get("role")) in _STABLE_ROLES
+            and ref.get("unit") == "x"
+            and isinstance(ref.get("value"), (int, float))]
 
 
 def test_no_two_scenario_records_share_an_assumptions_block() -> None:
@@ -152,20 +177,23 @@ def test_no_two_scenario_records_share_an_assumptions_block() -> None:
         seen.setdefault(digest, []).append(name)
     shared = [names for names in seen.values() if len(names) > 1]
     assert seen, "no scenario record carries an assumptions block — the guard ran vacuously"
-    unexpected = [g for g in shared if not any(n.split("-")[0] in KNOWN_FOREIGN for n in g)]
+    unexpected = [g for g in shared
+                  if frozenset(n.split("-")[0] for n in g) not in KNOWN_SHARED_GROUPS]
     assert not unexpected, (
         f"scenario records share a byte-identical assumptions block: {unexpected}. Every reference "
         f"value, source and note in one name's underwriting is then another name's — the human "
         f"source-checking a leg verifies against the wrong company. Re-derive the references from "
-        f"each name's own committed band. (Known: {sorted(KNOWN_FOREIGN)}.)")
+        f"each name's own committed band. (Known groups: "
+        f"{[sorted(g) for g in KNOWN_SHARED_GROUPS]}.)")
 
 
 def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     """GUARD 2 — the single hand-edited figure, which guard 1 cannot see.
 
-    A reference sourced to `valuation.own_history` claims to describe THIS company's trading
-    history. If its value is neither the band's own stored statistic for that role nor that same
-    statistic over any trailing window, it came from somewhere else."""
+    A stable-role reference on the multiple axis claims to describe THIS company's trading history
+    — that is what `band_low` / `median` / `band_high` in turns MEAN, whatever prose the `source`
+    field happens to carry. If its value is neither the band's own stored statistic for that role
+    nor that same statistic over any trailing window, it came from somewhere else."""
     checked, foreign, unscored = 0, [], []
     for name, doc in _scenarios():
         refs = _band_refs(doc)
@@ -192,15 +220,18 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     assert checked, (
         "no stable-role band reference was scored — every scenario record either cites no band or "
         "has no committed band, so this guard proved nothing")
-    assert not unscored, (
-        f"{unscored} cite a committed own-history band but have no usable band to check against — "
-        f"a scenario underwriting a name with no committed dossier is itself the anomaly. Assemble "
-        f"the name, or drop the band citation.")
+    surprise = [n for n in unscored if n.split("-")[0] not in NO_COMMITTED_BAND]
+    assert not surprise, (
+        f"{surprise} cite a committed own-history band but have no usable band to check against — "
+        f"a scenario underwriting a name with no committed dossier is itself the anomaly, and its "
+        f"band citations cannot be verified by any means. Assemble the name, or drop the citation. "
+        f"(Known: {sorted(NO_COMMITTED_BAND)}.)")
     unexpected = [f for f in foreign if f.split()[0].split("-")[0] not in KNOWN_FOREIGN]
     assert not unexpected, (
         f"reference(s) cite a figure their own name's close series cannot produce: {unexpected}. "
-        f"A reference sourced to `valuation.own_history` asserts it describes THIS "
-        f"company; a value unreachable from its own series belongs to another. (Known: "
+        f"A stable-role band statistic on the multiple axis asserts it describes THIS "
+        f"company's own trading history — whatever prose its `source` field carries. A value "
+        f"unreachable from that name's own series belongs to another. (Known: "
         f"{sorted(KNOWN_FOREIGN)}.)")
 
 

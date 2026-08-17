@@ -205,6 +205,18 @@ def test_the_multiples_stamps_are_frozen_because_they_are_join_keys() -> None:
                 scanned += 1
                 if not _traces(ref, refs):
                     broken.append(f"{path.parent.name} {key}[{i}] (cited={pt.get('cited')})")
+        # DECISIVE-QUESTION EVIDENCE COUNTS TOO. The first cut walked only bull/bear points, so a
+        # reworded stamp quoted ONLY here passed — measured 77 such citations on the corpus, every
+        # one of them traceable today, so this is free coverage rather than a new obligation.
+        dq = syn.get("decisive_question") or {}
+        for side in ("evidence_for", "evidence_against"):
+            for i, pt in enumerate(dq.get(side) or []):
+                ref = pt.get("source_ref") if isinstance(pt, dict) else None
+                if not ref:
+                    continue
+                scanned += 1
+                if not _traces(ref, refs):
+                    broken.append(f"{path.parent.name} decisive_question.{side}[{i}]")
         for i, tw in enumerate(syn.get("twin_reference_cases") or []):
             src = tw.get("source")
             if not src or "unverified" in src.lower():
