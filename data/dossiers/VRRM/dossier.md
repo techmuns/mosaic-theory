@@ -587,7 +587,7 @@ _Source §: 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm_
 [21] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2017-06-01→2017-12-31, 213d)`
 [22] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [23] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[24] `CIQ Financials→Multiples (Close; latest close = current, excluded from history)`
+[24] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [25] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [26] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [27] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`

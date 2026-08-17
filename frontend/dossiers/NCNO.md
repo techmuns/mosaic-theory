@@ -671,7 +671,7 @@ _Source §: latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm_
 [22] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2021-02-01→2022-01-31, 364d)`
 [23] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [24] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[25] `CIQ Financials→Multiples (Close; latest close = current, excluded from history)`
+[25] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [26] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [27] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [28] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`

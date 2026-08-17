@@ -611,7 +611,7 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
 [18] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2015-10-01→2016-09-30, 365d)`
 [19] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [20] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[21] `CIQ Financials→Multiples (Close; latest close = current, excluded from history)`
+[21] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [22] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [23] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [24] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
