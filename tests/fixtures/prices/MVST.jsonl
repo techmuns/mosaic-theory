@@ -422,3 +422,5 @@
 {"bar_date": "2026-08-10", "close": 0.8748, "high": 0.966, "internal_id": "SEC-0001760689-MVST", "low": 0.8433, "open": 0.9531, "source": "polygon-grouped", "volume": 9617452.687865}
 {"bar_date": "2026-08-11", "close": 0.8643, "high": 1.02, "internal_id": "SEC-0001760689-MVST", "low": 0.8228, "open": 0.8521, "source": "polygon-grouped", "volume": 11411446.530104}
 {"bar_date": "2026-08-12", "close": 0.92, "high": 0.9296, "internal_id": "SEC-0001760689-MVST", "low": 0.8475, "open": 0.8748, "source": "polygon-grouped", "volume": 6352294.323039}
+{"bar_date": "2026-08-13", "close": 0.8874, "high": 0.9987, "internal_id": "SEC-0001760689-MVST", "low": 0.86, "open": 0.92, "source": "polygon-grouped", "volume": 9990464.193559}
+{"bar_date": "2026-08-14", "close": 0.8385, "high": 0.89, "internal_id": "SEC-0001760689-MVST", "low": 0.812, "open": 0.88, "source": "polygon-grouped", "volume": 6156750.98538}
