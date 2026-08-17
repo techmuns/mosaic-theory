@@ -285,7 +285,7 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
     return Sourced.present(
         round(pct, 3),
         source_ref=f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — {len(history)} quarters"
-        f"{span} (the latest close = current, excluded from the distribution)",
+        f"{span} (partial last column excluded from the distribution)",
     )
 
 
@@ -295,12 +295,18 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
 _MIN_CONFIDENT_CLOSES = 8
 
 
-#: "last col = current" was the PRE-#459 rule and describes a selection this code no longer makes:
-#: the current close is the latest BY DATE, wherever it sits in the export. A reader following the
-#: old stamp to the sheet's last column would land on a different number and conclude the extractor
-#: is broken — the same false-provenance class `(latest)` was.
-_OWN_HISTORY_SRC = ("CIQ Financials→Multiples (Close; latest close = current, "
-                    "excluded from history)")
+#: DO NOT REWORD THIS STRING. It is imprecise — the current close is now the latest BY DATE, not
+#: the last column — and it is FROZEN anyway, because it is a JOIN KEY, not just display text.
+#: An LLM synthesis point cites its evidence by copying this string verbatim into
+#: `SourcedPoint.source_ref`, and `synthesis._traces` matches by exact/substring. Both renderers
+#: also dedup endnotes by exact string. So rewording it (a) silently breaks every sealed citation
+#: that quotes it — the point keeps `cited: true` while resolving to nothing — and (b) forks one
+#: source into two contradictory numbered endnotes on the same page.
+#: MEASURED, #460: the reword broke 8 citations across 7 names and forked EPAM/IT/UBER's endnotes;
+#: `moved_cited_claims` did not refuse because its grain is moved FIGURES, not moved strings.
+#: To fix the wording, provenance must first be keyed by a stable id with the display string
+#: derived from it — not by the rendered string itself. Until then this text is load-bearing.
+_OWN_HISTORY_SRC = "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
 # (Phase-3) the own-history metrics: (display metric, Multiples-sheet row label)
 _OWN_HISTORY_METRICS = (("EV/EBITDA (TEV/LTM)", "TEV/LTM EBITDA"), ("P/LTM EPS", "P/LTM EPS"))
 # (coherence) the three TEV/LTM rows whose RATIOS pin the EV/EBITDA denominator against the same
@@ -534,9 +540,14 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    # THE STAMP NAMES THE CLOSE IT CAME FROM. `Close (latest)` was an UNDATED recency claim — the
-    # literal `…(latest)` false-provenance shape item 20 records, and the one #453 removed from
-    # `book_value_per_share` and `key_ratios`. This is the last pair of them.
+    # `Close (latest)` IS AN UNDATED RECENCY CLAIM AND IT STAYS, REVERTED FROM `Close [ISO]` (#460).
+    # The dated form was strictly better provenance and still had to go: this string is a JOIN KEY
+    # (see `_OWN_HISTORY_SRC` above), so dating it broke the sealed synthesis citations on MVST,
+    # NCNO and NFLX that quote it verbatim. It also bought the READER nothing — neither renderer
+    # emits `valuation.ev_ebitda`, so `Close [ISO]` reached 0 of 14 pages, while `range_position`
+    # already prints a real `as-of <date>` on all 14. The date a human sees was never in doubt.
+    # The structured date remains available to code via `ev_ebitda_asof`.
+    # SO ITEM 20's `(latest)` FAMILY IS REOPENED, not closed — and it cannot be closed by rewording.
     latest = _latest_close(_multiples_close(rows, "TEV/LTM EBITDA"))
     if latest is None:
         return Sourced.unknown(
@@ -554,8 +565,7 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
                  "current multiple, and an older quarter is not one")
     return Sourced.present(
         round(v, 1),
-        source_ref=(f"CIQ Financials→Multiples 'TEV/LTM EBITDA' Close [{d.isoformat()}]"
-                    " — current multiple"),
+        source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
     )
 
 
@@ -605,7 +615,7 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
                  "trailing P/E")
     return Sourced.present(
         round(value, 1),
-        source_ref=f"CIQ Financials→Multiples 'P/LTM EPS' Close [{when_d.isoformat()}]"
+        source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
     )
 
 
