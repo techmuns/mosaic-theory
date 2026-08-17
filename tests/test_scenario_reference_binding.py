@@ -24,9 +24,21 @@ reference is labelled *"post-2022 band median"* and sourced to *"series, 2022Q1 
 15.16x is exactly EPAM's own trailing-20 median, a deliberate sub-window. The scoping lives in
 prose, so it cannot be read structurally; the check that separates a windowed stat of YOUR OWN
 series from ANOTHER COMPANY'S number is whether the value is derivable from this name's series at
-all. That formulation flags 2 of BRBR's 3 foreign values and **zero** correct references. A guard
-that cries wolf on good work gets disabled, so no-false-positives outranks catching all three —
-and guard (1) catches BRBR a second time regardless.
+all.
+
+WHAT GUARD 2 ACTUALLY CATCHES — MEASURED, and the first draft of this docstring got it wrong.
+It flags **1** of BRBR's 2 stable-role foreign values (`band_low` 6.11), not 2. `median` 17.85 is
+SMPL's figure, but BRBR's OWN series genuinely produces a trailing-11 window median of 18.12 —
+inside the 2% tolerance. So the value is foreign in PROVENANCE while being reachable in FACT, and
+**no value-only test can separate those.** Tightening the tolerance does not help: EPAM's correct
+`median` sits 32% from its whole-band median, so any threshold that rejects BRBR's 9.7% deviation
+rejects EPAM's deliberate sub-window first. This is a real ceiling, recorded rather than tuned
+around; guard (1) catches BRBR regardless, which is why two guards exist.
+THE DISCRIMINATOR THAT WOULD WORK is not the value — it is the CITATION. BRBR's reference sources
+itself to "35 closes, 8.55y span, sha 7bd83a1103", which are SMPL's; BRBR's own band carries 27
+closes and a different sha. Checking those needs the cited provenance parsed out of a prose
+`source` field, so it waits for provenance to be keyed structurally (the same unlock item 20 is
+reopened against) rather than being bolted on with a regex here.
 """
 from __future__ import annotations
 
@@ -71,31 +83,45 @@ def _scenarios() -> list[tuple[str, dict[str, Any]]]:
     return out
 
 
-def _own_series(ticker: str) -> list[float] | None:
-    """The name's OWN committed EV/EBITDA close series, or None when it has no band."""
+def _own_band(ticker: str) -> dict[str, Any] | None:
+    """The name's OWN committed EV/EBITDA band, or None when it has none."""
     path = ROOT / "data" / "dossiers" / ticker / "dossier.json"
     if not path.is_file():
         return None
     bands = ((json.loads(path.read_text())["mechanical"]["valuation"].get("own_history") or {})
              .get("value") or [])
-    band = next((b for b in bands if b.get("metric") == _BAND_METRIC), None)
-    if band is None:
-        return None
-    return [v for _, v in (band.get("series") or []) if isinstance(v, (int, float))]
+    return next((b for b in bands if b.get("metric") == _BAND_METRIC), None)
 
 
-def _reachable(series: list[float]) -> set[float]:
-    """Every stat derivable from ANY trailing window (>=4 closes) of this name's own series.
+#: role -> the ONE statistic that role names. Cross-kind matching was a real defect in the first
+#: cut: it pooled min/max/median/MEAN into one set, so a `median` reference could be satisfied by
+#: some window's MEAN. Each role now compares against its own statistic only.
+_ROLE_STAT = {"band_low": min, "median": statistics.median, "band_high": max}
+#: role -> the band field that role cites directly.
+_ROLE_FIELD = {"band_low": "low", "median": "median", "band_high": "high"}
 
-    Trailing windows only — a scenario reference cites a trailing range, and admitting arbitrary
-    interior windows would make the reachable set so large that nothing could ever fail."""
-    out: set[float] = set()
-    for k in range(4, len(series) + 1):
-        w = series[-k:]
-        out |= {round(min(w), 4), round(max(w), 4),
-                round(statistics.median(w), 4), round(statistics.mean(w), 4)}
-    if series:
-        out.add(round(series[-1], 4))
+
+def _reachable(band: dict[str, Any], role: str) -> set[float]:
+    """Values this role could legitimately take from THIS name's own band.
+
+    TWO SOURCES, and the second is not optional. (a) the band's STORED field for the role, because
+    that is the number a correct reference copies; (b) the same statistic over any trailing window,
+    since a reference may legitimately cite a declared sub-window (EPAM's "post-2022 median").
+
+    (a) IS LOAD-BEARING, measured: a band's low/median/high are computed with the CURRENT close
+    EXCLUDED, while every trailing window necessarily includes it. So on any name whose current
+    close is a new extreme, the band's own published `low` is unreachable as a window minimum —
+    **5 of 13 committed names are in that state** (CNXC, MVST, SMPL, UBER, VRRM), and SMPL's
+    correct `band_low` citation passed the first cut only by coincidence, because a trailing-4
+    median happened to land near it. Without (a) this guard cries wolf on correct work on 5 names,
+    which is the failure mode that gets a guard switched off."""
+    stat = _ROLE_STAT[role]
+    out = {round(stat(series[-k:]), 4)
+           for series in [[v for _, v in (band.get("series") or [])]]
+           for k in range(4, len(series) + 1)}
+    stored = band.get(_ROLE_FIELD[role])
+    if isinstance(stored, (int, float)):
+        out.add(round(float(stored), 4))
     return out
 
 
@@ -138,23 +164,38 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     """GUARD 2 — the single hand-edited figure, which guard 1 cannot see.
 
     A reference sourced to `valuation.own_history` claims to describe THIS company's trading
-    history. If its value is not derivable from this company's own committed close series under any
-    trailing window, it came from somewhere else."""
-    checked, foreign = 0, []
+    history. If its value is neither the band's own stored statistic for that role nor that same
+    statistic over any trailing window, it came from somewhere else."""
+    checked, foreign, unscored = 0, [], []
     for name, doc in _scenarios():
-        ticker = name.split("-")[0]
-        series = _own_series(ticker)
-        if not series or len(series) < 4:
+        refs = _band_refs(doc)
+        band = _own_band(name.split("-")[0])
+        if not refs:
             continue
-        reach = _reachable(series)
-        for ref in _band_refs(doc):
+        # FAIL LOUD, NEVER SKIP SILENTLY. A record citing a band while carrying no committed band
+        # is the shape where a foreign figure is LEAST likely to be caught by eye — WERN is live in
+        # exactly that state today. The first cut `continue`d here and said nothing.
+        if band is None or len(band.get("series") or []) < 4:
+            unscored.append(name)
+            continue
+        for ref in refs:
             checked += 1
-            value = float(ref["value"])
+            value, role = float(ref["value"]), str(ref["role"])
+            reach = _reachable(band, role)
             if not any(abs(value - r) <= 0.02 * max(1.0, abs(r)) for r in reach):
-                foreign.append(f"{name} {ref.get('role') or ref.get('label')}={value}")
-    assert checked >= 6, (
-        f"only {checked} stable-role band references checked — the corpus shrank, so this proves "
-        f"less than it did when written (6 across BRBR/EPAM/IT/SMPL)")
+                foreign.append(f"{name} {role}={value}")
+    # NO HAND-TUNED FLEET TOTAL. The first cut asserted `checked >= 6` against an actual 7 — a
+    # value-level pin on a living corpus with one reference of slack, and the documented BRBR unlock
+    # rewrites two of the seven, so the floor could redden on the fix it prescribes. That is the
+    # exact anti-pattern #460 removed from tests/test_dossier.py for "reddening on a win". What is
+    # asserted instead is that the loop ran at all, which is corpus-size independent.
+    assert checked, (
+        "no stable-role band reference was scored — every scenario record either cites no band or "
+        "has no committed band, so this guard proved nothing")
+    assert not unscored, (
+        f"{unscored} cite a committed own-history band but have no usable band to check against — "
+        f"a scenario underwriting a name with no committed dossier is itself the anomaly. Assemble "
+        f"the name, or drop the band citation.")
     unexpected = [f for f in foreign if f.split()[0].split("-")[0] not in KNOWN_FOREIGN]
     assert not unexpected, (
         f"reference(s) cite a figure their own name's close series cannot produce: {unexpected}. "
@@ -176,7 +217,7 @@ def test_the_known_foreign_record_is_still_foreign_and_still_recorded() -> None:
         assert ticker in blocks, f"{ticker} is allowlisted but has no scenario record — drop it"
     still_shared = [t for t in KNOWN_FOREIGN
                     if sum(1 for other, d in blocks.items() if d == blocks[t]) > 1]
-    assert still_shared == sorted(KNOWN_FOREIGN), (
+    assert sorted(still_shared) == sorted(KNOWN_FOREIGN), (
         f"{sorted(set(KNOWN_FOREIGN) - set(still_shared))} no longer shares an assumptions block "
         f"with another name — the underwriting was re-derived, so DELETE the KNOWN_FOREIGN "
         f"entry so the guards protect this name again. This is the good failure.")

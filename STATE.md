@@ -4472,6 +4472,33 @@ all three axes, every reference value, every note. Of 7 scenario records it is t
   NAME'S OWN close series — catches a single hand-edited figure, which (1) cannot see;
   (3) the allowlist entry must still be EARNED, so it cannot outlive the defect and silently exempt
   a future regression on the same name.
+  **REVIEW FIXES 2026-08-17 (medium effort, no fan-out) — all three measured:**
+  (a) `assert checked >= 6` DELETED. It was a hand-tuned fleet total against an actual 7 — one
+  reference of slack — and the documented BRBR unlock rewrites two of those seven, so the floor
+  could have reddened on the very fix it prescribes. Exactly the anti-pattern #460 removed from
+  `test_dossier.py` for reddening on a win. Replaced with `assert checked` (corpus-size
+  independent) plus a LOUD refusal for a record that cites a band while having none committed —
+  the first cut `continue`d there in silence, and WERN is live in that state.
+  (b) THE DOCSTRING WAS WRONG, NOT THE CHECK. It claimed the guard flags 2 of BRBR's foreign
+  values; it flags **1**. BRBR's `median` cites SMPL's 17.85, but BRBR's OWN series produces a
+  trailing-11 window median of 18.12 — inside tolerance. **The value is foreign in PROVENANCE
+  while reachable in FACT, and no value-only test separates those.** Tightening the tolerance
+  cannot help: EPAM's CORRECT median sits 32% from its whole-band median, so any threshold that
+  rejects BRBR's 9.7% rejects EPAM first. Recorded as a ceiling rather than tuned around.
+  **The discriminator that would work is the CITATION, not the value** — BRBR's reference sources
+  itself to "35 closes, 8.55y span, sha 7bd83a1103", all SMPL's, where BRBR's band carries 27
+  closes and a different sha. That needs provenance keyed structurally, which is the SAME unlock
+  item 20 is reopened against — so the two items now share one fix.
+  (c) A LATENT FALSE POSITIVE ON FIVE NAMES, found by the fix and the most valuable of the three.
+  A band's low/median/high EXCLUDE the current close; every trailing window INCLUDES it. So on a
+  name whose current close is a new extreme, the band's own published `low` is unreachable as a
+  window minimum — **CNXC, MVST, SMPL, UBER and VRRM are all in that state**, and SMPL's correct
+  `band_low` citation passed the first cut ONLY by coincidence (a trailing-4 median landed near
+  it). Seeding the reachable set with the band's STORED field closes it; mutation-verified by
+  removing the seed, which false-flags SMPL. Roles now also match their own statistic
+  (median→median, not median→mean), so a `median` cannot be satisfied by some window's mean.
+  (d) Guard 3 compared an insertion-ordered list to a sorted one, so a second allowlist entry
+  added out of alphabetical order reddened with a message naming an EMPTY set. Fixed.
   **Scoped by MEASUREMENT, not by frame:** a first cut checked every band-sourced reference and
   produced two FALSE POSITIVES on correct work — IT's genuine 75th-percentile citation (an arbitrary
   quantile the check cannot reproduce) and EPAM's `current` multiple (which legitimately drifts with
