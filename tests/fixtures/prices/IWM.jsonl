@@ -422,3 +422,5 @@
 {"bar_date": "2026-08-10", "close": 299.98, "high": 301.39, "internal_id": "IDX-IWM", "low": 299.08, "open": 300.51, "source": "polygon-grouped", "volume": 16226875.361364}
 {"bar_date": "2026-08-11", "close": 300.99, "high": 301.99, "internal_id": "IDX-IWM", "low": 300.6, "open": 300.93, "source": "polygon-grouped", "volume": 14942813.148837}
 {"bar_date": "2026-08-12", "close": 302.71, "high": 303.41, "internal_id": "IDX-IWM", "low": 301.0, "open": 303.02, "source": "polygon-grouped", "volume": 15480555.401073}
+{"bar_date": "2026-08-13", "close": 303.5, "high": 305.05, "internal_id": "IDX-IWM", "low": 302.72, "open": 304.04, "source": "polygon-grouped", "volume": 14719318.668066}
+{"bar_date": "2026-08-14", "close": 305.09, "high": 305.18, "internal_id": "IDX-IWM", "low": 302.74, "open": 303.28, "source": "polygon-grouped", "volume": 13163356.219984}
