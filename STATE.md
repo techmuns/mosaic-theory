@@ -4446,40 +4446,52 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
-**NFLX RE-ASSEMBLED 2026-08-17 ON A FRESH CIQ PULL — WITH 3 DAYS OF LOOKAHEAD ACCEPTED BY THE
-OPERATOR, MEASURED AND RECORDED (`artifacts/nflx-reassemble`).**
-- **THE GAP IS STRUCTURAL, NOT AN ACCIDENT — and this is the general finding.** A CIQ workbook is
-  stamped at PULL time (wall clock); the fleet as-of is bounded by MARKET DATA and deliberately
-  never by the clock (`_fleet_reference_date`). So **any panel pulled before that day's close
-  necessarily leads any honest as-of.** MVST's 1-day gap is the same phenomenon, not an anomaly —
-  which re-frames the as-of item: the fix is not "bound every source", it is deciding what a panel
-  dated PAST the as-of should do (refuse / flag / accept).
-- **WHAT WAS ACCEPTED:** the new Comparable-Analysis panel is stamped `2026-08-17`; the best as-of
-  reachable on 2026-08-17 was `2026-08-14`, because the Aug-17 bar had not published. Advancing the
-  as-of narrowed the gap 5d → 3d; it could not close it. **9 fields carry a date past NFLX's own
-  as-of:** `stock_info.market_cap{,_as_of}`, `valuation.implied_expectations.tev`,
-  `implied_valuation.{implied_equity,bridge,market_cap}`,
-  `leverage_survival.{total_debt_to_ebitda,credit_health}`, `peer_comps.peer_grid`. The sharpest is
-  `market_cap_as_of` — a market observation the market had not printed at the stated as-of.
-  **UNLOCK:** re-assemble after a close that reaches the panel date; the lookahead then goes to 0
-  without any code change.
-- **THE MULTIPLES DID NOT MOVE, and the operator was told before assembling:** both Financials
-  workbooks are still 2026-08-10, so `ev_ebitda` is 20.5 before and after and the own-history bands
-  are unchanged. The five new files refresh the peer grid, credit health, estimates, key
-  developments and the profile — comps-side only.
-- **NFLX IS THE FIRST ARTIFACT TO CARRY `2026-08-16.1`** (a full assembly stamps the version; the
-  mechanical-refresh path does not). **The fleet is now genuinely split-vintage — 1 name on
-  2026-08-16.1, 13 on 2026-07-28.1 — which is exactly the state the stamp EXISTS to make visible**
-  rather than a defect. #462's guard confirms both are declared rows.
-- **THE ARTIFACT-PASS RULE EARNED ITS KEEP AGAIN.** The first suite run went RED on
-  `test_the_wall_clock_is_unreachable_from_the_reference_date` — the committed PRICE FIXTURE still
-  held 2026-08-12 while the fleet as-of had moved to 2026-08-14, so the guard correctly read the
-  as-of as ahead of the store. Both fixtures regenerated per the runbook; suite green after.
+**NFLX RE-ASSEMBLED 2026-08-17 ON A FRESH CIQ PULL (`artifacts/nflx-reassemble`) — AND THE
+"3 DAYS OF LOOKAHEAD" I FIRST RECORDED HERE WAS FALSE. IT IS A STAMP BUG, NOT A DATA FACT.**
+- **THE CORRECTION, PROVED BY ARITHMETIC.** NFLX's new cap is 325,453.5 stamped
+  `market_cap_as_of 2026-08-17`. But 325,453.5 / 78.16 (the **2026-08-14** close) = 4,163.9M shares,
+  and the PRIOR artifact's 308,714.5 / 74.14 (the 2026-08-07 close) = **the same 4,163.9M**. The cap
+  is priced off the AS-OF's close. **No field carries future data.** `market_cap_as_of` publishes
+  the CIQ **EXPORT** stamp as if it were the OBSERVATION date, and the previous artifact shows the
+  identical offset (08-07 close stamped 08-10), so this **predates this assembly** entirely.
+- **WHY THE FIRST ENTRY WAS WRONG, and it is the sharper lesson.** I measured "dates past the
+  reference_date" and called them lookahead without asking WHAT EACH DATE LABELS. Nine fields
+  carried a later date; ZERO carried later DATA. A date-comparison sweep cannot tell an export stamp
+  from an observation — the same class as reading a display string for a value. The general claim in
+  the first draft (pull-time stamps vs a data-bounded as-of) is **true about STAMPS and false about
+  DATA**, and I applied it to the wrong one.
+- **THE STATED UNLOCK COULD NEVER HAVE FIRED.** "Re-assemble after a close that reaches the panel
+  date -> lookahead goes to 0" is unreachable: an export stamp is always ahead of the data it
+  carries, so waiting cannot close it. A ledger entry with an impossible unlock is worse than none.
+- **THIS RE-OPENS THE MVST FINDING.** MVST's recorded "1-day lookahead" is very likely the same
+  stamp bug. The as-of item must be RE-MEASURED asking what each date LABELS before any of it is
+  built — **do not size that build off the field counts recorded earlier in this file.**
+- **THE REAL DEFECT, for its own CODE PR (never an artifact commit):** `mechanical.py` corrects the
+  sibling `tev_as_of` through the export-vs-data helper and assigns `market_cap_as_of` RAW, so one
+  panel renders two dates for one observation — `CMP $78.16 (2026-08-14) / cap $325.5B (2026-08-17)`
+  — which is what `test_the_tev_cite_carries_both_dates_when_they_differ` exists to prevent. Same
+  for the eight comps `source_ref` suffixes.
+- **WHAT CHANGED, AND WHAT DID NOT:** `reference_date` 2026-08-12 -> 2026-08-14,
+  `extraction_version` -> `2026-08-16.1` (NFLX is the FIRST artifact on it; the fleet is now
+  legitimately split-vintage, 1 vs 13), synthesis re-rolled 6/6 -> 8/6. **`ev_ebitda` is 20.5 either
+  side** — both Financials workbooks are still 2026-08-10, so multiples and own-history did not move
+  and a Financials re-pull is still owed.
+- **TWO DATA REGRESSIONS THIS PASS CARRIES, recorded rather than hand-patched:**
+  (a) **GARTNER INC (CIK 0000749251 — the FOLLOWED name IT) lost `sic 8741` -> null.** `store.py`
+  uses `INSERT OR REPLACE` and COALESCEs only `first_seen`, so a transient EDGAR submissions miss
+  **permanently erases a known classification** (`unknown_sic` 28 -> 29 in the same run). A
+  store-layer defect needing its own fix; hand-editing the derived snapshot would misreport what the
+  pipeline produced.
+  (b) **The fixture regeneration REWROTE HISTORY** — 1,174 insertions vs 1,156 deletions across 7
+  files, so it is not additive: past-bar VOLUMES changed and `source` flipped `polygon-aggs` ->
+  `polygon-grouped`. Volume drives the ADV gate (`below_adv_floor` 445 -> 447 in this same commit).
+  The first draft said only "both fixtures regenerated", which hid it.
 - **PROCESS NOTE (mine):** `vinci screen` COMPUTES a screen but does not persist a run snapshot, so
   it does not advance `_fleet_reference_date` — only the orchestrator (`run-weekly`) exports the
   `screen_runs/*.manifest.json` the as-of is read from. Running `screen` first was wasted work.
-
-
+- **THE ARTIFACT-PASS RULE EARNED ITS KEEP AGAIN:** the first suite run went RED on
+  `test_the_wall_clock_is_unreachable_from_the_reference_date` — the committed price fixture still
+  held 2026-08-12 while the as-of had moved. Both fixtures regenerated per the runbook; green after.
 
 **THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
 2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
