@@ -84,7 +84,8 @@ def test_a_descending_export_resolves_the_latest_close_at_every_reader() -> None
                 [9.0, 8.0, 7.0, 6.0], [19.0, 18.0, 17.0, 16.0])
     ev = cs.ev_ebitda_current(b)
     assert ev.value == 9.0, f"the OLDEST close was published as current — {ev.value}"
-    assert "Close [2026-06-30]" in (ev.source_ref or ""), ev.source_ref
+    # the DATE is asserted structurally, not out of the stamp: the stamp reverted to the undated
+    # `Close (latest)` in #460 because it is a join key, and `ev_ebitda_asof` is the honest carrier.
     assert cs.ev_ebitda_asof(b) == date(2026, 6, 30)
     assert cs.pe_ltm_current(b).value == 19.0
     assert "as-of 2026-06-30" in (cs.range_position(b).value or "")
@@ -169,23 +170,54 @@ def _bundles() -> list[tuple[str, CiqBundle]]:
             for tk in sorted(p.name for p in root.iterdir() if p.is_dir()) if ms.files(tk)]
 
 
-def test_the_multiples_stamps_name_their_close_and_never_say_latest() -> None:
-    """THE LAST `…(latest)` PAIR, closed. Asserted as a PROPERTY of every stamp over the live
-    corpus rather than a table of dates, so a re-pull changes the data without rotting this."""
-    seen = 0
-    for tk, b in _bundles():
-        for fn, label in ((cs.ev_ebitda_current, "EV/EBITDA"), (cs.pe_ltm_current, "P/LTM EPS")):
-            s = fn(b)
-            if s.value is None:
+def test_the_multiples_stamps_are_frozen_because_they_are_join_keys() -> None:
+    """THE REVERT, PINNED (#460). `Close [ISO]` was strictly better provenance and had to go back.
+
+    These `source_ref` strings are JOIN KEYS, not display text: an LLM synthesis point cites its
+    evidence by copying the string verbatim into `SourcedPoint.source_ref`, `synthesis._traces`
+    matches exact/substring, and both renderers dedup endnotes by exact string. So dating the stamp
+    broke 8 sealed citations across 7 names (each keeping `cited: true` while resolving to nothing)
+    and forked EPAM/IT/UBER's CIQ endnote into two contradictory entries.
+
+    THIS PIN IS THE INVARIANT, NOT THE WORDING: whatever the stamp says, every committed dossier's
+    synthesis citations must TRACE into that dossier's own mechanical layer. That is the property
+    the reword actually violated, and it holds for any wording — so it cannot rot on a re-pull, and
+    it fires on the next author who edits these strings without re-rolling synthesis.
+
+    ITEM 20's `(latest)` FAMILY IS THEREFORE REOPENED. It cannot be closed by rewording; it needs
+    provenance keyed by a stable id with the display string derived from it. Recorded in STATE."""
+    import json
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    from vinci.dossier.schemas import Dossier
+    from vinci.dossier.synthesis import _refs_in, _traces
+
+    broken, scanned = [], 0
+    for path in sorted((root / "data" / "dossiers").glob("*/dossier.json")):
+        doc = json.loads(path.read_text())
+        refs = _refs_in(Dossier.model_validate(doc).mechanical)
+        syn = doc.get("synthesis") or {}
+        for key in ("bull_points", "bear_points"):
+            for i, pt in enumerate(syn.get(key) or []):
+                ref = pt.get("source_ref")
+                if not ref:
+                    continue
+                scanned += 1
+                if not _traces(ref, refs):
+                    broken.append(f"{path.parent.name} {key}[{i}] (cited={pt.get('cited')})")
+        for i, tw in enumerate(syn.get("twin_reference_cases") or []):
+            src = tw.get("source")
+            if not src or "unverified" in src.lower():
                 continue
-            seen += 1
-            ref = s.source_ref or ""
-            assert "(latest)" not in ref, (
-                f"{tk} {label}: the stamp still claims recency without naming a close — {ref!r}")
-            assert "Close [" in ref, f"{tk} {label}: the stamp names no date — {ref!r}"
-            inside = ref.split("Close [", 1)[1].split("]")[0]
-            date.fromisoformat(inside)  # raises if it is not a real ISO date
-    assert seen, "no name yielded a multiple — the assertion never ran"
+            scanned += 1
+            if not _traces(src, refs):
+                broken.append(f"{path.parent.name} twin[{i}]")
+    assert scanned, "no committed synthesis citation was scanned — the pin ran vacuously"
+    assert not broken, (
+        f"{len(broken)} committed synthesis citation(s) no longer trace to their own mechanical "
+        f"layer: {broken}. A mechanical `source_ref` was reworded while the sealed synthesis kept "
+        f"the old string, so the point still reads as source-verified while resolving to nothing. "
+        f"`moved_cited_claims` cannot catch this — its grain is moved FIGURES, not moved strings.")
 
 
 def test_the_value_and_its_as_of_resolve_the_same_close() -> None:
@@ -209,8 +241,7 @@ def test_the_value_and_its_as_of_resolve_the_same_close() -> None:
         if s.value is None:
             continue
         seen += 1
-        assert asof is not None and f"Close [{asof.isoformat()}]" in (s.source_ref or ""), (
-            f"{tk}: the stamp names a different close than the as-of — {s.source_ref!r} vs {asof}")
+        assert asof is not None, f"{tk}: a present multiple with no as-of to date it"
     assert seen, "no name yielded a multiple — the assertion never ran"
 
 

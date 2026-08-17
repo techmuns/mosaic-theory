@@ -40,6 +40,15 @@ minus the ambiguity 26a removes.
 
 from __future__ import annotations
 
+# APPEND-ONLY — with ONE recorded exception, 2026-08-17. The `2026-08-16.1` row was AMENDED, not
+# appended to: its second clause claimed "the multiples stamps name their close (`Close [ISO]`)",
+# and #460 REVERTED that (those source_refs are join keys quoted verbatim by sealed synthesis
+# citations, so dating them broke 8 of them across 7 names). Amending is legitimate here and only
+# here: append-only exists so a row an ARTIFACT REFERENCES is never rewritten under it, and NO
+# artifact carries `2026-08-16.1` — verified 0 of 14 committed dossiers, all still `2026-07-28.1`.
+# Appending a correction row instead would have declared a vintage that never produced anything and
+# left the false clause standing in the table a reader greps. The first clause is untouched because
+# it is TRUE: #459's selection-by-date and the NM refusals survived the revert.
 # APPEND-ONLY. One row per extraction vintage: (version, what this version NAMES). The LAST row is
 # current. A new row is written when extraction OUTPUT changes — not when the code is merely
 # refactored — and writing one forces you to say what changed, which is the point of the pairing.
@@ -52,8 +61,7 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
     (
         "2026-08-16.1",
         "every Multiples reader selects the latest close BY DATE, never by column position, and "
-        "refuses on an NM or undated one rather than reaching back a quarter (#459) · the "
-        "multiples stamps name their close (`Close [ISO]`) instead of claiming a bare `(latest)`",
+        "refuses on an NM or undated one rather than reaching back a quarter (#459)",
     ),
 )
 
