@@ -4446,8 +4446,67 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
-**OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
-13 committed dossiers still carry `Close (latest)` in
+**THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
+2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
+old before it reached STATE).** Agreed after the operator's push-back that a full fleet assembly
+per fix is wasteful — validate on 1–2 names, batch the fixes, assemble ONCE:
+- **PR-1 — KD event coverage.** MERGED #458.
+- **PR-2 — the `(latest)` family / Multiples vintage.** MERGED #459 (and it absorbed the band
+  backward-fill, same root cause).
+- **PR-3 — as-of bounding.** **RE-SCOPED 2026-08-16 on measurement, NOT dropped.** The ~12-field
+  sweep this set was sized against is a 2026-07-29 figure; against the current as-of the live leak
+  is MVST's CIQ panel (8 fields, 1 day) and VRRM's future-dated share count. Build against those,
+  not against the July number. Still the highest-stakes class in the queue — the fund's edge is
+  FORWARD-validated, so lookahead is the one defect that can invalidate the track record itself.
+- **PR-4 — the capital-allocation render gate.** **DROPPED 2026-08-16, measured:** the whole
+  section renders only inside `financialSnapshot()`, but **all 14 committed dossiers carry a
+  financial summary**, so the gate hides nothing from anyone today. It is a guard against a name
+  not in the universe. Re-open if a name ever assembles without a financial summary.
+**THE ORDERING LESSON.** PRs 1–2 were recurrence guards for shapes the corpus does not contain
+(76/76 metric-series already dated and ascending). **PR-2 ALONE consumed ~1.7M review tokens across
+two `/code-review` rounds** — and earned them: round 2 caught a fatal defect in round 1's own fix,
+where a single blank pad column disabled the sort and published the OLDEST close under a confident
+ISO date. The deeper cost is structural, though: when a guard targets a shape the corpus does not
+contain, neither the build nor the review can be settled by looking at the data, so review reasons
+hypothetically — and hypothetical space is unbounded. Each fix adds new hypothetical surface and the
+next pass finds more. **That is the fix→review→fix loop, and it is a property of SPECULATIVE
+TARGETS, not of the reviewer.** The artifact pass below is backed by a defect a reader meets TODAY.
+**Observed defects outrank latent guards in the queue order** — the correction this set earned.
+
+**ITEM 20's `(latest)` FAMILY IS REOPENED 2026-08-17 (#460) — AND IT CANNOT BE CLOSED BY
+REWORDING.** #459 dated the multiples stamps (`Close (latest)` → `Close [ISO]`); #460 REVERTED
+all four strings. **Cause: a mechanical `source_ref` is a JOIN KEY, not display text.** An LLM
+synthesis point cites evidence by copying the string verbatim into `SourcedPoint.source_ref`;
+`synthesis._traces` matches exact/substring, and both renderers dedup endnotes by exact
+string. So the reword **broke 8 sealed citations across 7 names** — each keeping `cited: true`
+while resolving to nothing, since `_validate` only runs in the LLM path — and **forked
+EPAM/IT/UBER's CIQ endnote into two contradictory entries.** `moved_cited_claims` did not
+refuse: its grain is moved FIGURES, not moved strings.
+  **THE REVERT COST THE READER NOTHING**, which is why it was the right trade: neither renderer
+  emits `valuation.ev_ebitda`, so `Close [ISO]` reached **0 of 14 pages**, while
+  `range_position` already prints a real `as-of <date>` on all 14. The structured date stays
+  available to code via `ev_ebitda_asof`. Precise-but-unresolvable lost to imprecise-but-bound.
+  **INVARIANT SHIPPED (INVARIANT RULE):** `tests/test_multiples_vintage.py::test_the_multiples_stamps_are_frozen_because_they_are_join_keys` asserts every committed
+  dossier's synthesis citations TRACE into its own mechanical layer — the property the reword
+  violated, phrasing-independent, so it fires on the next author who edits these strings
+  without re-rolling synthesis. It was RED on the un-reverted artifacts and is green now.
+  **UNLOCK:** key provenance by a stable id with the display string DERIVED from it; then the
+  wording is free to change. Until then these strings are frozen and the item stays open.
+
+**~~OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET~~ DONE 2026-08-17 (#460), PARTIALLY —
+READ THE RESIDUE BELOW BEFORE CLOSING THIS.** The pass ran: mechanical `Close (latest)`
+stamps went 13 → 0 and CNXC's + SMPL's phantom P/LTM EPS bands are gone. **THREE
+OBLIGATIONS SURVIVE IT** and are NOT discharged: (1) `extraction_version` is still
+`2026-07-28.1` on all 14 — the refresh path never stamps it, so the declared
+`2026-08-16.1` reaches no artifact until a name is next assembled with an LLM client;
+(2) the reworded mechanical `source_ref`s BROKE the sealed synthesis citations that
+quote them — 7 names carry a point with `cited: true` whose ref no longer traces to any
+mechanical fact, and EPAM/IT/UBER now render TWO contradictory endnotes for one CIQ
+source (`moved_cited_claims` guards FIGURES only, so nothing refused); (3) the
+`Close [ISO]` stamp reaches ZERO rendered surfaces — `ev_ebitda.source_ref` is cited by
+neither renderer — so on the PDF three names still show only the stale `Close (latest)`.
+**The original text is kept below for the record; its counts are superseded.**
+~~13 committed dossiers still carry `Close (latest)` in~~
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
 precedent needed its own pass, 1095f9f). The re-assembly also lands `EXTRACTION_VERSIONS
 2026-08-16.1` and drops CNXC's and SMPL's phantom P/LTM EPS bands. **This obligation is recorded
@@ -12733,6 +12792,26 @@ one evidence-backed leg at a time.
   observation dates BEFORE the pass and 79 AFTER**; UBER **118 → 117**. The only movement is the
   newest date, 08-10 → 08-11, and it is the PRICE-STORE FRONTIER from the bar backfill, not a new
   fact — bars themselves are already filtered (`_standalone_record`: `b.bar_date <= reference_date`).
+  **⚠ THOSE FIGURES ARE AS-OF-2026-07-29 AND ARE NO LONGER THE CURRENT STATE (re-measured
+  2026-08-16).** They are kept because they record what the #428 review found, but read as current
+  they overstate the live leak by two orders of magnitude. **The fleet as-of has since advanced to
+  2026-08-12, and re-measuring all 14 committed dossiers against each page's OWN `reference_date`
+  — same method, excluding forward-looking catalyst/maturity fields — gives 12 date-occurrences on 2 names (10 MVST + 2 VRRM):**
+  - **MVST — 10 field-occurrences reading a CIQ Comparable-Analysis panel stamped `2026-08-13`,
+    one day past its own as-of** (the nine listed below plus
+    `valuation.own_history.value[0].source_mtime`; an earlier draft of this line said "8 fields"
+    and then enumerated nine — corrected 2026-08-17 on re-measurement) (`stock_info.market_cap{,_as_of}`, `implied_expectations.tev`,
+    `implied_valuation.{implied_equity,bridge,market_cap}`, `leverage_survival.{total_debt_to_ebitda,
+    credit_health}`, `peer_comps.peer_grid`). Cause is DATA VINTAGE — that workbook was pulled on
+    08-13 — **not** the unbounded-selection path this entry describes.
+  - **VRRM — `quality.share_count_trend` running to `2026-08-31`** (TWO paths, `.value` and
+    `.source_ref`), a future-dated share count.
+  - **NFLX and UBER are now 0, and `primary_source` is clean on all 14** — the headline case (UBER
+    reading a 10-Q filed 7d past its as-of) no longer fires.
+  **THE DEFECT WAS OUTRUN, NOT FIXED, and that distinction is the whole point.** No as-of bound was
+  added; the as-of moved past the leak. `_fleet_reference_date` only advances on a SCREEN RUN, so a
+  lagging as-of is the NORMAL state between runs — the leak returns on its own, and the next
+  measurement must be taken against the then-current as-of rather than quoted from here.
   **THE TWO REMEDIES BOTH COST MORE THAN THIS PR CAN SPEND**, which is why it is recorded rather
   than fixed: (a) bounding every source is a decision-path change across ~12 extractors, each owing
   its own shown run; (b) advancing the fleet as-of needs a SCREEN RUN — the monthly operating loop —
