@@ -4446,6 +4446,42 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**OPEN — THE COMPS AS-OF PUBLISHES CIQ's EXPORT STAMP AS AN OBSERVATION DATE. SPEC BELOW; scoped
+2026-08-17, deliberately NOT built in a hurry.**
+- **THE DEFECT.** `corrected_ciq_as_of` (freshness.py:273) exists because CIQ's `As-Of` is the
+  EXPORT date and the data is the PRIOR trading close — **measured 11 of 11 committed names.**
+  `implied_expectations.tev_as_of` runs through it (mechanical.py:2974). `comps_as_of_date`
+  (ciq_sheets.py:3750) does NOT, so `StockInfo.market_cap_as_of` and every comps `source_ref`
+  suffix publish the export stamp. NFLX renders `CMP $78.16 (2026-08-14) · cap $325.5B
+  (2026-08-17)` — one observation, two dates — which is what
+  `test_the_tev_cite_carries_both_dates_when_they_differ` exists to prevent.
+- **PROVED NOT-LOOKAHEAD, so do not re-file this as a data problem:** 325,453.5 ÷ 78.16 (the 08-14
+  close) = 4,163.9M shares = 308,714.5 ÷ 74.14 (the prior artifact's 08-07 close). The DATA is
+  as-of-correct; only the LABEL is ahead.
+- **FIX AT THE ONE DERIVATION, NOT AT A CONSUMER.** `comps_as_of_date`'s own docstring: *"`comps_as_of`
+  renders this, `_comps_asof_suffix` stamps the rendering onto every comps `source_ref`, and
+  `StockInfo.market_cap_as_of` carries the value itself. All three read from HERE."* Correcting only
+  `market_cap_as_of` fixes 1 of 3 and makes them DISAGREE — the exact state that derivation was
+  extracted (O3) to end.
+- **MANDATORY CARVE-OUT: NEVER CORRECT THE ATTESTED PATH.** `comps_as_of_date` returns
+  `(date, operator_attested)`; the header path is `False` (CIQ's export stamp — correct it), the
+  AS_OF-sidecar path is `True` (**an operator's explicit attestation — overriding it is a worse
+  defect than the one being fixed, and no current test would catch it**).
+- **THE DESIGN FORK, which is why this is not a one-liner.** The correction resolves the prior
+  TRADING close from the store — deliberately not `date − 1`, because 2 of the 11 measured stamps
+  fall on a Monday. So it needs price bars, and `ciq_sheets` is a pure workbook parser with **8
+  `_comps_asof_suffix` call sites** and no store access. Choose ONE and record why:
+  (a) thread `bars` into `comps_as_of_date` + the 8 sites — consistent, but couples the parser to
+  price data; (b) move the correction to a layer holding both bundle and bars, and have
+  `ciq_sheets` render what it is given rather than deriving; (c) have the CIQ panel supply its own
+  data date if a column carries it — cheapest if it exists, and NOT yet checked.
+- **VERIFY BY RE-ASSEMBLING NFLX**, whose artifact currently carries the wrong stamp: on success
+  `market_cap_as_of` reads `2026-08-14` and the 9 fields the earlier sweep flagged drop to 0.
+- **AND RE-MEASURE MVST** under the same lens — its recorded "1-day lookahead" is very likely this
+  same stamp bug, not data.
+
+
+
 **NFLX RE-ASSEMBLED 2026-08-17 ON A FRESH CIQ PULL (`artifacts/nflx-reassemble`) — AND THE
 "3 DAYS OF LOOKAHEAD" I FIRST RECORDED HERE WAS FALSE. IT IS A STAMP BUG, NOT A DATA FACT.**
 - **THE CORRECTION, PROVED BY ARITHMETIC.** NFLX's new cap is 325,453.5 stamped
