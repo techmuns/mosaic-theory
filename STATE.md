@@ -4534,6 +4534,67 @@ was a false claim about to render; the other is ACCEPTED RISK with its unlock, n
   at which vintage (a schema field + render + JS twin + parity pins) — its own PR. Distinct from
   queue item 26b, which is *"an extractor change with no bump"*; here the bump exists and the
   refresh writer does not apply it.
+**ANALYST ACTION, OPEN — BRBR's UNDERWRITING CITES SIMPLY GOOD FOODS' TRADING HISTORY
+(found 2026-08-17, guards shipped; the content fix is YOURS, not the machine's).**
+`scenarios/BRBR.json`'s `assumptions` block is a BYTE-IDENTICAL copy of `scenarios/SMPL.json`'s —
+all three axes, every reference value, every note. Of 7 scenario records it is the only shared pair.
+- **THE HARM IS DIRECTIONAL, and it is the dangerous direction for a long-biased book.** BRBR's
+  bear multiple leg is **6.0x**, and the prose justifies it against *"this company's trading-range
+  low"* of **6.11x** — Simply Good Foods' floor. **BRBR's own floor is 4.29x**, so the bear leg sits
+  **1.71x ABOVE** the floor while reading as if stress-tested to it. Downside looks covered when it
+  is not. Same shape on median (17.85x cited vs BRBR's 19.76x) and the history span (8.5y/35 closes
+  cited vs BRBR's 6.6y/27).
+- **THE DECISION IS SOUND; THE AUDIT TRAIL IS NOT.** BRBR's ratified legs are its own and correctly
+  scaled (bear rev 2,250 / margin 8% / 6.0x against ~$2.3bn revenue; SMPL's are 1,200 / 13% / 5.5x).
+  So this is not a mis-valued name — it is a name whose source-bind sends the human to a different
+  company. Someone doing exactly what §Source-bind-everything exists for verifies the bear leg
+  against SMPL and comes away reassured. **That is why it outranks the remaining #460 residue.**
+- **UNLOCK (analyst, not mechanical):** re-derive `assumptions.multiple.references` from BRBR's own
+  committed band (low 4.29 / median 19.76 / current 9.18) and re-state each leg's rationale against
+  those. **The machine must not write this** — which reference justifies which leg is an
+  underwriting argument, and free-writing it is the line the pivot draws. Then delete BRBR from
+  `KNOWN_FOREIGN`.
+- **INVARIANT SHIPPED (INVARIANT RULE) — `tests/test_scenario_reference_binding.py`, 3 pins.**
+  (1) no two scenario records share an `assumptions` block — catches the wholesale paste;
+  (2) every band reference with a STABLE role (low/median/high) must be REPRODUCIBLE FROM THAT
+  NAME'S OWN close series — catches a single hand-edited figure, which (1) cannot see;
+  (3) the allowlist entry must still be EARNED, so it cannot outlive the defect and silently exempt
+  a future regression on the same name.
+  **REVIEW FIXES 2026-08-17 (medium effort, no fan-out) — all three measured:**
+  (a) `assert checked >= 6` DELETED. It was a hand-tuned fleet total against an actual 7 — one
+  reference of slack — and the documented BRBR unlock rewrites two of those seven, so the floor
+  could have reddened on the very fix it prescribes. Exactly the anti-pattern #460 removed from
+  `test_dossier.py` for reddening on a win. Replaced with `assert checked` (corpus-size
+  independent) plus a LOUD refusal for a record that cites a band while having none committed —
+  the first cut `continue`d there in silence, and WERN is live in that state.
+  (b) THE DOCSTRING WAS WRONG, NOT THE CHECK. It claimed the guard flags 2 of BRBR's foreign
+  values; it flags **1**. BRBR's `median` cites SMPL's 17.85, but BRBR's OWN series produces a
+  trailing-11 window median of 18.12 — inside tolerance. **The value is foreign in PROVENANCE
+  while reachable in FACT, and no value-only test separates those.** Tightening the tolerance
+  cannot help: EPAM's CORRECT median sits 32% from its whole-band median, so any threshold that
+  rejects BRBR's 9.7% rejects EPAM first. Recorded as a ceiling rather than tuned around.
+  **The discriminator that would work is the CITATION, not the value** — BRBR's reference sources
+  itself to "35 closes, 8.55y span, sha 7bd83a1103", all SMPL's, where BRBR's band carries 27
+  closes and a different sha. That needs provenance keyed structurally, which is the SAME unlock
+  item 20 is reopened against — so the two items now share one fix.
+  (c) A LATENT FALSE POSITIVE ON FIVE NAMES, found by the fix and the most valuable of the three.
+  A band's low/median/high EXCLUDE the current close; every trailing window INCLUDES it. So on a
+  name whose current close is a new extreme, the band's own published `low` is unreachable as a
+  window minimum — **CNXC, MVST, SMPL, UBER and VRRM are all in that state**, and SMPL's correct
+  `band_low` citation passed the first cut ONLY by coincidence (a trailing-4 median landed near
+  it). Seeding the reachable set with the band's STORED field closes it; mutation-verified by
+  removing the seed, which false-flags SMPL. Roles now also match their own statistic
+  (median→median, not median→mean), so a `median` cannot be satisfied by some window's mean.
+  (d) Guard 3 compared an insertion-ordered list to a sorted one, so a second allowlist entry
+  added out of alphabetical order reddened with a message naming an EMPTY set. Fixed.
+  **Scoped by MEASUREMENT, not by frame:** a first cut checked every band-sourced reference and
+  produced two FALSE POSITIVES on correct work — IT's genuine 75th-percentile citation (an arbitrary
+  quantile the check cannot reproduce) and EPAM's `current` multiple (which legitimately drifts with
+  every band refresh). `percentile` and `current` are therefore excluded and the reason is recorded
+  at the constant. Zero false positives now; both guards fire on BRBR with the allowlist emptied,
+  and (2) fires on a planted SMPL floor on IT. **A guard that cries wolf on good work gets
+  switched off, so no-false-positives outranked catching all three of BRBR's foreign figures** —
+  (1) catches BRBR regardless.
 
 
 
