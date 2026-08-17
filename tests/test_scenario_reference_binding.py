@@ -15,7 +15,7 @@ company and comes away reassured. That is why this is worth a guard rather than 
 
 TWO GUARDS, because either alone is escapable:
   1. no two scenario files share an `assumptions` block — catches the wholesale copy;
-  2. every reference sourced to a committed band must be REPRODUCIBLE FROM THAT NAME'S OWN SERIES —
+  2. every MULTIPLE-axis band statistic must be REPRODUCIBLE FROM THAT NAME'S OWN SERIES —
      catches a single hand-edited figure, which (1) cannot see.
 
 WHY (2) IS "REPRODUCIBLE FROM ITS OWN SERIES" AND NOT "EQUALS THE BAND". Measured first, per
@@ -190,9 +190,10 @@ def test_no_two_scenario_records_share_an_assumptions_block() -> None:
 def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     """GUARD 2 — the single hand-edited figure, which guard 1 cannot see.
 
-    A reference sourced to `valuation.own_history` claims to describe THIS company's trading
-    history. If its value is neither the band's own stored statistic for that role nor that same
-    statistic over any trailing window, it came from somewhere else."""
+    A stable-role reference on the multiple axis claims to describe THIS company's trading history
+    — that is what `band_low` / `median` / `band_high` in turns MEAN, whatever prose the `source`
+    field happens to carry. If its value is neither the band's own stored statistic for that role
+    nor that same statistic over any trailing window, it came from somewhere else."""
     checked, foreign, unscored = 0, [], []
     for name, doc in _scenarios():
         refs = _band_refs(doc)
@@ -228,8 +229,9 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     unexpected = [f for f in foreign if f.split()[0].split("-")[0] not in KNOWN_FOREIGN]
     assert not unexpected, (
         f"reference(s) cite a figure their own name's close series cannot produce: {unexpected}. "
-        f"A reference sourced to `valuation.own_history` asserts it describes THIS "
-        f"company; a value unreachable from its own series belongs to another. (Known: "
+        f"A stable-role band statistic on the multiple axis asserts it describes THIS "
+        f"company's own trading history — whatever prose its `source` field carries. A value "
+        f"unreachable from that name's own series belongs to another. (Known: "
         f"{sorted(KNOWN_FOREIGN)}.)")
 
 
