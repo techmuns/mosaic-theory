@@ -257,6 +257,16 @@ class CiqBundle:
     ticker: str
     workbooks: tuple[CiqWorkbook, ...]
     _cache: dict[Path, dict[str, list[list[Any]]]] = field(default_factory=dict, repr=False)
+    #: THE COMPS PANEL'S REAL DATA DATE, injected by the assembler — never derived here.
+    #: CIQ's `As-Of Date:` header is the EXPORT stamp; the data is an earlier trading close, so
+    #: every consumer of `comps_as_of_date` would otherwise publish a date the data does not reach.
+    #: Resolving it needs PRICE BARS, which this module has no business knowing about — so the
+    #: assembler resolves it once (it holds both the bundle and the store) and sets it here, and
+    #: `ciq_sheets` RENDERS what it is given. One slot corrects all eight comps consumers without
+    #: threading price data through a workbook parser.
+    #: PER-ASSEMBLY BY CONSTRUCTION: a bundle is built per ticker per run, so this cannot leak
+    #: between names. Left None (the default) nothing changes and the header stamp stands.
+    resolved_comps_as_of: date | None = field(default=None, repr=False)
 
     @classmethod
     def from_files(cls, ticker: str, paths: list[Path]) -> CiqBundle:

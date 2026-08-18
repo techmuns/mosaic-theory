@@ -4446,8 +4446,55 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
-**OPEN — THE COMPS AS-OF PUBLISHES CIQ's EXPORT STAMP AS AN OBSERVATION DATE. SPEC BELOW; scoped
-2026-08-17, deliberately NOT built in a hurry.**
+**~~OPEN~~ BUILT 2026-08-17 (`fix/comps-as-of-correction`) — THE COMPS AS-OF PUBLISHED CIQ's
+EXPORT STAMP AS AN OBSERVATION DATE. Corrected at the one chokepoint; spec below kept as the
+build record.**
+- **SHIPPED:** `CiqBundle.resolved_comps_as_of` (injection slot) · `freshness.date_of_close`
+  (price→date, fail-loud) · `ciq_sheets.comps_printed_close` (subject row via `_comps_layout`) ·
+  `comps_as_of_date` prefers the injected value **on the header branch only** ·
+  `assemble.py` resolves once inside the `Store` block, before any extractor reads the panel.
+- **VERIFIED END-TO-END:** NFLX `2026-08-17` → **`2026-08-14`**, and the suffix moves with it —
+  one derivation, so `market_cap_as_of` and all seven `source_ref` suffixes correct together.
+- **BLAST RADIUS, MEASURED BEFORE MERGE AS THE SPEC REQUIRED — 19 bundles:** 13 corrected by
+  1–3 days, all BACKWARDS (the honest direction); **6 left UNCORRECTED** (FUBO, MVST, NIKE,
+  UBER, VRRM + 1) where no bar uniquely carries the printed close — the fail-safe, not a
+  silent guess. **ZERO names cross `MAX_PANEL_AGE_DAYS = 45`**, so no new staleness caveat
+  fires. **NFLX's panel age was −3 DAYS** — a panel dated LATER than the page reading it — and
+  is now 0; a negative age was the defect visible on its face.
+- **REVIEW OF #466 FOUND A REAL BUG IN THE FIX — A DOUBLE CORRECTION, mine, on all 13 names.**
+  `_implied_expectations` read `_ie_asof(mc.source_ref)`: a REGEX over the rendered suffix — the
+  "second parser of one display string" `comps_as_of_date`'s own docstring says the extractor
+  exists to avoid. It survived for months because BOTH parsers agreed while the suffix carried
+  CIQ's raw header. **The injection broke that agreement:** header 2026-08-17 -> injected
+  2026-08-14 -> regexed back out -> `corrected_ciq_as_of` walked it back AGAIN -> **2026-08-13**.
+  One panel, two dates, both wrong. **Fixed by reading the structured derivation and DELETING
+  `_ie_asof`** — the double correction and the second parser removed together.
+- **THREE MORE FROM THE SAME REVIEW, all fixed:** `date_of_close` is now BOUNDED by the export
+  stamp (an export cannot predate its data; unbounded, a coincidental old close could publish a
+  date years off, or move the stamp FORWARD — the one invariant the correction exists to hold);
+  the TEV cite names BOTH dates and distinguishes corrected from uncorrectable; the printed-close
+  column resolves by HEADER LABEL, not position.
+- **THREE LESSONS ABOUT THE TESTS, worth more than the fix:**
+  (a) **A SOURCE-TEXT PIN WENT RED ON A RENAME, NOT ON THE DEFECT** — `assert
+  "corrected_ciq_as_of(stated_as_of, price_bars or [])" in src` would have stayed GREEN through the
+  actual double-correction bug it was written to prevent. Re-pointed to assert WHICH of the two
+  behaviours happens.
+  (b) **A FIXTURE WAS DICTATING THE PRODUCTION SHAPE (#305).** The IE tests fed a mocked
+  `source_ref` STRING, so production read strings; reading structure broke them. Fixed the
+  FIXTURE to carry a real comps sheet — not the code.
+  (c) **THE COMMENT-VS-CODE TRAP FIRED TWICE IN ONE SESSION.** A pin matched
+  `corrected_ciq_as_of` inside the comment EXPLAINING the defect it prevents. Solved once on the
+  attested-branch pin by stripping comments, then not carried across. Both strip now, and each
+  says why.
+- **THE 6 UNCORRECTED ARE A REAL RESIDUE, not a rounding error.** Worth a look: a printed close
+  no bar carries means either the store does not reach that name's panel or CIQ priced it from
+  a source the store does not hold. Their stamps stay on the export date until then.
+- **ARTIFACT PASS STILL OWED.** This is CODE ONLY — no dossier carries the corrected stamp yet.
+  Re-assembly is a separate pass (never bundle a code change into an artifact commit).
+- **AND RE-MEASURE MVST's "1-day lookahead"** under this lens — but note MVST is one of the 6
+  the price-match cannot resolve, so it needs the residue understood first.
+
+**THE SPEC AS SCOPED (kept as the build record):**
 - **THE DEFECT.** `corrected_ciq_as_of` (freshness.py:273) exists because CIQ's `As-Of` is the
   EXPORT date and the data is the PRIOR trading close — **measured 11 of 11 committed names.**
   `implied_expectations.tev_as_of` runs through it (mechanical.py:2974). `comps_as_of_date`
