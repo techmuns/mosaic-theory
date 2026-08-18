@@ -5450,8 +5450,27 @@ here, since the reading was being made.
 underwriting a name found things the fleet-wide guards did not; the first is a class we had not
 seen.
 
-**B1a — THE SEVERED VERBATIM: a quote can be faithful, auditable, and still argue the opposite of
-its source. DESIGN READ ONLY — NOTHING BUILT.** `operating_drivers.rows[23]` on BRBR quotes *"In
+**B1a — ~~DESIGN READ ONLY — NOTHING BUILT~~ BUILT AT #397 (2026-08-10, `_following_paragraph`)
+AND ON EVERY COMMITTED PAGE SINCE THE #472/#473 FLEET PASS — this entry stood as an open design
+for eight days after the build merged (stale-record class, corrected 2026-08-18; the operator
+re-specified the build from memory before the code was checked).** What shipped is the PARAGRAPH
+bound, and the reasoning the ledger never carried: at the 2026-08-10 measurement (191 rows, 27KB)
++1 sentence grew the payload 90% and crossed ONE call boundary (EPAM's Nelnet row spliced the Q4
+2025 call's opening remarks onto a quote); +2 sentences 186%/two crossings; **paragraph 161%/ZERO
+— structural, since a blank line precedes every `--- <call> ---` header, so a paragraph cannot
+cross one** (the code also hard-stops at `_CALL_HEADER`). Unconditional within transcript rows —
+no opener list, no classifier ("THE ONE RULE IS THAT THERE IS NO RULE", the docstring carries the
+BRBR "This is" counterexample); KD/event rows are excluded STRUCTURALLY (the extractor is
+transcript-only, so `following_context` cannot exist on a KD row). Surfaced in the synthesis
+digest at ≤400 chars/row (synthesis.py:901). **MEASURED ON THE COMMITTED FLEET 2026-08-18: 236 of
+316 transcript rows carry context; BRBR's 70%-promotion row carries the exact reversing qualifier
+("This is relatively in line with historical norms…") ON THE PAGE — the demonstrated instance is
+closed.** Worst-case digest payload AORT 9.0KB — no name crowds the prompt. Pins:
+`tests/test_following_context.py` (reversing qualifier captured · benign continuation carried ·
+never runs into the next call · headerless clamp · end-of-paragraph yields nothing · fail-soft ·
+re-wrapped quote stops at its own paragraph). Original entry:**
+THE SEVERED VERBATIM: a quote can be faithful, auditable, and still argue the opposite of
+its source.** `operating_drivers.rows[23]` on BRBR quotes *"In
 the third quarter, 70% of RTD shake category volumes were sold on price promotion."* The quote is
 **exact**, the source_ref is **correct**, the digits **trace**. Every guard we have — quote-in-
 transcript, digit-trace, 19c's citation requirement — takes the QUOTED TEXT as the check, and this
