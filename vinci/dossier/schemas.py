@@ -1153,6 +1153,37 @@ class DilutionPipeline(BaseModel):
     model_config = {"frozen": True}
 
 
+class SbcLine(BaseModel):
+    """STOCK-BASED COMPENSATION — the ONGOING dilution engine, as $ and as % of revenue.
+
+    WHY THE RATIO LEADS AND THE DOLLARS FOLLOW. Dollars alone do not compare: NFLX's $368M and
+    NCNO's $74M are five times apart in dollars and fifteen times apart the other way in
+    intensity, and intensity is the decision-relevant reading. Measured on this fleet the ratio
+    spans **0.7% to 12.4%** and sorts almost exactly by business model — one software name
+    isolated at the top, the consumer-staples cluster at the bottom.
+
+    **THE NUMERATOR AND DENOMINATOR ARE THE SAME WINDOW, BY CONSTRUCTION.** This is the defect
+    the field was built around: the first measurement paired each name's LATEST 10-K SBC with the
+    dossier's LTM revenue, and FUBO's FY2024 SBC over its post-merger LTM revenue read **0.7%
+    when the true FY2024 ratio is 2.6%** — understated 3.7x. The revenue fact is now matched on
+    the SBC fact's EXACT ``start``/``end``, so the two cannot drift apart. Where no revenue fact
+    covers the SBC window the ratio is UNKNOWN and the dollars still print — a stated gap, never
+    a ratio across mismatched periods.
+
+    IT IS NOT THE EBITDA WEDGE. ``ebitda_basis`` records that the actual row expenses SBC while
+    consensus adds it back; this field says how big that recurring charge IS relative to the
+    business. The two answer different questions and are read in that order — the wedge matters
+    where this ratio is high."""
+
+    expense: Sourced[float]            # $M, the SBC charge over `window`
+    pct_revenue: Sourced[float]        # %, over the IDENTICAL window — UNKNOWN if none matches
+    window_start: str                  # ISO — the SBC fact's own period, carried so the
+    window_end: str                    # reader can see what the ratio is a ratio OF
+    line: Sourced[str]                 # the composed MAIN-BODY line
+
+    model_config = {"frozen": True}
+
+
 class OwnershipFiling(BaseModel):
     """One Schedule 13D/G from the EDGAR filing index — form, date, accession only.
 
@@ -1401,6 +1432,9 @@ class MechanicalLayer(BaseModel):
     # back-compat: committed dossiers predate it and must round-trip byte-identically; a FRESH
     # assembly always builds it (its empty state is "none in window", never a missing block).
     ownership_events: OwnershipEvents | None = None
+    # The ONGOING dilution engine, beside the register (`dilution_pipeline`) and who is filing on
+    # it (`ownership_events`). Optional-with-default for back-compat; a FRESH assembly builds it.
+    sbc: SbcLine | None = None
     # Peer acquired-asset intensity — the comparison that says whether the subject's
     # goodwill+intangibles load is unusual for its sector or exactly what it looks like.
     # Optional-with-default for back-compat; a FRESH assembly builds it when the comps

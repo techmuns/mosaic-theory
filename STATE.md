@@ -13076,7 +13076,74 @@ one evidence-backed leg at a time.
   headroom, buybacks, peer intensity AND this pipeline — renders only inside `financialSnapshot()`,
   so a name whose financial summary is absent shows none of it on either surface. That predates
   this PR and applies to three existing blocks; recorded rather than widened into.
-  **Remaining Tier-1 queue: SBC line** *(KD types batch: BUILT; 13D/G events: BUILT, next line).*
+  **Tier-1 queue from the coverage audit: COMPLETE** *(dilution pipeline, KD types batch,
+  13D/G events, SBC line — all BUILT).*
+
+- **SBC LINE BUILT 2026-08-18 (`feat/sbc-line`) — Tier-1 item four, closing the queue: the
+  ONGOING dilution engine, beside the register (`dilution_pipeline`) and who files on it
+  (`ownership_events`).** New `MechanicalLayer.sbc` — `us-gaap:ShareBasedCompensation` from EDGAR
+  XBRL as $ and as **% of revenue**, upper-bounded at `reference_date`.
+  **THE RATIO LEADS BECAUSE DOLLARS DO NOT COMPARE.** Operator asked what the market-standard
+  framing is *for this universe*; measured, it is % of revenue. NFLX's $368M and NCNO's $74M are
+  5x apart in dollars and 15x apart the other way in intensity. The fleet spans **0.7%–12.4%**
+  and sorts by business model: NCNO 12.4 · AORT 5.5 · UBER 3.5 · EPAM 3.2 · FUBO 2.6 · VRRM 2.6 ·
+  IT 2.4 · V 2.2 · VITL 1.6 · SMPL 1.1 · BRBR 1.0 · CNXC 1.0 · NFLX 0.8 · MVST 0.7. The
+  `ebitda_basis` wedge is the SECOND read, and matters where this ratio is high — not a rival
+  framing.
+  **TWO WINDOW/BASIS TRAPS, BOTH CAUGHT ON THE LIVE CORPUS, BOTH MINE.**
+  (1) **The first measurement divided each name's latest 10-K SBC by the dossier's LTM revenue.**
+  FUBO's FY2024 SBC over its post-merger LTM read **0.7% against a true 2.6%** — understated
+  3.7x, and believable because both inputs were individually correct. Fixed by matching the
+  revenue fact on the SBC fact's EXACT `start`/`end`.
+  (2) **Same window turned out to be necessary, NOT sufficient.** FUBO carries TWO revenue facts
+  for 2024-01-01→2024-12-31: $1,622.8M from the 10-K (`fp=FY`) and **$402.3M from a 10-Q**
+  (`fp=Q1`, `frame=CY2024`) whose period string looks annual. The numerator was restricted to
+  10-K annuals and the denominator was not, so the first real run printed FUBO at **10.6%**. The
+  form filter is now the SAME on both sides. *Same window, different basis — again.*
+  **A THIRD HOLE WAS FOUND BY MUTATION, NOT BY REVIEW:** relaxing the period match to `end`-only
+  survived every pin, because the different-period test differed on BOTH dates. A Q4 fact shares
+  an annual fact's END and differs only in START, so end-only matching divides a year's SBC by a
+  quarter's revenue. Pinned.
+  **REFUSALS, NOT GUESSES:** no revenue fact covering the SBC window ⇒ ratio UNKNOWN and the
+  dollars still print; two 10-K facts disagreeing about one period ⇒ refuse rather than pick,
+  because a silently chosen denominator cannot be reconstructed by the reader.
+  **ONE TAG, MEASURED:** `ShareBasedCompensation` answers on all 14, so no fallback taxonomy is
+  invented for a gap that does not exist here (`AllocatedShareBasedCompensationExpense` is a
+  segment allocation, not the total).
+  **REAL RUN, all 14** — every name resolves a same-window ratio; zero UNKNOWN.
+  **JS twin shipped WITH the block** (#457/#470 lesson) and the python side pinned at the
+  ARTIFACT level through the real `render_markdown` (#470's helper-pin lesson). Registered in
+  `_DROP_WHEN_NONE` for byte-identical no-op refresh.
+  **REVIEW OF #471 — FOUR MORE SELECTION-LAYER DEFECTS, ALL LATENT, ALL MINE.** The framing
+  survived review; the SELECTION did not.
+  **(a) THE AS-OF BOUND WAS ON PERIOD `end`, NOT `filed` — a lookahead (#416/#426 class).** A
+  period ending before the as-of can be RESTATED long after it. Live FUBO FY2021 SBC is
+  **$63,796,000** as filed 2022-03-01 and **$53,150,000** as restated in the 2023 and 2024 10-Ks,
+  so a 2022-06-01 record was handed the 2024 filing's number — **17% off, from data that did not
+  exist**. Both numerator and denominator now bound on `filed`.
+  **(b) THE NUMERATOR PICKED AMONG DISAGREEING RESTATEMENTS BY ARRAY ORDER** while the
+  denominator refused the identical ambiguity three lines below — `sort(key=end)` + `[-1]` is a
+  stable sort, so the winner was whichever entry sat last in the API array. Restatement is a
+  VINTAGE, not a tie: the latest-FILED value inside the bound wins, and only a same-period,
+  same-filed disagreement refuses.
+  **(c) A FAILED FETCH DELETED THE BLOCK.** `except HttpError: return None` collapsed "could not
+  be read" into "no SBC tag", and `sbc` is in `_DROP_WHEN_NONE` — so a transient 503 during a
+  refresh stripped the line from the page AND the JSON, indistinguishable in the artifact diff
+  from a company that genuinely reports none. `_ownership_events` states the opposite rule in its
+  own docstring; this contradicted it. Now UNKNOWN.
+  **(d) `fp=FY` WAS TRUSTED WITHOUT A DURATION CHECK.** FUBO carries a real `form=10-K`, `fp=FY`
+  SBC fact spanning 2009-02-20→2012-09-30 — **1,318 days**. Duration is now checked (330–400d).
+  Also: the UNKNOWN note stated "no revenue fact covers …" for the ambiguity case, where two
+  facts DO cover it; and the hand-built companyfacts URL now uses `EdgarClient.companyfacts`.
+  **THE DURATION PIN'S FIRST FIXTURE COULD NOT BITE**, found by mutation: it put the stub BEFORE
+  the annual fact, so `_sbc_pick` discarded it on recency and the check could be deleted green.
+  **REAL RUN POST-FIX: all 14 lines BYTE-IDENTICAL to pre-fix.** These are LATENT defects — they
+  bite on historical as-ofs and edge periods, not on today's 2026-08-14 reference_date where the
+  newest period is unique and long filed. Stated because the unchanged output is NOT evidence the
+  fixes work; the FUBO corpus values and the mutations are.
+  **Eight mutations verified**: denominator basis filter dropped, period match relaxed to
+  end-only, disagreeing restatements picked, as-of bound removed, **`filed` bound removed,
+  latest-filed → array order, duration check removed, wrong UNKNOWN reason restored**.
 
 - **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: Schedule
   13D/G FILING ACTIVITY, beside the register that says how many shares could be issued.** New

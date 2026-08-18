@@ -1760,6 +1760,13 @@ function ownershipEvents(m) {
   return oe ? fact("Schedule 13D/G filing activity", oe.line) : "";
 }
 
+// PARITY SHIPPED WITH THE BLOCK, not after a review finds it missing (#457). See
+// `render._sbc_lines`.
+function sbcLine(m) {
+  const s = m.sbc;
+  return s ? fact("Stock-based compensation", s.line) : "";
+}
+
 function capitalAllocation(m) {
   // GATED PER BLOCK — see render._capital_allocation. An early return on `capital_allocation`
   // left seven names carrying `peer_capital_intensity` with nothing on the page.
@@ -1767,11 +1774,12 @@ function capitalAllocation(m) {
   const peers = peerCapitalIntensity(m);
   const dilution = dilutionPipeline(m);
   const ownership = ownershipEvents(m);
+  const sbc = sbcLine(m);
   if (!ca) {
     // GATED PER BLOCK on ALL THREE, not just peers — a name whose only content is the pipeline
     // must still get the section, which is the same defect the comment below records.
-    return peers || dilution || ownership
-      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${dilution}${ownership}${peers}`
+    return peers || dilution || ownership || sbc
+      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${dilution}${ownership}${sbc}${peers}`
       : "";
   }
   const usd = (v) => escapeHtml(`$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
@@ -1815,6 +1823,7 @@ function capitalAllocation(m) {
   out.push(fact("Acquisition consideration", ca.acquisition_consideration, usd));
   out.push(dilution);
   out.push(ownership);
+  out.push(sbc);
   const gap = String((ca.brand_split || {}).note || "").replace(/^NOT AVAILABLE FROM XBRL — /, "");
   out.push(`<div class="fact"><div class="fact-label">Per-brand split</div><div class="fact-val muted"><span class="pill unresolved">NOT AVAILABLE FROM XBRL</span> ${escapeHtml(gap)}</div></div>`);
   // HOUSE SUBTITLE SHAPE, not an invented one. `.ds-sub` is a MARGIN UTILITY applied to a

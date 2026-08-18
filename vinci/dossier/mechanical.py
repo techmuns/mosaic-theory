@@ -64,6 +64,7 @@ from vinci.dossier.schemas import (
     ReconciliationValue,
     RegistrationFiling,
     ReleaseExtract,
+    SbcLine,
     Sourced,
     SourceStatus,
     StockInfo,
@@ -2058,6 +2059,152 @@ def _ownership_events(
                         f"window {since.isoformat()}→{reference_date.isoformat()}{newest}")))
 
 
+#: SBC comes from ONE tag — measured, not assumed: `ShareBasedCompensation` answers on all 14
+#: names, so no fallback taxonomy is invented for a gap that does not exist here. If a future
+#: name misses it the block says UNKNOWN rather than reaching for a near-synonym that may mean
+#: something else (`AllocatedShareBasedCompensationExpense` is a segment allocation, not the total).
+_SBC_TAG = "ShareBasedCompensation"
+
+#: REVENUE FOR THE SBC WINDOW. Ordered most-specific first. The ratio is only ever formed from a
+#: fact whose period matches the SBC fact EXACTLY, so this list decides which tag answers, never
+#: which period — a tag missing here yields UNKNOWN, never a silently different window.
+_SBC_REVENUE_TAGS = ("RevenueFromContractWithCustomerExcludingAssessedTax",
+                     "RevenueFromContractWithCustomerIncludingAssessedTax",
+                     "Revenues", "SalesRevenueNet")
+
+
+#: An ANNUAL period, in days. FUBO carries a `form=10-K`, `fp=FY` SBC fact spanning
+#: 2009-02-20→2012-09-30 — **1,318 days**. Rendering that as "FY" would put a three-year stub
+#: beside genuine annual intensities as if comparable, so duration is checked rather than trusted.
+_SBC_ANNUAL_DAYS = (330, 400)
+
+
+def _sbc_annual(node: dict[str, Any], reference_date: date) -> list[dict[str, Any]]:
+    """The 10-K annual facts KNOWABLE at the as-of, newest period first.
+
+    **BOUNDED ON `filed`, NOT ONLY ON `end`** (review of #471, and the #416/#426 lookahead class).
+    A period ending before the as-of can be RESTATED long after it: FUBO's FY2021 SBC is
+    $63,796,000 as filed 2022-03-01 and $53,150,000 as restated in the 2023 and 2024 10-Ks. An
+    `end`-only bound hands a 2022-06-01 record the 2024 filing's number — 17% off, from data that
+    did not exist at the as-of. Both the numerator and the denominator are bounded here."""
+    out = []
+    for x in node.get("units", {}).get("USD", []):
+        if x.get("form") != "10-K" or not x.get("start") or not x.get("end"):
+            continue
+        filed = x.get("filed")
+        if filed and date.fromisoformat(str(filed)) > reference_date:
+            continue
+        start, end = date.fromisoformat(str(x["start"])), date.fromisoformat(str(x["end"]))
+        if end > reference_date:
+            continue
+        if not _SBC_ANNUAL_DAYS[0] <= (end - start).days <= _SBC_ANNUAL_DAYS[1]:
+            continue
+        out.append(x)
+    return out
+
+
+def _sbc_pick(cands: list[dict[str, Any]]) -> tuple[float, str, str] | None:
+    """(value $M, start, end) for the newest period — or None when it is genuinely ambiguous.
+
+    RESTATEMENT IS A VINTAGE, NOT A TIE. Several 10-K facts for one period are the SAME number
+    restated, so the as-of-correct answer is the LATEST FILED one still inside the bound — not a
+    refusal, and emphatically not `[-1]` of the API array, which is what the first cut used: a
+    stable sort on `end` alone left the winner to array order while the denominator refused the
+    identical ambiguity three lines below.
+
+    Only a same-period, SAME-FILED disagreement is irreducible; that refuses."""
+    if not cands:
+        return None
+    end = max(str(x["end"]) for x in cands)
+    same_period = [x for x in cands if str(x["end"]) == end]
+    newest_filed = max(str(x.get("filed") or "") for x in same_period)
+    winners = [x for x in same_period if str(x.get("filed") or "") == newest_filed]
+    vals = {round(float(x["val"]), 2) for x in winners}
+    if len(vals) > 1:
+        return None
+    w = winners[-1]
+    return float(w["val"]) / 1e6, str(w["start"]), str(w["end"])
+
+
+def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
+    """SBC as $ and as % of revenue over the SAME window — the pure half, driven in tests by a
+    real companyfacts-shaped dict and no network.
+
+    THE WINDOW IS THE WHOLE POINT. The first cut took each name's latest 10-K SBC and divided by
+    the dossier's LTM revenue. FUBO's latest SBC is FY2024 while its LTM revenue is post-merger,
+    so it read 0.7% against a true FY2024 ratio of 2.6% — understated 3.7x, and confidently,
+    because both inputs were individually correct. The revenue fact is matched on the SBC fact's
+    exact ``start``/``end``; nothing else is eligible.
+
+    SAME WINDOW IS NECESSARY, NOT SUFFICIENT — SAME BASIS TOO. FUBO carries TWO revenue facts for
+    2024-01-01→2024-12-31: $1,622.8M from the 10-K (``fp=FY``) and $402.3M from a 10-Q (``fp=Q1``,
+    ``frame=CY2024``) whose period STRING looks annual. Both sides now run through
+    ``_sbc_annual``, so the form, the duration and the as-of bound are identical by construction."""
+    gaap = (facts.get("facts") or {}).get("us-gaap") or {}
+    if _SBC_TAG not in gaap:
+        return None
+    picked = _sbc_pick(_sbc_annual(gaap[_SBC_TAG], reference_date))
+    if picked is None:
+        return None
+    usd, start, end = picked
+
+    rev: float | None = None
+    rev_tag = ""
+    ambiguous = False
+    for tag in _SBC_REVENUE_TAGS:
+        node = gaap.get(tag)
+        if not node:
+            continue
+        same = [x for x in _sbc_annual(node, reference_date)
+                if str(x["start"]) == start and str(x["end"]) == end]
+        if not same:
+            continue
+        rev_tag = tag
+        got = _sbc_pick(same)
+        if got is None:
+            ambiguous = True     # same period, same filing date, different values
+        else:
+            rev = got[0]
+        break
+
+    src = f"EDGAR XBRL {_SBC_TAG} (10-K, {start}→{end})"
+    if rev is None or rev <= 0:
+        why = (f"two {rev_tag} facts cover {start}→{end} with the same filing date and different "
+               "values — the denominator is irreducibly ambiguous, so no ratio is formed"
+               if ambiguous else
+               f"no 10-K revenue fact covers {start}→{end} — the SBC window has no matching "
+               "denominator, so no ratio is formed rather than one across two periods")
+        pct = Sourced[float].unknown(note=why)
+        line = f"stock-based compensation ${usd:,.1f}M (FY to {end}) · % of revenue UNKNOWN"
+    else:
+        pct = Sourced.present(100.0 * usd / rev, source_ref=f"{src} ÷ {rev_tag} (same window)")
+        line = (f"stock-based compensation ${usd:,.1f}M = {100.0 * usd / rev:.1f}% of revenue "
+                f"(${rev:,.1f}M, FY {start}→{end})")
+    return SbcLine(expense=Sourced.present(usd, source_ref=src), pct_revenue=pct,
+                   window_start=start, window_end=end,
+                   line=Sourced.present(line, source_ref=src))
+
+
+def _sbc(edgar: EdgarClient, cik: str | None, reference_date: date) -> SbcLine | None:
+    """The fetch half. A FAILED READ IS UNKNOWN, NEVER AN ABSENT BLOCK (review of #471).
+
+    `sbc` is registered in `_DROP_WHEN_NONE`, so returning None on a transient 503 would strip the
+    line from the page AND the JSON — indistinguishable in the artifact diff from a company that
+    genuinely reports no SBC. `_ownership_events` states this rule in its own docstring; this
+    function contradicted it. None is reserved for "no SBC tag in the taxonomy at all"."""
+    if not cik:
+        return None
+    try:
+        raw = edgar.companyfacts(cik)
+    except (HttpError, KeyError) as exc:
+        note = f"EDGAR companyfacts fetch failed: {exc}"
+        return SbcLine(expense=Sourced[float].unknown(note=note),
+                       pct_revenue=Sourced[float].unknown(note=note),
+                       window_start="", window_end="",
+                       line=Sourced[str].unknown(note=note))
+    return _sbc_line(raw, reference_date)
+
+
 class Form4Line(NamedTuple):
     """ONE non-derivative Form 4 transaction, with everything a window-free read needs.
 
@@ -3795,6 +3942,7 @@ def assemble_mechanical(
         # cached); "none on file" is a PRESENT finding, UNKNOWN is reserved for a failed read.
         dilution_pipeline=_dilution_pipeline(edgar, record.identity.cik, reference_date),
         ownership_events=_ownership_events(edgar, record.identity.cik, reference_date),
+        sbc=_sbc(edgar, record.identity.cik, reference_date),
         # Peer acquired-asset intensity. Needs the comps grid (only it carries peer TICKERS) plus
         # one cached EDGAR call per peer; absent grid -> None, which keeps its NOT-BUILT meaning.
         peer_capital_intensity=_peer_capital_intensity(peer_comps, resolver, edgar),
