@@ -138,3 +138,87 @@ def test_a_fourth_quarter_fact_sharing_the_year_end_is_not_the_denominator() -> 
     assert out is not None
     assert abs(out.pct_revenue.value - 10.0) < 0.05, (
         f"a Q4 denominator was accepted: {out.pct_revenue.value:.1f}% — {out.line.value}")
+
+
+def test_a_restatement_filed_after_the_as_of_is_not_visible_yet() -> None:
+    """THE LOOKAHEAD (review of #471, the #416/#426 class). A period ending before the as-of can
+    be RESTATED long after it. Live FUBO: FY2021 SBC is **$63,796,000** as filed 2022-03-01 and
+    **$53,150,000** as restated in the 2023 and 2024 10-Ks. Bounding only on `end` hands a
+    2022-06-01 record the 2024 filing's number — 17% off, from data that did not exist.
+
+    MUTATION: drop the `filed` bound in `_sbc_annual` and this reddens."""
+    out = _sbc_line(_facts(
+        [_fact(63.796e6, "2021-01-01", "2021-12-31", filed="2022-03-01"),
+         _fact(53.150e6, "2021-01-01", "2021-12-31", filed="2023-02-27"),
+         _fact(53.150e6, "2021-01-01", "2021-12-31", filed="2024-03-05")],
+        [_fact(638.0e6, "2021-01-01", "2021-12-31", filed="2022-03-01")]),
+        dt.date(2022, 6, 1))
+    assert out is not None
+    assert abs(out.expense.value - 63.796) < 0.001, (
+        f"a restatement filed after the as-of was used: ${out.expense.value:,.3f}M")
+
+
+def test_the_newest_restatement_within_the_bound_wins_not_array_order() -> None:
+    """RESTATEMENT IS A VINTAGE, NOT A TIE. The first cut sorted on `end` alone and took `[-1]`,
+    so among FUBO's three FY2021 facts the winner was whichever sat last in the API array — while
+    the denominator refused the identical ambiguity three lines below. At a 2024-06-01 as-of all
+    three are visible and the restated $53.150M is correct."""
+    out = _sbc_line(_facts(
+        [_fact(53.150e6, "2021-01-01", "2021-12-31", filed="2024-03-05"),
+         _fact(63.796e6, "2021-01-01", "2021-12-31", filed="2022-03-01")],   # array order reversed
+        [_fact(638.0e6, "2021-01-01", "2021-12-31", filed="2022-03-01")]),
+        dt.date(2024, 6, 1))
+    assert out is not None
+    assert abs(out.expense.value - 53.150) < 0.001, (
+        f"array order beat filing date: ${out.expense.value:,.3f}M")
+
+
+def test_a_multi_year_stub_labelled_fy_is_not_an_annual_period() -> None:
+    """FUBO carries a real `form=10-K`, `fp=FY` SBC fact spanning 2009-02-20→2012-09-30 —
+    **1,318 days**. Trusting `fp=FY` would print a three-year stub beside genuine annual
+    intensities as if comparable."""
+    # THE STUB MUST BE THE NEWEST PERIOD OR THE PIN CANNOT BITE — found by mutation. The first
+    # fixture put the stub BEFORE the annual fact, so `_sbc_pick` discarded it on recency and the
+    # duration check could be deleted with the test still green. FUBO's real stub ends 2012-09-30,
+    # after its FY2011.
+    out = _sbc_line(_facts(
+        [_fact(50.0e6, "2011-01-01", "2011-12-31", fp="FY", filed="2012-03-01"),
+         _fact(0.012e6, "2009-02-20", "2012-09-30", fp="FY", filed="2012-12-01")],
+        [_fact(500.0e6, "2011-01-01", "2011-12-31", filed="2012-03-01")]),
+        dt.date(2013, 6, 1))
+    assert out is not None
+    assert out.window_start == "2011-01-01", (
+        f"a 1,318-day stub was taken as FY: {out.window_start}→{out.window_end}")
+
+
+def test_the_unknown_note_states_which_reason_actually_applies() -> None:
+    """A NOTE THAT NAMES THE WRONG CAUSE IS WORSE THAN NONE. Disagreeing restatements printed
+    "no revenue fact covers …" — untrue when two facts cover it and disagree — and the pin
+    asserted only the STATUS, so the wrong reason passed."""
+    out = _sbc_line(_facts(
+        [_fact(50.0e6, "2025-01-01", "2025-12-31", filed="2026-02-01")],
+        [_fact(1000.0e6, "2025-01-01", "2025-12-31", filed="2026-02-01"),
+         _fact(1200.0e6, "2025-01-01", "2025-12-31", filed="2026-02-01")]),
+        REF)
+    assert out is not None
+    assert out.pct_revenue.status is SourceStatus.UNKNOWN
+    note = str(out.pct_revenue.note)
+    assert "ambiguous" in note, f"the note names the wrong cause: {note}"
+    assert "no 10-K revenue fact covers" not in note, f"the note names the wrong cause: {note}"
+
+
+def test_a_failed_fetch_is_unknown_not_a_deleted_block() -> None:
+    """`sbc` is in `_DROP_WHEN_NONE`, so returning None on a transient 503 strips the line from
+    the page AND the JSON — indistinguishable in the artifact diff from a company that genuinely
+    reports no SBC. `_ownership_events` states this rule; this function contradicted it."""
+    from vinci.dossier.mechanical import _sbc
+    from vinci.netcache import HttpError
+
+    class _Boom:
+        def companyfacts(self, cik: str) -> dict[str, Any]:
+            raise HttpError("EDGAR 503")
+
+    out = _sbc(_Boom(), "0001841925", REF)  # type: ignore[arg-type]
+    assert out is not None, "a transient fetch failure deleted the block"
+    assert out.expense.status is SourceStatus.UNKNOWN
+    assert out.line.status is SourceStatus.UNKNOWN

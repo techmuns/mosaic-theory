@@ -13113,9 +13113,37 @@ one evidence-backed leg at a time.
   **REAL RUN, all 14** — every name resolves a same-window ratio; zero UNKNOWN.
   **JS twin shipped WITH the block** (#457/#470 lesson) and the python side pinned at the
   ARTIFACT level through the real `render_markdown` (#470's helper-pin lesson). Registered in
-  `_DROP_WHEN_NONE` for byte-identical no-op refresh. **Four mutations verified**: denominator
-  basis filter dropped, period match relaxed to end-only, disagreeing restatements picked,
-  as-of bound removed.
+  `_DROP_WHEN_NONE` for byte-identical no-op refresh.
+  **REVIEW OF #471 — FOUR MORE SELECTION-LAYER DEFECTS, ALL LATENT, ALL MINE.** The framing
+  survived review; the SELECTION did not.
+  **(a) THE AS-OF BOUND WAS ON PERIOD `end`, NOT `filed` — a lookahead (#416/#426 class).** A
+  period ending before the as-of can be RESTATED long after it. Live FUBO FY2021 SBC is
+  **$63,796,000** as filed 2022-03-01 and **$53,150,000** as restated in the 2023 and 2024 10-Ks,
+  so a 2022-06-01 record was handed the 2024 filing's number — **17% off, from data that did not
+  exist**. Both numerator and denominator now bound on `filed`.
+  **(b) THE NUMERATOR PICKED AMONG DISAGREEING RESTATEMENTS BY ARRAY ORDER** while the
+  denominator refused the identical ambiguity three lines below — `sort(key=end)` + `[-1]` is a
+  stable sort, so the winner was whichever entry sat last in the API array. Restatement is a
+  VINTAGE, not a tie: the latest-FILED value inside the bound wins, and only a same-period,
+  same-filed disagreement refuses.
+  **(c) A FAILED FETCH DELETED THE BLOCK.** `except HttpError: return None` collapsed "could not
+  be read" into "no SBC tag", and `sbc` is in `_DROP_WHEN_NONE` — so a transient 503 during a
+  refresh stripped the line from the page AND the JSON, indistinguishable in the artifact diff
+  from a company that genuinely reports none. `_ownership_events` states the opposite rule in its
+  own docstring; this contradicted it. Now UNKNOWN.
+  **(d) `fp=FY` WAS TRUSTED WITHOUT A DURATION CHECK.** FUBO carries a real `form=10-K`, `fp=FY`
+  SBC fact spanning 2009-02-20→2012-09-30 — **1,318 days**. Duration is now checked (330–400d).
+  Also: the UNKNOWN note stated "no revenue fact covers …" for the ambiguity case, where two
+  facts DO cover it; and the hand-built companyfacts URL now uses `EdgarClient.companyfacts`.
+  **THE DURATION PIN'S FIRST FIXTURE COULD NOT BITE**, found by mutation: it put the stub BEFORE
+  the annual fact, so `_sbc_pick` discarded it on recency and the check could be deleted green.
+  **REAL RUN POST-FIX: all 14 lines BYTE-IDENTICAL to pre-fix.** These are LATENT defects — they
+  bite on historical as-ofs and edge periods, not on today's 2026-08-14 reference_date where the
+  newest period is unique and long filed. Stated because the unchanged output is NOT evidence the
+  fixes work; the FUBO corpus values and the mutations are.
+  **Eight mutations verified**: denominator basis filter dropped, period match relaxed to
+  end-only, disagreeing restatements picked, as-of bound removed, **`filed` bound removed,
+  latest-filed → array order, duration check removed, wrong UNKNOWN reason restored**.
 
 - **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: Schedule
   13D/G FILING ACTIVITY, beside the register that says how many shares could be issued.** New
