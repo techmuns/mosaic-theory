@@ -4704,6 +4704,8 @@ build record.**
   `test_the_wall_clock_is_unreachable_from_the_reference_date` — the committed price fixture still
   held 2026-08-12 while the as-of had moved. Both fixtures regenerated per the runbook; green after.
 
+**SHARED-STASH HAZARD CLEARED 2026-08-18:** `stash@{0}` (`fleet-batch-5-names-UNCOMMITTED`) held STALE re-assembled artifacts for AORT/EPAM/IT/NCNO/VITL from an older batch — fully superseded by #472/#473 (its AORT P/E 119.33 vs committed 120.38). DROPPED at operator instruction: a pop would have smashed five current dossiers with stale ones. `stash@{1}` (2026-07-23 WIP) remains, untouched.
+
 **⚠ LIVE UNGUARDED HAZARD — `scenario-refresh diluted_shares` SILENTLY REVERTS ITEM 24, AND ON
 SMPL IT FLIPS A GATE UNDER AN OPEN BUY (measured read-only 2026-08-18).**
 
@@ -4846,7 +4848,7 @@ was a false claim about to render; the other is ACCEPTED RISK with its unlock, n
   amendment relied on and was never checked, and it catches a typo'd bump at COMMIT time rather than
   at render time on one page. Mutation-verified: deleting the row 14 artifacts reference names all
   14; a one-sided py/js edit fires the existing parity pin.
-- **ACCEPTED RISK, NOT FIXED — THE MIXED-VINTAGE DOSSIER.** `own-history-refresh` re-extracts four
+- **~~ACCEPTED RISK, NOT FIXED — THE MIXED-VINTAGE DOSSIER~~ RESOLVED BY EVENTS 2026-08-18:** the #472/#473 fleet passes re-assembled ALL 14 names under `2026-08-16.1` (verified: 14/14 stamps uniform), so no committed dossier mixes vintages today. The refresh path still does not restamp — the CLASS recurs on the next partial refresh; only the instance is gone. Original entry: `own-history-refresh` re-extracts four
   valuation fields with current code and never restamps, so #460's 13 refreshed names carry
   post-#459 valuation output under a `2026-07-28.1` stamp. **NEITHER stamp is honest:** the new one
   would claim the WHOLE document was re-extracted — the false *"these two are comparable"* this
@@ -5134,9 +5136,12 @@ fleet's as-of, and "all eleven now sit on one as-of" was reported to the operato
 **RULING (operator, 2026-08-06): NO SWEEP.** Re-assemble on demand, when a name is being worked.
 Nine re-assemblies are nine variance events and no decision moves — the legs live in the scenario
 records, not the dossiers, so a fresher reference date restates the analysis without changing a
-verdict. **SMPL is excluded outright**: its record is sealed, its verdict logged, and the IC memo
-CITES ITS SYNTHESIS — a re-roll would orphan those citations against bear points that no longer
-exist. It gets fresh data at the October print regardless.
+verdict. **~~SMPL is excluded outright~~ SUPERSEDED 2026-08-18 BY THE FLEET-UNIFORMITY PASS
+(#473), operator-directed — and the original entry stood unrevised while the pass violated it,
+the declared-vs-enforced defect in the governance layer (operator's own ruling, operator's own
+correction).** What is true now: SMPL WAS re-assembled and its synthesis re-rolled; the IC memo's
+citations point at prose that no longer exists; **the memo is regenerable and that cost was
+accepted** in exchange for a uniform fleet. The protection this entry declared is NOT in force.
 
 **WHAT THE SPLIT BINDS.** Cross-sectional work — anything comparing names against each other on a
 price-derived field (`stock_info.price`, drawdown, `rel_ret_vs_market`, any ratio struck against
@@ -5146,7 +5151,7 @@ own stamps and are unaffected — this binds the PRICE-DERIVED fields only.
 
 **OPERATOR ACTIONS — RECORDED 2026-08-04, arising from the SMPL re-assembly (see §2).**
 
-**O1. RULING NEEDED — `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.**
+**~~O1. RULING NEEDED~~ CLOSED — BUILT AT #347 (`fix(O1): mark the drawdown-moment guide`), candidate (a): `_mark_drawdown_guidance` (synthesis.py) marks the field through the SHARED `guidance_vintage_mark`, mark LEADING the block, accession-matched date, UNDATED mark when none — and this entry stood as an open ruling for two weeks after the fix merged (stale-record class, same as the PR-OPEN notes; corrected 2026-08-18). Original entry:** `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.
 #342 marked `primary_source` in the brief; the 2026-08-04 SMPL roll shows the model reading the
 OTHER path and asserting APRIL's superseded guide in the present tense at `bear[1]`, with July's
 guide cited nowhere. `synthesis.py:979` excludes `primary_source` from the facts dump and swaps in
@@ -8407,7 +8412,7 @@ sample: **the source was authoritative and the excerpt was not.**
     risk of running on 26a alone is that someone changes extraction and forgets to bump the
     version — **which is exactly today's state, so it is not a regression**; it stops being a TOTAL
     freeze, which is the whole point.
-26a. **DECLARED EXTRACTION VERSION, RENDERED — BUILT 2026-07-28; PR OPEN, PREVIEW-GATED.**
+26a. **DECLARED EXTRACTION VERSION, RENDERED — BUILT 2026-07-28; ~~PR OPEN, PREVIEW-GATED~~ MERGED (stale note corrected 2026-08-18: zero PRs are open and all 14 committed dossiers carry `2026-08-16.1`).**
     SHIPPED: `vinci/dossier/extraction_version.py` (an APPEND-ONLY changelog, last row current);
     `Dossier.extraction_version: str | None` (default None → pre-26a JSON round-trips);
     `assemble` stamps it; BOTH twins render it in BOTH tiers — the identifier beside the document
@@ -10074,7 +10079,7 @@ nor any assertion notices. **THE RULE: when a value's BASIS is a choice, pin the
 structural pin on the source, or an assertion that names the basis — because an output-level test
 can only catch a basis error on the day the two bases happen to disagree.**
 
-**A2 RENDER — BUILT 2026-08-03, BOTH TWINS. PREVIEW-GATED: PR OPEN, NOT MERGED.**
+**A2 RENDER — BUILT 2026-08-03, BOTH TWINS. ~~PREVIEW-GATED: PR OPEN, NOT MERGED~~ MERGED (stale note corrected 2026-08-18: zero PRs are open).**
 **COVERAGE, PLAINLY: THE GAP STATEMENT REACHES 3 OF 11** — SMPL, EPAM, IT. The other eight carry a
 STATED reason, not a blank. That is the honest headline, written here so no later summary has to
 reconstruct it.
