@@ -217,6 +217,18 @@ def test_the_split_changes_exactly_one_name_and_loosens_nothing_else() -> None:
     # ceiling and the list goes EMPTY. That is the corpus-pinned-to-current-defects anti-pattern,
     # and a test that fails when things improve is worse than one that decays. The invariant is
     # directional: the split may not move a name we have not measured. Fewer is progress.
-    assert set(moved) <= {"MVST"}, (
-        f"the split moves {sorted(moved)}; measured 2026-07-30 it moves MVST alone. A name not on "
-        "that list means the classification widened — re-measure before accepting it.")
+    # AORT ADMITTED 2026-08-18, RE-MEASURED AS THIS ASSERTION DEMANDS — and it qualifies for
+    # exactly the reason the split exists. Its merged age is 49d, driven by
+    # `consensus_as_of` / `multiples_as_of` / `financial_summary.as_of` (all the ESTIMATES
+    # export, dated 2026-06-30), while its EXPORT age is 20d — comfortably inside the ceiling.
+    # Nothing was reclassified: it read 44d before the #466 artifact pass and 49d after, purely
+    # because `assembled_at` moved forward five days. A consensus panel aged past the ceiling
+    # while the export panel stayed fresh, which is the whole distinction the split draws.
+    # THIS SET WILL KEEP GROWING AS NAMES AGE, and that is the point: it is a TRIPWIRE asking
+    # a human to re-measure, not an invariant. The invariant — an export panel must never be
+    # classified as consensus — is the per-name `exp.days <= merged` assert inside the loop
+    # above, and it holds unconditionally.
+    assert set(moved) <= {"MVST", "AORT"}, (
+        f"the split moves {sorted(moved)}; measured it moves MVST (2026-07-30) and AORT\n"
+        "(2026-08-18). A name not on that list means the classification widened — re-measure\n"
+        "its merged vs export age before adding it, as both of those were.")

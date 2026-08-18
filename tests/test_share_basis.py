@@ -221,12 +221,28 @@ def test_the_bridged_name_reconciles_cap_shares_and_price_exactly() -> None:
     doc = DOSSIERS / "V" / "dossier.json"
     if not doc.is_file():
         pytest.skip("no committed V dossier")
+    # AGAINST THE PANEL'S OWN CLOSE, NOT THE PAGE'S CMP (#466 artifact pass). The docstring
+    # above says "that ROW's own close" and the check compared `stock_info.price` — the LIVE
+    # CMP from the store, a DIFFERENT number that merely sat near the panel while the market
+    # did. Re-assembling moved the CMP 362.82 -> 358.84 with the cap and shares untouched, and
+    # the 1% tolerance broke on market drift rather than on a basis defect. The panel prints
+    # its own close, so the coherence it claims can be asserted EXACTLY.
+    from vinci.config import get_config
+    from vinci.dossier import ciq_sheets as cs
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    ms = LocalFolderStore(get_config().data_dir / "manual" / "ciq")
+    if not ms.files("V"):
+        pytest.skip("licensed CIQ bundle unavailable (never committed)")
+    panel_close = cs.comps_printed_close(CiqBundle.from_files("V", ms.files("V")))
     si = json.loads(doc.read_text())["mechanical"]["stock_info"]
-    cap, shares, spot = si["market_cap"]["value"], si["shares_out"]["value"], si["price"]["value"]
+    cap, shares = si["market_cap"]["value"], si["shares_out"]["value"]
     implied = cap * 1e6 / shares
-    assert implied == pytest.approx(spot, rel=0.01), (
-        f"cap/shares implies ${implied:,.2f}/sh against a ${spot:,.2f} close — the bridged basis "
-        f"does not agree with the cap it sits beside")
+    assert panel_close is not None, "the comps panel prints no close to reconcile against"
+    assert implied == pytest.approx(panel_close, rel=0.001), (
+        f"cap/shares implies ${implied:,.2f}/sh against the panel's own printed close of "
+        f"${panel_close:,.2f} — the cap and the share count are not from the same row")
 
 
 # ─── the bound is a CADENCE, not a constant (review finding, #432) ────────────────────────────────
