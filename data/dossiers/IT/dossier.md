@@ -29,7 +29,7 @@ Gartner, Inc. provides business and technology insights to support decision-maki
 - **Snapshot:** NYSE · CMP $179.19 (2026-08-17) · cap $11.1B (2026-07-29) · 52-wk $124.25–$265.85 · shares 63.1M · book value/sh $0.93 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Is the near-flat contract-value growth a temporary, federal- and geopolitics-driven air-pocket in an otherwise durable high-retention subscription franchise (overshoot), or the leading edge of a structural demand erosion — possibly AI-native substitution of syndicated insight — that keeps growth stalled and justifies the de-rating (value trap)?**
+**Is the collapse in Contract Value growth to ~1% (and the negative new-business trend) a temporary, identifiable U.S.-federal / geopolitical drag that reverses — or the onset of a structural demand deceleration that makes the peer discount permanently EARNED?**
 _6 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-11-03 `[cadence-estimate]` — calendar in Analysis
 
@@ -83,16 +83,16 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
-- Contract value — the leading indicator for subscription revenue — grew 1% YoY in Q1 2026 but 3.5% ex-U.S.-federal, so the reported softness is concentrated in a ~$114M federal book being renewed down, not broad-based demand loss. [9]
-- The core Insights subscription model shows durable retention: GTS wallet retention 97% (99% ex-Fed) and GBS 98%, so recurring revenue is holding despite a tough selling environment. [9]
-- The stock has fallen 24% over the trailing year while the mid-cap benchmark rose ~24% (name -24.1% vs MDY +23.6%), yet the underlying business is not deteriorating at that pace — a de-rating far outrunning the operating slippage. [10]
+- The core Insights subscription franchise (78% of revenue) still grew: Q4-25 CV +1% YoY (+4% ex-U.S.-federal) and Q1-26 CV +1% YoY (+3.5% ex-Fed), an acceleration from year-end — the drag is a specific, identifiable U.S. federal exposure, not broad demand loss. [9]
+- Wallet retention held strong (GTS 97%, ex-Fed 99%; GBS 98%), consistent with a sticky subscription base rather than structural churn. [9]
+- Leverage is modest (net-debt/EBITDA 1.3x, interest coverage 10.1x) and self-funding is confirmed (positive latest-Q OCF and positive LTM FCF), giving room to keep buying back stock through the de-rating. [8]
 _Bear case — the decline is real:_
-- The FY26 consensus path has been cut hard over 12 months — revenue -8%, EBITDA -7%, GAAP net income -9% (12m→latest) — so estimates are still being marked down, not stabilising. [11]
-- Revenue growth has stalled to a near-halt — FY25 +4% decelerating to LTM revenue actually down, with Q1 Mar-31-2026 revenue -1.5% YoY — evidence the top line has flattened, not merely paused. [12]
-- On the comps grid the discount looks partly EARNED, not purely residual: name EBITDA margin 21% vs peer-median 31%, rev growth 2% vs 8%, EBITDA growth 2% vs 7% — worse growth and margin on every axis — though the human must judge whether the full 26% EV/EBITDA discount is explained by these gaps given the peer set is HETEROGENEOUS (caps span $960M–$123.7B, 129x). [13]
+- New business is contracting across both sales engines (GTS new business -4% YoY, GBS -2% YoY), the leading indicator of future CV — a genuine forward-demand deterioration, not just an optical trailing metric. [9]
+- FY26 consensus has been cut hard over the past year: revenue -8%, EBITDA -7%, EBT -11% (12m→latest), and the aggregate rating was downgraded to Hold with target price cut $167→$140 and $177→$154 — the sell-side is marking the trajectory down, not up. [10]
+- Revenue growth has decelerated to a stall — LTM revenue $6,474M is BELOW FY25 $6,497M and Q1-26 revenue was -1.5% YoY — the top line has actually gone slightly negative, so the low multiple may be an EARNED value-trap discount, not an overshoot. [11]
 
 ## Financial snapshot
-- **Financial snapshot** — [14]  <!-- ds-table -->
+- **Financial snapshot** — [12]  <!-- ds-table -->
 
 |  | FY22 | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -109,15 +109,17 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill + intangibles remaining:** $3,033.1M [15]
-- **Goodwill:** $2,738.6M [15]
-- **Intangibles (net):** $294.4M [16]
-- **Goodwill impairment:** $150.0M [17]
-- **Buyback — cash:** $1,081.8M [18]
-- **Buyback — shares repurchased:** 6,940,428 [19]
+- **Impairment headroom — goodwill + intangibles remaining:** $3,033.1M [13]
+- **Goodwill:** $2,738.6M [13]
+- **Intangibles (net):** $294.4M [14]
+- **Goodwill impairment:** $150.0M [15]
+- **Buyback — cash:** $1,081.8M [16]
+- **Buyback — shares repurchased:** 6,940,428 [17]
 - **Buyback — average cost/share:** _UNKNOWN_ — no TreasuryStockAcquiredAverageCostPerShare, and the only available legs are a CASH-FLOW payment line (EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d)) and a share COUNT (EDGAR companyfacts TreasuryStockSharesAcquired (2026-01-01→2026-06-30, 180d)). They cover one window but not one BASIS — cash paid includes prior-period excise tax and excludes accrued-unpaid, so the quotient is not a purchase price and does not reproduce the filer's own figure — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price
-- **Acquisition consideration:** $3,653.0M [20]
-- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14 [21]
+- **Acquisition consideration:** $3,653.0M [18]
+- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14 [19]
+- **Schedule 13D/G filing activity:** no 13D on file · Schedule 13G filings 20 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-13) — 3y window to 2026-08-14 [20]
+- **Stock-based compensation:** stock-based compensation $155.9M = 2.4% of revenue ($6,497.2M, FY 2025-01-01→2025-12-31) [21]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
 - **Peer acquired-asset intensity — goodwill + intangibles** — [22]  <!-- ds-table -->
 
@@ -183,69 +185,62 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ## The argument
 
-**Evidence balance:** mixed — a franchise trading at a trough multiple with intact retention/returns but genuinely stalled growth and still-falling estimates.
+**Evidence balance:** mixed — franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.
 
 ### Bull case — the decline is overdone
-- Contract value — the leading indicator for subscription revenue — grew 1% YoY in Q1 2026 but 3.5% ex-U.S.-federal, so the reported softness is concentrated in a ~$114M federal book being renewed down, not broad-based demand loss. [9]
-- The core Insights subscription model shows durable retention: GTS wallet retention 97% (99% ex-Fed) and GBS 98%, so recurring revenue is holding despite a tough selling environment. [9]
-- The stock has fallen 24% over the trailing year while the mid-cap benchmark rose ~24% (name -24.1% vs MDY +23.6%), yet the underlying business is not deteriorating at that pace — a de-rating far outrunning the operating slippage. [10]
-- Absolute EBITDA has kept rising through the de-rating — $1,309M (FY24) → $1,311M (FY25) → $1,337M (LTM Mar-31-2026) — so the margin optics conceal a business still compounding dollar profit. [29]
-- Leverage is modest and coverage is strong — net-debt/EBITDA 1.3x with interest coverage 10.1x — leaving ample balance-sheet room and no solvency pressure. [30]
-- The company is aggressively shrinking the share count — down 18.1% over ~1.7 years (77.1M → 63.1M) with $1,081.8M repurchased in H1 FY26 — concentrating per-share value while the stock is depressed. [31]
-- Return on capital remains high and stable through the drawdown — RoCE 18.2% (FY24) → 18.6% (FY25) → 19.4% (LTM) — inconsistent with a franchise in terminal decline. [32]
-- EV/EBITDA (TEV/LTM) at 8.0x sits at the 3rd percentile of its own ~9.3-year range (median 23.4x), i.e. the multiple is priced far below anything this business has traded at through prior cycles. [24]
+- The core Insights subscription franchise (78% of revenue) still grew: Q4-25 CV +1% YoY (+4% ex-U.S.-federal) and Q1-26 CV +1% YoY (+3.5% ex-Fed), an acceleration from year-end — the drag is a specific, identifiable U.S. federal exposure, not broad demand loss. [9]
+- Wallet retention held strong (GTS 97%, ex-Fed 99%; GBS 98%), consistent with a sticky subscription base rather than structural churn. [9]
+- Leverage is modest (net-debt/EBITDA 1.3x, interest coverage 10.1x) and self-funding is confirmed (positive latest-Q OCF and positive LTM FCF), giving room to keep buying back stock through the de-rating. [8]
+- On a NTM TEV/EBITDA basis the name is 8.09x vs a peer median 11.22x, but the peer set is HETEROGENEOUS (caps $960M–$123.7B, 129x span) so the gap must be decomposed as EARNED-vs-RESIDUAL rather than read as a clean discount. [29]
+- Returns on capital remain high and stable (RoCE 18-20% since FY22, LTM 19.4%), inconsistent with a business whose economics are structurally impairing. [30]
+- The stock has collapsed from ~$266 to $179 (-24% over 52 weeks vs +24% for the MDY benchmark) while absolute EBITDA has RISEN every year to $1,337M LTM — the de-rating is a multiple compression, not an earnings collapse. [31]
+- EV/EBITDA (TEV/LTM) sits at 8.0x — the 3rd percentile of its own 9.3-year range (median 23.4x, low 7.5x) — a near-floor own-history reading, though trailing-only cannot itself distinguish temporary from permanent (see key_unknowns). [32]
+- The company is aggressively retiring equity: share count -18.1% over ~1.7y (77.1M → 63.1M) and $1,082M repurchased in H1-2026 alone, compounding per-share value while the multiple is depressed. [33]
 
 ### Bear case — the decline is real
-- The FY26 consensus path has been cut hard over 12 months — revenue -8%, EBITDA -7%, GAAP net income -9% (12m→latest) — so estimates are still being marked down, not stabilising. [11]
-- Revenue growth has stalled to a near-halt — FY25 +4% decelerating to LTM revenue actually down, with Q1 Mar-31-2026 revenue -1.5% YoY — evidence the top line has flattened, not merely paused. [12]
-- On the comps grid the discount looks partly EARNED, not purely residual: name EBITDA margin 21% vs peer-median 31%, rev growth 2% vs 8%, EBITDA growth 2% vs 7% — worse growth and margin on every axis — though the human must judge whether the full 26% EV/EBITDA discount is explained by these gaps given the peer set is HETEROGENEOUS (caps span $960M–$123.7B, 129x). [13]
-- New business is contracting across both sales engines — GTS new business down 4% (down ~3% ex-Fed) and GBS down 2% YoY — the forward-order signal for a subscription book is negative, and ex-Fed does not rescue it. [9]
-- A $150M goodwill impairment (Digital Markets) was taken in FY25 and the business subsequently sold — a booked admission that prior capital deployment did not earn out. [33]
-- Sell-side conviction is draining — Morningstar cut to Hold on 2026-07-27, the consensus rating is Hold (3.00), and target prices are being walked down (one broker 167→140, another 177→154). [34]
+- New business is contracting across both sales engines (GTS new business -4% YoY, GBS -2% YoY), the leading indicator of future CV — a genuine forward-demand deterioration, not just an optical trailing metric. [9]
+- FY26 consensus has been cut hard over the past year: revenue -8%, EBITDA -7%, EBT -11% (12m→latest), and the aggregate rating was downgraded to Hold with target price cut $167→$140 and $177→$154 — the sell-side is marking the trajectory down, not up. [10]
+- Revenue growth has decelerated to a stall — LTM revenue $6,474M is BELOW FY25 $6,497M and Q1-26 revenue was -1.5% YoY — the top line has actually gone slightly negative, so the low multiple may be an EARNED value-trap discount, not an overshoot. [11]
+- On the fundamental_deltas the discount looks largely EARNED, not residual: Gartner grows revenue 2% vs peer-median 8%, EBITDA 2% vs 7%, at a 21% EBITDA margin vs peer-median 31%, with HIGHER leverage (2.4x vs 1.8x) — worse on every growth/margin/leverage axis the human must weigh against the peer gap. [34]
+- A $150M goodwill impairment was taken in FY25 (Digital Markets), and the Digital Markets / Capterra / Software Advice businesses are being divested — evidence that a slice of prior capital deployment did not earn its cost. [15]
 
 ### Decisive question
-**Is the near-flat contract-value growth a temporary, federal- and geopolitics-driven air-pocket in an otherwise durable high-retention subscription franchise (overshoot), or the leading edge of a structural demand erosion — possibly AI-native substitution of syndicated insight — that keeps growth stalled and justifies the de-rating (value trap)?**
+**Is the collapse in Contract Value growth to ~1% (and the negative new-business trend) a temporary, identifiable U.S.-federal / geopolitical drag that reverses — or the onset of a structural demand deceleration that makes the peer discount permanently EARNED?**
 
 ### …evidence for
-- Ex-federal CV grew 3.5% and both segments retain at 97–99%, with management attributing March softness to a discrete geopolitical slowdown after new business tracked ahead through February — consistent with a temporary air-pocket. [9]
-- Management is expanding the insight product (library volume up 19%, high-impact documents up 22%, same-day timeliness) and positioning AI as its highest-demand topic rather than a threat — an offensive posture toward the substitution risk. [9]
+- Management attributes the slowdown to specific external forces (DOGE/U.S.-federal, tariffs, geopolitics) with CV ex-Fed running ~330bps faster (~4%) and new business tracking ahead through February before March slowed — framing it as transient and localised. [35]
+- CV accelerated sequentially from Q4-25 to Q1-26 and wallet retention stayed at 97-99%, consistent with a demand pause rather than a loss of franchise value. [9]
 
 ### …evidence against
-- New business is down in BOTH engines (GTS -4%, GBS -2%) even ex-Fed, so the forward pipeline that feeds future CV is weakening beyond the federal explanation. [9]
-- Reported revenue has turned negative YoY (Q1 Mar-31-2026 -1.5%) and FY26 consensus revenue was cut 8% over twelve months, showing the stall is flowing into the financials and estimates are still falling. [11]
+- New business is falling in BOTH sales engines (GTS -4%, GBS -2% YoY) — the forward feedstock of CV — so the deceleration is broader than the U.S.-federal line item alone. [9]
+- LTM revenue has already turned slightly negative (Q1-26 -1.5% YoY) and consensus keeps cutting the FY26 path (revenue -8%, EBITDA -7% over 12m), consistent with a durable rather than one-quarter deceleration. [10]
 
 ### Key unknowns
-- Company-defined FY26 free-cash-flow / self-funding read is ambiguous: CIQ 'Levered FCF' $1,064.2M differs 0.85x from CFO−capex $1,257.9M, and FCF sign is separately flagged UNKNOWN in survival capacity — which basis a per-share/self-funding claim rests on is unresolved.
-- No segment EBITDA is disclosed — revenue is segmented (Insights 78%) but the profitability of the 78% Insights concentration is opaque, so a reader cannot see whether margin pressure is core or peripheral (an opacity risk).
-- Forward/adjusted EV/EBITDA and adjusted EPS are not in the revised guidance, so the 8.0x trailing multiple cannot be tested against a forward basis to separate a temporarily-depressed level from a permanently-impaired one.
-- EBITDA-basis coherence is UNRESOLVED: implied D&A is 1.82x higher in estimates than actuals, sitting in the 1.5–2.0x band where a GAAP-actual vs adjusted-estimate basis change has gone unflagged — reconcile the estimate row to the company's guidance basis before comparing across the FY25/FY26E boundary.
-- The full quantum of AI-native substitution risk to the syndicated-insight model is not measurable from the supplied facts — management posture is offered but no independent demand or churn-driver breakdown.
-- CIQ export date is unverified (a FLOOR ≥ 2026-07-27) while stock price is as-of 2026-08-17, so the valuation snapshot may lag the latest tape.
+- EV/EBITDA 8.0x is trailing-only with NO forward-adjusted basis in the revised guidance (adjusted EPS and adjusted fwd EV/EBITDA both UNKNOWN) — the overshoot-vs-terminal question cannot be resolved on the trailing multiple alone.
+- No SEGMENT EBITDA is disclosed (revenue segmented into Insights/Conferences/Consulting/Other but not profit) — cannot see whether the 78%-of-revenue Insights franchise is carrying or masking weaker segments (a bearish opacity).
+- The EBITDA-basis triangulation is UNRESOLVED: GAAP actuals implied-D&A vs estimate implied-D&A sit in the 1.5-2.0x band where a GAAP-vs-adjusted basis change has slipped through unflagged — reconcile the consensus EBITDA basis before comparing forward multiples.
+- Whether the U.S.-federal/geopolitical CV drag reverses in H2-26 as management guides ('CV will accelerate') or persists — the guidance is 101 days stale (dated 2026-05-05) and unconfirmed by a fresh print.
+- The peer set is HETEROGENEOUS (caps span 129x); no clean comparable-scale benchmark exists, so the peer-median discount is a confidence-gated input, not a resolved signal — the human must judge earned-vs-residual.
+- Company-defined FCF basis ambiguity: CIQ 'Levered FCF' $1,064M vs CFO-minus-capex $1,258M (0.85x apart) — self-funding read holds either way but per-share coverage of the buyback depends which basis is used.
 
 ### Twin reference cases
 - **FactSet Research Systems Inc.** — recovered
-  - distinguished by: A subscription-based financial-data franchise inside this very peer set that de-rated on decelerating growth fears yet held high retention and margins and re-rated as the recurring base proved sticky — the overshoot pattern.
+  - distinguished by: A same-industry subscription-data peer in the roster that de-rated on slowing subscription growth yet retained high margins and recurring revenue; the analogue tests whether a sticky-subscription franchise re-rates once growth stabilises.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Verisk Analytics** — recovered
-  - distinguished by: An analytics-subscription peer that periodically de-rated on slowing organic growth but whose entrenched, high-margin recurring data business supported a return to premium multiples — the mean-revert analogue.
+  - distinguished by: Roster peer that carried a premium data-analytics multiple through a low-growth patch on the strength of retention and pricing power; the analogue tests whether Gartner's franchise economics justify a re-rate toward peer levels.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Cognizant Technology Solutions Corporation** — recovered
-  - distinguished by: A same-peer-set IT-services name that traded at a low-teens P/E and single-digit EV/EBITDA on growth-stall worries and slowly re-rated as bookings stabilised — shows a cheap multiple need not be terminal.
+- **Cognizant Technology Solutions Corporation** — went terminal
+  - distinguished by: Roster peer that persistently traded at a low-multiple discount as a lower-margin, slower-growth IT-services name — the pattern of a discount that stays EARNED rather than mean-reverting, a value-trap caution.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Gartner (own 2020 arc)** — recovered
-  - distinguished by: The name's own EV/EBITDA compressed to the mid-teens through the 2020 demand shock (own-history series) then re-rated back above 20x as CV re-accelerated — a precedent for its multiple recovering off a trough.
+  - distinguished by: The name's own EV/EBITDA compressed to ~17x in the 2020 dislocation before re-rating above 25x as CV growth reaccelerated — the name's own resolved past shows this franchise has mean-reverted off a trough before.
   - source: CIQ Financials→Multiples (Close; last col = current, excluded from history)
-- **Thomson Reuters (legacy print-research decline)** — went terminal (LLM-claimed — verify)
-  - distinguished by: A syndicated-research/information franchise whose legacy segment structurally eroded as buyers substituted cheaper/embedded alternatives — the value-trap pattern if AI-native substitution hollows the insights subscription.
-  - source: [LLM-suggested, unverified]
-- **Meredith Corporation (media-research subscriptions)** — went terminal (LLM-claimed — verify)
-  - distinguished by: A subscription-content business where a slow-bleed drawdown with no discrete gap-down masked a genuine secular demand shift rather than a temporary overshoot.
-  - source: [LLM-suggested, unverified]
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **Next results print** — ~2026-11-03 `[cadence-estimate]` — the next reported quarter against the committed trajectory [35]
-- **4.50% Senior Notes Due 2028 $800.0M matures** — ~2028-07-01 `[stated]` — refinance / repay / convert before the wall — the survival read [36]
+- **Next results print** — ~2026-11-03 `[cadence-estimate]` — the next reported quarter against the committed trajectory [36]
+- **4.50% Senior Notes Due 2028 $800.0M matures** — ~2028-07-01 `[stated]` — refinance / repay / convert before the wall — the survival read [37]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
@@ -253,7 +248,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 9.2x vs peer median 12.3x (-26%); P/E 16.5x vs peer median 20.4x (-19%) [25]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _TEV as-of 2026-07-29 · multiples as-of 2026-07-27 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [37]  <!-- ds-table -->
+- **Price-implied levels (at each stated multiple)** — [38]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -297,7 +292,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.0x as-of 2026-07-17 — trailing range 7.5–37.8x (median 23.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 13.9x [24]
 
 ## Peer comps
-- **Peer set (roster · caps · business)** — [38]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [39]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -315,7 +310,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 _the name: $11.1B_
 
 - **Comparability (confidence gate):** market caps span $960M–$123.7B (129x); the name is $11.1B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]
-- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [39]  <!-- ds-table -->
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [29]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
@@ -344,7 +339,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [29]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [31]  <!-- ds-table -->
 
 |  | Dec-2017 (R) | Dec-2018 (R) | Dec-2019 | Dec-2020 | Dec-2021 | Dec-2022 | Dec-2023 | Dec-2024 | Dec-2025 | Mar-2026 (LTM) |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -352,7 +347,7 @@ _NM = a real state (negative base), not missing_
 
 _Revenue YoY (latest same-quarter): -1.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** buying back (trailing ~1.7y): 77,134,280 (2024-10-31) → 63,148,976 (2026-07-31), -18.1% [31]
+- **Share-count trend:** buying back (trailing ~1.7y): 77,134,280 (2024-10-31) → 63,148,976 (2026-07-31), -18.1% [33]
 - **Non-operating earnings:** no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-24M against $355M pre-tax [41]
 - **Return ratios — per fiscal period** — [42]  <!-- ds-table -->
 
@@ -380,7 +375,7 @@ _export date unverified (data ≥ 2026-07-27)_
   - EBIT FQ2 2026: 1m 0↑/0↓, 2m 1↑/2↓, 3m 6↑/5↓
   - EBIT FQ3 2026: 1m 0↑/1↓, 2m 2↑/2↓, 3m 3↑/8↓
   - _+8 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 13.6 (12m) → 13.1 (9m) → 13.5 (6m) → 13.2 (3m) → 13.7 (2m) → 13.7 (1m) → 13.7 (latest); net +1% (12m→latest) | FY 2026 EPS (GAAP): 12.6 (12m) → 11.8 (9m) → 12.5 (6m) → 12.3 (3m) → 12.8 (2m) → 12.9 (1m) → 12.9 (latest); net +2% (12m→latest) | FY 2026 Revenue: 7,014.8 (12m) → 6,765.7 (9m) → 6,708.8 (6m) → 6,504.9 (3m) → 6,446.1 (2m) → 6,429.3 (1m) → 6,426.3 (latest); net -8% (12m→latest) | FY 2026 EBITDA: 1,694.0 (12m) → 1,604.0 (9m) → 1,614.0 (6m) → 1,561.1 (3m) → 1,575.4 (2m) → 1,575.7 (1m) → 1,574.0 (latest); net -7% (12m→latest) | FY 2026 EBIT: 1,369.4 (12m) → 1,286.8 (9m) → 1,306.0 (6m) → 1,252.9 (3m) → 1,280.0 (2m) → 1,280.2 (1m) → 1,278.4 (latest); net -7% (12m→latest) | FY 2026 Interest Expense: -50.9 (12m) → -48.1 (9m) → -59.9 (6m) → -95.8 (3m) → -92.9 (2m) → -92.9 (1m) → -92.9 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 1,257.3 (12m) → 1,154.2 (9m) → 1,172.2 (6m) → 1,106.1 (3m) → 1,124.0 (2m) → 1,124.0 (1m) → 1,123.7 (latest); net -11% (12m→latest) | FY 2026 Net Income (Excl. Excep): 1,031.9 (12m) → 964.5 (9m) → 958.3 (6m) → 911.0 (3m) → 925.0 (2m) → 925.3 (1m) → 925.0 (latest); net -10% (12m→latest) | FY 2026 Net Income (GAAP): 960.3 (12m) → 880.6 (9m) → 885.7 (6m) → 852.5 (3m) → 872.2 (2m) → 873.0 (1m) → 872.8 (latest); net -9% (12m→latest)  [data ≥ 2026-07-27 · export date unverified] [11]
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 13.6 (12m) → 13.1 (9m) → 13.5 (6m) → 13.2 (3m) → 13.7 (2m) → 13.7 (1m) → 13.7 (latest); net +1% (12m→latest) | FY 2026 EPS (GAAP): 12.6 (12m) → 11.8 (9m) → 12.5 (6m) → 12.3 (3m) → 12.8 (2m) → 12.9 (1m) → 12.9 (latest); net +2% (12m→latest) | FY 2026 Revenue: 7,014.8 (12m) → 6,765.7 (9m) → 6,708.8 (6m) → 6,504.9 (3m) → 6,446.1 (2m) → 6,429.3 (1m) → 6,426.3 (latest); net -8% (12m→latest) | FY 2026 EBITDA: 1,694.0 (12m) → 1,604.0 (9m) → 1,614.0 (6m) → 1,561.1 (3m) → 1,575.4 (2m) → 1,575.7 (1m) → 1,574.0 (latest); net -7% (12m→latest) | FY 2026 EBIT: 1,369.4 (12m) → 1,286.8 (9m) → 1,306.0 (6m) → 1,252.9 (3m) → 1,280.0 (2m) → 1,280.2 (1m) → 1,278.4 (latest); net -7% (12m→latest) | FY 2026 Interest Expense: -50.9 (12m) → -48.1 (9m) → -59.9 (6m) → -95.8 (3m) → -92.9 (2m) → -92.9 (1m) → -92.9 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 1,257.3 (12m) → 1,154.2 (9m) → 1,172.2 (6m) → 1,106.1 (3m) → 1,124.0 (2m) → 1,124.0 (1m) → 1,123.7 (latest); net -11% (12m→latest) | FY 2026 Net Income (Excl. Excep): 1,031.9 (12m) → 964.5 (9m) → 958.3 (6m) → 911.0 (3m) → 925.0 (2m) → 925.3 (1m) → 925.0 (latest); net -10% (12m→latest) | FY 2026 Net Income (GAAP): 960.3 (12m) → 880.6 (9m) → 885.7 (6m) → 852.5 (3m) → 872.2 (2m) → 873.0 (1m) → 872.8 (latest); net -9% (12m→latest)  [data ≥ 2026-07-27 · export date unverified] [10]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [44]:
   - NTM: TEV/REV 1.97 · TEV/EBITDA 8.09 · TEV/EBIT 10.01 · Price/Earnings 11.76 · PEG 0.79 · P/BV –
   - FY 2026: TEV/REV 1.99 · TEV/EBITDA 8.12 · TEV/EBIT 10.00 · Price/Earnings 12.10 · PEG 0.81 · P/BV 57.76
@@ -427,13 +422,13 @@ _+11 more broker-days in JSON_
 - **Net debt / EBITDA [NET]:** 1.3x [8]
 - **Total debt / EBITDA vs peers:** name 2.4x vs peer median 1.8x (comps TOTAL-debt/EBITDA basis) [48]
 - **Net debt / OCF:** 1.2x [49]
-- **Interest coverage:** 10.1x [30]
-- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [50]
+- **Interest coverage:** 10.1x [50]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [51]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
-- **Free cash flow ($M):** 1064.2 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $1,367.9M − capex $110.0M = $1,257.9M — 0.85x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [51]
-- **Debt schedule vintage:** the debt schedule is 183d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since [52]
-- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 8 undated / later aggregate line item(s) in the appendix panel [53]
+- **Free cash flow ($M):** 1064.2 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Mar-31-2026], CFO $1,367.9M − capex $110.0M = $1,257.9M — 0.85x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [52]
+- **Debt schedule vintage:** the debt schedule is 183d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since [53]
+- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 8 undated / later aggregate line item(s) in the appendix panel [54]
 - **Maturity wall** · vs the 2026-08-14 reference:
   - due 2028: $800.0M
   - due 2029: $600.0M
@@ -442,22 +437,22 @@ _+11 more broker-days in JSON_
   - due 2035: $450.0M
   - undated (floor — no panel maturity): $371.3M — Operating Lease Liabilities $366.3M, State of Connecticut Economic… $5.0M
   - _reconciliation: itemized $3,371.3M (panel A 2025 filed Feb-12-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** term loans 5.0 (3 months Q4 Dec-31-2025 5.0 → 3 months Q1 Mar-31-2026 5.0); senior bonds 3,000.0; leases 372.2; total principal 3,377.2; total debt 3,355.2 (3 months Q1 Mar-31-2026) ($M) [54]
+- **Capital-structure aggregates:** term loans 5.0 (3 months Q4 Dec-31-2025 5.0 → 3 months Q1 Mar-31-2026 5.0); senior bonds 3,000.0; leases 372.2; total principal 3,377.2; total debt 3,355.2 (3 months Q1 Mar-31-2026) ($M) [55]
 - **Covenants — 24 Credit Agreement** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Term Benchmark Loans: Adjusted Term SOFR (Term SOFR Rate + 0.10%) plus Applicable Margin; RFR Loans: Adjusted Daily Sim…
-  - **Maturity:** March 26, 2024 · Termination Date = fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursuant…
+  - **Interest / coupon:** Term Benchmark Loans: Adjusted Term SOFR plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable…
+  - **Maturity:** March 26, 2024 · Termination Date: the fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursua…
   - **Financial maintenance:** Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any fiscal quarter during any Acquisition S…
-  - **Events of default:** acceleration · Events of Default in Section 8.1 include: (a) payment default (principal when due; interest/other within 5 days); (b) b…
+  - **Events of default:** acceleration · Events of Default (Section 8.1): (a) payment default (principal when due; interest/other amounts within 5 days); (b) in…
 - **Covenants — State of Connecticut Economic Development Loan** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Adjusted LIBO Rate + 275 bps · Term Loan B Facility and TLB Backstop Facility: Base Rate plus 175.0 basis points or Adjusted LIBO Rate plus 275.0 basi…
-  - **Maturity:** June 17, 2021 · Term Loan B Facility: seven years after the Closing Date; TLB Backstop Facility: seven years after the Closing Date; RC…
-  - **Financial maintenance:** Specified Amendment to Existing Credit Agreement: Consolidated Leverage Ratio not to exceed 5.25:1.00 (net of cash up t…
-  - **Events of default:** Mandatory prepayments (TLB Backstop / Term Loan B): 100% of net cash proceeds from Asset Sale or Recovery Event; 100% o…
+  - **Interest / coupon:** Adjusted LIBO Rate + 275 bps · Term Loan B Facility / TLB Backstop Facility: Base Rate plus 175.0 basis points OR Adjusted LIBO Rate plus 275.0 basis…
+  - **Maturity:** June 17, 2021 · RC Backstop Facility: June 17, 2021; TLB Backstop Facility: seven years after the Closing Date; Term Loan B Facility: s…
+  - **Financial maintenance:** Existing Credit Agreement (as amended by Specified Amendment) maintenance covenants: Consolidated Leverage Ratio max 5.…
+  - **Events of default:** Mandatory Prepayment (TLB Backstop / Term Loan B): 100% net cash proceeds of Asset Sale/Recovery Event (subject to rein…
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [55]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [56]
+- **Going-concern language:** none in latest 10-Q — checked, absent [56]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [57]
   - net debt / EBITDA (CIQ, GAAP basis): 1.3x
   - total debt / EBITDA (CIQ comps, GAAP basis): 2.4x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -489,11 +484,11 @@ Legs are set off the recorded consensus path rather than round numbers: base is 
 
 | reference | value |
 | --- | ---: |
-| FY2025 reported revenue | $6,497M [57] |
-| LTM revenue | $6,474.137M [57] |
-| consensus FY26E revenue `base` | $6,431M [57] |
-| consensus FY27E revenue `bull` | $6,715M [57] |
-| Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%) | 1.6% [58] |
+| FY2025 reported revenue | $6,497M [58] |
+| LTM revenue | $6,474.137M [58] |
+| consensus FY26E revenue `base` | $6,431M [58] |
+| consensus FY27E revenue `bull` | $6,715M [58] |
+| Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%) | 1.6% [59] |
 
 ### Margin · ratified 2026-07-21
 
@@ -501,12 +496,12 @@ Operating-margin legs are set off the clean reported history, with FY2025 adjust
 
 | reference | value |
 | --- | ---: |
-| screening median (pre-2021-dragged) | 14.13% [59] |
-| 7yr clean median (FY2025 adjusted) `base` | 18.45% [60] |
-| 5yr clean median (FY2025 adjusted) | 19.34% [60] |
-| FY2020 COVID trough `bear` | 11.96% [60] |
-| FY2023 best clean year `bull` | 20.94% [60] |
-| FY2025 adjusted ex $150.0M impairment | 18.1% [61] |
+| screening median (pre-2021-dragged) | 14.13% [60] |
+| 7yr clean median (FY2025 adjusted) `base` | 18.45% [61] |
+| 5yr clean median (FY2025 adjusted) | 19.34% [61] |
+| FY2020 COVID trough `bear` | 11.96% [61] |
+| FY2023 best clean year `bull` | 20.94% [61] |
+| FY2025 adjusted ex $150.0M impairment | 18.1% [62] |
 
 ### Multiple · ratified 2026-07-21
 
@@ -514,15 +509,15 @@ Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately
 
 | reference | value |
 | --- | ---: |
-| this company's trading-range low `bear` | 7.46x [62] |
-| this company's trailing median `base` | 23.38x [62] |
-| this company's trailing 75th percentile | 26.82x [62] |
-| current multiple (3rd pctile) | 7.97x [62] |
+| this company's trading-range low `bear` | 7.46x [63] |
+| this company's trailing median `base` | 23.38x [63] |
+| this company's trailing 75th percentile | 26.82x [63] |
+| current multiple (3rd pctile) | 7.97x [63] |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-27)
 ### Annual — every exported fiscal year + LTM + consensus
-- **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
+- **Annual financials ($M; E = consensus)** — [12]  <!-- ds-table -->
 
 |  | FY17 (R) | FY18 (R) | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -551,7 +546,7 @@ Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-27; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [63]  <!-- ds-table -->
+- **Quarterly financials** — [64]  <!-- ds-table -->
 
 |  | Q1-17 | Q2-17 | Q3-17 | Q4-17 | Q1-18 | Q2-18 | Q3-18 | Q4-18 (R) | Q1-19 (R) | Q2-19 (R) | Q3-19 (R) | Q4-19 (R) | Q1-20 (R) | Q2-20 (R) | Q3-20 (R) | Q4-20 (R) | Q1-21 | Q2-21 | Q3-21 | Q4-21 | Q1-22 | Q2-22 | Q3-22 | Q4-22 | Q1-23 (R) | Q2-23 (R) | Q3-23 (R) | Q4-23 (R) | Q1-24 | Q2-24 | Q3-24 | Q4-24 | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -565,12 +560,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-27; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 1,667; total debt 3,355; net debt 1,688; equity 63; net working capital -238; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [64]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $1,667M / bridge $1,667M; debt BS $3,355M / bridge $3,355M — reconcile with the implied-valuation bridge. [65]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 1,667; total debt 3,355; net debt 1,688; equity 63; net working capital -238; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [65]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $1,667M / bridge $1,667M; debt BS $3,355M / bridge $3,355M — reconcile with the implied-valuation bridge. [66]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Feb-12-2026** — [53]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Feb-12-2026** — [54]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -584,7 +579,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | State of Connecticut Economic Development Loan | Term Loans | $5.0M | 1.750% | NA | undated | N | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [66]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [67]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -596,31 +591,31 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 4.50% Senior Notes Due 2028 | — | — | no contract-level filing expected (aggregate line item) |
 | 4.95% Senior Notes Due 2031 | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — 24 Credit Agreement (governing agreement)** — [67]  <!-- ds-table -->
+- **Covenant terms — 24 Credit Agreement (governing agreement)** — [68]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001193125-24-083467 · d771496dex101.htm |
-| Principal / commitment amount | $1,000,000,000 (Total Commitments as of the Closing Date); revolving Facility. Commitment Increase permitted in minimum of $5,000,000 so long as aggregate Commitment Increases do not exceed $750,000,… — full verbatim in JSON | amended by 0001193125-24-083467 |
-| Interest / coupon rate | Term Benchmark Loans: Adjusted Term SOFR (Term SOFR Rate + 0.10%) plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicab… — full verbatim in JSON | amended by 0001193125-24-083467 |
-| Maturity date | March 26, 2024 · Termination Date = fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursuant to Section 2.18. Borrower shall repay all outstanding Loans on the Termination D… — full verbatim in JSON | amended by 0001193125-24-083467 |
-| Financial-maintenance covenants | Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period), tested at the end of any fiscal quarter for the trailing four co… — full verbatim in JSON | amended by 0001193125-24-083467 |
-| Security / collateral / guarantors | No collateral pledged at closing (facility is unsecured; Section 7.3 provides an equal-and-ratable Lien 'springing' mechanism if Borrower/Subsidiary Liens secure other Indebtedness). Subsidiary guara… — full verbatim in JSON | amended by 0001193125-24-083467 |
-| Mandatory prepayment / events of default | acceleration · Events of Default in Section 8.1 include: (a) payment default (principal when due; interest/other within 5 days); (b) breach of representations/warranties; (c) breach of specified covenants (Section… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Principal / commitment amount | $1,000,000,000 (Total Commitments as of the Closing Date); Commitment Increase permitted so long as aggregate Commitment Increases do not exceed $750,000,000; L/C Commitments aggregate not to exceed… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Interest / coupon rate | Term Benchmark Loans: Adjusted Term SOFR plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Term Benchm… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Maturity date | March 26, 2024 · Termination Date: the fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursuant to Section 2.18. The Borrower shall repay all outstanding Loans on the Termin… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Financial-maintenance covenants | Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period), calculated as at the end of any fiscal quarter for the period of… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Security / collateral / guarantors | No blanket security/collateral grant; facility is effectively unsecured except for equal-and-ratable Lien springing under Section 7.3 (negative pledge). Guarantors: each Domestic Subsidiary that guar… — full verbatim in JSON | amended by 0001193125-24-083467 |
+| Mandatory prepayment / events of default | acceleration · Events of Default (Section 8.1): (a) payment default (principal when due; interest/other amounts within 5 days); (b) inaccurate representation/warranty in material respect; (c) breach of covenants in… — full verbatim in JSON | amended by 0001193125-24-083467 |
 
 _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 0001193125-24-083467_
 
-- **Covenant terms — State of Connecticut Economic Development Loan (governing agreement)** — [67]  <!-- ds-table -->
+- **Covenant terms — State of Connecticut Economic Development Loan (governing agreement)** — [68]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0000930413-17-000070 · c86994_ex10-1.htm |
-| Principal / commitment amount | Term Loan B Facility: $1,375.0 million; 364-day Bridge Facility: $300.0 million; HY Bridge Facility: up to $600.0 million; RC Backstop Facility: $500 million; TLB Backstop Facility: $1.2 billion | base (footer) |
-| Interest / coupon rate | Adjusted LIBO Rate + 275 bps · Term Loan B Facility and TLB Backstop Facility: Base Rate plus 175.0 basis points or Adjusted LIBO Rate plus 275.0 basis points; 364-day Bridge: Base Rate + 175.0 bps or Adjusted LIBO Rate + 275.0 bp… — full verbatim in JSON | base (footer) |
-| Maturity date | June 17, 2021 · Term Loan B Facility: seven years after the Closing Date; TLB Backstop Facility: seven years after the Closing Date; RC Backstop Facility: June 17, 2021; 364-day Bridge Facility: 364 days after the C… — full verbatim in JSON | base (footer) |
-| Financial-maintenance covenants | Specified Amendment to Existing Credit Agreement: Consolidated Leverage Ratio not to exceed 5.25:1.00 (net of cash up to 50% of Consolidated EBITDA) for first six fiscal quarters, thereafter 4.50:1.0… — full verbatim in JSON | base (footer) |
-| Security / collateral / guarantors | Backstop Facilities and Term Loan B Facility: secured by perfected first priority security interest in all of Borrower's and Target's tangible and intangible assets; guarantees substantially the same… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | Mandatory prepayments (TLB Backstop / Term Loan B): 100% of net cash proceeds from Asset Sale or Recovery Event; 100% of net cash proceeds from debt issuance (subject to provisos); 50% of Excess Cash… — full verbatim in JSON | base (footer) |
+| Principal / commitment amount | Term Loan B Facility: $1,375 million (aggregate amount of up to $1,375.0 million); 364-day Bridge Facility: $300 million (up to $300.0 million); HY Bridge Facility: up to $600.0 million; RC Backstop… — full verbatim in JSON | base (footer) |
+| Interest / coupon rate | Adjusted LIBO Rate + 275 bps · Term Loan B Facility / TLB Backstop Facility: Base Rate plus 175.0 basis points OR Adjusted LIBO Rate plus 275.0 basis points; 364-day Bridge Facility: Base Rate plus 175.0 bps or Adjusted LIBO Rate… — full verbatim in JSON | base (footer) |
+| Maturity date | June 17, 2021 · RC Backstop Facility: June 17, 2021; TLB Backstop Facility: seven years after the Closing Date; Term Loan B Facility: seven years after the Closing Date; 364-day Bridge Facility: 364 days after the C… — full verbatim in JSON | base (footer) |
+| Financial-maintenance covenants | Existing Credit Agreement (as amended by Specified Amendment) maintenance covenants: Consolidated Leverage Ratio max 5.25:1.00 (net of cash up to 50% of Consolidated EBITDA) for first six fiscal quar… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | Backstop Facilities and Term Loan B Facility (senior secured): perfected first priority security interest in all of the Borrower's and Target's tangible and intangible assets, subject to limitations/… — full verbatim in JSON | base (footer) |
+| Mandatory prepayment / events of default | Mandatory Prepayment (TLB Backstop / Term Loan B): 100% net cash proceeds of Asset Sale/Recovery Event (subject to reinvestment); 100% net cash proceeds of debt issuance (other than Permitted Debt);… — full verbatim in JSON | base (footer) |
 
 _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 
@@ -628,9 +623,9 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 11090.6 [68]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $1,666.90M, − total debt $3,355.20M [69]
-- **Implied equity at peer-median ($M, CIQ)** — [70]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 11090.6 [69]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $1,666.90M, − total debt $3,355.20M [70]
+- **Implied equity at peer-median ($M, CIQ)** — [71]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -640,25 +635,25 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [71]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [72]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 3 (3 insiders, $0.59M) — in the last 182 days · last purchase $0.01M, SVP, Global Business Sales, 2026-02-05 (~6mo ago) · largest purchase $2.28M, director, 2025-12-10 (~8mo ago) · last sale $0.23M, EVP, Bus. & Tech. Insights, 2026-08-10 (~0mo ago) · largest sale $7.10M, Chairman and CEO, 2024-09-12 (~23mo ago) · grants 0 · last filing 2026-08-12 · other filings 590 [72]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 11.5M → 9.7M sh (-16.0%, falling) · 15.3% of shares out (EDGAR XBRL) · DTC 6.1d · recent: 2026-07-31 9.7M · 2026-07-15 11.5M · 2026-06-30 12.0M · 2026-06-15 12.5M [73]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 3 (3 insiders, $0.59M) — in the last 182 days · last purchase $0.01M, SVP, Global Business Sales, 2026-02-05 (~6mo ago) · largest purchase $2.28M, director, 2025-12-10 (~8mo ago) · last sale $0.23M, EVP, Bus. & Tech. Insights, 2026-08-10 (~0mo ago) · largest sale $7.10M, Chairman and CEO, 2024-09-12 (~23mo ago) · grants 0 · last filing 2026-08-12 · other filings 590 [73]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 11.5M → 9.7M sh (-16.0%, falling) · 15.3% of shares out (EDGAR XBRL) · DTC 6.1d · recent: 2026-07-31 9.7M · 2026-07-15 11.5M · 2026-06-30 12.0M · 2026-06-15 12.5M [74]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [74]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 6405.0 vs release NO NUMERIC OUTLOOK → not cross-checked [75]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [75]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 6405.0 vs release NO NUMERIC OUTLOOK → not cross-checked [76]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-08-14 · assembled 2026-08-18 07:30 UTC
+- **Data window:** screened as of 2026-08-14 · assembled 2026-08-18 12:39 UTC
 - **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 22d old (2026-07-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
-- **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+5.6s fetch)
+- **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)
 - **Re-run:** `python -m vinci dossier --ticker IT` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -674,18 +669,18 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 [7] `EOD IT−MDY 180d to 2026-08-14 (assembly, cap-band)`
 [8] `CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ EBITDA $1,337M [LTM 12 months Mar-31-2026]`
 [9] `CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf`
-[10] `EOD IT vs MDY rebased to 100, 2025-08-15..2026-08-14`
-[11] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[12] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-[13] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[15] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
-[16] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
-[17] `EDGAR companyfacts GoodwillImpairmentLoss (2025-01-01→2025-12-31, 364d)`
-[18] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d)`
-[19] `EDGAR companyfacts TreasuryStockSharesAcquired (2026-01-01→2026-06-30, 180d)`
-[20] `EDGAR companyfacts BusinessCombinationConsiderationTransferred1 (2017-01-01→2017-12-31, 364d)`
-[21] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946`
+[10] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[11] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+[12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
+[13] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
+[14] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
+[15] `EDGAR companyfacts GoodwillImpairmentLoss (2025-01-01→2025-12-31, 364d)`
+[16] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-01-01→2026-06-30, 180d)`
+[17] `EDGAR companyfacts TreasuryStockSharesAcquired (2026-01-01→2026-06-30, 180d)`
+[18] `EDGAR companyfacts BusinessCombinationConsiderationTransferred1 (2017-01-01→2017-12-31, 364d)`
+[19] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946`
+[20] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-15→2026-08-14 · latest 0001167557-26-000187`
+[21] `EDGAR XBRL ShareBasedCompensation (10-K, 2025-01-01→2025-12-31)`
 [22] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [23] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
 [24] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
@@ -693,17 +688,17 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 [26] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [27] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
 [28] `CIQ Customers&Suppliers Gartner Inc NYSE IT Customers.rtf`
-[29] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[30] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
-[31] `EDGAR XBRL shares, trailing 2024-10-31..2026-07-31`
-[32] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[33] `8-K 0000749251-26-000028 EX-99.1`
-[34] `CIQ Estimates→Consensus`
-[35] `cadence: EDGAR submissions (median 91d gap over 19 results 8-Ks; last print 2026-08-04)`
-[36] `CIQ capital-structure panel (maturity_date)`
-[37] `TEV = mcap 11090.6 + net debt 1688.2 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-07-29, exported 2026-07-30) — simple-TEV basis`
-[38] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[39] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[29] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[30] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
+[31] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[32] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)`
+[33] `EDGAR XBRL shares, trailing 2024-10-31..2026-07-31`
+[34] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+[35] `CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
+[36] `cadence: EDGAR submissions (median 91d gap over 19 results 8-Ks; last print 2026-08-04)`
+[37] `CIQ capital-structure panel (maturity_date)`
+[38] `TEV = mcap 11090.6 + net debt 1688.2 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-07-29, exported 2026-07-30) — simple-TEV basis`
+[39] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [40] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-07-29`
 [41] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
 [42] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
@@ -714,29 +709,30 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
 [47] `CIQ Estimates→Surprise (annual)`
 [48] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-07-29`
 [49] `CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ OCF $1,368M [LTM 12 months Mar-31-2026]`
-[50] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[51] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-[52] `CIQ Capital Structure Details — A 2025 filed Feb-12-2026`
-[53] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)`
-[54] `CIQ Financials→Capital Structure Summary`
-[55] `10-Q 0000749251-26-000245`
-[56] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[57] `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')`
-[58] `8-K EX-99.1 acc 0000749251-26-000165`
-[59] `committed anchor block margin.value`
-[60] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax`
-[61] `EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)`
-[62] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)`
-[63] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[64] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[65] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[66] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[67] `fenced Tier-2 extraction (verbatim, source-bound)`
-[68] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-29`
-[69] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
-[70] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
-[71] `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
-[72] `EDGAR Form 4 (latest 0000749251-26-000253; 475 filings in the 1095d scanned; counts over 182d)`
-[73] `FINRA consolidated short interest (settle 2026-07-31); DTC = 9,650,138 short ÷ 1,571,273 screen 90d ADV`
-[74] `10-Q maturity wall vs CIQ capital panel (same window)`
-[75] `CIQ revenue guide vs release actual/outlook`
+[50] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
+[51] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[52] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
+[53] `CIQ Capital Structure Details — A 2025 filed Feb-12-2026`
+[54] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)`
+[55] `CIQ Financials→Capital Structure Summary`
+[56] `10-Q 0000749251-26-000245`
+[57] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[58] `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')`
+[59] `8-K EX-99.1 acc 0000749251-26-000165`
+[60] `committed anchor block margin.value`
+[61] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax`
+[62] `EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)`
+[63] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)`
+[64] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[65] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[66] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[67] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[68] `fenced Tier-2 extraction (verbatim, source-bound)`
+[69] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-29`
+[70] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-29`
+[71] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-29`
+[72] `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
+[73] `EDGAR Form 4 (latest 0000749251-26-000253; 475 filings in the 1095d scanned; counts over 182d)`
+[74] `FINRA consolidated short interest (settle 2026-07-31); DTC = 9,650,138 short ÷ 1,571,273 screen 90d ADV`
+[75] `10-Q maturity wall vs CIQ capital panel (same window)`
+[76] `CIQ revenue guide vs release actual/outlook`
