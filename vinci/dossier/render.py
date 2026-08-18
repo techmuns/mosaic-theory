@@ -2505,13 +2505,13 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
     # page. Only the four names that happen to have both rendered it, and those are exactly the
     # four the first verification sampled: checking where it works cannot find this.
     ca = m.capital_allocation
-    if (ca is None and m.peer_capital_intensity is None
-            and m.dilution_pipeline is None and m.ownership_events is None):
+    if (ca is None and m.peer_capital_intensity is None and m.dilution_pipeline is None
+            and m.ownership_events is None and m.sbc is None):
         return []
     out: list[str] = ["", "**Capital allocation — created or destroyed**", ""]
     if ca is None:
         return (out + _dilution_pipeline_lines(m) + _ownership_events_lines(m)
-                + _peer_capital_intensity_lines(m))
+                + _sbc_lines(m) + _peer_capital_intensity_lines(m))
 
     gw, intang = ca.goodwill, ca.intangibles
     if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
@@ -2568,6 +2568,7 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
                      lambda v: f"${v:,.1f}M"))
     out += _dilution_pipeline_lines(m)
     out += _ownership_events_lines(m)
+    out += _sbc_lines(m)
     gap = _clean_note(str(ca.brand_split.note)).removeprefix("NOT AVAILABLE FROM XBRL — ")
     out.append(f"- **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — {gap}")
     # THE PEER COMPARISON SITS INSIDE THIS BLOCK, not beside it. "Is $1.5bn a lot?" is unanswerable
@@ -2608,6 +2609,19 @@ def _ownership_events_lines(m: MechanicalLayer) -> list[str]:
     if oe is None:
         return []
     return [_fact("Schedule 13D/G filing activity", oe.line)]
+
+
+def _sbc_lines(m: MechanicalLayer) -> list[str]:
+    """The ONGOING dilution engine — one MAIN-BODY line, completing the share-register trio.
+
+    THE RATIO IS THE READING, THE DOLLARS ARE THE SCALE, and both come from the SAME window (see
+    `SbcLine`). The line prints its period because the ratio is only meaningful as a ratio of a
+    stated one — FUBO's FY2024 SBC over a post-merger LTM revenue read 0.7% against a true 2.6%,
+    and nothing on the page would have shown which periods were being divided."""
+    s = m.sbc
+    if s is None:
+        return []
+    return [_fact("Stock-based compensation", s.line)]
 
 
 def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:

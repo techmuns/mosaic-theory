@@ -13076,7 +13076,46 @@ one evidence-backed leg at a time.
   headroom, buybacks, peer intensity AND this pipeline — renders only inside `financialSnapshot()`,
   so a name whose financial summary is absent shows none of it on either surface. That predates
   this PR and applies to three existing blocks; recorded rather than widened into.
-  **Remaining Tier-1 queue: SBC line** *(KD types batch: BUILT; 13D/G events: BUILT, next line).*
+  **Tier-1 queue from the coverage audit: COMPLETE** *(dilution pipeline, KD types batch,
+  13D/G events, SBC line — all BUILT).*
+
+- **SBC LINE BUILT 2026-08-18 (`feat/sbc-line`) — Tier-1 item four, closing the queue: the
+  ONGOING dilution engine, beside the register (`dilution_pipeline`) and who files on it
+  (`ownership_events`).** New `MechanicalLayer.sbc` — `us-gaap:ShareBasedCompensation` from EDGAR
+  XBRL as $ and as **% of revenue**, upper-bounded at `reference_date`.
+  **THE RATIO LEADS BECAUSE DOLLARS DO NOT COMPARE.** Operator asked what the market-standard
+  framing is *for this universe*; measured, it is % of revenue. NFLX's $368M and NCNO's $74M are
+  5x apart in dollars and 15x apart the other way in intensity. The fleet spans **0.7%–12.4%**
+  and sorts by business model: NCNO 12.4 · AORT 5.5 · UBER 3.5 · EPAM 3.2 · FUBO 2.6 · VRRM 2.6 ·
+  IT 2.4 · V 2.2 · VITL 1.6 · SMPL 1.1 · BRBR 1.0 · CNXC 1.0 · NFLX 0.8 · MVST 0.7. The
+  `ebitda_basis` wedge is the SECOND read, and matters where this ratio is high — not a rival
+  framing.
+  **TWO WINDOW/BASIS TRAPS, BOTH CAUGHT ON THE LIVE CORPUS, BOTH MINE.**
+  (1) **The first measurement divided each name's latest 10-K SBC by the dossier's LTM revenue.**
+  FUBO's FY2024 SBC over its post-merger LTM read **0.7% against a true 2.6%** — understated
+  3.7x, and believable because both inputs were individually correct. Fixed by matching the
+  revenue fact on the SBC fact's EXACT `start`/`end`.
+  (2) **Same window turned out to be necessary, NOT sufficient.** FUBO carries TWO revenue facts
+  for 2024-01-01→2024-12-31: $1,622.8M from the 10-K (`fp=FY`) and **$402.3M from a 10-Q**
+  (`fp=Q1`, `frame=CY2024`) whose period string looks annual. The numerator was restricted to
+  10-K annuals and the denominator was not, so the first real run printed FUBO at **10.6%**. The
+  form filter is now the SAME on both sides. *Same window, different basis — again.*
+  **A THIRD HOLE WAS FOUND BY MUTATION, NOT BY REVIEW:** relaxing the period match to `end`-only
+  survived every pin, because the different-period test differed on BOTH dates. A Q4 fact shares
+  an annual fact's END and differs only in START, so end-only matching divides a year's SBC by a
+  quarter's revenue. Pinned.
+  **REFUSALS, NOT GUESSES:** no revenue fact covering the SBC window ⇒ ratio UNKNOWN and the
+  dollars still print; two 10-K facts disagreeing about one period ⇒ refuse rather than pick,
+  because a silently chosen denominator cannot be reconstructed by the reader.
+  **ONE TAG, MEASURED:** `ShareBasedCompensation` answers on all 14, so no fallback taxonomy is
+  invented for a gap that does not exist here (`AllocatedShareBasedCompensationExpense` is a
+  segment allocation, not the total).
+  **REAL RUN, all 14** — every name resolves a same-window ratio; zero UNKNOWN.
+  **JS twin shipped WITH the block** (#457/#470 lesson) and the python side pinned at the
+  ARTIFACT level through the real `render_markdown` (#470's helper-pin lesson). Registered in
+  `_DROP_WHEN_NONE` for byte-identical no-op refresh. **Four mutations verified**: denominator
+  basis filter dropped, period match relaxed to end-only, disagreeing restatements picked,
+  as-of bound removed.
 
 - **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: Schedule
   13D/G FILING ACTIVITY, beside the register that says how many shares could be issued.** New

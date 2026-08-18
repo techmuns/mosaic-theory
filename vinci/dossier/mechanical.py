@@ -17,7 +17,7 @@ import time
 import xml.etree.ElementTree as ET
 from collections.abc import Sequence
 from datetime import date, timedelta
-from typing import Any, NamedTuple, TypeVar
+from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
@@ -64,6 +64,7 @@ from vinci.dossier.schemas import (
     ReconciliationValue,
     RegistrationFiling,
     ReleaseExtract,
+    SbcLine,
     Sourced,
     SourceStatus,
     StockInfo,
@@ -2058,6 +2059,99 @@ def _ownership_events(
                         f"window {since.isoformat()}→{reference_date.isoformat()}{newest}")))
 
 
+#: SBC comes from ONE tag — measured, not assumed: `ShareBasedCompensation` answers on all 14
+#: names, so no fallback taxonomy is invented for a gap that does not exist here. If a future
+#: name misses it the block says UNKNOWN rather than reaching for a near-synonym that may mean
+#: something else (`AllocatedShareBasedCompensationExpense` is a segment allocation, not the total).
+_SBC_TAG = "ShareBasedCompensation"
+
+#: REVENUE FOR THE SBC WINDOW. Ordered most-specific first. The ratio is only ever formed from a
+#: fact whose period matches the SBC fact EXACTLY, so this list decides which tag answers, never
+#: which period — a tag missing here yields UNKNOWN, never a silently different window.
+_SBC_REVENUE_TAGS = ("RevenueFromContractWithCustomerExcludingAssessedTax",
+                     "RevenueFromContractWithCustomerIncludingAssessedTax",
+                     "Revenues", "SalesRevenueNet")
+
+
+def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
+    """SBC as $ and as % of revenue over the SAME window — the pure half, driven in tests by a
+    real companyfacts-shaped dict and no network.
+
+    THE WINDOW IS THE WHOLE POINT. The first cut of this measurement took each name's latest 10-K
+    SBC and divided by the dossier's LTM revenue. FUBO's latest SBC is FY2024 while its LTM
+    revenue is post-merger, so it read 0.7% against a true FY2024 ratio of 2.6% — understated
+    3.7x, and confidently, because both inputs were individually correct. The revenue fact is
+    matched on the SBC fact's exact ``start``/``end``; nothing else is eligible.
+
+    UPPER-BOUNDED AT THE AS-OF like every other windowed read here: a 10-K published after the
+    record's as-of belongs to a later record."""
+    gaap = (facts.get("facts") or {}).get("us-gaap") or {}
+    if _SBC_TAG not in gaap:
+        return None
+    ann = [x for x in gaap[_SBC_TAG].get("units", {}).get("USD", [])
+           if x.get("form") == "10-K" and x.get("start") and x.get("end")
+           and date.fromisoformat(x["end"]) <= reference_date]
+    if not ann:
+        return None
+    ann.sort(key=lambda x: x["end"])
+    sbc = ann[-1]
+    start, end = str(sbc["start"]), str(sbc["end"])
+    usd = float(sbc["val"]) / 1e6
+
+    rev: float | None = None
+    rev_tag = ""
+    for tag in _SBC_REVENUE_TAGS:
+        node = gaap.get(tag)
+        if not node:
+            continue
+        # SAME WINDOW IS NECESSARY, NOT SUFFICIENT — SAME BASIS TOO. FUBO carries TWO facts for
+        # 2024-01-01→2024-12-31: $1,622.8M from the 10-K (`fp=FY`, the annual figure) and
+        # $402.3M from a 10-Q (`fp=Q1`, `frame=CY2024`) whose period string looks annual. The
+        # numerator was already restricted to 10-K annuals; leaving the denominator unrestricted
+        # picked the quarterly one and printed FUBO at 10.6% against a true 2.6%. The form filter
+        # is the SAME on both sides, which is the only way the two cannot drift.
+        same = [x for x in node.get("units", {}).get("USD", [])
+                if str(x.get("start")) == start and str(x.get("end")) == end
+                and x.get("form") == "10-K"]
+        if not same:
+            continue
+        vals = {round(float(x["val"]), 2) for x in same}
+        if len(vals) > 1:
+            # Restatements disagree about the same period. Choosing one silently would publish a
+            # ratio whose denominator the reader cannot reconstruct — refuse instead.
+            rev, rev_tag = None, tag
+            break
+        rev, rev_tag = float(same[-1]["val"]) / 1e6, tag
+        break
+
+    src = f"EDGAR XBRL {_SBC_TAG} (10-K, {start}→{end})"
+    if rev is None or rev <= 0:
+        pct = Sourced[float].unknown(
+            note=f"no revenue fact covers {start}→{end} — the SBC window has no matching "
+                 "denominator, so no ratio is formed rather than one across two periods")
+        line = f"stock-based compensation ${usd:,.1f}M (FY to {end}) · % of revenue UNKNOWN"
+    else:
+        pct = Sourced.present(100.0 * usd / rev, source_ref=f"{src} ÷ {rev_tag} (same window)")
+        line = (f"stock-based compensation ${usd:,.1f}M = {100.0 * usd / rev:.1f}% of revenue "
+                f"(${rev:,.1f}M, FY {start}→{end})")
+    return SbcLine(expense=Sourced.present(usd, source_ref=src), pct_revenue=pct,
+                   window_start=start, window_end=end,
+                   line=Sourced.present(line, source_ref=src))
+
+
+def _sbc(edgar: EdgarClient, cik: str | None, reference_date: date) -> SbcLine | None:
+    """The fetch half. None means the block does not render — a name with no SBC tag at all."""
+    if not cik:
+        return None
+    try:
+        raw = edgar._http.get_json(
+            f"https://data.sec.gov/api/xbrl/companyfacts/CIK{pad_cik(cik)}.json",
+            ttl_seconds=86_400)
+    except HttpError:
+        return None
+    return _sbc_line(cast(dict[str, Any], raw), reference_date)
+
+
 class Form4Line(NamedTuple):
     """ONE non-derivative Form 4 transaction, with everything a window-free read needs.
 
@@ -3795,6 +3889,7 @@ def assemble_mechanical(
         # cached); "none on file" is a PRESENT finding, UNKNOWN is reserved for a failed read.
         dilution_pipeline=_dilution_pipeline(edgar, record.identity.cik, reference_date),
         ownership_events=_ownership_events(edgar, record.identity.cik, reference_date),
+        sbc=_sbc(edgar, record.identity.cik, reference_date),
         # Peer acquired-asset intensity. Needs the comps grid (only it carries peer TICKERS) plus
         # one cached EDGAR call per peer; absent grid -> None, which keeps its NOT-BUILT meaning.
         peer_capital_intensity=_peer_capital_intensity(peer_comps, resolver, edgar),
