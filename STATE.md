@@ -5151,7 +5151,7 @@ own stamps and are unaffected — this binds the PRICE-DERIVED fields only.
 
 **OPERATOR ACTIONS — RECORDED 2026-08-04, arising from the SMPL re-assembly (see §2).**
 
-**O1. RULING NEEDED — `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.**
+**~~O1. RULING NEEDED~~ CLOSED — BUILT AT #347 (`fix(O1): mark the drawdown-moment guide`), candidate (a): `_mark_drawdown_guidance` (synthesis.py) marks the field through the SHARED `guidance_vintage_mark`, mark LEADING the block, accession-matched date, UNDATED mark when none — and this entry stood as an open ruling for two weeks after the fix merged (stale-record class, same as the PR-OPEN notes; corrected 2026-08-18). Original entry:** `drawdown_cause.revised_guidance` is the SECOND, UNMARKED guidance path.
 #342 marked `primary_source` in the brief; the 2026-08-04 SMPL roll shows the model reading the
 OTHER path and asserting APRIL's superseded guide in the present tense at `bear[1]`, with July's
 guide cited nowhere. `synthesis.py:979` excludes `primary_source` from the facts dump and swaps in
