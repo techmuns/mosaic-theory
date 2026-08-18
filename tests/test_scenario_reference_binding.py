@@ -58,13 +58,24 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: (low 4.29 / median 19.76 / current 9.18) and re-state the legs' rationale against those — an
 #: ANALYST action, not a mechanical one, because which reference justifies which leg is an
 #: underwriting argument the machine must not free-write.
-KNOWN_FOREIGN = {"BRBR": "assumptions block copied verbatim from SMPL (found 2026-08-17, #407 era)"}
+#: EMPTY, AND THAT IS THE FIX LANDING — guard 3 demanded this deletion and was right.
+#: BRBR sat here from 2026-08-17 while its multiple axis carried SMPL's figures. Those seven
+#: references are now WITHDRAWN in the record itself (`excluded` + `excluded_reason`, which
+#: renders dimmed WITH the reason rather than vanishing), so guard 2 sees no live reference
+#: to exempt and guard 1 sees a block that no longer matches SMPL's.
+#: DELETING THE ENTRY RESTORES PROTECTION rather than dropping it: re-paste SMPL's block and
+#: guard 1 fires with nothing to excuse it; un-exclude those references and guard 2 fires on
+#: values BellRing's own series cannot produce. An exemption is only ever earned while the
+#: defect it names is live.
+KNOWN_FOREIGN: dict[str, str] = {}
 
 #: The EXACT shared-digest group that is exempt — not "any group containing an allowlisted name".
 #: The first cut exempted the whole group, so a THIRD record pasted from BRBR/SMPL's block would
 #: have been waved through for as long as the BRBR entry lived. Keyed as a frozenset so a new member
 #: changes the key and reddens.
-KNOWN_SHARED_GROUPS = {frozenset({"BRBR", "SMPL"})}
+#: EMPTY for the same reason — BRBR's block no longer hashes to SMPL's, so ANY shared
+#: assumptions block is now unexpected and fires.
+KNOWN_SHARED_GROUPS: set[frozenset[str]] = set()
 
 #: Records that cite a committed band while having NO committed dossier, so their band citations are
 #: unverifiable by any means. Recorded rather than skipped: this is an anomaly in its own right — a

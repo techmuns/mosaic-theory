@@ -89,14 +89,18 @@
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
      "role": "band_low",
-     "leg": "bear"
+     "leg": "bear",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing 25th percentile",
      "value": 15.2,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "percentile"
+     "role": "percentile",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing median",
@@ -104,33 +108,43 @@
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
      "role": "median",
-     "leg": "base"
+     "leg": "base",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing 75th percentile",
      "value": 20.88,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "percentile"
+     "role": "percentile",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "current multiple (0th pctile)",
      "value": 5.65,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "current"
+     "role": "current",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "entry-boundary cell A (1,100 \u00d7 8% \u00d7 6.0x)",
      "value": 1.96,
      "unit": ":1",
-     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "entry-boundary cell B (1,050 \u00d7 7% \u00d7 6.0x)",
      "value": 1.73,
      "unit": ":1",
-     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     }
    ],
    "notes": [

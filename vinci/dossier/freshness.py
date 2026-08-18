@@ -331,16 +331,26 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
         c = getattr(b, "close", None)
         if d is None or not isinstance(c, (int, float)):
             continue
-        # BOUNDED BY THE EXPORT STAMP (review of #466). An export cannot predate the data it
-        # carries, so a bar AFTER the stamp can never be its source — and an unbounded scan over
-        # five years of history will eventually find a coincidental match at the same price,
-        # which would publish a date years off, or move the stamp FORWARD. Both are worse than
-        # leaving it uncorrected.
-        if not_after is not None and d > not_after:
+        # STRICTLY BEFORE THE STAMP. An export cannot predate the data it carries, so a bar AFTER
+        # the stamp can never be its source; and CIQ's measured convention (11 of 11) is that the
+        # data is the PRIOR trading close, so a bar ON the stamp cannot be it either. Excluding
+        # both also bounds an otherwise five-year scan that would eventually meet a coincidental
+        # match — publishing a date years off, or moving the stamp FORWARD.
+        if not_after is not None and d >= not_after:
             continue
         if abs(float(c) - close) <= tol:
             hits.append(d)
-    return hits[0] if len(hits) == 1 else None
+    if not hits:
+        return None
+    # RECURRENCE IS RESOLVED BY RECENCY, NOT REFUSED (measured 2026-08-18). Requiring exactly one
+    # match refused four of nineteen bundles — FUBO 9.70, MVST 0.92, UBER 68.18, VRRM 4.18 — all
+    # LOW-PRICED names whose close simply recurs across the history. That is ambiguity in the
+    # SEARCH, not in the data: the latest qualifying bar is the one CIQ's own convention names,
+    # and on all four it lands exactly on the prior trading close the offset method predicts. Two
+    # independent signals agreeing is stronger evidence than either alone, so refusing there threw
+    # away an answer the corpus supports. Measured fleet-wide: 13 names unchanged, 4 resolved,
+    # 0 moved — and NIKE, whose printed close matches NO bar, still correctly refuses above.
+    return max(hits)
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:

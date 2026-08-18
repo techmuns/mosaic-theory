@@ -1,28 +1,28 @@
 # Dossier — FuboTV Inc. (NYSE: FUBO)
 
-_August 14, 2026 · extraction 2026-07-28.1_
+_August 18, 2026 · extraction 2026-08-16.1_
 
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Bare peer-comparison (a bear point): 'TEV/EBITDA is NM on a real negative base and the forward is expensive not cheap; Heterogeneous-peer benchmark (a bear point): 'TEV/EBITDA is NM on a real negative base and the forward is expensive n… — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Bare peer-comparison (a bear point): 'On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.19 versus…; Heterogeneous-peer benchmark (a bear point): 'On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.1… — full caveats in Analysis.
 
 FuboTV Inc. operates as a live TV streaming platform company in the United States, Canada, France, Spain, and internationally.
-**Mixed** — scaled revenue and a contractual EBITDA step-up sit against deep cash burn, a zero-crossing earnings path, and opaque runway.
+**Mixed** — a genuine revenue-scale/monetization ramp collides with deep cash burn, negative returns and a 37% cut to current-year EBITDA consensus.
 - **Segments:** Television Programming & Distribution — single segment [1]
 - **Geography:** United States — single geography [2]
-- **Snapshot:** NYSE · CMP $9.70 (2026-08-12) · cap $293M · 52-wk $7.95–$56.64 · shares 30.2M · book value/sh $27.59 [3]
+- **Snapshot:** NYSE · CMP $10.27 (2026-08-17) · cap $293M (2026-08-11) ⚠ implies $9.70/sh vs CMP (-5.5%) · 52-wk $7.95–$56.64 · shares 30.2M · book value/sh $27.59 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Does the Hulu + Live TV combination convert scaled revenue into self-funding cash flow on the contractual timetable, or does persistent cash burn and a zero-crossing earnings path make the current top-line growth a value trap?**
+**Does the Hulu + Live TV combination — the contractual wholesale-fee step-up plus Disney ad-server monetization — convert FUBO's revenue scale into the sustained positive EBITDA and free cash flow consensus prices for FY27-FY28, or does persistent cash burn and negative returns make the forward ramp a value trap?**
 _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Beginning September 2, sports fans will be able to subscribe to Fubo Sports, a standalone plan with 20+ sports and br… ~2026-09 `[stated]` — calendar in Analysis
 
 ## What happened — and can it survive?
 - **Shape:** discrete gap-downs — 2026-03-26 no company filing; 2026-05-06 earnings; 2026-08-06 earnings [4]
-- **Price (180d):** -39.7% [5]
-- **Market (IWM) 180d:** 15.1% [6]
-- **vs market (180d):** -54.8% [7]
+- **Price (180d):** -36.9% [5]
+- **Market (IWM) 180d:** 16.0% [6]
+- **vs market (180d):** -52.9% [7]
 - **Net debt / EBITDA · Net debt / EBITDA [NET]:** _UNKNOWN_ — no CIQ Net Debt/EBITDA; EDGAR no net-debt — debt/cash not in XBRL — pull CIQ
 - **Free cash flow:** negative [8]
 
@@ -44,13 +44,13 @@ _own-history multiple missing (valuation.own_history.median absent)_
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
-- Migration of ad inventory to the Disney ad server has driven double-digit increases in CPM and fill rates versus last year, a concrete monetization driver behind the margin-inflection case. [9]
-- The Hulu + Live TV commercial agreement carries a contractual wholesale-fee step-up from 95% in calendar 2026 to 99% by 2028, a mechanism management ties directly to adjusted-EBITDA expansion visibility. [10]
-- Subscribers grew year-over-year in Q3 2026 to 5.75M in North America (up 2% vs 5.63M), evidencing the base is stable-to-rising through the transition, not eroding. [9]
+- North American subscribers grew 2% year-over-year to 5.75 million in Q3 fiscal 2026, a genuine reversal of the prior quarter's decline (5.7M vs 5.9M), grounding the top-line trajectory in a volume driver. [9]
+- The Hulu + Live TV combination gives a contractual wholesale-fee step-up from 95% of carriage costs in 2026 to 99% by 2028, a mechanism management frames as providing visibility into adjusted-EBITDA expansion. [10]
+- The Disney ad-server migration produced double-digit increases in CPM and fill rates versus last year, a monetization mechanism management describes as still early-stage. [9]
 _Bear case — the decline is real:_
-- The business remains structurally cash-consumptive: LTM levered FCF is -$107.8M and CIQ OCF is -$456M, so it is burning cash rather than generating it — this is the real signal, not an optical timing artefact, since both cash bases are negative. [11]
-- Near-term revision breadth is decisively negative: FQ4 2026 Revenue 0↑/8↓ and EBITDA 0↑/7↓ across all three lookbacks, so the very quarter ahead is being cut, not raised — a genuine load-bearing signal, not a stale metric. [12]
-- TEV/EBITDA is NM on a real negative base and the forward is expensive not cheap — NTM TEV/EBITDA 16.19 sits ABOVE the peer median 9.87 — so the 'cheap' read is an optical misread of the revenue multiple; on the earnings basis the name trades at a premium. [13]
+- LTM Levered Free Cash Flow is -$107.8M and the FCF sign is negative, and consensus models FY26E CFO at roughly -$393M — the company is burning cash, and cash is not derived beyond management's stated intent to end the year above $200M. [11]
+- The FY26 consensus EBITDA path deteriorated 37% (from $150.0M nine months ago to $95.2M latest) while GAAP EPS, EBIT, EBT and net income all crossed from positive into negative over the same window — a broad worsening of the current-year estimate set. [12]
+- On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.19 versus a peer median of 9.87 — i.e. richer than peers, so the 'cheap vs peers' read on the revenue line inverts once EBITDA is the denominator; this is the real signal, not the optical revenue-multiple discount. [13]
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -77,8 +77,9 @@ _Bear case — the decline is real:_
 - **Buyback — shares repurchased:** _UNKNOWN_ — no annual repurchased-share count under TreasuryStockSharesAcquired — EDGAR XBRL companyfacts
 - **Buyback — average cost/share:** _UNKNOWN_ — no TreasuryStockAcquiredAverageCostPerShare, and the cash leg is absent — refused rather than derived (EDGAR XBRL companyfacts). The repurchase CASH and SHARE COUNT above are each sound on their own basis; it is their QUOTIENT that is not a price
 - **Acquisition consideration:** $211.5M [17]
+- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 2 (S-3ASR, last 2026-01-23); prospectus supplements 3 (424B5/424B7, last 2026-01-23) · employee-plan (S-8) 3 (S-8, last 2026-08-05) — routine — 3y window to 2026-08-14 [18]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
-- **Peer acquired-asset intensity — goodwill + intangibles** — [18]  <!-- ds-table -->
+- **Peer acquired-asset intensity — goodwill + intangibles** — [19]  <!-- ds-table -->
 
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap |
 |---|---:|---:|---:|---:|---:|
@@ -97,7 +98,7 @@ _Bear case — the decline is real:_
 - **Median — all peers (n=10):** 30% of assets · 40% of market cap
 - **Median — peers ≥ $1,000M market cap (n=9):** 25% of assets · 29% of market cap
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
-- **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [19]  <!-- ds-table -->
+- **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [20]  <!-- ds-table -->
 
 |  | state | yrs charged | window $M | % acquired | last charge (any date) | live YTD $M |
 |---|---|---|---|---:|---:|---|
@@ -117,10 +118,10 @@ _Bear case — the decline is real:_
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
-- **vs own trading history · Own-history range position:** _UNKNOWN_ — TEV/LTM EBITDA Close has <4 quarters — no range position
-- **vs peers:** EV/EBITDA NM vs peer median 12.4; P/E NM vs peer median 13 [20]
-- **Comparability:** market caps span $410M–$311.4B (759x); the name is $293M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [21]
-- **The street, for contrast (target · ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-11 · export date unverified] [22]
+- **vs own trading history · Own-history range position:** _UNKNOWN_ — TEV/LTM EBITDA is NM at the latest Close [2026-08-11] — no range position
+- **vs peers:** EV/EBITDA NM vs peer median 12.4; P/E NM vs peer median 13 [21]
+- **Comparability:** market caps span $410M–$311.4B (759x); the name is $293M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [22]
+- **The street, for contrast (target · ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-11 · export date unverified] [23]
 
 # Analysis — full dossier
 
@@ -131,9 +132,9 @@ _Bear case — the decline is real:_
   - 2026-08-06 **-15.7%** → earnings
 
 _Company-specific or market-wide?_
-- **Name 180d return:** -39.7% [5]
-- **Market (IWM) 180d return:** 15.1% [6]
-- **Relative vs market:** -54.8% [7]
+- **Name 180d return:** -36.9% [5]
+- **Market (IWM) 180d return:** 16.0% [6]
+- **Relative vs market:** -52.9% [7]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Other 8-Ks at the gap dates (2):**
   - filed 2026-05-06 · items: 2.02 Results of Operations and Financial Condition [`0001493152-26-021406`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226021406/form8-k.htm)
@@ -144,86 +145,82 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 ## Business quality
 - **Segments (revenue share):** Television Programming & Distribution — single segment [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — single-segment reporting (Television Programming & Distribution) — no segment EBITDA to break out; the consolidated EBITDA is the whole business
-- **Customers:** 8 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [23]
+- **Customers:** 8 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [24]
 - **Geographic:** United States — single geography [2]
 
 ## The argument
 
-**Evidence balance:** mixed — scaled revenue and a contractual EBITDA step-up sit against deep cash burn, a zero-crossing earnings path, and opaque runway.
+**Evidence balance:** mixed — a genuine revenue-scale/monetization ramp collides with deep cash burn, negative returns and a 37% cut to current-year EBITDA consensus.
 
 ### Bull case — the decline is overdone
-- Migration of ad inventory to the Disney ad server has driven double-digit increases in CPM and fill rates versus last year, a concrete monetization driver behind the margin-inflection case. [9]
-- The Hulu + Live TV commercial agreement carries a contractual wholesale-fee step-up from 95% in calendar 2026 to 99% by 2028, a mechanism management ties directly to adjusted-EBITDA expansion visibility. [10]
-- Subscribers grew year-over-year in Q3 2026 to 5.75M in North America (up 2% vs 5.63M), evidencing the base is stable-to-rising through the transition, not eroding. [9]
-- Reported revenue stepped up sharply from $4,413M (FY25) to $5,712M LTM and consensus sees FY26E $6,182M / FY27E $6,497M, so the top line is scaling, not shrinking. [14]
-- On revenue the discount to peers is stark — name TEV/Rev 0.4 vs peer median 2.0 and NTM 0.36 vs 2.02 — while the name's revenue growth 31% dwarfs the peer-median 8%, posing whether the gap is RESIDUAL rather than EARNED; but the peer set is HETEROGENEOUS (caps $410M–$311.4B, 759x) so this is confidence-gated, not a clean benchmark. [24]
-- Consensus EBITDA is projected to inflect and roughly double, FY26E $95.2M → FY27E $175.8M, implying the profitability trough is being priced as temporary. [25]
-- Sell-side stance is constructive with a mean/median target of $17.00 and a Buy consensus, against a $9.70 close — the Street reads the de-rate as an overshoot. [26]
-- The share-price fall is idiosyncratic and severe — FUBO returned -39.7% over 180d while the small-cap benchmark rose +15.1%, a -54.8pp relative gap, so the de-rate is name-specific, not a market slide. [7]
+- North American subscribers grew 2% year-over-year to 5.75 million in Q3 fiscal 2026, a genuine reversal of the prior quarter's decline (5.7M vs 5.9M), grounding the top-line trajectory in a volume driver. [9]
+- The Hulu + Live TV combination gives a contractual wholesale-fee step-up from 95% of carriage costs in 2026 to 99% by 2028, a mechanism management frames as providing visibility into adjusted-EBITDA expansion. [10]
+- The Disney ad-server migration produced double-digit increases in CPM and fill rates versus last year, a monetization mechanism management describes as still early-stage. [9]
+- The equity trades at NTM TEV/Revenue of 0.36 versus a peer median of 2.02 — but the peer set spans $410M to $311.4B in cap (759x) against the name's $293M, so this gap is a confidence-gated input, not a clean benchmark; the human must judge whether the discount is EARNED (worse fundamentals) or RESIDUAL. [13]
+- Revenue growth of 31% is nearly 4x the peer-median 8%, a fundamental_delta that argues against the discount being fully EARNED on the growth axis — though the human must weigh this against the name's absent EBITDA margin in the same deltas. ⚠ uncited [25]
+- Consensus EBITDA is modelled to more than double from FY26E $95.2M to FY27E $175.8M, and the forward ladder shows FY28 TEV/EBITDA compressing to 7.22 — a steep expected profitability ramp priced into the forward. [26]
+- Sell-side stance is constructive: mean and median target $17.00 versus a $10.27 close, with a Buy (1.00) consensus rating and 8 Buy/Outperform ratings against 2 Hold and no Sell. [27]
 
 ### Bear case — the decline is real
-- The business remains structurally cash-consumptive: LTM levered FCF is -$107.8M and CIQ OCF is -$456M, so it is burning cash rather than generating it — this is the real signal, not an optical timing artefact, since both cash bases are negative. [11]
-- Near-term revision breadth is decisively negative: FQ4 2026 Revenue 0↑/8↓ and EBITDA 0↑/7↓ across all three lookbacks, so the very quarter ahead is being cut, not raised — a genuine load-bearing signal, not a stale metric. [12]
-- TEV/EBITDA is NM on a real negative base and the forward is expensive not cheap — NTM TEV/EBITDA 16.19 sits ABOVE the peer median 9.87 — so the 'cheap' read is an optical misread of the revenue multiple; on the earnings basis the name trades at a premium. [13]
-- Q3 adjusted EBITDA fell year-over-year to $19.1M from pro forma $31M despite the combination, so the profitability trend the bulls rely on decelerated in the most recent print. [9]
-- The equity is diluting into the losses — share count rose +2.5% over ~0.7y (334.1M → 342.4M) — compounding the per-share erosion while the company burns cash. [27]
-- The stock sits near a 52-week low of $7.95 (close $9.70) versus a 52-week high of $56.64, an ~83% peak-to-trough collapse, with discrete gap-downs on the last two earnings prints (2026-05-06, 2026-08-06). [4]
-- The current-FY earnings path has collapsed and crossed zero — FY26 EBITDA consensus fell from $150.0M (9m ago) to $95.2M (-37%) and GAAP EPS went 1.68 → -1.21 — so the trailing 'earnings' basis that would make it look cheap no longer exists; the recent negative annual figure is the operative one. [28]
-- Returns on capital are persistently negative with no upturn — ROIC -11.2% (2023) → -10.9% (2024) → -10.7% (2025) — evidencing capital destruction across multiple years, a structural not cyclical read. [29]
+- LTM Levered Free Cash Flow is -$107.8M and the FCF sign is negative, and consensus models FY26E CFO at roughly -$393M — the company is burning cash, and cash is not derived beyond management's stated intent to end the year above $200M. [11]
+- The FY26 consensus EBITDA path deteriorated 37% (from $150.0M nine months ago to $95.2M latest) while GAAP EPS, EBIT, EBT and net income all crossed from positive into negative over the same window — a broad worsening of the current-year estimate set. [12]
+- On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.19 versus a peer median of 9.87 — i.e. richer than peers, so the 'cheap vs peers' read on the revenue line inverts once EBITDA is the denominator; this is the real signal, not the optical revenue-multiple discount. [13]
+- Return on capital has been persistently negative (-11.2% → -10.9% → -10.7% across FY23-FY25), so the business has destroyed capital every year measured. [28]
+- The two most recent gap-downs (2026-05-06, 2026-08-06) both coincide with 8-K Item 2.02 earnings releases, tying the drawdown to reported results rather than to noise. [4]
+- The share count is diluting (+2.5% over roughly 0.7 years), an active shelf and prospectus supplements are on file, and reported Q3 adjusted EBITDA of $19.1M was down from $37.7M in Q2, adding pressure to the delivery track. [29]
+- TEV/LTM EBITDA is NM and P/E is NM — these are a real negative-base state, not missing data: the business does not currently generate positive trailing EBITDA or earnings against which a multiple can be struck. [13]
+- The stock fell 76.7% over the trailing year versus IWM +34.3%, and 180-day relative return is -52.9% — the de-rating is sharply idiosyncratic, not a market move. [7]
 
 ### Decisive question
-**Does the Hulu + Live TV combination convert scaled revenue into self-funding cash flow on the contractual timetable, or does persistent cash burn and a zero-crossing earnings path make the current top-line growth a value trap?**
+**Does the Hulu + Live TV combination — the contractual wholesale-fee step-up plus Disney ad-server monetization — convert FUBO's revenue scale into the sustained positive EBITDA and free cash flow consensus prices for FY27-FY28, or does persistent cash burn and negative returns make the forward ramp a value trap?**
 
 ### …evidence for
-- The wholesale-fee step-up (95% in 2026 → 99% by 2028) is a contractual mechanism management explicitly ties to adjusted-EBITDA expansion and forward earnings visibility. [10]
-- Consensus EBITDA nearly doubles FY26E $95.2M → FY27E $175.8M and the guidance bridge shows FY27 FCF guided to breakeven (0.00, dated 2026-08-05), consistent with a near-term inflection. [30]
-- Ad monetization is improving in-quarter with double-digit CPM and fill-rate gains post Disney-ad-server migration, a driver of the margin path. [9]
+- Management points to a contractual wholesale fee scaling from 95% of Hulu + Live TV carriage costs in 2026 to 99% by 2028 as the visibility behind expected adjusted-EBITDA expansion. [10]
+- Disney ad-server migration is already delivering double-digit CPM and fill-rate increases, and North American subscribers turned to +2% YoY growth in Q3, giving the profitability ramp two live operating mechanisms. [9]
 
 ### …evidence against
-- Cash generation is deeply negative today — LTM levered FCF -$107.8M and CIQ OCF -$456M — so the business does not yet self-fund. [11]
-- The current-FY consensus path deteriorated and crossed zero (FY26 EBITDA -37% from $150.0M to $95.2M; GAAP EPS 1.68 → -1.21), and the most recent Q3 adjusted EBITDA fell YoY to $19.1M from pro forma $31M. [28]
-- Near-quarter revision breadth is uniformly negative (FQ4 2026 Revenue 0↑/8↓, EBITDA 0↑/7↓), showing the timetable is slipping in the estimate set. [12]
+- Current-year consensus EBITDA has already been cut 37% (from $150.0M to $95.2M) with GAAP EPS/EBIT/EBT/net income crossing into negative — the ramp is being marked down, not confirmed, as it approaches. [12]
+- LTM Levered Free Cash Flow is -$107.8M and FY26E CFO is modelled near -$393M, so the business must fund a large cash gap before the FY27-FY28 profitability inflection can be tested. [11]
 
 ### Key unknowns
-- Cash runway is opaque and a bearish gap: net-debt/EBITDA is N/A (no CIQ figure, EDGAR carries no net-debt), interest coverage is unavailable (no EBITDA/interest row), and cash is not derivable while FCF is negative — survival capacity has legs UNKNOWN.
-- No revised-guidance block was parsed from the two explanatory earnings 8-Ks, so the reconciled forward outlook management issued is not verifiable from the supplied facts.
-- The reported vs consensus EBITDA basis is incoherent (derived FY26 $19.3M vs direct $95.2M, residual 0.797) and the multiple-pricing vintage differs from the TEV as-of — comps should be re-pulled before leaning on any peer multiple.
-- Management-adjusted (pro forma) EBITDA (~$100M LTM per the call) vs GAAP/consensus EBITDA cannot be reconciled here — no adjusted figure in the 99.1 revised guidance — leaving the true earnings base ambiguous.
-- The peer set is HETEROGENEOUS (caps $410M–$311.4B, 759x) so every peer multiple is confidence-gated, not a clean benchmark; the revenue-multiple discount cannot be cleanly decomposed into earned vs residual from these facts.
-- Whether the 2029 Convertible Notes ($177.5M, 7.50%) and Disney Note ($145M) can be serviced/refinanced through the burn window is not resolvable — no covenant terms or runway bridge supplied.
-- The CFO/CEO leadership transition (new CEO first call, COO moving to advisor) leaves forward strategy 'still taking shape' per management — execution continuity is unresolved.
+- No current EV/EBITDA or P/E exists (both NM on a negative trailing base) and no own-history multiple band has ≥4 quarterly closes — the overshoot-vs-terminal question cannot be settled on a trailing multiple.
+- Net-debt/EBITDA and interest coverage are both UNKNOWN (no CIQ ratio; EDGAR lacks the XBRL legs) — a missing leverage/coverage disclosure that is a survival-read gap, read as a risk not a neutral.
+- Cash runway is not derived: FCF is negative and management's 'above $200M year-end cash' is a stated intent, not an independently reconciled runway — an opacity risk given the roughly -$393M FY26E CFO.
+- Company-adjusted LTM EBITDA and margins, and the covenant basis on the 2029 Convertible Notes and Disney Note, are not disclosed here — the EBITDA-basis triangulation and covenant terms come back UNKNOWN.
+- The comps vintage is flagged incoherent (multiple-pricing vintage differs from TEV as-of; derived FY26 $19.3M vs direct $95.2M, residual 0.797) — peer multiples should be treated as confidence-gated, not clean.
+- CEO changed effective July 10, 2026 (Alisa Bowen) with the co-founder CEO and COO both transitioning out, and the new CEO defers a formal strategy to the November call — execution continuity on the EBITDA ramp is unresolved.
+- Whether the reverse-merger structure (Disney owns ~70%) leaves minority holders exposed on capital allocation and future dilution is not addressable from the supplied facts.
 
 ### Twin reference cases
-- **Chegg** — went terminal (LLM-claimed — verify)
-  - distinguished by: A cash-generative-looking subscription story that de-rated violently as the core model was disrupted and consensus earnings crossed toward zero; buy-side 'cheap vs history' proved a value trap.
-  - source: [LLM-suggested, unverified]
 - **Roku** — recovered
-  - distinguished by: A US streaming-platform peer in the same roster that endured a deep de-rate and negative-to-thin margins, then re-rated as ad monetization and scale inflected — the analogue for the overshoot/inflection thesis.
+  - distinguished by: A US streaming-platform peer in the same roster that ran deeply unprofitable and heavily de-rated, then re-rated as advertising monetization and platform scale turned EBITDA positive — the pattern FUBO's Disney-ad-server thesis would have to replicate.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Paramount Skydance Corporation** — went terminal
-  - distinguished by: A media peer in the roster carrying heavy acquired-asset write-downs and structural streaming-transition pressure, illustrating how a content-distribution model can impair rather than inflect.
+  - distinguished by: A media-and-entertainment peer that leaned on a transformational combination while carrying heavy debt and taking large goodwill impairments — the analogue for a deal-driven story where the integrated entity fails to earn its combined asset base.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Sirius XM Holdings Inc.** — recovered
-  - distinguished by: A roster subscription-media name that traded at a low revenue multiple with a stable subscriber base and positive EBITDA, the pattern bulls need FUBO's post-combination base to resemble.
+- **Sirius XM Holdings Inc.** — went terminal
+  - distinguished by: A subscription-audio peer with a stable subscriber base yet a compressed multiple and large impairment history — the analogue for a mature subscription model where subscriber flatness caps re-rating despite positive EBITDA.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **WeWork** — went terminal (LLM-claimed — verify)
-  - distinguished by: A growth story with rising reported revenue but persistent cash burn and dilution where the top-line scaling never converted to self-funding cash generation.
+- **Chewy** — recovered (LLM-claimed — verify)
+  - distinguished by: A high-growth US consumer platform that burned cash and de-rated sharply on profitability doubts, then recovered when scale converted revenue growth into positive cash generation — the overshoot pattern for a growth name whose losses were transitional.
   - source: [LLM-suggested, unverified]
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **Beginning September 2, sports fans will be able to subscribe to Fubo Sports, a standalone plan with 20+ sports and br…** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [31]
-- **Next results print** — ~2026-10-14 `[cadence-estimate]` — the next reported quarter against the committed trajectory [32]
-- **Beginning June 20, Fubo Sports Network will stream 16 live games for the duration of Season 9, with t** — ~2027-06 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [33]
-- **Other Notes $0.3M matures** — ~2027-06-30 `[stated]` — refinance / repay / convert before the wall — the survival read [34]
+- **Beginning September 2, sports fans will be able to subscribe to Fubo Sports, a standalone plan with 20+ sports and br…** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [30]
+- **Next results print** — ~2026-10-14 `[cadence-estimate]` — the next reported quarter against the committed trajectory [31]
+- **Beginning June 20, Fubo Sports Network will stream 16 live games for the duration of Season 9, with t** — ~2027-06 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [32]
+- **Other Notes $0.3M matures** — ~2027-06-30 `[stated]` — refinance / repay / convert before the wall — the survival read [33]
+- **effective July 29, 2026.** — ~2027-07 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [34]
+- **effective July 10, 2026** — ~2027-07 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [35]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA NM vs peer median 12.4; P/E NM vs peer median 13 [20]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA NM vs peer median 12.4; P/E NM vs peer median 13 [21]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _TEV as-of 2026-08-11 · multiples as-of 2026-08-11 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [35]  <!-- ds-table -->
+- **Price-implied levels (at each stated multiple)** — [36]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -245,7 +242,7 @@ _No gap is struck for this name: no scenario record for this name — the route 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 
 ## Peer comps
-- **Peer set (roster · caps · business)** — [36]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [37]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -262,7 +259,7 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 _the name: $293M_
 
-- **Comparability (confidence gate):** market caps span $410M–$311.4B (759x); the name is $293M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [21]
+- **Comparability (confidence gate):** market caps span $410M–$311.4B (759x); the name is $293M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [22]
 - **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [13]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
@@ -273,7 +270,7 @@ _the name: $293M_
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [37]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [38]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -292,7 +289,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [38]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [39]  <!-- ds-table -->
 
 |  | Oct-2022 | Sep-2023 | Sep-2024 | Sep-2025 | Jun-2026 (LTM) |
 |---|---|---|---|---|---|
@@ -300,9 +297,9 @@ _NM = a real state (negative base), not missing_
 
 _R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** diluting (trailing ~0.7y): 334,092,630 (2024-10-31) → 342,433,118 (2025-07-31), +2.5% [27]
-- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-06-30 — in the latest, $2M against $-25M pre-tax [39]
-- **Return ratios — per fiscal period** — [40]  <!-- ds-table -->
+- **Share-count trend:** diluting (trailing ~0.7y): 334,092,630 (2024-10-31) → 342,433,118 (2025-07-31), +2.5% [29]
+- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-06-30 — in the latest, $2M against $-25M pre-tax [40]
+- **Return ratios — per fiscal period** — [41]  <!-- ds-table -->
 
 |  | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|
@@ -316,7 +313,7 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 
 ## The street — estimates & guidance
 _export date unverified (data ≥ 2026-08-11)_
-- **Horizon read (FQ — next-2Q revision breadth)** — [12]:
+- **Horizon read (FQ — next-2Q revision breadth)** — [42]:
   - EPS (GAAP) FQ4 2026: 1m 3↑/4↓, 2m 3↑/4↓, 3m 3↑/4↓
   - EPS (GAAP) FQ1 2027: 1m 1↑/1↓, 2m 1↑/1↓, 3m 1↑/1↓
   - EPS Normalized FQ4 2026: 1m 2↑/1↓, 2m 2↑/1↓, 3m 2↑/1↓
@@ -328,15 +325,15 @@ _export date unverified (data ≥ 2026-08-11)_
   - EBIT FQ4 2026: 1m 1↑/5↓, 2m 1↑/5↓, 3m 1↑/5↓
   - EBIT FQ1 2027: 1m 1↑/1↓, 2m 1↑/1↓, 3m 1↑/1↓
   - _+7 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): 1.68 (9m) → -0.88 (6m) → -1.43 (3m) → -1.40 (2m) → -1.40 (1m) → -1.21 (latest); worsening (crossed zero) (9m→latest) | FY 2026 EPS Normalized: 2.04 (9m) → -0.22 (6m) → -0.51 (3m) → -0.51 (2m) → -0.51 (1m) → -0.52 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Revenue: 6,037.5 (9m) → 6,340.2 (6m) → 6,222.8 (3m) → 6,227.9 (2m) → 6,226.1 (1m) → 6,181.8 (latest); net +2% (9m→latest) | FY 2026 EBITDA: 150.0 (9m) → 109.2 (6m) → 93.5 (3m) → 92.3 (2m) → 92.3 (1m) → 95.2 (latest); net -37% (9m→latest) | FY 2026 EBIT: 162.0 (9m) → -33.5 (6m) → -103.3 (3m) → -103.3 (2m) → -103.3 (1m) → -101.6 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Interest Expense: -13.0 (9m) → -8.19 (6m) → -10.2 (3m) → -10.2 (2m) → -10.2 (1m) → -10.0 (latest); improving (magnitude toward zero) (9m→latest) | FY 2026 EBT (GAAP): 150.0 (9m) → -65.1 (6m) → -95.2 (3m) → -101.0 (2m) → -101.1 (1m) → -94.2 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Net Income (Excl. Excep): 178.0 (9m) → 10.7 (6m) → -35.0 (3m) → -49.1 (2m) → -49.1 (1m) → -32.0 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Net Income (GAAP): 145.0 (9m) → -39.0 (6m) → -36.8 (3m) → -37.3 (2m) → -37.3 (1m) → -37.6 (latest); worsening (crossed zero) (9m→latest)  [data ≥ 2026-08-11 · export date unverified] [28]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [41]:
+- **Acceleration read (monthly consensus path):** FY 2026 EPS (GAAP): 1.68 (9m) → -0.88 (6m) → -1.43 (3m) → -1.40 (2m) → -1.40 (1m) → -1.21 (latest); worsening (crossed zero) (9m→latest) | FY 2026 EPS Normalized: 2.04 (9m) → -0.22 (6m) → -0.51 (3m) → -0.51 (2m) → -0.51 (1m) → -0.52 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Revenue: 6,037.5 (9m) → 6,340.2 (6m) → 6,222.8 (3m) → 6,227.9 (2m) → 6,226.1 (1m) → 6,181.8 (latest); net +2% (9m→latest) | FY 2026 EBITDA: 150.0 (9m) → 109.2 (6m) → 93.5 (3m) → 92.3 (2m) → 92.3 (1m) → 95.2 (latest); net -37% (9m→latest) | FY 2026 EBIT: 162.0 (9m) → -33.5 (6m) → -103.3 (3m) → -103.3 (2m) → -103.3 (1m) → -101.6 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Interest Expense: -13.0 (9m) → -8.19 (6m) → -10.2 (3m) → -10.2 (2m) → -10.2 (1m) → -10.0 (latest); improving (magnitude toward zero) (9m→latest) | FY 2026 EBT (GAAP): 150.0 (9m) → -65.1 (6m) → -95.2 (3m) → -101.0 (2m) → -101.1 (1m) → -94.2 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Net Income (Excl. Excep): 178.0 (9m) → 10.7 (6m) → -35.0 (3m) → -49.1 (2m) → -49.1 (1m) → -32.0 (latest); worsening (crossed zero) (9m→latest) | FY 2026 Net Income (GAAP): 145.0 (9m) → -39.0 (6m) → -36.8 (3m) → -37.3 (2m) → -37.3 (1m) → -37.6 (latest); worsening (crossed zero) (9m→latest)  [data ≥ 2026-08-11 · export date unverified] [12]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [43]:
   - NTM: TEV/REV 0.36 · TEV/EBITDA 16.19 · TEV/EBIT – · Price/Earnings – · PEG –
   - FY 2026: TEV/REV 0.37 · TEV/EBITDA 24.06 · TEV/EBIT – · Price/Earnings – · PEG –
   - FY 2027: TEV/REV 0.35 · TEV/EBITDA 13.03 · TEV/EBIT – · Price/Earnings – · PEG –
   - FY 2028: TEV/REV 0.34 · TEV/EBITDA 7.22 · TEV/EBIT 16.35 · Price/Earnings 11.83 · PEG –
   - _+2 later fiscal years in JSON_
-- **Current guide (latest results filing):** adjusted ebitda Fiscal 2026: 80.0–100.0 $M [42]
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [30]  <!-- ds-table -->
+- **Current guide (latest results filing):** adjusted ebitda Fiscal 2026: 80.0–100.0 $M [44]
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [45]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -345,8 +342,8 @@ _export date unverified (data ≥ 2026-08-11)_
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
-- **Consensus stats (target + ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-11 · export date unverified] [22]
-- **Revision-event log (250 events · 20 broker-days)** — [43]  <!-- ds-table -->
+- **Consensus stats (target + ratings):** Target price: mean $17.00, median $17.00, high/low 23.00/12.00, N 8/8; Ratings: Buy 5, Outperform 3, Hold 2, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-08-11 · export date unverified] [23]
+- **Revision-event log (250 events · 20 broker-days)** — [46]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Init | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
@@ -362,16 +359,16 @@ _+14 more broker-days in JSON_
 - **Surprise history (annual beat/miss):** _UNKNOWN_ — Surprise sheet has no fiscal-year header row
 
 ## Leverage & survival
-- **Total debt / EBITDA vs peers:** name NM vs peer median 3.4x (comps TOTAL-debt/EBITDA basis) [44]
+- **Total debt / EBITDA vs peers:** name NM vs peer median 3.4x (comps TOTAL-debt/EBITDA basis) [47]
 - **Net debt / OCF:** _UNKNOWN_ — CIQ OCF $-456M <= 0 — ratio meaningless
 - **Interest coverage:** _UNKNOWN_ — Income Statement missing EBITDA or Interest Expense row
-- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [45]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [48]
 - **Credit health:** _UNKNOWN_ — comps workbook Company Comparable Analysis FuboTV Inc .xls has no 'Credit Health Panel' sheet
 
 - **FCF sign:** negative [8]
 - **Free cash flow ($M):** -107.8 — basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex, and the other basis cannot be stated for [12 months Sep-27-2025]: capex has no value in that column. Comparing against a different period would not be a basis check. [11]
-- **Debt schedule vintage:** the debt schedule is 7d old (source filed 2026-08-05); no Item 1.02 (termination of a material agreement) has been filed since [46]
-- **Live instruments — near-dated (≤12m + 2027) — panel Q3 2026 filed Aug-05-2026** — [47]  <!-- ds-table -->
+- **Debt schedule vintage:** the debt schedule is 9d old (source filed 2026-08-05); no Item 1.02 (termination of a material agreement) has been filed since [49]
+- **Live instruments — near-dated (≤12m + 2027) — panel Q3 2026 filed Aug-05-2026** — [50]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -379,21 +376,22 @@ _+14 more broker-days in JSON_
 
 _3 undated / later aggregate line item(s) in the appendix panel_
 
-- **Maturity wall** · vs the 2026-08-12 reference:
+- **Maturity wall** · vs the 2026-08-14 reference:
   - due 2027: $0.3M
   - due 2029: $177.5M
   - due 2031: $145.0M
   - undated (floor — no panel maturity): $32.4M — Operating Lease Liabilities $32.4M
   - _reconciliation: itemized $355.2M (panel Q3 2026 filed Aug-05-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** senior bonds 322.8; leases 32.4; total principal 355.3; total debt 402.7 (3 months FQ3/CQ2 Jun-30-2026) ($M) [48]
+- **Capital-structure aggregates:** senior bonds 322.8; leases 32.4; total principal 355.3; total debt 402.7 (3 months FQ3/CQ2 Jun-30-2026) ($M) [51]
 - **Covenants — 2029 Convertible Notes** (governing values; full verbatim in appendix):
   - **Conversion:** New Notes convertible into shares of Common Stock, cash or a combination of shares of Common Stock and cash, at the Com…
-  - **Maturity:** New Notes due 2029 (Convertible Senior Secured Notes due 2029); no specific date stated
+  - **Interest / coupon:** Existing Notes: 3.25% Convertible Senior Notes due 2026. New Notes coupon rate not stated in this exhibit (New Notes de…
+  - **Maturity:** New Notes: Convertible Senior Secured Notes due 2029 (specific maturity date not stated). Existing Notes: due 2026
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [49]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [50]
+- **Going-concern language:** none in latest 10-Q — checked, absent [52]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [53]
   - net debt / EBITDA (CIQ, GAAP basis): UNKNOWN
   - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -403,11 +401,11 @@ _3 undated / later aggregate line item(s) in the appendix panel_
 
 _2 to verify._
 
-- **Bare peer-comparison** — TEV/EBITDA is NM on a real negative base and the forward is expensive not cheap — NTM TEV/EBITDA 16.19 sits ABOVE the peer median 9.87 — so the 'cheap' read is an optical misread of the revenue multiple; on the earnings basis the name trades at a premium.
+- **Bare peer-comparison** — On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.19 versus a peer median of 9.87 — i.e. richer than peers, so the 'cheap vs peers' read on the revenue line inverts once EBITDA is the denominator; this is the real signal, not the optical revenue-multiple discount.
   - _where:_ a bear point
   - _why it matters:_ presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition
   - _how to verify:_ POSE justified-vs-residual, never the bare gap
-- **Heterogeneous-peer benchmark** — TEV/EBITDA is NM on a real negative base and the forward is expensive not cheap — NTM TEV/EBITDA 16.19 sits ABOVE the peer median 9.87 — so the 'cheap' read is an optical misread of the revenue multiple; on the earnings basis the name trades at a premium.
+- **Heterogeneous-peer benchmark** — On the FORWARD basis where the name IS positive, NTM TEV/EBITDA is 16.19 versus a peer median of 9.87 — i.e. richer than peers, so the 'cheap vs peers' read on the revenue line inverts once EBITDA is the denominator; this is the real signal, not the optical revenue-multiple discount.
   - _where:_ a bear point
   - _why it matters:_ leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS
   - _how to verify:_ confidence-gate every peer stat
@@ -446,7 +444,7 @@ _2 to verify._
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-11; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [51]  <!-- ds-table -->
+- **Quarterly financials** — [54]  <!-- ds-table -->
 
 |  | FY23 | FY24 | FY24 | FY24 | FY24 | FY25 (R) | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -460,12 +458,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-11; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 230; total debt 403; net debt 172; equity 813; net working capital 4; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [52]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $230M / bridge $230M; debt BS $403M / bridge $403M — reconcile with the implied-valuation bridge. [53]
+- **Posture:** as of FY26 ($M): cash & ST inv 230; total debt 403; net debt 172; equity 813; net working capital 4; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $230M / bridge $230M; debt BS $403M / bridge $403M — reconcile with the implied-valuation bridge. [56]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel Q3 2026 filed Aug-05-2026** — [47]  <!-- ds-table -->
+- **Capital structure — full instrument panel Q3 2026 filed Aug-05-2026** — [50]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -475,7 +473,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Other Notes | Bonds and Notes | $0.3M | 2.250% | NA | 2027-06-30 | N | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [54]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [57]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -486,29 +484,33 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 | Other Notes | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — 2029 Convertible Notes (governing agreement)** — [55]  <!-- ds-table -->
+- **Covenant terms — 2029 Convertible Notes (governing agreement)** — [58]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
-| Conversion price / mechanics | New Notes convertible into shares of Common Stock, cash or a combination of shares of Common Stock and cash, at the Company's election; Conversion Rate as defined in the New Notes Indenture (not stat… — full verbatim in JSON | base (footer) |
-| Principal / commitment amount | $205,835,000 aggregate principal amount of Existing Notes to be exchanged; Exchange Consideration = New Notes with aggregate principal amount equal to the sum of (x) 85% of the principal amount of su… — full verbatim in JSON | base (footer) |
-| Interest / coupon rate | UNKNOWN | not stated in 8-K 0001493152-25-020163 · ex10-1.htm |
-| Maturity date | New Notes due 2029 (Convertible Senior Secured Notes due 2029); no specific date stated | base (footer) |
+| Conversion price / mechanics | New Notes convertible into shares of Common Stock, cash or a combination of shares of Common Stock and cash, at the Company's election; conversion terms (including the Conversion Rate) governed by th… — full verbatim in JSON | base (footer) |
+| Principal / commitment amount | Existing Notes exchanged: $205,835,000 aggregate principal. New Notes principal = sum of (x) 85% of principal amount of Existing Notes exchanged and (y) accrued but unpaid interest up to but excludin… — full verbatim in JSON | base (footer) |
+| Interest / coupon rate | Existing Notes: 3.25% Convertible Senior Notes due 2026. New Notes coupon rate not stated in this exhibit (New Notes defined only as "Convertible Senior Secured Notes due 2029"; interest terms govern… — full verbatim in JSON | base (footer) |
+| Maturity date | New Notes: Convertible Senior Secured Notes due 2029 (specific maturity date not stated). Existing Notes: due 2026 | base (footer) |
 | Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001493152-25-020163 · ex10-1.htm |
-| Security / collateral / guarantors | New Notes are Convertible Senior Secured Notes; secured by Liens on Collateral under the Security Agreement in favor of U.S. Bank National Association as Collateral Agent; Guarantors: Edisn Inc., fub… — full verbatim in JSON | base (footer) |
+| Security / collateral / guarantors | New Notes are secured (Convertible Senior Secured Notes) by Liens on Collateral under the Security Agreement in favor of the Collateral Agent (U.S. Bank National Association). Guarantors: Edisn Inc.,… — full verbatim in JSON | base (footer) |
 | Mandatory prepayment / events of default | UNKNOWN | not stated in 8-K 0001493152-25-020163 · ex10-1.htm |
-| Right of First Refusal on secured indebtedness | For so long as Exchanging Investors hold at least $100,000,000 aggregate principal amount of New Notes; seven (7) Business Days to elect up to the full aggregate principal amount | base (footer) |
-| Offer to Participate on unsecured indebtedness | For so long as Exchanging Investors hold at least $100,000,000 aggregate principal amount of New Notes; right to elect up to one-third of the aggregate principal amount; seven (7) Business Days | base (footer) |
-| Preemptive rights on equity securities | Pro Rata Share preemptive right for so long as holders hold collectively at least $100,000,000 aggregate principal amount of New Notes | base (footer) |
-| Transfer / trading restriction (lock-up) | One year lock-up from date of Agreement; certain permitted transactions beginning 180 days following the date of the Agreement | base (footer) |
-| Expense reimbursement | Not to exceed $350,000 | base (footer) |
-| Closing Date | Later of January 2, 2024; the date conditions are satisfied or waived; or such other time and place as agreed | base (footer) |
-| Existing Notes description | 3.25% Convertible Senior Notes due 2026, CUSIP No. 35953D AB0 | base (footer) |
-| Governing law | State of New York | base (footer) |
+| Instrument type | Registration Rights Agreement (not a debt instrument) | 8-K 0001493152-25-020163 · ex10-1.htm |
+| Termination Date | the first date on which there are no Registrable Securities or there are no Holders | 8-K 0001493152-25-020163 · ex10-1.htm |
+| Registrable Securities | Class A Common Stock, including shares issuable upon exercise, conversion or exchange of other securities (including Class B Common Stock and Newco Units) | 8-K 0001493152-25-020163 · ex10-1.htm |
+| Registration Expenses / counsel fee cap | $30,000 in connection with the initial Registration Statement; $30,000 for any offering | 8-K 0001493152-25-020163 · ex10-1.htm |
+| Governing law | State of New York | amended by 0001493152-25-020163 |
+| Right of first refusal - secured indebtedness | ROFR to provide up to full aggregate principal amount of new secured third-party indebtedness, exercisable within 7 Business Days, for so long as Exchanging Investors hold at least $100,000,000 aggre… — full verbatim in JSON | base (footer) |
+| Offer to participate - unsecured indebtedness | Right to elect to provide up to one-third of aggregate principal amount of new unsecured third-party indebtedness, within 7 Business Days, for so long as Exchanging Investors hold at least $100,000,0… — full verbatim in JSON | base (footer) |
+| Preemptive rights (equity securities) | Preemptive right to purchase Pro Rata Share of New Securities, exercisable within 7 Business Days, for so long as Investor and Exchanging Investors collectively hold at least $100,000,000 aggregate p… — full verbatim in JSON | base (footer) |
+| Registration Rights Agreement | Registration Rights Agreement to be dated and entered into as of the Closing Date (form at Exhibit D) | base (footer) |
+| Expense reimbursement cap | Not to exceed $350,000 | base (footer) |
+| Transfer / trading restrictions (lock-up) | One-year lock-up from date of Agreement, with certain permitted activities beginning 180 days following the date of the Agreement | base (footer) |
+| Closing date | Later of (1) January 2, 2024; (2) date conditions in Section 6 satisfied or waived; and (3) such other time as Company and Investor agree | base (footer) |
 
-_Source §: 8-K 0001493152-24-000126 · ex10-1.htm_
+_Source §: 8-K 0001493152-24-000126 · ex10-1.htm · amended by 0001493152-25-020163_
 
-- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — [55]  <!-- ds-table -->
+- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — [58]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -526,9 +528,9 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 293.0 [56]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $230.30M, − total debt $402.70M [57]
-- **Implied equity at peer-median ($M, CIQ)** — [58]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 293.0 [59]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $230.30M, − total debt $402.70M [60]
+- **Implied equity at peer-median ($M, CIQ)** — [61]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -537,25 +539,25 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf; FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [59]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf; FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [62]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 1 (1 insider, $1.46M) — in the last 182 days · last purchase $0.04M, director, 2024-08-16 (~24mo ago) · last sale $1.46M, Chief Operating Officer, 2026-06-11 (~2mo ago) · largest sale $9.12M, Chief Executive Officer, 2025-01-07 (~19mo ago) · grants 14 · last filing 2026-07-29 · other filings 63 [60]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 6.6M → 6.8M sh (+4.0%, rising) · DTC 4.6d · recent: 2026-07-31 6.8M · 2026-07-15 6.6M · 2026-06-30 7.0M · 2026-06-15 6.9M [61]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 1 (1 insider, $1.46M) — in the last 182 days · last purchase $0.04M, director, 2024-08-16 (~24mo ago) · last sale $1.46M, Chief Operating Officer, 2026-06-11 (~2mo ago) · largest sale $9.12M, Chief Executive Officer, 2025-01-07 (~19mo ago) · grants 14 · last filing 2026-07-29 · other filings 63 [63]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-07-31): 6.6M → 6.8M sh (+4.0%, rising) · DTC 4.5d · recent: 2026-07-31 6.8M · 2026-07-15 6.6M · 2026-06-30 7.0M · 2026-06-15 6.9M [64]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [62]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ guide UNKNOWN — not cross-checked [63]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [65]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ guide UNKNOWN — not cross-checked [66]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-08-12 · assembled 2026-08-14 09:58 UTC
-- **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
-- **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-12
-- **Panel age:** oldest panel 3d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-14 build
-- **Consensus age:** consensus 3d old (2026-08-11, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Data window:** screened as of 2026-08-14 · assembled 2026-08-18 08:38 UTC
+- **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
+- **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
+- **Panel age:** oldest panel 7d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
+- **Consensus age:** consensus 7d old (2026-08-11, valuation.implied_expectations.multiples_as_of) — within the ceiling
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001484769` · NYSE : FUBO
-- **Assembly log:** primary-source: 8-K 0001493152-26-011823 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001493152-26-003429 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)
+- **Assembly log:** primary-source: 8-K 0001493152-26-011823 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001493152-26-003429 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+8.5s fetch)
 - **Re-run:** `python -m vinci dossier --ticker FUBO` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -566,62 +568,65 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [2] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-27-2025)`
 [3] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [4] `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-[5] `EOD FUBO 180d to 2026-08-12`
-[6] `EOD IWM 180d to 2026-08-12 (cap-band: $0.3B @ 2026-08-12 → small (<$4B) → IWM)`
-[7] `EOD FUBO−IWM 180d to 2026-08-12 (assembly, cap-band)`
+[5] `EOD FUBO 180d to 2026-08-14`
+[6] `EOD IWM 180d to 2026-08-14 (cap-band: $0.3B @ 2026-08-14 → small (<$4B) → IWM)`
+[7] `EOD FUBO−IWM 180d to 2026-08-14 (assembly, cap-band)`
 [8] `EDGAR XBRL FCF sign (screen data-record)`
 [9] `CIQ transcript: FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf`
 [10] `CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
 [11] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [12 months Sep-27-2025]`
-[12] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[12] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [13] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [15] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
 [16] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-06-30)`
 [17] `EDGAR companyfacts BusinessCombinationConsiderationTransferred1 (2018-01-01→2018-09-30, 272d)`
-[18] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
-[19] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
-[20] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
-[21] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
-[22] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-[23] `CIQ Customers&Suppliers FuboTV Inc NYSE FUBO Customers.rtf`
-[24] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[25] `CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)`
-[26] `CIQ Estimates→Consensus`
-[27] `EDGAR XBRL shares, trailing 2024-10-31..2025-07-31`
-[28] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[29] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[30] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
-[31] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Aug-28-2025`
-[32] `cadence: EDGAR submissions (median 70d gap over 34 results 8-Ks; last print 2026-08-05)`
-[33] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jun-18-2026`
-[34] `CIQ capital-structure panel (maturity_date)`
-[35] `TEV = mcap 293.0 + net debt 172.5 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-11, exported 2026-08-12) — simple-TEV basis`
-[36] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[37] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-12`
-[38] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[39] `EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-06-30`
-[40] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[41] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[42] `8-K 0001493152-26-015252 EX-99.1 (filed 2026-04-06)`
-[43] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-11 · export date unverified]`
-[44] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-12`
-[45] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[46] `CIQ Capital Structure Details — Q3 2026 filed Aug-05-2026`
-[47] `CIQ Financials→Capital Structure Details (Q3 2026 filed Aug-05-2026)`
-[48] `CIQ Financials→Capital Structure Summary`
-[49] `10-Q 0001628280-26-053535`
-[50] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[51] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[52] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[53] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[54] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[55] `fenced Tier-2 extraction (verbatim, source-bound)`
-[56] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-12`
-[57] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-12`
-[58] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-12`
-[59] `CIQ transcript(s): FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf; FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf`
-[60] `EDGAR Form 4 (latest 0001493152-26-035290; 67 filings in the 1095d scanned; counts over 182d)`
-[61] `FINRA consolidated short interest (settle 2026-07-31); DTC = 6,835,906 short ÷ 1,472,627 screen 90d ADV`
-[62] `10-Q maturity wall vs CIQ capital panel (same window)`
-[63] `CIQ revenue guide vs release actual/outlook`
+[18] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001493152-26-036220`
+[19] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
+[20] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
+[21] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
+[22] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
+[23] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
+[24] `CIQ Customers&Suppliers FuboTV Inc NYSE FUBO Customers.rtf`
+[25] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+[26] `CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)`
+[27] `CIQ Estimates→Consensus`
+[28] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
+[29] `EDGAR XBRL shares, trailing 2024-10-31..2025-07-31`
+[30] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Aug-28-2025`
+[31] `cadence: EDGAR submissions (median 70d gap over 34 results 8-Ks; last print 2026-08-05)`
+[32] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jun-18-2026`
+[33] `CIQ capital-structure panel (maturity_date)`
+[34] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jul-29-2026`
+[35] `CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jul-09-2026`
+[36] `TEV = mcap 293.0 + net debt 172.5 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-08-11, exported 2026-08-12) — simple-TEV basis`
+[37] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[38] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-11`
+[39] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[40] `EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-06-30`
+[41] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[42] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[43] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[44] `8-K 0001493152-26-015252 EX-99.1 (filed 2026-04-06)`
+[45] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[46] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-11 · export date unverified]`
+[47] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-11`
+[48] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[49] `CIQ Capital Structure Details — Q3 2026 filed Aug-05-2026`
+[50] `CIQ Financials→Capital Structure Details (Q3 2026 filed Aug-05-2026)`
+[51] `CIQ Financials→Capital Structure Summary`
+[52] `10-Q 0001628280-26-053535`
+[53] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[54] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[55] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[57] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[58] `fenced Tier-2 extraction (verbatim, source-bound)`
+[59] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-11`
+[60] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-11`
+[61] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-11`
+[62] `CIQ transcript(s): FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf; FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf`
+[63] `EDGAR Form 4 (latest 0001493152-26-035290; 67 filings in the 1095d scanned; counts over 182d)`
+[64] `FINRA consolidated short interest (settle 2026-07-31); DTC = 6,835,906 short ÷ 1,515,248 screen 90d ADV`
+[65] `10-Q maturity wall vs CIQ capital panel (same window)`
+[66] `CIQ revenue guide vs release actual/outlook`

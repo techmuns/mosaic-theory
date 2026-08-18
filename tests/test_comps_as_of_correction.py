@@ -48,11 +48,27 @@ def test_a_price_no_bar_carries_refuses_rather_than_guessing() -> None:
     assert date_of_close(78.16, []) is None
 
 
-def test_two_sessions_at_one_close_refuses_because_it_is_ambiguous() -> None:
-    """A flat stretch makes the price a non-identifier. Returning EITHER date would be a coin flip
-    presented as provenance, so the correction declines and the export stamp stands."""
-    flat = [_Bar(dt.date(2026, 8, 13), 78.16), _Bar(dt.date(2026, 8, 14), 78.16)]
-    assert date_of_close(78.16, flat) is None
+def test_recurrence_resolves_by_recency_rather_than_refusing() -> None:
+    """A RECURRING CLOSE IS AMBIGUITY IN THE SEARCH, NOT IN THE DATA — and the earlier rule threw
+    away answers because of it.
+
+    Requiring exactly one match refused 4 of 19 bundles: FUBO 9.70, MVST 0.92, UBER 68.18, VRRM
+    4.18 — all LOW-PRICED names whose close simply recurs. On every one, the latest qualifying bar
+    is exactly the prior trading close CIQ's measured convention predicts, so two independent
+    signals agree and refusing discards a supported answer. Fleet-wide the change moved 13 names
+    not at all, resolved those 4, and left NIKE (no matching bar anywhere) still refusing."""
+    flat = [_Bar(dt.date(2026, 8, 12), 78.16), _Bar(dt.date(2026, 8, 13), 78.16)]
+    assert date_of_close(78.16, flat, not_after=dt.date(2026, 8, 14)) == dt.date(2026, 8, 13)
+
+
+def test_a_bar_on_the_stamp_itself_is_never_the_source() -> None:
+    """STRICTLY BEFORE, because the export date is not the data date. CIQ's convention — measured
+    11 of 11 — is that the panel carries the PRIOR trading close, so a bar dated ON the stamp
+    cannot be its source however exactly the price agrees. FUBO is the live case: its 9.70 sits on
+    BOTH 2026-08-11 and the 2026-08-12 stamp, and admitting the same-day bar would publish an
+    export date as an observation date, which is the whole defect."""
+    both = [_Bar(dt.date(2026, 8, 11), 9.70), _Bar(dt.date(2026, 8, 12), 9.70)]
+    assert date_of_close(9.70, both, not_after=dt.date(2026, 8, 12)) == dt.date(2026, 8, 11)
 
 
 def test_the_injected_date_never_overrides_an_operator_attestation() -> None:
@@ -89,12 +105,13 @@ def test_the_search_is_bounded_by_the_export_stamp() -> None:
     bars = [_Bar(dt.date(2024, 1, 5), 78.16),   # a coincidental match years earlier
             _Bar(dt.date(2026, 8, 14), 78.16),
             _Bar(dt.date(2026, 8, 20), 78.16)]  # AFTER the stamp — impossible as a source
-    # unbounded: three hits, ambiguous, refuses
-    assert date_of_close(78.16, bars) is None
-    # bounded to the stamp: the 2026-08-20 bar is excluded, but 2024 still collides -> refuses
-    assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) is None
-    # bounded tightly enough to be unambiguous -> identifies
-    assert date_of_close(78.16, bars[1:], not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
+    # bounded: the 2026-08-20 bar cannot be the source, and the 2024 collision loses to recency
+    assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
+    # UNBOUNDED IS THE DANGER the bound exists for: with no stamp, the post-stamp bar wins on
+    # recency and the correction moves the date FORWARD — the one thing it must never do.
+    assert date_of_close(78.16, bars) == dt.date(2026, 8, 20), (
+        "unbounded, recency picks the LATER bar — which is why `not_after` is not optional at the "
+        "call site, and why the assembler always passes the export stamp")
 
 
 def test_the_printed_close_column_is_found_by_label_not_position() -> None:
