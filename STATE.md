@@ -4841,8 +4841,19 @@ all three axes, every reference value, every note. Of 7 scenario records it is t
 
 
 
-**OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET (added by #459).**
-13 committed dossiers still carry `Close (latest)` in
+**~~OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET AFTER THE PRE-ASSEMBLY SET~~ SUPERSEDED
+2026-08-18 — DO NOT ACT ON THE TEXT BELOW. It is kept only as the record of what #459
+intended, and BOTH of its asks are now wrong:**
+- **`Close (latest)` IS THE INTENDED STAMP, not a defect to remove.** #460 REVERTED the
+  dated form: those `source_ref`s are JOIN KEYS quoted verbatim by sealed synthesis
+  citations, and dating them broke 8 citations across 7 names. **13 of 14 carry it by
+  design.** Acting on the text below would re-break them.
+- **The vintage bump LANDED** — `2026-08-16.1` on the 10 names re-assembled by #467;
+  4 remain on `2026-07-28.1` because their stamps did not move (the price-match residue).
+  A split fleet here is the state the version stamp EXISTS to make visible, not a defect.
+- The live successor is the `DONE 2026-08-17 (#460), PARTIALLY` block earlier in this
+  section, plus the comps as-of entries. **Superseded text follows:**
+~~13 committed dossiers still carry `Close (latest)` in~~
 `mechanical.valuation.ev_ebitda.source_ref`; the code fix does not move the artifact (the #453
 precedent needed its own pass, 1095f9f). The re-assembly also lands `EXTRACTION_VERSIONS
 2026-08-16.1` and drops CNXC's and SMPL's phantom P/LTM EPS bands. **This obligation is recorded
