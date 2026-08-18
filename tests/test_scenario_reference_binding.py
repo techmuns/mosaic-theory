@@ -307,4 +307,5 @@ def test_no_two_records_share_a_name_specific_fact_value() -> None:
     assert not shared, (
         "two records carry the identical name-specific fact value — one of them is another "
         f"company's number: {shared}. Re-derive it from the name's OWN dossier anchor block and "
-        "correct it through `vinci.scenarios.refresh_record`, which logs old → new with provenance.")
+        "correct it through `vinci.scenarios.refresh_record`, which logs old → new with "
+        "provenance.")
