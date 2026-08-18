@@ -1757,7 +1757,7 @@ function dilutionPipeline(m) {
 // was written rather than after a review found it missing. See `render._ownership_events_lines`.
 function ownershipEvents(m) {
   const oe = m.ownership_events;
-  return oe ? fact("Beneficial ownership (Schedule 13D/G)", oe.line) : "";
+  return oe ? fact("Schedule 13D/G filing activity", oe.line) : "";
 }
 
 function capitalAllocation(m) {

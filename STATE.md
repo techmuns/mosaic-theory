@@ -13078,8 +13078,8 @@ one evidence-backed leg at a time.
   this PR and applies to three existing blocks; recorded rather than widened into.
   **Remaining Tier-1 queue: SBC line** *(KD types batch: BUILT; 13D/G events: BUILT, next line).*
 
-- **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: who is
-  ACCUMULATING, beside the register that says how many shares could be issued.** New
+- **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: Schedule
+  13D/G FILING ACTIVITY, beside the register that says how many shares could be issued.** New
   `MechanicalLayer.ownership_events` — Schedule 13D/G from the EDGAR filing index, 3y window,
   upper-bounded at `reference_date` in code (the item-9 leak class, pinned). Assemble-and-cite:
   counts, forms, dates. No filer identity — the submissions index does not name the ACQUIRER in
@@ -13096,10 +13096,31 @@ one evidence-backed leg at a time.
   **THE TWO SCHEDULES ARE NEVER SUMMED.** 13D = crossed 5% WITH intent to influence; 13G = the
   passive short form. Fleet split is 51 activist / 430 passive, so merging them would report an
   index fund's re-weight as an activist stake.
-  **REAL RUN, all 14 names:** NCNO 16 activist filings (last 2026-06-30), UBER 9 (2026-07-08),
-  CNXC 6 (2026-05-01), FUBO 2 (2026-03-20), AORT 1 (2025-08-12), MVST 1; **eight names carry no
-  13D**, which renders as the stated finding, never silence. Both vocabularies appear inside a
-  single count on live data (AORT: `SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A`).
+  **THE SUBMISSIONS INDEX IS NOT ISSUER-ONLY — #458's DEFECT, REBUILT TWO BUILDS LATER
+  (review of #470).** It also returns filings the company FILED on somebody else's stock.
+  **UBER's export carries eight**: `SCHEDULE 13D/A` 2026-07-08 (`0001552781-26-000379`) has
+  issuer **Grab Holdings**, reporting person Uber — as do its Didi / Serve / Aurora siblings.
+  Counted as inbound they said "nine parties are accumulating UBER" when the truth is Uber
+  disclosing stakes it HOLDS. **Direction inverted, from real data.** #458 found this exact class
+  in the KD export and closed it by attribution; it was rebuilt here because the verification
+  asked whether a COUNT moved and never whose filing it was — a fix and a measurement can both be
+  right about magnitude and silent about direction.
+  **ATTRIBUTION VIA `<acc>-index-headers.html`, NOT `primary_doc.xml`** — that XML exists only on
+  post-2024 filings (**101 of 254** in-window filings have none), so it would have attributed the
+  new era and left the old one unchecked. The header carries `SUBJECT COMPANY`/`FILED BY` for
+  both eras; verified on UBER's new-vocabulary foreign filing (resolves to Grab) and AORT's
+  XML-less `SC 13G/A` (resolves to AORT). Unattributable filings are excluded AND counted in the
+  line — defaulting a failed header read to "ours" would restore the defect silently.
+  **NO OWNERSHIP OR INTENT IS INFERRED (owner's P1 on #470).** The label read "Beneficial
+  ownership" over a line reading "activist/control", both derived from the FORM TYPE alone: a
+  13D/A can disclose an EXIT (AORT's single in-window filing is exactly such an `/A`), and a count
+  of FILINGS is not a count of HOLDERS. Now "Schedule 13D/G filing activity" / "Schedule 13D
+  filings N" on both surfaces.
+  **REAL RUN, all 14, POST-ATTRIBUTION:** NCNO 16 (last 2026-06-30), CNXC 6 (2026-05-01), FUBO 2
+  (2026-03-20), AORT 1 (2025-08-12), MVST 1; **UBER 9 → NO 13D ON FILE** (all nine foreign; its
+  13G also 12 → 9). Nine names carry no 13D, which renders as the stated finding, never silence.
+  Both vocabularies appear inside a single count (AORT: `SC 13G/SC 13G/A/SCHEDULE 13G/
+  SCHEDULE 13G/A`). Zero filings were unattributable fleet-wide.
   **BOTH SURFACES PINNED AT THE ARTIFACT LEVEL, and the second one only because a mutation
   caught it.** The JS twin shipped WITH the block this time (the #457 P1 lesson honoured at write
   time, not after review). The python side initially had a HELPER-level pin only: deleting the
@@ -13114,9 +13135,10 @@ one evidence-backed leg at a time.
   **UNLOCK:** read the `filings.files` overflow pages, then pin truncation on a frozen fixture.
   **BACK-COMPAT:** registered in `_DROP_WHEN_NONE`, so a no-op refresh stays byte-identical on
   all 14 committed dossiers — pages change on their next assembly, not on merge.
-  **Eight mutations verified**, each reddening a named test: vocabulary dropped, as-of bound
+  **Ten mutations verified**, each reddening a named test: vocabulary dropped, as-of bound
   removed, schedules summed, three state-collapses (no-CIK, fetch-fail, empty-window), JS twin
-  silenced, python call site deleted.
+  silenced, python call site deleted, **attribution test dropped, unattributable defaulted to
+  kept**.
 
 - **KD EVENT COVERAGE BUILT 2026-08-13 (`feat/kd-event-coverage`) — PR-1 of the pre-assembly
   set; the BioCatch/Delivery Hero seam closed at its filter.** `_KD_KEEP` admits, each measured

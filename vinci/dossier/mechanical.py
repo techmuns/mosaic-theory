@@ -1919,6 +1919,40 @@ _OWNERSHIP_ACTIVIST = ("SC 13D", "SC 13D/A", "SCHEDULE 13D", "SCHEDULE 13D/A")
 _OWNERSHIP_PASSIVE = ("SC 13G", "SC 13G/A", "SCHEDULE 13G", "SCHEDULE 13G/A")
 
 
+#: SUBJECT-COMPANY ATTRIBUTION (review of #470). The submissions index is NOT issuer-only: it
+#: also returns filings where the company is the REPORTING PERSON on somebody else's stock.
+#: Measured on the fleet, UBER's export carries eight such filings — `SCHEDULE 13D/A` 2026-07-08
+#: (`0001552781-26-000379`) has issuer **Grab Holdings** and reporting person Uber, as do its
+#: Didi / Serve / Aurora siblings. Counted as inbound they said "nine parties are accumulating
+#: UBER" when the truth is Uber disclosing stakes it HOLDS. Direction inverted, from real data.
+#:
+#: THIS IS THE #458 DEFECT AGAIN. The KD export was found "NOT issuer-only" and closed by
+#: attribution; the same class was rebuilt here two builds later, because the verification asked
+#: whether a COUNT moved and never whose filing it was.
+#:
+#: THE HEADER INDEX ANSWERS BOTH ERAS, which is why it is used instead of `primary_doc.xml`:
+#: that XML exists only on post-2024 filings (101 of 254 in-window filings on this fleet have
+#: none), while `<acc>-index-headers.html` carries the `SUBJECT COMPANY` / `FILED BY` blocks for
+#: every filing back to the old `SC 13` vocabulary. Verified on both: UBER's new-vocabulary
+#: foreign filing resolves to Grab's CIK, AORT's XML-less `SC 13G/A` resolves to AORT's own.
+_SUBJECT_CIK_RE = re.compile(r"SUBJECT COMPANY.*?CENTRAL INDEX KEY:\s*(\d+)", re.S)
+
+
+def _filing_subject_cik(edgar: EdgarClient, subject_cik: str, accession: str) -> str | None:
+    """The CIK of the company a 13D/G is ABOUT, or None when the header cannot be read.
+
+    None is UNATTRIBUTABLE and never means "ours" — a fetch failure that defaulted to keeping the
+    filing would restore the exact defect this function exists to remove, silently."""
+    acc = accession.replace("-", "")
+    url = (f"https://www.sec.gov/Archives/edgar/data/{int(subject_cik)}/{acc}/"
+           f"{accession}-index-headers.html")
+    try:
+        m = _SUBJECT_CIK_RE.search(edgar._http.get_text(url, ttl_seconds=86_400))
+    except (HttpError, ValueError):
+        return None
+    return m.group(1).lstrip("0") if m else None
+
+
 def _ownership_line(filings: list[Filing], reference_date: date) -> tuple[list[Filing], str]:
     """(window-bounded filings, composed line) — the pure half, driven in tests by REAL ``Filing``
     objects with no network.
@@ -1928,9 +1962,19 @@ def _ownership_line(filings: list[Filing], reference_date: date) -> tuple[list[F
     post-as-of leak class item 9 measured. Every count below is over
     ``filing_date <= reference_date`` only.
 
-    AMENDMENTS ARE COUNTED, NOT COLLAPSED. A 13D/A is how a position CHANGES — added to, trimmed,
-    or exited — so a name with one 13D and fifteen amendments (VRRM) has an active situation, not
-    a stale one. The forms are listed so the human sees which it was."""
+    IT COUNTS FILINGS, AND SAYS SO — never holders, and never a direction of travel. Two things
+    the index cannot support were asserted here and are now removed (review of #470):
+
+    * **"activist/control" was inferred from the form type alone.** A 13D/A is how a position
+      CHANGES, and the change can be an EXIT — AORT's single in-window filing is exactly such an
+      `/A`. Reading "activist stake" off the form would print a departure as an arrival. The
+      label now names the SCHEDULE and stops there; what the filing says is the human's to read.
+    * **A count of FILINGS is not a count of HOLDERS.** Amendments are deliberately included, so
+      three holders filing six annual `/A`s each would have printed as "21 holders". The label
+      says filings because filings are what was counted.
+
+    Amendments stay counted — a name with one 13D and fifteen amendments has an active
+    situation, not a stale one — but the forms are listed so the human sees which it was."""
     since = reference_date - timedelta(days=_OWNERSHIP_SCAN_DAYS)
     inwin = sorted(
         (f for f in filings if since <= f.filing_date <= reference_date),
@@ -1944,8 +1988,8 @@ def _ownership_line(filings: list[Filing], reference_date: date) -> tuple[list[F
         last = hits[0].filing_date.isoformat()
         return f"{label} {len(hits)} ({'/'.join(forms_seen)}, last {last})"
 
-    activist = part(_OWNERSHIP_ACTIVIST, "activist/control (13D)")
-    passive = part(_OWNERSHIP_PASSIVE, "passive 5% holders (13G)")
+    activist = part(_OWNERSHIP_ACTIVIST, "Schedule 13D filings")
+    passive = part(_OWNERSHIP_PASSIVE, "Schedule 13G filings")
     yrs = _OWNERSHIP_SCAN_DAYS // 365
     if activist is None and passive is None:
         line = (f"no Schedule 13D/G beneficial-ownership filings in the {yrs}y to "
@@ -1985,7 +2029,24 @@ def _ownership_events(
         return OwnershipEvents(
             filings=[], window_days=_OWNERSHIP_SCAN_DAYS,
             line=Sourced.unknown(note=f"EDGAR filing-index fetch failed: {exc}"))
-    inwin, line = _ownership_line(raw, reference_date)
+    # ATTRIBUTE BEFORE COUNTING. A filing this company FILED on somebody else's stock is not a
+    # fact about this company's register, and counting it inverts the direction (see
+    # `_filing_subject_cik`). Unattributable filings are dropped from the counts AND reported, so
+    # a header that could not be read shortens the count visibly rather than silently.
+    own: list[Filing] = []
+    unattributed = 0
+    for f in raw:
+        if f.filing_date > reference_date:
+            continue
+        subject = _filing_subject_cik(edgar, cik, f.accession)
+        if subject is None:
+            unattributed += 1
+        elif subject == str(int(cik)):
+            own.append(f)
+    inwin, line = _ownership_line(own, reference_date)
+    if unattributed:
+        line += (f" · {unattributed} filing(s) not attributable — subject company unread, "
+                 f"excluded from the counts")
     newest = f" · latest {inwin[0].accession}" if inwin else ""
     return OwnershipEvents(
         filings=[OwnershipFiling(form=f.form, filing_date=f.filing_date.isoformat(),

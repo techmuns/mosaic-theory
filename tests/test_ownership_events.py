@@ -50,7 +50,7 @@ def test_both_edgar_vocabularies_are_counted() -> None:
         [_f("SC 13D", REF - dt.timedelta(days=800)),
          _f("SCHEDULE 13D", REF - dt.timedelta(days=10))],
         REF)
-    assert "13D) 2" in line, f"both vocabularies must reach ONE count, got: {line}"
+    assert "Schedule 13D filings 2" in line, f"both vocabularies must reach ONE count: {line}"
 
 
 def test_the_two_schedules_are_never_summed() -> None:
@@ -61,7 +61,7 @@ def test_the_two_schedules_are_never_summed() -> None:
         [_f("SC 13D", REF - dt.timedelta(days=5))]
         + [_f("SC 13G", REF - dt.timedelta(days=d)) for d in (6, 7, 8)],
         REF)
-    assert "13D) 1" in line and "13G) 3" in line, line
+    assert "Schedule 13D filings 1" in line and "Schedule 13G filings 3" in line, line
     assert "4" not in line.split("—")[0], f"a summed 4 appeared: {line}"
 
 
@@ -115,9 +115,11 @@ class _MechStub:
         self.ownership_events = oe
 
 
-def test_the_rendered_line_separates_activist_from_passive() -> None:
-    """The label names the SCHEDULE, not "ownership", because 13D and 13G answer different
-    questions and the reader must not have to remember which is which."""
+def test_the_label_names_the_schedule_and_claims_no_ownership() -> None:
+    """REVIEW OF #470. The label read "Beneficial ownership" over a line reading
+    "activist/control", so a 13D/A disclosing an EXIT rendered as an activist stake. Both
+    claims came from the form type alone, which cannot support either. The label names the
+    SCHEDULE and the activity; the reader opens the accession for what it says."""
     from vinci.dossier.render import _ownership_events_lines
     from vinci.dossier.schemas import OwnershipEvents, OwnershipFiling, Sourced
 
@@ -125,11 +127,14 @@ def test_the_rendered_line_separates_activist_from_passive() -> None:
         filings=[OwnershipFiling(form="SCHEDULE 13D/A", filing_date="2026-07-08",
                                  accession="0001403161-26-000001")],
         window_days=_OWNERSHIP_SCAN_DAYS,
-        line=Sourced.present("activist/control (13D) 9 (SC 13D/SCHEDULE 13D/A, last 2026-07-08)",
+        line=Sourced.present("Schedule 13D filings 9 (SC 13D/SCHEDULE 13D/A, last 2026-07-08)",
                              source_ref="EDGAR filing index"))
     lines = _ownership_events_lines(_MechStub(oe))  # type: ignore[arg-type]
     assert len(lines) == 1
-    assert "Schedule 13D/G" in lines[0], f"the label stopped naming the schedule: {lines[0]}"
+    assert "Schedule 13D/G filing activity" in lines[0], (
+        f"the label stopped naming the schedule, or re-asserted ownership: {lines[0]}")
+    assert "ownership" not in lines[0].lower(), (
+        f"the label claims ownership again — the index cannot support it: {lines[0]}")
 
 
 def test_the_web_renderer_shows_ownership_too() -> None:
@@ -157,8 +162,8 @@ def test_the_web_renderer_shows_ownership_too() -> None:
     doc = _json.loads(committed[0].read_text())
 
     dj = (root / "frontend" / "views" / "shared" / "dossier.js").resolve().as_uri()
-    line = ("activist/control (13D) 9 (SC 13D/SCHEDULE 13D/A, last 2026-07-08) · "
-            "passive 5% holders (13G) 12 (SC 13G, last 2026-08-13) — 3y window to 2026-08-14")
+    line = ("Schedule 13D filings 9 (SC 13D/SCHEDULE 13D/A, last 2026-07-08) · "
+            "Schedule 13G filings 12 (SC 13G, last 2026-08-13) — 3y window to 2026-08-14")
     events = {"filings": [], "window_days": _OWNERSHIP_SCAN_DAYS,
               "line": {"value": line, "source_ref": "EDGAR filing index",
                        "status": "present", "note": None}}
@@ -220,10 +225,66 @@ def test_the_block_reaches_the_rendered_page_not_just_the_helper() -> None:
     doc = _json.loads(committed[0].read_text())
     doc["mechanical"]["ownership_events"] = {
         "filings": [], "window_days": _OWNERSHIP_SCAN_DAYS,
-        "line": {"value": "no 13D on file · passive 5% holders (13G) 21 (SC 13G, last 2026-08-14)"
+        "line": {"value": "no 13D on file · Schedule 13G filings 21 (SC 13G, last 2026-08-14)"
                           " — 3y window to 2026-08-14",
                  "source_ref": "EDGAR filing index", "status": "present", "note": None}}
     md = render_markdown(Dossier.model_validate(doc))
-    assert "Beneficial ownership (Schedule 13D/G)" in md, (
+    assert "Schedule 13D/G filing activity" in md, (
         "the block is absent from the rendered page — the call site is gone even though the "
         "helper still works")
+
+
+class _Attributed:
+    """An EdgarClient stand-in: returns two filings and a header index that attributes ONE of them
+    to another issuer — the real UBER/Grab shape, built from the REAL `Filing` type."""
+
+    def __init__(self, subject: str, foreign_acc: str) -> None:
+        self._subject, self._foreign = subject, foreign_acc
+        self._http = self
+
+    def recent_filings(self, *a: object, **k: object) -> list[Filing]:
+        return [_f2("SCHEDULE 13D/A", dt.date(2026, 7, 8), self._foreign),
+                _f2("SCHEDULE 13D", dt.date(2026, 6, 1), "0000000000-26-000001")]
+
+    def get_text(self, url: str, **k: object) -> str:
+        cik = "1855612" if self._foreign.replace("-", "") in url else self._subject
+        return f"SUBJECT COMPANY:\n  COMPANY DATA:\n    CENTRAL INDEX KEY: {cik.zfill(10)}\n"
+
+
+def _f2(form: str, on: dt.date, acc: str) -> Filing:
+    return Filing(cik="0001543151", form=form, filing_date=on, accession=acc,
+                  items=[], primary_doc=None)
+
+
+def test_a_filing_this_company_made_about_another_issuer_is_not_counted() -> None:
+    """THE #470 REVIEW FINDING, AND THE #458 DEFECT REBUILT. The submissions index is NOT
+    issuer-only: it also returns filings where the company is the REPORTING PERSON on somebody
+    else's stock. UBER's `SCHEDULE 13D/A` 2026-07-08 (`0001552781-26-000379`) has issuer **Grab
+    Holdings**; counted as inbound it said nine parties were accumulating UBER when Uber was
+    disclosing stakes it HOLDS. Direction inverted, from real data.
+
+    Attribution moved UBER from "9 activist filings" to "no 13D on file" on the live corpus.
+
+    MUTATION: drop the `subject == str(int(cik))` test and this reddens."""
+    client = _Attributed("1543151", "0001552781-26-000379")
+    oe = _ownership_events(client, "1543151", dt.date(2026, 8, 14))  # type: ignore[arg-type]
+    assert len(oe.filings) == 1, (
+        f"a filing about another issuer was counted as inbound: {[f.form for f in oe.filings]}")
+    assert oe.filings[0].accession == "0000000000-26-000001"
+    assert "13D filings 1" in oe.line.value, oe.line.value
+
+
+def test_an_unreadable_header_is_excluded_and_reported_never_silently_kept() -> None:
+    """UNATTRIBUTABLE IS NOT "OURS". Defaulting a failed header read to keep would restore the
+    inverted-direction defect silently, which is worse than the shortfall — so the filing leaves
+    the counts AND the line says how many did."""
+
+    class _NoHeader(_Attributed):
+        def get_text(self, url: str, **k: object) -> str:
+            raise HttpError("EDGAR 403")
+
+    oe = _ownership_events(_NoHeader("1543151", "x-26-1"), "1543151",  # type: ignore[arg-type]
+                           dt.date(2026, 8, 14))
+    assert oe.filings == []
+    assert "not attributable" in oe.line.value, oe.line.value
+    assert "2 filing(s)" in oe.line.value, oe.line.value

@@ -2591,17 +2591,23 @@ def _dilution_pipeline_lines(m: MechanicalLayer) -> list[str]:
 
 
 def _ownership_events_lines(m: MechanicalLayer) -> list[str]:
-    """WHO IS ACCUMULATING — one MAIN-BODY line, beside the register it acts on.
+    """SCHEDULE 13D/G FILING ACTIVITY — one MAIN-BODY line, beside the register it acts on.
 
-    It sits here because the two are the same question from opposite sides: the pipeline line
-    above says how many shares COULD be issued, this one says who has been buying the ones
-    already outstanding. "No 13D on file" prints — eight of 14 names say exactly that, and it is
-    a finding about the register, not a blank. Only a None FIELD (a dossier predating the
-    extractor) renders nothing, so committed pages are unchanged until their next assembly."""
+    IT REPORTS FILINGS, NOT OWNERSHIP (review of #470). The label said "beneficial ownership" and
+    the line said "activist/control", both of which read a CONCLUSION off a form type: a 13D/A can
+    disclose an exit as easily as a stake. What the index supports is that a filing of a given
+    schedule happened on a date — the reader opens the accession for the rest.
+
+    It sits beside the pipeline line because the two are the same question from opposite sides:
+    that one says how many shares COULD be issued, this one says the register is being filed on.
+
+    "No 13D on file" prints — it is a finding about the register, not a blank. Only a None FIELD
+    (a dossier predating the extractor) renders nothing, so committed pages are unchanged until
+    their next assembly."""
     oe = m.ownership_events
     if oe is None:
         return []
-    return [_fact("Beneficial ownership (Schedule 13D/G)", oe.line)]
+    return [_fact("Schedule 13D/G filing activity", oe.line)]
 
 
 def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
