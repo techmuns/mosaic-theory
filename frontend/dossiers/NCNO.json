@@ -3856,7 +3856,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Senior Secured Revolving Credit Facility · 0001902733-24-000171 · amended by 0001902733-24-000171]\n  Principal / commitment amount: The initial amount of the Aggregate Revolving Commitments in effect on the Closing…\n  Interest / coupon rate: Term SOFR Loans: Term SOFR plus the Applicable Rate (Term SOFR & Letter of Credit…\n  Maturity date: October 28, 2029\n  Financial-maintenance covenants: Consolidated Total Leverage Ratio not greater than 4.00:1.00 (as of end of any…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Senior Secured Revolving Credit Facility · 0001902733-24-000171 · amended by 0001902733-24-000171]\n  Principal / commitment amount: $250,000,000 initial Aggregate Revolving Commitments (Revolving Facility); Letter of…\n  Interest / coupon rate: Term SOFR Loans: Term SOFR plus Applicable Rate (2.00%–2.50% based on Consolidated…\n  Maturity date: October 28, 2029\n  Financial-maintenance covenants: Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -3936,7 +3936,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors: nCino Portfolio Analytics, LLC (Delaware); SimpleNexus, LLC (Utah); SNX Insurance LLC (Utah); L. Brewer and Associates, LLC (Georgia); Holdings: nCino, Inc. (Delaware)",
+              "value": "Guarantors (signatories): NCino Portfolio Analytics, LLC; SimpleNexus, LLC; SNX Insurance LLC; L. Brewer and Associates, LLC; Holdings: nCino, Inc.",
               "source_ref": "8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm",
               "status": "present",
               "note": "verbatim: “GUARANTORS: NCINO PORTFOLIO ANALYTICS, LLC, a Delaware limited liability company ... SIMPLENEXUS, LLC, a Utah limited liability company ... SNX INSURANCE LLC, a Utah limited liability company ... L. BREWER AND ASSOCIATES, LLC, a Georgia limited liability company”"
@@ -3954,34 +3954,6 @@
               "source_ref": null,
               "status": "unknown",
               "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Facility type",
-            "value": {
-              "value": "revolving facility",
-              "source_ref": "8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm",
-              "status": "present",
-              "note": "verbatim: “WHEREAS, a revolving facility has been extended to the Borrower pursuant to the Credit Agreement”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm",
-              "status": "present",
-              "note": "verbatim: “This Amendment shall be deemed to be a contract made under, and for all purposes shall be construed in accordance with, the laws of the State of New York.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4102,7 +4074,7 @@
             "pik_pct": null
           },
           {
-            "name": "Monthly Basic Rent (Aug–Dec 2026)",
+            "name": "Monthly Basic Rent (Aug-Dec 2026)",
             "value": {
               "value": "$114,798.40",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
@@ -4116,7 +4088,7 @@
             "pik_pct": null
           },
           {
-            "name": "Monthly Basic Rent (Jan–Jul 2027)",
+            "name": "Monthly Basic Rent (Jan-Jul 2027)",
             "value": {
               "value": "$118,107.82",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
@@ -4130,35 +4102,7 @@
             "pik_pct": null
           },
           {
-            "name": "Abated Monthly Basic Rent (Aug–Dec 2026)",
-            "value": {
-              "value": "$30,966.66 per month; $154,833.30 total for 2026",
-              "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
-              "status": "present",
-              "note": "verbatim: “The amount of abated Monthly Basic Rent for each of August through December 2026 shall be $30,966.66. The total amount of abated Monthly Basic Rent for 2026 shall be $154,833.30.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Abated Monthly Basic Rent (Jan–Jul 2027)",
-            "value": {
-              "value": "$30,966.66 per month; $216,766.62 total for 2027",
-              "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
-              "status": "present",
-              "note": "verbatim: “The amount of abated Monthly Basic Rent for each of January through July 2027 shall be $30,966.66. The total amount of abated Monthly Basic Rent for 2027 shall be $216,766.62.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Total Basic Rent (2026)",
+            "name": "Total Basic Rent 2026",
             "value": {
               "value": "$1,594,347.42",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
@@ -4172,7 +4116,7 @@
             "pik_pct": null
           },
           {
-            "name": "Total Basic Rent (2027)",
+            "name": "Total Basic Rent 2027",
             "value": {
               "value": "$1,572,127.14",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
@@ -4186,12 +4130,12 @@
             "pik_pct": null
           },
           {
-            "name": "First Extension Option",
+            "name": "Abated Monthly Basic Rent",
             "value": {
-              "value": "Deadline Feb 28, 2038; term Nov 1, 2039 to Oct 31, 2047",
+              "value": "$30,966.66 per month (Aug 2026 through Jul 2027)",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
               "status": "present",
-              "note": "verbatim: “The deadline to exercise the First Extension Option as provided in Section 6 of the Commencement Statement is February 28, 2038. In the event the First Extension Option is duly and timely exercised, the First Extension Option will commence on November 1, 2039 and expire on October 31, 2047.”"
+              "note": "verbatim: “The amount of abated Monthly Basic Rent for each of August through December 2026 shall be $30,966.66. ... The amount of abated Monthly Basic Rent for each of January through July 2027 shall be $30,966.66.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4200,12 +4144,12 @@
             "pik_pct": null
           },
           {
-            "name": "Second Extension Option",
+            "name": "Extension Options",
             "value": {
-              "value": "Deadline Feb 28, 2046; term Nov 1, 2047 to Oct 31, 2055",
+              "value": "First Extension: Nov 1, 2039–Oct 31, 2047 (deadline Feb 28, 2038); Second Extension: Nov 1, 2047–Oct 31, 2055 (deadline Feb 28, 2046)",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
               "status": "present",
-              "note": "verbatim: “Section 7 of the Commencement Statement is modified to provide that the deadline to exercise the Second Extension Option is February 28, 2046. If the Second Extension Option is duly and timely exercised the Second Extension Period will commence on November 1, 2047 and expire on October 31, 2055.”"
+              "note": "verbatim: “In the event the First Extension Option is duly and timely exercised, the First Extension Option will commence on November 1, 2039 and expire on October 31, 2047. ... If the Second Extension Option is duly and timely exercised the Second Extension Period will commence on November 1, 2047 and expire on October 31, 2055.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4214,40 +4158,12 @@
             "pik_pct": null
           },
           {
-            "name": "Tenant default remedy (abated rent recapture)",
+            "name": "Landlord remedy on Tenant default (recovery of abated rent)",
             "value": {
               "value": "Landlord may recover all abated Basic Rent upon Tenant default",
               "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
               "status": "present",
               "note": "verbatim: “Notwithstanding any other remedy or action elected by Landlord, in the event of a default by Tenant, Landlord shall be entitled to recover from Tenant all abated Basic Rent as set forth in Section 2 and 3 of this Second Amendment.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Right of First Offer (ROFO) deadline",
-            "value": {
-              "value": "On or prior to November 30, 2028",
-              "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
-              "status": "present",
-              "note": "verbatim: “If, on or prior to November 30 , 2028, Landlord shall desire to market the property or otherwise solicit an offer to purchase the property (a, \"ROFO Sale Offering\"), then Landlord shall not make any ROFO Sale Offering without first delivering to Tenant a written notice of the ROFO Sale Offering (the \"ROFO Notice\").”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Purchase Option notice deadline",
-            "value": {
-              "value": "No later than November 30, 2028",
-              "source_ref": "latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm",
-              "status": "present",
-              "note": "verbatim: “The Option Notice must be given no later than November 30, 2028, TIME BEING OF THE ESSENCE, otherwise the Purchase Option shall automatically become null and void.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4272,7 +4188,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The initial amount of the Aggregate Revolving Commitments in effect on the Closing Date is $250,000,000.",
+              "value": "$250,000,000 initial Aggregate Revolving Commitments (Revolving Facility); Letter of Credit Sublimit lesser of $45,000,000 and the Revolving Facility; Swingline Sublimit lesser of $20,000,000 and the Aggregate Revolving Commitments; Incremental Facility up to $50,000,000 plus unlimited amount subject to Consolidated Total Leverage Ratio not greater than 3.50:1.00",
               "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Revolving Commitments ” means the Commitments of all the Lenders.  The initial amount of the Aggregate Revolving Commitments in effect on the Closing Date is $250,000,000.”"
@@ -4286,15 +4202,15 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loans: Term SOFR plus the Applicable Rate (Term SOFR & Letter of Credit Fee: Level 1 <2.00:1.00 = 2.00%; Level 2 >2.00:1.00 but <3.00:1.00 = 2.25%; Level 3 >3.00:1.00 = 2.50%). Base Rate Loans: Base Rate plus Applicable Rate (Level 1 = 1.00%; Level 2 = 1.25%; Level 3 = 1.50%). Commitment Fee: Level 1 = 0.25%; Level 2 = 0.30%; Level 3 = 0.35%. Base Rate = highest of (a) Federal Funds Rate plus 0.50%, (b) Bank of America prime rate, and (c) Term SOFR plus 1.00%. Term SOFR floor: deemed zero if less than zero.",
+              "value": "Term SOFR Loans: Term SOFR plus Applicable Rate (2.00%–2.50% based on Consolidated Total Leverage Ratio); Base Rate Loans: Base Rate plus Applicable Rate (1.00%–1.50%). Term SOFR floor deemed zero if less than zero.",
               "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
               "status": "present",
-              "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate; and (iii) each Swingline Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
+              "note": "verbatim: “each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": 2.0,
             "margin_bps": null,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null
           },
           {
@@ -4314,10 +4230,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Total Leverage Ratio not greater than 4.00:1.00 (as of end of any fiscal quarter, commencing fiscal quarter ending January 31, 2025); Consolidated Interest Coverage Ratio not less than 3.00:1.00 (as of end of any four fiscal quarter period, commencing fiscal quarter ending January 31, 2025).",
+              "value": "Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest Coverage Ratio not less than 3.00:1.00 (each commencing fiscal quarter ending January 31, 2025)",
               "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
               "status": "present",
-              "note": "verbatim: “7.11 Financial Covenants . (a) Consolidated Total Leverage Ratio . Permit the Consolidated Total Leverage Ratio as of the end of any fiscal quarter of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be greater than 4.00:1.00. (b) Consolidated Interest Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any four fiscal quarter period of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be less than 3.00:1.00.”"
+              "note": "verbatim: “(a) Consolidated Total Leverage Ratio . Permit the Consolidated Total Leverage Ratio as of the end of any fiscal quarter of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be greater than 4.00:1.00. (b) Consolidated Interest Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any four fiscal quarter period of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be less than 3.00:1.00.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4328,10 +4244,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured by first priority perfected Liens (subject to Permitted Liens) on all personal property (other than Excluded Property) of each Loan Party, plus 100% of Equity Interests of each Domestic Subsidiary and 65%/100% of voting/non-voting Equity Interests of each directly owned Foreign Subsidiary, pursuant to the Security Agreement and Collateral Documents in favor of Bank of America, N.A. as Administrative Agent. Guarantors: nCino, Inc. (Holdings) and certain subsidiaries; signature-page guarantors include DocFox, Inc. (Delaware) and Integrated Lending Technologies, LLC (Utah). Continuing Guaranty under Article X (joint and several).",
+              "value": "Secured by first priority perfected Liens (subject to Permitted Liens) on Collateral (all personal property other than Excluded Property; 100% of Domestic Subsidiary Equity Interests and 65%/100% of Foreign Subsidiary Equity Interests) per the Security Agreement and Collateral Documents. Guarantors: Holdings (nCino, Inc.) and Subsidiaries (other than Borrower and Excluded Subsidiaries), including DocFox, Inc. and Integrated Lending Technologies, LLC.",
               "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
               "status": "present",
-              "note": "verbatim: ““ Collateral ” means all property that is or is intended under the terms of the Collateral Documents to be subject to Liens in favor of the Administrative Agent for the benefit of the Secured Parties. ... 6.13 Covenant to Give Security . ... (a) Equity Interests . Cause (i) 100% of the issued and outstanding Equity Interests of each Domestic Subsidiary and (ii) 65% of the issued and outstanding Equity Interests entitled to vote ... and 100% of the issued and outstanding Equity Interests not entitled to vote ... of each Foreign Subsidiary directly owned by any Loan Party to be subject at all times to a first priority, perfected Lien (subject to Permitted Liens) in favor of the Administrative Agent ... (b) Other Property . Cause all personal property (other than Excluded Property) of each Loan Party to be subject at all times to first priority, perfected Liens in favor of the Administrative Agent to secure the Obligations pursuant to the Collateral Documents (subject to Permitted Liens). GUARANTORS: NCINO, INC. AND CERTAIN OF ITS SUBSIDIARIES PARTY HERETO, as the Guarantors; ... DOCFOX, INC., a Delaware corporation ... INTEGRATED LENDING TECHNOLOGIES, LLC, a Utah limited liability company. Security Agreement means the security and pledge agreement, dated as of the Closing Date, executed in favor of the Administrative Agent by each of the Loan Parties.”"
+              "note": "verbatim: ““ Collateral ” means all property that is or is intended under the terms of the Collateral Documents to be subject to Liens in favor of the Administrative Agent for the benefit of the Secured Parties. ... “ Guarantors ” means, collectively, (a) Holdings and the Subsidiaries of Holdings (other than the Borrower or any Excluded Subsidiary) as are or may from time to time become parties to this Agreement pursuant to Section 6.12”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4342,10 +4258,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.05(b)): if Total Revolving Outstandings exceed Aggregate Revolving Commitments, Borrower shall within one (1) Business Day after notice prepay Revolving Loans, Swingline Loans and L/C Borrowings and/or Cash Collateralize L/C Obligations equal to such excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Default (Threshold Amount $10,000,000); (f) Insolvency Proceedings; (g) Inability to Pay Debts/Attachment; (h) Judgments; (i) ERISA; (j) Invalidity of Loan Documents; (k) Change of Control.",
+              "value": "Mandatory prepayment required if Total Revolving Outstandings exceed Aggregate Revolving Commitments (Section 2.05(b)). Events of Default in Section 8.01 include Non-Payment, breach of Specific/Other Covenants, misrepresentation, Cross-Default (Threshold Amount $10,000,000), Insolvency Proceedings, Inability to Pay Debts/Attachment, Judgments, ERISA, Invalidity of Loan Documents, and Change of Control.",
               "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
               "status": "present",
-              "note": "verbatim: “2.05 (b) Mandatory . (i) Revolving Outstandings .  If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments at such time, the Borrower shall within one (1) Business Day after receipt of notice from the Administrative Agent prepay Revolving Loans, Swingline Loans and L/C Borrowings and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess ... 8.01 Events of Default . Any of the following shall constitute an event of default (each, an “ Event of Default ”): (a) Non-Payment ... (b) Specific Covenants ... (c) Other Defaults ... (d) Representations and Warranties ... (e) Cross-Default ... (f) Insolvency Proceedings, Etc ... (g) Inability to Pay Debts; Attachment ... (h) Judgments ... (i) ERISA ... (j) Invalidity of Loan Documents ... (k) Change of Control .”"
+              "note": "verbatim: “(i) Revolving Outstandings .  If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments at such time, the Borrower shall within one (1) Business Day after receipt of notice from the Administrative Agent prepay Revolving Loans, Swingline Loans and L/C Borrowings and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4447,6 +4363,224 @@
         "note": null
       },
       "window_days": 1095
+    },
+    "ownership_events": {
+      "filings": [
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-08-13",
+          "accession": "0000902664-26-003445"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-08-13",
+          "accession": "0001167557-26-000165"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-07-31",
+          "accession": "0002100121-26-000925"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-07-29",
+          "accession": "0002012383-26-002833"
+        },
+        {
+          "form": "SCHEDULE 13D/A",
+          "filing_date": "2026-06-30",
+          "accession": "0000902664-26-002963"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-05-14",
+          "accession": "0001398344-26-009169"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-05-14",
+          "accession": "0001562230-26-000071"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-05-06",
+          "accession": "0000902664-26-002292"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-04-29",
+          "accession": "0002100121-26-000579"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-03-27",
+          "accession": "0000102909-26-001841"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-02-13",
+          "accession": "0001398344-26-003098"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-11-12",
+          "accession": "0000814133-25-000107"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2025-08-13",
+          "accession": "0001562230-25-000099"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-04-07",
+          "accession": "0000932471-25-000391"
+        },
+        {
+          "form": "SCHEDULE 13D/A",
+          "filing_date": "2025-02-11",
+          "accession": "0000902664-25-000852"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2025-02-11",
+          "accession": "0000814133-25-000016"
+        },
+        {
+          "form": "SCHEDULE 13D/A",
+          "filing_date": "2024-12-20",
+          "accession": "0001104659-24-130960"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-12-12",
+          "accession": "0000899140-24-001344"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-11-12",
+          "accession": "0000932471-24-001155"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-11-04",
+          "accession": "0000932471-24-000561"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-11-04",
+          "accession": "0000932471-24-000635"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-10-21",
+          "accession": "0001104659-24-110309"
+        },
+        {
+          "form": "SC 13D",
+          "filing_date": "2024-10-21",
+          "accession": "0000902664-24-005919"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-10-18",
+          "accession": "0001104659-24-109986"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-08-16",
+          "accession": "0000899140-24-000914"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-07-30",
+          "accession": "0000899140-24-000777"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-07-24",
+          "accession": "0000899140-24-000760"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-07-15",
+          "accession": "0001104659-24-079980"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-06-26",
+          "accession": "0001104659-24-074908"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-06-14",
+          "accession": "0000899140-24-000663"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-04-11",
+          "accession": "0000899140-24-000485"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2024-04-03",
+          "accession": "0000899140-24-000445"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-02-14",
+          "accession": "0001193125-24-036192"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-02-14",
+          "accession": "0001469026-24-000004"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-02-13",
+          "accession": "0001104659-24-021532"
+        },
+        {
+          "form": "SC 13G",
+          "filing_date": "2024-02-13",
+          "accession": "0001398344-24-002762"
+        },
+        {
+          "form": "SC 13D/A",
+          "filing_date": "2023-09-01",
+          "accession": "0000899140-23-000934"
+        }
+      ],
+      "line": {
+        "value": "Schedule 13D filings 16 (SC 13D/SC 13D/A/SCHEDULE 13D/A, last 2026-06-30) · Schedule 13G filings 21 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-13) — 3y window to 2026-08-14",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-15→2026-08-14 · latest 0000902664-26-003445",
+        "status": "present",
+        "note": null
+      },
+      "window_days": 1095
+    },
+    "sbc": {
+      "expense": {
+        "value": 73.884,
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-02-01→2026-01-31)",
+        "status": "present",
+        "note": null
+      },
+      "pct_revenue": {
+        "value": 12.422051141512592,
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-02-01→2026-01-31) ÷ RevenueFromContractWithCustomerExcludingAssessedTax (same window)",
+        "status": "present",
+        "note": null
+      },
+      "window_start": "2025-02-01",
+      "window_end": "2026-01-31",
+      "line": {
+        "value": "stock-based compensation $73.9M = 12.4% of revenue ($594.8M, FY 2025-02-01→2026-01-31)",
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-02-01→2026-01-31)",
+        "status": "present",
+        "note": null
+      }
     },
     "peer_capital_intensity": {
       "rows": [
@@ -7518,7 +7652,7 @@
         {
           "kind": "leading_indicator",
           "metric": "subscription revenues growth",
-          "period": "Q1 fiscal '27",
+          "period": "first quarter (Q1 fiscal '27)",
           "value": "12%",
           "value_num": null,
           "unit": null,
@@ -7530,7 +7664,7 @@
         {
           "kind": "leading_indicator",
           "metric": "ACV transitioned to new platform pricing model",
-          "period": "end of Q1 fiscal '27",
+          "period": "end of Q1 (fiscal '27)",
           "value": "over 40% of our ACV",
           "value_num": null,
           "unit": null,
@@ -7542,7 +7676,7 @@
         {
           "kind": "leading_indicator",
           "metric": "customers with initial bundle of intelligence units",
-          "period": "end of Q1 fiscal '27",
+          "period": "end of Q1 (fiscal '27)",
           "value": "over 200 of our customers",
           "value_num": null,
           "unit": null,
@@ -7553,9 +7687,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Banking Advisor usage (intelligence unit consumption)",
-          "period": "May from October",
-          "value": "up over 38x",
+          "metric": "Banking Advisor usage / intelligence unit consumption",
+          "period": "May vs. October",
+          "value": "up over 38x so far in the month of May from October",
           "value_num": null,
           "unit": null,
           "verbatim": "Consumption of intelligence units has continued to inflect higher month-over-month with Banking Advisor usage up over 38x so far in the month of May from October, with a few business days still left for additional usage this month.",
@@ -7565,9 +7699,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "nSight user conference attendees",
-          "period": "Q1 fiscal '27",
+          "metric": "attendees at nSight user conference",
+          "period": "nSight (fiscal '27)",
           "value": "over 1,600 attendees",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Several of these customers were on stage with us at nSight, where we welcomed over 1,600 attendees, representing an nSight user conference record of over 300 customers and prospects to Charlotte, North Carolina for what has evolved from a software user conference to a symposium for intelligent banking.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "customers and prospects at nSight",
+          "period": "nSight (fiscal '27)",
+          "value": "over 300 customers and prospects",
           "value_num": null,
           "unit": null,
           "verbatim": "Several of these customers were on stage with us at nSight, where we welcomed over 1,600 attendees, representing an nSight user conference record of over 300 customers and prospects to Charlotte, North Carolina for what has evolved from a software user conference to a symposium for intelligent banking.",
@@ -7589,7 +7735,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "product development team efficiency with AI",
+          "metric": "development team efficiency with AI",
           "period": "over the past year",
           "value": "approximately 34% more efficiently",
           "value_num": null,
@@ -7602,23 +7748,23 @@
         {
           "kind": "leading_indicator",
           "metric": "code written with AI assistance",
-          "period": "Q1 fiscal '27",
-          "value": "approximately 57%",
+          "period": "first quarter of fiscal '26",
+          "value": "about 21% of our code",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the first quarter of fiscal '26, about 21% of our code was written with AI assistance. That percentage increased to approximately 57% as of the first quarter of fiscal '27.",
-          "following_context": "But writing more code is not the goal. The goal is to be faster in the entire product life cycle from idea to production.",
+          "verbatim": "In the first quarter of fiscal '26, about 21% of our code was written with AI assistance.",
+          "following_context": "That percentage increased to approximately 57% as of the first quarter of fiscal '27. But writing more code is not the goal. The goal is to be faster in the entire product life cycle from idea to production.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "code written with AI assistance",
-          "period": "Q1 fiscal '26",
-          "value": "about 21%",
+          "period": "first quarter of fiscal '27",
+          "value": "approximately 57%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the first quarter of fiscal '26, about 21% of our code was written with AI assistance. That percentage increased to approximately 57% as of the first quarter of fiscal '27.",
+          "verbatim": "That percentage increased to approximately 57% as of the first quarter of fiscal '27.",
           "following_context": "But writing more code is not the goal. The goal is to be faster in the entire product life cycle from idea to production.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
           "tier": "llm-fenced"
@@ -7661,44 +7807,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "customers granting data processing rights / assets represented",
-          "period": "fiscal '26",
-          "value": "almost 500 financial institution customers representing over $11 trillion in assets",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Today, almost 500 financial institution customers representing over $11 trillion in assets have granted nCino the right to process their data into a proprietary and anonymized data set, one that powers the development of our products, fuels best-in-class industry insights and sharpens the accuracy of our intelligent services.",
-          "following_context": "This proprietary data set that nCino has carefully aggregated and curated for the better part of a decade gives nCino a unique unmatched global perspective on how to more profitably and efficiently operate a financial institution, how work moves seamlessly through the bank, where bottlenecks form, where exceptions happen and what great looks like at scale.",
-          "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "banking adviser usage (intelligence unit consumption)",
-          "period": "March compared to October",
-          "value": "up over 25x",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Customers are not just buying AI access, they're using it, and we can see that directly in the increasing consumption of intelligence units on our platform, with banking adviser usage up over 25x in March compared to usage in October.",
-          "following_context": "For years, we have said that nCino is not only in the software business, we are in the change management business and moving every customer from contract signing to implementation to pilot to using nCino's AI and production as an integral part of the day job is the sole focus of our forward deployed engineering team.",
-          "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "U.S. enterprise sales quarter performance",
-          "period": "Q4 fiscal '26",
-          "value": "best sales quarter in over 4 years",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "First, in the U.S. enterprise market, we delivered our best sales quarter in over 4 years, which included a mortgage expansion with a top 40 bank and cross-selling commercial to our largest consumer lending customer.",
-          "following_context": "Second, in EMEA, we leaned in with new leadership, a new go-to-market strategy and a clear execution plan. We delivered our largest deal of the year with a marquee net new customer win in Austria, and I'm thrilled with the momentum the EMEA team is seeing.",
-          "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "Japan total ACV growth",
-          "period": "fiscal '26",
+          "period": "fiscal '26 vs. fiscal '25",
           "value": "tripling their total ACV in fiscal '26 from fiscal '25",
           "value_num": null,
           "unit": null,
@@ -7708,14 +7818,26 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "countries served (system of record footprint)",
-          "period": null,
-          "value": "now over 25 countries",
+          "kind": "leading_indicator",
+          "metric": "Banking Advisor usage / intelligence unit consumption",
+          "period": "March vs. October",
+          "value": "up over 25x in March compared to usage in October",
           "value_num": null,
           "unit": null,
-          "verbatim": "This is why the nCino platform serves as a system of record for the most critical operations of banks, credit unions and IMBs of all sizes in now over 25 countries.",
-          "following_context": null,
+          "verbatim": "Customers are not just buying AI access, they're using it, and we can see that directly in the increasing consumption of intelligence units on our platform, with banking adviser usage up over 25x in March compared to usage in October.",
+          "following_context": "For years, we have said that nCino is not only in the software business, we are in the change management business and moving every customer from contract signing to implementation to pilot to using nCino's AI and production as an integral part of the day job is the sole focus of our forward deployed engineering team.",
+          "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "customers granting data processing rights / assets represented",
+          "period": "fiscal '26 (as of the call)",
+          "value": "almost 500 financial institution customers representing over $11 trillion in assets",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Today, almost 500 financial institution customers representing over $11 trillion in assets have granted nCino the right to process their data into a proprietary and anonymized data set, one that powers the development of our products, fuels best-in-class industry insights and sharpens the accuracy of our intelligent services.",
+          "following_context": "This proprietary data set that nCino has carefully aggregated and curated for the better part of a decade gives nCino a unique unmatched global perspective on how to more profitably and efficiently operate a financial institution, how work moves seamlessly through the bank, where bottlenecks form, where exceptions happen and what great looks like at scale.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -7727,77 +7849,77 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a genuine positive-EBITDA inflection with below-peer forward multiples, offset by sub-peer decelerating revenue and negative near-term revision breadth.",
+    "evidence_balance": "strongly-bullish — positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
     "bull_points": [
       {
-        "claim": "The trailing EV/EBITDA multiple of 27.8x sits at the 10th percentile of the name's own 2.3-year history (median 82.9x, high 221.1x), consistent with a de-rating into overshoot territory rather than a bare optical low.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
-        "cited": true
-      },
-      {
-        "claim": "On a forward basis the picture inverts: NTM TEV/EBITDA of 12.32x sits BELOW the peer median of 15.27x and NTM P/E of 13.75x is below the peer median of 19.86x — so the LTM 'premium' evaporates once the earnings inflection is priced.",
+        "claim": "The trailing EV/EBITDA is 27.8x with a much lower forward NTM basis of 12.32x that sits BELOW the peer NTM median of 15.27x — the trailing figure alone does not distinguish a depressed level from an impaired one, but the forward set reframes the discount.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "The forward discount decomposes favourably on fundamentals: the name earns a POSITIVE 12% EBITDA margin versus a peer-median NEGATIVE 4%, and carries lower leverage (Debt/EBITDA 4.1x vs peer-median 8.0x) and lower beta (0.7 vs 1.0) — so a below-peer forward multiple is not obviously EARNED by worse quality, posing a possible residual overshoot for the human to weigh.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Consensus FY27E EBITDA of $175.1M nearly triples the LTM $72M and FY28E reaches $206.6M, so the 154x trailing P/E rests on a depressed trailing base rather than a permanent earnings ceiling.",
+        "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has inflected hard from negative to positive — -$48M (FY23) → $11M → $27M → $59M → $72M LTM — with gross margin rising to 62%, a genuine operating turn rather than a cosmetic margin move.",
+        "claim": "EBITDA margin has climbed from negative territory to 12% LTM while absolute EBITDA rose from -$48M (FY23) to +$72M LTM — an inflection in profitability, not decline.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The turn is mechanism-backed: Q1 FY27 subscription-revenue growth accelerated to 12% with non-GAAP operating margin reaching 28%, management's stated 'Rule of 40' milestone.",
-        "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Consumption of the new AI monetisation layer is inflecting — Banking Advisor usage up over 38x in May from October — evidencing early traction on the new platform pricing model that could drive subscription upside beyond seat growth.",
-        "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Retention improved: ACV net retention rate rose to 112% (109% organic/constant-currency) from 106% in fiscal '25, alongside fiscal '26 ACV growth of 17% year-over-year — a leading indicator of forward subscription growth.",
-        "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding: LTM levered FCF of $138.5M against modest leverage (net-debt/EBITDA 3.1x) and interest coverage of 4.1x, so the de-rating is not a solvency story.",
+        "claim": "The company is FCF-positive ($138.5M LTM) and self-funding, with net-debt/EBITDA 3.1x and interest coverage 4.1x — no survival stress.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Apr-30-2026]",
         "cited": true
       },
       {
-        "claim": "Consensus is directionally supportive: mean/median target $23.36/$23.00 against a $20.23 close, an aggregate Buy rating, and current-FY EBITDA revised net +13% and GAAP net income net +1303% over 12m.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "ACV grew 17% YoY in fiscal '26 and ACV net retention improved to 112% (109% organic/constant-currency) from 106% — the forward revenue engine is accelerating, not eroding.",
+        "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Management is buying back stock — shares down 5.2% over ~1.7y and $110M repurchased in the quarter to Apr-30-2026 — rather than issuing, signalling internal conviction on value.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-08-22..2026-05-22",
+        "claim": "Subscription revenue growth accelerated to 12% in Q1 FY27 with non-GAAP operating margin at 28%, achieving the Rule of 40 — the mechanism behind rising margins is operating leverage on accelerating subscription mix.",
+        "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Over 40% of ACV has transitioned to the new AI platform-pricing model and Banking Advisor usage was up over 38x May-vs-October — an early, dated adoption signal for the intelligence-unit monetisation thesis.",
+        "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Guidance delivery is clean — revenue actual ≥ guided floor 29/29 and EBIT 29/29, most recent FQ1 2027 MET — supporting the credibility of the forward ramp.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
+        "cited": true
+      },
+      {
+        "claim": "Consensus target price mean $23.36 / median $23.00 sits above the $20.23 close, and the rating skews Buy/Outperform with FY27 EPS revised net +34% over 12 months — analyst posture is constructive.",
+        "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      },
+      {
+        "claim": "On the peer NTM EBITDA basis, nCino's 12.32x is a discount to the peer median 15.27x — pose whether that gap is RESIDUAL given the name carries a positive 12% EBITDA margin vs a NEGATIVE -4% peer-median margin and lower leverage (4.1x vs 8.0x).",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "A genuine counter-point: on the trailing LTM basis the name looks expensive, not cheap — P/E 154.3x vs peer median 39.1x and TEV/EBITDA 27.8x on a still-thin $72M LTM EBITDA — but this is largely the OPTICAL MISREAD, since the paired absolute-EBITDA reconciler shows earnings inflecting sharply and the forward NTM multiples sit below peers; it is OUTWEIGHED by the forward decomposition.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-        "cited": true
-      },
-      {
-        "claim": "A genuine counter-point: revenue growth is decelerating and trails peers — name 10% (Q1 Apr-30-2026 YoY) versus peer-median 16% — so part of the discount could be EARNED by a slower top line; this is a real signal the human must weigh against the margin/leverage advantage.",
+        "claim": "A genuine counter-point OUTWEIGHED by the accelerating subscription/ACV mechanism: revenue growth is only 10% vs a peer-median 16%, so the discount could be partly EARNED (a value trap) if the AI ramp does not lift the top line.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "A genuine counter-point: the near-term revision breadth skews negative — next-2-FQ Revenue 3m 2↑/8↓, EBITDA 3m 0↑/4↓, Net Income (Excl. Excep) 3m 0↑/7↓ — signalling brokers trimming the very quarters that must validate the trajectory, OUTWEIGHED by the strongly positive 12m current-FY EBITDA/EPS revision path.",
+        "claim": "A genuine counter-point on the trailing multiple: EV/EBITDA 27.8x sits at the 10th percentile of its own 2.3y range (25.8–221.1x, median 82.9x) — but this is trailing-only with no forward basis and cannot by itself distinguish a temporary de-rate from a permanent one, so it OUTWEIGHED by the forward EBITDA triple to $175M.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "cited": true
+      },
+      {
+        "claim": "A genuine risk that survives: next-2-FQ revision breadth is broadly downward (Revenue FQ2 3m 2↑/8↑; EBITDA FQ2 3m 0↑/4↓), so near-term estimates are being trimmed even as the annual path rises — OUTWEIGHED by the clean 29/29 guidance-delivery record.",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "A genuine counter-point: insiders have sold only — 23 open-market sells (5 insiders, $4.47M) and zero buys in the last 182 days, with no purchase in the 3y scanned — a disconfirming posture against the buyback signal.",
+        "claim": "A genuine flag: insiders sold in 23 open-market transactions ($4.47M, 5 insiders) with zero purchases in the 3y scanned, and short interest is 17.0% of shares out and rising — a bearish sentiment signal not explained by fundamentals here.",
         "source_ref": "EDGAR Form 4 (latest 0001902733-26-000094; 233 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
@@ -7806,92 +7928,94 @@
       {
         "name": "Q2 Holdings",
         "outcome": "recovered",
-        "distinguishing_fact": "Same-vertical digital-banking SaaS peer that pushed through the margin-turn from negative to positive EBITDA and re-rated as free cash flow scaled — the closest live analogue to the operating inflection under debate.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Workiva Inc.",
-        "outcome": "recovered",
-        "distinguishing_fact": "Cloud reporting-SaaS peer that carried an optically extreme trailing multiple on thin early profitability yet held its subscription franchise while margins matured — illustrates the trailing-vs-forward multiple trap.",
+        "distinguishing_fact": "Bank-software SaaS peer that de-rated during a growth slowdown then re-rated as margins inflected positive from a low base — the same profitability-inflection pattern nCino is showing.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "SPS Commerce",
         "outcome": "recovered",
-        "distinguishing_fact": "Durable niche B2B-SaaS platform that compounded on high retention and disciplined margins once past its investment phase — the pattern the bull case projects for a system-of-record vendor.",
+        "distinguishing_fact": "Cloud SaaS peer that sustained a durable positive-EBITDA-margin model and a low EV/EBITDA relative to the group, an analogue for a self-funding software business trading at a modest forward multiple.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Workiva Inc.",
+        "outcome": "recovered",
+        "distinguishing_fact": "Cloud-reporting SaaS peer that carried a very high trailing multiple on thin margins yet held its rating on a forward growth narrative — an analogue for optical-multiple distortion off a depressed earnings base.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Blackbaud",
         "outcome": "went terminal",
-        "distinguishing_fact": "Vertical-SaaS incumbent whose entrenched customer base could not lift durable growth, leaving it a low-growth value name despite positive cash flow — the value-trap risk if nCino's growth stays sub-peer.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Bill.com",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Fintech-adjacent SaaS whose growth decelerated faster than the market expected and never re-rated, showing that a positive-margin turn does not by itself rescue a name if top-line momentum fades.",
+        "distinguishing_fact": "Vertical-market SaaS whose single-industry dependence and slow top-line growth kept it a persistent value-trap discount despite positive cash flow — the risk if nCino's 10% growth does not accelerate.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the below-peer FORWARD multiple a residual overshoot that the earnings inflection will close, or is it earned by structurally slower revenue growth than peers — i.e. will the AI/consumption-driven subscription re-acceleration outrun the deceleration to 10% top-line growth?",
+      "question": "Will the AI intelligence-unit / platform-pricing transition convert into accelerating subscription revenue growth fast enough to close the growth gap to peers and validate the tripling of forward EBITDA — or does 10% top-line growth mean the discount is an earned value trap?",
       "evidence_for": [
         {
-          "claim": "Subscription growth accelerated to 12% in Q1 FY27 with the 'Rule of 40' reached, and consumption of AI intelligence units (Banking Advisor up 38x May-vs-October) points to a monetisation vector beyond seat growth.",
+          "claim": "Banking Advisor usage was up over 38x in May vs October and over 40% of ACV has moved to the new pricing model, a dated leading indicator of consumption-driven expansion.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "ACV net retention improved to 112% (109% organic) from 106% and fiscal '26 ACV grew 17% YoY — leading indicators that forward subscription revenue can re-accelerate.",
+          "claim": "ACV net retention improved to 112% (109% organic/constant-currency) from 106% and ACV grew 17% YoY, the forward booking that leads reported revenue.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The name's positive 12% EBITDA margin and lower leverage/beta versus peers argue its below-peer forward multiple is not explained by worse quality.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Consensus already embeds the payoff — FY27E EBITDA $175.1M rising to FY28E $206.6M, roughly tripling the LTM $72M.",
+          "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Reported revenue growth of 10% (Q1 Apr-30-2026 YoY) trails the peer-median 16%, and consensus FY27/FY28 revenue implies only ~8%/9% — a genuinely slower top line that could justify the discount.",
+          "claim": "Reported revenue growth is only 10% vs a peer-median 16%, so the AI narrative has not yet shown up as top-line acceleration.",
           "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         },
         {
-          "claim": "Near-term brokers are cutting the validating quarters — Revenue next-2-FQ 3m 2↑/8↓ and EBITDA 3m 0↑/4↓ — casting doubt on an imminent re-acceleration.",
+          "claim": "Near-term revenue and EBITDA revision breadth is skewed downward (Revenue FQ2 3m 2↑/8↓; EBITDA FQ2 3m 0↑/4↓), suggesting analysts are trimming the immediate quarters.",
           "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "cited": true
+        },
+        {
+          "claim": "Management itself frames initial intelligence-unit bundles as sized to last ~a year with a deliberate no-near-term-revenue approach, so consumption monetisation is a medium/long-term lever, not an immediate one.",
+          "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA or adjusted EPS is disclosed in the 99.1 revised guidance, and the actual-vs-estimate EBITDA basis diverges (estimate rows add back ~0.33x the D&A of actuals) — so trailing and forward multiples are not struck on the same basis and cannot be cleanly bridged.",
-      "The trailing multiple history spans only 2.3 years / 10 closes and the P/E history has just 95 points (below the 450 floor), so the 'near-floor' percentile is judged against a very short own-history window — overshoot-vs-terminal is unresolved on this metric alone.",
-      "Peer set is moderately dispersed (caps $674M–$4.3B, 6x) and heterogeneous by model, so every peer multiple is a confidence-gated input, not a clean benchmark; the LTM peer median (98.1x TEV/EBITDA) is itself distorted by near-breakeven peers.",
-      "How durable the new platform-pricing / intelligence-unit consumption ramp is beyond the initial ~1-year bundles — management states an average customer's initial bundle may last about a year, so whether re-orders materialise is unverified.",
-      "Whether the reported subscription re-acceleration (12%) persists against the sub-peer, decelerating total revenue growth and the negative near-term revision breadth.",
-      "Covenant headroom detail: the Consolidated Total Leverage Ratio cap is 4.00:1.00 and the debt schedule is 136d old; no company-adjusted LTM EBITDA is available to test headroom on the covenant basis.",
-      "No segment EBITDA breakout (single Software & Programming segment) — consolidated EBITDA is the whole business, so there is no way to isolate the profitability of the growth vs mature lines."
+      "No forward/adjusted EV/EBITDA or adjusted EPS in the 99.1 revised guidance — cannot fully reconcile the trailing multiple to a clean forward basis; and the EBITDA-basis note flags the estimate row adds back only ~0.33x the D&A of the actual row, so trailing-vs-forward multiples are part-definitional and NOT directly comparable.",
+      "5-year P/E percentile is unavailable (only 95 points, below the 450 floor) and the EV/EBITDA history spans just 2.3y/10 closes — the 'near-floor' read rests on a very short window.",
+      "No segment EBITDA breakout (single-segment reporting) — the whole-business EBITDA cannot be decomposed to test where profitability is coming from.",
+      "Peer set is moderately dispersed (caps $674M–$4.3B, 6x) and heterogeneous in model (restaurant/retail, work management, people-location) — treat every peer multiple as confidence-gated, not a clean benchmark.",
+      "The as-of/export date is a FLOOR (data ≥2026-07-22, export unverified) and guidance rows are 79–254d stale — the current outlook may be older than it appears.",
+      "Whether the ~40%-transitioned ACV and 38x consumption growth translate into paid overage/expansion revenue is not yet observable — management sizes initial bundles to last ~a year deliberately.",
+      "No credit-health panel rendered (scale direction ambiguous) — covenant headroom against the 4.00:1.00 total-leverage covenant is not directly disclosed here beyond the reported 4.1x total-debt/EBITDA."
     ]
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries a committed dossier. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-14-01: FAIL (g1_drawdown PASS · g2_idiosyncratic FAIL).",
-    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+11.7s fetch)",
+    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+0.7s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS 0.05 vs recent median -0.35; verify against normalized/forward EPS (CIQ)",
     "EDGAR P/E (416.2x) conflicts ~3x with CIQ P/LTM EPS (154.3x) — EDGAR trailing EPS is one-time-inflated; the synthesis must not anchor on 416.2x as 'cheap'.",
     "Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.1x as the covenant-basis leverage.",
-    "Possible false balance — the written assessment reads 'mixed' but the bull/bear split is lopsided (10 bull vs 4 bear) — confirm genuinely mixed, not one-sided dressed as balanced",
-    "Bare peer-comparison (a bear point): 'A genuine counter-point: on the trailing LTM basis the name looks expensive, not cheap — P/E 154.3x vs peer median 39.1x and TEV/EBITDA 27.8x on a still-thin $72M LTM EBITDA — but this is largely the OPTICAL MISREAD, since the paired absolute-EBITDA reconciler shows earnings inflecting sharply and the forward NTM multiples sit below peers; it is OUTWEIGHED by the forward decomposition.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap"
+    "Distorted-P/E anchor (a bull point): 'Consensus FY27E EBITDA of $175.1M nearly triples the LTM $72M and FY28E reaches $206.6M, so the 154x trailing P/E rests on a depressed trailing base rather than a permanent earnings ceiling.' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+    "TWIN 'Blackbaud' has numbers ['10'] — must be non-numeric",
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "TWIN self-referential 'nCino, Inc. (own prior arc)' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "TWIN 1 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-18T07:33:57.985524Z",
+  "assembled_at": "2026-08-18T12:18:50.486603Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -7917,7 +8041,7 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T07:36:47.866969Z",
+    "computed_at": "2026-08-18T12:20:56.367027Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
