@@ -62,7 +62,7 @@ def test_ubers_drift_is_stated_on_the_page_not_left_to_the_reader() -> None:
 
     line = _snapshot("UBER")
     assert "implies $68.18/sh" in line, "the cap's implied price is not on the page"
-    assert re.search(r"\(-?\d+\.\d%\)", line), (
+    assert re.search(r"\([+-]?\d+\.\d%\)", line), (
         f"no drift magnitude on the page — a vintage alone does not say how far apart they are: "
         f"{line!r}")
     assert "$139.3B" in line, "the cap itself no longer renders beside its implied price"

@@ -66,7 +66,7 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 | net debt | 1,122.7 $M | net debt, latest 10-Q | CIQ Financials/EDGAR — carried from the completed stage-2 underwrite |
 | d and a | 18.6 $M | FROZEN — no clean FY27 figure exists, so the latest reported annual charge is carried forward unchanged rather than forecast | carried from the completed stage-2 underwrite |
 | diluted shares | 116.478194 M shares | Diluted shares outstanding 116,478,194 = basic shares outstanding 116,278,194 (cover of the 10-Q filed 2026-08-04, as of 2026-07-28) + a dilutive increment of 200,000 (diluted weighted average 116,600,000 less basic weighted average 116,400,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is what makes the construction sound. The underwrite's 116,600,000 is NOT used: it is the latest-quarter diluted weighted average, a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date. | EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap |
-| ltm revenue | 1,392.235 $M | LTM revenue | committed financial_summary.annual (LTM) — via committed dossier anchor block (#158/#160/#162-verified) |
+| ltm revenue | 2,354.6 $M | LTM revenue | BellRing's own dossier anchor block — financial_summary.annual LTM column |
 
 _Chain (EV/EBITDA):_ EBIT = revenue × op margin → EBITDA = EBIT + D&A → EV = EBITDA × exit multiple (EV/EBITDA) → equity = EV − net debt → value/share = equity ÷ diluted shares
 
@@ -494,9 +494,9 @@ All three legs are read off the street's forecast distribution AT THIS RECORD'S 
 
 | reference | value |
 | --- | ---: |
-| FY2025 reported revenue | $1,450.9M [59] |
-| LTM revenue | $1,416.208M [60] |
-| consensus FY26E revenue `base` | $1,334M [61] |
+| _FY2025 reported revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,450.9M_ [59] |
+| _LTM revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,416.208M_ [60] |
+| _consensus FY26E revenue `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,334M_ [61] |
 
 ### Margin · ratified 2026-08-05
 
@@ -504,11 +504,11 @@ Base 15.5% matches the median operating margin of the last eight fiscal years, 1
 
 | reference | value |
 | --- | ---: |
-| screening median (naive, 8 FY) | 15.45% [62] |
-| 7yr clean median (FY2025 adjusted) `base` | 15.51% [63] |
-| FY2020 worst clean year `bear` | 9.58% [64] |
-| FY2022 best clean year `bull` | 17.35% [65] |
-| FY2025 adjusted ex $60.9M impairment | 15.01% [66] |
+| _screening median (naive, 8 FY) — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.45%_ [62] |
+| _7yr clean median (FY2025 adjusted) `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.51%_ [63] |
+| _FY2020 worst clean year `bear` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _9.58%_ [64] |
+| _FY2022 best clean year `bull` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _17.35%_ [65] |
+| _FY2025 adjusted ex $60.9M impairment — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.01%_ [66] |
 
 ### Multiple · ratified 2026-08-05
 

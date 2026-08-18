@@ -107,11 +107,33 @@ def test_the_search_is_bounded_by_the_export_stamp() -> None:
             _Bar(dt.date(2026, 8, 20), 78.16)]  # AFTER the stamp — impossible as a source
     # bounded: the 2026-08-20 bar cannot be the source, and the 2024 collision loses to recency
     assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
-    # UNBOUNDED IS THE DANGER the bound exists for: with no stamp, the post-stamp bar wins on
-    # recency and the correction moves the date FORWARD — the one thing it must never do.
-    assert date_of_close(78.16, bars) == dt.date(2026, 8, 20), (
-        "unbounded, recency picks the LATER bar — which is why `not_after` is not optional at the "
-        "call site, and why the assembler always passes the export stamp")
+    # UNBOUNDED + AMBIGUOUS REFUSES — and this assertion USED TO PIN THE DEFECT AS CORRECT.
+    # Written when recency was introduced, it asserted the unbounded call returns 2026-08-20, i.e.
+    # a bar AFTER the panel, moving the stamp FORWARD — the one outcome this correction exists to
+    # prevent. Caught in review of #469. Recency is only principled relative to the stamp: with no
+    # bound there is nothing to be "latest before", so several matches is a guess and it declines.
+    assert date_of_close(78.16, bars) is None, (
+        "an unbounded call with several matches picked one — recency without a bound can select a "
+        "bar LATER than the panel and move the stamp forward")
+
+
+def test_the_assembler_never_calls_the_correction_without_a_bound() -> None:
+    """THE CALL SITE IS THE OTHER HALF (review of #469). `comps_export_stamp` returns None whenever
+    the sheet has no decodable `As-Of Date:` header — the state the operator AS_OF sidecar exists
+    for — while `comps_printed_close` still reads a price off that same sheet. The first cut passed
+    that None straight through as `not_after`, so exactly the unbounded path above became
+    reachable in production. No stamp now means no correction at all."""
+    import inspect
+
+    import vinci.dossier.assemble as assemble
+
+    src = "\n".join(ln for ln in inspect.getsource(assemble).splitlines()
+                     if not ln.lstrip().startswith("#"))
+    i = src.index("resolved_comps_as_of")
+    window = src[max(0, i - 400):i + 400]
+    assert "_stamp is not None" in window, (
+        "the assembler resolves the comps as-of without first proving it has an export stamp to "
+        "bound the search with — an unbounded scan can move the stamp forward")
 
 
 def test_the_printed_close_column_is_found_by_label_not_position() -> None:
