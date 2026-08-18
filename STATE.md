@@ -4467,14 +4467,29 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   `(date, operator_attested)`; the header path is `False` (CIQ's export stamp — correct it), the
   AS_OF-sidecar path is `True` (**an operator's explicit attestation — overriding it is a worse
   defect than the one being fixed, and no current test would catch it**).
-- **THE DESIGN FORK, which is why this is not a one-liner.** The correction resolves the prior
-  TRADING close from the store — deliberately not `date − 1`, because 2 of the 11 measured stamps
-  fall on a Monday. So it needs price bars, and `ciq_sheets` is a pure workbook parser with **8
-  `_comps_asof_suffix` call sites** and no store access. Choose ONE and record why:
-  (a) thread `bars` into `comps_as_of_date` + the 8 sites — consistent, but couples the parser to
-  price data; (b) move the correction to a layer holding both bundle and bars, and have
-  `ciq_sheets` render what it is given rather than deriving; (c) have the CIQ panel supply its own
-  data date if a column carries it — cheapest if it exists, and NOT yet checked.
+- **(c) IS DEAD — MEASURED 2026-08-17. THE PANEL DOES NOT CARRY ITS OWN DATA DATE.** Scanned NFLX's
+  `comps → Financial Data` sheet: the only date-bearing cells are `As-Of Date:` (r9 — the EXPORT
+  stamp the code already reads) and `LTM Filing Date, Income Statement` (an income-statement filing
+  date, unrelated to pricing). `Day Close Price Latest` is a PRICE, not a date. So the panel cannot
+  self-report when its pricing data is from, and the cheapest option is unavailable.
+- **BUT THE PRINTED PRICE IDENTIFIES THE DATE EXACTLY, and that is a BETTER correction than the
+  offset — build this rather than what ships today.** NFLX's subject row (r26) prints
+  `Day Close Price Latest = 78.16`; searching the store, **exactly one** date carries that close —
+  **2026-08-14** — against an export stamp of `46251.0` → **2026-08-17**. Confirms the 3-day gap by
+  a completely independent route from the share-count arithmetic.
+  **WHY IT BEATS THE PRIOR-BAR OFFSET.** Today's `corrected_ciq_as_of` ASSUMES a convention
+  ("the data is the prior trading close"), measured 11/11 and true today — **but it cannot detect
+  its own failure**: if CIQ ever moved to same-day pricing, "prior trading bar" would silently shift
+  every stamp back a day and every test would stay green. Price-matching IDENTIFIES the date from
+  the data instead of assuming an offset, and gives a natural refusal path the offset version lacks
+  — **exactly one bar matches → use it; zero or several → refuse and leave the stamp uncorrected**,
+  which is this repo's fail-loud shape rather than a silent guess.
+- **THE FORK THAT REMAINS (price-matching does NOT escape it).** Either correction needs price bars,
+  and `ciq_sheets` is a pure workbook parser with **8 `_comps_asof_suffix` call sites** and no store
+  access. Choose ONE and record why: **(a)** thread `bars` into `comps_as_of_date` + the 8 sites —
+  consistent, but couples the parser to price data; **(b)** move the correction to a layer holding
+  both bundle and bars, and have `ciq_sheets` RENDER what it is given rather than derive it.
+  Price-matching strengthens whichever is chosen; it does not decide between them.
 - **VERIFY BY RE-ASSEMBLING NFLX**, whose artifact currently carries the wrong stamp: on success
   `market_cap_as_of` reads `2026-08-14` and the 9 fields the earlier sweep flagged drop to 0.
 - **AND RE-MEASURE MVST** under the same lens — its recorded "1-day lookahead" is very likely this
