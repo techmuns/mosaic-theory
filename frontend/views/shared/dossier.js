@@ -1753,17 +1753,25 @@ function dilutionPipeline(m) {
   return dp ? fact("Registered offering pipeline (equity/debt not distinguished)", dp.line) : "";
 }
 
+// THE SAME PARITY OBLIGATION as `dilutionPipeline` above, honoured at the same time this block
+// was written rather than after a review found it missing. See `render._ownership_events_lines`.
+function ownershipEvents(m) {
+  const oe = m.ownership_events;
+  return oe ? fact("Beneficial ownership (Schedule 13D/G)", oe.line) : "";
+}
+
 function capitalAllocation(m) {
   // GATED PER BLOCK — see render._capital_allocation. An early return on `capital_allocation`
   // left seven names carrying `peer_capital_intensity` with nothing on the page.
   const ca = m.capital_allocation;
   const peers = peerCapitalIntensity(m);
   const dilution = dilutionPipeline(m);
+  const ownership = ownershipEvents(m);
   if (!ca) {
     // GATED PER BLOCK on ALL THREE, not just peers — a name whose only content is the pipeline
     // must still get the section, which is the same defect the comment below records.
-    return peers || dilution
-      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${dilution}${peers}`
+    return peers || dilution || ownership
+      ? `<div class="subtitle muted ds-sub">Capital allocation — created or destroyed</div>${dilution}${ownership}${peers}`
       : "";
   }
   const usd = (v) => escapeHtml(`$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
@@ -1806,6 +1814,7 @@ function capitalAllocation(m) {
   }
   out.push(fact("Acquisition consideration", ca.acquisition_consideration, usd));
   out.push(dilution);
+  out.push(ownership);
   const gap = String((ca.brand_split || {}).note || "").replace(/^NOT AVAILABLE FROM XBRL — /, "");
   out.push(`<div class="fact"><div class="fact-label">Per-brand split</div><div class="fact-val muted"><span class="pill unresolved">NOT AVAILABLE FROM XBRL</span> ${escapeHtml(gap)}</div></div>`);
   // HOUSE SUBTITLE SHAPE, not an invented one. `.ds-sub` is a MARGIN UTILITY applied to a

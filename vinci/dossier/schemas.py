@@ -1153,6 +1153,53 @@ class DilutionPipeline(BaseModel):
     model_config = {"frozen": True}
 
 
+class OwnershipFiling(BaseModel):
+    """One Schedule 13D/G from the EDGAR filing index — form, date, accession only.
+
+    THE FILER IS NOT HERE, AND THAT IS DELIBERATE. The submissions index carries the SUBJECT
+    company's filings; it does not name the ACQUIRER in the recent arrays. Naming who accumulated
+    would need each document fetched and parsed, so this block cites the accession and lets the
+    human open it rather than asserting an identity the index never supplied."""
+
+    form: str          # "SC 13D" / "SCHEDULE 13D/A" / "SC 13G" / "SCHEDULE 13G" …
+    filing_date: str   # ISO
+    accession: str
+
+    model_config = {"frozen": True}
+
+
+class OwnershipEvents(BaseModel):
+    """WHO IS ACCUMULATING — Schedule 13D/G beneficial-ownership filings over a trailing window
+    bounded at the record's as-of.
+
+    THE TWO SCHEDULES ARE DIFFERENT FACTS AND ARE NEVER SUMMED. A **13D** is filed by a holder
+    crossing 5% WITH intent to influence — the activist/control signal. A **13G** is the passive
+    short-form used by index funds and institutions crossing the same threshold; on this fleet it
+    is the base rate, present on all 14 names. Merging them would bury 51 activist filings under
+    430 passive ones and report Vanguard's index re-weight as if it were an activist stake.
+
+    **BOTH EDGAR VOCABULARIES ARE READ, and this is the defect the block exists to avoid.** EDGAR
+    renamed these form types: filings appear as ``SC 13D``/``SC 13G`` through 2024 and as
+    ``SCHEDULE 13D``/``SCHEDULE 13G`` after. Measured on this fleet's 3y window, an ``SC 13``
+    filter sees 153 of 306 filings — **exactly half** — and every one it misses is the RECENT
+    half. Two names flip from clean to not: AORT 0 → 1 activist filing, FUBO 0 → 2. A form list
+    that reports "no activist interest" because the form was renamed is the false-CLEAN direction,
+    the same failure `dilution_pipeline`'s taxonomy pin exists to prevent.
+
+    "NONE IN WINDOW" IS A FINDING, NOT AN UNKNOWN — eight of 14 names carry no 13D, which is a
+    fact about the register. UNKNOWN is reserved for no CIK / failed fetch, and the two must never
+    render alike.
+
+    COUNTS, FORMS AND DATES ONLY — no reading, no filer identity, no stake size. Whether an
+    activist on the register is a risk or a catalyst is the human's call."""
+
+    filings: list[OwnershipFiling]  # newest first, window-bounded, machine-complete
+    line: Sourced[str]              # the composed MAIN-BODY line
+    window_days: int                # the trailing scan the counts describe
+
+    model_config = {"frozen": True}
+
+
 class CapitalAllocation(BaseModel):
     """Capital created or destroyed — EDGAR XBRL only, each value naming the tag that answered."""
 
@@ -1349,6 +1396,11 @@ class MechanicalLayer(BaseModel):
     # back-compat: committed dossiers predate it and must round-trip; a FRESH assembly always
     # builds it (its absent state is "none on file", never a missing block).
     dilution_pipeline: DilutionPipeline | None = None
+    # WHO IS ACCUMULATING — Schedule 13D/G. The register side above says how many shares COULD be
+    # issued; this side says who has been buying the ones outstanding. Optional-with-default for
+    # back-compat: committed dossiers predate it and must round-trip byte-identically; a FRESH
+    # assembly always builds it (its empty state is "none in window", never a missing block).
+    ownership_events: OwnershipEvents | None = None
     # Peer acquired-asset intensity — the comparison that says whether the subject's
     # goodwill+intangibles load is unusual for its sector or exactly what it looks like.
     # Optional-with-default for back-compat; a FRESH assembly builds it when the comps

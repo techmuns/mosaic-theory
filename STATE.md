@@ -13076,7 +13076,47 @@ one evidence-backed leg at a time.
   headroom, buybacks, peer intensity AND this pipeline — renders only inside `financialSnapshot()`,
   so a name whose financial summary is absent shows none of it on either surface. That predates
   this PR and applies to three existing blocks; recorded rather than widened into.
-  **Remaining Tier-1 queue: 13D/G events → SBC line** *(KD types batch: BUILT, next line).*
+  **Remaining Tier-1 queue: SBC line** *(KD types batch: BUILT; 13D/G events: BUILT, next line).*
+
+- **OWNERSHIP EVENTS BUILT 2026-08-18 (`feat/ownership-events`) — Tier-1 item three: who is
+  ACCUMULATING, beside the register that says how many shares could be issued.** New
+  `MechanicalLayer.ownership_events` — Schedule 13D/G from the EDGAR filing index, 3y window,
+  upper-bounded at `reference_date` in code (the item-9 leak class, pinned). Assemble-and-cite:
+  counts, forms, dates. No filer identity — the submissions index does not name the ACQUIRER in
+  its recent arrays, so the block cites the accession and lets the human open it rather than
+  asserting an identity the source never supplied.
+  **THE DEFECT THE BLOCK EXISTS FOR — EDGAR RENAMED THE FORM TYPES.** The same filing is indexed
+  as `SC 13D`/`SC 13G` through 2024 and `SCHEDULE 13D`/`SCHEDULE 13G` after, and `recent_filings`
+  matches EXACTLY, so a one-vocabulary list drops the other silently. Because the rename is
+  chronological, **the half it drops is the RECENT half.** Measured on the fleet's 3y window: an
+  `SC 13`-only list sees **153 of 306** filings. **AORT reads 0 activist filings instead of 1 and
+  FUBO 0 instead of 2** — both flip from "no activist interest on file" to having one. That is a
+  false CLEAN, the dangerous direction, and the same class `_DILUTION_SHELF`'s taxonomy note
+  records. Both vocabularies are read; the pin reddens if either is dropped.
+  **THE TWO SCHEDULES ARE NEVER SUMMED.** 13D = crossed 5% WITH intent to influence; 13G = the
+  passive short form. Fleet split is 51 activist / 430 passive, so merging them would report an
+  index fund's re-weight as an activist stake.
+  **REAL RUN, all 14 names:** NCNO 16 activist filings (last 2026-06-30), UBER 9 (2026-07-08),
+  CNXC 6 (2026-05-01), FUBO 2 (2026-03-20), AORT 1 (2025-08-12), MVST 1; **eight names carry no
+  13D**, which renders as the stated finding, never silence. Both vocabularies appear inside a
+  single count on live data (AORT: `SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A`).
+  **BOTH SURFACES PINNED AT THE ARTIFACT LEVEL, and the second one only because a mutation
+  caught it.** The JS twin shipped WITH the block this time (the #457 P1 lesson honoured at write
+  time, not after review). The python side initially had a HELPER-level pin only: deleting the
+  call site in `_capital_allocation` reddened NOTHING while the block vanished from every PDF —
+  pin-the-artifact-not-the-helper, now driven through the real `render_markdown`.
+  **KNOWN LIMIT, STATED NOT GUARDED:** `recent_filings` reads only the submissions index's
+  `recent` block, which EDGAR caps (~1000) and paginates the overflow. All 14 names reach past
+  the 3y window today, so the counts are complete — but **NFLX's index reaches only 2023-06
+  against a 2023-08 window start**, ~2 months of headroom, so a heavy filer WILL eventually
+  under-count and report a false clean. No guard shipped: none can be SHOWN firing on the live
+  corpus, and a guard that cannot be demonstrated is what CORPUS-BEFORE-SYNTHETIC warns against.
+  **UNLOCK:** read the `filings.files` overflow pages, then pin truncation on a frozen fixture.
+  **BACK-COMPAT:** registered in `_DROP_WHEN_NONE`, so a no-op refresh stays byte-identical on
+  all 14 committed dossiers — pages change on their next assembly, not on merge.
+  **Eight mutations verified**, each reddening a named test: vocabulary dropped, as-of bound
+  removed, schedules summed, three state-collapses (no-CIK, fetch-fail, empty-window), JS twin
+  silenced, python call site deleted.
 
 - **KD EVENT COVERAGE BUILT 2026-08-13 (`feat/kd-event-coverage`) — PR-1 of the pre-assembly
   set; the BioCatch/Delivery Hero seam closed at its filter.** `_KD_KEEP` admits, each measured

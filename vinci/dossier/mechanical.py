@@ -55,6 +55,8 @@ from vinci.dossier.schemas import (
     MechanicalLayer,
     OperatingDriver,
     OperatingDriversExtract,
+    OwnershipEvents,
+    OwnershipFiling,
     PeerComps,
     PerfPoint,
     PrimarySource,
@@ -1896,6 +1898,105 @@ def _dilution_pipeline(
                         f"→{reference_date.isoformat()}{newest}")))
 
 
+_OWNERSHIP_SCAN_DAYS = 1095
+
+#: SCHEDULE 13D/G FORM TYPES — BOTH EDGAR VOCABULARIES, and the pairing is the whole point.
+#:
+#: EDGAR renamed these form types: the same filing is indexed as ``SC 13D`` through 2024 and as
+#: ``SCHEDULE 13D`` after. `recent_filings` matches EXACTLY (`form not in forms`), so a list
+#: carrying one vocabulary silently drops the other — and because the rename is chronological,
+#: the half it drops is the RECENT half, which is the half that decides anything.
+#:
+#: MEASURED ON THIS FLEET, 3y window: an ``SC 13``-only list sees 153 of 306 filings. AORT reads
+#: 0 activist filings instead of 1; FUBO reads 0 instead of 2 — both flip from "no activist
+#: interest on file" to having one. That is a false CLEAN, the dangerous direction, exactly as
+#: `_DILUTION_SHELF`'s taxonomy note records for the registration families.
+#:
+#: THE TWO SCHEDULES STAY SEPARATE. 13D = crossed 5% WITH intent to influence (activist/control).
+#: 13G = the passive short form (index funds, institutions). Summing them buries 51 activist
+#: filings under 430 passive ones fleet-wide.
+_OWNERSHIP_ACTIVIST = ("SC 13D", "SC 13D/A", "SCHEDULE 13D", "SCHEDULE 13D/A")
+_OWNERSHIP_PASSIVE = ("SC 13G", "SC 13G/A", "SCHEDULE 13G", "SCHEDULE 13G/A")
+
+
+def _ownership_line(filings: list[Filing], reference_date: date) -> tuple[list[Filing], str]:
+    """(window-bounded filings, composed line) — the pure half, driven in tests by REAL ``Filing``
+    objects with no network.
+
+    THE UPPER BOUND IS APPLIED HERE, not assumed: ``recent_filings`` takes only a ``since`` lower
+    bound, so a filing dated after the record's as-of would otherwise enter the counts — the same
+    post-as-of leak class item 9 measured. Every count below is over
+    ``filing_date <= reference_date`` only.
+
+    AMENDMENTS ARE COUNTED, NOT COLLAPSED. A 13D/A is how a position CHANGES — added to, trimmed,
+    or exited — so a name with one 13D and fifteen amendments (VRRM) has an active situation, not
+    a stale one. The forms are listed so the human sees which it was."""
+    since = reference_date - timedelta(days=_OWNERSHIP_SCAN_DAYS)
+    inwin = sorted(
+        (f for f in filings if since <= f.filing_date <= reference_date),
+        key=lambda f: f.filing_date, reverse=True)
+
+    def part(forms: tuple[str, ...], label: str) -> str | None:
+        hits = [f for f in inwin if f.form in forms]
+        if not hits:
+            return None
+        forms_seen = sorted({f.form for f in hits})
+        last = hits[0].filing_date.isoformat()
+        return f"{label} {len(hits)} ({'/'.join(forms_seen)}, last {last})"
+
+    activist = part(_OWNERSHIP_ACTIVIST, "activist/control (13D)")
+    passive = part(_OWNERSHIP_PASSIVE, "passive 5% holders (13G)")
+    yrs = _OWNERSHIP_SCAN_DAYS // 365
+    if activist is None and passive is None:
+        line = (f"no Schedule 13D/G beneficial-ownership filings in the {yrs}y to "
+                f"{reference_date.isoformat()}")
+    else:
+        head = activist or "no 13D on file"
+        tail = f" · {passive}" if passive else " · no 13G on file"
+        line = f"{head}{tail} — {yrs}y window to {reference_date.isoformat()}"
+    return inwin, line
+
+
+def _ownership_events(
+    edgar: EdgarClient, cik: str | None, reference_date: date
+) -> OwnershipEvents:
+    """Schedule 13D/G beneficial ownership from the EDGAR filing index — the fetch half.
+
+    "NONE IN WINDOW" IS PRESENT, NOT UNKNOWN. Eight of this fleet's 14 names carry no 13D in
+    window; that is a stated fact about who is accumulating, decision-relevant exactly like an
+    empty shelf register. UNKNOWN is reserved for the states where the register could not be READ
+    — no CIK, or the fetch failing — and the two must never render alike.
+
+    KNOWN LIMIT, STATED RATHER THAN GUARDED: `recent_filings` reads only the submissions index's
+    ``recent`` block, which EDGAR caps (~1000 filings) and paginates the overflow. Every name on
+    this fleet reaches back past the 3y window today, so the counts are complete — but NFLX's
+    index reaches only 2023-06 against a 2023-08 window start, roughly two months of headroom, so
+    a heavy filer WILL eventually under-count. No guard is shipped because none can be shown
+    firing on the live corpus; recorded in STATE with its unlock (read ``filings.files`` overflow
+    pages) rather than built speculatively."""
+    since = reference_date - timedelta(days=_OWNERSHIP_SCAN_DAYS)
+    if not cik:
+        return OwnershipEvents(filings=[], window_days=_OWNERSHIP_SCAN_DAYS,
+                               line=Sourced.unknown(note="no CIK for the filing-index lookup"))
+    try:
+        raw = edgar.recent_filings(
+            cik, forms=_OWNERSHIP_ACTIVIST + _OWNERSHIP_PASSIVE, since=since)
+    except HttpError as exc:
+        return OwnershipEvents(
+            filings=[], window_days=_OWNERSHIP_SCAN_DAYS,
+            line=Sourced.unknown(note=f"EDGAR filing-index fetch failed: {exc}"))
+    inwin, line = _ownership_line(raw, reference_date)
+    newest = f" · latest {inwin[0].accession}" if inwin else ""
+    return OwnershipEvents(
+        filings=[OwnershipFiling(form=f.form, filing_date=f.filing_date.isoformat(),
+                                 accession=f.accession) for f in inwin],
+        window_days=_OWNERSHIP_SCAN_DAYS,
+        line=Sourced.present(
+            line,
+            source_ref=("EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), "
+                        f"window {since.isoformat()}→{reference_date.isoformat()}{newest}")))
+
+
 class Form4Line(NamedTuple):
     """ONE non-derivative Form 4 transaction, with everything a window-free read needs.
 
@@ -3632,6 +3733,7 @@ def assemble_mechanical(
         # FORWARD dilution capacity — the buyback block's mirror. Filing-index only (bounded,
         # cached); "none on file" is a PRESENT finding, UNKNOWN is reserved for a failed read.
         dilution_pipeline=_dilution_pipeline(edgar, record.identity.cik, reference_date),
+        ownership_events=_ownership_events(edgar, record.identity.cik, reference_date),
         # Peer acquired-asset intensity. Needs the comps grid (only it carries peer TICKERS) plus
         # one cached EDGAR call per peer; absent grid -> None, which keeps its NOT-BUILT meaning.
         peer_capital_intensity=_peer_capital_intensity(peer_comps, resolver, edgar),
