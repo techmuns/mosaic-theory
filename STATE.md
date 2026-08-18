@@ -4484,12 +4484,34 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the data instead of assuming an offset, and gives a natural refusal path the offset version lacks
   — **exactly one bar matches → use it; zero or several → refuse and leave the stamp uncorrected**,
   which is this repo's fail-loud shape rather than a silent guess.
-- **THE FORK THAT REMAINS (price-matching does NOT escape it).** Either correction needs price bars,
-  and `ciq_sheets` is a pure workbook parser with **8 `_comps_asof_suffix` call sites** and no store
-  access. Choose ONE and record why: **(a)** thread `bars` into `comps_as_of_date` + the 8 sites —
-  consistent, but couples the parser to price data; **(b)** move the correction to a layer holding
-  both bundle and bars, and have `ciq_sheets` RENDER what it is given rather than derive it.
-  Price-matching strengthens whichever is chosen; it does not decide between them.
+- **~~THE FORK~~ THERE IS NO FORK — RE-CHECKED 2026-08-17, and the first framing was wrong.**
+  `mechanical._stock_info` (where `market_cap_as_of` is set) **already holds BOTH** inputs: its
+  first line is `bars = store.get_price_history(...)` and it takes `bundle`. So the correction goes
+  where the number is PRODUCED — no threading, no new layer, **and nothing to rebuild.** The
+  earlier (a)/(b) framing treated a one-line population bug as an architecture decision.
+- **DO NOT RENAME `comps_as_of_date`.** An earlier draft of this spec proposed it. Its current shape
+  is DELIBERATE — the O3 extraction (2026-08-04) pulled the cap's vintage out of its `source_ref`
+  string precisely so the Snapshot's clause-(e) label had something structured to bind to, after a
+  wrong date shipped on 11 of 11 names. Renaming would obscure that history for no gain.
+- **THE #321 CONSTRAINT — THE ONE MOST LIKELY TO BE RE-BROKEN (refresh.py:376).** The first cut of
+  the ev-gap block re-read `comps_as_of` off the CURRENT bundle while the cap and net debt it
+  stamped were the STORED ones, so **AORT/IT/VITL took a 2026-07-30 stamp on figures extracted
+  2026-06-25 — 35 days of false provenance**, "precisely the class this block claims to guard". The
+  resolution: a vintage is a **STRUCTURED STORED FIELD that travels with its number**, read from the
+  stored dossier, never re-derived from whatever workbook is on disk. **`market_cap_as_of` is
+  ALREADY that shape** (O3); only its VALUE is wrong. **So the refresh path must keep reading the
+  STORED field — re-deriving it there recreates #321.**
+- **THE SUFFIXES: (b)'s PRINCIPLE, BY PARAMETER.** `_comps_asof_suffix` (8 sites in `ciq_sheets`)
+  should RENDER a date it is GIVEN, not derive one — `mechanical` computes the corrected as-of ONCE
+  and passes it down. `ciq_sheets` never learns about prices, and nothing re-parses a rendered
+  string to recover a date (the O3 rule).
+- **BLAST RADIUS TO MEASURE BEFORE MERGE — the freshness gate moves.** `panel_dates`
+  (freshness.py:304) picks up `stock_info.market_cap_as_of` — NFLX currently reads `2026-08-17` —
+  and feeds `panel_age` → `check_freshness` against `MAX_PANEL_AGE_DAYS = 45`. Correcting the stamp
+  makes every comps panel read **one trading day OLDER**, which is the honest direction
+  (`corrected_ciq_as_of`'s own docstring: "panel ages are understated, and the ceiling passes a day
+  early") — **but it can tip a borderline name over 45 and fire a staleness caveat that was not
+  there before. Measure across all 14 names BEFORE merging, not after.**
 - **VERIFY BY RE-ASSEMBLING NFLX**, whose artifact currently carries the wrong stamp: on success
   `market_cap_as_of` reads `2026-08-14` and the 9 fields the earlier sweep flagged drop to 0.
 - **AND RE-MEASURE MVST** under the same lens — its recorded "1-day lookahead" is very likely this
