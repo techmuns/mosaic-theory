@@ -49,11 +49,23 @@ def _snapshot(ticker: str) -> str:
 
 def test_ubers_drift_is_stated_on_the_page_not_left_to_the_reader() -> None:
     """THE REGRESSION, on UBER's real committed artifact. The page carried the cap and the price
-    side by side and never said they disagree by 13%."""
+    side by side and never said they disagree.
+
+    THE MAGNITUDE IS ASSERTED AS STATED, NOT AS A NUMBER (2026-08-18) — the same lesson the
+    sibling below already records. This pinned `-13.2%` and `$78.54`, both of which are functions
+    of the LIVE CMP: the cap and its implied $68.18/sh come from a frozen panel, the CMP moves with
+    the market, so the gap moves whenever bars refresh. It read -9.1% against a $74.99 close after
+    a routine refresh and the pin broke on PRICE MOVEMENT rather than on the page going quiet —
+    which is the failure this test exists to catch. What it owns is that the page SAYS the
+    disagreement rather than leaving a reader to divide two numbers; the size is data."""
+    import re
+
     line = _snapshot("UBER")
     assert "implies $68.18/sh" in line, "the cap's implied price is not on the page"
-    assert "-13.2%" in line, "the magnitude is not on the page — a vintage alone does not say 13%"
-    assert "$78.54" in line and "$139.3B" in line, "both disagreeing figures still render"
+    assert re.search(r"\([+-]?\d+\.\d%\)", line), (
+        f"no drift magnitude on the page — a vintage alone does not say how far apart they are: "
+        f"{line!r}")
+    assert "$139.3B" in line, "the cap itself no longer renders beside its implied price"
     # the mark sits WITH the cap, not appended to the line, so the pairing is unambiguous
     assert line.index("cap $139.3B") < line.index("implies $68.18/sh") < line.index("52-wk")
 

@@ -4446,6 +4446,48 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**QUEUE ITEMS 1, 2 AND 4 CLOSED 2026-08-18 (`fix/residue-and-brbr`) — ONE ANALYST ACTION SURVIVES.**
+- **THE PRICE-MATCH RESIDUE WAS RECURRENCE, NOT MISSING DATA (item 4).** FUBO 9.70, MVST 0.92,
+  UBER 68.18, VRRM 4.18 — all LOW-PRICED names whose close simply repeats across the history, so
+  "exactly one match" refused four of nineteen. **Rule sharpened to the LATEST match STRICTLY
+  BEFORE the stamp**, where two independent signals agree: the price identifies the bar, and
+  "strictly before" is CIQ's measured convention (the panel carries the PRIOR trading close). On
+  all four the answer lands exactly where the offset method predicts. **Fleet-wide: 13 unchanged,
+  4 resolved, 0 moved** — and NIKE, whose printed close matches NO bar, still correctly refuses.
+  **FUBO is why STRICTLY matters:** its 9.70 sits on both 2026-08-11 and the 2026-08-12 stamp, so
+  admitting the same-day bar would publish an export date as an observation date.
+- **ZERO NEGATIVE PANEL AGES FLEET-WIDE (item 2).** MVST −1 → +2; NFLX 0. A panel dated LATER than
+  the page reading it no longer exists anywhere in the corpus.
+- **BRBR's FOREIGN FIGURES WITHDRAWN, NOT REWRITTEN (item 1) — and the line is deliberate.** All
+  SEVEN multiple-axis references are marked `excluded` + `excluded_reason`, the mechanism that
+  renders them DIMMED WITH THE REASON rather than vanishing; it now says so 7× on both the PDF and
+  the web page. **The ratified legs (6.0 / 8.5 / 12.0) are untouched** — the decision was always
+  BellRing's; only the audit trail pointed at Simply Good Foods.
+  **WHY NOT SWAP IN BRBR's OWN FIGURES:** the whole block is SMPL's — band statistics, the
+  entry-boundary cells (1,100 × 8% is SMPL-scale revenue against BellRing's ~2,300), AND the notes
+  prose reasoning from SMPL's $10.53 close. Replacing only the values would leave BellRing's own
+  band contradicting prose still arguing SMPL's legs — one inconsistency traded for another.
+- **⚠ ANALYST ACTION, STILL OPEN — BRBR's `assumptions.multiple.notes`.** The prose still reasons
+  from SMPL's figures. **The machine must not rewrite it**: which reference justifies which leg is
+  an underwriting argument, and free-writing it is the line the 2026-07-13 pivot draws. Restate it
+  against BellRing's own band (low 4.29 / median 19.76 / current 9.18), then the withdrawn
+  references can be re-derived and un-excluded.
+- **GUARD 3 FIRED AND WAS RIGHT — the exemptions are RETIRED.** Withdrawing the references changed
+  BRBR's digest, so it no longer matches SMPL's, and guard 2 now sees ZERO live references on the
+  name. Both `KNOWN_FOREIGN` and `KNOWN_SHARED_GROUPS` are empty. **Deleting them RESTORES
+  protection rather than dropping it, mutation-verified both ways:** re-paste SMPL's block → guard
+  1 fires; un-exclude the references → guard 1 fires. An exemption is earned only while the defect
+  it names is live, which is exactly what that guard exists to notice.
+- **A FOURTH TEST WAS PINNED TO A MOVING MARKET.** `test_ubers_drift_is_stated_on_the_page` pinned
+  `-13.2%` and `$78.54`, both functions of the LIVE CMP, so it broke on a routine bar refresh
+  (−9.1% against a $74.99 close) rather than on the page going quiet. Re-pointed to assert a
+  magnitude IS STATED, which is what it owns; mutation-verified by stripping the magnitude from the
+  renderer. **That is four this session** — V's share basis, two dilution pins, and this — all
+  BORROWING a property from live data instead of CONSTRUCTING it. Each would have stayed green
+  through the defect it was written to catch.
+
+
+
 **COMPS AS-OF ARTIFACT PASS DONE 2026-08-18 (`artifacts/comps-as-of-pass`) — 10 of 14 re-assembled,
 and the last negative panel age but one is gone.**
 - **SCOPED TO WHAT MOVES.** A full assembly is the ONLY path that applies the correction (the
@@ -4708,6 +4750,34 @@ refuse: its grain is moved FIGURES, not moved strings.
   without re-rolling synthesis. It was RED on the un-reverted artifacts and is green now.
   **UNLOCK:** key provenance by a stable id with the display string DERIVED from it; then the
   wording is free to change. Until then these strings are frozen and the item stays open.
+
+
+**BRBR CARRIED SMPL'S UNDERWRITING ON ALL THREE AXES — CLOSED 2026-08-18 (#469).** The
+2026-08-17 fix withdrew the MULTIPLE axis only (7/7 references) and I deleted the
+`KNOWN_FOREIGN` allowlist on the strength of it. That was 1/3 of the defect, and the partial
+fix is exactly what hid the rest: withdrawing one axis stopped guard 1 hashing BRBR's
+assumptions block to SMPL's, so the REVENUE (3/3) and MARGIN (5/5) references — still
+byte-identical to SMPL's — became both unguarded AND unrecorded. BRBR's page printed
+`FY2025 reported revenue $1,450.9M` against BellRing's own 2,316.6. **NOW WITHDRAWN: 15/15
+across all three axes**, each with its reason inline on the rendered surface; the bear/base/bull
+legs are BellRing's own (2,250 / 2,385.47 / 2,500) and did not move.
+**THE SECOND SURFACE — `facts.ltm_revenue`:** it read `1392.235`, SMPL's LTM to the last
+decimal, cited to *BellRing's* anchor block, rendering as a TIER-1 DECISION VALUE. Every guard
+in `tests/test_scenario_reference_binding.py` missed it because they hash `assumptions` and
+`facts` is its sibling. Corrected to **2,354.6** through `scenarios.refresh_record` — the one
+path for machine inputs, which refused nothing (it touches no analyst-owned surface) and logged
+value and source as separate `refresh_log` entries. The number was not chosen: `anchor.
+_ltm_revenue_from_fs` derives 2354.6 from BRBR's own financial summary and 1392.235 from SMPL's.
+**INVARIANT SHIPPED (INVARIANT RULE):** `test_no_two_records_share_a_name_specific_fact_value`
+flags two records sharing a name-specific MAGNITUDE fact (ratios excluded — a shared 0.21 tax
+rate is not a paste). Mutation-verified against the LIVE corpus: restoring the real 1392.235
+turns it RED naming `('ltm_revenue', 1392.235): ['BRBR', 'SMPL']`.
+**RESIDUE — ANALYST, OPEN:** BRBR's `notes` prose still argues from SMPL's figures. The machine
+must not rewrite it; the withdrawal marks say so on the page. BRBR is NOT decision-ready until
+the analyst re-derives the three axes and the prose.
+**THE LESSON:** a partial fix that disables the guard covering the unfixed remainder is worse
+than no fix — it converts a detected defect into an undetected one. Withdraw the whole axis set
+or none, and never delete an allowlist entry on evidence produced by the same partial change.
 
 **~~OPERATOR ACTION, OPEN — RE-ASSEMBLE THE FLEET~~ DONE 2026-08-17 (#460), PARTIALLY —
 READ THE RESIDUE BELOW BEFORE CLOSING THIS.** The pass ran: mechanical `Close (latest)`

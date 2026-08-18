@@ -18,13 +18,17 @@
      "label": "FY2025 reported revenue",
      "value": 1450.9,
      "unit": "$M",
-     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)"
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500."
     },
     {
      "label": "LTM revenue",
      "value": 1416.208,
      "unit": "$M",
-     "source": "committed dossier anchor block (#158/#160/#162-verified)"
+     "source": "committed dossier anchor block (#158/#160/#162-verified)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500."
     },
     {
      "label": "consensus FY26E revenue",
@@ -32,7 +36,9 @@
      "unit": "$M",
      "source": "committed dossier financial_summary (E cols = consensus)",
      "role": "consensus",
-     "leg": "base"
+     "leg": "base",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500."
     }
    ]
   },
@@ -45,7 +51,9 @@
      "value": 15.45,
      "unit": "%",
      "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value",
-     "role": "median"
+     "role": "median",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged."
     },
     {
      "label": "7yr clean median (FY2025 adjusted)",
@@ -53,7 +61,9 @@
      "unit": "%",
      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment",
      "role": "median",
-     "leg": "base"
+     "leg": "base",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged."
     },
     {
      "label": "FY2020 worst clean year",
@@ -61,7 +71,9 @@
      "unit": "%",
      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)",
      "role": "trough",
-     "leg": "bear"
+     "leg": "bear",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged."
     },
     {
      "label": "FY2022 best clean year",
@@ -69,13 +81,17 @@
      "unit": "%",
      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)",
      "role": "peak",
-     "leg": "bull"
+     "leg": "bull",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged."
     },
     {
      "label": "FY2025 adjusted ex $60.9M impairment",
      "value": 15.01,
      "unit": "%",
-     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)"
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged."
     }
    ]
   },
@@ -89,14 +105,18 @@
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
      "role": "band_low",
-     "leg": "bear"
+     "leg": "bear",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing 25th percentile",
      "value": 15.2,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "percentile"
+     "role": "percentile",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing median",
@@ -104,33 +124,43 @@
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
      "role": "median",
-     "leg": "base"
+     "leg": "base",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "this company's trailing 75th percentile",
      "value": 20.88,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "percentile"
+     "role": "percentile",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "current multiple (0th pctile)",
      "value": 5.65,
      "unit": "x",
      "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
-     "role": "current"
+     "role": "current",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "entry-boundary cell A (1,100 \u00d7 8% \u00d7 6.0x)",
      "value": 1.96,
      "unit": ":1",
-     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     },
     {
      "label": "entry-boundary cell B (1,050 \u00d7 7% \u00d7 6.0x)",
      "value": 1.73,
      "unit": ":1",
-     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+     "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)",
+     "excluded": true,
+     "excludedReason": "this figure is Simply Good Foods', not BellRing's \u2014 the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged."
     }
    ],
    "notes": [
@@ -171,10 +201,10 @@
   },
   {
    "key": "ltm_revenue",
-   "value": 1392.235,
+   "value": 2354.6,
    "unit": "$M",
    "basis": "LTM revenue",
-   "source": "committed financial_summary.annual (LTM) \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+   "source": "BellRing's own dossier anchor block \u2014 financial_summary.annual LTM column"
   }
  ],
  "scenarios": [

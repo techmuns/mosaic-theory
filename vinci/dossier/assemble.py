@@ -728,10 +728,17 @@ def assemble_one(
         # about prices. Fail-safe: an unmatched price leaves the slot None and the header stands.
         from vinci.dossier.freshness import date_of_close
 
-        if (_px := ciq_sheets.comps_printed_close(bundle)) is not None:
+        # NO EXPORT STAMP -> NO BOUND -> NO CORRECTION (review of #469). `comps_export_stamp`
+        # is None whenever the sheet carries no decodable `As-Of Date:` header — the very
+        # state the operator AS_OF sidecar exists for — while `comps_printed_close` still
+        # reads a price off that same sheet. Passing `not_after=None` then lets the scan run
+        # unbounded over five years and take the LATEST coincidental match, which can sit
+        # AFTER the panel and move the stamp FORWARD. Refusing here keeps the header stamp,
+        # which is merely imprecise rather than invented.
+        _stamp = ciq_sheets.comps_export_stamp(bundle)
+        if _stamp is not None and (_px := ciq_sheets.comps_printed_close(bundle)) is not None:
             bundle.resolved_comps_as_of = date_of_close(
-                _px, store.get_price_history(rec.identity.internal_id),
-                not_after=ciq_sheets.comps_export_stamp(bundle))
+                _px, store.get_price_history(rec.identity.internal_id), not_after=_stamp)
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,

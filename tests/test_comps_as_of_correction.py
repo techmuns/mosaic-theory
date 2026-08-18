@@ -48,11 +48,27 @@ def test_a_price_no_bar_carries_refuses_rather_than_guessing() -> None:
     assert date_of_close(78.16, []) is None
 
 
-def test_two_sessions_at_one_close_refuses_because_it_is_ambiguous() -> None:
-    """A flat stretch makes the price a non-identifier. Returning EITHER date would be a coin flip
-    presented as provenance, so the correction declines and the export stamp stands."""
-    flat = [_Bar(dt.date(2026, 8, 13), 78.16), _Bar(dt.date(2026, 8, 14), 78.16)]
-    assert date_of_close(78.16, flat) is None
+def test_recurrence_resolves_by_recency_rather_than_refusing() -> None:
+    """A RECURRING CLOSE IS AMBIGUITY IN THE SEARCH, NOT IN THE DATA — and the earlier rule threw
+    away answers because of it.
+
+    Requiring exactly one match refused 4 of 19 bundles: FUBO 9.70, MVST 0.92, UBER 68.18, VRRM
+    4.18 — all LOW-PRICED names whose close simply recurs. On every one, the latest qualifying bar
+    is exactly the prior trading close CIQ's measured convention predicts, so two independent
+    signals agree and refusing discards a supported answer. Fleet-wide the change moved 13 names
+    not at all, resolved those 4, and left NIKE (no matching bar anywhere) still refusing."""
+    flat = [_Bar(dt.date(2026, 8, 12), 78.16), _Bar(dt.date(2026, 8, 13), 78.16)]
+    assert date_of_close(78.16, flat, not_after=dt.date(2026, 8, 14)) == dt.date(2026, 8, 13)
+
+
+def test_a_bar_on_the_stamp_itself_is_never_the_source() -> None:
+    """STRICTLY BEFORE, because the export date is not the data date. CIQ's convention — measured
+    11 of 11 — is that the panel carries the PRIOR trading close, so a bar dated ON the stamp
+    cannot be its source however exactly the price agrees. FUBO is the live case: its 9.70 sits on
+    BOTH 2026-08-11 and the 2026-08-12 stamp, and admitting the same-day bar would publish an
+    export date as an observation date, which is the whole defect."""
+    both = [_Bar(dt.date(2026, 8, 11), 9.70), _Bar(dt.date(2026, 8, 12), 9.70)]
+    assert date_of_close(9.70, both, not_after=dt.date(2026, 8, 12)) == dt.date(2026, 8, 11)
 
 
 def test_the_injected_date_never_overrides_an_operator_attestation() -> None:
@@ -89,12 +105,35 @@ def test_the_search_is_bounded_by_the_export_stamp() -> None:
     bars = [_Bar(dt.date(2024, 1, 5), 78.16),   # a coincidental match years earlier
             _Bar(dt.date(2026, 8, 14), 78.16),
             _Bar(dt.date(2026, 8, 20), 78.16)]  # AFTER the stamp — impossible as a source
-    # unbounded: three hits, ambiguous, refuses
-    assert date_of_close(78.16, bars) is None
-    # bounded to the stamp: the 2026-08-20 bar is excluded, but 2024 still collides -> refuses
-    assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) is None
-    # bounded tightly enough to be unambiguous -> identifies
-    assert date_of_close(78.16, bars[1:], not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
+    # bounded: the 2026-08-20 bar cannot be the source, and the 2024 collision loses to recency
+    assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
+    # UNBOUNDED + AMBIGUOUS REFUSES — and this assertion USED TO PIN THE DEFECT AS CORRECT.
+    # Written when recency was introduced, it asserted the unbounded call returns 2026-08-20, i.e.
+    # a bar AFTER the panel, moving the stamp FORWARD — the one outcome this correction exists to
+    # prevent. Caught in review of #469. Recency is only principled relative to the stamp: with no
+    # bound there is nothing to be "latest before", so several matches is a guess and it declines.
+    assert date_of_close(78.16, bars) is None, (
+        "an unbounded call with several matches picked one — recency without a bound can select a "
+        "bar LATER than the panel and move the stamp forward")
+
+
+def test_the_assembler_never_calls_the_correction_without_a_bound() -> None:
+    """THE CALL SITE IS THE OTHER HALF (review of #469). `comps_export_stamp` returns None whenever
+    the sheet has no decodable `As-Of Date:` header — the state the operator AS_OF sidecar exists
+    for — while `comps_printed_close` still reads a price off that same sheet. The first cut passed
+    that None straight through as `not_after`, so exactly the unbounded path above became
+    reachable in production. No stamp now means no correction at all."""
+    import inspect
+
+    import vinci.dossier.assemble as assemble
+
+    src = "\n".join(ln for ln in inspect.getsource(assemble).splitlines()
+                     if not ln.lstrip().startswith("#"))
+    i = src.index("resolved_comps_as_of")
+    window = src[max(0, i - 400):i + 400]
+    assert "_stamp is not None" in window, (
+        "the assembler resolves the comps as-of without first proving it has an export stamp to "
+        "bound the search with — an unbounded scan can move the stamp forward")
 
 
 def test_the_printed_close_column_is_found_by_label_not_position() -> None:

@@ -58,13 +58,24 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: (low 4.29 / median 19.76 / current 9.18) and re-state the legs' rationale against those — an
 #: ANALYST action, not a mechanical one, because which reference justifies which leg is an
 #: underwriting argument the machine must not free-write.
-KNOWN_FOREIGN = {"BRBR": "assumptions block copied verbatim from SMPL (found 2026-08-17, #407 era)"}
+#: EMPTY, AND THAT IS THE FIX LANDING — guard 3 demanded this deletion and was right.
+#: BRBR sat here from 2026-08-17 while its multiple axis carried SMPL's figures. Those seven
+#: references are now WITHDRAWN in the record itself (`excluded` + `excluded_reason`, which
+#: renders dimmed WITH the reason rather than vanishing), so guard 2 sees no live reference
+#: to exempt and guard 1 sees a block that no longer matches SMPL's.
+#: DELETING THE ENTRY RESTORES PROTECTION rather than dropping it: re-paste SMPL's block and
+#: guard 1 fires with nothing to excuse it; un-exclude those references and guard 2 fires on
+#: values BellRing's own series cannot produce. An exemption is only ever earned while the
+#: defect it names is live.
+KNOWN_FOREIGN: dict[str, str] = {}
 
 #: The EXACT shared-digest group that is exempt — not "any group containing an allowlisted name".
 #: The first cut exempted the whole group, so a THIRD record pasted from BRBR/SMPL's block would
 #: have been waved through for as long as the BRBR entry lived. Keyed as a frozenset so a new member
 #: changes the key and reddens.
-KNOWN_SHARED_GROUPS = {frozenset({"BRBR", "SMPL"})}
+#: EMPTY for the same reason — BRBR's block no longer hashes to SMPL's, so ANY shared
+#: assumptions block is now unexpected and fires.
+KNOWN_SHARED_GROUPS: set[frozenset[str]] = set()
 
 #: Records that cite a committed band while having NO committed dossier, so their band citations are
 #: unverifiable by any means. Recorded rather than skipped: this is an anomaly in its own right — a
@@ -252,3 +263,49 @@ def test_the_known_foreign_record_is_still_foreign_and_still_recorded() -> None:
         f"{sorted(set(KNOWN_FOREIGN) - set(still_shared))} no longer shares an assumptions block "
         f"with another name — the underwriting was re-derived, so DELETE the KNOWN_FOREIGN "
         f"entry so the guards protect this name again. This is the good failure.")
+
+
+#: Facts whose value is a NAME-SPECIFIC MAGNITUDE — a revenue, a debt balance, a share count. Two
+#: names landing on the identical float here is a paste, not a coincidence. RATIOS are excluded on
+#: purpose (`cash_tax_rate` 0.21, `share_growth` 0.02): those legitimately coincide across names, so
+#: scoring them would train the reader to ignore this guard.
+MAGNITUDE_FACTS = ("ltm_revenue", "net_debt", "d_and_a", "diluted_shares", "ltm_fcf",
+                   "cash_interest", "burn_to_breakeven")
+
+
+def _facts() -> list[tuple[str, dict[str, Any]]]:
+    """Every record's `facts` block. NOT `_scenarios()` — that one filters to records carrying
+    `assumptions`, and this guard's whole reason to exist is that `facts` is the sibling the
+    assumptions-block guard cannot see."""
+    out = []
+    for p in sorted((ROOT / "scenarios").glob("*.json")):
+        doc = json.loads(p.read_text())
+        if doc.get("facts"):
+            out.append((p.stem, doc["facts"]))
+    return out
+
+
+def test_no_two_records_share_a_name_specific_fact_value() -> None:
+    """THE SECOND SURFACE OF THE SAME PASTE (2026-08-18).
+
+    BRBR carried `facts.ltm_revenue = 1392.235` — Simply Good Foods' LTM to the last decimal —
+    cited to *BellRing's own* anchor block, while BellRing's own financial summary reads 2,354.6.
+    It rendered as a tier-1 decision value for as long as the record existed, and **every guard in
+    this file missed it**: they hash `assumptions`, and `facts` is its sibling. A cross-name check
+    that stops at one block is a check that names the block, not the defect.
+
+    Scoped to magnitudes (see `MAGNITUDE_FACTS`) so a shared tax rate never fires it."""
+    seen: dict[tuple[str, float], list[str]] = {}
+    for name, facts in _facts():
+        ticker = name.split("-")[0]
+        for key in MAGNITUDE_FACTS:
+            fact = facts.get(key)
+            value = fact.get("value") if isinstance(fact, dict) else None
+            if isinstance(value, (int, float)):
+                seen.setdefault((key, float(value)), []).append(ticker)
+    shared = {k: sorted(set(v)) for k, v in seen.items() if len(set(v)) > 1}
+    assert not shared, (
+        "two records carry the identical name-specific fact value — one of them is another "
+        f"company's number: {shared}. Re-derive it from the name's OWN dossier anchor block and "
+        "correct it through `vinci.scenarios.refresh_record`, which logs old → new with "
+        "provenance.")

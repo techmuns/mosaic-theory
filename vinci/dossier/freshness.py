@@ -311,10 +311,15 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
     shift every stamp back a day and every test would stay green. Matching the panel's own printed
     `Day Close Price Latest` against the store reads the answer out of the data instead.
 
-    FAIL LOUD, NEVER GUESS. Exactly one bar must carry the price. Zero (a store that does not reach
-    the panel, or a price CIQ sourced elsewhere) and several (a flat stretch where two sessions
-    closed identically) both return None, and the caller leaves the stamp UNCORRECTED — the honest
-    miss this repo prefers to an invented date."""
+    FAIL LOUD, NEVER GUESS. No bar carrying the price returns None and the caller leaves the stamp
+    UNCORRECTED — the honest miss this repo prefers to an invented date.
+
+    RECURRENCE RESOLVES BY RECENCY, BUT ONLY INSIDE A BOUND. Several bars may carry the price on a
+    low-priced name; the latest one BEFORE ``not_after`` is the one CIQ's convention names, and on
+    the four bundles that needed it the answer matched the offset method exactly. **Without
+    ``not_after`` that same recency rule is dangerous** — the latest match may sit AFTER the panel
+    and move the stamp FORWARD, the one thing this correction must never do — so an unbounded call
+    that finds SEVERAL matches refuses rather than picking one."""
     def _as_date(v: Any) -> dt.date | None:
         if isinstance(v, dt.datetime):
             return v.date()
@@ -331,16 +336,32 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
         c = getattr(b, "close", None)
         if d is None or not isinstance(c, (int, float)):
             continue
-        # BOUNDED BY THE EXPORT STAMP (review of #466). An export cannot predate the data it
-        # carries, so a bar AFTER the stamp can never be its source — and an unbounded scan over
-        # five years of history will eventually find a coincidental match at the same price,
-        # which would publish a date years off, or move the stamp FORWARD. Both are worse than
-        # leaving it uncorrected.
-        if not_after is not None and d > not_after:
+        # STRICTLY BEFORE THE STAMP. An export cannot predate the data it carries, so a bar AFTER
+        # the stamp can never be its source; and CIQ's measured convention (11 of 11) is that the
+        # data is the PRIOR trading close, so a bar ON the stamp cannot be it either. Excluding
+        # both also bounds an otherwise five-year scan that would eventually meet a coincidental
+        # match — publishing a date years off, or moving the stamp FORWARD.
+        if not_after is not None and d >= not_after:
             continue
         if abs(float(c) - close) <= tol:
             hits.append(d)
-    return hits[0] if len(hits) == 1 else None
+    if not hits:
+        return None
+    # UNBOUNDED + AMBIGUOUS = REFUSE (review of #469). Recency is only principled relative to the
+    # export stamp; with no bound there is nothing to be "latest before", and the newest match can
+    # be a coincidental later bar that drags the stamp FORWARD. One match is still an
+    # identification, so it stands; several without a bound is a guess.
+    if not_after is None and len(hits) > 1:
+        return None
+    # RECURRENCE IS RESOLVED BY RECENCY, NOT REFUSED (measured 2026-08-18). Requiring exactly one
+    # match refused four of nineteen bundles — FUBO 9.70, MVST 0.92, UBER 68.18, VRRM 4.18 — all
+    # LOW-PRICED names whose close simply recurs across the history. That is ambiguity in the
+    # SEARCH, not in the data: the latest qualifying bar is the one CIQ's own convention names,
+    # and on all four it lands exactly on the prior trading close the offset method predicts. Two
+    # independent signals agreeing is stronger evidence than either alone, so refusing there threw
+    # away an answer the corpus supports. Measured fleet-wide: 13 names unchanged, 4 resolved,
+    # 0 moved — and NIKE, whose printed close matches NO bar, still correctly refuses above.
+    return max(hits)
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
