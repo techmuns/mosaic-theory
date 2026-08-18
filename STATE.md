@@ -4501,10 +4501,25 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   stored dossier, never re-derived from whatever workbook is on disk. **`market_cap_as_of` is
   ALREADY that shape** (O3); only its VALUE is wrong. **So the refresh path must keep reading the
   STORED field — re-deriving it there recreates #321.**
-- **THE SUFFIXES: (b)'s PRINCIPLE, BY PARAMETER.** `_comps_asof_suffix` (8 sites in `ciq_sheets`)
-  should RENDER a date it is GIVEN, not derive one — `mechanical` computes the corrected as-of ONCE
-  and passes it down. `ciq_sheets` never learns about prices, and nothing re-parses a rendered
-  string to recover a date (the O3 rule).
+- **THE SUFFIXES: (b)'s PRINCIPLE, BY INJECTION AT A SINGLE CHOKEPOINT — settled 2026-08-17, and
+  it is CHEAPER than the "8 call sites" the earlier draft feared.** The chain is
+  `_comps_asof_suffix(bundle)` -> `comps_as_of(bundle)` -> `comps_as_of_date(bundle)`. **All 7
+  suffix sites and `StockInfo.market_cap_as_of` funnel through that ONE derivation**, so correcting
+  it reaches every consumer with **zero signature churn** — no `bars` threaded through any
+  extractor, no new layer, nothing renamed.
+  **HOW.** `CiqBundle` is a plain dataclass (`ticker`, `workbooks`, `_cache`) — add a resolved-as-of
+  slot. `mechanical` computes the corrected date ONCE (it already holds bundle + bars) and injects
+  it on the bundle before the extractors run; `comps_as_of_date` PREFERS the injected value.
+  `ciq_sheets` never learns about prices — it renders a date it is GIVEN, which is exactly (b)'s
+  principle, reached without (b)'s cost.
+  **THE INJECTION MUST OVERRIDE THE HEADER PATH ONLY.** `comps_as_of_date` returns header-first,
+  then sidecar. The header is CIQ's EXPORT stamp (correct it); the sidecar is
+  `operator-attested` (**never** — overriding a human's attestation is worse than the defect, and
+  no current test would catch it). Order the branch so an attested date cannot be reached by the
+  injected value.
+  **AND IT MUST BE PER-ASSEMBLY, NOT CACHED ACROSS RUNS.** The slot lives on the bundle, which is
+  built per ticker per assembly, so it cannot leak between names — and the refresh path, which
+  builds its own bundle, still reads the STORED field rather than this (the #321 constraint above).
 - **BLAST RADIUS TO MEASURE BEFORE MERGE — the freshness gate moves.** `panel_dates`
   (freshness.py:304) picks up `stock_info.market_cap_as_of` — NFLX currently reads `2026-08-17` —
   and feeds `panel_age` → `check_freshness` against `MAX_PANEL_AGE_DAYS = 45`. Correcting the stamp
