@@ -301,6 +301,29 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> CiqAsOf:
     return CiqAsOf(max(dates), resolved=True)
 
 
+def date_of_close(close: float, bars: list[Any], *, tol: float = 0.005) -> dt.date | None:
+    """The date whose close IS this price — or None when the store cannot say so unambiguously.
+
+    IDENTIFIES rather than ASSUMES, which is why this exists beside `corrected_ciq_as_of`. That
+    function encodes a measured CONVENTION ("the data is the prior trading close", 11 of 11) and
+    cannot detect its own failure: if CIQ ever moved to same-day pricing, "prior trading bar" would
+    shift every stamp back a day and every test would stay green. Matching the panel's own printed
+    `Day Close Price Latest` against the store reads the answer out of the data instead.
+
+    FAIL LOUD, NEVER GUESS. Exactly one bar must carry the price. Zero (a store that does not reach
+    the panel, or a price CIQ sourced elsewhere) and several (a flat stretch where two sessions
+    closed identically) both return None, and the caller leaves the stamp UNCORRECTED — the honest
+    miss this repo prefers to an invented date."""
+    hits = [d for b in bars
+            if (d := getattr(b, "bar_date", None)) is not None
+            and isinstance(c := getattr(b, "close", None), (int, float))
+            and abs(float(c) - close) <= tol]
+    if len(hits) != 1:
+        return None
+    only = hits[0]
+    return only if isinstance(only, dt.date) else dt.date.fromisoformat(str(only))
+
+
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
     """Every (key, ISO date) that is a PANEL arrival stamp. Value-borne dates are excluded — see
     ``_NOT_A_PANEL``; conflating the two is what produced an inverted staleness ranking twice.

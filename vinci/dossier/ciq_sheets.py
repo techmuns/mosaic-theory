@@ -3769,11 +3769,36 @@ def comps_as_of_date(bundle: CiqBundle) -> tuple[date | None, bool]:
         return None, False
     d = _scan_asof_header(rows)
     if d is not None:
-        return d, False
+        # THE HEADER IS CIQ's EXPORT STAMP, NOT THE DATA'S DATE — prefer the assembler's resolved
+        # value when it set one (see `CiqBundle.resolved_comps_as_of`). Measured on NFLX: the panel
+        # stamps 2026-08-17 while its own printed close, 78.16, is the 2026-08-14 bar — so every
+        # consumer of this derivation published a date three days ahead of the data it describes.
+        # THE OVERRIDE IS SCOPED TO THIS BRANCH DELIBERATELY. Below, `_sidecar_as_of` is an OPERATOR
+        # ATTESTATION; overriding a human's stated date with a machine guess is a worse defect than
+        # the one this corrects, and nothing downstream would reveal it. Returning here keeps the
+        # attested path unreachable from the injected value rather than relying on a later guard.
+        return (bundle.resolved_comps_as_of or d), False
     sc = _sidecar_as_of(bundle)
     if sc is not None:
         return sc, True
     return None, False
+
+
+def comps_printed_close(bundle: CiqBundle) -> float | None:
+    """The subject's `Day Close Price Latest` as the comps panel prints it — the panel's own
+    evidence of WHEN its data is from, since it carries no data-date column of its own.
+
+    MEASURED 2026-08-17: the sheet's only date-bearing cells are `As-Of Date:` (the export stamp)
+    and `LTM Filing Date, Income Statement` (an income-statement filing date, unrelated to pricing).
+    This price is the one field that can be tied back to a trading day, so the assembler matches it
+    against the store to recover the real as-of. Subject row via `_comps_layout` — the authoritative
+    ticker-paren match, never a positional guess."""
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError:
+        return None
+    _h, _p, tgt = _comps_layout(fd, bundle.ticker)
+    return _num_or_none(_comps_cell(fd, tgt, 1)) if tgt is not None else None
 
 
 def comps_as_of(bundle: CiqBundle) -> Sourced[str]:

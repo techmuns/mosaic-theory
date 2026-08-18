@@ -718,6 +718,19 @@ def assemble_one(
     flags: list[str] = requirements.manifest_flags(bundle, ticker=ticker, location=location,
                                                    sleeve=fin.sleeve)
     with Store(cfg.db_path) as store:
+        # RESOLVE THE COMPS PANEL'S REAL DATA DATE, ONCE, BEFORE ANY EXTRACTOR READS IT.
+        # CIQ's `As-Of Date:` header is the EXPORT stamp; the data is an earlier trading close, so
+        # `market_cap_as_of` and all seven comps `source_ref` suffixes would otherwise publish a
+        # date their data does not reach (NFLX: panel stamped 2026-08-17, its own printed close of
+        # 78.16 is the 2026-08-14 bar). Every one of those consumers funnels through
+        # `comps_as_of_date`, so setting the bundle slot here corrects all of them at once —
+        # `ciq_sheets` stays a workbook parser that renders what it is given and never learns
+        # about prices. Fail-safe: an unmatched price leaves the slot None and the header stands.
+        from vinci.dossier.freshness import date_of_close
+
+        if (_px := ciq_sheets.comps_printed_close(bundle)) is not None:
+            bundle.resolved_comps_as_of = date_of_close(
+                _px, store.get_price_history(rec.identity.internal_id))
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,
