@@ -90,14 +90,29 @@ def test_it_is_wired_into_the_tev_stamp() -> None:
     function would satisfy a bare-name search while the stamp stayed uncorrected."""
     import inspect
 
+    import vinci.dossier.assemble as assemble
     import vinci.dossier.mechanical as dm
 
-    src = inspect.getsource(dm._implied_expectations)
-    assert "corrected_ciq_as_of(stated_as_of, price_bars or [])" in src, (
-        "the TEV stamp is not being corrected — every CIQ as-of stays a day too new")
-    caller = inspect.getsource(dm.assemble_mechanical)
-    assert "store.get_price_history(record.identity.internal_id)" in caller, (
-        "the bars never reach _implied_expectations, so the correction cannot fire")
+    # RE-POINTED BY #466. The correction moved UPSTREAM: the assembler resolves the comps
+    # as-of once and injects it, so `_implied_expectations` must now read the STRUCTURED
+    # derivation and must NOT correct again — doing both walked the stamp back a second
+    # trading day (NFLX 2026-08-17 -> 2026-08-14 -> 2026-08-13). The old pin matched the exact
+    # call TEXT, so it went red on a rename rather than on the defect.
+    # COMMENTS STRIPPED — structure, not prose. The code comment here EXPLAINS the
+    # double-correction it prevents and so names `corrected_ciq_as_of`; matching raw source
+    # reads the explanation as the defect. (Second time this trap fired today; the sibling
+    # pin in tests/test_comps_as_of_correction.py strips comments for the same reason.)
+    src = "\n".join(ln for ln in inspect.getsource(dm._implied_expectations).splitlines()
+                    if not ln.lstrip().startswith("#"))
+    assert "comps_as_of_date(bundle)" in src, (
+        "the TEV stamp no longer reads the structured comps as-of — regexing the rendered "
+        "suffix again would re-correct an already-corrected date")
+    assert "corrected_ciq_as_of" not in src, (
+        "the TEV stamp is corrected a SECOND time: the assembler already injected the "
+        "corrected comps as-of, so this walks it back another trading day")
+    asm = inspect.getsource(assemble)
+    assert "date_of_close(" in asm and "not_after=" in asm, (
+        "the assembler no longer resolves the comps as-of from the store")
 
 
 # --- review findings ------------------------------------------------------------------------------
@@ -139,7 +154,7 @@ def test_the_tev_cite_carries_both_dates_when_they_differ() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert "exported {stated_as_of}" in src and "if as_of.resolved else" in src, (
+    assert "exported {_export_stamp}" in src and "if _corrected else" in src, (
         "the TEV cite does not disclose the export date beside the data date")
     assert "data {tev_as_of}" in src
 
@@ -174,9 +189,9 @@ def test_an_uncorrectable_stamp_says_so_on_the_page() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert "NOT date-corrected: no prior bar in the store" in src, (
+    assert "NOT date-corrected: the store carries no bar" in src, (
         "an uncorrectable stamp is still indistinguishable from a corrected one")
-    assert "if as_of.resolved else" in src, (
+    assert "if _corrected else" in src, (
         "the states are not branched on the REPORTED flag")
 
 
@@ -207,5 +222,5 @@ def test_the_cite_branches_on_the_reported_flag() -> None:
     import vinci.dossier.mechanical as dm
 
     src = inspect.getsource(dm._implied_expectations)
-    assert "if as_of.resolved else" in src, "the cite still infers whether the correction ran"
+    assert "if _corrected else" in src, "the cite still infers whether the correction ran"
     assert "if not price_bars else" not in src, "the old empty-list inference survives"

@@ -4461,6 +4461,31 @@ build record.**
   silent guess. **ZERO names cross `MAX_PANEL_AGE_DAYS = 45`**, so no new staleness caveat
   fires. **NFLX's panel age was −3 DAYS** — a panel dated LATER than the page reading it — and
   is now 0; a negative age was the defect visible on its face.
+- **REVIEW OF #466 FOUND A REAL BUG IN THE FIX — A DOUBLE CORRECTION, mine, on all 13 names.**
+  `_implied_expectations` read `_ie_asof(mc.source_ref)`: a REGEX over the rendered suffix — the
+  "second parser of one display string" `comps_as_of_date`'s own docstring says the extractor
+  exists to avoid. It survived for months because BOTH parsers agreed while the suffix carried
+  CIQ's raw header. **The injection broke that agreement:** header 2026-08-17 -> injected
+  2026-08-14 -> regexed back out -> `corrected_ciq_as_of` walked it back AGAIN -> **2026-08-13**.
+  One panel, two dates, both wrong. **Fixed by reading the structured derivation and DELETING
+  `_ie_asof`** — the double correction and the second parser removed together.
+- **THREE MORE FROM THE SAME REVIEW, all fixed:** `date_of_close` is now BOUNDED by the export
+  stamp (an export cannot predate its data; unbounded, a coincidental old close could publish a
+  date years off, or move the stamp FORWARD — the one invariant the correction exists to hold);
+  the TEV cite names BOTH dates and distinguishes corrected from uncorrectable; the printed-close
+  column resolves by HEADER LABEL, not position.
+- **THREE LESSONS ABOUT THE TESTS, worth more than the fix:**
+  (a) **A SOURCE-TEXT PIN WENT RED ON A RENAME, NOT ON THE DEFECT** — `assert
+  "corrected_ciq_as_of(stated_as_of, price_bars or [])" in src` would have stayed GREEN through the
+  actual double-correction bug it was written to prevent. Re-pointed to assert WHICH of the two
+  behaviours happens.
+  (b) **A FIXTURE WAS DICTATING THE PRODUCTION SHAPE (#305).** The IE tests fed a mocked
+  `source_ref` STRING, so production read strings; reading structure broke them. Fixed the
+  FIXTURE to carry a real comps sheet — not the code.
+  (c) **THE COMMENT-VS-CODE TRAP FIRED TWICE IN ONE SESSION.** A pin matched
+  `corrected_ciq_as_of` inside the comment EXPLAINING the defect it prevents. Solved once on the
+  attested-branch pin by stripping comments, then not carried across. Both strip now, and each
+  says why.
 - **THE 6 UNCORRECTED ARE A REAL RESIDUE, not a rounding error.** Worth a look: a printed close
   no bar carries means either the store does not reach that name's panel or CIQ priced it from
   a source the store does not hold. Their stamps stay on the export date until then.

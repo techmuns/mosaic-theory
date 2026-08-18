@@ -3172,7 +3172,20 @@ def _ie_inputs(
         bridge=ds.Sourced.present(bridge, source_ref="CIQ→Implied Valuation"),
         market_cap=ds.Sourced.present(market_cap, source_ref=_IE_MCAP_REF),
         comparability_gate=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"))
-    bundle = _est_bundle({"Trends": trends if trends is not None else _IE_TRENDS})
+    # THE COMPS AS-OF IS READ STRUCTURALLY NOW, so the fixture must carry the sheet it comes from.
+    # It used to arrive as a regex over the mocked `source_ref` string above — the "second parser
+    # of one display string" `comps_as_of_date` exists to avoid — and #466 removed that read. A
+    # fixture that supplies only the rendered string would keep dictating the production shape
+    # (#305), so it supplies the real one: an 'As-Of Date:' header, 2026-06-24 as a CIQ serial.
+    est = Path("/fake/Estimates.xls")
+    comps = Path("/fake/Comparable.xls")
+    wbs = (ciq.CiqWorkbook(kind="estimates", path=est, fmt=ciq.CiqFormat.BIFF_XLS,
+                           freq="quarterly"),
+           ciq.CiqWorkbook(kind="comps", path=comps, fmt=ciq.CiqFormat.BIFF_XLS, freq=None))
+    bundle = ciq.CiqBundle(
+        ticker="X", workbooks=wbs,
+        _cache={est: {"Trends": trends if trends is not None else _IE_TRENDS},
+                comps: {"Financial Data": [["As-Of Date:", 46197.0]]}})
     return pc, cp, iv, bundle
 
 
@@ -3186,7 +3199,9 @@ def test_ie_parsers_read_the_assembled_fields() -> None:
     assert dm._ie_peer_median(_IE_TM, "TEV/EBITDA") == 14.5  # the LTM one (no 'NTM' prefix)
     assert dm._ie_peer_median(_IE_TM, "TEV/Rev") == 3.2
     assert dm._ie_consensus_latest(_IE_AR, "FY 2026", "EBITDA") == 62.1
-    assert dm._ie_asof(_IE_MCAP_REF) == "2026-06-24"
+    # `_ie_asof` DELETED by #466 — it regexed the as-of back out of a rendered source_ref (the
+    # second parser of one display string) and, once the assembler injected a corrected date,
+    # re-corrected it. The as-of is read structurally from `comps_as_of_date` now.
     assert dm._ie_bridge_net_debt(_iv(_IE_BRIDGE, cash=126.1, debt=326.0)) == 199.9
 
 

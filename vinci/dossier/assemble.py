@@ -730,7 +730,8 @@ def assemble_one(
 
         if (_px := ciq_sheets.comps_printed_close(bundle)) is not None:
             bundle.resolved_comps_as_of = date_of_close(
-                _px, store.get_price_history(rec.identity.internal_id))
+                _px, store.get_price_history(rec.identity.internal_id),
+                not_after=ciq_sheets.comps_export_stamp(bundle))
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,

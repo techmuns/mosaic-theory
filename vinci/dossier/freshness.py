@@ -301,7 +301,8 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> CiqAsOf:
     return CiqAsOf(max(dates), resolved=True)
 
 
-def date_of_close(close: float, bars: list[Any], *, tol: float = 0.005) -> dt.date | None:
+def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = None,
+                  tol: float = 0.005) -> dt.date | None:
     """The date whose close IS this price — or None when the store cannot say so unambiguously.
 
     IDENTIFIES rather than ASSUMES, which is why this exists beside `corrected_ciq_as_of`. That
@@ -314,14 +315,32 @@ def date_of_close(close: float, bars: list[Any], *, tol: float = 0.005) -> dt.da
     the panel, or a price CIQ sourced elsewhere) and several (a flat stretch where two sessions
     closed identically) both return None, and the caller leaves the stamp UNCORRECTED — the honest
     miss this repo prefers to an invented date."""
-    hits = [d for b in bars
-            if (d := getattr(b, "bar_date", None)) is not None
-            and isinstance(c := getattr(b, "close", None), (int, float))
-            and abs(float(c) - close) <= tol]
-    if len(hits) != 1:
-        return None
-    only = hits[0]
-    return only if isinstance(only, dt.date) else dt.date.fromisoformat(str(only))
+    def _as_date(v: Any) -> dt.date | None:
+        if isinstance(v, dt.datetime):
+            return v.date()
+        if isinstance(v, dt.date):
+            return v
+        try:
+            return dt.date.fromisoformat(str(v))
+        except (TypeError, ValueError):
+            return None
+
+    hits = []
+    for b in bars:
+        d = _as_date(getattr(b, "bar_date", None))
+        c = getattr(b, "close", None)
+        if d is None or not isinstance(c, (int, float)):
+            continue
+        # BOUNDED BY THE EXPORT STAMP (review of #466). An export cannot predate the data it
+        # carries, so a bar AFTER the stamp can never be its source — and an unbounded scan over
+        # five years of history will eventually find a coincidental match at the same price,
+        # which would publish a date years off, or move the stamp FORWARD. Both are worse than
+        # leaving it uncorrected.
+        if not_after is not None and d > not_after:
+            continue
+        if abs(float(c) - close) <= tol:
+            hits.append(d)
+    return hits[0] if len(hits) == 1 else None
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:

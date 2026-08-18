@@ -31,7 +31,6 @@ from vinci.dossier.ciq import CiqBundle
 # See the note at `_ITEM_TERMINATION` for why it moved.
 from vinci.dossier.ciq_sheets import _cs_panel_filed
 from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
-from vinci.dossier.freshness import CiqAsOf, corrected_ciq_as_of
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
@@ -2921,12 +2920,6 @@ def _ie_consensus_latest(ar: str | None, period: str, metric: str) -> float | No
     return float(mo.group(1)) if mo else None
 
 
-def _ie_asof(source_ref: str | None) -> str:
-    """The '· as-of YYYY-MM-DD' an extractor stamps on its source_ref (else 'UNKNOWN')."""
-    mo = re.search(r"as-of\s+(\d{4}-\d{2}-\d{2})", source_ref or "")
-    return mo.group(1) if mo else "UNKNOWN"
-
-
 def _ie_bridge_net_debt(implied: ImpliedValuation) -> float | None:
     """Net debt implied by the cash/debt bridge (total debt − cash) — condition-b probe. Reads the
     STRUCTURED schema floats (DESIGN RULE); the old thousands-blind regex on the display string
@@ -2970,10 +2963,20 @@ def _implied_expectations(
     # Comparable Analysis → Financial Data. `mult_as_of` below comes from the ESTIMATES export,
     # whose convention has NOT been measured — correcting it too would be assuming the convention
     # generalises, which is the category-label rule. It stays uncorrected until measured.
-    stated_as_of = _ie_asof(mc.source_ref)
-    as_of = (corrected_ciq_as_of(stated_as_of, price_bars or [])
-             if stated_as_of != "UNKNOWN" else CiqAsOf(stated_as_of, resolved=False))
-    tev_as_of = as_of.as_of
+    # STRUCTURED, NOT RE-PARSED — and it must not be corrected a SECOND time.
+    # This read `_ie_asof(mc.source_ref)`: a regex over the rendered suffix, which is the "second
+    # parser of one display string" `comps_as_of_date`'s own docstring says the extractor exists to
+    # avoid. It survived because both parsers agreed while the suffix carried CIQ's raw header.
+    # THE COLLISION (review of #466): the assembler now injects the CORRECTED comps as-of, so
+    # the suffix carried it, this regex read it back out, and `corrected_ciq_as_of` walked it
+    # back ANOTHER trading day — measured on NFLX, header 2026-08-17 → injected 2026-08-14 →
+    # re-corrected 2026-08-13, on each of the 13 bundles the correction reaches. One panel, two
+    # dates, both wrong.
+    _cd, _ = ciq_sheets.comps_as_of_date(bundle)
+    tev_as_of = _cd.isoformat() if _cd is not None else "UNKNOWN"
+    _raw = ciq_sheets.comps_export_stamp(bundle)
+    _export_stamp = _raw.isoformat() if _raw is not None else "UNKNOWN"
+    _corrected = bundle.resolved_comps_as_of is not None
     mult_as_of = (
         (catalyst.as_of.value or "UNKNOWN").lstrip("≥")
         if catalyst.as_of.status is SourceStatus.PRESENT else "UNKNOWN")
@@ -3058,9 +3061,9 @@ def _implied_expectations(
         # resolve — and the unresolved one is a day too NEW, i.e. reads fresher than it is. An
         # uncorrectable stamp now says so on the page rather than passing as a corrected one.
         + (f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}, "
-           f"exported {stated_as_of}" if as_of.resolved else
-           f"(CIQ Comparable Analysis→Financial Data, Latest, export stamp {stated_as_of} — "
-           f"NOT date-corrected: no prior bar in the store")
+           f"exported {_export_stamp}" if _corrected else
+           f"(CIQ Comparable Analysis→Financial Data, Latest, export stamp {_export_stamp} — "
+           f"NOT date-corrected: the store carries no bar at that panel's printed close")
         + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(

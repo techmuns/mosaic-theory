@@ -77,3 +77,36 @@ def test_the_injected_date_never_overrides_an_operator_attestation() -> None:
     assert "resolved_comps_as_of" not in tail, (
         "the injected as-of is reachable from the operator-attested sidecar branch — a machine "
         "guess would silently overwrite a human's stated date, which nothing downstream reveals")
+
+
+def test_the_search_is_bounded_by_the_export_stamp() -> None:
+    """AN EXPORT CANNOT PREDATE THE DATA IT CARRIES, so a bar after the stamp is never its source.
+
+    Unbounded, the match runs over five years of history and will eventually hit a coincidental
+    old close at the same price — publishing a date years off — or a LATER one, moving the stamp
+    FORWARD, which is the invariant the whole correction exists to enforce. Found in review of
+    #466; the first cut searched the whole series."""
+    bars = [_Bar(dt.date(2024, 1, 5), 78.16),   # a coincidental match years earlier
+            _Bar(dt.date(2026, 8, 14), 78.16),
+            _Bar(dt.date(2026, 8, 20), 78.16)]  # AFTER the stamp — impossible as a source
+    # unbounded: three hits, ambiguous, refuses
+    assert date_of_close(78.16, bars) is None
+    # bounded to the stamp: the 2026-08-20 bar is excluded, but 2024 still collides -> refuses
+    assert date_of_close(78.16, bars, not_after=dt.date(2026, 8, 17)) is None
+    # bounded tightly enough to be unambiguous -> identifies
+    assert date_of_close(78.16, bars[1:], not_after=dt.date(2026, 8, 17)) == dt.date(2026, 8, 14)
+
+
+def test_the_printed_close_column_is_found_by_label_not_position() -> None:
+    """A HARDCODED COLUMN SILENTLY FEEDS A DIFFERENT NUMBER into the date match if CIQ reorders the
+    sheet — and the match cannot tell a wrong price from a right one; it just fails, or matches the
+    wrong day. Pinned structurally: the extractor must resolve the column from the header row."""
+    import inspect
+
+    from vinci.dossier import ciq_sheets as cs
+
+    src = inspect.getsource(cs.comps_printed_close)
+    assert "Day Close Price" in src, "the column is no longer resolved by its header label"
+    assert "_comps_cell(fd, tgt, 1)" not in src, (
+        "the printed-close column is hardcoded to position 1 again — a CIQ column reorder would "
+        "feed a different number into the date match with nothing to reveal it")

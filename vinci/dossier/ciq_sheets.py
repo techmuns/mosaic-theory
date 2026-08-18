@@ -3797,8 +3797,30 @@ def comps_printed_close(bundle: CiqBundle) -> float | None:
         fd = bundle.sheet("comps", "Financial Data")
     except CiqUnavailableError:
         return None
-    _h, _p, tgt = _comps_layout(fd, bundle.ticker)
-    return _num_or_none(_comps_cell(fd, tgt, 1)) if tgt is not None else None
+    hdr, _p, tgt = _comps_layout(fd, bundle.ticker)
+    if hdr is None or tgt is None:
+        return None
+    # BY HEADER LABEL, NOT POSITION (review of #466). A hardcoded column silently feeds a DIFFERENT
+    # number into the date match if CIQ ever reorders the sheet — and the date match cannot tell a
+    # wrong price from a right one, it just fails to match or matches the wrong day.
+    col = next((j for j, cell in enumerate(fd[hdr])
+                if str(cell).strip().startswith("Day Close Price")), None)
+    return _num_or_none(_comps_cell(fd, tgt, col)) if col is not None else None
+
+
+def comps_export_stamp(bundle: CiqBundle) -> date | None:
+    """The RAW `As-Of Date:` header — CIQ's EXPORT stamp, uncorrected and un-injected.
+
+    `comps_as_of_date` returns the CORRECTED date once the assembler has injected one, which is
+    what every consumer should publish. This exposes the raw stamp beside it so a cite can name
+    BOTH — "data <corrected>, exported <stamp>" — and so a reader can tell a corrected stamp from
+    one the store could not resolve. Without it the two states render identically, and the
+    unresolved one reads a day fresher than it is."""
+    try:
+        rows = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError:
+        return None
+    return _scan_asof_header(rows)
 
 
 def comps_as_of(bundle: CiqBundle) -> Sourced[str]:
