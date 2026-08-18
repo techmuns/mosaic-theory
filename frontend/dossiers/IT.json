@@ -4338,7 +4338,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[24 Credit Agreement · 0001193125-20-256749 · amended by 0001193125-24-083467]\n  Principal / commitment amount: $1,000,000,000 (Total Commitments as of the Closing Date); revolving Facility.…\n  Interest / coupon rate: Term Benchmark Loans: Adjusted Term SOFR (Term SOFR Rate + 0.10%) plus Applicable…\n  Maturity date: Termination Date = fifth anniversary of the Closing Date (Closing Date: March 26,…\n  Financial-maintenance covenants: Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any…\n[State of Connecticut Economic Development Loan · 0000930413-17-000070]\n  Principal / commitment amount: Term Loan B Facility: $1,375.0 million; 364-day Bridge Facility: $300.0 million; HY…\n  Interest / coupon rate: Term Loan B Facility and TLB Backstop Facility: Base Rate plus 175.0 basis points or…\n  Maturity date: Term Loan B Facility: seven years after the Closing Date; TLB Backstop Facility:…\n  Financial-maintenance covenants: Specified Amendment to Existing Credit Agreement: Consolidated Leverage Ratio not to…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[24 Credit Agreement · 0001193125-20-256749 · amended by 0001193125-24-083467]\n  Principal / commitment amount: $1,000,000,000 (Total Commitments as of the Closing Date); Commitment Increase…\n  Interest / coupon rate: Term Benchmark Loans: Adjusted Term SOFR plus Applicable Margin; RFR Loans: Adjusted…\n  Maturity date: Termination Date: the fifth anniversary of the Closing Date (Closing Date: March 26,…\n  Financial-maintenance covenants: Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any…\n[State of Connecticut Economic Development Loan · 0000930413-17-000070]\n  Principal / commitment amount: Term Loan B Facility: $1,375 million (aggregate amount of up to $1,375.0 million);…\n  Interest / coupon rate: Term Loan B Facility / TLB Backstop Facility: Base Rate plus 175.0 basis points OR…\n  Maturity date: RC Backstop Facility: June 17, 2021; TLB Backstop Facility: seven years after the…\n  Financial-maintenance covenants: Existing Credit Agreement (as amended by Specified Amendment) maintenance covenants:…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4362,10 +4362,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (Total Commitments as of the Closing Date); revolving Facility. Commitment Increase permitted in minimum of $5,000,000 so long as aggregate Commitment Increases do not exceed $750,000,000. L/C Commitments not to exceed $75,000,000.",
+              "value": "$1,000,000,000 (Total Commitments as of the Closing Date); Commitment Increase permitted so long as aggregate Commitment Increases do not exceed $750,000,000; L/C Commitments aggregate not to exceed $75,000,000",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Commitment ”: as to any Lender, the obligation of such Lender, if any, to make Loans and participate in Letters of Credit in an aggregate principal and/or face amount not to exceed the amount set forth under the heading “Commitment” opposite such Lender’s name on Schedule 1.1A or in the Assignment and Assumption pursuant to which such Lender became a party hereto, as the same may be changed from time to time pursuant to the terms hereof. As of the Closing Date, the amount of the Total Commitments is $1,000,000,000.”"
+              "note": "verbatim: ““ Commitment ”: as to any Lender, the obligation of such Lender, if any, to make Loans and participate in Letters of Credit in an aggregate principal and/or face amount not to exceed the amount set forth under the heading “Commitment” opposite such Lender’s name on Schedule 1.1A ... As of the Closing Date, the amount of the Total Commitments is $1,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4376,7 +4376,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term Benchmark Loans: Adjusted Term SOFR (Term SOFR Rate + 0.10%) plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Term Benchmark/RFR Loans ranges 1.125%–1.75% and for ABR Loans 0.125%–0.75% per pricing grids (Levels I–V / ratings-based). From Closing Date through first two full fiscal quarters, Applicable Margin calculated at Level IV. Floor = zero.",
+              "value": "Term Benchmark Loans: Adjusted Term SOFR plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Term Benchmark Loans and RFR Loans ranges 1.125%–1.75%; for ABR Loans 0.125%–0.75%. Adjusted Term SOFR = Term SOFR Rate plus 0.10%; Adjusted Daily Simple SOFR = Daily Simple SOFR plus 0.10%. Floor = zero. Default rate: applicable rate plus 2%.",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) (i) Each Term Benchmark Loan shall bear interest for each day during each Interest Period with respect thereto at a rate per annum equal to the Adjusted Term SOFR determined for such day plus the Applicable Margin and (ii) each RFR Loan ... shall bear interest at a rate per annum equal to the Adjusted Daily Simple SOFR plus the Applicable Margin. (b) Each ABR Loan shall bear interest at a rate per annum equal to the ABR plus the Applicable Margin.”"
@@ -4390,7 +4390,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date = fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursuant to Section 2.18. Borrower shall repay all outstanding Loans on the Termination Date.",
+              "value": "Termination Date: the fifth anniversary of the Closing Date (Closing Date: March 26, 2024), subject to extension pursuant to Section 2.18. The Borrower shall repay all outstanding Loans on the Termination Date.",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Termination Date ”: the fifth anniversary of the Closing Date, subject to the extension thereof pursuant to Section 2.18 .”"
@@ -4404,10 +4404,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period), tested at the end of any fiscal quarter for the trailing four consecutive fiscal quarters on a Pro Forma Basis.",
+              "value": "Consolidated Leverage Ratio not to exceed 4.00 to 1.00 (or 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period), calculated as at the end of any fiscal quarter for the period of four consecutive fiscal quarters, on a Pro Forma Basis; no more than two Acquisition Step-Up Periods after the Closing Date, each separated by at least two calendar quarters.",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
-              "note": "verbatim: “7.1 Financial Condition Covenant . Permit the Consolidated Leverage Ratio, calculated as at the end of any fiscal quarter for the period of four consecutive fiscal quarters of the Borrower then ended, on a Pro Forma Basis, to exceed (x) 4.00 to 1.00, or (y) 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period ...; provided that that there shall be no more than two Acquisition Step-Up Periods after the Closing Date and each Acquisition Step-Up Period shall be separated by at least two calendar quarters.”"
+              "note": "verbatim: “7.1 Financial Condition Covenant . Permit the Consolidated Leverage Ratio, calculated as at the end of any fiscal quarter for the period of four consecutive fiscal quarters of the Borrower then ended, on a Pro Forma Basis, to exceed (x) 4.00 to 1.00, or (y) 4.50 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period ...”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4418,7 +4418,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "No collateral pledged at closing (facility is unsecured; Section 7.3 provides an equal-and-ratable Lien 'springing' mechanism if Borrower/Subsidiary Liens secure other Indebtedness). Subsidiary guarantee under Section 6.7: each Domestic Subsidiary that guarantees Borrower Indebtedness of the type in clauses (a) and (c) in aggregate principal amount of $150,000,000 or more must guarantee the Obligations within 60 days; automatic release when conditions no longer apply.",
+              "value": "No blanket security/collateral grant; facility is effectively unsecured except for equal-and-ratable Lien springing under Section 7.3 (negative pledge). Guarantors: each Domestic Subsidiary that guarantees Borrower Indebtedness (clauses (a) and (c)) of $150,000,000 or more must guarantee the Obligations within 60 days (springing subsidiary guarantee, Section 6.7); Section 7.3 requires Obligations to be secured equally and ratably if Liens securing other Indebtedness are created (negative pledge with equal-and-ratable clause).",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
               "note": "verbatim: “6.7 Subsidiary Guarantee . (a) Each Domestic Subsidiary that guarantees Indebtedness of the Borrower of the type contemplated by clauses (a) and (c) of the definition thereof in an aggregate principal amount of $150,000,000 or more will guarantee the Obligations under the Facility pursuant to documentation reasonably satisfactory to the Administrative Agent within 60 days of the incurrence of such guarantee (or such longer period as may be agreed by the Administrative Agent).”"
@@ -4432,10 +4432,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Events of Default in Section 8.1 include: (a) payment default (principal when due; interest/other within 5 days); (b) breach of representations/warranties; (c) breach of specified covenants (Section 6.4(a)(i)/(ii), 6.6(a) or Section 7); (d) other covenant default unremedied for 30 days after notice; (e) cross-default/cross-acceleration on Indebtedness exceeding $200,000,000 in aggregate; (f) bankruptcy/insolvency (automatic acceleration for Borrower); (g) ERISA events; (h) judgments of $200,000,000 or more unvacated for 60 days; (i) change of control ('person'/'group' beneficial owner of more than 50% of outstanding common stock). Remedies: acceleration and Commitment termination (automatic upon bankruptcy Events of Default). No scheduled/asset-sale mandatory prepayment stated; optional prepayment without premium or penalty (Section 2.5). L/C cash collateralization required upon acceleration and in certain overage/Defaulting Lender scenarios.",
+              "value": "Events of Default (Section 8.1): (a) payment default (principal when due; interest/other amounts within 5 days); (b) inaccurate representation/warranty in material respect; (c) breach of covenants in Section 6.4(a)(i)/(ii), 6.6(a) or Section 7; (d) breach of other covenants unremedied for 30 days after notice; (e) cross-default to Indebtedness exceeding $200,000,000 in aggregate; (f) bankruptcy/insolvency (60-day period for involuntary); (g) ERISA events with Material Adverse Effect; (h) judgments of $200,000,000 or more undischarged for 60 days; (i) change of control (person/group beneficially owns more than 50% of outstanding common stock). Acceleration provisions apply; bankruptcy of Borrower is automatic. No general mandatory prepayment covenant stated (loans are revolving; repay all outstanding Loans on Termination Date); prepayment obligations limited to cash collateralization of L/C over-limits (Section 3.1) and reimbursement obligations.",
               "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
               "status": "present",
-              "note": "verbatim: “8.1 Events of Default . If any of the following events shall occur and be continuing: (a) the Borrower shall fail to pay any principal of any Loan or Reimbursement Obligation when due ...; (b) any representation or warranty ... shall prove to have been inaccurate in any material respect ...; (c) the Borrower shall default in the observance or performance of any agreement contained in clause (i) or (ii) of Section 6.4(a) , Section 6.6(a) or Section 7 ...; (d) the Borrower shall default in the observance or performance of any other agreement ... and such default shall continue unremedied for a period of 30 days after notice ...; (e) ... cross-default/cross-acceleration with respect to Indebtedness the outstanding principal amount of which exceeds in the aggregate $200,000,000; (f) ... bankruptcy/insolvency events ...; (g) ERISA events ...; (h) one or more judgments or decrees ... involving in the aggregate a liability ... of $200,000,000 or more ...; (i) any “person” or “group” ... becomes the “beneficial owner” ... of more than 50% of the outstanding common stock of the Borrower;”"
+              "note": "verbatim: “8.1 Events of Default . If any of the following events shall occur and be continuing: (a) the Borrower shall fail to pay any principal of any Loan or Reimbursement Obligation when due ... (e) ... Indebtedness the outstanding principal amount of which exceeds in the aggregate $200,000,000; ... (h) one or more judgments or decrees ... of $200,000,000 or more ... (i) any “person” or “group” ... becomes the “beneficial owner” ... directly or indirectly, of more than 50% of the outstanding common stock of the Borrower;”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4460,10 +4460,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Term Loan B Facility: $1,375.0 million; 364-day Bridge Facility: $300.0 million; HY Bridge Facility: up to $600.0 million; RC Backstop Facility: $500 million; TLB Backstop Facility: $1.2 billion",
+              "value": "Term Loan B Facility: $1,375 million (aggregate amount of up to $1,375.0 million); 364-day Bridge Facility: $300 million (up to $300.0 million); HY Bridge Facility: up to $600.0 million; RC Backstop Facility: $500 million; TLB Backstop Facility: $1.2 billion; additional incremental revolving commitments up to $750 million",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “(b) The Borrower will obtain a seven-year senior secured term loan B facility (the \"Term Loan B Facility,\" together with the Existing Credit Facilities or the Backstop Facilities, as applicable, the \"Senior Secured Facilities\") in an aggregate principal amount of $1,375 million... (c) The Borrower will obtain a 364-day senior unsecured bridge facility (the \"364-day Bridge Facility\") in an aggregate principal amount of $300 million. (d) The Borrower intends to (i) issue and sell senior unsecured notes providing for gross proceeds of up to $600 million ... obtain up to $600 million in the aggregate ... under a senior unsecured bridge loan facility described in Exhibit F (the \"HY Bridge Facility\"). RC Backstop Facility ... a senior secured revolving credit facility in aggregate principal amount of $500 million ... TLB Backstop Facility ... a senior secured term loan B credit facility in aggregate principal amount of $1.2 billion”"
+              "note": "verbatim: “(b) The Borrower will obtain a seven-year senior secured term loan B facility (the “ Term Loan B Facility ,” ...) in an aggregate principal amount of $1,375 million ... (c) The Borrower will obtain a 364-day senior unsecured bridge facility (the “ 364-day Bridge Facility ”) in an aggregate principal amount of $300 million. (d) ... obtain up to $600 million in the aggregate ... under a senior unsecured bridge loan facility described in Exhibit F (the “ HY Bridge Facility ”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4474,10 +4474,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term Loan B Facility and TLB Backstop Facility: Base Rate plus 175.0 basis points or Adjusted LIBO Rate plus 275.0 basis points; 364-day Bridge: Base Rate + 175.0 bps or Adjusted LIBO Rate + 275.0 bps (with step-ups); HY Bridge: Base Rate + 3.50% or Adjusted LIBO Rate + 4.50%",
+              "value": "Term Loan B Facility / TLB Backstop Facility: Base Rate plus 175.0 basis points OR Adjusted LIBO Rate plus 275.0 basis points; 364-day Bridge Facility: Base Rate plus 175.0 bps or Adjusted LIBO Rate plus 275.0 bps (margins increase 25.0 bps 180 days after Closing and additional 25.0 bps each 90 days thereafter); HY Bridge Facility: Base Rate plus 3.50% or Adjusted LIBO Rate plus 4.50% (increasing 50.0 bps every 90 days, subject to Total Cap). RC Backstop drawn: L + 300.0 to L + 112.5 bps by leverage grid.",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “The Borrower may elect that the Term Loan B loans bear interest at a rate per annum equal to (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. ... TLB Backstop Facility ... (a) the Base Rate (as defined in Exhibit D) plus 175.0 basis points or (b) the Adjusted LIBO Rate (as defined in Exhibit D) plus 275.0 basis points. ... 364-day Bridge Loans ... (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. Such margins will increase by (a) 25.0 basis points 180 days after the Closing Date and (b) an additional 25.0 basis points each 90 days thereafter. ... HY Bridge Loans ... (a) the Base Rate (as defined in Exhibit D hereto) plus 3.50% (the \"Initial Margin\") or (b) the Adjusted LIBO Rate (as defined in Exhibit D hereto) plus 4.50%. Such margins will increase by 50.0 basis points every 90 days after the Closing Date.”"
+              "note": "verbatim: “With respect to the TLB Backstop Facility, the Borrower may elect that the loans thereunder bear interest at a rate per annum equal to (a) the Base Rate (as defined in Exhibit D) plus 175.0 basis points or (b) the Adjusted LIBO Rate (as defined in Exhibit D) plus 275.0 basis points. ... The Borrower may elect that the Term Loan B loans bear interest at a rate per annum equal to (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. ... The Borrower may elect that the 364-day Bridge Loans bear interest at a rate per annum equal to (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. ... the Borrower may elect that the HY Bridge Loans bear interest at a rate per annum equal to (a) the Base Rate (as defined in Exhibit D hereto) plus 3.50% (the “ Initial Margin ”) or (b) the Adjusted LIBO Rate (as defined in Exhibit D hereto) plus 4.50%.”"
             },
             "base_rate_label": "Adjusted LIBO Rate",
             "margin_pct": null,
@@ -4488,10 +4488,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Term Loan B Facility: seven years after the Closing Date; TLB Backstop Facility: seven years after the Closing Date; RC Backstop Facility: June 17, 2021; 364-day Bridge Facility: 364 days after the Closing Date; HY Bridge Loans: first anniversary of the Closing Date (extendable to eighth anniversary); Exchange Notes/Extended Term Loans: eighth anniversary of the Closing Date",
+              "value": "RC Backstop Facility: June 17, 2021; TLB Backstop Facility: seven years after the Closing Date; Term Loan B Facility: seven years after the Closing Date; 364-day Bridge Facility: 364 days after the Closing Date; HY Bridge Loans: first anniversary of the Closing Date (Initial HY Maturity Date), extendable to eighth anniversary of the Closing Date; Exchange Notes/Extended Term Loans: eighth anniversary of the Closing Date",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Maturity: Loans under the Term Loan B Facility will mature seven years after the Closing Date, and will be subject to amortization at the rate of 1.00% per annum with a bullet payment at the final maturity thereof. ... The RC Backstop Facility will mature on June 17, 2021. Loans under the TLB Backstop Facility will mature seven years after the Closing Date ... The Bridge Loans will mature on the day that is 364 days after the Closing Date ... The HY Bridge Loans will initially mature on the first anniversary of the Closing Date (the \"Initial HY Maturity Date\") ... shall automatically be extended to the eighth anniversary of the Closing Date (the \"Extended Term Loans\"). ... The Exchange Notes and Extended Term Loans will mature on the eighth anniversary of the Closing Date.”"
+              "note": "verbatim: “The RC Backstop Facility will mature on June 17, 2021. Loans under the TLB Backstop Facility will mature seven years after the Closing Date ... Loans under the Term Loan B Facility will mature seven years after the Closing Date ... The Bridge Loans will mature on the day that is 364 days after the Closing Date ... The HY Bridge Loans will initially mature on the first anniversary of the Closing Date (the “ Initial HY Maturity Date ”) ... such HY Bridge Loans shall automatically be extended to the eighth anniversary of the Closing Date (the “ Extended Term Loans ”) ... The Exchange Notes and Extended Term Loans will mature on the eighth anniversary of the Closing Date.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4502,10 +4502,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Specified Amendment to Existing Credit Agreement: Consolidated Leverage Ratio not to exceed 5.25:1.00 (net of cash up to 50% of Consolidated EBITDA) for first six fiscal quarters, thereafter 4.50:1.00 (or 4.75:1.00 during Acquisition Step-Up Period); Consolidated Secured Leverage Ratio not to exceed 4.25:1.00 (net of cash up to 50% of Consolidated EBITDA) for first six fiscal quarters, thereafter 3.50:1.00 (or 3.75:1.00 during Acquisition Step-Up Period). Term Loan B Facility: no financial covenants. HY Bridge Facility: no financial covenants.",
+              "value": "Existing Credit Agreement (as amended by Specified Amendment) maintenance covenants: Consolidated Leverage Ratio max 5.25:1.00 (net of cash up to 50% of Consolidated EBITDA) for first six fiscal quarters after Closing, thereafter 4.50:1.00 (or 4.75:1.00 during Acquisition Step-Up Period); Consolidated Secured Leverage Ratio max 4.25:1.00 (net of cash up to 50% of EBITDA) for first six fiscal quarters, thereafter 3.50:1.00 (or 3.75:1.00 during Acquisition Step-Up Period). Term Loan B Facility: not subject to any financial covenants. HY Bridge Facility: no financial covenants. Backstop Facilities and 364-day Bridge: negative and financial covenants substantially the same as Existing Credit Facilities (as modified by Specified Amendment).",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Section 7.1(a) shall be amended to prohibit the Consolidated Leverage Ratio (as defined in the Existing Credit Agreement) from exceeding (1) 5.25 to 1.00, net of cash up to 50% of Consolidated EBITDA, for the first six fiscal quarters following the Closing Date and (2) thereafter, without the netting of any cash, from exceeding (x) 4.50 to 1.00 or (y) 4.75 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period. ... Section 7.1(b) shall be amended to prohibit the Consolidated Secured Leverage Ratio ... from exceeding (1) 4.25 to 1.00, net of cash up to 50% of Consolidated EBITDA, for the first six fiscal quarters ... (x) 3.50 to 1.00 or (y) 3.75 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period. ... Financial Covenants: The Term Loan B Facility will not be subject to any financial covenants. ... The HY Bridge Facility will not include any financial covenants.”"
+              "note": "verbatim: “Section 7.1(a) shall be amended to prohibit the Consolidated Leverage Ratio (as defined in the Existing Credit Agreement) from exceeding (1) 5.25 to 1.00, net of cash up to 50% of Consolidated EBITDA, for the first six fiscal quarters following the Closing Date and (2) thereafter, without the netting of any cash, from exceeding (x) 4.50 to 1.00 or (y) 4.75 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period ... Section 7.1(b) shall be amended to prohibit the Consolidated Secured Leverage Ratio ... from exceeding (1) 4.25 to 1.00, net of cash up to 50% of Consolidated EBITDA, for the first six fiscal quarters following the Closing Date and (2) thereafter ... (x) 3.50 to 1.00 or (y) 3.75 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period. ... [Term Loan B Facility] The Term Loan B Facility will not be subject to any financial covenants. ... [HY Bridge Facility] The HY Bridge Facility will not include any financial covenants.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4516,10 +4516,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Backstop Facilities and Term Loan B Facility: secured by perfected first priority security interest in all of Borrower's and Target's tangible and intangible assets; guarantees substantially the same as Existing Credit Facilities (Borrower and guarantors = Loan Parties). 364-day Bridge Facility and HY Bridge Facility: senior unsecured; guarantees from Target and material domestic subsidiaries that would guarantee Existing Credit Facilities",
+              "value": "Backstop Facilities and Term Loan B Facility (senior secured): perfected first priority security interest in all of the Borrower's and Target's tangible and intangible assets, subject to limitations/exclusions substantially the same as Existing Credit Facilities; guarantees substantially the same as Existing Credit Facilities, with Target and each subsidiary that would guarantee Existing Credit Facilities required to become guarantors (collectively 'Loan Parties'). 364-day Bridge Facility and HY Bridge Facility: senior UNSECURED; guarantees by Target and each material domestic subsidiary that would guarantee the Existing Credit Facilities. Exchange Notes/Extended Term Loans guarantors: same as HY Bridge Loans, ranking pari passu with senior unsecured indebtedness.",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Guarantees: Substantially the same as and limited to those set forth in the Existing Credit Facilities. The Target and each of its subsidiaries that would be required to guarantee the Existing Credit Facilities will ... be required to become guarantors. The Borrower and the guarantors are collectively referred to as the \"Loan Parties.\" Guarantee and Collateral Provisions: Subject to the Backstop Documentation Principles and the Limited Conditionality Provisions, the Borrower's obligations shall be secured by a perfected first priority security interest in all of the Borrower's and Target's tangible and intangible assets, subject to limitations and exclusions which shall be substantially the same as those set forth in the Existing Credit Facilities. ... [364-day Bridge and HY Bridge:] A senior unsecured ... bridge loan facility”"
+              "note": "verbatim: “Guarantees : Substantially the same as and limited to those set forth in the Existing Credit Facilities. The Target and each of its subsidiaries that would be required to guarantee the Existing Credit Facilities will ... be required to become guarantors. The Borrower and the guarantors are collectively referred to as the “ Loan Parties .” ... Guarantee and Collateral Provisions : ... the Borrower’s obligations shall be secured by a perfected first priority security interest in all of the Borrower’s and Target’s tangible and intangible assets, subject to limitations and exclusions which shall be substantially the same as those set forth in the Existing Credit Facilities.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4530,10 +4530,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments (TLB Backstop / Term Loan B): 100% of net cash proceeds from Asset Sale or Recovery Event; 100% of net cash proceeds from debt issuance (subject to provisos); 50% of Excess Cash Flow (reduced to 25% if Consolidated Secured Leverage Ratio ≤ 3.00:1.00, eliminated at 2.50:1.00). 364-day Bridge: 100% of foreign subsidiary distributions/dividends and 100% of net cash proceeds from Specified Debt Incurrence/Specified Equity Issuance. HY Bridge: 100% of Specified Debt Incurrence proceeds and 100% of Specified Equity Issuance proceeds. Events of Default: substantially the same as and limited to those in the Existing Credit Facilities (HY Bridge: usual for facilities of this type).",
+              "value": "Mandatory Prepayment (TLB Backstop / Term Loan B): 100% net cash proceeds of Asset Sale/Recovery Event (subject to reinvestment); 100% net cash proceeds of debt issuance (other than Permitted Debt); 50% of Excess Cash Flow, reduced to 25% when Consolidated Secured Leverage Ratio ≤ 3.00:1.00 and eliminated at 2.50:1.00. 364-day Bridge: 100% net cash proceeds of Foreign Subsidiary distributions/dividends less taxes; 100% net proceeds of Specified Debt Incurrence or Specified Equity Issuance. HY Bridge: 100% net proceeds of Specified Debt Incurrence (secured debt not until first anniversary); 100% net proceeds of Specified Equity Issuance. Events of Default: substantially the same as and limited to those in the Existing Credit Facilities (HY Bridge/Exchange Notes: usual/customary for high-yield financings).",
               "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
               "status": "present",
-              "note": "verbatim: “Mandatory Prepayment: Subject to the ... Documentation Principles, substantially the same as those set forth in the Existing Credit Facilities and including mandatory prepayments for the following: (a) ... 100% of the net cash proceeds received ... from any Asset Sale or Recovery Event ... (b) 100% of the net cash proceeds received by the Borrower from any debt issuance ... (c) ... 50% of Excess Cash Flow, subject to (i) reduction to 25% upon the Consolidated Secured Leverage Ratio ... being equal to or less than 3.00 to 1.00 and (ii) elimination upon the Consolidated Secured Leverage Ratio being equal to 2.50 to 1.00 ... Events of Default: Subject to the Backstop Documentation Principles and the Limited Conditionality Provisions, substantially the same as and limited to those set forth in the Existing Credit Facilities.”"
+              "note": "verbatim: “Mandatory Prepayment : ... (a) with respect to the TLB Backstop Facility only, 100% of the net cash proceeds received by the Borrower or any of its restricted subsidiaries from any Asset Sale or Recovery Event ... (b) 100% of the net cash proceeds received by the Borrower from any debt issuance (other than ... Permitted Debt ...) after the Closing Date ... (c) With respect to the TLB Backstop Facility only, 50% of Excess Cash Flow, subject to (i) reduction to 25% upon the Consolidated Secured Leverage Ratio ... being equal to or less than 3.00 to 1.00 and (ii) elimination upon the Consolidated Secured Leverage Ratio being equal to 2.50 to 1.00 ... Events of Default : Subject to the Backstop Documentation Principles and the Limited Conditionality Provisions, substantially the same as and limited to those set forth in the Existing Credit Facilities.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4558,10 +4558,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,400,000,000 total; Total Revolving Commitments $1,000,000,000; aggregate Term Commitments $400,000,000; L/C Commitments aggregate not to exceed $75,000,000",
+              "value": "$1,400,000,000 total facility; Total Revolving Commitments $1,000,000,000; aggregate Term Commitments $400,000,000; L/C Commitments aggregate not to exceed $75,000,000",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
-              "note": "verbatim: “$1,400,000,000 AMENDED AND RESTATED CREDIT AGREEMENT ... As of the Closing Date, the amount of the Total Revolving Commitments is $1,000,000,000. ... As of the Closing Date, the aggregate amount of Term Commitments is $400,000,000.”"
+              "note": "verbatim: “$1,400,000,000 AMENDED AND RESTATED CREDIT AGREEMENT ... “Revolving Commitment” ... As of the Closing Date, the amount of the Total Revolving Commitments is $1,000,000,000. ... “Term Commitment” ... As of the Closing Date, the aggregate amount of Term Commitments is $400,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4572,7 +4572,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurodollar Loans: Adjusted LIBO Rate plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Eurodollar Loans ranges 1.125%–2.25% and for ABR Loans 0.125%–1.25% by Consolidated Leverage Ratio pricing grid (Level III until first Adjustment Date). Default rate: applicable rate plus 2%.",
+              "value": "Eurodollar Loans: Adjusted LIBO Rate plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Eurodollar Loans ranges 1.125%–2.25% and for ABR Loans 0.125%–1.25% based on Consolidated Leverage Ratio (Level III from Closing Date until first Adjustment Date). LIBO Screen Rate floored at zero.",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) Each Eurodollar Loan shall bear interest for each day during each Interest Period with respect thereto at a rate per annum equal to the Adjusted LIBO Rate determined for such day plus the Applicable Margin. (b) Each ABR Loan shall bear interest at a rate per annum equal to the ABR plus the Applicable Margin.”"
@@ -4586,10 +4586,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Revolving Termination Date and Term Loan Maturity Date each = fifth anniversary of the Closing Date (Closing Date: September 28, 2020)",
+              "value": "Term Loan Maturity Date and Revolving Termination Date: the fifth anniversary of the Closing Date (Closing Date = September 28, 2020)",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Revolving Termination Date ”: the fifth anniversary of the Closing Date. ... “ Term Loan Maturity Date ”: the fifth anniversary of the Closing Date. ... “ Closing Date ”: September 28, 2020.”"
+              "note": "verbatim: ““Term Loan Maturity Date”: the fifth anniversary of the Closing Date. ... “Revolving Termination Date”: the fifth anniversary of the Closing Date. ... “Closing Date”: September 28, 2020.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4600,7 +4600,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Leverage Ratio not to exceed: (i) 5.00 to 1.00 for any fiscal quarter ending on or before December 31, 2021; (ii) thereafter 4.50 to 1.00, or 5.00 to 1.00 during any Acquisition Step-Up Period (no more than two Acquisition Step-Up Periods, each separated by at least two calendar quarters)",
+              "value": "Consolidated Leverage Ratio not to exceed: (i) 5.00 to 1.00 for any fiscal quarter ending on or before December 31, 2021; (ii) thereafter (x) 4.50 to 1.00 or (y) 5.00 to 1.00 during any Acquisition Step-Up Period (no more than two Step-Up Periods, each separated by at least two calendar quarters)",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
               "note": "verbatim: “7.1 Financial Condition Covenant . Permit the Consolidated Leverage Ratio, calculated as at the end of any fiscal quarter for the period of four consecutive fiscal quarters of the Borrower then ended, on a Pro Forma Basis, to exceed (i) for any fiscal quarter ending on or before December 31, 2021, 5.00 to 1.00 and (ii) for each fiscal quarter thereafter, (x) 4.50 to 1.00; or (y) 5.00 to 1.00 for any fiscal quarter during any Acquisition Step-Up Period”"
@@ -4614,10 +4614,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured and guaranteed. Collateral = all property of the Loan Parties subject to a Lien pursuant to any Security Document (Guarantee and Collateral Agreement dated Sept 28, 2020). Guarantors = each Subsidiary Guarantor (each Domestic Subsidiary, other than Foreign Subsidiary Holdcos, that is a Material Subsidiary). Pledge of Capital Stock, with no more than 66% of voting Capital Stock of Excluded Foreign Subsidiaries required to be pledged.",
+              "value": "Secured. Collateral = all property of Loan Parties subject to a Lien under any Security Document, per the Amended and Restated Guarantee and Collateral Agreement dated September 28, 2020. Guarantors: Borrower and each Subsidiary Guarantor (each Domestic Subsidiary, other than Foreign Subsidiary Holdcos, that is a Material Subsidiary). Pledge of up to 66% of voting Capital Stock of Excluded Foreign Subsidiaries.",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Guarantee and Collateral Agreement ”: the Amended and Restated Guarantee and Collateral Agreement, dated as of September 28, 2020, by the Borrower and each Subsidiary Guarantor ... “ Collateral ”: all property of the Loan Parties, now owned or hereafter acquired, subject to a Lien pursuant to any Security Document. ... “ Subsidiary Guarantor ”: each Domestic Subsidiary (other than any Foreign Subsidiary Holdcos) of the Borrower that is a Material Subsidiary.”"
+              "note": "verbatim: ““Guarantee and Collateral Agreement”: the Amended and Restated Guarantee and Collateral Agreement, dated as of September 28, 2020, by the Borrower and each Subsidiary Guarantor ... “Collateral”: all property of the Loan Parties, now owned or hereafter acquired, subject to a Lien pursuant to any Security Document. ... “Subsidiary Guarantor”: each Domestic Subsidiary (other than any Foreign Subsidiary Holdcos) of the Borrower that is a Material Subsidiary.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4628,10 +4628,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: 50% of Net Cash Proceeds from Asset Sale or Recovery Event applied to Term Loans (unless Reinvestment Notice delivered; not required if Consolidated Leverage Ratio ≤3.50 to 1.00 on Pro Forma Basis). Events of Default (Section 8.1) include: (a) payment default (principal; interest/other within 5 days); (b) misrepresentation; (c)-(d) covenant defaults (30-day cure for others); (e) cross-default on Indebtedness exceeding $100,000,000 aggregate; (f) bankruptcy/insolvency of Borrower or Significant Subsidiary; (g) ERISA; (h) judgments of $100,000,000 or more; (i) Security Documents cease to be effective; (j) guarantee ceases; (k) Change of Control (>50% of outstanding common stock).",
+              "value": "Mandatory Prepayment (Section 2.9): 50% of Net Cash Proceeds from any Asset Sale or Recovery Event applied to Term Loans, unless a Reinvestment Notice is delivered or Borrower is in compliance on a Pro Forma Basis with Consolidated Leverage Ratio not to exceed 3.50 to 1.00; Reinvestment Prepayment Amount applied on each Reinvestment Prepayment Date. Events of Default (Section 8.1): (a) payment defaults; (b) inaccurate representations/warranties; (c)-(d) covenant defaults; (e) cross-default to Indebtedness exceeding $100,000,000 in the aggregate; (f) bankruptcy/insolvency of Borrower or Significant Subsidiary Guarantor; (g) ERISA events; (h) judgments of $100,000,000 or more; (i) Security Documents cease to be effective; (j) guarantee ceases to be in effect; (k) Change of Control (>50% of outstanding common stock).",
               "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
               "status": "present",
-              "note": "verbatim: “2.9 Mandatory Prepayments . (a) If any Group Member shall receive Net Cash Proceeds from any Asset Sale or Recovery Event, then, unless (x) a Reinvestment Notice shall be delivered in respect thereof, an amount equal to 50% of such Net Cash Proceeds shall be applied to the prepayment of the Term Loans ... provided that no such prepayment shall be required if, as of the date Net Cash Proceeds ... are received, the Borrower is in compliance on a Pro Forma Basis with a Consolidated Leverage Ratio not to exceed 3.50 to 1.00 ... 8.1 Events of Default . If any of the following events shall occur and be continuing: (a) the Borrower shall fail to pay any principal ... (b) any representation or warranty ... shall prove to have been inaccurate in any material respect ... (e) ... cross-default ... Indebtedness the outstanding principal amount of which exceeds in the aggregate $100,000,000 ... (f) bankruptcy/insolvency ... (h) one or more judgments ... of $100,000,000 or more ... (k) any “person” or “group” ... becomes the “beneficial owner” ... of more than 50% of the outstanding common stock of the Borrower”"
+              "note": "verbatim: “2.9 Mandatory Prepayments . (a) If any Group Member shall receive Net Cash Proceeds from any Asset Sale or Recovery Event, then, unless (x) a Reinvestment Notice shall be delivered in respect thereof, an amount equal to 50% of such Net Cash Proceeds shall be applied to the prepayment of the Term Loans ... provided that no such prepayment shall be required if ... the Borrower is in compliance on a Pro Forma Basis with a Consolidated Leverage Ratio not to exceed 3.50 to 1.00 ... 8.1 Events of Default . If any of the following events shall occur and be continuing: (a) the Borrower shall fail to pay any principal ... when due”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4733,6 +4733,139 @@
         "note": null
       },
       "window_days": 1095
+    },
+    "ownership_events": {
+      "filings": [
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-08-13",
+          "accession": "0001167557-26-000187"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-08-13",
+          "accession": "0001172661-26-003359"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-07-28",
+          "accession": "0002012383-26-002578"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-06-03",
+          "accession": "0001017918-26-000047"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-05-15",
+          "accession": "0001017918-26-000034"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-05-15",
+          "accession": "0001167557-26-000097"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-05-14",
+          "accession": "0001562230-26-000088"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-05-14",
+          "accession": "0001172661-26-001863"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-04-29",
+          "accession": "0002100119-26-000517"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-04-29",
+          "accession": "0002100121-26-000384"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2026-03-26",
+          "accession": "0000102909-26-001323"
+        },
+        {
+          "form": "SCHEDULE 13G",
+          "filing_date": "2026-02-13",
+          "accession": "0001562230-26-000028"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-11-14",
+          "accession": "0001017918-25-000056"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-07-29",
+          "accession": "0000932471-25-000886"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-07-17",
+          "accession": "0002052113-25-003179"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2025-05-15",
+          "accession": "0001017918-25-000028"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "filing_date": "2024-11-14",
+          "accession": "0001017918-24-000073"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-02-14",
+          "accession": "0001567619-24-000218"
+        },
+        {
+          "form": "SC 13G/A",
+          "filing_date": "2024-02-13",
+          "accession": "0001104659-24-020996"
+        },
+        {
+          "form": "SC 13G",
+          "filing_date": "2024-01-26",
+          "accession": "0001086364-24-004330"
+        }
+      ],
+      "line": {
+        "value": "no 13D on file · Schedule 13G filings 20 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-13) — 3y window to 2026-08-14",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-08-15→2026-08-14 · latest 0001167557-26-000187",
+        "status": "present",
+        "note": null
+      },
+      "window_days": 1095
+    },
+    "sbc": {
+      "expense": {
+        "value": 155.877,
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-01-01→2025-12-31)",
+        "status": "present",
+        "note": null
+      },
+      "pct_revenue": {
+        "value": 2.3991315678414145,
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-01-01→2025-12-31) ÷ RevenueFromContractWithCustomerExcludingAssessedTax (same window)",
+        "status": "present",
+        "note": null
+      },
+      "window_start": "2025-01-01",
+      "window_end": "2025-12-31",
+      "line": {
+        "value": "stock-based compensation $155.9M = 2.4% of revenue ($6,497.2M, FY 2025-01-01→2025-12-31)",
+        "source_ref": "EDGAR XBRL ShareBasedCompensation (10-K, 2025-01-01→2025-12-31)",
+        "status": "present",
+        "note": null
+      }
     },
     "peer_capital_intensity": {
       "rows": [
@@ -7849,7 +7982,79 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "year-over-year contract value growth",
+          "metric": "number of high-impact documents",
+          "period": "Q1 2026",
+          "value": "increased ... by 22%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We've increased the number of high-impact documents by 22%.",
+          "following_context": "The second dimension is volume. The number of documents in our insights library is up 19%. The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "number of documents in insights library",
+          "period": "Q1 2026",
+          "value": "up 19%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The number of documents in our insights library is up 19%.",
+          "following_context": "The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "number of same-day timeliness documents",
+          "period": "Q1 2026",
+          "value": "more than doubled",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The number of these documents has more than doubled.",
+          "following_context": "A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "two-way conversations with executives (annual)",
+          "period": null,
+          "value": "more than 0.5 million 2-way conversations with more than 80,000 executives",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Every year, we hold more than 0.5 million 2-way conversations with more than 80,000 executives across every major function and in every industry.",
+          "following_context": "We conduct more than 27,000 briefings with executives from technology providers. We also leverage data from proprietary surveys, tools, models, benchmarks and more. This gives us a deep understanding of what executives care about most, what's working and what isn't.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "briefings with technology provider executives (annual)",
+          "period": null,
+          "value": "more than 27,000 briefings",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We conduct more than 27,000 briefings with executives from technology providers.",
+          "following_context": "We also leverage data from proprietary surveys, tools, models, benchmarks and more. This gives us a deep understanding of what executives care about most, what's working and what isn't.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Gartner Peer Community executives",
+          "period": null,
+          "value": "more than 100,000 executives",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "They can validate decisions through the Gartner Peer Community, which has more than 100,000 executives from nearly every enterprise function.",
+          "following_context": "And of course, they can use AskGartner to go even deeper into specific topics. No one else does what we do at our scope and scale.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "contract value (CV) growth year-over-year",
           "period": "Q1 2026",
           "value": "grew 1% year-over-year",
           "value_num": null,
@@ -7861,7 +8066,43 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "contract value growth excluding U.S. federal government",
+          "metric": "share count reduction",
+          "period": "Q1 2026",
+          "value": "reduced our share count by about 4%, buying back $535 million of stock",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In the first quarter, we reduced our share count by about 4%, buying back $535 million of stock.",
+          "following_context": "And we expect to generate significant free cash flow and have fewer shares outstanding over the course of the next several years.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "insights revenue growth year-over-year",
+          "period": "Q1 2026",
+          "value": "grew 3% year-over-year as reported and was about flat FX neutral",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Insights revenue in the quarter grew 3% year-over-year as reported and was about flat FX neutral.",
+          "following_context": "First quarter insights contribution margin was 78%, up about 120 basis points versus last year. Contract value was $5.3 billion at the end of the first quarter, up 1% versus the prior year and an acceleration from year-end. Excluding the U.S. federal government, CV growth was 3.5%. At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "contract value at quarter end",
+          "period": "end of Q1 2026",
+          "value": "$5.3 billion",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Contract value was $5.3 billion at the end of the first quarter, up 1% versus the prior year and an acceleration from year-end.",
+          "following_context": "Excluding the U.S. federal government, CV growth was 3.5%. At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "CV growth excluding U.S. federal government",
           "period": "Q1 2026",
           "value": "3.5%",
           "value_num": null,
@@ -7873,8 +8114,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. federal contract value",
-          "period": "At March 31",
+          "metric": "U.S. federal CV",
+          "period": "March 31, 2026",
           "value": "approximately $114 million",
           "value_num": null,
           "unit": null,
@@ -7885,21 +8126,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "contract value (end of period)",
-          "period": "end of the first quarter",
-          "value": "$5.3 billion, up 1% versus the prior year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Contract value was $5.3 billion at the end of the first quarter, up 1% versus the prior year and an acceleration from year-end.",
-          "following_context": "Excluding the U.S. federal government, CV growth was 3.5%. At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "new business",
           "period": "Q1 2026",
-          "value": "more than $200 million",
+          "value": "more than $200 million in new business",
           "value_num": null,
           "unit": null,
           "verbatim": "We had more than $200 million in new business in the first quarter as there continues to be considerable interest in Gartner's proprietary unbiased insights.",
@@ -7909,33 +8138,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "high-impact documents count",
-          "period": null,
-          "value": "increased the number of high-impact documents by 22%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We've increased the number of high-impact documents by 22%.",
-          "following_context": "The second dimension is volume. The number of documents in our insights library is up 19%. The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "insights library document volume",
-          "period": null,
-          "value": "up 19%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "The number of documents in our insights library is up 19%.",
-          "following_context": "The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "overall client engagement (monthly active users)",
-          "period": "Q1 2026",
-          "value": "up over 170 basis points compared to the prior year quarter",
+          "period": "Q1 2026 vs prior year quarter",
+          "value": "up over 170 basis points",
           "value_num": null,
           "unit": null,
           "verbatim": "Derived from analyzing monthly active users, overall engagement in Q1 was up over 170 basis points compared to the prior year quarter.",
@@ -7969,9 +8174,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Global Technology Sales contract value",
-          "period": "end of the first quarter",
-          "value": "$4 billion, up versus the prior year",
+          "metric": "Global Technology Sales CV",
+          "period": "end of Q1 2026",
+          "value": "$4 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Global Technology Sales contract value was $4 billion at the end of the first quarter, up versus the prior year.",
@@ -7995,7 +8200,7 @@
           "kind": "leading_indicator",
           "metric": "GTS wallet retention",
           "period": "Q1 2026",
-          "value": "97% for the quarter",
+          "value": "97%",
           "value_num": null,
           "unit": null,
           "verbatim": "Wallet retention for GTS was 97% for the quarter.",
@@ -8017,7 +8222,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "GTS new business",
+          "metric": "GTS new business change",
           "period": "Q1 2026",
           "value": "down 4% compared to last year and down about 3% ex-Fed",
           "value_num": null,
@@ -8029,9 +8234,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Global Business Sales contract value",
-          "period": "end of the first quarter",
-          "value": "$1.3 billion, up 3% year-over-year",
+          "metric": "Global Business Sales CV",
+          "period": "end of Q1 2026",
+          "value": "$1.3 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Global Business Sales contract value was $1.3 billion at the end of the first quarter, up 3% year-over-year.",
@@ -8055,7 +8260,7 @@
           "kind": "leading_indicator",
           "metric": "GBS wallet retention",
           "period": "Q1 2026",
-          "value": "98% for the quarter",
+          "value": "98%",
           "value_num": null,
           "unit": null,
           "verbatim": "Wallet retention for GBS was 98% for the quarter.",
@@ -8065,7 +8270,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "GBS new business",
+          "metric": "GBS new business change",
           "period": "Q1 2026",
           "value": "down 2% compared to last year",
           "value_num": null,
@@ -8102,7 +8307,7 @@
         {
           "kind": "leading_indicator",
           "metric": "consulting backlog",
-          "period": "At March 31",
+          "period": "March 31, 2026",
           "value": "$201 million",
           "value_num": null,
           "unit": null,
@@ -8112,20 +8317,152 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "two-way conversations with executives (scope/scale)",
-          "period": "Every year",
-          "value": "more than 0.5 million 2-way conversations with more than 80,000 executives",
+          "kind": "leading_indicator",
+          "metric": "contract optimization revenue 2-year CAGR",
+          "period": "Q1 2026 LTM",
+          "value": "up about 15%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Every year, we hold more than 0.5 million 2-way conversations with more than 80,000 executives across every major function and in every industry.",
-          "following_context": "We conduct more than 27,000 briefings with executives from technology providers. We also leverage data from proprietary surveys, tools, models, benchmarks and more. This gives us a deep understanding of what executives care about most, what's working and what isn't.",
+          "verbatim": "On a 2-year CAGR basis, revenue was up about 15%.",
+          "following_context": "As you know, our contract optimization revenue is highly variable.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Q4 CV growth outside U.S. federal government",
+          "metric": "shares outstanding",
+          "period": "Q1 2026",
+          "value": "70 million shares outstanding ... improvement of about 8 million shares or approximately 10% year-over-year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We had 70 million shares outstanding in the first quarter. This is an improvement of about 8 million shares or approximately 10% year-over-y",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "differentiation / trusted source claim",
+          "period": null,
+          "value": "the best, most trusted source",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Gartner is the best, most trusted source for the help executives need to achieve success.",
+          "following_context": "We proactively deliver insights that guide smarter decisions and stronger outcomes on mission-critical priorities.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "exclusivity / scope and scale claim",
+          "period": null,
+          "value": "No one else does what we do at our scope and scale",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "No one else does what we do at our scope and scale.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "AI-related documents in library",
+          "period": "2025",
+          "value": "more than 6,000 AI-related documents",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We have more than 6,000 AI-related documents in our library.",
+          "following_context": "We've documented more than 1,000 unique use cases. In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "unique AI use cases documented",
+          "period": "2025",
+          "value": "more than 1,000 unique use cases",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We've documented more than 1,000 unique use cases.",
+          "following_context": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "in-depth AI client conversations",
+          "period": "2025",
+          "value": "more than 200,000 in-depth client conversations on AI",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "AI-related questions answered through AskGartner",
+          "period": "2025",
+          "value": "more than 500,000 AI-related questions",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "active insights library growth",
+          "period": "end of 2025",
+          "value": "grown by approximately 50%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "As of the end of 2025, our active insights library has grown by approximately 50%.",
+          "following_context": "By increasing volume, we can better accommodate the full range of our clients' mission-critical priorities.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "average Magic Quadrant insight creation time",
+          "period": "2025",
+          "value": "reduced ... by 75% compared to 2024",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Second, for insight types that are highly valued by our clients, such as Magic Quadrants, we reduced our average insight creation time by 75% compared to 2024.",
+          "following_context": "So we'll continue to ensure our insights keep pace with the ever accelerating pace of the world.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "AskGartner user renewal rates",
+          "period": null,
+          "value": "substantially higher renewal rates",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Licensed users who used AskGartner had substantially higher renewal rates than those who did not even with the same levels of engagement.",
+          "following_context": "We'll continuously improve and innovate AskGartner's capabilities. Separately, we're identifying role-specific insights each week that are particularly valuable and broadly applicable. Our goal is to ensure clients have every opportunity to engage with these uniquely valuable insights.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Contract Value growth year-over-year",
+          "period": "Q4 2025",
+          "value": "grew 1% year-over-year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Fourth quarter revenue was $1.8 billion, up 2% year-over-year as reported and unchanged FX neutral. For the full year, revenue was $6.5 billion, up 4% as reported and 3% FX neutral. Fourth quarter Contract Value or CV grew 1% year-over-year.",
+          "following_context": "Outside the U.S. federal government, CV grew 4%. In the quarter, total contribution margin was 67%, up 85 basis points from last year.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "CV growth outside U.S. federal government",
           "period": "Q4 2025",
           "value": "grew 4%",
           "value_num": null,
@@ -8137,9 +8474,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Contract Value (end of Q4)",
-          "period": "end of the fourth quarter",
-          "value": "$5.2 billion, up 1% versus the prior year",
+          "metric": "Insights revenue growth year-over-year",
+          "period": "Q4 2025",
+          "value": "grew 3% year-over-year as reported and 1% FX neutral",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Insights revenue in the quarter grew 3% year-over-year as reported and 1% FX neutral.",
+          "following_context": "Fourth quarter Insights contribution margin was 77%, up 59 basis points versus last year. Full year Insights revenue increased 5% as reported and 4% FX neutral. For 2025, Insights' contribution margin was 77%, up 14 basis points from 2024.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Contract Value at quarter end",
+          "period": "end of Q4 2025",
+          "value": "$5.2 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Contract Value was $5.2 billion at the end of the fourth quarter, up 1% versus the prior year.",
@@ -8149,8 +8498,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "CV growth outside U.S. federal government (end of Q4)",
-          "period": "end of the fourth quarter",
+          "metric": "CV growth outside U.S. federal government",
+          "period": "Q4 2025",
           "value": "about 330 basis points faster at around 4%",
           "value_num": null,
           "unit": null,
@@ -8173,73 +8522,13 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. federal contract value",
-          "period": "At December 31",
+          "metric": "U.S. federal CV",
+          "period": "December 31, 2025",
           "value": "$126 million",
           "value_num": null,
           "unit": null,
           "verbatim": "At December 31, we had $126 million of U.S. federal CV.",
           "following_context": null,
-          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "AI-related documents in library",
-          "period": "During 2025",
-          "value": "more than 6,000 AI-related documents",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We have more than 6,000 AI-related documents in our library.",
-          "following_context": "We've documented more than 1,000 unique use cases. In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "unique AI use cases documented",
-          "period": "During 2025",
-          "value": "more than 1,000 unique use cases",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We've documented more than 1,000 unique use cases.",
-          "following_context": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "in-depth client conversations on AI",
-          "period": "2025",
-          "value": "more than 200,000 in-depth client conversations on AI",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "active insights library growth",
-          "period": "As of the end of 2025",
-          "value": "grown by approximately 50%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "As of the end of 2025, our active insights library has grown by approximately 50%.",
-          "following_context": "By increasing volume, we can better accommodate the full range of our clients' mission-critical priorities.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "average insight creation time reduction (Magic Quadrants)",
-          "period": "compared to 2024",
-          "value": "reduced our average insight creation time by 75% compared to 2024",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Second, for insight types that are highly valued by our clients, such as Magic Quadrants, we reduced our average insight creation time by 75% compared to 2024.",
-          "following_context": "So we'll continue to ensure our insights keep pace with the ever accelerating pace of the world.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8251,78 +8540,73 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a franchise trading at a trough multiple with intact retention/returns but genuinely stalled growth and still-falling estimates.",
+    "evidence_balance": "mixed — franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
     "bull_points": [
       {
-        "claim": "The stock has fallen 24% over the trailing year while the mid-cap benchmark rose ~24% (name -24.1% vs MDY +23.6%), yet the underlying business is not deteriorating at that pace — a de-rating far outrunning the operating slippage.",
-        "source_ref": "EOD IT vs MDY rebased to 100, 2025-08-15..2026-08-14",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA has kept rising through the de-rating — $1,309M (FY24) → $1,311M (FY25) → $1,337M (LTM Mar-31-2026) — so the margin optics conceal a business still compounding dollar profit.",
+        "claim": "The stock has collapsed from ~$266 to $179 (-24% over 52 weeks vs +24% for the MDY benchmark) while absolute EBITDA has RISEN every year to $1,337M LTM — the de-rating is a multiple compression, not an earnings collapse.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "EV/EBITDA (TEV/LTM) at 8.0x sits at the 3rd percentile of its own ~9.3-year range (median 23.4x), i.e. the multiple is priced far below anything this business has traded at through prior cycles.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "claim": "EV/EBITDA (TEV/LTM) sits at 8.0x — the 3rd percentile of its own 9.3-year range (median 23.4x, low 7.5x) — a near-floor own-history reading, though trailing-only cannot itself distinguish temporary from permanent (see key_unknowns).",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "Return on capital remains high and stable through the drawdown — RoCE 18.2% (FY24) → 18.6% (FY25) → 19.4% (LTM) — inconsistent with a franchise in terminal decline.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "The core Insights subscription model shows durable retention: GTS wallet retention 97% (99% ex-Fed) and GBS 98%, so recurring revenue is holding despite a tough selling environment.",
+        "claim": "The core Insights subscription franchise (78% of revenue) still grew: Q4-25 CV +1% YoY (+4% ex-U.S.-federal) and Q1-26 CV +1% YoY (+3.5% ex-Fed), an acceleration from year-end — the drag is a specific, identifiable U.S. federal exposure, not broad demand loss.",
         "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Contract value — the leading indicator for subscription revenue — grew 1% YoY in Q1 2026 but 3.5% ex-U.S.-federal, so the reported softness is concentrated in a ~$114M federal book being renewed down, not broad-based demand loss.",
+        "claim": "Wallet retention held strong (GTS 97%, ex-Fed 99%; GBS 98%), consistent with a sticky subscription base rather than structural churn.",
         "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The company is aggressively shrinking the share count — down 18.1% over ~1.7 years (77.1M → 63.1M) with $1,081.8M repurchased in H1 FY26 — concentrating per-share value while the stock is depressed.",
+        "claim": "The company is aggressively retiring equity: share count -18.1% over ~1.7y (77.1M → 63.1M) and $1,082M repurchased in H1-2026 alone, compounding per-share value while the multiple is depressed.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-31..2026-07-31",
         "cited": true
       },
       {
-        "claim": "Leverage is modest and coverage is strong — net-debt/EBITDA 1.3x with interest coverage 10.1x — leaving ample balance-sheet room and no solvency pressure.",
-        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]",
+        "claim": "Returns on capital remain high and stable (RoCE 18-20% since FY22, LTM 19.4%), inconsistent with a business whose economics are structurally impairing.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "Leverage is modest (net-debt/EBITDA 1.3x, interest coverage 10.1x) and self-funding is confirmed (positive latest-Q OCF and positive LTM FCF), giving room to keep buying back stock through the de-rating.",
+        "source_ref": "CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ EBITDA $1,337M [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "On a NTM TEV/EBITDA basis the name is 8.09x vs a peer median 11.22x, but the peer set is HETEROGENEOUS (caps $960M–$123.7B, 129x span) so the gap must be decomposed as EARNED-vs-RESIDUAL rather than read as a clean discount.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Revenue growth has stalled to a near-halt — FY25 +4% decelerating to LTM revenue actually down, with Q1 Mar-31-2026 revenue -1.5% YoY — evidence the top line has flattened, not merely paused.",
+        "claim": "Revenue growth has decelerated to a stall — LTM revenue $6,474M is BELOW FY25 $6,497M and Q1-26 revenue was -1.5% YoY — the top line has actually gone slightly negative, so the low multiple may be an EARNED value-trap discount, not an overshoot.",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "On the comps grid the discount looks partly EARNED, not purely residual: name EBITDA margin 21% vs peer-median 31%, rev growth 2% vs 8%, EBITDA growth 2% vs 7% — worse growth and margin on every axis — though the human must judge whether the full 26% EV/EBITDA discount is explained by these gaps given the peer set is HETEROGENEOUS (caps span $960M–$123.7B, 129x).",
+        "claim": "On the fundamental_deltas the discount looks largely EARNED, not residual: Gartner grows revenue 2% vs peer-median 8%, EBITDA 2% vs 7%, at a 21% EBITDA margin vs peer-median 31%, with HIGHER leverage (2.4x vs 1.8x) — worse on every growth/margin/leverage axis the human must weigh against the peer gap.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "New business is contracting across both sales engines — GTS new business down 4% (down ~3% ex-Fed) and GBS down 2% YoY — the forward-order signal for a subscription book is negative, and ex-Fed does not rescue it.",
+        "claim": "New business is contracting across both sales engines (GTS new business -4% YoY, GBS -2% YoY), the leading indicator of future CV — a genuine forward-demand deterioration, not just an optical trailing metric.",
         "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The FY26 consensus path has been cut hard over 12 months — revenue -8%, EBITDA -7%, GAAP net income -9% (12m→latest) — so estimates are still being marked down, not stabilising.",
+        "claim": "FY26 consensus has been cut hard over the past year: revenue -8%, EBITDA -7%, EBT -11% (12m→latest), and the aggregate rating was downgraded to Hold with target price cut $167→$140 and $177→$154 — the sell-side is marking the trajectory down, not up.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "A $150M goodwill impairment (Digital Markets) was taken in FY25 and the business subsequently sold — a booked admission that prior capital deployment did not earn out.",
-        "source_ref": "8-K 0000749251-26-000028 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "Sell-side conviction is draining — Morningstar cut to Hold on 2026-07-27, the consensus rating is Hold (3.00), and target prices are being walked down (one broker 167→140, another 177→154).",
-        "source_ref": "CIQ Estimates→Consensus",
+        "claim": "A $150M goodwill impairment was taken in FY25 (Digital Markets), and the Digital Markets / Capterra / Software Advice businesses are being divested — evidence that a slice of prior capital deployment did not earn its cost.",
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2025-01-01→2025-12-31, 364d)",
         "cited": true
       }
     ],
@@ -8330,92 +8614,78 @@
       {
         "name": "FactSet Research Systems Inc.",
         "outcome": "recovered",
-        "distinguishing_fact": "A subscription-based financial-data franchise inside this very peer set that de-rated on decelerating growth fears yet held high retention and margins and re-rated as the recurring base proved sticky — the overshoot pattern.",
+        "distinguishing_fact": "A same-industry subscription-data peer in the roster that de-rated on slowing subscription growth yet retained high margins and recurring revenue; the analogue tests whether a sticky-subscription franchise re-rates once growth stabilises.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Verisk Analytics",
         "outcome": "recovered",
-        "distinguishing_fact": "An analytics-subscription peer that periodically de-rated on slowing organic growth but whose entrenched, high-margin recurring data business supported a return to premium multiples — the mean-revert analogue.",
+        "distinguishing_fact": "Roster peer that carried a premium data-analytics multiple through a low-growth patch on the strength of retention and pricing power; the analogue tests whether Gartner's franchise economics justify a re-rate toward peer levels.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Cognizant Technology Solutions Corporation",
-        "outcome": "recovered",
-        "distinguishing_fact": "A same-peer-set IT-services name that traded at a low-teens P/E and single-digit EV/EBITDA on growth-stall worries and slowly re-rated as bookings stabilised — shows a cheap multiple need not be terminal.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Roster peer that persistently traded at a low-multiple discount as a lower-margin, slower-growth IT-services name — the pattern of a discount that stays EARNED rather than mean-reverting, a value-trap caution.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Gartner (own 2020 arc)",
         "outcome": "recovered",
-        "distinguishing_fact": "The name's own EV/EBITDA compressed to the mid-teens through the 2020 demand shock (own-history series) then re-rated back above 20x as CV re-accelerated — a precedent for its multiple recovering off a trough.",
+        "distinguishing_fact": "The name's own EV/EBITDA compressed to ~17x in the 2020 dislocation before re-rating above 25x as CV growth reaccelerated — the name's own resolved past shows this franchise has mean-reverted off a trough before.",
         "source": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      },
-      {
-        "name": "Thomson Reuters (legacy print-research decline)",
-        "outcome": "went terminal",
-        "distinguishing_fact": "A syndicated-research/information franchise whose legacy segment structurally eroded as buyers substituted cheaper/embedded alternatives — the value-trap pattern if AI-native substitution hollows the insights subscription.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Meredith Corporation (media-research subscriptions)",
-        "outcome": "went terminal",
-        "distinguishing_fact": "A subscription-content business where a slow-bleed drawdown with no discrete gap-down masked a genuine secular demand shift rather than a temporary overshoot.",
-        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the near-flat contract-value growth a temporary, federal- and geopolitics-driven air-pocket in an otherwise durable high-retention subscription franchise (overshoot), or the leading edge of a structural demand erosion — possibly AI-native substitution of syndicated insight — that keeps growth stalled and justifies the de-rating (value trap)?",
+      "question": "Is the collapse in Contract Value growth to ~1% (and the negative new-business trend) a temporary, identifiable U.S.-federal / geopolitical drag that reverses — or the onset of a structural demand deceleration that makes the peer discount permanently EARNED?",
       "evidence_for": [
         {
-          "claim": "Ex-federal CV grew 3.5% and both segments retain at 97–99%, with management attributing March softness to a discrete geopolitical slowdown after new business tracked ahead through February — consistent with a temporary air-pocket.",
-          "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "claim": "Management attributes the slowdown to specific external forces (DOGE/U.S.-federal, tariffs, geopolitics) with CV ex-Fed running ~330bps faster (~4%) and new business tracking ahead through February before March slowed — framing it as transient and localised.",
+          "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Management is expanding the insight product (library volume up 19%, high-impact documents up 22%, same-day timeliness) and positioning AI as its highest-demand topic rather than a threat — an offensive posture toward the substitution risk.",
+          "claim": "CV accelerated sequentially from Q4-25 to Q1-26 and wallet retention stayed at 97-99%, consistent with a demand pause rather than a loss of franchise value.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "New business is down in BOTH engines (GTS -4%, GBS -2%) even ex-Fed, so the forward pipeline that feeds future CV is weakening beyond the federal explanation.",
+          "claim": "New business is falling in BOTH sales engines (GTS -4%, GBS -2% YoY) — the forward feedstock of CV — so the deceleration is broader than the U.S.-federal line item alone.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Reported revenue has turned negative YoY (Q1 Mar-31-2026 -1.5%) and FY26 consensus revenue was cut 8% over twelve months, showing the stall is flowing into the financials and estimates are still falling.",
+          "claim": "LTM revenue has already turned slightly negative (Q1-26 -1.5% YoY) and consensus keeps cutting the FY26 path (revenue -8%, EBITDA -7% over 12m), consistent with a durable rather than one-quarter deceleration.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Company-defined FY26 free-cash-flow / self-funding read is ambiguous: CIQ 'Levered FCF' $1,064.2M differs 0.85x from CFO−capex $1,257.9M, and FCF sign is separately flagged UNKNOWN in survival capacity — which basis a per-share/self-funding claim rests on is unresolved.",
-      "No segment EBITDA is disclosed — revenue is segmented (Insights 78%) but the profitability of the 78% Insights concentration is opaque, so a reader cannot see whether margin pressure is core or peripheral (an opacity risk).",
-      "Forward/adjusted EV/EBITDA and adjusted EPS are not in the revised guidance, so the 8.0x trailing multiple cannot be tested against a forward basis to separate a temporarily-depressed level from a permanently-impaired one.",
-      "EBITDA-basis coherence is UNRESOLVED: implied D&A is 1.82x higher in estimates than actuals, sitting in the 1.5–2.0x band where a GAAP-actual vs adjusted-estimate basis change has gone unflagged — reconcile the estimate row to the company's guidance basis before comparing across the FY25/FY26E boundary.",
-      "The full quantum of AI-native substitution risk to the syndicated-insight model is not measurable from the supplied facts — management posture is offered but no independent demand or churn-driver breakdown.",
-      "CIQ export date is unverified (a FLOOR ≥ 2026-07-27) while stock price is as-of 2026-08-17, so the valuation snapshot may lag the latest tape."
+      "EV/EBITDA 8.0x is trailing-only with NO forward-adjusted basis in the revised guidance (adjusted EPS and adjusted fwd EV/EBITDA both UNKNOWN) — the overshoot-vs-terminal question cannot be resolved on the trailing multiple alone.",
+      "No SEGMENT EBITDA is disclosed (revenue segmented into Insights/Conferences/Consulting/Other but not profit) — cannot see whether the 78%-of-revenue Insights franchise is carrying or masking weaker segments (a bearish opacity).",
+      "The EBITDA-basis triangulation is UNRESOLVED: GAAP actuals implied-D&A vs estimate implied-D&A sit in the 1.5-2.0x band where a GAAP-vs-adjusted basis change has slipped through unflagged — reconcile the consensus EBITDA basis before comparing forward multiples.",
+      "Whether the U.S.-federal/geopolitical CV drag reverses in H2-26 as management guides ('CV will accelerate') or persists — the guidance is 101 days stale (dated 2026-05-05) and unconfirmed by a fresh print.",
+      "The peer set is HETEROGENEOUS (caps span 129x); no clean comparable-scale benchmark exists, so the peer-median discount is a confidence-gated input, not a resolved signal — the human must judge earned-vs-residual.",
+      "Company-defined FCF basis ambiguity: CIQ 'Levered FCF' $1,064M vs CFO-minus-capex $1,258M (0.85x apart) — self-funding read holds either way but per-share coverage of the buyback depends which basis is used."
     ]
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries a committed dossier. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-07-29-01: PASS (g1_drawdown PASS · g2_idiosyncratic PASS · g3_and_distress PASS).",
     "primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+5.6s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
     "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-04, EDGAR 8-K item 2.02), the oldest by 8d: valuation multiples as-of 2026-07-27; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "operating-drivers: Tier-B row dropped — value figure 1 not in its quote (Q4 contract value growth)",
-    "TWIN 'Gartner (own 2020 arc)' has numbers ['20', '2020'] — must be non-numeric",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+    "TWIN 'Gartner (own 2020 arc)' has numbers ['17', '2020', '25'] — must be non-numeric"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-18T07:30:27.983215Z",
+  "assembled_at": "2026-08-18T12:39:51.873184Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
@@ -8441,7 +8711,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T07:33:54.775154Z",
+    "computed_at": "2026-08-18T12:42:57.262114Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

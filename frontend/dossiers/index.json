@@ -89,19 +89,19 @@
   },
   "reads": {
     "AORT": "mixed \u2014 compounding revenue and rising absolute EBITDA against a sharply cut forward-earnings base, worse leverage, dilution and an On-X recall.",
-    "BRBR": "mixed \u2014 a real, validated EBITDA/margin collapse and heavy leverage set against an intact ~8% category, leading franchise and a dated FY27 price-increase repair mechanism.",
+    "BRBR": "strongly-bearish \u2014 EBITDA down in absolute terms with structural margin/demand deterioration and rising leverage, only partly offset by a cheap optical P/E.",
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
-    "EPAM": "mixed \u2014 net-cash, still-growing absolute EBITDA and an AI engine offset a management-acknowledged North America growth gap and uniformly negative revenue revisions.",
+    "EPAM": "mixed \u2014 net-cash, still-growing dollar EBITDA and a floor multiple sit against a management-owned structural North American growth gap and relentless downward revisions.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
-    "IT": "mixed \u2014 a franchise trading at a trough multiple with intact retention/returns but genuinely stalled growth and still-falling estimates.",
-    "MVST": "strongly-bearish \u2014 a stated going-concern doubt plus a near-term maturity wall against negative latest-quarter operating cash outweigh the trailing turn and Buy consensus.",
+    "IT": "mixed \u2014 franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
+    "MVST": "strongly-bearish \u2014 management-stated going-concern doubt plus a ~$104M near-term wall against negative operating cash flow and falling volumes.",
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
-    "NFLX": "mixed \u2014 a real, self-funded compounder (EBITDA/ROIC rising) still on a premium multiple, offset by a ~37% de-rating, negative revenue-revision breadth and peer-lagging EBITDA growth.",
-    "SMPL": "mixed \u2014 a self-funding balance sheet and Quest/pricing levers offset a still-contracting Atkins/OWYN base and downward estimate path.",
+    "NFLX": "mixed \u2014 a genuine high-return long-runway compounder set against a fully-priced forward multiple, a 37% trailing de-rate, and downward near-term revisions.",
+    "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
     "UBER": "mixed \u2014 genuine operating inflection (EBITDA, ROIC, FCF, 22% bookings) against a rich decade-long consensus, cut GAAP EPS, and rising cost lines.",
-    "V": "mixed \u2014 durable double-digit compounding and a rising-return runway, but the quality is largely paid for at ~21.6x with negative EPS revision breadth.",
-    "VITL": "mixed \u2014 a fortress balance sheet and intact loyal base offset a ~97% forward-EBITDA collapse, cash burn, and still-falling estimates.",
-    "VRRM": "strongly-bearish \u2014 a >10%-revenue customer's termination permanently resets the earnings base lower and forward EBITDA is modeled to fall."
+    "V": "mixed \u2014 a genuinely lengthening volume/VAS runway and rising ROIC against a fully-earned but growth-matched premium and a year of market underperformance.",
+    "VITL": "mixed \u2014 an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.",
+    "VRRM": "mixed \u2014 a genuine, quantified >10%-customer loss and repeated guide cuts sit against a self-funding, contracted-government-growth franchise at a distressed multiple."
   },
   "sleeves": {
     "AORT": "overshoot",
