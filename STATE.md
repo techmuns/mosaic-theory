@@ -4704,6 +4704,41 @@ build record.**
   `test_the_wall_clock_is_unreachable_from_the_reference_date` — the committed price fixture still
   held 2026-08-12 while the as-of had moved. Both fixtures regenerated per the runbook; green after.
 
+**⚠ LIVE UNGUARDED HAZARD — `scenario-refresh diluted_shares` SILENTLY REVERTS ITEM 24, AND ON
+SMPL IT FLIPS A GATE UNDER AN OPEN BUY (measured read-only 2026-08-18).**
+
+THE MECHANISM, not just the conclusion. The two sides carry DIFFERENT QUANTITIES, uniformly:
+  * the RECORD's `facts.diluted_shares` is **diluted shares OUTSTANDING** — basic outstanding +
+    dilutive increment, a point-in-time count (item 24's denominator work);
+  * the DOSSIER ANCHOR's is **diluted WEIGHTED-AVERAGE (latest 10-Q)**, from
+    `EDGAR WeightedAverageNumberOfDilutedSharesOutstanding`.
+Both bases are uniform across all SEVEN records carrying the fact. **So every `diluted_shares`
+divergence in a record-vs-anchor sweep is the CONVENTION WORKING, never staleness** — and a
+refresh replaces the analyst's denominator with the quantity item 24 was built to remove.
+
+**MEASURED CONSEQUENCE (in-memory recompute, nothing written):** SMPL record 88.460545M vs anchor
+89.940680M (−1.65%). Refreshing that one fact moves **ratio 2.0952 → 1.9540** (bar 2.0) and
+**gate PASS → FAIL** — headroom was +4.76%. SMPL is the fund's ONLY open position and the ledger
+carries a BUY at $11.33 struck on the passing number. `refresh_record` RECOMPUTES THE RESULT
+through the engine, so the stored ratio does NOT stand while its inputs move underneath.
+
+**WHY NOTHING WARNS — and why the obvious guard cannot be built as specified.** `refresh_record`
+already REFUSES a unit change, on the stated reasoning that *"basis is prose about the same
+quantity; unit is the quantity's scale"*. **That assumption is exactly what fails here:**
+outstanding-plus-increment and weighted-average are DIFFERENT QUANTITIES wearing the SAME unit
+(`M shares`), so the unit guard is structurally blind to the swap. And `Fact.basis` is a free
+`str` — a basis-comparison guard would be a TEXT comparison of prose, which is the shape this repo
+refuses outright (parsers consume structured values, never rendered strings). **DESIGN FINDING: the
+guard is not buildable until `basis` carries a structured quantity-kind** (e.g. `outstanding` vs
+`weighted_average`) beside its prose. Recorded as ACCEPTED RISK with that unlock; nothing built.
+
+**THE METHOD LESSON (beside the guard-scope ladder):** a divergence table without the BASIS ON BOTH
+SIDES cannot tell a defect from a convention. Fourteen divergent cells were measured; **seven were
+the convention working, one was a documented deliberate deviation (EPAM `net_debt`, FINANCIAL-ONLY
+by its own basis string), two were real vintage staleness (AORT, IT `net_debt`), one ambiguous
+(BRBR, a CARRIED value whose basis never says lease-inclusive).** The alarm inverted on reading the
+second side: SMPL's PASS is sound and the REFRESH would have been the error.
+
 **THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
 2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
 old before it reached STATE).** Agreed after the operator's push-back that a full fleet assembly
