@@ -2,7 +2,7 @@
   "ticker": "BRBR",
   "name": "BELLRING BRANDS, INC.",
   "cik": "0001772016",
-  "reference_date": "2026-08-12",
+  "reference_date": "2026-08-14",
   "rank": 3,
   "sleeve": "overshoot",
   "mechanical": {
@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 6.458333333333333,
+        "value": 6.398809523809524,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
-        "note": "price 2026-08-12 ÷ annual diluted EPS for the period ending 2025-09-30 (316d old, filed 2025-11-18)"
+        "note": "price 2026-08-14 ÷ annual diluted EPS for the period ending 2025-09-30 (318d old, filed 2025-11-18)"
       },
       "pe_percentile_5y": {
-        "value": 0.02631578947368421,
+        "value": 0.026294820717131476,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
-        "note": "1254 P/E observations over 1825d; price 2026-08-12 ÷ annual diluted EPS for the period ending 2025-09-30 (316d old, filed 2025-11-18)"
+        "note": "1255 P/E observations over 1825d; price 2026-08-14 ÷ annual diluted EPS for the period ending 2025-09-30 (318d old, filed 2025-11-18)"
       },
       "ev_ebitda": {
         "value": 9.2,
@@ -839,7 +839,7 @@
             "pe": "16.55"
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-07",
         "status": "present",
         "note": null
       }
@@ -897,20 +897,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.39283715724678236,
-        "source_ref": "EOD BRBR 180d to 2026-08-12",
+        "value": -0.3984331281477337,
+        "source_ref": "EOD BRBR 180d to 2026-08-14",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.1511636750836629,
-        "source_ref": "EOD IWM 180d to 2026-08-12 (cap-band: $1.3B @ 2026-08-12 → small (<$4B) → IWM)",
+        "value": 0.16021448128993,
+        "source_ref": "EOD IWM 180d to 2026-08-14 (cap-band: $1.3B @ 2026-08-14 → small (<$4B) → IWM)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.5440008323304453,
-        "source_ref": "EOD BRBR−IWM 180d to 2026-08-12 (assembly, cap-band)",
+        "value": -0.5586476094376637,
+        "source_ref": "EOD BRBR−IWM 180d to 2026-08-14 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -927,7 +927,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "IWM",
-      "benchmark_basis": "cap-band: $1.3B @ 2026-08-12 → small (<$4B) → IWM"
+      "benchmark_basis": "cap-band: $1.3B @ 2026-08-14 → small (<$4B) → IWM"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1067,7 +1067,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Revenue: latest guide '2,335.00 - 2,375.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 9/11 resolved; most recent guidance outcome: FY 2025 MET; EBITDA: latest guide '275.00 - 295.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 7/7 resolved; most recent guidance outcome: FY 2025 MET; Capital Expenditure: latest guide -10.0 for FY 2026 (dated 2026-08-04); spend ≤ guided ceiling 6/6 resolved; most recent guidance outcome: FY 2025 MET; Gross Margin %: latest guide '28.20 - 32.40' for FQ4 2022 (dated 2022-08-05) (stale — 1468d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ4 2022 MET; Interest Expense: latest guide -47.0 for FY 2020 (dated 2020-02-07) (stale — 2378d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2020 MISSED  [data ≥ 2026-08-06 · export date unverified]",
+        "value": "Revenue: latest guide '2,335.00 - 2,375.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 9/11 resolved; most recent guidance outcome: FY 2025 MET; EBITDA: latest guide '275.00 - 295.00' for FY 2026 (dated 2026-08-04); actual ≥ guided floor 7/7 resolved; most recent guidance outcome: FY 2025 MET; Capital Expenditure: latest guide -10.0 for FY 2026 (dated 2026-08-04); spend ≤ guided ceiling 6/6 resolved; most recent guidance outcome: FY 2025 MET; Gross Margin %: latest guide '28.20 - 32.40' for FQ4 2022 (dated 2022-08-05) (stale — 1470d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ4 2022 MET; Interest Expense: latest guide -47.0 for FY 2020 (dated 2020-02-07) (stale — 2380d old); spend ≤ guided ceiling 0/1 resolved; most recent guidance outcome: FY 2020 MISSED  [data ≥ 2026-08-06 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1106,7 +1106,7 @@
             "latest_guide": "'28.20 - 32.40'",
             "period": "FQ4 2022",
             "dated": "2022-08-05",
-            "age": "1468d (stale)",
+            "age": "1470d (stale)",
             "record": "actual ≥ floor 1/1",
             "most_recent": "FQ4 2022 MET"
           },
@@ -1115,7 +1115,7 @@
             "latest_guide": "-47.0",
             "period": "FY 2020",
             "dated": "2020-02-07",
-            "age": "2378d (stale)",
+            "age": "2380d (stale)",
             "record": "spend ≤ ceiling 0/1",
             "most_recent": "FY 2020 MISSED"
           }
@@ -3895,7 +3895,7 @@
       },
       "short_interest": {
         "value": "Short interest (FINRA, settle 2026-07-31): 14.7M → 14.3M sh (-2.8%, falling) · 12.3% of shares out (EDGAR XBRL) · DTC 2.7d · recent: 2026-07-31 14.3M · 2026-07-15 14.7M · 2026-06-30 17.7M · 2026-06-15 15.8M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-07-31); DTC = 14,310,982 short ÷ 5,287,731 screen 90d ADV",
+        "source_ref": "FINRA consolidated short interest (settle 2026-07-31); DTC = 14,310,982 short ÷ 5,236,911 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -3903,11 +3903,39 @@
     "catalyst_calendar": {
       "rows": [
         {
+          "event": "and departed the Company effective as of September 1, 2026.",
+          "expected_date": "2026-09",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jun-24-2026"
+        },
+        {
           "event": "Next results print",
           "expected_date": "2026-11-03",
           "date_basis": "cadence-estimate",
           "tests_what": "the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it)",
           "source_ref": "cadence: EDGAR submissions (median 91d gap over 28 results 8-Ks; last print 2026-08-04) · guide: EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm"
+        },
+        {
+          "event": "effective January 1, 2026",
+          "expected_date": "2027-01",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-14-2025"
+        },
+        {
+          "event": "effective as of June 24, 2026, and departed the Company effective as of September 1, 2026.",
+          "expected_date": "2027-06",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jun-24-2026"
+        },
+        {
+          "event": "effective July 29, 2026",
+          "expected_date": "2027-07",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026"
         }
       ],
       "qa_flags": []
@@ -3921,7 +3949,7 @@
       },
       "total_debt_to_ebitda": {
         "value": "name 4.4x vs peer median 2.4x (comps TOTAL-debt/EBITDA basis)",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -3997,13 +4025,13 @@
             "high": 2796.93
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
       "bridge": {
         "value": "TEV→equity bridge: + cash $50.40M, − total debt $1,173.10M",
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -4011,7 +4039,7 @@
       "bridge_debt": 1173.1,
       "market_cap": {
         "value": 1344.2,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -4138,7 +4166,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans);…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…\n  Interest rate floor: Eurodollar Rate: Revolving Credit Loans not less than 1.00% per annum; Term Loans…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000; Schedule I: Credit Suisse AG, Cayman…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4162,10 +4190,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000",
+              "value": "aggregate principal amount up to $636,200,000; Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000 / Total $636,200,000",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “2021 Refinancing Term Loans”)”"
+              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “ 2021 Refinancing Term Loans ”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4179,26 +4207,12 @@
               "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Clause (a) of the defined term “Applicable Rate” ... is hereby amended and restated ... “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
+              "note": "verbatim: ““(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
             },
             "base_rate_label": "Eurodollar Rate",
             "margin_pct": 4.0,
             "margin_bps": null,
             "floor_pct": 0.75,
-            "pik_pct": null
-          },
-          {
-            "name": "Interest rate floor",
-            "value": {
-              "value": "Eurodollar Rate: Revolving Credit Loans not less than 1.00% per annum; Term Loans not less than 0.75% per annum",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: “provided, however, notwithstanding the foregoing, at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
             "pik_pct": null
           },
           {
@@ -4232,10 +4246,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2021 Refinancing Term Loans constitute Obligations, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents; Loan Parties reaffirm Liens and guaranties under the Collateral Agreement; Guarantors signing include Dymatize Enterprises, LLC, Premier Nutrition Company, LLC, Supreme Protein, LLC, and TA/DEI-A Acquisition Corp.",
+              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; Guarantors/Loan Parties signing: BellRing Brands, LLC (Borrower), Dymatize Enterprises, LLC, Premier Nutrition Company, LLC, Supreme Protein, LLC, TA/DEI-A Acquisition Corp.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
+              "note": "verbatim: “Each Loan Party party hereto hereby (i) acknowledges and agrees that all of its pledges, grants of security interests and Liens and other obligations under the Collateral Agreement and the other Loan Documents to which it is a party are reaffirmed and remain in full force and effect on a continuous basis, (ii) reaffirms (x) each Lien granted by it to the Administrative Agent for the benefit of the Secured Parties and (y) the guaranties made by it pursuant to the Collateral Agreement ... Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4246,10 +4260,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Repricing Event premium: if on or before 6 months after the Amendment No. 2 Effective Date, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans repriced/refinanced (clause (i)) or subject to amendment (clause (ii)). Amendment also provides notice of prepayment of Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans; and condition (i) requires 100% of proceeds applied to repay all outstanding Existing Term Loans. Events of Default terms are governed by the Amended Credit Agreement (Section 4(f): no Event of Default or Default before/after funding), not stated verbatim herein.",
+              "value": "Repricing Event premium: 1.00% of the aggregate principal amount of the Term B Loans repriced/refinanced (clause (i)) or subject to amendment (clause (ii)), if occurring on or before the date that is 6 months after the Amendment No. 2 Effective Date. (Amendment references Events of Default/Default as conditions but does not restate the events of default provisions.)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any ... a “Repricing Event”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... (I) in the case of clause (i) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced ... and (II) ... 1.00% of the aggregate principal amount of the Term B Loans that are the subject of such Repricing Event”"
+              "note": "verbatim: ““(ix) If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... bearing interest at an “effective” interest rate that is less than the “effective” interest rate applicable to the Term B Loans ... (any such transaction or event described in clauses (i) or (ii) above, a “ Repricing Event ”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay to the Administrative Agent, for the ratable account of each of the applicable Term B Lenders, (I) in the case of clause (i) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced ... and (II) in the case of clause (ii) above, an amount equal to 1.00% of the aggregate principal amount of the Term B Loans that are the subject of such Repricing Event outstanding immediately prior to such amendment””"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4354,118 +4368,6 @@
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null
-          },
-          {
-            "name": "Redemption Right / mechanics (Nonvoting Common Units)",
-            "value": {
-              "value": "Each Member (other than Pubco) may cause the Company to redeem its Nonvoting Common Units, receiving either the Share Settlement or the Cash Settlement (at the Company's option).",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Subject to the provisions set forth in this Section 9.01, each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements). ... In exercising its Redemption Right, a Redeeming Member shall be entitled to receive the Share Settlement or the Cash Settlement”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Share Settlement (redemption consideration)",
-            "value": {
-              "value": "a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e)",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Share Settlement ” means a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Cash Settlement (redemption consideration)",
-            "value": {
-              "value": "immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Cash Settlement ” means immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Redeemed Units Equivalent",
-            "value": {
-              "value": "the product of (a) the Share Settlement and (b) the Common Unit Redemption Price",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Redeemed Units Equivalent ” means the product of (a) the Share Settlement and (b) the Common Unit Redemption Price.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Common Unit Redemption Price",
-            "value": {
-              "value": "the arithmetic average of the volume weighted average prices for a share of Class A Common Stock ... for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Common Unit Redemption Price ” means the arithmetic average of the volume weighted average prices for a share of Class A Common Stock on the principal U.S. securities exchange or automated or electronic quotation system on which the Class A Common Stock is traded or quoted, as reported by Bloomberg, L.P. or its successor, for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment for any stock splits, reverse splits, stock dividends or similar events affecting the Class A Common Stock.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Units issued / reclassified (capitalization)",
-            "value": {
-              "value": "97,474,180 Nonvoting Common Units (reclassified to Holdings); 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “All limited liability company interests in the Company outstanding as of immediately prior to the Effective Time, all of which are held by Holdings, shall be reclassified into 97,474,180 Nonvoting Common Units, and the Company hereby issues 39,428,571 Nonvoting Common Units to Pubco”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Term / existence",
-            "value": {
-              "value": "perpetual existence unless sooner dissolved",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Company shall have perpetual existence unless sooner dissolved and its affairs wound up as provided in Article XI.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "laws of the State of Delaware",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to the conflicts of law rules of such State”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
           }
         ],
         "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
@@ -4474,7 +4376,7 @@
       },
       "maturity_event": null,
       "panel_vintage": {
-        "value": "the debt schedule is 267d old (source filed 2025-11-18); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 269d old (source filed 2025-11-18); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Nov-18-2025",
         "status": "present",
         "note": null
@@ -4535,6 +4437,22 @@
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
+    },
+    "dilution_pipeline": {
+      "filings": [
+        {
+          "form": "S-8",
+          "filing_date": "2024-09-12",
+          "accession": "0001193125-24-217983"
+        }
+      ],
+      "line": {
+        "value": "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983",
+        "status": "present",
+        "note": null
+      },
+      "window_days": 1095
     },
     "peer_capital_intensity": {
       "rows": [
@@ -4750,24 +4668,24 @@
           "ticker": "USNA",
           "is_subject": false,
           "market_cap": 285.6,
-          "acquired": 267.028,
-          "total_assets": 738.966,
-          "pct_assets": 0.36135356701120214,
-          "pct_market_cap": 0.9349719887955182,
+          "acquired": 233.756,
+          "total_assets": 703.21,
+          "pct_assets": 0.332412792764608,
+          "pct_market_cap": 0.8184733893557422,
           "note": null,
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
-            "window_start": "2021-04-04",
-            "window_end": "2026-04-04",
+            "window_start": "2021-07-04",
+            "window_end": "2026-07-04",
             "observations": 5,
             "charged_years": 1,
             "total": 6.527,
-            "pct_acquired": 0.024443129559446948,
+            "pct_acquired": 0.02792227793083386,
             "last_charge_end": "2026-01-03",
             "last_charge_amount": 6.527,
-            "pending": null,
-            "pending_span": null,
+            "pending": 29.137,
+            "pending_span": "2026-01-04→2026-07-04, 181d",
             "tags": "GoodwillImpairmentLoss + ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill",
             "note": null
           }
@@ -4802,16 +4720,16 @@
           "ticker": "FTLF",
           "is_subject": false,
           "market_cap": 94.2,
-          "acquired": 70.559,
-          "total_assets": 104.269,
-          "pct_assets": 0.6767016083399667,
-          "pct_market_cap": 0.7490339702760085,
+          "acquired": 70.285,
+          "total_assets": 102.592,
+          "pct_assets": 0.6850924048658764,
+          "pct_market_cap": 0.7461252653927812,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
             "state_label": "reports nil",
-            "window_start": "2021-03-31",
-            "window_end": "2026-03-31",
+            "window_start": "2021-06-30",
+            "window_end": "2026-06-30",
             "observations": 2,
             "charged_years": 0,
             "total": null,
@@ -4829,7 +4747,7 @@
       "subject_pct_assets": 0.16928048664575612,
       "subject_pct_market_cap": 0.13249516441005801,
       "median_all_assets": 0.48161081589411636,
-      "median_all_market_cap": 0.6137248147915989,
+      "median_all_market_cap": 0.6122704623499853,
       "median_large_assets": 0.5759968508312878,
       "median_large_market_cap": 0.4784156593071894,
       "n_all": 10,
@@ -6246,7 +6164,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 10.85,
+        "value": 10.18,
         "source_ref": "EOD BRBR last close",
         "status": "present",
         "note": null
@@ -6255,13 +6173,13 @@
         "value": 43.02,
         "source_ref": "EOD BRBR 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
+        "note": "52-week window 2025-08-14→2026-08-17: spans 368d over 253 bars"
       },
       "low_52w": {
         "value": 7.82,
         "source_ref": "EOD BRBR 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
+        "note": "52-week window 2025-08-14→2026-08-17: spans 368d over 253 bars"
       },
       "shares_out": {
         "value": 116278194.0,
@@ -6277,1278 +6195,1278 @@
       },
       "market_cap": {
         "value": 1344.2,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-09",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
-      "as_of": "2026-08-12",
-      "market_cap_as_of": "2026-08-09"
+      "as_of": "2026-08-17",
+      "market_cap_as_of": "2026-08-07"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-08-13",
+          "date": "2025-08-15",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-08-14",
-          "name": 96.13,
-          "benchmark": 98.71
-        },
-        {
-          "date": "2025-08-15",
-          "name": 97.04,
-          "benchmark": 98.23
-        },
-        {
           "date": "2025-08-18",
-          "name": 97.37,
-          "benchmark": 98.59
+          "name": 100.34,
+          "benchmark": 100.37
         },
         {
           "date": "2025-08-19",
-          "name": 103.14,
-          "benchmark": 97.83
+          "name": 106.28,
+          "benchmark": 99.59
         },
         {
           "date": "2025-08-20",
-          "name": 102.93,
-          "benchmark": 97.49
+          "name": 106.07,
+          "benchmark": 99.24
         },
         {
           "date": "2025-08-21",
-          "name": 100.63,
-          "benchmark": 97.73
+          "name": 103.7,
+          "benchmark": 99.49
         },
         {
           "date": "2025-08-22",
-          "name": 100.96,
-          "benchmark": 101.56
+          "name": 104.04,
+          "benchmark": 103.39
         },
         {
           "date": "2025-08-25",
-          "name": 97.8,
-          "benchmark": 100.49
+          "name": 100.78,
+          "benchmark": 102.3
         },
         {
           "date": "2025-08-26",
-          "name": 100.61,
-          "benchmark": 101.32
+          "name": 103.68,
+          "benchmark": 103.15
         },
         {
           "date": "2025-08-27",
-          "name": 102.99,
-          "benchmark": 102.04
+          "name": 106.13,
+          "benchmark": 103.88
         },
         {
           "date": "2025-08-28",
-          "name": 103.39,
-          "benchmark": 102.16
+          "name": 106.54,
+          "benchmark": 104.0
         },
         {
           "date": "2025-08-29",
-          "name": 103.85,
-          "benchmark": 101.71
+          "name": 107.01,
+          "benchmark": 103.54
         },
         {
           "date": "2025-09-02",
-          "name": 105.29,
-          "benchmark": 101.16
+          "name": 108.5,
+          "benchmark": 102.98
         },
         {
           "date": "2025-09-03",
-          "name": 105.92,
-          "benchmark": 101.06
+          "name": 109.15,
+          "benchmark": 102.88
         },
         {
           "date": "2025-09-04",
-          "name": 107.97,
-          "benchmark": 102.32
+          "name": 111.26,
+          "benchmark": 104.17
         },
         {
           "date": "2025-09-05",
-          "name": 99.82,
-          "benchmark": 102.83
+          "name": 102.87,
+          "benchmark": 104.68
         },
         {
           "date": "2025-09-08",
-          "name": 90.49,
-          "benchmark": 103.04
+          "name": 93.25,
+          "benchmark": 104.9
         },
         {
           "date": "2025-09-09",
-          "name": 95.4,
-          "benchmark": 102.43
+          "name": 98.31,
+          "benchmark": 104.28
         },
         {
           "date": "2025-09-10",
-          "name": 92.99,
-          "benchmark": 102.25
+          "name": 95.83,
+          "benchmark": 104.09
         },
         {
           "date": "2025-09-11",
-          "name": 94.38,
-          "benchmark": 104.14
+          "name": 97.26,
+          "benchmark": 106.02
         },
         {
           "date": "2025-09-12",
-          "name": 96.31,
-          "benchmark": 103.08
+          "name": 99.24,
+          "benchmark": 104.94
         },
         {
           "date": "2025-09-15",
-          "name": 89.83,
-          "benchmark": 103.52
+          "name": 92.57,
+          "benchmark": 105.38
         },
         {
           "date": "2025-09-16",
-          "name": 92.97,
-          "benchmark": 103.05
+          "name": 95.8,
+          "benchmark": 104.91
         },
         {
           "date": "2025-09-17",
-          "name": 92.66,
-          "benchmark": 103.32
+          "name": 95.49,
+          "benchmark": 105.18
         },
         {
           "date": "2025-09-18",
-          "name": 92.79,
-          "benchmark": 105.89
+          "name": 95.62,
+          "benchmark": 107.8
         },
         {
           "date": "2025-09-19",
-          "name": 91.07,
-          "benchmark": 105.09
+          "name": 93.85,
+          "benchmark": 106.98
         },
         {
           "date": "2025-09-22",
-          "name": 92.16,
-          "benchmark": 105.7
+          "name": 94.97,
+          "benchmark": 107.6
         },
         {
           "date": "2025-09-23",
-          "name": 92.64,
-          "benchmark": 105.46
+          "name": 95.46,
+          "benchmark": 107.36
         },
         {
           "date": "2025-09-24",
-          "name": 92.49,
-          "benchmark": 104.49
+          "name": 95.31,
+          "benchmark": 106.37
         },
         {
           "date": "2025-09-25",
-          "name": 92.69,
-          "benchmark": 103.49
+          "name": 95.52,
+          "benchmark": 105.35
         },
         {
           "date": "2025-09-26",
-          "name": 93.09,
-          "benchmark": 104.38
+          "name": 95.93,
+          "benchmark": 106.26
         },
         {
           "date": "2025-09-29",
-          "name": 92.99,
-          "benchmark": 104.5
+          "name": 95.83,
+          "benchmark": 106.38
         },
         {
           "date": "2025-09-30",
-          "name": 91.96,
-          "benchmark": 104.64
+          "name": 94.76,
+          "benchmark": 106.53
         },
         {
           "date": "2025-10-01",
-          "name": 91.65,
-          "benchmark": 104.87
-        },
-        {
-          "date": "2025-10-02",
-          "name": 90.72,
-          "benchmark": 105.54
-        },
-        {
-          "date": "2025-10-03",
-          "name": 88.52,
-          "benchmark": 106.32
-        },
-        {
-          "date": "2025-10-06",
-          "name": 85.33,
-          "benchmark": 106.74
-        },
-        {
-          "date": "2025-10-07",
-          "name": 87.96,
-          "benchmark": 105.6
-        },
-        {
-          "date": "2025-10-08",
-          "name": 88.01,
-          "benchmark": 106.7
-        },
-        {
-          "date": "2025-10-09",
-          "name": 89.4,
-          "benchmark": 106.02
-        },
-        {
-          "date": "2025-10-10",
-          "name": 86.34,
-          "benchmark": 102.84
-        },
-        {
-          "date": "2025-10-13",
-          "name": 86.82,
-          "benchmark": 105.7
-        },
-        {
-          "date": "2025-10-14",
-          "name": 87.83,
-          "benchmark": 107.21
-        },
-        {
-          "date": "2025-10-15",
-          "name": 87.28,
-          "benchmark": 108.26
-        },
-        {
-          "date": "2025-10-16",
-          "name": 84.01,
-          "benchmark": 105.99
-        },
-        {
-          "date": "2025-10-17",
-          "name": 83.48,
-          "benchmark": 105.27
-        },
-        {
-          "date": "2025-10-20",
-          "name": 81.81,
-          "benchmark": 107.33
-        },
-        {
-          "date": "2025-10-21",
-          "name": 84.7,
-          "benchmark": 106.82
-        },
-        {
-          "date": "2025-10-22",
-          "name": 84.39,
-          "benchmark": 105.24
-        },
-        {
-          "date": "2025-10-23",
-          "name": 84.47,
-          "benchmark": 106.57
-        },
-        {
-          "date": "2025-10-24",
-          "name": 83.61,
-          "benchmark": 107.88
-        },
-        {
-          "date": "2025-10-27",
-          "name": 80.67,
-          "benchmark": 108.25
-        },
-        {
-          "date": "2025-10-28",
-          "name": 79.91,
-          "benchmark": 107.67
-        },
-        {
-          "date": "2025-10-29",
-          "name": 78.02,
+          "name": 94.45,
           "benchmark": 106.76
         },
         {
-          "date": "2025-10-30",
-          "name": 76.4,
-          "benchmark": 105.89
+          "date": "2025-10-02",
+          "name": 93.48,
+          "benchmark": 107.44
         },
         {
-          "date": "2025-10-31",
-          "name": 76.22,
-          "benchmark": 106.49
+          "date": "2025-10-03",
+          "name": 91.21,
+          "benchmark": 108.23
         },
         {
-          "date": "2025-11-03",
-          "name": 76.88,
-          "benchmark": 106.15
+          "date": "2025-10-06",
+          "name": 87.93,
+          "benchmark": 108.66
         },
         {
-          "date": "2025-11-04",
-          "name": 76.73,
-          "benchmark": 104.32
+          "date": "2025-10-07",
+          "name": 90.64,
+          "benchmark": 107.5
         },
         {
-          "date": "2025-11-05",
-          "name": 76.27,
-          "benchmark": 105.82
+          "date": "2025-10-08",
+          "name": 90.69,
+          "benchmark": 108.63
         },
         {
-          "date": "2025-11-06",
-          "name": 73.36,
-          "benchmark": 103.95
+          "date": "2025-10-09",
+          "name": 92.13,
+          "benchmark": 107.92
         },
         {
-          "date": "2025-11-07",
-          "name": 74.05,
-          "benchmark": 104.49
+          "date": "2025-10-10",
+          "name": 88.97,
+          "benchmark": 104.69
         },
         {
-          "date": "2025-11-10",
-          "name": 71.52,
-          "benchmark": 105.54
+          "date": "2025-10-13",
+          "name": 89.47,
+          "benchmark": 107.61
         },
         {
-          "date": "2025-11-11",
-          "name": 70.05,
-          "benchmark": 105.63
-        },
-        {
-          "date": "2025-11-12",
-          "name": 69.85,
-          "benchmark": 105.37
-        },
-        {
-          "date": "2025-11-13",
-          "name": 68.18,
-          "benchmark": 102.41
-        },
-        {
-          "date": "2025-11-14",
-          "name": 68.2,
-          "benchmark": 102.71
-        },
-        {
-          "date": "2025-11-17",
-          "name": 64.81,
-          "benchmark": 100.67
-        },
-        {
-          "date": "2025-11-18",
-          "name": 66.43,
-          "benchmark": 100.97
-        },
-        {
-          "date": "2025-11-19",
-          "name": 74.02,
-          "benchmark": 100.96
-        },
-        {
-          "date": "2025-11-20",
-          "name": 75.39,
-          "benchmark": 99.09
-        },
-        {
-          "date": "2025-11-21",
-          "name": 75.31,
-          "benchmark": 101.89
-        },
-        {
-          "date": "2025-11-24",
-          "name": 77.79,
-          "benchmark": 103.75
-        },
-        {
-          "date": "2025-11-25",
-          "name": 76.8,
-          "benchmark": 106.02
-        },
-        {
-          "date": "2025-11-26",
-          "name": 77.38,
-          "benchmark": 106.95
-        },
-        {
-          "date": "2025-11-28",
-          "name": 78.14,
-          "benchmark": 107.58
-        },
-        {
-          "date": "2025-12-01",
-          "name": 78.14,
-          "benchmark": 106.23
-        },
-        {
-          "date": "2025-12-02",
-          "name": 78.04,
-          "benchmark": 106.03
-        },
-        {
-          "date": "2025-12-03",
-          "name": 77.97,
-          "benchmark": 107.96
-        },
-        {
-          "date": "2025-12-04",
-          "name": 79.33,
-          "benchmark": 108.91
-        },
-        {
-          "date": "2025-12-05",
-          "name": 78.85,
-          "benchmark": 108.46
-        },
-        {
-          "date": "2025-12-08",
-          "name": 77.18,
-          "benchmark": 108.5
-        },
-        {
-          "date": "2025-12-09",
-          "name": 77.28,
-          "benchmark": 108.72
-        },
-        {
-          "date": "2025-12-10",
-          "name": 84.24,
-          "benchmark": 110.2
-        },
-        {
-          "date": "2025-12-11",
-          "name": 82.65,
-          "benchmark": 111.5
-        },
-        {
-          "date": "2025-12-12",
-          "name": 80.82,
-          "benchmark": 109.79
-        },
-        {
-          "date": "2025-12-15",
-          "name": 82.92,
-          "benchmark": 108.96
-        },
-        {
-          "date": "2025-12-16",
-          "name": 78.24,
-          "benchmark": 108.08
-        },
-        {
-          "date": "2025-12-17",
-          "name": 75.79,
-          "benchmark": 106.93
-        },
-        {
-          "date": "2025-12-18",
-          "name": 74.07,
-          "benchmark": 107.56
-        },
-        {
-          "date": "2025-12-19",
-          "name": 73.46,
-          "benchmark": 108.46
-        },
-        {
-          "date": "2025-12-22",
-          "name": 74.63,
-          "benchmark": 109.67
-        },
-        {
-          "date": "2025-12-23",
-          "name": 75.77,
-          "benchmark": 109.02
-        },
-        {
-          "date": "2025-12-24",
-          "name": 76.22,
-          "benchmark": 109.29
-        },
-        {
-          "date": "2025-12-26",
-          "name": 76.3,
-          "benchmark": 108.74
-        },
-        {
-          "date": "2025-12-29",
-          "name": 69.14,
-          "benchmark": 108.07
-        },
-        {
-          "date": "2025-12-30",
-          "name": 67.52,
-          "benchmark": 107.27
-        },
-        {
-          "date": "2025-12-31",
-          "name": 67.62,
-          "benchmark": 106.46
-        },
-        {
-          "date": "2026-01-02",
-          "name": 66.0,
-          "benchmark": 107.59
-        },
-        {
-          "date": "2026-01-05",
-          "name": 60.44,
-          "benchmark": 109.3
-        },
-        {
-          "date": "2026-01-06",
-          "name": 59.45,
-          "benchmark": 110.75
-        },
-        {
-          "date": "2026-01-07",
-          "name": 58.31,
-          "benchmark": 110.49
-        },
-        {
-          "date": "2026-01-08",
-          "name": 62.64,
-          "benchmark": 111.7
-        },
-        {
-          "date": "2026-01-09",
-          "name": 62.79,
-          "benchmark": 112.55
-        },
-        {
-          "date": "2026-01-12",
-          "name": 58.44,
-          "benchmark": 113.1
-        },
-        {
-          "date": "2026-01-13",
-          "name": 58.39,
-          "benchmark": 113.03
-        },
-        {
-          "date": "2026-01-14",
-          "name": 60.06,
-          "benchmark": 113.83
-        },
-        {
-          "date": "2026-01-15",
-          "name": 61.52,
-          "benchmark": 114.83
-        },
-        {
-          "date": "2026-01-16",
-          "name": 60.49,
-          "benchmark": 114.94
-        },
-        {
-          "date": "2026-01-20",
-          "name": 67.75,
-          "benchmark": 113.56
-        },
-        {
-          "date": "2026-01-21",
-          "name": 71.06,
-          "benchmark": 115.82
-        },
-        {
-          "date": "2026-01-22",
-          "name": 70.58,
-          "benchmark": 116.68
-        },
-        {
-          "date": "2026-01-23",
-          "name": 69.97,
-          "benchmark": 114.53
-        },
-        {
-          "date": "2026-01-26",
-          "name": 64.71,
-          "benchmark": 114.17
-        },
-        {
-          "date": "2026-01-27",
-          "name": 65.95,
-          "benchmark": 114.49
-        },
-        {
-          "date": "2026-01-28",
-          "name": 62.69,
-          "benchmark": 113.87
-        },
-        {
-          "date": "2026-01-29",
-          "name": 63.34,
-          "benchmark": 113.9
-        },
-        {
-          "date": "2026-01-30",
-          "name": 62.91,
-          "benchmark": 112.3
-        },
-        {
-          "date": "2026-02-02",
-          "name": 61.7,
-          "benchmark": 113.39
-        },
-        {
-          "date": "2026-02-03",
-          "name": 52.82,
-          "benchmark": 113.65
-        },
-        {
-          "date": "2026-02-04",
-          "name": 53.4,
-          "benchmark": 112.67
-        },
-        {
-          "date": "2026-02-05",
-          "name": 49.28,
-          "benchmark": 110.64
-        },
-        {
-          "date": "2026-02-06",
-          "name": 49.38,
-          "benchmark": 114.62
-        },
-        {
-          "date": "2026-02-09",
-          "name": 47.48,
-          "benchmark": 115.42
-        },
-        {
-          "date": "2026-02-10",
-          "name": 45.94,
-          "benchmark": 115.11
-        },
-        {
-          "date": "2026-02-11",
-          "name": 44.5,
-          "benchmark": 114.59
-        },
-        {
-          "date": "2026-02-12",
-          "name": 44.57,
-          "benchmark": 112.25
-        },
-        {
-          "date": "2026-02-13",
-          "name": 45.21,
-          "benchmark": 113.73
-        },
-        {
-          "date": "2026-02-17",
-          "name": 45.74,
-          "benchmark": 113.76
-        },
-        {
-          "date": "2026-02-18",
-          "name": 46.85,
-          "benchmark": 114.17
-        },
-        {
-          "date": "2026-02-19",
-          "name": 48.01,
-          "benchmark": 114.44
-        },
-        {
-          "date": "2026-02-20",
-          "name": 48.17,
-          "benchmark": 114.44
-        },
-        {
-          "date": "2026-02-23",
-          "name": 45.38,
-          "benchmark": 112.66
-        },
-        {
-          "date": "2026-02-24",
-          "name": 46.4,
-          "benchmark": 113.89
-        },
-        {
-          "date": "2026-02-25",
-          "name": 45.69,
-          "benchmark": 114.43
-        },
-        {
-          "date": "2026-02-26",
-          "name": 47.66,
-          "benchmark": 115.04
-        },
-        {
-          "date": "2026-02-27",
-          "name": 46.52,
-          "benchmark": 113.06
-        },
-        {
-          "date": "2026-03-02",
-          "name": 45.91,
-          "benchmark": 114.09
-        },
-        {
-          "date": "2026-03-03",
-          "name": 44.85,
-          "benchmark": 112.12
-        },
-        {
-          "date": "2026-03-04",
-          "name": 44.32,
-          "benchmark": 113.21
-        },
-        {
-          "date": "2026-03-05",
-          "name": 42.95,
-          "benchmark": 111.05
-        },
-        {
-          "date": "2026-03-06",
-          "name": 43.99,
-          "benchmark": 108.51
-        },
-        {
-          "date": "2026-03-09",
-          "name": 41.64,
-          "benchmark": 109.69
-        },
-        {
-          "date": "2026-03-10",
-          "name": 43.23,
-          "benchmark": 109.58
-        },
-        {
-          "date": "2026-03-11",
-          "name": 44.57,
-          "benchmark": 109.35
-        },
-        {
-          "date": "2026-03-12",
-          "name": 42.32,
-          "benchmark": 107.0
-        },
-        {
-          "date": "2026-03-13",
-          "name": 42.58,
-          "benchmark": 106.65
-        },
-        {
-          "date": "2026-03-16",
-          "name": 47.26,
-          "benchmark": 107.66
-        },
-        {
-          "date": "2026-03-17",
-          "name": 46.83,
-          "benchmark": 108.14
-        },
-        {
-          "date": "2026-03-18",
-          "name": 43.99,
-          "benchmark": 106.4
-        },
-        {
-          "date": "2026-03-19",
-          "name": 43.87,
-          "benchmark": 107.1
-        },
-        {
-          "date": "2026-03-20",
-          "name": 43.56,
-          "benchmark": 104.76
-        },
-        {
-          "date": "2026-03-23",
-          "name": 42.02,
-          "benchmark": 107.02
-        },
-        {
-          "date": "2026-03-24",
-          "name": 40.17,
-          "benchmark": 107.59
-        },
-        {
-          "date": "2026-03-25",
-          "name": 39.21,
-          "benchmark": 108.91
-        },
-        {
-          "date": "2026-03-26",
-          "name": 38.3,
-          "benchmark": 107.01
-        },
-        {
-          "date": "2026-03-27",
-          "name": 38.83,
-          "benchmark": 105.14
-        },
-        {
-          "date": "2026-03-30",
-          "name": 40.83,
-          "benchmark": 103.63
-        },
-        {
-          "date": "2026-03-31",
-          "name": 40.7,
-          "benchmark": 107.26
-        },
-        {
-          "date": "2026-04-01",
-          "name": 39.56,
-          "benchmark": 107.93
-        },
-        {
-          "date": "2026-04-02",
-          "name": 42.04,
-          "benchmark": 108.68
-        },
-        {
-          "date": "2026-04-06",
-          "name": 39.79,
+          "date": "2025-10-14",
+          "name": 90.51,
           "benchmark": 109.14
         },
         {
-          "date": "2026-04-07",
-          "name": 39.62,
-          "benchmark": 109.38
+          "date": "2025-10-15",
+          "name": 89.94,
+          "benchmark": 110.21
         },
         {
-          "date": "2026-04-08",
-          "name": 39.79,
-          "benchmark": 112.65
+          "date": "2025-10-16",
+          "name": 86.57,
+          "benchmark": 107.89
         },
         {
-          "date": "2026-04-09",
-          "name": 38.96,
-          "benchmark": 113.29
+          "date": "2025-10-17",
+          "name": 86.03,
+          "benchmark": 107.17
         },
         {
-          "date": "2026-04-10",
-          "name": 37.97,
-          "benchmark": 113.01
+          "date": "2025-10-20",
+          "name": 84.31,
+          "benchmark": 109.26
         },
         {
-          "date": "2026-04-13",
-          "name": 38.22,
-          "benchmark": 114.64
+          "date": "2025-10-21",
+          "name": 87.28,
+          "benchmark": 108.74
         },
         {
-          "date": "2026-04-14",
-          "name": 39.13,
+          "date": "2025-10-22",
+          "name": 86.97,
+          "benchmark": 107.14
+        },
+        {
+          "date": "2025-10-23",
+          "name": 87.04,
+          "benchmark": 108.49
+        },
+        {
+          "date": "2025-10-24",
+          "name": 86.16,
+          "benchmark": 109.82
+        },
+        {
+          "date": "2025-10-27",
+          "name": 83.13,
+          "benchmark": 110.2
+        },
+        {
+          "date": "2025-10-28",
+          "name": 82.35,
+          "benchmark": 109.61
+        },
+        {
+          "date": "2025-10-29",
+          "name": 80.4,
+          "benchmark": 108.68
+        },
+        {
+          "date": "2025-10-30",
+          "name": 78.73,
+          "benchmark": 107.8
+        },
+        {
+          "date": "2025-10-31",
+          "name": 78.55,
+          "benchmark": 108.41
+        },
+        {
+          "date": "2025-11-03",
+          "name": 79.22,
+          "benchmark": 108.06
+        },
+        {
+          "date": "2025-11-04",
+          "name": 79.07,
+          "benchmark": 106.19
+        },
+        {
+          "date": "2025-11-05",
+          "name": 78.6,
+          "benchmark": 107.73
+        },
+        {
+          "date": "2025-11-06",
+          "name": 75.6,
+          "benchmark": 105.82
+        },
+        {
+          "date": "2025-11-07",
+          "name": 76.3,
+          "benchmark": 106.38
+        },
+        {
+          "date": "2025-11-10",
+          "name": 73.7,
+          "benchmark": 107.44
+        },
+        {
+          "date": "2025-11-11",
+          "name": 72.18,
+          "benchmark": 107.53
+        },
+        {
+          "date": "2025-11-12",
+          "name": 71.98,
+          "benchmark": 107.27
+        },
+        {
+          "date": "2025-11-13",
+          "name": 70.26,
+          "benchmark": 104.25
+        },
+        {
+          "date": "2025-11-14",
+          "name": 70.28,
+          "benchmark": 104.56
+        },
+        {
+          "date": "2025-11-17",
+          "name": 66.79,
+          "benchmark": 102.48
+        },
+        {
+          "date": "2025-11-18",
+          "name": 68.46,
+          "benchmark": 102.79
+        },
+        {
+          "date": "2025-11-19",
+          "name": 76.28,
+          "benchmark": 102.77
+        },
+        {
+          "date": "2025-11-20",
+          "name": 77.69,
+          "benchmark": 100.87
+        },
+        {
+          "date": "2025-11-21",
+          "name": 77.61,
+          "benchmark": 103.73
+        },
+        {
+          "date": "2025-11-24",
+          "name": 80.16,
+          "benchmark": 105.62
+        },
+        {
+          "date": "2025-11-25",
+          "name": 79.14,
+          "benchmark": 107.92
+        },
+        {
+          "date": "2025-11-26",
+          "name": 79.74,
+          "benchmark": 108.88
+        },
+        {
+          "date": "2025-11-28",
+          "name": 80.53,
+          "benchmark": 109.52
+        },
+        {
+          "date": "2025-12-01",
+          "name": 80.53,
+          "benchmark": 108.14
+        },
+        {
+          "date": "2025-12-02",
+          "name": 80.42,
+          "benchmark": 107.94
+        },
+        {
+          "date": "2025-12-03",
+          "name": 80.34,
+          "benchmark": 109.91
+        },
+        {
+          "date": "2025-12-04",
+          "name": 81.75,
+          "benchmark": 110.87
+        },
+        {
+          "date": "2025-12-05",
+          "name": 81.26,
+          "benchmark": 110.41
+        },
+        {
+          "date": "2025-12-08",
+          "name": 79.54,
+          "benchmark": 110.45
+        },
+        {
+          "date": "2025-12-09",
+          "name": 79.64,
+          "benchmark": 110.68
+        },
+        {
+          "date": "2025-12-10",
+          "name": 86.81,
+          "benchmark": 112.19
+        },
+        {
+          "date": "2025-12-11",
+          "name": 85.17,
+          "benchmark": 113.5
+        },
+        {
+          "date": "2025-12-12",
+          "name": 83.29,
+          "benchmark": 111.76
+        },
+        {
+          "date": "2025-12-15",
+          "name": 85.45,
+          "benchmark": 110.92
+        },
+        {
+          "date": "2025-12-16",
+          "name": 80.63,
+          "benchmark": 110.03
+        },
+        {
+          "date": "2025-12-17",
+          "name": 78.1,
+          "benchmark": 108.85
+        },
+        {
+          "date": "2025-12-18",
+          "name": 76.33,
+          "benchmark": 109.5
+        },
+        {
+          "date": "2025-12-19",
+          "name": 75.7,
+          "benchmark": 110.42
+        },
+        {
+          "date": "2025-12-22",
+          "name": 76.9,
+          "benchmark": 111.65
+        },
+        {
+          "date": "2025-12-23",
+          "name": 78.08,
+          "benchmark": 110.98
+        },
+        {
+          "date": "2025-12-24",
+          "name": 78.55,
+          "benchmark": 111.26
+        },
+        {
+          "date": "2025-12-26",
+          "name": 78.62,
+          "benchmark": 110.69
+        },
+        {
+          "date": "2025-12-29",
+          "name": 71.25,
+          "benchmark": 110.02
+        },
+        {
+          "date": "2025-12-30",
+          "name": 69.58,
+          "benchmark": 109.2
+        },
+        {
+          "date": "2025-12-31",
+          "name": 69.68,
+          "benchmark": 108.38
+        },
+        {
+          "date": "2026-01-02",
+          "name": 68.01,
+          "benchmark": 109.53
+        },
+        {
+          "date": "2026-01-05",
+          "name": 62.28,
+          "benchmark": 111.27
+        },
+        {
+          "date": "2026-01-06",
+          "name": 61.26,
+          "benchmark": 112.75
+        },
+        {
+          "date": "2026-01-07",
+          "name": 60.09,
+          "benchmark": 112.48
+        },
+        {
+          "date": "2026-01-08",
+          "name": 64.55,
+          "benchmark": 113.71
+        },
+        {
+          "date": "2026-01-09",
+          "name": 64.7,
+          "benchmark": 114.57
+        },
+        {
+          "date": "2026-01-12",
+          "name": 60.22,
+          "benchmark": 115.13
+        },
+        {
+          "date": "2026-01-13",
+          "name": 60.17,
+          "benchmark": 115.07
+        },
+        {
+          "date": "2026-01-14",
+          "name": 61.89,
+          "benchmark": 115.88
+        },
+        {
+          "date": "2026-01-15",
+          "name": 63.4,
+          "benchmark": 116.9
+        },
+        {
+          "date": "2026-01-16",
+          "name": 62.33,
+          "benchmark": 117.01
+        },
+        {
+          "date": "2026-01-20",
+          "name": 69.81,
+          "benchmark": 115.61
+        },
+        {
+          "date": "2026-01-21",
+          "name": 73.23,
+          "benchmark": 117.9
+        },
+        {
+          "date": "2026-01-22",
+          "name": 72.73,
+          "benchmark": 118.78
+        },
+        {
+          "date": "2026-01-23",
+          "name": 72.11,
+          "benchmark": 116.59
+        },
+        {
+          "date": "2026-01-26",
+          "name": 66.68,
           "benchmark": 116.22
         },
         {
+          "date": "2026-01-27",
+          "name": 67.96,
+          "benchmark": 116.55
+        },
+        {
+          "date": "2026-01-28",
+          "name": 64.6,
+          "benchmark": 115.92
+        },
+        {
+          "date": "2026-01-29",
+          "name": 65.28,
+          "benchmark": 115.96
+        },
+        {
+          "date": "2026-01-30",
+          "name": 64.83,
+          "benchmark": 114.32
+        },
+        {
+          "date": "2026-02-02",
+          "name": 63.58,
+          "benchmark": 115.43
+        },
+        {
+          "date": "2026-02-03",
+          "name": 54.43,
+          "benchmark": 115.7
+        },
+        {
+          "date": "2026-02-04",
+          "name": 55.03,
+          "benchmark": 114.7
+        },
+        {
+          "date": "2026-02-05",
+          "name": 50.78,
+          "benchmark": 112.64
+        },
+        {
+          "date": "2026-02-06",
+          "name": 50.89,
+          "benchmark": 116.68
+        },
+        {
+          "date": "2026-02-09",
+          "name": 48.93,
+          "benchmark": 117.5
+        },
+        {
+          "date": "2026-02-10",
+          "name": 47.34,
+          "benchmark": 117.18
+        },
+        {
+          "date": "2026-02-11",
+          "name": 45.86,
+          "benchmark": 116.65
+        },
+        {
+          "date": "2026-02-12",
+          "name": 45.93,
+          "benchmark": 114.27
+        },
+        {
+          "date": "2026-02-13",
+          "name": 46.58,
+          "benchmark": 115.78
+        },
+        {
+          "date": "2026-02-17",
+          "name": 47.13,
+          "benchmark": 115.81
+        },
+        {
+          "date": "2026-02-18",
+          "name": 48.28,
+          "benchmark": 116.23
+        },
+        {
+          "date": "2026-02-19",
+          "name": 49.48,
+          "benchmark": 116.5
+        },
+        {
+          "date": "2026-02-20",
+          "name": 49.64,
+          "benchmark": 116.5
+        },
+        {
+          "date": "2026-02-23",
+          "name": 46.77,
+          "benchmark": 114.69
+        },
+        {
+          "date": "2026-02-24",
+          "name": 47.81,
+          "benchmark": 115.94
+        },
+        {
+          "date": "2026-02-25",
+          "name": 47.08,
+          "benchmark": 116.49
+        },
+        {
+          "date": "2026-02-26",
+          "name": 49.11,
+          "benchmark": 117.11
+        },
+        {
+          "date": "2026-02-27",
+          "name": 47.94,
+          "benchmark": 115.09
+        },
+        {
+          "date": "2026-03-02",
+          "name": 47.31,
+          "benchmark": 116.15
+        },
+        {
+          "date": "2026-03-03",
+          "name": 46.22,
+          "benchmark": 114.14
+        },
+        {
+          "date": "2026-03-04",
+          "name": 45.67,
+          "benchmark": 115.25
+        },
+        {
+          "date": "2026-03-05",
+          "name": 44.26,
+          "benchmark": 113.05
+        },
+        {
+          "date": "2026-03-06",
+          "name": 45.33,
+          "benchmark": 110.46
+        },
+        {
+          "date": "2026-03-09",
+          "name": 42.91,
+          "benchmark": 111.66
+        },
+        {
+          "date": "2026-03-10",
+          "name": 44.55,
+          "benchmark": 111.55
+        },
+        {
+          "date": "2026-03-11",
+          "name": 45.93,
+          "benchmark": 111.32
+        },
+        {
+          "date": "2026-03-12",
+          "name": 43.61,
+          "benchmark": 108.93
+        },
+        {
+          "date": "2026-03-13",
+          "name": 43.87,
+          "benchmark": 108.57
+        },
+        {
+          "date": "2026-03-16",
+          "name": 48.7,
+          "benchmark": 109.59
+        },
+        {
+          "date": "2026-03-17",
+          "name": 48.25,
+          "benchmark": 110.09
+        },
+        {
+          "date": "2026-03-18",
+          "name": 45.33,
+          "benchmark": 108.32
+        },
+        {
+          "date": "2026-03-19",
+          "name": 45.2,
+          "benchmark": 109.03
+        },
+        {
+          "date": "2026-03-20",
+          "name": 44.89,
+          "benchmark": 106.64
+        },
+        {
+          "date": "2026-03-23",
+          "name": 43.3,
+          "benchmark": 108.95
+        },
+        {
+          "date": "2026-03-24",
+          "name": 41.4,
+          "benchmark": 109.53
+        },
+        {
+          "date": "2026-03-25",
+          "name": 40.41,
+          "benchmark": 110.87
+        },
+        {
+          "date": "2026-03-26",
+          "name": 39.47,
+          "benchmark": 108.94
+        },
+        {
+          "date": "2026-03-27",
+          "name": 40.02,
+          "benchmark": 107.03
+        },
+        {
+          "date": "2026-03-30",
+          "name": 42.08,
+          "benchmark": 105.49
+        },
+        {
+          "date": "2026-03-31",
+          "name": 41.94,
+          "benchmark": 109.19
+        },
+        {
+          "date": "2026-04-01",
+          "name": 40.77,
+          "benchmark": 109.88
+        },
+        {
+          "date": "2026-04-02",
+          "name": 43.33,
+          "benchmark": 110.64
+        },
+        {
+          "date": "2026-04-06",
+          "name": 41.01,
+          "benchmark": 111.11
+        },
+        {
+          "date": "2026-04-07",
+          "name": 40.82,
+          "benchmark": 111.35
+        },
+        {
+          "date": "2026-04-08",
+          "name": 41.01,
+          "benchmark": 114.68
+        },
+        {
+          "date": "2026-04-09",
+          "name": 40.15,
+          "benchmark": 115.33
+        },
+        {
+          "date": "2026-04-10",
+          "name": 39.13,
+          "benchmark": 115.04
+        },
+        {
+          "date": "2026-04-13",
+          "name": 39.39,
+          "benchmark": 116.7
+        },
+        {
+          "date": "2026-04-14",
+          "name": 40.33,
+          "benchmark": 118.31
+        },
+        {
           "date": "2026-04-15",
-          "name": 40.35,
-          "benchmark": 116.51
+          "name": 41.58,
+          "benchmark": 118.61
         },
         {
           "date": "2026-04-16",
-          "name": 41.06,
-          "benchmark": 116.75
+          "name": 42.31,
+          "benchmark": 118.85
         },
         {
           "date": "2026-04-17",
-          "name": 40.83,
-          "benchmark": 119.27
+          "name": 42.08,
+          "benchmark": 121.42
         },
         {
           "date": "2026-04-20",
-          "name": 41.69,
-          "benchmark": 119.95
+          "name": 42.96,
+          "benchmark": 122.11
         },
         {
           "date": "2026-04-21",
-          "name": 41.61,
-          "benchmark": 118.72
+          "name": 42.88,
+          "benchmark": 120.86
         },
         {
           "date": "2026-04-22",
-          "name": 41.77,
-          "benchmark": 119.57
+          "name": 43.04,
+          "benchmark": 121.73
         },
         {
           "date": "2026-04-23",
-          "name": 41.23,
-          "benchmark": 119.16
+          "name": 42.49,
+          "benchmark": 121.3
         },
         {
           "date": "2026-04-24",
-          "name": 40.98,
-          "benchmark": 119.65
+          "name": 42.23,
+          "benchmark": 121.8
         },
         {
           "date": "2026-04-27",
-          "name": 42.63,
-          "benchmark": 119.86
+          "name": 43.93,
+          "benchmark": 122.02
         },
         {
           "date": "2026-04-28",
-          "name": 42.83,
-          "benchmark": 118.46
+          "name": 44.13,
+          "benchmark": 120.6
         },
         {
           "date": "2026-04-29",
-          "name": 44.37,
-          "benchmark": 117.67
+          "name": 45.72,
+          "benchmark": 119.79
         },
         {
           "date": "2026-04-30",
-          "name": 45.03,
-          "benchmark": 120.22
+          "name": 46.4,
+          "benchmark": 122.38
         },
         {
           "date": "2026-05-01",
-          "name": 43.51,
-          "benchmark": 120.79
+          "name": 44.84,
+          "benchmark": 122.96
         },
         {
           "date": "2026-05-04",
-          "name": 43.92,
-          "benchmark": 120.18
+          "name": 45.26,
+          "benchmark": 122.34
         },
         {
           "date": "2026-05-05",
-          "name": 26.89,
-          "benchmark": 122.2
+          "name": 27.71,
+          "benchmark": 124.4
         },
         {
           "date": "2026-05-06",
-          "name": 28.08,
-          "benchmark": 124.04
+          "name": 28.94,
+          "benchmark": 126.27
         },
         {
           "date": "2026-05-07",
-          "name": 26.46,
-          "benchmark": 122.07
+          "name": 27.27,
+          "benchmark": 124.27
         },
         {
           "date": "2026-05-08",
-          "name": 26.08,
-          "benchmark": 122.9
+          "name": 26.88,
+          "benchmark": 125.11
         },
         {
           "date": "2026-05-11",
-          "name": 23.78,
-          "benchmark": 123.4
+          "name": 24.5,
+          "benchmark": 125.62
         },
         {
           "date": "2026-05-12",
-          "name": 23.98,
-          "benchmark": 122.21
-        },
-        {
-          "date": "2026-05-13",
-          "name": 23.4,
-          "benchmark": 122.25
-        },
-        {
-          "date": "2026-05-14",
-          "name": 23.15,
-          "benchmark": 123.02
-        },
-        {
-          "date": "2026-05-15",
-          "name": 24.51,
-          "benchmark": 120.06
-        },
-        {
-          "date": "2026-05-18",
-          "name": 23.43,
-          "benchmark": 119.35
-        },
-        {
-          "date": "2026-05-19",
-          "name": 22.49,
-          "benchmark": 118.07
-        },
-        {
-          "date": "2026-05-20",
-          "name": 22.69,
-          "benchmark": 121.04
-        },
-        {
-          "date": "2026-05-21",
-          "name": 22.89,
-          "benchmark": 122.17
-        },
-        {
-          "date": "2026-05-22",
-          "name": 22.54,
-          "benchmark": 123.31
-        },
-        {
-          "date": "2026-05-26",
-          "name": 21.76,
-          "benchmark": 125.64
-        },
-        {
-          "date": "2026-05-27",
-          "name": 21.73,
-          "benchmark": 125.58
-        },
-        {
-          "date": "2026-05-28",
-          "name": 21.91,
-          "benchmark": 126.3
-        },
-        {
-          "date": "2026-05-29",
-          "name": 21.15,
-          "benchmark": 125.61
-        },
-        {
-          "date": "2026-06-01",
-          "name": 22.92,
-          "benchmark": 124.98
-        },
-        {
-          "date": "2026-06-02",
-          "name": 22.87,
-          "benchmark": 126.14
-        },
-        {
-          "date": "2026-06-03",
-          "name": 22.41,
+          "name": 24.71,
           "benchmark": 124.41
         },
         {
+          "date": "2026-05-13",
+          "name": 24.11,
+          "benchmark": 124.45
+        },
+        {
+          "date": "2026-05-14",
+          "name": 23.85,
+          "benchmark": 125.24
+        },
+        {
+          "date": "2026-05-15",
+          "name": 25.26,
+          "benchmark": 122.22
+        },
+        {
+          "date": "2026-05-18",
+          "name": 24.14,
+          "benchmark": 121.5
+        },
+        {
+          "date": "2026-05-19",
+          "name": 23.18,
+          "benchmark": 120.2
+        },
+        {
+          "date": "2026-05-20",
+          "name": 23.38,
+          "benchmark": 123.22
+        },
+        {
+          "date": "2026-05-21",
+          "name": 23.59,
+          "benchmark": 124.37
+        },
+        {
+          "date": "2026-05-22",
+          "name": 23.23,
+          "benchmark": 125.53
+        },
+        {
+          "date": "2026-05-26",
+          "name": 22.42,
+          "benchmark": 127.9
+        },
+        {
+          "date": "2026-05-27",
+          "name": 22.39,
+          "benchmark": 127.84
+        },
+        {
+          "date": "2026-05-28",
+          "name": 22.58,
+          "benchmark": 128.57
+        },
+        {
+          "date": "2026-05-29",
+          "name": 21.79,
+          "benchmark": 127.87
+        },
+        {
+          "date": "2026-06-01",
+          "name": 23.62,
+          "benchmark": 127.23
+        },
+        {
+          "date": "2026-06-02",
+          "name": 23.57,
+          "benchmark": 128.41
+        },
+        {
+          "date": "2026-06-03",
+          "name": 23.1,
+          "benchmark": 126.65
+        },
+        {
           "date": "2026-06-04",
-          "name": 21.98,
-          "benchmark": 126.29
+          "name": 22.65,
+          "benchmark": 128.57
         },
         {
           "date": "2026-06-05",
-          "name": 22.19,
-          "benchmark": 121.81
+          "name": 22.86,
+          "benchmark": 124.0
         },
         {
           "date": "2026-06-08",
-          "name": 19.98,
-          "benchmark": 122.87
+          "name": 20.59,
+          "benchmark": 125.09
         },
         {
           "date": "2026-06-09",
-          "name": 21.33,
-          "benchmark": 123.27
+          "name": 21.98,
+          "benchmark": 125.49
         },
         {
           "date": "2026-06-10",
-          "name": 21.83,
-          "benchmark": 121.98
+          "name": 22.5,
+          "benchmark": 124.18
         },
         {
           "date": "2026-06-11",
-          "name": 22.54,
-          "benchmark": 125.6
+          "name": 23.23,
+          "benchmark": 127.86
         },
         {
           "date": "2026-06-12",
-          "name": 22.29,
-          "benchmark": 126.7
+          "name": 22.97,
+          "benchmark": 128.98
         },
         {
           "date": "2026-06-15",
-          "name": 22.41,
-          "benchmark": 127.43
+          "name": 23.1,
+          "benchmark": 129.72
         },
         {
           "date": "2026-06-16",
-          "name": 22.34,
-          "benchmark": 126.32
+          "name": 23.02,
+          "benchmark": 128.6
         },
         {
           "date": "2026-06-17",
-          "name": 22.94,
-          "benchmark": 125.37
+          "name": 23.64,
+          "benchmark": 127.63
         },
         {
           "date": "2026-06-18",
-          "name": 23.93,
-          "benchmark": 127.84
+          "name": 24.66,
+          "benchmark": 130.14
         },
         {
           "date": "2026-06-22",
-          "name": 25.73,
-          "benchmark": 128.96
+          "name": 26.51,
+          "benchmark": 131.28
         },
         {
           "date": "2026-06-23",
-          "name": 28.51,
-          "benchmark": 127.72
+          "name": 29.38,
+          "benchmark": 130.02
         },
         {
           "date": "2026-06-24",
-          "name": 30.13,
-          "benchmark": 128.32
+          "name": 31.05,
+          "benchmark": 130.63
         },
         {
           "date": "2026-06-25",
-          "name": 28.81,
-          "benchmark": 129.28
+          "name": 29.69,
+          "benchmark": 131.6
         },
         {
           "date": "2026-06-26",
-          "name": 29.22,
-          "benchmark": 129.67
+          "name": 30.11,
+          "benchmark": 132.01
         },
         {
           "date": "2026-06-29",
-          "name": 31.32,
-          "benchmark": 129.3
+          "name": 32.27,
+          "benchmark": 131.63
         },
         {
           "date": "2026-06-30",
-          "name": 32.73,
-          "benchmark": 129.94
+          "name": 33.73,
+          "benchmark": 132.28
         },
         {
           "date": "2026-07-01",
-          "name": 33.77,
-          "benchmark": 129.45
+          "name": 34.8,
+          "benchmark": 131.78
         },
         {
           "date": "2026-07-02",
-          "name": 35.06,
-          "benchmark": 128.7
+          "name": 36.13,
+          "benchmark": 131.02
         },
         {
           "date": "2026-07-06",
-          "name": 34.02,
-          "benchmark": 129.27
+          "name": 35.06,
+          "benchmark": 131.6
         },
         {
           "date": "2026-07-07",
-          "name": 35.26,
-          "benchmark": 128.1
+          "name": 36.34,
+          "benchmark": 130.41
         },
         {
           "date": "2026-07-08",
-          "name": 33.34,
-          "benchmark": 126.93
+          "name": 34.36,
+          "benchmark": 129.21
         },
         {
           "date": "2026-07-09",
-          "name": 30.74,
-          "benchmark": 128.55
+          "name": 31.67,
+          "benchmark": 130.87
         },
         {
           "date": "2026-07-10",
-          "name": 31.57,
-          "benchmark": 128.01
+          "name": 32.53,
+          "benchmark": 130.32
         },
         {
           "date": "2026-07-13",
-          "name": 32.25,
-          "benchmark": 126.93
+          "name": 33.24,
+          "benchmark": 129.21
         },
         {
           "date": "2026-07-14",
-          "name": 30.61,
-          "benchmark": 127.37
+          "name": 31.54,
+          "benchmark": 129.67
         },
         {
           "date": "2026-07-15",
-          "name": 30.58,
-          "benchmark": 127.92
+          "name": 31.52,
+          "benchmark": 130.22
         },
         {
           "date": "2026-07-16",
-          "name": 30.33,
-          "benchmark": 127.84
+          "name": 31.26,
+          "benchmark": 130.14
         },
         {
           "date": "2026-07-17",
-          "name": 30.66,
-          "benchmark": 127.17
+          "name": 31.6,
+          "benchmark": 129.46
         },
         {
           "date": "2026-07-20",
-          "name": 30.74,
-          "benchmark": 126.42
+          "name": 31.67,
+          "benchmark": 128.7
         },
         {
           "date": "2026-07-21",
-          "name": 32.03,
-          "benchmark": 128.25
+          "name": 33.0,
+          "benchmark": 130.56
         },
         {
           "date": "2026-07-22",
-          "name": 32.33,
-          "benchmark": 127.06
+          "name": 33.32,
+          "benchmark": 129.35
         },
         {
           "date": "2026-07-23",
-          "name": 32.63,
-          "benchmark": 126.33
+          "name": 33.63,
+          "benchmark": 128.6
         },
         {
           "date": "2026-07-24",
-          "name": 32.76,
-          "benchmark": 125.93
+          "name": 33.76,
+          "benchmark": 128.2
         },
         {
           "date": "2026-07-27",
-          "name": 33.06,
-          "benchmark": 126.68
+          "name": 34.07,
+          "benchmark": 128.96
         },
         {
           "date": "2026-07-28",
-          "name": 34.56,
-          "benchmark": 126.88
+          "name": 35.61,
+          "benchmark": 129.16
         },
         {
           "date": "2026-07-29",
-          "name": 33.62,
-          "benchmark": 124.8
+          "name": 34.65,
+          "benchmark": 127.05
         },
         {
           "date": "2026-07-30",
-          "name": 33.27,
-          "benchmark": 126.54
+          "name": 34.28,
+          "benchmark": 128.82
         },
         {
           "date": "2026-07-31",
-          "name": 31.34,
-          "benchmark": 125.94
+          "name": 32.3,
+          "benchmark": 128.21
         },
         {
           "date": "2026-08-03",
-          "name": 32.76,
-          "benchmark": 128.11
-        },
-        {
-          "date": "2026-08-04",
-          "name": 32.25,
-          "benchmark": 130.49
-        },
-        {
-          "date": "2026-08-05",
-          "name": 31.9,
-          "benchmark": 129.65
-        },
-        {
-          "date": "2026-08-06",
-          "name": 30.63,
-          "benchmark": 128.99
-        },
-        {
-          "date": "2026-08-07",
-          "name": 29.24,
+          "name": 33.76,
           "benchmark": 130.42
         },
         {
+          "date": "2026-08-04",
+          "name": 33.24,
+          "benchmark": 132.84
+        },
+        {
+          "date": "2026-08-05",
+          "name": 32.87,
+          "benchmark": 131.98
+        },
+        {
+          "date": "2026-08-06",
+          "name": 31.57,
+          "benchmark": 131.31
+        },
+        {
+          "date": "2026-08-07",
+          "name": 30.14,
+          "benchmark": 132.77
+        },
+        {
           "date": "2026-08-10",
-          "name": 28.79,
-          "benchmark": 129.74
+          "name": 29.67,
+          "benchmark": 132.07
         },
         {
           "date": "2026-08-11",
-          "name": 29.22,
-          "benchmark": 130.17
+          "name": 30.11,
+          "benchmark": 132.52
         },
         {
           "date": "2026-08-12",
-          "name": 27.45,
-          "benchmark": 130.92
+          "name": 28.28,
+          "benchmark": 133.28
+        },
+        {
+          "date": "2026-08-13",
+          "name": 28.65,
+          "benchmark": 133.62
+        },
+        {
+          "date": "2026-08-14",
+          "name": 28.02,
+          "benchmark": 134.32
         }
       ],
       "name_symbol": "BRBR",
       "benchmark_symbol": "IWM",
-      "as_of": "2026-08-12",
+      "as_of": "2026-08-14",
       "window_days": 364,
-      "name_return": -0.7255249177839616,
-      "benchmark_return": 0.3091860565695008,
-      "source_ref": "EOD BRBR vs IWM rebased to 100, 2025-08-13..2026-08-12"
+      "name_return": -0.7197601668404587,
+      "benchmark_return": 0.3432395544401883,
+      "source_ref": "EOD BRBR vs IWM rebased to 100, 2025-08-15..2026-08-14"
     },
     "operating_drivers": {
       "rows": [
@@ -7638,6 +7556,42 @@
         },
         {
           "kind": "event",
+          "metric": "Executive/Board Change - Other",
+          "period": "Jul-08-2026",
+          "value": "BellRing Brands, Inc. Announces Appointment of Michael Axelrod as President and to Board of Directors, Effective July 29, 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that Michael Axelrod, 58, has been appointed as President and to the Company’s Board of Directors, effective July 29, 2026. Michael Axelrod is an accomplished executive with more than 30 years of experience in the consumer packaged goods industry, including",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Executive Change - CEO",
+          "period": "Jul-08-2026",
+          "value": "BellRing Brands, Inc. Appoints Michael Axelrod as Chief Executive Officer, Effective July 29, 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that Michael Axelrod, 58, has been appointed as the company’s next Chief Executive Officer, effective July 29, 2026. Darcy Davenport, who announced her intention to retire from the Company earlier this year, will serve in a senior advisory capacity to suppo",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Executive/Board Change - Other",
+          "period": "Jun-24-2026",
+          "value": "Douglas J. Cornille to Step Down as the Chief Growth Officer of Bellring Brands, Inc, Effective as of June 24, 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that Douglas J. Cornille stepped down from his role as the Company's Chief Growth Officer, effective as of June 24, 2026, and departed the Company effective as of September 1, 2026.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jun-24-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
           "metric": "Corporate Guidance - New/Confirmed",
           "period": "May-05-2026",
           "value": "BellRing Brands, Inc. Revises Earnings Guidance for the Year 2026",
@@ -7646,6 +7600,30 @@
           "verbatim": "Situation: BellRing Brands, Inc. revised earnings guidance for the year 2026. For the year, the company expects net sales of $2.325 billion - $2.365 billion. Net Sales Growth of 0% to 2%.",
           "following_context": null,
           "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · May-05-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Executive/Board Change - Other",
+          "period": "Feb-03-2026",
+          "value": "Darcy Davenport Decides to Retire as President of Bellring Brands, Inc",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that its President and Chief Executive Officer Darcy Davenport has decided to retire from the Company, effective upon the earlier of the appointment of a new Chief Executive Officer or September 30, 2026, the end of the Company’s fiscal year. Ms. Davenport ",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Feb-03-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Executive Change - CEO",
+          "period": "Feb-03-2026",
+          "value": "Darcy Davenport Decides to Retire as Chief Executive Officer of Bellring Brands, Inc",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that its President and Chief Executive Officer Darcy Davenport has decided to retire from the Company, effective upon the earlier of the appointment of a new Chief Executive Officer or September 30, 2026, the end of the Company’s fiscal year. Ms. Davenport ",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Feb-03-2026",
           "tier": "anchored"
         },
         {
@@ -7674,6 +7652,30 @@
         },
         {
           "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Nov-20-2025",
+          "value": "BellRing Brands, Inc. (NYSE:BRBR) announces an Equity Buyback for $600 million worth of its shares.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. (NYSE:BRBR) announces a share repurchase program. Under the program, the company will repurchase up to $600 million worth of its shares. The program will expire in 2 years.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-20-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Nov-19-2025",
+          "value": "BellRing Brands, Inc. authorizes a Buyback Plan.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: The Board of Directors of BellRing Brands, Inc. has authorized a buyback plan on November 19, 2025.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-19-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
           "metric": "Corporate Guidance - New/Confirmed",
           "period": "Nov-18-2025",
           "value": "Bellring Brands, Inc. Provides Earnings Guidance for the Fiscal Year 2026",
@@ -7682,6 +7684,18 @@
           "verbatim": "Situation: BellRing Brands, Inc. provides earnings guidance for the fiscal year 2026. For the period, the company expects Net Sales of $2.41 billion - $2.49 billion, Net Sales Growth 4% to 8%.",
           "following_context": null,
           "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-18-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Executive/Board Change - Other",
+          "period": "Nov-14-2025",
+          "value": "BellRing Brands, Inc. Appoints David Finkelstein to Board of Directors and the Audit Committee, Effective January 1, 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. announced that David Finkelstein has been appointed to its Board of Directors and the Audit Committee, effective January 1, 2026. With the addition of Mr. Finkelstein, the Board will consist of eight members. Mr. Finkelstein is a seasoned executive who brings a wealt",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-14-2025",
           "tier": "anchored"
         },
         {
@@ -7697,10 +7711,34 @@
           "tier": "anchored"
         },
         {
+          "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Sep-02-2025",
+          "value": "BellRing Brands, Inc. (NYSE:BRBR) announces an Equity Buyback for $400 million worth of its shares.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. (NYSE:BRBR) announces a share repurchase program. Under the program, the company will repurchase up to $400 million worth of its shares. The program will expire in 2 years.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Sep-02-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Sep-02-2025",
+          "value": "BellRing Brands, Inc. authorizes a Buyback Plan.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: The Board of Directors of BellRing Brands, Inc. has authorized a buyback plan on September 2, 2025.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Sep-02-2025",
+          "tier": "anchored"
+        },
+        {
           "kind": "leading_indicator",
-          "metric": "RTD shake category volumes sold on price promotion",
+          "metric": "RTD shake category volume sold on price promotion",
           "period": "Q2 2026",
-          "value": "27%, up 8 percentage points versus last year",
+          "value": "27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year",
           "value_num": null,
           "unit": null,
           "verbatim": "As a result, 27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year and a meaningful step-up from Q1.",
@@ -7712,7 +7750,7 @@
           "kind": "leading_indicator",
           "metric": "RTD shake category growth",
           "period": "Q2 2026",
-          "value": "up 8%",
+          "value": "RTD shakes up 8%",
           "value_num": null,
           "unit": null,
           "verbatim": "In short, the category remains strong with RTD shakes up 8%, which is well ahead of the broader food and beverage industry.",
@@ -7722,9 +7760,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Total BellRing net sales",
+          "metric": "Total BellRing net sales growth",
           "period": "Q2 2026",
-          "value": "$599 million, up 2% year-over-year",
+          "value": "up 2% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "Total BellRing net sales for the second quarter were $599 million, up 2% year-over-year with adjusted EBITDA of $54 million.",
@@ -7734,7 +7772,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier Protein net sales",
+          "metric": "Premier Protein net sales growth",
           "period": "Q2 2026",
           "value": "grew 1.7%",
           "value_num": null,
@@ -7746,19 +7784,19 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier RTD shake net sales",
+          "metric": "Premier RTD shake net sales growth",
           "period": "Q2 2026",
-          "value": "increased 2.3%",
+          "value": "up 2.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
-          "following_context": null,
+          "verbatim": "Premier Protein net sales grew 1.7% with RTD shake net sales up 2.3%.",
+          "following_context": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier Shake volumes",
+          "metric": "Premier Shake volume growth",
           "period": "Q2 2026",
           "value": "increased 12% with unfavorable price mix of 9%",
           "value_num": null,
@@ -7770,7 +7808,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Dymatize sales",
+          "metric": "Dymatize net sales",
           "period": "Q2 2026",
           "value": "declined 2%",
           "value_num": null,
@@ -7794,7 +7832,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Premier consumption outside of club",
+          "metric": "Consumption outside of club",
           "period": "Q2 2026",
           "value": "up 15%, with the mass channel up high teens",
           "value_num": null,
@@ -7808,7 +7846,7 @@
           "kind": "competitive_position",
           "metric": "club channel share of BellRing sales",
           "period": null,
-          "value": "just over 40%",
+          "value": "just over 40% of BellRing sales",
           "value_num": null,
           "unit": null,
           "verbatim": "Retailers also expanded space, particularly in the club channel, which represents just over 40% of BellRing sales.",
@@ -7817,7 +7855,7 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
+          "kind": "leading_indicator",
           "metric": "advertising investment as percent of sales",
           "period": "fiscal 2026",
           "value": "approximately 4% of sales",
@@ -7829,32 +7867,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "RTD shake category volumes sold on price promotion",
-          "period": "Q3 2026",
-          "value": "70%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
-          "following_context": "This is relatively in line with historical norms for this period after adjusting for the shift of a major e-commerce promotion, while down sequentially from the heavier promoted second quarter. While category fundamentals remain strong, our outlook assumes fourth quarter promotional levels will be more similar to the second quarter trends, reflecting continued value-seeking behavior and elevated promotional activity during the key Q2 and Q4 seasons. Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "Premier household penetration",
-          "period": null,
-          "value": "almost 23%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Premier household penetration has reached almost 23%, with shake repeat rate consistently the highest in the category.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "pricing_action",
-          "metric": "price increase on Premier shakes and powders",
+          "metric": "double-digit price increase on Premier shakes and additional powder pricing",
           "period": "Q1 fiscal 2027",
           "value": "double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027",
           "value_num": null,
@@ -7866,8 +7880,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "expected volume-related elasticity with price increase",
-          "period": null,
+          "metric": "expected volume-related elasticity from price increase",
+          "period": "fiscal 2027",
           "value": "slightly greater than 1",
           "value_num": null,
           "unit": null,
@@ -7877,31 +7891,31 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "Premier Protein Ultimate protein content",
-          "period": null,
-          "value": "42 grams of protein",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We believe our core 30-gram protein shakes and our new Premier Protein Ultimate product, with 42 grams of protein, are well suited to the convenience channel and can drive incremental growth.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "total BellRing net sales",
+          "kind": "competitive_position",
+          "metric": "Premier household penetration",
           "period": "Q3 2026",
-          "value": "increased 4%",
+          "value": "almost 23%, with shake repeat rate consistently the highest in the category",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net sales increased 4% in the third quarter, with both brands ahead o",
+          "verbatim": "Premier household penetration has reached almost 23%, with shake repeat rate consistently the highest in the category.",
           "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
+          "kind": "leading_indicator",
+          "metric": "RTD shake category volume sold on price promotion",
+          "period": "Q3 2026",
+          "value": "70% of RTD shake category volumes were sold on price promotion",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
+          "following_context": "This is relatively in line with historical norms for this period after adjusting for the shift of a major e-commerce promotion, while down sequentially from the heavier promoted second quarter. While category fundamentals remain strong, our outlook assumes fourth quarter promotional levels will be more similar to the second quarter trends, reflecting continued value-seeking behavior and elevated promotional activity during the key Q2 and Q4 seasons. Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
           "metric": "advertising investment as percent of sales",
           "period": "fiscal 2026",
           "value": "approximately 4% of sales",
@@ -7913,14 +7927,14 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "club shake item rotating out of assortment",
-          "period": "fiscal 2027",
-          "value": "one item representing a low single-digit sales percentage of this year's net sales expected to rotate out",
+          "kind": "leading_indicator",
+          "metric": "Total BellRing net sales growth",
+          "period": "Q3 2026",
+          "value": "increased 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In club, we currently expect our shake assortment next year to be generally consistent with this year, with one item representing a low single-digit sales percentage of this year's net sales expected to rotate out.",
-          "following_context": "We expect to retain a portion of that demand with our remaining flavors and continue to see opportunities to expand our club presence through innovation and new offerings that align with retailers' evolving assortment strategies.",
+          "verbatim": "Net sales increased 4% in the third quarter, with both brands ahead o",
+          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -7929,144 +7943,168 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a real, consensus-confirmed EBITDA collapse offset by intact category demand, re-accelerating Q3 sales and an announced fiscal-2027 pricing lever.",
+    "evidence_balance": "mixed — a real margin/EBITDA halving into 4.3x leverage, but an intact growing-volume franchise with a dated FY2027 pricing lever.",
     "bull_points": [
       {
-        "claim": "The de-rate is discrete and idiosyncratic — a single earnings gap-down on 2026-05-05 drove the drawdown while the small-cap market rose, consistent with an event-driven overshoot rather than steady secular decline.",
+        "claim": "The de-rate is a single discrete earnings gap-down (2026-05-05), not a multi-year structural drip, isolating a bounded profitability shock rather than a slow terminal fade.",
         "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       },
       {
-        "claim": "The falling EBITDA margin (16%→11% LTM) is optical to the extent revenue kept rising — absolute revenue grew Sep-30-2025 2,317 → Jun-30-2026 (LTM) 2,355, so the compression is a cost/mix event, not a demand collapse (RESIDUAL question for the human).",
+        "claim": "Absolute revenue kept rising through the shock — FY25 $2,317M to LTM $2,355M — so the collapsing EBITDA margin (16%→11%) is a cost/mix event, not a demand loss (a % fell while the top line held).",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Category demand remains intact: RTD shakes up 8%, well ahead of broader food and beverage, though management flags increased competition and a more price-sensitive consumer as near-term pressures.",
+        "claim": "The underlying category is a genuine grower — RTD shakes up 8% and well ahead of broader food and beverage — so the revenue base is not eroding.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Management has taken an explicit margin-recovery lever — a double-digit price increase on Premier shakes plus additional powder pricing effective Q1 fiscal 2027, with expected elasticity only slightly greater than 1.",
+        "claim": "Premier volumes actually grew double-digits (+12%) with the shortfall coming from unfavourable price/mix, indicating demand strength masked by promotional pressure rather than a shrinking franchise.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Management has an explicit self-help margin lever underway — a double-digit Premier shake price increase plus powder pricing effective Q1 FY2027 — with expected elasticity only slightly greater than 1, the direct mechanism to rebuild margin.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Q3 revenue re-accelerated (net sales up 4% with both brands ahead of expectations), a mechanism-bearing sign the top-line pressure is not deepening.",
+        "claim": "The most recent quarter already showed net sales re-accelerating (+4% in Q3, both brands ahead of expectations), evidence the top line is not deteriorating further into the guide.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The name is self-funding on an annual view — LTM levered FCF is positive at $158M and it is buying back stock, reducing shares -9.7% over ~1.7y.",
+        "claim": "Brand health metrics remain strong — Premier household penetration near 23% with the highest shake repeat rate in the category — supporting a durable franchise rather than a fading one.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "On EV/EBITDA the name sits at 9.2x, its own 11th percentile over 6.6 years (median 19.8x, floor 4.3x), a sharp compression against its own history rather than a level it has always traded at.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "cited": true
+      },
+      {
+        "claim": "Consensus revenue revisions are UP not down in the last month (Revenue FY2026 11↑/0↓), so the top-line story is stabilising even as EPS was cut.",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "cited": true
+      },
+      {
+        "claim": "The business is FCF-positive on an LTM basis ($158M levered FCF) and is actively buying back stock (share count -9.7% over ~1.7y), a self-funding capital-return posture inconsistent with terminal distress.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
-        "cited": true
-      },
-      {
-        "claim": "On a forward basis the name trades in line with or below peers — NTM TEV/EBITDA 7.99 vs peer median 8.3 — so the LTM optical premium reverses once earnings are normalized (EARNED-vs-RESIDUAL question for the human, gated by heterogeneity).",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The earnings collapse is real and consensus-confirmed, not merely optical: FY26 consensus EBITDA was cut from 512.3 (12m ago) to 288.1 (latest), net -44%, with the whole ladder (EPS -56%, net income -59%) falling in lockstep.",
+        "claim": "EBITDA margin has halved from a 21% peak (FY24) to 11% LTM and absolute EBITDA has fallen from $424M (FY24) to $263M (LTM) — this is a real earnings collapse, not merely an optical % decline, because the absolute reconciler falls alongside the percentage.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "Net debt/EBITDA is 4.3x with interest coverage only 3.3x and equity book value negative (-$4.02/sh), a genuinely stretched balance sheet where the leverage ratio worsens mechanically as EBITDA falls.",
+        "source_ref": "CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $263M [LTM 12 months Jun-30-2026]",
+        "cited": true
+      },
+      {
+        "claim": "The forward earnings path is being cut hard, not just the trailing print — FY26 consensus EBITDA fell -44% and normalized EPS -56% over 12 months to latest, a deepening not a stabilising revision.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Margin destruction is structural at the gross line — adjusted gross margin fell to 22.7% from 34.5% a year ago, driven by input-cost inflation, tariffs, unfavorable price mix and freight, not a one-off.",
+        "claim": "The margin damage is being driven by structural competitive intensity — 27% of RTD category volumes sold on promotion in Q2, up 8 points YoY, with buy-rate per household in its first decline in five years — pressure management itself expects to persist.",
         "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Leverage is elevated versus peers on the comps basis — total debt/EBITDA 4.4x vs peer median 2.4x — and interest coverage is only 3.3x, tightening as EBITDA falls.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-09",
+        "claim": "Adjusted gross margin fell to 22.7% from 34.5% a year earlier on input inflation, tariffs, freight and adverse mix, and protein-commodity inflation was flagged as running above plan into the back half — a cost base still deteriorating.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The pricing lever carries demand risk: category promotional intensity is at 70% of Q3 RTD volumes on price promotion and management expects the coming price increase to trigger volume elasticity slightly greater than 1, so units fall more than price rises.",
-        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+        "claim": "Forward EPS revision breadth is overwhelmingly negative (EPS GAAP FY2026 0↑/4↓; FQ4 EBITDA 0↑/11↓), showing analysts are still cutting the near-term earnings line.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "Revision breadth is uniformly negative near-term — FY26 GAAP EPS 0 up / 4 down last month and FQ4 2026 EBITDA 0 up / 11 down — indicating estimates are still being cut, not stabilizing.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "claim": "A CEO transition mid-crisis (Davenport retiring, Axelrod in his seventh day at the Q3 call) with a Chief Growth Officer departure adds execution risk precisely when a turnaround is required.",
+        "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026",
         "cited": true
       },
       {
-        "claim": "The equity base is negative (book value -$4.02/share) and the guidance floor keeps falling — FY26 net-sales guide walked down from $2.41-2.49B (Nov-2025) to $2.335-2.375B (Aug-2026).",
-        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (2026-06-30)",
+        "claim": "On the ratio the market actually pays for consolidated cash flow, EV/EBITDA 9.2x is a +39% PREMIUM to peer median 6.6x, so the name is not cheap on the metric that best captures its leverage.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "The Simply Good Foods Company",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Peer in the same protein/meal-replacement space carrying an impairment charge and pending write-down, a signal of acquired-brand value being marked down as category competition intensifies.",
+        "outcome": "recovered",
+        "distinguishing_fact": "A comparable protein/nutrition-snack brand owner in the peer set that absorbed category promotional intensity and margin pressure while keeping its franchise intact.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Conagra Brands",
         "outcome": "went terminal",
-        "distinguishing_fact": "Branded packaged-food peer with repeated large impairments and negative revenue growth, illustrating a value-trap where margin and volume erode together despite a cheap multiple.",
+        "distinguishing_fact": "A branded packaged-food peer carrying elevated leverage into persistent input-cost inflation with repeated multi-year impairments — the value-trap template where a cheap-looking multiple stayed cheap.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Herbalife Ltd.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Similar-cap wellness name trading at a low multiple with elevated leverage and flat EBITDA, showing how a small-cap single-category model can stay cheap without re-rating.",
+        "distinguishing_fact": "A similarly-sized wellness/nutrition name trading at a low multiple with heavy debt, illustrating how a leveraged single-category consumer name can stay de-rated when growth stalls.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Monster Beverage",
-        "outcome": "recovered",
-        "distinguishing_fact": "Single-category beverage brand that faced a margin squeeze from input inflation and competitive entrants, then recovered by pushing price through with high household repeat and category leadership intact.",
+        "name": "Medifast",
+        "outcome": "went terminal",
+        "distinguishing_fact": "A single-category weight-management/nutrition brand whose demand base eroded when competitive dynamics shifted, showing category-relevance can reverse faster than expected.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Central Garden & Pet",
         "outcome": "recovered",
-        "distinguishing_fact": "Consumer name that absorbed a promotional/input-cost shock, took pricing and cost-out actions, and re-rated once margins normalized without losing category share.",
+        "distinguishing_fact": "A branded consumer name that saw margins compress on input costs and promotion, then rebuilt profitability through pricing and cost programs without demand loss.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the FY26 EBITDA/margin collapse a transitory input-cost-plus-promotion shock that the announced fiscal-2027 pricing and cost actions reverse, or a structural reset in which competitive intensity and elasticity permanently cap the margin at the new lower level?",
+      "question": "Is the halving of margin a transitory cost/promotion shock that the announced FY2027 pricing actions and cost programs reverse, or a structural competitive-intensity re-set that permanently lowers the earnings power of a leveraged single-category business?",
       "evidence_for": [
         {
-          "claim": "Management announced a double-digit Premier shake price increase plus powder pricing effective Q1 fiscal 2027 explicitly to offset input inflation and rebuild margin, with elasticity expected only slightly above 1.",
+          "claim": "Management has a concrete, dated lever — a double-digit Premier shake price increase plus powder pricing effective Q1 FY2027 — with expected elasticity only slightly greater than 1, i.e. designed to recover margin without collapsing volume.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Revenue kept rising through the compression (Sep-30-2025 2,317 → LTM 2,355) and Q3 net sales re-accelerated to +4%, suggesting the problem is cost/mix rather than demand loss.",
+          "claim": "Volume demand is intact and improving — Premier volumes +12% in Q2 and total net sales re-accelerating to +4% in Q3 — so the shock sits in price/mix and cost, both of which pricing can address.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Adjusted gross margin fell to 22.7% from 34.5% on input-cost inflation, tariffs, price mix and freight — several of which are ongoing, and protein-driven commodity inflation was flagged as running above expectations into the back half.",
+          "claim": "The promotional intensity driving margin down is competitive and, on management's own account, expected to persist, with the first household buy-rate decline in five years signalling a value-seeking consumer that erodes pricing power.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The category is 70% promoted on price with an increasingly value-seeking consumer, so pushing a double-digit list price with elasticity >1 risks volume loss that offsets the intended margin repair.",
-          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+          "claim": "Forward EBITDA is still being cut (FY26 consensus EBITDA -44% over 12m to latest), so the market has not yet seen the deterioration stop, and 4.3x leverage magnifies any further miss.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the fiscal-2027 double-digit price increase holds without volume loss exceeding the >1 elasticity assumption, given a 70%-promoted category and value-seeking consumer.",
-      "The company-defined adjusted EBITDA / adjusted leverage on a forward basis is not disclosed (net-debt/adj-EBITDA UNKNOWN; adjusted EPS UNKNOWN), leaving true forward leverage and coverage opaque — a bearish disclosure gap.",
-      "The self-funding read is MIXED — latest-quarter OCF is negative while LTM FCF is positive; whether cash generation stabilizes at the lower EBITDA is unresolved.",
-      "The EBITDA-basis question is unresolved: implied D&A ratio (1.73x) sits in the band where GAAP-actuals-vs-adjusted-estimates basis changes have gone unflagged; forward multiples may not be on the same basis as trailing.",
-      "Trailing EV/EBITDA at the 11th percentile of its own 6.6y range is a NEUTRAL fact tagged trailing-only — overshoot-vs-terminal cannot be distinguished without a forward-basis anchor.",
-      "New CEO (7 days in at Q3 call) has not yet articulated strategic priorities or 2027 guidance; execution and capital-allocation direction under new leadership is unresolved.",
-      "Peer set is HETEROGENEOUS (caps $94M–$36.9B, 392x span); every peer multiple must be treated as confidence-gated, not a clean benchmark for the $1.3B name.",
-      "Whether the club-channel item rotating out in fiscal 2027 (low-single-digit % of net sales) plus increased competitive intensity in club (~40% of sales) compounds the revenue risk."
+      "Whether the announced FY2027 double-digit Premier price increase holds at the assumed ~1 elasticity, or triggers greater volume loss in an already value-seeking consumer environment.",
+      "The forward/adjusted EV/EBITDA and adjusted EPS basis are UNKNOWN (not in the 99.1 revised guidance), so the current 9.2x trailing multiple cannot be cleanly compared to a normalized forward earnings level.",
+      "No segment EBITDA breakout exists (single-segment reporting) — the consolidated number is the only visibility, an opacity that prevents isolating Premier vs Dymatize profitability and is a bearish disclosure gap.",
+      "Covenant terms and headroom relative to the 4.3x leverage are only partially disclosed (covenant basis 'no structured source for this decision vintage'), leaving survival-capacity partly unresolved as EBITDA falls.",
+      "Self-funding is MIXED — latest-quarter OCF turned negative while LTM FCF is positive — so whether the buyback and debt service remain internally funded on a forward basis is unresolved.",
+      "New CEO (seventh day at the Q3 call) has not yet presented FY2027 guidance or strategic priorities; the turnaround plan and its execution are unproven.",
+      "The EBITDA-basis triangulation flags GAAP actuals vs possibly ADJUSTED estimates in the 1.5–2.0x band where a real basis change has gone unflagged on this fleet — reconcile before comparing trailing to forward earnings."
     ]
   },
   "caveats": [
@@ -8076,21 +8114,22 @@
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion and Adjusted EBITDA* outlook of $425-$440 million\" (8-K 0001628280-26-004789 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion\" (8-K 0001628280-25-052773 EX-99.1)",
     "Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: \"Adjusted EBITDA as a percentage of net sales of 18% to 20%\" (8-K 0001628280-25-052773 EX-99.1)",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+4.1s fetch)",
     "Net debt/EBITDA (4.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.3x as the covenant-basis leverage.",
-    "Unreconciled margin-compression (a bear point): 'Margin destruction is structural at the gross line — adjusted gross margin fell to 22.7% from 34.5% a year ago, driven by input-cost inflation, tariffs, unfavorable price mix and freight, not a one-off.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "Unreconciled margin-compression (a decisive-against point): 'Adjusted gross margin fell to 22.7% from 34.5% on input-cost inflation, tariffs, price mix and freight — several of which are ongoing, and protein-driven commodity inflation was flagged as running above expectations into the back half.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+    "Unreconciled margin-compression (a bear point): 'Adjusted gross margin fell to 22.7% from 34.5% a year earlier on input inflation, tariffs, freight and adverse mix, and protein-commodity inflation was flagged as running above plan into the back half — a cost base still deteriorating.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "Unreconciled margin-compression (a decisive-against point): 'The promotional intensity driving margin down is competitive and, on management's own account, expected to persist, with the first household buy-rate decline in five years signalling a value-seeking consumer that erodes pricing power.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "Heterogeneous-peer benchmark (a bear point): 'On the ratio the market actually pays for consolidated cash flow, EV/EBITDA 9.2x is a +39% PREMIUM to peer median 6.6x, so the name is not cheap on the metric that best captures its leverage.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "TWIN ampersand-name 'Central Garden & Pet' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T16:51:30.242658Z",
-  "extraction_version": "2026-07-28.1",
+  "assembled_at": "2026-08-18T07:22:18.362694Z",
+  "extraction_version": "2026-08-16.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",
-    "frontier": "2026-08-12"
+    "frontier": "2026-08-17"
   },
   "sector": "Consumer Staples",
   "industry": {
@@ -8111,7 +8150,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T16:53:20.950815Z",
+    "computed_at": "2026-08-18T07:24:25.251997Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

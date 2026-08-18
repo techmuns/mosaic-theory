@@ -2,8 +2,8 @@
   "ticker": "EPAM",
   "name": "EPAM Systems, Inc.",
   "cik": "0001352010",
-  "reference_date": "2026-08-12",
-  "rank": 6,
+  "reference_date": "2026-08-14",
+  "rank": 5,
   "sleeve": "overshoot",
   "mechanical": {
     "valuation": {
@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 14.924107142857144,
+        "value": 14.955357142857144,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
-        "note": "price 2026-08-12 ÷ annual diluted EPS for the period ending 2025-12-31 (224d old, filed 2026-02-26)"
+        "note": "price 2026-08-14 ÷ annual diluted EPS for the period ending 2025-12-31 (226d old, filed 2026-02-26)"
       },
       "pe_percentile_5y": {
-        "value": 0.03907496012759171,
+        "value": 0.04143426294820717,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
-        "note": "1254 P/E observations over 1825d; price 2026-08-12 ÷ annual diluted EPS for the period ending 2025-12-31 (224d old, filed 2026-02-26)"
+        "note": "1255 P/E observations over 1825d; price 2026-08-14 ÷ annual diluted EPS for the period ending 2025-12-31 (226d old, filed 2026-02-26)"
       },
       "ev_ebitda": {
         "value": 5.4,
@@ -931,7 +931,7 @@
             "pe": "15.3"
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-07",
         "status": "present",
         "note": null
       }
@@ -1016,20 +1016,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.3971869928472681,
-        "source_ref": "EOD EPAM 180d to 2026-08-12",
+        "value": -0.39592474604796535,
+        "source_ref": "EOD EPAM 180d to 2026-08-14",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.08578981342021952,
-        "source_ref": "EOD MDY 180d to 2026-08-12 (cap-band: $5.0B @ 2026-08-12 → mid ($4–25B) → MDY)",
+        "value": 0.10181969077552022,
+        "source_ref": "EOD MDY 180d to 2026-08-14 (cap-band: $5.0B @ 2026-08-14 → mid ($4–25B) → MDY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.4829768062674876,
-        "source_ref": "EOD EPAM−MDY 180d to 2026-08-12 (assembly, cap-band)",
+        "value": -0.49774443682348557,
+        "source_ref": "EOD EPAM−MDY 180d to 2026-08-14 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -1046,7 +1046,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "MDY",
-      "benchmark_basis": "cap-band: $5.0B @ 2026-08-12 → mid ($4–25B) → MDY"
+      "benchmark_basis": "cap-band: $5.0B @ 2026-08-14 → mid ($4–25B) → MDY"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1170,7 +1170,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Effective Tax Rate %: latest guide 25.0 for FQ3 2026 (dated 2026-08-06); spend ≤ guided ceiling 20/45 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ1 2026 MISSED; Revenue: latest guide '1,410.00 - 1,425.00' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 62/63 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET; EBIT: latest guide '219.80 - 233.98' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 45/45 resolved; most recent guidance outcome: FQ2 2026 MET; Net Income (Excl. Excep): latest guide 138.2 for FY 2015 (dated 2015-11-04) (stale — 3934d old); actual ≥ guided floor 4/4 resolved; most recent guidance outcome: FY 2015 MET; Capital Expenditure: latest guide '(19.00) - (20.00)' for FY 2016 (dated 2016-02-18) (stale — 3828d old); spend ≤ guided ceiling 1/2 resolved; most recent guidance outcome: FY 2016 MISSED; EPS Normalized: latest guide '3.38 - 3.46' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 61/62 resolved · 3 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET; EPS (GAAP): latest guide '2.33 - 2.41' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 39/54 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET  [data ≥ 2026-08-09 · export date unverified]",
+        "value": "Effective Tax Rate %: latest guide 25.0 for FQ3 2026 (dated 2026-08-06); spend ≤ guided ceiling 20/45 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ1 2026 MISSED; Revenue: latest guide '1,410.00 - 1,425.00' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 62/63 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET; EBIT: latest guide '219.80 - 233.98' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 45/45 resolved; most recent guidance outcome: FQ2 2026 MET; Net Income (Excl. Excep): latest guide 138.2 for FY 2015 (dated 2015-11-04) (stale — 3936d old); actual ≥ guided floor 4/4 resolved; most recent guidance outcome: FY 2015 MET; Capital Expenditure: latest guide '(19.00) - (20.00)' for FY 2016 (dated 2016-02-18) (stale — 3830d old); spend ≤ guided ceiling 1/2 resolved; most recent guidance outcome: FY 2016 MISSED; EPS Normalized: latest guide '3.38 - 3.46' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 61/62 resolved · 3 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET; EPS (GAAP): latest guide '2.33 - 2.41' for FQ3 2026 (dated 2026-08-06); actual ≥ guided floor 39/54 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 MET  [data ≥ 2026-08-09 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1209,7 +1209,7 @@
             "latest_guide": "138.2",
             "period": "FY 2015",
             "dated": "2015-11-04",
-            "age": "3934d (stale)",
+            "age": "3936d (stale)",
             "record": "actual ≥ floor 4/4",
             "most_recent": "FY 2015 MET"
           },
@@ -1218,7 +1218,7 @@
             "latest_guide": "'(19.00) - (20.00)'",
             "period": "FY 2016",
             "dated": "2016-02-18",
-            "age": "3828d (stale)",
+            "age": "3830d (stale)",
             "record": "spend ≤ ceiling 1/2",
             "most_recent": "FY 2016 MISSED"
           },
@@ -4016,7 +4016,7 @@
       },
       "short_interest": {
         "value": "Short interest (FINRA, settle 2026-07-31): 9.5M → 8.2M sh (-14.5%, falling) · 15.8% of shares out (EDGAR XBRL) · DTC 4.1d · recent: 2026-07-31 8.2M · 2026-07-15 9.5M · 2026-06-30 11.3M · 2026-06-15 10.3M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-07-31); DTC = 8,159,418 short ÷ 1,999,241 screen 90d ADV",
+        "source_ref": "FINRA consolidated short interest (settle 2026-07-31); DTC = 8,159,418 short ÷ 1,966,551 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4042,7 +4042,7 @@
       },
       "total_debt_to_ebitda": {
         "value": "name 0.2x vs peer median 2.1x (comps TOTAL-debt/EBITDA basis)",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -4060,7 +4060,7 @@
       },
       "credit_health": {
         "value": "name Overall/Operational/Solvency/Liquidity 2/2/2/1 (S&P issuer rating unrated); peer-median O/Op/S/L 3/3/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-08-07",
         "status": "present",
         "note": null
       }
@@ -4125,13 +4125,13 @@
             "high": 191427.66
           }
         ],
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
       "bridge": {
         "value": "TEV→equity bridge: + cash $789.40M, − total debt $152.20M",
-        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -4139,7 +4139,7 @@
       "bridge_debt": 152.2,
       "market_cap": {
         "value": 5026.1,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
@@ -4273,7 +4273,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001352010-17-000022 · amended by 0001352010-21-000039]\n  Principal / commitment amount: $700,000,000 REVOLVING CREDIT FACILITY (aggregate principal amount not to exceed…\n  Interest / coupon rate: Base Rate Option: Base Rate plus Applicable Margin; Eurocurrency Rate Option:…\n  Maturity date: Expiration Date: October 21, 2026 (as may be extended pursuant to Section 12.1).…\n  Financial-maintenance covenants: Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001352010-17-000022 · amended by 0001352010-21-000039]\n  Principal / commitment amount: $700,000,000 REVOLVING CREDIT FACILITY; aggregate principal amount not to exceed…\n  Interest / coupon rate: Base Rate Option = Base Rate plus Applicable Margin; Eurocurrency Rate Option =…\n  Maturity date: Expiration Date: October 21, 2026 (as may be extended pursuant to Section 12.1)\n  Financial-maintenance covenants: Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4297,7 +4297,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$300,000,000.00 Revolving Credit Facility; aggregate principal amount not to exceed $300,000,000.00",
+              "value": "$300,000,000.00 revolving credit facility (aggregate principal amount not to exceed $300,000,000.00); Letter of Credit Sublimit $50,000,000.00; Swing Loan Commitment; Incremental Loan Commitments not to exceed $100,000,000.00 in aggregate (minimum $25,000,000.00 each)",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
               "note": "verbatim: “The Borrower has requested the Lenders to provide an amended and restated revolving credit facility to the Borrower in an aggregate principal amount not to exceed $300,000,000.00.”"
@@ -4311,10 +4311,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate plus Applicable Margin (Base Rate Option); or Euro-Rate plus Applicable Margin (Euro-Rate Option)",
+              "value": "Base Rate Option: Base Rate plus the Applicable Margin; Euro-Rate Option: Euro-Rate plus the Applicable Margin (Applicable Margin per pricing grid on Schedule 1.1(A) based on the Leverage Ratio; grid not stated in exhibit text)",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “(i) Revolving Credit Base Rate Option: A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option: A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+              "note": "verbatim: “(i) Revolving Credit Base Rate Option : A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option : A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
             },
             "base_rate_label": "Euro-Rate",
             "margin_pct": null,
@@ -4325,7 +4325,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Expiration Date: May 24, 2022",
+              "value": "May 24, 2022 (Expiration Date, with respect to the Revolving Credit Commitments)",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
               "note": "verbatim: “Expiration Date shall mean, with respect to the Revolving Credit Commitments, May 24, 2022.”"
@@ -4339,7 +4339,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio (Section 7.2.13); Minimum Interest Coverage Ratio (Section 7.2.14). Note: substantive covenant levels not stated in the exhibit text (section bodies omitted)",
+              "value": "Maximum Leverage Ratio (Section 7.2.13) and Minimum Interest Coverage Ratio (Section 7.2.14); specific covenant levels not stated in the text of Sections 7.2.13/7.2.14. Related: Leverage Ratio for Permitted Acquisitions 'shall not be greater than 2.75 to 1.00 both immediately prior to and on a pro forma basis after giving effect to such Permitted Acquisition'",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
               "note": "verbatim: “7.2.13 Maximum Leverage Ratio. 7.2.14 Minimum Interest Coverage Ratio.”"
@@ -4353,10 +4353,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors party hereto (signature page): Vested Development, Inc.; EPAM Systems, LLC; NavigationArts, LLC; NavigationArts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc. Guaranty Agreement (Exhibit 1.1(G)(2)). Existing liens/security interests under the Existing Credit Agreement to be terminated and released on the Closing Date (Section 6.1.1(x)); Cash Collateral security interest granted for Letter of Credit Obligations",
+              "value": "Guarantors party to the Agreement (executing signature pages): Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; NavigationArts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc. Guaranty Agreement (Continuing Agreement of Guaranty and Suretyship, Exhibit 1.1(G)(2)). As to collateral: '(x) The Loan Parties' Existing Credit Agreement shall be amended and restated... and all liens and security interests granted in connection therewith shall be terminated and released on the Closing Date' — the facility is generally unsecured except Cash Collateral for Letters of Credit; Borrower grants Administrative Agent a security interest in all Cash Collateral pledged",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “Guaranty Agreement shall mean the Continuing Agreement of Guaranty and Suretyship in substantially the form of Exhibit 1.1(G)(2) executed and delivered by each of the Guarantors to the Administrative Agent for the benefit of the Lenders.”"
+              "note": "verbatim: “IN WITNESS WHEREOF... GUARANTORS: VESTED DEVELOPMENT, INC.... EPAM SYSTEMS, LLC... NAVIGATION ARTS, LLC... NAVIGATIONARTS, INC.... ALLIANCE GLOBAL SERVICES, LLC... ALLIANCE GLOBAL SERVICES, INC.... ALLIANCE CONSULTING GLOBAL HOLDINGS, INC.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4370,7 +4370,7 @@
               "value": "Mandatory Prepayments (Section 4.7): 4.7.1 and 4.7.2 [Intentionally omitted]; 4.7.3 Currency Fluctuations; 4.7.4 Application Among Interest Rate Options. Events of Default (Section 8.1): 8.1.1 Payments Under Loan Documents; 8.1.2 Breach of Warranty; 8.1.3 Anti-Terrorism Laws; Anti-Corruption Laws; 8.1.4 Breach of Negative Covenants, Visitation Rights or Anti-Terrorism Laws; 8.1.5 Breach of Other Covenants; 8.1.6 Defaults in Other Agreements or Indebtedness; 8.1.7 Final Judgments or Orders; 8.1.8 Loan Document Unenforceable; 8.1.9 Uninsured Losses; Proceedings Against Assets; 8.1.10 Events Relating to Plans and Benefit Arrangements; 8.1.11 Change of Control; 8.1.12 Relief Proceedings",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “4.7 Mandatory Prepayments. 4.7.1 [Intentionally omitted]. 4.7.2 [Intentionally omitted]. 4.7.3 Currency Fluctuations. 4.7.4 Application Among Interest Rate Options. ... 8.1 Events of Default. An Event of Default shall mean the occurrence or existence of any one or more of the following events or conditions”"
+              "note": "verbatim: “4.7 Mandatory Prepayments. 4.7.1 [Intentionally omitted]. 4.7.2 [Intentionally omitted]. 4.7.3 Currency Fluctuations. 4.7.4 Application Among Interest Rate Options.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4379,51 +4379,9 @@
             "pik_pct": null
           },
           {
-            "name": "Letter of Credit Sublimit",
+            "name": "Use of proceeds",
             "value": {
-              "value": "$50,000,000.00",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “in no event shall (i) the Letter of Credit Obligations exceed, at any one time, $50,000,000.00 (the \"Letter of Credit Sublimit\")”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Swing Loan / Incremental Loan Commitment",
-            "value": {
-              "value": "Incremental Loan Commitments aggregate not to exceed $100,000,000.00; each not less than $25,000,000.00",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “the total aggregate principal amount of all such Incremental Loan Commitments shall not (as of any date of incurrence thereof) exceed $100,000,000.00 and (b) the minimum principal amount of each such Incremental Loan Commitment shall not be less than $25,000,000.00”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Commitment Fee",
-            "value": {
-              "value": "Applicable Commitment Fee Rate (per pricing grid on Schedule 1.1(A), based on Leverage Ratio) times average daily unused commitments",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “the Borrower agrees to pay to the Administrative Agent for the account of each Lender according to its Ratable Share, a nonrefundable commitment fee (the \"Commitment Fee\") equal to the Applicable Commitment Fee Rate ... multiplied by the average daily difference between the amount of (i) the Revolving Credit Commitments and (ii) the Dollar Equivalent amount of the Revolving Facility Usage”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Use of Proceeds",
-            "value": {
-              "value": "Working capital and general corporate needs (including Letters of Credit); refinance existing Indebtedness; finance capital expenditures and Permitted Acquisitions",
+              "value": "(i) support working capital and general corporate needs, including issuance of Letters of Credit; (ii) refinance existing Indebtedness; and/or (iii) finance ongoing capital expenditures and Permitted Acquisitions",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
               "note": "verbatim: “The proceeds of the Loans shall be used to (i) support working capital and general corporate needs, including the issuance of Letters of Credit, (ii) refinance existing Indebtedness, and/or (iii) finance ongoing capital expenditures and Permitted Acquisitions.”"
@@ -4435,12 +4393,40 @@
             "pik_pct": null
           },
           {
-            "name": "Governing Law",
+            "name": "Commitment Fee",
             "value": {
-              "value": "Section 10.11.1 (text of governing-law body omitted in exhibit)",
+              "value": "Applicable Commitment Fee Rate (percentage per annum based on the Leverage Ratio, per pricing grid on Schedule 1.1(A); rate not stated in text) times average daily unused difference between Revolving Credit Commitments and Revolving Facility Usage",
+              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+              "status": "present",
+              "note": "verbatim: “the Borrower agrees to pay to the Administrative Agent for the account of each Lender according to its Ratable Share, a nonrefundable commitment fee (the \"Commitment Fee\") equal to the Applicable Commitment Fee Rate (computed on the basis of a year of 365 or 366 days, as the case may be, and actual days elapsed) multiplied by the average daily difference between the amount of (i) the Revolving Credit Commitments and (ii) the Dollar Equivalent amount of the Revolving Facility Usage”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "Section 10.11.1 [Governing Law] referenced; specific governing law text not set forth in the exhibit",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
               "note": "verbatim: “10.11.1 Governing Law.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Base Rate definition",
+            "value": {
+              "value": "highest of (a) Overnight Bank Funding Rate plus 0.5%, (b) the Prime Rate, and (c) the Daily LIBOR Rate plus 1.00%; floored at zero",
+              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+              "status": "present",
+              "note": "verbatim: “Base Rate shall mean, for any day, a fluctuating per annum rate of interest equal to the highest of (a) the Overnight Bank Funding Rate, plus 0.5%, (b) the Prime Rate, and (c) the Daily LIBOR Rate, plus 1.00%.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4521,10 +4507,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Unfunded and unsecured contractual obligation of the Company; each Participant and beneficiary will be an unsecured creditor of the Company",
+              "value": "The Plan is unfunded; unfunded and unsecured contractual obligation of the Company; each Participant and beneficiary will be an unsecured creditor of the Company.",
               "source_ref": "latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm",
               "status": "present",
-              "note": "verbatim: “The Plan is unfunded. The Plan, together with the applicable Election Form, shall represent at all times an unfunded and unsecured contractual obligation of the Company. Each Participant and beneficiary will be an unsecured creditor of the Company with respect to all obligations owed to them under the Plan.”"
+              "note": "verbatim: “The Plan, together with the applicable Election Form, shall represent at all times an unfunded and unsecured contractual obligation of the Company. Each Participant and beneficiary will be an unsecured creditor of the Company with respect to all obligations owed to them under the Plan.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4563,7 +4549,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$700,000,000 REVOLVING CREDIT FACILITY (aggregate principal amount not to exceed $700,000,000); Swingline Loan Commitment up to $50,000,000; Letter of Credit Sublimit $100,000,000; Alternative Currency Sublimit lesser of $150,000,000 and total Revolving Credit Commitment; Incremental Loan Commitments not to exceed $300,000,000",
+              "value": "$700,000,000 REVOLVING CREDIT FACILITY; aggregate principal amount not to exceed $700,000,000, including a Swingline Loan subfacility (up to $50,000,000) and a Letter of Credit subfacility (Letter of Credit Sublimit of $100,000,000); Alternative Currency Sublimit lesser of $150,000,000 and total Revolving Credit Commitment; Incremental Loan Commitments not to exceed $300,000,000",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: “The Borrower has requested that the Administrative Agent and the Lenders amend and restate the Existing Credit Agreement to provide a revolving credit facility to the Borrower in an aggregate principal amount not to exceed $700,000,000, including therein a Swingline Loan (as hereinafter defined) subfacility and a Letter of Credit (as hereinafter defined) subfacility.”"
@@ -4577,7 +4563,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate Option: Base Rate plus Applicable Margin; Eurocurrency Rate Option: Adjusted Eurocurrency Rate plus Applicable Margin. Applicable Margin (Revolving Credit Eurocurrency Rate Spread) ranges from 0.875% (Level I) to 2.000% (Level V) based on Consolidated Leverage Ratio; Base Rate Spread 0.000% to 1.000%. Base Rate defined as highest of (i) Overnight Bank Funding Rate plus 0.5%, (ii) Prime Rate, (iii) Daily LIBOR Rate plus 1.00%.",
+              "value": "Base Rate Option = Base Rate plus Applicable Margin; Eurocurrency Rate Option = Adjusted Eurocurrency Rate plus Applicable Margin. Applicable Margin (Revolving Credit Eurocurrency Rate Spread) ranges 0.875% (Level I) to 2.000% (Level V) and Base Rate Spread 0.000% to 1.000% based on Consolidated Leverage Ratio. Interest After Default: increased by 2.0% per annum.",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
@@ -4585,13 +4571,13 @@
             "base_rate_label": "Adjusted Eurocurrency Rate",
             "margin_pct": 0.875,
             "margin_bps": null,
-            "floor_pct": 0.0,
+            "floor_pct": null,
             "pik_pct": null
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Expiration Date: October 21, 2026 (as may be extended pursuant to Section 12.1). Closing Date: October 21, 2021.",
+              "value": "Expiration Date: October 21, 2026 (as may be extended pursuant to Section 12.1)",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: ““ Expiration Date ” means, with respect to the Revolving Credit Commitments, October 21, 2026, as such date may be extended pursuant to Section 12.1 [Modifications, Amendments or Waivers].”"
@@ -4605,7 +4591,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for four fiscal quarters following a Material Permitted Acquisition, no more than twice during the term). Minimum Consolidated Interest Coverage Ratio: not less than 3.00 to 1.00.",
+              "value": "Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily increaseable to 4.00 to 1.00 for a four fiscal quarter period following a Material Permitted Acquisition, no more than twice during term). Minimum Consolidated Interest Coverage Ratio: not less than 3.00 to 1.00.",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: “9.14 Maximum Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio to exceed 3.50 to 1.00 (tested as of the end of each fiscal quarter) ... 9.15 Minimum Consolidated Interest Coverage Ratio . Permit the Interest Coverage Ratio to be less than 3.00 to 1.00 (tested as of the end of each fiscal quarter for the immediately preceding four (4) fiscal quarters).”"
@@ -4619,7 +4605,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors: each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries), party to a Continuing Agreement of Guaranty and Suretyship. Signatory Guarantors include Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; Navigation Arts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc.; Continuum Innovation, LLC; Continuum, LLC; ShareKnowledge, Inc.; Competentum USA, Ltd.; EPAM DX, LLC; EPAM Upskill, LLC. Facility is generally unsecured (Permitted Liens include Liens in favor of Administrative Agent securing the Obligations; Cash Collateral security interest granted for Letters of Credit).",
+              "value": "Guarantors: each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries), pursuant to Continuing Agreement of Guaranty and Suretyship. Signatory Guarantors include Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; Navigation Arts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc.; Continuum Innovation, LLC; Continuum, LLC; ShareKnowledge, Inc.; Competentum USA, Ltd.; EPAM DX, LLC; EPAM Upskill, LLC. No general collateral pledge for the facility is stated (facility is generally unsecured); Cash Collateral required for Letters of Credit/Defaulting Lender Fronting Exposure and upon Event of Default.",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: ““ Guarantors ” means, collectively, each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries). ... “ Guaranty Agreement ” means the Continuing Agreement of Guaranty and Suretyship, dated of even date herewith, executed and delivered by each of the Guarantors in favor of the Administrative Agent for the benefit of the Lenders.”"
@@ -4633,10 +4619,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory Prepayments (Section 5.3): subsections (a) and (b) Reserved; (d) Alternative Currency overage prepayment - if Alternative Currency Loans/LC Obligations exceed 105% of Alternative Currency Sublimit, prepay/Cash Collateralize within five Business Days to not exceed 100%. Events of Default (Section 10.1): (a) Payments Under Loan Documents (3 BD grace for interest, 5 BD for other amounts other than principal); (b) Breach of Warranty; (c) Breach of Certain Covenants (Article 9); (d) Breach of Other Covenants (30 days from notice); (e) Defaults in Other Agreements or Indebtedness in excess of Threshold Amount ($75,000,000); (f) Final Judgments or Orders in excess of Threshold Amount; (g) Loan Document Unenforceable; (h) Reserved; (i) ERISA/Pension Plan events (excess of $25,000,000 / Threshold Amount); (j) Change of Control (>50% of Equity Interests); (k) Relief Proceedings; Solvency; Attachment.",
+              "value": "Mandatory Prepayments (Section 5.3): (a) and (b) Reserved; (d) Alternative Currencies overage — if aggregate Alternative Currency Loans and LC Obligations exceed 105% of the Alternative Currency Sublimit, prepay/Cash Collateralize within 5 Business Days to not exceed 100%. Events of Default (Section 10.1): (a) Payments Under Loan Documents (3 Business Day grace for interest, 5 Business Days for other amounts other than principal); (b) Breach of Warranty; (c) Breach of Certain Covenants (Article 9); (d) Breach of Other Covenants (30-day cure, no grace for 8.12(a),(b),8.13(a)); (e) Defaults in Other Agreements/Indebtedness in excess of Threshold Amount ($75,000,000); (f) Final Judgments or Orders in excess of Threshold Amount; (g) Loan Document Unenforceable; (h) Reserved; (i) ERISA/Pension Plan events ($25,000,000 / Threshold Amount); (j) Change of Control; (k) Relief Proceedings; Solvency; Attachment.",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
-              "note": "verbatim: “5.3 Mandatory Prepayments . (a) [Reserved]. (b) [Reserved]. ... (d) Alternative Currencies. If the Administrative Agent notifies the Borrower at any time that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days after receipt of such notice, the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit in an aggregate amount sufficient to reduce such amount as of such date of payment to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect.”"
+              "note": "verbatim: “5.3 Mandatory Prepayments . (a) [Reserved] . (b) [ Reserved] . ... (d) Alternative Currencies . If the Administrative Agent notifies the Borrower at any time that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days after receipt of such notice, the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit ... to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4651,7 +4637,7 @@
       },
       "maturity_event": null,
       "panel_vintage": {
-        "value": "the debt schedule is 167d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 169d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
@@ -4712,6 +4698,37 @@
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
       }
+    },
+    "dilution_pipeline": {
+      "filings": [
+        {
+          "form": "S-8",
+          "filing_date": "2026-08-06",
+          "accession": "0001140361-26-031685"
+        },
+        {
+          "form": "S-8",
+          "filing_date": "2026-08-06",
+          "accession": "0001140361-26-031684"
+        },
+        {
+          "form": "S-8",
+          "filing_date": "2025-05-28",
+          "accession": "0001140361-25-020661"
+        },
+        {
+          "form": "S-3ASR",
+          "filing_date": "2023-10-03",
+          "accession": "0001140361-23-046625"
+        }
+      ],
+      "line": {
+        "value": "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685",
+        "status": "present",
+        "note": null
+      },
+      "window_days": 1095
     },
     "peer_capital_intensity": {
       "rows": [
@@ -6389,7 +6406,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 100.29,
+        "value": 98.73,
         "source_ref": "EOD EPAM last close",
         "status": "present",
         "note": null
@@ -6398,13 +6415,13 @@
         "value": 222.53,
         "source_ref": "EOD EPAM 52-week high",
         "status": "present",
-        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
+        "note": "52-week window 2025-08-14→2026-08-17: spans 368d over 253 bars"
       },
       "low_52w": {
         "value": 73.055,
         "source_ref": "EOD EPAM 52-week low",
         "status": "present",
-        "note": "52-week window 2025-08-12→2026-08-12: spans 365d over 252 bars"
+        "note": "52-week window 2025-08-14→2026-08-17: spans 368d over 253 bars"
       },
       "shares_out": {
         "value": 51586981.0,
@@ -6420,1278 +6437,1278 @@
       },
       "market_cap": {
         "value": 5026.1,
-        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-10",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-08-07",
         "status": "present",
         "note": null
       },
-      "as_of": "2026-08-12",
-      "market_cap_as_of": "2026-08-10"
+      "as_of": "2026-08-17",
+      "market_cap_as_of": "2026-08-07"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-08-13",
+          "date": "2025-08-15",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-08-14",
-          "name": 99.07,
-          "benchmark": 98.66
-        },
-        {
-          "date": "2025-08-15",
-          "name": 98.08,
-          "benchmark": 98.16
-        },
-        {
           "date": "2025-08-18",
-          "name": 102.36,
-          "benchmark": 98.43
-        },
-        {
-          "date": "2025-08-19",
-          "name": 104.19,
-          "benchmark": 98.61
-        },
-        {
-          "date": "2025-08-20",
-          "name": 103.51,
-          "benchmark": 98.19
-        },
-        {
-          "date": "2025-08-21",
-          "name": 103.48,
-          "benchmark": 98.07
-        },
-        {
-          "date": "2025-08-22",
-          "name": 108.8,
-          "benchmark": 100.78
-        },
-        {
-          "date": "2025-08-25",
-          "name": 107.28,
-          "benchmark": 99.96
-        },
-        {
-          "date": "2025-08-26",
-          "name": 105.9,
-          "benchmark": 100.43
-        },
-        {
-          "date": "2025-08-27",
-          "name": 107.93,
-          "benchmark": 101.07
-        },
-        {
-          "date": "2025-08-28",
-          "name": 108.32,
-          "benchmark": 101.2
-        },
-        {
-          "date": "2025-08-29",
-          "name": 109.68,
-          "benchmark": 100.72
-        },
-        {
-          "date": "2025-09-02",
-          "name": 108.64,
+          "name": 104.37,
           "benchmark": 100.27
         },
         {
+          "date": "2025-08-19",
+          "name": 106.23,
+          "benchmark": 100.46
+        },
+        {
+          "date": "2025-08-20",
+          "name": 105.54,
+          "benchmark": 100.03
+        },
+        {
+          "date": "2025-08-21",
+          "name": 105.51,
+          "benchmark": 99.91
+        },
+        {
+          "date": "2025-08-22",
+          "name": 110.93,
+          "benchmark": 102.67
+        },
+        {
+          "date": "2025-08-25",
+          "name": 109.38,
+          "benchmark": 101.83
+        },
+        {
+          "date": "2025-08-26",
+          "name": 107.97,
+          "benchmark": 102.31
+        },
+        {
+          "date": "2025-08-27",
+          "name": 110.04,
+          "benchmark": 102.97
+        },
+        {
+          "date": "2025-08-28",
+          "name": 110.44,
+          "benchmark": 103.1
+        },
+        {
+          "date": "2025-08-29",
+          "name": 111.83,
+          "benchmark": 102.6
+        },
+        {
+          "date": "2025-09-02",
+          "name": 110.77,
+          "benchmark": 102.15
+        },
+        {
           "date": "2025-09-03",
-          "name": 108.24,
-          "benchmark": 100.1
+          "name": 110.36,
+          "benchmark": 101.98
         },
         {
           "date": "2025-09-04",
-          "name": 104.53,
-          "benchmark": 101.55
-        },
-        {
-          "date": "2025-09-05",
-          "name": 105.39,
-          "benchmark": 102.02
-        },
-        {
-          "date": "2025-09-08",
-          "name": 102.27,
-          "benchmark": 102.05
-        },
-        {
-          "date": "2025-09-09",
-          "name": 102.62,
-          "benchmark": 101.12
-        },
-        {
-          "date": "2025-09-10",
-          "name": 95.21,
-          "benchmark": 101.08
-        },
-        {
-          "date": "2025-09-11",
-          "name": 98.17,
-          "benchmark": 102.78
-        },
-        {
-          "date": "2025-09-12",
-          "name": 97.07,
-          "benchmark": 101.64
-        },
-        {
-          "date": "2025-09-15",
-          "name": 96.11,
-          "benchmark": 101.61
-        },
-        {
-          "date": "2025-09-16",
-          "name": 96.13,
-          "benchmark": 101.33
-        },
-        {
-          "date": "2025-09-17",
-          "name": 95.44,
-          "benchmark": 101.25
-        },
-        {
-          "date": "2025-09-18",
-          "name": 96.93,
-          "benchmark": 102.49
-        },
-        {
-          "date": "2025-09-19",
-          "name": 97.14,
-          "benchmark": 101.44
-        },
-        {
-          "date": "2025-09-22",
-          "name": 97.28,
-          "benchmark": 101.35
-        },
-        {
-          "date": "2025-09-23",
-          "name": 95.8,
-          "benchmark": 101.3
-        },
-        {
-          "date": "2025-09-24",
-          "name": 97.28,
-          "benchmark": 100.52
-        },
-        {
-          "date": "2025-09-25",
-          "name": 93.28,
-          "benchmark": 99.96
-        },
-        {
-          "date": "2025-09-26",
-          "name": 94.43,
-          "benchmark": 100.97
-        },
-        {
-          "date": "2025-09-29",
-          "name": 96.08,
-          "benchmark": 100.75
-        },
-        {
-          "date": "2025-09-30",
-          "name": 93.77,
-          "benchmark": 100.86
-        },
-        {
-          "date": "2025-10-01",
-          "name": 94.71,
-          "benchmark": 101.19
-        },
-        {
-          "date": "2025-10-02",
-          "name": 95.01,
-          "benchmark": 101.32
-        },
-        {
-          "date": "2025-10-03",
-          "name": 95.85,
-          "benchmark": 101.65
-        },
-        {
-          "date": "2025-10-06",
-          "name": 94.84,
-          "benchmark": 101.8
-        },
-        {
-          "date": "2025-10-07",
-          "name": 93.2,
-          "benchmark": 100.7
-        },
-        {
-          "date": "2025-10-08",
-          "name": 93.94,
-          "benchmark": 101.7
-        },
-        {
-          "date": "2025-10-09",
-          "name": 93.61,
-          "benchmark": 100.59
-        },
-        {
-          "date": "2025-10-10",
-          "name": 88.54,
-          "benchmark": 97.77
-        },
-        {
-          "date": "2025-10-13",
-          "name": 91.23,
-          "benchmark": 99.66
-        },
-        {
-          "date": "2025-10-14",
-          "name": 91.41,
-          "benchmark": 100.58
-        },
-        {
-          "date": "2025-10-15",
-          "name": 88.91,
-          "benchmark": 100.68
-        },
-        {
-          "date": "2025-10-16",
-          "name": 88.43,
-          "benchmark": 99.44
-        },
-        {
-          "date": "2025-10-17",
-          "name": 89.88,
-          "benchmark": 99.65
-        },
-        {
-          "date": "2025-10-20",
-          "name": 90.17,
-          "benchmark": 100.85
-        },
-        {
-          "date": "2025-10-21",
-          "name": 96.44,
-          "benchmark": 101.2
-        },
-        {
-          "date": "2025-10-22",
-          "name": 97.31,
-          "benchmark": 100.06
-        },
-        {
-          "date": "2025-10-23",
-          "name": 97.47,
-          "benchmark": 101.41
-        },
-        {
-          "date": "2025-10-24",
-          "name": 99.13,
-          "benchmark": 101.95
-        },
-        {
-          "date": "2025-10-27",
-          "name": 101.03,
-          "benchmark": 102.34
-        },
-        {
-          "date": "2025-10-28",
-          "name": 100.68,
-          "benchmark": 101.45
-        },
-        {
-          "date": "2025-10-29",
-          "name": 101.27,
-          "benchmark": 100.8
-        },
-        {
-          "date": "2025-10-30",
-          "name": 98.97,
-          "benchmark": 99.74
-        },
-        {
-          "date": "2025-10-31",
-          "name": 101.7,
-          "benchmark": 100.35
-        },
-        {
-          "date": "2025-11-03",
-          "name": 100.57,
-          "benchmark": 100.3
-        },
-        {
-          "date": "2025-11-04",
-          "name": 98.54,
-          "benchmark": 99.43
-        },
-        {
-          "date": "2025-11-05",
-          "name": 100.07,
-          "benchmark": 100.08
-        },
-        {
-          "date": "2025-11-06",
-          "name": 104.48,
-          "benchmark": 99.17
-        },
-        {
-          "date": "2025-11-07",
-          "name": 109.02,
-          "benchmark": 100.31
-        },
-        {
-          "date": "2025-11-10",
-          "name": 113.43,
-          "benchmark": 100.95
-        },
-        {
-          "date": "2025-11-11",
-          "name": 112.04,
-          "benchmark": 100.95
-        },
-        {
-          "date": "2025-11-12",
-          "name": 112.01,
-          "benchmark": 101.3
-        },
-        {
-          "date": "2025-11-13",
-          "name": 112.23,
-          "benchmark": 99.4
-        },
-        {
-          "date": "2025-11-14",
-          "name": 111.33,
-          "benchmark": 99.19
-        },
-        {
-          "date": "2025-11-17",
-          "name": 110.56,
-          "benchmark": 97.36
-        },
-        {
-          "date": "2025-11-18",
-          "name": 111.14,
-          "benchmark": 97.67
-        },
-        {
-          "date": "2025-11-19",
-          "name": 112.52,
-          "benchmark": 97.79
-        },
-        {
-          "date": "2025-11-20",
-          "name": 111.08,
-          "benchmark": 96.23
-        },
-        {
-          "date": "2025-11-21",
-          "name": 112.55,
-          "benchmark": 98.54
-        },
-        {
-          "date": "2025-11-24",
-          "name": 113.95,
-          "benchmark": 99.47
-        },
-        {
-          "date": "2025-11-25",
-          "name": 115.55,
-          "benchmark": 101.35
-        },
-        {
-          "date": "2025-11-26",
-          "name": 114.86,
-          "benchmark": 101.96
-        },
-        {
-          "date": "2025-11-28",
-          "name": 116.29,
-          "benchmark": 102.46
-        },
-        {
-          "date": "2025-12-01",
-          "name": 118.42,
-          "benchmark": 101.91
-        },
-        {
-          "date": "2025-12-02",
-          "name": 120.02,
-          "benchmark": 101.54
-        },
-        {
-          "date": "2025-12-03",
-          "name": 124.38,
-          "benchmark": 102.24
-        },
-        {
-          "date": "2025-12-04",
-          "name": 125.31,
-          "benchmark": 102.74
-        },
-        {
-          "date": "2025-12-05",
-          "name": 126.62,
-          "benchmark": 102.78
-        },
-        {
-          "date": "2025-12-08",
-          "name": 126.64,
-          "benchmark": 102.27
-        },
-        {
-          "date": "2025-12-09",
-          "name": 129.33,
-          "benchmark": 102.19
-        },
-        {
-          "date": "2025-12-10",
-          "name": 131.67,
-          "benchmark": 104.14
-        },
-        {
-          "date": "2025-12-11",
-          "name": 131.29,
-          "benchmark": 105.13
-        },
-        {
-          "date": "2025-12-12",
-          "name": 130.37,
-          "benchmark": 103.75
-        },
-        {
-          "date": "2025-12-15",
-          "name": 131.93,
-          "benchmark": 103.56
-        },
-        {
-          "date": "2025-12-16",
-          "name": 128.02,
-          "benchmark": 102.91
-        },
-        {
-          "date": "2025-12-17",
-          "name": 127.07,
-          "benchmark": 102.45
-        },
-        {
-          "date": "2025-12-18",
-          "name": 128.74,
-          "benchmark": 102.9
-        },
-        {
-          "date": "2025-12-19",
-          "name": 130.08,
-          "benchmark": 103.49
-        },
-        {
-          "date": "2025-12-22",
-          "name": 131.59,
-          "benchmark": 104.26
-        },
-        {
-          "date": "2025-12-23",
-          "name": 129.35,
-          "benchmark": 103.95
-        },
-        {
-          "date": "2025-12-24",
-          "name": 130.02,
-          "benchmark": 104.11
-        },
-        {
-          "date": "2025-12-26",
-          "name": 131.47,
-          "benchmark": 104.13
-        },
-        {
-          "date": "2025-12-29",
-          "name": 131.62,
-          "benchmark": 103.49
-        },
-        {
-          "date": "2025-12-30",
-          "name": 128.3,
-          "benchmark": 103.13
-        },
-        {
-          "date": "2025-12-31",
-          "name": 127.41,
-          "benchmark": 102.09
-        },
-        {
-          "date": "2026-01-02",
-          "name": 124.66,
+          "name": 106.58,
           "benchmark": 103.45
         },
         {
-          "date": "2026-01-05",
-          "name": 128.49,
-          "benchmark": 104.81
+          "date": "2025-09-05",
+          "name": 107.45,
+          "benchmark": 103.94
         },
         {
-          "date": "2026-01-06",
-          "name": 135.81,
-          "benchmark": 106.32
+          "date": "2025-09-08",
+          "name": 104.27,
+          "benchmark": 103.96
         },
         {
-          "date": "2026-01-07",
-          "name": 135.7,
-          "benchmark": 105.55
+          "date": "2025-09-09",
+          "name": 104.64,
+          "benchmark": 103.02
         },
         {
-          "date": "2026-01-08",
-          "name": 136.68,
-          "benchmark": 105.94
+          "date": "2025-09-10",
+          "name": 97.08,
+          "benchmark": 102.97
         },
         {
-          "date": "2026-01-09",
-          "name": 131.8,
-          "benchmark": 106.85
+          "date": "2025-09-11",
+          "name": 100.09,
+          "benchmark": 104.71
         },
         {
-          "date": "2026-01-12",
-          "name": 131.73,
-          "benchmark": 107.0
+          "date": "2025-09-12",
+          "name": 98.97,
+          "benchmark": 103.55
         },
         {
-          "date": "2026-01-13",
-          "name": 131.83,
-          "benchmark": 107.23
+          "date": "2025-09-15",
+          "name": 98.0,
+          "benchmark": 103.52
         },
         {
-          "date": "2026-01-14",
-          "name": 137.69,
-          "benchmark": 107.34
+          "date": "2025-09-16",
+          "name": 98.01,
+          "benchmark": 103.23
         },
         {
-          "date": "2026-01-15",
-          "name": 133.86,
-          "benchmark": 108.61
+          "date": "2025-09-17",
+          "name": 97.31,
+          "benchmark": 103.14
         },
         {
-          "date": "2026-01-16",
-          "name": 132.22,
-          "benchmark": 108.28
+          "date": "2025-09-18",
+          "name": 98.83,
+          "benchmark": 104.41
         },
         {
-          "date": "2026-01-20",
-          "name": 128.41,
-          "benchmark": 106.81
+          "date": "2025-09-19",
+          "name": 99.04,
+          "benchmark": 103.34
         },
         {
-          "date": "2026-01-21",
-          "name": 132.43,
-          "benchmark": 108.72
+          "date": "2025-09-22",
+          "name": 99.19,
+          "benchmark": 103.25
         },
         {
-          "date": "2026-01-22",
-          "name": 136.23,
-          "benchmark": 108.75
+          "date": "2025-09-23",
+          "name": 97.67,
+          "benchmark": 103.2
         },
         {
-          "date": "2026-01-23",
-          "name": 135.7,
-          "benchmark": 107.65
+          "date": "2025-09-24",
+          "name": 99.19,
+          "benchmark": 102.41
         },
         {
-          "date": "2026-01-26",
-          "name": 137.09,
-          "benchmark": 107.6
+          "date": "2025-09-25",
+          "name": 95.1,
+          "benchmark": 101.84
         },
         {
-          "date": "2026-01-27",
-          "name": 135.6,
-          "benchmark": 107.59
+          "date": "2025-09-26",
+          "name": 96.28,
+          "benchmark": 102.87
         },
         {
-          "date": "2026-01-28",
-          "name": 135.79,
-          "benchmark": 107.34
+          "date": "2025-09-29",
+          "name": 97.96,
+          "benchmark": 102.64
         },
         {
-          "date": "2026-01-29",
-          "name": 129.93,
-          "benchmark": 107.14
+          "date": "2025-09-30",
+          "name": 95.61,
+          "benchmark": 102.75
         },
         {
-          "date": "2026-01-30",
-          "name": 129.73,
-          "benchmark": 106.2
+          "date": "2025-10-01",
+          "name": 96.57,
+          "benchmark": 103.09
         },
         {
-          "date": "2026-02-02",
-          "name": 130.86,
-          "benchmark": 107.07
+          "date": "2025-10-02",
+          "name": 96.87,
+          "benchmark": 103.22
         },
         {
-          "date": "2026-02-03",
-          "name": 114.01,
-          "benchmark": 107.27
+          "date": "2025-10-03",
+          "name": 97.72,
+          "benchmark": 103.56
         },
         {
-          "date": "2026-02-04",
-          "name": 114.91,
-          "benchmark": 108.02
+          "date": "2025-10-06",
+          "name": 96.7,
+          "benchmark": 103.71
         },
         {
-          "date": "2026-02-05",
-          "name": 110.37,
-          "benchmark": 107.45
+          "date": "2025-10-07",
+          "name": 95.03,
+          "benchmark": 102.59
         },
         {
-          "date": "2026-02-06",
-          "name": 116.09,
-          "benchmark": 110.9
+          "date": "2025-10-08",
+          "name": 95.78,
+          "benchmark": 103.61
         },
         {
-          "date": "2026-02-09",
-          "name": 118.49,
-          "benchmark": 110.96
+          "date": "2025-10-09",
+          "name": 95.45,
+          "benchmark": 102.48
         },
         {
-          "date": "2026-02-10",
-          "name": 119.16,
-          "benchmark": 110.9
+          "date": "2025-10-10",
+          "name": 90.28,
+          "benchmark": 99.61
         },
         {
-          "date": "2026-02-11",
-          "name": 110.69,
-          "benchmark": 110.62
+          "date": "2025-10-13",
+          "name": 93.02,
+          "benchmark": 101.53
         },
         {
-          "date": "2026-02-12",
-          "name": 101.44,
-          "benchmark": 109.07
+          "date": "2025-10-14",
+          "name": 93.2,
+          "benchmark": 102.47
         },
         {
-          "date": "2026-02-13",
-          "name": 103.46,
-          "benchmark": 110.11
+          "date": "2025-10-15",
+          "name": 90.65,
+          "benchmark": 102.56
         },
         {
-          "date": "2026-02-17",
-          "name": 100.87,
-          "benchmark": 110.29
+          "date": "2025-10-16",
+          "name": 90.17,
+          "benchmark": 101.3
         },
         {
-          "date": "2026-02-18",
-          "name": 104.28,
-          "benchmark": 110.78
+          "date": "2025-10-17",
+          "name": 91.64,
+          "benchmark": 101.52
         },
         {
-          "date": "2026-02-19",
-          "name": 86.54,
-          "benchmark": 110.76
+          "date": "2025-10-20",
+          "name": 91.94,
+          "benchmark": 102.74
         },
         {
-          "date": "2026-02-20",
-          "name": 86.35,
-          "benchmark": 111.45
+          "date": "2025-10-21",
+          "name": 98.33,
+          "benchmark": 103.1
         },
         {
-          "date": "2026-02-23",
-          "name": 80.82,
-          "benchmark": 109.51
+          "date": "2025-10-22",
+          "name": 99.21,
+          "benchmark": 101.93
         },
         {
-          "date": "2026-02-24",
-          "name": 80.11,
-          "benchmark": 110.54
+          "date": "2025-10-23",
+          "name": 99.38,
+          "benchmark": 103.32
         },
         {
-          "date": "2026-02-25",
-          "name": 81.52,
-          "benchmark": 110.95
-        },
-        {
-          "date": "2026-02-26",
-          "name": 86.21,
-          "benchmark": 111.37
-        },
-        {
-          "date": "2026-02-27",
-          "name": 87.69,
-          "benchmark": 110.47
-        },
-        {
-          "date": "2026-03-02",
-          "name": 86.54,
-          "benchmark": 111.41
-        },
-        {
-          "date": "2026-03-03",
-          "name": 87.54,
-          "benchmark": 109.49
-        },
-        {
-          "date": "2026-03-04",
-          "name": 87.62,
-          "benchmark": 109.48
-        },
-        {
-          "date": "2026-03-05",
-          "name": 89.91,
-          "benchmark": 107.96
-        },
-        {
-          "date": "2026-03-06",
-          "name": 90.72,
-          "benchmark": 105.44
-        },
-        {
-          "date": "2026-03-09",
-          "name": 90.96,
-          "benchmark": 106.48
-        },
-        {
-          "date": "2026-03-10",
-          "name": 88.42,
-          "benchmark": 106.01
-        },
-        {
-          "date": "2026-03-11",
-          "name": 88.3,
-          "benchmark": 105.69
-        },
-        {
-          "date": "2026-03-12",
-          "name": 84.46,
-          "benchmark": 103.53
-        },
-        {
-          "date": "2026-03-13",
-          "name": 85.29,
-          "benchmark": 103.4
-        },
-        {
-          "date": "2026-03-16",
-          "name": 85.23,
-          "benchmark": 104.14
-        },
-        {
-          "date": "2026-03-17",
-          "name": 84.86,
-          "benchmark": 105.09
-        },
-        {
-          "date": "2026-03-18",
-          "name": 83.32,
-          "benchmark": 104.11
-        },
-        {
-          "date": "2026-03-19",
-          "name": 84.37,
-          "benchmark": 104.37
-        },
-        {
-          "date": "2026-03-20",
-          "name": 85.47,
-          "benchmark": 101.78
-        },
-        {
-          "date": "2026-03-23",
-          "name": 84.4,
-          "benchmark": 103.68
-        },
-        {
-          "date": "2026-03-24",
-          "name": 82.74,
-          "benchmark": 104.55
-        },
-        {
-          "date": "2026-03-25",
-          "name": 82.87,
-          "benchmark": 105.43
-        },
-        {
-          "date": "2026-03-26",
-          "name": 84.67,
+          "date": "2025-10-24",
+          "name": 101.07,
           "benchmark": 103.87
         },
         {
-          "date": "2026-03-27",
-          "name": 84.07,
+          "date": "2025-10-27",
+          "name": 103.01,
+          "benchmark": 104.26
+        },
+        {
+          "date": "2025-10-28",
+          "name": 102.66,
+          "benchmark": 103.35
+        },
+        {
+          "date": "2025-10-29",
+          "name": 103.26,
+          "benchmark": 102.69
+        },
+        {
+          "date": "2025-10-30",
+          "name": 100.91,
+          "benchmark": 101.61
+        },
+        {
+          "date": "2025-10-31",
+          "name": 103.7,
+          "benchmark": 102.23
+        },
+        {
+          "date": "2025-11-03",
+          "name": 102.54,
           "benchmark": 102.18
         },
         {
-          "date": "2026-03-30",
-          "name": 84.69,
-          "benchmark": 101.37
+          "date": "2025-11-04",
+          "name": 100.47,
+          "benchmark": 101.3
         },
         {
-          "date": "2026-03-31",
-          "name": 84.2,
+          "date": "2025-11-05",
+          "name": 102.03,
+          "benchmark": 101.96
+        },
+        {
+          "date": "2025-11-06",
+          "name": 106.52,
+          "benchmark": 101.03
+        },
+        {
+          "date": "2025-11-07",
+          "name": 111.15,
+          "benchmark": 102.19
+        },
+        {
+          "date": "2025-11-10",
+          "name": 115.66,
+          "benchmark": 102.85
+        },
+        {
+          "date": "2025-11-11",
+          "name": 114.23,
+          "benchmark": 102.84
+        },
+        {
+          "date": "2025-11-12",
+          "name": 114.21,
+          "benchmark": 103.2
+        },
+        {
+          "date": "2025-11-13",
+          "name": 114.43,
+          "benchmark": 101.26
+        },
+        {
+          "date": "2025-11-14",
+          "name": 113.51,
+          "benchmark": 101.05
+        },
+        {
+          "date": "2025-11-17",
+          "name": 112.73,
+          "benchmark": 99.18
+        },
+        {
+          "date": "2025-11-18",
+          "name": 113.32,
+          "benchmark": 99.51
+        },
+        {
+          "date": "2025-11-19",
+          "name": 114.72,
+          "benchmark": 99.63
+        },
+        {
+          "date": "2025-11-20",
+          "name": 113.26,
+          "benchmark": 98.03
+        },
+        {
+          "date": "2025-11-21",
+          "name": 114.75,
+          "benchmark": 100.39
+        },
+        {
+          "date": "2025-11-24",
+          "name": 116.18,
+          "benchmark": 101.34
+        },
+        {
+          "date": "2025-11-25",
+          "name": 117.81,
+          "benchmark": 103.25
+        },
+        {
+          "date": "2025-11-26",
+          "name": 117.11,
+          "benchmark": 103.87
+        },
+        {
+          "date": "2025-11-28",
+          "name": 118.57,
+          "benchmark": 104.38
+        },
+        {
+          "date": "2025-12-01",
+          "name": 120.74,
+          "benchmark": 103.82
+        },
+        {
+          "date": "2025-12-02",
+          "name": 122.37,
+          "benchmark": 103.44
+        },
+        {
+          "date": "2025-12-03",
+          "name": 126.82,
+          "benchmark": 104.16
+        },
+        {
+          "date": "2025-12-04",
+          "name": 127.77,
+          "benchmark": 104.67
+        },
+        {
+          "date": "2025-12-05",
+          "name": 129.1,
+          "benchmark": 104.71
+        },
+        {
+          "date": "2025-12-08",
+          "name": 129.12,
+          "benchmark": 104.19
+        },
+        {
+          "date": "2025-12-09",
+          "name": 131.87,
+          "benchmark": 104.11
+        },
+        {
+          "date": "2025-12-10",
+          "name": 134.25,
+          "benchmark": 106.09
+        },
+        {
+          "date": "2025-12-11",
+          "name": 133.86,
+          "benchmark": 107.1
+        },
+        {
+          "date": "2025-12-12",
+          "name": 132.92,
+          "benchmark": 105.7
+        },
+        {
+          "date": "2025-12-15",
+          "name": 134.51,
+          "benchmark": 105.5
+        },
+        {
+          "date": "2025-12-16",
+          "name": 130.52,
+          "benchmark": 104.84
+        },
+        {
+          "date": "2025-12-17",
+          "name": 129.56,
           "benchmark": 104.37
         },
         {
-          "date": "2026-04-01",
-          "name": 84.03,
-          "benchmark": 105.22
+          "date": "2025-12-18",
+          "name": 131.27,
+          "benchmark": 104.83
         },
         {
-          "date": "2026-04-02",
-          "name": 85.81,
-          "benchmark": 105.33
+          "date": "2025-12-19",
+          "name": 132.63,
+          "benchmark": 105.43
         },
         {
-          "date": "2026-04-06",
-          "name": 85.21,
-          "benchmark": 105.8
+          "date": "2025-12-22",
+          "name": 134.16,
+          "benchmark": 106.21
         },
         {
-          "date": "2026-04-07",
-          "name": 83.47,
-          "benchmark": 105.92
+          "date": "2025-12-23",
+          "name": 131.89,
+          "benchmark": 105.9
         },
         {
-          "date": "2026-04-08",
-          "name": 80.84,
-          "benchmark": 108.93
+          "date": "2025-12-24",
+          "name": 132.57,
+          "benchmark": 106.06
         },
         {
-          "date": "2026-04-09",
-          "name": 77.02,
-          "benchmark": 109.18
+          "date": "2025-12-26",
+          "name": 134.05,
+          "benchmark": 106.08
         },
         {
-          "date": "2026-04-10",
-          "name": 76.16,
-          "benchmark": 108.83
+          "date": "2025-12-29",
+          "name": 134.2,
+          "benchmark": 105.43
         },
         {
-          "date": "2026-04-13",
-          "name": 77.73,
-          "benchmark": 110.01
+          "date": "2025-12-30",
+          "name": 130.82,
+          "benchmark": 105.07
         },
         {
-          "date": "2026-04-14",
-          "name": 79.24,
-          "benchmark": 110.57
+          "date": "2025-12-31",
+          "name": 129.91,
+          "benchmark": 104.0
         },
         {
-          "date": "2026-04-15",
-          "name": 79.86,
-          "benchmark": 110.23
+          "date": "2026-01-02",
+          "name": 127.11,
+          "benchmark": 105.39
         },
         {
-          "date": "2026-04-16",
-          "name": 78.86,
-          "benchmark": 110.45
+          "date": "2026-01-05",
+          "name": 131.01,
+          "benchmark": 106.78
         },
         {
-          "date": "2026-04-17",
+          "date": "2026-01-06",
+          "name": 138.47,
+          "benchmark": 108.31
+        },
+        {
+          "date": "2026-01-07",
+          "name": 138.36,
+          "benchmark": 107.53
+        },
+        {
+          "date": "2026-01-08",
+          "name": 139.36,
+          "benchmark": 107.93
+        },
+        {
+          "date": "2026-01-09",
+          "name": 134.38,
+          "benchmark": 108.85
+        },
+        {
+          "date": "2026-01-12",
+          "name": 134.31,
+          "benchmark": 109.01
+        },
+        {
+          "date": "2026-01-13",
+          "name": 134.42,
+          "benchmark": 109.25
+        },
+        {
+          "date": "2026-01-14",
+          "name": 140.38,
+          "benchmark": 109.35
+        },
+        {
+          "date": "2026-01-15",
+          "name": 136.48,
+          "benchmark": 110.64
+        },
+        {
+          "date": "2026-01-16",
+          "name": 134.81,
+          "benchmark": 110.31
+        },
+        {
+          "date": "2026-01-20",
+          "name": 130.92,
+          "benchmark": 108.81
+        },
+        {
+          "date": "2026-01-21",
+          "name": 135.03,
+          "benchmark": 110.76
+        },
+        {
+          "date": "2026-01-22",
+          "name": 138.89,
+          "benchmark": 110.79
+        },
+        {
+          "date": "2026-01-23",
+          "name": 138.36,
+          "benchmark": 109.67
+        },
+        {
+          "date": "2026-01-26",
+          "name": 139.78,
+          "benchmark": 109.62
+        },
+        {
+          "date": "2026-01-27",
+          "name": 138.25,
+          "benchmark": 109.61
+        },
+        {
+          "date": "2026-01-28",
+          "name": 138.45,
+          "benchmark": 109.36
+        },
+        {
+          "date": "2026-01-29",
+          "name": 132.47,
+          "benchmark": 109.15
+        },
+        {
+          "date": "2026-01-30",
+          "name": 132.27,
+          "benchmark": 108.19
+        },
+        {
+          "date": "2026-02-02",
+          "name": 133.42,
+          "benchmark": 109.08
+        },
+        {
+          "date": "2026-02-03",
+          "name": 116.25,
+          "benchmark": 109.28
+        },
+        {
+          "date": "2026-02-04",
+          "name": 117.16,
+          "benchmark": 110.05
+        },
+        {
+          "date": "2026-02-05",
+          "name": 112.53,
+          "benchmark": 109.46
+        },
+        {
+          "date": "2026-02-06",
+          "name": 118.37,
+          "benchmark": 112.98
+        },
+        {
+          "date": "2026-02-09",
+          "name": 120.81,
+          "benchmark": 113.04
+        },
+        {
+          "date": "2026-02-10",
+          "name": 121.5,
+          "benchmark": 112.98
+        },
+        {
+          "date": "2026-02-11",
+          "name": 112.86,
+          "benchmark": 112.7
+        },
+        {
+          "date": "2026-02-12",
+          "name": 103.43,
+          "benchmark": 111.11
+        },
+        {
+          "date": "2026-02-13",
+          "name": 105.49,
+          "benchmark": 112.17
+        },
+        {
+          "date": "2026-02-17",
+          "name": 102.85,
+          "benchmark": 112.36
+        },
+        {
+          "date": "2026-02-18",
+          "name": 106.33,
+          "benchmark": 112.86
+        },
+        {
+          "date": "2026-02-19",
+          "name": 88.24,
+          "benchmark": 112.84
+        },
+        {
+          "date": "2026-02-20",
+          "name": 88.04,
+          "benchmark": 113.54
+        },
+        {
+          "date": "2026-02-23",
+          "name": 82.4,
+          "benchmark": 111.56
+        },
+        {
+          "date": "2026-02-24",
           "name": 81.68,
           "benchmark": 112.61
         },
         {
-          "date": "2026-04-20",
-          "name": 82.03,
-          "benchmark": 113.31
+          "date": "2026-02-25",
+          "name": 83.11,
+          "benchmark": 113.03
         },
         {
-          "date": "2026-04-21",
-          "name": 82.16,
+          "date": "2026-02-26",
+          "name": 87.9,
+          "benchmark": 113.46
+        },
+        {
+          "date": "2026-02-27",
+          "name": 89.4,
+          "benchmark": 112.55
+        },
+        {
+          "date": "2026-03-02",
+          "name": 88.24,
+          "benchmark": 113.5
+        },
+        {
+          "date": "2026-03-03",
+          "name": 89.26,
+          "benchmark": 111.54
+        },
+        {
+          "date": "2026-03-04",
+          "name": 89.34,
+          "benchmark": 111.53
+        },
+        {
+          "date": "2026-03-05",
+          "name": 91.67,
+          "benchmark": 109.99
+        },
+        {
+          "date": "2026-03-06",
+          "name": 92.49,
+          "benchmark": 107.42
+        },
+        {
+          "date": "2026-03-09",
+          "name": 92.74,
+          "benchmark": 108.48
+        },
+        {
+          "date": "2026-03-10",
+          "name": 90.15,
+          "benchmark": 108.0
+        },
+        {
+          "date": "2026-03-11",
+          "name": 90.03,
+          "benchmark": 107.67
+        },
+        {
+          "date": "2026-03-12",
+          "name": 86.11,
+          "benchmark": 105.47
+        },
+        {
+          "date": "2026-03-13",
+          "name": 86.96,
+          "benchmark": 105.34
+        },
+        {
+          "date": "2026-03-16",
+          "name": 86.9,
+          "benchmark": 106.09
+        },
+        {
+          "date": "2026-03-17",
+          "name": 86.53,
+          "benchmark": 107.06
+        },
+        {
+          "date": "2026-03-18",
+          "name": 84.95,
+          "benchmark": 106.06
+        },
+        {
+          "date": "2026-03-19",
+          "name": 86.02,
+          "benchmark": 106.33
+        },
+        {
+          "date": "2026-03-20",
+          "name": 87.14,
+          "benchmark": 103.69
+        },
+        {
+          "date": "2026-03-23",
+          "name": 86.06,
+          "benchmark": 105.62
+        },
+        {
+          "date": "2026-03-24",
+          "name": 84.36,
+          "benchmark": 106.51
+        },
+        {
+          "date": "2026-03-25",
+          "name": 84.5,
+          "benchmark": 107.4
+        },
+        {
+          "date": "2026-03-26",
+          "name": 86.33,
+          "benchmark": 105.81
+        },
+        {
+          "date": "2026-03-27",
+          "name": 85.72,
+          "benchmark": 104.09
+        },
+        {
+          "date": "2026-03-30",
+          "name": 86.35,
+          "benchmark": 103.27
+        },
+        {
+          "date": "2026-03-31",
+          "name": 85.85,
+          "benchmark": 106.33
+        },
+        {
+          "date": "2026-04-01",
+          "name": 85.68,
+          "benchmark": 107.2
+        },
+        {
+          "date": "2026-04-02",
+          "name": 87.5,
+          "benchmark": 107.3
+        },
+        {
+          "date": "2026-04-06",
+          "name": 86.88,
+          "benchmark": 107.78
+        },
+        {
+          "date": "2026-04-07",
+          "name": 85.11,
+          "benchmark": 107.9
+        },
+        {
+          "date": "2026-04-08",
+          "name": 82.42,
+          "benchmark": 110.97
+        },
+        {
+          "date": "2026-04-09",
+          "name": 78.53,
+          "benchmark": 111.22
+        },
+        {
+          "date": "2026-04-10",
+          "name": 77.66,
+          "benchmark": 110.87
+        },
+        {
+          "date": "2026-04-13",
+          "name": 79.25,
+          "benchmark": 112.07
+        },
+        {
+          "date": "2026-04-14",
+          "name": 80.79,
           "benchmark": 112.64
         },
         {
+          "date": "2026-04-15",
+          "name": 81.43,
+          "benchmark": 112.3
+        },
+        {
+          "date": "2026-04-16",
+          "name": 80.41,
+          "benchmark": 112.53
+        },
+        {
+          "date": "2026-04-17",
+          "name": 83.28,
+          "benchmark": 114.72
+        },
+        {
+          "date": "2026-04-20",
+          "name": 83.63,
+          "benchmark": 115.43
+        },
+        {
+          "date": "2026-04-21",
+          "name": 83.77,
+          "benchmark": 114.75
+        },
+        {
           "date": "2026-04-22",
-          "name": 80.3,
-          "benchmark": 112.21
+          "name": 81.87,
+          "benchmark": 114.32
         },
         {
           "date": "2026-04-23",
-          "name": 75.11,
-          "benchmark": 112.2
+          "name": 76.58,
+          "benchmark": 114.3
         },
         {
           "date": "2026-04-24",
-          "name": 73.99,
-          "benchmark": 112.44
+          "name": 75.44,
+          "benchmark": 114.55
         },
         {
           "date": "2026-04-27",
-          "name": 72.33,
-          "benchmark": 112.5
+          "name": 73.75,
+          "benchmark": 114.61
         },
         {
           "date": "2026-04-28",
-          "name": 70.99,
-          "benchmark": 111.37
+          "name": 72.38,
+          "benchmark": 113.46
         },
         {
           "date": "2026-04-29",
-          "name": 70.22,
-          "benchmark": 110.56
+          "name": 71.59,
+          "benchmark": 112.63
         },
         {
           "date": "2026-04-30",
-          "name": 70.76,
-          "benchmark": 112.39
+          "name": 72.15,
+          "benchmark": 114.5
         },
         {
           "date": "2026-05-01",
-          "name": 69.86,
-          "benchmark": 112.42
+          "name": 71.23,
+          "benchmark": 114.53
         },
         {
           "date": "2026-05-04",
-          "name": 68.78,
-          "benchmark": 111.74
+          "name": 70.13,
+          "benchmark": 113.84
         },
         {
           "date": "2026-05-05",
-          "name": 68.18,
-          "benchmark": 113.18
+          "name": 69.52,
+          "benchmark": 115.31
         },
         {
           "date": "2026-05-06",
-          "name": 66.52,
-          "benchmark": 115.23
-        },
-        {
-          "date": "2026-05-07",
-          "name": 64.83,
-          "benchmark": 113.78
-        },
-        {
-          "date": "2026-05-08",
-          "name": 61.71,
-          "benchmark": 114.27
-        },
-        {
-          "date": "2026-05-11",
-          "name": 60.54,
-          "benchmark": 113.99
-        },
-        {
-          "date": "2026-05-12",
-          "name": 59.17,
-          "benchmark": 113.22
-        },
-        {
-          "date": "2026-05-13",
-          "name": 56.21,
-          "benchmark": 112.94
-        },
-        {
-          "date": "2026-05-14",
-          "name": 55.78,
-          "benchmark": 113.41
-        },
-        {
-          "date": "2026-05-15",
-          "name": 57.85,
-          "benchmark": 111.57
-        },
-        {
-          "date": "2026-05-18",
-          "name": 62.46,
-          "benchmark": 111.41
-        },
-        {
-          "date": "2026-05-19",
-          "name": 62.51,
-          "benchmark": 110.35
-        },
-        {
-          "date": "2026-05-20",
-          "name": 64.86,
-          "benchmark": 112.44
-        },
-        {
-          "date": "2026-05-21",
-          "name": 64.17,
-          "benchmark": 112.58
-        },
-        {
-          "date": "2026-05-22",
-          "name": 63.86,
-          "benchmark": 113.49
-        },
-        {
-          "date": "2026-05-26",
-          "name": 62.0,
-          "benchmark": 115.25
-        },
-        {
-          "date": "2026-05-27",
-          "name": 63.23,
-          "benchmark": 114.83
-        },
-        {
-          "date": "2026-05-28",
-          "name": 63.08,
-          "benchmark": 114.95
-        },
-        {
-          "date": "2026-05-29",
-          "name": 63.72,
-          "benchmark": 115.18
-        },
-        {
-          "date": "2026-06-01",
-          "name": 67.64,
-          "benchmark": 115.08
-        },
-        {
-          "date": "2026-06-02",
-          "name": 64.2,
-          "benchmark": 116.11
-        },
-        {
-          "date": "2026-06-03",
-          "name": 60.5,
-          "benchmark": 116.0
-        },
-        {
-          "date": "2026-06-04",
-          "name": 60.69,
-          "benchmark": 116.42
-        },
-        {
-          "date": "2026-06-05",
-          "name": 60.97,
-          "benchmark": 114.16
-        },
-        {
-          "date": "2026-06-08",
-          "name": 60.15,
-          "benchmark": 114.44
-        },
-        {
-          "date": "2026-06-09",
-          "name": 59.48,
-          "benchmark": 115.36
-        },
-        {
-          "date": "2026-06-10",
-          "name": 57.86,
-          "benchmark": 113.69
-        },
-        {
-          "date": "2026-06-11",
-          "name": 57.69,
-          "benchmark": 116.57
-        },
-        {
-          "date": "2026-06-12",
-          "name": 59.32,
-          "benchmark": 117.4
-        },
-        {
-          "date": "2026-06-15",
-          "name": 57.66,
-          "benchmark": 117.85
-        },
-        {
-          "date": "2026-06-16",
-          "name": 58.04,
-          "benchmark": 117.5
-        },
-        {
-          "date": "2026-06-17",
-          "name": 54.54,
-          "benchmark": 116.07
-        },
-        {
-          "date": "2026-06-18",
-          "name": 47.66,
-          "benchmark": 116.93
-        },
-        {
-          "date": "2026-06-22",
-          "name": 47.29,
-          "benchmark": 117.41
-        },
-        {
-          "date": "2026-06-23",
-          "name": 47.82,
-          "benchmark": 116.23
-        },
-        {
-          "date": "2026-06-24",
-          "name": 48.75,
-          "benchmark": 116.94
-        },
-        {
-          "date": "2026-06-25",
-          "name": 48.12,
-          "benchmark": 118.01
-        },
-        {
-          "date": "2026-06-26",
-          "name": 50.17,
-          "benchmark": 117.66
-        },
-        {
-          "date": "2026-06-29",
-          "name": 49.77,
-          "benchmark": 118.11
-        },
-        {
-          "date": "2026-06-30",
-          "name": 49.35,
-          "benchmark": 119.02
-        },
-        {
-          "date": "2026-07-01",
-          "name": 53.01,
-          "benchmark": 117.96
-        },
-        {
-          "date": "2026-07-02",
-          "name": 54.89,
+          "name": 67.83,
           "benchmark": 117.39
         },
         {
-          "date": "2026-07-06",
-          "name": 54.01,
-          "benchmark": 117.89
+          "date": "2026-05-07",
+          "name": 66.1,
+          "benchmark": 115.92
         },
         {
-          "date": "2026-07-07",
-          "name": 55.69,
-          "benchmark": 116.45
-        },
-        {
-          "date": "2026-07-08",
-          "name": 53.48,
-          "benchmark": 115.32
-        },
-        {
-          "date": "2026-07-09",
-          "name": 54.28,
-          "benchmark": 116.8
-        },
-        {
-          "date": "2026-07-10",
-          "name": 52.17,
-          "benchmark": 116.73
-        },
-        {
-          "date": "2026-07-13",
-          "name": 53.72,
-          "benchmark": 116.08
-        },
-        {
-          "date": "2026-07-14",
-          "name": 52.55,
-          "benchmark": 116.63
-        },
-        {
-          "date": "2026-07-15",
-          "name": 53.44,
-          "benchmark": 116.68
-        },
-        {
-          "date": "2026-07-16",
-          "name": 54.52,
-          "benchmark": 117.27
-        },
-        {
-          "date": "2026-07-17",
-          "name": 55.14,
-          "benchmark": 116.55
-        },
-        {
-          "date": "2026-07-20",
-          "name": 55.6,
-          "benchmark": 115.64
-        },
-        {
-          "date": "2026-07-21",
-          "name": 55.49,
-          "benchmark": 116.84
-        },
-        {
-          "date": "2026-07-22",
-          "name": 53.84,
-          "benchmark": 116.79
-        },
-        {
-          "date": "2026-07-23",
-          "name": 53.57,
+          "date": "2026-05-08",
+          "name": 62.92,
           "benchmark": 116.41
         },
         {
+          "date": "2026-05-11",
+          "name": 61.73,
+          "benchmark": 116.13
+        },
+        {
+          "date": "2026-05-12",
+          "name": 60.33,
+          "benchmark": 115.34
+        },
+        {
+          "date": "2026-05-13",
+          "name": 57.31,
+          "benchmark": 115.06
+        },
+        {
+          "date": "2026-05-14",
+          "name": 56.87,
+          "benchmark": 115.54
+        },
+        {
+          "date": "2026-05-15",
+          "name": 58.98,
+          "benchmark": 113.66
+        },
+        {
+          "date": "2026-05-18",
+          "name": 63.69,
+          "benchmark": 113.5
+        },
+        {
+          "date": "2026-05-19",
+          "name": 63.73,
+          "benchmark": 112.42
+        },
+        {
+          "date": "2026-05-20",
+          "name": 66.13,
+          "benchmark": 114.55
+        },
+        {
+          "date": "2026-05-21",
+          "name": 65.43,
+          "benchmark": 114.69
+        },
+        {
+          "date": "2026-05-22",
+          "name": 65.11,
+          "benchmark": 115.62
+        },
+        {
+          "date": "2026-05-26",
+          "name": 63.21,
+          "benchmark": 117.42
+        },
+        {
+          "date": "2026-05-27",
+          "name": 64.47,
+          "benchmark": 116.98
+        },
+        {
+          "date": "2026-05-28",
+          "name": 64.31,
+          "benchmark": 117.1
+        },
+        {
+          "date": "2026-05-29",
+          "name": 64.97,
+          "benchmark": 117.34
+        },
+        {
+          "date": "2026-06-01",
+          "name": 68.96,
+          "benchmark": 117.23
+        },
+        {
+          "date": "2026-06-02",
+          "name": 65.46,
+          "benchmark": 118.29
+        },
+        {
+          "date": "2026-06-03",
+          "name": 61.68,
+          "benchmark": 118.18
+        },
+        {
+          "date": "2026-06-04",
+          "name": 61.88,
+          "benchmark": 118.61
+        },
+        {
+          "date": "2026-06-05",
+          "name": 62.16,
+          "benchmark": 116.3
+        },
+        {
+          "date": "2026-06-08",
+          "name": 61.33,
+          "benchmark": 116.58
+        },
+        {
+          "date": "2026-06-09",
+          "name": 60.65,
+          "benchmark": 117.52
+        },
+        {
+          "date": "2026-06-10",
+          "name": 58.99,
+          "benchmark": 115.82
+        },
+        {
+          "date": "2026-06-11",
+          "name": 58.82,
+          "benchmark": 118.76
+        },
+        {
+          "date": "2026-06-12",
+          "name": 60.48,
+          "benchmark": 119.6
+        },
+        {
+          "date": "2026-06-15",
+          "name": 58.79,
+          "benchmark": 120.06
+        },
+        {
+          "date": "2026-06-16",
+          "name": 59.18,
+          "benchmark": 119.7
+        },
+        {
+          "date": "2026-06-17",
+          "name": 55.61,
+          "benchmark": 118.24
+        },
+        {
+          "date": "2026-06-18",
+          "name": 48.6,
+          "benchmark": 119.13
+        },
+        {
+          "date": "2026-06-22",
+          "name": 48.22,
+          "benchmark": 119.62
+        },
+        {
+          "date": "2026-06-23",
+          "name": 48.75,
+          "benchmark": 118.41
+        },
+        {
+          "date": "2026-06-24",
+          "name": 49.71,
+          "benchmark": 119.14
+        },
+        {
+          "date": "2026-06-25",
+          "name": 49.06,
+          "benchmark": 120.23
+        },
+        {
+          "date": "2026-06-26",
+          "name": 51.16,
+          "benchmark": 119.87
+        },
+        {
+          "date": "2026-06-29",
+          "name": 50.75,
+          "benchmark": 120.32
+        },
+        {
+          "date": "2026-06-30",
+          "name": 50.31,
+          "benchmark": 121.26
+        },
+        {
+          "date": "2026-07-01",
+          "name": 54.05,
+          "benchmark": 120.17
+        },
+        {
+          "date": "2026-07-02",
+          "name": 55.97,
+          "benchmark": 119.59
+        },
+        {
+          "date": "2026-07-06",
+          "name": 55.07,
+          "benchmark": 120.1
+        },
+        {
+          "date": "2026-07-07",
+          "name": 56.78,
+          "benchmark": 118.63
+        },
+        {
+          "date": "2026-07-08",
+          "name": 54.52,
+          "benchmark": 117.48
+        },
+        {
+          "date": "2026-07-09",
+          "name": 55.35,
+          "benchmark": 118.99
+        },
+        {
+          "date": "2026-07-10",
+          "name": 53.19,
+          "benchmark": 118.92
+        },
+        {
+          "date": "2026-07-13",
+          "name": 54.77,
+          "benchmark": 118.26
+        },
+        {
+          "date": "2026-07-14",
+          "name": 53.58,
+          "benchmark": 118.82
+        },
+        {
+          "date": "2026-07-15",
+          "name": 54.49,
+          "benchmark": 118.87
+        },
+        {
+          "date": "2026-07-16",
+          "name": 55.59,
+          "benchmark": 119.47
+        },
+        {
+          "date": "2026-07-17",
+          "name": 56.22,
+          "benchmark": 118.74
+        },
+        {
+          "date": "2026-07-20",
+          "name": 56.69,
+          "benchmark": 117.81
+        },
+        {
+          "date": "2026-07-21",
+          "name": 56.57,
+          "benchmark": 119.03
+        },
+        {
+          "date": "2026-07-22",
+          "name": 54.89,
+          "benchmark": 118.98
+        },
+        {
+          "date": "2026-07-23",
+          "name": 54.62,
+          "benchmark": 118.6
+        },
+        {
           "date": "2026-07-24",
-          "name": 55.88,
-          "benchmark": 116.89
+          "name": 56.97,
+          "benchmark": 119.08
         },
         {
           "date": "2026-07-27",
-          "name": 58.56,
-          "benchmark": 117.25
+          "name": 59.71,
+          "benchmark": 119.45
         },
         {
           "date": "2026-07-28",
-          "name": 62.44,
-          "benchmark": 117.27
+          "name": 63.66,
+          "benchmark": 119.47
         },
         {
           "date": "2026-07-29",
-          "name": 66.47,
-          "benchmark": 115.27
+          "name": 67.78,
+          "benchmark": 117.43
         },
         {
           "date": "2026-07-30",
-          "name": 64.47,
-          "benchmark": 116.29
+          "name": 65.73,
+          "benchmark": 118.47
         },
         {
           "date": "2026-07-31",
-          "name": 65.65,
-          "benchmark": 116.14
+          "name": 66.93,
+          "benchmark": 118.32
         },
         {
           "date": "2026-08-03",
-          "name": 66.7,
-          "benchmark": 117.46
+          "name": 68.01,
+          "benchmark": 119.66
         },
         {
           "date": "2026-08-04",
-          "name": 69.69,
-          "benchmark": 119.55
+          "name": 71.05,
+          "benchmark": 121.8
         },
         {
           "date": "2026-08-05",
-          "name": 68.33,
-          "benchmark": 119.55
+          "name": 69.67,
+          "benchmark": 121.02
         },
         {
           "date": "2026-08-06",
-          "name": 57.88,
-          "benchmark": 119.55
+          "name": 59.01,
+          "benchmark": 120.61
         },
         {
           "date": "2026-08-07",
-          "name": 60.59,
-          "benchmark": 119.55
+          "name": 61.78,
+          "benchmark": 122.26
         },
         {
           "date": "2026-08-10",
-          "name": 60.55,
-          "benchmark": 119.55
+          "name": 61.74,
+          "benchmark": 121.88
         },
         {
           "date": "2026-08-11",
-          "name": 62.13,
-          "benchmark": 119.55
+          "name": 63.34,
+          "benchmark": 122.24
         },
         {
           "date": "2026-08-12",
-          "name": 62.37,
-          "benchmark": 119.55
+          "name": 63.59,
+          "benchmark": 122.7
+        },
+        {
+          "date": "2026-08-13",
+          "name": 64.39,
+          "benchmark": 123.2
+        },
+        {
+          "date": "2026-08-14",
+          "name": 63.72,
+          "benchmark": 123.59
         }
       ],
       "name_symbol": "EPAM",
       "benchmark_symbol": "MDY",
-      "as_of": "2026-08-12",
+      "as_of": "2026-08-14",
       "window_days": 364,
-      "name_return": -0.3763059701492537,
-      "benchmark_return": 0.19553923476553914,
-      "source_ref": "EOD EPAM vs MDY rebased to 100, 2025-08-13..2026-08-12"
+      "name_return": -0.3627544226745293,
+      "benchmark_return": 0.2359451771399017,
+      "source_ref": "EOD EPAM vs MDY rebased to 100, 2025-08-15..2026-08-14"
     },
     "operating_drivers": {
       "rows": [
@@ -7793,6 +7810,18 @@
         },
         {
           "kind": "event",
+          "metric": "Executive/Board Change - Other",
+          "period": "Feb-17-2026",
+          "value": "EPAM Systems, Inc. Appoints Ben Hall as Head of Empathy Lab for North America",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: EPAM Systems, Inc. announced that to drive its North American expansion, EPAM has appointed Ben Hall as Head of Empathy Lab for North America, where he will lead growth across the U.S. and Canada. Hall brings more than 20 years of experience in leading enterprise growth at several global ",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: EPAM Systems Inc NYSE EPAM Key Developments.rtf · Feb-17-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
           "metric": "Business Expansion",
           "period": "Feb-17-2026",
           "value": "EPAM Systems, Inc. Expands Ai-Native Agency Empathy Lab in North America to Help CMOs Accelerate Ai-Enabled Business Growth & Transformation",
@@ -7853,6 +7882,30 @@
         },
         {
           "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Oct-21-2025",
+          "value": "EPAM Systems, Inc. (NYSE:EPAM) announces an Equity Buyback for $1,000 million worth of its shares.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: EPAM Systems, Inc. (NYSE:EPAM) announces a share repurchase program. Under the program, the company will repurchase up to $1,000 million worth of its common shares. The program will be valid for a period of 24 months.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: EPAM Systems Inc NYSE EPAM Key Developments.rtf · Oct-21-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Buyback Transaction Announcements",
+          "period": "Oct-16-2025",
+          "value": "EPAM Systems, Inc. authorizes a Buyback Plan.",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: The Board of Directors of EPAM Systems, Inc. has authorized a buyback plan on October 16, 2025.",
+          "following_context": null,
+          "source_ref": "CIQ Key Developments: EPAM Systems Inc NYSE EPAM Key Developments.rtf · Oct-16-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
           "metric": "Client Announcement",
           "period": "Oct-09-2025",
           "value": "Epam Systems, Inc. Advances Client-Centric Digital Transformation Across Ibero-America",
@@ -7891,7 +7944,7 @@
           "kind": "leading_indicator",
           "metric": "pure AI revenues",
           "period": "Q1 2026",
-          "value": "exceeded $125 million in Q1, up nearly 20% sequentially from Q4",
+          "value": "exceeded $125 million",
           "value_num": null,
           "unit": null,
           "verbatim": "Our full pure AI revenues exceeded $125 million in Q1, up nearly 20% sequentially from Q4.",
@@ -7901,9 +7954,33 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Claude certifications",
+          "metric": "pure AI revenues sequential growth",
           "period": "Q1 2026",
-          "value": "more than 1,300 are already Claude certified",
+          "value": "up nearly 20% sequentially from Q4",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Our full pure AI revenues exceeded $125 million in Q1, up nearly 20% sequentially from Q4.",
+          "following_context": "This momentum gives us a strong line of sight to our $600 million target for the full year, even with the broader macro variability we have factored into our outlook.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Claude certified EPAMers",
+          "period": "to date (Q1 2026)",
+          "value": "more than 1,300",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "To date, over 20,000 EPAMers have completed training via Anthropic Academy and more than 1,300 are already Claude certified.",
+          "following_context": "We expect to reach 5,000 certifications by end of Q3 with 10,000 by year-end.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "EPAMers completed Anthropic Academy training",
+          "period": "to date (Q1 2026)",
+          "value": "over 20,000",
           "value_num": null,
           "unit": null,
           "verbatim": "To date, over 20,000 EPAMers have completed training via Anthropic Academy and more than 1,300 are already Claude certified.",
@@ -7915,7 +7992,19 @@
           "kind": "leading_indicator",
           "metric": "revenue growth year-over-year",
           "period": "Q1 2026",
-          "value": "7.6% year-over-year with constant organic currency revenue growth of 3.7%",
+          "value": "7.6%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In Q1, revenues grew 7.6% year-over-year with constant organic currency revenue growth of 3.7%.",
+          "following_context": "5 of our 6 verticals grew year-over-year, led by Financial Services and Software & Hi-Tech, followed by Consumer Goods, Retail & Travel, Emerging Verticals and Life Sciences & Healthcare. Across geographies, growth was led by EMEA, delivered strong double-digit year-over-year growth. We are continually balancing our delivery locations and skill mix, adding new certification, domain specialization and additional roles across our global pyramid. We also continue to proactively manage our commercial engagement types, driving new fixed price and as-a-service deals while proactively managing localized benches.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "constant organic currency revenue growth",
+          "period": "Q1 2026",
+          "value": "3.7%",
           "value_num": null,
           "unit": null,
           "verbatim": "In Q1, revenues grew 7.6% year-over-year with constant organic currency revenue growth of 3.7%.",
@@ -7927,7 +8016,7 @@
           "kind": "leading_indicator",
           "metric": "top 100 clients engaged in AI initiatives",
           "period": "Q1 2026",
-          "value": "more than 80% are engaged in AI initiatives",
+          "value": "more than 80%",
           "value_num": null,
           "unit": null,
           "verbatim": "Looking across our top 100 clients, traction remains strong as more than 80% are engaged in AI initiatives.",
@@ -7939,7 +8028,7 @@
           "kind": "leading_indicator",
           "metric": "new AI-native projects launched",
           "period": "Q1 2026",
-          "value": "more than 100 new AI-native project launched in Q1",
+          "value": "more than 100",
           "value_num": null,
           "unit": null,
           "verbatim": "Notably, we had more than 100 new AI-native project launched in Q1, illustrating our active pipeline and healthy replenishment of new opportunities.",
@@ -7950,8 +8039,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Nelnet productivity increase",
-          "period": null,
-          "value": "31% productivity increase, accelerated back-end development by nearly 2x",
+          "period": "Q1 2026",
+          "value": "31% productivity increase",
           "value_num": null,
           "unit": null,
           "verbatim": "Based on EPAM's AI/Run.Transform, Nelnet achieved a 31% productivity increase, accelerated back-end development by nearly 2x and empowered its teams to scale AI-driven innovation across the organization.",
@@ -7963,7 +8052,7 @@
           "kind": "leading_indicator",
           "metric": "pure AI native revenues",
           "period": "Q2 2026",
-          "value": "reaching more than $160 million in the quarter",
+          "value": "more than $160 million",
           "value_num": null,
           "unit": null,
           "verbatim": "Our pure AI native revenues accelerated, reaching more than $160 million in the quarter.",
@@ -7973,7 +8062,19 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Google Gemini certified partner specialists",
+          "metric": "Anthropic certified engineers",
+          "period": "Q2 2026",
+          "value": "more than 5,700 certified engineers",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "With Anthropic, we are now among the top 5 globally certified partners with more than 5,700 certified engineers already ahead of the 5,000 by Q3 milestone we set out.",
+          "following_context": "We are building toward more than 10,000 Claude-certified architects by the year-end with over half of our delivery organization already through the Anthropic Academic coursework, backed by a dedicated group of 250 forward deployed engineering black belts. Notably, the practice now extends beyond the team enablement into security and into specific verticals and key accounts.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Google Gemini Certified Partner Specialists",
           "period": "Q2 2026",
           "value": "more than 2,000 of our 5,000 by Q3 target",
           "value_num": null,
@@ -7984,26 +8085,50 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Anthropic certified partner ranking",
+          "kind": "leading_indicator",
+          "metric": "certified Google Cloud practitioners",
           "period": "Q2 2026",
-          "value": "among the top 5 globally certified partners with more than 5,700 certified engineers already ahead of the 5,000 by Q3 milestone",
+          "value": "over 2,000",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Anthropic, we are now among the top 5 globally certified partners with more than 5,700 certified engineers already ahead of the 5,000 by Q3 milestone we set out.",
-          "following_context": "We are building toward more than 10,000 Claude-certified architects by the year-end with over half of our delivery organization already through the Anthropic Academic coursework, backed by a dedicated group of 250 forward deployed engineering black belts. Notably, the practice now extends beyond the team enablement into security and into specific verticals and key accounts.",
+          "verbatim": "This is on top of our multiyear GCP relationship with over 2,000 certified Google Cloud practitioners, agentic GCP, marketplace solutions and award-winning offerings.",
+          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "revenue growth year-over-year",
+          "metric": "revenue growth year-over-year reported",
           "period": "Q2 2026",
-          "value": "4.5% year-over-year on a reported basis with organic constant currency growth of 3.4%",
+          "value": "4.5%",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue grew 4.5% year-over-year on a reported basis with organic constant currency growth of 3.4%.",
           "following_context": "Four of our 6 verticals grew year-over-year, led by Financial Services and Life Sciences and Healthcare. Our emerging verticals and consumer goods and retail and travel businesses both contributed to growth. Software & Hi-Tech and Business Information & Media both declined in the quarter.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "organic constant currency growth",
+          "period": "Q2 2026",
+          "value": "3.4%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Revenue grew 4.5% year-over-year on a reported basis with organic constant currency growth of 3.4%.",
+          "following_context": "Four of our 6 verticals grew year-over-year, led by Financial Services and Life Sciences and Healthcare. Our emerging verticals and consumer goods and retail and travel businesses both contributed to growth. Software & Hi-Tech and Business Information & Media both declined in the quarter.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "Anthropic partner ranking",
+          "period": "Q2 2026",
+          "value": "among the top 5 globally certified partners",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "With Anthropic, we are now among the top 5 globally certified partners with more than 5,700 certified engineers already ahead of the 5,000 by Q3 milestone we set out.",
+          "following_context": "We are building toward more than 10,000 Claude-certified architects by the year-end with over half of our delivery organization already through the Anthropic Academic coursework, backed by a dedicated group of 250 forward deployed engineering black belts. Notably, the practice now extends beyond the team enablement into security and into specific verticals and key accounts.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -8015,73 +8140,73 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — margins/ROIC/North-America softness and unanimous estimate cuts pull bearish, but rising absolute EBITDA, net cash and a compounding AI-native leg counter it.",
+    "evidence_balance": "mixed — net-cash, still-growing absolute EBITDA and an AI engine offset a management-acknowledged North America growth gap and uniformly negative revenue revisions.",
     "bull_points": [
       {
-        "claim": "The stock is near the bottom of its own 9-year multiple range — EV/EBITDA 5.4x sits at the 3rd percentile against a trailing median of 22.4x, so the de-rate is a residual overshoot only if the earnings base is intact rather than an earned reset.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "claim": "Net cash balance sheet: net-debt/EBITDA -0.8x with FCF-positive operations means the company is self-funding, so the drawdown is not a solvency event that would force terminal impairment.",
+        "source_ref": "CIQ Net Debt $-637M [Q2 Jun-30-2026] ÷ CIQ EBITDA $753M [LTM 12 months Jun-30-2026]",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has kept RISING through the de-rate — $652M (FY23) → $693M (FY24) → $707M (FY25) → $753M LTM — so the collapsing multiple is not a collapsing profit pool.",
+        "claim": "Absolute EBITDA is still rising — Dec-31-2024 693 → Dec-31-2025 707 → Jun-30-2026 (LTM) 753 — so the falling EBITDA margin % reflects mix/revenue-base dilution, not shrinking cash generation.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "On fundamentals the name screens BETTER than the peer median on the drivers that usually earn a discount: revenue growth 11% vs 1%, EBITDA growth 5% vs -0%, Debt/EBITDA 0.2 vs 2.1 — posing whether the discount to peers is RESIDUAL rather than EARNED, though the human must judge against a heterogeneous set.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet is net cash (net-debt/EBITDA -0.8x) and the business is FCF-positive on the LTM levered-FCF basis ($650.2M), so this is a self-funding, survivable name, not a distressed one.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
-        "cited": true
-      },
-      {
-        "claim": "Management reports a compounding AI-native revenue leg — pure AI-native revenue reached more than $160M in Q2 2026, an acceleration — which is the mechanism behind the claim that the growth engine is intact under the reported-revenue softness.",
+        "claim": "Revenue is still growing (Dec-31-2025 5,457 → Jun-30-2026 LTM 5,617) and management reports organic constant-currency growth of 3.4% in Q2 2026 with four of six verticals growing, so the top line is not in secular decline.",
         "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The most recent quarter MET revenue, EBIT and EPS guidance (FQ2 2026) and the delivery track-record is strong (revenue actual ≥ floor 62/63; EPS-normalized 61/62), evidence the reported print is landing at or above guided levels.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
+        "claim": "Pure AI-native revenue accelerated to more than $160 million in Q2 2026 (from >$125M in Q1), an emerging growth engine that offsets legacy non-AI ramp-downs and is not reflected in the trailing multiple.",
+        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The company is shrinking the share count (buying back ~9.1% of shares over ~1.7y), a capital-return signal at a depressed multiple.",
+        "claim": "On forward NTM basis EPAM's TEV/EBITDA is 4.58 vs peer median 6.49 and NTM P/E 7.18 vs peer median 9.52; whether this discount is EARNED or RESIDUAL must be read against fundamentals showing EPAM's revenue growth 11% vs peer-median 1% and Debt/EBITDA 0.2 vs 2.1 — better on growth and leverage — posing the overshoot question for the human, though the 82x cap-span heterogeneous peer set gates this comparison.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The company is buying back stock (share count -9.1% over ~1.7y to Jun-2026) under a $1.0B authorization from Oct-2025, a capital-return signal inconsistent with a management view of terminal impairment.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-31..2026-07-31",
+        "cited": true
+      },
+      {
+        "claim": "Guidance delivery is intact — most-recent Revenue, EBIT and EPS-Normalized outcomes for FQ2 2026 all MET, with strong long-run floor-hit records (EBIT 45/45), so the franchise is still delivering against its committed trajectory.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The de-rate is idiosyncratic, not market-driven: EPAM fell -39.7% over 180d while the mid-cap benchmark rose +8.6%, a -48pt relative gap — the market is repricing this name specifically, not the sector.",
-        "source_ref": "EOD EPAM−MDY 180d to 2026-08-12 (assembly, cap-band)",
-        "cited": true
-      },
-      {
-        "claim": "The core problem is a real revenue-mechanism deterioration management itself owns: North America is 'not growing fast enough' with demand shifting away from task-based services faster than replacement work ramps, and reported organic constant-currency growth slowed to 3.4% in Q2.",
+        "claim": "Management itself says North America 'is not growing fast enough' and now expects it to operate below expectations in the second half, driven by a genuine shift away from tax/labor-based services faster than AI replacement work ramps — a structural demand-mix problem, not a timing blip.",
         "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Gross and EBITDA margins are in secular decline — gross 36% (FY17) → 29% (LTM); EBITDA 17% (FY22) → 13% (LTM) — and the paired absolute-EBITDA reconciler shows the rise is slowing (707 → 753 LTM), so the margin fall is a genuine structural signal, not purely an optical %-vs-absolute mismatch.",
+        "claim": "The falling EBITDA margin (17% in FY22 → 13% LTM) is only partly optical: it is paired with rising absolute EBITDA (the reconciler), but gross margin has also fallen structurally 36% FY17 → 29% LTM, so pricing/mix erosion is a REAL signal beyond the % denominator effect, not purely a consensus misread.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Forward estimates are being cut hard and broadly — Revenue FY2026 revisions 0↑/16↓ last month — confirming the print is deteriorating, not stabilising, so the near-floor multiple sits on a falling forward base.",
+        "claim": "Forward revenue revisions are overwhelmingly negative — Revenue FY2026 breadth 0↑/16↓ last month — confirming analysts are cutting the top line, not raising it.",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       },
       {
-        "claim": "The big AI-led deals management points to as the offset are explicitly NOT signed and pushed out — meaningful contribution now expected in 1H 2027 rather than 2H 2026 — removing a near-term catalyst.",
-        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+        "claim": "The stock is a pronounced idiosyncratic underperformer: -39.6% over 180d vs the market benchmark +10.2% (-49.8% relative), so the de-rate is name-specific, not a sector or market drag.",
+        "source_ref": "EOD EPAM−MDY 180d to 2026-08-14 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "Returns on capital have stepped down and stayed down — ROIC 14.9% (FY22) → 9.6% (FY25) → 10.5% LTM — consistent with an earned, not purely optical, reset of the business's economics.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "claim": "Next-quarter estimate momentum is deeply negative — Revenue FQ3 2026 1m 0↑/14↓ and EPS Normalized FQ3 2026 1m 1↑/12↓ — and the most recent guidance outcome FQ1 2026 MISSED on the tax-rate line, so the forward path is being marked down.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "cited": true
+      },
+      {
+        "claim": "The trailing EV/EBITDA of 5.4x sits at the 3rd percentile of its own 9.2-year range (median 22.4x) but is trailing-only with no forward basis, so it cannot on its own distinguish a temporarily depressed level from a permanently impaired one — the discount is not self-validating as an overshoot.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "cited": true
       }
     ],
@@ -8089,90 +8214,78 @@
       {
         "name": "Cognizant Technology Solutions Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "Large-scale IT-services peer that de-rated on a growth-slowdown and margin-pressure narrative, then held profitability while the multiple compressed — the analogue for an overshoot that mean-reverted on stable earnings.",
+        "distinguishing_fact": "IT-services peer that de-rated hard on a growth-and-margin scare, then stabilized as delivery and demand normalized without any balance-sheet distress — the analogue for a services franchise re-rating off a trough once growth reaccelerates.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "DXC Technology Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "IT-services name whose revenue actually shrank and margins eroded structurally — the value-trap analogue where a low multiple was EARNED by a declining top line, not a temporary overshoot.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10"
+        "distinguishing_fact": "IT-services peer whose revenue actually declined (negative growth) and never re-rated, trading at the lowest multiple in the set — the value-trap analogue where the discount was EARNED by genuine secular shrinkage.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Globant S.A.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Digital-engineering peer that saw growth stall to roughly flat, showing how quickly a former high-growth services name can lose its premium once organic growth decelerates.",
-        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-08-10"
+        "distinguishing_fact": "Digital-engineering peer that lost its growth premium as AI disruption compressed the discretionary-project pipeline, illustrating the risk that AI both drives and cannibalizes the services book.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Accenture plc",
         "outcome": "recovered",
-        "distinguishing_fact": "Scaled consulting/services franchise that navigated a demand-mix shift toward AI while sustaining margins and growth — the analogue for a services firm whose AI pivot ultimately re-rated it.",
+        "distinguishing_fact": "Scaled consulting-and-technology peer that navigated an AI-transition demand air-pocket by leaning into an AI partnership/bookings pivot while sustaining margin — the analogue for a services name whose AI motion becomes the growth bridge.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is North America's revenue softness a temporary mix-transition (task-based work retiring faster than AI-led replacement ramps) that the compounding AI-native leg and unsigned large deals will backfill — or a structural, earned reset of EPAM's growth and margin base?",
+      "question": "Is the North America growth shortfall a temporary transition (legacy labor-based work rolling off faster than AI-led modernization ramps, with a real large-deal pipeline landing in 1H27) or a permanent structural loss of the services franchise?",
       "evidence_for": [
         {
-          "claim": "Management frames the North America gap as a self-inflicted, addressable mix and go-to-market timing problem ('we own it'), with AI-native revenue accelerating to >$160M in Q2 as the offsetting engine.",
+          "claim": "Management frames the gap as a fixable, self-owned commercial-execution and demand-transition problem with a big AI-led deal pipeline that they expect to contribute more meaningfully starting first half 2027.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA continued to rise to $753M LTM even as margins fell, so the profit pool has not yet inflected down.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-          "cited": true
-        },
-        {
-          "claim": "Fundamentals still screen ahead of peers on growth (11% vs 1%) and leverage (0.2 vs 2.1), posing the discount as potentially residual.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Pure AI-native revenue is compounding (>$160M in Q2 2026, up from >$125M in Q1) and EMEA is delivering strong double-digit growth, evidence the replacement engine and other geographies are already scaling.",
+          "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The load-bearing offset — the large AI-led deals — is unsigned and now pushed to 1H 2027, leaving 2H 2026 exposed to the North America shortfall.",
+          "claim": "Management explicitly says North America will operate below expectations in the second half and that the shift away from labor-based services is happening faster than replacement work ramps — an acknowledged, not-yet-closed growth gap.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Revenue estimates are being cut almost unanimously (0↑/16↓ last month), signalling the analyst community reads the softness as deepening, not transient.",
+          "claim": "Analysts are cutting, not raising — FY2026 Revenue breadth 0↑/16↓ last month and FQ3 2026 Revenue 0↑/14↓ — and the named large deals are unsigned with ramp pushed to 1H27, so the bridge is not yet in the numbers.",
           "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-          "cited": true
-        },
-        {
-          "claim": "The multi-year gross-margin slide (36%→29%) and ROIC step-down (14.9%→10.5%) are consistent with an earned reset of the economics.",
-          "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the depressed EV/EBITDA is an overshoot or an earned value-trap CANNOT be resolved from a trailing multiple alone — the ev_ebitda fact is flagged trailing-only with no forward basis to distinguish a temporarily depressed level from a permanently impaired one.",
-      "No segment-level EBITDA is disclosed — the company reports two revenue segments (Americas; Europe) but no segment profitability, so the margin drag from the underperforming North America business cannot be isolated (a missing expected disclosure).",
-      "No adjusted forward EBITDA or adjusted EPS in the revised 99.1 guidance, and net-debt/adjusted-EBITDA is UNKNOWN — the company-defined forward profitability basis is not available.",
-      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense), though net-cash mitigates the relevance.",
-      "The peer set is flagged HETEROGENEOUS (market caps span $1.3B–$107.5B, 82x) — every peer-median comparison is a confidence-gated input, not a clean benchmark, and the median is anchored by businesses of differing scale/model.",
-      "Whether the unsigned large AI-led deals actually close and ramp on the now-projected 1H 2027 timeline — timing and conversion are unresolved.",
-      "Management posture requires reading both earnings-call transcripts in full for the quarter-over-quarter shift in tone on North America and demand visibility."
+      "No segment EBITDA disclosure — the company reports 2 segments (Americas; Europe) with revenue but discloses no segment EBITDA, so the profitability of the deteriorating North America book cannot be isolated (an opacity risk, bearish-leaning).",
+      "No adjusted forward EBITDA or adjusted EPS in the revised 99.1 guidance, so a clean forward EV/EBITDA on management's own basis cannot be built — the 5.4x trailing multiple's overshoot-vs-terminal status stays unresolved.",
+      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense), though net-cash position makes this a low-priority gap.",
+      "Whether the unsigned large-deal AI pipeline actually closes and ramps in 1H27 as management guides — the entire growth-bridge thesis rests on deals that are explicitly not yet signed.",
+      "Whether the peer discount is EARNED or RESIDUAL is not resolvable from the data alone: the peer set is HETEROGENEOUS (caps $1.3B–$107.5B, 82x span), so no peer multiple can be read as a clean benchmark.",
+      "Export date of the CIQ estimate/guidance snapshots is unverified (a floor of ≥2026-08-09), so revision breadth may be staler than the true latest."
     ]
   },
   "caveats": [
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
-    "Unreconciled margin-compression (a decisive-against point): 'The multi-year gross-margin slide (36%→29%) and ROIC step-down (14.9%→10.5%) are consistent with an earned reset of the economics.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-08-13T16:55:52.969105Z",
-  "extraction_version": "2026-07-28.1",
+  "assembled_at": "2026-08-18T07:48:36.233061Z",
+  "extraction_version": "2026-08-16.1",
   "price_store": {
     "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",
-    "frontier": "2026-08-12"
+    "frontier": "2026-08-17"
   },
   "sector": "Technology",
   "industry": {
@@ -8193,7 +8306,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-13T16:58:05.128908Z",
+    "computed_at": "2026-08-18T07:50:57.290676Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

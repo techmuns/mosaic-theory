@@ -110,8 +110,16 @@ def test_a_failed_read_is_unknown_and_never_renders_like_none_on_file() -> None:
 
 
 def test_committed_dossiers_round_trip_with_the_field_absent() -> None:
-    """BACK-COMPAT: every committed dossier predates the field; it must parse (defaulting None)
-    and render byte-identically — the pages change on their next assembly, not on this merge."""
+    """BACK-COMPAT: a record PREDATING the field must parse (defaulting None) and render
+    nothing — an old page cannot start inventing a block it never carried.
+
+    THE FIXTURE IS CONSTRUCTED, NOT BORROWED (#466 pass). This read `committed[0]` and
+    asserted its pipeline was None, which held only while NO committed dossier had been
+    assembled since #457. AORT gained the field on its next assembly and the pin went red on
+    a name being REBUILT — a test failing because the fleet moved forward, not because
+    back-compat broke. Stripping the key states the case the assertion is actually about, and
+    it keeps holding however much of the fleet carries the field."""
+    import json as _json
     import pathlib
 
     import pytest
@@ -122,15 +130,15 @@ def test_committed_dossiers_round_trip_with_the_field_absent() -> None:
     committed = sorted(pathlib.Path("data/dossiers").glob("*/dossier.json"))
     if not committed:
         pytest.skip("no committed dossiers in this checkout")
-    d = Dossier.model_validate_json(committed[0].read_text())
+    doc = _json.loads(committed[0].read_text())
+    doc["mechanical"] = {k: v for k, v in doc["mechanical"].items()
+                         if k != "dilution_pipeline"}
+    d = Dossier.model_validate(doc)
     assert d.mechanical.dilution_pipeline is None, (
-        "a committed dossier parsed with a NON-None pipeline — the default is wrong and old "
-        "records are inventing a block they never carried")
+        "a record WITHOUT the field parsed with a NON-None pipeline — the default is wrong "
+        "and old records would invent a block they never carried")
     assert _dilution_pipeline_lines(d.mechanical) == [], (
-        "a None field rendered lines — committed pages would change on merge, not on assembly")
-    # and the md really does not carry the label yet
-    md = committed[0].with_name("dossier.md").read_text()
-    assert "Registered offering pipeline" not in md
+        "a None field rendered lines — old pages would change on merge, not on assembly")
 
 
 def test_the_rendered_line_carries_the_equity_debt_disclaimer() -> None:
@@ -204,6 +212,15 @@ def test_the_web_renderer_shows_the_pipeline_too() -> None:
     with tempfile.TemporaryDirectory() as td:
         doc_path = pathlib.Path(td) / "doc.json"
         doc_path.write_text(_json.dumps(doc))
+        # THE ABSENT CASE IS CONSTRUCTED, NOT BORROWED. It used to be `committed[0]`
+        # rendered as-is, which only works while the alphabetically-first dossier happens
+        # to lack the field — AORT gained one the moment #457's extractor ran on its next
+        # assembly (#466 pass), and the pin went red on a name being REBUILT rather than on
+        # the renderer changing. Removing the key states the case the assertion is about.
+        bare = {**doc, "mechanical": {k: v for k, v in doc["mechanical"].items()
+                                      if k != "dilution_pipeline"}}
+        bare_path = pathlib.Path(td) / "bare.json"
+        bare_path.write_text(_json.dumps(bare))
         pipe_path = pathlib.Path(td) / "dp.json"
         pipe_path.write_text(_json.dumps(pipeline))
         driver = f"""
@@ -215,7 +232,8 @@ const {{ renderDossier }} = await import("{dj}");
 const doc = JSON.parse(readFileSync({_json.dumps(str(doc_path))}, "utf8"));
 const dp = JSON.parse(readFileSync({_json.dumps(str(pipe_path))}, "utf8"));
 const out = {{}};
-out.absent = renderDossier(doc, null);
+const bare = JSON.parse(readFileSync({_json.dumps(str(bare_path))}, "utf8"));
+out.absent = renderDossier(bare, null);
 out.present = renderDossier(
   {{ ...doc, mechanical: {{ ...doc.mechanical, dilution_pipeline: dp }} }}, null);
 console.log(JSON.stringify(out));
@@ -232,8 +250,8 @@ console.log(JSON.stringify(out));
         "about what the number means")
     assert "shelf registrations 1" in got["present"], "the value itself never reached the HTML"
     assert "Registered offering pipeline" not in got["absent"], (
-        "a dossier without the field rendered the block — committed pages would change on merge, "
-        "not on their next assembly")
+        "a dossier with the field REMOVED still rendered the block — committed pages would "
+        "change on merge, not on their next assembly")
 
 
 def test_the_form_taxonomy_covers_the_registration_families() -> None:
