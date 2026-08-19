@@ -1,17 +1,17 @@
 {
+  "NFLX": {
+    "followed_since": "2026-08-10",
+    "reason": "Global streaming network followed as an OVERSHOOT candidate: down ~41% from its high with EV/EBITDA at the 7.9th percentile of its own history, the question is whether the de-rating overshoots a business whose mechanism is intact. Re-tagged from `quality` 2026-08-19 \u2014 the anchor already selects R1 (drawdown reversion), so the sleeve was the only thing out of place. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it.",
+    "sleeve": "overshoot"
+  },
   "UBER": {
+    "followed_since": "2026-08-07",
     "reason": "Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality",
-    "followed_since": "2026-08-07"
+    "sleeve": "quality"
   },
   "V": {
+    "followed_since": "2026-08-10",
     "reason": "Global payments network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality",
-    "followed_since": "2026-08-10"
-  },
-  "NFLX": {
-    "reason": "Global streaming network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality",
-    "followed_since": "2026-08-10"
+    "sleeve": "quality"
   }
 }
