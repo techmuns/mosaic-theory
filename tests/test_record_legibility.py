@@ -277,8 +277,18 @@ def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -
     arch = sc.read_archived(key, root=ROOT)
     assert arch.superseded_by == sc.archive_key(live), "the archived record must point forward"
     assert sc.archive_key(arch) == key
-    # the reissue is CLEAN: no amendment tags carried over into the new sealed text
-    assert seal.amendments(live.verdict.rationale or "") == []
+    # THE REISSUE IS CLEAN — no amendment tag CARRIED OVER into the new sealed text. Asserted by
+    # DATE, not by count. The first cut asserted `amendments(...) == []`, which borrowed the live
+    # record's then-current emptiness as a proxy for "nothing carried over" — so the moment SMPL's
+    # verdict was recorded on 2026-08-19 with a legitimate new `judgment` tag, the pin reddened on
+    # a correct write. Same class as this file's own "re-pick" tripwire two functions down (AORT →
+    # WERN → synthetic): a property that happens to hold is not the property under test. A tag
+    # carried over from a predecessor is dated BEFORE the reissue; one added after it is not.
+    for tag in seal.amendments(live.verdict.rationale or ""):
+        tag_date, _cls, _words = seal.tag_parts(tag)
+        assert tag_date >= live.underwrite_date, (
+            f"amendment {tag_date} predates the {live.underwrite_date} reissue — it was carried "
+            f"over from {key}, and a reissue must start from clean sealed text")
     # ...AND NO ARCHIVED RECORD EVER LOSES ITS AMENDMENTS. Asserted on the record that HAS them
     # rather than on whatever `live.supersedes` happens to point at: the 2026-08-05 supersession
     # archived SMPL-2026-07-27, itself a clean reissue carrying zero, so a bare `== 3` against the

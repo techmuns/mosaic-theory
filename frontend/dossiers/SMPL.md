@@ -9,20 +9,27 @@ _August 18, 2026 · extraction 2026-08-16.1_
 
 _Spot source: EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)_
 
-**Underwrite disposition:** PENDING_ANALYST (2026-07-27) — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** WATCH (2026-08-19) · entry $11.33 (entry-vintage) — _the BUY/AVOID verdict of record is the ledger's_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-08-05); the live close is in Snapshot, above._
+
+The market prices this as a broken business in a shrinking category. It is share loss inside a growing one: retail takeaway fell 6.7% while the purposeful-nutrition category grew about 10% over the same window. Atkins is the drag at −24.6% net sales; Quest holds its share. A high-single-digit portfolio price increase takes effect in September, and the January print is the first evidence on whether it sticks. Bought at $11.33 against a $19.64 value that assumes nine times EBITDA — below where the company itself traded in September 2025, and near the median for comparable companies today. The case fails if the profit reset proves permanent rather than cyclical.
+
+[amended 2026-08-19 (judgment): a fourth re-underwrite trigger — OWYN net sales turning negative year-over-year in any quarter. Added after management flagged further distribution losses over six to twelve months from a product-quality issue, explicitly not in the base case. OWYN grew net sales 3.6% against takeaway of −1.3%; this tests shipments catching down to consumption.]
 
 ### What would reopen this name
 
 - Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.
 - FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.
 - Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)
+- OWYN net sales turn negative year-over-year in any quarter — added 2026-08-19.
 
 > ⚠ **Verify before the verdict:** EDGAR P/E 11.1x does not rest on LTM GAAP earnings; Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
-**Mixed** — a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.
 - **Segments:** Branded Nutritional Foods and Snacking Products — single segment [1]
 - **Geography:** North America 98%; International 2% [2]
 - **Snapshot:** Nasdaq · CMP $10.84 (2026-08-17) · cap $961M (2026-08-11) · 52-wk $9.88–$30.36 · shares 88.5M · book value/sh $16.03 [3]
