@@ -424,3 +424,4 @@
 {"bar_date": "2026-08-12", "close": 19.0, "high": 19.21, "internal_id": "SEC-0001902733-NCNO", "low": 18.58, "open": 18.91, "source": "polygon-grouped", "volume": 1449185.7384}
 {"bar_date": "2026-08-13", "close": 20.66, "high": 20.7983, "internal_id": "SEC-0001902733-NCNO", "low": 19.0, "open": 19.21, "source": "polygon-grouped", "volume": 2950789.094215}
 {"bar_date": "2026-08-14", "close": 20.81, "high": 20.92, "internal_id": "SEC-0001902733-NCNO", "low": 20.23, "open": 20.85, "source": "polygon-grouped", "volume": 2587172.587438}
+{"bar_date": "2026-08-17", "close": 20.23, "high": 20.69, "internal_id": "SEC-0001902733-NCNO", "low": 20.06, "open": 20.59, "source": "polygon-grouped", "volume": 2633539.713838}

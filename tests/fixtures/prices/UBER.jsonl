@@ -424,3 +424,4 @@
 {"bar_date": "2026-08-12", "close": 75.36, "high": 78.56, "internal_id": "SEC-0001543151-UBER", "low": 74.88, "open": 78.2, "source": "polygon-grouped", "volume": 19192459.983049}
 {"bar_date": "2026-08-13", "close": 75.88, "high": 76.035, "internal_id": "SEC-0001543151-UBER", "low": 74.53, "open": 75.63, "source": "polygon-grouped", "volume": 13239337.782526}
 {"bar_date": "2026-08-14", "close": 75.95, "high": 77.44, "internal_id": "SEC-0001543151-UBER", "low": 75.3699, "open": 77.09, "source": "polygon-grouped", "volume": 10195700.229062}
+{"bar_date": "2026-08-17", "close": 74.99, "high": 77.53, "internal_id": "SEC-0001543151-UBER", "low": 74.65, "open": 77.09, "source": "polygon-grouped", "volume": 18084901.676156}
