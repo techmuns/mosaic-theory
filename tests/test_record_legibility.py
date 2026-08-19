@@ -172,16 +172,19 @@ def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown() -
     trigger (2027-01-07); the calendar must win — leading with the trigger would misstate "next
     evidence" by a full quarter. A record with NEITHER must say UNKNOWN, never invent.
 
-    The no-source fixture is WERN, not AORT: AORT gained a real calendar row on 2026-07-27, which
-    is the right outcome and exactly why a LIVING record makes a poor "absent" fixture. WERN has
-    no dossier at all (so no calendar can exist for it) and no dated triggers — a structural
-    UNKNOWN rather than a temporary one."""
+    THE ABSENT CASE IS CONSTRUCTED, NOT BORROWED — and it took two relocations to learn that.
+    AORT was the fixture until it gained a calendar row on 2026-07-27; WERN replaced it and gained
+    a whole dossier on 2026-08-19, tripping the very "re-pick" guard that had been written to catch
+    exactly this. Re-picking a third live name would only move the trap again: the property under
+    test is "no calendar on file AND no dated triggers", which a SYNTHETIC ticker has structurally
+    and permanently, while a real one has it only until the fleet grows. The fallback case below
+    already used a synthetic name; this one now does too."""
     smpl = _BUILD._next_evidence("SMPL", {"dated_triggers": [
         {"deadline": "2027-01-07", "trigger": "the analyst's falsifier"}]})
     assert smpl["date"] == "2026-10-08" and "catalyst calendar" in smpl["source"]
-    assert not (ROOT / "data" / "dossiers" / "WERN").exists(), "WERN gained a dossier — re-pick"
-    wern = _BUILD._next_evidence("WERN", {})
-    assert wern["date"] == "UNKNOWN" and wern["source"] == "none on file"
+    assert not (ROOT / "data" / "dossiers" / "NO_SUCH_TICKER_ABSENT").exists()
+    absent = _BUILD._next_evidence("NO_SUCH_TICKER_ABSENT", {})
+    assert absent["date"] == "UNKNOWN" and absent["source"] == "none on file"
     # with no calendar on file, the dated trigger is the fallback — not UNKNOWN
     fb = _BUILD._next_evidence("NO_SUCH_TICKER", {"dated_triggers": [
         {"deadline": "2027-01-07", "trigger": "t"}]})

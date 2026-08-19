@@ -13,7 +13,8 @@
     "UBER",
     "V",
     "VITL",
-    "VRRM"
+    "VRRM",
+    "WERN"
   ],
   "labels": {
     "AORT": {
@@ -85,6 +86,11 @@
       "industry": "Data Processing and Outsourced Services",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "WERN": {
+      "industry": "Cargo Ground Transportation",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     }
   },
   "reads": {
@@ -101,7 +107,8 @@
     "UBER": "mixed \u2014 genuine operating inflection (EBITDA, ROIC, FCF, 22% bookings) against a rich decade-long consensus, cut GAAP EPS, and rising cost lines.",
     "V": "mixed \u2014 a genuinely lengthening volume/VAS runway and rising ROIC against a fully-earned but growth-matched premium and a year of market underperformance.",
     "VITL": "mixed \u2014 an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.",
-    "VRRM": "mixed \u2014 a genuine, quantified >10%-customer loss and repeated guide cuts sit against a self-funding, contracted-government-growth franchise at a distressed multiple."
+    "VRRM": "mixed \u2014 a genuine, quantified >10%-customer loss and repeated guide cuts sit against a self-funding, contracted-government-growth franchise at a distressed multiple.",
+    "WERN": "mixed \u2014 a live pricing/mix inflection and rising forward EBITDA offset by still-negative earnings, 1.1% ROIC, above-peer leverage and a near-ceiling own-history multiple."
   },
   "sleeves": {
     "AORT": "overshoot",
@@ -117,6 +124,7 @@
     "UBER": "quality",
     "V": "quality",
     "VITL": "overshoot",
-    "VRRM": "overshoot"
+    "VRRM": "overshoot",
+    "WERN": "overshoot"
   }
 }
