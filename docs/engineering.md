@@ -119,6 +119,11 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **FPI** — SEC *foreign private issuer*: a non-US filer (20-F/6-K, IFRS taxonomy, often
+  non-USD units). NOT the house sense of "foreign figures" (another NAME's figures on a
+  page — the BRBR incident); the two collide only in the word. Readiness gaps recorded in
+  STATE §Next-steps (MC1–MC4 / FPI1–FPI5, 2026-08-20).
+
 - **D1/D2/D3** — dossier-restructure build tags; **D3 = deterministic render-side ORDERING of
   bull/bear points** — `render.py` `_ordered_points`; never an LLM/schema field. HYBRID since
   2026-07-24: the bull case leads with crux-linked mechanism points (balance sheet demoted to the
