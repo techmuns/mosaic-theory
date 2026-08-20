@@ -340,15 +340,16 @@
     "gate": "PASS"
   },
   "verdict": {
-    "status": "pending_analyst",
-    "recorded": "2026-07-27",
-    "rationale": "",
+    "status": "watch",
+    "recorded": "2026-08-19",
+    "rationale": "The market prices this as a broken business in a shrinking category. It is share loss inside a growing one: retail takeaway fell 6.7% while the purposeful-nutrition category grew about 10% over the same window. Atkins is the drag at −24.6% net sales; Quest holds its share. A high-single-digit portfolio price increase takes effect in September, and the January print is the first evidence on whether it sticks. Bought at $11.33 against a $19.64 value that assumes nine times EBITDA — below where the company itself traded in September 2025, and near the median for comparable companies today. The case fails if the profit reset proves permanent rather than cyclical.\n\n[amended 2026-08-19 (judgment): a fourth re-underwrite trigger — OWYN net sales turning negative year-over-year in any quarter. Added after management flagged further distribution losses over six to twelve months from a product-quality issue, explicitly not in the base case. OWYN grew net sales 3.6% against takeaway of −1.3%; this tests shipments catching down to consumption.]",
     "rationale_plain": null,
     "rationale_plain_recorded": null,
     "reunderwrite_triggers": [
       "Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.",
       "FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.",
-      "Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)"
+      "Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)",
+      "OWYN net sales turn negative year-over-year in any quarter — added 2026-08-19."
     ],
     "dated_triggers": [
       {
@@ -357,8 +358,8 @@
         "basis": "second print after the September action — the Q1-FY27 print reveals elasticity; operator-confirmed 2026-07-24"
       }
     ],
-    "entry_price": null,
-    "ratio_at_entry": null,
+    "entry_price": 11.33,
+    "ratio_at_entry": 2.0951651862723257,
     "avoid_priced": false,
     "avoid_priced_note": null
   },
