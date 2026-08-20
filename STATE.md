@@ -4470,7 +4470,12 @@ megacap.**
 - **MC1. XBRL tag-level freshness has no guard.** `edgar/concepts.py` is ONE global
   priority-ordered us-gaap alias list, first-present-wins, point-in-time by filed date; no
   freshness assertion at the tag level (searched stale/STALE/coverage_status/fresh across
-  `vinci/edgar/`; the only staleness knob is `price_staleness_days`, `config.py:93`). A filer
+  `vinci/edgar/`). **PER-TAG is the missing grain, not staleness as such** — two staleness bounds
+  DO exist and neither is per-tag: `price_staleness_days` (`config.py:93`, price coverage) and the
+  share-count age bound (`mechanical.py:2501/2517`, 180d vs 540d chosen by 20-F/40-F-vs-10-Q
+  cadence — named in the READY list above and again in FPI2). The first draft of this line said
+  "the only staleness knob is `price_staleness_days`", which its own record falsified twice in the
+  same block; the corrected claim is narrower and survives. A filer
   that ABANDONS a tag still carries old data under it, so first-present-wins can serve a dead
   series under a confident filed date. The GOOGL monitoring workstream reports this shape live at
   megacaps (AMZN/META/NVDA tags years stale, MSFT untagged) — those specifics are
