@@ -197,9 +197,87 @@ TRUCKLOAD_SUPPLY_PURGE = DriverSpec(
     ),
 )
 
+
+GLP1_DEMAND_SHIFT = DriverSpec(
+    key="glp1-demand-shift",
+    # NO `mirror_slug` YET — DELIBERATE. The binding pin refuses a slug pointing at a mirror that
+    # does not exist, and `frontend/themes/glp1.json` is CREATED BY THE FIRST SCAN+FREEZE. The
+    # field's own docstring records that a real driver exists before its theme does, so the slug
+    # is declared when the mirror is, not before. Declaring it early would bind this driver to a
+    # file nothing has written — the declared-vs-enforced shape, in the registry.
+    description=(
+        "the GLP-1 DEMAND SHIFT — incretin (GLP-1/GIP) therapy at population scale re-shaping "
+        "FOOD AND BEVERAGE consumption: users eat materially less by volume and re-weight what "
+        "they do eat toward protein and satiety, so demand moves AWAY from high-volume "
+        "discretionary calories and TOWARD protein-dense, portion-controlled and "
+        "satiety-positioned products. BOTH DIRECTIONS ARE IN SCOPE and the sub-structure tag "
+        "says which side a name sits on — this is deliberate: a single company can be "
+        "suppressed in one category and helped in another (a nutrition portfolio whose "
+        "snacking brands face volume decline while its protein brands face a tailwind), and a "
+        "one-sided driver would mis-grade exactly those names. The structure is PARALLEL "
+        "consumption categories, not a supply chain: (1) suppressed volume — sweet and salty "
+        "snacking, confectionery, baked goods, sugared beverages, quick-service restaurants, "
+        "alcohol; (2) benefiting nutrition — high-protein foods and shakes, portion-controlled "
+        "and meal-replacement formats, satiety/fibre positioning, medical and active nutrition; "
+        "(3) adjacent — distribution, private-label manufacture and delivery INTO either side. "
+        "Exposure must be to the SHIFT, grounded in disclosed activity — NOT generic packaged-"
+        "food exposure, NOT the incretin MANUFACTURERS or their supply chain (that is a "
+        "different driver), NOT the PRESCRIBING AND TELEHEALTH CHANNELS through which incretins "
+        "are dispensed, and NOT fitness or coaching services. **Product-based meal replacement is "
+        "IN SCOPE, not excluded** — it is sold as a product and its exposure is genuinely "
+        "two-sided: as a weight-loss METHOD it competes with incretins and is suppressed, and as "
+        "nutrition support for incretin users it benefits. The scan decides which; a wording that "
+        "pre-excluded the category would defeat the classifier it is meant to configure."
+    ),
+    tie_taxonomy=(
+        "driver-specific = MATERIAL disclosed revenue in a named category of the shift, on "
+        "EITHER side, with the sub-structure tag recording which. Suppressed side: a company "
+        "whose disclosed volumes sit in snacking, confectionery, sugared beverage, QSR or "
+        "alcohol categories facing the consumption decline. Benefiting side: a company whose "
+        "disclosed revenue sits in high-protein, portion-controlled, meal-replacement or "
+        "satiety-positioned nutrition. DIRECTION IS RECORDED, NOT SCORED — the tag says which "
+        "way the shift points for this name; it does not say whether that is good for the "
+        "equity, which is the human's call. A name material on BOTH sides is driver-specific "
+        "and carries both tags. "
+        "indirect = exposed to an affected category without the shift being disclosed as "
+        "material — a broadline distributor or contract manufacturer serving snacking or "
+        "nutrition among many end-markets, an ingredient supplier whose protein or sweetener "
+        "volumes are not broken out, or a retailer whose category mix is not disclosed. "
+        "not-driver = adjacent-but-distinct — a food or beverage company with no disclosed "
+        "position in an affected category, the incretin drug manufacturers and their CDMO/"
+        "device supply chain (a separate driver), the pharmacy and telehealth CHANNELS that "
+        "prescribe or dispense incretins, fitness and coaching SERVICES, and general grocery. "
+        "The exclusion is of CHANNELS and SERVICES, never of products: a meal-replacement or "
+        "portion-control PRODUCT company is driver-specific on whichever side(s) its disclosed "
+        "revenue sits, and may carry both tags."
+    ),
+    prefilter_terms=(
+        "GLP-1", "GLP1", "incretin", "semaglutide", "tirzepatide", "weight management",
+        "snacking", "snack", "confectionery", "candy", "baked goods", "salty snacks",
+        "sugared beverage", "carbonated soft drink", "quick service restaurant", "alcohol",
+        "beer", "spirits", "protein", "high-protein", "protein shake", "nutrition bar",
+        "meal replacement", "portion control", "satiety", "fiber", "active nutrition",
+        "medical nutrition", "ready-to-drink", "private label", "consumer packaged goods",
+    ),
+    provenance_tags=(
+        ("suppressed-volume",
+         ("snack", "snacking", "confectionery", "candy", "baked", "cookie", "chip",
+          "carbonated", "sugared beverage", "quick service", "restaurant", "alcohol",
+          "beer", "spirits", "wine")),
+        ("benefiting-nutrition",
+         ("protein", "shake", "nutrition bar", "meal replacement", "portion control",
+          "satiety", "fiber", "fibre", "active nutrition", "medical nutrition",
+          "ready-to-drink", "rtd")),
+        ("adjacent",
+         ("distribution", "distributor", "private label", "contract manufactur", "co-man",
+          "foodservice", "delivery", "ingredient")),
+    ),
+)
+
 # registry — adding a theme = adding its DriverSpec instance here
 DRIVER_SPECS: dict[str, DriverSpec] = {
     AI_DATACENTER.key: AI_DATACENTER,
     DEFENSE_DEMAND_SHIFT.key: DEFENSE_DEMAND_SHIFT,
+    GLP1_DEMAND_SHIFT.key: GLP1_DEMAND_SHIFT,
     TRUCKLOAD_SUPPLY_PURGE.key: TRUCKLOAD_SUPPLY_PURGE,
 }
