@@ -473,10 +473,17 @@ def test_themes_exposure_driver_required_and_resolves(
 
 
 def test_truckload_driver_registered_and_fields_nonempty() -> None:
-    """Theme #3 (truckload-supply-purge, T007) is in the registry — now 3 keys — and its
-    analyst-ratified spec fields are all non-empty. The exposure classifier is driver-agnostic, so a
-    new theme is a new DriverSpec and nothing else."""
-    assert "truckload-supply-purge" in DRIVER_SPECS and len(DRIVER_SPECS) == 3
+    """Theme #3 (truckload-supply-purge, T007) is in the registry and its analyst-ratified spec
+    fields are all non-empty. The exposure classifier is driver-agnostic, so a new theme is a new
+    DriverSpec and nothing else.
+
+    THE COUNT ASSERTION WAS REMOVED, and the reason is the point of the test. It read
+    `len(DRIVER_SPECS) == 3` — a pin on how many OTHER drivers exist, which is not the property
+    this test names. Adding `glp1-demand-shift` reddened it while truckload remained perfectly
+    registered, so the pin reported a regression that had not happened. The classifier being
+    driver-agnostic is exactly the claim that the registry's SIZE is nobody's business: a test
+    that must be edited to add a driver is asserting the opposite of the design it documents."""
+    assert "truckload-supply-purge" in DRIVER_SPECS
     t = TRUCKLOAD_SUPPLY_PURGE
     assert t.key == "truckload-supply-purge"
     assert all([t.description, t.tie_taxonomy, t.prefilter_terms, t.provenance_tags])
