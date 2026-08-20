@@ -1178,6 +1178,36 @@ def _covenant_value_lead(label: str, raw: str, term: GoverningTerm | None = None
     return ""
 
 
+_ACC_IN_REF = re.compile(r"(\d{10}-\d{2}-\d{6})")
+
+
+def _covenant_source_suffix(g: Any, dates: dict[str, str]) -> str:
+    """(K1b) The FILING a covenant value was read from, appended to its clause.
+
+    WHY A DATE AND NOT A BETTER SELECTOR. Selection can always be wrong — measured: EPAM's digest
+    read "Expiration Date: October 21, 2026" from a 2017 8-K, against a capital-structure line
+    saying Due 2030, and NOTHING on the page said which filing it came from. A dated source makes
+    a stale read OBVIOUS beside the panel without anyone knowing the pointer set is mis-ordered,
+    which is the principle the rest of this layer already runs on (the panel-age stamp, the
+    multiples vintage, the extraction version). It is orthogonal to the ordering fix and lands
+    first because it INDICTS rather than repairs — a wrong value that says where it came from is
+    auditable; a wrong value that says nothing is not.
+
+    The accession is carried inside ``base_ref``'s prose, and the pointer rows hold the dates, so
+    the join is a lookup rather than a new fetch. An unmatched accession yields NOTHING rather than
+    a guessed date — an unattributed clause reads exactly as it does today, never worse."""
+    ref = getattr(g, "base_ref", None)
+    m = _ACC_IN_REF.search(str(ref or ""))
+    base = dates.get(m.group(1)) if m else None
+    amended = [dates[a] for a in (getattr(g, "amended_by", ()) or ()) if a in dates]
+    if not base and not amended:
+        return ""
+    if not base:
+        return f" — per an 8-K filed {max(amended)}"
+    tail = f", amended {max(amended)}" if amended else ""
+    return f" — per an 8-K filed {base}{tail}"
+
+
 def _covenant_summary_lines(cs: Any) -> list[str]:
     """(K1) CURATED covenant summary for the MAIN body — the governing VALUES that drive survival
     (financial-maintenance / conversion / interest / maturity / a 1-line events-of-default), each a
@@ -1189,6 +1219,10 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
     if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
         return []
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
+    # accession -> filing_date, so each governing value can name the filing it was read from
+    _pdates = {p.accession: p.filing_date
+               for p in (ptrs.value if ptrs is not None and ptrs.value else [])
+               if p.accession and p.filing_date}
     fams: list[str] = []
     for g in gov:
         fl = g.family.lower()
@@ -1208,7 +1242,7 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
             raw = str(g.value.value)
             lead = _covenant_value_lead(label, raw, g)  # (K1) lead with the extractable value
             clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
-            parts.append(f"  - **{label}:** {clause}")
+            parts.append(f"  - **{label}:** {clause}{_covenant_source_suffix(g, _pdates)}")
         if parts:
             out.append(f"- **Covenants — {fam}** (governing values; full verbatim in appendix):")
             out += parts

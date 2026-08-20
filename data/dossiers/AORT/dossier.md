@@ -461,21 +461,21 @@ _6 undated / later aggregate line item(s) in the appendix panel_
   - _reconciliation: itemized $263.4M (panel A 2025 filed Feb-18-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 190.0 (3 months Q4 Dec-31-2025 190.0 → 3 months Q1 Mar-31-2026 190.0); leases 42.8; total principal 262.8; total debt 258.2 (3 months Q1 Mar-31-2026) ($M) [58]
 - **Covenants — Convertible Senior Notes** (governing values; full verbatim in appendix):
-  - **Conversion:** ⇒ ~$23.46/sh at 42.6203 sh per $1,000 · Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conv…
-  - **Interest / coupon:** 4.250% per year
-  - **Maturity:** July 1, 2025 · July 1, 2025, unless earlier repurchased, redeemed or converted.
-  - **Interest / coupon:** Interest will accrue from June 23, 2020 and will be payable semiannually in arrears on January 1 and July 1 of each yea…
-  - **Conversion:** If the effective date of a make-whole fundamental change occurs prior to maturity or if the Issuer gives a notice of re…
+  - **Conversion:** ⇒ ~$23.46/sh at 42.6203 sh per $1,000 · Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conv… — per an 8-K filed 2020-06-23
+  - **Interest / coupon:** 4.250% per year — per an 8-K filed 2020-06-23
+  - **Maturity:** July 1, 2025 · July 1, 2025, unless earlier repurchased, redeemed or converted. — per an 8-K filed 2020-06-23
+  - **Interest / coupon:** Interest will accrue from June 23, 2020 and will be payable semiannually in arrears on January 1 and July 1 of each yea… — per an 8-K filed 2020-06-23
+  - **Conversion:** If the effective date of a make-whole fundamental change occurs prior to maturity or if the Issuer gives a notice of re… — per an 8-K filed 2020-06-23
 - **Covenants — New Delayed Draw Term Loan Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** LIBOR + 3.50% · At Borrowers' option: Base Rate plus Applicable Margin, or LIBOR plus Applicable Margin. Applicable Margin (Term Loan &…
-  - **Maturity:** Term Loan Facility: term of five years. Revolving Credit Facility: until the fifth anniversary of the Closing Date. (No…
-  - **Financial maintenance:** Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (maximum total leverage levels to be agreed…
-  - **Events of default:** Mandatory prepayments: (a) 50% of Excess Cash Flow, reducing to 25% at total leverage multiple of 2.50x and to 0% at 1.…
+  - **Interest / coupon:** LIBOR + 3.50% · At Borrowers' option: Base Rate plus Applicable Margin, or LIBOR plus Applicable Margin. Applicable Margin (Term Loan &… — per an 8-K filed 2015-12-23
+  - **Maturity:** Term Loan Facility: term of five years. Revolving Credit Facility: until the fifth anniversary of the Closing Date. (No… — per an 8-K filed 2015-12-23
+  - **Financial maintenance:** Minimum interest coverage of 3.00:1.00; and maximum total leverage multiple (maximum total leverage levels to be agreed… — per an 8-K filed 2015-12-23
+  - **Events of default:** Mandatory prepayments: (a) 50% of Excess Cash Flow, reducing to 25% at total leverage multiple of 2.50x and to 0% at 1.… — per an 8-K filed 2015-12-23
 - **Covenants — Secured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** LIBOR or Base Rate plus Applicable Margin; initial: Base Rate Loan 2.50% per annum; LIBOR Rate Loan 3.50% per annum. Th…
-  - **Maturity:** January 20, 2021 · Revolving Termination Date: January 20, 2021; final Term Loan installment due January 20, 2021 ($56,250,000.00)
-  - **Financial maintenance:** Leverage Ratio: max 3.50:1.00 (Mar 31, 2016-Dec 31, 2016), 3.25:1.00 (Mar 31 & Jun 30, 2017), 3.00:1.00 (Sep 30, 2017),…
-  - **Events of default:** Mandatory prepayments: Asset Dispositions/Events of Loss (Net Proceeds over $1,500,000/FY, with reinvestment rights); I…
+  - **Interest / coupon:** LIBOR or Base Rate plus Applicable Margin; initial: Base Rate Loan 2.50% per annum; LIBOR Rate Loan 3.50% per annum. Th… — per an 8-K filed 2016-01-25
+  - **Maturity:** January 20, 2021 · Revolving Termination Date: January 20, 2021; final Term Loan installment due January 20, 2021 ($56,250,000.00) — per an 8-K filed 2016-01-25
+  - **Financial maintenance:** Leverage Ratio: max 3.50:1.00 (Mar 31, 2016-Dec 31, 2016), 3.25:1.00 (Mar 31 & Jun 30, 2017), 3.00:1.00 (Sep 30, 2017),… — per an 8-K filed 2016-01-25
+  - **Events of default:** Mandatory prepayments: Asset Dispositions/Events of Loss (Net Proceeds over $1,500,000/FY, with reinvestment rights); I… — per an 8-K filed 2016-01-25
 
 ### Filing cross-checks — going concern · leverage basis
 

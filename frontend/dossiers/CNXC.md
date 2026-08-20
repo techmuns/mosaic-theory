@@ -405,15 +405,15 @@ _8 undated / later aggregate line item(s) in the appendix panel_
 - **Capital-structure aggregates:** term loans 1,837.5 (3 months Q1 Feb-28-2026 1,956.2 → 3 months Q2 May-31-2026 1,837.5); senior bonds 2,150.0; leases 919.4; total principal 5,519.4; total debt 5,504.3 (3 months Q2 May-31-2026) ($M) [56]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event
 - **Covenants — Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** 2.0% per annum (fixed); default rate increases by 2.0% per annum during continuing Event of Default
-  - **Maturity:** the second anniversary of the Closing Date
-  - **Events of default:** acceleration · Mandatory repurchase upon Change of Control (100% of principal plus accrued interest); mandatory repurchase from net ca…
-  - **Interest / coupon:** Interest paid in cash in Euros; computed on basis of 365/366-day year, actual days elapsed
+  - **Interest / coupon:** 2.0% per annum (fixed); default rate increases by 2.0% per annum during continuing Event of Default — per an 8-K filed 2023-03-31
+  - **Maturity:** the second anniversary of the Closing Date — per an 8-K filed 2023-03-31
+  - **Events of default:** acceleration · Mandatory repurchase upon Change of Control (100% of principal plus accrued interest); mandatory repurchase from net ca… — per an 8-K filed 2023-03-31
+  - **Interest / coupon:** Interest paid in cash in Euros; computed on basis of 365/366-day year, actual days elapsed — per an 8-K filed 2023-03-31
 - **Covenants — Senior Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Term SOFR plus Applicable Rate (Term SOFR Loans 1.25%–2.00% based on Consolidated Leverage Ratio); Base Rate plus Appli…
-  - **Maturity:** December 27, 2026 · December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A Loan); Incremental Term Loan: as spe…
-  - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during a Leverage Increase Period followin…
-  - **Events of default:** Mandatory prepayments: excess over Aggregate Revolving Commitments; 100% of Net Cash Proceeds of Material Dispositions/…
+  - **Interest / coupon:** Term SOFR plus Applicable Rate (Term SOFR Loans 1.25%–2.00% based on Consolidated Leverage Ratio); Base Rate plus Appli… — per an 8-K filed 2021-12-30
+  - **Maturity:** December 27, 2026 · December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A Loan); Incremental Term Loan: as spe… — per an 8-K filed 2021-12-30
+  - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during a Leverage Increase Period followin… — per an 8-K filed 2021-12-30
+  - **Events of default:** Mandatory prepayments: excess over Aggregate Revolving Commitments; 100% of Net Cash Proceeds of Material Dispositions/… — per an 8-K filed 2021-12-30
 
 ### Filing cross-checks — going concern · leverage basis
 

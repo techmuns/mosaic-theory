@@ -421,10 +421,10 @@ _+8 more broker-days in JSON_
   - _reconciliation: itemized $278.7M (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 200.0; leases 63.9; total principal 327.4; total debt 326.7 (3 months Q1 Apr-30-2026) ($M) [57]
 - **Covenants — Senior Secured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Term SOFR Loans: Term SOFR plus Applicable Rate (2.00%–2.50% based on Consolidated Total Leverage Ratio); Base Rate Loa…
-  - **Maturity:** October 28, 2029 · October 28, 2029
-  - **Financial maintenance:** Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest Coverage Ratio not less than 3.00:1…
-  - **Events of default:** Mandatory prepayment required if Total Revolving Outstandings exceed Aggregate Revolving Commitments (Section 2.05(b)).…
+  - **Interest / coupon:** Term SOFR Loans: Term SOFR plus Applicable Rate (2.00%–2.50% based on Consolidated Total Leverage Ratio); Base Rate Loa… — per an 8-K filed 2024-10-30
+  - **Maturity:** October 28, 2029 · October 28, 2029 — per an 8-K filed 2024-02-13, amended 2024-10-30
+  - **Financial maintenance:** Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest Coverage Ratio not less than 3.00:1… — per an 8-K filed 2024-10-30
+  - **Events of default:** Mandatory prepayment required if Total Revolving Outstandings exceed Aggregate Revolving Commitments (Section 2.05(b)).… — per an 8-K filed 2024-10-30
 
 ### Filing cross-checks — going concern · leverage basis
 

@@ -394,15 +394,15 @@ _12 undated / later aggregate line item(s) in the appendix panel_
   - _reconciliation: itemized $12,381.0M (panel A 2025 filed Feb-13-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 10,590.0; leases 1,905.0; total principal 12,495.0; total debt 12,419.0 (3 months Q1 Mar-31-2026) ($M) [62]
 - **Covenants — 2025 Convertible Notes** (governing values; full verbatim in appendix):
-  - **Conversion:** Strike Price: USD 72.5437; Cap Price: USD 95.8125; Option Entitlement: A number equal to the product of the Applicable…
-  - **Interest / coupon:** 0.875% Convertible Senior Notes due 2028
-  - **Maturity:** December 1, 2028 · 0.875% Convertible Senior Notes due 2028; Expiration Date: December 1, 2028, subject to earlier exercise
-  - **Events of default:** Additional Termination Events including: event of default under Section 6.01 of the Indenture and Convertible Notes dec…
+  - **Conversion:** Strike Price: USD 72.5437; Cap Price: USD 95.8125; Option Entitlement: A number equal to the product of the Applicable… — per an 8-K filed 2023-11-24
+  - **Interest / coupon:** 0.875% Convertible Senior Notes due 2028 — per an 8-K filed 2023-03-03, amended 2023-11-24
+  - **Maturity:** December 1, 2028 · 0.875% Convertible Senior Notes due 2028; Expiration Date: December 1, 2028, subject to earlier exercise — per an 8-K filed 2023-03-03, amended 2023-11-24
+  - **Events of default:** Additional Termination Events including: event of default under Section 6.01 of the Indenture and Convertible Notes dec… — per an 8-K filed 2023-03-03, amended 2023-11-24
 - **Covenants — 2028 Convertible Notes** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans
-  - **Maturity:** March 3, 2030 · March 3, 2030
-  - **Events of default:** Prepayment: Borrower shall prepay in full the Refinanced 2021 Refinancing Term Loans on the Amendment Effective Date. R…
-  - **Interest / coupon:** the Floor as of the Amendment No.2 Effectiveness Date shall be 0%; LIBOR Floor means 0.00%
+  - **Interest / coupon:** (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans — per an 8-K filed 2021-03-01, amended 2023-03-14
+  - **Maturity:** March 3, 2030 · March 3, 2030 — per an 8-K filed 2021-03-01, amended 2023-03-14
+  - **Events of default:** Prepayment: Borrower shall prepay in full the Refinanced 2021 Refinancing Term Loans on the Amendment Effective Date. R… — per an 8-K filed 2021-03-01, amended 2023-03-14
+  - **Interest / coupon:** the Floor as of the Amendment No.2 Effectiveness Date shall be 0%; LIBOR Floor means 0.00% — per an 8-K filed 2021-03-01
 
 ### Filing cross-checks — going concern · leverage basis
 

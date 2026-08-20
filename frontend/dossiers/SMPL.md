@@ -466,10 +466,10 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
   - _reconciliation: itemized $304.5M (panel A 2025 filed Oct-28-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 397.0 (3 months FQ2/CQ1 Feb-28-2026 396.9 → 3 months FQ3/CQ2 May-30-2026 397.0); leases 51.4; total principal 448.5; total debt 448.5 (3 months FQ3/CQ2 May-30-2026) ($M) [63]
 - **Covenants — Credit Agreement** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** LIBO Rate / ABR + 3.75% · On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior to Am…
-  - **Maturity:** July 7, 2024 · July 7, 2024
-  - **Financial maintenance:** Total Net Leverage Ratio no greater than 5.00 to 1.00 (as an Investment condition under Section 6.04(bb)); Investment b…
-  - **Events of default:** Voluntary prepayment permitted at any time without premium or penalty, except a 1.00% prepayment premium applies to Rep…
+  - **Interest / coupon:** LIBO Rate / ABR + 3.75% · On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior to Am… — per an 8-K filed 2018-03-20, amended 2019-11-07
+  - **Maturity:** July 7, 2024 · July 7, 2024 — per an 8-K filed 2019-11-07
+  - **Financial maintenance:** Total Net Leverage Ratio no greater than 5.00 to 1.00 (as an Investment condition under Section 6.04(bb)); Investment b… — per an 8-K filed 2019-11-07
+  - **Events of default:** Voluntary prepayment permitted at any time without premium or penalty, except a 1.00% prepayment premium applies to Rep… — per an 8-K filed 2018-03-20, amended 2019-11-07
 
 ### Filing cross-checks — going concern · leverage basis
 

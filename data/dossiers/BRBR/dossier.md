@@ -446,9 +446,9 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
   - _reconciliation: itemized $1,119.5M (panel A 2025 filed Nov-18-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 840.0; total principal 1,177.8; total debt 1,173.1 (3 months FQ3/CQ2 Jun-30-2026) ($M) [58]
 - **Covenants — Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans
-  - **Interest / coupon:** Eurodollar Rate floor: Revolving Credit Loans 1.00% per annum; Term Loans 0.75% per annum
-  - **Events of default:** Repricing Event within 6 months after Amendment No. 2 Effective Date: 1.00% prepayment premium on Term B Loans repriced…
+  - **Interest / coupon:** in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans — per an 8-K filed 2021-02-26
+  - **Interest / coupon:** Eurodollar Rate floor: Revolving Credit Loans 1.00% per annum; Term Loans 0.75% per annum — per an 8-K filed 2021-02-26
+  - **Events of default:** Repricing Event within 6 months after Amendment No. 2 Effective Date: 1.00% prepayment premium on Term B Loans repriced… — per an 8-K filed 2021-02-26
 
 ### Filing cross-checks — going concern · leverage basis
 
