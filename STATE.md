@@ -4829,8 +4829,19 @@ Measured on SMPL: `man["SMPL"]` was byte-identical to `man["SMPL-2026-07-27"]` (
 cannot fail its own seal check. **THE WINDOW: from any supersede whose incoming verdict is
 unsealed, until the next sealed write — which then REFUSES**, naming a mutation the writer did not
 make. Every future supersede of that shape recreates it; today's stale-entry count says nothing
-about tomorrow's. UNLOCK: re-seal unconditionally (an unsealed record seals to `chars: 0`), or key
-the manifest on the archive key rather than the ticker.
+about tomorrow's.
+**AND THE REFUSAL MISATTRIBUTES, WHICH IS WHAT MAKES IT EXPENSIVE.** It fires on the person writing
+a legitimate rationale and tells them the sealed text was MUTATED — an accusation against a write
+that did nothing wrong, for a supersede that happened weeks earlier. The next person spends a turn
+investigating their own edit. A guard that names the wrong actor costs more than one that says
+nothing.
+**UNLOCK — AND THE ONE-LINE FIX CARRIES THE DEFECT IT FIXES.** Re-sealing unconditionally seals an
+unsealed record to **`chars: 0`**, and **zero reads as "sealed, empty" rather than "not yet
+sealed"** — the absent-versus-zero class this repo has paid for five times (`no-record` vs
+`cannot-read-record`, `filer-reports-none` vs `we-could-not-fetch`, CNXC's zero, the NM refusals,
+the empty-store raise). **Keying the manifest on the RECORD ID avoids it by construction: a missing
+key means NEVER SEALED, which is a different state from a key sealing nothing.** Recorded so the
+cheaper fix is not chosen for being cheaper.
 
 **2 — THE VERDICT VOCABULARY IS LOSSY.** `VerdictStatus` is
 `pending_analyst | confirmed | overridden | passed | watch`. `confirmed`/`overridden` encode
