@@ -4446,6 +4446,105 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**OPERATOR TO-DOs — MEGACAP + NON-US-FILER (FPI) READINESS, measured from code, recorded
+2026-08-20 (OPERATOR-ACTION RULE — the assessment happened in chat, and chat is not a ledger).**
+"FPI" = SEC *foreign private issuer*, a non-US filer (20-F/6-K, IFRS) — NOT the house sense of
+"foreign figures" (another name's figures on a page, the BRBR incident); glossary line added in
+the same PR. Context: the operator asked whether the setup can underwrite megacaps
+(NFLX/GOOGL/NVDA/AMZN/AMD) and non-US names (Novo Nordisk, AstraZeneca, Nokia — plus Eli Lilly,
+a plain US filer).
+
+**READY, so the gaps below are scoped and not re-found:** followed-entry with mandatory sleeve
+(`vinci/followed.py`; a screen-candidate conflict refused at `assemble.py:399`); per-book framing
+end-to-end (`system_for`/`tool_for` sent at `synthesis.py:1199`; unknown sleeve REFUSED, no
+overshoot fallback); `Verdict.PASS` with write-time vocabulary enforcement
+(`ledger/workflow.py:52`); per-sleeve proposal legs (`dossier/verdict.py`); cap-band benchmarks
+IWM/MDY/SPY (`monitor.py:43` — V's committed page carries SPY at $665B); ADR/foreign security
+types admissible (`config.py:61` — CS/ADRC/OS/GDR); dei-based share counts with a 20-F/40-F-aware
+staleness bound (`mechanical.py:2537`); 13D/G on US-listed names. Three committed megacaps
+(V, UBER, NFLX) are the existence proof. **LLY is onboardable today on the same terms as any US
+megacap.**
+
+**THE GAPS — MC = megacap, FPI = non-US filer. Absence claims state the searches tried.**
+
+- **MC1. XBRL tag-level freshness has no guard.** `edgar/concepts.py` is ONE global
+  priority-ordered us-gaap alias list, first-present-wins, point-in-time by filed date; no
+  freshness assertion at the tag level (searched stale/STALE/coverage_status/fresh across
+  `vinci/edgar/`). **PER-TAG is the missing grain, not staleness as such** — two staleness bounds
+  DO exist and neither is per-tag: `price_staleness_days` (`config.py:93`, price coverage) and the
+  share-count age bound (`mechanical.py:2501/2517`, 180d vs 540d chosen by 20-F/40-F-vs-10-Q
+  cadence — named in the READY list above and again in FPI2). The first draft of this line said
+  "the only staleness knob is `price_staleness_days`", which its own record falsified twice in the
+  same block; the corrected claim is narrower and survives. A filer
+  that ABANDONS a tag still carries old data under it, so first-present-wins can serve a dead
+  series under a confident filed date. The GOOGL monitoring workstream reports this shape live at
+  megacaps (AMZN/META/NVDA tags years stale, MSFT untagged) — those specifics are
+  VERIFY-AT-BUILD; the CLASS is what this records. ACTION: per-tag freshness assertions before
+  any megacap's XBRL diversity is trusted.
+- **MC2. Segment ECONOMICS are not extracted — only segment revenue SHARES.** `_segment_roster`
+  (`ciq_sheets.py:1349`) reads (name, share of total revenue) for concentration; no per-segment
+  operating-income/margin series exists (searched "segment" across `vinci/` and READ every hit —
+  the roster plus GICS/peer wording; `git log --all -i --grep=segment` surfaces split/books work,
+  no extractor). Megacap theses ARE segments (AWS, Google Cloud, NVDA data-center): today their
+  economics reach the record only as synthesis prose. DECISION: does the followed-megacap book
+  justify a segment-note extractor (10-K/10-Q via the FilingSummary/R-file route), or does the
+  book accept prose-only segment evidence?
+- **MC3. No P/E-basis recipe — a P/E-framed underwrite is REFUSED today.** Recipes are R1
+  (midcycle margin × EV/EBITDA) and R2 (terminal margin × EV/EBITDA|EV/EBIT|EV/Revenue)
+  (`scenarios.py:830`, `AXES_BY_RECIPE`); no P/E basis (searched P/NTM, price_earnings,
+  pe_multiple; `git log --all -S"BASIS_PE"` — not found under those searches). Refusal is the
+  DESIGNED failure mode (#374) — nothing mangles — but a GOOGL-shape underwrite (P/NTM EPS ×
+  Bear/Base/Bull) cannot become a ScenarioRecord. **GATED behind the book-blind ruling already
+  recorded in this section** ("the UNDERWRITE layer is still book-blind" — `ScenarioRecord`
+  carries no sleeve; the green bar-test PASS chip vs `Verdict.PASS` vocabulary collision): settle
+  that ruling FIRST, then decide whether to commission a P/E recipe (declared in
+  `AXES_BY_RECIPE`; never speculatively).
+- **MC4. The CIQ parser is unproven off December fiscal years.** Header-label parsing with a
+  (kind, fiscal-year) compare (`ciq_sheets.py:1072`) SHOULD handle NVDA's late-January FY — but
+  every committed name is a December filer, so per CORPUS BEFORE SYNTHETIC it is unverified.
+  ACTION: the first non-December onboarding (NVDA) runs the real workbook and pins what it finds.
+- **FPI1. The DOSSIER altitude reads only us-gaap; the IFRS wall is already MEASURED one
+  altitude up.** `edgar/client.py:129` takes `facts["us-gaap"]`; every concept alias is us-gaap;
+  the annual reader gates on `form=="10-K"` + `units.USD` (`mechanical.py:2091`); SBC is one
+  us-gaap tag (`mechanical.py:2066`). Searched ifrs case-insensitively across `vinci/` — the only
+  source hits are the THEME altitude (`themes/exposure.py`, `themes/assay.py`), where the wall is
+  already measured and recorded (the theme-scan record "TWO STRUCTURAL FACTS, measured not
+  inferred": 20 of 32 scanned names are FPIs; **all 16 of T002 produce nothing — no us-gaap
+  total-revenue tag on IFRS filers**). NEW here is the same wall at the DOSSIER/underwrite
+  altitude: an NVO/NOK dossier assembles with every EDGAR-fed block honestly EMPTY (financial
+  backfill, SBC, guidance, events). DECISION: does non-US coverage justify an `ifrs-full` alias
+  branch PLUS a non-USD units/FX policy? The FX question is NEW to this repo — nothing prices a
+  DKK fact today. **AZN is the cheapest pilot: an IFRS filer that reports natively in USD.**
+- **FPI2. Event detection is 8-K-bound; FPIs furnish 6-K.** `forms=("8-K",)` is hardcoded at
+  `mechanical.py:281/2715/2822/2877` and is the client default (`client.py:340`); the ONE
+  20-F/40-F-aware path is the share-count staleness bound (`mechanical.py:2537`). The staler-info
+  limitation is already recorded at the SCAN altitude ("foreign issuers 18/450 read on staler
+  info… no 8-K stream"); at the dossier altitude the consequence is ZERO event coverage on FPI
+  names. ACTION: add 6-K with its OWN semantics — a 6-K is a furnish-anything wrapper, not an
+  itemized 8-K; the item-code routing does not transfer.
+- **FPI3. Section-16-exempt names: the insider signal is empty and UNLABELED.** The Form 4 scan
+  (`mechanical.py:2329`) returns nothing for FPIs forever, and the surface cannot distinguish
+  "no insider activity" from "exempt — not applicable". ACTION: an explicit N/A state keyed on
+  filer status, so absence is honest rather than quiet.
+- **FPI4. No ADS-ratio handling.** Searched ADR / American Depositary / adr_ratio /
+  ordinary-share conversion across `vinci/`, plus `git log --all -i --grep="ADR|depositary"` —
+  not found under those searches (`config.py:61` admits ADRC as a security TYPE; nothing converts
+  a ratio). Where 1 ADS ≠ 1 ordinary (AZN), a bridge mixing a filing share count with the ADR
+  price is silently wrong. ACTION: a per-name listing-basis ratio BEFORE any per-share bridge on
+  a non-1:1 name — REFUSE rather than assume 1:1.
+- **FPI5. The CIQ parser is unverified on a foreign-currency workbook.** The cap policy assumes
+  CIQ $M→USD (`mechanical.py:669`) and one section title is byte-pinned "Company Level (USD)"
+  (`ciq_sheets.py:2279`). A USD-exported workbook (CIQ converts) likely parses; a native DKK/EUR
+  export is unproven. ACTION: pilot on a real AZN (USD) export; treat DKK/EUR as its own gate.
+
+**CROSS-REFERENCE, not duplicated:** the GLP-1 demand-shift driver (#484,
+`themes/drivers.py:201`) is registered with ZERO tickers — NVO and LLY are its natural names, so
+the THEME altitude can attach them now while FPI1–FPI5 gate the DOSSIER altitude for NVO. The
+ordering that falls out: **LLY now → AZN pilot (USD IFRS) → NVDA workbook check (MC4) → NVO/NOK
+behind the FX policy (FPI1)**. MC1–MC2 bind trust in any megacap's numbers; MC3 binds any
+P/E-framed underwrite and waits on the book-blind ruling. No build is queued by this record —
+each item is an operator decision or a verify-at-onboarding gate.
+
 **QUEUE ITEMS 1, 2 AND 4 CLOSED 2026-08-18 (`fix/residue-and-brbr`) — ONE ANALYST ACTION SURVIVES.**
 - **THE PRICE-MATCH RESIDUE WAS RECURRENCE, NOT MISSING DATA (item 4).** FUBO 9.70, MVST 0.92,
   UBER 68.18, VRRM 4.18 — all LOW-PRICED names whose close simply repeats across the history, so
