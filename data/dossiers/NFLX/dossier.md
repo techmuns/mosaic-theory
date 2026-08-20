@@ -409,25 +409,25 @@ _16 undated / later aggregate line item(s) in the appendix panel_
   - _reconciliation: itemized $17,032.0M (panel A 2025 filed Jan-23-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 14,372.0; leases 2,330.4; total principal 16,702.4; total debt 16,654.7 (3 months Q2 Jun-30-2026) ($M) [58]
 - **Covenants — Senior Unsecured Bridge Term Loan Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** 5.875%
-  - **Maturity:** November 15, 2028 · November 15, 2028
-  - **Events of default:** Change of Control: Offer to purchase at price of 101% of principal plus accrued interest
-  - **Interest / coupon:** May 15 and November 15 of each year, commencing November 15, 2018
+  - **Interest / coupon:** 5.875% — per an 8-K filed 2018-04-26
+  - **Maturity:** November 15, 2028 · November 15, 2028 — per an 8-K filed 2018-04-26
+  - **Events of default:** Change of Control: Offer to purchase at price of 101% of principal plus accrued interest — per an 8-K filed 2018-04-26
+  - **Interest / coupon:** May 15 and November 15 of each year, commencing November 15, 2018 — per an 8-K filed 2018-04-26
 - **Covenants — Senior Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing: Term SOFR Rate for the Interest Perio…
-  - **Maturity:** December 19, 2025 · The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Ag…
-  - **Financial maintenance:** Consolidated EBITDA to Consolidated Interest Expense ratio not less than 3.00:1.00, tested as of the end of each fiscal…
-  - **Events of default:** acceleration · Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Revolving Commitments, Borrower shall…
+  - **Interest / coupon:** ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing: Term SOFR Rate for the Interest Perio… — per an 8-K filed 2025-12-22
+  - **Maturity:** December 19, 2025 · The earliest of (a) the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Ag… — per an 8-K filed 2025-12-22
+  - **Financial maintenance:** Consolidated EBITDA to Consolidated Interest Expense ratio not less than 3.00:1.00, tested as of the end of each fiscal… — per an 8-K filed 2025-12-22
+  - **Events of default:** acceleration · Mandatory prepayment (Section 2.08(c)): if Aggregate Total Exposure exceeds total Revolving Commitments, Borrower shall… — per an 8-K filed 2025-12-22
 - **Covenants — Unsecured Delayed Draw Term Loan Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Term SOFR Rate + 0.75% (Floor 0.00%) · the ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin. “Applicable Margin” means a perce…
-  - **Maturity:** The date that is 364 days after the Closing Date
-  - **Financial maintenance:** Financial Covenants: Substantially the same as the Existing Credit Agreement, subject, in each case, to the Documentati…
-  - **Events of default:** Mandatory Commitment Reduction/Prepayment on Dollar-for-Dollar basis for: (1) Incurrence of Indebtedness (100% of commi…
+  - **Interest / coupon:** Term SOFR Rate + 0.75% (Floor 0.00%) · the ABR plus the Applicable Margin; or the Term SOFR Rate plus the Applicable Margin. “Applicable Margin” means a perce… — per an 8-K filed 2025-12-05
+  - **Maturity:** The date that is 364 days after the Closing Date — per an 8-K filed 2025-12-05
+  - **Financial maintenance:** Financial Covenants: Substantially the same as the Existing Credit Agreement, subject, in each case, to the Documentati… — per an 8-K filed 2025-12-05
+  - **Events of default:** Mandatory Commitment Reduction/Prepayment on Dollar-for-Dollar basis for: (1) Incurrence of Indebtedness (100% of commi… — per an 8-K filed 2025-12-05
 - **Covenants — Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Adjusted LIBO Rate + 0.75% · Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate of 0.75% per annum; ABR Borrowing: Alternate Base Rate pl…
-  - **Maturity:** June 17, 2026 · June 17, 2026 (amended from March 29, 2024)
-  - **Financial maintenance:** No traditional financial-maintenance covenant (e.g., leverage/coverage ratio to be maintained). Incurrence-based Aggreg…
-  - **Events of default:** Mandatory prepayment: (i) Section 2.08(c) — prepay if Aggregate Total Exposure exceeds total Commitments; (ii) Section…
+  - **Interest / coupon:** Adjusted LIBO Rate + 0.75% · Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate of 0.75% per annum; ABR Borrowing: Alternate Base Rate pl… — per an 8-K filed 2021-06-17
+  - **Maturity:** June 17, 2026 · June 17, 2026 (amended from March 29, 2024) — per an 8-K filed 2021-06-17
+  - **Financial maintenance:** No traditional financial-maintenance covenant (e.g., leverage/coverage ratio to be maintained). Incurrence-based Aggreg… — per an 8-K filed 2021-06-17
+  - **Events of default:** Mandatory prepayment: (i) Section 2.08(c) — prepay if Aggregate Total Exposure exceeds total Commitments; (ii) Section… — per an 8-K filed 2021-06-17
 
 ### Filing cross-checks — going concern · leverage basis
 

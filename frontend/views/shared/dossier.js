@@ -2448,11 +2448,33 @@ function clipTrim(s, n) {
 // a 1-line events-of-default), each leading with its extractable value then a ≤120-char clause.
 // Debt families only — the RSU/equity-incentive family is appendix-only. Returns "" when there are no
 // governing rows (the appendix carries the full detail). Mirrors the per-family grouping in the md.
+// (K1b) The FILING a covenant value was read from — mirrors render._covenant_source_suffix.
+// EPAM's digest read "Expiration Date: October 21, 2026" from a 2017 8-K against a panel saying
+// Due 2030, and nothing on the page said which filing it came from. A dated source makes a stale
+// read obvious beside the panel without the reader knowing the pointer set is mis-ordered.
+// An unmatched accession yields NOTHING rather than a guessed date.
+const _ACC_IN_REF = /(\d{10}-\d{2}-\d{6})/;
+
+function covenantSourceSuffix(g, dates) {
+  const m = _ACC_IN_REF.exec(String(g.base_ref || ""));
+  const base = m ? dates[m[1]] : null;
+  const amended = (g.amended_by || []).map((a) => dates[a]).filter(Boolean).sort();
+  if (!base && !amended.length) return "";
+  const newest = amended.length ? amended[amended.length - 1] : null;
+  if (!base) return ` — per an 8-K filed ${newest}`;
+  return ` — per an 8-K filed ${base}${newest ? `, amended ${newest}` : ""}`;
+}
+
 function covenantSummary(cs) {
   const rs = cs.covenant_term_rows;
   if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length) return "";
   const ptrs = cs.covenant_pointer_rows;
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
+  // accession -> filing_date, so each governing value can name the filing it was read from
+  const _pdates = {};
+  for (const pt of (ptrs && ptrs.value) || []) {
+    if (pt.accession && pt.filing_date) _pdates[pt.accession] = pt.filing_date;
+  }
   const fams = [];
   for (const g of gov) {
     const fl = (g.fam || "").toLowerCase();
@@ -2471,7 +2493,8 @@ function covenantSummary(cs) {
       const raw = String(v.value);
       const lead = covenantValueLead(label, raw, g);  // (K1) lead with the extractable value
       const clause = lead ? `${lead} · ${clip120(raw)}` : clip120(raw);
-      parts.push(`<li><b>${escapeHtml(label)}:</b> ${escapeHtml(clause)}</li>`);
+      parts.push(`<li><b>${escapeHtml(label)}:</b> ` +
+        `${escapeHtml(clause + covenantSourceSuffix(g, _pdates))}</li>`);
     }
     if (parts.length) {
       out += `<div class="fact"><div class="fact-label">Covenants — ${escapeHtml(fam)} ` +

@@ -447,10 +447,10 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
   - _reconciliation: itemized $143.7M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** leases 127.2; total principal 152.2; total debt 152.2 (3 months Q2 Jun-30-2026) ($M) [57]
 - **Covenants — Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Base Rate + Applicable Margin, or Adjusted Eurocurrency Rate (LIBOR Rate / CDOR) + Applicable Margin. Applicable Margin…
-  - **Maturity:** October 21, 2026 · October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1
-  - **Financial maintenance:** Maximum Consolidated Leverage Ratio not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for four fiscal…
-  - **Events of default:** Mandatory Prepayments (Section 5.3): (a)-(b) Reserved; (d) if Alternative Currency Loans and Letter of Credit Obligatio…
+  - **Interest / coupon:** Base Rate + Applicable Margin, or Adjusted Eurocurrency Rate (LIBOR Rate / CDOR) + Applicable Margin. Applicable Margin… — per an 8-K filed 2017-05-26, amended 2021-10-25
+  - **Maturity:** October 21, 2026 · October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1 — per an 8-K filed 2017-05-26, amended 2021-10-25
+  - **Financial maintenance:** Maximum Consolidated Leverage Ratio not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for four fiscal… — per an 8-K filed 2017-05-26, amended 2021-10-25
+  - **Events of default:** Mandatory Prepayments (Section 5.3): (a)-(b) Reserved; (d) if Alternative Currency Loans and Letter of Credit Obligatio… — per an 8-K filed 2017-05-26, amended 2021-10-25
 
 ### Filing cross-checks — going concern · leverage basis
 

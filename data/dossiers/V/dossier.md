@@ -414,11 +414,11 @@ _16 undated / later aggregate line item(s) in the appendix panel_
 - **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months FQ3/CQ2 Jun-30-2026) ($M) [56]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event
 - **Covenants — Unsecured Revolving Credit Facility** (governing values; full verbatim in appendix):
-  - **Conversion:** 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share (UK&I Mem…
-  - **Interest / coupon:** Interest payable on the Pre-Interest Deferred Cash Amount = €124,864,000.00 (no rate stated)
-  - **Maturity:** Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside Closing Date
-  - **Financial maintenance:** Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal qu…
-  - **Events of default:** Termination: upon proper termination of the Transaction Agreement prior to Closing under Section 8.1, this Amendment au…
+  - **Conversion:** 2,480,500 shares of Visa Inc. Series B Convertible Participating Preferred Stock, par value $0.0001 per share (UK&I Mem… — per an 8-K filed 2016-05-10
+  - **Interest / coupon:** Interest payable on the Pre-Interest Deferred Cash Amount = €124,864,000.00 (no rate stated) — per an 8-K filed 2013-01-31, amended 2016-05-10
+  - **Maturity:** Deferred Cash Consideration payable on the third (3rd) anniversary of the Outside Closing Date — per an 8-K filed 2013-01-31, amended 2016-05-10
+  - **Financial maintenance:** Consolidated Indebtedness to Consolidated EBITDA Ratio not greater than 3.75 to 1.0 as of the last day of any fiscal qu… — per an 8-K filed 2013-01-31
+  - **Events of default:** Termination: upon proper termination of the Transaction Agreement prior to Closing under Section 8.1, this Amendment au… — per an 8-K filed 2013-01-31, amended 2016-05-10
 
 ### Filing cross-checks — going concern · leverage basis
 

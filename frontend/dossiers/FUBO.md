@@ -387,8 +387,8 @@ _3 undated / later aggregate line item(s) in the appendix panel_
   - _reconciliation: itemized $355.2M (panel Q3 2026 filed Aug-05-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 322.8; leases 32.4; total principal 355.3; total debt 402.7 (3 months FQ3/CQ2 Jun-30-2026) ($M) [53]
 - **Covenants — 2029 Convertible Notes** (governing values; full verbatim in appendix):
-  - **Conversion:** The New Notes will be convertible into shares of Common Stock, cash or a combination of shares of Common Stock and cash…
-  - **Maturity:** Convertible Senior Secured Notes due 2029 (New Notes); Existing Notes are the Company's 3.25% Convertible Senior Notes…
+  - **Conversion:** The New Notes will be convertible into shares of Common Stock, cash or a combination of shares of Common Stock and cash… — per an 8-K filed 2024-01-02
+  - **Maturity:** Convertible Senior Secured Notes due 2029 (New Notes); Existing Notes are the Company's 3.25% Convertible Senior Notes… — per an 8-K filed 2024-01-02
 
 ### Filing cross-checks — going concern · leverage basis
 

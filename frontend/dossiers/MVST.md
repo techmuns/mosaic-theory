@@ -441,18 +441,18 @@ _2 undated / later aggregate line item(s) in the appendix panel_
 - **Capital-structure aggregates:** term loans 118.5 (3 months Q1 Mar-31-2026 215.2 → 3 months Q2 Jun-30-2026 118.5); senior bonds 56.9; leases 17.5; total principal 192.9; total debt 193.0 (3 months Q2 Jun-30-2026) ($M) [55]
 - **Maturity resolution (8-K verbatim):** On May 28, 2026, Mr. Wu delivered a Notice of Conversion in respect of the full $25.0 million principal amount outstanding under the Loan Agreement. Such principal amount will be converted into shares of common stock of the Company in accordance with the terms of the Loan Agreement. [33]
 - **Covenants — Convertible Bond** (governing values; full verbatim in appendix):
-  - **Conversion:** any conversion of the Convertible Loans into Conversion Shares pursuant to Section 3.2(c)(iii) will only occur in conne…
-  - **Interest / coupon:** non-interest bearing term loan facility
-  - **Events of default:** MPS shall repay in full any remaining portion of the CL Amount within five Business Days of receipt of Required Approva…
+  - **Conversion:** any conversion of the Convertible Loans into Conversion Shares pursuant to Section 3.2(c)(iii) will only occur in conne… — per an 8-K filed 2021-02-05
+  - **Interest / coupon:** non-interest bearing term loan facility — per an 8-K filed 2021-02-05
+  - **Events of default:** MPS shall repay in full any remaining portion of the CL Amount within five Business Days of receipt of Required Approva… — per an 8-K filed 2021-02-05
 - **Covenants — Convertible Loan** (governing values; full verbatim in appendix):
-  - **Maturity:** November 28, 2025 · clause (a) of the definition of “Maturity Date” amended from “November 28, 2025” to “May 28, 2026”
-  - **Events of default:** Condition to effectiveness: no Default or Event of Default shall have occurred and be continuing or be caused by this A…
+  - **Maturity:** November 28, 2025 · clause (a) of the definition of “Maturity Date” amended from “November 28, 2025” to “May 28, 2026” — per an 8-K filed 2025-03-17
+  - **Events of default:** Condition to effectiveness: no Default or Event of Default shall have occurred and be continuing or be caused by this A… — per an 8-K filed 2025-03-17
 - **Covenants — Loan Facilities Agreement** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** LPR + 115 bps · Floating rate: one-year LPR published by the National Interbank Funding Center Plus 115 bps, reset every 12 months (res…
-  - **Interest / coupon:** Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation Default Interest Rate: 200% of applicabl…
-  - **Maturity:** December 10, 2026 · December 10, 2026 (5 years in total)
-  - **Financial maintenance:** Article 14.1(9) 'Financial indicator': 'The Borrower shall meet the following financial indicators: [/]' — the specific…
-  - **Events of default:** 12 enumerated; acceleration · Events of Default (Article 15.1): 1. Misrepresentation; 2. Breach of contract or other obligations; 3. Payment default;…
+  - **Interest / coupon:** LPR + 115 bps · Floating rate: one-year LPR published by the National Interbank Funding Center Plus 115 bps, reset every 12 months (res… — per an 8-K filed 2022-09-29
+  - **Interest / coupon:** Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation Default Interest Rate: 200% of applicabl… — per an 8-K filed 2022-09-29
+  - **Maturity:** December 10, 2026 · December 10, 2026 (5 years in total) — per an 8-K filed 2022-09-29
+  - **Financial maintenance:** Article 14.1(9) 'Financial indicator': 'The Borrower shall meet the following financial indicators: [/]' — the specific… — per an 8-K filed 2022-09-29
+  - **Events of default:** 12 enumerated; acceleration · Events of Default (Article 15.1): 1. Misrepresentation; 2. Breach of contract or other obligations; 3. Payment default;… — per an 8-K filed 2022-09-29
 
 ### Filing cross-checks — going concern · leverage basis
 
