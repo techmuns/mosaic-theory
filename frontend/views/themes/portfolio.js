@@ -5,13 +5,18 @@
 // only — full fidelity lives on the theme page; drivers lazy-load on first expand so the glance
 // stays cheap at 10+ themes), and the RADAR INTAKE strip (pre-freeze funnel state + the way in).
 import { getThemesIndex, getThemeDriver, getRadarCandidates, getRadarInbox } from "../../lib/snapshots.js";
-import { fmtInt, fmtDate, DASH, escapeHtml, gradeBucket } from "../../lib/format.js";
+import { fmtInt, fmtDate, DASH, escapeHtml, gradeBucket, tierPill } from "../../lib/format.js";
 
 // The verdict/scan key — the grade-vs-verdict distinction. VERDICT is the ANALYST's call; SCAN is the
-// MACHINE's read of firmness. The Buy bar is the fund's ≥2:1 reward-to-risk bar (never 3:1).
+// MACHINE's read of firmness.
+// THE BAR SENTENCE WAS STALE FROM THE DAY THE LADDER SHIPPED (review, #489): it asserted a single
+// ≥2:1 line while #487 made ≥1.75:1 the ELIGIBILITY line and ≥2:1 the PREFERRED rung, so a name
+// that is eligible-but-not-preferred read as failing here and passing on its own card. Both lines
+// are now named, and neither is stated as the thing a Buy "cleared" — the analyst's verdict is.
 const VS_KEY = `<div class="vs-key">
   <div class="vs-key-row"><span class="vs-key-tag verdict">Verdict · analyst</span>
-    <span><b>Buys</b> cleared the fund's ≥2:1 bar (reward-to-risk) · <b>Watch</b> = real exposure that
+    <span><b>Buys</b> are the analyst's call; the machine's reward-to-risk read is tiered —
+    eligible ≥1.75:1, preferred ≥2:1 · <b>Watch</b> = real exposure that
     failed only on price / materiality, carries a re-underwrite trigger</span></div>
   <div class="vs-key-row"><span class="vs-key-tag scan">Scan · machine read</span>
     <span><b>firm</b> = contracted / quantified · <b>partial</b> = real activity, not contracted ·
@@ -24,8 +29,12 @@ function wlLine(n, meta) {
   const c = n.scenarioCard;
   const v = (c && c.verdict) || {};
   const trig = c && (v.reunderwriteTriggers || []).length
-    ? `${v.status ? `<span class="pill conditional">${escapeHtml(v.status)}</span> ` : ""}${c.passFail
-        ? `<span class="pill ${c.passFail === "PASS" ? "buy" : "avoid"}">${escapeHtml(c.passFail)}</span> ` : ""}` +
+    // TIER FIRST, legacy boolean second — the same precedence uw-card.js uses, so one name cannot
+    // read red here and green on its card. A pre-ladder record has no tier and keeps its PASS/FAIL.
+    ? `${v.status ? `<span class="pill conditional">${escapeHtml(v.status)}</span> ` : ""}${c.asymmetryTier
+        ? `${tierPill(c.asymmetryTier)} `
+        : c.passFail
+          ? `<span class="pill ${c.passFail === "PASS" ? "buy" : "avoid"}">${escapeHtml(c.passFail)}</span> ` : ""}` +
       escapeHtml(v.reunderwriteTriggers[0])
     : escapeHtml(oneLine(n.trigger));
   return `<div class="wl-line">

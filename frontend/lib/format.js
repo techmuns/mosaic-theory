@@ -105,3 +105,26 @@ export const GRADE_BUCKET = {
 export function gradeBucket(basis) {
   return GRADE_BUCKET[String(basis)] || "none";
 }
+
+// THE TIERED LADDER's display vocabulary (#487), living HERE and not in a view — `uw-card.js`
+// and `themes/portfolio.js` both render it, and a second copy is how the grade-bucket trio came
+// to need a three-way parity pin. Labels are the UI's pill caps; render.py carries the md-prose
+// wording separately and deliberately (different register, same keys — pinned).
+export const TIER_LABEL = {
+  poor: "POOR", below_target: "BELOW TARGET", target_met: "TARGET MET",
+  preferred: "PREFERRED", fails: "FAILS", minimum_met: "MINIMUM MET", undefined: "UNDEFINED",
+};
+// EXPLICIT PER TIER — never a ternary with a fallthrough. The first cut defaulted anything
+// unlisted to red `avoid`, so a tier added to the enum would have rendered as a FAILURE at a
+// reader until someone noticed (review, #489). An unknown key now renders neutral.
+export const TIER_TONE = {
+  poor: "avoid", below_target: "avoid", fails: "avoid",
+  target_met: "buy", minimum_met: "buy", preferred: "buy",
+  undefined: "unresolved",
+};
+export function tierPill(tier) {
+  if (!tier) return "";
+  const key = String(tier);
+  const cls = TIER_TONE[key] || "unresolved";
+  return ` <span class="pill ${cls} uw-mini">${escapeHtml(TIER_LABEL[key] || key)}</span>`;
+}

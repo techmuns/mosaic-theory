@@ -18,9 +18,11 @@ IT pins the determinate-false AND: ratio below the line + IRR undefined → Fals
 """
 from __future__ import annotations
 
+import functools
 import importlib.util
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -30,10 +32,19 @@ from vinci.dossier.render import _underwrite_lines
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = sorted(p for p in (ROOT / "scenarios").glob("*.json") if not p.name.startswith("_"))
 
-_spec = importlib.util.spec_from_file_location("_tg_build", ROOT / "frontend" / "build.py")
-assert _spec and _spec.loader
-_BUILD = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_BUILD)
+
+
+@functools.lru_cache(maxsize=1)
+def _build() -> Any:
+    """`frontend/build.py` loaded lazily, matching the six other test files that exec it (mine
+    was the only module-level load — review, #487). build.py is `__main__`-guarded so importing
+    it is side-effect-free either way; the cost of the outlier is that an import-time failure
+    there would break COLLECTION of this file rather than one test."""
+    spec = importlib.util.spec_from_file_location("_tg_build", ROOT / "frontend" / "build.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 #: Every camelCase key the ladder adds to the display card. Named ONCE here so the three pins
 #: (absent-on-legacy, present-on-new-regime, rendered-by-the-view) cannot drift apart.
@@ -217,7 +228,7 @@ def test_committed_records_carry_no_regime_and_their_cards_gain_no_keys(path: Pa
         f"{path.name} carries a regime stamp on disk — the sealed book was supposed to freeze")
     r = _load(path)
     assert r.result is not None and r.result.gate_regime is None
-    card = _BUILD._scenario_card(rec, {})
+    card = _build()._scenario_card(rec, {})
     leaked = [k for k in NEW_CARD_KEYS if k in card]
     assert not leaked, f"legacy card gained ladder keys {leaked} — byte-identical rule broken"
 
@@ -227,7 +238,7 @@ def test_a_new_regime_card_emits_the_keys_and_the_view_renders_them() -> None:
     named in uw-card.js — the card-key parity discipline, asserted here for the new keys since
     the committed corpus cannot exercise them yet."""
     rec = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
-    card = _BUILD._scenario_card(json.loads(rec.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(rec.model_dump_json()), {})
     for k in ("gateRegime", "asymmetryTier", "returnTier", "eligible", "eligibleRatio",
               "eligibleIrr", "ceilingEligible", "irrConvention"):
         assert k in card, f"new-regime card is missing {k}"
@@ -241,7 +252,7 @@ def test_eligible_false_reaches_the_card() -> None:
     """False is a REAL answer and must not be dropped by a truthiness emit — the three-state
     trap named in build.py's own comment, pinned on EPAM's recomputed card."""
     rec = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "EPAM.json")))
-    card = _BUILD._scenario_card(json.loads(rec.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(rec.model_dump_json()), {})
     assert card.get("gateRegime") and card.get("eligible") is False
 
 
@@ -291,7 +302,7 @@ def test_the_rendered_card_shows_tiers_on_new_records_and_the_regime_on_old(
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     fresh = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
-    card = _BUILD._scenario_card(json.loads(fresh.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(fresh.model_dump_json()), {})
     fresh_path = tmp_path / "fresh_card.json"
     fresh_path.write_text(json.dumps(card))
     driver = r"""
@@ -359,3 +370,164 @@ def test_scenario_create_is_the_migration_path() -> None:
     assert "run_recipe" in create, "scenario-create no longer runs the engine — migration path gone"
     assert "run_recipe" not in supersede, (
         "supersede now runs the engine — the corrected STATE claim and the test above are stale")
+
+
+def test_every_tier_map_covers_the_whole_enum_in_both_languages() -> None:
+    r"""THE MIRROR, pinned the way this repo pins every other one (`test_med3_tier_bucket_trio_
+    agree` is the precedent). The maps are deliberately DIFFERENT presentations — md prose
+    ("below target") vs UI pill caps ("BELOW TARGET") — so their VALUES must not be compared.
+    Their KEY SETS must each cover the enum, or a newly added tier renders as a raw token, or
+    (worse) as the wrong COLOUR.
+
+    TWO FIXES FROM REVIEW #489 ARE PINNED HERE. (1) `TIER_TONE` is checked at all — the first cut
+    covered only the label maps, while the tone was a ternary that fell through to red `avoid`
+    for anything unlisted, so a new tier would have rendered as a FAILURE at a reader. (2) The JS
+    key regex tolerates QUOTED keys: `{poor: …}` and `{"poor": …}` are both valid JS, and the
+    first cut's `(\w+):` matched zero keys on the quoted form — reddening this pin on a
+    legitimate restyle, which is how a guard gets weakened instead of heeded.
+    """
+    import re
+    import typing
+
+    enum_vals = set(typing.get_args(sc.AsymmetryTier)) | set(typing.get_args(sc.ReturnTier))
+
+    py_src = (ROOT / "vinci" / "dossier" / "render.py").read_text()
+    py_map = re.search(r"_tl = \{(.*?)\}", py_src, re.S)
+    assert py_map, "render.py no longer carries the _tl humanisation map"
+    py_keys = set(re.findall(r'"(\w+)"\s*:', py_map.group(1)))
+    assert not enum_vals - py_keys, f"render.py _tl misses {sorted(enum_vals - py_keys)}"
+
+    js_src = (ROOT / "frontend" / "lib" / "format.js").read_text()
+    for name in ("TIER_LABEL", "TIER_TONE"):
+        block = re.search(rf"{name} = \{{(.*?)\}};", js_src, re.S)
+        assert block, f"format.js no longer carries {name}"
+        # quoted OR bare keys — both are valid JS and neither may silently read as zero keys
+        keys = set(re.findall(r'["\']?(\w+)["\']?\s*:', block.group(1)))
+        assert not enum_vals - keys, f"format.js {name} misses {sorted(enum_vals - keys)}"
+
+    # the tone map may only emit classes the stylesheet knows — a typo renders unstyled
+    tone = re.search(r"TIER_TONE = \{(.*?)\};", js_src, re.S)
+    assert tone
+    tones = set(re.findall(r':\s*"(\w+)"', tone.group(1)))
+    assert tones <= {"buy", "avoid", "unresolved"}, f"unknown pill class in TIER_TONE: {tones}"
+
+
+def test_the_tier_vocabulary_has_exactly_one_js_home() -> None:
+    """REUSE, enforced (review, #489): `uw-card.js` and `themes/portfolio.js` both render tier
+    pills, and a second copy is precisely how the grade-bucket trio came to need a three-way
+    parity pin. The definition lives in `lib/format.js`; the views import it."""
+    fmt = (ROOT / "frontend" / "lib" / "format.js").read_text()
+    assert "export function tierPill" in fmt, "tierPill left its shared home"
+    for view in ("views/shared/uw-card.js", "views/themes/portfolio.js"):
+        src = (ROOT / "frontend" / view).read_text()
+        assert "tierPill" in src and "lib/format.js" in src, f"{view} does not use the shared pill"
+        assert "const TIER_LABEL" not in src and "const TIER_TONE" not in src, (
+            f"{view} re-declares the tier vocabulary — one home, imported")
+
+
+def test_the_themes_watchlist_does_not_contradict_the_card() -> None:
+    """The stale-legend finding (#489). The themes key asserted a single "≥2:1 bar" that a Buy
+    had "cleared" — false since #487 made ≥1.75:1 the eligibility line — so an eligible-but-not-
+    preferred name read as failing there and passing on its card. Both lines must be named."""
+    src = (ROOT / "frontend" / "views" / "themes" / "portfolio.js").read_text()
+    assert "cleared the fund's ≥2:1 bar" not in src, "the stale single-bar claim is back"
+    assert "1.75" in src and "≥2:1" in src, "the key must name BOTH lines"
+    assert "asymmetryTier" in src, "the watchlist must prefer the tier over the legacy boolean"
+
+
+def test_a_stamped_record_with_null_thresholds_still_renders() -> None:
+    """THE CRASH (#489). `gate_regime` does NOT imply the thresholds: `scenario-supersede` writes
+    the incoming payload's `result` VERBATIM (pinned above), so a hand-authored payload can carry
+    a regime stamp beside null `eligible_ratio`/`eligible_irr`. Formatting those raised
+    `TypeError: unsupported format string passed to NoneType.__format__` and took the WHOLE md /
+    PDF render down — an export killed by a record shape a supported command produces."""
+    fresh = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
+    assert fresh.result is not None
+    holed = fresh.result.model_copy(update={"eligible_ratio": None, "eligible_irr": None})
+    md = "\n".join(_underwrite_lines(fresh.model_copy(update={"result": holed})))
+    assert "ELIGIBLE" in md and "thresholds unstated" in md, (
+        "the eligibility line must render honestly without its thresholds, not crash or vanish")
+    # and the normal case still prints the numbers
+    full = "\n".join(_underwrite_lines(fresh))
+    assert "≥1.75:1" in full and "≥12%" in full
+
+
+def test_an_earlier_regime_is_frozen_not_re_judged() -> None:
+    """THE FREEZE, FOR THE *NEXT* REGIME (#489). The guard was `gate_regime is None`, which
+    protects only PRE-LADDER records — so the day GATE_REGIME advances, every sealed 2026-08-21
+    record would be silently re-judged against the new constants on its next refresh.
+
+    Simulated by stamping a record with a regime that is not the current one: its ladder must
+    survive recompute BYTE-FOR-BYTE (its own regime, its own thresholds, its own tiers), while
+    the non-ladder fields still recompute normally."""
+    fresh = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
+    assert fresh.result is not None
+    old_regime = fresh.result.model_copy(update={
+        "gate_regime": "2019-01-01", "eligible_ratio": 3.0, "eligible_irr": 0.30,
+        "asymmetry_tier": "below_target", "return_tier": "fails", "eligible": False})
+    out = sc.run_recipe(fresh.model_copy(update={"result": old_regime}))
+    assert out.result is not None
+    for f in sc.LADDER_FIELDS:
+        assert getattr(out.result, f) == getattr(old_regime, f), (
+            f"{f} was re-judged under the current regime — a sealed record must keep the "
+            f"thresholds it was judged against")
+    # the non-ladder half still recomputes
+    assert out.result.ratio == fresh.result.ratio and out.result.pass_fail == fresh.result.pass_fail
+
+
+def test_the_current_regime_still_recomputes_its_tiers() -> None:
+    """The other side of that guard: a record already on the CURRENT regime must re-tier when its
+    legs move, or a refresh would leave a stale tier beside a fresh ratio."""
+    fresh = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
+    assert fresh.result is not None and fresh.result.asymmetry_tier == "preferred"
+    lied = fresh.result.model_copy(update={"asymmetry_tier": "poor", "eligible": False})
+    out = sc.run_recipe(fresh.model_copy(update={"result": lied}))
+    assert out.result is not None
+    assert out.result.asymmetry_tier == "preferred" and out.result.eligible is True, (
+        "a current-regime record must re-tier on recompute")
+
+
+def test_tier_pill_renders_the_right_tone_for_every_tier() -> None:
+    """PIN THE RENDERED PILL, NOT THE MAP (#489, second pass). The map-coverage pin above did NOT
+    kill a mutation that reverted `tierPill` to a ternary falling through to red `avoid` — the map
+    stayed complete and simply stopped being read, which is the pin-the-helper trap: a guard on the
+    definition survives the call site being deleted.
+
+    So this EXECUTES the pill for every enum value and asserts the class in the emitted HTML. The
+    load-bearing case is `target_met`/`minimum_met`: those are PASSING rungs, and rendering them
+    red would tell a reader an eligible name had failed."""
+    import shutil
+    import subprocess
+    import typing
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    tiers = sorted(set(typing.get_args(sc.AsymmetryTier)) | set(typing.get_args(sc.ReturnTier)))
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const { tierPill } = await import(pathToFileURL(path.resolve("frontend/lib/format.js")).href);
+const out = {};
+for (const t of JSON.parse(process.argv[1])) {
+  const html = tierPill(t);
+  const m = html.match(/class="pill (\w+)/);
+  out[t] = m ? m[1] : null;
+}
+out["__unknown__"] = (tierPill("a_tier_nobody_added_yet").match(/class="pill (\w+)/) || [])[1];
+out["__empty__"] = tierPill("") === "" && tierPill(null) === "";
+console.log(JSON.stringify(out));
+"""
+    res = json.loads(subprocess.run(
+        ["node", "--input-type=module", "-e", driver, json.dumps(tiers)],
+        capture_output=True, text=True, check=True, cwd=ROOT).stdout.strip().splitlines()[-1])
+
+    expected = {"poor": "avoid", "below_target": "avoid", "fails": "avoid",
+                "target_met": "buy", "minimum_met": "buy", "preferred": "buy",
+                "undefined": "unresolved"}
+    for tier in tiers:
+        assert res[tier] == expected[tier], (
+            f"{tier} rendered as {res[tier]!r}, expected {expected[tier]!r} — a passing rung "
+            f"shown in the failure colour tells a reader the opposite of the truth")
+    assert res["__unknown__"] == "unresolved", (
+        "an unlisted tier must render NEUTRAL, never as a failure — the fallthrough this fixed")
+    assert res["__empty__"], "an absent tier must render nothing at all"

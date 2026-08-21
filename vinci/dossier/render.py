@@ -2869,10 +2869,19 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
                "undefined": "UNDEFINED"}
         tier_bits = [f"**Asymmetry** {_tl.get(r.asymmetry_tier or 'undefined', r.asymmetry_tier)}",
                      f"**Return** {_tl.get(r.return_tier or 'undefined', r.return_tier)}"]
+        # THE THRESHOLDS ARE FORMATTED ONLY IF THEY EXIST. `gate_regime` does NOT imply them:
+        # `scenario-supersede` writes the incoming payload's `result` VERBATIM (pinned in
+        # test_tiered_gates), so a hand-authored payload can carry a regime stamp beside null
+        # thresholds. Formatting those raised `TypeError: unsupported format string passed to
+        # NoneType.__format__` and took the WHOLE md/PDF render down with it — a crash in the
+        # export, from a record shape a supported command can produce (review, #489).
+        _lines = (f"≥{r.eligible_ratio:g}:1 & ≥{r.eligible_irr:.0%}"
+                  if r.eligible_ratio is not None and r.eligible_irr is not None else None)
         if r.eligible is True:
-            el = f"ELIGIBLE (≥{r.eligible_ratio:g}:1 & ≥{r.eligible_irr:.0%})"
+            el = f"ELIGIBLE ({_lines})" if _lines else "ELIGIBLE (thresholds unstated)"
         elif r.eligible is False:
-            el = f"BELOW ELIGIBILITY (needs ≥{r.eligible_ratio:g}:1 & ≥{r.eligible_irr:.0%})"
+            el = (f"BELOW ELIGIBILITY (needs {_lines})" if _lines
+                  else "BELOW ELIGIBILITY (thresholds unstated)")
         else:
             el = f"eligibility UNDEFINED — {r.eligible_undefined or 'input missing'}"
         tier_bits.append(f"**Eligibility** {el}")
