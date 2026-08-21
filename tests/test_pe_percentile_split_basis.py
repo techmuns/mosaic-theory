@@ -27,6 +27,7 @@ from vinci.schemas.envelope import CoverageStatus
 from vinci.screens.assemble import (
     G3_REASONS,
     G3_SPLIT_BASIS,
+    MAX_EPS_AGE_DAYS,
     pe_current_and_percentile,
     share_basis_change,
 )
@@ -182,8 +183,11 @@ def test_the_new_reason_is_in_the_taxonomy() -> None:
     assert G3_SPLIT_BASIS in G3_REASONS
 
 
-#: The trailing-range window the production call site uses, against the committed fleet's as-of.
-_WINDOW_START = date(2026, 8, 14) - timedelta(days=1825)
+#: The trailing-range window the production call site uses, against the committed fleet's as-of —
+#: THE RANGE PLUS THE EPS REACH-BACK (review of #490), because the range's observations are built
+#: from `annual_eps_as_of(bar_date)`, which reaches back up to `MAX_EPS_AGE_DAYS` past a period
+#: end. Windowing on the range alone drops periods the range actually consumes.
+_WINDOW_START = date(2026, 8, 14) - timedelta(days=1825 + MAX_EPS_AGE_DAYS)
 
 
 def test_only_the_known_split_name_is_affected_on_the_committed_fleet() -> None:
@@ -236,3 +240,54 @@ def test_a_split_outside_the_window_does_not_withdraw_the_percentile() -> None:
     assert G3_SPLIT_BASIS not in (pctile.note or ""), (
         "the split-basis refusal fired on a rescaling that cannot touch a single observation in "
         "the trailing range")
+
+
+def test_a_split_at_the_window_edge_still_withdraws_the_percentile() -> None:
+    """THE NEGATIVE HALF OF THE WINDOWING, and the boundary the first cut left open (review of
+    #490).
+
+    Windowing the split check on the RANGE alone is too narrow, because the range does not read
+    EPS points dated inside it: each bar reads `annual_eps_as_of(bar_date)`, which reaches back up
+    to `MAX_EPS_AGE_DAYS` past a period end. So a rescaling can sit outside the range and still
+    contaminate every observation in it.
+
+    THE CASE: a 2:1 forward split whose 10-K (filed 2023-02-15) restates FY2020 and FY2021, under
+    a window opening 2021-08-15. Only FY2021 ends inside the range — ONE agreeing period, below
+    `_SPLIT_MIN_PERIODS` — so a range-only window returns None and publishes a percentile whose
+    first eighteen months divide split-adjusted prices by as-filed EPS (4.40, not 2.20). The
+    reach-back window keeps FY2020 too, both factors agree at 2.0, and the refusal fires.
+
+    MUTATION: drop `+ MAX_EPS_AGE_DAYS` from `_split_start` and this reddens with a PRESENT
+    percentile, while every other pin in this file stays green."""
+    from vinci.edgar.concepts import ConceptPoint
+    from vinci.schemas.market import PriceBar
+
+    def pt(pe: date, filed: date, val: float) -> ConceptPoint:
+        return ConceptPoint(
+            concept="eps_diluted", tag="EarningsPerShareDiluted", unit="USD/shares", value=val,
+            period_start=pe - timedelta(days=364), period_end=pe, filed=filed,
+            fy=pe.year, fp="FY", form="10-K", accession="x")
+
+    ref = date(2026, 8, 14)
+    pts = [
+        pt(date(2020, 12, 31), date(2021, 2, 15), 4.00),   # as filed — PRE-split basis
+        pt(date(2021, 12, 31), date(2022, 2, 15), 4.40),   # as filed — PRE-split basis
+        pt(date(2020, 12, 31), date(2023, 2, 15), 2.00),   # restated by the post-split 10-K
+        pt(date(2021, 12, 31), date(2023, 2, 15), 2.20),   # restated by the post-split 10-K
+        pt(date(2022, 12, 31), date(2023, 2, 15), 2.40),
+        pt(date(2023, 12, 31), date(2024, 2, 15), 2.60),
+        pt(date(2024, 12, 31), date(2025, 2, 15), 2.80),
+        pt(date(2025, 12, 31), date(2026, 2, 15), 3.00),
+    ]
+    window_start = ref - timedelta(days=1825)
+    assert share_basis_change([p for p in pts if p.period_end >= window_start]) is None, (
+        "the fixture no longer exercises the boundary — the range-only window must MISS this "
+        "split, or the pin proves nothing about the reach-back")
+
+    bars = [PriceBar(internal_id="SEC-X", bar_date=window_start + timedelta(days=n), open=50.0,
+                     high=51.0, low=49.0, close=50.0, volume=1e6, source="t")
+            for n in range((ref - window_start).days + 1)]
+    _pe, pctile = pe_current_and_percentile(bars, pts, reference_date=ref)
+    assert pctile.coverage_status is CoverageStatus.UNKNOWN, (
+        f"a split whose restated comparatives feed the range was not refused: {pctile.value!r}")
+    assert G3_SPLIT_BASIS in (pctile.note or ""), pctile.note

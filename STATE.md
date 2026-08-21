@@ -5204,6 +5204,30 @@ split check: **un-windowing leaves the existing fleet test green**, because that
 own points and so guards the FUNCTION while the defect was at the CALL SITE. Pin-the-artifact-not-
 the-helper, in the pin written to catch it.
 
+**AND THE WINDOW ITSELF WAS ONE REACH-BACK TOO NARROW (review of #490, applied on the same
+branch).** The corrected call windowed the split check on the TRAILING RANGE — but the range does
+not read EPS points dated inside it. Each bar reads `annual_eps_as_of(bar_date)`, which reaches
+back up to `MAX_EPS_AGE_DAYS` (470) past a period end, so the periods that can FEED an observation
+start at `window − 470`, not at `window`. DEMONSTRATED on a synthetic whose shape is ordinary: a
+2:1 split whose 10-K restates FY2020 and FY2021 under a window opening 2021-08-15 leaves FY2021 as
+the only restated period inside the range — ONE agreeing factor, below `_SPLIT_MIN_PERIODS` — so
+the refusal never fires while every bar before the restatement filing still divides a split-
+adjusted price by an as-filed EPS (4.40, not 2.20). A published percentile built across two bases,
+which is the ORIGINAL defect, re-entered through the fix for its over-firing. `_split_start` is now
+`_PE_WINDOW_DAYS + MAX_EPS_AGE_DAYS`; re-measured on all 16 committed fixtures, HLF still returns
+None and NFLX still returns 10.02, so the #488 correction is untouched and only its boundary moved.
+Pinned with a mutation-verified negative (revert the reach-back → the new pin alone reddens).
+**THE SHAPE: a window that names a RANGE OF OBSERVATIONS is not the window of the INPUTS those
+observations are built from** — whenever a lookup reaches back, the guard on its inputs must reach
+back with it.
+
+**AND THE REFUSAL REASON NAMED TWO CAUSES WHERE FOUR EXIST (same review).** `_uncorrected_reason`
+was given the coverage cause and the no-bar cause, but `assemble.py` never calls `date_of_close` AT
+ALL unless both the export stamp and the panel's printed close decode (the two `None` guards from
+the review of #469). On either, the store is never consulted — and the page still printed "the
+store carries no bar at that panel's printed close" for a panel that prints no close. Same
+wrong-cause defect, one branch further out; each suppressing guard now states itself.
+
 **THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
 2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
 old before it reached STATE).** Agreed after the operator's push-back that a full fleet assembly

@@ -204,17 +204,30 @@ def test_an_uncorrectable_stamp_says_so_on_the_page() -> None:
         close = 12.33
 
     stamp = dt.date(2026, 8, 20)
-    far = dm._uncorrected_reason(stamp, [_B()])
+    far = dm._uncorrected_reason(stamp, [_B()], 12.45)
     assert "price store ends" in far and "2026-08-20" in far, (
         f"a store that cannot reach the stamp must say so, not blame the price: {far!r}")
 
     class _Near(_B):
         bar_date = dt.date(2026, 8, 19)
 
-    near = dm._uncorrected_reason(stamp, [_Near()])
+    near = dm._uncorrected_reason(stamp, [_Near()], 12.45)
     assert near == "the store carries no bar at that panel's printed close", (
         f"with coverage, the only remaining cause is the price itself: {near!r}")
     assert far != near, "the two causes must not print the same sentence"
+
+    # THE TWO GUARDS ONE BRANCH FURTHER OUT (review of #490). `assemble.py` does not call
+    # `date_of_close` AT ALL unless both the export stamp and the panel's printed close decode,
+    # so on either of those the store was never consulted and blaming it is the same wrong-cause
+    # defect this helper exists to end. MUTATION: delete either early return and this reddens.
+    no_stamp = dm._uncorrected_reason(None, [_Near()], 12.45)
+    assert "no decodable export-stamp header" in no_stamp, (
+        f"a panel with no stamp blames the store it never consulted: {no_stamp!r}")
+    no_close = dm._uncorrected_reason(stamp, [_Near()], None)
+    assert "prints no close price" in no_close, (
+        f"a panel that prints no close is described as one whose close found no bar: {no_close!r}")
+    assert len({far, near, no_stamp, no_close}) == 4, (
+        "two distinct refusal causes print the same sentence")
 
 
 def test_resolved_is_reported_not_inferred() -> None:
