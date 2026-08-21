@@ -1852,8 +1852,17 @@ def refresh_record(
                         f"({old.quantity_kind} → {incoming_kind}) — both are {old.unit!r}, so no "
                         f"unit check can see it. Swapping this denominator moves the ratio and can "
                         f"flip the gate under a live position. Re-underwrite instead")
+            # A DECLARED QUANTITY IS PART OF THE RESTATEMENT (review fix, 2026-08-21). The first cut
+            # compared only basis/source and rebuilt the fact from `old`, so an incoming
+            # `quantity_kind` was accepted and then silently DROPPED. On a sensitive fact the two
+            # kinds must already match, so nothing moved — but on any other fact a caller could
+            # restate the basis to name a different quantity, declare the matching kind, and get a
+            # record whose prose says one quantity while its structured half still says the other:
+            # a mislabel manufactured by the writer, which is the exact defect this field exists to
+            # close. The structured half moves with the prose or it is not the structured half.
             restated = v if isinstance(v, Fact) and (
-                v.basis != old.basis or v.source != old.source) else None
+                v.basis != old.basis or v.source != old.source
+                or (v.quantity_kind and v.quantity_kind != old.quantity_kind)) else None
             if new_value == old.value and restated is None:
                 continue
             if new_value != old.value:
@@ -1867,14 +1876,19 @@ def refresh_record(
                 # what changed. `test_refresh_moves_machine_inputs_and_logs_provenance` already
                 # asserts `e.old != e.new` on refresh entries; this violated the file's own rule.
                 for field, was, now in (("basis", old.basis, restated.basis),
-                                        ("source", old.source, restated.source)):
+                                        ("source", old.source, restated.source),
+                                        ("quantity_kind", old.quantity_kind,
+                                         restated.quantity_kind or old.quantity_kind)):
                     if was != now:
                         # a number that keeps its value while changing MEANING is exactly the move
                         # a value-diff cannot show, so it gets its own line either way
                         entries.append(RefreshEntry(field=f"facts.{k}.{field}", old=was, new=now,
                                                     date=on_date, source=source))
                 new_facts[k] = old.model_copy(update={
-                    "value": new_value, "basis": restated.basis, "source": restated.source})
+                    "value": new_value, "basis": restated.basis, "source": restated.source,
+                    # an ABSENT declaration leaves the record's own stamp alone; a bare float has
+                    # always meant "same quantity, re-read" and must not clear a stamp
+                    "quantity_kind": restated.quantity_kind or old.quantity_kind})
             else:
                 new_facts[k] = old.model_copy(update={"value": new_value})
         updates["facts"] = new_facts

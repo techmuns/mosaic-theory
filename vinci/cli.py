@@ -1329,7 +1329,17 @@ def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
             print(f"--fact-kind expects KEY=KIND, got {kv!r}")
             return 2
         k, _, v = kv.partition("=")
-        kinds[k.strip()] = v.strip()
+        kind = v.strip()
+        # CHECKED HERE, not at `Fact(...)` (review fix): the model validator raises a pydantic
+        # ValidationError, which no caller catches — a mistyped kind (`oustanding`) exited the CLI
+        # on a raw traceback while every other malformed argument on this command prints one line
+        # and returns 2. An EMPTY kind was worse than loud: it fell through to a bare float and the
+        # refusal told the operator to pass `--fact-kind`, which is what they had just passed.
+        if kind not in sc.QUANTITY_KINDS:
+            print(f"--fact-kind {k.strip()}: {kind!r} is not one of "
+                  f"{sorted(sc.QUANTITY_KINDS)}")
+            return 2
+        kinds[k.strip()] = kind
 
     facts: dict[str, float | sc.Fact] = {}
     parsed: dict[str, float] = {}

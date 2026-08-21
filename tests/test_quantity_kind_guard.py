@@ -164,3 +164,64 @@ def test_the_stamps_round_trip_and_an_unstamped_fact_emits_no_key() -> None:
         "facts": {**rec.facts, "diluted_shares": _fact(rec, quantity_kind="")}}))
     assert "quantity_kind" not in scoped["facts"]["diluted_shares"]
     assert "quantity_kind" in sc._version_scoped(rec)["facts"]["diluted_shares"]
+
+
+# --- the review fixes: the birth stamp, the declared kind that moves, the CLI's one line --------
+
+def test_a_freshly_proposed_record_is_born_stamped() -> None:
+    """THE GUARD IS ONLY AS GOOD AS THE WRITER THAT FEEDS IT. `scenario-create` emits the template
+    every new underwrite starts from, and it emitted `diluted_shares` with NO quantity_kind — so
+    the next name underwritten would arrive unstamped, refuse every refresh of its own denominator
+    ("nothing to check the incoming kind against"), and redden the corpus pin above the moment it
+    was committed. The template takes the POINT-IN-TIME count, so the stamp is `outstanding` by
+    construction."""
+    from vinci.dossier.propose import SHARES_QUANTITY_KIND, build_template
+
+    assert SHARES_QUANTITY_KIND in sc.QUANTITY_KINDS
+    doss = ROOT / "data" / "dossiers" / "BRBR" / "dossier.json"
+    if not doss.is_file():
+        pytest.skip("no committed BRBR dossier")
+    f = build_template(json.loads(doss.read_text()))["facts"]["diluted_shares"]
+    assert f["quantity_kind"] == "outstanding", f
+    # and the template's fact is loadable as the real type, stamp included
+    assert sc.Fact(**f).quantity_kind == "outstanding"
+
+
+def test_a_declared_quantity_moves_with_the_value_instead_of_being_dropped() -> None:
+    """The declaration was accepted and then SILENTLY DISCARDED: the new fact was rebuilt from the
+    OLD one, so a caller could restate a fact's basis to name a different quantity, declare the
+    matching kind, and be left with prose saying one quantity over a structured half still saying
+    the other — the mislabel this field exists to close, manufactured by the writer that closes it.
+    Uses `net_debt`, the non-sensitive path where the drop was reachable."""
+    rec = _rec("SMPL")
+    old = rec.facts["net_debt"]
+    assert old.quantity_kind == "" and "net_debt" not in sc.QUANTITY_SENSITIVE_FACTS
+    declared = sc.Fact(value=old.value + 1.0, unit=old.unit, basis="restated, point-in-time",
+                       source=old.source, quantity_kind="outstanding")
+    out = sc.refresh_record(rec, facts={"net_debt": declared}, source="s", on_date="2026-08-21")
+    assert out.facts["net_debt"].quantity_kind == "outstanding"
+    fields = [e.field for e in out.refresh_log[len(rec.refresh_log):]]
+    assert "facts.net_debt.quantity_kind" in fields, fields
+    # and with the PROSE UNCHANGED: a declaration alone is still a restatement, because the
+    # structured half changing is exactly the move a value-diff cannot show
+    kind_only = sc.Fact(value=old.value + 3.0, unit=old.unit, basis=old.basis, source=old.source,
+                        quantity_kind="outstanding")
+    out2 = sc.refresh_record(rec, facts={"net_debt": kind_only}, source="s", on_date="2026-08-21")
+    assert out2.facts["net_debt"].quantity_kind == "outstanding"
+    # a BARE FLOAT never clears a stamp — it has always meant "same quantity, re-read"
+    smpl = sc.refresh_record(rec, facts={"net_debt": old.value + 2.0}, source="s",
+                             on_date="2026-08-21")
+    assert smpl.facts["net_debt"].quantity_kind == ""
+
+
+def test_the_cli_refuses_a_mistyped_kind_with_one_line_not_a_traceback() -> None:
+    """`--fact-kind diluted_shares=oustanding` reached `Fact(...)` and exited on a raw pydantic
+    ValidationError, while every other malformed argument on this command prints one line and
+    returns 2. An EMPTY kind was worse: it fell through to a bare float, and the refusal told the
+    operator to pass `--fact-kind` — which is what they had just passed."""
+    from vinci.cli import main
+
+    for bad in ("diluted_shares=oustanding", "diluted_shares="):
+        rc = main(["scenario-refresh", "SMPL", "--fact", "diluted_shares=88.9",
+                   "--fact-kind", bad, "--source", "10-Q re-read", "--dry-run"])
+        assert rc == 2, bad
