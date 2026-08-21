@@ -2859,6 +2859,28 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
     if getattr(r, "gate", None):
         strip.append(f"**Gate** {r.gate} (both tests)")
     out += [" · ".join(strip), ""]
+    # THE TIERED LADDER (2026-08-21) — a second strip line, present only on new-regime records.
+    # A record without `gate_regime` was judged under the 2:1/15% booleans alone, and the page
+    # SAYS so: absence must not read as the new labels having been applied and passed. Labels are
+    # humanised from the enum values once, here (the JS card mirrors them — uw-card.js).
+    if getattr(r, "gate_regime", None):
+        _tl = {"poor": "poor (<1:1)", "below_target": "below target", "target_met": "target met",
+               "preferred": "preferred", "fails": "fails", "minimum_met": "minimum met",
+               "undefined": "UNDEFINED"}
+        tier_bits = [f"**Asymmetry** {_tl.get(r.asymmetry_tier or 'undefined', r.asymmetry_tier)}",
+                     f"**Return** {_tl.get(r.return_tier or 'undefined', r.return_tier)}"]
+        if r.eligible is True:
+            el = f"ELIGIBLE (≥{r.eligible_ratio:g}:1 & ≥{r.eligible_irr:.0%})"
+        elif r.eligible is False:
+            el = f"BELOW ELIGIBILITY (needs ≥{r.eligible_ratio:g}:1 & ≥{r.eligible_irr:.0%})"
+        else:
+            el = f"eligibility UNDEFINED — {r.eligible_undefined or 'input missing'}"
+        tier_bits.append(f"**Eligibility** {el}")
+        out += [" · ".join(tier_bits),
+                f"_gate regime {r.gate_regime} · IRR {r.irr_convention or 'convention unstated'}_",
+                ""]
+    elif getattr(r, "gate", None):
+        out += ["_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_", ""]
     # (item 1e) THE SPOT'S PROVENANCE, verbatim — the only place the price's OWN date reaches a
     # print reader. The web has carried it since the masthead redesign, as the `[S1]` cite beside
     # the value; the md rendered it NOWHERE, so the export could state a frozen price with no way

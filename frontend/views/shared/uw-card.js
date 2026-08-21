@@ -118,11 +118,28 @@ function verdictPills(c) {
 // PASS/FAIL is the machine's bar test. Once a human verdict is recorded it is subsumed by the
 // verdict itself (a recorded BUY that FAILED its bar would be the override, and the status says
 // so) — so it renders only while the call is still open, where it is the only signal present.
+// THE TIERED LADDER (2026-08-21) — display labels for the record's tier enums. Mirror of the
+// humanisation table in render.py; a record WITHOUT `gateRegime` was judged under the 2:1/15%
+// booleans alone and keeps the legacy PASS/FAIL pills (mastheadFoot says which regime applied).
+const TIER_LABEL = {
+  poor: "POOR", below_target: "BELOW TARGET", target_met: "TARGET MET",
+  preferred: "PREFERRED", fails: "FAILS", minimum_met: "MINIMUM MET", undefined: "UNDEFINED",
+};
+function tierPill(tier) {
+  if (!tier) return "";
+  const cls = tier === "preferred" || tier === "target_met" || tier === "minimum_met" ? "buy"
+    : tier === "undefined" ? "unresolved" : "avoid";
+  return ` <span class="pill ${cls} uw-mini">${escapeHtml(TIER_LABEL[tier] || tier)}</span>`;
+}
+
 function ratioCell(c) {
   const open = headlineState(c) !== "target";
-  const badge = open && c.passFail
-    ? ` <span class="pill ${c.passFail === "PASS" ? "buy" : "avoid"} uw-mini">${escapeHtml(c.passFail)}</span>`
-    : "";
+  // new-regime records carry `asymmetryTier`; the tier pill replaces the bare PASS/FAIL — which
+  // also retires this card's half of the PASS-chip / Verdict.PASS vocabulary collision.
+  const badge = open && c.asymmetryTier ? tierPill(c.asymmetryTier)
+    : open && c.passFail
+      ? ` <span class="pill ${c.passFail === "PASS" ? "buy" : "avoid"} uw-mini">${escapeHtml(c.passFail)}</span>`
+      : "";
   if (c.ratioUndefined) {
     return statCell("Reward : risk",
       `<span class="pill unresolved">UNDEFINED</span>`, escapeHtml(c.ratioUndefined), { txt: true });
@@ -134,8 +151,14 @@ function ratioCell(c) {
   // (labelled), the AT-ENTRY ratio lives in the Entry cell — both shown, neither misreported.
   const ceil = (c.currentState || {}).ceiling2to1;
   const lim = (c.currentState || {}).limit;
-  const bar = (typeof c.bar === "number"
-    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`)
+  // new-regime sub-line names BOTH lines (eligibility + preferred); legacy keeps the bar wording
+  const bar = (typeof c.eligibleRatio === "number" && typeof c.bar === "number"
+    ? `at underwrite · eligible ≥${escapeHtml(String(c.eligibleRatio))} : 1 · preferred ≥${
+        escapeHtml(String(c.bar))} : 1`
+    : typeof c.bar === "number"
+      ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`)
+    // the eligibility ceiling rides beside the 2:1 ceiling when present
+    + (typeof c.ceilingEligible === "number" ? ` · elig. ceiling $${c.ceilingEligible.toFixed(2)}` : "")
     // the price at which the ratio decays to the bar — a qualifier ON this cell, so it belongs in
     // this cell's sub-line rather than in a block of its own.
     + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "")
@@ -164,11 +187,15 @@ function irrCell(c) {
     return statCell("Base IRR", `<span class="pill unresolved">UNDEFINED</span>`,
       escapeHtml(c.irrUndefined), { txt: true });
   }
-  const badge = open && c.irrPassFail
-    ? ` <span class="pill ${c.irrPassFail === "PASS" ? "buy" : "avoid"} uw-mini">${escapeHtml(c.irrPassFail)}</span>`
-    : "";
-  const sub = (typeof c.irrFloor === "number"
-    ? `vs the ${(c.irrFloor * 100).toFixed(0)}% floor` : `floor ${DASH}`)
+  // new-regime records carry `returnTier`; same pill-over-boolean swap as ratioCell
+  const badge = open && c.returnTier ? tierPill(c.returnTier)
+    : open && c.irrPassFail
+      ? ` <span class="pill ${c.irrPassFail === "PASS" ? "buy" : "avoid"} uw-mini">${escapeHtml(c.irrPassFail)}</span>`
+      : "";
+  const sub = (typeof c.eligibleIrr === "number" && typeof c.irrFloor === "number"
+    ? `eligible ≥${(c.eligibleIrr * 100).toFixed(0)}% · preferred ≥${(c.irrFloor * 100).toFixed(0)}%`
+    : typeof c.irrFloor === "number"
+      ? `vs the ${(c.irrFloor * 100).toFixed(0)}% floor` : `floor ${DASH}`)
     + (typeof c.horizonYears === "number" ? ` · over ${c.horizonYears}y` : "");
   return statCell("Base IRR", (c.irr * 100).toFixed(1) + "%" + badge, sub);
 }
@@ -292,6 +319,19 @@ function mastheadFoot(c) {
     bits.push(`${escapeHtml(lead)} ${escapeHtml(ne.date)}`);
   }
   if (s.underwriteDate) bits.push(`underwritten ${escapeHtml(s.underwriteDate)}`);
+  // THE TIERED LADDER (2026-08-21): the regime + eligibility verdict, at the band's lowest
+  // weight — a fact about how the record was judged, not a valuation number. A record without
+  // `gateRegime` was judged under the 2:1/15% booleans alone, and the foot SAYS so: absence must
+  // never read as the tiers having been applied and passed.
+  if (c.gateRegime) {
+    const el = c.eligible === true ? "ELIGIBLE"
+      : c.eligible === false ? "BELOW ELIGIBILITY"
+        : `eligibility UNDEFINED${c.eligibleUndefined ? ` — ${escapeHtml(c.eligibleUndefined)}` : ""}`;
+    bits.push(`${el} · gate regime ${escapeHtml(c.gateRegime)}`);
+    if (c.irrConvention) bits.push(`IRR ${escapeHtml(c.irrConvention)}`);
+  } else if (c.gate) {
+    bits.push("judged under the 2:1 / 15% regime (pre-2026-08-21)");
+  }
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
   // only meaningful while no ledger row exists — a logged name says so in the foot instead
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {

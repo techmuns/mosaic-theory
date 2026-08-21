@@ -156,6 +156,17 @@ AXIS_FIELDS_INTRODUCED_IN: dict[str, str] = {
 GATE_FIELDS: tuple[str, ...] = (
     "horizon_years", "irr", "irr_undefined", "irr_floor", "irr_pass_fail", "gate")
 
+#: THE TIERED LADDER's serialization group (2026-08-21). Dropped as a UNIT when `gate_regime` is
+#: None: an absent block says *this record was never judged under the ladder* (the freeze ruling),
+#: which is a different statement from nine nulls — the same absent-vs-null distinction
+#: `REF_FIELDS_INTRODUCED_IN` documents and `GATE_FIELDS` applies one level up. Keyed on the
+#: REGIME and not per-field, because a stamped record legitimately carries `eligible: null` WITH
+#: its reason (`eligible_undefined`) — half-dropping a stamped block would delete the honesty.
+#: No schema bump: like `leg_fy`, nothing here materialises a default onto old records.
+LADDER_FIELDS: tuple[str, ...] = (
+    "gate_regime", "asymmetry_tier", "return_tier", "eligible_ratio", "eligible_irr",
+    "eligible", "eligible_undefined", "ceiling_eligible", "irr_convention")
+
 #: THE FOURTH LEVEL — the LEG. `leg_fy` (2026-08-05) is analyst-supplied, so the version mechanism
 #: would normally be the right tool. It is not needed: unlike `irr_floor`, which materialises as
 #: 0.15 on every record that touches the model, `leg_fy` has NO default to materialise. Absent-key
@@ -463,6 +474,62 @@ class SurvivalInput(BaseModel):
 #: forward return when setting it.
 IRR_FLOOR = 0.15
 
+# --- THE TIERED LADDER (operator-ratified 2026-08-21; fund-wide, ALL recipes) -------------------
+# The tiers sit BESIDE the booleans — the 2026-08-05 precedent (`pass_fail` kept its old meaning
+# when `gate` arrived) applied again. The preferred lines ARE the legacy constants (`BAR` 2:1,
+# `IRR_FLOOR` 15%), so `pass_fail`/`irr_pass_fail`/`gate` keep their arithmetic unchanged on every
+# record ever written and simply become the preferred-tier booleans. What is NEW is the
+# ELIGIBILITY line below them:
+#
+#   asymmetry: <1.0 poor · 1.0–<1.75 below_target · 1.75–<2.0 target_met · ≥2.0 preferred
+#   return:    <12% fails · 12–<15% minimum_met · ≥15% preferred
+#   eligible:  ratio ≥ 1.75 AND base IRR ≥ 12% — the BUY-eligibility line
+#
+# INFORM-ONLY, by explicit ruling: the tiers and `eligible` label the record; nothing here blocks
+# a confirmed verdict (survival remains the only hard block — it guards a WRONG number, not a low
+# one). Sealed records are FROZEN: these fields stamp on new/recomputed runs only, and a record
+# without `gate_regime` was judged under the 2:1/15% booleans alone — the page says so rather
+# than letting absence read as passage.
+#
+# PROVENANCE: thresholds ratified by the operator 2026-08-21 by face validity, lineage the GOOGL
+# IC memo's hurdle structure (set before any name was pending on them — GOOGL itself FAILED its
+# own 1.75x). Fund-wide like BAR/HURDLE — never per name, for the same manufacture-a-pass reason.
+# NOT tuned on outcomes; no code path reads a forward return when setting them.
+GATE_REGIME = "2026-08-21"
+ELIGIBLE_RATIO = 1.75
+ELIGIBLE_IRR = 0.12
+#: Stamped on every new-regime record so the rate can never be misread: the IRR is price-only.
+#: Dividends are excluded by explicit ruling (2026-08-21) — a dividend forecast is an assumption,
+#: and assumptions here are analyst-stated, never machine-fetched.
+IRR_CONVENTION = "price-only — excludes dividends; conservative for dividend payers"
+
+AsymmetryTier = Literal["poor", "below_target", "target_met", "preferred", "undefined"]
+ReturnTier = Literal["fails", "minimum_met", "preferred", "undefined"]
+
+
+def asymmetry_tier(ratio: float | None) -> AsymmetryTier:
+    """The reward:risk ladder. Half-open upward: 1.75 is target_met, 2.0 is preferred."""
+    if ratio is None:
+        return "undefined"
+    if ratio < 1.0:
+        return "poor"
+    if ratio < ELIGIBLE_RATIO:
+        return "below_target"
+    if ratio < BAR:
+        return "target_met"
+    return "preferred"
+
+
+def return_tier(irr: float | None) -> ReturnTier:
+    """The base-IRR ladder. Half-open upward: 12% is minimum_met, 15% is preferred."""
+    if irr is None:
+        return "undefined"
+    if irr < ELIGIBLE_IRR:
+        return "fails"
+    if irr < IRR_FLOOR:
+        return "minimum_met"
+    return "preferred"
+
 
 def annualised_irr(nominal_value: float, spot: float, years: float) -> tuple[float | None, str]:
     """``(value/spot)^(1/years) - 1`` — or ``(None, why)``. Never a fabricated rate.
@@ -534,6 +601,30 @@ class Result(BaseModel):
     #: when either is undefined, because a gate that reads PASS on a half-computed record is worse
     #: than one that admits it does not know.
     gate: Literal["PASS", "FAIL", "UNDEFINED"] | None = None
+
+    # --- THE TIERED LADDER (2026-08-21) -------------------------------------------------------
+    # All default None so every committed record round-trips byte-identical (freeze ruling): a
+    # record without `gate_regime` was judged under the 2:1/15% booleans alone, and the page says
+    # which regime applied rather than letting absence read as the new labels. Stamped ONLY by
+    # `_with_irr_gate`, so a new run or a legitimate refresh migrates a record to the new regime
+    # and a hand edit cannot half-stamp it.
+    gate_regime: str | None = None
+    asymmetry_tier: AsymmetryTier | None = None
+    return_tier: ReturnTier | None = None
+    eligible_ratio: float | None = None    # the stamped eligibility thresholds — from the record,
+    eligible_irr: float | None = None      # never the module constants, on every read-back
+    #: The BUY-eligibility line: ratio ≥ eligible_ratio AND irr ≥ eligible_irr. INFORM-ONLY —
+    #: no validator reads it (survival stays the only hard block). Same determinate-false AND as
+    #: `gate`: a side that is known-failing decides False without the other; a missing side with
+    #: nothing failing → None, with the reason in `eligible_undefined`, never a silent None.
+    eligible: bool | None = None
+    eligible_undefined: str | None = None
+    #: The spot at which reward:risk decays to the ELIGIBILITY line — `ceiling2to1`'s sibling,
+    #: computed in the same seat from the same legs, so the two can never drift.
+    ceiling_eligible: float | None = None
+    #: How the IRR was computed — stamped so the rate cannot be misread (price-only; see
+    #: `IRR_CONVENTION`).
+    irr_convention: str | None = None
 
 
 class Verdict(BaseModel):
@@ -1225,15 +1316,48 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     # `(base + 2*bear)/3`, correct only while every record carries bar 2.0 (all seven do today) —
     # while `uw-card.js` states the opposite rule for itself: "an absent bar renders honest, never
     # an invented 2 … the card carries no fund constants of its own". This seat reads `res.bar`.
-    per, ceiling = res.per_scenario or {}, None
+    per, ceiling, ceiling_el = res.per_scenario or {}, None, None
     if "base" in per and "bear" in per and res.bar:
         b_vps, r_vps = per["base"].value_per_share, per["bear"].value_per_share
         if b_vps is not None and r_vps is not None:
             ceiling = (b_vps + res.bar * r_vps) / (1.0 + res.bar)
+            # the ELIGIBILITY ceiling — same formula, same seat, the 1.75 line
+            ceiling_el = (b_vps + ELIGIBLE_RATIO * r_vps) / (1.0 + ELIGIBLE_RATIO)
+    # THE TIERED LADDER (2026-08-21) — LEGACY-PRESERVING, which is the freeze ruling made
+    # mechanical: a record whose committed result was judged WITHOUT a regime stays that way
+    # under recompute, so a no-op refresh is still a no-op (`test_refresh_path`'s preservation
+    # pin holds) and `run_recipe(rec).result == rec.result` still holds on the sealed book. The
+    # ladder stamps on a FIRST compute (`rec.result is None` — scenario-propose, a superseded
+    # reissue) and stays on a record that already carries it; migrating a sealed record to the
+    # new regime is a deliberate supersede, never a side effect of touching it.
+    legacy = rec.result is not None and rec.result.gate_regime is None
+    ladder: dict[str, Any] = {}
+    if not legacy:
+        # Tiers are pure functions of the numbers already computed above; `eligible` mirrors
+        # `gate`'s determinate-false AND exactly — a side that is known-failing decides False
+        # without waiting on the other, and a missing side with nothing failing is None WITH
+        # ITS REASON, never a silent None.
+        eligible: bool | None
+        el_why: str | None = None
+        if (res.ratio is not None and res.ratio < ELIGIBLE_RATIO) or \
+                (irr is not None and irr < ELIGIBLE_IRR):
+            eligible = False
+        elif res.ratio is None or irr is None:
+            eligible = None
+            el_why = (res.ratio_undefined or "no ratio") if res.ratio is None else \
+                (why or "no base IRR")
+        else:
+            eligible = True
+        ladder = {
+            "gate_regime": GATE_REGIME,
+            "asymmetry_tier": asymmetry_tier(res.ratio), "return_tier": return_tier(irr),
+            "eligible_ratio": ELIGIBLE_RATIO, "eligible_irr": ELIGIBLE_IRR,
+            "eligible": eligible, "eligible_undefined": el_why,
+            "ceiling_eligible": ceiling_el, "irr_convention": IRR_CONVENTION}
     return res.model_copy(update={
         "horizon_years": years, "irr": irr, "irr_undefined": why or None,
         "irr_floor": IRR_FLOOR, "irr_pass_fail": irr_pf, "gate": gate,
-        "ceiling2to1": ceiling})
+        "ceiling2to1": ceiling, **ladder})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -1452,6 +1576,11 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     # pre-convention record round-trips byte-identically instead of gaining six nulls
     if (out.get("result") or {}).get("gate") is None:
         for field in GATE_FIELDS:
+            (out.get("result") or {}).pop(field, None)
+    # the ladder level (2026-08-21): a record never judged under the tiered regime carries NO
+    # ladder keys — see LADDER_FIELDS for why the drop is keyed on the regime, never per-field
+    if (out.get("result") or {}).get("gate_regime") is None:
+        for field in LADDER_FIELDS:
             (out.get("result") or {}).pop(field, None)
     # the leg level: a leg that states no fiscal year carries no key for one
     for _leg in (out.get("scenarios") or {}).values():

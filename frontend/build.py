@@ -433,6 +433,23 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         **({"irrPassFail": r.get("irr_pass_fail")} if r.get("irr_pass_fail") else {}),
         **({"horizonYears": r.get("horizon_years")} if r.get("horizon_years") is not None else {}),
         **({"gate": r.get("gate")} if r.get("gate") else {}),
+        # THE TIERED LADDER (2026-08-21): omitted when absent — same byte-identical rule as the
+        # IRR block above, so every record judged under the 2:1/15% booleans stays unchanged and
+        # the card renders the legacy-regime line from the ABSENCE of `gateRegime`. `eligible` is
+        # three-state (False is a real answer), so its emit key is presence-of-the-regime, never
+        # truthiness of the value.
+        **({"gateRegime": r.get("gate_regime")} if r.get("gate_regime") else {}),
+        **({"asymmetryTier": r.get("asymmetry_tier")} if r.get("asymmetry_tier") else {}),
+        **({"returnTier": r.get("return_tier")} if r.get("return_tier") else {}),
+        **({"eligibleRatio": r.get("eligible_ratio")}
+           if r.get("eligible_ratio") is not None else {}),
+        **({"eligibleIrr": r.get("eligible_irr")} if r.get("eligible_irr") is not None else {}),
+        **({"eligible": r.get("eligible")} if r.get("gate_regime") else {}),
+        **({"eligibleUndefined": r.get("eligible_undefined")}
+           if r.get("eligible_undefined") else {}),
+        **({"ceilingEligible": _rd(r.get("ceiling_eligible"), 2)}
+           if r.get("ceiling_eligible") is not None else {}),
+        **({"irrConvention": r.get("irr_convention")} if r.get("irr_convention") else {}),
         # gate_adjudication: a machine gate the human consciously overrode. OMITTED when absent so
         # records that never hit a gate stay byte-identical.
         **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),

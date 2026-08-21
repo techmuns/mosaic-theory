@@ -4446,6 +4446,49 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**TIERED GATES SHIPPED 2026-08-21 (`feat/tiered-gates`) — FOUR OPERATOR RULINGS, RECORDED HERE
+because they were given in chat and chat is not a ledger (OPERATOR-ACTION RULE).** Context: the
+operator generalized the GOOGL memo's hurdle ladder FUND-WIDE (all names, all recipes — not
+per-book), which decoupled this from the book-blind ruling and R3 entirely.
+- **RULING 1 — the BUY-eligibility line is ratio ≥1.75 AND base IRR ≥12%;** 2.0x/15% become the
+  PREFERRED tier. Ladders (half-open upward): asymmetry <1.0 poor · <1.75 below_target · <2.0
+  target_met · ≥2.0 preferred; return <12% fails · <15% minimum_met · ≥15% preferred.
+- **RULING 2 — INFORM-ONLY.** Tiers and `eligible` label the record; no validator reads them.
+  Survival stays the only hard block (it guards a WRONG number, not a low one).
+- **RULING 3 — THE SEALED BOOK FREEZES, with the regime made visible.** A record without
+  `gate_regime` was judged under the 2:1/15% booleans alone and every surface SAYS so.
+- **RULING 4 — THE IRR STAYS PRICE-ONLY,** convention stamped on the record ("price-only —
+  excludes dividends; conservative for dividend payers"). A dividend forecast is an assumption,
+  and assumptions are analyst-stated.
+**PROVENANCE:** face validity; the thresholds are the GOOGL memo's pre-existing hurdles, set
+before any name was pending on them — GOOGL itself FAILED its own 1.75x. Never outcome-tuned.
+**HOW IT SHIPPED — add-beside, the 2026-08-05 precedent applied again:** the preferred lines ARE
+the legacy constants, so `pass_fail`/`irr_pass_fail`/`gate`/`bar`/`irr_floor` keep their
+arithmetic on every record ever written. Nine new `Result` fields (`gate_regime`,
+`asymmetry_tier`, `return_tier`, `eligible_ratio/irr`, `eligible`, `eligible_undefined`,
+`ceiling_eligible`, `irr_convention`) default None and serialize as a DROP-GROUP keyed on the
+regime (`LADDER_FIELDS`), so the committed book is byte-identical on disk and its cards gain no
+keys. **REFRESH SEMANTICS, the subtle half of Ruling 3:** `_with_irr_gate` is LEGACY-PRESERVING —
+recompute of a record whose result carries no regime reproduces that result EXACTLY (the no-op
+refresh stays a no-op); the ladder stamps only on a FIRST compute (propose, a superseded
+reissue). Migrating a sealed record is a deliberate supersede, never a side effect of touching
+it. **CORPUS RUN (all 8 live records, in memory):** zero reclassifications; EPAM is the
+acceptance case (below_target asymmetry + preferred return → NOT eligible — the levered-bet
+refusal); IT pins the determinate-false AND (below-line ratio + undefined IRR → False); SMPL
+alone is ELIGIBLE (2.10x / 44.3%). The 12–15% divergence zone (old boolean FAILs while the
+record is ELIGIBLE) is unreachable on the corpus and is pinned on a frozen SMPL derivative —
+which is how mutation M4 (irr boolean rebased onto 12%) survived the first sweep and got its
+pin. **SIDE EFFECT:** the tier pills replace the bare green PASS chip on new-regime cards, which
+retires the card half of the PASS-chip / `Verdict.PASS` vocabulary collision (the book-blind
+entry's ruling is still owed for the rest). **ARTIFACTS:** the 8 committed dossier.md (+ mirrors)
+gained one line — "_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_" —
+re-rendered from committed JSON, no re-assembly, no synthesis touched. **INVARIANT (INVARIANT
+RULE):** `tests/test_tiered_gates.py`, 49 pins — edge pins at every half-open boundary,
+legacy-preservation on all 8 records, the stamped round-trip, and the card EXECUTED under node
+for both states (the #469 render-don't-grep rule). Mutation-verified: threshold shift,
+determinate-false inversion, truthiness emit dropping `eligible: false`, irr-boolean rebase,
+legacy-line deletion — all killed.
+
 **OPERATOR TO-DOs — MEGACAP + NON-US-FILER (FPI) READINESS, measured from code, recorded
 2026-08-20 (OPERATOR-ACTION RULE — the assessment happened in chat, and chat is not a ledger).**
 "FPI" = SEC *foreign private issuer*, a non-US filer (20-F/6-K, IFRS) — NOT the house sense of

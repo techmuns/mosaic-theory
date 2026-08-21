@@ -7,6 +7,8 @@ _August 18, 2026 · extraction 2026-08-16.1_
 ## At a glance
 **Target (base)** $0.60 (-34.7% vs entry-vintage spot) · **Spot** $0.92 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1) · **Base IRR** 3.4% (floor 15%, 4y) · **Gate** FAIL (both tests)
 
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
 _Spot source: Polygon MVST close 2026-07-21 (live at underwrite)_
 
 **Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
