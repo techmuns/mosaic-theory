@@ -34,8 +34,36 @@ from vinci.screens.assemble import (
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
 
-#: Names whose filings show a share-basis change. NFLX is the only one on the committed fleet —
-#: verified against live EDGAR for all fourteen, not assumed from the two fixtures kept here.
+#: Names whose share-basis change is a CONFIRMED corporate action INSIDE THE TRAILING
+#: WINDOW — each verified from the FILING,
+#: never from the ratio alone, because the detector cannot tell a split from a restatement and the
+#: whole point of this set is that a human checked.
+#:
+#:   NFLX — 10:1 forward (FY2023 12.03 → 1.20, FY2024 19.83 → 1.98).
+#: HLF IS NOT HERE, AND THAT IS THE CORRECTION (review of #488). It HAS a confirmed split — 2:1
+#: forward, shareholder-approved 2018-04-26, 8-K 0001193125-18-136523, "(5) Effect a two-for-one
+#: stock split of the Company's common shares" (73,825,918 for); the companion 8-K
+#: 0001157523-18-000984 labels figures "Pre Stock Split"; the filer halved its own history in the
+#: 2019-02-19 10-K (FY2016 3.02 → 1.51, FY2017 2.58 → 1.29). **But 2018 is EIGHT YEARS before a
+#: window opening 2021-08-15**, so it cannot touch one observation in the trailing range: the full
+#: series returns 2.0032 and the WINDOWED series returns None. Adding it here would have ratified
+#: the very collateral damage the fleet test below exists to catch — the percentile was withdrawn
+#: with a note claiming the split "falls inside the window", which was false. This set means
+#: "rescaled INSIDE the window", not "has ever split".
+#:
+#: The share COUNT series shows nothing either way (99.5M → 103.6M over 2022-2025, smooth) — the
+#: split predates it, so checking counts alone concludes "no split" and is wrong for a different
+#: reason. Both traps are recorded because both were walked into.
+#:
+#:   (former entry, kept for its evidence) HLF — 2:1 FORWARD, 8-K 0001193125-18-136523:
+#:          "(5) Effect a two-for-one stock split of the Company's common shares" (73,825,918 for).
+#:          Its companion 8-K (0001157523-18-000984) labels figures "Pre Stock Split" outright.
+#:          The filer restated its own history onto the post-split basis in the 2019-02-19 10-K:
+#:          FY2016 3.02 (filed 2017-02 and 2018-02) → 1.51 (filed 2019-02); FY2017 2.58 (2018-02)
+#:          → 1.29 (2019-02). Per-share figures HALVE in later filings, which is what a forward
+#:          split does to comparatives. Ratio measured 2.0032. The share COUNT series (99.5M →
+#:          103.6M over 2022-2025) is smooth and shows nothing — the split predates it, so
+#:          checking counts alone would have concluded "no split" and been wrong.
 SPLIT_NAMES = {"NFLX"}
 
 
@@ -154,6 +182,10 @@ def test_the_new_reason_is_in_the_taxonomy() -> None:
     assert G3_SPLIT_BASIS in G3_REASONS
 
 
+#: The trailing-range window the production call site uses, against the committed fleet's as-of.
+_WINDOW_START = date(2026, 8, 14) - timedelta(days=1825)
+
+
 def test_only_the_known_split_name_is_affected_on_the_committed_fleet() -> None:
     """COLLATERAL DAMAGE. Every other fleet name keeps its percentile; a detector that fired
     broadly would quietly delete a valuation signal across the book."""
@@ -161,10 +193,46 @@ def test_only_the_known_split_name_is_affected_on_the_committed_fleet() -> None:
         pts = [p for p in extract_points(json.loads(f.read_text()), "eps_diluted") if p.is_annual]
         if not pts:
             continue
-        got = share_basis_change(pts)
+        # WINDOWED, matching the CALL SITE this test guards. The production check restricts to the
+        # trailing range (`assemble._pe_percentile`), so a raw full-history call here would assert
+        # a different function than the one that withdraws percentiles — and did: it demanded HLF
+        # be allowlisted for a split outside the window.
+        got = share_basis_change([q for q in pts if q.period_end >= _WINDOW_START])
         if f.stem in SPLIT_NAMES:
             assert got is not None, f"{f.stem}: known split no longer detected"
         else:
             assert got is None, (
                 f"{f.stem}: a share-basis change was detected ({got}) where none is known — its "
                 f"percentile is about to be withdrawn, so confirm the split before accepting it")
+
+
+def test_a_split_outside_the_window_does_not_withdraw_the_percentile() -> None:
+    """THE CALL SITE, NOT THE DETECTOR (review of #488) — and the pin that was missing.
+
+    `share_basis_change` scans every annual point it is given. The production call passed the FULL
+    history while the sentence above it said "inside the window", so a rescaling that predates the
+    trailing range refused a percentile it cannot touch.
+
+    HLF is the case: its only basis change is the 2018 2:1 split, EIGHT YEARS before a window
+    opening 2021-08-15. Full series → 2.0032; windowed → None. Its committed page carried "a
+    share-basis change falls inside the window" as a FALSE claim and deleted a buildable signal.
+
+    THE FLEET TEST ABOVE CANNOT CATCH THIS: it windows the points itself, so it asserts the
+    FUNCTION and stays green while the CALL SITE scans everything. Verified — un-windowing the
+    call site leaves that test passing and reddens only this one. Same shape as pinning a helper
+    while the artifact it feeds goes wrong."""
+    from vinci.schemas.market import PriceBar
+
+    ref = date(2026, 8, 14)
+    bars = [
+        PriceBar(internal_id="SEC-HLF", bar_date=ref - timedelta(days=n), open=12.0, high=12.6,
+                 low=11.9, close=12.33, volume=1e6, source="t")
+        for n in range(0, 1800, 3)
+    ]
+    pe, pctile = pe_current_and_percentile(bars, _eps("HLF"), reference_date=ref)
+    assert pe.coverage_status is CoverageStatus.PRESENT
+    assert pctile.coverage_status is CoverageStatus.PRESENT, (
+        f"HLF's percentile was withdrawn for a split outside the window: {pctile.note!r}")
+    assert G3_SPLIT_BASIS not in (pctile.note or ""), (
+        "the split-basis refusal fired on a rescaling that cannot touch a single observation in "
+        "the trailing range")

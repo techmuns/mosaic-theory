@@ -652,3 +652,91 @@ def test_valid_assessment_grade_unaffected_by_error_bucket() -> None:
     a = assess_exposure(AI_DATACENTER, "CIFR", "1819989", _STREAM, llm=_MockLlm(payload))
     assert a.exposure_basis is ExposureBasis.BINDING_CONTRACTS  # derived, NOT unassessed-error
     assert a.flags == []
+
+
+# ─── provenance tags: multi-match, and the ordering three drivers depend on ──────────────────────
+def test_multi_tag_is_opt_in_because_first_match_ordering_is_load_bearing() -> None:
+    """MEASURED COLLISIONS (review of #488). `ai-datacenter` and `truckload-supply-purge` order
+    their tags most-specific-first and rely on the first match winning. Under unconditional
+    multi-match:
+
+      "liquid cooling systems for data centers" -> ('thermal/cooling', 'colocation/operator')
+      "less-than-truckload carrier"             -> ('ltl', 'asset-based-tl')
+
+    The AI case makes nearly every name read as colocation, because its prefilter GUARANTEES
+    "data center" appears. The truckload case is worse — its tags are DIRECTIONAL, so a HEADWIND
+    name lands in the TAILWIND bucket, which is the collision `drivers.py` regression-pins.
+
+    So the capability is a per-spec DECLARATION: a driver whose tags PARTITION keeps first-match;
+    one whose tags are DIMENSIONS asks for all of them."""
+    from vinci.themes.drivers import DRIVER_SPECS
+    from vinci.themes.exposure import provenance_tag_of, provenance_tags_of
+
+    partitioned = [k for k, s in DRIVER_SPECS.items() if not s.multi_tag]
+    assert set(partitioned) >= {"ai-datacenter", "truckload-supply-purge", "defense-demand-shift"}
+    assert DRIVER_SPECS["glp1-demand-shift"].multi_tag is True, (
+        "the GLP-1 sides are genuinely non-exclusive — one name can be suppressed in one category "
+        "and helped in another")
+
+    tl = DRIVER_SPECS["truckload-supply-purge"].provenance_tags
+    assert provenance_tag_of("less-than-truckload carrier", tl) == "ltl", (
+        "first-match must still win for a partitioned driver — a headwind name tagged into the "
+        "tailwind bucket is the defect this ordering exists to prevent")
+    assert provenance_tags_of("less-than-truckload carrier", tl) == ("ltl", "asset-based-tl"), (
+        "the multi-match function itself still returns every match — the GATE is the spec flag, "
+        "not the resolver")
+
+
+def test_the_single_tag_form_is_the_first_of_the_multi_form() -> None:
+    """`provenance_tag_of` DELEGATES, so the two can never disagree — the property that lets the
+    other three drivers stay untouched by the multi-tag work."""
+    from vinci.themes.drivers import DRIVER_SPECS
+    from vinci.themes.exposure import provenance_tag_of, provenance_tags_of
+
+    for spec in DRIVER_SPECS.values():
+        for text in ("data center liquid cooling", "less-than-truckload", "protein shake",
+                     "nothing matches this string at all"):
+            assert (provenance_tag_of(text, spec.provenance_tags)
+                    == provenance_tags_of(text, spec.provenance_tags)[0])
+
+
+def test_nothing_matching_yields_unspecified_rather_than_empty() -> None:
+    """The return is never empty, so no caller needs a guard."""
+    from vinci.themes.drivers import DRIVER_SPECS
+    from vinci.themes.exposure import provenance_tags_of
+
+    tags = DRIVER_SPECS["glp1-demand-shift"].provenance_tags
+    assert provenance_tags_of("zzz no keyword here", tags) == ("unspecified",)
+
+
+def test_no_cli_print_site_resolves_tags_outside_the_shared_helper() -> None:
+    """THE SIBLING-CALL-SITE PIN (review of #488) — the defect that changed an answer.
+
+    `cli.py` had TWO tag print sites. The multi-tag fix updated one; the committed-capacity block
+    still called the single-tag helper, so 12 of 18 driver-specific names printed under-tagged and
+    the reported conclusion — "no benefiting-side name competes with SMPL" — was FALSE, hiding
+    SMPL's own second tag and BJRI's. The suite stayed green throughout, because nothing asserted
+    that the print sites agree.
+
+    A behavioural pin cannot reach a print site without running the whole scan, so this asserts the
+    STRUCTURAL property instead: every tag resolution in the CLI goes through the ONE gated helper
+    (`_tags`), and no call site reaches the raw resolvers directly. Same shape as the contamination
+    caught in `assumptions` and invisible in its sibling `facts` — the sibling is the check that
+    was missing."""
+    import pathlib
+
+    src = (pathlib.Path(__file__).resolve().parents[1] / "vinci" / "cli.py").read_text()
+    # Counted rather than located: BOTH resolvers must be invoked exactly once in the whole file,
+    # and both of those calls live in `_tags`. A second call anywhere is a second decision about
+    # how tags resolve, which is precisely how the two print sites came to disagree.
+    assert src.count("provenance_tags_of(") == 1, (
+        "provenance_tags_of is called more than once in cli.py — every print site must share the "
+        "ONE gated resolution, or a fix applied at one and not its sibling changes the answer")
+    assert src.count("provenance_tag_of(") == 1, (
+        "provenance_tag_of is called more than once in cli.py — the single-tag helper is the "
+        "fallback INSIDE `_tags`, never a second path a print site can reach")
+    # A generous window rather than a precise slice: `_tags` carries a docstring with blank lines,
+    # so splitting on "\n\n" truncates before the body it is meant to check.
+    tags_def = src[src.index("def _tags("):][:1200]
+    assert "provenance_tags_of(" in tags_def and "provenance_tag_of(" in tags_def, (
+        "both resolvers must sit inside `_tags` — if they moved, this pin is guarding nothing")

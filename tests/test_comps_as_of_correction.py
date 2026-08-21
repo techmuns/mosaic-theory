@@ -149,3 +149,50 @@ def test_the_printed_close_column_is_found_by_label_not_position() -> None:
     assert "_comps_cell(fd, tgt, 1)" not in src, (
         "the printed-close column is hardcoded to position 1 again — a CIQ column reorder would "
         "feed a different number into the date match with nothing to reveal it")
+
+
+def test_a_store_that_stops_before_the_stamp_refuses_rather_than_matching_backward() -> None:
+    """THE HLF CASE, 2026-08-21 — the bound was one-sided and the backward scan was unbounded.
+
+    `not_after` excludes bars at or after the stamp, and the docstring treats it as the cure for
+    "an otherwise five-year scan that would eventually meet a coincidental match". It only bounds
+    the scan FORWARD. HLF's panel printed 12.45 as of 2026-08-20 while the store ended 2026-08-14,
+    so no bar within a half-cent existed after July — the scan reached back to **2025-12-03**,
+    `max(hits)` correctly returned that latest match, and the correction published a data date
+    **261 days old**. The 45-day freshness ceiling then refused an assembly whose workbooks had
+    been exported the previous day.
+
+    THE PRECONDITION IS COVERAGE, NOT DISTANCE, and WERN is why. Same shape — stamp 2026-08-19,
+    store ending 2026-08-14 — but no coincidental match, so it returned None and the header stood.
+    The difference between the two names was LUCK. A distance threshold would need a number nobody
+    can set from face validity; "the store cannot see the stamp" is knowable and needs none.
+
+    THE GUARD IS PRIOR-CLOSE COVERAGE, NOT STAMP COVERAGE — the first cut required the frontier
+    to reach the STAMP and reddened the recurrence pin two functions up, whose store ends 08-13
+    under an 08-14 stamp. That is the LEGITIMATE case: the panel's data IS the prior trading
+    close, so a store ending exactly there covers it. `_COVERAGE_GAP_DAYS` = 4 spans a long
+    weekend plus a holiday — the widest two consecutive trading days can sit apart.
+
+    MUTATION: drop the coverage guard and this reddens with 2025-12-03."""
+    stamp = dt.date(2026, 8, 20)
+    bars = [
+        _Bar(dt.date(2025, 12, 3), 12.45),    # the coincidental match, 261 days back
+        _Bar(dt.date(2026, 7, 30), 12.44),    # nearest recent — OUTSIDE the half-cent window
+        _Bar(dt.date(2026, 8, 14), 12.33),    # the store's frontier, before the stamp
+    ]
+    assert date_of_close(12.45, bars, not_after=stamp) is None, (
+        "a store ending before the stamp cannot contain the bar the panel names — every match is "
+        "coincidental by construction, so the correction must refuse and leave the header standing")
+
+
+def test_coverage_reaching_the_stamp_still_corrects_normally() -> None:
+    """THE NEGATIVE HALF — the precondition must not disarm the correction it guards. When the
+    store DOES reach the stamp, the prior-trading-close identification runs exactly as before;
+    measured on the committed fleet, all six previously-corrected names are unchanged."""
+    stamp = dt.date(2026, 8, 17)
+    bars = [
+        _Bar(dt.date(2026, 8, 13), 77.10),
+        _Bar(dt.date(2026, 8, 14), 78.16),    # the prior trading close the panel names
+        _Bar(dt.date(2026, 8, 17), 79.02),    # ON the stamp — excluded by the forward bound
+    ]
+    assert date_of_close(78.16, bars, not_after=stamp) == dt.date(2026, 8, 14)

@@ -2146,6 +2146,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         grade_driving_fact,
         is_real_exposure,
         provenance_tag_of,
+        provenance_tags_of,
         scan_driver_exposure,
     )
     from vinci.themes.schemas import ExposureBasis
@@ -2154,8 +2155,15 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     print(f"driver={spec.key}")
     _layers = spec.provenance_tags  # theme's by-tag provenance map (chain layers here)
 
-    def _tag(fact_text: str) -> str:
-        return provenance_tag_of(fact_text, _layers)
+    def _tags(fact_text: str) -> tuple[str, ...]:
+        """All applicable tags when the SPEC declares its tags non-exclusive, else the first match.
+
+        GATED ON `spec.multi_tag` (review of #488): multi-match defeats the most-specific-first
+        ordering three of the four drivers depend on — "less-than-truckload carrier" resolves to
+        ('ltl', 'asset-based-tl') under truckload's directional tags, putting a headwind name in
+        the tailwind bucket."""
+        return (provenance_tags_of(fact_text, _layers) if spec.multi_tag
+                else (provenance_tag_of(fact_text, _layers),))
 
     cfg = get_config()
     cfg.ensure_dirs()
@@ -2222,7 +2230,11 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     dist = Counter(a.exposure_basis for a in results)
     _not_surfaced = (ExposureBasis.NONE_DISCLOSED, ExposureBasis.UNASSESSED_ERROR)
     surfaced = [a for a in results if a.exposure_basis not in _not_surfaced]
-    layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
+    # BY TAG, not by name: a two-sided name counts under BOTH sides, so the totals here can
+    # exceed the surfaced count. That is the point — the column answers 'how much exposure
+    # of each kind', not 'how many companies'.
+    layers = Counter(tag for a in surfaced if (f := grade_driving_fact(a))
+                     for tag in _tags(f.fact))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
     print(f"\n=== Stage-3 · {spec.key} exposure scan ===")
     print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
@@ -2233,7 +2245,10 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     print(f"  {'(no chain exposure disclosed)':32} {dist.get(ExposureBasis.NONE_DISCLOSED, 0)}")
     print(f"  {'(UNASSESSED — scan error, NOT none)':32} "
           f"{dist.get(ExposureBasis.UNASSESSED_ERROR, 0)}")
-    print(f"\nVOLUME by chain layer — of the {len(surfaced)} surfaced:")
+    # BY TAG, and the header says so when tags can overlap — with `multi_tag` a two-sided name
+    # counts under both sides, so the column deliberately does not sum to the surfaced count.
+    _basis = ("tag mentions across" if spec.multi_tag else "of the")
+    print(f"\nVOLUME by chain layer — {_basis} {len(surfaced)} surfaced:")
     for layer, n in layers.most_common():
         print(f"  {layer:22} {n}")
     real = [a for a in surfaced if is_real_exposure(a)]
@@ -2243,14 +2258,15 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     for a in sorted(real, key=lambda x: x.exposure_basis.value):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{_tag(f.fact)}> "
+            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{'+'.join(_tags(f.fact))}> "
                   f"{f.driver_tie.value}: {f.fact[:120]}")
             print(f"         source: {f.source_ref}")
     print(f"\nCOMMITTED-capacity — borderline, capex/MW toward the driver ({len(committed)}):")
     for a in sorted(committed, key=lambda x: x.ticker):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} <{_tag(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
+            print(f"  {a.ticker:6} <{'+'.join(_tags(f.fact))}> "
+                  f"{f.driver_tie.value}: {f.fact[:105]}")
     print(f"\n(+ {dist.get(ExposureBasis.ASPIRATIONAL, 0)} at the INTENT tier — surfaced, soft on "
           "their face; full provenance in --out. Volume decides the downstream calibration need.)")
     return 0

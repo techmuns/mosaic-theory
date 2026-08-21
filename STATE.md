@@ -5149,6 +5149,61 @@ reached classification). **Keep the clause** — it documents intent and the uni
 change — **but a clean run is no evidence it works.** Clearest instance yet of a guard that cannot
 fire.
 
+**A STORED DERIVATION OUTLIVES THE CODE THAT PRODUCED IT — THIRD INSTANCE (2026-08-21, review of
+#488).** Recorded as a CLASS because the individual fixes keep landing while the shape recurs.
+
+**THE DEFECT.** `pe_current_and_percentile` refuses a percentile when the filer rescaled per-share
+figures — correctly, since split-adjusted prices over as-filed EPS divide one basis by the other.
+Its own sentence says *"inside the window"*, and **the call passed the FULL annual history**, so a
+rescaling that predates the trailing range refused a percentile it cannot touch. Declared-vs-
+enforced, in a guard.
+
+**MEASURED, NOT ESTIMATED.** Across all 16 committed companyfacts fixtures only TWO names carry any
+basis change: **HLF** (full 2.0032 → windowed None — WRONGLY WITHDRAWN, its 2018 2:1 split sits
+EIGHT YEARS before a window opening 2021-08-15) and **NFLX** (10.02 either way — a correct refusal,
+its 10:1 is inside). **Exposure among committed dossiers: exactly one name.** The 1,802-name
+universe is UNMEASURED — companyfacts for every name is not held locally, and the fixtures cover
+the dossier fleet only.
+
+**AND I RATIFIED IT BEFORE THE REVIEW CAUGHT IT.** Seeing the detector fire on HLF, I verified the
+split from the filing (8-K 0001193125-18-136523, "(5) Effect a two-for-one stock split", 73,825,918
+for) and added HLF to `SPLIT_NAMES` — **the allowlist whose own test exists to catch exactly this
+collateral damage**. The split is real; its LOCATION is what mattered, and I checked the wrong
+property. `SPLIT_NAMES` now means "rescaled INSIDE the window", never "has ever split".
+
+**THE CLASS, AND WHY THE CODE FIX DOES NOT CLOSE THE ARTIFACT.** `valuation.pe_percentile_5y` reads
+`f.pe_pctile_vs_history` from the **screen data-record**, which is SERIALIZED AT SCREEN TIME. So
+fixing the computation corrects no name already screened: HLF's dossier still carries the false
+note *"a share-basis change falls inside the window"* after a full re-assembly, because assembly
+reads the persisted record rather than recomputing. **`vinci screen` has no per-ticker option** —
+it is the whole-universe weekly job — so the artifact closes on the next screen run, not here.
+**THE ARTIFACT WAS THEREFORE HELD OUT OF #488**: shipping it would publish a known-false claim on
+the decision surface, and the code fixes stand on their own.
+
+**THIS IS THE THIRD OF THE SHAPE, and the other two are already in this file:** the SEAL MANIFEST
+holding a predecessor's hash after a supersede, and `extraction_version` not restamping on refresh.
+**A derived value written once and read forever is invisible to the fix that corrects its
+producer.** The general remedy is not obvious — recomputing on read costs the reproducibility the
+stored record exists for — so this is recorded as a CLASS to reason about, not a build.
+
+**THE OTHER SEVEN REVIEW FINDINGS, all applied:** multi-tag made OPT-IN per spec
+(`DriverSpec.multi_tag`, default False) — unconditional multi-match put a HEADWIND truckload name
+in the TAILWIND bucket (`"less-than-truckload carrier"` → `('ltl','asset-based-tl')`) and made
+nearly every AI-datacenter name read as colocation, since its prefilter guarantees "data center"
+appears; the uncorrected-comps reason now NAMES WHICH CAUSE applies (the coverage guard added a
+second `None` path on which the store DOES carry the bar — HLF holds 12.45 on 2025-12-03 and its
+own pin asserts it, while the page printed "no bar at that panel's printed close");
+`_COVERAGE_GAP_DAYS` no longer claims to be an absolute calendar bound (Sandy 2012 closed the NYSE
+Mon–Tue, a FIVE-day gap — the error direction is safe, the claim was overstated); the per-tag
+header says so; the dead `_tag` helper is gone; a superseded comment removed.
+
+**TWO PINS ADDED WHERE THE DEFECTS LIVED, both mutation-verified.** A STRUCTURAL pin that both CLI
+print sites resolve through ONE gated helper — the sibling-call-site defect that made 12 of 18
+names print under-tagged and produced a FALSE conclusion. And a CALL-SITE pin for the windowed
+split check: **un-windowing leaves the existing fleet test green**, because that test windows its
+own points and so guards the FUNCTION while the defect was at the CALL SITE. Pin-the-artifact-not-
+the-helper, in the pin written to catch it.
+
 **THE PRE-ASSEMBLY SET — the plan itself, recorded here because it lived only in CHAT until
 2026-08-17 (an OPERATOR-ACTION RULE slip: chat is not a ledger, and the set was already three PRs
 old before it reached STATE).** Agreed after the operator's push-back that a full fleet assembly

@@ -258,7 +258,19 @@ def pe_current_and_percentile(
     # those observations divide one basis by the other. Refused with its cause rather than
     # rescaled, because the periods the filer never restated have no published current-basis
     # figure and deriving one would be fabrication.
-    if (factor := share_basis_change(annual_eps)) is not None:
+    # WINDOWED, because the sentence above says "inside the window" and the call did not enforce it
+    # (review of #488). `share_basis_change` scans every annual point it is given, so an
+    # unrestricted call refuses on a rescaling that predates the trailing range and cannot touch a
+    # single observation in it. MEASURED on the committed fixtures: HLF's only basis change is its
+    # 2018 2:1 split — eight years before a window opening 2021-08-15 — so the full series returns
+    # 2.0032 and the windowed series returns None, while NFLX's 10:1 sits INSIDE and returns 10.02
+    # either way. HLF's committed page therefore carried "a share-basis change falls inside the
+    # window" as a FALSE claim on the decision surface, and deleted a buildable percentile.
+    #
+    # The window is the same one the range itself uses, computed here so the two cannot drift.
+    _split_start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
+    _in_window = [p for p in annual_eps if p.period_end >= _split_start]
+    if (factor := share_basis_change(_in_window)) is not None:
         return pe_df, DataField.unknown(
             source="EDGAR", tier=SourceTier.DERIVED,
             note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{factor:.4g}x)",

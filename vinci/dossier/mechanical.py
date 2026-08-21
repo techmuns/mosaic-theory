@@ -31,6 +31,7 @@ from vinci.dossier.ciq import CiqBundle
 # See the note at `_ITEM_TERMINATION` for why it moved.
 from vinci.dossier.ciq_sheets import _cs_panel_filed
 from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
+from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
@@ -3244,6 +3245,25 @@ def _ie_bridge_net_debt(implied: ImpliedValuation) -> float | None:
     return debt - cash if (cash is not None and debt is not None) else None
 
 
+def _uncorrected_reason(stamp: date | None, price_bars: list[Any] | None) -> str:
+    """WHY the comps as-of could not be corrected — the two causes are different facts.
+
+    THE STRING WAS TRUE OF ONE PATH AND BECAME FALSE OF THE OTHER (review of #488). The original
+    reason — "the store carries no bar at that panel's printed close" — described the only refusal
+    that existed. The coverage precondition added a SECOND, and on it the store usually DOES carry
+    the bar: HLF holds 12.45 on 2025-12-03 and its own regression pin asserts exactly that, while
+    its dossier printed the no-bar sentence. A reason that names the wrong cause is worse than
+    none, because it sends the reader to check a thing that is not wrong.
+    """
+    dates = [d for b in (price_bars or []) if isinstance(d := getattr(b, "bar_date", None), date)]
+    frontier = max(dates, default=None)
+    if frontier is not None and stamp is not None and (stamp - frontier).days > _COVERAGE_GAP_DAYS:
+        return (f"the price store ends {frontier.isoformat()}, before the {stamp.isoformat()} "
+                "export stamp — the bar this panel names is absent, so any match would be "
+                "coincidence")
+    return "the store carries no bar at that panel's printed close"
+
+
 def _implied_expectations(
     peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle,
     price_bars: list[Any] | None = None,
@@ -3372,7 +3392,7 @@ def _implied_expectations(
         + (f"(CIQ Comparable Analysis→Financial Data, Latest, data {tev_as_of}, "
            f"exported {_export_stamp}" if _corrected else
            f"(CIQ Comparable Analysis→Financial Data, Latest, export stamp {_export_stamp} — "
-           f"NOT date-corrected: the store carries no bar at that panel's printed close")
+           f"NOT date-corrected: {_uncorrected_reason(_raw, price_bars)}")
         + ") — simple-TEV basis"
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(
