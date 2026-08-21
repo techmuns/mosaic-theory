@@ -40,7 +40,8 @@
       "value": 51.656981,
       "unit": "M shares",
       "basis": "Diluted shares outstanding 51,656,981 = basic shares outstanding 51,586,981 (cover of the 10-Q filed 2026-08-06, as of 2026-07-31) + a dilutive increment of 70,000 (diluted weighted average 52,267,000 less basic weighted average 52,197,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is the condition that makes the construction sound: the increment is highly price-sensitive and has COLLAPSED as the stock fell — 260,000 in Q3-2025, 390,000 in Q1-2026, 70,000 now. Pairing a current share count with a stale increment would have overstated the denominator by 320,000 shares. The prior 52,634,451 was self-consistent when written (Q1 count plus the Q1 increment) and is now two quarters stale on both legs. The latest-quarter diluted weighted average of 52,267,000 is NOT used: it is a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date.",
-      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap",
+      "quantity_kind": "outstanding"
     },
     "ltm_revenue": {
       "value": 5555.425,

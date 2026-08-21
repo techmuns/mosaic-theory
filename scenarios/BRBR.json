@@ -40,7 +40,8 @@
       "value": 116.478194,
       "unit": "M shares",
       "basis": "Diluted shares outstanding 116,478,194 = basic shares outstanding 116,278,194 (cover of the 10-Q filed 2026-08-04, as of 2026-07-28) + a dilutive increment of 200,000 (diluted weighted average 116,600,000 less basic weighted average 116,400,000, 2026-04-01 to 2026-06-30). BOTH LEGS COME FROM THE SAME FILING, which is what makes the construction sound. The underwrite's 116,600,000 is NOT used: it is the latest-quarter diluted weighted average, a period average over a quarter in which the count was falling, and a period average is the mislabel the denominator convention exists to remove. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; and any change in the dilutive count between the reporting period end and the valuation date.",
-      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap",
+      "quantity_kind": "outstanding"
     },
     "ltm_revenue": {
       "value": 2354.6,

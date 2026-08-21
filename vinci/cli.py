@@ -1318,22 +1318,51 @@ def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
 
     import vinci.scenarios as sc
 
+    # THE QUANTITY A REFRESH SUPPLIES, declared (2026-08-21). Until now this command could only
+    # send a bare float, which is precisely why the diluted_shares hazard had no door to close:
+    # the value moved while the basis kept naming a quantity the number no longer was. For a
+    # QUANTITY_SENSITIVE fact the engine now REFUSES an undeclared refresh, so the operator needs
+    # a way to say which one — and saying it is the point, not a formality.
+    kinds: dict[str, str] = {}
+    for kv in (args.fact_kind or []):
+        if "=" not in kv:
+            print(f"--fact-kind expects KEY=KIND, got {kv!r}")
+            return 2
+        k, _, v = kv.partition("=")
+        kinds[k.strip()] = v.strip()
+
     facts: dict[str, float | sc.Fact] = {}
+    parsed: dict[str, float] = {}
     for kv in args.fact:
         if "=" not in kv:
             print(f"--fact expects KEY=VALUE, got {kv!r}")
             return 2
         k, _, v = kv.partition("=")
         try:
-            facts[k.strip()] = float(v)
+            parsed[k.strip()] = float(v)
         except ValueError:
             print(f"--fact {k.strip()!r}: {v!r} is not a number")
             return 2
+    unknown = sorted(set(kinds) - set(parsed))
+    if unknown:
+        print(f"--fact-kind names {unknown} which no --fact supplies")
+        return 2
     try:
         rec = sc.read_record(args.ticker.upper())
     except FileNotFoundError:
         print(f"no committed record for {args.ticker.upper()}")
         return 1
+    # A DECLARED kind rides on a Fact carrying the record's OWN basis/source/unit: the operator is
+    # declaring WHICH QUANTITY the new number is, not rewriting the provenance prose. If the two
+    # disagree the engine refuses — that refusal is the whole point of the flag.
+    for k, val in parsed.items():
+        kind = kinds.get(k)
+        cur = rec.facts.get(k)
+        if kind and cur is not None:
+            facts[k] = sc.Fact(value=val, unit=cur.unit, basis=cur.basis, source=cur.source,
+                               quantity_kind=kind)
+        else:
+            facts[k] = val
     on_date = args.as_of or _date.today().isoformat()
     try:
         out = sc.refresh_record(rec, spot=args.spot, facts=facts or None,
@@ -3352,6 +3381,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_sr.add_argument("--spot", type=float, help="new spot; omit to leave unchanged")
     p_sr.add_argument("--fact", action="append", default=[], metavar="KEY=VALUE",
                       help="refresh one machine fact (repeatable); see the refreshable set")
+    p_sr.add_argument("--fact-kind", action="append", metavar="KEY=KIND",
+                      help="declare WHICH QUANTITY a --fact supplies (e.g. "
+                           "diluted_shares=outstanding). Required where two quantities share a "
+                           "unit — the engine refuses an undeclared refresh of those")
     p_sr.add_argument("--source", required=True,
                       help="WHERE the new values came from — required; an unattributable refresh "
                            "is an untraceable edit")

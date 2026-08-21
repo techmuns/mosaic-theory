@@ -34,7 +34,8 @@
       "value": 93.677801,
       "unit": "M shares",
       "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
-      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified)"
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified)",
+      "quantity_kind": "weighted_average"
     },
     "ltm_revenue": {
       "value": 1392.235,

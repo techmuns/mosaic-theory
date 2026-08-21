@@ -32,7 +32,8 @@
       "value": 110.508875,
       "unit": "shares",
       "basis": "Diluted shares outstanding 110,508,875 = basic outstanding 109,552,950 + dilutive increment 955,925 (diluted 109,458,472 − basic 108,502,547 weighted average, 2026-02-01→2026-04-30). The dilutive increment is carried from the reporting period to the valuation date, which assumes the dilutive count has not moved since. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
-      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap",
+      "quantity_kind": "outstanding"
     },
     "d_and_a_ratio": {
       "value": 0.071043,
