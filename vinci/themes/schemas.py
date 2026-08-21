@@ -395,3 +395,19 @@ class DriverSpec(BaseModel, frozen=True):
     prefilter_terms: tuple[str, ...]  # pre-filter vocabulary (shape-agnostic; whatever fits)
     # optional keyword→tag map for by-tag volume aggregation (e.g. chain layers); () if none
     provenance_tags: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    #: MAY ONE FACT CARRY SEVERAL TAGS? Default False — FIRST-MATCH, which is what three of the
+    #: four drivers depend on and what their pins assert.
+    #:
+    #: OPT-IN, AND MEASURED WHY (review of #488). `ai-datacenter` and `truckload-supply-purge`
+    #: order their tags MOST-SPECIFIC FIRST and rely on the first match winning: "liquid cooling
+    #: systems for data centers" resolves to ('thermal/cooling', 'colocation/operator') under
+    #: multi-match, and every AI name reads as colocation because the prefilter guarantees "data
+    #: center" appears. Truckload is worse because its tags are DIRECTIONAL — "less-than-truckload
+    #: carrier" resolves to ('ltl', 'asset-based-tl'), putting a HEADWIND name in the TAILWIND
+    #: bucket, which is the collision `drivers.py` calls load-bearing and regression-pins.
+    #:
+    #: `glp1-demand-shift` is the case that needs it: its sides are genuinely non-exclusive, since
+    #: one company can be suppressed in one category and helped in another. So the capability is a
+    #: per-spec DECLARATION rather than a global change — a driver whose tags are a partition keeps
+    #: first-match, and a driver whose tags are dimensions asks for all of them.
+    multi_tag: bool = False

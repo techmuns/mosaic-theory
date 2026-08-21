@@ -258,7 +258,30 @@ def pe_current_and_percentile(
     # those observations divide one basis by the other. Refused with its cause rather than
     # rescaled, because the periods the filer never restated have no published current-basis
     # figure and deriving one would be fabrication.
-    if (factor := share_basis_change(annual_eps)) is not None:
+    # WINDOWED, because the sentence above says "inside the window" and the call did not enforce it
+    # (review of #488). `share_basis_change` scans every annual point it is given, so an
+    # unrestricted call refuses on a rescaling that predates the trailing range and cannot touch a
+    # single observation in it. MEASURED on the committed fixtures: HLF's only basis change is its
+    # 2018 2:1 split — eight years before a window opening 2021-08-15 — so the full series returns
+    # 2.0032 and the windowed series returns None, while NFLX's 10:1 sits INSIDE and returns 10.02
+    # either way. HLF's committed page therefore carried "a share-basis change falls inside the
+    # window" as a FALSE claim on the decision surface, and deleted a buildable percentile.
+    #
+    # THE WINDOW IS THE RANGE **PLUS THE EPS REACH-BACK**, not the range alone (review of #490).
+    # The range loop below does not read EPS points dated inside the window — it reads, for each
+    # bar, `annual_eps_as_of(bar_date)`, which reaches back up to `MAX_EPS_AGE_DAYS` past the
+    # period end. So the set of periods that can feed an observation in the range starts at
+    # `window - MAX_EPS_AGE_DAYS`, and filtering on the range alone drops periods the range
+    # actually consumes. DEMONSTRATED: a 2:1 split filed 2023-02 restating FY2020/FY2021, under a
+    # window opening 2021-08-15, leaves FY2021 as the only restated period inside the range —
+    # one factor, below `_SPLIT_MIN_PERIODS` — so the refusal never fires while every bar before
+    # the restatement filing still divides an adjusted price by an as-filed EPS. The reach-back
+    # window keeps both periods and the refusal fires. Re-measured on all 16 committed fixtures:
+    # HLF still returns None (its 2018 restatement is far outside even the extended window) and
+    # NFLX still returns 10.02 — the fix this PR shipped is unchanged, its boundary is closed.
+    _split_start = reference_date - timedelta(days=_PE_WINDOW_DAYS + MAX_EPS_AGE_DAYS)
+    _in_window = [p for p in annual_eps if p.period_end >= _split_start]
+    if (factor := share_basis_change(_in_window)) is not None:
         return pe_df, DataField.unknown(
             source="EDGAR", tier=SourceTier.DERIVED,
             note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{factor:.4g}x)",

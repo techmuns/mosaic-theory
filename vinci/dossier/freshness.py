@@ -301,6 +301,19 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> CiqAsOf:
     return CiqAsOf(max(dates), resolved=True)
 
 
+#: The gap this allows: a Friday close to the following Tuesday when Monday is a holiday — the
+#: widest ROUTINE separation between two consecutive trading days.
+#:
+#: NOT AN ABSOLUTE BOUND, and the comment used to say it was (review of #488). UNSCHEDULED
+#: closures exceed it: Hurricane Sandy shut the NYSE Mon-Tue 2012-10-29/30, so Friday 10-26 to
+#: Wednesday 10-31 is a FIVE-day gap between consecutive trading days. The error direction is
+#: safe — a longer real gap makes this guard REFUSE a correction it could have made, leaving the
+#: header stamp standing, which is the honest fallback either way. Widening it to cover every
+#: historical closure would weaken the guard against exactly the coincidental match it exists to
+#: stop, so the routine bound is kept and its limit is stated rather than overclaimed.
+_COVERAGE_GAP_DAYS = 4
+
+
 def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = None,
                   tol: float = 0.005) -> dt.date | None:
     """The date whose close IS this price — or None when the store cannot say so unambiguously.
@@ -328,6 +341,39 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
         try:
             return dt.date.fromisoformat(str(v))
         except (TypeError, ValueError):
+            return None
+
+    # COVERAGE PRECONDITION (HLF, 2026-08-21). The panel names a bar; if the store's history STOPS
+    # BEFORE the stamp, that bar is ABSENT BY CONSTRUCTION and every match below is a coincidence.
+    #
+    # THE BOUND WAS ONE-SIDED. `not_after` excludes bars at or after the stamp and the docstring
+    # treats it as the cure for "an otherwise five-year scan that would eventually meet a
+    # coincidental match — publishing a date years off". It only bounds the scan FORWARD; backward
+    # it ran the full history. HLF is that case: its panel prints 12.45 as of 2026-08-20, the store
+    # ends 2026-08-14, no bar within a half-cent exists after July (nearest 12.44 on 07-30, 12.47
+    # on 07-15) — so the scan reached back to 2025-12-03, `max(hits)` correctly returned that
+    # latest match, and the correction published a data date 261 DAYS OLD. The 45-day freshness
+    # ceiling then refused the assembly, naming a stale panel that was exported the day before.
+    #
+    # WERN IS THE CONTROL and the reason this is a precondition rather than a distance knob: SAME
+    # shape (stamp 2026-08-19, store ends 2026-08-14), no coincidental match, correctly returned
+    # None. The difference between the two names was luck, not evidence — so the refusal must key
+    # on the store's COVERAGE, which is knowable, rather than on how far back a match happened to
+    # sit, which is a threshold nobody can set from face validity.
+    #
+    # Fails to the path the function already has: None leaves the stamp UNCORRECTED and the header
+    # stands. A correction that cannot see the data it is correcting must not run.
+    # THE FRONTIER MUST REACH THE PRIOR TRADING CLOSE, NOT THE STAMP — and the first cut of this
+    # guard got that wrong. Requiring `frontier >= not_after` refused the legitimate case the
+    # recurrence pin covers (bars ending 08-13 under an 08-14 stamp): the panel's data IS the
+    # prior trading close, so a store ending exactly there COVERS it. The existing pin caught it.
+    # `_COVERAGE_GAP_DAYS` spans a long weekend plus a holiday — it is a CALENDAR fact about how
+    # far apart two consecutive trading days can sit, not a face-validity threshold, and no
+    # market calendar is available here to do better.
+    if not_after is not None and bars:
+        frontier = max((d for b in bars if (d := _as_date(getattr(b, "bar_date", None)))),
+                       default=None)
+        if frontier is not None and (not_after - frontier).days > _COVERAGE_GAP_DAYS:
             return None
 
     hits = []

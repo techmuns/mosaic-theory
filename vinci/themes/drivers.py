@@ -231,7 +231,13 @@ GLP1_DEMAND_SHIFT = DriverSpec(
     ),
     tie_taxonomy=(
         "driver-specific = MATERIAL disclosed revenue in a named category of the shift, on "
-        "EITHER side, with the sub-structure tag recording which. Suppressed side: a company "
+        "EITHER side. RECORD EVERY APPLICABLE SIDE, NOT THE STRONGEST ONE: a company with "
+        "material revenue in BOTH a suppressed category and a benefiting one is exposed twice "
+        "over, and reporting one side would state the smaller truth — a nutrition portfolio "
+        "whose snacking brands face volume decline while its protein brands face a tailwind is "
+        "suppressed-volume AND benefiting-nutrition, and a meal-replacement product is both a "
+        "weight-loss METHOD competing with incretins and nutrition support for incretin users. "
+        "The sub-structure tags record which sides. Suppressed side: a company "
         "whose disclosed volumes sit in snacking, confectionery, sugared beverage, QSR or "
         "alcohol categories facing the consumption decline. Benefiting side: a company whose "
         "disclosed revenue sits in high-protein, portion-controlled, meal-replacement or "
@@ -259,6 +265,7 @@ GLP1_DEMAND_SHIFT = DriverSpec(
         "meal replacement", "portion control", "satiety", "fiber", "active nutrition",
         "medical nutrition", "ready-to-drink", "private label", "consumer packaged goods",
     ),
+    multi_tag=True,   # a name can be suppressed in one category and helped in another
     provenance_tags=(
         ("suppressed-volume",
          ("snack", "snacking", "confectionery", "candy", "baked", "cookie", "chip",

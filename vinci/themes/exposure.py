@@ -101,12 +101,31 @@ def provenance_tag_of(text: str, tags: tuple[tuple[str, tuple[str, ...]], ...]) 
     names, by a keyword read of ``tags`` (the DriverSpec's ``provenance_tags``, ordered
     most-specific first — e.g. for AI-datacenter, the value-chain layers), for by-tag aggregation.
     Approximate (a fact spans tags; the human reads the verbatim fact). First match wins;
-    'unspecified' if none match or the theme supplied no tags."""
+    'unspecified' if none match or the theme supplied no tags.
+
+    SINGLE-TAG, DELIBERATELY KEPT — see :func:`provenance_tags_of` for the multi-tag form. A
+    caller that aggregates BY NAME (one row per company) wants one tag; a caller reporting a
+    name's full exposure wants all of them."""
+    return provenance_tags_of(text, tags)[0]
+
+
+def provenance_tags_of(text: str, tags: tuple[tuple[str, tuple[str, ...]], ...]) -> tuple[str, ...]:
+    """EVERY sub-structure tag a disclosed fact names — not just the first.
+
+    WHY BOTH FORMS EXIST (measured on `glp1-demand-shift`, 2026-08-19). A driver whose structure
+    is DIRECTIONAL rather than sequential can have one company genuinely on two sides: SMPL is
+    suppressed as snacking and helped as protein — that duality IS its thesis — and HLF's
+    meal-replacement is a weight-loss METHOD competing with incretins AND nutrition support for
+    incretin users. First-match returned ONE tag for both, so the two-sided design lived in the
+    DriverSpec prose and never reached the output: zero of eleven names carried two tags.
+    The spec licensed it and the resolver could not express it.
+
+    ORDER IS PRESERVED from the spec's `provenance_tags`, so the most-specific tag still leads and
+    `provenance_tag_of` keeps its exact previous behaviour by taking [0]. 'unspecified' when
+    nothing matches, so the return is never empty and no caller needs a guard."""
     t = text.lower()
-    for tag, kws in tags:
-        if any(k in t for k in kws):
-            return tag
-    return "unspecified"
+    hits = tuple(tag for tag, kws in tags if any(k in t for k in kws))
+    return hits or ("unspecified",)
 
 
 def grade_driving_fact(a: ExposureAssessment) -> ExposureFact | None:
