@@ -2146,6 +2146,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         grade_driving_fact,
         is_real_exposure,
         provenance_tag_of,
+        provenance_tags_of,
         scan_driver_exposure,
     )
     from vinci.themes.schemas import ExposureBasis
@@ -2156,6 +2157,10 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
 
     def _tag(fact_text: str) -> str:
         return provenance_tag_of(fact_text, _layers)
+
+    def _tags(fact_text: str) -> tuple[str, ...]:
+        """ALL applicable tags — a directional driver can put one name on two sides."""
+        return provenance_tags_of(fact_text, _layers)
 
     cfg = get_config()
     cfg.ensure_dirs()
@@ -2222,7 +2227,11 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     dist = Counter(a.exposure_basis for a in results)
     _not_surfaced = (ExposureBasis.NONE_DISCLOSED, ExposureBasis.UNASSESSED_ERROR)
     surfaced = [a for a in results if a.exposure_basis not in _not_surfaced]
-    layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
+    # BY TAG, not by name: a two-sided name counts under BOTH sides, so the totals here can
+    # exceed the surfaced count. That is the point — the column answers 'how much exposure
+    # of each kind', not 'how many companies'.
+    layers = Counter(tag for a in surfaced if (f := grade_driving_fact(a))
+                     for tag in _tags(f.fact))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
     print(f"\n=== Stage-3 · {spec.key} exposure scan ===")
     print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
@@ -2243,14 +2252,15 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     for a in sorted(real, key=lambda x: x.exposure_basis.value):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{_tag(f.fact)}> "
+            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{'+'.join(_tags(f.fact))}> "
                   f"{f.driver_tie.value}: {f.fact[:120]}")
             print(f"         source: {f.source_ref}")
     print(f"\nCOMMITTED-capacity — borderline, capex/MW toward the driver ({len(committed)}):")
     for a in sorted(committed, key=lambda x: x.ticker):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} <{_tag(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
+            print(f"  {a.ticker:6} <{'+'.join(_tags(f.fact))}> "
+                  f"{f.driver_tie.value}: {f.fact[:105]}")
     print(f"\n(+ {dist.get(ExposureBasis.ASPIRATIONAL, 0)} at the INTENT tier — surfaced, soft on "
           "their face; full provenance in --out. Volume decides the downstream calibration need.)")
     return 0
