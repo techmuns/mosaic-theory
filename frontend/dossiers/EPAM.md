@@ -7,6 +7,8 @@ _August 18, 2026 · extraction 2026-08-16.1_
 ## At a glance
 **Target (base)** $131.00 (+34.5% vs entry-vintage spot) · **Spot** $97.43 (entry-vintage — frozen at underwrite 2026-08-07) · **Reward** $33.57 · **Risk** $22.37 · **Reward : risk** 1.50 : 1 (bar 2 : 1) · **Base IRR** 21.8% (floor 15%, 1.5y) · **Gate** FAIL (both tests)
 
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
 _Spot source: EOD close 2026-08-07_
 
 **Underwrite disposition:** WATCH (2026-08-11) — _the BUY/AVOID verdict of record is the ledger's_

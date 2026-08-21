@@ -7,6 +7,8 @@ _August 18, 2026 · extraction 2026-08-16.1_
 ## At a glance
 **Target (base)** $19.64 (+73.4% vs entry-vintage spot) · **Spot** $11.33 (entry-vintage — frozen at underwrite 2026-08-05) · **Reward** $8.31 · **Risk** $3.97 · **Reward : risk** 2.10 : 1 (bar 2 : 1) · **Base IRR** 44.3% (floor 15%, 1.5y) · **Gate** PASS (both tests)
 
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
 _Spot source: EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)_
 
 **Underwrite disposition:** WATCH (2026-08-19) · entry $11.33 (entry-vintage) — _the BUY/AVOID verdict of record is the ledger's_

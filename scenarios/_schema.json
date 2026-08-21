@@ -446,6 +446,127 @@
           ],
           "default": null,
           "title": "Gate"
+        },
+        "gate_regime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate Regime"
+        },
+        "asymmetry_tier": {
+          "anyOf": [
+            {
+              "enum": [
+                "poor",
+                "below_target",
+                "target_met",
+                "preferred",
+                "undefined"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asymmetry Tier"
+        },
+        "return_tier": {
+          "anyOf": [
+            {
+              "enum": [
+                "fails",
+                "minimum_met",
+                "preferred",
+                "undefined"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Tier"
+        },
+        "eligible_ratio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eligible Ratio"
+        },
+        "eligible_irr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eligible Irr"
+        },
+        "eligible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eligible"
+        },
+        "eligible_undefined": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eligible Undefined"
+        },
+        "ceiling_eligible": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ceiling Eligible"
+        },
+        "irr_convention": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Irr Convention"
         }
       },
       "title": "Result",

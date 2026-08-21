@@ -7,6 +7,8 @@ _August 19, 2026 · extraction 2026-08-16.1_
 ## At a glance
 **Target (base)** $35.71 (-22.4% vs entry-vintage spot) · **Spot** $46.04 (entry-vintage — frozen at underwrite 2026-07-19) · **Reward** $-10.33 · **Risk** $29.45 · **Reward : risk** -0.35 : 1 (bar 2 : 1) · **Base IRR** UNDEFINED — no horizon stated — an IRR needs a realisation date · **Gate** FAIL (both tests)
 
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
 _Spot source: Polygon EOD daily close 2026-07-17 (live)_
 
 **Underwrite disposition:** WATCH (2026-07-19) — _the BUY/AVOID verdict of record is the ledger's_

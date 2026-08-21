@@ -7,6 +7,8 @@ _August 18, 2026 · extraction 2026-08-16.1_
 ## At a glance
 **Target (base)** $12.31 (+6.5% vs entry-vintage spot) · **Spot** $11.56 (entry-vintage — frozen at underwrite 2026-08-07) · **Reward** $0.75 · **Risk** $10.97 · **Reward : risk** 0.07 : 1 (bar 2 : 1) · **Base IRR** 4.3% (floor 15%, 1.5y) · **Gate** FAIL (both tests)
 
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
 _Spot source: EOD BRBR close 2026-08-07. NOTE: only the -sl worktree's store carries a bar that far; this worktree's frontier is 2026-08-04. All three stores agree at 2026-07-29 ($13.29), so the difference is refresh depth, not value._
 
 **Underwrite disposition:** WATCH (2026-08-11) — _the BUY/AVOID verdict of record is the ledger's_
