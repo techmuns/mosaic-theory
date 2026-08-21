@@ -1327,9 +1327,19 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     # mechanical: a record whose committed result was judged WITHOUT a regime stays that way
     # under recompute, so a no-op refresh is still a no-op (`test_refresh_path`'s preservation
     # pin holds) and `run_recipe(rec).result == rec.result` still holds on the sealed book. The
-    # ladder stamps on a FIRST compute (`rec.result is None` — scenario-propose, a superseded
-    # reissue) and stays on a record that already carries it; migrating a sealed record to the
-    # new regime is a deliberate supersede, never a side effect of touching it.
+    # ladder stamps on a FIRST compute (`rec.result is None`) and stays on a record that already
+    # carries it.
+    #
+    # WHICH PATHS ACTUALLY REACH HERE — traced, not assumed (review finding, #487). `scenario-
+    # create` is the migration path: validate -> run_recipe -> write, so a reissued record picks
+    # up the regime. `scenario-refresh` recomputes WITH the result present, which is exactly the
+    # case this branch preserves. `scenario-supersede` NEVER CALLS run_recipe AT ALL — the
+    # incoming payload's `result` is written verbatim — so a supersede carries whatever regime
+    # its payload holds. That is PRE-EXISTING and not this ladder's doing: the 2026-08-05 IRR
+    # gate has the identical exposure, visible in the committed corpus (the two archived SMPL
+    # records carry `gate: UNDEFINED, irr: null` while the live one carries a computed gate).
+    # Recorded in STATE rather than fixed here — changing that path would silently re-run the
+    # engine over an analyst-authored payload, which is a decision, not a cleanup.
     legacy = rec.result is not None and rec.result.gate_regime is None
     ladder: dict[str, Any] = {}
     if not legacy:

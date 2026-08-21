@@ -47,9 +47,9 @@ def _load(p: Path) -> sc.ScenarioRecord:
 
 def _fresh(rec: sc.ScenarioRecord) -> sc.ScenarioRecord:
     """The record as a FIRST compute would see it — `result=None`. The ladder is
-    legacy-preserving, so simulating a fresh underwrite (scenario-propose, a superseded reissue)
-    means dropping the committed result; recomputing WITH it is the refresh path and must
-    preserve the legacy regime instead."""
+    legacy-preserving, so simulating a fresh underwrite (`scenario-create`: validate ->
+    run_recipe -> write) means dropping the committed result; recomputing WITH it is the
+    refresh path and must preserve the legacy regime instead."""
     return rec.model_copy(update={"result": None})
 
 
@@ -186,9 +186,9 @@ def test_the_divergence_zone_eligible_but_not_preferred() -> None:
 def test_a_recompute_never_migrates_a_legacy_record(path: Path) -> None:
     """THE FREEZE RULING AT THE ENGINE: recomputing a committed record WITH its result present is
     the refresh path, and it must reproduce the committed result EXACTLY — no regime, no tiers,
-    no convention stamp. Migration to the new regime is a deliberate supersede (result=None),
-    never a side effect of touching a record. This is also what keeps the no-op refresh a no-op
-    (`test_refresh_path`'s preservation pin)."""
+    no convention stamp. Migration to the new regime happens on a FIRST compute
+    (`scenario-create`), never as a side effect of touching a record. This is also what keeps
+    the no-op refresh a no-op (`test_refresh_path`'s preservation pin)."""
     rec = _load(path)
     out = sc.run_recipe(rec)
     assert out.result is not None and out.result.gate_regime is None
@@ -319,3 +319,43 @@ console.log(JSON.stringify({
                          capture_output=True, text=True, check=True, cwd=ROOT)
     res = json.loads(out.stdout.strip().splitlines()[-1])
     assert all(res.values()), f"rendered-card invariants failed: {res}"
+
+
+def test_supersede_writes_the_payloads_result_verbatim() -> None:
+    """THE CORRECTED CLAIM, PINNED (review finding, #487). The first cut of this PR asserted in
+    STATE and in the engine comment that a "superseded reissue" stamps the ladder. It does not:
+    `_cmd_scenario_supersede` never calls `run_recipe`, so the incoming payload's `result` is
+    written verbatim.
+
+    PRE-EXISTING, NOT THIS LADDER'S DOING — the 2026-08-05 IRR gate has the identical exposure,
+    which the committed corpus shows directly: both archived SMPL records carry
+    `gate: UNDEFINED, irr: null` while the live record carries a computed gate.
+
+    Pinned as BEHAVIOUR so the corrected sentence is machine-checked rather than merely reworded:
+    if supersede ever starts recomputing, this reddens and the STATE record must be re-ruled."""
+    live_rec = _load(ROOT / "scenarios" / "SMPL.json")
+    assert live_rec.result is not None and live_rec.result.gate_regime is None
+
+    incoming = live_rec.model_copy(update={"supersedes": None, "superseded_by": None})
+    _archived, live = sc.supersede_record(live_rec, incoming)
+    assert live.result is not None and live.result.gate_regime is None, (
+        "supersede recomputed the incoming payload — the engine comment and the STATE record "
+        "both say it does not; re-rule the migration path before changing this")
+
+    # the source-of-truth for "pre-existing": the archived corpus predates the IRR gate too
+    arch = ROOT / "scenarios" / "archive"
+    pre_gate = [p for p in arch.glob("SMPL-*.json")
+                if (json.loads(p.read_text()).get("result") or {}).get("irr") is None]
+    assert pre_gate, "expected archived SMPL records with no computed IRR — the same exposure"
+
+
+def test_scenario_create_is_the_migration_path() -> None:
+    """The other half of the corrected claim: `scenario-create` runs the engine, so a record
+    written through it carries the regime. Asserted on the CLI's own source (the command is an
+    argparse handler with side effects; the claim under test is which path CALLS the engine)."""
+    src = (ROOT / "vinci" / "cli.py").read_text()
+    create = src.split("def _cmd_scenario_create", 1)[1].split("\ndef _cmd_", 1)[0]
+    supersede = src.split("def _cmd_scenario_supersede", 1)[1].split("\ndef _cmd_", 1)[0]
+    assert "run_recipe" in create, "scenario-create no longer runs the engine — migration path gone"
+    assert "run_recipe" not in supersede, (
+        "supersede now runs the engine — the corrected STATE claim and the test above are stale")

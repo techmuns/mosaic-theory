@@ -4470,9 +4470,23 @@ arithmetic on every record ever written. Nine new `Result` fields (`gate_regime`
 regime (`LADDER_FIELDS`), so the committed book is byte-identical on disk and its cards gain no
 keys. **REFRESH SEMANTICS, the subtle half of Ruling 3:** `_with_irr_gate` is LEGACY-PRESERVING —
 recompute of a record whose result carries no regime reproduces that result EXACTLY (the no-op
-refresh stays a no-op); the ladder stamps only on a FIRST compute (propose, a superseded
-reissue). Migrating a sealed record is a deliberate supersede, never a side effect of touching
-it. **CORPUS RUN (all 8 live records, in memory):** zero reclassifications; EPAM is the
+refresh stays a no-op); the ladder stamps only on a FIRST compute. **WHICH PATHS REACH IT —
+TRACED, AND THE FIRST DRAFT OF THIS ENTRY GOT IT WRONG (review, #487):** `scenario-create`
+(validate → run_recipe → write) is the MIGRATION path; `scenario-refresh` recomputes with the
+result present and is the case the preservation branch exists for; **`scenario-supersede` never
+calls `run_recipe` at all** — the incoming payload's `result` is written verbatim, so a supersede
+carries whatever regime its payload holds. The draft claimed "a superseded reissue" stamps the
+ladder; it does not. **PRE-EXISTING, NOT THE LADDER'S DOING** — the 2026-08-05 IRR gate has the
+identical exposure, visible in the committed corpus (both archived SMPL records carry
+`gate: UNDEFINED, irr: null` beside a live record with a computed gate). Pinned as BEHAVIOUR
+(`test_supersede_writes_the_payloads_result_verbatim`) so the corrected sentence is
+machine-checked rather than merely reworded.
+**OPERATOR TO-DO — should `scenario-supersede` recompute the incoming payload's `result`?**
+Today it trusts the analyst's payload. Recomputing would make supersede a migration path and
+close the gate-staleness window, but it would also silently re-run the engine over
+analyst-authored numbers — a decision about who owns that block, not a cleanup, which is why
+this build recorded it instead of taking it. Affects the IRR gate identically, so the ruling
+covers both. **CORPUS RUN (all 8 live records, in memory):** zero reclassifications; EPAM is the
 acceptance case (below_target asymmetry + preferred return → NOT eligible — the levered-bet
 refusal); IT pins the determinate-false AND (below-line ratio + undefined IRR → False); SMPL
 alone is ELIGIBLE (2.10x / 44.3%). The 12–15% divergence zone (old boolean FAILs while the
