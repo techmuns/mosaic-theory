@@ -36,7 +36,21 @@ FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
 
 #: Names whose filings show a share-basis change. NFLX is the only one on the committed fleet —
 #: verified against live EDGAR for all fourteen, not assumed from the two fixtures kept here.
-SPLIT_NAMES = {"NFLX"}
+#: Names whose share-basis change is a CONFIRMED corporate action — each verified from the FILING,
+#: never from the ratio alone, because the detector cannot tell a split from a restatement and the
+#: whole point of this set is that a human checked.
+#:
+#:   NFLX — 10:1 forward (FY2023 12.03 → 1.20, FY2024 19.83 → 1.98).
+#:   HLF  — 2:1 FORWARD, shareholder-approved 2018-04-26, 8-K accession 0001193125-18-136523:
+#:          "(5) Effect a two-for-one stock split of the Company's common shares" (73,825,918 for).
+#:          Its companion 8-K (0001157523-18-000984) labels figures "Pre Stock Split" outright.
+#:          The filer restated its own history onto the post-split basis in the 2019-02-19 10-K:
+#:          FY2016 3.02 (filed 2017-02 and 2018-02) → 1.51 (filed 2019-02); FY2017 2.58 (2018-02)
+#:          → 1.29 (2019-02). Per-share figures HALVE in later filings, which is what a forward
+#:          split does to comparatives. Ratio measured 2.0032. The share COUNT series (99.5M →
+#:          103.6M over 2022-2025) is smooth and shows nothing — the split predates it, so
+#:          checking counts alone would have concluded "no split" and been wrong.
+SPLIT_NAMES = {"NFLX", "HLF"}
 
 
 def _eps(ticker: str) -> list:

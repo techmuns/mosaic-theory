@@ -5,6 +5,7 @@
     "CNXC",
     "EPAM",
     "FUBO",
+    "HLF",
     "IT",
     "MVST",
     "NCNO",
@@ -39,6 +40,11 @@
     },
     "FUBO": {
       "industry": "Interactive Media and Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "HLF": {
+      "industry": "Personal Care Products",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
@@ -99,6 +105,7 @@
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
     "EPAM": "mixed \u2014 net-cash, still-growing dollar EBITDA and a floor multiple sit against a management-owned structural North American growth gap and relentless downward revisions.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
+    "HLF": "mixed \u2014 genuine four-quarter revenue growth and de-leveraging offset by a -33% EPS cut, negative equity, and a direct-selling-model overhang.",
     "IT": "mixed \u2014 franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
     "MVST": "strongly-bearish \u2014 management-stated going-concern doubt plus a ~$104M near-term wall against negative operating cash flow and falling volumes.",
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
@@ -116,6 +123,7 @@
     "CNXC": "overshoot",
     "EPAM": "overshoot",
     "FUBO": "overshoot",
+    "HLF": "overshoot",
     "IT": "overshoot",
     "MVST": "overshoot",
     "NCNO": "overshoot",
