@@ -15,7 +15,7 @@
 // knob is gone: self-contained scopes make the failure impossible instead of merely defaulted-away,
 // and it was leaving the theme page's copy of the card visibly different from the dossier's.
 // Gaps render as pills (UNDEFINED), never blank.
-import { escapeHtml, fmtPrice, fmtDate, DASH } from "../../lib/format.js";
+import { escapeHtml, fmtPrice, fmtDate, DASH, tierPill } from "../../lib/format.js";
 import { isBuyVerdict } from "../../lib/snapshots.js";
 import { citeMark, withEndnotes } from "../../lib/cites.js";
 
@@ -118,20 +118,9 @@ function verdictPills(c) {
 // PASS/FAIL is the machine's bar test. Once a human verdict is recorded it is subsumed by the
 // verdict itself (a recorded BUY that FAILED its bar would be the override, and the status says
 // so) — so it renders only while the call is still open, where it is the only signal present.
-// THE TIERED LADDER (2026-08-21) — display labels for the record's tier enums. Mirror of the
-// humanisation table in render.py; a record WITHOUT `gateRegime` was judged under the 2:1/15%
+// THE TIERED LADDER (2026-08-21): `tierPill` lives in lib/format.js so this card and the themes
+// watchlist render one vocabulary. A record WITHOUT `gateRegime` was judged under the 2:1/15%
 // booleans alone and keeps the legacy PASS/FAIL pills (mastheadFoot says which regime applied).
-const TIER_LABEL = {
-  poor: "POOR", below_target: "BELOW TARGET", target_met: "TARGET MET",
-  preferred: "PREFERRED", fails: "FAILS", minimum_met: "MINIMUM MET", undefined: "UNDEFINED",
-};
-function tierPill(tier) {
-  if (!tier) return "";
-  const cls = tier === "preferred" || tier === "target_met" || tier === "minimum_met" ? "buy"
-    : tier === "undefined" ? "unresolved" : "avoid";
-  return ` <span class="pill ${cls} uw-mini">${escapeHtml(TIER_LABEL[tier] || tier)}</span>`;
-}
-
 function ratioCell(c) {
   const open = headlineState(c) !== "target";
   // new-regime records carry `asymmetryTier`; the tier pill replaces the bare PASS/FAIL — which

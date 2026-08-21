@@ -1340,9 +1340,18 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     # records carry `gate: UNDEFINED, irr: null` while the live one carries a computed gate).
     # Recorded in STATE rather than fixed here — changing that path would silently re-run the
     # engine over an analyst-authored payload, which is a decision, not a cleanup.
-    legacy = rec.result is not None and rec.result.gate_regime is None
+    # THE GUARD IS "NOT THE CURRENT REGIME", never "no regime" (review, #489). Keyed on `is None`
+    # it protected only PRE-LADDER records, so the day `GATE_REGIME` advances, every sealed
+    # 2026-08-21 record would be silently re-judged against the new constants on its next
+    # refresh — the exact thing the freeze ruling forbids, arriving quietly a regime later.
+    # Preserved records carry their OWN block forward verbatim: a fresh `Result` has no ladder
+    # fields, so skipping the update would STRIP a stamped record rather than freeze it.
+    prior = rec.result.gate_regime if rec.result is not None else None
+    frozen = rec.result is not None and prior != GATE_REGIME
     ladder: dict[str, Any] = {}
-    if not legacy:
+    if frozen:
+        ladder = {f: getattr(rec.result, f) for f in LADDER_FIELDS}
+    else:
         # Tiers are pure functions of the numbers already computed above; `eligible` mirrors
         # `gate`'s determinate-false AND exactly — a side that is known-failing decides False
         # without waiting on the other, and a missing side with nothing failing is None WITH
