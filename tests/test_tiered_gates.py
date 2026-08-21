@@ -18,9 +18,11 @@ IT pins the determinate-false AND: ratio below the line + IRR undefined → Fals
 """
 from __future__ import annotations
 
+import functools
 import importlib.util
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -30,10 +32,19 @@ from vinci.dossier.render import _underwrite_lines
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = sorted(p for p in (ROOT / "scenarios").glob("*.json") if not p.name.startswith("_"))
 
-_spec = importlib.util.spec_from_file_location("_tg_build", ROOT / "frontend" / "build.py")
-assert _spec and _spec.loader
-_BUILD = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_BUILD)
+
+
+@functools.lru_cache(maxsize=1)
+def _build() -> Any:
+    """`frontend/build.py` loaded lazily, matching the six other test files that exec it (mine
+    was the only module-level load — review, #487). build.py is `__main__`-guarded so importing
+    it is side-effect-free either way; the cost of the outlier is that an import-time failure
+    there would break COLLECTION of this file rather than one test."""
+    spec = importlib.util.spec_from_file_location("_tg_build", ROOT / "frontend" / "build.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 #: Every camelCase key the ladder adds to the display card. Named ONCE here so the three pins
 #: (absent-on-legacy, present-on-new-regime, rendered-by-the-view) cannot drift apart.
@@ -217,7 +228,7 @@ def test_committed_records_carry_no_regime_and_their_cards_gain_no_keys(path: Pa
         f"{path.name} carries a regime stamp on disk — the sealed book was supposed to freeze")
     r = _load(path)
     assert r.result is not None and r.result.gate_regime is None
-    card = _BUILD._scenario_card(rec, {})
+    card = _build()._scenario_card(rec, {})
     leaked = [k for k in NEW_CARD_KEYS if k in card]
     assert not leaked, f"legacy card gained ladder keys {leaked} — byte-identical rule broken"
 
@@ -227,7 +238,7 @@ def test_a_new_regime_card_emits_the_keys_and_the_view_renders_them() -> None:
     named in uw-card.js — the card-key parity discipline, asserted here for the new keys since
     the committed corpus cannot exercise them yet."""
     rec = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
-    card = _BUILD._scenario_card(json.loads(rec.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(rec.model_dump_json()), {})
     for k in ("gateRegime", "asymmetryTier", "returnTier", "eligible", "eligibleRatio",
               "eligibleIrr", "ceilingEligible", "irrConvention"):
         assert k in card, f"new-regime card is missing {k}"
@@ -241,7 +252,7 @@ def test_eligible_false_reaches_the_card() -> None:
     """False is a REAL answer and must not be dropped by a truthiness emit — the three-state
     trap named in build.py's own comment, pinned on EPAM's recomputed card."""
     rec = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "EPAM.json")))
-    card = _BUILD._scenario_card(json.loads(rec.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(rec.model_dump_json()), {})
     assert card.get("gateRegime") and card.get("eligible") is False
 
 
@@ -291,7 +302,7 @@ def test_the_rendered_card_shows_tiers_on_new_records_and_the_regime_on_old(
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     fresh = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
-    card = _BUILD._scenario_card(json.loads(fresh.model_dump_json()), {})
+    card = _build()._scenario_card(json.loads(fresh.model_dump_json()), {})
     fresh_path = tmp_path / "fresh_card.json"
     fresh_path.write_text(json.dumps(card))
     driver = r"""
@@ -359,3 +370,28 @@ def test_scenario_create_is_the_migration_path() -> None:
     assert "run_recipe" in create, "scenario-create no longer runs the engine — migration path gone"
     assert "run_recipe" not in supersede, (
         "supersede now runs the engine — the corrected STATE claim and the test above are stale")
+
+
+def test_both_tier_label_maps_cover_the_whole_enum() -> None:
+    """THE PY/JS MIRROR, pinned the way this repo pins every other one (`test_med3_tier_bucket_
+    trio_agree` is the precedent). The two maps are deliberately DIFFERENT presentations — md
+    prose ("below target") vs UI pill caps ("BELOW TARGET") — so their VALUES must not be
+    compared. Their KEY SETS must both cover the enum: add a tier, update one side, and the other
+    renders the raw enum token at a reader. Correct at the time of writing; unguarded until now
+    (review, #487)."""
+    import re
+    import typing
+
+    enum_vals = set(typing.get_args(sc.AsymmetryTier)) | set(typing.get_args(sc.ReturnTier))
+    py_src = (ROOT / "vinci" / "dossier" / "render.py").read_text()
+    py_map = re.search(r"_tl = \{(.*?)\}", py_src, re.S)
+    assert py_map, "render.py no longer carries the _tl humanisation map"
+    py_keys = set(re.findall(r'"(\w+)":', py_map.group(1)))
+
+    js_src = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    js_map = re.search(r"TIER_LABEL = \{(.*?)\};", js_src, re.S)
+    assert js_map, "uw-card.js no longer carries TIER_LABEL"
+    js_keys = set(re.findall(r"(\w+):", js_map.group(1)))
+
+    assert not enum_vals - py_keys, f"render.py _tl misses {sorted(enum_vals - py_keys)}"
+    assert not enum_vals - js_keys, f"uw-card.js TIER_LABEL misses {sorted(enum_vals - js_keys)}"

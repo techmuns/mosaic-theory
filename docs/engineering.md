@@ -119,6 +119,18 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **gate regime / the tiered ladder / eligibility line** — the underwrite gate's threshold
+  vocabulary (#487, ratified 2026-08-21). **Gate regime** = WHICH set of thresholds judged a
+  record, stamped on it (`result.gate_regime`); an ABSENT stamp means the pre-2026-08-21
+  booleans (2:1 and 15%) judged it, and every surface says so rather than letting absence read
+  as passage. **The tiered ladder** = the two graded scales that replaced those pass/fail
+  booleans as the READING — asymmetry (poor / below target / target met / preferred) and return
+  (fails / minimum met / preferred). **Eligibility line** = the BUY-eligibility threshold pair,
+  ratio ≥1.75 AND base IRR ≥12%; the old 2:1 and 15% survive unchanged as the top ("preferred")
+  rung, which is why no committed record's meaning moved. Fund-wide, all recipes, INFORM-ONLY —
+  it labels a record and blocks nothing (survival is still the only hard block). Home:
+  `vinci/scenarios.py` (`LADDER_FIELDS`, `asymmetry_tier`, `return_tier`).
+
 - **FPI** — SEC *foreign private issuer*: a non-US filer (20-F/6-K, IFRS taxonomy, often
   non-USD units). NOT the house sense of "foreign figures" (another NAME's figures on a
   page — the BRBR incident); the two collide only in the word. Readiness gaps recorded in
