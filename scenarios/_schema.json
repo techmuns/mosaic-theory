@@ -108,7 +108,7 @@
       "type": "object"
     },
     "Fact": {
-      "description": "One source-bound input. ``basis`` names WHAT the number is; ``source`` names WHERE it came\nfrom (form + accession + statement line) so the human can verify rather than trust.",
+      "description": "One source-bound input. ``basis`` names WHAT the number is; ``source`` names WHERE it came\nfrom (form + accession + statement line) so the human can verify rather than trust.\n\n``quantity_kind`` is the STRUCTURED half of ``basis`` \u2014 see :data:`QUANTITY_KINDS`. Optional\nand empty by default, so every committed record round-trips byte-identically; it is REQUIRED\non a refresh of a :data:`QUANTITY_SENSITIVE_FACTS` member, where prose alone cannot tell two\nquantities apart.",
       "properties": {
         "value": {
           "title": "Value",
@@ -124,6 +124,11 @@
         },
         "source": {
           "title": "Source",
+          "type": "string"
+        },
+        "quantity_kind": {
+          "default": "",
+          "title": "Quantity Kind",
           "type": "string"
         }
       },

@@ -200,16 +200,52 @@ BASIS_REQUIRED_FROM = "1.2"
 VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed", "watch"]
 
 
+#: THE QUANTITY A NUMBER IS, structured (2026-08-21). `basis` is PROSE and always was: it reads
+#: well and cannot be compared, so a guard written against it would be a text comparison of
+#: analyst wording — the rendered-string parse this repo refuses outright. This is the small
+#: machine-readable half beside it, and it exists for one measured reason: `diluted_shares`
+#: carries TWO different quantities wearing the SAME unit (`M shares`) — shares OUTSTANDING
+#: (basic + dilutive increment, item 24's denominator) and the diluted WEIGHTED AVERAGE the
+#: dossier anchor reads from EDGAR. The unit guard in `refresh_record` is structurally blind to
+#: that swap, and on SMPL — the fund's ONLY open position — the swap flips the gate PASS → FAIL
+#: under a logged BUY struck on the passing number. Recorded as accepted risk 2026-08-18 with
+#: exactly this unlock; built 2026-08-21.
+QUANTITY_KINDS: frozenset[str] = frozenset({
+    "outstanding",        # a point-in-time count at a stated date
+    "weighted_average",   # averaged over a reporting period
+})
+
+#: Facts where two admissible quantities share a unit, so an undeclared refresh is the hazard
+#: rather than a nuisance. Deliberately NOT every fact: `net_debt` in $M is one quantity, and
+#: forcing a declaration everywhere would train the operator to type past it.
+QUANTITY_SENSITIVE_FACTS: frozenset[str] = frozenset({"diluted_shares"})
+
+
 class Fact(BaseModel):
     """One source-bound input. ``basis`` names WHAT the number is; ``source`` names WHERE it came
-    from (form + accession + statement line) so the human can verify rather than trust."""
+    from (form + accession + statement line) so the human can verify rather than trust.
+
+    ``quantity_kind`` is the STRUCTURED half of ``basis`` — see :data:`QUANTITY_KINDS`. Optional
+    and empty by default, so every committed record round-trips byte-identically; it is REQUIRED
+    on a refresh of a :data:`QUANTITY_SENSITIVE_FACTS` member, where prose alone cannot tell two
+    quantities apart."""
 
     value: float
     unit: str                      # "$M" | "shares" | "$/share" | "x" | "rate"
     basis: str                     # e.g. "consolidated FY2025" | "incl. operating + finance leases"
     source: str                    # e.g. "10-K acc 0000793074-26-000071 income statement"
+    quantity_kind: str = ""        # "" | see QUANTITY_KINDS
 
     model_config = {"frozen": True}
+
+    @field_validator("quantity_kind")
+    @classmethod
+    def _known_kind(cls, v: str) -> str:
+        if v and v not in QUANTITY_KINDS:
+            raise ValueError(
+                f"quantity_kind {v!r} is not one of {sorted(QUANTITY_KINDS)} — an unlisted "
+                f"quantity is not reviewable; add it to QUANTITY_KINDS deliberately")
+        return v
 
 
 class RefPoint(BaseModel):
@@ -1601,6 +1637,13 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     if (out.get("result") or {}).get("gate_regime") is None:
         for field in LADDER_FIELDS:
             (out.get("result") or {}).pop(field, None)
+    # the FACT level (2026-08-21): an unstamped fact carries NO key for a quantity kind, the same
+    # absent-vs-null rule `leg_fy` follows — "this record never stated the quantity" is a
+    # different sentence from a null, and every record predating the field must round-trip
+    # byte-identically or the guard's own PR churns the corpus it exists to protect.
+    for _fact in (out.get("facts") or {}).values():
+        if isinstance(_fact, dict) and not _fact.get("quantity_kind"):
+            _fact.pop("quantity_kind", None)
     # the leg level: a leg that states no fiscal year carries no key for one
     for _leg in (out.get("scenarios") or {}).values():
         for field in LEG_FIELDS_DROPPED_WHEN_NONE:
@@ -1774,8 +1817,52 @@ def refresh_record(
                     f"facts.{k}: a refresh may restate the BASIS but never the UNIT "
                     f"({old.unit!r} → {v.unit!r}) — a silent re-scale of a denominator is how a "
                     "per-share value goes wrong by a factor of a million. Re-underwrite instead")
+            # THE QUANTITY GUARD (2026-08-21). The unit check above cannot see this class: shares
+            # OUTSTANDING and the diluted WEIGHTED AVERAGE are DIFFERENT QUANTITIES wearing the
+            # SAME unit, so a swap passes it untouched. Measured 2026-08-18: swapping SMPL's
+            # denominator flips its gate PASS → FAIL under the fund's ONLY open position, whose
+            # ledger carries a BUY struck on the passing number — and SMPL's PASS is the SOUND
+            # side; the refresh would have been the error.
+            #
+            # A BARE FLOAT IS REFUSED HERE, and that is the door the incident actually walks
+            # through: `vinci scenario-refresh --fact diluted_shares=X` can only send a float, so
+            # the value moves while the basis keeps saying "outstanding" over a number that is no
+            # longer outstanding — the manufactured mislabel this writer's own docstring warns
+            # about, arriving through the writer meant to prevent it. For these facts the caller
+            # must SAY which quantity it is supplying; for every other fact a float still means
+            # "same quantity, re-read", which is what it has always meant.
+            if k in QUANTITY_SENSITIVE_FACTS:
+                incoming_kind = v.quantity_kind if isinstance(v, Fact) else ""
+                if not isinstance(v, Fact) or not incoming_kind:
+                    raise RefreshRefusedError(
+                        f"facts.{k}: two admissible quantities share the unit {old.unit!r} "
+                        f"(shares outstanding vs the diluted weighted average), so a refresh must "
+                        f"DECLARE which one it supplies — pass a Fact with quantity_kind "
+                        f"({sorted(QUANTITY_KINDS)}), not a bare number. On the CLI: "
+                        f"--fact-kind {k}=<kind>")
+                if not old.quantity_kind:
+                    raise RefreshRefusedError(
+                        f"facts.{k}: this record's fact carries no structured quantity_kind, so "
+                        f"there is nothing to check the incoming {incoming_kind!r} against. Stamp "
+                        f"the record's own quantity first — its basis prose already says which it "
+                        f"is — then refresh")
+                if incoming_kind != old.quantity_kind:
+                    raise RefreshRefusedError(
+                        f"facts.{k}: this is a QUANTITY SWAP, not a refresh "
+                        f"({old.quantity_kind} → {incoming_kind}) — both are {old.unit!r}, so no "
+                        f"unit check can see it. Swapping this denominator moves the ratio and can "
+                        f"flip the gate under a live position. Re-underwrite instead")
+            # A DECLARED QUANTITY IS PART OF THE RESTATEMENT (review fix, 2026-08-21). The first cut
+            # compared only basis/source and rebuilt the fact from `old`, so an incoming
+            # `quantity_kind` was accepted and then silently DROPPED. On a sensitive fact the two
+            # kinds must already match, so nothing moved — but on any other fact a caller could
+            # restate the basis to name a different quantity, declare the matching kind, and get a
+            # record whose prose says one quantity while its structured half still says the other:
+            # a mislabel manufactured by the writer, which is the exact defect this field exists to
+            # close. The structured half moves with the prose or it is not the structured half.
             restated = v if isinstance(v, Fact) and (
-                v.basis != old.basis or v.source != old.source) else None
+                v.basis != old.basis or v.source != old.source
+                or (v.quantity_kind and v.quantity_kind != old.quantity_kind)) else None
             if new_value == old.value and restated is None:
                 continue
             if new_value != old.value:
@@ -1789,14 +1876,19 @@ def refresh_record(
                 # what changed. `test_refresh_moves_machine_inputs_and_logs_provenance` already
                 # asserts `e.old != e.new` on refresh entries; this violated the file's own rule.
                 for field, was, now in (("basis", old.basis, restated.basis),
-                                        ("source", old.source, restated.source)):
+                                        ("source", old.source, restated.source),
+                                        ("quantity_kind", old.quantity_kind,
+                                         restated.quantity_kind or old.quantity_kind)):
                     if was != now:
                         # a number that keeps its value while changing MEANING is exactly the move
                         # a value-diff cannot show, so it gets its own line either way
                         entries.append(RefreshEntry(field=f"facts.{k}.{field}", old=was, new=now,
                                                     date=on_date, source=source))
                 new_facts[k] = old.model_copy(update={
-                    "value": new_value, "basis": restated.basis, "source": restated.source})
+                    "value": new_value, "basis": restated.basis, "source": restated.source,
+                    # an ABSENT declaration leaves the record's own stamp alone; a bare float has
+                    # always meant "same quantity, re-read" and must not clear a stamp
+                    "quantity_kind": restated.quantity_kind or old.quantity_kind})
             else:
                 new_facts[k] = old.model_copy(update={"value": new_value})
         updates["facts"] = new_facts

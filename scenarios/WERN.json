@@ -34,7 +34,8 @@
       "value": 59.950115,
       "unit": "M shares",
       "basis": "The filer reports NO dilutive difference for 2026-01-01→2026-03-31 (basic and diluted weighted averages are equal at 59,910,000), so the diluted denominator equals the basic outstanding count of 59,950,115. This is a reported zero, not an unchecked one. Excluded from the filer's diluted average: antidilutive instruments (a loss period reports no dilution at all under ASC 260); out-of-the-money options, which contribute nothing under the treasury-stock method; any change in the dilutive count between the reporting period and the valuation date.",
-      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap"
+      "source": "EDGAR dei:EntityCommonStockSharesOutstanding + us-gaap:WeightedAverageNumberOf{SharesOutstandingBasic,DilutedSharesOutstanding} — item 24 denominator swap",
+      "quantity_kind": "outstanding"
     },
     "cash_interest": {
       "value": 39.053,

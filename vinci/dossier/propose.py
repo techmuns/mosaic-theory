@@ -284,6 +284,12 @@ def record_legs_for_validation(rec: Any) -> dict[str, dict[str, Any]]:
 #: is an analyst's problem, not a rounding one. 2% separates the two cases.
 SHARE_DISAGREEMENT_TOL = 0.02
 
+#: WHICH QUANTITY the template's `diluted_shares` is, structured — `resolve_shares` takes the
+#: POINT-IN-TIME `stock_info.shares_out`, never the period weighted average, so the kind follows
+#: from the construction rather than from reading the basis prose. Pinned against
+#: :data:`vinci.scenarios.QUANTITY_KINDS` so a renamed kind cannot silently emit an invalid stamp.
+SHARES_QUANTITY_KIND = "outstanding"
+
 
 def resolve_shares(doc: dict[str, Any]) -> tuple[float, str, str]:
     """The per-share denominator, as (value_in_MILLIONS, basis, source) — never picked silently.
@@ -543,8 +549,17 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     # "M shares", NOT "shares": `resolve_shares` returns MILLIONS (SMPL's committed record says
     # "M shares" for the same reason). A unit label that disagrees with its own value is the
     # `percentile`-as-`p25` class one field over.
+    # STAMPED AT BIRTH (review fix, 2026-08-21). `Fact.quantity_kind` is REQUIRED on any refresh of
+    # `diluted_shares`, and `refresh_record` refuses outright when the record's own fact carries no
+    # stamp ("nothing to check the incoming kind against"). A template that emits the fact unstamped
+    # therefore writes a record whose denominator can never again be refreshed through the ONE
+    # programmatic path — forcing back the hand-edited JSON `refresh_record` exists to end — and
+    # reddens `test_every_committed_diluted_shares_declares_its_quantity` the moment it is
+    # committed. `resolve_shares` takes `stock_info.shares_out`, the POINT-IN-TIME count, so the
+    # quantity is `outstanding` by construction, not by a reading of the prose.
     facts: dict[str, Any] = {"diluted_shares": {"value": shares, "unit": "M shares",
-                                                "basis": sh_basis, "source": sh_source}}
+                                                "basis": sh_basis, "source": sh_source,
+                                                "quantity_kind": SHARES_QUANTITY_KIND}}
     for key, unit in (("d_and_a", "$M"), ("net_debt", "$M")):
         f = _get(doc, "anchor", key)
         if isinstance(f, dict) and f.get("value") is not None:

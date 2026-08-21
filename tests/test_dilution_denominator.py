@@ -411,8 +411,13 @@ def test_a_refresh_may_restate_the_basis_and_logs_it_separately() -> None:
 
     rec = sc.read_record("SMPL", root=ROOT)
     old = rec.facts["diluted_shares"]
+    # THE QUANTITY IS DECLARED (2026-08-21). This pin genuinely IS about `diluted_shares` — its
+    # subject is the weighted-average -> outstanding swap — so it keeps the fact and states the
+    # quantity, which is what the guard asks of every caller on this path. Declaring the SAME
+    # quantity the record already carries is a restatement; declaring the other one is the swap
+    # `test_quantity_kind_guard` refuses.
     new = sc.Fact(value=old.value - 1.0, unit=old.unit, basis="diluted shares OUTSTANDING",
-                  source="EDGAR dei + us-gaap weighted averages")
+                  source="EDGAR dei + us-gaap weighted averages", quantity_kind="outstanding")
     out = sc.refresh_record(rec, facts={"diluted_shares": new}, source="s", on_date="2026-07-31")
     assert out.facts["diluted_shares"].basis == "diluted shares OUTSTANDING"
     assert out.facts["diluted_shares"].source == "EDGAR dei + us-gaap weighted averages"
@@ -431,13 +436,13 @@ def test_a_source_only_restatement_does_not_log_a_phantom_basis_change() -> None
     import vinci.scenarios as sc
 
     rec = sc.read_record("SMPL", root=ROOT)
-    old = rec.facts["diluted_shares"]
+    old = rec.facts["net_debt"]
     src_only = sc.Fact(value=old.value, unit=old.unit, basis=old.basis,
                        source=old.source + " (re-cited)")
-    out = sc.refresh_record(rec, facts={"diluted_shares": src_only}, source="s",
+    out = sc.refresh_record(rec, facts={"net_debt": src_only}, source="s",
                             on_date="2026-07-31")
     added = out.refresh_log[len(rec.refresh_log):]
-    assert [e.field for e in added] == ["facts.diluted_shares.source"], [e.field for e in added]
+    assert [e.field for e in added] == ["facts.net_debt.source"], [e.field for e in added]
     assert all(e.old != e.new for e in added)
 
 
@@ -447,15 +452,15 @@ def test_a_basis_restatement_alone_is_recorded_even_when_the_value_holds() -> No
     import vinci.scenarios as sc
 
     rec = sc.read_record("SMPL", root=ROOT)
-    old = rec.facts["diluted_shares"]
-    same_value = sc.Fact(value=old.value, unit=old.unit, basis="restated meaning, same count",
+    old = rec.facts["net_debt"]
+    same_value = sc.Fact(value=old.value, unit=old.unit, basis="restated meaning, same amount",
                          source=old.source)
-    out = sc.refresh_record(rec, facts={"diluted_shares": same_value}, source="s",
+    out = sc.refresh_record(rec, facts={"net_debt": same_value}, source="s",
                             on_date="2026-07-31")
     assert out is not rec, "a basis-only restatement was dropped as a no-op"
-    assert out.facts["diluted_shares"].value == old.value
+    assert out.facts["net_debt"].value == old.value
     assert [e.field for e in out.refresh_log[len(rec.refresh_log):]] == \
-        ["facts.diluted_shares.basis"]
+        ["facts.net_debt.basis"]
 
 
 def test_a_unit_change_is_refused_because_it_rescales_the_denominator() -> None:
@@ -478,11 +483,11 @@ def test_a_bare_float_still_refreshes_the_same_quantity_without_touching_the_bas
     import vinci.scenarios as sc
 
     rec = sc.read_record("SMPL", root=ROOT)
-    old = rec.facts["diluted_shares"]
-    out = sc.refresh_record(rec, facts={"diluted_shares": old.value - 1.0}, source="s",
+    old = rec.facts["net_debt"]
+    out = sc.refresh_record(rec, facts={"net_debt": old.value - 1.0}, source="s",
                             on_date="2026-07-31")
-    assert out.facts["diluted_shares"].basis == old.basis
-    assert [e.field for e in out.refresh_log[len(rec.refresh_log):]] == ["facts.diluted_shares"]
+    assert out.facts["net_debt"].basis == old.basis
+    assert [e.field for e in out.refresh_log[len(rec.refresh_log):]] == ["facts.net_debt"]
 
 
 def test_every_committed_record_states_the_denominator_it_actually_uses() -> None:
