@@ -34,7 +34,9 @@ def _iso(d: date | None) -> str | None:
 # immutable) AND the securities/issuers ENTITY MASTER (accumulate-only — rows update via REPLACE but
 # identities are never pruned; the master resolves a ledgered name after it leaves the universe).
 # #121: a stale-DB full export shrank BOTH the ledger (1→0) and the entity master (−578 identities).
-_NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities", "issuers"})
+NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities", "issuers"})
+#: Kept as the private alias this module has always used internally.
+_NO_ROW_DROP_TABLES = NO_ROW_DROP_TABLES
 
 
 def _assert_no_row_drop(path: Path, new_lines: list[str], pk: Sequence[str]) -> None:
@@ -530,10 +532,27 @@ class Store:
             counts[table] = len(rows)
         return counts
 
-    def rebuild_from_snapshots(self, snapshots_dir: Path) -> dict[str, int]:
-        """Reconstruct the working DB from committed snapshots. Returns row counts imported."""
+    def rebuild_from_snapshots(
+        self, snapshots_dir: Path, *, tables: Sequence[str] | None = None
+    ) -> dict[str, int]:
+        """Reconstruct the working DB from committed snapshots. Returns row counts imported.
+
+        ``tables`` restricts the load to a SUBSET, mirroring :meth:`export_snapshots` — one shape
+        for both directions, so a caller that exports a subset can seed the same subset. The load
+        is INSERT-OR-REPLACE and therefore purely additive: it can only ever make the DB a superset
+        of what is committed, never prune it.
+
+        WHY A SUBSET IS EVER WANTED (2026-08-24): `build_universe` exports the accumulate-only
+        entity master alongside `universe_snapshot`, which is a POINT-IN-TIME table replaced on
+        each run (the committed file holds exactly one `as_of`). Seeding everything would make
+        that table accumulate dates it was never meant to keep, so the universe build seeds only
+        the tables that must not shrink."""
         counts: dict[str, int] = {}
-        for table in SNAPSHOT_TABLES:
+        load = tuple(SNAPSHOT_TABLES if tables is None else tables)
+        unknown = set(load) - set(SNAPSHOT_TABLES)
+        if unknown:
+            raise ValueError(f"rebuild_from_snapshots: unknown table(s) {sorted(unknown)}")
+        for table in load:
             path = snapshots_dir / f"{table}.jsonl"
             if not path.exists():
                 counts[table] = 0
