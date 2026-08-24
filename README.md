@@ -51,7 +51,7 @@ These will not be edited in response to results. Tuning the screen or the metric
 | 5 | Screen 2 (overshot de-rating) as PASS/FAIL/UNKNOWN gates | ✅ done |
 | 6 | Decision ledger + entry workflow (BUY **and** AVOID) | ✅ done |
 | 7 | Scoring harness (BUY−AVOID spread, hit-rate, α/β, twin-realisation) | ✅ done |
-| 8 | Scheduled automation (GitHub Actions cron) | ✅ done |
+| 8 | Operator-triggered automation (GitHub Actions `workflow_dispatch`) | ✅ done |
 | E1 | 5y history (Polygon Starter) → G3 multiple-at-floor operative | ✅ done |
 | E2 | Cap-band universe builder (close × XBRL shares; $3M ADV + operating-cos-only SIC gates) + lazy screen | ✅ done |
 | E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |

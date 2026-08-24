@@ -55,7 +55,8 @@ Visibility today = a **manual** `git add data/dossiers && commit && push` → Cl
 (**uppercased**, `build.py:77`) + `index.json` → the viewer fetches it. **The git push is the trigger.**
 
 Already cloud-automated (reuse this pattern): `weekly-screen.yml` + `monthly-score.yml` run on
-**GitHub Actions cron** with **GitHub Actions secrets** and auto-commit+push. The dossier-assembler is
+**GitHub Actions `workflow_dispatch`** — operator-triggered, no cron (ruling 2026-08-24) —
+with **GitHub Actions secrets** and auto-commit+push. The dossier-assembler is
 the *only* piece still local-only.
 
 ## 3. The constraint that shapes the design
@@ -122,7 +123,7 @@ DERIVED `dossier.json` is ever committed. Store choice is one config knob.
 7. Commit **only** `data/dossiers/<ticker>/{dossier.json,.md}` via an **explicit add-list** — never
    `data/manual/ciq`, never `llm_call.log`. Default target: a branch + PR (R3). Mirror the existing
    workflows' `git diff --staged --quiet || commit` idempotence. Before pushing, `git pull --rebase`
-   to avoid racing the scheduled commit jobs (audit #7).
+   to avoid racing the operator-triggered commit jobs (audit #7).
 
 ### 5c. Pages Function dispatcher (new `functions/api/assemble.js`)
 Server-side handler. It inherits Basic Auth automatically — `_middleware.js:26` `onRequest` gates
@@ -219,7 +220,8 @@ assembly.
 - Branch+PR (default, §8) vs straight-to-`main` (opt-in once trusted).
 - Install LibreOffice in the workflow (transcripts) vs accept `UNAVAILABLE`.
 - GitHub App token vs PAT for the dispatcher.
-- Whether to also expose screen/ingestion via the same dispatcher (probably not — already on cron).
+- Whether to also expose screen/ingestion via the same dispatcher (probably not — they
+  already have their own `workflow_dispatch` entries).
 
 ## 12. What this explicitly does NOT change
 
