@@ -156,9 +156,16 @@ def test_the_manifest_carries_run_status_only_when_present() -> None:
     assert '(SNAP / "run_status.json").exists()' in src, (
         "the run block must be conditional — absent status is UNKNOWN, not an empty object")
 
-    committed = json.loads((ROOT / "frontend" / "snapshots" / "manifest.json").read_text())
+    # THE MIRROR IS GIT-IGNORED, so it does not exist on a fresh checkout — every CI run. The
+    # first cut asserted against it unconditionally and passed locally while failing in CI: the
+    # same passes-everywhere-except-where-it-matters shape as the outage this work exists for.
+    # The CONTRACT is the conditional above, asserted always; the consistency check runs only
+    # where a built mirror is present, and says so rather than pretending to have checked.
+    mirror = ROOT / "frontend" / "snapshots" / "manifest.json"
+    if not mirror.is_file():
+        pytest.skip("frontend/snapshots is git-ignored and unbuilt here — source contract asserted")
     status_on_disk = (ROOT / "data" / "snapshots" / "run_status.json").exists()
-    assert ("run" in committed) == status_on_disk, (
+    assert ("run" in json.loads(mirror.read_text())) == status_on_disk, (
         "the built manifest and the presence of run_status.json disagree — the mirror is stale")
 
 
