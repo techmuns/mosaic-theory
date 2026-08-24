@@ -548,10 +548,16 @@ class Store:
         that table accumulate dates it was never meant to keep, so the universe build seeds only
         the tables that must not shrink."""
         counts: dict[str, int] = {}
-        load = tuple(SNAPSHOT_TABLES if tables is None else tables)
-        unknown = set(load) - set(SNAPSHOT_TABLES)
+        requested = tuple(SNAPSHOT_TABLES if tables is None else tables)
+        unknown = set(requested) - set(SNAPSHOT_TABLES)
         if unknown:
             raise ValueError(f"rebuild_from_snapshots: unknown table(s) {sorted(unknown)}")
+        # LOADED IN SCHEMA ORDER, never the caller's (review finding, #494). `PRAGMA foreign_keys`
+        # is ON, so a subset naming children before parents — `("securities", "issuers")` — fails
+        # with `FOREIGN KEY constraint failed`. The caller states WHICH tables; the schema decides
+        # in what order, because only it knows the dependencies.
+        want = set(requested)
+        load = tuple(t for t in SNAPSHOT_TABLES if t in want)
         for table in load:
             path = snapshots_dir / f"{table}.jsonl"
             if not path.exists():

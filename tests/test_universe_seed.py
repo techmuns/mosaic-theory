@@ -207,3 +207,75 @@ def test_build_universe_itself_seeds_before_it_exports(tmp_path: Path, monkeypat
 
     assert _rows(snaps / "issuers.jsonl") == before, (
         "build_universe exported without seeding — the committed entity master was truncated")
+
+
+# --- the seed must not delete the alarms it now runs past ---------------------------------------
+
+def test_the_blank_universe_guard_reads_the_universe_not_the_entity_master() -> None:
+    """THE REGRESSION THE SEED WOULD HAVE INTRODUCED (review finding, #494).
+
+    `run_weekly`'s #431 guard always MEANT to catch a zero-admit rebuild — its message says
+    "universe rebuilt EMPTY" — but it asked `iter_securities()`, which is the accumulate-only
+    ENTITY MASTER and answers a different question. That was survivable only by accident: on CI's
+    empty store a zero-admit run died earlier, at the very ROW-DROP this PR fixes. Seeded, the
+    master is never empty, so the guard could no longer fire — and `screen_universe` falls back to
+    screening the ENTIRE master with `caps = {}` when the universe is empty, so the run would have
+    committed a blank universe and exited 0.
+
+    Asserted on the source because the alternative is a live `run_weekly` (network, keys, an hour):
+    what is under test is WHICH TABLE the guard consults, and that is visible without running it.
+    """
+    import inspect
+
+    from vinci.orchestrator import run_weekly
+
+    src = inspect.getsource(run_weekly)
+    guard = "if not store.latest_universe(end):"
+    assert guard in src, (
+        "the blank-universe guard no longer reads the universe snapshot — if it is back on "
+        "`iter_securities()` the seed makes it unfireable and a zero-admit run publishes blank")
+    # and it must GUARD the raise, not merely appear somewhere near it
+    assert src.index(guard) < src.index('raise RuntimeError(\n                f"universe rebuilt')
+    # the old emptiness test must not be what decides it
+    decider = src[src.index(guard):src.index("universe rebuilt EMPTY")]
+    assert "iter_securities" not in decider
+
+
+def test_the_future_identity_check_is_seeded_and_still_precedes_build_universe() -> None:
+    """TWO CONSTRAINTS, BOTH REAL — and the first attempt at this fix satisfied only one.
+
+    The #442 check must run BEFORE `build_universe`, or the leaked identities are already in the
+    universe snapshot and filed under the run's id — `test_a_backdated_run_refuses_identities_the
+    _store_learned_later` pins that, and it caught the wrong fix when the check was simply moved
+    after the seed.
+
+    It must ALSO run after the entity master is loaded, or on a fresh checkout — every CI run —
+    it inspects an EMPTY store, sees nothing, and `build_universe`'s own seed then loads the very
+    identities it exists to refuse (the load is INSERT-OR-REPLACE and COALESCE preserves the
+    seeded `first_seen`).
+
+    So the invariant is an ORDER of three: seed, then check, then build."""
+    import inspect
+
+    from vinci.orchestrator import run_weekly
+
+    src = inspect.getsource(run_weekly)
+    seed = src.index("rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)")
+    check = src.index("identities_first_seen_after")
+    build = src.index("build_universe(cfg,")
+    assert seed < check, (
+        "the future-identity check runs before any seed — on a fresh checkout it inspects an "
+        "empty store and the seed then admits exactly what it exists to refuse")
+    assert check < build, (
+        "the check runs after build_universe — by then the leaked identities are in the universe "
+        "snapshot and filed under this run's id, which is what #442 exists to prevent")
+
+
+def test_a_subset_loads_in_schema_order_whatever_order_the_caller_names(tmp_path: Path) -> None:
+    """FOREIGN KEYS ARE ON (review finding, #494). A subset naming children before parents —
+    `("securities", "issuers")` — raised `FOREIGN KEY constraint failed`. The caller states WHICH
+    tables; the schema decides in what order, because only it knows the dependencies."""
+    cfg, snaps = _ci_like(tmp_path)
+    with Store(cfg.db_path) as store:
+        counts = store.rebuild_from_snapshots(snaps, tables=("securities", "issuers"))
+    assert counts["issuers"] > 0 and counts["securities"] > 0
