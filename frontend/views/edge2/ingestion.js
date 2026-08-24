@@ -1,7 +1,7 @@
 // INGESTION & UNIVERSE — data freshness/health. Honest, point-in-time. NOT analytics: the only
 // universe detail is the builder's fail-closed gate-exclusion counts (a wrong count = a gate bug).
 import { getUniverseHealth, getRankedQueue, getUniverseStats, getSnapshotMeta } from "../../lib/snapshots.js";
-import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
+import { fmtInt, fmtDate, DASH, escapeHtml, runHealth, queueAgeDays } from "../../lib/format.js";
 import { refreshBlock } from "../../lib/ui.js";
 
 export async function render(root, _params, { item, frame }) {
@@ -47,6 +47,29 @@ export async function render(root, _params, { item, frame }) {
         <h3>Universe gates — fail-closed exclusions</h3>
         <div class="notice" style="margin-top:8px;">Gate-exclusion counts are captured at universe-build time (<span class="mono">universe_stats.json</span>) and populate on the next build. Not yet in this snapshot.</div></div>`;
 
+  // RUN HEALTH — the one fact on this dashboard that is NOT the age of a committed artifact.
+  // Every date above answers "how old is what we have"; this answers "did the last attempt work".
+  // Only the second could have surfaced the four-week outage: a failed run commits nothing, so
+  // silence and failure look identical everywhere else on a committed-data surface.
+  const rh = runHealth(health.run);
+  const age = queueAgeDays(health.screen.asOf);
+  const runCard = `
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Last weekly run <span class="chip ${rh.tone}" style="margin-left:6px;">${escapeHtml(rh.label)}</span></h3>
+      <div style="font-size:13px; color:var(--ink-2); line-height:1.6;">
+        ${health.run && health.run.attemptedAt
+          ? `Attempted <b>${escapeHtml(String(health.run.attemptedAt).replace("T", " ").replace("Z", " UTC"))}</b>. `
+          : "No run has reported an outcome yet. "}${escapeHtml(rh.detail)}${
+          health.run && health.run.runUrl
+            ? ` <a href="${escapeHtml(health.run.runUrl)}" target="_blank" rel="noopener">run log</a>.` : ""}
+        <div style="margin-top:8px;">
+          The screen is <b>operator-triggered</b> — there is no schedule. To run it:
+          <span class="mono">Actions → weekly-screen → Run workflow</span>, or locally
+          <span class="mono">python -m vinci run-weekly</span>.
+          ${age !== null ? ` The committed queue is <b>${age} day${age === 1 ? "" : "s"}</b> old.` : ""}
+        </div>
+      </div></div>`;
+
   const freshness = `
     <div class="card" style="margin-bottom:18px;">
       <h3>Freshness — point-in-time, by design</h3>
@@ -62,5 +85,5 @@ export async function render(root, _params, { item, frame }) {
       <span>Mirror built: ${meta.generatedAt ? escapeHtml(meta.generatedAt) : DASH}</span>
     </div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: cards + funnel + freshness + refreshBlock() + provenance });
+  root.innerHTML = frame(item, { bodyHtml: cards + funnel + runCard + freshness + refreshBlock() + provenance });
 }

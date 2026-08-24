@@ -265,13 +265,20 @@ def test_a_stale_queue_says_so_and_a_fresh_one_stays_quiet() -> None:
     does not fire leaves this page serving a stale queue whose only signal is a date the reader has
     to do arithmetic on — which is how it once drifted 12 days and 95 names behind the screen that
     fed it (STATE.md §5). Both cases are stamped onto real committed rows against the running clock,
-    so neither pin rots as the committed snapshot ages."""
+    so neither pin rots as the committed snapshot ages.
+
+    RE-POINTED 2026-08-24 WITH THE CRON REMOVAL, and the phrase it used to pin is now the thing
+    being forbidden. It asserted "may not have run", which implies a MISSED APPOINTMENT — true
+    while a Monday cron existed, false the moment the screen became operator-triggered. What the
+    pin actually guards is unchanged and is asserted directly: a stale queue says it is stale and
+    says HOW stale, a fresh one stays silent."""
     stale = _render("stale")["page"]
     fresh = _render("fresh")["page"]
-    assert "may not have run" in stale, (
+    assert re.search(r"queue is \d+ days old", stale), (
         f"a 40-day-old queue renders no staleness warning:\n{stale[:600]}")
-    assert re.search(r"queue is \d+ days old", stale), "the warning does not say HOW old"
-    assert "may not have run" not in fresh, (
+    assert "may not have run" not in stale, (
+        "the missed-appointment wording is back — there is no schedule to miss")
+    assert not re.search(r"queue is \d+ days old", fresh), (
         "a queue screened today is flagged stale — the threshold is firing on everything")
 
 

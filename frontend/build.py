@@ -1270,6 +1270,15 @@ def main(argv: list[str] | None = None) -> None:
                 else None
             ),
         },
+        # THE LAST RUN'S OUTCOME, folded in rather than mirrored as its own file — the manifest is
+        # already fetched on every screen, so run health costs no extra request. Written by the
+        # weekly job's always-runs reporting step (weekly-screen.yml); ABSENT until the first run
+        # under that step, and absent is rendered as "unknown", never as success. This is the ONLY
+        # thing on the served surface that can distinguish "a run failed" from "nobody ran one":
+        # every other freshness number here is the age of what was COMMITTED, and a failed run
+        # commits nothing.
+        **({"run": json.loads((SNAP / "run_status.json").read_text())}
+           if (SNAP / "run_status.json").exists() else {}),
         # Queue summary counts so the overview reads two numbers from this ~200-byte file instead
         # of fetching + parsing the full ~440 KB ranked_queue.jsonl to show them. The full queue
         # still loads lazily on the Ranker screen, where it's actually needed.

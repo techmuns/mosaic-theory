@@ -89,6 +89,14 @@ export async function getUniverseHealth() {
     // `total` falls back to screen.candidates for an older manifest that predates the queue block.
     queue: { total: m.queue?.total ?? m.screen?.candidates ?? null, demoted: m.queue?.demoted ?? null },
     eod: { asOf: m.screen?.as_of ?? null },
+    // THE LAST RUN'S OUTCOME — the one fact here that is not the age of a committed artifact.
+    // ABSENT until the weekly job has reported once, and absent must render as UNKNOWN: a
+    // missing status is exactly the "nobody can tell whether it ran" state, never a pass.
+    run: m.run
+      ? { job: m.run.job ?? null, attemptedAt: m.run.attempted_at ?? null,
+          conclusion: m.run.conclusion ?? null, runUrl: m.run.run_url ?? null,
+          remediation: m.run.remediation ?? "" }
+      : null,
   };
 }
 

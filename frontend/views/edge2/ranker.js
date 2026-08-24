@@ -2,7 +2,7 @@
 // a workflow state per row. Orders, never decides. Rows open the dossier. Sort/filter are purely
 // client-side, in place — the queue is fetched once and never re-fetched on sort/filter.
 import { getRankedQueue, getProcessedStates, getG3Reasons, getGicsLabels, WORKFLOW_STATES } from "../../lib/snapshots.js";
-import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH, queueAgeChip } from "../../lib/format.js";
 import { linScale } from "../../lib/exhibit.js";
 import { refreshBlock } from "../../lib/ui.js";
 
@@ -77,19 +77,6 @@ function volSpark(series) {
 
 // The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
 // not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
-// arithmetic on — and that is exactly how it once drifted 12 days and 95 names behind the screen
-// feeding it (STATE.md §5). 10 days = the weekly cadence plus slack; a face-validity threshold, not
-// tuned on anything. Says how old and what to do, never how stale is "too" stale to act on.
-const QUEUE_STALE_DAYS = 10;
-function stalenessChip(asOf) {
-  if (!asOf) return "";
-  const days = Math.floor((Date.now() - Date.parse(`${asOf}T00:00:00Z`)) / 86400000);
-  if (!Number.isFinite(days) || days < QUEUE_STALE_DAYS) return "";
-  return `<span class="chip gate" title="The weekly job (vinci run-weekly) screens and then writes this queue. `
-    + `A queue older than ${QUEUE_STALE_DAYS} days means that job has not completed since — the names, ranks and `
-    + `price-derived reads below are all as of the screen date, not today. Re-run it, or run vinci rank.">`
-    + `⚠ queue is ${days} days old — the weekly screen may not have run</span>`;
-}
 let G3 = null; // ticker -> the specific G3 UNKNOWN reason
 let state = null;
 
@@ -124,7 +111,7 @@ export async function render(root, _params, { item, frame }) {
         <input id="rk-hide" type="checkbox" /> hide structurally-sunk (${DATA.counts.demoted})
       </label>
       <span class="muted" style="font-size:12px;">${DATA.counts.total} candidates · screened ${escapeHtml(fmtDate(DATA.asOf))}</span>
-      ${stalenessChip(DATA.asOf)}
+      ${queueAgeChip(DATA.asOf)}
     </div>
     <div class="subtitle muted" style="margin-bottom:12px;">
       Columns lead with the interpretable quantity (depth/idio as % moves, multiple as the percentile or reason); hover a cell
