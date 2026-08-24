@@ -1,11 +1,11 @@
 name: monthly-score
 
-# Configure once, runs forever: on the 1st of each month it scores the decision ledger
-# (the BUY−AVOID spread + supporting metrics) and commits the report back.
+# Scores the decision ledger (the BUY−AVOID spread + supporting metrics) and commits the report.
+# MANUAL TRIGGER ONLY — same ruling as `weekly-screen.yml` (2026-08-24), same reason: this job
+# commits `scoring_report.md`, the surface the BUY-AVOID spread is READ from, and that is a
+# decision surface. Two automated commits reached main from this cron.
 on:
-  schedule:
-    - cron: "0 7 1 * *" # 1st of the month, 07:00 UTC
-  workflow_dispatch: {}
+  workflow_dispatch: {} # OPERATOR-TRIGGERED ONLY — see weekly-screen.yml for the ruling
 
 permissions:
   contents: write

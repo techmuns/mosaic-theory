@@ -1,4 +1,8 @@
-"""Configure-once orchestration for the scheduled jobs (GitHub Actions cron).
+"""Orchestration for the two OPERATOR-TRIGGERED jobs (GitHub Actions `workflow_dispatch`).
+
+No cron: both jobs move DECISION SURFACES — the weekly rebuilds the universe, re-screens
+and re-ranks the queue; the monthly commits the report the BUY-AVOID spread is read from —
+so the operator decides when they run (ruling 2026-08-24).
 
 Each run is self-contained and idempotent: **rebuild** the working DB from the committed JSONL
 snapshots, **refresh** EOD prices for the stored universe (the immutable per-day grouped-daily
