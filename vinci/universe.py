@@ -23,7 +23,7 @@ from vinci.eod import EodClient, PolygonEodClient
 from vinci.resolver import EntityResolver
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
-from vinci.store import Store
+from vinci.store import NO_ROW_DROP_TABLES, Store
 
 _QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
 _FILING_LAG_DAYS = 40  # don't ask for a quarter's shares frame until it's plausibly filed
@@ -84,6 +84,12 @@ def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
 # near-miss). Enumerated from the store calls below, not guessed.
 BUILD_UNIVERSE_TABLES: tuple[str, ...] = ("issuers", "securities", "universe_snapshot")
 
+#: The subset of :data:`BUILD_UNIVERSE_TABLES` that may never SHRINK, DERIVED from the store's own
+#: declaration rather than re-listed here — a hand-copied list is one edit away from silently
+#: missing a table the day another accumulate-only one joins the export.
+BUILD_UNIVERSE_SEED_TABLES: tuple[str, ...] = tuple(
+    t for t in BUILD_UNIVERSE_TABLES if t in NO_ROW_DROP_TABLES)
+
 
 #: EVERY drop this builder can make, in funnel order. Enumerated rather than described, because a
 #: stage missing from the thin grain is a stage with no evidence trail — which just MOVES the blind
@@ -139,6 +145,27 @@ def build_universe(
                 stage=stage, reason=reason, deciding_input=inp))
 
     with Store(cfg.db_path) as store:
+        # SEED THE ACCUMULATE-ONLY MASTER BEFORE TOUCHING IT (2026-08-24). `data/vinci.db` is
+        # git-ignored, so on any fresh checkout — every CI run — this store starts EMPTY. The loop
+        # below upserts only what THIS fetch admits, and the export at the end then writes that
+        # subset over `issuers.jsonl` / `securities.jsonl`, which are accumulate-only: an identity
+        # is never pruned, because the entity master has to resolve a ledgered name after it leaves
+        # the universe. The no-row-drop guard therefore REFUSED the write, and the weekly screen
+        # failed four consecutive weeks (2026-08-03 through 08-24) with the served queue frozen:
+        #
+        #   ROW-DROP on issuers.jsonl: writing 1810 row(s) over 2304 on disk
+        #   would drop 503 existing row(s) by PK.
+        #
+        # It passed on a laptop the whole time, because a dev store already holds the accumulation
+        # — the "green everywhere except where it matters" shape. `run_weekly` does seed the store,
+        # but at its own line AFTER this function has already exported; the seed has to happen
+        # HERE, inside the context that writes.
+        #
+        # SEEDS ONLY THE TABLES THAT MUST NOT SHRINK. `universe_snapshot` is POINT-IN-TIME — the
+        # committed file holds exactly one `as_of` — so loading it back would make it accumulate
+        # dates it was never meant to keep, turning a fix for one table into a silent semantic
+        # change in another.
+        store.rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)
         store.clear_universe()  # FULL replace — a rebuild is a clean snapshot, not an accretion
         # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
         for ident in resolver.iter_universe(band.exchanges):

@@ -43,7 +43,12 @@ from vinci.screens.retention import (
 from vinci.screens.screen2 import Screen2Thresholds
 from vinci.sec import build_sec_http
 from vinci.store import Store
-from vinci.universe import DROP_STAGES, benchmark_identity, build_universe
+from vinci.universe import (
+    BUILD_UNIVERSE_SEED_TABLES,
+    DROP_STAGES,
+    benchmark_identity,
+    build_universe,
+)
 
 # ~5y: enough history for the 52w drawdown AND the G3 multiple-at-floor range (Polygon Starter).
 _SCREEN_LOOKBACK_DAYS = 1825
@@ -254,7 +259,18 @@ def run_weekly(
     # `--end 2026-08-12` admitted all three to the 2026-08-12 universe and filed them under that
     # run's manifest. RAISE rather than filter: silently dropping them would make the leak
     # invisible and the operator would never learn the store needs rolling back.
+    # NO FUTURE IDENTITIES IN A BACKDATED RUN — AND THE CHECK NEEDS DATA TO INSPECT.
+    # TWO CONSTRAINTS, BOTH REAL, AND THE FIRST FIX SATISFIED ONLY ONE (review, #494).
+    #   * it must run BEFORE `build_universe`, or the leaked identities are already in the
+    #     universe snapshot and filed under this run's id (`test_a_backdated_run_refuses_
+    #     identities_the_store_learned_later` pins exactly that, and caught the wrong fix);
+    #   * it must run AFTER the entity master is loaded, or on a fresh checkout — every CI run,
+    #     where `data/vinci.db` is git-ignored — it inspects an EMPTY store, sees nothing, and
+    #     `build_universe`'s own seed then loads the very identities it exists to refuse.
+    # So the seed moves HERE, ahead of both. It is the same idempotent subset load
+    # `build_universe` performs, so doing it twice costs a re-read and changes nothing.
     with Store(cfg.db_path) as _s:
+        _s.rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)
         ahead = _s.identities_first_seen_after(end)
     if ahead:
         raise RuntimeError(
@@ -270,7 +286,17 @@ def run_weekly(
     edgar = EdgarClient.from_config(cfg)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
-        if not any(not s.internal_id.startswith("IDX-") for s in store.iter_securities()):
+        # THE GUARD READS THE UNIVERSE, NOT THE ENTITY MASTER (review finding, #494). It always
+        # MEANT to — its message says "universe rebuilt EMPTY" — but it asked
+        # `iter_securities()`, which is the accumulate-only master and answers a different
+        # question. That was survivable only by accident: on CI's empty store a zero-admit run
+        # died earlier, at the ROW-DROP the seed now fixes. Removing that accidental failure
+        # exposed the real one — seeded, the master is never empty, so the guard could no longer
+        # fire and a zero-admit run would export a BLANK `universe_snapshot`, pass here, and reach
+        # `screen_universe`, whose own `if ids:` falls back to screening the ENTIRE master with
+        # `caps = {}` (screens/run.py). A fix for one failure must not delete the alarm for
+        # another.
+        if not store.latest_universe(end):
             # RAISE, never return. build_universe has ALREADY cleared and exported
             # universe_snapshot.jsonl, so a soft return would exit 0, and the workflow's next step
             # commits data/snapshots — publishing a blank universe beside the previous candidates
