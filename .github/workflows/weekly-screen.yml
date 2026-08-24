@@ -1,11 +1,17 @@
 name: weekly-screen
 
-# Configure once, runs forever: every Monday it refreshes EOD prices for the stored universe,
-# runs Screen 2, and commits the updated JSONL snapshots back. No manual re-runs.
+# ONE CALL IS THE WHOLE WEEK: refresh EOD for the stored universe, rebuild the universe, run
+# Screen 2, scan for structural disqualifiers, rank, export, and commit the JSONL snapshots.
+# MANUAL TRIGGER ONLY — the operator's ruling, 2026-08-24. There was never a sanctioned cron here:
+# the schedule arrived with "Loop 1 step 8: configure-once scheduled automation" (274339a,
+# 2026-06-17) and ran unasked every Monday since, pushing SIX automated commits to main. A job that
+# rebuilds the universe, re-screens it, re-ranks the queue and commits the result is a DECISION
+# SURFACE moving on a timer — the operator decides when the fund's queue advances, not the clock.
+#
+# `workflow_dispatch` keeps the one-call convenience (Actions -> weekly-screen -> Run workflow), and
+# `vinci run-weekly` remains the same single command locally.
 on:
-  schedule:
-    - cron: "0 6 * * 1" # Mondays 06:00 UTC
-  workflow_dispatch: {} # also runnable on demand
+  workflow_dispatch: {} # OPERATOR-TRIGGERED ONLY — see the note above; no schedule, deliberately
 
 permissions:
   contents: write # to commit the refreshed snapshots back
