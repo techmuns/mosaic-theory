@@ -288,3 +288,76 @@ def test_every_fixture_series_shares_one_vintage() -> None:
         f"the fixture carries mixed vintages {fronts} — rebuild it in one pass: "
         f"python scripts/build_price_fixture.py --refresh")
 
+
+def test_both_pushes_rebase_so_a_slow_run_cannot_lose_a_race() -> None:
+    """THE JOB TAKES ~26 MINUTES AND MAIN IS NOT FROZEN WHILE IT RUNS. The reporting step already
+    rebased; the SNAPSHOT commit — the one that actually advances the queue — pushed bare, so any
+    merge landing mid-run would fail the whole thing after the screen, both mirrors and the gate had
+    all succeeded. Both commits carry derived data only, so replaying onto a newer main is safe."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+    for step in ("Commit refreshed snapshots", "Report the run's outcome"):
+        body = wf.split(step, 1)[1].split("- name:", 1)[0]
+        assert "git pull --rebase" in body, (
+            f"the {step!r} step pushes without rebasing — a merge to main during the run loses the "
+            f"race and marks a successful run failed")
+
+
+def test_a_name_that_flips_out_of_the_maintained_set_is_still_rebuilt(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE FLIP IS THE WHOLE POINT, AND IT IS INVISIBLE TODAY. `maintained_names` is `committed
+    dossiers MINUS current screen candidates`, so it moves every time the screen re-ranks — MVST,
+    NCNO and WERN are all inside the universe and can be admitted any week. Right now the derived
+    set and the files on disk happen to MATCH, so a mutation removing the union survives every
+    state-based assertion. Simulated here instead: a fixture file whose name is no longer
+    maintained must still be rebuilt, or it keeps its old vintage while the rest advance and
+    `_cfg` — which globs the whole directory — loads a mixed-vintage store."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_bpf", ROOT / "scripts" / "build_price_fixture.py")
+    assert spec and spec.loader
+    bpf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bpf)
+
+    (tmp_path / "STILLHERE.jsonl").write_text("")   # on disk, no longer maintained
+    (tmp_path / "KEPT.jsonl").write_text("")        # on disk AND maintained
+    monkeypatch.setattr(bpf, "OUT_DIR", tmp_path)
+    monkeypatch.setattr(bpf, "maintained_names", lambda _cfg: ["KEPT", "BRANDNEW"])
+
+    got = bpf.names_to_rebuild(object())
+    assert got == ["BRANDNEW", "KEPT", "STILLHERE"], (
+        f"names_to_rebuild returned {got} — a name that flipped out of the maintained set is not "
+        f"being rebuilt, so it will keep an older vintage than every other series")
+
+
+def test_the_benchmark_is_not_double_counted() -> None:
+    """`main` always appends the benchmark, so `names_to_rebuild` must not also return it — a
+    duplicate would resolve and fetch IWM twice and break the strict zip that pairs names to
+    identities."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_bpf2", ROOT / "scripts" / "build_price_fixture.py")
+    assert spec and spec.loader
+    bpf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bpf)
+    from vinci.config import get_config
+
+    assert bpf.BENCHMARK_SMALL not in bpf.names_to_rebuild(get_config())
+
+
+def test_main_actually_calls_names_to_rebuild() -> None:
+    """PIN THE CALL SITE, NOT THE HELPER — the fourth time this exact trap has bitten in this
+    session. A perfectly-tested `names_to_rebuild` that `main` no longer calls is worth nothing:
+    the mutation replacing the call with a bare `maintained_names(cfg)` survived every behavioural
+    pin above, because those exercise the helper directly."""
+    src = (ROOT / "scripts" / "build_price_fixture.py").read_text()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    called = {ast.unparse(n.func) for n in ast.walk(main) if isinstance(n, ast.Call)}
+    assert "names_to_rebuild" in called, (
+        "main no longer calls names_to_rebuild — the union with the existing files is bypassed and "
+        "a name that flips out of the maintained set will keep a stale vintage")
+    assert "maintained_names" not in called, (
+        "main calls maintained_names directly, bypassing the union in names_to_rebuild")
+

@@ -73,12 +73,30 @@ def maintained_names(cfg: object) -> list[str]:
     return [t for t in committed if t not in cands]
 
 
+def names_to_rebuild(cfg: object) -> list[str]:
+    """Every series the fixture ALREADY has, plus every maintained name — not just the derived set.
+
+    `maintained_names` is `committed dossiers MINUS current screen candidates`, so it MOVES every
+    time the screen re-ranks: MVST, NCNO and WERN all sit inside the universe and can be admitted as
+    candidates any week. A name that flips OUT of the maintained set would keep its old file,
+    untouched, while every other series advanced — and `_cfg` in `test_maintenance_path` globs the
+    WHOLE directory, so the suite would silently load a mixed-vintage fixture with nobody having
+    decided to. The benchmark is excluded here only because `main` always appends it.
+
+    Rebuilding what is already there costs one extra aggregate call per flipped name and makes the
+    uniform vintage true BY CONSTRUCTION. Nothing is deleted: a name that flips back is current.
+    """
+    existing = {f.stem for f in OUT_DIR.glob("*.jsonl")} - {BENCHMARK_SMALL}
+    return sorted(set(maintained_names(cfg)) | existing)
+
+
 def main(argv: list[str]) -> int:
     load_local_env()
     cfg = get_config()
     resolver = EntityResolver.from_config(cfg)
     flags = {a for a in argv[1:] if a.startswith("-")}
-    wanted = [t.upper() for t in argv[1:] if not t.startswith("-")] or maintained_names(cfg)
+    explicit = [t.upper() for t in argv[1:] if not t.startswith("-")]
+    wanted = explicit or names_to_rebuild(cfg)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Identities, not just ids: `--refresh` needs the whole Identity to ingest against, and the

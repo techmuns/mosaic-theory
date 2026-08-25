@@ -139,6 +139,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/snapshots frontend tests/fixtures/prices
           git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots"
+          # REBASE BEFORE PUSHING, as the reporting step below already does. This job runs for ~26
+          # minutes; anything merged to main in that window makes a bare push lose the race and
+          # marks the whole run failed — after the screen, the mirrors and the gate all succeeded.
+          # The commit is derived data only, so replaying it onto a newer main is always safe.
+          git pull --rebase --autostash
           git push
 
       # THE RUN REPORTS ITS OWN OUTCOME — A DELIBERATE, NAMED EXCEPTION TO THE GATE ABOVE.
