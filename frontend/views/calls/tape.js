@@ -230,7 +230,7 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
   const win = bars.filter((b) => (from == null || b.d >= from) && (to == null || b.d <= to));
   if (win.length < 2) return null;
 
-  const W = 880, H = 470, padL = 44, padR = 12, cy0 = 26, cy1 = 300, by0 = 358, by1 = 448;
+  const W = 1100, H = 560, padL = 46, padR = 14, cy0 = 26, cy1 = 380, by0 = 440, by1 = 540;
   const px0 = padL, px1 = W - padR;
   const idxOf = (iso) => {
     let best = -1;
@@ -247,7 +247,7 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
 
   // gridlines at a nice step
   const span = dom.hi - dom.lo;
-  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200].find((g) => span / g <= 7) || 500;
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200].find((g) => span / g <= 9) || 500;
   let grid = "";
   for (let v = Math.ceil(dom.lo / step) * step; v < dom.hi; v += step) {
     const y = sy(v).toFixed(1);
@@ -442,9 +442,18 @@ function paneCalendar() {
   }
   // A DROPDOWN, not just arrows: 25 months is eight pages of clicking to reach the far end.
   const allMonths = [...new Set(Object.keys(S.days).map(monthOf))].sort();
+  // The month VOLUME rides in the option label. It was the one thing the timeline strip showed
+  // that the dropdown did not — the ~2x decline from 2024 to 2026 — and it costs nothing here,
+  // where the reader is already choosing a month.
+  const vol = {};
+  for (const [iso, rec] of Object.entries(S.days)) {
+    const k = monthOf(iso);
+    vol[k] = (vol[k] || 0) + (rec.n || 0);
+  }
   const opts = allMonths.map((mm) => {
     const [yy, m2] = mm.split("-").map(Number);
-    return `<option value="${mm}"${mm === S.month ? " selected" : ""}>${MON[m2 - 1]} ${yy}</option>`;
+    return `<option value="${mm}"${mm === S.month ? " selected" : ""}>`
+      + `${MON[m2 - 1]} ${yy} · ${vol[mm] || 0}</option>`;
   }).join("");
   return `<div class="card cal-card">
     <div class="cal-head"><button class="cal-nav" data-mon="-1" aria-label="Previous month">◀</button>
@@ -593,6 +602,7 @@ async function paneChart() {
   return `<div class="card chart-card"><div class="chart-h"><span class="chart-bar"></span>
       <b class="mono">$${escapeHtml(tkr)}</b>
       <span class="muted">call of ${escapeHtml(p.d)}${winLabel}</span>
+      <span class="chart-seq" title="The chart is the record of what he said about this ticker, so the filters above do not touch it — a filtered record would be a false one.">${others.length} post${others.length === 1 ? "" : "s"} on $${escapeHtml(tkr)} in view · unfiltered</span>
       <span class="chart-follow">
         ${WINDOWS.map(([k]) => `<button class="wbtn${(S.window || DEFAULT_WINDOW) === k ? " on" : ""}" data-win="${k}"`
           + ` title="${k === "FIT" ? "fit the scored horizon" : k === "MAX" ? "every fetched bar" : "around the post"}">${k}</button>`).join("")}
@@ -766,23 +776,11 @@ function toolbar(tickers) {
       </div></details></div>`;
 }
 
-function timelineStrip() {
-  const months = [...new Set(Object.keys(S.days).map(monthOf))].sort();
-  const tot = {};
-  for (const [iso, r] of Object.entries(S.days)) tot[monthOf(iso)] = (tot[monthOf(iso)] || 0) + (r.n || 0);
-  const max = Math.max(...Object.values(tot), 1);
-  return `<div class="card ct-strip"><div class="ct-strip-in">${months.map((m) => {
-    const on = m === S.month;
-    return `<div class="ct-mo${on ? " on" : ""}" data-mon-jump="${m}" title="${m}: ${tot[m] || 0} posts">
-      <div class="ct-mo-b" style="height:${(30 * (tot[m] || 0) / max).toFixed(0)}px"></div>
-      <div class="ct-mo-l">${(+m.slice(5) === 1 || +m.slice(5) === 7 || on) ? m.slice(2) : ""}</div></div>`;
-  }).join("")}</div></div>`;
-}
 
 async function paint(root) {
   const tickers = [...new Set(Object.values(S.days).flatMap((d) => d.tk || []))]
     .map((t) => t.replace(/^\$/, "")).sort();
-  root.querySelector("#ct-tools").innerHTML = toolbar(tickers) + timelineStrip();
+  root.querySelector("#ct-tools").innerHTML = toolbar(tickers);
   root.querySelector("#ct-cal").innerHTML = paneCalendar();
   root.querySelector("#ct-posts").innerHTML = panePosts();
   root.querySelector("#ct-chart").innerHTML = `<div class="card muted" style="font-size:12.5px">Drawing…</div>`;
@@ -929,10 +927,17 @@ async function boot(root) {
   // happened to be first — so a shared link pointed at the wrong chart, silently.
   if (S.tweetId || S.ticker) {
     const posts = dayPosts();
-    const pi = posts.findIndex((p) => String(p.id) === String(S.tweetId));
+    const want = String(S.ticker || "").toUpperCase();
+    let pi = S.tweetId ? posts.findIndex((p) => String(p.id) === String(S.tweetId)) : -1;
+    // A TICKER-ONLY LINK (#/calls/<h>/<date>/HOOD) must find the post that names it. Without this
+    // the ticker was matched against whatever post happened to be first, missed, and the screen
+    // opened on an unrelated cashtag — the link looked honoured and was not.
+    if (pi < 0 && want) {
+      pi = posts.findIndex((p) => (p.tk || []).some((t) => t.replace(/^\$/, "").toUpperCase() === want));
+    }
     if (pi >= 0) S.postIdx = pi;
     const tags = focusTags();
-    const ci = tags.indexOf(String(S.ticker || "").toUpperCase());
+    const ci = tags.indexOf(want);
     if (ci >= 0) S.chipIdx = ci;
   }
   await paint(root);
@@ -948,9 +953,15 @@ export async function render(root, params, { item, frame }) {
   S.ticker = rest.shift() || null;
   S.tweetId = rest.shift() || null;
 
+  // TWO COLUMNS, not three. The chart is the evidence and was getting the narrowest share of a
+  // 1760px screen; navigation (calendar) and the work queue (posts) are both narrow by nature, so
+  // they stack in one rail and the chart takes everything else.
   root.innerHTML = frame(item, {
     bodyHtml: `<div id="ct-tools"></div>
-      <div class="ct-panes"><div id="ct-cal"></div><div id="ct-posts"></div><div id="ct-chart"></div></div>
+      <div class="ct-panes">
+        <div class="ct-rail"><div id="ct-cal"></div><div id="ct-posts"></div></div>
+        <div id="ct-chart"></div>
+      </div>
       <div class="ct-hints">
         <span><kbd>j</kbd><kbd>k</kbd> post</span><span><kbd>h</kbd><kbd>l</kbd> cashtag</span>
         <span><kbd>b</kbd><kbd>s</kbd> bias</span><span><kbd>n</kbd> no_entry</span>

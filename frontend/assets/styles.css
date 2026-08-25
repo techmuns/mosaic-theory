@@ -1496,17 +1496,15 @@ table.data th.peer-desc-h { text-align: left; }
 .ct-exp { padding: 4px 11px; border: 1px solid var(--line-2); border-radius: 7px; background: var(--surface);
   color: var(--ink); font: 11.5px var(--sans); cursor: pointer; }
 .ct-exp:hover { border-color: var(--accent); color: var(--accent); }
-.ct-strip { padding: 7px 11px 4px; margin-bottom: 11px; }
-.ct-strip-in { display: flex; gap: 2px; align-items: flex-end; height: 44px; }
-.ct-mo { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; cursor: pointer; }
-.ct-mo-b { width: 100%; background: var(--line-2); border-radius: 2px 2px 0 0; }
-.ct-mo.on .ct-mo-b, .ct-mo:hover .ct-mo-b { background: var(--accent); }
-.ct-mo-l { font-size: 8px; color: var(--ink-3); font-family: var(--mono); }
-.ct-mo.on .ct-mo-l { color: var(--accent); }
-.ct-panes { display: grid; grid-template-columns: 296px 400px minmax(0, 1fr); gap: 12px; align-items: start; }
-@media (max-width: 1500px) { .ct-panes { grid-template-columns: 260px 360px minmax(0, 1fr); } }
-@media (max-width: 1180px) { .ct-panes { grid-template-columns: 1fr; } }
-#ct-posts { display: flex; flex-direction: column; gap: 8px; max-height: 78vh; overflow-y: auto; }
+/* TWO COLUMNS, not three. The chart is the evidence and was getting the narrowest share of the
+   screen; navigation and the work queue are both narrow by nature, so they stack in one rail. */
+.ct-panes { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 1400px) { .ct-panes { grid-template-columns: 340px minmax(0, 1fr); } }
+@media (max-width: 1080px) { .ct-panes { grid-template-columns: 1fr; } }
+/* calendar first because it is how you move; posts second because that is where the time goes */
+.ct-rail { display: flex; flex-direction: column; gap: 10px; }
+#ct-posts { display: flex; flex-direction: column; gap: 8px; max-height: 62vh; overflow-y: auto;
+  padding-right: 2px; }
 #ct-chart { display: flex; flex-direction: column; gap: 10px; }
 
 /* calendar */
@@ -1616,3 +1614,11 @@ table.data th.peer-desc-h { text-align: left; }
 /* prior-post markers are clickable — the sequence is the point, and a dot you cannot open is a tally mark */
 #ct-chart svg .pmark { transition: r 0.1s; }
 #ct-chart svg .pmark:hover { r: 6; stroke-width: 2; }
+
+/* the timeline strip is gone; monthly volume rides in the month dropdown instead */
+.chart-seq { font-size: 10.5px; color: var(--ink-3); border-left: 1px solid var(--line-2);
+  padding-left: 8px; margin-left: 2px; }
+/* a roomier calendar now that the rail is wider — the date gets more room to be a date */
+.cal-cell { min-height: 44px; }
+.cal-n { font-size: 13px; }
+.cal-c { font-size: 10px; }

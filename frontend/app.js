@@ -65,8 +65,10 @@ const EDGES = [
   {
     key: "calls", label: "Calls tape", state: "live",
     stages: [
-      { route: "calls", label: "Tape",
-        does: "One screen over a public account's posted calls — calendar, posts and chart in three panes, keyboard-driven. A LABELLING tool: machine labels render as guesses, hand labels as ground truth. Research input only; it gates nothing." },
+      // No `does` on purpose: the frame prints it as a persistent subtitle, and on a cockpit that
+      // is a paragraph of vertical space describing what the screen visibly is. The orientation
+      // lives in the Spec key and the hint bar, where it is asked for rather than always on.
+      { route: "calls", label: "Tape" },
       { route: "calls/scoreboard", label: "Scoreboard", state: "conditional",
         cond: {
           what: "Hit-rate, excess return and target-touch aggregates over the labelled calls.",

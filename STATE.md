@@ -3501,6 +3501,26 @@ Each line: *what it does* — *verified how*.
     browser's exact shape, imported (83 → 84 hand labels, "replaced a guess 1"), then reverted; the
     corpus is byte-identical to committed. Five pins cover replacement, the two flag columns
     surviving, meta drift, whole-or-nothing refusal, and dry-run.*
+  - **FOURTH PASS (2026-08-25) — the chart was the smallest pane on the screen.** Three columns gave
+    the EVIDENCE the narrowest share while navigation and the work queue each took a fixed slab.
+    Now TWO: a 380px rail stacking calendar over posts, and the chart taking the rest — **74% of the
+    content width at 1760px (1,062px, up from ~916), 65% at 1280px**, with the canvas widened
+    880→1100 and deepened 470→560 so the extra room becomes resolution rather than stretch. The
+    timeline strip and the stage subtitle are gone; the strip's one unique fact (monthly volume,
+    the ~2x decline) now rides in the month dropdown's own option labels, where the reader is
+    already choosing a month. — *verified at 1760 and 1280: no horizontal page scroll, calendar
+    fits, chart does not overflow its pane; a full exercise (month switch → MAX → 1Y → marker jump)
+    raised zero JS errors and zero failed fetches.*
+  - **THE FILTERS DELIBERATELY DO NOT REACH THE CHART, and the page now says so.** The posts pane is
+    filtered because that is how the work is found; the chart is the RECORD of what the author said
+    about that ticker, and a filtered record is a false one — the same failure as drawing 5 of 30
+    markers, arrived at from the other direction. The header now states the count and the fact
+    ("148 posts on $SPY in view · unfiltered") rather than leaving the reader to infer it.
+  - **A ticker-only deep link opened the wrong cashtag.** `#/calls/<h>/<date>/HOOD` matched HOOD
+    against whatever post happened to be FIRST that day, missed, and silently focused something
+    else — a link that looked honoured and was not. It now finds the first post on that day
+    actually naming the ticker, then completes the URL with the resolved post id.
+
 
 
 
