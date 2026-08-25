@@ -3449,8 +3449,13 @@ Each line: *what it does* — *verified how*.
     monthly volume falls **2.0x** across the span (357 → 177), not ~3x; and the machine labeller's
     quoted **55% bias / 62% target accuracy is NOT re-derivable here** — a hand label REPLACES the
     machine row at the same key, so the machine's own guess for those 83 is retained nowhere in the
-    bundle. The figure has to be taken on trust or re-measured upstream, and no surface in the app
-    claims it was verified.
+    bundle. The figure has to be taken on trust or re-measured upstream.
+    **CORRECTED 2026-08-25:** this entry originally said "no surface in the app claims it was
+    verified" — and `app.js` was at that moment stating "the machine labeller's 55%-accurate bias
+    calls" as plain fact in the Scoreboard's unlock trigger, which a reader sees. Asserting a
+    number the same entry records as unverifiable is the defect this repo forbids, found by
+    auditing my own claims rather than by anything failing. Both mentions now ATTRIBUTE it to the
+    brief and state why it cannot be re-derived here.
   - **A convention the brief never states, left unchanged but written down:** 53% of posts land
     outside 09:30–16:00 ET, and the scorer keys off the DATE only. So a pre-market post and an
     after-close post on the same day receive the SAME next-open entry. For the after-close post

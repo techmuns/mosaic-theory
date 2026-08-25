@@ -72,7 +72,7 @@ const EDGES = [
       { route: "calls/scoreboard", label: "Scoreboard", state: "conditional",
         cond: {
           what: "Hit-rate, excess return and target-touch aggregates over the labelled calls.",
-          trigger: "Conditional · unlocks at ~500 hand labels. Below that any headline number is dominated by the machine labeller's 55%-accurate bias calls, so it would describe the model, not the author.",
+          trigger: "Conditional · unlocks at ~500 hand labels. Below that, 8,102 of the 8,185 rows carry a MACHINE guess rather than a human reading, so a headline number would describe the labeller rather than the author. (The build brief reports that labeller at ~55% on bias and ~62% on targets; that figure cannot be re-derived from this corpus — a hand label REPLACES the machine row at the same key, so the machine's own guess for the 83 read rows is retained nowhere. It is taken on trust, not verified here.)",
         } },
     ],
   },

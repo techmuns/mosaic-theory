@@ -16,7 +16,9 @@
 // accounts.json, so adding a second voice is a directory drop plus `vinci calls accounts` — no
 // route, view or schema change. Nothing below hardcodes a handle.
 //
-// MACHINE LABELS ARE GUESSES AND MUST LOOK LIKE GUESSES (55% on bias, 62% on targets): dashed,
+// MACHINE LABELS ARE GUESSES AND MUST LOOK LIKE GUESSES (the brief reports ~55% on bias and
+// ~62% on targets — REPORTED, not re-derivable here: a hand label replaces the machine row at
+// the same key, so the machine's guess for the 83 read rows is retained nowhere): dashed,
 // muted, prefixed `guess:`. Hand labels are ground truth and render in full colour. No aggregate
 // hit-rate is displayed anywhere — at 83 hand labels against 8,102 machine ones, any headline
 // number would describe the machine, not the author.
