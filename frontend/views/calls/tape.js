@@ -21,6 +21,7 @@
 // hit-rate is displayed anywhere — at 83 hand labels against 8,102 machine ones, any headline
 // number would describe the machine, not the author.
 // ============================================================================
+import { scoreCall } from "../../lib/callscore.js";
 import { candleDomain, candleWidth, candles, extent, linScale } from "../../lib/exhibit.js";
 import { DASH, escapeHtml, fmtPct } from "../../lib/format.js";
 
@@ -83,7 +84,7 @@ function reviewReasons(key) {
   const l = labelFor(key);
   if (!l || l.src === "hand") return [];
   if (NON_SIGNAL.has(l.post_class)) return [];
-  const r = S.results ? S.results.get(key) : null;
+  const r = resultFor(key);
   return REVIEW_REASONS.filter(([, , test]) => {
     try { return Boolean(test(l, r)); } catch (e) { return false; }
   }).map(([id]) => id);
@@ -99,6 +100,7 @@ const S = {
   window: null,                    // active chart window preset (see WINDOWS)
   seqFiltered: false,              // do the filters reach the chart's prior-post markers
   geom: null,                      // last drawn chart geometry, for the crosshair
+  local: {},                       // key -> locally recomputed result for an EDITED row
 };
 
 // --- edits: local until exported. The pipeline's own file is the durable record. ---------------
@@ -109,6 +111,17 @@ function loadEdits() {
 }
 function saveEdits() {
   try { localStorage.setItem(storeKey(), JSON.stringify(S.edits)); } catch (e) { /* private mode */ }
+}
+
+/**
+ * The score for a row: the LOCAL recompute when the operator has edited the label, else the
+ * committed one. Editing a bias used to change the chip and nothing else — the readout, the target
+ * line, the horizon band and the FIT window all read `results.jsonl`, which was scored from the
+ * label as it stood BEFORE the edit. So a bearish chip sat beside a bullish-signed return, the two
+ * disagreeing on one screen with nothing saying so.
+ */
+function resultFor(key) {
+  return S.local[key] || (S.results ? S.results.get(key) : null) || null;
 }
 
 /** The label a human should see: the committed row, with any local edit laid over it. */
@@ -580,7 +593,21 @@ async function paneChart() {
       <div class="notice" style="margin-top:8px">No committed bars for <b>$${escapeHtml(tkr)}</b> — delisted,
       renamed, or an index. The tape carries three such symbols; the pane states it rather than failing.</div></div>`;
   }
-  const label = labelFor(key), res = S.results.get(key) || null;
+  const label = labelFor(key);
+  // RECOMPUTE ON EDIT. `vinci calls score` stays authoritative and writes results.jsonl; this only
+  // re-derives rows edited in THIS session, using the same pre-registered conventions (pinned
+  // against the Python scorer by tests/test_calls_parity.py).
+  if (S.edits[key] && label) {
+    S.local[key] = ["bullish", "bearish"].includes(label.bias)
+      ? scoreCall({ tweetId: String(p.id), ticker: tkr, posted: p.d, bias: label.bias,
+                    target: label.target, targetType: label.target_type,
+                    horizonLo: label.hlo, horizonHi: label.hhi, bars, bench })
+      : { status: "UNDIRECTED", local: true,
+          detail: "no directional bias — there is no side to sign a return by" };
+  } else {
+    delete S.local[key];
+  }
+  const res = resultFor(key);
   const [wfrom, wto] = windowRange(p.d, res);
   const others = await postsForTicker(tkr, wfrom, wto);
   const svg = chartSvg({ bars, bench, postDate: p.d, label, result: res, ticker: tkr, otherPosts: others });
@@ -592,9 +619,13 @@ async function paneChart() {
   const st = (l, v, sub, c) => `<div class="rd-s"><div class="rd-l">${l}</div>`
     + `<div class="rd-v mono"${c ? ` style="color:${c}"` : ""}>${v}</div><div class="rd-sub">${sub || ""}</div></div>`;
   let readout;
-  if (!res) {
-    readout = `<div class="notice">Not scored — this row carries no directional bias, so there is no
-      side to sign a return by. Set a bias and re-run <code>vinci calls score</code>.</div>`;
+  const localMark = res && res.local
+    ? `<span class="gt partial rd-local" title="Recomputed in the browser from your edit, using the
+same conventions as the CLI scorer. Run \`vinci calls import-labels\` then \`vinci calls score\`
+to make it the record.">recomputed from your edit</span>` : "";
+  if (!res || res.status === "UNDIRECTED") {
+    readout = `<div class="rd-head">${localMark}</div><div class="notice">Not scored — this row
+      carries no directional bias, so there is no side to sign a return by.</div>`;
   } else if (res.status === "OPEN") {
     // PROVISIONAL, AND SAID SO. The settled figures do not exist yet and are not invented; what is
     // shown is the entry (known), the clock (running) and the path so far (a fact). Every value
@@ -603,7 +634,7 @@ async function paneChart() {
     const tone = (v) => (v == null ? "var(--ink-2)" : v >= 0 ? "var(--pos-text)" : "var(--danger)");
     const done = res.elapsed_days != null && res.horizon_days
       ? Math.min(100, Math.round((res.elapsed_days / res.horizon_days) * 100)) : 0;
-    readout = `<div class="rd-head"><span class="pill conditional">OPEN</span>
+    readout = `<div class="rd-head">${localMark}<span class="pill conditional">OPEN</span>
         <span class="rd-why">${res.elapsed_days ?? "?"} of ${res.horizon_days ?? "?"} trading days —
           <b>excluded from every aggregate</b> until the horizon elapses</span>
         <span class="gt ${res.horizon_assumed ? "partial" : "firm"}">${res.horizon_days}d ·
@@ -630,7 +661,7 @@ async function paneChart() {
              res.target_hit_to_date ? "var(--pos-text)" : "var(--ink-2)")}
       </div>`;
   } else if (res.status !== "CLOSED") {
-    readout = `<div class="rd-head"><span class="pill avoid">${res.status}</span>
+    readout = `<div class="rd-head">${localMark}<span class="pill avoid">${res.status}</span>
       <span class="rd-why">${escapeHtml(res.detail || "")}</span></div>`;
   } else {
     const tgtNote = { resolved: "", qualitative: "qualitative — no price",
@@ -641,7 +672,7 @@ async function paneChart() {
                     }[res.target_status] || "";
     const touchNote = res.target_status === "counter_directional"
       ? "reached the zone" : "inside the band";
-    readout = `<div class="rd-head"><span class="pill live">CLOSED</span>
+    readout = `<div class="rd-head">${localMark}<span class="pill live">CLOSED</span>
       <span class="rd-why">horizon elapsed — counts toward aggregates</span>
       <span class="gt ${res.horizon_assumed ? "partial" : "firm"}">${res.horizon_days}d · ${res.horizon_assumed ? "63d DEFAULT, assumed" : "STATED"}</span></div>
       <div class="rd-grid">
@@ -970,7 +1001,7 @@ function keyboard(root) {
       case "b": if (key) setPatch(key, { bias: "bullish" }); break;
       case "s": if (key) setPatch(key, { bias: "bearish" }); break;
       case "n": if (key) setPatch(key, { action: "no_entry" }); break;
-      case "Backspace": if (key) { delete S.edits[key]; saveEdits(); } break;
+      case "Backspace": if (key) { delete S.edits[key]; delete S.local[key]; saveEdits(); } break;
       case "ArrowLeft": case "ArrowRight": {
         const i = days.indexOf(S.day);
         const j = e.key === "ArrowLeft" ? i - 1 : i + 1;

@@ -1634,3 +1634,5 @@ table.data th.peer-desc-h { text-align: left; }
 /* a live call's progress through its horizon */
 .rd-prog { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 0 0 11px; }
 .rd-prog-fill { height: 100%; background: var(--conditional); }
+/* a readout recomputed in the browser from an unsaved edit — never mistakable for the record */
+.rd-local { margin-right: 2px; }

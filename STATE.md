@@ -3589,6 +3589,30 @@ Each line: *what it does* — *verified how*.
     browser caches ES modules hard enough that a reload kept running the PREVIOUS build of a view —
     so "verify it in the browser" was twice quietly testing old code, and twice I mistook a stale
     module for a broken feature. Not shipped to the deploy; a dev-loop correctness fix.
+  - **SEVENTH PASS (2026-08-25) — EDITING A LABEL CHANGED THE CHIP AND NOTHING ELSE.** Reported
+    from the screen: `$HOOD`, machine-labelled bullish, re-marked **bearish** after reading the post
+    ("after an 800% run… might be topping out") — the chip flipped and **the readout kept the old
+    answer**. Diagnosed screen-wide: the chip reads `labelFor()` (live), but the readout, the target
+    line, the horizon band, the FIT window and three review reasons all read `S.results` — i.e.
+    `results.jsonl`, scored SERVER-SIDE from the label as it stood BEFORE the edit. So the page
+    showed a bearish chip beside a bullish-signed return with nothing saying they disagree. On that
+    row the truth is the opposite of what was displayed: **Return −32% → +32%, Excess −38% → +38%,
+    MFE/MAE +0%/−49% → +49%/−0%** — his call was RIGHT and the page said it was wrong.
+    - **FIX: the browser recomputes an EDITED row locally** (`frontend/lib/callscore.js`), so the
+      readout, target line, horizon band and FIT window all follow the label the operator can see.
+      — *verified: bias flip moves every bias-dependent field; a horizon edit 105 → 20 moves the
+      exit date 2026-06-08 → 2026-02-04 and shrinks the band 499px → 99px on BOTH panels; setting a
+      resolvable target draws the target line.*
+    - **IT IS A PREVIEW, NOT THE RECORD, and it says so.** `vinci calls score` stays authoritative;
+      the readout carries a "recomputed from your edit" mark, and the path to make it the record is
+      `calls import-labels` → `calls score`.
+    - **THE TWIN IS PINNED, because a py↔JS twin over one artifact is precisely the hazard
+      `test_duplicate_definitions.py` exists for** — neither side can import the other, so the
+      conventions get hand-copied and a one-sided edit ships two surfaces that disagree with nothing
+      red. `tests/test_calls_parity.py` runs `callscore.js` under node over the **real committed
+      corpus** (3,000+ rows) and asserts every field matches the Python scorer, plus a 14-shape
+      parser comparison. — *mutation-tested: flipping `signOf` to always return 1 reddens it.*
+
 
 
 
