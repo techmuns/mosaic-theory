@@ -25,6 +25,7 @@ from vinci.eod import (
     compute_price_features,
     ingest_prices,
     ingest_prices_per_symbol,
+    last_completed_session,
 )
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
@@ -1892,8 +1893,25 @@ def _cmd_run_weekly(args: argparse.Namespace) -> int:
 
     No flags — every stage is unconditional. A cron with opt-in pieces is how the ranker and the
     structural scan both came to be silently missing from the weekly run (STATE.md §5).
+
+    THE DATE COMES FROM THE DATA, NOT THE CLOCK. This defaulted to `date.today()`, which stamped the
+    universe as-of, the `reference_date` and every relative-return window with the moment the JOB
+    RAN rather than a moment the prices reach. Fired 07:04 UTC on Monday 2026-08-24 — before the US
+    market opened — it produced a queue dated 2026-08-24 whose newest possible bar was Friday's.
+    The gate caught it every week from 2026-08-03 on, so the weekly run had been structurally
+    unable to go green; those four "failures" were the guard refusing a corrupted queue, not four
+    bad weeks. `--end` still overrides, and an explicit one skips the probe entirely (no network is
+    spent dating a run whose date you gave).
     """
-    end = date.fromisoformat(args.end) if args.end else date.today()
+    if args.end:
+        end = date.fromisoformat(args.end)
+    else:
+        # The EOD source is the calendar: `grouped_daily` is empty on a non-trading day, so
+        # weekends and holidays answer themselves. See `last_completed_session` for why it starts
+        # at yesterday rather than today.
+        end = last_completed_session(PolygonEodClient.from_config(get_config()),
+                                     today=date.today())
+        print(f"weekly run: dating from the data — last completed session {end}", file=sys.stderr)
     result = run_weekly(end=end, benchmark=args.benchmark, progress=stderr_reporter)
     print(f"weekly run: {result}")
     return 0
@@ -3451,7 +3469,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_score.set_defaults(func=_cmd_score)
 
     p_weekly = sub.add_parser("run-weekly", help="scheduled: refresh + screen + export snapshots")
-    p_weekly.add_argument("--end", help="end date YYYY-MM-DD (default: today)")
+    p_weekly.add_argument("--end", help="end date YYYY-MM-DD "
+                          "(default: the last completed session, asked of the EOD source)")
     p_weekly.add_argument("--benchmark", default="IWM")
     p_weekly.set_defaults(func=_cmd_run_weekly)
 

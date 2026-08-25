@@ -74,14 +74,24 @@ def main(argv: list[str]) -> int:
     bench = benchmark_identity(BENCHMARK_SMALL)
     targets.append((BENCHMARK_SMALL, bench.internal_id))
 
-    total_rows = total_bytes = 0
+    # ALL-OR-NOTHING: BUILD EVERY SERIES FIRST, WRITE ONLY IF EVERY ONE SUCCEEDED.
+    #
+    # This used to write each file inside the loop and `return 1` on the first name with no bars,
+    # which leaves the committed fixture in a MIXED-VINTAGE state — observed, not theorised: run
+    # against a partially-refreshed store it rewrote six names back to 2026-08-07, left WERN at its
+    # old 08-14, and never reached IWM at all. The BENCHMARK silently keeping older bars than the
+    # names it is compared against is the exact shape of corruption `rel_ret_vs_market` cannot
+    # survive, and the weekly job now runs this script unattended — so a partial write would be
+    # committed. A failed build must leave the previous fixture untouched.
+    planned: list[tuple[str, str, int, str, str]] = []
     with Store(cfg.db_path) as store:
         for ticker, iid in targets:
             bars = [b for b in store.get_price_history(iid)
                     if b.bar_date.isoformat() >= _WINDOW_START]
             if not bars:
                 print(f"  {ticker:6} NO BARS in the local store from {_WINDOW_START} — refresh EOD "
-                      f"for this name before building the fixture", file=sys.stderr)
+                      f"for this name before building the fixture. NOTHING WAS WRITTEN; the "
+                      f"existing fixture is untouched.", file=sys.stderr)
                 return 1
             # internal_id is written per row: the loader keys the store by it and must not have to
             # re-resolve a ticker (which would put the SEC network on the suite's critical path).
@@ -90,12 +100,15 @@ def main(argv: list[str]) -> int:
                 "open": b.open, "high": b.high, "low": b.low, "close": b.close,
                 "volume": b.volume, "source": b.source,
             }, sort_keys=True) for b in bars]
-            body = "\n".join(lines) + "\n"
-            (OUT_DIR / f"{ticker}.jsonl").write_text(body)
-            total_rows += len(bars)
-            total_bytes += len(body)
-            print(f"  {ticker:6} {len(bars):4} bars  {bars[0].bar_date}..{bars[-1].bar_date}  "
-                  f"{len(body) / 1024:6.1f} KB")
+            planned.append((ticker, "\n".join(lines) + "\n", len(bars),
+                            bars[0].bar_date.isoformat(), bars[-1].bar_date.isoformat()))
+
+    total_rows = total_bytes = 0
+    for ticker, body, n, first, last in planned:
+        (OUT_DIR / f"{ticker}.jsonl").write_text(body)
+        total_rows += n
+        total_bytes += len(body)
+        print(f"  {ticker:6} {n:4} bars  {first}..{last}  {len(body) / 1024:6.1f} KB")
 
     print(f"\n=== {len(targets)} series · {total_rows} rows · {total_bytes / 1024:.1f} KB "
           f"→ {OUT_DIR} ===")

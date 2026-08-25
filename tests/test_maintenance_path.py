@@ -323,11 +323,35 @@ def test_the_standalone_record_is_truncated_to_its_own_reference_date() -> None:
     assert fin.data_record.prices.last.value == pytest.approx(upto[-1].close), (
         f"the record's last price is not the last bar at or before its own reference_date {ref} — "
         "it is carrying a price from the future of its own stamp")
-    later = [b for b in bars if b.bar_date > ref]
-    if later:
-        assert fin.data_record.prices.last.value != pytest.approx(later[-1].close), (
-            "the record carries the STORE FRONTIER's close under an older reference_date stamp")
     assert isinstance(ref, dt.date)
+
+    # --- THE HALF THAT MUST NEVER GO DORMANT ---------------------------------------------------
+    #
+    # This used to read `later = [b for b in bars if b.bar_date > ref]; if later: assert ...`, with
+    # `ref` riding the LIVE fleet as-of. That is fine only while the committed fixture happens to
+    # end after the last screen run. The weekly job now regenerates the fixture from the same
+    # refreshed store the screen just used, so the fixture frontier CATCHES UP to the fleet as-of —
+    # `later` becomes empty, `if later:` quietly stops running, and the only assertion that catches
+    # the actual bug (a record carrying the frontier's close under an older stamp) disappears
+    # without ever going red. A guard that cannot fire is worse than no guard, because the green
+    # tick still gets counted.
+    #
+    # So the vintage is FROZEN INSIDE THE FIXTURE instead of inherited from the fleet: ten bars back
+    # from whatever the fixture's own frontier is. Bars after it exist BY CONSTRUCTION, on every
+    # machine and every week, so the assertion cannot be skipped — and it is still derived from the
+    # fixture rather than hardcoded, so it does not rot as bars accumulate. (TEST-LAYER RULE: a
+    # value-level pin belongs on a frozen construction, never on the re-drawn artifact.)
+    frozen_ref = bars[-10].bar_date
+    before = [b for b in bars if b.bar_date <= frozen_ref]
+    after = [b for b in bars if b.bar_date > frozen_ref]
+    assert after, (
+        f"{t}'s fixture has no bars after {frozen_ref} — the truncation assertion below would be "
+        f"testing nothing. Rebuild it: python scripts/build_price_fixture.py")
+    frozen = asm._standalone_record(cfg, t, frozen_ref)
+    assert frozen.prices.last.value == pytest.approx(before[-1].close), (
+        f"at a reference date of {frozen_ref} the record's last price is not that date's bar")
+    assert frozen.prices.last.value != pytest.approx(after[-1].close), (
+        "the record carries the STORE FRONTIER's close under an older reference_date stamp")
 
 
 def test_assembly_reads_the_property_not_the_candidate_record() -> None:
