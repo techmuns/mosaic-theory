@@ -2,6 +2,17 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "calls-tape",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-mac-Documents-GitHub-mosaic-theory--claude-worktrees-adoring-heisenberg-d54179/73dfcb91-6403-4033-8db3-887fda1a302d/scratchpad/serve_nocache.py",
+        "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/adoring-heisenberg-d54179/frontend",
+        "8946"
+      ],
+      "port": 8946,
+      "autoPort": false
+    },
+    {
       "name": "layout-study",
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": [

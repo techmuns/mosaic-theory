@@ -119,6 +119,23 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **calls tape** — the browser over a public commentator's posted calls (#499). Plain words: a
+  calendar, the posts for a day, and a price chart for whichever cashtag is focused, on ONE screen,
+  built to LABEL those posts rather than to present them. A research input only: it feeds no screen,
+  ranker, ledger or spread and gates nothing. "Tape" is the trading sense — the running record of
+  what someone said, in order. Home: `vinci/calls/`, `frontend/views/calls/tape.js`.
+- **counter-directional target / watched level** — a stated price level that sits on the OPPOSITE
+  side of the entry from the author's own bias (#499). Plain words: he says "bullish" and names a
+  price BELOW the current one — because it is a support he expects a bounce FROM, or a zone he is
+  waiting to buy, not a target the thesis predicts reaching. Kept and MARKED rather than refused:
+  four of the eighty-three hand labels are this shape and all four are correct. It changes what
+  "touched" means, so the touch test keys on the LEVEL's position rather than on the bias.
+  Home: `vinci/calls/targets.py` (`TargetStatus.COUNTER_DIRECTIONAL`), `score.py` (`touched`).
+- **implausible target** — a resolved target more than 10x above or 0.1x below the entry price
+  (#499). Plain words: a number that cannot be the price target it was read as — usually an options
+  FLOW amount ("$CVNA – $10.77M") or a dollar move parsed as a level. Refused, because the touch
+  test would otherwise be satisfied by arithmetic. The band is set on face validity, never on what
+  it does to the hit-rate. Home: `vinci/calls/targets.py` (`TargetStatus.IMPLAUSIBLE`).
 - **gate regime / the tiered ladder / eligibility line** — the underwrite gate's threshold
   vocabulary (#487, ratified 2026-08-21). **Gate regime** = WHICH set of thresholds judged a
   record, stamped on it (`result.gate_regime`); an ABSENT stamp means the pre-2026-08-21

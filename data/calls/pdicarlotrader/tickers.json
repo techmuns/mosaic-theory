@@ -1,0 +1,1722 @@
+{
+ "note": "fetch daily aggregates from Polygon for these windows",
+ "renamed": {
+  "SQ": "XYZ",
+  "FB": "META",
+  "TWTR": null
+ },
+ "tickers": [
+  {
+   "ticker": "TSLA",
+   "mentions": 1371,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NVDA",
+   "mentions": 772,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SPY",
+   "mentions": 494,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AMD",
+   "mentions": 422,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MSTR",
+   "mentions": 239,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "QQQ",
+   "mentions": 207,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "COIN",
+   "mentions": 186,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "META",
+   "mentions": 170,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "HIMS",
+   "mentions": 143,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CLSK",
+   "mentions": 143,
+   "first_mention": "2024-08-09",
+   "last_mention": "2025-12-16",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PLTR",
+   "mentions": 141,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-17",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MSFT",
+   "mentions": 133,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-18",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AMZN",
+   "mentions": 127,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-18",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AAPL",
+   "mentions": 125,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-07-30",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SMCI",
+   "mentions": 118,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-11",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MU",
+   "mentions": 106,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "HOOD",
+   "mentions": 84,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MARA",
+   "mentions": 83,
+   "first_mention": "2024-08-01",
+   "last_mention": "2025-12-16",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BABA",
+   "mentions": 74,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-07-13",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SOUN",
+   "mentions": 71,
+   "first_mention": "2025-02-14",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2024-11-11",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NIO",
+   "mentions": 67,
+   "first_mention": "2024-09-08",
+   "last_mention": "2026-05-13",
+   "fetch_from": "2024-06-05",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "OSCR",
+   "mentions": 66,
+   "first_mention": "2025-06-09",
+   "last_mention": "2026-07-01",
+   "fetch_from": "2025-03-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PDD",
+   "mentions": 64,
+   "first_mention": "2024-08-01",
+   "last_mention": "2025-11-11",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NFLX",
+   "mentions": 64,
+   "first_mention": "2024-08-12",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-05-09",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AVGO",
+   "mentions": 62,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-07-08",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SOFI",
+   "mentions": 59,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RIOT",
+   "mentions": 56,
+   "first_mention": "2024-09-19",
+   "last_mention": "2025-12-16",
+   "fetch_from": "2024-06-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CELH",
+   "mentions": 51,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ARM",
+   "mentions": 50,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-05-25",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ZETA",
+   "mentions": 49,
+   "first_mention": "2024-11-15",
+   "last_mention": "2026-08-11",
+   "fetch_from": "2024-08-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DLTR",
+   "mentions": 47,
+   "first_mention": "2024-09-05",
+   "last_mention": "2026-04-17",
+   "fetch_from": "2024-06-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "INTC",
+   "mentions": 46,
+   "first_mention": "2024-08-09",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "GOOG",
+   "mentions": 46,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-05-01",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "IREN",
+   "mentions": 46,
+   "first_mention": "2024-11-27",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-08-24",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "UNH",
+   "mentions": 46,
+   "first_mention": "2025-04-21",
+   "last_mention": "2026-08-05",
+   "fetch_from": "2025-01-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "JD",
+   "mentions": 45,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-03-04",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RIVN",
+   "mentions": 43,
+   "first_mention": "2024-09-09",
+   "last_mention": "2026-06-02",
+   "fetch_from": "2024-06-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TSM",
+   "mentions": 42,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-01-22",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRWV",
+   "mentions": 41,
+   "first_mention": "2025-06-25",
+   "last_mention": "2026-08-20",
+   "fetch_from": "2025-03-22",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BA",
+   "mentions": 39,
+   "first_mention": "2024-08-22",
+   "last_mention": "2025-08-21",
+   "fetch_from": "2024-05-19",
+   "fetch_to": "2026-08-21"
+  },
+  {
+   "ticker": "LULU",
+   "mentions": 38,
+   "first_mention": "2024-08-01",
+   "last_mention": "2025-12-19",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NBIS",
+   "mentions": 38,
+   "first_mention": "2025-10-20",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2025-07-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RDDT",
+   "mentions": 37,
+   "first_mention": "2024-11-01",
+   "last_mention": "2026-08-17",
+   "fetch_from": "2024-07-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SNOW",
+   "mentions": 34,
+   "first_mention": "2024-08-08",
+   "last_mention": "2026-04-12",
+   "fetch_from": "2024-05-05",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "GME",
+   "mentions": 34,
+   "first_mention": "2024-10-15",
+   "last_mention": "2025-06-12",
+   "fetch_from": "2024-07-12",
+   "fetch_to": "2026-06-12"
+  },
+  {
+   "ticker": "LLY",
+   "mentions": 33,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-05-28",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "GOOGL",
+   "mentions": 30,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ONDS",
+   "mentions": 30,
+   "first_mention": "2025-08-24",
+   "last_mention": "2026-08-14",
+   "fetch_from": "2025-05-21",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ORCL",
+   "mentions": 28,
+   "first_mention": "2024-08-08",
+   "last_mention": "2026-08-12",
+   "fetch_from": "2024-05-05",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MRNA",
+   "mentions": 28,
+   "first_mention": "2024-08-09",
+   "last_mention": "2026-08-20",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RKLB",
+   "mentions": 28,
+   "first_mention": "2024-10-20",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2024-07-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ENPH",
+   "mentions": 28,
+   "first_mention": "2025-04-22",
+   "last_mention": "2026-08-20",
+   "fetch_from": "2025-01-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "FSLR",
+   "mentions": 26,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-08-03",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TQQQ",
+   "mentions": 24,
+   "first_mention": "2024-08-01",
+   "last_mention": "2025-05-21",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-05-21"
+  },
+  {
+   "ticker": "AFRM",
+   "mentions": 23,
+   "first_mention": "2024-08-20",
+   "last_mention": "2026-05-18",
+   "fetch_from": "2024-05-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ASTS",
+   "mentions": 23,
+   "first_mention": "2024-08-15",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2024-05-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ELF",
+   "mentions": 23,
+   "first_mention": "2024-08-09",
+   "last_mention": "2025-06-09",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2026-06-09"
+  },
+  {
+   "ticker": "SOXL",
+   "mentions": 23,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-07-22",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CVNA",
+   "mentions": 22,
+   "first_mention": "2024-08-01",
+   "last_mention": "2026-07-30",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ASML",
+   "mentions": 22,
+   "first_mention": "2024-09-11",
+   "last_mention": "2025-10-03",
+   "fetch_from": "2024-06-08",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MDB",
+   "mentions": 21,
+   "first_mention": "2024-08-09",
+   "last_mention": "2025-09-18",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BMNR",
+   "mentions": 21,
+   "first_mention": "2025-08-11",
+   "last_mention": "2025-12-16",
+   "fetch_from": "2025-05-08",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CIFR",
+   "mentions": 20,
+   "first_mention": "2026-04-17",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2026-01-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SPCX",
+   "mentions": 20,
+   "first_mention": "2026-06-12",
+   "last_mention": "2026-08-20",
+   "fetch_from": "2026-03-09",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SG",
+   "mentions": 19,
+   "first_mention": "2024-08-29",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-05-26",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PYPL",
+   "mentions": 19,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-02-04",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NOW",
+   "mentions": 19,
+   "first_mention": "2024-09-03",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-05-31",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "OKLO",
+   "mentions": 19,
+   "first_mention": "2024-10-23",
+   "last_mention": "2026-05-18",
+   "fetch_from": "2024-07-20",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "UBER",
+   "mentions": 17,
+   "first_mention": "2024-08-16",
+   "last_mention": "2025-06-24",
+   "fetch_from": "2024-05-13",
+   "fetch_to": "2026-06-24"
+  },
+  {
+   "ticker": "EOSE",
+   "mentions": 17,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-04-13",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DIS",
+   "mentions": 16,
+   "first_mention": "2024-08-04",
+   "last_mention": "2025-02-05",
+   "fetch_from": "2024-05-01",
+   "fetch_to": "2026-02-05"
+  },
+  {
+   "ticker": "APP",
+   "mentions": 16,
+   "first_mention": "2024-08-15",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-05-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CMG",
+   "mentions": 16,
+   "first_mention": "2025-02-28",
+   "last_mention": "2026-01-11",
+   "fetch_from": "2024-11-25",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "UAMY",
+   "mentions": 16,
+   "first_mention": "2025-12-23",
+   "last_mention": "2026-03-17",
+   "fetch_from": "2025-09-19",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ROKU",
+   "mentions": 15,
+   "first_mention": "2024-11-15",
+   "last_mention": "2025-07-14",
+   "fetch_from": "2024-08-12",
+   "fetch_to": "2026-07-14"
+  },
+  {
+   "ticker": "DUOL",
+   "mentions": 14,
+   "first_mention": "2025-05-25",
+   "last_mention": "2026-08-04",
+   "fetch_from": "2025-02-19",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "OPEN",
+   "mentions": 14,
+   "first_mention": "2025-07-20",
+   "last_mention": "2026-01-07",
+   "fetch_from": "2025-04-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "POET",
+   "mentions": 14,
+   "first_mention": "2026-02-24",
+   "last_mention": "2026-08-04",
+   "fetch_from": "2025-11-21",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRWD",
+   "mentions": 13,
+   "first_mention": "2024-08-22",
+   "last_mention": "2025-10-28",
+   "fetch_from": "2024-05-19",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRM",
+   "mentions": 13,
+   "first_mention": "2024-08-05",
+   "last_mention": "2025-07-09",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-07-09"
+  },
+  {
+   "ticker": "IONQ",
+   "mentions": 13,
+   "first_mention": "2025-06-26",
+   "last_mention": "2026-07-01",
+   "fetch_from": "2025-03-23",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NVO",
+   "mentions": 13,
+   "first_mention": "2025-08-04",
+   "last_mention": "2026-03-03",
+   "fetch_from": "2025-05-01",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PLUG",
+   "mentions": 13,
+   "first_mention": "2026-01-06",
+   "last_mention": "2026-06-16",
+   "fetch_from": "2025-10-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "XOM",
+   "mentions": 12,
+   "first_mention": "2024-08-07",
+   "last_mention": "2026-08-10",
+   "fetch_from": "2024-05-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BTC",
+   "mentions": 12,
+   "first_mention": "2024-09-17",
+   "last_mention": "2026-08-22",
+   "fetch_from": "2024-06-14",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DJT",
+   "mentions": 12,
+   "first_mention": "2024-10-23",
+   "last_mention": "2024-11-08",
+   "fetch_from": "2024-07-20",
+   "fetch_to": "2025-11-08"
+  },
+  {
+   "ticker": "DDOG",
+   "mentions": 12,
+   "first_mention": "2024-12-02",
+   "last_mention": "2026-06-02",
+   "fetch_from": "2024-08-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CAVA",
+   "mentions": 11,
+   "first_mention": "2024-10-20",
+   "last_mention": "2026-04-16",
+   "fetch_from": "2024-07-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "REGN",
+   "mentions": 11,
+   "first_mention": "2024-10-06",
+   "last_mention": "2025-12-11",
+   "fetch_from": "2024-07-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SNDK",
+   "mentions": 11,
+   "first_mention": "2026-01-06",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2025-10-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ABNB",
+   "mentions": 10,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-01-15",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "QCOM",
+   "mentions": 10,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-08-04",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NKE",
+   "mentions": 10,
+   "first_mention": "2024-08-15",
+   "last_mention": "2026-08-18",
+   "fetch_from": "2024-05-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SMH",
+   "mentions": 10,
+   "first_mention": "2024-08-02",
+   "last_mention": "2026-08-24",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "UAL",
+   "mentions": 10,
+   "first_mention": "2024-09-13",
+   "last_mention": "2024-11-26",
+   "fetch_from": "2024-06-10",
+   "fetch_to": "2025-11-26"
+  },
+  {
+   "ticker": "ULTA",
+   "mentions": 10,
+   "first_mention": "2024-09-10",
+   "last_mention": "2026-05-03",
+   "fetch_from": "2024-06-07",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "LUNR",
+   "mentions": 10,
+   "first_mention": "2024-11-07",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2024-08-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "WBA",
+   "mentions": 10,
+   "first_mention": "2025-02-06",
+   "last_mention": "2025-03-17",
+   "fetch_from": "2024-11-03",
+   "fetch_to": "2026-03-17"
+  },
+  {
+   "ticker": "RDW",
+   "mentions": 10,
+   "first_mention": "2026-05-22",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2026-02-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "LMT",
+   "mentions": 9,
+   "first_mention": "2024-08-26",
+   "last_mention": "2026-04-22",
+   "fetch_from": "2024-05-23",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CHWY",
+   "mentions": 9,
+   "first_mention": "2024-08-20",
+   "last_mention": "2026-05-21",
+   "fetch_from": "2024-05-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AMAT",
+   "mentions": 9,
+   "first_mention": "2024-08-26",
+   "last_mention": "2025-09-23",
+   "fetch_from": "2024-05-23",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SBUX",
+   "mentions": 9,
+   "first_mention": "2024-08-05",
+   "last_mention": "2025-12-29",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ABBV",
+   "mentions": 9,
+   "first_mention": "2024-08-20",
+   "last_mention": "2026-01-20",
+   "fetch_from": "2024-05-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SHOP",
+   "mentions": 9,
+   "first_mention": "2024-08-07",
+   "last_mention": "2026-05-18",
+   "fetch_from": "2024-05-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MRK",
+   "mentions": 9,
+   "first_mention": "2024-08-07",
+   "last_mention": "2025-12-11",
+   "fetch_from": "2024-05-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MRO",
+   "mentions": 9,
+   "first_mention": "2024-09-03",
+   "last_mention": "2024-11-08",
+   "fetch_from": "2024-05-31",
+   "fetch_to": "2025-11-08"
+  },
+  {
+   "ticker": "RKT",
+   "mentions": 9,
+   "first_mention": "2024-11-26",
+   "last_mention": "2025-08-21",
+   "fetch_from": "2024-08-23",
+   "fetch_to": "2026-08-21"
+  },
+  {
+   "ticker": "LMND",
+   "mentions": 9,
+   "first_mention": "2025-06-18",
+   "last_mention": "2026-04-06",
+   "fetch_from": "2025-03-15",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SLV",
+   "mentions": 9,
+   "first_mention": "2025-12-01",
+   "last_mention": "2026-08-03",
+   "fetch_from": "2025-08-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "X",
+   "mentions": 8,
+   "first_mention": "2024-08-20",
+   "last_mention": "2024-11-19",
+   "fetch_from": "2024-05-17",
+   "fetch_to": "2025-11-19"
+  },
+  {
+   "ticker": "IBIT",
+   "mentions": 8,
+   "first_mention": "2024-11-19",
+   "last_mention": "2024-11-29",
+   "fetch_from": "2024-08-16",
+   "fetch_to": "2025-11-29"
+  },
+  {
+   "ticker": "WMT",
+   "mentions": 8,
+   "first_mention": "2024-11-18",
+   "last_mention": "2026-07-23",
+   "fetch_from": "2024-08-15",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TEM",
+   "mentions": 8,
+   "first_mention": "2025-01-21",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2024-10-18",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DOGE",
+   "mentions": 8,
+   "first_mention": "2025-04-29",
+   "last_mention": "2025-09-13",
+   "fetch_from": "2025-01-24",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "GLD",
+   "mentions": 8,
+   "first_mention": "2025-04-21",
+   "last_mention": "2026-08-03",
+   "fetch_from": "2025-01-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NCLH",
+   "mentions": 8,
+   "first_mention": "2025-06-24",
+   "last_mention": "2025-08-23",
+   "fetch_from": "2025-03-21",
+   "fetch_to": "2026-08-23"
+  },
+  {
+   "ticker": "CRCL",
+   "mentions": 8,
+   "first_mention": "2025-09-12",
+   "last_mention": "2026-08-19",
+   "fetch_from": "2025-06-09",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "COST",
+   "mentions": 7,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-02-06",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "APO",
+   "mentions": 7,
+   "first_mention": "2024-08-09",
+   "last_mention": "2024-11-27",
+   "fetch_from": "2024-05-06",
+   "fetch_to": "2025-11-27"
+  },
+  {
+   "ticker": "HUM",
+   "mentions": 7,
+   "first_mention": "2024-10-01",
+   "last_mention": "2025-12-11",
+   "fetch_from": "2024-06-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TTD",
+   "mentions": 7,
+   "first_mention": "2024-09-20",
+   "last_mention": "2025-09-23",
+   "fetch_from": "2024-06-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "INTU",
+   "mentions": 7,
+   "first_mention": "2024-09-12",
+   "last_mention": "2026-07-31",
+   "fetch_from": "2024-06-09",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BIDU",
+   "mentions": 7,
+   "first_mention": "2024-09-04",
+   "last_mention": "2025-10-04",
+   "fetch_from": "2024-06-01",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "OXY",
+   "mentions": 7,
+   "first_mention": "2024-10-03",
+   "last_mention": "2025-03-19",
+   "fetch_from": "2024-06-30",
+   "fetch_to": "2026-03-19"
+  },
+  {
+   "ticker": "RBLX",
+   "mentions": 7,
+   "first_mention": "2024-11-29",
+   "last_mention": "2026-07-21",
+   "fetch_from": "2024-08-26",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CROX",
+   "mentions": 7,
+   "first_mention": "2024-11-07",
+   "last_mention": "2026-06-12",
+   "fetch_from": "2024-08-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PTON",
+   "mentions": 7,
+   "first_mention": "2025-06-02",
+   "last_mention": "2025-07-07",
+   "fetch_from": "2025-02-27",
+   "fetch_to": "2026-07-07"
+  },
+  {
+   "ticker": "BE",
+   "mentions": 7,
+   "first_mention": "2025-10-13",
+   "last_mention": "2026-07-31",
+   "fetch_from": "2025-07-10",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BRKB",
+   "mentions": 6,
+   "first_mention": "2024-08-23",
+   "last_mention": "2024-11-27",
+   "fetch_from": "2024-05-20",
+   "fetch_to": "2025-11-27"
+  },
+  {
+   "ticker": "C",
+   "mentions": 6,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-04-10",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DELL",
+   "mentions": 6,
+   "first_mention": "2024-08-06",
+   "last_mention": "2026-05-24",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CVX",
+   "mentions": 6,
+   "first_mention": "2024-08-08",
+   "last_mention": "2026-08-10",
+   "fetch_from": "2024-05-05",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PEP",
+   "mentions": 6,
+   "first_mention": "2025-01-19",
+   "last_mention": "2025-09-09",
+   "fetch_from": "2024-10-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "GRAB",
+   "mentions": 6,
+   "first_mention": "2025-02-18",
+   "last_mention": "2025-12-22",
+   "fetch_from": "2024-11-15",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MVIS",
+   "mentions": 6,
+   "first_mention": "2025-03-12",
+   "last_mention": "2025-03-25",
+   "fetch_from": "2024-12-07",
+   "fetch_to": "2026-03-25"
+  },
+  {
+   "ticker": "BULL",
+   "mentions": 6,
+   "first_mention": "2025-10-08",
+   "last_mention": "2025-10-20",
+   "fetch_from": "2025-07-05",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "PATH",
+   "mentions": 6,
+   "first_mention": "2025-06-02",
+   "last_mention": "2025-12-15",
+   "fetch_from": "2025-02-27",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "BMY",
+   "mentions": 5,
+   "first_mention": "2024-08-29",
+   "last_mention": "2026-06-15",
+   "fetch_from": "2024-05-26",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRSP",
+   "mentions": 5,
+   "first_mention": "2024-08-29",
+   "last_mention": "2025-12-11",
+   "fetch_from": "2024-05-26",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "WDC",
+   "mentions": 5,
+   "first_mention": "2024-08-14",
+   "last_mention": "2026-08-10",
+   "fetch_from": "2024-05-11",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SQ",
+   "mentions": 5,
+   "first_mention": "2024-09-13",
+   "last_mention": "2025-01-09",
+   "fetch_from": "2024-06-10",
+   "fetch_to": "2026-01-09"
+  },
+  {
+   "ticker": "IWM",
+   "mentions": 5,
+   "first_mention": "2024-10-22",
+   "last_mention": "2026-04-22",
+   "fetch_from": "2024-07-19",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ACHR",
+   "mentions": 5,
+   "first_mention": "2024-11-25",
+   "last_mention": "2026-08-11",
+   "fetch_from": "2024-08-22",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RDFN",
+   "mentions": 5,
+   "first_mention": "2024-11-08",
+   "last_mention": "2025-02-20",
+   "fetch_from": "2024-08-05",
+   "fetch_to": "2026-02-20"
+  },
+  {
+   "ticker": "ALAB",
+   "mentions": 5,
+   "first_mention": "2024-11-06",
+   "last_mention": "2026-08-18",
+   "fetch_from": "2024-08-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AMGN",
+   "mentions": 5,
+   "first_mention": "2025-01-01",
+   "last_mention": "2026-05-25",
+   "fetch_from": "2024-09-28",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "ADBE",
+   "mentions": 5,
+   "first_mention": "2025-01-21",
+   "last_mention": "2026-05-08",
+   "fetch_from": "2024-10-18",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "NET",
+   "mentions": 5,
+   "first_mention": "2025-04-27",
+   "last_mention": "2026-05-08",
+   "fetch_from": "2025-01-22",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DOCU",
+   "mentions": 5,
+   "first_mention": "2025-05-30",
+   "last_mention": "2025-06-09",
+   "fetch_from": "2025-02-24",
+   "fetch_to": "2026-06-09"
+  },
+  {
+   "ticker": "CAR",
+   "mentions": 5,
+   "first_mention": "2025-06-24",
+   "last_mention": "2025-06-25",
+   "fetch_from": "2025-03-21",
+   "fetch_to": "2026-06-25"
+  },
+  {
+   "ticker": "QS",
+   "mentions": 5,
+   "first_mention": "2025-09-19",
+   "last_mention": "2026-01-07",
+   "fetch_from": "2025-06-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "UPS",
+   "mentions": 5,
+   "first_mention": "2025-08-13",
+   "last_mention": "2026-01-07",
+   "fetch_from": "2025-05-10",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AEO",
+   "mentions": 5,
+   "first_mention": "2025-09-03",
+   "last_mention": "2025-12-22",
+   "fetch_from": "2025-05-31",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRDO",
+   "mentions": 5,
+   "first_mention": "2026-05-18",
+   "last_mention": "2026-06-12",
+   "fetch_from": "2026-02-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MRVL",
+   "mentions": 4,
+   "first_mention": "2024-08-30",
+   "last_mention": "2026-08-03",
+   "fetch_from": "2024-05-27",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "WFC",
+   "mentions": 4,
+   "first_mention": "2024-08-27",
+   "last_mention": "2025-03-14",
+   "fetch_from": "2024-05-24",
+   "fetch_to": "2026-03-14"
+  },
+  {
+   "ticker": "GE",
+   "mentions": 4,
+   "first_mention": "2024-08-02",
+   "last_mention": "2024-10-22",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2025-10-22"
+  },
+  {
+   "ticker": "LCID",
+   "mentions": 4,
+   "first_mention": "2024-08-25",
+   "last_mention": "2026-07-14",
+   "fetch_from": "2024-05-22",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AXP",
+   "mentions": 4,
+   "first_mention": "2024-08-21",
+   "last_mention": "2024-11-25",
+   "fetch_from": "2024-05-18",
+   "fetch_to": "2025-11-25"
+  },
+  {
+   "ticker": "WYNN",
+   "mentions": 4,
+   "first_mention": "2024-08-21",
+   "last_mention": "2025-06-12",
+   "fetch_from": "2024-05-18",
+   "fetch_to": "2026-06-12"
+  },
+  {
+   "ticker": "HD",
+   "mentions": 4,
+   "first_mention": "2024-08-20",
+   "last_mention": "2025-05-26",
+   "fetch_from": "2024-05-17",
+   "fetch_to": "2026-05-26"
+  },
+  {
+   "ticker": "DXCM",
+   "mentions": 4,
+   "first_mention": "2024-08-15",
+   "last_mention": "2025-10-03",
+   "fetch_from": "2024-05-12",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "EL",
+   "mentions": 4,
+   "first_mention": "2024-08-01",
+   "last_mention": "2024-08-15",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2025-08-15"
+  },
+  {
+   "ticker": "EW",
+   "mentions": 4,
+   "first_mention": "2024-08-01",
+   "last_mention": "2024-08-09",
+   "fetch_from": "2024-04-28",
+   "fetch_to": "2025-08-09"
+  },
+  {
+   "ticker": "DKNG",
+   "mentions": 4,
+   "first_mention": "2024-08-06",
+   "last_mention": "2025-04-15",
+   "fetch_from": "2024-05-03",
+   "fetch_to": "2026-04-15"
+  },
+  {
+   "ticker": "GS",
+   "mentions": 4,
+   "first_mention": "2024-08-05",
+   "last_mention": "2026-03-12",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RTX",
+   "mentions": 4,
+   "first_mention": "2024-10-01",
+   "last_mention": "2025-08-11",
+   "fetch_from": "2024-06-28",
+   "fetch_to": "2026-08-11"
+  },
+  {
+   "ticker": "U",
+   "mentions": 4,
+   "first_mention": "2024-09-23",
+   "last_mention": "2024-10-29",
+   "fetch_from": "2024-06-20",
+   "fetch_to": "2025-10-29"
+  },
+  {
+   "ticker": "CEG",
+   "mentions": 4,
+   "first_mention": "2024-09-05",
+   "last_mention": "2025-02-26",
+   "fetch_from": "2024-06-02",
+   "fetch_to": "2026-02-26"
+  },
+  {
+   "ticker": "CPRI",
+   "mentions": 4,
+   "first_mention": "2024-10-21",
+   "last_mention": "2024-12-26",
+   "fetch_from": "2024-07-18",
+   "fetch_to": "2025-12-26"
+  },
+  {
+   "ticker": "CVS",
+   "mentions": 4,
+   "first_mention": "2024-10-04",
+   "last_mention": "2024-12-26",
+   "fetch_from": "2024-07-01",
+   "fetch_to": "2025-12-26"
+  },
+  {
+   "ticker": "CDNA",
+   "mentions": 4,
+   "first_mention": "2024-11-26",
+   "last_mention": "2026-07-17",
+   "fetch_from": "2024-08-23",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AMC",
+   "mentions": 4,
+   "first_mention": "2025-05-22",
+   "last_mention": "2025-06-04",
+   "fetch_from": "2025-02-16",
+   "fetch_to": "2026-06-04"
+  },
+  {
+   "ticker": "BBAI",
+   "mentions": 4,
+   "first_mention": "2025-07-07",
+   "last_mention": "2025-11-25",
+   "fetch_from": "2025-04-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "QBTS",
+   "mentions": 4,
+   "first_mention": "2025-09-19",
+   "last_mention": "2026-07-01",
+   "fetch_from": "2025-06-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RGTI",
+   "mentions": 4,
+   "first_mention": "2025-09-19",
+   "last_mention": "2026-06-22",
+   "fetch_from": "2025-06-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TXN",
+   "mentions": 4,
+   "first_mention": "2025-04-09",
+   "last_mention": "2026-04-22",
+   "fetch_from": "2025-01-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "RR",
+   "mentions": 4,
+   "first_mention": "2026-01-07",
+   "last_mention": "2026-02-19",
+   "fetch_from": "2025-10-04",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "MCD",
+   "mentions": 3,
+   "first_mention": "2024-08-05",
+   "last_mention": "2024-08-21",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2025-08-21"
+  },
+  {
+   "ticker": "VALE",
+   "mentions": 3,
+   "first_mention": "2024-08-19",
+   "last_mention": "2026-01-07",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TGT",
+   "mentions": 3,
+   "first_mention": "2024-08-19",
+   "last_mention": "2025-08-29",
+   "fetch_from": "2024-05-16",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "LRCX",
+   "mentions": 3,
+   "first_mention": "2024-08-16",
+   "last_mention": "2025-08-22",
+   "fetch_from": "2024-05-13",
+   "fetch_to": "2026-08-22"
+  },
+  {
+   "ticker": "SNAP",
+   "mentions": 3,
+   "first_mention": "2024-08-05",
+   "last_mention": "2024-08-09",
+   "fetch_from": "2024-05-02",
+   "fetch_to": "2025-08-09"
+  },
+  {
+   "ticker": "MCK",
+   "mentions": 3,
+   "first_mention": "2024-08-08",
+   "last_mention": "2025-02-26",
+   "fetch_from": "2024-05-05",
+   "fetch_to": "2026-02-26"
+  },
+  {
+   "ticker": "BAC",
+   "mentions": 3,
+   "first_mention": "2024-08-02",
+   "last_mention": "2024-10-11",
+   "fetch_from": "2024-04-29",
+   "fetch_to": "2025-10-11"
+  },
+  {
+   "ticker": "TSLS",
+   "mentions": 3,
+   "first_mention": "2024-09-11",
+   "last_mention": "2024-10-01",
+   "fetch_from": "2024-06-08",
+   "fetch_to": "2025-10-01"
+  },
+  {
+   "ticker": "RH",
+   "mentions": 3,
+   "first_mention": "2024-09-13",
+   "last_mention": "2024-09-25",
+   "fetch_from": "2024-06-10",
+   "fetch_to": "2025-09-25"
+  },
+  {
+   "ticker": "PFE",
+   "mentions": 3,
+   "first_mention": "2024-09-16",
+   "last_mention": "2025-05-28",
+   "fetch_from": "2024-06-13",
+   "fetch_to": "2026-05-28"
+  },
+  {
+   "ticker": "LYFT",
+   "mentions": 3,
+   "first_mention": "2024-09-13",
+   "last_mention": "2025-02-18",
+   "fetch_from": "2024-06-10",
+   "fetch_to": "2026-02-18"
+  },
+  {
+   "ticker": "VST",
+   "mentions": 3,
+   "first_mention": "2024-11-01",
+   "last_mention": "2025-08-11",
+   "fetch_from": "2024-07-29",
+   "fetch_to": "2026-08-11"
+  },
+  {
+   "ticker": "MS",
+   "mentions": 3,
+   "first_mention": "2024-10-30",
+   "last_mention": "2025-03-14",
+   "fetch_from": "2024-07-27",
+   "fetch_to": "2026-03-14"
+  },
+  {
+   "ticker": "UPST",
+   "mentions": 3,
+   "first_mention": "2024-10-31",
+   "last_mention": "2025-02-18",
+   "fetch_from": "2024-07-28",
+   "fetch_to": "2026-02-18"
+  },
+  {
+   "ticker": "JPM",
+   "mentions": 3,
+   "first_mention": "2024-10-25",
+   "last_mention": "2025-03-15",
+   "fetch_from": "2024-07-22",
+   "fetch_to": "2026-03-15"
+  },
+  {
+   "ticker": "CNC",
+   "mentions": 3,
+   "first_mention": "2024-10-17",
+   "last_mention": "2025-10-04",
+   "fetch_from": "2024-07-14",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "HUT",
+   "mentions": 3,
+   "first_mention": "2024-10-03",
+   "last_mention": "2026-04-22",
+   "fetch_from": "2024-06-30",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TLT",
+   "mentions": 3,
+   "first_mention": "2024-11-10",
+   "last_mention": "2024-12-18",
+   "fetch_from": "2024-08-07",
+   "fetch_to": "2025-12-18"
+  },
+  {
+   "ticker": "AZN",
+   "mentions": 3,
+   "first_mention": "2024-11-25",
+   "last_mention": "2025-04-09",
+   "fetch_from": "2024-08-22",
+   "fetch_to": "2026-04-09"
+  },
+  {
+   "ticker": "MNDY",
+   "mentions": 3,
+   "first_mention": "2024-11-11",
+   "last_mention": "2025-11-10",
+   "fetch_from": "2024-08-08",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "JNJ",
+   "mentions": 3,
+   "first_mention": "2025-01-27",
+   "last_mention": "2025-07-09",
+   "fetch_from": "2024-10-24",
+   "fetch_to": "2026-07-09"
+  },
+  {
+   "ticker": "AAL",
+   "mentions": 3,
+   "first_mention": "2025-02-28",
+   "last_mention": "2025-05-02",
+   "fetch_from": "2024-11-25",
+   "fetch_to": "2026-05-02"
+  },
+  {
+   "ticker": "BB",
+   "mentions": 3,
+   "first_mention": "2025-04-22",
+   "last_mention": "2026-05-22",
+   "fetch_from": "2025-01-17",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "TMO",
+   "mentions": 3,
+   "first_mention": "2025-07-23",
+   "last_mention": "2025-08-23",
+   "fetch_from": "2025-04-19",
+   "fetch_to": "2026-08-23"
+  },
+  {
+   "ticker": "KBH",
+   "mentions": 3,
+   "first_mention": "2025-07-18",
+   "last_mention": "2025-08-23",
+   "fetch_from": "2025-04-14",
+   "fetch_to": "2026-08-23"
+  },
+  {
+   "ticker": "TER",
+   "mentions": 3,
+   "first_mention": "2025-09-23",
+   "last_mention": "2026-06-12",
+   "fetch_from": "2025-06-20",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CC",
+   "mentions": 3,
+   "first_mention": "2025-09-11",
+   "last_mention": "2026-01-16",
+   "fetch_from": "2025-06-08",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SUPV",
+   "mentions": 3,
+   "first_mention": "2025-09-09",
+   "last_mention": "2025-10-28",
+   "fetch_from": "2025-06-06",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AA",
+   "mentions": 3,
+   "first_mention": "2025-10-23",
+   "last_mention": "2026-08-11",
+   "fetch_from": "2025-07-20",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "SPX",
+   "mentions": 3,
+   "first_mention": "2025-04-07",
+   "last_mention": "2025-07-13",
+   "fetch_from": "2025-01-02",
+   "fetch_to": "2026-07-13"
+  },
+  {
+   "ticker": "AMR",
+   "mentions": 3,
+   "first_mention": "2026-03-05",
+   "last_mention": "2026-03-19",
+   "fetch_from": "2025-11-30",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "CRVW",
+   "mentions": 3,
+   "first_mention": "2025-11-06",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2025-08-03",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "DVN",
+   "mentions": 3,
+   "first_mention": "2026-04-29",
+   "last_mention": "2026-05-05",
+   "fetch_from": "2026-01-24",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "AEHR",
+   "mentions": 3,
+   "first_mention": "2026-04-20",
+   "last_mention": "2026-08-11",
+   "fetch_from": "2026-01-15",
+   "fetch_to": "2026-08-25"
+  },
+  {
+   "ticker": "HNST",
+   "mentions": 3,
+   "first_mention": "2026-05-23",
+   "last_mention": "2026-08-06",
+   "fetch_from": "2026-02-17",
+   "fetch_to": "2026-08-25"
+  }
+ ]
+}

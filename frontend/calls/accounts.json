@@ -1,0 +1,17 @@
+{
+  "default": "pdicarlotrader",
+  "accounts": [
+    {
+      "handle": "pdicarlotrader",
+      "display": "@pdicarlotrader",
+      "first": "2024-08-01",
+      "last": "2026-08-24",
+      "n_posts": 5641,
+      "n_days": 606,
+      "n_cashtags": 411,
+      "n_tracked": 214,
+      "n_hand_labels": 83,
+      "n_machine_labels": 8102
+    }
+  ]
+}

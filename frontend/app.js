@@ -63,6 +63,20 @@ const EDGES = [
     ],
   },
   {
+    key: "calls", label: "Calls tape", state: "live",
+    stages: [
+      // No `does` on purpose: the frame prints it as a persistent subtitle, and on a cockpit that
+      // is a paragraph of vertical space describing what the screen visibly is. The orientation
+      // lives in the Spec key and the hint bar, where it is asked for rather than always on.
+      { route: "calls", label: "Tape" },
+      { route: "calls/scoreboard", label: "Scoreboard", state: "conditional",
+        cond: {
+          what: "Hit-rate, excess return and target-touch aggregates over the labelled calls.",
+          trigger: "Conditional · unlocks at ~500 hand labels. Below that, 8,102 of the 8,185 rows carry a MACHINE guess rather than a human reading, so a headline number would describe the labeller rather than the author. (The build brief reports that labeller at ~55% on bias and ~62% on targets; that figure cannot be re-derived from this corpus — a hand label REPLACES the machine row at the same key, so the machine's own guess for the 83 read rows is retained nowhere. It is taken on trust, not verified here.)",
+        } },
+    ],
+  },
+  {
     key: "neglected", label: "Neglected", state: "locked", route: "screen-neglected",
     lock: {
       what: "Surfaces orphaned / under-covered (“neglected”) names — its own edge, where mispricing is neglect rather than overreaction.",
@@ -101,6 +115,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  calls: () => import("./views/calls/tape.js"),
 };
 
 // Every routable item: shared + each live edge's stages + each locked edge's own
