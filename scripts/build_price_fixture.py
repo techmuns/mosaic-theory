@@ -95,8 +95,25 @@ def main(argv: list[str]) -> int:
     cfg = get_config()
     resolver = EntityResolver.from_config(cfg)
     flags = {a for a in argv[1:] if a.startswith("-")}
+    # UNKNOWN FLAGS ARE REFUSED, not silently dropped (review, #497). A typo'd `--refesh` used to
+    # fall through to a bare build and reproduce the exact production failure this script was
+    # changed to fix, under the misleading message "NO BARS in the local store" — which sends the
+    # reader to the store rather than to their own command line.
+    unknown = sorted(flags - {"--refresh"})
+    if unknown:
+        print(f"unknown flag(s) {unknown} — the only flag is --refresh", file=sys.stderr)
+        return 2
     explicit = [t.upper() for t in argv[1:] if not t.startswith("-")]
     wanted = explicit or names_to_rebuild(cfg)
+    if explicit:
+        # A PARTIAL BUILD IS A DELIBERATE ACT, so say what it leaves behind (review, #497). The
+        # benchmark is always rebuilt alongside, so it can never end up trailing the names — but
+        # every OTHER series keeps its current vintage, and if the fleet as-of has moved past them
+        # the straddle pin will (correctly) ask for a full rebuild.
+        others = sorted({f.stem for f in OUT_DIR.glob("*.jsonl")} - {*wanted, BENCHMARK_SMALL})
+        if others:
+            print(f"  PARTIAL BUILD: {wanted} + {BENCHMARK_SMALL}; leaving {others} at their "
+                  f"current vintage. Run with no arguments to rebuild everything.")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Identities, not just ids: `--refresh` needs the whole Identity to ingest against, and the
@@ -108,8 +125,14 @@ def main(argv: list[str]) -> int:
                                                       strict=True)]
 
     if "--refresh" in flags:
-        # PER-SYMBOL, not grouped-daily: this is a handful of names the market-wide pull does not
-        # cover, so one aggregate call each is the cheap path (the NCNO-class backfill route).
+        # PER-SYMBOL for the bars themselves — one aggregate call per name (the NCNO-class backfill
+        # route), because these are names the market-wide pull does not cover.
+        #
+        # HONEST ABOUT THE COST (review, #497): this is NOT "nine calls and nothing else". Dating
+        # the window calls `last_completed_session`, which probes `grouped_daily` — a WHOLE-MARKET
+        # request — once per candidate day until one answers, so a Monday costs one or two of them
+        # on top. They are immutable-per-day and cached, so a re-run is free, but the earlier
+        # comment claiming no market-wide pull was simply wrong.
         end = last_completed_session(PolygonEodClient.from_config(cfg), today=date.today())
         print(f"  refreshing {len(identities)} names {_WINDOW_START}..{end} via per-symbol aggs")
         with Store(cfg.db_path) as store:
@@ -131,9 +154,20 @@ def main(argv: list[str]) -> int:
             bars = [b for b in store.get_price_history(iid)
                     if b.bar_date.isoformat() >= _WINDOW_START]
             if not bars:
-                print(f"  {ticker:6} NO BARS in the local store from {_WINDOW_START} — refresh EOD "
-                      f"for this name before building the fixture. NOTHING WAS WRITTEN; the "
-                      f"existing fixture is untouched.", file=sys.stderr)
+                # NAME THE RECOVERY (review, #497). `names_to_rebuild` unions in whatever is on
+                # disk, so a name that DELISTS or stops filing becomes a permanent hard failure
+                # with nothing to fetch — and because it is no longer maintained, nothing needs it
+                # either. Fail loud, but say which file to remove; a bare "NO BARS" sends the
+                # reader to the store, which is not where the problem is.
+                stale = ticker != BENCHMARK_SMALL and ticker not in maintained_names(cfg)
+                remedy = (f"{ticker} is NO LONGER MAINTAINED and has no bars — it is only in this "
+                          f"build because {OUT_DIR / f'{ticker}.jsonl'} still exists. Delete that "
+                          f"file to drop it from the fixture."
+                          if stale else
+                          f"refresh EOD for {ticker} before building the fixture (or run with "
+                          f"--refresh to fetch it here)")
+                print(f"  {ticker:6} NO BARS in the local store from {_WINDOW_START} — {remedy} "
+                      f"NOTHING WAS WRITTEN; the existing fixture is untouched.", file=sys.stderr)
                 return 1
             # internal_id is written per row: the loader keys the store by it and must not have to
             # re-resolve a ticker (which would put the SEC network on the suite's critical path).

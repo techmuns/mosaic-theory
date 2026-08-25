@@ -143,7 +143,18 @@ jobs:
           # minutes; anything merged to main in that window makes a bare push lose the race and
           # marks the whole run failed — after the screen, the mirrors and the gate all succeeded.
           # The commit is derived data only, so replaying it onto a newer main is always safe.
-          git pull --rebase --autostash
+          #
+          # A CONFLICTED REBASE MUST NOT BE LEFT IN PLACE (review, #497). An interrupted rebase
+          # leaves unmerged paths in the tree, and the `if: always()` reporting step below then
+          # dies on `git commit` — so the run would fail AND publish no status, reopening the exact
+          # blind spot #495 exists to close, in exactly the case it exists for. Abort first, leave
+          # a clean tree, then fail on our own terms.
+          git pull --rebase --autostash || {
+            echo "::error::rebase onto origin/main conflicted — aborting it so the run can still report"
+            git rebase --abort || true
+            git checkout -- . || true
+            exit 1
+          }
           git push
 
       # THE RUN REPORTS ITS OWN OUTCOME — A DELIBERATE, NAMED EXCEPTION TO THE GATE ABOVE.
@@ -167,6 +178,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # CLEAR THE DECK FIRST (review, #497). This step's whole purpose is to report when
+          # something ELSE went wrong, so it must assume the tree it inherits is a mess. An
+          # interrupted rebase leaves unmerged paths and `git commit` then refuses outright — the
+          # run would fail AND publish nothing, which is the #495 blind spot reopened in precisely
+          # the case #495 exists for. Nothing here is load-bearing state: every artifact this job
+          # produces is either already committed or already discarded by the time we arrive.
+          git rebase --abort 2>/dev/null || true
+          git merge --abort 2>/dev/null || true
           python - <<'PY'
           import json, os, pathlib
           from datetime import UTC, datetime
@@ -196,7 +215,8 @@ jobs:
           git add data/snapshots/run_status.json
           git diff --staged --quiet && exit 0
           git commit -m "weekly screen: run status ($JOB_STATUS)"
-          git pull --rebase --autostash
+          # A failed pull here costs only the push — the status file is already committed locally.
+          git pull --rebase --autostash || git rebase --abort || true
           git push
         env:
           JOB_STATUS: ${{ job.status }}

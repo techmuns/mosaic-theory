@@ -32,6 +32,7 @@ import pathlib
 import pytest
 
 from vinci.eod.client import EodClient, RawBar, last_completed_session
+from vinci.monitor import BENCHMARK_SMALL as BENCHMARK
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -263,8 +264,14 @@ def test_the_fixture_set_really_does_reach_outside_the_screening_universe() -> N
         pytest.skip("no committed universe snapshot")
     in_universe = {json.loads(line)["internal_id"]
                    for line in snap.read_text().splitlines() if line.strip()}
+    # THE BENCHMARK IS EXCLUDED, or this can never fail (review, #497): `IDX-IWM` is a synthetic
+    # identity that by construction never appears in an issuer universe, so leaving it in made
+    # `outside` non-empty always — a guard that cannot fire, counted as a passing one. The claim
+    # being tested is about real ISSUERS the screen does not carry.
     outside = []
     for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
+        if f.stem == BENCHMARK:
+            continue
         first = json.loads(f.read_text().splitlines()[0])
         if first["internal_id"] not in in_universe:
             outside.append(f.stem)
@@ -273,19 +280,34 @@ def test_the_fixture_set_really_does_reach_outside_the_screening_universe() -> N
         "weekly job no longer needs --refresh, and this pin plus the one above should be revisited")
 
 
-def test_every_fixture_series_shares_one_vintage() -> None:
-    """THE BENCHMARK MUST NOT DRIFT FROM THE NAMES MEASURED AGAINST IT. `rel_ret_vs_market` compares
-    a name to IWM, so a fixture where IWM stops earlier than the names silently changes every
-    relative return it feeds. This is the exact corruption the old non-atomic builder produced —
-    six names rewritten, WERN left three days behind, IWM never written at all."""
+def test_the_benchmark_never_trails_the_names_measured_against_it() -> None:
+    """`rel_ret_vs_market` compares a name to IWM, so a fixture where the BENCHMARK stops earlier
+    than the names silently changes every relative return it feeds. That is the corruption the old
+    non-atomic builder produced: six names rewritten, WERN three days behind, IWM never written.
+
+    ASSERTED DIRECTIONALLY, NOT AS EQUALITY (review, #497). The first cut demanded that all nine
+    frontiers be IDENTICAL, which would have handed the weekly job an UN-FIXABLE red: a halted,
+    delisted or aggs-lagging name legitimately stops earlier than the rest, the builder only aborts
+    on ZERO bars so it would happily produce that, and the job would then fail its own gate after
+    the screen, both mirrors and the fixture build had all succeeded — with a published remediation
+    ("rebuild it") that cannot fix it, because rebuilding is exactly what produced it.
+
+    What actually matters is the direction: the benchmark is an ETF that does not halt, so it must
+    never be the one lagging. A single name trailing is a data condition; the comparator trailing
+    is corruption."""
     import json
 
     fronts = {}
     for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
         fronts[f.stem] = max(json.loads(line)["bar_date"]
                              for line in f.read_text().splitlines() if line.strip())
-    assert len(set(fronts.values())) == 1, (
-        f"the fixture carries mixed vintages {fronts} — rebuild it in one pass: "
+    bench = fronts.get(BENCHMARK)
+    assert bench is not None, (
+        f"no {BENCHMARK} fixture — the benchmark every name is measured against")
+    ahead = {k: v for k, v in fronts.items() if k != BENCHMARK and v > bench}
+    assert not ahead, (
+        f"{BENCHMARK} stops at {bench} but {ahead} carry later bars — every relative return "
+        f"computed against a stale benchmark is wrong. Rebuild in one pass: "
         f"python scripts/build_price_fixture.py --refresh")
 
 
@@ -354,10 +376,52 @@ def test_main_actually_calls_names_to_rebuild() -> None:
     src = (ROOT / "scripts" / "build_price_fixture.py").read_text()
     main = next(n for n in ast.walk(ast.parse(src))
                 if isinstance(n, ast.FunctionDef) and n.name == "main")
-    called = {ast.unparse(n.func) for n in ast.walk(main) if isinstance(n, ast.Call)}
-    assert "names_to_rebuild" in called, (
-        "main no longer calls names_to_rebuild — the union with the existing files is bypassed and "
-        "a name that flips out of the maintained set will keep a stale vintage")
-    assert "maintained_names" not in called, (
-        "main calls maintained_names directly, bypassing the union in names_to_rebuild")
+    # THE ASSIGNMENT, not "any call anywhere in main". The first cut asserted `maintained_names`
+    # was never called in `main` at all, and immediately reddened on a legitimate second use — the
+    # stale-file diagnostic added for review finding 4 has to ask whether an absent name is still
+    # maintained. What must not happen is `wanted` being sourced from it directly.
+    assigns = [n for n in ast.walk(main) if isinstance(n, ast.Assign)
+               and any(isinstance(x, ast.Name) and x.id == "wanted" for x in n.targets)]
+    assert assigns, "main no longer assigns `wanted` — has it been restructured?"
+    source = " ".join(ast.unparse(a.value) for a in assigns)
+    assert "names_to_rebuild" in source, (
+        f"`wanted` is built from {source!r}, not names_to_rebuild — the union with the files "
+        f"already on disk is bypassed, and a name that flips out of the maintained set keeps a "
+        f"stale vintage while every other series advances")
+
+
+def test_a_conflicted_rebase_cannot_silence_the_status_report() -> None:
+    """THE #495 BLIND SPOT, REOPENED BY THE #496 REBASE, CLOSED HERE (review, #497).
+
+    The snapshot commit rebases onto main so a mid-run merge does not lose the race. But an
+    interrupted rebase leaves UNMERGED PATHS, and the `if: always()` reporting step then dies on
+    `git commit` before it can write anything — so the run fails AND publishes no status, in
+    exactly the situation the status report exists for. Two guards, both required: the commit step
+    aborts its own failed rebase rather than leaving the tree wedged, and the reporting step clears
+    the deck before it tries to commit, because its job is to work when everything else did not."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+
+    commit = wf.split("Commit refreshed snapshots", 1)[1].split("- name:", 1)[0]
+    assert "git rebase --abort" in commit, (
+        "the snapshot commit can leave an interrupted rebase, which stops the reporting step from "
+        "committing anything at all")
+
+    report = wf.split("Report the run's outcome", 1)[1]
+    before_commit = report.split("git add data/snapshots/run_status.json", 1)[0]
+    assert "git rebase --abort" in before_commit, (
+        "the reporting step clears a wedged tree only AFTER its commit — by then `git commit` has "
+        "already refused on unmerged paths and no status is published")
+
+
+def test_an_unknown_flag_is_refused_rather_than_ignored() -> None:
+    """A typo'd `--refesh` used to fall through to a bare build and reproduce the production
+    failure verbatim, under a message pointing at the store rather than at the command line."""
+    import subprocess
+    import sys as _sys
+
+    r = subprocess.run([_sys.executable, "scripts/build_price_fixture.py", "--refesh"],
+                       capture_output=True, text=True, cwd=ROOT,
+                       env={"PYTHONPATH": str(ROOT), "PATH": "/usr/bin:/bin"})
+    assert r.returncode == 2, f"exit {r.returncode}, expected 2 — the typo was accepted"
+    assert "unknown flag" in r.stderr, r.stderr
 
