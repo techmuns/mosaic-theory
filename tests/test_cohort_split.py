@@ -366,3 +366,33 @@ def test_the_rank_cli_carries_forward_the_structural_flags() -> None:
     assert "carry_forward_assessment" in called, (
         "`vinci rank` does not carry the prior assessment forward — a hand re-rank silently "
         "un-sinks every structurally disqualified name")
+
+
+def test_the_surface_s_peer_floor_tracks_the_one_the_code_enforces() -> None:
+    """THE INVARIANT THE "under 6" INCIDENT NEEDED, not just the correction.
+
+    Lowering `MIN_PEERS` from 6 to 5 left three surfaces saying "under 6" while ELEVEN committed
+    rows carried a 5-peer cohort the copy claimed could not exist. That was fixed by editing the
+    numbers — but the view still hardcodes its own `COHORT_MIN_PEERS`, and nothing tied it to the
+    Python constant, so the next floor change re-breaks the surface exactly the same way. A
+    correction without its invariant is a correction that recurs.
+
+    Pins the VALUE, not the presence: the two constants must be equal, and no rendered copy may
+    name a different floor."""
+    import re
+
+    view = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    m = re.search(r"COHORT_MIN_PEERS\s*=\s*(\d+)", view)
+    assert m, "the ranker view no longer declares COHORT_MIN_PEERS"
+    assert int(m.group(1)) == MIN_PEERS, (
+        f"the view's peer floor is {m.group(1)} but vinci.cohort.MIN_PEERS is {MIN_PEERS} — the "
+        f"surface will describe a floor the code does not enforce, which is the 'under 6' bug")
+
+    # ...and no prose anywhere may name a different floor than the one in force
+    for path in (ROOT / "frontend" / "views" / "edge2" / "ranker.js",
+                 ROOT / "docs" / "engineering.md"):
+        text = path.read_text()
+        for wrong in re.findall(r"under (\d+) (?:screened )?peers", text):
+            assert int(wrong) == MIN_PEERS, (
+                f"{path.name} says 'under {wrong} peers' while MIN_PEERS is {MIN_PEERS}")
+
