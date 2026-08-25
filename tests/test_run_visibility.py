@@ -50,15 +50,19 @@ console.log(JSON.stringify({
   healthUnset: m.runHealth({ conclusion: null }),
   healthOk: m.runHealth({ conclusion: "success" }),
   healthFail: m.runHealth({ conclusion: "failure", remediation: "REMEDY-TEXT" }),
+  healthCancelled: m.runHealth({ conclusion: "cancelled", remediation: "CANCEL-TEXT" }),
   staleDays: m.QUEUE_STALE_DAYS,
 }));
 """
 
 
 def _dates() -> dict[str, str]:
+    """UTC, because `queueAgeDays` ages against `Date.parse(...Z)` (review, #495). Built from the
+    LOCAL date, the 30-day fixture computes to 29 days anywhere east of UTC before the offset has
+    elapsed — green in CI, red on the operator's laptop between 00:00 and 05:30 IST."""
     import datetime as dt
 
-    today = dt.date.today()
+    today = dt.datetime.now(dt.UTC).date()
     return {"fresh": (today - dt.timedelta(days=1)).isoformat(),
             "stale": (today - dt.timedelta(days=30)).isoformat()}
 
@@ -183,3 +187,38 @@ def test_the_reporting_step_stages_only_the_status_file() -> None:
         assert forbidden not in step, (
             f"the reporting step stages more than the status file ({forbidden!r}) — a red run "
             f"could push artifacts the gate refused")
+
+
+def test_a_cancelled_run_is_not_reported_as_a_failure() -> None:
+    """CANCELLED IS NOT FAILED (review, #495). `job.status` is success / failure / cancelled, and
+    folding the third into "failure" shows a red chip telling the operator to fix a cause that does
+    not exist — for a run THEY stopped. Not-healthy, but not broken, and it must not carry
+    fix-the-cause remediation."""
+    r = _node(_FMT, json.dumps(_dates()))
+    c = r["healthCancelled"]
+    assert c["label"] == "CANCELLED" and c["tone"] == "unresolved", (
+        f"a cancelled run renders as {c['label']}/{c['tone']} — a red FAILED chip blames a cause "
+        f"that does not exist")
+    assert c["detail"] == "CANCEL-TEXT"
+    # ...and the job must SEND the real status rather than collapsing it to a boolean
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+    step = wf.split("Report the run's outcome", 1)[1]
+    assert '"conclusion": status' in step, (
+        "the reporting step derives the conclusion instead of passing job.status through — "
+        "cancelled gets folded into failure again")
+    assert '"success" if ok else "failure"' not in step
+
+
+def test_every_outcome_tone_has_a_chip_style_to_render_it() -> None:
+    """THE ALARM MUST LOOK LIKE ONE (review, #495). `runHealth` returns buy/avoid/unresolved and
+    both consumers apply them to a CHIP — but those modifiers existed only on `.pill`, so a FAILED
+    run rendered as a neutral grey chip, visually IDENTICAL to OK and UNKNOWN. A correct value in
+    an indistinguishable colour is not a warning."""
+    css = (ROOT / "frontend" / "assets" / "styles.css").read_text()
+    r = _node(_FMT, json.dumps(_dates()))
+    tones = {r[k]["tone"] for k in ("healthOk", "healthFail", "healthMissing", "healthCancelled")}
+    assert tones == {"buy", "avoid", "unresolved"}, tones
+    for tone in sorted(tones):
+        assert f".chip.{tone} " in css or f".chip.{tone}{{" in css, (
+            f"runHealth emits tone {tone!r} onto a .chip, but .chip.{tone} has no style — the "
+            f"chip renders neutral and the state is invisible")

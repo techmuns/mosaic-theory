@@ -157,13 +157,17 @@ export function runHealth(run) {
              detail: "no run has reported its outcome yet — a failed run commits nothing, so this "
                      + "surface cannot tell a failure from a run nobody started" };
   }
-  const ok = run.conclusion === "success";
-  return {
-    tone: ok ? "buy" : "avoid",
-    label: ok ? "OK" : "FAILED",
-    detail: ok ? "the last attempt completed and committed"
-               : (run.remediation || "the last attempt failed"),
-  };
+  if (run.conclusion === "success") {
+    return { tone: "buy", label: "OK", detail: "the last attempt completed and committed" };
+  }
+  // CANCELLED IS NOT FAILED (review, #495): an operator who stopped a run should not meet a red
+  // chip telling them to fix a cause that does not exist. Not-healthy, but not broken.
+  if (run.conclusion === "cancelled") {
+    return { tone: "unresolved", label: "CANCELLED",
+             detail: run.remediation || "the last attempt was cancelled before it finished" };
+  }
+  return { tone: "avoid", label: "FAILED",
+           detail: run.remediation || "the last attempt failed" };
 }
 
 export function tierPill(tier) {

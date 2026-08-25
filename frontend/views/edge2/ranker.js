@@ -77,6 +77,9 @@ function volSpark(series) {
 
 // The queue only moves when the ranker runs. run_weekly() writes it now, but a week where CI does
 // not fire leaves this page serving a stale queue with no signal beyond a date the reader has to do
+// The queue-age chip moved to `lib/format.js` (2026-08-24) so home, ingestion and the ranker
+// render one definition; its rationale — the queue only moves when the ranker runs, and it once
+// drifted 12 days and 95 names behind the screen feeding it (STATE.md §5) — lives there now.
 let G3 = null; // ticker -> the specific G3 UNKNOWN reason
 let state = null;
 
