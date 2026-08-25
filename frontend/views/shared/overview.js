@@ -3,7 +3,7 @@ import {
   getSpreadStatus, getUniverseHealth, getLedger,
   getDossierIndex, getSnapshotMeta, getThemesIndex,
 } from "../../lib/snapshots.js";
-import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
+import { fmtInt, fmtDate, DASH, escapeHtml, queueAgeChip, runHealth } from "../../lib/format.js";
 
 export async function render(root) {
   root.innerHTML = `<div class="notice">Loading fund status…</div>`;
@@ -12,6 +12,21 @@ export async function render(root) {
     getSpreadStatus(), getUniverseHealth(), getLedger(),
     getDossierIndex(), getSnapshotMeta(), getThemesIndex(),
   ]);
+
+  // THE QUEUE'S AGE AND THE LAST RUN'S OUTCOME, on the FIRST screen. The age chip lived only on
+  // the ranker, so learning the queue was stale required opening the queue — the screen you are
+  // least likely to open during an outage, because it looks unchanged. Both render only when they
+  // have something to say: a fresh queue and a clean run add no furniture here.
+  const rh = runHealth(health.run);
+  const ageChip = queueAgeChip(health.screen.asOf);
+  const runChip = health.run && health.run.conclusion !== "success"
+    ? `<span class="chip ${rh.tone}" title="${escapeHtml(rh.detail)}">⚠ last weekly run: ${
+        escapeHtml(rh.label)}${health.run.attemptedAt
+          ? ` · ${escapeHtml(String(health.run.attemptedAt).slice(0, 10))}` : ""}</span>`
+    : "";
+  const statusStrip = (ageChip || runChip)
+    ? `<div class="chips" style="grid-column: 1 / -1; margin-bottom:2px;">${ageChip}${runChip}</div>`
+    : "";
 
   const gateCard = `
     <div class="card gate-card" style="grid-column: 1 / -1;">
@@ -87,6 +102,7 @@ export async function render(root) {
     </div>
 
     <div class="grid cols-4" style="margin-bottom:16px;">
+      ${statusStrip}
       ${gateCard}
     </div>
     <div class="grid cols-4" style="margin-bottom:18px;">

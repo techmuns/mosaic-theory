@@ -112,3 +112,61 @@ jobs:
           git add data/snapshots frontend
           git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots"
           git push
+
+      # THE RUN REPORTS ITS OWN OUTCOME — A DELIBERATE, NAMED EXCEPTION TO THE GATE ABOVE.
+      #
+      # WHY IT EXISTS. The frontend reads COMMITTED snapshots and nothing else, so a run that fails
+      # commits nothing and is INDISTINGUISHABLE from a run nobody started. That blind spot cost
+      # four weeks: 2026-08-03 through 08-24 all failed, the served queue sat frozen, and the only
+      # trace was in the Actions tab. The queue-age chip on the ranker could say the queue was old;
+      # it could never say an attempt had been made and broken.
+      #
+      # WHY IT IS ALLOWED PAST THE GATE, stated so nobody has to infer it. The gate exists to stop
+      # bad DATA reaching main. This step writes ONE machine-generated file carrying no analytical
+      # claim — an attempt time, an outcome, and the step that failed. It stages `run_status.json`
+      # BY NAME and nothing else, so a red run cannot smuggle its half-built snapshots out through
+      # this door. A system that cannot report its own state is not safer for it.
+      #
+      # `if: always()` — the whole point is the FAILING case. `--rebase` because a green run has
+      # already pushed above.
+      - name: Report the run's outcome
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          python - <<'PY'
+          import json, os, pathlib
+          from datetime import UTC, datetime
+          # CANCELLED IS NOT FAILED (review, #495). `job.status` is one of success / failure /
+          # cancelled, and folding the third into "failure" publishes a red chip telling the
+          # operator to fix a cause that does not exist — for a run THEY stopped. It is passed
+          # through as its own conclusion, and the consumer treats anything that is not "success"
+          # as not-healthy without claiming it broke.
+          status = os.environ["JOB_STATUS"]
+          remedy = {
+              "success": "",
+              "cancelled": "the run was cancelled before it finished — nothing was committed; "
+                           "re-trigger when ready: Actions -> weekly-screen -> Run workflow",
+          }.get(status,
+                "Open the run log, fix the cause, then re-trigger: Actions -> weekly-screen -> "
+                "Run workflow. If the gate failed on a stale fixture, RUNBOOKS.md step 5 "
+                "regenerates both fixtures.")
+          pathlib.Path("data/snapshots/run_status.json").write_text(json.dumps({
+              "job": "weekly-screen",
+              "attempted_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "conclusion": status,
+              "run_url": f"{os.environ['SERVER']}/{os.environ['REPO']}/actions/runs/{os.environ['RUN_ID']}",
+              # NAMED, not inferred: the remediation a human would otherwise dig out of the log.
+              "remediation": remedy,
+          }, indent=2) + "\n")
+          PY
+          git add data/snapshots/run_status.json
+          git diff --staged --quiet && exit 0
+          git commit -m "weekly screen: run status ($JOB_STATUS)"
+          git pull --rebase --autostash
+          git push
+        env:
+          JOB_STATUS: ${{ job.status }}
+          SERVER: ${{ github.server_url }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}

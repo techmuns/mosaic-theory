@@ -381,6 +381,14 @@ summary:focus-visible, [tabindex]:focus-visible {
 .chip.accent { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent-strong); }
 .chip.gate { background: var(--conditional-bg); border-color: var(--warn-border); color: var(--warn-text); }
 .chip.locked { background: var(--surface-2); color: var(--locked); }
+/* OUTCOME TONES ON .chip (review, #495). `runHealth` returns buy/avoid/unresolved and both
+   consumers apply them to a CHIP, but those modifiers existed only on .pill — so a FAILED weekly
+   run rendered as a neutral grey chip, visually identical to OK and to UNKNOWN. That de-fangs the
+   exact alarm the run-status work exists to raise. Mirrors the .pill definitions rather than
+   inventing a second palette. */
+.chip.buy { background: var(--live-bg); border-color: var(--pos-border); color: var(--pos-text); }
+.chip.avoid { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.chip.unresolved { background: var(--surface-2); border-color: var(--surface-2); color: var(--ink-2); }
 
 /* status pill (inline) */
 .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }

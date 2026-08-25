@@ -122,6 +122,54 @@ export const TIER_TONE = {
   target_met: "buy", minimum_met: "buy", preferred: "buy",
   undefined: "unresolved",
 };
+// QUEUE AGE AND RUN HEALTH — one definition, three consumers (overview, ingestion, ranker). The
+// age chip lived only on the ranker, so you had to open the queue to learn the queue was stale;
+// during a four-week outage that is the screen you are least likely to open, because it looks
+// unchanged. 10 days = the weekly cadence plus slack, a face-validity threshold tuned on nothing.
+export const QUEUE_STALE_DAYS = 10;
+
+export function queueAgeDays(asOf) {
+  if (!asOf) return null;
+  const d = Math.floor((Date.now() - Date.parse(`${asOf}T00:00:00Z`)) / 86400000);
+  return Number.isFinite(d) ? d : null;
+}
+
+// WORDING FIXED WITH THE CRON REMOVAL (2026-08-24): this used to say "the weekly screen may not
+// have run", which implied a missed appointment. There is no schedule any more — the screen runs
+// when the operator triggers it — so the honest statement is the queue's AGE, and the prompt is
+// an invitation rather than an alarm about a broken timer.
+export function queueAgeChip(asOf) {
+  const days = queueAgeDays(asOf);
+  if (days === null || days < QUEUE_STALE_DAYS) return "";
+  return `<span class="chip gate" title="This queue was written by the weekly screen on ${
+    escapeHtml(String(asOf))}. The names, ranks and price-derived reads are all as of that date, `
+    + `not today. The screen is operator-triggered: Actions -> weekly-screen -> Run workflow, or `
+    + `run vinci run-weekly locally.">⚠ queue is ${days} days old — screened ${
+      escapeHtml(String(asOf))}</span>`;
+}
+
+// The last run's OUTCOME, which no age can tell you: a failed run commits nothing, so silence and
+// failure look identical on a surface that reads only committed data. `null` is UNKNOWN and says
+// so — never a pass.
+export function runHealth(run) {
+  if (!run || !run.conclusion) {
+    return { tone: "unresolved", label: "UNKNOWN",
+             detail: "no run has reported its outcome yet — a failed run commits nothing, so this "
+                     + "surface cannot tell a failure from a run nobody started" };
+  }
+  if (run.conclusion === "success") {
+    return { tone: "buy", label: "OK", detail: "the last attempt completed and committed" };
+  }
+  // CANCELLED IS NOT FAILED (review, #495): an operator who stopped a run should not meet a red
+  // chip telling them to fix a cause that does not exist. Not-healthy, but not broken.
+  if (run.conclusion === "cancelled") {
+    return { tone: "unresolved", label: "CANCELLED",
+             detail: run.remediation || "the last attempt was cancelled before it finished" };
+  }
+  return { tone: "avoid", label: "FAILED",
+           detail: run.remediation || "the last attempt failed" };
+}
+
 export function tierPill(tier) {
   if (!tier) return "";
   const key = String(tier);
