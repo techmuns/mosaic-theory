@@ -20,6 +20,16 @@ window must straddle the fleet as-of generously on both sides.
 
     python scripts/build_price_fixture.py              # every maintained name + the benchmark
     python scripts/build_price_fixture.py IT           # just this one
+    python scripts/build_price_fixture.py --refresh    # fetch the bars first, then build
+
+THE `--refresh` FLAG EXISTS BECAUSE THE WEEKLY JOB'S STORE CANNOT SUPPLY THESE NAMES. The job
+refreshes EOD for the SCREENING UNIVERSE, and this fixture covers the MAINTENANCE-ROUTE set —
+which is, by definition, the names the screen does NOT carry. Six of the nine (IT, LLY, NFLX, UBER,
+V, and IWM the benchmark) sit outside the universe entirely: the megacaps fail the cap band, and
+IWM is a synthetic IDX-* identity that was never an SEC issuer. Wiring the bare script into CI
+therefore failed on the first name it tried (run 32818611056). With `--refresh` it fetches its own
+bars per-symbol first — nine aggregate calls, not a market-wide pull. Opt-in, so the operator flow
+in RUNBOOKS step 5 (store already populated locally) still spends no network.
 
 RE-RUN IT IN THE SAME PR THAT MAKES A NEW NAME MAINTAINED — a followed name, or a held name that
 grows out of the band. `test_every_committed_dossier_can_still_be_located` fails loudly and names
@@ -33,8 +43,10 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
+from datetime import date
 
-from vinci.config import get_config
+from vinci.config import get_config, load_local_env
+from vinci.eod import PolygonEodClient, ingest_prices_per_symbol, last_completed_session
 from vinci.monitor import BENCHMARK_SMALL
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
@@ -61,18 +73,71 @@ def maintained_names(cfg: object) -> list[str]:
     return [t for t in committed if t not in cands]
 
 
+def names_to_rebuild(cfg: object) -> list[str]:
+    """Every series the fixture ALREADY has, plus every maintained name — not just the derived set.
+
+    `maintained_names` is `committed dossiers MINUS current screen candidates`, so it MOVES every
+    time the screen re-ranks: MVST, NCNO and WERN all sit inside the universe and can be admitted as
+    candidates any week. A name that flips OUT of the maintained set would keep its old file,
+    untouched, while every other series advanced — and `_cfg` in `test_maintenance_path` globs the
+    WHOLE directory, so the suite would silently load a mixed-vintage fixture with nobody having
+    decided to. The benchmark is excluded here only because `main` always appends it.
+
+    Rebuilding what is already there costs one extra aggregate call per flipped name and makes the
+    uniform vintage true BY CONSTRUCTION. Nothing is deleted: a name that flips back is current.
+    """
+    existing = {f.stem for f in OUT_DIR.glob("*.jsonl")} - {BENCHMARK_SMALL}
+    return sorted(set(maintained_names(cfg)) | existing)
+
+
 def main(argv: list[str]) -> int:
+    load_local_env()
     cfg = get_config()
     resolver = EntityResolver.from_config(cfg)
-    wanted = [t.upper() for t in argv[1:]] or maintained_names(cfg)
+    flags = {a for a in argv[1:] if a.startswith("-")}
+    # UNKNOWN FLAGS ARE REFUSED, not silently dropped (review, #497). A typo'd `--refesh` used to
+    # fall through to a bare build and reproduce the exact production failure this script was
+    # changed to fix, under the misleading message "NO BARS in the local store" — which sends the
+    # reader to the store rather than to their own command line.
+    unknown = sorted(flags - {"--refresh"})
+    if unknown:
+        print(f"unknown flag(s) {unknown} — the only flag is --refresh", file=sys.stderr)
+        return 2
+    explicit = [t.upper() for t in argv[1:] if not t.startswith("-")]
+    wanted = explicit or names_to_rebuild(cfg)
+    if explicit:
+        # A PARTIAL BUILD IS A DELIBERATE ACT, so say what it leaves behind (review, #497). The
+        # benchmark is always rebuilt alongside, so it can never end up trailing the names — but
+        # every OTHER series keeps its current vintage, and if the fleet as-of has moved past them
+        # the straddle pin will (correctly) ask for a full rebuild.
+        others = sorted({f.stem for f in OUT_DIR.glob("*.jsonl")} - {*wanted, BENCHMARK_SMALL})
+        if others:
+            print(f"  PARTIAL BUILD: {wanted} + {BENCHMARK_SMALL}; leaving {others} at their "
+                  f"current vintage. Run with no arguments to rebuild everything.")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # (ticker, internal_id) — the benchmark is an IDX-* synthetic identity, not an SEC issuer.
-    targets: list[tuple[str, str]] = [
-        (t, resolver.resolve_ticker(t).internal_id) for t in wanted
-    ]
-    bench = benchmark_identity(BENCHMARK_SMALL)
-    targets.append((BENCHMARK_SMALL, bench.internal_id))
+    # Identities, not just ids: `--refresh` needs the whole Identity to ingest against, and the
+    # benchmark is an IDX-* synthetic — not an SEC issuer, so it is resolver-exempt.
+    identities = [resolver.resolve_ticker(t) for t in wanted]
+    identities.append(benchmark_identity(BENCHMARK_SMALL))
+    targets: list[tuple[str, str]] = [(t, i.internal_id)
+                                      for t, i in zip([*wanted, BENCHMARK_SMALL], identities,
+                                                      strict=True)]
+
+    if "--refresh" in flags:
+        # PER-SYMBOL for the bars themselves — one aggregate call per name (the NCNO-class backfill
+        # route), because these are names the market-wide pull does not cover.
+        #
+        # HONEST ABOUT THE COST (review, #497): this is NOT "nine calls and nothing else". Dating
+        # the window calls `last_completed_session`, which probes `grouped_daily` — a WHOLE-MARKET
+        # request — once per candidate day until one answers, so a Monday costs one or two of them
+        # on top. They are immutable-per-day and cached, so a re-run is free, but the earlier
+        # comment claiming no market-wide pull was simply wrong.
+        end = last_completed_session(PolygonEodClient.from_config(cfg), today=date.today())
+        print(f"  refreshing {len(identities)} names {_WINDOW_START}..{end} via per-symbol aggs")
+        with Store(cfg.db_path) as store:
+            ingest_prices_per_symbol(PolygonEodClient.from_config(cfg), store, identities,
+                                     start=date.fromisoformat(_WINDOW_START), end=end)
 
     # ALL-OR-NOTHING: BUILD EVERY SERIES FIRST, WRITE ONLY IF EVERY ONE SUCCEEDED.
     #
@@ -89,9 +154,20 @@ def main(argv: list[str]) -> int:
             bars = [b for b in store.get_price_history(iid)
                     if b.bar_date.isoformat() >= _WINDOW_START]
             if not bars:
-                print(f"  {ticker:6} NO BARS in the local store from {_WINDOW_START} — refresh EOD "
-                      f"for this name before building the fixture. NOTHING WAS WRITTEN; the "
-                      f"existing fixture is untouched.", file=sys.stderr)
+                # NAME THE RECOVERY (review, #497). `names_to_rebuild` unions in whatever is on
+                # disk, so a name that DELISTS or stops filing becomes a permanent hard failure
+                # with nothing to fetch — and because it is no longer maintained, nothing needs it
+                # either. Fail loud, but say which file to remove; a bare "NO BARS" sends the
+                # reader to the store, which is not where the problem is.
+                stale = ticker != BENCHMARK_SMALL and ticker not in maintained_names(cfg)
+                remedy = (f"{ticker} is NO LONGER MAINTAINED and has no bars — it is only in this "
+                          f"build because {OUT_DIR / f'{ticker}.jsonl'} still exists. Delete that "
+                          f"file to drop it from the fixture."
+                          if stale else
+                          f"refresh EOD for {ticker} before building the fixture (or run with "
+                          f"--refresh to fetch it here)")
+                print(f"  {ticker:6} NO BARS in the local store from {_WINDOW_START} — {remedy} "
+                      f"NOTHING WAS WRITTEN; the existing fixture is untouched.", file=sys.stderr)
                 return 1
             # internal_id is written per row: the loader keys the store by it and must not have to
             # re-resolve a ticker (which would put the SEC network on the suite's critical path).

@@ -32,6 +32,7 @@ import pathlib
 import pytest
 
 from vinci.eod.client import EodClient, RawBar, last_completed_session
+from vinci.monitor import BENCHMARK_SMALL as BENCHMARK
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -226,3 +227,201 @@ def test_the_derivation_is_reachable_from_the_package_root() -> None:
 
     assert "last_completed_session" in eod.__all__
     assert inspect.isfunction(eod.last_completed_session)
+
+
+def test_the_fixture_step_fetches_its_own_bars_because_the_screen_never_carries_them() -> None:
+    """THE FIRST WIRING OF THIS STEP FAILED IN PRODUCTION (run 32818611056) AND THIS IS WHY.
+
+    The weekly screen refreshes EOD for the SCREENING UNIVERSE. The price fixture covers the
+    MAINTENANCE-ROUTE set — which is, by definition, the names the screen does NOT carry. Checked
+    against the committed universe snapshot rather than asserted: six of the nine fixture names are
+    outside it entirely (the megacaps fail the cap band, and the benchmark is a synthetic `IDX-*`
+    identity that was never an SEC issuer). So the job's store can never supply them, the bare
+    script aborts on the first one, and `--refresh` is a REQUIREMENT rather than a speed-up.
+
+    Pinned at the CALL SITE — the workflow line, not the script's flag parsing — because a
+    correct `--refresh` that nobody passes fixes nothing."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+    step = wf.split("Rebuild the price fixture", 1)[1].split("- name:", 1)[0]
+    assert "build_price_fixture.py --refresh" in step, (
+        "the fixture step does not pass --refresh — it will abort on the first maintenance-route "
+        "name the screening universe does not carry")
+    assert "POLYGON_API_KEY" in step, (
+        "--refresh fetches bars and needs the Polygon key in this step's env")
+
+
+def test_the_fixture_set_really_does_reach_outside_the_screening_universe() -> None:
+    """THE REASON THE FLAG ABOVE CANNOT BE OPTIMISED AWAY, asserted against the real committed
+    corpus rather than left as a comment. If this ever became empty — every fixture name inside the
+    universe — `--refresh` would be redundant and the pin above would be cargo. It is not empty:
+    that is the whole shape of the maintenance route."""
+    import json
+
+    from vinci.config import get_config
+
+    snap = get_config().snapshots_dir / "universe_snapshot.jsonl"
+    if not snap.is_file():
+        pytest.skip("no committed universe snapshot")
+    in_universe = {json.loads(line)["internal_id"]
+                   for line in snap.read_text().splitlines() if line.strip()}
+    # THE BENCHMARK IS EXCLUDED, or this can never fail (review, #497): `IDX-IWM` is a synthetic
+    # identity that by construction never appears in an issuer universe, so leaving it in made
+    # `outside` non-empty always — a guard that cannot fire, counted as a passing one. The claim
+    # being tested is about real ISSUERS the screen does not carry.
+    outside = []
+    for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
+        if f.stem == BENCHMARK:
+            continue
+        first = json.loads(f.read_text().splitlines()[0])
+        if first["internal_id"] not in in_universe:
+            outside.append(f.stem)
+    assert outside, (
+        "every fixture name is inside the screening universe — if that is genuinely true the "
+        "weekly job no longer needs --refresh, and this pin plus the one above should be revisited")
+
+
+def test_the_benchmark_never_trails_the_names_measured_against_it() -> None:
+    """`rel_ret_vs_market` compares a name to IWM, so a fixture where the BENCHMARK stops earlier
+    than the names silently changes every relative return it feeds. That is the corruption the old
+    non-atomic builder produced: six names rewritten, WERN three days behind, IWM never written.
+
+    ASSERTED DIRECTIONALLY, NOT AS EQUALITY (review, #497). The first cut demanded that all nine
+    frontiers be IDENTICAL, which would have handed the weekly job an UN-FIXABLE red: a halted,
+    delisted or aggs-lagging name legitimately stops earlier than the rest, the builder only aborts
+    on ZERO bars so it would happily produce that, and the job would then fail its own gate after
+    the screen, both mirrors and the fixture build had all succeeded — with a published remediation
+    ("rebuild it") that cannot fix it, because rebuilding is exactly what produced it.
+
+    What actually matters is the direction: the benchmark is an ETF that does not halt, so it must
+    never be the one lagging. A single name trailing is a data condition; the comparator trailing
+    is corruption."""
+    import json
+
+    fronts = {}
+    for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
+        fronts[f.stem] = max(json.loads(line)["bar_date"]
+                             for line in f.read_text().splitlines() if line.strip())
+    bench = fronts.get(BENCHMARK)
+    assert bench is not None, (
+        f"no {BENCHMARK} fixture — the benchmark every name is measured against")
+    ahead = {k: v for k, v in fronts.items() if k != BENCHMARK and v > bench}
+    assert not ahead, (
+        f"{BENCHMARK} stops at {bench} but {ahead} carry later bars — every relative return "
+        f"computed against a stale benchmark is wrong. Rebuild in one pass: "
+        f"python scripts/build_price_fixture.py --refresh")
+
+
+def test_both_pushes_rebase_so_a_slow_run_cannot_lose_a_race() -> None:
+    """THE JOB TAKES ~26 MINUTES AND MAIN IS NOT FROZEN WHILE IT RUNS. The reporting step already
+    rebased; the SNAPSHOT commit — the one that actually advances the queue — pushed bare, so any
+    merge landing mid-run would fail the whole thing after the screen, both mirrors and the gate had
+    all succeeded. Both commits carry derived data only, so replaying onto a newer main is safe."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+    for step in ("Commit refreshed snapshots", "Report the run's outcome"):
+        body = wf.split(step, 1)[1].split("- name:", 1)[0]
+        assert "git pull --rebase" in body, (
+            f"the {step!r} step pushes without rebasing — a merge to main during the run loses the "
+            f"race and marks a successful run failed")
+
+
+def test_a_name_that_flips_out_of_the_maintained_set_is_still_rebuilt(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE FLIP IS THE WHOLE POINT, AND IT IS INVISIBLE TODAY. `maintained_names` is `committed
+    dossiers MINUS current screen candidates`, so it moves every time the screen re-ranks — MVST,
+    NCNO and WERN are all inside the universe and can be admitted any week. Right now the derived
+    set and the files on disk happen to MATCH, so a mutation removing the union survives every
+    state-based assertion. Simulated here instead: a fixture file whose name is no longer
+    maintained must still be rebuilt, or it keeps its old vintage while the rest advance and
+    `_cfg` — which globs the whole directory — loads a mixed-vintage store."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_bpf", ROOT / "scripts" / "build_price_fixture.py")
+    assert spec and spec.loader
+    bpf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bpf)
+
+    (tmp_path / "STILLHERE.jsonl").write_text("")   # on disk, no longer maintained
+    (tmp_path / "KEPT.jsonl").write_text("")        # on disk AND maintained
+    monkeypatch.setattr(bpf, "OUT_DIR", tmp_path)
+    monkeypatch.setattr(bpf, "maintained_names", lambda _cfg: ["KEPT", "BRANDNEW"])
+
+    got = bpf.names_to_rebuild(object())
+    assert got == ["BRANDNEW", "KEPT", "STILLHERE"], (
+        f"names_to_rebuild returned {got} — a name that flipped out of the maintained set is not "
+        f"being rebuilt, so it will keep an older vintage than every other series")
+
+
+def test_the_benchmark_is_not_double_counted() -> None:
+    """`main` always appends the benchmark, so `names_to_rebuild` must not also return it — a
+    duplicate would resolve and fetch IWM twice and break the strict zip that pairs names to
+    identities."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_bpf2", ROOT / "scripts" / "build_price_fixture.py")
+    assert spec and spec.loader
+    bpf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bpf)
+    from vinci.config import get_config
+
+    assert bpf.BENCHMARK_SMALL not in bpf.names_to_rebuild(get_config())
+
+
+def test_main_actually_calls_names_to_rebuild() -> None:
+    """PIN THE CALL SITE, NOT THE HELPER — the fourth time this exact trap has bitten in this
+    session. A perfectly-tested `names_to_rebuild` that `main` no longer calls is worth nothing:
+    the mutation replacing the call with a bare `maintained_names(cfg)` survived every behavioural
+    pin above, because those exercise the helper directly."""
+    src = (ROOT / "scripts" / "build_price_fixture.py").read_text()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    # THE ASSIGNMENT, not "any call anywhere in main". The first cut asserted `maintained_names`
+    # was never called in `main` at all, and immediately reddened on a legitimate second use — the
+    # stale-file diagnostic added for review finding 4 has to ask whether an absent name is still
+    # maintained. What must not happen is `wanted` being sourced from it directly.
+    assigns = [n for n in ast.walk(main) if isinstance(n, ast.Assign)
+               and any(isinstance(x, ast.Name) and x.id == "wanted" for x in n.targets)]
+    assert assigns, "main no longer assigns `wanted` — has it been restructured?"
+    source = " ".join(ast.unparse(a.value) for a in assigns)
+    assert "names_to_rebuild" in source, (
+        f"`wanted` is built from {source!r}, not names_to_rebuild — the union with the files "
+        f"already on disk is bypassed, and a name that flips out of the maintained set keeps a "
+        f"stale vintage while every other series advances")
+
+
+def test_a_conflicted_rebase_cannot_silence_the_status_report() -> None:
+    """THE #495 BLIND SPOT, REOPENED BY THE #496 REBASE, CLOSED HERE (review, #497).
+
+    The snapshot commit rebases onto main so a mid-run merge does not lose the race. But an
+    interrupted rebase leaves UNMERGED PATHS, and the `if: always()` reporting step then dies on
+    `git commit` before it can write anything — so the run fails AND publishes no status, in
+    exactly the situation the status report exists for. Two guards, both required: the commit step
+    aborts its own failed rebase rather than leaving the tree wedged, and the reporting step clears
+    the deck before it tries to commit, because its job is to work when everything else did not."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+
+    commit = wf.split("Commit refreshed snapshots", 1)[1].split("- name:", 1)[0]
+    assert "git rebase --abort" in commit, (
+        "the snapshot commit can leave an interrupted rebase, which stops the reporting step from "
+        "committing anything at all")
+
+    report = wf.split("Report the run's outcome", 1)[1]
+    before_commit = report.split("git add data/snapshots/run_status.json", 1)[0]
+    assert "git rebase --abort" in before_commit, (
+        "the reporting step clears a wedged tree only AFTER its commit — by then `git commit` has "
+        "already refused on unmerged paths and no status is published")
+
+
+def test_an_unknown_flag_is_refused_rather_than_ignored() -> None:
+    """A typo'd `--refesh` used to fall through to a bare build and reproduce the production
+    failure verbatim, under a message pointing at the store rather than at the command line."""
+    import subprocess
+    import sys as _sys
+
+    r = subprocess.run([_sys.executable, "scripts/build_price_fixture.py", "--refesh"],
+                       capture_output=True, text=True, cwd=ROOT,
+                       env={"PYTHONPATH": str(ROOT), "PATH": "/usr/bin:/bin"})
+    assert r.returncode == 2, f"exit {r.returncode}, expected 2 — the typo was accepted"
+    assert "unknown flag" in r.stderr, r.stderr
+
