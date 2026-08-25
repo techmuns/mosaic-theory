@@ -18,6 +18,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from vinci.schemas.cohort import CohortRead
+
 
 class CauseClass(enum.StrEnum):
     """Tier-3 LLM cause-classification — an ANNOTATION that *colours* the queue, never the sort key.
@@ -114,6 +116,15 @@ class RankedCandidate(BaseModel, frozen=True):
     # after ranking from data the screen already assembled. NEVER a rank input: vinci.rank must not
     # import vinci.evidence, and an AST fence asserts it. None when nothing is known for the name.
     context: str | None = None
+    # THE COHORT SPLIT — how much of the name's fall was its INDUSTRY's and how much its own.
+    # Inform-only, attached by the WRITER after ranking, exactly like `sector`/`industry`/`context`
+    # above and for the same reason: G2 strips market beta but not sector, so a name that fell with
+    # its whole industry lands here looking idiosyncratic. It NEVER re-orders the queue — ranking by
+    # the residual was pre-registered, tested over four snapshots and FALSIFIED (its top-25 churns
+    # more than the raw order at every interval). The SCHEMA is sector-free on purpose so this file
+    # can hold the result while the fence still stops `vinci.rank` deriving one; `vinci.cohort` does
+    # the derivation and is fenced out alongside `vinci.sectors`. None until a screen log exists.
+    cohort: CohortRead | None = None
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
     structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)

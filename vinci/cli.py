@@ -32,6 +32,7 @@ from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.orchestrator import (
     QUEUE_ADV_FLOOR,
     QUEUE_MD_TOP,
+    carry_forward_assessment,
     rank_from_snapshots,
     run_monthly,
     run_weekly,
@@ -39,7 +40,6 @@ from vinci.orchestrator import (
 )
 from vinci.progress import stderr_reporter
 from vinci.rank import (
-    StructuralDisqualifier,
     load_candidates_from_snapshot,
     load_cause_annotations,
     render_profile_block,
@@ -209,7 +209,21 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     snaps = cfg.snapshots_dir
     annotations = load_cause_annotations(Path(args.cause_file)) if args.cause_file else {}
 
-    structural_flags: dict[str, StructuralDisqualifier] = {}
+    # CARRY FORWARD WHAT THE OPERATOR ALREADY ESTABLISHED (found while wiring the cohort split).
+    #
+    # `carry_forward_assessment` was added in #420 so a scheduled refresh could not silently un-sink
+    # a name an 8-K disqualifier had capped — but it was wired into `run_weekly` ONLY. A hand-run
+    # `vinci rank` therefore passed NO flags and wiped every one of them: measured on the committed
+    # queue, a plain re-rank restored 58 structurally-disqualified names, and SOC — carrying a
+    # "going-concern / substantial doubt" 8-K, capped at 0.05 and sunk to rank 212 — came back at
+    # RANK 7. The manual path is the one an operator reaches for precisely when they are working
+    # the queue by hand, which is the worst moment to lose it.
+    #
+    # Safe in the only direction that matters: the structural channel is DEMOTE-ONLY, so a carried
+    # flag can only keep a name down. `--structural` still overrides with a fresh scan, and that
+    # scan self-clears a signal that no longer fires.
+    structural_flags, carried_causes = carry_forward_assessment(cfg)
+    annotations = annotations or carried_causes
     if args.structural:
         from vinci.edgar.client import EdgarClient
         from vinci.rank import scan_structural
@@ -225,6 +239,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
             # `.flags` only: a MANUAL run is the operator asking for this scan's verdict outright,
             # so there is no prior assessment to preserve. Coverage matters on the SCHEDULED path,
             # which replaces flags and must not read an unscanned name as clean (orchestrator).
+            # an explicit scan REPLACES the carried set — the operator asked for this verdict
             structural_flags = scan_structural(
                 cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
             ).flags

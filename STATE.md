@@ -4799,6 +4799,43 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
+**THE COHORT SPLIT IS LIVE ON THE QUEUE — SHIPPED 2026-08-25 (`feat/cohort-split-in-the-queue`),
+INFORM-ONLY.** The `Idio (vs mkt)` column asserted a name fell for its own reasons; G2 strips
+MARKET beta but not SECTOR, so for roughly one in five persistent decliners that assertion was
+false. The cell now carries the split — `coh -37% · own -10%` — plus a call, inside the column that
+made the claim. **No 14th column**: the table already runs to 13 and overruns a 1280px laptop.
+
+**IT NEVER RE-ORDERS ANYTHING, and that is measured rather than cautious.** Ranking by the residual
+was pre-registered, tested over four snapshots and FALSIFIED (§ experiment record 2026-08-25). The
+read is attached by the WRITER after `rank_candidates` returns, beside `sector`/`industry`/`context`
+— proven end-to-end: a re-rank with the split attached leaves order and every score IDENTICAL, with
+`cohort` the only differing field. Pinned by `test_attaching_the_split_changes_no_order_and_no_score`.
+
+**THE CALL ABSTAINS.** Stability is 96% above a 25-point margin and 34% below 10, so inside 10
+points it reports UNRESOLVED — the rule `mixed` already follows. Under 6 screened peers there is no
+cohort and the read carries no numbers. Live: 115 own · 38 cohort · 29 unresolved · 86 no-cohort.
+
+**FENCED LIKE THE LABELS.** `vinci.cohort` is sector-derived, so `vinci.rank`/`vinci.screens` may
+not import it; the SCHEMA (`vinci/schemas/cohort.py`) is deliberately sector-free so
+`RankedCandidate` can CARRY a read while the derivation stays outside. Both halves pinned by AST.
+
+**INCIDENT → INVARIANT (shipped Y): `vinci rank` WAS WIPING THE STRUCTURAL FLAGS.** Found while
+wiring this. #420 added `carry_forward_assessment` so a refresh could not un-sink a name an 8-K had
+capped — but wired it into `run_weekly` ONLY. A hand-run `vinci rank` passed no flags and destroyed
+all of them: on the committed queue a plain re-rank restored **58** structurally-disqualified names,
+and **SOC — carrying a "going-concern / substantial doubt" 8-K, capped at 0.05 and sunk to rank
+212 — came back at RANK 7.** The manual path is the one an operator reaches for precisely when
+working the queue by hand. Now carries forward; `--structural` still overrides with a fresh scan.
+Pinned by `test_the_rank_cli_carries_forward_the_structural_flags`.
+
+**PHASE 0 (the LLM cause classifier) IS NOT BUILDABLE AS SCOPED — FOLDED INTO PHASE 2.** `cause_class`
+reads `"unclassified"` on all 268 not because the pass is unwired but because **there is no textual
+de-rating source at queue scale at all**: every one of the 525 committed events is
+`earnings_gap_down`, produced by the EOD gap-down detector (`screens/assemble.py:359`), with **no
+accession and no document**. `rank/cause.py` needs `derate_text`; nothing supplies it. Turning it on
+requires 8-K text per de-rated name — the same per-name EDGAR fetching Phase 2 needs, so it rides
+with that rather than being half-built. The ranker's own comment already anticipated this split.
+
 **THE WEEKLY RUN DATED ITSELF BY THE WALL CLOCK — FIXED 2026-08-25
 (`fix/weekly-run-dates-itself-from-the-data`). THE FOUR "FAILURES" WERE THE GATE WORKING.**
 
@@ -6077,8 +6114,12 @@ data only — no API calls, no forward returns touched.
 
 **THE GAP IS REAL AND WAS ALREADY NAMED.** PR #84 (2026-07-06) built the coarse SIC roll-up and its
 own message states it: *"G2 strips MARKET beta (name vs IWM) but NOT sector, so a name that fell
-with its whole sector still lands in the set looking idiosyncratic."* `sector`/`industry` are on
-every `ranked_queue.jsonl` row and reach NO rendered surface. Separately
+with its whole sector still lands in the set looking idiosyncratic."* `sector`/`industry` are on every `ranked_queue.jsonl` row; **industry IS rendered
+in the web ranker** (with the committed-dossier CIQ-GICS overlay) and is absent only from
+`ranked_queue.md`. So the missing thing is NOT the label — it is the DECOMPOSITION: nothing anywhere
+splits a name's fall into its cohort's share and its own. The `Idio (vs mkt)` column asserts
+idiosyncrasy as a single number, and that assertion is what this measurement shows is sometimes
+false. Separately
 `mechanical.idiosyncratic_vs_shared` has a `cohort` slot, a schema and a renderer — and is **null on
 16 of 16 dossiers**, because it reaches for `graph_coverage.json` (supply-chain) rather than the SIC
 cohort already on the row. `rank/cause.py` likewise exists and never runs: `cause_class` is

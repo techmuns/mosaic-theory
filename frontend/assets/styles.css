@@ -1636,3 +1636,27 @@ table.data th.peer-desc-h { text-align: left; }
 .rd-prog-fill { height: 100%; background: var(--conditional); }
 /* a readout recomputed in the browser from an unsaved edit — never mistakable for the record */
 .rd-local { margin-right: 2px; }
+/* --- the cohort split, inside the idiosyncrasy cell (2026-08-25) --------------------------
+   G2 strips MARKET beta but not SECTOR, so a name that fell with its whole industry lands in the
+   queue looking idiosyncratic. The cell keeps the raw number in its old position and weight, and
+   carries the cohort/own split beneath it. Tones MIRROR the existing .pill palette rather than
+   inventing a second one — `own` reads as the positive finding (the fall is the name's own, which
+   is what an overshoot thesis needs), `cohort` as the caution.
+   The call is WITHHELD inside a 10-point margin: stability across four snapshots is 96% above 25
+   points and 34% below 10, so a near-tie reports unresolved rather than guessing — the same rule
+   `mixed` follows when a two-sided read is the human's to settle. */
+.ck-cell { min-width: 178px; }
+.ck-top { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.ck-top { font-variant-numeric: tabular-nums; }
+.ck-split {
+  display: flex; align-items: center; justify-content: flex-end; gap: 4px;
+  margin-top: 2px; font-size: 11px; color: var(--ink-2);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.ck-split b { font-weight: 650; color: var(--ink); }
+.ck-k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+.ck-sep { color: var(--line-2); }
+.pill.ck-own { background: var(--live-bg); color: var(--pos-text); }
+.pill.ck-cohort { background: var(--danger-bg); color: var(--danger); }
+.pill.ck-unresolved { background: var(--surface-2); color: var(--ink-2); }
+.pill.ck-no-cohort { background: transparent; color: var(--ink-3); border: 1px dashed var(--line-2); }

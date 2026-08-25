@@ -12,7 +12,11 @@ const COLS = [
   { key: "industry", label: "Industry" },  // resolved label (CIQ-GICS overlay > official SIC) — inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
-  { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
+  { key: "idiosyncrasy", label: "Idio — cohort vs own",
+    title: "The name against the market benchmark, split into its INDUSTRY cohort's "
+         + "median move and the residual that is the name's own. Inform-only: the split "
+         + "never re-orders the queue. A call is withheld when the two are within 10 "
+         + "points, and no cohort is formed under 6 screened peers." }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
   // Tier-2, not an axis — sits after the four Tier-1 axes and before the tradeability figures,
   // mirroring the order the subtitle describes the composite in. The header carries the BASIS so
@@ -197,6 +201,45 @@ function renderRows() {
     const v = a.raw == null ? `<span class="muted">${DASH}</span>` : fmtPct(a.raw, { signed: true });
     return `<td class="num" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${v}</td>`;
   };
+  // THE COHORT SPLIT, inside the cell that makes the claim.
+  //
+  // `Idio (vs mkt)` asserts a name fell for its OWN reasons — but G2 strips MARKET beta, not
+  // SECTOR, so a name that fell with its whole industry lands here looking idiosyncratic. For
+  // roughly one in five persistent decliners that assertion is false. The split goes INSIDE this
+  // cell rather than into a 14th column: the table already runs to 13 and overruns a 1280px
+  // laptop (see the scroll container below).
+  //
+  // It NEVER re-orders the queue. Ranking by the residual was pre-registered, measured across four
+  // snapshots and FALSIFIED — its top-25 churns more than the raw order at every interval. The
+  // sort key is untouched; this is display only.
+  const COHORT_LABEL = {
+    own: ["own", "The cohort barely moved — the fall is this name's own"],
+    cohort: ["cohort", "Most of the fall is the industry's, not this name's"],
+    unresolved: ["unresolved", "Cohort and own are within 10 points — too close to call"],
+    "no-cohort": ["no cohort", "Fewer than 6 screened peers — not assessable"],
+  };
+  const idioCell = (r) => {
+    const a = r.axes.idiosyncrasy || {};
+    const raw = a.raw == null ? `<span class="muted">${DASH}</span>` : fmtPct(a.raw, { signed: true });
+    const c = r.cohort;
+    // No cohort block at all = a snapshot written before the split shipped. Degrade to the bare
+    // number rather than rendering an empty scaffold.
+    if (!c) {
+      return `<td class="num" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${raw}</td>`;
+    }
+    const [lbl, tip] = COHORT_LABEL[c.call] || COHORT_LABEL["no-cohort"];
+    const pill = `<span class="pill ck-${c.call}" title="${escapeHtml(tip)}">${lbl}</span>`;
+    // When there is no cohort the PILL already says so — repeating it on the split line just
+    // renders "no cohort no cohort". The line carries the reason only when it adds one (a cohort
+    // that exists but is too small to take a median over), and is otherwise empty.
+    const split = (c.median == null || c.residual == null)
+      ? (c.peers ? `<span class="muted">only ${c.peers} screened peers</span>` : "")
+      : `<span class="ck-k">coh</span><b>${fmtPct(c.median, { signed: true })}</b>`
+        + `<span class="ck-sep">·</span><span class="ck-k">own</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
+    const key = c.key ? ` · cohort: ${c.key} (${c.peers} screened peers)` : "";
+    return `<td class="ck-cell" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}${escapeHtml(key)}">`
+      + `<div class="ck-top">${raw}${pill}</div><div class="ck-split">${split}</div></td>`;
+  };
   // 3d: character qualitatively — its sub-signals (sharp-discrete vs grind/bleed, gap count, recency)
   // are translatable, so lead with the interpretable form; 0–1 sub-score + full read on hover.
   const charCell = (r) => {
@@ -271,7 +314,7 @@ function renderRows() {
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>
-        ${rawCell(r, "idiosyncrasy")}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}${evidenceCell(r)}
+        ${idioCell(r)}${rawCell(r, "depth")}${charCell(r)}${multCell(r)}${volCell(r)}${evidenceCell(r)}
         <td class="num">${fmtMoney(r.advUsd)}</td>
         <td class="num">${r.marketCap == null ? `<span class="muted">${DASH}</span>` : fmtMoney(r.marketCap)}</td>
       </tr>`;

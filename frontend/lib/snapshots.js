@@ -147,6 +147,10 @@ export async function getRankedQueue() {
       // run (it is computed from bars in eod/features), so it stays null until the weekly job next
       // re-screens — the queue cell degrades to the bare ratio, which is the pre-sparkline state.
       volumeTrend: Array.isArray(r.volume_trend) ? r.volume_trend : null,
+      // THE COHORT SPLIT — how much of the fall was the name's INDUSTRY's and how much its own.
+      // Inform-only, attached by the queue writer AFTER ranking; it never re-orders anything.
+      // null on a snapshot written before 2026-08-25, so the cell falls back to the bare number.
+      cohort: r.cohort ?? null,
       // the evidence strip — inform-only context composed by the WRITER (vinci/evidence.py), null
       // when nothing is known for the name or the snapshot predates the field
       context: r.context ?? null,
