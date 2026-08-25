@@ -12,11 +12,14 @@ const COLS = [
   { key: "industry", label: "Industry" },  // resolved label (CIQ-GICS overlay > official SIC) — inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
-  { key: "idiosyncrasy", label: "Idio — industry vs name",
+  // `num` stays TRUE: the cell still leads with the same right-aligned mono percentage it always
+  // did, and dropping the flag left this one header left-aligned in a row of right-aligned numeric
+  // headers (`table.data th.num`) while the figure beside Depth lost `var(--mono)`.
+  { key: "idiosyncrasy", label: "Idio — industry vs name", num: true,
     title: "The name against the market benchmark, split into its INDUSTRY cohort's "
          + "median move and what is left over, which is the name's own. Inform-only: the split "
          + "never re-orders the queue. A call is withheld when the two are within 10 "
-         + "points, and no cohort is formed under 6 screened peers." }, { key: "depth", label: "Depth (52w)", num: true },
+         + "points, and no cohort is formed under 5 screened peers." }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
   // Tier-2, not an axis — sits after the four Tier-1 axes and before the tradeability figures,
   // mirroring the order the subtitle describes the composite in. The header carries the BASIS so
@@ -215,6 +218,13 @@ function renderRows() {
   // PLAIN WORDS ON THE SURFACE. The code's terms are `own` / `cohort`; neither says what it means
   // to someone reading a queue, and shipping them raw broke this repo's own coin-time translation
   // rule. The label states the FINDING, and the tooltip states the arithmetic behind it.
+  //
+  // The JS twin of `vinci.cohort.MIN_PEERS` — display only, used to pick WHICH reason to print for
+  // an empty read. Kept as one named constant rather than a number written into three sentences,
+  // because it was: the first cut said "6" in the header tooltip, the label map and the glossary
+  // while the code's floor was 5, so 11 rows of the committed queue carried a cohort the surface
+  // said could not exist.
+  const COHORT_MIN_PEERS = 5;
   const COHORT_LABEL = {
     own: ["name-specific",
           "Its industry barely moved — this fall is the company's own, which is what an overshoot "
@@ -225,12 +235,22 @@ function renderRows() {
     unresolved: ["too close",
                  "No call is made. The gap between the industry's move and the name's own does "
                  + "not clear BOTH bars it has to: 10 points (below that the read holds only 34% "
-                 + "of the time week to week) and this cohort's own median uncertainty, shown "
-                 + "below."],
+                 + "of the time week to week) and this cohort's own median uncertainty, which is "
+                 + "in the cell's own tooltip."],
     "no-cohort": ["too few peers",
-                  "Fewer than 6 same-industry names in the screened universe — not enough to take "
-                  + "a median over, so no comparison is offered."],
+                  "Fewer than 5 same-industry names in the screened universe — not enough to take "
+                  + "a median over, so no comparison is offered. (An industry the SIC code does "
+                  + "not resolve is never a cohort either, at any size.)"],
   };
+  // A no-cohort read has TWO causes and they are not the same statement. `too few peers` is about
+  // the INDUSTRY; this one is about the NAME — its industry is well populated, the name just is
+  // not in the newest screen log (the queue was ranked off an older candidate snapshot). Two rows
+  // of the committed queue are this case, and both read "too few peers" beside a 12-name cohort
+  // until the pill learned to tell them apart.
+  const NOT_SCREENED = ["not screened",
+                        "This name is not in the latest screen log — the queue was ranked from an "
+                        + "earlier candidate snapshot — so there is no current return to split. "
+                        + "Its industry is not the problem; the cell's tooltip gives its size."];
   const idioCell = (r) => {
     const a = r.axes.idiosyncrasy || {};
     const raw = a.raw == null ? `<span class="muted">${DASH}</span>` : fmtPct(a.raw, { signed: true });
@@ -240,27 +260,42 @@ function renderRows() {
     if (!c) {
       return `<td class="num" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${raw}</td>`;
     }
-    const [lbl, tip] = COHORT_LABEL[c.call] || COHORT_LABEL["no-cohort"];
+    const thin = c.peers < COHORT_MIN_PEERS;
+    const [lbl, tip] = (c.median == null && !thin)
+      ? NOT_SCREENED
+      : (COHORT_LABEL[c.call] || COHORT_LABEL["no-cohort"]);
     const pill = `<span class="pill ck-${c.call}" title="${escapeHtml(tip)}">${lbl}</span>`;
     // When there is no cohort the PILL already says so — repeating it on the split line just
-    // renders "no cohort no cohort". The line carries the reason only when it adds one (a cohort
-    // that exists but is too small to take a median over), and is otherwise empty.
+    // renders "no cohort no cohort". The line carries the reason only when it adds one, and there
+    // are TWO distinct ones the peer count separates: a same-industry set that exists but is too
+    // small to take a median over, versus a name that simply is not in the latest screen log while
+    // its industry is well populated. Saying "only 12 screened peers" for the second would be a
+    // false reason, so each gets its own words.
     const split = (c.median == null || c.residual == null)
-      ? (c.peers ? `<span class="muted">only ${c.peers} screened peers</span>` : "")
+      ? (thin
+          ? `<span class="muted">only ${c.peers} screened peer${c.peers === 1 ? "" : "s"}</span>`
+          : `<span class="muted">${c.peers} peers, name not screened</span>`)
       : `<span class="ck-k">industry</span><b>${fmtPct(c.median, { signed: true })}</b>`
         + `<span class="ck-sep">→</span><span class="ck-k">name</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
     // The tooltip carries the arithmetic AND the cohort's membership, because "industry" is doing
     // a lot of work in one word: it is the SIC industry AS REPRESENTED IN THE SCREENED UNIVERSE,
     // not the true sector — a handful of small caps, not every listed peer. Say which, and how many.
-    const key = c.key
-      ? ` — measured against the ${c.peers} ${c.key} names in the screened universe`
-        + (c.uncertainty == null ? ""
-           : `, whose median is pinned to ±${fmtPct(c.uncertainty)}`)
-        + (c.median == null ? "" : `; the name is ${fmtPct(c.median + c.residual, { signed: true })}`
-           + ` vs the market, its industry ${fmtPct(c.median, { signed: true })}, leaving`
-           + ` ${fmtPct(c.residual, { signed: true })} that is the name's own`)
-      : "";
-    return `<td class="ck-cell" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}${escapeHtml(key)}">`
+    //
+    // "MEASURED AGAINST" IS ONLY TRUE WHEN SOMETHING WAS MEASURED. With no median there is no
+    // comparison, so the phrasing switches to a plain count of what exists — the earlier wording
+    // asserted "measured against the 0 Aircraft names" on all 75 no-cohort rows of the committed
+    // queue, which was both a false count and a claim of a measurement that never happened.
+    const key = !c.key ? ""
+      : c.median == null
+        ? ` — no comparison: ${c.peers} ${c.key} name${c.peers === 1 ? "" : "s"} in the screened `
+          + `universe`
+        : ` — measured against the ${c.peers} ${c.key} names in the screened universe`
+          + (c.uncertainty == null ? ""
+             : `, whose median is pinned to ±${fmtPct(c.uncertainty)}`)
+          + `; the name is ${fmtPct(c.median + c.residual, { signed: true })}`
+          + ` vs the market, its industry ${fmtPct(c.median, { signed: true })}, leaving`
+          + ` ${fmtPct(c.residual, { signed: true })} that is the name's own`;
+    return `<td class="num ck-cell" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}${escapeHtml(key)}">`
       + `<div class="ck-top">${raw}${pill}</div><div class="ck-split">${split}</div></td>`;
   };
   // 3d: character qualitatively — its sub-signals (sharp-discrete vs grind/bleed, gap count, recency)

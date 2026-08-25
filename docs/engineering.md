@@ -126,7 +126,7 @@ PR (CLAUDE.md: coin-time translation).
   what someone said, in order. Home: `vinci/calls/`, `frontend/views/calls/tape.js`.
 - **cohort split / cohort / residual** (#501, 2026-08-25) — splitting a name's fall into its
   INDUSTRY's share and its own. **Cohort** = the same-SIC-industry names *inside the screened
-  universe* (min 6), NOT the market benchmark — IWM is what each name is already measured against,
+  universe* (min 5), NOT the market benchmark — IWM is what each name is already measured against,
   and the cohort median is measured against IWM too. **Residual** = the name's return minus that
   median: what is left after the industry is taken out. The queue says it in plain words —
   *name-specific* / *industry-wide* / *too close* / *too few peers* — and the code calls the first

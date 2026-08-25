@@ -91,6 +91,11 @@ def main() -> int:
              ((RUNS[0], RUNS[1]), "14 days"), ((RUNS[2], RUNS[3]), "10 days"))
     for (a, b), label in pairs:
         common = sorted(set(dec[a]) & set(dec[b]))
+        # FAIL LOUD, never print a divide-by-zero traceback as if the measurement had run. Two runs
+        # with no shared cohorted name means the snapshot set changed under the script, not that
+        # the stability is 0 — say which pair, and stop.
+        if not common:
+            raise SystemExit(f"{label}: {a} and {b} share no cohorted name — the run set changed")
         ra = [dec[a][t][1] for t in common]
         rb = [dec[b][t][1] for t in common]
         flips = sum(1 for x, y in zip(ra, rb, strict=True) if x * y < 0)

@@ -223,7 +223,12 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     # flag can only keep a name down. `--structural` still overrides with a fresh scan, and that
     # scan self-clears a signal that no longer fires.
     structural_flags, carried_causes = carry_forward_assessment(cfg)
-    annotations = annotations or carried_causes
+    # `if not args.cause_file`, NOT `annotations or carried_causes`: an operator who passes a cause
+    # file that annotates NOTHING is clearing the annotations, and a truthiness fallback would
+    # silently resurrect the carried set underneath them — the supplied file having no effect and
+    # saying nothing about it. Explicit file wins, empty or not.
+    if not args.cause_file:
+        annotations = carried_causes
     if args.structural:
         from vinci.edgar.client import EdgarClient
         from vinci.rank import scan_structural
@@ -236,10 +241,10 @@ def _cmd_rank(args: argparse.Namespace) -> int:
                 f"scanning {len(cands)} candidates for structural disqualifiers "
                 f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
             )
-            # `.flags` only: a MANUAL run is the operator asking for this scan's verdict outright,
-            # so there is no prior assessment to preserve. Coverage matters on the SCHEDULED path,
-            # which replaces flags and must not read an unscanned name as clean (orchestrator).
-            # an explicit scan REPLACES the carried set — the operator asked for this verdict
+            # `.flags` only, and it REPLACES the carried set outright: a manual scan is the
+            # operator asking for this scan's verdict, so a stale flag must not be resurrected
+            # underneath a name that now comes back clean. Coverage matters on the SCHEDULED path,
+            # which must not read an unscanned name as clean (orchestrator).
             structural_flags = scan_structural(
                 cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
             ).flags

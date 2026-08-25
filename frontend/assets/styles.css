@@ -1644,17 +1644,25 @@ table.data th.peer-desc-h { text-align: left; }
    is what an overshoot thesis needs), `cohort` as the caution.
    The call is WITHHELD inside a 10-point margin: stability across four snapshots is 96% above 25
    points and 34% below 10, so a near-tie reports unresolved rather than guessing — the same rule
-   `mixed` follows when a two-sided read is the human's to settle. */
+   `mixed` follows when a two-sided read is the human's to settle.
+
+   The cell KEEPS `.num`, so the headline figure stays right-aligned and in --mono like every other
+   numeric column and its header keeps `table.data th.num`. The WORDS inside it — the pill, the
+   industry/name keys, the fallback reason — opt back out to --sans, because a monospaced label
+   reads as data rather than as the plain-English finding it is. */
 .ck-cell { min-width: 196px; }
 .ck-top { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 .ck-top { font-variant-numeric: tabular-nums; }
+.ck-top .pill { font-family: var(--sans); }
 .ck-split {
   display: flex; align-items: center; justify-content: flex-end; gap: 4px;
   margin-top: 2px; font-size: 11px; color: var(--ink-2);
   font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .ck-split b { font-weight: 650; color: var(--ink); }
-.ck-k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+.ck-split .muted { font-family: var(--sans); }
+.ck-k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3);
+        font-family: var(--sans); }
 /* The arrow reads the arithmetic left to right — "its industry did X, leaving Y that is the name's
    own" — so the two numbers are a subtraction rather than an unexplained pair. */
 .ck-sep { padding: 0 1px; }

@@ -31,6 +31,7 @@ from vinci.cohort import (
 )
 from vinci.config import get_config
 from vinci.schemas.cohort import CohortCall
+from vinci.sectors import industry_for_sic
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SNAP = ROOT / "data" / "snapshots"
@@ -224,6 +225,57 @@ def test_cohorts_under_the_floor_are_dropped_not_imputed() -> None:
     assert len(medians_for_run(rel, sic)) == 1
 
 
+def test_the_unresolved_sic_bucket_is_never_a_cohort_at_any_size() -> None:
+    """``industry_for_sic`` returns ``"Unknown"`` for a blank/absent/non-numeric SIC, so that
+    bucket is not an industry — it is every name whose industry could not be READ, pooled. The
+    aggregate coverage guard tolerates 20% unresolved, which at screen scale (~1,750 names) is
+    ~350: far past :data:`MIN_PEERS`. Without an explicit drop the bucket clears the floor, gets a
+    real median, and hands back ``own``/``cohort`` calls measured against a grab-bag — a fabricated
+    analytical value that looks entirely plausible, arriving UNDER the guard written to stop it.
+
+    Sized at what the coverage guard PERMITS, not at MIN_PEERS, so a floor bump cannot quietly
+    retire the pin."""
+    rel = {f"U{i}": -0.4 - i / 100 for i in range(40)}
+    sic: dict[str, str | None] = dict.fromkeys(rel, None)
+    assert medians_for_run(rel, sic) == {}, "the unresolved-SIC bucket was given a median"
+    # a NON-numeric code lands in the same bucket and must be dropped with it
+    rel["JUNK"] = -0.4
+    sic["JUNK"] = "n/a"
+    assert medians_for_run(rel, sic) == {}
+    # ...while a real industry alongside it is still measured, so the drop is targeted
+    for i in range(MIN_PEERS):
+        rel[f"P{i}"] = -0.3
+        sic[f"P{i}"] = "2834"
+    assert list(medians_for_run(rel, sic)) == [industry_for_sic("2834")]
+
+
+def test_an_empty_read_still_says_how_many_peers_there_were() -> None:
+    """``peers`` is the ONLY thing separating the two ways a read comes back empty — "4 screened
+    peers, too few for a median" from "this name is not in the latest screen log". Defaulting it to
+    0 collapsed them: every no-cohort row in the committed queue said ``peers: 0``, and the queue
+    cell rendered "measured against the 0 Aircraft names in the screened universe" for names whose
+    industry has three. A false count is worse than no count."""
+    cfg = get_config()
+    runs = screen_run_files(cfg.snapshots_dir)
+    if not runs:
+        pytest.skip("no committed screen log")
+    sic = sic_by_ticker(cfg.snapshots_dir)
+    latest = relatives_for_run(runs[-1])
+    sizes: dict[str, int] = {}
+    for t in latest:
+        key = industry_for_sic(sic.get(t))
+        sizes[key] = sizes.get(key, 0) + 1
+    thin = [t for t in latest if sizes[industry_for_sic(sic.get(t))] < MIN_PEERS]
+    if not thin:
+        pytest.skip("every screened industry clears the peer floor in this run")
+    read = cohort_reads(cfg.snapshots_dir, sic, tickers=thin[:1])[thin[0]]
+    assert read.call is CohortCall.NO_COHORT
+    assert read.median is None
+    assert 0 < read.peers < MIN_PEERS, (
+        f"a too-few-peers read reported peers={read.peers} — the surface prints this number as "
+        f"the reason no comparison was made, so it must be the real count")
+
+
 # --- the surfaces --------------------------------------------------------------------------------
 
 def test_the_queue_cell_carries_the_split_and_the_header_says_so() -> None:
@@ -261,6 +313,16 @@ def test_the_surface_speaks_plain_words_not_the_code_s_terms() -> None:
             f"same untranslated jargon the label map was fixed for")
     for abbrev in ('class="ck-k">coh<', 'class="ck-k">own<', 'class="ck-k">res<'):
         assert abbrev not in cell, f"{abbrev} is back on the split line"
+
+    # AN EMPTY READ HAS TWO CAUSES AND THEY ARE DIFFERENT STATEMENTS. "too few peers" is about the
+    # INDUSTRY; a name absent from the newest screen log while its industry has twelve members is
+    # about the NAME. Both committed rows of the second kind read "too few peers" beside a 12-name
+    # cohort until the pill branched. Pinned as the BRANCH, not the wording — what must not come
+    # back is one label serving both.
+    assert "COHORT_MIN_PEERS" in cell, (
+        "the cell no longer branches on the peer floor — a name absent from the screen log will "
+        "again be reported as having too few peers")
+    assert "NOT_SCREENED" in cell, "the not-in-the-screen-log read lost its own label"
 
     # the glossary line the coin-time rule requires, so git log answers in either vocabulary
     glossary = (ROOT / "docs" / "engineering.md").read_text()

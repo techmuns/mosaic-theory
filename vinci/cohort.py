@@ -60,6 +60,10 @@ TRAJECTORY_RUNS = 4
 #: Minimum share of the SCREEN LOG a supplied SIC map must resolve before medians are trusted.
 MIN_SIC_COVERAGE = 0.80
 
+#: What :func:`vinci.sectors.industry_for_sic` returns when the SIC is absent/blank/non-numeric.
+#: NOT an industry — a bucket of names whose industry could not be read. Never a cohort.
+UNRESOLVED_INDUSTRY = "Unknown"
+
 
 def sic_by_ticker(snapshots_dir: pathlib.Path) -> dict[str, str | None]:
     """``{ticker: sic}`` from the committed ENTITY MASTER, which covers the whole screened set.
@@ -142,11 +146,21 @@ def relatives_for_run(path: pathlib.Path) -> dict[str, float]:
 
 
 def medians_for_run(relatives: dict[str, float], sic: dict[str, str | None]) -> dict[str, float]:
-    """``{industry: median rel_ret}``. A cohort under :data:`MIN_PEERS` is omitted, not imputed."""
+    """``{industry: median rel_ret}``. A cohort under :data:`MIN_PEERS` is omitted, not imputed.
+
+    :data:`UNRESOLVED_INDUSTRY` is omitted TOO, at any size. ``industry_for_sic`` returns
+    ``"Unknown"`` for a blank/non-numeric/absent SIC, so that bucket is not an industry — it is
+    every name whose industry could not be read, pooled. The coverage guard in
+    :func:`cohort_reads` tolerates up to 20% unresolved, which at screen scale is ~350 names:
+    comfortably past :data:`MIN_PEERS`, so without this line the bucket would take a median over a
+    grab-bag and hand back ``own``/``cohort`` calls against it. That is the fabricated-value class
+    the module docstring forbids, just under the aggregate guard's threshold. No median, no call.
+    """
     grouped: dict[str, list[float]] = {}
     for ticker, value in relatives.items():
         grouped.setdefault(industry_for_sic(sic.get(ticker)), []).append(value)
-    return {k: statistics.median(v) for k, v in grouped.items() if len(v) >= MIN_PEERS}
+    return {k: statistics.median(v) for k, v in grouped.items()
+            if len(v) >= MIN_PEERS and k != UNRESOLVED_INDUSTRY}
 
 
 def _call(median: float, residual: float, uncertainty: float) -> CohortCall:
@@ -212,9 +226,17 @@ def cohort_reads(
         key = industry_for_sic(sic_map.get(ticker))
         value = latest.get(ticker)
         median = current.get(key)
+        # `peers` is carried on EVERY read, NO_COHORT included. It is the whole difference between
+        # the two ways a read can be empty — "4 screened peers, too few to take a median over" and
+        # "this name never reached the gates" — and leaving it at 0 collapsed them: all 75
+        # no-cohort rows in the committed queue said `peers: 0`, which the queue cell then rendered
+        # as "measured against the 0 Aircraft names in the screened universe" for names that have
+        # three. Counted off `members`, which is already grouped, rather than re-deriving the
+        # industry of all ~1,750 screened names once per queue row.
+        peers = len(members.get(key, ()))
         if value is None or median is None:
             # NOT a failure: too few peers, or the name never reached the gates. Say so and stop.
-            out[ticker] = CohortRead(key=key, call=CohortCall.NO_COHORT)
+            out[ticker] = CohortRead(key=key, call=CohortCall.NO_COHORT, peers=peers)
             continue
         residual = value - median
         spread: float = uncertainty.get(key, float("inf"))
@@ -225,7 +247,7 @@ def cohort_reads(
             median=median,
             residual=residual,
             margin=abs(median) - abs(residual),
-            peers=sum(1 for t in latest if industry_for_sic(sic_map.get(t)) == key),
+            peers=peers,
             trajectory=[m[key] for m in medians if key in m],
         )
     return out
