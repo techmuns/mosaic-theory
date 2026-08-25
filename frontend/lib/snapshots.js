@@ -689,6 +689,69 @@ export async function getProcessedStates() {
   };
 }
 
+// --- the CALLS TAPE (one X account per directory) -----------------------------
+// Everything is namespaced by HANDLE so a second account is a directory drop, never a code change.
+// The month files and per-ticker bars are the only large payloads here, so both are fetched lazily
+// and memoised per key — a browse across one month must not pull 2.6 MB of posts or 6 MB of bars.
+const CALLS = "./calls";
+
+// getCallAccounts() -> { default, accounts:[{handle, display, first, last, n_posts, ...}] }
+export async function getCallAccounts() {
+  return _once("calls-accounts", () => _json(`${CALLS}/accounts.json`));
+}
+
+// getCallDays(handle) -> { "YYYY-MM-DD": {n, tk[], lab, sig} }  — drives the calendar + timeline
+export async function getCallDays(handle) {
+  return _once(`calls-days-${handle}`, () => _json(`${CALLS}/${handle}/days.json`));
+}
+
+// getCallPosts(handle, "YYYY-MM") -> [{id, t, d, txt, tk[], v, p, q, lk, vw, url}]
+export async function getCallPosts(handle, month) {
+  return _once(`calls-posts-${handle}-${month}`, () => _json(`${CALLS}/${handle}/posts/${month}.json`));
+}
+
+// getCallLabels(handle) -> { "<tweet_id>|<TICKER>": {bias, action, target, target_type, hlo, hhi,
+//                                                    spec, src, needs_review, post_class} }
+export async function getCallLabels(handle) {
+  return _once(`calls-labels-${handle}`, () => _json(`${CALLS}/${handle}/labels.json`));
+}
+
+// getCallTickers(handle) -> { renamed:{OLD:NEW|null}, tickers:[{ticker, mentions, ...}] }
+export async function getCallTickers(handle) {
+  return _once(`calls-tickers-${handle}`, () => _json(`${CALLS}/${handle}/tickers.json`));
+}
+
+// getCallBars(handle, ticker) -> [{d, o, h, l, c, v}]  (chronological; [] when the symbol has none)
+// A DELISTED OR RENAMED SYMBOL RESOLVES TO [], NEVER A THROW: three of this account's tickers carry
+// no bars at all (BRKB, DOGE, SPX), and the chart pane must render an empty state rather than take
+// the screen down — the reader is mid-labelling and would lose their place.
+export async function getCallBars(handle, ticker) {
+  return _once(`calls-bars-${handle}-${ticker}`, async () => {
+    try {
+      const raw = await _json(`${CALLS}/${handle}/bars/${ticker}.json`);
+      // STRUCTURED VALUES, not display strings: the file stores compact rows
+      // [iso, open, high, low, close, volume] to keep 214 tickers off the wire as repeated keys.
+      return (raw.bars || []).map((r) => ({ d: r[0], o: r[1], h: r[2], l: r[3], c: r[4], v: r[5] }));
+    } catch (e) {
+      if (e && e.status === 404) return [];
+      throw e;
+    }
+  });
+}
+
+// getCallResults(handle) -> Map("<tweet_id>|<TICKER>" -> scored row)  — written by `vinci calls score`
+export async function getCallResults(handle) {
+  return _once(`calls-results-${handle}`, async () => {
+    try {
+      const rows = await _jsonl(`${CALLS}/${handle}/results.jsonl`);
+      return new Map(rows.map((r) => [`${r.tweet_id}|${r.ticker}`, r]));
+    } catch (e) {
+      if (e && e.status === 404) return new Map();
+      throw e;
+    }
+  });
+}
+
 // --- internal date helpers (UTC-safe) ----------------------------------------
 function _addDays(iso, days) {
   if (!iso || typeof days !== "number") return null;

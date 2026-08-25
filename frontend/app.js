@@ -63,6 +63,18 @@ const EDGES = [
     ],
   },
   {
+    key: "calls", label: "Calls tape", state: "live",
+    stages: [
+      { route: "calls", label: "Tape",
+        does: "One screen over a public account's posted calls — calendar, posts and chart in three panes, keyboard-driven. A LABELLING tool: machine labels render as guesses, hand labels as ground truth. Research input only; it gates nothing." },
+      { route: "calls/scoreboard", label: "Scoreboard", state: "conditional",
+        cond: {
+          what: "Hit-rate, excess return and target-touch aggregates over the labelled calls.",
+          trigger: "Conditional · unlocks at ~500 hand labels. Below that any headline number is dominated by the machine labeller's 55%-accurate bias calls, so it would describe the model, not the author.",
+        } },
+    ],
+  },
+  {
     key: "neglected", label: "Neglected", state: "locked", route: "screen-neglected",
     lock: {
       what: "Surfaces orphaned / under-covered (“neglected”) names — its own edge, where mispricing is neglect rather than overreaction.",
@@ -101,6 +113,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  calls: () => import("./views/calls/tape.js"),
 };
 
 // Every routable item: shared + each live edge's stages + each locked edge's own

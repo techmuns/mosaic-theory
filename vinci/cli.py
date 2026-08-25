@@ -1719,6 +1719,64 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     return 0
 
 
+# --- calls tape ---------------------------------------------------------------
+def _cmd_calls_accounts(args: argparse.Namespace) -> int:
+    """Rebuild data/calls/accounts.json from each account's own meta.json (derived, idempotent)."""
+    from vinci.calls.accounts import rebuild_accounts
+    idx = rebuild_accounts(default=getattr(args, "default", None))
+    print(f"default: {idx.default}")
+    for a in idx.accounts:
+        print(f"  {a.display:<22} {a.first}..{a.last}  posts={a.n_posts:>6}  "
+              f"tracked={a.n_tracked:>4}  hand={a.n_hand_labels:>4}  "
+              f"machine={a.n_machine_labels:>6}")
+    return 0
+
+
+def _cmd_calls_bars(args: argparse.Namespace) -> int:
+    """Fetch each tracked ticker's Polygon window into data/calls/<handle>/bars/.
+
+    SERVER-SIDE ONLY. The key is read from the environment and never leaves this process; the
+    browser reads the committed files, never Polygon.
+    """
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.bars import fetch_account_bars
+    handle = load_accounts().get(args.account).handle
+    only = set(args.only.split(",")) if args.only else None
+
+    def _prog(i: int, tot: int, sym: str, n: int) -> None:
+        print(f"  {i:>4}/{tot}  {sym:<8} {n:>5} bars", flush=True)
+
+    counts = fetch_account_bars(handle, only=only, on_progress=_prog)
+    empty = sorted(t for t, c in counts.items() if c == 0)
+    print(f"{handle}: {len(counts)} tickers, {sum(counts.values()):,} bars")
+    if empty:
+        print(f"  no bars (delisted / renamed / index): {', '.join(empty)}")
+    return 0
+
+
+def _cmd_calls_score(args: argparse.Namespace) -> int:
+    """Score an account's directional calls against the committed bars.
+
+    The printed counts are an OPERATOR RUN SUMMARY, not a published aggregate — see
+    vinci/calls/run.py on why no hit-rate reaches the dashboard until the hand set is large.
+    """
+    import collections
+
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.run import score_account, write_results
+    handle = load_accounts().get(args.account).handle
+    res = score_account(handle, only_hand=args.hand_only)
+    out = write_results(handle, res, hand_only=args.hand_only)
+    by = collections.Counter(r.status for r in res)
+    print(f"{handle}: scored {len(res)} directional calls -> {out}")
+    for k in ("CLOSED", "OPEN", "NO_PRICE_DATA", "NO_ENTRY_BAR"):
+        if by.get(k):
+            print(f"  {k:<14} {by[k]:>5}")
+    tgt = collections.Counter(r.target_status for r in res if r.target_status)
+    print("  target: " + "  ".join(f"{k}={v}" for k, v in sorted(tgt.items())))
+    return 0
+
+
 def _cmd_audit_spot(args: argparse.Namespace) -> int:
     """SPOT audit — every committed record's spot against the bar it claims to be. READ-ONLY.
 
@@ -3457,6 +3515,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_spot = audit_sub.add_parser(
         "spot", help="every record's spot against the bar it claims to be (read-only; notes print)")
     p_spot.set_defaults(func=_cmd_audit_spot)
+
+    p_calls = sub.add_parser("calls", help="the calls tape — score a public account's stated calls")
+    calls_sub = p_calls.add_subparsers(dest="calls_what", required=True)
+    p_ca = calls_sub.add_parser("accounts", help="rebuild the account index from each meta.json")
+    p_ca.add_argument("--default", help="handle that opens by default")
+    p_ca.set_defaults(func=_cmd_calls_accounts)
+    p_cb = calls_sub.add_parser("fetch-bars", help="fetch Polygon daily bars for tracked tickers")
+    p_cb.add_argument("--account", help="handle (default: the index's default)")
+    p_cb.add_argument("--only", help="comma-separated tickers, instead of all tracked")
+    p_cb.set_defaults(func=_cmd_calls_bars)
+    p_cs = calls_sub.add_parser("score", help="score labelled calls against the committed bars")
+    p_cs.add_argument("--account", help="handle (default: the index's default)")
+    p_cs.add_argument("--hand-only", action="store_true", dest="hand_only",
+                      help="score only human-labelled rows")
+    p_cs.set_defaults(func=_cmd_calls_score)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

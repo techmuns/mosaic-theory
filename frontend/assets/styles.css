@@ -1482,3 +1482,103 @@ table.data th.peer-desc-h { text-align: left; }
 .main { min-width: 0; }
 .card pre { overflow-x: auto; }
 
+
+/* --- CALLS TAPE ----------------------------------------------------------------------------- */
+/* One screen, three panes. `.main` caps at 1180px for reading-width screens; the tape is a
+   cockpit and needs the window, so it opts out rather than the cap being lifted for everyone. */
+.main:has(.ct-panes) { max-width: none; }
+.ct-bar { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-bottom: 9px; }
+.ct-bar .filter-select { padding: 5px 8px; font-size: 12px; }
+.ct-bar .chip { padding: 3px 9px; cursor: pointer; }
+.ct-hot { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent-strong); font-weight: 600; }
+.ct-right { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--ink-3); }
+.ct-count b { color: var(--ink); font-size: 13px; }
+.ct-exp { padding: 4px 11px; border: 1px solid var(--line-2); border-radius: 7px; background: var(--surface);
+  color: var(--ink); font: 11.5px var(--sans); cursor: pointer; }
+.ct-exp:hover { border-color: var(--accent); color: var(--accent); }
+.ct-strip { padding: 7px 11px 4px; margin-bottom: 11px; }
+.ct-strip-in { display: flex; gap: 2px; align-items: flex-end; height: 44px; }
+.ct-mo { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; cursor: pointer; }
+.ct-mo-b { width: 100%; background: var(--line-2); border-radius: 2px 2px 0 0; }
+.ct-mo.on .ct-mo-b, .ct-mo:hover .ct-mo-b { background: var(--accent); }
+.ct-mo-l { font-size: 8px; color: var(--ink-3); font-family: var(--mono); }
+.ct-mo.on .ct-mo-l { color: var(--accent); }
+.ct-panes { display: grid; grid-template-columns: 296px 400px minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (max-width: 1500px) { .ct-panes { grid-template-columns: 260px 360px minmax(0, 1fr); } }
+@media (max-width: 1180px) { .ct-panes { grid-template-columns: 1fr; } }
+#ct-posts { display: flex; flex-direction: column; gap: 8px; max-height: 78vh; overflow-y: auto; }
+#ct-chart { display: flex; flex-direction: column; gap: 10px; }
+
+/* calendar */
+.cal-card { padding: 11px 12px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.cal-nav { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 11px; padding: 2px 4px; }
+.cal-nav:hover { color: var(--accent); }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }
+.cal-dow div { font-size: 8.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 700; text-align: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-cell { min-height: 38px; border: 1px solid var(--line); border-radius: 4px; padding: 3px 4px;
+  display: flex; flex-direction: column; cursor: pointer; }
+.cal-cell:hover { border-color: var(--accent); }
+.cal-n { font-size: 9px; font-family: var(--mono); opacity: 0.8; line-height: 1.1; }
+.cal-c { font-size: 12px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.cal-dots { display: flex; gap: 2px; margin-top: auto; }
+.cal-dot { width: 4px; height: 4px; border-radius: 50%; display: inline-block; }
+.cal-key { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px; font-size: 10px; color: var(--ink-3); }
+
+/* posts */
+.pcard { border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; background: var(--surface); cursor: pointer; }
+.pcard.pfocus { border-color: var(--accent-border); box-shadow: inset 3px 0 0 var(--accent); }
+.phead { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.ptime, .peng { font-size: 10.5px; color: var(--ink-3); }
+.peng { margin-left: auto; }
+.plink { font-size: 10.5px; }
+.ptxt { font-size: 12px; line-height: 1.5; color: var(--ink); white-space: pre-wrap; }
+.pchips { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+/* THREE CHIP STATES, and the difference between them is the point: a machine label is a 55%-accurate
+   guess and must never be mistaken for a human's decision. */
+.lchip { display: inline-flex; align-items: center; gap: 5px; font: 11px var(--sans);
+  padding: 3px 8px; border-radius: 999px; cursor: pointer; background: transparent; }
+.lchip.lc-none { border: 1px solid var(--line-2); color: var(--ink-3); }
+.lchip.lc-machine { border: 1px dashed var(--line-2); color: var(--ink-3); }
+.lchip.lc-hand { border: 1px solid var(--lc, var(--pos-border)); color: var(--lc, var(--pos-text));
+  background: color-mix(in srgb, var(--lc, var(--pos-text)) 10%, var(--surface)); font-weight: 600; }
+.lchip.lc-focus { box-shadow: 0 0 0 2px var(--accent-bg), 0 0 0 3px var(--accent); }
+
+/* inline editor */
+.ed { margin-top: 9px; border-top: 1px solid var(--line); padding-top: 9px; display: flex; flex-direction: column; gap: 7px; }
+.ed-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.ed-l { font-size: 9.5px; width: 44px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.ed-seg { display: flex; gap: 4px; flex-wrap: wrap; }
+.ed-b { font: 11px var(--sans); padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line-2);
+  background: transparent; color: var(--ink-3); cursor: pointer; }
+.ed-b.on { background: var(--live-bg); border-color: var(--pos-border); color: var(--pos-text); font-weight: 600; }
+.ed-b kbd { font-family: var(--mono); font-size: 9px; opacity: 0.65; margin-left: 4px; }
+.ed-i { padding: 3px 7px; font-size: 11.5px; }
+.ed-sm { width: 82px; } .ed-xs { width: 54px; } .ed-d { color: var(--ink-3); font-size: 11px; }
+.ed-note { font-size: 10px; color: var(--ink-3); }
+.ed-ck { padding: 3px 9px; cursor: pointer; gap: 5px; }
+
+/* chart + readout */
+.chart-card { padding: 10px 12px 12px; }
+.chart-h { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11.5px; color: var(--ink-3); }
+.chart-h b { font-size: 14px; color: var(--ink); }
+.chart-bar { width: 3px; height: 15px; background: var(--accent); border-radius: 2px; }
+.chart-follow { margin-left: auto; }
+.rd-card { padding: 11px 13px; }
+.rd-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.rd-why { font-size: 11.5px; color: var(--ink-2); }
+.rd-head .gt { margin-left: auto; }
+.rd-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.rd-s { flex: 1; min-width: 78px; }
+.rd-l { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 700; margin-bottom: 2px; }
+.rd-v { font-size: 15px; font-weight: 650; line-height: 1.1; }
+.rd-sub { font-size: 9.5px; color: var(--ink-3); }
+
+/* the persistent key hint bar */
+.ct-hints { margin-top: 12px; padding: 7px 12px; background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r); display: flex; gap: 16px; align-items: center; font-size: 11px; flex-wrap: wrap; color: var(--ink-3); }
+.ct-hints kbd { font-family: var(--mono); font-size: 10px; background: var(--surface); border: 1px solid var(--line-2);
+  border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; margin-right: 2px; color: var(--ink-2); }
+.ct-hint-r { margin-left: auto; }

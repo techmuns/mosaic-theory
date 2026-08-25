@@ -3351,6 +3351,71 @@ Each line: *what it does* — *verified how*.
     wide tables; measured 13px of page scroll before, 0 after, with the wrapper scrolling instead.
     Pinned — the next column added here cannot silently re-break the page.
 
+- **THE CALLS TAPE — scoring a public commentator's stated calls, and a parser that had been
+  swallowing its own failures** (`vinci/calls/`, `frontend/views/calls/tape.js`, PR *calls-tape*).
+  A RESEARCH INPUT ONLY: it touches no screen, ranker, ledger or spread, and gates nothing. The
+  build carries four decisions the operator made explicitly after a design review.
+  - **THE DEFECT.** `tracker.py`'s `parse_target` took `s.split("-")[0]` as the first number, so a
+    target written with a leading minus began with the empty string, `float("")` raised, and a bare
+    `except Exception: return None` swallowed it. Every negative percentage therefore scored as *"the
+    author named no target"* — indistinguishable downstream from a post that genuinely named none.
+    **Measured on the corpus: 40 of 628 pct targets begin with a minus; 13 carry a bias agreeing with
+    the sign and were resolvable all along.** One of them, $HIMS `-30%` of 2025-12-22, was actually
+    TOUCHED — a correct call scored as an absent one. — *verified by running the OLD and NEW parsers
+    over all 3,433 named targets in the committed corpus: 13 newly resolved, **0 prices moved**, and
+    the 347 newly-refused rows are all `no_bias`, which tracker.py never scored anyway because it
+    filters to bullish/bearish before parsing. The regression tests go RED on the old extraction
+    (7 of 15 fail) and green on the fix.*
+  - **Every non-resolution now carries a REASON** (`absent` / `qualitative` / `sign_conflict` /
+    `no_bias` / `no_entry` / `unparseable`). The bug was never only the regex: it was five different
+    facts about the author collapsing into one silent `None`.
+  - **A stated direction that contradicts the stated bias is REFUSED, not coerced.** $QQQ of
+    2026-02-13 is `bias=bullish` with `target=-10-15%` — the post calls that drawdown the downside
+    branch *if* his signals flip. Forcing it through the bullish formula invents a target 10% ABOVE
+    entry, a number the author never wrote. This is the spec's "worst case flips polarity with his
+    position" trap, met at the parser rather than downstream. 21 rows.
+  - **THE CONVENTIONS ARE UNCHANGED, and that is load-bearing.** Entry is the OPEN of the next
+    trading day (never the post-day close — look-ahead that manufactures alpha out of the author's
+    own timing); returns are signed by bias; an unelapsed horizon is OPEN and excluded; the 63-day
+    default is FLAGGED wherever applied; SPY is the benchmark, and both legs end on the COMMON LAST
+    BAR (`vinci/eod/features.py`'s lesson, ported deliberately). — *verified by transcribing
+    tracker.py's main loop line-for-line and running BOTH over the same Polygon bars: **73 of 76
+    hand-labelled calls identical, 3 differing only on `target_px`/`target_hit`** — exactly the
+    authorised fix, nothing else.*
+  - **ACCOUNTS ARE DATA** (`vinci/calls/accounts.py`). One directory per handle under `data/calls/`,
+    an index DERIVED from each account's own `meta.json` so it cannot drift, and every read in the
+    view namespaced by handle. Adding a second voice is a directory drop plus `vinci calls accounts`
+    — no route, view or schema change. The selector is built from the index, not hardcoded.
+  - **ONE SCREEN, NOT THREE** (operator decision, overriding the first design). Calendar, posts and
+    chart are three panes of a single view; keys move FOCUS (day → post → cashtag) and the chart
+    re-draws for whatever is focused. The URL still carries the full selection so a call is
+    linkable, but it is written with `history.replaceState` — assigning `location.hash` fires
+    `app.js`'s router, which re-renders all of `#main` and would tear the screen down on every
+    keystroke. **A labelling tool that loses your place every few seconds does not get used.**
+  - **Candles landed in `lib/exhibit.js` WITH their consumer**, per that file's own standing rule
+    ("Not shipped unused"; extension points ship "when a real consumer lands — not before"). A pin
+    enforces it: `test_calls_exhibit.py` fails if the primitive exists with no view drawing candles.
+    `candleDomain` deliberately does NOT floor at zero the way `lineDomain` does — zero is
+    meaningful for a margin, not for a price — and it pins an out-of-range target into view, so a
+    chart cannot imply the target was never approached by leaving it off the axis.
+  - **PRICES ARE FETCHED SERVER-SIDE, and the spec asked otherwise.** `APP_SPEC.md` has the page
+    call Polygon on chart open; that would put `POLYGON_API_KEY` into client JavaScript and break
+    the read-only mirror discipline stated twice in the code. Bars are pulled by
+    `vinci calls fetch-bars`, committed, and mirrored — the path every other number on the
+    dashboard already takes. Cost, stated on the page: prices are as of the last fetch, not live.
+  - **NO AGGREGATE IS PUBLISHED.** At 83 hand labels against 8,102 machine ones, a headline
+    hit-rate would describe the 55%-accurate labeller, not the author. The Scoreboard ships as a
+    `conditional` stage — the app's existing vocabulary for "built when its trigger fires" — with
+    the trigger stated on the page: ~500 hand labels.
+  - *Real runs: 214 tickers fetched (95,592 bars; 3 empty — BRKB/DOGE/SPX, delisted or an index);
+    3,889 directional calls scored (3,375 CLOSED, 349 OPEN, 154 NO_PRICE_DATA, 11 NO_ENTRY_BAR);
+    browser-verified at 1760px with every rendered readout value checked against `results.jsonl`
+    field-by-field, and all five overlays asserted present in the emitted SVG.*
+  - **Two defects found by that browser pass, both fixed:** a deep link
+    (`#/calls/<h>/<date>/TSLA/<id>`) opened the right DAY and then focused whatever was first, so a
+    shared link pointed at the wrong chart silently; and the label chip prefixed `$` onto every
+    target, rendering `$+12.33%` — a currency mark on a relative move.
+
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **The fossils call the graph "the differentiator." That is wrong, and recorded honestly here:**

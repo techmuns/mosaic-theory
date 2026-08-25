@@ -2,6 +2,19 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "calls-tape",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8944",
+        "--directory",
+        "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/adoring-heisenberg-d54179/frontend"
+      ],
+      "port": 8944,
+      "autoPort": false
+    },
+    {
       "name": "layout-study",
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": [

@@ -107,6 +107,55 @@ export const EXHIBIT = Object.freeze({
   margin: "18px 0 16px",  // .ds-exhibit vertical rhythm
 });
 
+// ---- CANDLES (OHLC) ----
+// Added 2026-08-25 for the calls tape, WITH its consumer (views/calls/tape.js) — this module's
+// standing rule is that an extension point ships when a real consumer lands, never speculatively.
+//
+// WHY A PRICE DOMAIN IS NOT `lineDomain`. lineDomain floors at zero because zero is a meaningful
+// threshold for a MARGIN or a RETURN. For a price it is not: flooring TSLA's $290–$430 range at 0
+// spends 67% of the panel on empty space below anything that ever traded, and the candle bodies
+// collapse into a smear. candleDomain zooms to the observed high/low — which is also why it takes
+// the HIGHS and LOWS rather than the closes: a wick that pokes outside the axis is a lie about the
+// day's range, and clipping it silently is exactly the kind of fabrication this file forbids.
+export function candleDomain(highs, lows, { padFrac = 0.06, minPad = 0, include = [] } = {}) {
+  // `include` pins extra levels into view — a stated price target above the range must be VISIBLE,
+  // otherwise the chart quietly implies the target was never approached.
+  const e = extent([...(highs || []), ...(lows || []), ...(include || [])]);
+  if (!e) return null;
+  const [lo, hi] = e;
+  const pad = Math.max((hi - lo) * padFrac, minPad);
+  return { lo: lo - pad, hi: hi + pad };
+}
+
+// Per-bar geometry for a candle series. Returns ONE entry per input index, `null` where the bar is
+// incomplete — a gap stays a gap (never bridged, never carried forward from the previous bar).
+// Emits no markup: callers own their SVG, as every other exhibit here does.
+export function candles(opens, highs, lows, closes, { sx, sy, width = 3 } = {}) {
+  const n = Math.max(opens?.length || 0, closes?.length || 0);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const o = opens?.[i], h = highs?.[i], l = lows?.[i], c = closes?.[i];
+    if ([o, h, l, c].some((v) => v == null || !Number.isFinite(v))) { out.push(null); continue; }
+    const x = sx(i), top = sy(Math.max(o, c)), bot = sy(Math.min(o, c));
+    out.push({
+      i, x, up: c >= o,
+      bodyX: x - width / 2, bodyW: width,
+      bodyY: top,
+      // A doji (open === close) has zero height and would render as nothing at all; give it the
+      // hairline a reader expects to see, rather than a hole in the series.
+      bodyH: Math.max(bot - top, 0.9),
+      wickY0: sy(h), wickY1: sy(l),
+    });
+  }
+  return out;
+}
+
+// Candle width from the plot width and the bar count, so a 60-session window and a 315-session one
+// use the same call. Never below a hairline: a sub-pixel body is invisible, and an invisible datum
+// reads as an absent one.
+export const candleWidth = (plotWidth, count, { fill = 0.62, min = 1.2 } = {}) =>
+  Math.max(min, (plotWidth / Math.max(count, 1)) * fill);
+
 // ---- label placement ----
 // Anchor a value beside a marker on the roomier side of its panel midpoint (avoids running off-panel).
 export const labelAnchor = (px, mid) => (px < mid ? "start" : "end");
