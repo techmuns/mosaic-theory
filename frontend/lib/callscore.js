@@ -111,6 +111,15 @@ export function scoreCall({ tweetId, ticker, posted, bias, target, targetType,
   }
   const hz = horizonHi || horizonLo || DEFAULT_HORIZON_DAYS;
   const assumed = !(horizonHi || horizonLo);
+  // MIRRORS score.py's horizon guard. The Horizon boxes in the tape take free text, so hz can
+  // arrive negative, fractional or non-numeric. `winAll[hz]` is then `undefined` and reading
+  // `.c` off it throws — inside an awaited paint, which leaves the chart pane stuck on "Drawing…"
+  // with the bad value already persisted to localStorage, so a reload reproduces it. Refused by
+  // name instead, and by the same rule the CLI uses, so the two cannot disagree about the row.
+  if (!Number.isInteger(hz) || hz <= 0) {
+    return { ...base, status: "BAD_HORIZON",
+             detail: `horizon must be a positive whole number of trading days, got ${JSON.stringify(hz)}` };
+  }
   const tp = parseTarget(target, targetType, entry, bias);
   const sign = signOf(bias);
   const winAll = bars.filter((b) => b.d >= entryDate);

@@ -3659,6 +3659,44 @@ Each line: *what it does* — *verified how*.
       when the line that makes it work is deleted, which is the failure mode that occurred (the
       guard was never written). — *all three mutation-tested: removing each guard reddens its pin.*
       Recorded as accepted weaker-layer coverage rather than dressed up as e2e.
+  - **NINTH PASS (2026-08-25) — SECOND CODE REVIEW, four defects fixed.** All four sit on the HAND
+    path, which is the path the tape exists to grow.
+    - **A NEGATIVE HORIZON WAS INDEXED BACKWARDS AND SCORED CLOSED.** `hz` reaches `win_all[hz]`
+      unvalidated, and Python does not raise on a negative index — it returns a bar counted from the
+      END of the fetched series. Shown on real bars: `horizon_hi = -5` produced `status: CLOSED`,
+      `exit_date 2025-02-05`, `ret +33.7%` and `horizon_days: -5`, straight into the aggregates; a
+      FRACTIONAL `hz` raised `TypeError` and took the whole `calls score` run down instead. Not
+      reachable from the machine labeller — reachable from a hand label, because the tape's Horizon
+      boxes take free text, `exportJsonl` carries it verbatim and `import-labels` writes it through
+      unchallenged. Refused by name now (`BAD_HORIZON`) in **both** the scorer and the JS twin, and
+      the tape coerces a clean positive whole number while KEEPING anything else verbatim so the
+      readout names it rather than the typo being silently discarded (`Number("abc")` used to become
+      `NaN`, fall through the `or` chain, and score at the 63-day default flagged **STATED**).
+      — *pinned `tests/test_calls_score.py`, red on the old code for all six shapes; the corpus
+      re-scores byte-identical (3,889 rows), so no committed number moved.*
+    - **IN THE BROWSER THE SAME VALUE WEDGED THE SCREEN.** `winAll[-5]` is `undefined`, reading
+      `.c` off it threw inside the awaited `paint()`, so the chart pane stayed on "Drawing…" and
+      `wire()` / `wireCrosshair()` / `writeUrl()` never ran — and because the patch is persisted to
+      `localStorage`, a reload reproduced it. Closed by the same guard.
+    - **A PRICE PANEL WITH NO READABLE LEVEL ON IT.** The gridline ladder started at `1`, so any
+      window whose padded span held no whole dollar drew no gridlines and **no y-axis labels at
+      all**. Measured on the committed bars: 53 sampled windows, all on names between $3 and $5
+      ($BB, 2025-08-25, 3.67–3.97). Ladder now goes down to 0.01, labels carry the matching
+      precision, and multiples are counted rather than accumulated so 0.05 cannot drift into
+      `4.050000000000001`. Above $1 the steps are unchanged.
+    - **THE CALENDAR'S LABEL DOT NEVER MOVED AFTER AN IMPORT.** `days.json`'s `lab` is the only
+      thing that dot reads and nothing in this repo regenerates the file (the corpus is produced
+      upstream), so `import-labels` landed the labels, updated `meta.json`'s totals, and left every
+      day showing its pre-import tally — the operator browses back to the month they just worked and
+      the tool says they never labelled it. `import_labels` now DERIVES the per-day tally from
+      `labels.json` + the post dates, so it cannot drift from what was merged. — *pinned against the
+      real corpus (`tests/test_calls_ingest.py`): 2024-08-01 goes 0 → 1 and the per-day tallies
+      still sum to `meta.n_hand_labels`.* The CLI's post-import advice also now names
+      `vinci calls accounts`, which is what refreshes the hand-label count the toolbar reads.
+    - **ALSO:** `focusPost()` was being called once per chart marker, and it re-filters the whole
+      open month through `chipPasses` → `reviewReasons` each time (up to 47 full scans per draw on a
+      screen whose point is keystroke throughput) — hoisted out of the loop; and the Horizon inputs'
+      `value=` is now escaped, since they can hold operator free text.
 
 
 

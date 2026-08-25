@@ -51,7 +51,7 @@ class CallResult(BaseModel, frozen=True):
     ticker: str
     posted: date
     bias: str
-    status: str                      # CLOSED | OPEN | NO_PRICE_DATA | NO_ENTRY_BAR
+    status: str                      # CLOSED | OPEN | NO_PRICE_DATA | NO_ENTRY_BAR | BAD_HORIZON
     detail: str = ""
 
     entry: float | None = None
@@ -145,6 +145,18 @@ def score_call(
 
     hz = horizon_hi or horizon_lo or DEFAULT_HORIZON_DAYS
     assumed = not (horizon_hi or horizon_lo)
+    # A HORIZON IS AN OFFSET, AND PYTHON WILL HAPPILY INDEX BACKWARDS WITH IT. `win_all[hz]` on a
+    # NEGATIVE hz returns a bar counted from the END of the series — a horizon of -5 scored CLOSED
+    # with an `exit_date` five bars before the last committed bar, an `exit` price it never reached
+    # inside any window the author named, and a `ret` that went straight into the aggregates with
+    # `horizon_days: -5` sitting beside it. A FRACTIONAL hz crashes on the index instead. Neither
+    # is reachable from the machine labeller, but both are reachable from a hand label: the tape's
+    # Horizon boxes take free text, the export carries it verbatim, and `import-labels` writes it
+    # through unchallenged. Refused BY NAME, like every other unscoreable row here.
+    if not isinstance(hz, int) or isinstance(hz, bool) or hz <= 0:
+        return CallResult(**base, status="BAD_HORIZON",
+                          detail=f"horizon must be a positive whole number of trading days, "
+                                 f"got {hz!r}")
 
     tp = parse_target(target, target_type, entry, bias)
     tgt_fields = {"target_px": tp.price, "target_status": tp.status.value}

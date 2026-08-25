@@ -276,14 +276,21 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
   const sx = linScale(0, win.length - 1, px0, px1);
   const sy = linScale(dom.lo, dom.hi, cy1, cy0);
 
-  // gridlines at a nice step
+  // GRIDLINES AT A NICE STEP — AND THE STEPS GO BELOW $1. The ladder started at 1, so any window
+  // whose padded span held no whole dollar drew NOTHING: no gridlines and no y-axis labels at all,
+  // leaving a price panel with no readable level on it. That is not a rare shape here — $BB spends
+  // the corpus between $3 and $5, and a 5D window on it lands inside a single dollar (e.g.
+  // 2025-08-25, 3.67–3.97). Counting in integer multiples of the step, rather than accumulating it,
+  // keeps 0.05 from drifting into 4.050000000000001 on the label.
   const span = dom.hi - dom.lo;
-  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200].find((g) => span / g <= 9) || 500;
+  const step = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200]
+    .find((g) => span / g <= 9) || 500;
+  const dec = step >= 1 ? 0 : step >= 0.1 ? 1 : 2;
   let grid = "";
-  for (let v = Math.ceil(dom.lo / step) * step; v < dom.hi; v += step) {
-    const y = sy(v).toFixed(1);
+  for (let k = Math.ceil(dom.lo / step); k * step < dom.hi; k++) {
+    const v = k * step, y = sy(v).toFixed(1);
     grid += `<line x1="${px0}" y1="${y}" x2="${px1}" y2="${y}" stroke="var(--line)"/>`
-      + `<text x="${px0 - 5}" y="${+y + 3.3}" font-size="10" text-anchor="end" fill="var(--ink-3)">${v}</text>`;
+      + `<text x="${px0 - 5}" y="${+y + 3.3}" font-size="10" text-anchor="end" fill="var(--ink-3)">${v.toFixed(dec)}</text>`;
   }
 
   // (4) HORIZON BAND — post -> horizon end. Target touched inside it is the win condition.
@@ -336,10 +343,15 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
   // (2) EVERY OTHER POST ON THIS TICKER, coloured by bias, staggered across lanes on collision —
   // the same treatment drawdownChart() gives clustered gap-downs, for the same reason.
   const LANES = [-17, 17, -30, 30];
+  // HOISTED OUT OF THE LOOP. `focusPost()` is `dayPosts()[S.postIdx]`, and `dayPosts()` re-filters
+  // the whole open month through `chipPasses` — which runs `reviewReasons` per (post, cashtag) —
+  // so calling it per marker re-ran that scan up to 47 times for one draw, on a screen whose whole
+  // point is keystroke throughput. The answer cannot change inside the loop.
+  const focusId = (focusPost() || {}).id;
   let marks = "", prevX = -1e9, cluster = 0;
   for (const op of otherPosts) {
     const i = idxOf(op.d);
-    if (i < 0 || op.id === (focusPost() || {}).id) continue;
+    if (i < 0 || op.id === focusId) continue;
     const x = sx(i);
     cluster = x - prevX < 18 ? cluster + 1 : 0;
     prevX = x;
@@ -553,8 +565,8 @@ function editorHtml(key) {
       <input class="filter-select ed-i ed-sm" data-f="target" value="${escapeHtml(l.target ?? "")}">
       <select class="filter-select ed-i" data-f="target_type">${TARGET_TYPES.map((t) => opt(t, l.target_type)).join("")}</select></div>
     <div class="ed-row"><span class="ed-l">Horizon</span>
-      <input class="filter-select ed-i ed-xs" data-f="hlo" value="${l.hlo ?? ""}"><span class="ed-d">–</span>
-      <input class="filter-select ed-i ed-xs" data-f="hhi" value="${l.hhi ?? ""}">
+      <input class="filter-select ed-i ed-xs" data-f="hlo" value="${escapeHtml(l.hlo ?? "")}"><span class="ed-d">–</span>
+      <input class="filter-select ed-i ed-xs" data-f="hhi" value="${escapeHtml(l.hhi ?? "")}">
       <span class="ed-note">${l.hhi || l.hlo ? "trading days · <b>stated</b>" : "none stated → <b>63d default</b>, flagged"}</span></div>
     <div class="ed-row"><span class="ed-l">Flags</span>
       <label class="chip ed-ck"><input type="checkbox" data-f="is_conditional"${l.is_conditional ? " checked" : ""}> conditional <span class="ed-note">“if X, then…”</span></label>
@@ -1012,7 +1024,15 @@ function wire(root) {
     const k = edKey(); if (!k) return;
     const f = e.currentTarget.dataset.f;
     let v = e.currentTarget.value;
-    if (f === "hlo" || f === "hhi") v = v.trim() === "" ? null : Number(v);
+    // A HORIZON IS A COUNT OF TRADING DAYS, and `Number()` alone accepted anything: "abc" became
+    // NaN and fell silently through to the 63-day default (flagged as STATED, not assumed), while
+    // "-5" and "2.5" reached the scorer as an index and took the chart pane down mid-session. What
+    // is a clean positive whole number becomes one; anything else is KEPT VERBATIM so the scorer
+    // refuses it by name in the readout, rather than the operator's typo being quietly discarded.
+    if (f === "hlo" || f === "hhi") {
+      const t = String(v).trim();
+      v = t === "" ? null : (/^[1-9]\d*$/.test(t) ? Number(t) : t);
+    }
     setPatch(k, { [f]: v }); repaint(); });
   q(".ed input[type=checkbox]", (e) => {
     const k = edKey(); if (!k) return;

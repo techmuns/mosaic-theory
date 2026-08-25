@@ -11,6 +11,7 @@ WHAT IT TOUCHES:
   * ``labels.json``     — the merged row becomes ``src: "hand"``; the machine's guess is REPLACED.
   * ``gold_labels.jsonl`` — the hand set, keyed by ``<tweet_id>|<TICKER>``, de-duplicated.
   * ``meta.json``       — the hand / machine counts, so the index cannot drift from the corpus.
+  * ``days.json``       — each day's hand-label tally, which is what the calendar's dot reads.
 
 It does NOT re-score. Scoring is a separate, explicit step (``vinci calls score``) because it reads
 prices and takes real time; the summary printed here says so rather than leaving the operator to
@@ -35,6 +36,42 @@ _FIELD_MAP = {
 
 class IngestError(RuntimeError):
     """A malformed export — raised rather than partially merging."""
+
+
+def _refresh_day_labels(d: Path, labels: dict[str, Any]) -> int:
+    """Recount ``days.json``'s per-day HAND-label tally from ``labels.json``. Returns days touched.
+
+    WHY IT IS HERE. ``days.json`` carries ``lab`` — the number of hand labels posted that day — and
+    it is the ONLY thing the calendar's green dot reads. Nothing in this repo regenerates the file
+    (the corpus is produced upstream), so without this an import landed the labels, updated
+    ``meta.json``'s totals, and left the calendar still showing the pre-import days: the operator
+    browses back looking for the work they just did and the tool says they never did it. The count
+    is DERIVED from ``labels.json`` and the post dates, so it cannot drift from what was merged.
+    """
+    days_p = d / "days.json"
+    if not days_p.is_file():
+        return 0
+    posted: dict[str, str] = {}
+    for f in sorted((d / "posts").glob("*.json")):
+        for p in json.loads(f.read_text()):
+            posted[str(p["id"])] = str(p["d"])[:10]
+    per: dict[str, int] = {}
+    for key, v in labels.items():
+        if not isinstance(v, dict) or v.get("src") != "hand":
+            continue
+        day = posted.get(key.split("|")[0])
+        if day is not None:
+            per[day] = per.get(day, 0) + 1
+    days = json.loads(days_p.read_text())
+    changed = 0
+    for iso, rec in days.items():
+        n = per.get(iso, 0)
+        if rec.get("lab") != n:
+            rec["lab"] = n
+            changed += 1
+    if changed:
+        days_p.write_text(json.dumps(days))
+    return changed
 
 
 def _key(row: dict[str, Any]) -> str:
@@ -103,7 +140,8 @@ def import_labels(handle: str, path: Path, *, dry_run: bool = False) -> dict[str
     meta["n_hand_labels"] = sum(1 for v in labels.values() if v.get("src") == "hand")
     meta["n_machine_labels"] = sum(1 for v in labels.values() if v.get("src") == "machine")
     meta_p.write_text(json.dumps(meta, indent=2) + "\n")
+    days_changed = _refresh_day_labels(d, labels)
 
     return {"rows": len(incoming), "new": new, "updated": updated,
             "replaced_machine": over_machine, "written": len(incoming),
-            "hand_total": meta["n_hand_labels"]}
+            "hand_total": meta["n_hand_labels"], "days_recounted": days_changed}

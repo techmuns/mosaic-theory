@@ -1769,7 +1769,7 @@ def _cmd_calls_score(args: argparse.Namespace) -> int:
     out = write_results(handle, res, hand_only=args.hand_only)
     by = collections.Counter(r.status for r in res)
     print(f"{handle}: scored {len(res)} directional calls -> {out}")
-    for k in ("CLOSED", "OPEN", "NO_PRICE_DATA", "NO_ENTRY_BAR"):
+    for k in ("CLOSED", "OPEN", "NO_PRICE_DATA", "NO_ENTRY_BAR", "BAD_HORIZON"):
         if by.get(k):
             print(f"  {k:<14} {by[k]:>5}")
     tgt = collections.Counter(r.target_status for r in res if r.target_status)
@@ -1795,7 +1795,9 @@ def _cmd_calls_import(args: argparse.Namespace) -> int:
     print(f"  replaced a guess   {r['replaced_machine']:>5}")
     if not args.dry_run:
         print(f"  hand labels now    {r['hand_total']:>5}")
-        print("  scores are NOT updated — run `vinci calls score` to re-score.")
+        print(f"  calendar days recounted {r['days_recounted']:>5}")
+        print("  scores are NOT updated — run `vinci calls score` to re-score,")
+        print("  and `vinci calls accounts` to refresh the index the dashboard's count reads.")
     return 0
 
 

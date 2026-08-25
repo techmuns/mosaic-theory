@@ -167,3 +167,38 @@ def test_a_rebuild_does_not_silently_move_the_default_account(tmp_path: Path) ->
     assert rebuild_accounts(root=root, default="alpha").default == "alpha"
     shutil.rmtree(root / "alpha")
     assert rebuild_accounts(root=root).default == "zeta"
+
+
+def test_the_calendars_hand_label_tally_follows_the_import(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`days.json`'s `lab` IS the calendar's green dot, and nothing else regenerates it.
+
+    The corpus is produced upstream; this repo has no builder for `days.json`. So before the fix an
+    import landed the labels, updated `meta.json`'s totals — and left every day still showing its
+    pre-import tally. The operator browses back to the month they just worked and the tool tells
+    them they never labelled it. Pinned against the REAL corpus: 2024-08-01 carries 20 posts and a
+    `lab` of 0, and `1819010251032502488|MSFT` is a machine guess on that day.
+    """
+    d = _corpus(tmp_path)
+    for extra in ("days.json",):
+        if not (SRC / extra).is_file():
+            pytest.skip("no committed calls corpus")
+        shutil.copy(SRC / extra, d / extra)
+    shutil.copytree(SRC / "posts", d / "posts")
+    monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
+
+    before = json.loads((d / "days.json").read_text())
+    assert before["2024-08-01"]["lab"] == 0, "fixture day is no longer unlabelled — re-point it"
+
+    r = import_labels("x", _write(tmp_path / "in.jsonl",
+                                  [_row("1819010251032502488", "MSFT", date="2024-08-01")]))
+    after = json.loads((d / "days.json").read_text())
+    assert after["2024-08-01"]["lab"] == 1, "the calendar still shows the pre-import tally"
+    assert r["days_recounted"] == 1
+    # DERIVED, not incremented: the per-day tallies must still sum to the corpus's hand total.
+    meta = json.loads((d / "meta.json").read_text())
+    assert sum(v["lab"] for v in after.values()) == meta["n_hand_labels"]
+    # and nothing else in the file moved
+    assert {k: (v["n"], v["sig"], v["tk"]) for k, v in after.items()} == \
+           {k: (v["n"], v["sig"], v["tk"]) for k, v in before.items()}

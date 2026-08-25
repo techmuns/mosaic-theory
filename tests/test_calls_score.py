@@ -205,3 +205,40 @@ def test_a_non_positive_entry_open_is_refused_by_name_not_divided_by() -> None:
     assert r.status == "NO_ENTRY_BAR", "a zero open was scored rather than refused"
     assert "non-positive open" in r.detail
     assert r.ret is None and r.mfe is None and r.unrealised is None
+
+
+# NOTE 0 is deliberately absent: `hi or lo or DEFAULT` has always read a 0 as "not
+# stated", which is the documented chain, so it falls through to the flagged default.
+@pytest.mark.parametrize("hz", [-5, -1, 2.5, "abc", "-5", "0"])
+def test_a_horizon_that_is_not_a_positive_whole_number_is_refused_by_name(hz: object) -> None:
+    """A HORIZON IS AN OFFSET, AND PYTHON INDEXES BACKWARDS WITH A NEGATIVE ONE.
+
+    `win_all[hz]` on hz = -5 does not raise — it returns the bar five from the END of the fetched
+    series. The row scored CLOSED, with an `exit_date` unrelated to any window the author named, a
+    `ret` computed against it, and `horizon_days: -5` printed beside it; a fractional hz crashed on
+    the index instead and took the whole `vinci calls score` run down. Neither shape is reachable
+    from the machine labeller, but both are reachable from a hand label: the tape's Horizon boxes
+    take free text, the export carries it verbatim, and `import-labels` writes it through.
+    """
+    bars = _bars(date(2025, 1, 6), [100.0 + i for i in range(40)])
+    r = score_call(tweet_id="t", ticker="X", posted=bars[0][0], bias="bullish",
+                   target=None, target_type=None, horizon_lo=None,
+                   horizon_hi=hz,  # type: ignore[arg-type]
+                   bars=bars, bench=[])
+    assert r.status == "BAD_HORIZON", f"{hz!r} was scored instead of refused"
+    assert "positive whole number" in r.detail
+    assert r.ret is None and r.exit is None and r.exit_date is None
+
+
+def test_a_zero_horizon_still_falls_through_to_the_low_end_and_the_default() -> None:
+    """The guard must not swallow the `hi or lo or default` chain: a stated LOW end with no high is
+    the documented convention, and 0/None on the high end is how that arrives."""
+    bars = _bars(date(2025, 1, 6), [100.0 + i for i in range(40)])
+    r = score_call(tweet_id="t", ticker="X", posted=bars[0][0], bias="bullish",
+                   target=None, target_type=None, horizon_lo=5, horizon_hi=None,
+                   bars=bars, bench=[])
+    assert r.status == "CLOSED" and r.horizon_days == 5 and r.horizon_assumed is False
+    r2 = score_call(tweet_id="t", ticker="X", posted=bars[0][0], bias="bullish",
+                    target=None, target_type=None, horizon_lo=None, horizon_hi=None,
+                    bars=bars, bench=[])
+    assert r2.horizon_days == DEFAULT_HORIZON_DAYS and r2.horizon_assumed is True
