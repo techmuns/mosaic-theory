@@ -1503,27 +1503,28 @@ table.data th.peer-desc-h { text-align: left; }
 @media (max-width: 1080px) { .ct-panes { grid-template-columns: 1fr; } }
 /* calendar first because it is how you move; posts second because that is where the time goes */
 .ct-rail { display: flex; flex-direction: column; gap: 10px; }
-#ct-posts { display: flex; flex-direction: column; gap: 8px; max-height: 62vh; overflow-y: auto;
+#ct-posts { display: flex; flex-direction: column; gap: 8px; max-height: 74vh; overflow-y: auto;
   padding-right: 2px; }
 #ct-chart { display: flex; flex-direction: column; gap: 10px; }
 
 /* calendar */
-.cal-card { padding: 11px 12px; }
-.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.cal-card { padding: 9px 10px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 12.5px; font-weight: 600; }
 .cal-nav { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 11px; padding: 2px 4px; }
 .cal-nav:hover { color: var(--accent); }
 .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }
 .cal-dow div { font-size: 8.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 700; text-align: center; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-.cal-cell { min-height: 38px; border: 1px solid var(--line); border-radius: 4px; padding: 3px 4px;
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-cell { min-height: 30px; border: 1px solid var(--line); border-radius: 4px; padding: 2px 4px 3px;
   display: flex; flex-direction: column; cursor: pointer; }
 .cal-cell:hover { border-color: var(--accent); }
 .cal-n { font-size: 9px; font-family: var(--mono); opacity: 0.8; line-height: 1.1; }
 .cal-c { font-size: 12px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.cal-dots { display: flex; gap: 2px; margin-top: auto; }
+.cal-dots { display: flex; gap: 2px; margin-top: auto; min-height: 4px; }
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; display: inline-block; }
-.cal-key { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
-  display: flex; flex-direction: column; gap: 4px; font-size: 10px; color: var(--ink-3); }
+/* the calendar's static legend is gone — it never changed, and it cost ~40px of the rail on every
+   load. The dots stay self-describing through each cell's own title, and the Spec key carries the
+   long-form explanation where it is asked for rather than always on. */
 
 /* posts */
 .pcard { border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; background: var(--surface); cursor: pointer; }
@@ -1619,6 +1620,17 @@ table.data th.peer-desc-h { text-align: left; }
 .chart-seq { font-size: 10.5px; color: var(--ink-3); border-left: 1px solid var(--line-2);
   padding-left: 8px; margin-left: 2px; }
 /* a roomier calendar now that the rail is wider — the date gets more room to be a date */
-.cal-cell { min-height: 44px; }
-.cal-n { font-size: 13px; }
-.cal-c { font-size: 10px; }
+.cal-cell { min-height: 30px; }
+.cal-n { font-size: 12.5px; }
+.cal-c { font-size: 9.5px; }
+
+/* the sequence toggle doubles as the count — the label states which reading you are looking at */
+.chart-seq { font: 10.5px var(--sans); color: var(--ink-3); background: none;
+  border: 1px solid transparent; border-left: 1px solid var(--line-2); border-radius: 0 4px 4px 0;
+  padding: 2px 7px; margin-left: 2px; cursor: pointer; }
+.chart-seq:hover { color: var(--accent); border-color: var(--accent); }
+.chart-seq.on { color: var(--accent); border-color: var(--accent-border);
+  background: var(--accent-bg); font-weight: 600; }
+/* a live call's progress through its horizon */
+.rd-prog { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 0 0 11px; }
+.rd-prog-fill { height: 100%; background: var(--conditional); }

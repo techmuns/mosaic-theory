@@ -22,7 +22,9 @@
 // number would describe the machine, not the author.
 // ============================================================================
 import { candleDomain, candleWidth, candles, extent, linScale } from "../../lib/exhibit.js";
-import { escapeHtml, fmtPct } from "../../lib/format.js";
+import { DASH, escapeHtml, fmtPct } from "../../lib/format.js";
+
+const DASH_ = DASH;
 import {
   getCallAccounts, getCallBars, getCallDays, getCallLabels, getCallPosts, getCallResults,
 } from "../../lib/snapshots.js";
@@ -68,6 +70,8 @@ const REVIEW_REASONS = [
    (l) => l.src === "machine" && (l.spec === "A" || l.spec === "B")],
   ["undirected", "a target with no direction to score it by",
    (l) => l.target_type && l.target_type !== "none" && (!l.bias || l.bias === "none")],
+  ["implausible", "a target nowhere near the price (a parse artifact)",
+   (l, r) => r && r.target_status === "implausible"],
   ["mixed", "a two-sided read", (l) => l.bias === "mixed"],
 ];
 const NON_SIGNAL = new Set(["flow_spam", "promo", "noise", "engagement"]);
@@ -91,6 +95,7 @@ const S = {
   filters: { ticker: "", spec: "", cls: "", video: false, review: "", unlabelled: false },
   edits: {},                       // key -> patch, mirrored to localStorage
   window: null,                    // active chart window preset (see WINDOWS)
+  seqFiltered: false,              // do the filters reach the chart's prior-post markers
   geom: null,                      // last drawn chart geometry, for the crosshair
 };
 
@@ -141,37 +146,41 @@ async function loadMonth(month) {
   S.month = month;
 }
 
+//: ONE DEFINITION OF "PASSES THE FILTERS", used by the posts list AND (optionally) by the chart's
+//: prior-post markers. Two copies of this predicate would drift the moment a filter was added, and
+//: the two surfaces would then disagree about the same post without anything saying so.
+const tagsOf = (p) => (p.tk || []).map((t) => t.replace(/^\$/, ""));
+
+/** Post-level filters — things true of the post itself, independent of which cashtag. */
+function postPasses(p) {
+  const f = S.filters;
+  if (f.video && !p.v) return false;
+  if (f.ticker && !tagsOf(p).includes(f.ticker)) return false;
+  return true;
+}
+
+/** Chip-level filters — asked of ONE (post, ticker) pair, which is the unit of work here. */
+function chipPasses(postId, tkr) {
+  const f = S.filters;
+  const key = `${postId}|${tkr}`;
+  const l = labelFor(key);
+  if (f.cls) {
+    const raw = (S.labels || {})[key];
+    if (!raw || raw.post_class !== f.cls) return false;
+  }
+  if (f.spec && (!l || l.spec !== f.spec)) return false;
+  if (f.review) {
+    const rs = reviewReasons(key);
+    if (!rs.length || (f.review !== "any" && !rs.includes(f.review))) return false;
+  }
+  if (f.unlabelled && isHand(l)) return false;
+  return true;
+}
+
 /** Posts on the selected day, after filters. Filtering is what makes the tool usable at 5,641. */
 function dayPosts() {
-  const f = S.filters;
-  return S.posts.filter((p) => {
-    if (p.d !== S.day) return false;
-    if (f.video && !p.v) return false;
-    const tags = (p.tk || []).map((t) => t.replace(/^\$/, ""));
-    if (f.ticker && !tags.includes(f.ticker)) return false;
-    if (f.cls) {
-      const tags0 = (p.tk || []).map((t) => t.replace(/^\$/, ""));
-      const anyCls = tags0.some((t) => {
-        const l = (S.labels || {})[`${p.id}|${t}`];
-        return l && l.post_class === f.cls;
-      });
-      if (!anyCls) return false;
-    }
-    if (f.spec || f.review || f.unlabelled) {
-      const ok = tags.some((t) => {
-        const l = labelFor(`${p.id}|${t}`);
-        if (f.spec && (!l || l.spec !== f.spec)) return false;
-        if (f.review) {
-          const rs = reviewReasons(`${p.id}|${t}`);
-          if (!rs.length || (f.review !== "any" && !rs.includes(f.review))) return false;
-        }
-        if (f.unlabelled && isHand(l)) return false;
-        return true;
-      });
-      if (!ok) return false;
-    }
-    return true;
-  });
+  return S.posts.filter((p) => p.d === S.day && postPasses(p)
+    && tagsOf(p).some((t) => chipPasses(p.id, t)));
 }
 const focusPost = () => dayPosts()[S.postIdx] || null;
 function focusTags() {
@@ -256,13 +265,26 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
   }
 
   // (4) HORIZON BAND — post -> horizon end. Target touched inside it is the win condition.
-  let band = "";
-  const hzEndIdx = result && result.exit_date ? idxOf(result.exit_date) : -1;
+  // A LIVE CALL HAS A BAND TOO. It used to draw only when `exit_date` existed, so the 349 OPEN
+  // calls — the ones whose outcome is still in play, and arguably the more interesting half —
+  // showed no shaded window at all. For those the band runs to the last bar and its right edge is
+  // left OPEN (no closing rule) so it reads as "still running", never as a horizon that ended.
+  let band = "", hzEndIdx = -1, bandOpen = false;
+  if (result && result.exit_date) {
+    hzEndIdx = idxOf(result.exit_date);
+  } else if (result && result.status === "OPEN") {
+    hzEndIdx = win.length - 1;
+    bandOpen = true;
+  }
   if (tIdx >= 0 && hzEndIdx > tIdx) {
     band = `<rect x="${sx(tIdx).toFixed(1)}" y="${cy0}" width="${(sx(hzEndIdx) - sx(tIdx)).toFixed(1)}"`
-      + ` height="${cy1 - cy0}" fill="var(--target-fill)"/>`
-      + `<line x1="${sx(hzEndIdx).toFixed(1)}" y1="${cy0}" x2="${sx(hzEndIdx).toFixed(1)}" y2="${cy1}"`
-      + ` stroke="var(--pos-border)" stroke-dasharray="2 4"/>`;
+      + ` height="${cy1 - cy0}" fill="var(--target-fill)"/>`;
+    band += bandOpen
+      ? `<text x="${(sx(hzEndIdx) - 4).toFixed(1)}" y="${cy0 + 12}" font-size="9.5" text-anchor="end"`
+        + ` fill="var(--conditional)">horizon still running` +
+        ` (${result.elapsed_days ?? "?"}/${result.horizon_days ?? "?"}d) ▸</text>`
+      : `<line x1="${sx(hzEndIdx).toFixed(1)}" y1="${cy0}" x2="${sx(hzEndIdx).toFixed(1)}" y2="${cy1}"`
+        + ` stroke="var(--pos-border)" stroke-dasharray="2 4"/>`;
   }
 
   // candles — geometry from lib/exhibit.js, markup here (chart-type geometry stays per-exhibit)
@@ -404,6 +426,10 @@ async function postsForTicker(tkr, from, to) {
       if (from != null && q.d < from) continue;
       if (to != null && q.d > to) continue;
       if (!(q.tk || []).some((t) => t.replace(/^\$/, "") === tkr)) continue;
+      // DEFAULT: unfiltered. The chart is the RECORD of what he said about this ticker, and a
+      // filtered record is a false one. The toggle exists because "only his spec-A calls on this
+      // name" is a real question — it is just not the default reading.
+      if (S.seqFiltered && !(postPasses(q) && chipPasses(q.id, tkr))) continue;
       const l = labelFor(`${q.id}|${tkr}`);
       out.push({ id: String(q.id), d: q.d, bias: l ? l.bias : "none" });
     }
@@ -442,18 +468,9 @@ function paneCalendar() {
   }
   // A DROPDOWN, not just arrows: 25 months is eight pages of clicking to reach the far end.
   const allMonths = [...new Set(Object.keys(S.days).map(monthOf))].sort();
-  // The month VOLUME rides in the option label. It was the one thing the timeline strip showed
-  // that the dropdown did not — the ~2x decline from 2024 to 2026 — and it costs nothing here,
-  // where the reader is already choosing a month.
-  const vol = {};
-  for (const [iso, rec] of Object.entries(S.days)) {
-    const k = monthOf(iso);
-    vol[k] = (vol[k] || 0) + (rec.n || 0);
-  }
   const opts = allMonths.map((mm) => {
     const [yy, m2] = mm.split("-").map(Number);
-    return `<option value="${mm}"${mm === S.month ? " selected" : ""}>`
-      + `${MON[m2 - 1]} ${yy} · ${vol[mm] || 0}</option>`;
+    return `<option value="${mm}"${mm === S.month ? " selected" : ""}>${MON[m2 - 1]} ${yy}</option>`;
   }).join("");
   return `<div class="card cal-card">
     <div class="cal-head"><button class="cal-nav" data-mon="-1" aria-label="Previous month">◀</button>
@@ -461,9 +478,6 @@ function paneCalendar() {
       <button class="cal-nav" data-mon="1" aria-label="Next month">▶</button></div>
     <div class="cal-dow">${["S", "M", "T", "W", "T", "F", "S"].map((d) => `<div>${d}</div>`).join("")}</div>
     <div class="cal-grid">${cells}</div>
-    <div class="cal-key"><div>Intensity = posts, <b>log-scaled</b></div>
-      <div><span class="cal-dot" style="background:var(--conditional)"></span> spec A/B
-      &nbsp;<span class="cal-dot" style="background:var(--pos-text)"></span> hand-labelled</div></div>
   </div>`;
 }
 
@@ -574,15 +588,47 @@ async function paneChart() {
   if (!res) {
     readout = `<div class="notice">Not scored — this row carries no directional bias, so there is no
       side to sign a return by. Set a bias and re-run <code>vinci calls score</code>.</div>`;
+  } else if (res.status === "OPEN") {
+    // PROVISIONAL, AND SAID SO. The settled figures do not exist yet and are not invented; what is
+    // shown is the entry (known), the clock (running) and the path so far (a fact). Every value
+    // here is marked "so far" and the row is still excluded from every aggregate.
+    const pct = (v) => (v == null ? DASH_ : fmtPct(v, { signed: true }));
+    const tone = (v) => (v == null ? "var(--ink-2)" : v >= 0 ? "var(--pos-text)" : "var(--danger)");
+    const done = res.elapsed_days != null && res.horizon_days
+      ? Math.min(100, Math.round((res.elapsed_days / res.horizon_days) * 100)) : 0;
+    readout = `<div class="rd-head"><span class="pill conditional">OPEN</span>
+        <span class="rd-why">${res.elapsed_days ?? "?"} of ${res.horizon_days ?? "?"} trading days —
+          <b>excluded from every aggregate</b> until the horizon elapses</span>
+        <span class="gt ${res.horizon_assumed ? "partial" : "firm"}">${res.horizon_days}d ·
+          ${res.horizon_assumed ? "63d DEFAULT, assumed" : "STATED"}</span></div>
+      <div class="rd-prog"><div class="rd-prog-fill" style="width:${done}%"></div></div>
+      <div class="rd-grid">
+        ${st("Entry", `$${res.entry.toFixed(2)}`, `open ${res.entry_date}`)}
+        ${st("Mark", res.mark == null ? DASH_ : `$${res.mark.toFixed(2)}`,
+             `close ${res.mark_date ?? DASH_}`, "var(--ink-2)")}
+        ${st("Unrealised", pct(res.unrealised), "so far, by bias", tone(res.unrealised))}
+        ${st("SPY", pct(res.bench_unrealised), "same window", "var(--ink-2)")}
+        ${st("Excess", pct(res.unrealised != null && res.bench_unrealised != null
+             ? res.unrealised - res.bench_unrealised : null), "so far",
+             tone(res.unrealised != null && res.bench_unrealised != null
+                  ? res.unrealised - res.bench_unrealised : null))}
+        ${st("MFE", pct(res.mfe_to_date), "so far", "var(--pos-text)")}
+        ${st("MAE", pct(res.mae_to_date), "so far", "var(--danger)")}
+        ${st("Target", res.target_px == null ? DASH_ : `$${res.target_px.toFixed(2)}`,
+             res.target_px != null ? "" : (res.target_status === "implausible"
+               ? "nowhere near the price — refused" : "none stated"))}
+        ${st("Touched", res.target_hit_to_date == null ? DASH_
+             : (res.target_hit_to_date ? "YES" : "not yet"), "so far",
+             res.target_hit_to_date ? "var(--pos-text)" : "var(--ink-2)")}
+      </div>`;
   } else if (res.status !== "CLOSED") {
-    const why = res.status === "OPEN"
-      ? `Its ${res.horizon_days}-day horizon has not elapsed, so it is excluded from every aggregate.`
-      : escapeHtml(res.detail || "");
-    readout = `<div class="rd-head"><span class="pill conditional">${res.status}</span>
-      <span class="rd-why">${why}</span></div>`;
+    readout = `<div class="rd-head"><span class="pill avoid">${res.status}</span>
+      <span class="rd-why">${escapeHtml(res.detail || "")}</span></div>`;
   } else {
-    const tgtNote = { resolved: "", qualitative: "qualitative — no price", sign_conflict: "sign vs bias — refused",
-                      absent: "none stated", no_bias: "no direction", unparseable: "could not be read" }[res.target_status] || "";
+    const tgtNote = { resolved: "", qualitative: "qualitative — no price",
+                      sign_conflict: "sign vs bias — refused", absent: "none stated",
+                      no_bias: "no direction", unparseable: "could not be read",
+                      implausible: "nowhere near the price — refused" }[res.target_status] || "";
     readout = `<div class="rd-head"><span class="pill live">CLOSED</span>
       <span class="rd-why">horizon elapsed — counts toward aggregates</span>
       <span class="gt ${res.horizon_assumed ? "partial" : "firm"}">${res.horizon_days}d · ${res.horizon_assumed ? "63d DEFAULT, assumed" : "STATED"}</span></div>
@@ -602,7 +648,12 @@ async function paneChart() {
   return `<div class="card chart-card"><div class="chart-h"><span class="chart-bar"></span>
       <b class="mono">$${escapeHtml(tkr)}</b>
       <span class="muted">call of ${escapeHtml(p.d)}${winLabel}</span>
-      <span class="chart-seq" title="The chart is the record of what he said about this ticker, so the filters above do not touch it — a filtered record would be a false one.">${others.length} post${others.length === 1 ? "" : "s"} on $${escapeHtml(tkr)} in view · unfiltered</span>
+      <button class="chart-seq${S.seqFiltered ? " on" : ""}" id="ct-seqf"
+        title="${S.seqFiltered
+          ? "Filtered: the markers honour the filters above. Fewer dots than he actually posted."
+          : "Unfiltered: every post on this ticker in the window. The chart is the record of what he said, and a filtered record is a false one."}">
+        ${others.length} post${others.length === 1 ? "" : "s"} on $${escapeHtml(tkr)} ·
+        ${S.seqFiltered ? "filtered" : "unfiltered"}</button>
       <span class="chart-follow">
         ${WINDOWS.map(([k]) => `<button class="wbtn${(S.window || DEFAULT_WINDOW) === k ? " on" : ""}" data-win="${k}"`
           + ` title="${k === "FIT" ? "fit the scored horizon" : k === "MAX" ? "every fetched bar" : "around the post"}">${k}</button>`).join("")}
@@ -834,6 +885,9 @@ function wire(root) {
     const d = new Date(Date.UTC(y, m - 1 + Number(e.currentTarget.dataset.mon), 1));
     await gotoMonth(d.toISOString().slice(0, 7)); repaint(); }, "click");
   q(".ct-mo", async (e) => { await gotoMonth(e.currentTarget.dataset.monJump); repaint(); }, "click");
+  const sq = root.querySelector("#ct-seqf");
+  if (sq) sq.addEventListener("click", (e) => {
+    e.stopPropagation(); S.seqFiltered = !S.seqFiltered; repaint(); });
   q(".wbtn", (e) => {
     e.stopPropagation();
     S.window = e.currentTarget.dataset.win; repaint(); }, "click");

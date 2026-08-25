@@ -72,6 +72,27 @@ class CallResult(BaseModel, frozen=True):
     target_hit: bool | None = None
     direction_correct: bool | None = None
 
+    # --- PROVISIONAL, OPEN CALLS ONLY -----------------------------------------------------------
+    # A live call has no return yet — `ret`/`excess`/`mfe`/`mae`/`direction_correct` stay None so
+    # nothing can aggregate an unfinished call by accident, which is the convention's whole point.
+    # But "nothing to show" is the wrong answer for the human reading the page: the entry is known,
+    # the clock is running, and the path so far is a fact. These fields carry that, under names
+    # that cannot be mistaken for the settled ones.
+    mark: float | None = None                # last close available
+    mark_date: date | None = None
+    elapsed_days: int | None = None          # trading days since the entry bar
+    unrealised: float | None = None          # signed by bias, entry -> mark
+    bench_unrealised: float | None = None
+    mfe_to_date: float | None = None
+    mae_to_date: float | None = None
+    target_hit_to_date: bool | None = None
+
+
+def sign_of(bias: str) -> float:
+    """+1 for a bullish call, -1 for a bearish one. Returns are signed by the STATED bias, so a
+    bearish call on a stock that falls is a win."""
+    return 1.0 if bias == "bullish" else -1.0
+
 
 def _after(bars: list[Bar], d: date) -> list[Bar]:
     return [b for b in bars if b[0] > d]
@@ -109,14 +130,35 @@ def score_call(
 
     win_all = _from(bars, entry_date)
     if len(win_all) <= hz:
+        # LIVE. Mark it to the last close and report the path SO FAR, explicitly provisional.
+        mark_bar = win_all[-1]
+        highs_o, lows_o = [b[2] for b in win_all], [b[3] for b in win_all]
+        mark = mark_bar[4]
+        unreal = sign_of(bias) * (mark / entry - 1.0) if entry > 0 else None
+        b_o = [b for b in bench if entry_date <= b[0] <= mark_bar[0]]
+        b_unreal: float | None = None
+        if len(b_o) > 1 and b_o[0][4] > 0:
+            b_unreal = sign_of(bias) * (b_o[-1][4] / b_o[0][4] - 1.0)
+        hit_o: bool | None = None
+        if tp.price is not None:
+            hit_o = (any(h >= tp.price for h in highs_o) if sign_of(bias) > 0
+                     else any(lo <= tp.price for lo in lows_o))
         return CallResult(**base, **tgt_fields, status="OPEN",
-                          detail=f"horizon of {hz} trading days has not elapsed",
+                          detail=f"horizon of {hz} trading days has not elapsed "
+                                 f"({len(win_all) - 1} of {hz} so far)",
                           entry=entry, entry_date=entry_date,
-                          horizon_days=hz, horizon_assumed=assumed)
+                          horizon_days=hz, horizon_assumed=assumed,
+                          mark=mark, mark_date=mark_bar[0], elapsed_days=len(win_all) - 1,
+                          unrealised=unreal, bench_unrealised=b_unreal,
+                          mfe_to_date=sign_of(bias) * (
+                              (max(highs_o) if sign_of(bias) > 0 else min(lows_o)) / entry - 1.0),
+                          mae_to_date=sign_of(bias) * (
+                              (min(lows_o) if sign_of(bias) > 0 else max(highs_o)) / entry - 1.0),
+                          target_hit_to_date=hit_o)
 
     exit_bar = win_all[hz]
     exit_date, exit_px = exit_bar[0], exit_bar[4]           # CLOSE at the horizon end
-    sign = 1.0 if bias == "bullish" else -1.0
+    sign = sign_of(bias)
     ret = sign * (exit_px / entry - 1.0)
 
     # THE COMMON LAST BAR — the benchmark leg is trimmed to what both series actually carry.

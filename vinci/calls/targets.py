@@ -38,6 +38,19 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
+#: A STATED PRICE TARGET LIVES NEAR THE PRICE. Outside this band it is not a target a commentator
+#: could have meant — it is a parse artifact ("+$5" read as a $5 level, a share count, a percentage
+#: mistaken for a level). The band is set on FACE VALIDITY and never on what it does to the
+#: hit-rate: 10x admits a genuine ten-bagger call and 0.1x admits a 90%-crash call, both of which
+#: this author does make, while a $430 stock "reaching $5,000,000" is admitted by nothing.
+#:
+#: WHY IT MATTERS MORE THAN IT LOOKS. `target_hit` asks "did the high ever reach the target" for a
+#: bullish call and "did the low ever reach it" for a bearish one. So an absurdly HIGH target on a
+#: BEARISH call is satisfied by every bar that ever traded, and an absurdly LOW one on a BULLISH
+#: call likewise — the hit is arithmetic, not evidence. Measured on the corpus: 621 of 1,966
+#: resolved targets sat outside this band and 489 of them were reporting a hit.
+_PLAUSIBLE_LO, _PLAUSIBLE_HI = 0.1, 10.0
+
 #: A signed number is recognised ONLY at the start; any later "-" is a range separator, never a
 #: sign. This is the whole bug fix: "-10-15%" -> (-10, 15), "50-100%" -> (50, 100).
 _PAIR = re.compile(
@@ -55,6 +68,7 @@ class TargetStatus(StrEnum):
     UNPARSEABLE = "unparseable"       # a target was named and could not be read — a DEFECT signal
     NO_ENTRY = "no_entry"             # a pct/relative target with no entry price to apply it to
     NO_BIAS = "no_bias"               # a RELATIVE move with no stated direction to apply it in
+    IMPLAUSIBLE = "implausible"       # resolved, but nowhere near the price — a parse artifact
 
 
 class TargetParse(BaseModel, frozen=True):
@@ -74,6 +88,22 @@ def _numbers(raw: str) -> tuple[float, float | None] | None:
         return None
     hi = m.group("hi")
     return float(m.group("lo")), (float(hi) if hi is not None else None)
+
+
+def _plausible(price: float, entry: float | None) -> TargetParse:
+    """Accept a resolved target only if it sits near the price it is a target for.
+
+    With no entry to compare against the target is returned as-is — refusing on an unknown would
+    discard good targets for want of a price, which is the opposite of the intent.
+    """
+    if price <= 0:
+        return TargetParse(price=None, status=TargetStatus.IMPLAUSIBLE)
+    if entry is None or entry <= 0:
+        return TargetParse(price=price, status=TargetStatus.RESOLVED)
+    ratio = price / entry
+    if ratio < _PLAUSIBLE_LO or ratio > _PLAUSIBLE_HI:
+        return TargetParse(price=None, status=TargetStatus.IMPLAUSIBLE)
+    return TargetParse(price=price, status=TargetStatus.RESOLVED)
 
 
 def parse_target(
@@ -96,11 +126,11 @@ def parse_target(
     lo, hi = nums
 
     if target_type == "point":
-        return TargetParse(price=lo, status=TargetStatus.RESOLVED)
+        return _plausible(lo, entry)
 
     if target_type == "range":
         if hi is None:
-            return TargetParse(price=lo, status=TargetStatus.RESOLVED)
+            return _plausible(lo, entry)
         # BY VALUE, not by position (fixed 2026-08-25, operator-authorised). tracker.py took the
         # SECOND number when bullish and the FIRST when bearish, which is only "the high end vs the
         # low end" while the author happens to write ranges ascending. 88 of the corpus's ranges are
@@ -112,8 +142,7 @@ def parse_target(
         # top of the range, bearish the bottom. Only the ASSUMPTION that the author writes ranges
         # ascending is gone. On ascending ranges (the other 533) this is bit-identical to before.
         low, high = min(lo, hi), max(lo, hi)
-        return TargetParse(price=(high if bias == "bullish" else low),
-                           status=TargetStatus.RESOLVED)
+        return _plausible(high if bias == "bullish" else low, entry)
 
     if target_type == "pct":
         if bias not in ("bullish", "bearish"):
@@ -131,7 +160,6 @@ def parse_target(
         # FIRST number of a range, magnitude only, applied in the bias direction — tracker.py's
         # convention, preserved exactly.
         mag = abs(lo) / 100.0
-        return TargetParse(price=entry * (1 + mag) if bias == "bullish" else entry * (1 - mag),
-                           status=TargetStatus.RESOLVED)
+        return _plausible(entry * (1 + mag) if bias == "bullish" else entry * (1 - mag), entry)
 
     return TargetParse(price=None, status=TargetStatus.UNPARSEABLE)

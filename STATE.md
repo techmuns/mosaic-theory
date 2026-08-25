@@ -3520,6 +3520,44 @@ Each line: *what it does* — *verified how*.
     against whatever post happened to be FIRST that day, missed, and silently focused something
     else — a link that looked honoured and was not. It now finds the first post on that day
     actually naming the ticker, then completes the URL with the resolved post id.
+  - **FIFTH PASS (2026-08-25) — A TARGET NOWHERE NEAR THE PRICE WAS SCORING A HIT.** Found while
+    looking for an OPEN call to test: `$TSLA bearish, target $5,000,000`, `$SPY bullish, target
+    $12`, `$OPEN bearish, target $4,000,000` against a $4.79 entry. `target_hit` asks whether the
+    HIGH ever reached the target for a bullish call and whether the LOW ever did for a bearish one,
+    **so an absurdly high target on a bearish call is satisfied by every bar that ever traded**, and
+    an absurdly low one on a bullish call likewise. The hit was arithmetic, not evidence.
+    — *measured: **621 of 1,966 resolved targets sat outside 0.1x–10x of entry, and 489 of them were
+    reporting a hit**. Refusing them (`TargetStatus.IMPLAUSIBLE`) drops the target-hit denominator
+    1,808 → 1,212 and the corpus hit-rate **74.2% → 70.3%**.* The band is set on FACE VALIDITY and
+    never on what it does to the rate — 10x admits a genuine ten-bagger call and 0.1x admits a
+    90%-crash call, both of which this author makes; a $430 stock "reaching $5,000,000" is admitted
+    by nothing. With no entry to compare against the target is NOT refused: the check exists to
+    catch numbers that contradict a known price, not to discard targets for want of one.
+    **This was not asked for**; it is the same defect family as the two authorised parser fixes
+    (a silently-wrong target quietly scoring), it moves a headline number, and it is recorded here
+    rather than folded in quietly.
+  - **A live call now shows its own numbers.** OPEN rendered a pill and one sentence — nothing else
+    — so the 349 calls whose outcome is still in play, arguably the more interesting half, showed
+    no shaded band and no figures at all. The settled fields (`ret` / `excess` / `mfe` / `mae` /
+    `direction_correct`) stay **None** so nothing can aggregate an unfinished call by accident,
+    which is the convention's whole point; alongside them sit explicitly provisional ones —
+    `mark`, `mark_date`, `elapsed_days`, `unrealised`, `bench_unrealised`, `mfe_to_date`,
+    `mae_to_date`, `target_hit_to_date` — every one rendered under a "so far" label, with a
+    progress bar and the words *excluded from every aggregate until the horizon elapses*. The chart
+    band now runs for a live call too, with its right edge left OPEN (no closing rule) and marked
+    "horizon still running (62/63d)", so it can never read as a horizon that ended.
+  - **The chart sequence can now honour the filters, on request.** Default stays UNFILTERED — the
+    chart is the record of what the author said about that ticker, and a filtered record is a false
+    one — but "only his spec-A calls on this name" is a real question, so the header count doubles
+    as the toggle and states which reading is on screen. One shared predicate (`postPasses` /
+    `chipPasses`) backs both the posts list and the markers; two copies would drift the moment a
+    filter was added and the surfaces would silently disagree about the same post.
+  - **The calendar gave ~90px back to the rail**: its static legend is gone (it never changed and
+    cost that on every load — the dots stay self-describing through each cell's title, and the Spec
+    key carries the long form where it is asked for), cells are 44px → 30px, and the posts pane
+    grew 62vh → 74vh. The month dropdown's post counts are gone at the operator's call; monthly
+    volume now reads only off the calendar's own intensity.
+
 
 
 
