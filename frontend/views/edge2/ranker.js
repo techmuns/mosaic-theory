@@ -12,9 +12,9 @@ const COLS = [
   { key: "industry", label: "Industry" },  // resolved label (CIQ-GICS overlay > official SIC) — inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
-  { key: "idiosyncrasy", label: "Idio — cohort vs own",
+  { key: "idiosyncrasy", label: "Idio — industry vs name",
     title: "The name against the market benchmark, split into its INDUSTRY cohort's "
-         + "median move and the residual that is the name's own. Inform-only: the split "
+         + "median move and what is left over, which is the name's own. Inform-only: the split "
          + "never re-orders the queue. A call is withheld when the two are within 10 "
          + "points, and no cohort is formed under 6 screened peers." }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
@@ -212,11 +212,22 @@ function renderRows() {
   // It NEVER re-orders the queue. Ranking by the residual was pre-registered, measured across four
   // snapshots and FALSIFIED — its top-25 churns more than the raw order at every interval. The
   // sort key is untouched; this is display only.
+  // PLAIN WORDS ON THE SURFACE. The code's terms are `own` / `cohort`; neither says what it means
+  // to someone reading a queue, and shipping them raw broke this repo's own coin-time translation
+  // rule. The label states the FINDING, and the tooltip states the arithmetic behind it.
   const COHORT_LABEL = {
-    own: ["own", "The cohort barely moved — the fall is this name's own"],
-    cohort: ["cohort", "Most of the fall is the industry's, not this name's"],
-    unresolved: ["unresolved", "Cohort and own are within 10 points — too close to call"],
-    "no-cohort": ["no cohort", "Fewer than 6 screened peers — not assessable"],
+    own: ["name-specific",
+          "Its industry barely moved — this fall is the company's own, which is what an overshoot "
+          + "thesis needs."],
+    cohort: ["industry-wide",
+             "Its industry fell too, and by more than this name did on its own — most of this "
+             + "drop is not company-specific."],
+    unresolved: ["too close",
+                 "The industry's move and the name's own are within 10 points. No call is made: "
+                 + "below that margin the read is only 34% stable across snapshots."],
+    "no-cohort": ["too few peers",
+                  "Fewer than 6 same-industry names in the screened universe — not enough to take "
+                  + "a median over, so no comparison is offered."],
   };
   const idioCell = (r) => {
     const a = r.axes.idiosyncrasy || {};
@@ -234,9 +245,17 @@ function renderRows() {
     // that exists but is too small to take a median over), and is otherwise empty.
     const split = (c.median == null || c.residual == null)
       ? (c.peers ? `<span class="muted">only ${c.peers} screened peers</span>` : "")
-      : `<span class="ck-k">coh</span><b>${fmtPct(c.median, { signed: true })}</b>`
-        + `<span class="ck-sep">·</span><span class="ck-k">own</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
-    const key = c.key ? ` · cohort: ${c.key} (${c.peers} screened peers)` : "";
+      : `<span class="ck-k">industry</span><b>${fmtPct(c.median, { signed: true })}</b>`
+        + `<span class="ck-sep">→</span><span class="ck-k">name</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
+    // The tooltip carries the arithmetic AND the cohort's membership, because "industry" is doing
+    // a lot of work in one word: it is the SIC industry AS REPRESENTED IN THE SCREENED UNIVERSE,
+    // not the true sector — a handful of small caps, not every listed peer. Say which, and how many.
+    const key = c.key
+      ? ` — measured against the ${c.peers} ${c.key} names in the screened universe`
+        + (c.median == null ? "" : `; the name is ${fmtPct(c.median + c.residual, { signed: true })}`
+           + ` vs the market, its industry ${fmtPct(c.median, { signed: true })}, leaving`
+           + ` ${fmtPct(c.residual, { signed: true })} that is the name's own`)
+      : "";
     return `<td class="ck-cell" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}${escapeHtml(key)}">`
       + `<div class="ck-top">${raw}${pill}</div><div class="ck-split">${split}</div></td>`;
   };

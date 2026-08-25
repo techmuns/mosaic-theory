@@ -124,6 +124,14 @@ PR (CLAUDE.md: coin-time translation).
   built to LABEL those posts rather than to present them. A research input only: it feeds no screen,
   ranker, ledger or spread and gates nothing. "Tape" is the trading sense — the running record of
   what someone said, in order. Home: `vinci/calls/`, `frontend/views/calls/tape.js`.
+- **cohort split / cohort / residual** (#501, 2026-08-25) — splitting a name's fall into its
+  INDUSTRY's share and its own. **Cohort** = the same-SIC-industry names *inside the screened
+  universe* (min 6), NOT the market benchmark — IWM is what each name is already measured against,
+  and the cohort median is measured against IWM too. **Residual** = the name's return minus that
+  median: what is left after the industry is taken out. The queue says it in plain words —
+  *name-specific* / *industry-wide* / *too close* / *too few peers* — and the code calls the first
+  two `own` and `cohort` (`vinci/cohort.py`). Inform-only: ranking BY the residual was measured and
+  falsified (STATE.md, 2026-08-25).
 - **counter-directional target / watched level** — a stated price level that sits on the OPPOSITE
   side of the entry from the author's own bias (#499). Plain words: he says "bullish" and names a
   price BELOW the current one — because it is a support he expects a bounce FROM, or a zone he is

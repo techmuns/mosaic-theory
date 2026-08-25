@@ -183,8 +183,42 @@ def test_the_queue_cell_carries_the_split_and_the_header_says_so() -> None:
     is worth nothing. Asserted on the view source plus the committed artifact it reads."""
     src = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
     assert "idioCell(r)" in src, "the ranker still renders the bare idiosyncrasy cell"
-    assert "cohort vs own" in src, "the column header does not say the cell carries a split"
+    assert "industry vs name" in src, "the column header does not say the cell carries a split"
     assert "COHORT_LABEL" in src
+
+
+def test_the_surface_speaks_plain_words_not_the_code_s_terms() -> None:
+    """COIN-TIME TRANSLATION, which this shipped without and the operator caught. The code calls
+    the two findings `own` and `cohort`; neither says anything to someone reading a queue — "cohort"
+    does not even reveal whether it is good or bad news. The rendered LABEL must state the finding
+    in words that need no glossary, and the glossary line must exist for the code's terms.
+
+    Pinned as a class rather than a spelling: what is forbidden is the bare code term reaching a
+    LABEL, so a future rename cannot quietly put jargon back on the page."""
+    src = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    block = src.split("const COHORT_LABEL", 1)[1].split("};", 1)[0]
+    for plain in ("name-specific", "industry-wide", "too close", "too few peers"):
+        assert plain in block, f"the surface no longer says {plain!r}"
+    for jargon in ('["own"', '["cohort"', '["unresolved"', '["no cohort"'):
+        assert jargon not in block, (
+            f"{jargon} is back as a rendered LABEL — the code's term, not a plain reading")
+    # ...and the SPLIT LINE's own labels, which the block above does not cover — a mutation
+    # reverting them to `coh`/`own` survived the label check, because they are written at the
+    # cell, not in the map. Two numbers under an abbreviation nobody can expand is the same
+    # failure one level down.
+    cell = src.split("const idioCell", 1)[1].split("\n  };", 1)[0]
+    for word in ("industry", "name"):
+        assert f'class="ck-k">{word}<' in cell, (
+            f"the split line no longer labels its halves {word!r} — an abbreviation there is the "
+            f"same untranslated jargon the label map was fixed for")
+    for abbrev in ('class="ck-k">coh<', 'class="ck-k">own<', 'class="ck-k">res<'):
+        assert abbrev not in cell, f"{abbrev} is back on the split line"
+
+    # the glossary line the coin-time rule requires, so git log answers in either vocabulary
+    glossary = (ROOT / "docs" / "engineering.md").read_text()
+    assert "cohort split" in glossary, (
+        "no glossary line for the cohort split — CLAUDE.md requires coin-time translation in the "
+        "same PR that coins the term")
     norm = (ROOT / "frontend" / "lib" / "snapshots.js").read_text()
     assert "cohort: r.cohort ?? null" in norm, "the normaliser drops the cohort block"
 

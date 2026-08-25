@@ -1645,7 +1645,7 @@ table.data th.peer-desc-h { text-align: left; }
    The call is WITHHELD inside a 10-point margin: stability across four snapshots is 96% above 25
    points and 34% below 10, so a near-tie reports unresolved rather than guessing — the same rule
    `mixed` follows when a two-sided read is the human's to settle. */
-.ck-cell { min-width: 178px; }
+.ck-cell { min-width: 196px; }
 .ck-top { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 .ck-top { font-variant-numeric: tabular-nums; }
 .ck-split {
@@ -1655,6 +1655,9 @@ table.data th.peer-desc-h { text-align: left; }
 }
 .ck-split b { font-weight: 650; color: var(--ink); }
 .ck-k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+/* The arrow reads the arithmetic left to right — "its industry did X, leaving Y that is the name's
+   own" — so the two numbers are a subtraction rather than an unexplained pair. */
+.ck-sep { padding: 0 1px; }
 .ck-sep { color: var(--line-2); }
 .pill.ck-own { background: var(--live-bg); color: var(--pos-text); }
 .pill.ck-cohort { background: var(--danger-bg); color: var(--danger); }
