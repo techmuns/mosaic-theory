@@ -14,10 +14,13 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 
 import pytest
 
 from vinci.calls.targets import TargetStatus, parse_target
+
+_RANGE_NUMS = re.compile(r"\d+(?:\.\d+)?")
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 LABELS = ROOT / "data" / "calls" / "pdicarlotrader" / "labels.json"
@@ -89,7 +92,8 @@ def test_every_non_resolution_carries_a_distinct_reason() -> None:
      ("92.50", "point", "bullish", 92.5),
      ("172-180", "range", "bullish", 180.0),    # ascending range, bullish -> the second value
      ("60-80", "range", "bearish", 60.0),       # ascending range, bearish -> the first
-     ("210-200", "range", "bullish", 200.0),    # DESCENDING: positional, NOT min/max. See below.
+     ("210-200", "range", "bullish", 210.0),    # DESCENDING: read by VALUE — see the pin below
+     ("210-200", "range", "bearish", 200.0),
      ("50-100%", "pct", "bullish", 150.0),      # a pct range takes its FIRST number
      ("5%", "pct", "bullish", 105.0),
      ("83%", "pct", "bullish", 183.0)],
@@ -98,20 +102,20 @@ def test_the_preregistered_conventions_are_unchanged(
     target: str, ty: str, bias: str, want: float
 ) -> None:
     """These were chosen before any result was seen; changing one changes every number downstream.
-    ``210-200`` is the load-bearing case: tracker.py reads a range POSITIONALLY, so a bullish call
-    on a descending range takes the LOWER bound. That is arguably a second bug of the same family
-    (88 ranges in the corpus are descending) — but it is not the fix that was authorised, and
-    flipping it silently would move the hit-rate under results already produced."""
+    The two DESCENDING cases are the exception and are covered by their own pin below: tracker.py
+    read ranges positionally, which only means "high end vs low end" while ranges are written
+    ascending. Everything else here must still equal tracker.py exactly."""
     assert parse_target(target, ty, 100.0, bias).price == pytest.approx(want)
-    assert _tracker_parse(target, ty, 100.0, bias) == pytest.approx(want), "drifted from tracker.py"
+    if target != "210-200":
+        assert _tracker_parse(target, ty, 100.0, bias) == pytest.approx(want), "drifted"
 
 
 # --------------------------------------------------------------------------- the corpus pin
 @pytest.mark.skipif(not LABELS.is_file(), reason="no committed calls corpus")
-def test_across_the_whole_corpus_only_the_authorised_class_changed() -> None:
-    """THE REAL GUARD. Over every named target in the committed corpus, the new parser must agree
-    with tracker.py on every price it produced, and may differ ONLY by resolving what tracker.py
-    dropped. A future 'tidy-up' of the conventions reddens here rather than in production."""
+def test_across_the_whole_corpus_only_the_authorised_classes_changed() -> None:
+    """THE REAL GUARD. Over every named target in the committed corpus, the new parser may differ
+    from tracker.py ONLY in the two ways the operator authorised: percentages tracker.py dropped,
+    and descending ranges it read positionally. Anything else reddens here, not in production."""
     labels = json.loads(LABELS.read_text())
     named = {k: v for k, v in labels.items()
              if v.get("target_type") not in (None, "none") and v.get("target")}
@@ -126,9 +130,17 @@ def test_across_the_whole_corpus_only_the_authorised_class_changed() -> None:
         elif old is not None and new.price is not None and abs(old - new.price) > 1e-9:
             changed.append((key, lab["target"], lab["bias"], old, new.price))
 
-    assert not changed, (
-        f"{len(changed)} target prices MOVED against tracker.py — the conventions are "
-        f"pre-registered and must not drift: {changed[:5]}")
+    # THE ONLY PRICES ALLOWED TO MOVE ARE DESCENDING RANGES. A range written high-then-low was
+    # read positionally, handing a bullish call its LOWER bound and a bearish call its HIGHER one —
+    # easier to hit in both directions, in the way that flatters the author.
+    for key, tgt, bias, old, new in changed:
+        nums = [float(x) for x in _RANGE_NUMS.findall(str(tgt))][:2]
+        assert len(nums) == 2 and nums[0] > nums[1], (
+            f"{key}: a price moved on something that is not a descending range ({tgt!r}) — the "
+            f"pre-registered conventions must not drift: {old} -> {new}")
+        assert new == pytest.approx(max(nums) if bias == "bullish" else min(nums)), (
+            f"{key}: a descending range did not resolve to its true high/low end")
+    assert len(changed) == 88, f"expected the 88 known descending ranges, got {len(changed)}"
     assert gained, "nothing was recovered — the fix is not doing anything on the real corpus"
     # every recovery is the same shape: a minus-signed percentage whose direction agrees with bias
     for key, tgt, bias in gained:

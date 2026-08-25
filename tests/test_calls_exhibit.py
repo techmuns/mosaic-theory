@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 
@@ -94,3 +95,62 @@ def test_candle_width_never_falls_below_a_visible_hairline() -> None:
     wide, few, cramped = got
     assert few > wide > 1.0, f"width does not scale with the bar count: {got}"
     assert cramped >= 1.2, f"a cramped panel produced an invisible candle: {cramped}"
+
+
+# --------------------------------------------------------------------------- editor vocabulary
+def _js_list(src: str, name: str) -> list[str]:
+    m = re.search(rf"const {name} = \[(.*?)\];", src, re.S)
+    assert m, f"{name} not found in tape.js"
+    return re.findall(r'"([^"]+)"', m.group(1))
+
+
+@pytest.mark.skipif(not TAPE.is_file(), reason="no tape view")
+def test_the_editor_can_represent_every_value_the_corpus_actually_carries() -> None:
+    """SILENT DATA LOSS, caught by an audit rather than by a crash. The editor's bias control was
+    built from the build spec's list (bullish / bearish / neutral / none) — but the corpus carries
+    ``mixed`` on 336 rows. Opening one of those in an editor that cannot express it and touching any
+    other field rewrote a two-sided read as a one-sided one, with nothing red anywhere.
+
+    The same hazard applies to the spec tiers and to ``post_class``: a value the upstream labeller
+    starts emitting must not silently vanish from the surface that edits it. This pin holds all
+    three vocabularies against the committed corpus, so the NEXT new value fails here."""
+    labels_p = ROOT / "data" / "calls" / "pdicarlotrader" / "labels.json"
+    if not labels_p.is_file():
+        pytest.skip("no committed calls corpus")
+    labels = json.loads(labels_p.read_text())
+    src = TAPE.read_text()
+
+    in_corpus = {k: {str(v.get(k)) for v in labels.values() if v.get(k) is not None}
+                 for k in ("bias", "spec", "post_class")}
+
+    missing_bias = in_corpus["bias"] - set(_js_list(src, "BIASES"))
+    assert not missing_bias, (
+        f"the editor cannot express bias value(s) {sorted(missing_bias)}, which "
+        f"{sum(1 for v in labels.values() if str(v.get('bias')) in missing_bias)} rows carry — "
+        f"editing one silently rewrites it")
+
+    spec_defined = set(re.findall(r'\["([A-D])", "', src))
+    missing_spec = in_corpus["spec"] - spec_defined
+    assert not missing_spec, f"spec tier(s) {sorted(missing_spec)} have no definition in SPEC_DEF"
+
+    missing_cls = in_corpus["post_class"] - set(_js_list(src, "CLASSES"))
+    assert not missing_cls, f"post_class value(s) {sorted(missing_cls)} are unfilterable"
+
+
+@pytest.mark.skipif(not TAPE.is_file(), reason="no tape view")
+def test_every_chart_window_stays_anchored_on_the_post() -> None:
+    """A window that can scroll the call off screen is not a window on the call. Each preset is
+    [post − lead, post + span]: the lead must be negative and the span positive, so the post is
+    always inside the drawn range no matter which zoom the reader picks."""
+    src = TAPE.read_text()
+    m = re.search(r"const WINDOWS = \[(.*?)\];", src, re.S)
+    assert m, "WINDOWS not found"
+    rows = re.findall(r'\["([A-Z0-9]+)",\s*(-?\d+|null),\s*(-?\d+|null)\]', m.group(1))
+    assert len(rows) >= 6, f"expected the full preset row, got {rows}"
+    for name, lead, span in rows:
+        if lead == "null":
+            assert name in ("MAX", "FIT"), f"{name} has no bounds but is not MAX/FIT"
+            continue
+        assert int(lead) < 0, f"{name}: lead {lead} does not precede the post"
+        assert int(span) > 0, f"{name}: span {span} does not follow the post"
+    assert 'const DEFAULT_WINDOW = "1Y"' in src, "the default window moved without a decision"

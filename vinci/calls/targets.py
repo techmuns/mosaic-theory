@@ -101,13 +101,18 @@ def parse_target(
     if target_type == "range":
         if hi is None:
             return TargetParse(price=lo, status=TargetStatus.RESOLVED)
-        # POSITIONAL, not min/max — tracker.py takes the SECOND value when bullish and the FIRST
-        # when bearish, which is only "high vs low" while the author writes ranges ascending. 88 of
-        # the corpus's ranges are DESCENDING ("210-200"), where positional order picks the lower
-        # bound for a bullish call. That is a second bug of the same family as the pct one, but it
-        # is NOT the fix that was authorised, and silently flipping 88 targets would change the
-        # hit-rate underneath results already produced. Preserved exactly; reported separately.
-        return TargetParse(price=(hi if bias == "bullish" else lo),
+        # BY VALUE, not by position (fixed 2026-08-25, operator-authorised). tracker.py took the
+        # SECOND number when bullish and the FIRST when bearish, which is only "the high end vs the
+        # low end" while the author happens to write ranges ascending. 88 of the corpus's ranges are
+        # DESCENDING — "$TSLA 210-200", "$NVDA 120-118" — and on those the positional rule handed a
+        # bullish call its LOWER bound and a bearish call its HIGHER one: the target was easier to
+        # hit in both directions, in exactly the way that flatters the author.
+        #
+        # The convention itself is unchanged and still reads as it always did — bullish targets the
+        # top of the range, bearish the bottom. Only the ASSUMPTION that the author writes ranges
+        # ascending is gone. On ascending ranges (the other 533) this is bit-identical to before.
+        low, high = min(lo, hi), max(lo, hi)
+        return TargetParse(price=(high if bias == "bullish" else low),
                            status=TargetStatus.RESOLVED)
 
     if target_type == "pct":

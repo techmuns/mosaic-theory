@@ -3415,6 +3415,56 @@ Each line: *what it does* — *verified how*.
     (`#/calls/<h>/<date>/TSLA/<id>`) opened the right DAY and then focused whatever was first, so a
     shared link pointed at the wrong chart silently; and the label chip prefixed `$` onto every
     target, rendering `$+12.33%` — a currency mark on a relative move.
+  - **SECOND PASS (2026-08-25) — the descending-range bug, now authorised and fixed.** A range was
+    read POSITIONALLY: the second number when bullish, the first when bearish. That is only "the
+    high end vs the low end" while the author writes ranges ascending, and **88 of the corpus's 621
+    ranges are descending** ("$TSLA 210-200", "$NVDA 120-118"). On those, a bullish call was handed
+    its LOWER bound and a bearish call its HIGHER one — the target was easier to hit in BOTH
+    directions, i.e. the error ran in the direction that flatters the author. Now read by VALUE.
+    — *measured on the corpus: 88 targets moved, 55 of them on scored rows, **4 `target_hit` flips —
+    all four from HIT to not-hit**, none the other way. Corpus hit-rate 74.4% → 74.2%. The corpus
+    pin now asserts that the ONLY prices allowed to move are descending ranges, and that each
+    resolves to its true high/low end.*
+  - **AN AUDIT OF THE BUILD BRIEF AGAINST THE REAL DATA found four things the brief never said**,
+    two of which were live defects:
+    - **`bias: "mixed"` exists on 336 rows and the editor could not express it.** The bias control
+      was built from the brief's enum (bullish/bearish/neutral/none). Opening a `mixed` row and
+      touching any other field rewrote a two-sided read as a one-sided one, with nothing red.
+      Fixed, and pinned: `test_calls_exhibit.py` now holds the editor's bias / spec / post_class
+      vocabularies against every value the committed corpus carries, so the NEXT new value fails
+      in CI rather than silently on someone's screen.
+    - **`post_class` is not in the brief at all**, yet 2,166 of 8,185 rows (26%) are not signal —
+      1,412 `flow_spam`, 474 `promo`, 219 `noise`, 61 `engagement`. Labelling throughput is the
+      entire point of the screen, so a class filter matters more than most of the filters that
+      WERE specified. Added.
+    - **The specificity tiers had no definition anywhere** — the filter offered A/B/C/D against a
+      scale the reader could not see. Now defined FROM the data (A: direction + target, usually a
+      horizon · B: direction + target, no horizon · C: direction, no target · D: no directional
+      call), with the measured row counts shown beside each.
+    - **`needs_review` is true on 5,982 of 8,185 rows (73%)**, so as a filter it selects almost
+      everything. Left as-is — it is the upstream labeller's field — but recorded so nobody reads
+      a 73%-true flag as a shortlist.
+  - **Three claims in the brief do not survive contact with the bundle**, recorded so they are not
+    repeated: the renamed map holds **3** entries (SQ→XYZ, FB→META, TWTR→null), not the 8 asserted;
+    monthly volume falls **2.0x** across the span (357 → 177), not ~3x; and the machine labeller's
+    quoted **55% bias / 62% target accuracy is NOT re-derivable here** — a hand label REPLACES the
+    machine row at the same key, so the machine's own guess for those 83 is retained nowhere in the
+    bundle. The figure has to be taken on trust or re-measured upstream, and no surface in the app
+    claims it was verified.
+  - **A convention the brief never states, left unchanged but written down:** 53% of posts land
+    outside 09:30–16:00 ET, and the scorer keys off the DATE only. So a pre-market post and an
+    after-close post on the same day receive the SAME next-open entry. For the after-close post
+    that is right; for the pre-market one it silently forfeits the session the post was about.
+    Conservative in both cases (never look-ahead), so preserved — but it is an assumption, not a
+    neutral fact, and it was nowhere in the brief.
+  - **Chart windows are anchored on the POST, not on today** (`WINDOWS`, 5D/1M/3M/6M/1Y/5Y/MAX/FIT).
+    The usual trailing-window row would be wrong here: the subject is a call at a fixed point in
+    the past, so "last 6 months" can miss the call entirely. Each preset is `[post − lead, post +
+    span]`, and a pin asserts every lead is negative and every span positive — a window that can
+    scroll the call off screen is not a window on the call. FIT snaps to the scored horizon.
+  - **A crosshair readout** (date · OHLC · the price at the cursor's own height) reads from the same
+    geometry object the SVG was drawn from, so it can never report a bar that was not plotted.
+
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

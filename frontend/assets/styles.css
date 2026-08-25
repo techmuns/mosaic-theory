@@ -1582,3 +1582,34 @@ table.data th.peer-desc-h { text-align: left; }
 .ct-hints kbd { font-family: var(--mono); font-size: 10px; background: var(--surface); border: 1px solid var(--line-2);
   border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; margin-right: 2px; color: var(--ink-2); }
 .ct-hint-r { margin-left: auto; }
+
+/* --- calls tape: month select, legible dates, spec key, window buttons ----------------------- */
+.cal-sel { flex: 1; margin: 0 6px; padding: 3px 6px; border: 1px solid var(--line-2); border-radius: 6px;
+  background: var(--surface); color: var(--ink); font: 600 12.5px var(--sans); cursor: pointer; }
+.cal-sel:hover { border-color: var(--accent); }
+/* THE DATE LEADS. It was 9px at 0.8 opacity beneath a bolder post count, so the number a reader
+   navigates by was the faintest mark in the cell. Date first, count subordinate. */
+.cal-top { display: flex; align-items: baseline; justify-content: space-between; gap: 3px; }
+.cal-n { font-size: 12px; font-weight: 650; font-family: var(--mono); line-height: 1.1; letter-spacing: -0.02em; }
+.cal-c { font-size: 9.5px; font-weight: 500; opacity: 0.72; font-variant-numeric: tabular-nums; }
+.cal-cell { gap: 2px; }
+
+.ct-key { flex-basis: 100%; margin-top: 2px; }
+.ct-key > summary { cursor: pointer; font-size: 11px; color: var(--ink-3); list-style: none; }
+.ct-key > summary::-webkit-details-marker { display: none; }
+.ct-key > summary::before { content: "▸"; margin-right: 5px; }
+.ct-key[open] > summary::before { content: "▾"; }
+.ct-key-body { margin-top: 7px; padding: 9px 12px; background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--r); }
+.ct-key-row { display: flex; align-items: baseline; gap: 9px; padding: 3px 0; font-size: 11.5px; }
+.ct-key-w { color: var(--ink); min-width: 250px; }
+.ct-key-y { color: var(--ink-3); flex: 1; }
+.ct-key-n { color: var(--ink-2); font-weight: 600; }
+.ct-key-foot { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line-2);
+  font-size: 10.5px; color: var(--ink-3); line-height: 1.5; }
+
+.chart-follow { margin-left: auto; display: flex; gap: 2px; }
+.wbtn { font: 10.5px var(--mono); padding: 2px 6px; border: 1px solid var(--line-2); border-radius: 4px;
+  background: var(--surface); color: var(--ink-3); cursor: pointer; }
+.wbtn:hover { border-color: var(--accent); color: var(--accent); }
+.wbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }

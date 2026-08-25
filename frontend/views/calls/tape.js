@@ -29,8 +29,24 @@ import {
 
 const BIAS_COLOR = { bullish: "var(--pos-text)", bearish: "var(--danger)" };
 const ACTIONS = ["", "enter_long", "enter_short", "add", "trim", "exit", "no_entry", "hold", "none"];
-const BIASES = ["bullish", "bearish", "neutral", "none"];
+const BIASES = ["bullish", "bearish", "mixed", "neutral", "none"];
 const TARGET_TYPES = ["none", "point", "range", "pct", "qualitative"];
+//: What the specificity tiers actually contain, measured across the committed corpus rather than
+//: asserted — the filter offered A/B/C/D with no definition anywhere, which is a scale you cannot
+//: sort by. `n` is filled at render from the labels actually loaded.
+const SPEC_DEF = [
+  ["A", "direction + target, usually with a stated horizon", "the most actionable call"],
+  ["B", "direction + target, no horizon stated", "a level, open-ended on timing"],
+  ["C", "direction only, no target named", "a stance, not a number"],
+  ["D", "no directional call", "commentary, retrospective, or flow"],
+];
+
+//: post_class comes from the upstream labeller and is NOT in the build spec, but a quarter of the
+//: corpus is not signal at all (1,412 flow_spam + 474 promo + 219 noise + 61 engagement of 8,185).
+//: Labelling throughput is the whole point of this screen, so being able to hide them matters more
+//: than most of the filters that were specified.
+const CLASSES = ["signal_candidate", "flow_spam", "pnl_report", "promo", "noise", "engagement"];
+
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const S = {
@@ -38,8 +54,10 @@ const S = {
   accounts: null, days: null, labels: null, results: null,
   posts: [], month: null,
   postIdx: 0, chipIdx: 0,
-  filters: { ticker: "", spec: "", video: false, review: false, unlabelled: false },
+  filters: { ticker: "", spec: "", cls: "", video: false, review: false, unlabelled: false },
   edits: {},                       // key -> patch, mirrored to localStorage
+  window: null,                    // active chart window preset (see WINDOWS)
+  geom: null,                      // last drawn chart geometry, for the crosshair
 };
 
 // --- edits: local until exported. The pipeline's own file is the durable record. ---------------
@@ -89,6 +107,14 @@ function dayPosts() {
     if (f.video && !p.v) return false;
     const tags = (p.tk || []).map((t) => t.replace(/^\$/, ""));
     if (f.ticker && !tags.includes(f.ticker)) return false;
+    if (f.cls) {
+      const tags0 = (p.tk || []).map((t) => t.replace(/^\$/, ""));
+      const anyCls = tags0.some((t) => {
+        const l = (S.labels || {})[`${p.id}|${t}`];
+        return l && l.post_class === f.cls;
+      });
+      if (!anyCls) return false;
+    }
     if (f.spec || f.review || f.unlabelled) {
       const ok = tags.some((t) => {
         const l = labelFor(`${p.id}|${t}`);
@@ -109,11 +135,40 @@ function focusTags() {
 }
 
 // --- chart -------------------------------------------------------------------------------------
-const WINDOW_BEFORE_M = 3, WINDOW_AFTER_M = 12;
-function shift(iso, months) {
+// WINDOWS ARE ANCHORED ON THE POST, NOT ON TODAY, and that is the whole reason these are not the
+// usual 5D/1M/3M row. A normal chart's "6M" means the last six months from now; here the subject is
+// a call made at a fixed point in the past, so a trailing window can miss the call entirely. Each
+// preset is therefore [post − lead, post + span] in calendar days, which keeps the post and its
+// outcome both on screen at every zoom level. FIT snaps to the scored horizon itself.
+const WINDOWS = [
+  ["5D", -4, 7], ["1M", -10, 31], ["3M", -25, 92], ["6M", -45, 183],
+  ["1Y", -92, 365], ["5Y", -365, 1825], ["MAX", null, null], ["FIT", null, null],
+];
+const DEFAULT_WINDOW = "1Y";               // == the old fixed −3mo / +12mo
+
+function shiftDays(iso, days) {
   const d = new Date(iso + "T00:00:00Z");
-  d.setUTCMonth(d.getUTCMonth() + months);
+  d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
+}
+
+/** Resolve the active preset to a concrete [from, to] for this post. */
+function windowRange(postDate, result) {
+  const key = S.window || DEFAULT_WINDOW;
+  if (key === "MAX") return [null, null];
+  if (key === "FIT") {
+    // the scored horizon, padded — useless before a call is scored, so fall back to the default
+    if (!result || !result.entry_date || !result.exit_date) {
+      const [, lead, span] = WINDOWS.find((w) => w[0] === DEFAULT_WINDOW);
+      return [shiftDays(postDate, lead), shiftDays(postDate, span)];
+    }
+    const days = Math.round(
+      (Date.parse(result.exit_date) - Date.parse(result.entry_date)) / 86400000);
+    const pad = Math.max(Math.round(days * 0.15), 3);
+    return [shiftDays(result.entry_date, -pad), shiftDays(result.exit_date, pad)];
+  }
+  const w = WINDOWS.find((x) => x[0] === key) || WINDOWS.find((x) => x[0] === DEFAULT_WINDOW);
+  return [shiftDays(postDate, w[1]), shiftDays(postDate, w[2])];
 }
 
 /**
@@ -126,8 +181,8 @@ function shift(iso, months) {
  */
 function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) {
   if (!bars.length) return null;
-  const from = shift(postDate, -WINDOW_BEFORE_M), to = shift(postDate, WINDOW_AFTER_M);
-  const win = bars.filter((b) => b.d >= from && b.d <= to);
+  const [from, to] = windowRange(postDate, result);
+  const win = bars.filter((b) => (from == null || b.d >= from) && (to == null || b.d <= to));
   if (win.length < 2) return null;
 
   const W = 880, H = 470, padL = 44, padR = 12, cy0 = 26, cy1 = 300, by0 = 358, by1 = 448;
@@ -251,9 +306,23 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
     }
   }
 
+  // THE CROSSHAIR reads from this, so it can never disagree with what was drawn.
+  S.geom = { win, px0, px1, cy0, cy1, W, H,
+             yOf: (v) => sy(v), xOf: (i) => sx(i),
+             lo: dom.lo, hi: dom.hi };
+  const cross = `<g id="ch-cross" style="display:none;pointer-events:none">
+      <line id="ch-vx" y1="${cy0}" y2="${cy1}" stroke="var(--ink-3)" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line id="ch-hz" x1="${px0}" x2="${px1}" stroke="var(--ink-3)" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <circle id="ch-dot" r="3" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.5"/>
+      <g id="ch-tip"><rect id="ch-tip-bg" rx="4" fill="var(--surface)" stroke="var(--line-2)"/>
+        <text id="ch-tip-t" font-size="10" font-family="var(--mono)" fill="var(--ink)"></text></g>
+      <g id="ch-ytag"><rect id="ch-ytag-bg" rx="3" fill="var(--ink-2)"/>
+        <text id="ch-ytag-t" font-size="9.5" font-family="var(--mono)" fill="var(--surface)" text-anchor="end"></text></g>
+    </g>
+    <rect id="ch-hit" x="${px0}" y="${cy0}" width="${px1 - px0}" height="${cy1 - cy0}" fill="transparent" style="cursor:crosshair"/>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img"
     aria-label="${escapeHtml(ticker)} daily candles with the post marked, prior posts, the stated target, the horizon band, and SPY rebased to 100">
-    ${band}${grid}${body}${tgt}${marks}${xl}${here}${lower}</svg>`;
+    ${band}${grid}${body}${tgt}${marks}${xl}${here}${lower}${cross}</svg>`;
 }
 
 // --- pane 1: the calendar ----------------------------------------------------------------------
@@ -278,13 +347,21 @@ function paneCalendar() {
     const sel = iso === S.day ? "box-shadow:0 0 0 2px var(--accent);" : "";
     const dots = (rec.sig ? `<span class="cal-dot" style="background:var(--conditional)"></span>` : "")
       + (rec.lab ? `<span class="cal-dot" style="background:var(--pos-text)"></span>` : "");
-    cells += `<div class="cal-cell" data-day="${iso}" style="background:${bg};color:${ink};${sel}">`
-      + `<div class="cal-n">${d}</div><div class="cal-c">${rec.n || "·"}</div>`
+    cells += `<div class="cal-cell" data-day="${iso}" style="background:${bg};color:${ink};${sel}"`
+      + ` title="${iso} · ${rec.n || 0} posts">`
+      + `<div class="cal-top"><span class="cal-n">${d}</span>`
+      + `<span class="cal-c">${rec.n || ""}</span></div>`
       + `<div class="cal-dots">${dots}</div></div>`;
   }
+  // A DROPDOWN, not just arrows: 25 months is eight pages of clicking to reach the far end.
+  const allMonths = [...new Set(Object.keys(S.days).map(monthOf))].sort();
+  const opts = allMonths.map((mm) => {
+    const [yy, m2] = mm.split("-").map(Number);
+    return `<option value="${mm}"${mm === S.month ? " selected" : ""}>${MON[m2 - 1]} ${yy}</option>`;
+  }).join("");
   return `<div class="card cal-card">
     <div class="cal-head"><button class="cal-nav" data-mon="-1" aria-label="Previous month">◀</button>
-      <span>${MON[m - 1]} ${y}</span>
+      <select class="cal-sel" id="cal-month" aria-label="Month">${opts}</select>
       <button class="cal-nav" data-mon="1" aria-label="Next month">▶</button></div>
     <div class="cal-dow">${["S", "M", "T", "W", "T", "F", "S"].map((d) => `<div>${d}</div>`).join("")}</div>
     <div class="cal-grid">${cells}</div>
@@ -391,6 +468,11 @@ async function paneChart() {
     }
   }
   const svg = chartSvg({ bars, bench, postDate: p.d, label, result: res, ticker: tkr, otherPosts: others });
+  const wk = S.window || DEFAULT_WINDOW;
+  const [wf, wt] = windowRange(p.d, res);
+  const winLabel = wk === "MAX" ? " · every fetched bar"
+    : wk === "FIT" ? " · fitted to the horizon"
+    : ` · ${wf} → ${wt}`;
   const st = (l, v, sub, c) => `<div class="rd-s"><div class="rd-l">${l}</div>`
     + `<div class="rd-v mono"${c ? ` style="color:${c}"` : ""}>${v}</div><div class="rd-sub">${sub || ""}</div></div>`;
   let readout;
@@ -424,10 +506,68 @@ async function paneChart() {
   }
   return `<div class="card chart-card"><div class="chart-h"><span class="chart-bar"></span>
       <b class="mono">$${escapeHtml(tkr)}</b>
-      <span class="muted">call of ${escapeHtml(p.d)} · −${WINDOW_BEFORE_M}mo / +${WINDOW_AFTER_M}mo</span>
-      <span class="gt firm chart-follow">follows the focused chip</span></div>
+      <span class="muted">call of ${escapeHtml(p.d)}${winLabel}</span>
+      <span class="chart-follow">
+        ${WINDOWS.map(([k]) => `<button class="wbtn${(S.window || DEFAULT_WINDOW) === k ? " on" : ""}" data-win="${k}"`
+          + ` title="${k === "FIT" ? "fit the scored horizon" : k === "MAX" ? "every fetched bar" : "around the post"}">${k}</button>`).join("")}
+      </span></div>
       ${svg || `<div class="notice">Not enough bars inside the window to draw.</div>`}</div>
     <div class="card rd-card">${readout}</div>`;
+}
+
+/** TRADING-VIEW-STYLE READOUT. Hovering the plot names the bar under the pointer — date, OHLC, and
+ *  the price at the cursor's own height — because a chart you cannot interrogate forces the reader
+ *  back to the raw file to answer "what was it on the 14th". Reads S.geom, which is written by the
+ *  same call that drew the SVG, so the crosshair can never report a bar that was not plotted. */
+function wireCrosshair(root) {
+  const svg = root.querySelector("#ct-chart svg");
+  const g = S.geom;
+  if (!svg || !g || !g.win.length) return;
+  const hit = svg.querySelector("#ch-hit"), cross = svg.querySelector("#ch-cross");
+  if (!hit || !cross) return;
+  const el = (id) => svg.querySelector(id);
+  const pt = svg.createSVGPoint();
+
+  const move = (ev) => {
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    const loc = pt.matrixTransform(ctm.inverse());
+    const n = g.win.length;
+    const frac = (loc.x - g.px0) / Math.max(g.px1 - g.px0, 1);
+    const i = Math.max(0, Math.min(n - 1, Math.round(frac * (n - 1))));
+    const b = g.win[i];
+    if (!b) return;
+    const x = g.xOf(i), y = Math.max(g.cy0, Math.min(g.cy1, loc.y));
+    cross.style.display = "";
+    el("#ch-vx").setAttribute("x1", x); el("#ch-vx").setAttribute("x2", x);
+    el("#ch-hz").setAttribute("y1", y); el("#ch-hz").setAttribute("y2", y);
+    el("#ch-dot").setAttribute("cx", x); el("#ch-dot").setAttribute("cy", g.yOf(b.c));
+
+    // the price at the CURSOR's height, not the bar's close — that is what a reader is measuring
+    const atCursor = g.lo + (1 - (y - g.cy0) / Math.max(g.cy1 - g.cy0, 1)) * (g.hi - g.lo);
+    const ytag = el("#ch-ytag"), ybg = el("#ch-ytag-bg"), ytxt = el("#ch-ytag-t");
+    ytxt.textContent = atCursor.toFixed(2);
+    ytag.setAttribute("transform", `translate(0, ${y})`);
+    ytxt.setAttribute("x", g.px0 - 5); ytxt.setAttribute("y", 3.4);
+    ybg.setAttribute("x", g.px0 - 5 - (ytxt.getComputedTextLength() + 8));
+    ybg.setAttribute("y", -7.5); ybg.setAttribute("height", 15);
+    ybg.setAttribute("width", ytxt.getComputedTextLength() + 8);
+
+    const pct = b.o > 0 ? ((b.c / b.o - 1) * 100).toFixed(2) : "0.00";
+    const txt = el("#ch-tip-t"), bg = el("#ch-tip-bg");
+    txt.textContent = `${b.d}  O ${b.o.toFixed(2)}  H ${b.h.toFixed(2)}  `
+      + `L ${b.l.toFixed(2)}  C ${b.c.toFixed(2)}  ${pct >= 0 ? "+" : ""}${pct}%`;
+    txt.setAttribute("y", g.cy0 + 12);
+    const w = txt.getComputedTextLength() + 12;
+    // flip the tip to the left of the cursor near the right edge, so it never runs off the canvas
+    const tx = x + 8 + w > g.px1 ? x - 8 - w : x + 8;
+    txt.setAttribute("x", tx + 6);
+    bg.setAttribute("x", tx); bg.setAttribute("y", g.cy0 + 1);
+    bg.setAttribute("width", w); bg.setAttribute("height", 16);
+  };
+  hit.addEventListener("mousemove", move);
+  hit.addEventListener("mouseleave", () => { cross.style.display = "none"; });
 }
 
 // --- export ------------------------------------------------------------------------------------
@@ -461,6 +601,10 @@ function exportJsonl() {
 
 // --- shell -------------------------------------------------------------------------------------
 function toolbar(tickers) {
+  const counts = {};
+  for (const v of Object.values(S.labels || {})) {
+    if (v && v.spec) counts[v.spec] = (counts[v.spec] || 0) + 1;
+  }
   const accs = S.accounts.accounts;
   const a = accs.find((x) => x.handle === S.handle) || accs[0];
   const f = S.filters;
@@ -473,7 +617,9 @@ function toolbar(tickers) {
     <select class="filter-select" id="ct-tkr"><option value="">All tickers (${tickers.length})</option>
       ${tickers.map((t) => `<option value="${t}"${f.ticker === t ? " selected" : ""}>$${t}</option>`).join("")}</select>
     <select class="filter-select" id="ct-spec"><option value="">Spec: any</option>
-      ${["A", "B", "C", "D"].map((x) => `<option value="${x}"${f.spec === x ? " selected" : ""}>Spec ${x}</option>`).join("")}</select>
+      ${SPEC_DEF.map(([x, what]) => `<option value="${x}"${f.spec === x ? " selected" : ""}>Spec ${x} — ${escapeHtml(what)}</option>`).join("")}</select>
+    <select class="filter-select" id="ct-class"><option value="">All classes</option>
+      ${CLASSES.map((c) => `<option value="${c}"${f.cls === c ? " selected" : ""}>${c.replace(/_/g, " ")}</option>`).join("")}</select>
     <label class="chip"><input type="checkbox" id="ct-vid"${f.video ? " checked" : ""}> video</label>
     <label class="chip"><input type="checkbox" id="ct-rev"${f.review ? " checked" : ""}> needs review</label>
     <label class="chip ct-hot"><input type="checkbox" id="ct-unl"${f.unlabelled ? " checked" : ""}> unlabelled only</label>
@@ -481,7 +627,20 @@ function toolbar(tickers) {
       <span class="ct-count"><b class="mono">${a.n_hand_labels + Object.keys(S.edits).length}</b> hand labels</span>
       <span class="muted">· Scoreboard unlocks at 500</span>
       <button class="ct-exp" id="ct-export">Export JSONL</button>
-    </div></div>`;
+    </div>
+    <details class="ct-key"><summary>What do Spec A–D mean?</summary>
+      <div class="ct-key-body">
+        ${SPEC_DEF.map(([t, what, why]) => {
+          const n = counts[t] || 0;
+          return `<div class="ct-key-row"><span class="gt ${t === "A" ? "firm" : t === "D" ? "none" : "early"}">${t}</span>
+            <span class="ct-key-w">${escapeHtml(what)}</span>
+            <span class="ct-key-y">${escapeHtml(why)}</span>
+            <span class="ct-key-n mono">${n.toLocaleString()}</span></div>`;
+        }).join("")}
+        <div class="ct-key-foot">Measured across all ${Object.values(counts).reduce((a, b) => a + b, 0).toLocaleString()}
+          labelled rows in this account, not asserted. A and B both name a target and a direction;
+          they differ on whether the author put a clock on it.</div>
+      </div></details></div>`;
 }
 
 function timelineStrip() {
@@ -506,6 +665,7 @@ async function paint(root) {
   root.querySelector("#ct-chart").innerHTML = `<div class="card muted" style="font-size:12.5px">Drawing…</div>`;
   root.querySelector("#ct-chart").innerHTML = await paneChart();
   wire(root);
+  wireCrosshair(root);
   writeUrl();
   const foc = root.querySelector(".pfocus");
   if (foc) foc.scrollIntoView({ block: "nearest" });
@@ -532,6 +692,10 @@ function wire(root) {
       S.postIdx = 0; S.chipIdx = 0; repaint(); });
   };
   bindF("#ct-tkr", "ticker", "value"); bindF("#ct-spec", "spec", "value");
+  bindF("#ct-class", "cls", "value");
+  const msel = root.querySelector("#cal-month");
+  if (msel) msel.addEventListener("change", async (e) => {
+    await gotoMonth(e.target.value); repaint(); });
   bindF("#ct-vid", "video", "checked"); bindF("#ct-rev", "review", "checked");
   bindF("#ct-unl", "unlabelled", "checked");
 
@@ -549,6 +713,9 @@ function wire(root) {
     const d = new Date(Date.UTC(y, m - 1 + Number(e.currentTarget.dataset.mon), 1));
     await gotoMonth(d.toISOString().slice(0, 7)); repaint(); }, "click");
   q(".ct-mo", async (e) => { await gotoMonth(e.currentTarget.dataset.monJump); repaint(); }, "click");
+  q(".wbtn", (e) => {
+    e.stopPropagation();
+    S.window = e.currentTarget.dataset.win; repaint(); }, "click");
   q(".pcard", (e) => {
     S.postIdx = Number(e.currentTarget.dataset.post); S.chipIdx = 0; repaint(); }, "click");
   q(".lchip", (e) => {
