@@ -3557,6 +3557,39 @@ Each line: *what it does* — *verified how*.
     key carries the long form where it is asked for), cells are 44px → 30px, and the posts pane
     grew 62vh → 74vh. The month dropdown's post counts are gone at the operator's call; monthly
     volume now reads only off the calendar's own intensity.
+  - **SIXTH PASS (2026-08-25) — the trivial hit, closed properly, and the sign gap widened to
+    absolute targets.** `sign_conflict` only ever covered PERCENTAGE targets, where an explicit
+    minus contradicts the bias. For a point or range target the direction is implied by where the
+    level sits, and nothing checked it: **590 absolute targets sat on the opposite side of entry
+    from the stated bias.**
+    - **THE ROOT DEFECT WAS THE TOUCH TEST, not the label.** `target_hit` picked HIGHS for a
+      bullish call and LOWS for a bearish one — correct wherever the target lies in the direction
+      of the call, and **trivially true wherever it does not**: a bullish call with a level BELOW
+      entry asked "did the high ever reach it", which the first bar satisfies. **326 of the 373
+      signal-class rows in that shape were reporting a hit on arithmetic alone.** `touched()` now
+      keys on the LEVEL's own position — did price travel from entry to the level — which is
+      identical wherever the two rules agree. *358 hits flipped, **every one on a
+      counter-directional row, zero collateral**; corpus hit-rate 70.3% → 40.8%.*
+    - **MARKED, NOT REFUSED — and the ground truth is the reason.** Four of the 83 HAND labels are
+      this shape and all four are CORRECT: `$UNH` bullish with a $300 target against a $303 entry
+      is the support he expects a bounce FROM; `$SPY` bearish with $676–684 against $668 is the
+      rejection zone he expects price to rise INTO before falling. These are **levels being
+      watched, not targets being predicted.** A guard that discarded four ground-truth labels to
+      catch a machine artifact would have been the worse trade — so the status is
+      `COUNTER_DIRECTIONAL`, the price still resolves, the touch is still scored, and the readout
+      says "reached the zone" instead of "inside the band". `$NOW` (bearish, $140–150 against a
+      $112 entry) correctly flips to NOT hit: price never rose to the zone.
+    - The headline separates cleanly now: **true targets 46.7%, watched levels 33.3%** — two
+      different questions that were previously averaged into one number.
+  - **A BIAS FILTER** (bullish / bearish / mixed / neutral / none, with corpus counts, plus
+    "unlabelled (no chip)" — a distinct state from a label whose bias IS `none`, which is the author
+    declining to take a side). — *verified on 2026-01-26: 6 posts → 5 bullish (every chip bullish)
+    → 0 bearish (genuinely none that day) → 1 `none`.*
+  - **A dev-only no-cache static server** (`serve_nocache.py`, launch config `calls-tape`). The
+    browser caches ES modules hard enough that a reload kept running the PREVIOUS build of a view —
+    so "verify it in the browser" was twice quietly testing old code, and twice I mistook a stale
+    module for a broken feature. Not shipped to the deploy; a dev-loop correctness fix.
+
 
 
 

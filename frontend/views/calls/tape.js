@@ -72,6 +72,8 @@ const REVIEW_REASONS = [
    (l) => l.target_type && l.target_type !== "none" && (!l.bias || l.bias === "none")],
   ["implausible", "a target nowhere near the price (a parse artifact)",
    (l, r) => r && r.target_status === "implausible"],
+  ["counter", "a level on the wrong side of the entry for the stated bias",
+   (l, r) => r && r.target_status === "counter_directional"],
   ["mixed", "a two-sided read", (l) => l.bias === "mixed"],
 ];
 const NON_SIGNAL = new Set(["flow_spam", "promo", "noise", "engagement"]);
@@ -92,7 +94,7 @@ const S = {
   accounts: null, days: null, labels: null, results: null,
   posts: [], month: null,
   postIdx: 0, chipIdx: 0,
-  filters: { ticker: "", spec: "", cls: "", video: false, review: "", unlabelled: false },
+  filters: { ticker: "", spec: "", cls: "", bias: "", video: false, review: "", unlabelled: false },
   edits: {},                       // key -> patch, mirrored to localStorage
   window: null,                    // active chart window preset (see WINDOWS)
   seqFiltered: false,              // do the filters reach the chart's prior-post markers
@@ -169,6 +171,11 @@ function chipPasses(postId, tkr) {
     if (!raw || raw.post_class !== f.cls) return false;
   }
   if (f.spec && (!l || l.spec !== f.spec)) return false;
+  // `unlabelled` is a real bias value here, meaning "no chip at all" — distinct from the label
+  // whose bias IS the string "none", which is the author declining to take a side.
+  if (f.bias) {
+    if (f.bias === "__none__") { if (l) return false; } else if (!l || l.bias !== f.bias) return false;
+  }
   if (f.review) {
     const rs = reviewReasons(key);
     if (!rs.length || (f.review !== "any" && !rs.includes(f.review))) return false;
@@ -618,7 +625,8 @@ async function paneChart() {
              res.target_px != null ? "" : (res.target_status === "implausible"
                ? "nowhere near the price — refused" : "none stated"))}
         ${st("Touched", res.target_hit_to_date == null ? DASH_
-             : (res.target_hit_to_date ? "YES" : "not yet"), "so far",
+             : (res.target_hit_to_date ? "YES" : "not yet"),
+             res.target_status === "counter_directional" ? "zone, so far" : "so far",
              res.target_hit_to_date ? "var(--pos-text)" : "var(--ink-2)")}
       </div>`;
   } else if (res.status !== "CLOSED") {
@@ -628,7 +636,11 @@ async function paneChart() {
     const tgtNote = { resolved: "", qualitative: "qualitative — no price",
                       sign_conflict: "sign vs bias — refused", absent: "none stated",
                       no_bias: "no direction", unparseable: "could not be read",
-                      implausible: "nowhere near the price — refused" }[res.target_status] || "";
+                      implausible: "nowhere near the price — refused",
+                      counter_directional: "a LEVEL against the bias, not a target"
+                    }[res.target_status] || "";
+    const touchNote = res.target_status === "counter_directional"
+      ? "reached the zone" : "inside the band";
     readout = `<div class="rd-head"><span class="pill live">CLOSED</span>
       <span class="rd-why">horizon elapsed — counts toward aggregates</span>
       <span class="gt ${res.horizon_assumed ? "partial" : "firm"}">${res.horizon_days}d · ${res.horizon_assumed ? "63d DEFAULT, assumed" : "STATED"}</span></div>
@@ -641,7 +653,7 @@ async function paneChart() {
         ${st("MFE", fmtPct(res.mfe, { signed: true }), "best", "var(--pos-text)")}
         ${st("MAE", fmtPct(res.mae, { signed: true }), "worst", "var(--danger)")}
         ${st("Target", res.target_px == null ? "—" : `$${res.target_px.toFixed(2)}`, tgtNote)}
-        ${st("Touched", res.target_hit == null ? "—" : (res.target_hit ? "YES" : "no"), "inside the band",
+        ${st("Touched", res.target_hit == null ? "—" : (res.target_hit ? "YES" : "no"), touchNote,
              res.target_hit ? "var(--pos-text)" : "var(--ink-2)")}
       </div>`;
   }
@@ -730,7 +742,8 @@ function wireCrosshair(root) {
     // day and landing on the wrong post would be worse than saying so, so the filters are cleared
     // for this jump rather than silently mis-focusing.
     if (pi < 0) {
-      S.filters = { ticker: "", spec: "", cls: "", video: false, review: "", unlabelled: false };
+      S.filters = { ticker: "", spec: "", cls: "", bias: "", video: false, review: "",
+                    unlabelled: false };
     }
     const posts2 = dayPosts();
     S.postIdx = Math.max(0, posts2.findIndex((q) => String(q.id) === id));
@@ -785,6 +798,10 @@ function toolbar(tickers) {
     rev.any += 1;
     for (const r of rs) rev[r] = (rev[r] || 0) + 1;
   }
+  const bcount = {};
+  for (const v of Object.values(S.labels || {})) {
+    if (v && v.bias) bcount[v.bias] = (bcount[v.bias] || 0) + 1;
+  }
   const accs = S.accounts.accounts;
   const a = accs.find((x) => x.handle === S.handle) || accs[0];
   const f = S.filters;
@@ -798,6 +815,11 @@ function toolbar(tickers) {
       ${tickers.map((t) => `<option value="${t}"${f.ticker === t ? " selected" : ""}>$${t}</option>`).join("")}</select>
     <select class="filter-select" id="ct-spec"><option value="">Spec: any</option>
       ${SPEC_DEF.map(([x, what]) => `<option value="${x}"${f.spec === x ? " selected" : ""}>Spec ${x} — ${escapeHtml(what)}</option>`).join("")}</select>
+    <select class="filter-select" id="ct-bias"><option value="">Bias: any</option>
+      ${BIASES.map((b) => `<option value="${b}"${f.bias === b ? " selected" : ""}>${b}${
+        bcount[b] ? ` (${bcount[b].toLocaleString()})` : ""}</option>`).join("")}
+      <option value="__none__"${f.bias === "__none__" ? " selected" : ""}>unlabelled (no chip)</option>
+    </select>
     <select class="filter-select" id="ct-class"><option value="">All classes</option>
       ${CLASSES.map((c) => `<option value="${c}"${f.cls === c ? " selected" : ""}>${c.replace(/_/g, " ")}</option>`).join("")}</select>
     <label class="chip"><input type="checkbox" id="ct-vid"${f.video ? " checked" : ""}> video</label>
@@ -864,7 +886,7 @@ function wire(root) {
       S.postIdx = 0; S.chipIdx = 0; repaint(); });
   };
   bindF("#ct-tkr", "ticker", "value"); bindF("#ct-spec", "spec", "value");
-  bindF("#ct-class", "cls", "value");
+  bindF("#ct-class", "cls", "value"); bindF("#ct-bias", "bias", "value");
   const msel = root.querySelector("#cal-month");
   if (msel) msel.addEventListener("change", async (e) => {
     await gotoMonth(e.target.value); repaint(); });

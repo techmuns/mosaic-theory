@@ -69,6 +69,9 @@ class TargetStatus(StrEnum):
     NO_ENTRY = "no_entry"             # a pct/relative target with no entry price to apply it to
     NO_BIAS = "no_bias"               # a RELATIVE move with no stated direction to apply it in
     IMPLAUSIBLE = "implausible"       # resolved, but nowhere near the price — a parse artifact
+    #: Resolved, and USABLE — but the level sits on the opposite side of the entry from the stated
+    #: bias, so it is a ZONE being watched rather than a target the thesis predicts reaching.
+    COUNTER_DIRECTIONAL = "counter_directional"
 
 
 class TargetParse(BaseModel, frozen=True):
@@ -88,6 +91,28 @@ def _numbers(raw: str) -> tuple[float, float | None] | None:
         return None
     hi = m.group("hi")
     return float(m.group("lo")), (float(hi) if hi is not None else None)
+
+
+def _directional(price: float, entry: float | None, bias: str | None) -> TargetParse:
+    """Mark a level that lies AGAINST the stated bias — resolved, usable, and not a price target.
+
+    NOT A REFUSAL, and the corpus is why. Four of the eighty-three HAND labels are this shape and
+    every one is correct: ``$UNH`` bullish with a target of $300 against a $303 entry is the smart-
+    money support he expects a bounce FROM; ``$SPY`` bearish with $676–684 against $668 is the
+    rejection zone he expects price to rise INTO before falling. These are levels being watched,
+    not targets being predicted, and a guard that discarded four ground-truth labels to catch a
+    machine artifact would be the worse trade.
+
+    What it changes is what "touched" MEANS, which the caller handles: see ``score_call``, where the
+    touch test keys on the level's position relative to entry rather than on the bias. Under the old
+    bias-keyed test a bullish call with a level BELOW entry asked "did the high ever reach it",
+    which every bar satisfies from the first tick — 326 of 373 such rows were reporting a hit.
+    """
+    if entry is None or entry <= 0 or bias not in ("bullish", "bearish"):
+        return TargetParse(price=price, status=TargetStatus.RESOLVED)
+    against = (bias == "bullish" and price < entry) or (bias == "bearish" and price > entry)
+    st = TargetStatus.COUNTER_DIRECTIONAL if against else TargetStatus.RESOLVED
+    return TargetParse(price=price, status=st)
 
 
 def _plausible(price: float, entry: float | None) -> TargetParse:
@@ -126,11 +151,13 @@ def parse_target(
     lo, hi = nums
 
     if target_type == "point":
-        return _plausible(lo, entry)
+        p = _plausible(lo, entry)
+        return p if p.price is None else _directional(p.price, entry, bias)
 
     if target_type == "range":
         if hi is None:
-            return _plausible(lo, entry)
+            p = _plausible(lo, entry)
+            return p if p.price is None else _directional(p.price, entry, bias)
         # BY VALUE, not by position (fixed 2026-08-25, operator-authorised). tracker.py took the
         # SECOND number when bullish and the FIRST when bearish, which is only "the high end vs the
         # low end" while the author happens to write ranges ascending. 88 of the corpus's ranges are
@@ -142,7 +169,8 @@ def parse_target(
         # top of the range, bearish the bottom. Only the ASSUMPTION that the author writes ranges
         # ascending is gone. On ascending ranges (the other 533) this is bit-identical to before.
         low, high = min(lo, hi), max(lo, hi)
-        return _plausible(high if bias == "bullish" else low, entry)
+        p = _plausible(high if bias == "bullish" else low, entry)
+        return p if p.price is None else _directional(p.price, entry, bias)
 
     if target_type == "pct":
         if bias not in ("bullish", "bearish"):

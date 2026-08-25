@@ -225,3 +225,29 @@ def test_the_implausible_band_does_not_swallow_ordinary_calls() -> None:
         f"the plausibility band refuses {refused}/{kept + refused} targets priced at their own "
         f"level — it is too tight and is discarding real calls")
     assert statistics.mean([1.0]) == 1.0
+
+
+# ------------------------------------------------------------------- levels against the bias
+def test_a_level_against_the_bias_is_marked_but_never_discarded() -> None:
+    """MARKED, NOT REFUSED, and the ground truth is why. Four of the eighty-three HAND labels are
+    this shape and all four are correct: $UNH bullish with a $300 target against a $303 entry is
+    the support he expects a bounce FROM; $SPY bearish with $676–684 against $668 is the rejection
+    zone he expects price to rise INTO before falling. They are levels being watched, not targets
+    being predicted — and a guard that discarded four ground-truth labels to catch a machine
+    artifact would be the worse trade."""
+    below = parse_target("300", "point", 303.12, "bullish")
+    assert below.price == pytest.approx(300.0), "a watched level was discarded"
+    assert below.status is TargetStatus.COUNTER_DIRECTIONAL
+    above = parse_target("676-684", "range", 668.36, "bearish")
+    assert above.price == pytest.approx(676.0) and above.status is TargetStatus.COUNTER_DIRECTIONAL
+    # ...and an ordinary target in the direction of the call is untouched
+    assert parse_target("400", "point", 340.0, "bullish").status is TargetStatus.RESOLVED
+    assert parse_target("100", "point", 140.0, "bearish").status is TargetStatus.RESOLVED
+
+
+def test_a_percentage_target_can_never_be_counter_directional() -> None:
+    """A pct target is DERIVED from the bias, so it cannot point against it — and if this ever
+    starts returning COUNTER_DIRECTIONAL the derivation itself has broken."""
+    for bias in ("bullish", "bearish"):
+        got = parse_target("10%", "pct", 100.0, bias)
+        assert got.status is TargetStatus.RESOLVED, f"{bias}: {got.status}"

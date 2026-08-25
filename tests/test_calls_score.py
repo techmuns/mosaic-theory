@@ -14,7 +14,13 @@ from datetime import date, timedelta
 
 import pytest
 
-from vinci.calls.score import DEFAULT_HORIZON_DAYS, Bar, is_scoreable, score_call
+from vinci.calls.score import (
+    DEFAULT_HORIZON_DAYS,
+    Bar,
+    is_scoreable,
+    score_call,
+    touched,
+)
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "data" / "calls" / "pdicarlotrader"
@@ -140,3 +146,33 @@ def test_the_committed_results_obey_every_convention_at_once() -> None:
     closed = [r for r in rows if r["status"] == "CLOSED"]
     assert closed and any(r["horizon_assumed"] for r in rows), "no assumed horizon to check"
     assert any(not r["horizon_assumed"] for r in rows), "no stated horizon to check"
+
+
+def test_the_touch_test_keys_on_the_level_not_on_the_bias() -> None:
+    """THE TRIVIAL-HIT BUG. The test used to pick highs for a bullish call and lows for a bearish
+    one — right whenever the target lies in the direction of the call, and trivially TRUE whenever
+    it does not. A bullish call with a level BELOW entry asked "did the high ever reach it", which
+    the first bar satisfies. On the corpus, 326 of the 373 signal-class rows whose level ran
+    against their bias were reporting a hit on that arithmetic alone.
+
+    Keyed on the level's own position the question is the real one — did price travel from entry to
+    the level — and it is IDENTICAL wherever the two rules agree."""
+    highs, lows = [105.0, 108.0], [98.0, 95.0]
+    # a level ABOVE entry is reached by the highs; one BELOW, by the lows
+    assert touched(107.0, 100.0, highs, lows) is True
+    assert touched(120.0, 100.0, highs, lows) is False
+    assert touched(96.0, 100.0, highs, lows) is True
+    assert touched(90.0, 100.0, highs, lows) is False
+    # THE REGRESSION: a level below entry must NOT be satisfied merely by the highs existing
+    assert touched(96.0, 100.0, [1e9], [99.0]) is False, (
+        "a level below entry was 'hit' by a high — the trivial-hit bug is back")
+
+
+def test_a_counter_directional_level_is_still_scored_end_to_end() -> None:
+    """$UNH's shape: bullish, level just BELOW entry. It must still produce a price and a touch
+    verdict — the label is ground truth and dropping it would lose a real call."""
+    bars = _bars(date(2025, 1, 6), [100.0] + [97.0] * 40)
+    r = _call(bars=bars, bias="bullish", target="98", target_type="point", horizon_hi=5)
+    assert r.target_px == pytest.approx(98.0)
+    assert r.target_status == "counter_directional"
+    assert r.target_hit is True, "price fell to the watched level and that was not recorded"
