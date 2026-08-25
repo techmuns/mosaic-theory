@@ -66,6 +66,54 @@ def _trading_days(start: date, end: date) -> Iterator[date]:
         d += timedelta(days=1)
 
 
+#: How far back :func:`last_completed_session` will probe before giving up. A four-day weekend plus
+#: a stacked holiday is the worst real case; 10 covers it without probing indefinitely on an outage.
+_SESSION_LOOKBACK_DAYS = 10
+
+
+def last_completed_session(client: EodClient, *, today: date,
+                           lookback_days: int = _SESSION_LOOKBACK_DAYS) -> date:
+    """The newest date the MARKET DATA reaches — asked of the data, never of a calendar.
+
+    WHY THIS EXISTS. `vinci run-weekly` defaulted its `--end` to `date.today()`, so the whole
+    screen — universe as-of, `reference_date`, every relative-return window — was stamped with the
+    WALL CLOCK. On Monday 2026-08-24 the job fired at 07:04 UTC, six hours before the US market
+    opened, and stamped a queue `2026-08-24` when the newest bar that could exist was Friday's.
+    `test_the_wall_clock_is_unreachable_from_the_reference_date` refused it at the gate, correctly,
+    and the weekly run had not been able to go green since. This is the same defect `_ref_of` was
+    fixed for in `assemble.py` (#355, "a reference date names a moment the data reaches, never the
+    clock") — that fix is guarded by an AST scan which reads `assemble.py` ONLY, so the
+    orchestrator's entry point kept its wall clock.
+
+    THE DATA DECIDES WHAT A SESSION IS; the weekday check is COST, not knowledge. `grouped_daily`
+    returns an EMPTY dict for any non-trading day, so holidays, half-days and a session that has
+    not closed all answer for themselves — no holiday table is shipped, and none can rot. The
+    `weekday() < 5` skip only avoids spending two calls on a weekend it would reject anyway, which
+    is exactly what `_trading_days` above already does for the same reason. Remove it and the
+    answer is unchanged; the probe just costs more.
+
+    IT PROBES FROM `today - 1`, NEVER `today`. A session still in progress can return partial
+    aggregates, and stamping a record with a date whose bars are half-formed is the lookahead
+    trapdoor this repo has already shut once for entry prices. Yesterday-or-earlier can only ever
+    name a CLOSED session, so the answer is safe by construction rather than by timing. The cost is
+    that a run fired after today's close stamps yesterday — a stamp that LAGS the data is harmless
+    (the gate asserts `fleet <= frontier`); a stamp that LEADS it is the bug being fixed.
+
+    Raises rather than guessing when nothing answers inside the window — a fabricated date here
+    would propagate into every stamp the run writes.
+    """
+    day = today - timedelta(days=1)
+    for _ in range(lookback_days):
+        if day.weekday() < 5 and client.grouped_daily(day):
+            return day
+        day -= timedelta(days=1)
+    raise RuntimeError(
+        f"no completed trading session found in the {lookback_days} days before {today} — the EOD "
+        f"source returned no rows for any of them. Refusing to date a run by the wall clock; pass "
+        f"an explicit --end naming a session you know closed."
+    )
+
+
 def ingest_prices(
     client: EodClient,
     store: Any,

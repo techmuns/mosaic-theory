@@ -73,6 +73,25 @@ jobs:
       - name: Rebuild the derived frontend mirror
         run: python frontend/build.py
 
+      # THE SECOND DERIVED MIRROR. The step above rebuilds `frontend/` because it mirrors the data
+      # this job just refreshed; `tests/fixtures/prices/` is the OTHER mirror of that same data and
+      # was never rebuilt with it, which is half of why the weekly run could not go green.
+      #
+      # `tests/test_maintenance_path.py::_cfg` builds its store from these committed bars on EVERY
+      # machine — deliberately, so the maintenance pins mean the same thing in CI as on a laptop
+      # (they passed on every laptop while main ran red for eleven merges). The consequence is that
+      # the gate below compares the freshly-screened fleet as-of against THESE bars, not against the
+      # store. Refresh the store and leave the fixture behind, and the run fails its own gate.
+      #
+      # DERIVED DATA, NOT CODE, and the distinction is the one CLAUDE.md draws: these are
+      # regenerable price bars carrying no analytical claim and no logic, staged by directory name
+      # so this cannot become a door for a code change. The script is ALL-OR-NOTHING — a name with
+      # no bars aborts before anything is written — so a partial build can never be committed.
+      - name: Rebuild the price fixture, the other mirror of the refreshed store
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: PYTHONPATH=$PWD python scripts/build_price_fixture.py
+
       # THE ARTIFACT-PASS RULE, APPLIED TO THE PASS THAT IS NOT A HUMAN'S.
       #
       # This job's commit is the one that changes the fleet's ROUTING — a name leaving the candidate
@@ -109,7 +128,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/snapshots frontend
+          git add data/snapshots frontend tests/fixtures/prices
           git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots"
           git push
 
