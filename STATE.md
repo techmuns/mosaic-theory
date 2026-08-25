@@ -4797,6 +4797,34 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-25
+
+**WHY THIS BLOCK EXISTS.** §5 is append-only and had grown to ~9,900 lines across 804 bold headers,
+of which 51 carry a done-marker. Most of the rest are NARRATIVE, not to-dos. "What is still open"
+was therefore unanswerable by reading, and on 2026-08-25 it produced a concrete failure: an agent
+that had itself verified the weekly run that morning, and recorded it DONE here, proposed
+re-triggering it hours later — while a stale entry further down still read "STILL OPEN — the queue
+has not actually advanced". The record contradicted itself and the reader took the wrong half.
+
+**THE RULE.** This block is the ONLY authoritative answer to "what is next". A build that closes an
+item DELETES its row here (and strikes its entry below). A build that opens one adds a row. Prose
+explaining a shipped thing belongs in **§2 Built and verified**, never here — that is how §5 grew
+into an essay.
+
+| # | open item | owner | unlocks / blocked on |
+|--:|---|---|---|
+| 1 | **Cohort pool widening** — measured 2026-08-25: no-cohort 75→28, every flip one-way (`own`→`unresolved`, `unresolved`→`cohort`, none back), confirming the small-cap-only pool overstates idiosyncrasy. ~15 min of EDGAR, cached; prices already downloaded and discarded. | agent | TWO OPERATOR RULINGS: (a) do ADRs (BABA) belong in an industry cohort in a US-first fund? (b) confirm Polygon's security `type` replaces the crude warrant/preferred heuristic used in the test |
+| 2 | **Phase 2 — mechanical no-CIQ triage pass** over the queue, with a COST GATE first (time 10 names before committing to 268). **Phase 0 (LLM cause classifier) folds in here**: `cause_class` is dark because no textual de-rating source exists at queue scale — all 525 events are `earnings_gap_down` from the EOD detector, no accession, no document. | agent | operator go-ahead on the cost gate; narrow to top-50 if a full pass will not fit the weekly window |
+| 3 | **Vintage check between `candidate_records.jsonl` and `screen_runs/*.jsonl`** — the queue is ranked from one and cohorts read the newest of the other, with no as-of assertion between them. Two rows already mismatch; degrades honestly today, would widen silently on drift. | agent | nothing — ready to build |
+| 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
+| 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
+| 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
+
+**NOT open, recorded because they were recently believed open:** the weekly screen (ran green
+2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
+blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
+
+
 ### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
 **THE COHORT SPLIT IS LIVE ON THE QUEUE — SHIPPED 2026-08-25 (`feat/cohort-split-in-the-queue`),
@@ -5082,9 +5110,11 @@ primitives, never the call site, so the guard survived its only caller being rem
 pin-the-helper trap for the second time this session. A pin now runs the REAL `build_universe`
 against an empty universe feed, and the mutation dies. 5/5 mutations killed.
 
-**STILL OPEN — the queue has not actually advanced.** This unblocks the run; it does not perform it.
-The screen must be triggered manually (see the cron-removal ruling) and the first real run is the
-only proof the fix holds end to end.
+**~~STILL OPEN — the queue has not actually advanced~~ — CLOSED 2026-08-25, run 32827750106.** The
+screen ran green end to end and the queue advanced to `screen_run_at 2026-08-24`; the record is at
+the head of this section. *Struck rather than deleted, and called out because it is the failure
+this section's new OPEN NOW block exists for: this entry sat here reading "STILL OPEN" for hours
+after a later entry recorded the run as DONE, so a careful reader of §5 got two answers.*
 
 **TIERED GATES SHIPPED 2026-08-21 (`feat/tiered-gates`) — FOUR OPERATOR RULINGS, RECORDED HERE
 because they were given in chat and chat is not a ledger (OPERATOR-ACTION RULE).** Context: the
