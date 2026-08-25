@@ -17,6 +17,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 from pathlib import Path
 
+from vinci.cohort import cohort_reads, sic_by_ticker
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
@@ -103,6 +104,13 @@ def rank_from_snapshots(
     # CIQ-GICS overlay joins at the frontend build from the committed dossier index, so a dossier
     # landing between rank runs upgrades its name without a re-rank.
     sic_by_id = {c.candidate_id: c.data_record.identity.sic for c in cands}
+    # THE COHORT SPLIT is derived HERE, in the writer, for the same reason the labels are: it is
+    # sector-derived, and the scorer must never be able to reach it. Ranking is finished by this
+    # line. The medians are taken over the SCREEN LOG — every name that reached the gates, pass and
+    # fail — never over the admitted candidates, which would define the cohort by the very
+    # selection under test and guarantee a deeply-negative median. Reads committed artifacts only.
+    queue_tickers = [c.data_record.identity.ticker for c in cands]
+    cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers)
     # The EVIDENCE STRIP is composed HERE, in the writer, for the same reason the labels are: it is
     # presented context, and the scorer must never be able to read it. Ranking is already finished
     # by this line, so the strip cannot influence an order it is attached to.
@@ -112,6 +120,7 @@ def rank_from_snapshots(
             "sector": (lbl := resolve_label(sic_by_id.get(r.candidate_id))).sector,
             "industry": lbl.industry,
             "context": (evidence_strip(rec) if (rec := rec_by_id.get(r.candidate_id)) else None),
+            "cohort": cohorts.get(r.ticker),
         })
         for r in ranked
     ]
