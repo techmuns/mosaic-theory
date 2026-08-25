@@ -49,12 +49,46 @@ const CLASSES = ["signal_candidate", "flow_spam", "pnl_report", "promo", "noise"
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+//: WHY THE UPSTREAM `needs_review` FLAG IS NOT USED AS A FILTER. It is true on 5,982 of 8,185 rows
+//: (73%), and worse than merely unselective: it INCLUDES 1,410 flow_spam rows nobody should ever
+//: read, and EXCLUDES 510 spec-A calls — the most specific, most reviewable rows in the corpus. As
+//: a queue it points away from the work. The flag is still shown on the chip (it is the labeller's
+//: own signal and not ours to delete); it is just not what the filter sorts by.
+//:
+//: These reasons are DERIVED, ordered most-actionable first, and every one excludes the non-signal
+//: classes outright. Counts are computed at render from the corpus actually loaded.
+const REVIEW_REASONS = [
+  ["conflict", "target contradicts the stated bias",
+   (l, r) => r && r.target_status === "sign_conflict"],
+  ["unreadable", "a target was named and could not be read",
+   (l, r) => r && r.target_status === "unparseable"],
+  ["noprice", "no price data for the ticker",
+   (l, r) => r && r.status === "NO_PRICE_DATA"],
+  ["specific", "a specific call (spec A/B) still only guessed",
+   (l) => l.src === "machine" && (l.spec === "A" || l.spec === "B")],
+  ["undirected", "a target with no direction to score it by",
+   (l) => l.target_type && l.target_type !== "none" && (!l.bias || l.bias === "none")],
+  ["mixed", "a two-sided read", (l) => l.bias === "mixed"],
+];
+const NON_SIGNAL = new Set(["flow_spam", "promo", "noise", "engagement"]);
+
+/** The reasons this row wants a human, most actionable first. Empty = it does not. */
+function reviewReasons(key) {
+  const l = labelFor(key);
+  if (!l || l.src === "hand") return [];
+  if (NON_SIGNAL.has(l.post_class)) return [];
+  const r = S.results ? S.results.get(key) : null;
+  return REVIEW_REASONS.filter(([, , test]) => {
+    try { return Boolean(test(l, r)); } catch (e) { return false; }
+  }).map(([id]) => id);
+}
+
 const S = {
   handle: null, day: null, ticker: null, tweetId: null,
   accounts: null, days: null, labels: null, results: null,
   posts: [], month: null,
   postIdx: 0, chipIdx: 0,
-  filters: { ticker: "", spec: "", cls: "", video: false, review: false, unlabelled: false },
+  filters: { ticker: "", spec: "", cls: "", video: false, review: "", unlabelled: false },
   edits: {},                       // key -> patch, mirrored to localStorage
   window: null,                    // active chart window preset (see WINDOWS)
   geom: null,                      // last drawn chart geometry, for the crosshair
@@ -84,6 +118,14 @@ const monthOf = (iso) => String(iso).slice(0, 7);
 const quarterOf = (iso) => `${iso.slice(0, 4)}Q${Math.floor((+iso.slice(5, 7) - 1) / 3) + 1}`;
 
 function writeUrl() {
+  // DERIVE FROM WHAT IS FOCUSED, never from separately-tracked state. S.ticker / S.tweetId were
+  // set only by a chip click, so j/k and a marker jump left the URL naming the PREVIOUS post —
+  // and a link shared from that state opened the wrong call. Reading the focus itself makes the
+  // URL structurally unable to disagree with the screen.
+  const fp = focusPost();
+  const ft = focusTags()[S.chipIdx];
+  if (fp) S.tweetId = String(fp.id);
+  if (ft) S.ticker = ft;
   const parts = ["calls", S.handle, S.day, S.ticker, S.tweetId].filter(Boolean);
   const url = `#/${parts.join("/")}`;
   // replaceState, never location.hash: assigning the hash fires app.js's router, which would
@@ -119,7 +161,10 @@ function dayPosts() {
       const ok = tags.some((t) => {
         const l = labelFor(`${p.id}|${t}`);
         if (f.spec && (!l || l.spec !== f.spec)) return false;
-        if (f.review && !(l && l.needs_review)) return false;
+        if (f.review) {
+          const rs = reviewReasons(`${p.id}|${t}`);
+          if (!rs.length || (f.review !== "any" && !rs.includes(f.review))) return false;
+        }
         if (f.unlabelled && isHand(l)) return false;
         return true;
       });
@@ -256,9 +301,15 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
     prevX = x;
     const yp = sy(win[i].c), yc = yp + LANES[cluster % LANES.length];
     const col = BIAS_COLOR[op.bias] || "var(--ink-3)";
+    // CLICKABLE: the point of plotting the sequence is to read it, and a dot you cannot open is
+    // just a tally mark. Clicking one selects that post's day and focuses this same cashtag on it,
+    // so the two calls can be compared as TEXT, which is where the reasoning actually lives.
     marks += `<line x1="${x.toFixed(1)}" y1="${yp.toFixed(1)}" x2="${x.toFixed(1)}" y2="${yc.toFixed(1)}"`
       + ` stroke="${col}" stroke-width="0.8" opacity="0.7"/>`
-      + `<circle cx="${x.toFixed(1)}" cy="${yc.toFixed(1)}" r="4.2" fill="var(--surface)" stroke="${col}" stroke-width="1.4"/>`;
+      + `<circle class="pmark" cx="${x.toFixed(1)}" cy="${yc.toFixed(1)}" r="4.2" fill="var(--surface)"`
+      + ` stroke="${col}" stroke-width="1.4" data-goto-post="${escapeHtml(op.id)}"`
+      + ` data-goto-day="${escapeHtml(op.d)}" style="cursor:pointer">`
+      + `<title>${escapeHtml(op.d)} · ${escapeHtml(op.bias || "no bias")} — click to open this post</title></circle>`;
   }
 
   // (1) THE POST ITSELF — a solid rule spanning both panels, so the eye lands on it first.
@@ -322,7 +373,43 @@ function chartSvg({ bars, bench, postDate, label, result, ticker, otherPosts }) 
     <rect id="ch-hit" x="${px0}" y="${cy0}" width="${px1 - px0}" height="${cy1 - cy0}" fill="transparent" style="cursor:crosshair"/>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img"
     aria-label="${escapeHtml(ticker)} daily candles with the post marked, prior posts, the stated target, the horizon band, and SPY rebased to 100">
-    ${band}${grid}${body}${tgt}${marks}${xl}${here}${lower}${cross}</svg>`;
+    ${band}${grid}${body}${tgt}${xl}${here}${lower}${cross}${marks}</svg>`;
+}
+
+/**
+ * Every post on `tkr` inside [from, to] — across MONTHS, not just the one on screen.
+ *
+ * THIS WAS A REAL DEFECT. The chart's whole claim is that the SEQUENCE is the story ("he called
+ * $TSLA 1,371 times"), and it was drawing markers from `S.posts`, which holds ONE month. On $HOOD
+ * at the 1Y window that showed 5 of the 30 posts actually in range — a sequence with 25 of its
+ * members missing, presented as complete.
+ *
+ * `days.json` carries each day's ticker list, so the months worth opening are known WITHOUT
+ * touching `posts/`; only those are fetched, and `getCallPosts` memoises them. A MAX window on a
+ * heavily-covered name is the expensive case and is still bounded by the account's 25 months.
+ */
+async function postsForTicker(tkr, from, to) {
+  const want = `$${tkr}`;
+  const months = new Set();
+  for (const [iso, rec] of Object.entries(S.days)) {
+    if (from != null && iso < from) continue;
+    if (to != null && iso > to) continue;
+    if ((rec.tk || []).includes(want)) months.add(monthOf(iso));
+  }
+  const out = [];
+  for (const m of [...months].sort()) {
+    let posts;
+    try { posts = await getCallPosts(S.handle, m); } catch (e) { continue; }
+    for (const q of posts) {
+      if (from != null && q.d < from) continue;
+      if (to != null && q.d > to) continue;
+      if (!(q.tk || []).some((t) => t.replace(/^\$/, "") === tkr)) continue;
+      const l = labelFor(`${q.id}|${tkr}`);
+      out.push({ id: String(q.id), d: q.d, bias: l ? l.bias : "none" });
+    }
+  }
+  out.sort((a, b) => a.d.localeCompare(b.d));
+  return out;
 }
 
 // --- pane 1: the calendar ----------------------------------------------------------------------
@@ -395,7 +482,11 @@ function chipHtml(key, tkr, focused) {
     const bits = [l.bias, l.action && l.action !== "none" ? l.action : null,
                   targetText(l), l.hhi || l.hlo ? `${l.hhi || l.hlo}d` : null].filter(Boolean);
     txt += (isHand(l) ? " " : ` <i>guess:</i> `) + escapeHtml(bits.join(" · "));
-    if (l.needs_review) txt += ` <span class="gt partial">review</span>`;
+    const rs = reviewReasons(key);
+    if (rs.length) {
+      const [, what] = REVIEW_REASONS.find(([id]) => id === rs[0]) || [null, "review"];
+      txt += ` <span class="gt partial" title="${escapeHtml(what)}">${escapeHtml(rs[0])}</span>`;
+    }
   }
   return `<button class="lchip ${cls}${focused ? " lc-focus" : ""}" data-key="${key}" data-tkr="${tkr}"${tone}>${txt}</button>`;
 }
@@ -460,13 +551,8 @@ async function paneChart() {
       renamed, or an index. The tape carries three such symbols; the pane states it rather than failing.</div></div>`;
   }
   const label = labelFor(key), res = S.results.get(key) || null;
-  const others = [];
-  for (const q of S.posts) {
-    if ((q.tk || []).some((t) => t.replace(/^\$/, "") === tkr)) {
-      const l = labelFor(`${q.id}|${tkr}`);
-      others.push({ id: q.id, d: q.d, bias: l ? l.bias : "none" });
-    }
-  }
+  const [wfrom, wto] = windowRange(p.d, res);
+  const others = await postsForTicker(tkr, wfrom, wto);
   const svg = chartSvg({ bars, bench, postDate: p.d, label, result: res, ticker: tkr, otherPosts: others });
   const wk = S.window || DEFAULT_WINDOW;
   const [wf, wt] = windowRange(p.d, res);
@@ -523,8 +609,8 @@ function wireCrosshair(root) {
   const svg = root.querySelector("#ct-chart svg");
   const g = S.geom;
   if (!svg || !g || !g.win.length) return;
-  const hit = svg.querySelector("#ch-hit"), cross = svg.querySelector("#ch-cross");
-  if (!hit || !cross) return;
+  const cross = svg.querySelector("#ch-cross");
+  if (!cross) return;
   const el = (id) => svg.querySelector(id);
   const pt = svg.createSVGPoint();
 
@@ -566,8 +652,32 @@ function wireCrosshair(root) {
     bg.setAttribute("x", tx); bg.setAttribute("y", g.cy0 + 1);
     bg.setAttribute("width", w); bg.setAttribute("height", 16);
   };
-  hit.addEventListener("mousemove", move);
-  hit.addEventListener("mouseleave", () => { cross.style.display = "none"; });
+  // Listen on the SVG ROOT, not the capture rect: the post markers sit above that rect so they can
+  // be clicked, and a rect-only listener would drop the crosshair whenever the pointer crossed one.
+  svg.addEventListener("mousemove", move);
+  svg.addEventListener("mouseleave", () => { cross.style.display = "none"; });
+  svg.addEventListener("click", async (ev) => {
+    const m = ev.target.closest && ev.target.closest("[data-goto-post]");
+    if (!m) return;
+    ev.stopPropagation();
+    const day = m.dataset.gotoDay, id = m.dataset.gotoPost;
+    if (monthOf(day) !== S.month) await loadMonth(monthOf(day));
+    S.day = day;
+    const posts = dayPosts();
+    const pi = posts.findIndex((q) => String(q.id) === id);
+    // A post can be filtered OUT of the day list (unlabelled-only, a class filter). Jumping to a
+    // day and landing on the wrong post would be worse than saying so, so the filters are cleared
+    // for this jump rather than silently mis-focusing.
+    if (pi < 0) {
+      S.filters = { ticker: "", spec: "", cls: "", video: false, review: "", unlabelled: false };
+    }
+    const posts2 = dayPosts();
+    S.postIdx = Math.max(0, posts2.findIndex((q) => String(q.id) === id));
+    const tags = focusTags();
+    const ci = tags.indexOf(String(S.ticker || "").toUpperCase());
+    S.chipIdx = ci >= 0 ? ci : 0;
+    await paint(root);
+  });
 }
 
 // --- export ------------------------------------------------------------------------------------
@@ -605,6 +715,15 @@ function toolbar(tickers) {
   for (const v of Object.values(S.labels || {})) {
     if (v && v.spec) counts[v.spec] = (counts[v.spec] || 0) + 1;
   }
+  // review-queue counts, computed over the whole corpus so the operator can see how much work
+  // each reason actually represents before choosing one
+  const rev = { any: 0 };
+  for (const key of Object.keys(S.labels || {})) {
+    const rs = reviewReasons(key);
+    if (!rs.length) continue;
+    rev.any += 1;
+    for (const r of rs) rev[r] = (rev[r] || 0) + 1;
+  }
   const accs = S.accounts.accounts;
   const a = accs.find((x) => x.handle === S.handle) || accs[0];
   const f = S.filters;
@@ -621,7 +740,11 @@ function toolbar(tickers) {
     <select class="filter-select" id="ct-class"><option value="">All classes</option>
       ${CLASSES.map((c) => `<option value="${c}"${f.cls === c ? " selected" : ""}>${c.replace(/_/g, " ")}</option>`).join("")}</select>
     <label class="chip"><input type="checkbox" id="ct-vid"${f.video ? " checked" : ""}> video</label>
-    <label class="chip"><input type="checkbox" id="ct-rev"${f.review ? " checked" : ""}> needs review</label>
+    <select class="filter-select" id="ct-rev" title="A derived queue — not the upstream needs_review flag, which is true on 73% of rows">
+      <option value="">Review: off</option>
+      <option value="any"${f.review === "any" ? " selected" : ""}>Review queue — any reason (${(rev.any || 0).toLocaleString()})</option>
+      ${REVIEW_REASONS.map(([id, what]) => `<option value="${id}"${f.review === id ? " selected" : ""}>· ${escapeHtml(what)} (${(rev[id] || 0).toLocaleString()})</option>`).join("")}
+    </select>
     <label class="chip ct-hot"><input type="checkbox" id="ct-unl"${f.unlabelled ? " checked" : ""}> unlabelled only</label>
     <div class="ct-right">
       <span class="ct-count"><b class="mono">${a.n_hand_labels + Object.keys(S.edits).length}</b> hand labels</span>
@@ -696,7 +819,7 @@ function wire(root) {
   const msel = root.querySelector("#cal-month");
   if (msel) msel.addEventListener("change", async (e) => {
     await gotoMonth(e.target.value); repaint(); });
-  bindF("#ct-vid", "video", "checked"); bindF("#ct-rev", "review", "checked");
+  bindF("#ct-vid", "video", "checked"); bindF("#ct-rev", "review", "value");
   bindF("#ct-unl", "unlabelled", "checked");
 
   const exp = root.querySelector("#ct-export");

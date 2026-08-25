@@ -1777,6 +1777,28 @@ def _cmd_calls_score(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_calls_import(args: argparse.Namespace) -> int:
+    """Merge an exported labelling session back into the account's corpus.
+
+    The dashboard cannot write — it is a static mirror — so landing a session is this deliberate,
+    reviewable step, where the change appears in `git diff` like any other. Does NOT re-score;
+    run `vinci calls score` after.
+    """
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.ingest import import_labels
+    handle = load_accounts().get(args.account).handle
+    r = import_labels(handle, Path(args.path), dry_run=args.dry_run)
+    verb = "would merge" if args.dry_run else "merged"
+    print(f"{handle}: {verb} {r['rows']} row(s) from {args.path}")
+    print(f"  new                {r['new']:>5}")
+    print(f"  updated (hand)     {r['updated']:>5}")
+    print(f"  replaced a guess   {r['replaced_machine']:>5}")
+    if not args.dry_run:
+        print(f"  hand labels now    {r['hand_total']:>5}")
+        print("  scores are NOT updated — run `vinci calls score` to re-score.")
+    return 0
+
+
 def _cmd_audit_spot(args: argparse.Namespace) -> int:
     """SPOT audit — every committed record's spot against the bar it claims to be. READ-ONLY.
 
@@ -3530,6 +3552,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_cs.add_argument("--hand-only", action="store_true", dest="hand_only",
                       help="score only human-labelled rows")
     p_cs.set_defaults(func=_cmd_calls_score)
+    p_ci = calls_sub.add_parser("import-labels",
+                                help="merge an exported labelling session back into the corpus")
+    p_ci.add_argument("path", help="the JSONL exported from the tape")
+    p_ci.add_argument("--account", help="handle (default: the index's default)")
+    p_ci.add_argument("--dry-run", action="store_true", dest="dry_run",
+                      help="report what would change and write nothing")
+    p_ci.set_defaults(func=_cmd_calls_import)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

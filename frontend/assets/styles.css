@@ -1613,3 +1613,6 @@ table.data th.peer-desc-h { text-align: left; }
   background: var(--surface); color: var(--ink-3); cursor: pointer; }
 .wbtn:hover { border-color: var(--accent); color: var(--accent); }
 .wbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+/* prior-post markers are clickable — the sequence is the point, and a dot you cannot open is a tally mark */
+#ct-chart svg .pmark { transition: r 0.1s; }
+#ct-chart svg .pmark:hover { r: 6; stroke-width: 2; }

@@ -3464,6 +3464,44 @@ Each line: *what it does* — *verified how*.
     scroll the call off screen is not a window on the call. FIT snaps to the scored horizon.
   - **A crosshair readout** (date · OHLC · the price at the cursor's own height) reads from the same
     geometry object the SVG was drawn from, so it can never report a bar that was not plotted.
+  - **THIRD PASS (2026-08-25) — the sequence was being drawn one month wide.** The chart's whole
+    claim is that the SEQUENCE is the story, and the prior-post markers were built from `S.posts`,
+    which holds ONE month. On $HOOD at the 1Y window that drew **5 of the 30 posts actually in
+    range** — a sequence missing 25 of its members, presented as complete. Now gathered across the
+    window: `days.json` carries each day's ticker list, so the months worth opening are known
+    without touching `posts/`, and only those are fetched (memoised). $HOOD now draws 35.
+  - **The markers are CLICKABLE**, jumping to that post's day and focusing the same cashtag on it —
+    a dot you cannot open is a tally mark, and the reasoning being compared lives in the TEXT. If a
+    filter would hide the destination post the filters are cleared for the jump rather than landing
+    on the wrong one silently.
+  - **A stale-URL bug found by that jump.** `writeUrl()` read `S.ticker`/`S.tweetId`, which only a
+    CHIP CLICK ever set — so after `j`/`k` or a marker jump the address bar still named the previous
+    post, and a link shared from that state opened the wrong call. It now DERIVES both from what is
+    focused, which makes the URL structurally unable to disagree with the screen.
+  - **`needs_review` is not a queue and is no longer used as one.** The upstream flag is true on
+    **5,982 of 8,185 rows (73%)** and is worse than unselective: it INCLUDES 1,410 `flow_spam` rows
+    nobody should read and EXCLUDES 510 spec-A calls — the most reviewable rows in the corpus. As a
+    filter it pointed away from the work. Replaced by a DERIVED queue, ordered most-actionable
+    first and excluding the non-signal classes outright: target contradicts the bias (16) · target
+    unreadable (0) · no price data (45) · a specific call still only guessed (1,180) · a target with
+    no direction (1,004) · a two-sided read (315). **2,526 rows, 31%**, and each row's chip now
+    names WHY it is queued. The upstream flag is still carried on the label — it is the labeller's
+    signal, not ours to delete — it is simply not what the filter sorts by.
+  - **THE ROUND TRIP IS CLOSED** (`vinci/calls/ingest.py`, `vinci calls import-labels`). Edits were
+    reaching `localStorage` and the JSONL export and going no further, so the corpus never grew.
+    Landing them is a CLI step and stays one: the dashboard is a read-only static mirror and must
+    not acquire a write path, and hand labels are the ground truth this tool exists to grow — a
+    silent background write is exactly how a reference set gets corrupted without a trace. Here the
+    change lands in `git diff` like anything else. The merge is **whole or refused**: the file is
+    parsed and keyed before a byte is written, so a bad row on line 40 cannot leave line 1 merged.
+    A hand label REPLACES the machine guess at its key and clears `needs_review`; `meta.json`'s
+    counts are recomputed from the merged corpus so they cannot drift. It deliberately does NOT
+    re-score — that reads prices and takes real time — and says so on exit.
+    — *round-trip verified end to end on the real corpus: a machine spec-A row exported in the
+    browser's exact shape, imported (83 → 84 hand labels, "replaced a guess 1"), then reverted; the
+    corpus is byte-identical to committed. Five pins cover replacement, the two flag columns
+    surviving, meta drift, whole-or-nothing refusal, and dry-run.*
+
 
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
