@@ -1,7 +1,7 @@
 {
   "job": "weekly-screen",
-  "attempted_at": "2026-08-25T07:15:19Z",
-  "conclusion": "failure",
-  "run_url": "https://github.com/techmuns/mosaic-theory/actions/runs/32818611056",
-  "remediation": "Open the run log, fix the cause, then re-trigger: Actions -> weekly-screen -> Run workflow. If the gate failed on a stale fixture, RUNBOOKS.md step 5 regenerates both fixtures."
+  "attempted_at": "2026-08-25T09:08:16Z",
+  "conclusion": "success",
+  "run_url": "https://github.com/techmuns/mosaic-theory/actions/runs/32827750106",
+  "remediation": ""
 }
