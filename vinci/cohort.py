@@ -32,6 +32,7 @@ not a cohort either: both yield ``NO_COHORT`` and no numbers. Nothing here imput
 from __future__ import annotations
 
 import json
+import math
 import pathlib
 import statistics
 from typing import TYPE_CHECKING
@@ -42,11 +43,15 @@ from vinci.sectors import industry_for_sic
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from collections.abc import Iterable
 
-#: Below this a median is an anecdote, not a cohort. 6 is the floor the falsifier ran at.
-MIN_PEERS = 6
+#: DERIVED, not chosen: the smallest sample for which a distribution-free median interval is
+#: bounded AT ALL. Below 5 the binomial order statistics cannot exclude either tail at 90%, so
+#: "the median of these values" is not a statement the data supports. See :func:`median_halfwidth`.
+MIN_PEERS = 5
 
-#: |cohort| - |residual| inside this band is a coin-flip: 34% stable across four snapshots against
-#: 96% above 25 points. The call abstains here rather than guessing.
+#: The TEMPORAL guard. Measured across four snapshots: a call whose margin is under 10 points holds
+#: only 34% of the time, against 96% above 25. Independent of how tight the cohort is TODAY — a
+#: median can be precisely estimated and still move next week — so it stacks with the
+#: per-cohort interval below.
 NEAR_TIE = 0.10
 
 #: How many prior screen runs the trajectory looks back over (oldest -> newest, current last).
@@ -77,6 +82,45 @@ def sic_by_ticker(snapshots_dir: pathlib.Path) -> dict[str, str | None]:
     return out
 
 
+def median_halfwidth(values: list[float]) -> float:
+    """Half-width of the exact distribution-free interval around a median, from binomial order
+    statistics. ``inf`` when the sample cannot bound one at all.
+
+    WHY THIS REPLACED A PEER-COUNT FLOOR. The first cut made a call on any cohort of 6+ and
+    abstained only inside a fixed 10-point band. Measured afterwards, the median of a 6-8 name
+    cohort wobbles by ~20 POINTS under resampling — double the band the call was abstaining
+    inside. Every such call was arbitrary: stable week to week (the same names keep the same
+    returns) yet entirely dependent on which handful of names the screen happened to admit. A
+    reliable measurement of an arbitrary quantity is the worst of both.
+
+    Raising the floor instead was tested and is a bad trade: at 15 peers only ONE of the queue's
+    top ten keeps a cohort. Requiring the MARGIN to clear the cohort's OWN uncertainty keeps six of
+    seven, because a large margin clears even a loose cohort — the rule calibrates itself.
+
+    EXACT AND DETERMINISTIC, deliberately. A bootstrap needs a seed, and a seeded resample inside a
+    committed artifact is a reproducibility hazard. This is closed-form over the order statistics —
+    same input, same answer, forever. A MAD-based normal approximation was tried first and rejected:
+    against the bootstrap its per-cohort ratio ranged 0.06x to 1.73x, so it would have waved through
+    calls on cohorts whose medians were wildly unstable.
+    """
+    n = len(values)
+    ordered = sorted(values)
+    # largest k with P(Bin(n, 0.5) < k) <= 0.05 — the two-sided ~90% order-statistic interval
+    cumulative, k = 0.0, 0
+    for i in range(n + 1):
+        p = math.comb(n, i) * 0.5 ** n
+        if cumulative + p > 0.05:
+            break
+        cumulative += p
+        k = i + 1
+    # k == 0 means neither tail can be excluded at 90% — true for every n below 5, so this single
+    # branch is the whole small-sample guard. An earlier explicit `n < 3` return sat above it and
+    # was dead code: a mutation removing it changed nothing, which is how it was found.
+    if k == 0 or n - k < k:
+        return float("inf")
+    return (ordered[n - k] - ordered[k - 1]) / 2
+
+
 def relatives_for_run(path: pathlib.Path) -> dict[str, float]:
     """``{ticker: rel_ret_vs_market}`` for every name that reached the gates in one screen run.
 
@@ -105,8 +149,16 @@ def medians_for_run(relatives: dict[str, float], sic: dict[str, str | None]) -> 
     return {k: statistics.median(v) for k, v in grouped.items() if len(v) >= MIN_PEERS}
 
 
-def _call(median: float, residual: float) -> CohortCall:
-    if abs(abs(median) - abs(residual)) < NEAR_TIE:
+def _call(median: float, residual: float, uncertainty: float) -> CohortCall:
+    """TWO GUARDS, because there are two ways to be wrong.
+
+    ``uncertainty`` is how precisely THIS cohort's median is pinned by the names in it — a
+    cross-sectional question. ``NEAR_TIE`` is how well a small margin holds up WEEK TO WEEK — a
+    temporal one. A cohort can be tight today and still move; a margin can be large today and still
+    be inside the noise of a loose cohort. The call is made only when it clears both.
+    """
+    margin = abs(abs(median) - abs(residual))
+    if margin < NEAR_TIE or margin <= uncertainty:
         return CohortCall.UNRESOLVED
     return CohortCall.COHORT if abs(median) > abs(residual) else CohortCall.OWN
 
@@ -148,6 +200,11 @@ def cohort_reads(
             )
     medians = [medians_for_run(relatives_for_run(p), sic_map) for p in history]
     current = medians[-1]
+    # how tightly each cohort's OWN median is pinned by its members — the bar a call must clear
+    members: dict[str, list[float]] = {}
+    for member, member_rel in latest.items():
+        members.setdefault(industry_for_sic(sic_map.get(member)), []).append(member_rel)
+    uncertainty = {k: median_halfwidth(v) for k, v in members.items()}
 
     wanted = set(tickers) if tickers is not None else set(latest)
     out: dict[str, CohortRead] = {}
@@ -160,9 +217,11 @@ def cohort_reads(
             out[ticker] = CohortRead(key=key, call=CohortCall.NO_COHORT)
             continue
         residual = value - median
+        spread: float = uncertainty.get(key, float("inf"))
         out[ticker] = CohortRead(
             key=key,
-            call=_call(median, residual),
+            call=_call(median, residual, spread),
+            uncertainty=None if spread == float("inf") else spread,
             median=median,
             residual=residual,
             margin=abs(median) - abs(residual),

@@ -4811,9 +4811,35 @@ read is attached by the WRITER after `rank_candidates` returns, beside `sector`/
 — proven end-to-end: a re-rank with the split attached leaves order and every score IDENTICAL, with
 `cohort` the only differing field. Pinned by `test_attaching_the_split_changes_no_order_and_no_score`.
 
-**THE CALL ABSTAINS.** Stability is 96% above a 25-point margin and 34% below 10, so inside 10
-points it reports UNRESOLVED — the rule `mixed` already follows. Under 6 screened peers there is no
-cohort and the read carries no numbers. Live: 115 own · 38 cohort · 29 unresolved · 86 no-cohort.
+**THE CALL ABSTAINS ON TWO GUARDS, AND THE FIRST CUT'S SINGLE GUARD WAS UNSUPPORTED.** The
+original rule made a call on any cohort of 6+ and abstained only inside a fixed 10-point band.
+**Measured afterwards, the median of a 6-8 name cohort moves ±20 POINTS under resampling** —
+double the band it was abstaining inside — so those calls were stable week to week (the same names
+keep the same returns) and entirely arbitrary (dependent on whichever handful the screen admitted).
+*A reliable measurement of an arbitrary quantity is the worst of both.*
+
+Raising the peer floor is the obvious fix and is a **bad trade, measured**: at 15 peers only ONE of
+the queue's top ten keeps a cohort. The rule now requires the margin to clear **both** (a) 10 points
+— the TEMPORAL guard, from the four-snapshot stability curve — and (b) **the cohort's own median
+uncertainty**, the exact distribution-free interval from binomial order statistics. That keeps six
+of the top ten's seven cohort-having names, because a large margin clears even a loose cohort: the
+rule calibrates itself instead of legislating a count. **`MIN_PEERS` is now DERIVED** (5 — where the
+interval becomes bounded at all), not asserted. Live: 93 own · 26 cohort · 74 unresolved · 73
+no-cohort.
+
+**EXACT, NOT BOOTSTRAPPED, deliberately** — a seeded resample inside a committed artifact re-draws
+every run. A MAD-based normal approximation was tried first and REJECTED: against the bootstrap its
+per-cohort ratio ranged 0.06x–1.73x, so it would have waved calls through on wildly unstable medians.
+
+**IS SIC TOO CRUDE? TESTED, AND NO — BUT ONLY AT THE FINE GRAIN.** Permutation test over the 1,755
+screened names, each grouping against its OWN random null (200 regroupings at identical size
+distribution): SIC **industry** eta-sq 0.151 vs null 95% ≤ 0.074 (excess **0.098**); SIC **sector**
+0.060 vs ≤ 0.013 (excess 0.054); **2-digit SIC** 0.081 vs ≤ 0.045 (excess 0.055). So the shipped
+grain carries nearly twice the signal of the coarser ones, and **widening to sector to fix the
+"too few peers" gaps would halve it** — the opposite of the intuitive fix. *(A first pass over all
+319 raw industry buckets read INSIDE the null; that was an artifact of 254 sub-6 buckets inflating
+the null, and restricting to cohorts the code actually forms inverted it. Fine partitions explain
+variance at random — always compare against a null with the same bucket-size distribution.)*
 
 **FENCED LIKE THE LABELS.** `vinci.cohort` is sector-derived, so `vinci.rank`/`vinci.screens` may
 not import it; the SCHEMA (`vinci/schemas/cohort.py`) is deliberately sector-free so

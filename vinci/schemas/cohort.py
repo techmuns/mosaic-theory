@@ -33,4 +33,8 @@ class CohortRead(BaseModel, frozen=True):
     residual: float | None = None  # the name's return MINUS that median — what is its own
     margin: float | None = None    # |median| - |residual|; the confidence the call rests on
     peers: int = 0                 # screened names in the cohort (pass AND fail)
+    # How precisely the cohort's own median is pinned by its members — the exact distribution-free
+    # interval's half-width. A call must clear this, so a loose cohort makes none. None = the
+    # sample cannot bound a median at all.
+    uncertainty: float | None = None
     trajectory: list[float] = []   # the cohort median across recent runs, oldest -> newest

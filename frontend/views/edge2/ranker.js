@@ -223,8 +223,10 @@ function renderRows() {
              "Its industry fell too, and by more than this name did on its own — most of this "
              + "drop is not company-specific."],
     unresolved: ["too close",
-                 "The industry's move and the name's own are within 10 points. No call is made: "
-                 + "below that margin the read is only 34% stable across snapshots."],
+                 "No call is made. The gap between the industry's move and the name's own does "
+                 + "not clear BOTH bars it has to: 10 points (below that the read holds only 34% "
+                 + "of the time week to week) and this cohort's own median uncertainty, shown "
+                 + "below."],
     "no-cohort": ["too few peers",
                   "Fewer than 6 same-industry names in the screened universe — not enough to take "
                   + "a median over, so no comparison is offered."],
@@ -252,6 +254,8 @@ function renderRows() {
     // not the true sector — a handful of small caps, not every listed peer. Say which, and how many.
     const key = c.key
       ? ` — measured against the ${c.peers} ${c.key} names in the screened universe`
+        + (c.uncertainty == null ? ""
+           : `, whose median is pinned to ±${fmtPct(c.uncertainty)}`)
         + (c.median == null ? "" : `; the name is ${fmtPct(c.median + c.residual, { signed: true })}`
            + ` vs the market, its industry ${fmtPct(c.median, { signed: true })}, leaving`
            + ` ${fmtPct(c.residual, { signed: true })} that is the name's own`)

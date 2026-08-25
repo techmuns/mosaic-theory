@@ -23,6 +23,7 @@ from vinci.cohort import (
     MIN_PEERS,
     NEAR_TIE,
     cohort_reads,
+    median_halfwidth,
     medians_for_run,
     relatives_for_run,
     screen_run_files,
@@ -110,12 +111,59 @@ def test_a_near_tie_makes_no_call() -> None:
     for read in reads.values():
         if read.margin is None:
             continue
-        if abs(read.margin) < NEAR_TIE:
+        spread = read.uncertainty if read.uncertainty is not None else float("inf")
+        if abs(read.margin) < NEAR_TIE or abs(read.margin) <= spread:
             assert read.call is CohortCall.UNRESOLVED, (
-                f"{read.key} margin {read.margin:.3f} is inside the near-tie band but a call was "
-                f"still made ({read.call})")
+                f"{read.key} margin {read.margin:.3f} clears neither the 10-point temporal band "
+                f"nor its own median uncertainty {spread:.3f}, but a call was still made "
+                f"({read.call})")
         else:
             assert read.call in (CohortCall.OWN, CohortCall.COHORT)
+
+
+def test_a_call_must_clear_its_own_cohort_s_uncertainty() -> None:
+    """THE MEASUREMENT THAT KILLED THE FIRST RULE. The first cut made a call on any cohort of 6+,
+    abstaining only inside a fixed 10-point band. Bootstrapped afterwards, the median of a 6-8 name
+    cohort moves by ~20 POINTS under resampling — DOUBLE that band. Those calls were stable week to
+    week and entirely arbitrary: a reliable measurement of whichever handful of names the screen
+    happened to admit.
+
+    Raising the peer floor was the obvious fix and is a bad trade — at 15 peers only ONE of the
+    queue's top ten keeps a cohort. Requiring the margin to clear the cohort's OWN uncertainty
+    keeps six of seven, because a large margin clears even a loose cohort."""
+    cfg = get_config()
+    reads = cohort_reads(cfg.snapshots_dir, sic_by_ticker(cfg.snapshots_dir))
+    if not reads:
+        pytest.skip("no committed screen runs")
+    called = [r for r in reads.values() if r.call in (CohortCall.OWN, CohortCall.COHORT)]
+    assert called, "no calls at all — the rule has become unfireable"
+    for r in called:
+        assert r.uncertainty is not None, f"{r.key} made a call with no uncertainty measured"
+        assert abs(r.margin or 0) > r.uncertainty, (
+            f"{r.key} called {r.call} on a margin of {r.margin:.3f} against a median uncertainty "
+            f"of ±{r.uncertainty:.3f} — the margin is inside the cohort's own noise")
+
+
+def test_the_median_interval_is_exact_and_needs_no_seed() -> None:
+    """DETERMINISM IS THE REASON THIS IS NOT A BOOTSTRAP. A seeded resample inside a committed
+    artifact re-draws on every run; the order-statistic interval is closed-form, so the same input
+    gives the same answer forever. Also pinned: it refuses to bound a median it cannot — below 5
+    observations the binomial cannot exclude either tail at 90%, and saying so is the honest
+    answer rather than returning a confident narrow number."""
+    sample = [0.1, -0.2, 0.3, -0.4, 0.5, -0.6, 0.7, 0.8]
+    first = median_halfwidth(sample)
+    assert all(median_halfwidth(sample) == first for _ in range(5)), "not deterministic"
+    assert median_halfwidth(list(reversed(sample))) == first, "order-dependent"
+    assert first not in (0.0, float("inf"))
+    for n in (0, 1, 2, 3, 4):
+        assert median_halfwidth([0.1] * n) == float("inf"), (
+            f"a median interval was returned for n={n} — the data cannot support one")
+    src = (ROOT / "vinci" / "cohort.py").read_text()
+    for banned in ("random.", "import random", "shuffle", "seed("):
+        assert banned not in src, (
+            f"{banned!r} appears in vinci/cohort.py — a committed artifact must not re-draw")
+    assert MIN_PEERS == 5, (
+        "MIN_PEERS is DERIVED from where the median interval becomes bounded, never chosen")
 
 
 def test_too_few_peers_is_not_a_cohort() -> None:
