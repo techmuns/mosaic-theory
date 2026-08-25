@@ -3612,6 +3612,48 @@ Each line: *what it does* — *verified how*.
       red. `tests/test_calls_parity.py` runs `callscore.js` under node over the **real committed
       corpus** (3,000+ rows) and asserts every field matches the Python scorer, plus a 14-shape
       parser comparison. — *mutation-tested: flipping `signOf` to always return 1 reddens it.*
+  - **EIGHTH PASS (2026-08-25) — CODE REVIEW OF THE WHOLE TAPE, five defects fixed.** Found by
+    reading the diff, not by the screen; two of them were guards that had been WRITTEN and never
+    worked, which is the more expensive kind because the comment says the hazard is handled.
+    - **THE COMMON-LAST-BAR TRIM COULD NEVER FIRE.** `score.py` (and its JS twin) computed
+      `common_end = min(b_win[-1], exit_date)` over a `b_win` **already bounded by `exit_date`** —
+      so it re-derived the same window and changed nothing, while the NAME's leg was never trimmed
+      at all. The exact asymmetry `vinci/eod/features.py` learned the expensive way was live in the
+      module whose docstring cites it, and **the test pinned the defect**: it asserted `bench_ret is
+      not None` for a benchmark stopping 13 bars short of the horizon. Fixed by REFUSING rather than
+      trimming — if the benchmark does not span `[entry_date, exit_date]` there is no honest excess,
+      so `bench_ret`/`excess` stay `None`. — *re-scored the corpus: **3,889 rows, byte-identical**,
+      because SPY's window (2024-04-29 → 2026-08-24) happens to cover every call; the guard is
+      latent-only today and would have bitten the first account whose benchmark fetch lagged.*
+      Test now carries a negative AND a positive pin.
+    - **A NON-POSITIVE ENTRY OPEN WOULD HAVE CRASHED THE RUN.** `unrealised` carried an `entry > 0`
+      guard; `mfe_to_date` two lines below divided by the same entry with none, so a zero open (a
+      bad vendor bar) raised `ZeroDivisionError` mid-account rather than returning None. Refused by
+      name now — `NO_ENTRY_BAR`, detail states the open — in both Python and the JS twin.
+    - **THE EXPORT LANDED DATELESS ROWS.** `exportJsonl()` indexed posts from `S.posts` — **one
+      month** — while `S.edits` is restored from `localStorage` and accumulates across months and
+      sessions. Every edited row outside the open month exported `date` / `quarter` / `text` /
+      `has_video` as `null`, and `calls import-labels` writes them into `gold_labels.jsonl`
+      unchallenged (it keys on `tweet_id|ticker` and never reads the date). **The ground truth this
+      tool exists to grow would have been corrupted silently.** Now resolved across months, fetching
+      only the months still missing an id.
+    - **THE INLINE EDITOR WAS UNUSABLE ON ANY CASHTAG BUT THE FIRST.** The editor renders INSIDE
+      `.pcard`, whose click handler sets `S.chipIdx = 0` and repaints. So a bias button on the
+      second cashtag applied the edit and then re-rendered the editor for a DIFFERENT one, and
+      clicking into the Target field repainted the pane out from under the input before a character
+      could be typed. `.lchip` stopped propagation for exactly this reason; `.ed` did not.
+    - **PAINTS RACED.** `paneChart()` awaits a fetch and the keyboard fires a paint per keystroke,
+      so two held `j`-presses started two paints and whichever fetch settled LAST won the innerHTML
+      — not necessarily the last post focused. Serialised by sequence number; a superseded paint
+      drops its result. (Also: `S.local` — keyed `<tweet_id>|<TICKER>` with no handle in it — is now
+      cleared on an account switch, and `rebuild_accounts` PRESERVES the stored `default` instead of
+      silently resetting it to the alphabetically-first handle on every bare rebuild.)
+    - **TEST LAYER, STATED HONESTLY.** The two DOM fixes and the paint race are pinned as SOURCE
+      scans (`tests/test_calls_tape.py`), not end-to-end: there is no jsdom in this suite and the
+      view's entry point needs a live `root`. A source pin cannot prove the fix works — it fails
+      when the line that makes it work is deleted, which is the failure mode that occurred (the
+      guard was never written). — *all three mutation-tested: removing each guard reddens its pin.*
+      Recorded as accepted weaker-layer coverage rather than dressed up as e2e.
 
 
 

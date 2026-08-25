@@ -137,3 +137,33 @@ def test_a_dry_run_reports_and_writes_nothing(
     r = import_labels("x", _write(tmp_path / "in.jsonl", [_row("999", "ZZZ")]), dry_run=True)
     assert r["written"] == 0 and r["new"] == 1
     assert (d / "labels.json").read_text() == before
+
+
+def test_a_rebuild_does_not_silently_move_the_default_account(tmp_path: Path) -> None:
+    """The index is DERIVED from each meta.json — except the default, which is a CHOICE. A rebuild
+    used to write `accounts[0].handle` whenever no --default was passed, so dropping in a second
+    account whose handle sorts first moved the dashboard's opening account on the next
+    `vinci calls accounts`, with nothing said. The stored choice is preserved unless it names a
+    handle that no longer exists."""
+    from vinci.calls.accounts import rebuild_accounts
+
+    root = tmp_path / "calls"
+    for h in ("zeta", "alpha"):
+        d = root / h
+        d.mkdir(parents=True)
+        (d / "meta.json").write_text(json.dumps({
+            "handle": h, "first": "2024-01-01", "last": "2026-01-01", "n_posts": 1, "n_days": 1,
+            "tickers": ["$X"], "n_hand_labels": 0, "n_machine_labels": 0}))
+
+    first = rebuild_accounts(root=root, default="zeta")
+    assert first.default == "zeta"
+
+    # a bare rebuild — "alpha" sorts first and used to take the default over
+    again = rebuild_accounts(root=root)
+    assert again.default == "zeta", "a bare rebuild moved the operator's chosen default"
+    assert {a.handle for a in again.accounts} == {"alpha", "zeta"}
+
+    # an explicit flag still wins, and a stored default naming a vanished handle falls back
+    assert rebuild_accounts(root=root, default="alpha").default == "alpha"
+    shutil.rmtree(root / "alpha")
+    assert rebuild_accounts(root=root).default == "zeta"

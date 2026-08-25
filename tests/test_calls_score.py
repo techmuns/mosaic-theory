@@ -102,10 +102,22 @@ def test_the_benchmark_leg_ends_on_the_common_last_bar() -> None:
     the market moved in the gap."""
     bars = _bars(date(2025, 1, 6), [100.0] * 40)
     full = _bars(date(2025, 1, 6), [100.0] * 40)
-    short = full[:8]                       # benchmark frontier stops well before the horizon end
+
+    # NEGATIVE PIN. The benchmark frontier stops well before the horizon end, so the two legs cover
+    # different windows. There is no honest excess to report and none is reported — this used to
+    # return a bench_ret measured over 8 bars against a name return measured over 21, and call the
+    # difference "excess vs SPY". (The old `min(b_win[-1], exit_date)` trim could never fire: b_win
+    # was already bounded by exit_date, so it re-derived the same window and changed nothing.)
+    short = full[:8]
     r = _call(bars=bars, bench=short, horizon_hi=20)
-    assert r.status == "CLOSED" and r.bench_ret is not None
-    assert r.excess == pytest.approx(r.ret - r.bench_ret)
+    assert r.status == "CLOSED"
+    assert r.bench_ret is None and r.excess is None, "an asymmetric benchmark window was reported"
+
+    # POSITIVE PIN. A benchmark that spans the whole window is used, and excess is the difference.
+    r2 = _call(bars=bars, bench=full, horizon_hi=20)
+    assert r2.bench_ret is not None and r2.ret is not None
+    assert r2.excess == pytest.approx(r2.ret - r2.bench_ret)
+
     # a benchmark with no usable overlap yields no excess at all — never a zero standing in for one
     assert _call(bars=bars, bench=[], horizon_hi=20).excess is None
 
@@ -176,3 +188,20 @@ def test_a_counter_directional_level_is_still_scored_end_to_end() -> None:
     assert r.target_px == pytest.approx(98.0)
     assert r.target_status == "counter_directional"
     assert r.target_hit is True, "price fell to the watched level and that was not recorded"
+
+
+def test_a_non_positive_entry_open_is_refused_by_name_not_divided_by() -> None:
+    """Every figure in a scored row divides by the entry open. A zero (or negative) open — which a
+    bad vendor bar can carry — used to reach that division: `unrealised` had its own `entry > 0`
+    guard and returned None, while `mfe_to_date` two lines below had none and raised
+    ZeroDivisionError, taking the whole scoring run down mid-account. The guard now sits where the
+    entry is read, so the row is refused by name instead."""
+    bars: list[Bar] = [
+        (date(2025, 1, 6), 100.0, 101.0, 99.0, 100.0, 1_000.0),
+        (date(2025, 1, 7), 0.0, 101.0, 0.0, 100.0, 1_000.0),      # the entry bar, open == 0
+        (date(2025, 1, 8), 100.0, 101.0, 99.0, 100.0, 1_000.0),
+    ]
+    r = _call(bars=bars, horizon_hi=1)
+    assert r.status == "NO_ENTRY_BAR", "a zero open was scored rather than refused"
+    assert "non-positive open" in r.detail
+    assert r.ret is None and r.mfe is None and r.unrealised is None

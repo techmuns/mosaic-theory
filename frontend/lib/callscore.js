@@ -104,6 +104,11 @@ export function scoreCall({ tweetId, ticker, posted, bias, target, targetType,
              detail: "no trading day after the post inside the fetched window" };
   }
   const entry = fwd[0].o, entryDate = fwd[0].d;
+  if (!(entry > 0)) {
+    // Every figure below divides by the entry — refuse by name rather than emit NaN/Infinity.
+    return { ...base, status: "NO_ENTRY_BAR",
+             detail: `entry bar ${entryDate} carries a non-positive open (${entry})` };
+  }
   const hz = horizonHi || horizonLo || DEFAULT_HORIZON_DAYS;
   const assumed = !(horizonHi || horizonLo);
   const tp = parseTarget(target, targetType, entry, bias);
@@ -114,7 +119,10 @@ export function scoreCall({ tweetId, ticker, posted, bias, target, targetType,
     const markBar = winAll[winAll.length - 1];
     const highs = winAll.map((b) => b.h), lows = winAll.map((b) => b.l);
     const bo = (bench || []).filter((b) => b.d >= entryDate && b.d <= markBar.d);
-    const bUn = bo.length > 1 && bo[0].c > 0 ? sign * (bo[bo.length - 1].c / bo[0].c - 1) : null;
+    const bSpans = Boolean(bench && bench.length)
+      && bench[0].d <= entryDate && bench[bench.length - 1].d >= markBar.d;
+    const bUn = bSpans && bo.length > 1 && bo[0].c > 0
+      ? sign * (bo[bo.length - 1].c / bo[0].c - 1) : null;
     return { ...base, status: "OPEN",
              detail: `horizon of ${hz} trading days has not elapsed (${winAll.length - 1} of ${hz} so far)`,
              entry, entry_date: entryDate, horizon_days: hz, horizon_assumed: assumed,
@@ -129,15 +137,16 @@ export function scoreCall({ tweetId, ticker, posted, bias, target, targetType,
 
   const exitBar = winAll[hz];
   const ret = sign * (exitBar.c / entry - 1);
-  // THE COMMON LAST BAR — the benchmark leg is trimmed to what both series actually carry.
+  // THE COMMON LAST BAR — the benchmark must actually SPAN the name's window. If its series stops
+  // short of exitBar (or starts after the entry) the two legs measure different windows, so no
+  // excess is reported at all rather than one whose sign is set by the gap. (The old trim to
+  // `min(bWin.last, exitBar)` could never fire: bWin is already bounded by exitBar.)
   const bWin = (bench || []).filter((b) => b.d >= entryDate && b.d <= exitBar.d);
+  const spans = Boolean(bench && bench.length)
+    && bench[0].d <= entryDate && bench[bench.length - 1].d >= exitBar.d;
   let benchRet = null;
-  if (bWin.length > 1) {
-    const commonEnd = bWin[bWin.length - 1].d < exitBar.d ? bWin[bWin.length - 1].d : exitBar.d;
-    const bTrim = bWin.filter((b) => b.d <= commonEnd);
-    if (bTrim.length > 1 && bTrim[0].c > 0) {
-      benchRet = sign * (bTrim[bTrim.length - 1].c / bTrim[0].c - 1);
-    }
+  if (spans && bWin.length > 1 && bWin[0].c > 0) {
+    benchRet = sign * (bWin[bWin.length - 1].c / bWin[0].c - 1);
   }
   const win = winAll.filter((b) => b.d <= exitBar.d);
   const highs = win.map((b) => b.h), lows = win.map((b) => b.l);

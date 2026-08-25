@@ -136,6 +136,12 @@ def score_call(
 
     entry_bar = fwd[0]
     entry, entry_date = entry_bar[1], entry_bar[0]          # OPEN of the next trading day
+    if entry <= 0:
+        # Every figure below divides by the entry. A non-positive open is not a price this call can
+        # be scored against, and it is refused by name rather than crashing on the division or —
+        # worse — reporting some fields and silently dropping the rest.
+        return CallResult(**base, status="NO_ENTRY_BAR",
+                          detail=f"entry bar {entry_date} carries a non-positive open ({entry})")
 
     hz = horizon_hi or horizon_lo or DEFAULT_HORIZON_DAYS
     assumed = not (horizon_hi or horizon_lo)
@@ -149,10 +155,11 @@ def score_call(
         mark_bar = win_all[-1]
         highs_o, lows_o = [b[2] for b in win_all], [b[3] for b in win_all]
         mark = mark_bar[4]
-        unreal = sign_of(bias) * (mark / entry - 1.0) if entry > 0 else None
+        unreal = sign_of(bias) * (mark / entry - 1.0)
         b_o = [b for b in bench if entry_date <= b[0] <= mark_bar[0]]
+        b_spans = bool(bench) and bench[0][0] <= entry_date and bench[-1][0] >= mark_bar[0]
         b_unreal: float | None = None
-        if len(b_o) > 1 and b_o[0][4] > 0:
+        if b_spans and len(b_o) > 1 and b_o[0][4] > 0:
             b_unreal = sign_of(bias) * (b_o[-1][4] / b_o[0][4] - 1.0)
         hit_o = touched(tp.price, entry, highs_o, lows_o) if tp.price is not None else None
         return CallResult(**base, **tgt_fields, status="OPEN",
@@ -173,14 +180,17 @@ def score_call(
     sign = sign_of(bias)
     ret = sign * (exit_px / entry - 1.0)
 
-    # THE COMMON LAST BAR — the benchmark leg is trimmed to what both series actually carry.
+    # THE COMMON LAST BAR. The benchmark must actually SPAN the name's window; if its series stops
+    # short of `exit_date` (or starts after `entry_date`) the two legs measure different windows and
+    # the sign of the error is set by whichever way the market moved in the gap. There is no honest
+    # excess return to report then, so none is: `bench_ret` stays None and `excess` with it.
+    # (The earlier `min(b_win[-1][0], exit_date)` trim could never fire — `b_win` is already bounded
+    # by `exit_date`, so it re-derived the same window and the asymmetry passed through unflagged.)
     b_win = [b for b in bench if entry_date <= b[0] <= exit_date]
+    spans = bool(bench) and bench[0][0] <= entry_date and bench[-1][0] >= exit_date
     bench_ret: float | None = None
-    if len(b_win) > 1:
-        common_end = min(b_win[-1][0], exit_date)
-        b_trim = [b for b in b_win if b[0] <= common_end]
-        if len(b_trim) > 1 and b_trim[0][4] > 0:
-            bench_ret = sign * (b_trim[-1][4] / b_trim[0][4] - 1.0)
+    if spans and len(b_win) > 1 and b_win[0][4] > 0:
+        bench_ret = sign * (b_win[-1][4] / b_win[0][4] - 1.0)
 
     win = [b for b in win_all if b[0] <= exit_date]
     highs, lows = [b[2] for b in win], [b[3] for b in win]

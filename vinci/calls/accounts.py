@@ -90,6 +90,18 @@ def rebuild_accounts(*, root: Path = CALLS_DIR, default: str | None = None) -> A
         ))
     if not accounts:
         raise FileNotFoundError(f"no account directories with a meta.json under {root}/")
-    idx = AccountIndex(default=default or accounts[0].handle, accounts=accounts)
+    # THE DEFAULT IS THE ONE THING HERE THAT IS NOT DERIVED — it is a choice, so a rebuild must not
+    # silently overwrite it. Without this, dropping in a second account whose handle sorts first
+    # moved the dashboard's opening account on the next `vinci calls accounts`, with nothing said.
+    prev: str | None = None
+    idx_p = root / ACCOUNTS_JSON
+    if idx_p.is_file():
+        try:
+            prev = json.loads(idx_p.read_text()).get("default")
+        except (OSError, ValueError):
+            prev = None
+    handles = {a.handle for a in accounts}
+    keep = prev if prev in handles else None
+    idx = AccountIndex(default=default or keep or accounts[0].handle, accounts=accounts)
     (root / ACCOUNTS_JSON).write_text(idx.model_dump_json(indent=2) + "\n")
     return idx

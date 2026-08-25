@@ -786,9 +786,38 @@ function wireCrosshair(root) {
 }
 
 // --- export ------------------------------------------------------------------------------------
-/** JSONL in gold_labels.jsonl's exact shape, so it merges straight back into the pipeline. */
-function exportJsonl() {
+/**
+ * Every post an edit refers to, keyed by id — ACROSS MONTHS, not just the one on screen.
+ *
+ * THIS WAS A REAL DEFECT in the export. `S.posts` holds a SINGLE month, and `S.edits` is restored
+ * from localStorage and accumulates across months and across sessions. So every edited row outside
+ * the open month exported with `date`, `quarter`, `text` and `has_video` all null — and
+ * `vinci calls import-labels` writes them into `gold_labels.jsonl` unchallenged, because it keys on
+ * tweet_id|ticker and never looks at the date. The ground truth the tool exists to grow would have
+ * been landed dateless and textless, silently.
+ *
+ * Only the months still missing an id are fetched, and `getCallPosts` memoises them, so an export
+ * after labelling inside one month costs nothing.
+ */
+async function postsByIdFor(ids) {
   const byId = new Map(S.posts.map((p) => [String(p.id), p]));
+  const missing = new Set([...ids].filter((id) => !byId.has(id)));
+  if (!missing.size) return byId;
+  for (const m of [...new Set(Object.keys(S.days).map(monthOf))].sort()) {
+    let posts;
+    try { posts = await getCallPosts(S.handle, m); } catch (e) { continue; }
+    for (const p of posts) {
+      const id = String(p.id);
+      if (missing.delete(id)) byId.set(id, p);
+    }
+    if (!missing.size) break;
+  }
+  return byId;
+}
+
+/** JSONL in gold_labels.jsonl's exact shape, so it merges straight back into the pipeline. */
+async function exportJsonl() {
+  const byId = await postsByIdFor(Object.keys(S.edits).map((k) => k.split("|")[0]));
   const rows = [];
   for (const [key, patch] of Object.entries(S.edits)) {
     const [id, tkr] = key.split("|");
@@ -881,14 +910,24 @@ function toolbar(tickers) {
 }
 
 
+//: PAINTS ARE SERIALISED BY SEQUENCE, because `paneChart` awaits a fetch and the keyboard fires a
+//: paint per keystroke. Two held j-presses start two paints; whichever fetch settles LAST wins the
+//: innerHTML — which is not necessarily the last post focused. The chart would then show one call
+//: while the posts pane highlighted another, and `S.geom` (the crosshair's source of truth) would
+//: belong to the stale draw. A superseded paint drops its result instead.
+let paintSeq = 0;
+
 async function paint(root) {
+  const mine = ++paintSeq;
   const tickers = [...new Set(Object.values(S.days).flatMap((d) => d.tk || []))]
     .map((t) => t.replace(/^\$/, "")).sort();
   root.querySelector("#ct-tools").innerHTML = toolbar(tickers);
   root.querySelector("#ct-cal").innerHTML = paneCalendar();
   root.querySelector("#ct-posts").innerHTML = panePosts();
   root.querySelector("#ct-chart").innerHTML = `<div class="card muted" style="font-size:12.5px">Drawing…</div>`;
-  root.querySelector("#ct-chart").innerHTML = await paneChart();
+  const chart = await paneChart();
+  if (mine !== paintSeq) return;              // superseded — a newer paint owns the screen
+  root.querySelector("#ct-chart").innerHTML = chart;
   wire(root);
   wireCrosshair(root);
   writeUrl();
@@ -925,8 +964,9 @@ function wire(root) {
   bindF("#ct-unl", "unlabelled", "checked");
 
   const exp = root.querySelector("#ct-export");
-  if (exp) exp.addEventListener("click", () => {
-    const n = exportJsonl();
+  if (exp) exp.addEventListener("click", async () => {
+    exp.textContent = "Collecting…";
+    const n = await exportJsonl();
     exp.textContent = n ? `Exported ${n}` : "Nothing edited yet";
     setTimeout(() => { exp.textContent = "Export JSONL"; }, 1800);
   });
@@ -945,6 +985,12 @@ function wire(root) {
     e.stopPropagation();
     S.window = e.currentTarget.dataset.win; repaint(); }, "click");
   q(".pcard", (e) => {
+    // THE EDITOR IS INSIDE THE CARD, and its clicks must not reach this handler. They did: every
+    // click on a bias button, a select or the Target field bubbled up here, reset `chipIdx` to 0 —
+    // so an edit made on the second cashtag left the editor showing the FIRST — and repainted the
+    // pane out from under the field, which tore the focus off the input before a character could
+    // be typed. `.lchip` already stopped propagation for exactly this reason; `.ed` did not.
+    if (e.target.closest && e.target.closest(".ed")) return;
     S.postIdx = Number(e.currentTarget.dataset.post); S.chipIdx = 0; repaint(); }, "click");
   q(".lchip", (e) => {
     e.stopPropagation();
@@ -1021,6 +1067,9 @@ function keyboard(root) {
 // --- entry -------------------------------------------------------------------------------------
 async function boot(root) {
   loadEdits();
+  // The local recompute cache is keyed <tweet_id>|<TICKER> with no handle in it, so switching
+  // accounts must clear it — otherwise one account's recomputed row could surface under another's.
+  S.local = {};
   [S.days, S.labels, S.results] = await Promise.all([
     getCallDays(S.handle), getCallLabels(S.handle), getCallResults(S.handle),
   ]);
