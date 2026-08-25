@@ -226,3 +226,65 @@ def test_the_derivation_is_reachable_from_the_package_root() -> None:
 
     assert "last_completed_session" in eod.__all__
     assert inspect.isfunction(eod.last_completed_session)
+
+
+def test_the_fixture_step_fetches_its_own_bars_because_the_screen_never_carries_them() -> None:
+    """THE FIRST WIRING OF THIS STEP FAILED IN PRODUCTION (run 32818611056) AND THIS IS WHY.
+
+    The weekly screen refreshes EOD for the SCREENING UNIVERSE. The price fixture covers the
+    MAINTENANCE-ROUTE set — which is, by definition, the names the screen does NOT carry. Checked
+    against the committed universe snapshot rather than asserted: six of the nine fixture names are
+    outside it entirely (the megacaps fail the cap band, and the benchmark is a synthetic `IDX-*`
+    identity that was never an SEC issuer). So the job's store can never supply them, the bare
+    script aborts on the first one, and `--refresh` is a REQUIREMENT rather than a speed-up.
+
+    Pinned at the CALL SITE — the workflow line, not the script's flag parsing — because a
+    correct `--refresh` that nobody passes fixes nothing."""
+    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
+    step = wf.split("Rebuild the price fixture", 1)[1].split("- name:", 1)[0]
+    assert "build_price_fixture.py --refresh" in step, (
+        "the fixture step does not pass --refresh — it will abort on the first maintenance-route "
+        "name the screening universe does not carry")
+    assert "POLYGON_API_KEY" in step, (
+        "--refresh fetches bars and needs the Polygon key in this step's env")
+
+
+def test_the_fixture_set_really_does_reach_outside_the_screening_universe() -> None:
+    """THE REASON THE FLAG ABOVE CANNOT BE OPTIMISED AWAY, asserted against the real committed
+    corpus rather than left as a comment. If this ever became empty — every fixture name inside the
+    universe — `--refresh` would be redundant and the pin above would be cargo. It is not empty:
+    that is the whole shape of the maintenance route."""
+    import json
+
+    from vinci.config import get_config
+
+    snap = get_config().snapshots_dir / "universe_snapshot.jsonl"
+    if not snap.is_file():
+        pytest.skip("no committed universe snapshot")
+    in_universe = {json.loads(line)["internal_id"]
+                   for line in snap.read_text().splitlines() if line.strip()}
+    outside = []
+    for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
+        first = json.loads(f.read_text().splitlines()[0])
+        if first["internal_id"] not in in_universe:
+            outside.append(f.stem)
+    assert outside, (
+        "every fixture name is inside the screening universe — if that is genuinely true the "
+        "weekly job no longer needs --refresh, and this pin plus the one above should be revisited")
+
+
+def test_every_fixture_series_shares_one_vintage() -> None:
+    """THE BENCHMARK MUST NOT DRIFT FROM THE NAMES MEASURED AGAINST IT. `rel_ret_vs_market` compares
+    a name to IWM, so a fixture where IWM stops earlier than the names silently changes every
+    relative return it feeds. This is the exact corruption the old non-atomic builder produced —
+    six names rewritten, WERN left three days behind, IWM never written at all."""
+    import json
+
+    fronts = {}
+    for f in sorted((ROOT / "tests" / "fixtures" / "prices").glob("*.jsonl")):
+        fronts[f.stem] = max(json.loads(line)["bar_date"]
+                             for line in f.read_text().splitlines() if line.strip())
+    assert len(set(fronts.values())) == 1, (
+        f"the fixture carries mixed vintages {fronts} — rebuild it in one pass: "
+        f"python scripts/build_price_fixture.py --refresh")
+

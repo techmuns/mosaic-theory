@@ -20,6 +20,16 @@ window must straddle the fleet as-of generously on both sides.
 
     python scripts/build_price_fixture.py              # every maintained name + the benchmark
     python scripts/build_price_fixture.py IT           # just this one
+    python scripts/build_price_fixture.py --refresh    # fetch the bars first, then build
+
+THE `--refresh` FLAG EXISTS BECAUSE THE WEEKLY JOB'S STORE CANNOT SUPPLY THESE NAMES. The job
+refreshes EOD for the SCREENING UNIVERSE, and this fixture covers the MAINTENANCE-ROUTE set —
+which is, by definition, the names the screen does NOT carry. Six of the nine (IT, LLY, NFLX, UBER,
+V, and IWM the benchmark) sit outside the universe entirely: the megacaps fail the cap band, and
+IWM is a synthetic IDX-* identity that was never an SEC issuer. Wiring the bare script into CI
+therefore failed on the first name it tried (run 32818611056). With `--refresh` it fetches its own
+bars per-symbol first — nine aggregate calls, not a market-wide pull. Opt-in, so the operator flow
+in RUNBOOKS step 5 (store already populated locally) still spends no network.
 
 RE-RUN IT IN THE SAME PR THAT MAKES A NEW NAME MAINTAINED — a followed name, or a held name that
 grows out of the band. `test_every_committed_dossier_can_still_be_located` fails loudly and names
@@ -33,8 +43,10 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
+from datetime import date
 
-from vinci.config import get_config
+from vinci.config import get_config, load_local_env
+from vinci.eod import PolygonEodClient, ingest_prices_per_symbol, last_completed_session
 from vinci.monitor import BENCHMARK_SMALL
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
@@ -62,17 +74,29 @@ def maintained_names(cfg: object) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
+    load_local_env()
     cfg = get_config()
     resolver = EntityResolver.from_config(cfg)
-    wanted = [t.upper() for t in argv[1:]] or maintained_names(cfg)
+    flags = {a for a in argv[1:] if a.startswith("-")}
+    wanted = [t.upper() for t in argv[1:] if not t.startswith("-")] or maintained_names(cfg)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # (ticker, internal_id) — the benchmark is an IDX-* synthetic identity, not an SEC issuer.
-    targets: list[tuple[str, str]] = [
-        (t, resolver.resolve_ticker(t).internal_id) for t in wanted
-    ]
-    bench = benchmark_identity(BENCHMARK_SMALL)
-    targets.append((BENCHMARK_SMALL, bench.internal_id))
+    # Identities, not just ids: `--refresh` needs the whole Identity to ingest against, and the
+    # benchmark is an IDX-* synthetic — not an SEC issuer, so it is resolver-exempt.
+    identities = [resolver.resolve_ticker(t) for t in wanted]
+    identities.append(benchmark_identity(BENCHMARK_SMALL))
+    targets: list[tuple[str, str]] = [(t, i.internal_id)
+                                      for t, i in zip([*wanted, BENCHMARK_SMALL], identities,
+                                                      strict=True)]
+
+    if "--refresh" in flags:
+        # PER-SYMBOL, not grouped-daily: this is a handful of names the market-wide pull does not
+        # cover, so one aggregate call each is the cheap path (the NCNO-class backfill route).
+        end = last_completed_session(PolygonEodClient.from_config(cfg), today=date.today())
+        print(f"  refreshing {len(identities)} names {_WINDOW_START}..{end} via per-symbol aggs")
+        with Store(cfg.db_path) as store:
+            ingest_prices_per_symbol(PolygonEodClient.from_config(cfg), store, identities,
+                                     start=date.fromisoformat(_WINDOW_START), end=end)
 
     # ALL-OR-NOTHING: BUILD EVERY SERIES FIRST, WRITE ONLY IF EVERY ONE SUCCEEDED.
     #

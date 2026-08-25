@@ -87,10 +87,19 @@ jobs:
       # regenerable price bars carrying no analytical claim and no logic, staged by directory name
       # so this cannot become a door for a code change. The script is ALL-OR-NOTHING — a name with
       # no bars aborts before anything is written — so a partial build can never be committed.
+      #
+      # `--refresh` IS REQUIRED HERE, NOT AN OPTIMISATION. The screen above refreshes EOD for the
+      # SCREENING UNIVERSE; this fixture covers the MAINTENANCE-ROUTE set, which is by definition
+      # the names the screen does NOT carry. Six of the nine — IT, LLY, NFLX, UBER, V, and IWM the
+      # BENCHMARK — are outside the universe entirely (the megacaps fail the cap band; IWM is a
+      # synthetic IDX-* identity that was never an SEC issuer). The bare script therefore found
+      # zero bars for the first name it tried and aborted (run 32818611056). With `--refresh` it
+      # fetches its own bars per-symbol: nine aggregate calls, not a second market-wide pull.
       - name: Rebuild the price fixture, the other mirror of the refreshed store
         env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
-        run: PYTHONPATH=$PWD python scripts/build_price_fixture.py
+        run: PYTHONPATH=$PWD python scripts/build_price_fixture.py --refresh
 
       # THE ARTIFACT-PASS RULE, APPLIED TO THE PASS THAT IS NOT A HUMAN'S.
       #
