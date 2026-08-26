@@ -36,8 +36,19 @@ verdict placement.
 ## Session ritual (every time)
 
 1. **Read STATE.md first** — the authoritative record of built / falsified / deferred / next.
+   **§5.0 OPEN NOW is that answer** — read it, and RE-read it before proposing next steps, however
+   long the session has run. §5 below it is a ~9,900-line append-only archive: it is history, not a
+   to-do list, and it CONTRADICTS itself where closed items were never struck. *Never answer "what
+   is next" from conversation memory — on 2026-08-25 an agent verified the weekly run green that
+   morning, recorded it DONE itself, and proposed re-triggering it that afternoon while a stale
+   entry below still read "STILL OPEN".* State established earlier in a session decays; the file
+   does not.
 2. End every build by **updating STATE.md**: built → how-verified; falsified → why; deferred →
    unlock trigger. A build that changes reality without updating STATE.md leaves the record lying.
+   **CLOSING an item means DELETING its §5.0 row AND striking its entry below** — a done item left
+   standing is how §5 came to answer the same question two ways. **Narrative belongs in §2 Built
+   and verified; §5 takes the TO-DO only.** Prose about shipped work is what grew §5 into an essay
+   (804 bold headers, 51 with a done-marker) — and a section nobody can re-read stops being read.
 3. Keep STATE.md accuracy-first: falsified is falsified, unproven is unproven. Never upgrade a hedged
    claim to a confident one to make progress look better.
 4. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
