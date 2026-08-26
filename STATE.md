@@ -4827,8 +4827,13 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
 
 
-### LIVE QUEUE (authoritative — restamped 2026-07-27)
+### LIVE QUEUE — MIGRATED 2026-08-25 (P1); NOT authoritative, and no longer here
 
+*Formerly "LIVE QUEUE (authoritative — restamped 2026-07-27)". Its entries went to
+`docs/records/` with the rest of the archive, and the heading is kept only because records cite it
+by name (`### LIVE QUEUE holds SERIES A — ENGINEERING / AUDIT-REMEDIATION…`). **§5.0 OPEN NOW above
+is the authoritative open list** — an empty heading still claiming authority is the two-answers
+failure this migration exists to end.*
 
 ### §5 ARCHIVE — MIGRATED 2026-08-25 (P1)
 

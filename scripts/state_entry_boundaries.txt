@@ -1,6 +1,14 @@
 # HAND-CLASSIFIED §5 entry boundaries (offsets from the section start), P1 2026-08-25.
 # Read and judged one by one: §5 has no machine-detectable boundaries, so this file IS
 # the judgement. See scripts/migrate_state_to_records.py for why it is data, not a regex.
+#
+# THE OFFSETS ARE ONLY MEANINGFUL AGAINST ONE FILE. They are counted from the '## 5. Next
+# steps' heading, and §5.0 above the archive is the LIVING block — it gains and loses a row
+# every build. One line inserted there shifts all 168 boundaries by one, and RECONSTRUCTION
+# CANNOT SEE IT: the check proves the split is contiguous, which any monotone offset list
+# satisfies. So the source file is pinned by content hash and the script refuses to run
+# against anything else.
+# source-sha256: a97b828bf849c12600880c0113f8394655910ec27bc40c884a3b62213eebfc38
 34
 91
 133
