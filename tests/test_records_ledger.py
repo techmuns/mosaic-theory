@@ -272,10 +272,15 @@ def test_the_cross_tool_entry_point_points_and_does_not_copy() -> None:
         f"AGENTS.md is {len(text.splitlines())} lines — drifting from a pointer into a "
         f"second rulebook, which is how the two come to disagree")
 
-    # no long sentence may appear verbatim in both files
-    import re
+    # NO LONG SENTENCE MAY APPEAR IN BOTH FILES — compared WRAP-INDEPENDENTLY. Splitting on
+    # `[.\n]` made a LINE the unit, so it only ever caught a copy that landed on identical line
+    # breaks: the same rule pasted in and re-wrapped at another width (the normal result of
+    # copying into a differently-indented context, or of any editor reflow) produced no shared
+    # fragment and the guard ran green over a verbatim duplicate. Whitespace is collapsed first,
+    # so the comparison is on sentences rather than on line endings.
     def long_sentences(s: str) -> set[str]:
-        return {x.strip() for x in re.split(r"[.\n]", s) if len(x.strip()) > 60}
+        flat = " ".join(s.split())
+        return {x.strip() for x in flat.split(".") if len(x.strip()) > 60}
     shared = long_sentences(text) & long_sentences((ROOT / "CLAUDE.md").read_text())
     assert not shared, (
         f"AGENTS.md copies {len(shared)} sentence(s) verbatim from CLAUDE.md — copies drift. "
@@ -284,11 +289,21 @@ def test_the_cross_tool_entry_point_points_and_does_not_copy() -> None:
 
 def test_the_file_map_names_every_surface() -> None:
     """A READER ARRIVING COLD SHOULD NOT HAVE TO INFER THE SPLIT. Six surfaces now carry the
-    record between them; the map in RUNBOOKS is the one place that says which answers what."""
+    record between them; the map in RUNBOOKS is the one place that says which answers what.
+
+    SCOPED TO THE TABLE'S OWN ROWS. A fixed character window ran 860 characters past the map into
+    the pre-existing preamble below it — which names STATE.md, CLAUDE.md and docs/engineering.md in
+    a parenthetical — so deleting the STATE.md row or the CLAUDE.md row from the map left this
+    green. The mutation that "passed" only passed for the surfaces that happen to be absent
+    downstream. The rows are the unit: only `| … |` lines count."""
     runbooks = (ROOT / "docs" / "RUNBOOKS.md").read_text()
     assert "Which file answers which question" in runbooks, "the file map is gone from RUNBOOKS"
-    head = runbooks.split("Which file answers which question", 1)[1][:2200]
+    after = runbooks.split("Which file answers which question", 1)[1]
+    rows = "\n".join(x for x in after.splitlines()[:40] if x.lstrip().startswith("|"))
+    assert rows.count("\n") >= 6, (
+        f"the file map has {rows.count(chr(10))} rows below its heading — a surface has been "
+        f"dropped from the table, or the table no longer follows the heading")
     for surface in ("CLAUDE.md", "STATE.md", "docs/records/", "docs/engineering.md",
                     "RUNBOOKS.md", "planning/", "AGENTS.md"):
-        assert surface in head, f"the file map does not mention {surface}"
+        assert surface in rows, f"the file map does not mention {surface}"
 
