@@ -360,8 +360,77 @@ def test_the_snapshot_stays_readable_in_one_sitting() -> None:
     unfollowable; it is now under 2,000. The cap is set with room to breathe rather than at today's
     exact size, because §2/§4 summaries legitimately grow as capabilities are added — what it
     refuses is the return of multi-hundred-line narrative, which now belongs in a record."""
+    #: 2,100 against a 1,944-line file: ~155 lines of headroom.
+    #:
+    #: THE FIRST CUT SAID 2,600 AND WAS THE DEFECT IT DESCRIBES (review, #506). Against a
+    #: 1,892-line file that left **708 lines** of slack — so the "multi-hundred-line narrative"
+    #: this docstring says it refuses would have sailed through, and the guard would have gone on
+    #: reporting green while the thing it exists to stop happened. A cap whose stated purpose and
+    #: actual behaviour disagree is worse than no cap, because it is counted as protection.
+    #:
+    #: 155 lines is sized to what LEGITIMATE growth looks like here: a new capability is a 2-3 line
+    #: summary in §2, a new open item is one row in §5.0. Fifty of those fit. One 300-line build
+    #: narrative does not — and that is the whole distinction being drawn.
+    cap = 2100
     n = len(STATE.read_text().splitlines())
-    assert n <= 2600, (
-        f"STATE.md is {n} lines. It is the SNAPSHOT: a build's narrative goes in a new file under "
+    assert n <= cap, (
+        f"STATE.md is {n} lines, over the {cap} cap. It is the SNAPSHOT: a build's narrative "
+        f"goes in a new file under "
         f"docs/records/, and STATE.md gets a summary line with a pointer. See CLAUDE.md ritual 2.")
+
+
+def _pointer_pairs() -> list[tuple[str, str]]:
+    """(the bullet a pointer hangs under, the record it names) for every §2/§4 pointer."""
+    lines = STATE.read_text().splitlines()
+    pairs = []
+    for i, line in enumerate(lines):
+        m = re.search(r"\*\(detail: `docs/records/([\w.\-]+\.md)`\)\*", line)
+        if not m:
+            continue
+        j = i - 1
+        while j >= 0 and not re.match(r"^(- |\d+\. )\*\*", lines[j]):
+            j -= 1
+        pairs.append((lines[j] if j >= 0 else "", m.group(1)))
+    return pairs
+
+
+def test_each_pointer_lands_on_the_record_for_its_own_bullet() -> None:
+    """EXISTENCE IS NOT CORRESPONDENCE (review, #506).
+
+    The first guard only asked whether the file a pointer names exists — so a pointer aimed at the
+    WRONG record passed, and that is the failure mode that actually happens: the migration writes
+    one record per bullet, and a mis-paired pointer sends a reader to someone else's detail while
+    looking perfectly healthy. §2 already suffered the adjacent version of this, where a `###`
+    heading was absorbed into the record for the PRECEDING bullet.
+
+    Correspondence is checkable because the migration writes the bullet's own text as the record's
+    `# ` heading. If that ever stops being true, this pin is the place to re-derive the rule — not
+    a reason to delete it."""
+    pairs = _pointer_pairs()
+    assert pairs, "no §2/§4 pointers found — has the compaction been reverted?"
+    for bullet, name in pairs:
+        rec = RECORDS / name
+        assert rec.is_file(), f"{name} does not exist"
+        heading = next((x for x in rec.read_text().splitlines() if x.startswith("# ")), "")
+        want = re.sub(r"^(- |\d+\. )", "", bullet).strip()
+        got = heading[2:].strip()
+        # compare on the distinctive opening of the bullet, which the heading reproduces
+        key = re.sub(r"[^a-z0-9]+", "", want.lower())[:40]
+        assert key and key in re.sub(r"[^a-z0-9]+", "", got.lower()), (
+            f"pointer under {want[:60]!r} names {name}, whose heading is {got[:60]!r} — the "
+            f"reader is being sent to a different bullet's detail")
+
+
+def test_no_migrated_section_record_is_left_unpointed() -> None:
+    """THE OTHER HALF: a record nothing points at is detail nobody can reach from the claim it
+    belongs to. Scoped to §2/§4 ONLY, deliberately — the §5 archive is pointed at COLLECTIVELY by
+    its section block, and `docs/records/README.md` says discovery is `ls`/`grep` with no curated
+    index, so a blanket orphan check would contradict the design it is meant to protect."""
+    pointed = {name for _, name in _pointer_pairs()}
+    section_records = {p.name for p in _records()
+                       if re.search(r"^migrated-from: STATE\.md §[24]", p.read_text(), re.M)}
+    orphans = sorted(section_records - pointed)
+    assert not orphans, (
+        f"{len(orphans)} §2/§4 record(s) that nothing in STATE.md points at: {orphans[:4]}. The "
+        f"summary lost its pointer, so the detail is unreachable from the claim it supports.")
 

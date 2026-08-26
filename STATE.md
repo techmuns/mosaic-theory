@@ -26,11 +26,12 @@ at scale — NOT the terminal goal; the terminal goal is LP returns and the AUM 
 
 ## 2. Built and verified (checked against the repo, not memory)
 
-**THE KNOWLEDGE LEDGER — P0/P1/P2 SHIPPED 2026-08-25/26 (#503, #504, #505).** STATE.md is the
-SNAPSHOT and `docs/records/` is the LEDGER — one immutable file per entry, 206 of them. §5 went
-9,908 → 51 lines and the governance log 3,957 → 10; the whole file 19,241 → 5,442. `AGENTS.md`
-points other tools at CLAUDE.md without copying it. §2 below is the last unmigrated block (P3).
-*Records: `docs/records/2026-08-2*-knowledge-ledger-p{0,1,2}.md`.*
+**THE KNOWLEDGE LEDGER — P0/P1/P2/P3 SHIPPED 2026-08-25/26 (#503, #504, #505, #506).** STATE.md is
+the SNAPSHOT and `docs/records/` is the LEDGER — one immutable file per entry, 250 of them. §5 went
+9,908 → 51 lines and the governance log 3,957 → 10; P3 took §2 3,686 → 889 and §4 1,013 → 254; the
+whole file 19,241 → 1,892. `AGENTS.md` points other tools at CLAUDE.md without copying it. Every
+block is migrated: §2 and §4 keep one summary line per item with a pointer to its record.
+*Records: `docs/records/2026-08-2*-knowledge-ledger-p{0,1,2,3}.md`.*
 
 Each line: *what it does* — *verified how*.
 
@@ -43,7 +44,7 @@ Each line: *what it does* — *verified how*.
   a few as SEC data updates).*
   *(detail: `docs/records/2026-08-26-capability-universe-builder-vinci-universe-market-cap-clo.md`)*
 - **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
-  idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
+  idiosyncratic **vs the IWM market index** (NOT a sector cohort — see the G2 caveat in the screen-2 record below) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317
   candidates @ ref 2026-06-22 (was 301 @ 06-17; the universe/screen drift weekly as SEC+EOD data
   update), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH
@@ -758,6 +759,11 @@ Each line: *what it does* — *verified how*.
   CLOSEOUT (2026-07-20, feat/company-labels; PR open, NOT merged).** The operator's finding: the
   dossier moved to CIQ-GICS in #98 but every other surface stayed on hand-rolled SIC labels, and
   the repo had FIVE labeling lenses. Now ONE table, ONE resolver, provenance visible everywhere.
+  **ACCEPTED RISK / FLAGGED, not fixed (scope):** (a) `_SCAN_BASIS.get(…, "none")` may fold an
+  `unassessed-error` basis into the "none" tier count — a scan FAILURE conflated with genuine
+  no-exposure; whether unassessed rows can reach that counter is QUEUED. (b) the web ledger view
+  still doesn't display `LedgerEntry.sector`. (c) the JS overlay precedence (`dispIndustry`) is the
+  unavoidable stdlib-fence twin of `resolve_label` — source-pinned, residual drift accepted.
   *(detail: `docs/records/2026-08-26-capability-one-company-label-resolver-official-sic-table.md`)*
 - **THEME EDGE IA RESTRUCTURE + CANONICAL UNDERWRITE CARD + SHARED-SURFACE SURFACING (2026-07-20,
   feat/theme-edge-ia; MERGED as #152 `20a9f03`; SUPERSEDES #151 — closed unmerged, nothing cherry-picked).**
@@ -1072,7 +1078,7 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   LLM cause-pass, which then reads filing text instead of `LLM: —`). Trigger: **only if the gap
   proves to bite during real finalist selection** — i.e. the ~51% UNKNOWN-multiple names or the
   un-split character axis visibly distort the queue-top in use. **Monitor in use; don't chase
-  preemptively** (the ranker already handles the gaps fail-loud — §2 coverage caveat).
+  preemptively** (the ranker already handles the gaps fail-loud — the coverage caveat in §2's ranker record).
 - **Self-registering CIQ address registry (the dossier manifest's Option A) — named decision point,
   NOT a TODO.** Today `CIQ_MODULES` is **hand-maintained, drift-PROOFED by the AST coverage test**
   (§2: a new extractor consuming an undeclared kind fails the test → you declare it in the tuple).
@@ -1088,6 +1094,20 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   2nd or 3rd new kind lands and the pattern is real.** Until then the AST guard is the binding.
 - **Catalyst-path follow-ups (recorded when PR A landed, 2026-07-02) — deferred, not chased.**
   *(detail: `docs/records/2026-08-26-deferred-catalyst-path-follow-ups-recorded-when-pr-a.md`)*
+
+### Edge-hypothesis ledger — the full inventory (record-only doc; the edges are gated, built per §4's GOVERNOR)
+
+Every edge hypothesis considered, so a future session neither re-litigates a dead one nor chases an
+unrecorded one; each carries an explicit status + (where testable) a KILL CRITERION. **THE EDGE
+FILTER:** a candidate counts ONLY if it FEEDS the human's judgment — the instant a hypothesis
+becomes "the machine's OUTPUT is the decision" it has left the thesis. **LIVE — Edge 2 (overshoot
+de-rating): UNPROVEN**, the whole built funnel serves it and the BUY−AVOID spread is still empty
+(CAPITAL waits on it; parallel BUILD does not). **FALSIFIED — Edge 3 / graph-as-mechanical-signal**
+(§3), kept listed only so "the graph" is never reread as a live tradeable signal. *The bullets in
+this subsection are INVENTORY entries with their own statuses — not deferred build items.*
+*(full framing: `docs/records/2026-08-26-deferred-catalyst-path-follow-ups-recorded-when-pr-a.md`)*
+
+**RESEARCH-INPUT (built, gates nothing) + its untested live core:**
 - **graph-exposure lookup** — built (§2); validated **operationally**, never statistically (so it
   can't be data-mined); feeds the human, decides nothing.
 - **Non-consensus on AGGREGATION (the LIVE core of the graph thesis — NOT the dead mechanical
@@ -1126,6 +1146,14 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   mispricing is taxonomic. KILL CRITERION: mis-classified names must re-rate when re-classified,
   **forward, not in hindsight.** Untested.
   *(detail: `docs/records/2026-08-26-deferred-non-consensus-on-classification-the-market-p.md`)*
+
+**SLEEVE ARCHITECTURE — the edges become a REGISTRY, not a fork (decided 2026-08-08).** A `sleeve` =
+a tagged strategy book with its own playbook, verdict labels and attribution curve; a sleeve is a
+registry row — {case, twin, page question, proposal 3-row mapping, verdict labels} — so adding
+sleeve N+1 touches no assembler, no schema, no ledger mechanics. **The lines that do NOT move:** the
+machine still proposes and never concludes; the mapping stays face-validity-frozen; `mixed` proposes
+nothing; the edge-basis gate still runs; and the PRIMARY BUY−AVOID spread stays **screen-origin
+overshoot ONLY**. Four sleeves recorded; **two active in the decision ledger at v1**:
 - **S1 overshoot** — LIVE, unchanged, becomes the explicit default. Kill: the standing empty-spread
   falsifier.
 - **S2 quality (NEW CANDIDATE EDGE — the followed-megacap book: UBER/AMZN/NFLX/V class).**
@@ -1150,6 +1178,18 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   from a theme is underwritten it enters under S1/S2 with edge-basis `variant-vs-cross-section`.
 - **S4 neglect** — Edge 1 above, registry row only; activating it later = filling that row.
   *(detail: `docs/records/2026-08-26-deferred-s4-neglect-edge-1-above-registry-row-only-ac.md`)*
+
+**ACCEPTED RISK / KNOWN GAP (recorded, not hidden).** A quality name gets a dossier that asks the
+right question, a machine proposal and a human verdict in the ledger — but **not yet a scenario
+record**: the underwrite template still emits R1 axes only. And option 6 of the edge-basis gate
+still renders "machine verification pending" — A5 unbuilt. *(detail: the S4-neglect record above.)*
+
+**THE THEME / TREND FAMILY** — AI-assembled reasoning about themes / trends / rotations. All three
+share ONE failure mode and ONE discipline: they are **MOMENTUM-ADJACENT**, so EACH is this fund's
+edge **ONLY IF AI-assembly (selection / timing / exit discipline) beats a NAIVE MOMENTUM BASELINE**
+— the momentum itself is replicable and is NOT the edge (§3). All are **PAPER-VALIDATABLE IN
+PARALLEL** against that baseline, per §4's GOVERNOR — never capital, never single-threaded ahead of
+the lead loop. *(detail: the S4-neglect record above.)*
 - **PHASE-0 SCOPING (theme DETECTION) — admissibility spec written + data-availability spike run;
   spike returns NO-GO on existing data (2026-06-25). The detection/clustering layer is NOT built
   (gated on the two checks below).** Before any clustering code, two Phase-0 deliverables. **(1)
@@ -1160,7 +1200,7 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   candidate driver, analyst JUDGES it real+nameable), **breadth** (a basket not a pair, no hardcoded
   N), **coherence** (shared residual variance after stripping market **+ sector** beta — the G2
   control discipline; NECESSARY but NOT SUFFICIENT — coherence without a nameable driver is a momentum
-  bucket; note the G2 sector leg is itself still unbuilt, §2 G2 caveat), **persistence**
+  bucket; note the G2 sector leg is itself still unbuilt, the G2 caveat in §2's screen-2 record), **persistence**
   (months-to-quarters; admits a theme EXISTS — the fork judges early-vs-late lifecycle). Structure:
   2–4 are PASS/FAIL necessary-condition GATES (a SCREEN — themes are NOT ranked against each other), 1
   is the discriminating gate. KEY DESIGN DECISION recorded: cluster on **ECONOMIC LINKAGE**
@@ -1230,6 +1270,19 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   for the human, never a standalone screen or auto-verdict. (a) closed; (b) folded into the dossier's
   assemble-and-flag role if ever built.
   *(detail: `docs/records/2026-08-26-deferred-different-archetype-mispricings-two-sub-case.md`)*
+
+**DELIBERATELY NOT RECORDED — the graveyard** (considered and rejected; listed so they are not
+re-proposed as fresh ideas): sentiment / social signals, generic alt-data, patent-flow,
+management-turnover screens. Out of scope on purpose — **not** "untested-but-promising."
+
+**SCOPING QUESTIONS (where the edge LIVES — not new edges; full text in §6).** (1) **Cap-band
+ceiling — RESOLVED 2026-06-22: KEEP $10B.** (2) **Sector-expertise — OPEN, data-gated** on the
+per-sector BUY−AVOID spread (§2). *Honest status of the graph thesis:* the mechanical graph SIGNAL
+is dead (§3); the graph-exposure LOOKUP is built (§2); the AGGREGATION form above is genuinely
+untested. "Dead" applies to the mechanical signal, not the whole idea.
+
+**WORKED-EXAMPLE VALIDATION (2026-06-24, record-only — evidence the inventory is sound).** An
+external two-name analysis mapped against this inventory:
 - **Already covered:** "cost-plus pass-through misread" (margin-% optical, EBITDA/unit intact) = the
   dossier's existing GAAP-vs-economic-reality reconciliation (VRRM-class); "pre-sales/P&L divergence"
   (bookings up, recognized revenue down on percentage-of-completion timing) = a textbook **OVERSHOOT**
@@ -1270,7 +1323,6 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
 | 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
-| 7 | **Knowledge-ledger P3 — §2 compaction.** §2 'Built and verified' is **3,680 lines**, the last block standing between STATE.md (5,442) and its ≤600 target. Unlike P1 this is JUDGEMENT work, not scripted: per-subsystem summaries in the snapshot, detail into records. P0–P2 shipped (#503, #504, #505). | agent | operator go-ahead — deferred by ruling until the new shape has been used |
 
 **NOT open, recorded because they were recently believed open:** the weekly screen (ran green
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a

@@ -5,6 +5,7 @@ date: 2026-08-26
 prs: [506]
 supersedes:
 superseded-by:
+date-source: MIGRATION DATE — this record was cut out of STATE.md on 2026-08-26; the work it describes is earlier and is dated in the body. The filename prefix is therefore the migration date, not the event date.
 migrated-from: STATE.md §2 Built and verified
 ---
 

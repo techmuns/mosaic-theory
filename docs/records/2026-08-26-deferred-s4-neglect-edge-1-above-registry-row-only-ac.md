@@ -5,6 +5,7 @@ date: 2026-08-26
 prs: [506]
 supersedes:
 superseded-by:
+date-source: MIGRATION DATE — this record was cut out of STATE.md on 2026-08-26; the work it describes is earlier and is dated in the body. The filename prefix is therefore the migration date, not the event date.
 migrated-from: STATE.md §4 Deferred
 status-note: `recorded`, not `open` — STATE.md §4 keeps the item and its unlock trigger and is the authority on whether it is still deferred; a record never is
 ---
