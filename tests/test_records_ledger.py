@@ -307,3 +307,32 @@ def test_the_file_map_names_every_surface() -> None:
                     "RUNBOOKS.md", "planning/", "AGENTS.md"):
         assert surface in rows, f"the file map does not mention {surface}"
 
+
+def test_a_shipped_record_names_the_pr_that_carried_it() -> None:
+    """THE TRAIL MUST BE WRITTEN BEFORE MERGE, BECAUSE AFTERWARDS IT CANNOT BE (review, #505).
+
+    `prs:` is front-matter, and the amendment contract freezes everything except `status:` — so an
+    empty trail on a merged record is permanent, fixable only by an appended correction. Both the
+    P0 and P1 records shipped that way (P0 naming the PR it was written *against*, P1 naming
+    none), and each now carries an `## Amendments` block saying so, which is the contract behaving
+    correctly rather than a workaround.
+
+    This refuses the third instance. A record that claims something SHIPPED and cannot say where is
+    a dead end for anyone asking "what change was this?" — the question records exist to answer.
+
+    Only NEW records are checked: the migrated archive predates the field, and re-dating an
+    immutable ledger is not something a test gets to demand."""
+    for p in _records():
+        text = p.read_text()
+        front = text.split("---", 2)[1]
+        if "migrated-from" in front:
+            continue                      # the P1 archive: written before `prs:` existed
+        if not re.search(r"^status:\s*shipped\s*$", front, re.M):
+            continue
+        prs = re.search(r"^prs:\s*\[(.*?)\]", front, re.M)
+        has_trail = bool(prs and prs.group(1).strip())
+        assert has_trail or "## Amendments" in text, (
+            f"{p.name} claims status: shipped with an empty `prs:` trail. Write the PR number "
+            f"BEFORE merge — the amendment contract freezes this field afterwards, and the only "
+            f"remedy left is an appended correction.")
+

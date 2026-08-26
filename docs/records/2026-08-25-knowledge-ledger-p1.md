@@ -46,3 +46,11 @@ lie repeated a hundred times. The archive cap is re-set from 9,904 to 60.
 left ATTACHED to its parent, because merging is cheap (content preserved, citations still grep-hit)
 while tearing is not. Five records exceed 300 lines; the largest was inspected and is genuinely one
 entry. §2 is untouched, so STATE.md is readable-in-one-sitting but not yet small.
+
+## Amendments
+
+**2026-08-26 — the `prs:` trail was wrong, and this is the contract working.** It reads `prs: []`. P1 shipped in **#504**, so the record→PR trail was empty.
+The front-matter is frozen after merge (only `status:` may change), so the correction is appended
+rather than edited in: the wrong version stays visible, which is the point. Found by review of #505,
+which flagged the same defect on that record while it was still unmerged and therefore fixable in
+place.

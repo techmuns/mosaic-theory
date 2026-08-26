@@ -26,6 +26,12 @@ at scale — NOT the terminal goal; the terminal goal is LP returns and the AUM 
 
 ## 2. Built and verified (checked against the repo, not memory)
 
+**THE KNOWLEDGE LEDGER — P0/P1/P2 SHIPPED 2026-08-25/26 (#503, #504, #505).** STATE.md is the
+SNAPSHOT and `docs/records/` is the LEDGER — one immutable file per entry, 206 of them. §5 went
+9,908 → 51 lines and the governance log 3,957 → 10; the whole file 19,241 → 5,442. `AGENTS.md`
+points other tools at CLAUDE.md without copying it. §2 below is the last unmigrated block (P3).
+*Records: `docs/records/2026-08-2*-knowledge-ledger-p{0,1,2}.md`.*
+
 Each line: *what it does* — *verified how*.
 
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
@@ -4820,7 +4826,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
 | 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
-| 7 | **Knowledge-ledger P1** — migrate §5's 194 dated entries + the governance log's 43 + §7's 16 (253 total) into `docs/records/`, absorb `docs/audits/`, rewrite STATE.md as a ≤600-line snapshot. Scripted, byte-verbatim, with a completeness manifest that fails the gate on one orphaned line. P0 shipped 2026-08-25 (`docs/records/2026-08-25-knowledge-ledger-p0.md`). | agent | operator go-ahead; P0 merged and a week of new entries born as records |
+| 7 | **Knowledge-ledger P3 — §2 compaction.** §2 'Built and verified' is **3,680 lines**, the last block standing between STATE.md (5,442) and its ≤600 target. Unlike P1 this is JUDGEMENT work, not scripted: per-subsystem summaries in the snapshot, detail into records. P0–P2 shipped (#503, #504, #505). | agent | operator go-ahead — deferred by ruling until the new shape has been used |
 
 **NOT open, recorded because they were recently believed open:** the weekly screen (ran green
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
