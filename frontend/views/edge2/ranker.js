@@ -225,6 +225,13 @@ function renderRows() {
   // while the code's floor was 5, so 11 rows of the committed queue carried a cohort the surface
   // said could not exist.
   const COHORT_MIN_PEERS = 5;
+  //: mirrors vinci.cohort.UNRESOLVED_INDUSTRY — the bucket `industry_for_sic` returns for a SIC
+  //: that is blank, null or unparseable. It is never made a cohort, so a name in it has no peers
+  //: to compare against and must not be described as one that was skipped by the screen.
+  const UNRESOLVED_INDUSTRY = "Unknown";
+  const NO_INDUSTRY = ["no industry",
+    "This name was screened, but its SIC code is missing or unreadable, so there is no industry "
+    + "to compare it against. Not a judgement about the name."];
   const COHORT_LABEL = {
     own: ["name-specific",
           "Its industry barely moved — this fall is the company's own, which is what an overshoot "
@@ -260,11 +267,18 @@ function renderRows() {
     if (!c) {
       return `<td class="num" title="sub-score ${a.score == null ? "—" : a.score.toFixed(2)} · ${escapeHtml(a.label || "")}">${raw}</td>`;
     }
+    // THREE REASONS A NAME HAS NO COHORT, and they are different statements (review, #503). The
+    // first cut had two, so a screened name whose SIC does not resolve was told "name not
+    // screened" — false, and its own "cohort" was N Unknown-industry names. `key` is the
+    // discriminator: the unresolved bucket is never made a cohort, so it always lands here.
     const thin = c.peers < COHORT_MIN_PEERS;
+    const unresolved = c.key === UNRESOLVED_INDUSTRY;
     const [lbl, tip] = (c.median == null && !thin)
-      ? NOT_SCREENED
+      ? (unresolved ? NO_INDUSTRY : NOT_SCREENED)
       : (COHORT_LABEL[c.call] || COHORT_LABEL["no-cohort"]);
-    const pill = `<span class="pill ck-${c.call}" title="${escapeHtml(tip)}">${lbl}</span>`;
+    // `c.call` is data-derived and reaches a class attribute, so it is escaped like every other
+    // interpolation in this cell rather than trusted for being an enum today.
+    const pill = `<span class="pill ck-${escapeHtml(c.call)}" title="${escapeHtml(tip)}">${lbl}</span>`;
     // When there is no cohort the PILL already says so — repeating it on the split line just
     // renders "no cohort no cohort". The line carries the reason only when it adds one, and there
     // are TWO distinct ones the peer count separates: a same-industry set that exists but is too
@@ -274,7 +288,9 @@ function renderRows() {
     const split = (c.median == null || c.residual == null)
       ? (thin
           ? `<span class="muted">only ${c.peers} screened peer${c.peers === 1 ? "" : "s"}</span>`
-          : `<span class="muted">${c.peers} peers, name not screened</span>`)
+          : unresolved
+            ? `<span class="muted">industry not on file</span>`
+            : `<span class="muted">${c.peers} peers, name not screened</span>`)
       : `<span class="ck-k">industry</span><b>${fmtPct(c.median, { signed: true })}</b>`
         + `<span class="ck-sep">→</span><span class="ck-k">name</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
     // The tooltip carries the arithmetic AND the cohort's membership, because "industry" is doing

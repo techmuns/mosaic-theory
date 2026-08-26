@@ -14,6 +14,7 @@ candidates, ledger, and as-reported fundamentals.
 
 from __future__ import annotations
 
+import sys
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -110,7 +111,16 @@ def rank_from_snapshots(
     # fail — never over the admitted candidates, which would define the cohort by the very
     # selection under test and guarantee a deeply-negative median. Reads committed artifacts only.
     queue_tickers = [c.data_record.identity.ticker for c in cands]
-    cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers)
+    # INFORM-ONLY MUST NOT BE ABLE TO STOP THE QUEUE (review, #503). This ran unguarded, so a
+    # missing or truncated `securities.jsonl` raised out of the writer and NO QUEUE WAS WRITTEN AT
+    # ALL — a display column taking down the decision surface it decorates. The failure is reported
+    # loudly and the rank proceeds with every row reading "no cohort", which is the honest state
+    # and exactly what the cell renders when a name has none.
+    try:
+        cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers)
+    except (ValueError, OSError) as exc:
+        print(f"WARNING: cohort split unavailable, ranking without it — {exc}", file=sys.stderr)
+        cohorts = {}
     # The EVIDENCE STRIP is composed HERE, in the writer, for the same reason the labels are: it is
     # presented context, and the scorer must never be able to read it. Ranking is already finished
     # by this line, so the strip cannot influence an order it is attached to.

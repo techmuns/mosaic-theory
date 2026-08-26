@@ -110,12 +110,18 @@ def median_halfwidth(values: list[float]) -> float:
     n = len(values)
     ordered = sorted(values)
     # largest k with P(Bin(n, 0.5) < k) <= 0.05 — the two-sided ~90% order-statistic interval
-    cumulative, k = 0.0, 0
+    # EXACT INTEGER ARITHMETIC (review, #503). `math.comb(n, i) * 0.5 ** n` converts a binomial
+    # coefficient to float, which OVERFLOWS above n ~= 1100 — `median_halfwidth(range(1100))`
+    # raised `OverflowError: int too large to convert to float`, and that size is reachable in
+    # production. Since 0.05 == 1/20, `(cum + term) * 20 > 2**n` is the identical test in Python's
+    # unbounded integers: no overflow, no rounding drift, same interval returned.
+    cumulative, k = 0, 0
+    total = 1 << n  # 2**n, exactly
     for i in range(n + 1):
-        p = math.comb(n, i) * 0.5 ** n
-        if cumulative + p > 0.05:
+        term = math.comb(n, i)
+        if (cumulative + term) * 20 > total:
             break
-        cumulative += p
+        cumulative += term
         k = i + 1
     # k == 0 means neither tail can be excluded at 90% — true for every n below 5, so this single
     # branch is the whole small-sample guard. An earlier explicit `n < 3` return sat above it and
@@ -204,7 +210,14 @@ def cohort_reads(
     # exact class CLAUDE.md forbids, and precisely what happened when this was first wired with the
     # candidate-only map. Coverage is checked against the screen log the medians are taken over.
     if latest:
-        known = sum(1 for t in latest if sic_map.get(t) is not None)
+        # RESOLUTION, NOT KEY PRESENCE (review, #503). This counted `sic_map.get(t) is not None`,
+        # which a map of BLANK STRINGS satisfies for every name — so a fully unresolved map
+        # reported 100% coverage, sailed past this guard, and died deeper in with an OverflowError
+        # instead of the clear refusal written here. `industry_for_sic` sends '', None and junk to
+        # UNRESOLVED_INDUSTRY, so what matters is whether the SIC lands on a real industry. Not
+        # hypothetical: 526 of the 2,485 committed securities rows carry no SIC at all.
+        known = sum(1 for t in latest
+                    if industry_for_sic(sic_map.get(t)) != UNRESOLVED_INDUSTRY)
         if known < MIN_SIC_COVERAGE * len(latest):
             raise ValueError(
                 f"the SIC map covers {known}/{len(latest)} screened names "
@@ -212,13 +225,20 @@ def cohort_reads(
                 f"be taken mostly over one 'unknown' bucket and would be silently wrong. Pass the "
                 f"ENTITY MASTER map (`sic_by_ticker(snapshots_dir)`), not the candidate set."
             )
-    medians = [medians_for_run(relatives_for_run(p), sic_map) for p in history]
+    # The newest run is already parsed as `latest`; re-reading and re-parsing it here cost a
+    # second full pass over a ~7,700-line log on every rank (review, #503).
+    medians = [medians_for_run(latest if p is history[-1] else relatives_for_run(p), sic_map)
+               for p in history]
     current = medians[-1]
     # how tightly each cohort's OWN median is pinned by its members — the bar a call must clear
     members: dict[str, list[float]] = {}
     for member, member_rel in latest.items():
         members.setdefault(industry_for_sic(sic_map.get(member)), []).append(member_rel)
-    uncertainty = {k: median_halfwidth(v) for k, v in members.items()}
+    # UNRESOLVED_INDUSTRY is skipped: `medians_for_run` already refuses to make it a cohort, so
+    # measuring its spread is work whose answer is never read — and at screen scale that bucket is
+    # the biggest one there is, which is how the blank-map case reached the overflow above.
+    uncertainty = {k: median_halfwidth(v) for k, v in members.items()
+                   if k != UNRESOLVED_INDUSTRY}
 
     wanted = set(tickers) if tickers is not None else set(latest)
     out: dict[str, CohortRead] = {}

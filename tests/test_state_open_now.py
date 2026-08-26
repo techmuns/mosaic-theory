@@ -87,7 +87,17 @@ def test_the_closed_weekly_screen_entry_stays_struck() -> None:
     stale = "STILL OPEN — the queue has not actually advanced"
     if stale not in body:
         pytest.skip("the entry has since been removed entirely")
-    line = next(x for x in body.splitlines() if stale in x)
-    assert line.lstrip().startswith("**~~"), (
+    # THE ENTRY, NOT THE FIRST QUOTE OF IT (review, #503). `next(...)` took whichever line
+    # mentioned the phrase first, and passed only because §5.0's narrative happens to wrap it
+    # across two lines today. A reflow — or any new prose quoting the incident, which this record
+    # invites — would point the assertion at the narrative while the real entry sat unstruck. An
+    # ENTRY starts its own line with bold; a quotation of it does not.
+    entries = [x for x in body.splitlines()
+               if stale in x and x.lstrip().startswith("**")]
+    assert entries, (
+        f"the phrase {stale!r} appears only inside prose, never as an entry heading — if the "
+        f"entry was removed, drop this pin; if it was reworded, update it")
+    for line in entries:
+        assert line.lstrip().startswith("**~~"), (
         "the 'queue has not advanced' entry is no longer struck — it contradicts the run recorded "
         "green on 2026-08-25 and a reader gets two answers")

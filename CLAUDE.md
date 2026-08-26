@@ -42,13 +42,19 @@ verdict placement.
    is next" from conversation memory — on 2026-08-25 an agent verified the weekly run green that
    morning, recorded it DONE itself, and proposed re-triggering it that afternoon while a stale
    entry below still read "STILL OPEN".* State established earlier in a session decays; the file
-   does not.
-2. End every build by **updating STATE.md**: built → how-verified; falsified → why; deferred →
-   unlock trigger. A build that changes reality without updating STATE.md leaves the record lying.
-   **CLOSING an item means DELETING its §5.0 row AND striking its entry below** — a done item left
-   standing is how §5 came to answer the same question two ways. **Narrative belongs in §2 Built
-   and verified; §5 takes the TO-DO only.** Prose about shipped work is what grew §5 into an essay
-   (804 bold headers, 51 with a done-marker) — and a section nobody can re-read stops being read.
+   does not. The full history now lives in **`docs/records/`** — one immutable file per entry,
+   opened on demand rather than read up front (`ls`/`grep`/`git log` are the index; there is no
+   curated one, which would rot).
+2. End every build by **writing a RECORD and updating the SNAPSHOT** — two files, two jobs.
+   **§5 IS FROZEN to new entries (2026-08-25, P0).** A build's narrative — what happened, why, how
+   verified, what it cost — goes in a NEW file under **`docs/records/`** (see its README; copy
+   `TEMPLATE.md`). STATE.md then gets only what changed about *current truth*: a §5.0 OPEN NOW row
+   if something opened, its removal if something closed, and at most a ≤3-line claim pointing at
+   the record. **CLOSING an item means DELETING its §5.0 row AND striking its entry below.**
+   A build that changes reality without doing both leaves the record lying.
+   *Why frozen: §5 reached 9,876 lines / 804 bold headers, 51 with a done-marker — appended like a
+   journal, trusted like a snapshot, and it came to answer one question two ways. A record's body
+   is immutable, so a reversal adds a file and flips a status instead of rewriting a claim.*
 3. Keep STATE.md accuracy-first: falsified is falsified, unproven is unproven. Never upgrade a hedged
    claim to a confident one to make progress look better.
 4. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
@@ -246,8 +252,10 @@ incomplete regardless of code state.
   R2 preview checked the visible tier, passed, and shipped a renderer that printed `undefined`
   three times inside the collapsed reference table — in every PDF, invisible to the preview that
   approved it. Render collapsed AND force-open; capture both.
-- **OPERATOR-ACTION RULE.** Operator to-dos arising from builds/audits are appended to STATE.md
-  §Next-steps **by the build itself** — chat is not a ledger.
+- **OPERATOR-ACTION RULE.** Operator to-dos arising from builds/audits are recorded **by the build
+  itself** — chat is not a ledger. Since 2026-08-25 that means a row in **STATE.md §5.0 OPEN NOW**
+  (owner + what unlocks it) and, where the item has reasoning worth keeping, a file under
+  **`docs/records/`**. Never appended to §5, which is frozen.
 - **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (re-assemble dossiers → build frontend
   → commit `data/dossiers/*` + `frontend/dossiers/*` → push) runs the **FULL offline suite green
   BEFORE pushing** — an artifact commit is **not exempt from green-main**, because tests read the
