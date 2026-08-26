@@ -40,8 +40,23 @@ returning to the snapshot.
 the items, but the archive rule says a record is never the authority on status. §4 keeps the item
 and its trigger and remains the authority; the records are `recorded` and say so.
 
-**WHAT IT COSTS, AND WHAT IS LEFT.** §7 "The standing discipline" is **495 lines** and untouched:
-it is RULES, not state, so it belongs in CLAUDE.md or `docs/engineering.md` — a placement decision,
-not a migration, and it is the operator's. That is the gap between 1,892 and the ≤600 target I set
-in the plan, and the target itself now looks wrong: at 1,892 the file is readable in one sitting,
-which was the actual goal.
+**§7 STAYS, AND THE PLAN WAS WRONG ABOUT IT.** I wrote that §7 "The standing discipline" (495
+lines) is *rules, not state*, so it belonged in CLAUDE.md or `docs/engineering.md`. The operator
+challenged that, and reading §7 shows it is neither: it is **fund policy** — `DUAL MEASUREMENT —
+RATIFIED 2026-07-22`, `HURDLE = 15%, FLAT, HOUSE-WIDE`, `SURVIVAL IS A HARD GATE`, the
+print-freshness gate before any BUY, `Monitor cadence: MANUAL, never a scheduler`. Filing an
+investment policy under engineering conventions would be a category error, and 495 lines would
+nearly triple a CLAUDE.md that is deliberately minimal.
+
+**"The hurdle is 15%, ratified 2026-07-21" IS current truth about the fund**, which is what a
+snapshot holds. Nor should it be compacted: 34 conventions at a median of 13 lines is honest
+density, and unlike §2 — where the summary line was the point and the detail was elaboration —
+§7's content IS the policy. `HURDLE = 15%` without its derivation (risk-free ~4.3% + equity premium
+~5% + demanded excess) is a number the next person edits, because nothing on the page says why.
+Splitting a rule from its justification is how rules quietly change.
+
+**SO THE ≤600 TARGET WAS WRONG.** I picked it before knowing what the file contained. At **1,892** —
+§2 as 73 one-line capability summaries, §4 as 25 gated items with triggers, §7 as the ratified
+policy in force — the file is readable in one sitting, which was the actual goal. Chasing 600 would
+mean cutting summaries that are already one line each, trading real information for a number I
+invented.
