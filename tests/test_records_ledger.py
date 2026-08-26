@@ -22,16 +22,23 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 STATE = ROOT / "STATE.md"
 RECORDS = ROOT / "docs" / "records"
 
-#: The ARCHIVE's line count at the freeze — §5 measured from the END of the §5.0 OPEN NOW block.
+#: P1 (2026-08-25) MIGRATED the archive out, so what remains below §5.0 is the pointer block, not
+#: 9,904 lines of entries. The cap is re-set to the pointer's size: §5 can never re-accumulate
+#: entries, because a new one is a file under docs/records/ and this refuses the alternative.
+#:
+#: The ARCHIVE's line count — §5 measured from the END of the §5.0 OPEN NOW block.
 #: §5.0 is deliberately excluded: it is the LIVING block and legitimately grows and shrinks as
 #: items open and close (it carries its own 60-line cap in test_state_open_now). Measuring the two
 #: together made the freeze fire on ordinary open-item churn — a false alarm that would have
 #: trained the next reader to raise the number, which is how a cap stops meaning anything.
-ARCHIVE_FROZEN_AT = 9904
+ARCHIVE_FROZEN_AT = 60
 #: Slack for the strike-throughs and pointers that CLOSING an item legitimately adds in place.
 FREEZE_SLACK = 40
 
-STATUSES = {"open", "shipped", "falsified", "superseded", "accepted-risk"}
+#: `recorded` was added by P1: most migrated entries are DIAGNOSIS / EXPERIMENT / AUDIT records —
+#: things that happened and were written down, not things that shipped. Calling those "shipped"
+#: would be a small lie repeated 100+ times.
+STATUSES = {"open", "shipped", "falsified", "superseded", "accepted-risk", "recorded"}
 
 
 def _archive() -> list[str]:
