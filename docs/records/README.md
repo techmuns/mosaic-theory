@@ -35,7 +35,7 @@ Every record opens with the same five fields. `status` is the only one that may 
 
     ---
     id: D23                      # S/D identifier, or omit
-    status: open                 # open | shipped | falsified | superseded | accepted-risk
+    status: open                 # open | shipped | recorded | falsified | superseded | accepted-risk
     date: 2026-08-25             # when the thing happened, not when the file was written
     prs: [501, 502]              # PRs that carried it
     supersedes:                  # record filename(s) this replaces, or omit
@@ -47,6 +47,9 @@ Every record opens with the same five fields. `status` is the only one that may 
 **The body never changes after merge.** Two things may:
 
 1. **`status:`** — flip it when the item closes, is falsified, or is superseded.
+`recorded` is for a diagnosis, audit or experiment — something that happened and was written
+down, as distinct from something that shipped.
+
 2. **An appended `## Amendments` section** — dated entries at the end, the house style this repo
    already uses (49 entries in the old STATE.md carry in-place `AMENDED <date>` annotations).
 

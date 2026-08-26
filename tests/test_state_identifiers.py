@@ -51,6 +51,28 @@ def _headings(text: str) -> list[str]:
     return [f"{k}{n}" for k, n in HEADING.findall(text)]
 
 
+#: WHERE ENTRIES LIVE AFTER P1 (2026-08-25). The S/D entries moved out of STATE.md into
+#: `docs/records/`, one file each, so resolving a citation against STATE.md ALONE now reports every
+#: one of them as dangling — which is exactly what this test did on the migration commit, correctly.
+#: The property being protected has not changed: *a citation resolves to exactly one entry*. What
+#: changed is that the corpus is now two places, so it is read as two places.
+RECORDS = ROOT / "docs" / "records"
+
+
+#: README.md and TEMPLATE.md are documentation ABOUT records, not records. They carry an
+#: ILLUSTRATIVE `D23` in the naming example, which this test duly reported as a dangling citation —
+#: correct behaviour on a wrong corpus. Excluded by name, not by pattern, so a real record can
+#: never be dropped from the check by accident.
+_NOT_RECORDS = {"README.md", "TEMPLATE.md"}
+
+
+def _corpus() -> str:
+    parts = [STATE.read_text()]
+    parts += [p.read_text() for p in sorted(RECORDS.glob("*.md"))
+              if p.name not in _NOT_RECORDS]
+    return "\n".join(parts)
+
+
 def _references(text: str) -> set[str]:
     return set(REFERENCE.findall(text))
 
@@ -58,7 +80,7 @@ def _references(text: str) -> set[str]:
 def test_every_state_identifier_is_unique() -> None:
     """THE S10 COLLISION, and any successor. Two entries under one number make every citation of it
     ambiguous — and the ambiguity is silent, because both entries render fine."""
-    ids = _headings(STATE.read_text())
+    ids = _headings(_corpus())
     dupes = sorted({i for i in ids if ids.count(i) > 1})
     assert not dupes, (
         f"duplicate STATE.md identifiers: {dupes} — a citation of these resolves to two entries. "
@@ -68,7 +90,7 @@ def test_every_state_identifier_is_unique() -> None:
 def test_every_state_reference_resolves_to_an_entry() -> None:
     """A reference to a number no entry holds is a citation into a hole — the same broken property
     as a duplicate, seen from the other side."""
-    text = STATE.read_text()
+    text = _corpus()
     known = set(_headings(text))
     dangling = sorted(r for r in _references(text) if r not in known)
     assert not dangling, (
@@ -121,7 +143,7 @@ def test_the_broad_pattern_has_no_false_positives_on_the_committed_record() -> N
     broad while every token it finds resolves — asserted against the live file rather than assumed.
     If this reds, the fix is an exclusion justified by the token that forced it, never a quiet
     re-narrowing."""
-    text = STATE.read_text()
+    text = _corpus()
     unresolved = sorted(_references(text) - set(_headings(text)))
     assert not unresolved, (
         f"tokens matched but not resolvable: {unresolved} — either a dangling citation, or a "
