@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **S14. THE `getattr` SWEEP — 66 SITES IN THE CLASS, AND THE RULE'S OWN LIMIT FOUND. NOTHING FIXED.**

@@ -1,11 +1,12 @@
 ---
 id: D19
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D19. THE PLAN CONSOLIDATES — five pieces plus three queued items become about four** (operator

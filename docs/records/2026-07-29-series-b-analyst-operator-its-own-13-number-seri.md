@@ -1,11 +1,12 @@
 ---
 id: 
 status: recorded
-date: 2026-07-27
+date: 2026-07-29
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 #### SERIES B — ANALYST / OPERATOR (its own 13.. number series)

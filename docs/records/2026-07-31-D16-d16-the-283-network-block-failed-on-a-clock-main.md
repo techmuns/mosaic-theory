@@ -1,11 +1,12 @@
 ---
 id: D16
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: [283]
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D16. THE #283 NETWORK BLOCK FAILED ON A CLOCK — MAIN WENT RED ON AN UNCHANGED COMMIT.** The

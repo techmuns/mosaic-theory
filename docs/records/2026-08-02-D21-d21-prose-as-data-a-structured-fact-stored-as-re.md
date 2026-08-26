@@ -1,11 +1,12 @@
 ---
 id: D21
 status: recorded
-date: 2026-07-27
+date: 2026-08-02
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D21. PROSE-AS-DATA — a structured fact stored as rendered text, so nothing can compare it.**

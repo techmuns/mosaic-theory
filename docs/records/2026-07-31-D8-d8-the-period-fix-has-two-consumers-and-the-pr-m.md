@@ -1,11 +1,12 @@
 ---
 id: D8
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: [282]
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D8. THE PERIOD FIX HAS TWO CONSUMERS AND THE PR MEASURED ONE** (review finding on #282). Besides

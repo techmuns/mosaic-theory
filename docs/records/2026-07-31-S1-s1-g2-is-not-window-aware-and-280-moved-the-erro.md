@@ -1,11 +1,12 @@
 ---
 id: S1
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: [280]
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **S1. G2 IS NOT WINDOW-AWARE, and #280 moved the error into the blind spot.**

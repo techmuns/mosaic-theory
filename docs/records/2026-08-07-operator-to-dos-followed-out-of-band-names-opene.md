@@ -1,11 +1,12 @@
 ---
 id: 
-status: open
+status: recorded
 date: 2026-08-07
 prs: [365]
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+status-note: migrated as `recorded`; §5.0 OPEN NOW is the only authority on what is open, and this entry is not in it
 ---
 
 ### OPERATOR TO-DOs — followed (out-of-band) names, opened 2026-08-07 by PR #365

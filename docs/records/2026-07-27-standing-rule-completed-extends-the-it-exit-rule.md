@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 2. **STANDING RULE COMPLETED** (extends the IT-exit rule): *"Human actions — market executions AND

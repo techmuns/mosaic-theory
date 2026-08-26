@@ -6,6 +6,7 @@ prs: [283, 282]
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **D11. THE OFFLINE GATE HAD A LIVE SEC CLIENT IN IT** (review finding on #283, and #282 shipped it).

@@ -188,3 +188,67 @@ def test_fossil_banners_point_somewhere_live() -> None:
         head = "\n".join(p.read_text().splitlines()[:8])
         assert "STATE.md" in head and "RUNBOOKS" in head, (
             f"{p.name}'s fossil banner does not point at the live surfaces")
+
+
+def test_no_record_carries_an_invented_date() -> None:
+    """FAIL LOUD, NEVER FABRICATE — applied to the ledger's own metadata (review, #504).
+
+    The migration stamped a hardcoded `2026-07-27` on every entry whose header carried no date: 33
+    records, including every S1–S18 / D1–D22 entry. `ls` is the only index by design, so those
+    sorted wrongly, and the "an undated record cannot be ordered or trusted" pin passed *because
+    the date had been invented*. A guessed value that satisfies its own guard is the worst shape
+    this repo has a rule against.
+
+    15 were recovered from git history (the first commit containing the entry's text — real data);
+    the remaining 21 say UNKNOWN out loud. Either is acceptable; a silent guess is not."""
+    for p in _records():
+        front = p.read_text().split("---", 2)[1]
+        if "date-source: UNKNOWN" in front:
+            continue                      # declared unknown — honest
+        m = re.search(r"^date:\s*(\S+)", front, re.M)
+        assert m, f"{p.name} has no date and does not declare it unknown"
+        body = p.read_text().split("---", 2)[2]
+        first = next((x for x in body.splitlines() if x.strip()), "")
+        if m.group(1) == "2026-07-27" and "2026-07-27" not in first:
+            assert "date-source:" in front, (
+                f"{p.name} carries the migration's fallback date with nothing saying where it came "
+                f"from — that is an invented value presented as a fact")
+
+
+def test_no_archive_record_claims_to_be_open() -> None:
+    """ONE AUTHORITY ON WHAT IS OPEN (review, #504). Five migrated records were stamped `open` from
+    their header wording — none of them in §5.0's list, one containing struck-through closed items.
+    That is exactly the two-answers failure the ledger exists to end, re-created inside the ledger.
+
+    §5.0 OPEN NOW is the authority. An archive record RECORDS that something was once open; it does
+    not assert that it still is."""
+    for p in _records():
+        front = p.read_text().split("---", 2)[1]
+        if "migrated-from" not in front:
+            continue                      # a current record may legitimately be open
+        assert not re.search(r"^status:\s*open\s*$", front, re.M), (
+            f"{p.name} is an ARCHIVE record claiming status open, while §5.0 OPEN NOW is the only "
+            f"authority on that — use `recorded`")
+
+
+def test_every_sd_identifier_has_its_own_record() -> None:
+    """AN ENTRY THAT STARTS AFTER AN INLINE ASIDE IS STILL AN ENTRY (review, #504).
+
+    The migration matched `^\\*\\*([SD]\\d+)\\.` — LINE-ANCHORED — and so missed D10, D13 and D14,
+    each of which opens `*(scheduling superseded by D19.)* **D14. …`. All three were swallowed by a
+    neighbouring record: outside the collision guard, absent from `ls`, and unfindable by filename.
+
+    `tests/test_state_identifiers.py` warns about this exact anchoring in prose, and the migration
+    did it anyway — so the property is pinned here rather than left to a comment."""
+    ids_in_front, ids_in_text = set(), set()
+    for p in _records():
+        txt = p.read_text()
+        m = re.search(r"^id:\s*([SD]\d+)", txt.split("---", 2)[1], re.M)
+        if m:
+            ids_in_front.add(m.group(1))
+        ids_in_text |= {f"{k}{n}" for k, n in re.findall(r"\*\*([SD])(\d+)\.\s", txt)}
+    missing = sorted(ids_in_text - ids_in_front)
+    assert not missing, (
+        f"{missing} appear as entry HEADINGS but no record claims them in front-matter — they are "
+        f"buried inside another record, so `ls` and the collision guard cannot see them")
+

@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 3. **CONVENTION ADOPTED.** Every verdict transition or close row carries EITHER a

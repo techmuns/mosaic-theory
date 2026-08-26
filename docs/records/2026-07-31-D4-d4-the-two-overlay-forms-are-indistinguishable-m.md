@@ -1,11 +1,12 @@
 ---
 id: D4
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D4. THE TWO OVERLAY FORMS ARE INDISTINGUISHABLE — MEASURED, so the choice is not an analytic

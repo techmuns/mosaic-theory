@@ -1,11 +1,12 @@
 ---
 id: 
-status: open
+status: recorded
 date: 2026-07-23
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+status-note: migrated as `recorded`; §5.0 OPEN NOW is the only authority on what is open, and this entry is not in it
 ---
 
 **OPERATOR TO-DO — SMPL post-audit decisions (2026-07-23).** (a) SEALED rationale, analyst-only:

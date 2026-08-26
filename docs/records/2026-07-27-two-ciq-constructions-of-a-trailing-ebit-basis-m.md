@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 1. **Two CIQ constructions of a trailing EBIT-basis margin differ by 1.01pp** (13.89% vs 12.88%) —

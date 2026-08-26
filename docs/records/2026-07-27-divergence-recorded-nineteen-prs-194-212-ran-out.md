@@ -6,6 +6,7 @@ prs: [194, 212, 212]
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 1. **Divergence recorded.** Nineteen PRs (#194–#212) ran outside the advisory thread. #212 nulled

@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 1. **Run real finalist cycles by hand** — top of the ranked queue → `dossier` → the human reads the

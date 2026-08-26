@@ -1,11 +1,12 @@
 ---
 id: D1
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D1. THE EXTRACTION GAP IS HALF THE SIZE IT WAS REPORTED AS — diluted IS extracted; basic

@@ -1,19 +1,14 @@
 ---
-id: D5
+id: D14
 status: recorded
 date: 2026-07-27
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+split-from: 2026-07-27-D5-d5-three-names-have-a-zero-dilution-delta-and-th.md
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
-
-**D5. THREE NAMES HAVE A ZERO DILUTION DELTA AND THAT MUST PRINT, not silently no-op.** FUBO, SMPL
-and VITL tag basic == diluted for the latest quarter, so the overlay returns the outstanding count
-unchanged. FUBO is correct accounting (a loss makes dilution antidilutive); SMPL and VITL are the
-filer's tagging and are NOT self-evidently right for a profitable name. The page must say *the
-filer reports no dilutive difference in this period*, never leave a reader to infer we checked and
-found none — item 22's visible-absence rule applied to the denominator.
 
 *(scheduling superseded by D19.)* **D14. THE MATERIALIZING-WRITE ACCEPTED RISK HAS ITS FIRST LIVE INSTANCE — and its falsifier did
 NOT fire.** #284's re-render of MVST added **79 schema-default keys, 0 changed, 0 removed** — the

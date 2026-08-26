@@ -1,11 +1,12 @@
 ---
 id: 
-status: open
+status: recorded
 date: 2026-07-30
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+status-note: migrated as `recorded`; §5.0 OPEN NOW is the only authority on what is open, and this entry is not in it
 ---
 
 **D&A CONVENTION — QUEUED 2026-07-30, does NOT block A2 (operator ruling).** The two recipes use

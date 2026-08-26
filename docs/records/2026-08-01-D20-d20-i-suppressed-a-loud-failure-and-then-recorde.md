@@ -1,11 +1,12 @@
 ---
 id: D20
 status: recorded
-date: 2026-07-27
+date: 2026-08-01
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D20. I SUPPRESSED A LOUD FAILURE AND THEN RECORDED GIT'S BEHAVIOUR AS THE BUG**

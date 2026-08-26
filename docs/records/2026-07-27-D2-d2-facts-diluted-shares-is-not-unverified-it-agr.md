@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **D2. `facts.diluted_shares` IS NOT UNVERIFIED — it agrees with the machine extraction on 7 of 7

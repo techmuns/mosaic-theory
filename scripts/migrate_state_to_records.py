@@ -151,7 +151,13 @@ def main(argv: list[str]) -> int:
         date = found.group(1) if found else UNDATED_FALLBACK
         if not found:
             undated.append(header[:70])
-        sd = re.match(r"^\*\*([SD]\d+)\.", header)
+        # NOT LINE-ANCHORED, and this is the second time the repo has learned it. A heading can
+        # follow an inline aside — D14 is literally `*(scheduling superseded by D19.)* **D14. …` —
+        # and `tests/test_state_identifiers.py` says so in prose: "a line-anchored pattern silently
+        # missed it in the first enumeration this file exists to replace". This script anchored
+        # anyway and dropped D10, D13 and D14 from both the filename and `id:`, putting all three
+        # outside the collision guard.
+        sd = re.search(r"\*\*([SD]\d+)\.\s", header)
         ident = sd.group(1) if sd else ""
         base = f"{date}-{ident + '-' if ident else ''}{slugify(header)}"
         names[base] = names.get(base, 0) + 1

@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 4. **CLOSE-ROW CONTEXT.** The ledger close row's stated reason (input staleness) stands

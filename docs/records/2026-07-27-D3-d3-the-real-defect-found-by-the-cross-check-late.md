@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **D3. THE REAL DEFECT, FOUND BY THE CROSS-CHECK: `_latest_point` RETURNS A CUMULATIVE PERIOD, NOT

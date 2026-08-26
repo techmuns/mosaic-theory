@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **S4. RETENTION IS CALIBRATION DATA, NOT AN AUDIT TRAIL** (operator reframe, and it changes the

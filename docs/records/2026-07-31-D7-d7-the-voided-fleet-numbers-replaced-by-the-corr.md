@@ -1,11 +1,12 @@
 ---
 id: D7
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **D7. THE VOIDED FLEET NUMBERS, REPLACED BY THE CORRECTED RUN — and the premise behind them was

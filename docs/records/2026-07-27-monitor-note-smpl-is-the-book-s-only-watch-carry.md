@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md governance log
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 6. **MONITOR NOTE.** SMPL is the book's only `watch` carrying a PASSING grid (3.83:1 at $10.53,

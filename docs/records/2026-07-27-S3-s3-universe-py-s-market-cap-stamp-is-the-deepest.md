@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **S3. `universe.py`'s MARKET-CAP STAMP IS THE DEEPEST OF THE FIVE.** A falsely-stamped cap decides

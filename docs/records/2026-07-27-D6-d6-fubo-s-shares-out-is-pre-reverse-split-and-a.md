@@ -6,6 +6,7 @@ prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: UNKNOWN — not recoverable from the header or git; do not read as fact
 ---
 
 **D6. FUBO'S `shares_out` IS PRE-REVERSE-SPLIT AND A YEAR STALE — the 11.65× CIQ divergence now has

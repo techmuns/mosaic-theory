@@ -1,11 +1,12 @@
 ---
 id: S2
 status: recorded
-date: 2026-07-27
+date: 2026-07-31
 prs: []
 supersedes:
 superseded-by:
 migrated-from: STATE.md §5 archive
+date-source: git (first commit containing this text)
 ---
 
 **S2. G3's INPUT IS A SELECTION DISTORTION, not a labelling defect** (operator re-scope). In
