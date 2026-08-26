@@ -921,6 +921,16 @@ Each line: *what it does* — *verified how*.
   *(detail: `docs/records/2026-08-26-capability-the-calls-tape-scoring-a-public-commentator-s.md`)*
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
+**ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**
+#501 proved the split never reaches the sort key; nothing yet shows it does not steer WHICH names
+get worked. Falsifier pre-registered before the data exists: within a rank band (the control —
+`own` ranks higher by construction, median 110 vs 172), a >20-point gap in worked-rate between
+`own` and `cohort` means it is screening, and the pill's placement is revisited. **Not yet
+testable** — no band clears 10 names per arm and 5 worked.
+*Record + harness: `docs/records/2026-08-26-cohort-anchoring-falsifier.md`,
+`scripts/cohort_anchoring_falsifier.py`.*
+
+
 **The fossils call the graph "the differentiator." That is wrong, and recorded honestly here:**
 
 - **Edge 3 / graph-as-mechanical-signal (shock-propagation): FALSIFIED.** Test 1 (`vinci/graph/test1`,
