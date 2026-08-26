@@ -388,11 +388,105 @@ def test_the_surface_s_peer_floor_tracks_the_one_the_code_enforces() -> None:
         f"the view's peer floor is {m.group(1)} but vinci.cohort.MIN_PEERS is {MIN_PEERS} — the "
         f"surface will describe a floor the code does not enforce, which is the 'under 6' bug")
 
-    # ...and no prose anywhere may name a different floor than the one in force
+    # ...and no prose anywhere may name a different floor than the one in force.
+    #
+    # THE PATTERN LIST IS THE GUARD (review, #503). The first cut matched only
+    # `under N peers` — and missed "Fewer than 5 same-industry names" in the same file and
+    # "(min 5)" in the glossary. Raising MIN_PEERS would have left BOTH stale with the suite
+    # green: the exact "under 6" recurrence this test exists to stop, surviving the test written
+    # to stop it. Every phrasing that states a floor is enumerated here; a new one must be added
+    # WITH its prose.
+    floor_forms = (r"under (\d+) (?:screened )?peers",
+                   r"[Ff]ewer than (\d+) (?:same-industry|screened)",
+                   r"\(min (\d+)\)")
     for path in (ROOT / "frontend" / "views" / "edge2" / "ranker.js",
-                 ROOT / "docs" / "engineering.md"):
+                 ROOT / "docs" / "engineering.md",
+                 ROOT / "vinci" / "cohort.py"):
         text = path.read_text()
-        for wrong in re.findall(r"under (\d+) (?:screened )?peers", text):
-            assert int(wrong) == MIN_PEERS, (
-                f"{path.name} says 'under {wrong} peers' while MIN_PEERS is {MIN_PEERS}")
+        for form in floor_forms:
+            for wrong in re.findall(form, text):
+                assert int(wrong) == MIN_PEERS, (
+                    f"{path.name} states a peer floor of {wrong} while MIN_PEERS is {MIN_PEERS} "
+                    f"(matched {form!r})")
+
+    # THE MARGIN BAND HAS THE SAME PROBLEM. `10 points` is written into the rendered tooltip and
+    # was untied to NEAR_TIE, so changing the constant would have left the surface describing the
+    # old band — the peer-floor bug in a second variable.
+    view = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    for stated in re.findall(r"(\d+) points", view):
+        assert int(stated) == round(NEAR_TIE * 100), (
+            f"the ranker view says '{stated} points' while NEAR_TIE is {NEAR_TIE:.0%}")
+
+
+def test_the_coverage_guard_measures_resolution_not_key_presence() -> None:
+    """THE GUARD DID NOT GUARD (review, #503). It counted `sic_map.get(t) is not None`, which a map
+    of BLANK STRINGS satisfies for every name — so a fully unresolved map reported 100% coverage,
+    passed, and died deeper in with an OverflowError instead of the clear refusal written here.
+
+    `industry_for_sic` sends '', None and junk to one "Unknown" bucket, so presence of a key says
+    nothing. Live condition, not hypothetical: 526 of the 2,485 committed securities rows carry no
+    SIC at all."""
+    cfg = get_config()
+    if not screen_run_files(cfg.snapshots_dir):
+        pytest.skip("no committed screen runs")
+    latest = relatives_for_run(screen_run_files(cfg.snapshots_dir)[-1])
+    for label, bad in (("blank strings", dict.fromkeys(latest, "")),
+                       ("unparseable", dict.fromkeys(latest, "zzz")),
+                       ("explicit None", dict.fromkeys(latest))):
+        with pytest.raises(ValueError, match="SIC map covers"):
+            cohort_reads(cfg.snapshots_dir, bad)
+        assert label  # named so a failure says WHICH shape of unresolved map slipped through
+
+
+def test_the_median_interval_survives_a_cohort_of_any_size() -> None:
+    """`math.comb(n, i) * 0.5 ** n` converted a binomial coefficient to float and OVERFLOWED above
+    n ~= 1100 — reachable in production, since the unresolved bucket can hold a thousand-plus names
+    before anything else notices. The integer form is the same test (0.05 == 1/20) with no
+    conversion, so it cannot overflow and cannot drift."""
+    for n in (5, 50, 1099, 1100, 3000):
+        v = median_halfwidth(list(range(n)))
+        assert v == float("inf") or v >= 0, f"n={n} produced {v}"
+    assert median_halfwidth(list(range(1100))) != float("inf"), (
+        "a 1100-name cohort can no longer be measured — the overflow guard has become a refusal")
+
+
+def test_the_unresolved_bucket_never_becomes_a_cohort() -> None:
+    """Every name whose SIC is blank, null or unreadable pools into one "Unknown" pile — a
+    grab-bag with nothing in common but a missing field. It clears MIN_PEERS trivially, so left in
+    it would issue own/cohort calls off a median over unrelated businesses."""
+    rel = {f"T{i}": -0.5 - i / 100 for i in range(40)}
+    assert medians_for_run(rel, dict.fromkeys(rel)) == {}, (
+        "the Unknown bucket produced a median — a call made against it is a fabricated comparison")
+
+
+def test_a_cohort_failure_cannot_stop_the_queue() -> None:
+    """INFORM-ONLY MUST NOT TAKE DOWN THE DECISION SURFACE. `cohort_reads` ran unguarded in the
+    queue writer, so a missing or truncated `securities.jsonl` raised and NO QUEUE WAS WRITTEN AT
+    ALL — a display column stopping the thing it decorates. Pinned at the call site, because a
+    correct `cohort_reads` and an unguarded caller is still an outage."""
+    src = (ROOT / "vinci" / "orchestrator.py").read_text()
+    fn = src.split("def rank_from_snapshots", 1)[1].split("\ndef ", 1)[0]
+    assert "try:" in fn and "cohort_reads(" in fn, (
+        "rank_from_snapshots calls cohort_reads outside a try — a missing securities.jsonl would "
+        "take the whole queue down for an inform-only column")
+    assert "cohorts = {}" in fn, "the fallback does not degrade to 'no cohort'"
+
+
+def test_the_cell_distinguishes_all_three_reasons_for_no_cohort() -> None:
+    """A screened name whose SIC does not resolve was told "name not screened" — false, and it was
+    offered N Unknown-industry names as its cohort. Three distinct states, three distinct words."""
+    view = (ROOT / "frontend" / "views" / "edge2" / "ranker.js").read_text()
+    # THE BRANCH, NOT THE CONSTANT. A first cut asserted the strings existed; a mutation deleting
+    # the branch that SELECTS them left both defined-but-unused and passed. Pin-the-definition,
+    # again — so what is checked is that `unresolved` is derived from the key AND decides the label.
+    assert 'c.key === UNRESOLVED_INDUSTRY' in view, (
+        "the view no longer derives `unresolved` from the cohort key")
+    assert "unresolved ? NO_INDUSTRY" in view, (
+        "the label branch no longer selects NO_INDUSTRY — a screened name whose SIC does not "
+        "resolve is being told 'name not screened', which is false")
+    assert "unresolved" in view.split("const split =", 1)[1][:400], (
+        "the split line no longer distinguishes the unresolved case")
+    for phrase in ("industry not on file", "name not screened", "screened peer"):
+        assert phrase in view, f"the cell no longer says {phrase!r}"
+    assert "escapeHtml(c.call)" in view, "the call reaches a class attribute unescaped"
 
