@@ -336,3 +336,32 @@ def test_a_shipped_record_names_the_pr_that_carried_it() -> None:
             f"BEFORE merge — the amendment contract freezes this field afterwards, and the only "
             f"remedy left is an appended correction.")
 
+
+def test_every_snapshot_pointer_resolves_to_a_record() -> None:
+    """THE SNAPSHOT IS NOW MOSTLY POINTERS, SO A DEAD ONE IS A HOLE IN THE RECORD (P3).
+
+    §2 and §4 keep one summary line per item and send the detail to `docs/records/`. That trade is
+    only honest while every pointer lands: a claim whose evidence resolves to nothing is worse than
+    the 3,686-line section it replaced, because it *looks* sourced.
+
+    Renaming a record is the realistic way to break this — filenames carry the slug, and a slug is
+    the kind of thing someone tidies."""
+    state = STATE.read_text()
+    pointers = re.findall(r"docs/records/([\w.\-]+\.md)", state)
+    assert pointers, "STATE.md carries no record pointers — has the compaction been reverted?"
+    dead = sorted({p for p in pointers if not (RECORDS / p).is_file()})
+    assert not dead, (
+        f"{len(dead)} pointer(s) in STATE.md resolve to nothing: {dead[:5]}. A summary whose "
+        f"detail cannot be found is a claim with no evidence behind it.")
+
+
+def test_the_snapshot_stays_readable_in_one_sitting() -> None:
+    """THE WHOLE POINT, pinned as a number. STATE.md was 19,241 lines and "read STATE.md first" was
+    unfollowable; it is now under 2,000. The cap is set with room to breathe rather than at today's
+    exact size, because §2/§4 summaries legitimately grow as capabilities are added — what it
+    refuses is the return of multi-hundred-line narrative, which now belongs in a record."""
+    n = len(STATE.read_text().splitlines())
+    assert n <= 2600, (
+        f"STATE.md is {n} lines. It is the SNAPSHOT: a build's narrative goes in a new file under "
+        f"docs/records/, and STATE.md gets a summary line with a pointer. See CLAUDE.md ritual 2.")
+
