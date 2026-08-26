@@ -4807,9 +4807,10 @@ re-triggering it hours later — while a stale entry further down still read "ST
 has not actually advanced". The record contradicted itself and the reader took the wrong half.
 
 **THE RULE.** This block is the ONLY authoritative answer to "what is next". A build that closes an
-item DELETES its row here (and strikes its entry below). A build that opens one adds a row. Prose
-explaining a shipped thing belongs in **§2 Built and verified**, never here — that is how §5 grew
-into an essay.
+item DELETES its row here (and strikes its entry below). A build that opens one adds a row.
+**§5 BELOW IS FROZEN to new entries (2026-08-25).** A build's narrative — what happened, why, how
+verified — goes in a new file under **`docs/records/`**; STATE.md gets the row and, at most, a
+≤3-line claim pointing at the record. That is what stops this section growing back into an essay.
 
 | # | open item | owner | unlocks / blocked on |
 |--:|---|---|---|
@@ -4819,6 +4820,7 @@ into an essay.
 | 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
 | 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
+| 7 | **Knowledge-ledger P1** — migrate §5's 194 dated entries + the governance log's 43 + §7's 16 (253 total) into `docs/records/`, absorb `docs/audits/`, rewrite STATE.md as a ≤600-line snapshot. Scripted, byte-verbatim, with a completeness manifest that fails the gate on one orphaned line. P0 shipped 2026-08-25 (`docs/records/2026-08-25-knowledge-ledger-p0.md`). | agent | operator go-ahead; P0 merged and a week of new entries born as records |
 
 **NOT open, recorded because they were recently believed open:** the weekly screen (ran green
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a

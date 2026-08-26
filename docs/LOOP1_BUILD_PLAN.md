@@ -1,3 +1,9 @@
+> **FOSSIL — superseded, kept for the reasoning.** Last substantive change 2026-06-18. Nothing live
+> cites this: it is referenced only by other fossils (`planning/`), which CLAUDE.md already calls
+> "the planning fossils". Read it for WHY a decision was made, never for what is true now — the
+> current state is STATE.md §5.0 OPEN NOW, and the operating loops are docs/RUNBOOKS.md.
+> *Banner added by P0 of the knowledge-ledger plan; the file itself is unchanged below.*
+
 # Loop 1 — Build Plan (Claude Code runbook)
 
 **Version:** v0.2 · **Owner:** Munshot Research · **Goal:** build the **first production slice of the real system** — thin in *scope* (one screen, thin ingestion), production-grade in *quality* — and run it in **paper mode** (records and scores decisions against live data, deploys no capital) as the validation gate before capital. Real software we keep and extend, not a throwaway prototype. This is the **next action** — not another spec.

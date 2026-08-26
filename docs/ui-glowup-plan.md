@@ -1,3 +1,9 @@
+> **FOSSIL — superseded, kept for the reasoning.** Last substantive change 2026-07-16. Nothing live
+> cites this: it is referenced only by other fossils (`planning/`), which CLAUDE.md already calls
+> "the planning fossils". Read it for WHY a decision was made, never for what is true now — the
+> current state is STATE.md §5.0 OPEN NOW, and the operating loops are docs/RUNBOOKS.md.
+> *Banner added by P0 of the knowledge-ledger plan; the file itself is unchanged below.*
+
 # UI glow-up — implementation plan (Hybrid direction + dark mode)
 
 > North-star for the product-wide visual restyle. Direction locked: **Hybrid** — Direction B's
