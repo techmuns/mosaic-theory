@@ -252,3 +252,43 @@ def test_every_sd_identifier_has_its_own_record() -> None:
         f"{missing} appear as entry HEADINGS but no record claims them in front-matter — they are "
         f"buried inside another record, so `ls` and the collision guard cannot see them")
 
+
+def test_the_cross_tool_entry_point_points_and_does_not_copy() -> None:
+    """AGENTS.md IS A POINTER, AND THAT IS THE WHOLE DESIGN (P2).
+
+    The obvious alternative — copy CLAUDE.md's rules into it so a non-Claude tool has them inline —
+    is the twin-constant bug this repo has already paid for twice: a peer floor moved from 6 to 5 in
+    code while three surfaces went on saying "under 6", and eleven committed rows contradicted their
+    own caption until a value-level pin closed it. Rules restated in two places drift, and the drift
+    is silent because both copies read fine.
+
+    So this pins the SHAPE: AGENTS.md must name CLAUDE.md as canonical, must stay short, and must
+    not carry CLAUDE.md's sentences. A tool that reads it is one hop from the real rules."""
+    agents = ROOT / "AGENTS.md"
+    assert agents.is_file(), "AGENTS.md is gone — a non-Claude tool has no door into this repo"
+    text = agents.read_text()
+    assert "CLAUDE.md" in text, "AGENTS.md does not point at the canonical rules"
+    assert len(text.splitlines()) <= 60, (
+        f"AGENTS.md is {len(text.splitlines())} lines — drifting from a pointer into a "
+        f"second rulebook, which is how the two come to disagree")
+
+    # no long sentence may appear verbatim in both files
+    import re
+    def long_sentences(s: str) -> set[str]:
+        return {x.strip() for x in re.split(r"[.\n]", s) if len(x.strip()) > 60}
+    shared = long_sentences(text) & long_sentences((ROOT / "CLAUDE.md").read_text())
+    assert not shared, (
+        f"AGENTS.md copies {len(shared)} sentence(s) verbatim from CLAUDE.md — copies drift. "
+        f"First: {sorted(shared)[0][:90]!r}")
+
+
+def test_the_file_map_names_every_surface() -> None:
+    """A READER ARRIVING COLD SHOULD NOT HAVE TO INFER THE SPLIT. Six surfaces now carry the
+    record between them; the map in RUNBOOKS is the one place that says which answers what."""
+    runbooks = (ROOT / "docs" / "RUNBOOKS.md").read_text()
+    assert "Which file answers which question" in runbooks, "the file map is gone from RUNBOOKS"
+    head = runbooks.split("Which file answers which question", 1)[1][:2200]
+    for surface in ("CLAUDE.md", "STATE.md", "docs/records/", "docs/engineering.md",
+                    "RUNBOOKS.md", "planning/", "AGENTS.md"):
+        assert surface in head, f"the file map does not mention {surface}"
+

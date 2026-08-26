@@ -1,6 +1,7 @@
 # CLAUDE.md — working instructions for the mosaic-theory repo
 
-> This file is HOW to work in this repo. STATE.md is WHAT is true about the project right now.
+> This file is HOW to work in this repo. STATE.md is WHAT is true right now; `docs/records/`
+> is HOW IT GOT THAT WAY (one immutable file per entry). `AGENTS.md` points other tools here.
 > docs/engineering.md is the fuller engineering handbook (conventions, practices, workflow).
 > **The operating loops (monthly sweep, group-review recording, survivor checks, theme-advance,
 > verification, sacred files, UI rule, calendar) live in docs/RUNBOOKS.md — follow them before
