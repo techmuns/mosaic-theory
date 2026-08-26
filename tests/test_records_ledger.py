@@ -252,3 +252,87 @@ def test_every_sd_identifier_has_its_own_record() -> None:
         f"{missing} appear as entry HEADINGS but no record claims them in front-matter — they are "
         f"buried inside another record, so `ls` and the collision guard cannot see them")
 
+
+def test_the_cross_tool_entry_point_points_and_does_not_copy() -> None:
+    """AGENTS.md IS A POINTER, AND THAT IS THE WHOLE DESIGN (P2).
+
+    The obvious alternative — copy CLAUDE.md's rules into it so a non-Claude tool has them inline —
+    is the twin-constant bug this repo has already paid for twice: a peer floor moved from 6 to 5 in
+    code while three surfaces went on saying "under 6", and eleven committed rows contradicted their
+    own caption until a value-level pin closed it. Rules restated in two places drift, and the drift
+    is silent because both copies read fine.
+
+    So this pins the SHAPE: AGENTS.md must name CLAUDE.md as canonical, must stay short, and must
+    not carry CLAUDE.md's sentences. A tool that reads it is one hop from the real rules."""
+    agents = ROOT / "AGENTS.md"
+    assert agents.is_file(), "AGENTS.md is gone — a non-Claude tool has no door into this repo"
+    text = agents.read_text()
+    assert "CLAUDE.md" in text, "AGENTS.md does not point at the canonical rules"
+    assert len(text.splitlines()) <= 60, (
+        f"AGENTS.md is {len(text.splitlines())} lines — drifting from a pointer into a "
+        f"second rulebook, which is how the two come to disagree")
+
+    # NO LONG SENTENCE MAY APPEAR IN BOTH FILES — compared WRAP-INDEPENDENTLY. Splitting on
+    # `[.\n]` made a LINE the unit, so it only ever caught a copy that landed on identical line
+    # breaks: the same rule pasted in and re-wrapped at another width (the normal result of
+    # copying into a differently-indented context, or of any editor reflow) produced no shared
+    # fragment and the guard ran green over a verbatim duplicate. Whitespace is collapsed first,
+    # so the comparison is on sentences rather than on line endings.
+    def long_sentences(s: str) -> set[str]:
+        flat = " ".join(s.split())
+        return {x.strip() for x in flat.split(".") if len(x.strip()) > 60}
+    shared = long_sentences(text) & long_sentences((ROOT / "CLAUDE.md").read_text())
+    assert not shared, (
+        f"AGENTS.md copies {len(shared)} sentence(s) verbatim from CLAUDE.md — copies drift. "
+        f"First: {sorted(shared)[0][:90]!r}")
+
+
+def test_the_file_map_names_every_surface() -> None:
+    """A READER ARRIVING COLD SHOULD NOT HAVE TO INFER THE SPLIT. Six surfaces now carry the
+    record between them; the map in RUNBOOKS is the one place that says which answers what.
+
+    SCOPED TO THE TABLE'S OWN ROWS. A fixed character window ran 860 characters past the map into
+    the pre-existing preamble below it — which names STATE.md, CLAUDE.md and docs/engineering.md in
+    a parenthetical — so deleting the STATE.md row or the CLAUDE.md row from the map left this
+    green. The mutation that "passed" only passed for the surfaces that happen to be absent
+    downstream. The rows are the unit: only `| … |` lines count."""
+    runbooks = (ROOT / "docs" / "RUNBOOKS.md").read_text()
+    assert "Which file answers which question" in runbooks, "the file map is gone from RUNBOOKS"
+    after = runbooks.split("Which file answers which question", 1)[1]
+    rows = "\n".join(x for x in after.splitlines()[:40] if x.lstrip().startswith("|"))
+    assert rows.count("\n") >= 6, (
+        f"the file map has {rows.count(chr(10))} rows below its heading — a surface has been "
+        f"dropped from the table, or the table no longer follows the heading")
+    for surface in ("CLAUDE.md", "STATE.md", "docs/records/", "docs/engineering.md",
+                    "RUNBOOKS.md", "planning/", "AGENTS.md"):
+        assert surface in rows, f"the file map does not mention {surface}"
+
+
+def test_a_shipped_record_names_the_pr_that_carried_it() -> None:
+    """THE TRAIL MUST BE WRITTEN BEFORE MERGE, BECAUSE AFTERWARDS IT CANNOT BE (review, #505).
+
+    `prs:` is front-matter, and the amendment contract freezes everything except `status:` — so an
+    empty trail on a merged record is permanent, fixable only by an appended correction. Both the
+    P0 and P1 records shipped that way (P0 naming the PR it was written *against*, P1 naming
+    none), and each now carries an `## Amendments` block saying so, which is the contract behaving
+    correctly rather than a workaround.
+
+    This refuses the third instance. A record that claims something SHIPPED and cannot say where is
+    a dead end for anyone asking "what change was this?" — the question records exist to answer.
+
+    Only NEW records are checked: the migrated archive predates the field, and re-dating an
+    immutable ledger is not something a test gets to demand."""
+    for p in _records():
+        text = p.read_text()
+        front = text.split("---", 2)[1]
+        if "migrated-from" in front:
+            continue                      # the P1 archive: written before `prs:` existed
+        if not re.search(r"^status:\s*shipped\s*$", front, re.M):
+            continue
+        prs = re.search(r"^prs:\s*\[(.*?)\]", front, re.M)
+        has_trail = bool(prs and prs.group(1).strip())
+        assert has_trail or "## Amendments" in text, (
+            f"{p.name} claims status: shipped with an empty `prs:` trail. Write the PR number "
+            f"BEFORE merge — the amendment contract freezes this field afterwards, and the only "
+            f"remedy left is an appended correction.")
+

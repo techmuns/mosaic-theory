@@ -1,5 +1,28 @@
 # RUNBOOKS.md — the operating loops
 
+## Which file answers which question
+
+Four files and one directory, each with one job. The split is deliberate: STATE.md is the
+SNAPSHOT (what is true now, short enough to re-read every session) and `docs/records/` is the
+LEDGER (how it got that way, in full, forever) — the same shape the fund runs on its data, an
+append-only ledger beside regenerable snapshots.
+
+| question | file |
+|---|---|
+| How do I work here? What must I never do? | `CLAUDE.md` — behaviour, read every session |
+| What is true right now? What is open? | `STATE.md` — start at **§5.0 OPEN NOW** |
+| Why is it like this? What happened on 2026-08-12? | `docs/records/` — one immutable file per entry |
+| What does this house term mean? What is the convention? | `docs/engineering.md` |
+| What are the steps for the weekly run / a new name / an artifact pass? | `docs/RUNBOOKS.md` (this file) |
+| What did we plan before, and abandon? | `planning/`, and any doc with a FOSSIL banner |
+| I use a tool other than Claude Code | `AGENTS.md` — points here, copies nothing |
+
+**Writing, not reading?** A build's narrative goes in a NEW record under `docs/records/` (copy
+`TEMPLATE.md`); STATE.md gets only a §5.0 row and at most a ≤3-line claim with a pointer. §5 is
+frozen: it reached 9,876 lines by being appended like a journal and trusted like a snapshot, and it
+came to answer one question two ways.
+
+
 > **How to use this file.** Each section below is a loop a **fresh Claude Code session** can execute
 > from this doc alone. Every step is sourced from the repo (STATE.md, CLAUDE.md, `--help` output,
 > committed artifacts, git history) — the source is cited per step. Where a convention is undocumented

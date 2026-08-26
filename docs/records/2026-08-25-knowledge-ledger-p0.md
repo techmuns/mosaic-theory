@@ -50,3 +50,11 @@ Mutation-tested — see the PR.
 solved yet — only the *growth* is stopped. The freeze pin is a ceiling with slack, not an equality,
 because closing an item legitimately edits §5 in place; it refuses new essays, not new strikes.
 And `docs/audits/` remains a second dated-record convention until P1 absorbs it.
+
+## Amendments
+
+**2026-08-26 — the `prs:` trail was wrong, and this is the contract working.** It reads `prs: [502]` — the PR it was written *against*. P0 actually shipped in **#503**.
+The front-matter is frozen after merge (only `status:` may change), so the correction is appended
+rather than edited in: the wrong version stays visible, which is the point. Found by review of #505,
+which flagged the same defect on that record while it was still unmerged and therefore fixable in
+place.
