@@ -245,8 +245,9 @@ function renderRows() {
                  + "of the time week to week) and this cohort's own median uncertainty, which is "
                  + "in the cell's own tooltip."],
     "no-cohort": ["too few peers",
-                  "Fewer than 5 same-industry names in the screened universe — not enough to take "
-                  + "a median over, so no comparison is offered. (An industry the SIC code does "
+                  "Fewer than 5 same-industry names in the peer pool — the screened names plus "
+                  + "the peers the screen dropped for cap or liquidity — not enough to take a "
+                  + "median over, so no comparison is offered. (An industry the SIC code does "
                   + "not resolve is never a cohort either, at any size.)"],
   };
   // A no-cohort read has TWO causes and they are not the same statement. `too few peers` is about
@@ -287,15 +288,18 @@ function renderRows() {
     // false reason, so each gets its own words.
     const split = (c.median == null || c.residual == null)
       ? (thin
-          ? `<span class="muted">only ${c.peers} screened peer${c.peers === 1 ? "" : "s"}</span>`
+          ? `<span class="muted">only ${c.peers} pooled peer${c.peers === 1 ? "" : "s"}</span>`
           : unresolved
             ? `<span class="muted">industry not on file</span>`
             : `<span class="muted">${c.peers} peers, name not screened</span>`)
       : `<span class="ck-k">industry</span><b>${fmtPct(c.median, { signed: true })}</b>`
         + `<span class="ck-sep">→</span><span class="ck-k">name</span><b>${fmtPct(c.residual, { signed: true })}</b>`;
     // The tooltip carries the arithmetic AND the cohort's membership, because "industry" is doing
-    // a lot of work in one word: it is the SIC industry AS REPRESENTED IN THE SCREENED UNIVERSE,
-    // not the true sector — a handful of small caps, not every listed peer. Say which, and how many.
+    // a lot of work in one word: it is the SIC industry AS REPRESENTED IN THE PEER POOL — the
+    // screened names PLUS the peers the screen dropped for cap or liquidity (`cohort_pool.jsonl`),
+    // still not literally every listed peer. It said "in the screened universe" until #509 widened
+    // the pool, at which point the phrase became false: Software is measured over ~160 names of
+    // which only ~60 are screened. Say which set, and how many.
     //
     // "MEASURED AGAINST" IS ONLY TRUE WHEN SOMETHING WAS MEASURED. With no median there is no
     // comparison, so the phrasing switches to a plain count of what exists — the earlier wording
@@ -303,9 +307,8 @@ function renderRows() {
     // queue, which was both a false count and a claim of a measurement that never happened.
     const key = !c.key ? ""
       : c.median == null
-        ? ` — no comparison: ${c.peers} ${c.key} name${c.peers === 1 ? "" : "s"} in the screened `
-          + `universe`
-        : ` — measured against the ${c.peers} ${c.key} names in the screened universe`
+        ? ` — no comparison: ${c.peers} ${c.key} name${c.peers === 1 ? "" : "s"} in the peer pool`
+        : ` — measured against the ${c.peers} ${c.key} names in the peer pool`
           + (c.uncertainty == null ? ""
              : `, whose median is pinned to ±${fmtPct(c.uncertainty)}`)
           + `; the name is ${fmtPct(c.median + c.residual, { signed: true })}`

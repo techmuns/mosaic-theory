@@ -47,8 +47,21 @@ OUT = SNAP / "cohort_pool.jsonl"
 #: denylist stages are excluded for the same reason the screen excludes them.
 POOLABLE = ("out_of_band", "below_adv_floor")
 
-#: The screen's own denylist, mirrored — a non-operating issuer is not part of an industry's move.
-EXCLUDED_SIC = ("6189", "6221", "6722", "6726", "6770")
+#: How many EDGAR resolver failures are tolerated before the run is abandoned. A few dead CIKs are
+#: normal; a wave is an outage, and an outage that only thins the pool is invisible in the output.
+MAX_RESOLVE_ERRORS = 25
+
+#: THE SECURITY-TYPE GATE IS NOT OPTIONAL HERE (review, #509). `universe.py` applies its
+#: instrument-type allowlist AFTER the cap band, so an `out_of_band` name has never been through
+#: it — and pooling that stage raw put WARRANTS in the industry medians. The first committed pool
+#: carried 60 detectable warrant/unit siblings of names already in it: RVMDW at +483% beside RVMD
+#: at +92% in SIC 2836, PDYNW at -98% inside SIC 7372, the very industry this change is about. A
+#: warrant is not a company; it is the same issuer counted twice on a leveraged return. The screen's
+#: own `admit_security_type` is reused verbatim, fail-closed on a missing type, so the pool and the
+#: universe can never drift apart on what counts as an operating-company equity.
+#:
+#: The SIC denylist is read from CONFIG, never re-typed here — a mirrored literal is a copy that
+#: silently stops matching the moment the operator edits `excluded_sic_codes`.
 
 
 def window_from(run: pathlib.Path) -> tuple[dt.date, dt.date]:
@@ -70,8 +83,10 @@ def main(argv: list[str]) -> int:
     from vinci.eod import PolygonEodClient
     from vinci.monitor import BENCHMARK_SMALL
     from vinci.resolver import EntityResolver
+    from vinci.universe import admit_security_type
 
     cfg = get_config()
+    band = cfg.universe
     runs = sorted((SNAP / "screen_runs").glob("*.jsonl"))
     if not runs:
         print("no committed screen runs", file=sys.stderr)
@@ -103,19 +118,41 @@ def main(argv: list[str]) -> int:
     bench = bars_end[BENCHMARK_SMALL].close / bars_start[BENCHMARK_SMALL].close - 1
     print(f"  {BENCHMARK_SMALL} over the window: {bench:+.1%} "
           f"(2 grouped-daily calls, whole market)")
+    sec_types = client.security_types()  # one cached bulk reference pull, same as the screen's
+    print(f"  {len(sec_types)} security types (allowlist {'/'.join(band.allowed_security_types)})")
 
     resolver = EntityResolver.from_config(cfg)
-    written = skipped_sic = skipped_px = 0
+    written = skipped_sic = skipped_px = skipped_type = errors = 0
     with OUT.open("a") as fh:
         for i, ticker in enumerate(wanted, 1):
             if ticker not in bars_end or ticker not in bars_start or not bars_start[ticker].close:
                 skipped_px += 1
                 continue
+            # INSTRUMENT TYPE BEFORE SIC — fail-closed, and it is also the cheap gate: it is a
+            # dict lookup, while `sic_for` is an EDGAR call. A warrant shares its issuer's CIK and
+            # therefore its SIC, so the SIC gate cannot see it at all.
+            if not admit_security_type(sec_types.get(ticker), band.allowed_security_types):
+                skipped_type += 1
+                continue
             try:
                 sic, _ = resolver.sic_for(resolver.resolve_ticker(ticker).cik)
-            except Exception:
-                sic = None
-            if not sic or sic in EXCLUDED_SIC:
+            except Exception as exc:  # noqa: BLE001 - counted and re-raised in aggregate below
+                # NEVER SILENT (review, #509). This swallowed every exception into `sic = None`,
+                # which lands in `skipped_sic` — indistinguishable from a name that genuinely has
+                # no SIC. An EDGAR burst of 500s (a recorded failure mode here) would therefore
+                # thin the pool by hundreds of names and report it as a clean run, biasing every
+                # median toward whichever industries happened to resolve. Counted separately and
+                # made fatal past a floor: a handful of dead CIKs is normal, a wave is an outage.
+                errors += 1
+                if errors > MAX_RESOLVE_ERRORS:
+                    raise SystemExit(
+                        f"{errors} resolver failures at {ticker} ({exc!r}) — over the "
+                        f"{MAX_RESOLVE_ERRORS} tolerated. The pool would be silently thin and "
+                        f"every median biased toward the industries that happened to resolve. "
+                        f"Re-run once EDGAR is healthy; rows already written are kept and skipped."
+                    ) from exc
+                continue
+            if not sic or sic in band.excluded_sic_codes:
                 skipped_sic += 1
                 continue
             rel = (bars_end[ticker].close / bars_start[ticker].close - 1) - bench
@@ -128,7 +165,8 @@ def main(argv: list[str]) -> int:
             if i % 500 == 0:
                 print(f"    {i}/{len(wanted)} · written {written}", flush=True)
     print(f"\n  WROTE {written} pool rows · skipped {skipped_sic} (no/denylisted SIC), "
-          f"{skipped_px} (no price at a window endpoint)")
+          f"{skipped_type} (not operating-company equity), "
+          f"{skipped_px} (no price at a window endpoint), {errors} resolver failures")
     return 0
 
 

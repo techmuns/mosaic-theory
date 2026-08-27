@@ -61,3 +61,49 @@ would not have caught GWRE in April either. Window and pool are separate levers;
 **VERIFIED.** Order and every score identical after re-ranking, 58 structural flags preserved.
 Five pins, three mutations caught: a queued name leaking into the pool, a denylisted industry
 entering, a row measured over a different window.
+
+## Review pass (#509) — four fixes on the surface the widening touched
+
+**THE SECOND OPERATOR RULING WAS NEVER APPLIED.** STATE.md blocked this item on *"(b) confirm
+Polygon's security `type` replaces the crude warrant/preferred heuristic"*; ruling (a) landed, (b)
+did not, and the STATE.md row was replaced rather than carried. `universe.py` runs its instrument
+type allowlist AFTER the cap band, so an `out_of_band` name has never been through it — and the
+first committed pool held **276 non-equity instruments: 95 WARRANTS, 70 structured products, 51
+preferreds, 41 ETNs**, plus units, rights, an ETF and a fund. 60 were the warrant of a name already
+pooled — RVMDW at **+483%** beside RVMD at +92% in SIC 2836; PDYNW at **−98%** inside SIC 7372, the
+industry this whole change is about. A warrant is not a company; it is the same issuer counted twice
+on a leveraged return, inside the median and inside the peer count the human reads. The builder now
+calls the screen's own `admit_security_type`, fail-closed, before spending an EDGAR call.
+
+**THE TRAJECTORY WAS TWO DIFFERENT MEASUREMENTS ON ONE LINE.** Only the newest run was widened, so
+the last point of every trajectory was taken over ~2.5x the peers of the three before it. *Services-
+Business Services, NEC* was committed as `[-7.8%, +11.7%, +14.7%, -7.5%]` where the narrow series
+ended **+22.9%** — a 30-point industry reversal no name in the industry made. Each run is now
+measured over its OWN pool, and the trajectory is truncated to the contiguous newest runs sharing
+the newest run's pool-presence. Today that is ONE point; it lengthens as prior runs are backfilled.
+Nothing imputes a pool for a run that has none.
+
+**THE POOL WAS PAYING OFF THE SIC-COVERAGE GUARD.** Every pool row carries a resolved SIC by
+construction, and the pool was merged BEFORE the coverage check — handing the guard 2,770 free
+passes. At the committed sizes a screened map resolving only **~48%** cleared the 80% bar; the guard
+exists for exactly that map, the one that produced plausible calls and wrong numbers. Coverage is
+now measured over the screened set alone, before the merge.
+
+**"IN THE SCREENED UNIVERSE" BECAME FALSE.** The cell asserts *"measured against the N X names in
+the screened universe"* — for GTM that read 169 names against a screened Software count of ~60. The
+copy now says PEER POOL and the tooltip defines it.
+
+Also: the SIC denylist is read from `cfg.excluded_sic_codes` instead of a re-typed literal, and a
+resolver exception is counted and made fatal past 25 rather than swallowed into `sic = None` — an
+EDGAR burst of 500s (a recorded failure mode here) would otherwise thin the pool by hundreds of
+names, bias every median toward whichever industries resolved, and report a clean run.
+
+**RE-VERIFIED after the fixes.** Pool 2,770 → **2,494**. Order, every `priority_score` and every
+rank identical; 58 structural flags preserved. Calls move on the cleaner pool: `own` 69 → 82,
+`cohort` 63 → 57, `unresolved` 108 → 100, `no-cohort` 28 → 29. `ruff` + `mypy --strict` clean; full
+offline suite green with `data/vinci.db` moved aside.
+
+**NOT FIXED, recorded.** `POOLABLE` excludes the 1,923 names dropped at `no_shares` on the stated
+grounds that they "cannot contribute a return at all". That is false: `no_shares` means no EDGAR
+XBRL SHARE COUNT, and the stage sits AFTER `no_price`, so every one of those names has both window
+closes. It is the same under-representation this PR fixes, one stage over, and needs its own build.

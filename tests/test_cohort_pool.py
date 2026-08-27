@@ -107,3 +107,90 @@ def test_an_absent_pool_leaves_the_narrow_behaviour_unchanged() -> None:
     assert empty == {}
     reads = cohort_reads(cfg.snapshots_dir, sic_by_ticker(cfg.snapshots_dir))
     assert reads, "cohort_reads returned nothing"
+
+
+def test_no_pooled_name_is_a_warrant_unit_or_right() -> None:
+    """A WARRANT IS NOT A COMPANY (review, #509). `universe.py` applies its instrument-type
+    allowlist AFTER the cap band, so an `out_of_band` name has never been through it — and the
+    first committed pool carried 60 warrant/unit siblings of names already in it: RVMDW at +483%
+    beside RVMD at +92% in SIC 2836, PDYNW at -98% inside SIC 7372, the very industry this change
+    is about. Each one is the SAME ISSUER counted twice, on a leveraged return, inside the median.
+
+    Pinned STRUCTURALLY rather than against a type list this test would have to keep in sync: a
+    pooled ticker that is another pooled ticker plus a W/U/R suffix is the observed failure shape,
+    and the type gate in `build_cohort_pool.py` is what has to keep it out."""
+    rows = _pool_rows()
+    tickers = {r["ticker"] for r in rows}
+    siblings = sorted(t for t in tickers if len(t) >= 5 and t[-1] in "WUR" and t[:-1] in tickers)
+    assert not siblings, (
+        f"{len(siblings)} pooled ticker(s) look like the warrant/unit/right of another pooled "
+        f"name: {siblings[:8]}. The security-type allowlist is not being applied to the pool.")
+
+
+def test_the_pool_builder_applies_the_screens_own_type_and_sic_gates() -> None:
+    """PIN THE CALL SITE, not the helper. `admit_security_type` staying correct is worth nothing if
+    the pool builder never calls it, and a re-typed SIC denylist stops matching the moment the
+    operator edits `excluded_sic_codes` — so both are asserted at the point of use."""
+    src = (ROOT / "scripts" / "build_cohort_pool.py").read_text()
+    assert "admit_security_type(sec_types.get(ticker)" in src, (
+        "the pool builder no longer gates on the screen's security-type allowlist — warrants, "
+        "units and preferreds re-enter the industry medians")
+    assert "band.excluded_sic_codes" in src, (
+        "the pool builder no longer reads the SIC denylist from config — a mirrored literal "
+        "silently stops matching when the operator edits it")
+    assert "except Exception" not in src or "errors += 1" in src, (
+        "a resolver failure is being swallowed into a plain skip again — an EDGAR outage would "
+        "thin the pool by hundreds of names and report a clean run")
+
+
+def test_the_trajectory_never_splices_a_narrow_run_onto_a_widened_one() -> None:
+    """A SERIES HAS TO BE ONE MEASUREMENT (review, #509). The first cut widened only the newest
+    run, so the last point of every trajectory was taken over ~2.5x the peers of the three before
+    it. Services-Business Services, NEC was committed as [-7.8%, +11.7%, +14.7%, -7.5%] where the
+    narrow series ended +22.9% — a 30-point industry "reversal" no name in the industry made.
+
+    The trajectory is now truncated to the contiguous newest runs sharing the newest run's
+    pool-presence, so its LENGTH is the assertion: it can never exceed the number of runs measured
+    on the same basis."""
+    from vinci.cohort import TRAJECTORY_RUNS, screen_run_files
+
+    cfg = get_config()
+    runs = screen_run_files(cfg.snapshots_dir)[-TRAJECTORY_RUNS:]
+    if not runs:
+        pytest.skip("no committed screen runs")
+    wide = [bool(pool_for_run(cfg.snapshots_dir, p.stem)) for p in runs]
+    same = 1
+    while same < len(wide) and wide[-1 - same] == wide[-1]:
+        same += 1
+
+    reads = cohort_reads(cfg.snapshots_dir, sic_by_ticker(cfg.snapshots_dir))
+    longest = max((len(r.trajectory) for r in reads.values()), default=0)
+    assert longest <= same, (
+        f"a trajectory carries {longest} points while only the newest {same} run(s) were measured "
+        f"over the same peer pool ({wide}). The extra points are a different measurement and plot "
+        f"the widening as an industry move.")
+    assert longest >= 1, "no trajectory survived truncation at all"
+
+
+def test_the_pool_cannot_pay_for_the_sic_coverage_guard() -> None:
+    """THE POOL WAS BUYING OFF THE GUARD (review, #509). Every pool row carries a resolved SIC by
+    construction, so folding 2,770 of them into the coverage denominator handed the guard 2,770
+    free passes: at the committed sizes a SCREENED map resolving only ~48% cleared an 80% bar. The
+    guard exists for exactly that map — the one that produced plausible calls and wrong numbers.
+
+    Built from the REAL entity-master map, degraded to just above the old diluted threshold: it
+    must still be refused."""
+    cfg = get_config()
+    latest = screen_run_files(cfg.snapshots_dir)[-1]
+    from vinci.cohort import relatives_for_run
+
+    screened = sorted(relatives_for_run(latest))
+    if not screened or not pool_for_run(cfg.snapshots_dir, latest.stem):
+        pytest.skip("needs a committed screen run and a pool for it")
+    full = sic_by_ticker(cfg.snapshots_dir)
+    # 60% of the screened names keep their real SIC; the rest go blank. Under the diluted guard
+    # this passed comfortably; against the screened set alone it is below the 80% floor.
+    keep = set(screened[: int(len(screened) * 0.60)])
+    degraded = {t: (full.get(t) if t in keep else "") for t in full}
+    with pytest.raises(ValueError, match="SIC map covers"):
+        cohort_reads(cfg.snapshots_dir, degraded)
