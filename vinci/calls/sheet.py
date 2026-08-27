@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from vinci.calls import jsonl_lines
 from vinci.calls.accounts import account_dir
 from vinci.calls.audit import ACTIONS, BIASES, CLASSES, SPECS, TARGET_TYPES, load_audit
 from vinci.calls.bars import load_bars
@@ -173,7 +174,7 @@ def _rows(handle: str) -> list[dict[str, Any]]:
     res_p = d / "results.jsonl"
     results: dict[tuple[str, str], dict[str, Any]] = {}
     if res_p.is_file():
-        for line in res_p.read_text().splitlines():
+        for line in jsonl_lines(res_p.read_text()):
             if line.strip():
                 r = json.loads(line)
                 results[(str(r["tweet_id"]), r["ticker"])] = r

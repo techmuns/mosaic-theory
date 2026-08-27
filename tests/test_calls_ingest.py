@@ -15,6 +15,7 @@ from typing import Any
 
 import pytest
 
+from vinci.calls import jsonl_lines
 from vinci.calls.ingest import IngestError, import_labels
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -220,3 +221,50 @@ def test_the_calendars_hand_label_tally_follows_the_import(
     # and nothing else in the file moved
     assert {k: (v["n"], v["sig"], v["tk"]) for k, v in after.items()} == \
            {k: (v["n"], v["sig"], v["tk"]) for k, v in before.items()}
+
+
+
+# ---------------------------------------------------------------------------
+# A JSONL RECORD ENDS AT \n, AND NOWHERE ELSE. `str.splitlines()` is Unicode-aware and also breaks
+# on U+2028, U+2029 and U+0085 — the three characters a conformant JSON writer leaves UNESCAPED
+# (control characters below 0x20 are always escaped, so they can never reach a reader raw; only
+# these three can). The observed failure: a $WMT post in this corpus carries U+2028 — 18 of the
+# 5,641 posts do — and the browser bench's export of 185 rows read back as 186 lines with one
+# record torn in half. It failed LOUD rather than merging a fragment, but that row could not be
+# imported at all.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("ch", ["\u2028", "\u2029", "\x85"])
+def test_a_post_carrying_a_unicode_line_break_still_imports(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ch: str
+) -> None:
+    d = _corpus(tmp_path)
+    monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
+    key = next(iter(json.loads((d / "labels.json").read_text())))
+    tid, _, tkr = key.partition("|")
+    # ensure_ascii=False is what the browser's JSON.stringify does — the shape that actually shipped
+    row = _row(tid, tkr, text=f"${tkr} breaking out{ch}next stop $200")
+    p = tmp_path / "in.jsonl"
+    p.write_text(json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    assert len(p.read_text().splitlines()) == 2, "fixture no longer reproduces the tear"
+    assert len(jsonl_lines(p.read_text())) == 1, "the reader still tore the record in half"
+    import_labels("x", p)
+    assert json.loads((d / "labels.json").read_text())[key]["src"] == "hand", \
+        "the row never reached the corpus"
+
+
+def test_the_shape_that_actually_shipped(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verbatim from the $WMT post that broke the first 185-row import."""
+    d = _corpus(tmp_path)
+    monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
+    key = next(iter(json.loads((d / "labels.json").read_text())))
+    tid, _, tkr = key.partition("|")
+    text = (f"${tkr} Alpha Gold Alert \U0001f514 \n\nWhales are loading up on calls \n\n"
+            f"Follow the money. \U0001f680\n\u2028Learn how")
+    p = tmp_path / "in.jsonl"
+    p.write_text(json.dumps(_row(tid, tkr, text=text), ensure_ascii=False) + "\n",
+                 encoding="utf-8")
+    assert "\u2028" in p.read_text(), "JSON.stringify leaves it raw, so the fixture must too"
+    import_labels("x", p)
+    assert json.loads((d / "labels.json").read_text())[key]["src"] == "hand"

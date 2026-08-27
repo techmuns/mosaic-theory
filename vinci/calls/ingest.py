@@ -23,6 +23,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from vinci.calls import jsonl_lines
 from vinci.calls.accounts import account_dir
 
 #: The gold-label field -> labels.json field mapping. Anything not here is carried by the post
@@ -99,7 +100,7 @@ def import_rows(handle: str, rows: list[dict[str, Any]], *, dry_run: bool = Fals
     gold_p = d / "gold_labels.jsonl"
     gold: dict[str, dict[str, Any]] = {}
     if gold_p.is_file():
-        for ln in gold_p.read_text().splitlines():
+        for ln in jsonl_lines(gold_p.read_text()):
             if ln.strip():
                 g = json.loads(ln)
                 gold[_key(g)] = g
@@ -148,7 +149,7 @@ def import_labels(handle: str, path: Path, *, dry_run: bool = False) -> dict[str
     cannot leave the corpus half-updated. The merge itself is `import_rows`, shared with the
     workbook path — two importers with two sets of merge rules is how the two would drift.
     """
-    raw = [ln for ln in path.read_text().splitlines() if ln.strip()]
+    raw = jsonl_lines(path.read_text())
     rows: list[dict[str, Any]] = []
     for i, ln in enumerate(raw, 1):
         try:

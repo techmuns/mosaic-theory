@@ -30,6 +30,7 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
+from vinci.calls import jsonl_lines
 from vinci.calls.accounts import account_dir
 from vinci.config import get_config
 from vinci.graph.llm import AnthropicLlmClient, LlmClient, LlmError
@@ -187,7 +188,7 @@ def load_audit(handle: str) -> dict[str, PostReading]:
     if not p.is_file():
         return {}
     out: dict[str, PostReading] = {}
-    for line in p.read_text().splitlines():
+    for line in jsonl_lines(p.read_text()):
         if line.strip():
             r = PostReading.model_validate_json(line)
             out[r.tweet_id] = r
