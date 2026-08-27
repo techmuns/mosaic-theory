@@ -37,6 +37,16 @@ the criterion the whole time. A watcher that re-reads its own instructions is no
 gap — not GOOGL specifically — is why this is worth building, and phases 2-3 must EXTEND the
 freshness panel rather than re-implement filing-watch and the kills list beside it.
 
+**MEASURING AN INDICATOR IS NOT ADJUDICATING A TRIGGER, AND THIS PLAN ASKS ONLY FOR THE FIRST.**
+The panel's refusal to adjudicate is DELIBERATE and documented at its own source
+(`vinci/monitor.py:23`, `:468` — *"the freshness/trigger panel FLAGS; it never adjudicates a
+trigger as fired"*, *"the machine surfaces, the human concludes"*). Nothing here weakens that.
+What the panels add is the NUMBER beside the criterion — computing OWYN net sales YoY and showing
+it next to the trigger that names it — so the human reads an indicator instead of going to find
+it. Declaring the trigger fired stays the human's call, exactly as today. A future build that
+reads this record as licence to let the machine conclude has misread it, and crosses the line
+CLAUDE.md draws.
+
 **THE DESIGN — PANELS ARE MODULES.** A monitor panel is a `PanelSpec` carrying `key`, `tier`,
 `requires` (tags / R-file notes / feeds / uploads), `config_schema`, `render`, `cadence`, `caveat`.
 A NAME declares which panels it runs and with what config, beside its sleeve. This is the shape
