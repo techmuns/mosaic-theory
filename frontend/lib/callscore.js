@@ -27,6 +27,12 @@ const PLAUSIBLE_LO = 0.1, PLAUSIBLE_HI = 10.0;
 //: sign. Mirrors _PAIR in targets.py.
 const PAIR = /^\s*([-+]?\d+(?:\.\d+)?)\s*(?:[-–—]\s*([-+]?\d+(?:\.\d+)?))?/;
 
+//: A TARGET IS A VALUE, NOT A SENTENCE — mirrors _VALUE_ONLY in targets.py. The first number in
+//: "532 breakout to 540/544 or reject to 508" is the CURRENT level, not the target, so reading it
+//: as one is a fabrication dressed as a parse.
+const NUMPAT = "\\$?\\s*[-+]?\\d+(?:\\.\\d+)?\\s*%?\\s*\\+?";
+const VALUE_ONLY = new RegExp(`^\\s*${NUMPAT}\\s*(?:(?:[-–—/]|to)\\s*${NUMPAT}\\s*)?$`, "i");
+
 /** parse_target() — resolve a stated target to a price, or say why it did not. */
 export function parseTarget(target, targetType, entry, bias) {
   const none = (status) => ({ price: null, status });
@@ -35,7 +41,8 @@ export function parseTarget(target, targetType, entry, bias) {
   if (targetType === "qualitative") return none("qualitative");
 
   const raw = String(target).replace(/\$/g, "").replace(/,/g, "").trim();
-  const m = PAIR.exec(raw);
+  if (!VALUE_ONLY.test(String(target).replace(/,/g, ""))) return none("unparseable");
+  const m = PAIR.exec(raw.replace(/\//g, "-"));
   if (!m) return none("unparseable");
   const lo = parseFloat(m[1]);
   const hi = m[2] === undefined ? null : parseFloat(m[2]);

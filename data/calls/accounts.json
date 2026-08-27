@@ -11,7 +11,8 @@
       "n_cashtags": 411,
       "n_tracked": 214,
       "n_hand_labels": 83,
-      "n_machine_labels": 8102
+      "n_machine_labels": 0,
+      "n_llm_labels": 8102
     }
   ]
 }

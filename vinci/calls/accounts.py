@@ -42,6 +42,10 @@ class Account(BaseModel, frozen=True):
     n_tracked: int
     n_hand_labels: int
     n_machine_labels: int
+    #: the adopted LLM second reading — a THIRD tier, kept distinct from both. It is measurably
+    #: better than the machine (77% on bias against the held-out hand labels, vs the brief's ~55%)
+    #: and still not a person having read the post.
+    n_llm_labels: int = 0
 
 
 class AccountIndex(BaseModel, frozen=True):
@@ -87,6 +91,7 @@ def rebuild_accounts(*, root: Path = CALLS_DIR, default: str | None = None) -> A
             n_posts=m["n_posts"], n_days=m["n_days"],
             n_cashtags=len(m.get("tickers", [])), n_tracked=tracked,
             n_hand_labels=m["n_hand_labels"], n_machine_labels=m["n_machine_labels"],
+            n_llm_labels=int(m.get("n_llm_labels", 0)),
         ))
     if not accounts:
         raise FileNotFoundError(f"no account directories with a meta.json under {root}/")

@@ -163,3 +163,69 @@ def import_labels(handle: str, path: Path, *, dry_run: bool = False) -> dict[str
         raise IngestError(f"{path} carries no rows")
     return import_rows(handle, rows, dry_run=dry_run)
 
+
+def adopt_audit(handle: str, *, dry_run: bool = False) -> dict[str, int]:
+    """Apply the LLM second reading to the corpus as its OWN source tier.
+
+    WHY `src: "llm"` AND NOT `"hand"`. The second reading is measurably better than the upstream
+    labeller — 77% on bias against the 83 held-out hand labels, where the brief puts the original
+    at ~55% — so adopting it improves the corpus. But it is still a MACHINE reading, and `hand`
+    means a person read the post. Writing it as `hand` would launder one machine's guesses into the
+    reference set that every future accuracy claim is measured against, and nothing downstream
+    could ever tell the two apart again. Three tiers, honestly labelled, cost nothing.
+
+    A HAND LABEL IS NEVER OVERWRITTEN. Those 83 rows are the only ground truth there is.
+
+    THE MACHINE'S ORIGINAL IS PRESERVED, once, in ``labels.machine.json``. Without it the
+    before/after comparison — and the ability to undo this — would be gone the moment it ran.
+    """
+    d = account_dir(handle)
+    from vinci.calls.audit import load_audit
+
+    labels: dict[str, Any] = json.loads((d / "labels.json").read_text())
+    audit = load_audit(handle)
+
+    backup = d / "labels.machine.json"
+    if not backup.is_file() and not dry_run:
+        backup.write_text(json.dumps(labels, separators=(",", ":")))
+
+    counts = {"rows": len(labels), "adopted": 0, "unchanged": 0, "hand_kept": 0,
+              "no_reading": 0, "bias_changed": 0}
+    for key, cur in labels.items():
+        tid, _, tkr = key.partition("|")
+        if cur.get("src") == "hand":
+            counts["hand_kept"] += 1
+            continue
+        r = audit.get(tid)
+        if r is None:
+            counts["no_reading"] += 1
+            continue
+        t = next((x for x in r.tickers if x.ticker.upper() == tkr.upper()), None)
+        if t is None:
+            counts["no_reading"] += 1
+            continue
+        before = cur.get("bias")
+        new = {**cur, "bias": t.bias, "action": t.action, "target": t.target,
+               "target_type": t.target_type, "hlo": t.horizon_lo_days, "hhi": t.horizon_hi_days,
+               "spec": t.spec, "post_class": r.post_class, "is_conditional": r.is_conditional,
+               "is_retrospective": r.is_retrospective, "src": "llm"}
+        if new == cur:
+            counts["unchanged"] += 1
+            continue
+        counts["adopted"] += 1
+        if before != t.bias:
+            counts["bias_changed"] += 1
+        if not dry_run:
+            labels[key] = new
+
+    if dry_run:
+        return counts
+    (d / "labels.json").write_text(json.dumps(labels, separators=(",", ":")))
+    _refresh_day_labels(d, labels)
+    meta_p = d / "meta.json"
+    meta = json.loads(meta_p.read_text())
+    meta["n_hand_labels"] = sum(1 for v in labels.values() if v.get("src") == "hand")
+    meta["n_machine_labels"] = sum(1 for v in labels.values() if v.get("src") == "machine")
+    meta["n_llm_labels"] = sum(1 for v in labels.values() if v.get("src") == "llm")
+    meta_p.write_text(json.dumps(meta, indent=2) + "\n")
+    return counts

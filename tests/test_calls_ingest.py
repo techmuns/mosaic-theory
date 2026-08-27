@@ -56,7 +56,10 @@ def test_a_hand_label_replaces_the_machine_guess_at_the_same_key(
     d = _corpus(tmp_path)
     monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
     labels = json.loads((d / "labels.json").read_text())
-    key = next(k for k, v in labels.items() if v.get("src") == "machine")
+    # ANY non-hand tier, not "machine" specifically. The corpus now carries `llm` rows too (the
+    # adopted second reading), and the property under test is "a HUMAN's reading replaces whatever
+    # machine reading sat at that key" — which tier it was is not what this pin is about.
+    key = next(k for k, v in labels.items() if v.get("src") != "hand")
     tid, _, tkr = key.partition("|")
 
     r = import_labels("x", _write(tmp_path / "in.jsonl", [_row(tid, tkr)]))

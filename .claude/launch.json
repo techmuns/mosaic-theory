@@ -2,6 +2,17 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "audit-preview",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-mac-Documents-GitHub-mosaic-theory--claude-worktrees-adoring-heisenberg-d54179/73dfcb91-6403-4033-8db3-887fda1a302d/scratchpad/serve_nocache.py",
+        "/private/tmp/claude-501/-Users-mac-Documents-GitHub-mosaic-theory--claude-worktrees-adoring-heisenberg-d54179/73dfcb91-6403-4033-8db3-887fda1a302d/scratchpad",
+        "8952"
+      ],
+      "port": 8952,
+      "autoPort": false
+    },
+    {
       "name": "calls-tape",
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": [

@@ -1748,7 +1748,7 @@ def _cmd_calls_accounts(args: argparse.Namespace) -> int:
     for a in idx.accounts:
         print(f"  {a.display:<22} {a.first}..{a.last}  posts={a.n_posts:>6}  "
               f"tracked={a.n_tracked:>4}  hand={a.n_hand_labels:>4}  "
-              f"machine={a.n_machine_labels:>6}")
+              f"machine={a.n_machine_labels:>6}  llm={a.n_llm_labels:>6}")
     return 0
 
 
@@ -1896,6 +1896,26 @@ def _cmd_calls_import_sheet(args: argparse.Namespace) -> int:
         print(f"  hand labels now    {r['hand_total']:>5}")
         print(f"  calendar days recounted {r['days_recounted']:>5}")
         print("  scores are NOT updated — run `vinci calls score` to re-score.")
+    return 0
+
+
+def _cmd_calls_adopt(args: argparse.Namespace) -> int:
+    """Apply the LLM second reading to the corpus as `src: "llm"`.
+
+    A hand label is never overwritten, and the machine's original is preserved once in
+    labels.machine.json so this is reversible and the comparison stays reconstructible.
+    """
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.ingest import adopt_audit
+    handle = load_accounts().get(args.account).handle
+    c = adopt_audit(handle, dry_run=args.dry_run)
+    print(f"{handle}: {'would adopt' if args.dry_run else 'adopted'} the second reading")
+    for k, lab in (("adopted", "rows updated"), ("bias_changed", "  of which bias moved"),
+                   ("unchanged", "already identical"), ("hand_kept", "hand labels left alone"),
+                   ("no_reading", "no reading available")):
+        print(f"  {lab:<26}{c[k]:>6}")
+    if not args.dry_run:
+        print("  run `vinci calls score` to re-score on the adopted tags.")
     return 0
 
 
@@ -3675,6 +3695,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_cis.add_argument("--dry-run", action="store_true", dest="dry_run",
                        help="report what would change and write nothing")
     p_cis.set_defaults(func=_cmd_calls_import_sheet)
+    p_cad = calls_sub.add_parser("adopt-audit",
+                                 help="apply the LLM second reading as src=llm (never over hand)")
+    p_cad.add_argument("--account", help="handle (default: the index's default)")
+    p_cad.add_argument("--dry-run", action="store_true", dest="dry_run")
+    p_cad.set_defaults(func=_cmd_calls_adopt)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

@@ -119,7 +119,11 @@ def test_across_the_whole_corpus_only_the_authorised_classes_changed() -> None:
     labels = json.loads(LABELS.read_text())
     named = {k: v for k, v in labels.items()
              if v.get("target_type") not in (None, "none") and v.get("target")}
-    assert len(named) > 3000, f"corpus shrank to {len(named)} named targets — re-check the fixture"
+    # A FLOOR, NOT A CENSUS. How many targets the corpus names moves every time the tags are
+    # re-read — adopting the second reading took it from 3,433 to 2,132, because the machine had
+    # been reading flow amounts and durations as price targets. The pin exists to catch the fixture
+    # VANISHING, so it wants a floor well clear of zero, not a number that reddens on a re-tag.
+    assert len(named) > 800, f"corpus shrank to {len(named)} named targets — re-check the fixture"
 
     gained, changed = [], []
     for key, lab in named.items():
@@ -154,12 +158,17 @@ def test_across_the_whole_corpus_only_the_authorised_classes_changed() -> None:
         f"only {len(changed)} descending ranges moved — the by-value fix is barely doing anything; "
         f"re-check that the corpus still contains descending ranges")
     assert gained, "nothing was recovered — the fix is not doing anything on the real corpus"
-    # every recovery is the same shape: a minus-signed percentage whose direction agrees with bias
-    for key, tgt, bias in gained:
-        assert str(tgt).strip().startswith("-") and bias == "bearish", (
-            f"{key} was recovered for an unexpected reason ({tgt!r}, {bias}) — the fix widened "
-            f"beyond negative percentages")
-    assert len(gained) == 13, f"expected the 13 known dropped calls, got {len(gained)}"
+    # EVERY RECOVERY IS A VALUE tracker.py's arithmetic dropped — never prose. The corpus now
+    # carries richer target strings than the original labeller ever wrote ("$450+", "$215/$220",
+    # and, before the grammar was tightened, whole sentences). Recovering a bare value is the fix;
+    # recovering the first number out of "532 breakout to 540/544 or reject to 508" would be a
+    # fabrication dressed as a parse, so the shape of what may be recovered is what this pins.
+    from vinci.calls.targets import _VALUE_ONLY
+    for key, tgt, _bias in gained:
+        assert _VALUE_ONLY.match(str(tgt).replace(",", "")), (
+            f"{key} recovered a target from PROSE ({tgt!r}) — the first number in a sentence is "
+            f"not the target it describes")
+    assert gained, "nothing was recovered — the fix is not doing anything on the real corpus"
 
 
 # --------------------------------------------------------------------------- implausible targets
@@ -203,8 +212,14 @@ def test_without_an_entry_the_target_is_not_refused_for_want_of_one() -> None:
 
 @pytest.mark.skipif(not LABELS.is_file(), reason="no committed calls corpus")
 def test_the_implausible_band_does_not_swallow_ordinary_calls() -> None:
-    """A guard that refuses too much is its own defect. Against every resolvable point/range target
-    in the corpus priced at its own entry, the overwhelming majority must survive."""
+    """A guard that refuses too much is its own defect. Against every point/range target in the
+    corpus priced at its OWN level — where the ratio is ~1 and the band should never bite — the
+    overwhelming majority must survive.
+
+    ISOLATED FROM THE GRAMMAR (2026-08-27). This counted every non-resolution as a band refusal,
+    so when the value grammar landed it started failing on prose targets the band never saw — a
+    test reporting the wrong culprit is worse than no test. Only value-shaped targets are measured
+    here; the grammar has its own pins."""
     import statistics
     labels = json.loads(LABELS.read_text())
     kept, refused = 0, 0
@@ -213,6 +228,9 @@ def test_the_implausible_band_does_not_swallow_ordinary_calls() -> None:
             continue
         # price each target against ITSELF scaled to a realistic entry, so the test measures the
         # band and not the corpus's price levels
+        from vinci.calls.targets import _VALUE_ONLY
+        if not _VALUE_ONLY.match(str(v["target"]).replace(",", "")):
+            continue            # prose — the grammar's business, not the band's
         nums = [float(x) for x in _RANGE_NUMS.findall(str(v["target"]))][:1]
         if not nums:
             continue
@@ -251,3 +269,47 @@ def test_a_percentage_target_can_never_be_counter_directional() -> None:
     for bias in ("bullish", "bearish"):
         got = parse_target("10%", "pct", 100.0, bias)
         assert got.status is TargetStatus.RESOLVED, f"{bias}: {got.status}"
+
+
+# --------------------------------------------------------------------- a target is a value
+@pytest.mark.parametrize(
+    ("target", "ttype", "admit"),
+    [("172-180", "range", True), ("-10%", "pct", True), ("$450+", "point", True),
+     ("$215/$220", "range", True), ("92.50", "point", True), ("50-100%", "pct", True),
+     ("100%+", "pct", True), ("$500 to $600", "range", True),
+     ("532 breakout to 540/544 or reject to 508", "range", False),
+     ("640-650 rejection, retest 600, then rally to $680+", "range", False),
+     ("around 500 maybe", "point", False), ("new highs by Q3", "point", False)],
+)
+def test_a_target_is_a_value_and_prose_is_refused(target: str, ttype: str, admit: bool) -> None:
+    """THE FIRST NUMBER IN A SENTENCE IS NOT THE TARGET IT DESCRIBES. "532 breakout to 540/544 or
+    reject to 508" names 532 as the CURRENT level; the outcomes are 540/544 and 508. Reading 532
+    as the target is a fabrication dressed as a parse.
+
+    This was invisible until richer readings entered the corpus — the original labeller only ever
+    emitted bare values, so nothing exercised it (0 of its 3,397 named targets are prose-shaped).
+    The first pass at the grammar was then too TIGHT and refused "100%+" and "$500 to $600", which
+    are ordinary ways to write a value; both directions are pinned here."""
+    got = parse_target(target, ttype, 500.0, "bearish" if target.startswith("-") else "bullish")
+    assert got.resolved is admit, f"{target!r}: expected resolved={admit}, got {got.status.value}"
+    if not admit:
+        assert got.status is TargetStatus.UNPARSEABLE
+
+
+@pytest.mark.skipif(not LABELS.is_file(), reason="no committed calls corpus")
+def test_the_value_grammar_refuses_nothing_the_original_labeller_wrote() -> None:
+    """A guard that refuses real data is its own defect. Measured against the machine tags the
+    corpus shipped with: every one of them is value-shaped, so the grammar costs nothing there and
+    only bites on the free-text the second reader introduced."""
+    from vinci.calls.targets import _VALUE_ONLY
+
+    machine = ROOT / "data" / "calls" / "pdicarlotrader" / "labels.machine.json"
+    if not machine.is_file():
+        pytest.skip("no pre-adoption snapshot")
+    labels = json.loads(machine.read_text())
+    prose = [v["target"] for v in labels.values()
+             if v.get("target_type") not in (None, "none", "qualitative") and v.get("target")
+             and not _VALUE_ONLY.match(str(v["target"]).replace(",", ""))]
+    assert not prose, (
+        f"the value grammar refuses {len(prose)} target(s) the original labeller wrote, e.g. "
+        f"{prose[:5]} — it is too tight and is discarding real data")
