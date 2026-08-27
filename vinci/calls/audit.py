@@ -183,8 +183,8 @@ def audit_path(handle: str) -> Path:
     return account_dir(handle) / "audit.jsonl"
 
 
-def load_audit(handle: str) -> dict[str, PostReading]:
-    p = audit_path(handle)
+def load_audit(handle: str, *, path: Path | None = None) -> dict[str, PostReading]:
+    p = path or audit_path(handle)
     if not p.is_file():
         return {}
     out: dict[str, PostReading] = {}
@@ -198,15 +198,25 @@ def load_audit(handle: str) -> dict[str, PostReading]:
 def run_audit(
     handle: str, *, posts: Iterable[dict[str, Any]], tickers_of: Any,
     client: LlmClient | None = None, workers: int = 8, limit: int | None = None,
-    on_done: Any = None,
+    on_done: Any = None, out: Path | None = None, model: str | None = None,
 ) -> dict[str, int]:
-    """Audit every post not already in ``audit.jsonl``. Appends as results land."""
-    cli = client or AnthropicLlmClient(model=get_config().calls_audit_llm_model)
-    done = set(load_audit(handle))
+    """Audit every post not already in the output file. Appends as results land.
+
+    ``out`` NEVER DEFAULTS TO SOMETHING ELSE'S FILE. A re-reading by a different model is a second
+    opinion, not a replacement: ``audit.jsonl`` is what the corpus was adopted FROM, so a stronger
+    model writes beside it and is COMPARED before anything is adopted. Overwriting it would destroy
+    the only record of what the corpus's tags were derived from — and with it the ability to say
+    whether the new reading is better at all.
+
+    ``done`` is read from the OUT file, so each model's run resumes against its own results rather
+    than skipping every post another model already covered.
+    """
+    cli = client or AnthropicLlmClient(model=model or get_config().calls_audit_llm_model)
+    out_p = out or audit_path(handle)
+    done = set(load_audit(handle, path=out_p))
     todo = [p for p in posts if str(p["id"]) not in done]
     if limit is not None:
         todo = todo[:limit]
-    out_p = audit_path(handle)
     lock = threading.Lock()
     counts = {"attempted": 0, "ok": 0, "failed": 0, "skipped": len(done)}
     if not todo:

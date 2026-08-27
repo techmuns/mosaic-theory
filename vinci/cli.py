@@ -1831,6 +1831,7 @@ def _cmd_calls_audit(args: argparse.Namespace) -> int:
     """
     import json as _json
     import time as _time
+    from pathlib import Path as _Path
 
     from vinci.calls.accounts import account_dir, load_accounts
     from vinci.calls.audit import audit_path, run_audit
@@ -1839,6 +1840,17 @@ def _cmd_calls_audit(args: argparse.Namespace) -> int:
     for f in sorted((account_dir(handle) / "posts").glob("*.json")):
         posts.extend(_json.loads(f.read_text()))
     posts.sort(key=lambda p: str(p.get("d")))
+    # A SECOND READER WRITES BESIDE THE FIRST, never over it: `audit.jsonl` is what the corpus's
+    # tags were adopted from, so a different model needs `--out` and the two get COMPARED against
+    # the hand labels before anything is adopted.
+    out = _Path(args.out) if args.out else None
+    if args.model and not out:
+        raise SystemExit("--model needs --out: a different model must not overwrite the reading "
+                         "the corpus was adopted from. Give it its own file.")
+    if args.only:
+        want = {ln.strip() for ln in _Path(args.only).read_text().splitlines() if ln.strip()}
+        posts = [p for p in posts if str(p["id"]) in want]
+        print(f"  restricted to {len(posts)} of the account's posts by --only")
     t0 = _time.time()
 
     def _prog(counts: dict[str, int], _r: object) -> None:
@@ -1850,9 +1862,10 @@ def _cmd_calls_audit(args: argparse.Namespace) -> int:
 
     counts = run_audit(handle, posts=posts,
                        tickers_of=lambda p: [str(t).lstrip("$") for t in (p.get("tk") or [])],
-                       workers=args.workers, limit=args.limit, on_done=_prog)
+                       workers=args.workers, limit=args.limit, on_done=_prog,
+                       out=out, model=args.model)
     print(f"{handle}: {counts['attempted']} audited, {counts['failed']} failed, "
-          f"{counts['skipped']} already done -> {audit_path(handle)}")
+          f"{counts['skipped']} already done -> {out or audit_path(handle)}")
     return 0
 
 
@@ -3683,6 +3696,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_ca2.add_argument("--account", help="handle (default: the index's default)")
     p_ca2.add_argument("--workers", type=int, default=8, help="concurrent calls (default 8)")
     p_ca2.add_argument("--limit", type=int, help="stop after N un-audited tweets (for a dry look)")
+    p_ca2.add_argument("--model", help="override the configured model (requires --out)")
+    p_ca2.add_argument("--out", help="write to this file instead of audit.jsonl — REQUIRED for a "
+                                     "different model, which must not overwrite the first reading")
+    p_ca2.add_argument("--only", help="path to a file of tweet ids, one per line: audit only these")
     p_ca2.set_defaults(func=_cmd_calls_audit)
     p_csh = calls_sub.add_parser("sheet", help="build the local audit workbook (.xlsx)")
     p_csh.add_argument("--account", help="handle (default: the index's default)")

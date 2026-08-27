@@ -168,3 +168,57 @@ def test_a_run_with_nothing_to_do_makes_no_calls(
     stub = _Stub()
     counts = run_audit("acct", posts=[POST], tickers_of=lambda p: ["AAA"], client=stub, workers=2)
     assert stub.calls == [] and counts["attempted"] == 0 and counts["skipped"] == 1
+
+
+# ---------------------------------------------------------------------------
+# A SECOND READER WRITES BESIDE THE FIRST, NEVER OVER IT. `audit.jsonl` is what the corpus's tags
+# were adopted FROM. A stronger model re-reading the same posts is a second OPINION that has to be
+# COMPARED against the hand labels before anything is adopted — and if it wrote to the same file,
+# the record of what the corpus was derived from would be gone, taking with it the only way to
+# answer "is the new reading actually better?". Measured 2026-08-28: opus-5 scored 77% against the
+# unanchored gold labels and sonnet-5 scored 77%. Overwriting would have destroyed the comparison
+# that showed the upgrade buys nothing.
+# ---------------------------------------------------------------------------
+
+def test_a_second_model_writes_beside_the_first_and_resumes_against_its_own_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    d = tmp_path / "acct"
+    d.mkdir()
+    monkeypatch.setattr("vinci.calls.audit.account_dir", lambda h, **k: d)
+    posts = [dict(POST, id=str(i)) for i in range(1, 4)]
+
+    first = _Stub(*([GOOD] * 3))
+    run_audit("acct", posts=posts, tickers_of=lambda p: ["AAA"], client=first, workers=2)
+    canonical = (d / "audit.jsonl").read_text()
+    assert len(canonical.strip().splitlines()) == 3
+
+    other = d / "audit_opus.jsonl"
+    second = _Stub(*([GOOD] * 3))
+    c = run_audit("acct", posts=posts, tickers_of=lambda p: ["AAA"], client=second,
+                  workers=2, out=other)
+    assert c["skipped"] == 0, "the second model skipped posts the FIRST model had already read"
+    assert c["attempted"] == 3 and len(second.calls) == 3
+    assert (d / "audit.jsonl").read_text() == canonical, "the first reading was written over"
+    assert set(load_audit("acct", path=other)) == {"1", "2", "3"}
+
+    third = _Stub(*([GOOD] * 3))
+    c2 = run_audit("acct", posts=posts, tickers_of=lambda p: ["AAA"], client=third,
+                   workers=2, out=other)
+    assert c2["skipped"] == 3 and not third.calls, "the second file did not resume against itself"
+
+
+def test_the_model_override_reaches_the_client(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`--model` is inert unless it reaches the client. A silent fallback to the configured model
+    would compare one model against ITSELF, and the tie would read as "the upgrade buys nothing"."""
+    d = tmp_path / "acct"
+    d.mkdir()
+    monkeypatch.setattr("vinci.calls.audit.account_dir", lambda h, **k: d)
+    seen: list[str] = []
+    monkeypatch.setattr("vinci.calls.audit.AnthropicLlmClient",
+                        lambda model: seen.append(model) or _Stub(GOOD))  # type: ignore[misc]
+    run_audit("acct", posts=[dict(POST, id="1")], tickers_of=lambda p: ["AAA"],
+              workers=1, out=d / "x.jsonl", model="claude-opus-5")
+    assert seen == ["claude-opus-5"], f"the override never reached the client: {seen}"
