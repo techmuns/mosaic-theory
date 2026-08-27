@@ -180,8 +180,13 @@ def test_the_calendars_hand_label_tally_follows_the_import(
     The corpus is produced upstream; this repo has no builder for `days.json`. So before the fix an
     import landed the labels, updated `meta.json`'s totals — and left every day still showing its
     pre-import tally. The operator browses back to the month they just worked and the tool tells
-    them they never labelled it. Pinned against the REAL corpus: 2024-08-01 carries 20 posts and a
-    `lab` of 0, and `1819010251032502488|MSFT` is a machine guess on that day.
+    them they never labelled it.
+
+    Run against the REAL corpus, so the target day is DERIVED, never named. An earlier version
+    pinned 2024-08-01 and `1819010251032502488|MSFT` by hand and went red the day the operator
+    hand-labelled that date — a value-level pin on a living artifact, which is the one thing an
+    e2e test here must not do. The invariant is what matters: import a hand label onto a day the
+    calendar shows as unlabelled, and that day's tally moves to 1.
     """
     d = _corpus(tmp_path)
     for extra in ("days.json",):
@@ -192,12 +197,22 @@ def test_the_calendars_hand_label_tally_follows_the_import(
     monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
 
     before = json.loads((d / "days.json").read_text())
-    assert before["2024-08-01"]["lab"] == 0, "fixture day is no longer unlabelled — re-point it"
+    posts_by_day: dict[str, list[dict[str, Any]]] = {}
+    for f in sorted((d / "posts").glob("*.json")):
+        for post in json.loads(f.read_text()):
+            posts_by_day.setdefault(str(post["d"]), []).append(post)
+    day, post = next(
+        ((k, ps[0]) for k, v in sorted(before.items()) if v["lab"] == 0
+         for ps in [posts_by_day.get(k, [])] if ps and ps[0].get("tk")),
+        (None, None))
+    if day is None or post is None:
+        pytest.skip("every day in the corpus already carries a hand label")
+    ticker = str(post["tk"][0]).lstrip("$")
 
     r = import_labels("x", _write(tmp_path / "in.jsonl",
-                                  [_row("1819010251032502488", "MSFT", date="2024-08-01")]))
+                                  [_row(str(post["id"]), ticker, date=day)]))
     after = json.loads((d / "days.json").read_text())
-    assert after["2024-08-01"]["lab"] == 1, "the calendar still shows the pre-import tally"
+    assert after[day]["lab"] == 1, "the calendar still shows the pre-import tally"
     assert r["days_recounted"] == 1
     # DERIVED, not incremented: the per-day tallies must still sum to the corpus's hand total.
     meta = json.loads((d / "meta.json").read_text())
