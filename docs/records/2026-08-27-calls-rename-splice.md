@@ -59,6 +59,6 @@ is fetched under both symbols and says so; a `null` successor is left alone; an 
 still costs exactly one call). MUTATION-CHECKED, four separate mutations including reinstating the
 original bug — each reddens exactly its own test.
 
-**Not done.** `BRKB` is the same class of problem in punctuation form (Polygon wants `BRK.B`) and
-would now be a one-line map entry recovering 6 rows. It is NOT a rename, and whether an alias
-belongs in a map called `renamed` is a judgment left to the operator.
+**Follow-up, since taken.** `BRKB` is the same class of problem in punctuation form (Polygon wants
+`BRK.B`). Flagged here as the operator's judgment — an alias is not a rename — and DONE the same
+day: see `docs/records/2026-08-27-calls-notation-alias.md`.

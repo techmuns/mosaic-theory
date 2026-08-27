@@ -98,7 +98,10 @@ class _FakeClient:
 
     def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
         self.asked.append(symbol)
-        return {"SQ": OLD, "XYZ": NEW, "TWTR": OLD, "AAA": OLD}.get(symbol, [])
+        # `BRKB` answers to nothing; `BRK.B` carries the whole window. That is NOTATION, not a
+        # rename, and it must not be mistaken for a delisting.
+        return {"SQ": OLD, "XYZ": NEW, "TWTR": OLD, "AAA": OLD,
+                "BRK.B": OLD + NEW}.get(symbol, [])
 
 
 @pytest.fixture()
@@ -106,10 +109,10 @@ def acct(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     d = tmp_path / "calls" / "acct"
     (d / "bars").mkdir(parents=True)
     (d / "tickers.json").write_text(json.dumps({
-        "note": "t", "renamed": {"SQ": "XYZ", "TWTR": None},
+        "note": "t", "renamed": {"SQ": "XYZ", "TWTR": None, "BRKB": "BRK.B"},
         "tickers": [{"ticker": t, "mentions": 1, "first_mention": "2025-01-15",
                      "last_mention": "2025-01-22", "fetch_from": "2024-10-12",
-                     "fetch_to": "2026-01-22"} for t in ("SQ", "TWTR", "AAA")]}))
+                     "fetch_to": "2026-01-22"} for t in ("SQ", "TWTR", "AAA", "BRKB")]}))
     monkeypatch.setattr("vinci.calls.bars.account_dir", lambda h, **k: d)
     return d
 
@@ -142,3 +145,17 @@ def test_an_unmapped_ticker_costs_exactly_one_call(acct: Path) -> None:
     fetch_account_bars("acct", client=cli, only={"AAA"})
     assert [s for s in cli.asked if s != "SPY"] == ["AAA"], "an extra call for an unmapped ticker"
     assert "renamed_to" not in _written(acct, "AAA")
+
+
+def test_a_notation_alias_is_the_successors_series_outright(acct: Path) -> None:
+    """`$BRKB` is how he types it; `BRK.B` is what Polygon answers to. The cashtag returns an empty
+    series, which reads exactly like a delisting — so the alias must produce the WHOLE window, and
+    must NOT claim a splice that never happened."""
+    cli = _FakeClient()
+    counts = fetch_account_bars("acct", client=cli, only={"BRKB"})
+
+    assert counts["BRKB"] == 5, "the alias did not carry the successor's full window"
+    brk = _written(acct, "BRKB")
+    assert brk["bars"][0][0] == "2025-01-15" and brk["bars"][-1][0] == "2025-01-22"
+    assert brk["renamed_to"] == "BRK.B"
+    assert "spliced_at" not in brk, "nothing was spliced — there was no cashtag half to hand over"

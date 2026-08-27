@@ -14,11 +14,18 @@ adjusted, disk-cached, fail-loud on a bad status. Nothing here re-implements it.
 THE WINDOW comes from ``tickers.json`` (first mention −3mo, last mention +12mo), so a ticker
 mentioned once costs one small call rather than a full-history pull.
 
-A CASHTAG IS NOT ALWAYS A SYMBOL. He posts the ticker he knew; the exchange may have renamed it
-since. Polygon serves each symbol only for the span it was live, so fetching the cashtag alone
-truncates the window at the rename with NOTHING SAID — ``$SQ`` stopped dead at 2025-01-17, the day
-Block became XYZ, and every later ``$SQ`` post silently lost its price. ``tickers.json`` carries a
-``renamed`` map for exactly this; ``_splice_rename`` is what finally reads it.
+A CASHTAG IS NOT ALWAYS A SYMBOL. He posts the ticker he knew; the vendor may want a different
+string. ``tickers.json``'s ``renamed`` map is read as **cashtag → the symbol Polygon serves it
+under**, which covers two cases the fetcher used to fail silently on:
+
+- a RENAME mid-window. Polygon serves each symbol only for the span it was live, so fetching the
+  cashtag alone truncated the window with NOTHING SAID — ``$SQ`` stopped dead at 2025-01-17, the
+  day Block became XYZ, and every later ``$SQ`` post lost its price.
+- NOTATION. ``$BRKB`` is how he types it and ``BRK.B`` is what Polygon answers to; the cashtag
+  returns an empty series and the file looks like a delisting.
+
+The first needs a splice, the second is the successor's series outright — ``_splice_rename``
+handles both, and ``null`` (TWTR) is a delisting with no successor at all.
 """
 from __future__ import annotations
 
