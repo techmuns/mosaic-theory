@@ -28,6 +28,10 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.6",
     "mypy>=1.11",
+    # The calls-tape AUDIT SHEET only (`vinci calls sheet`) — a LOCAL operator workbook with
+    # validation dropdowns and disagreement highlighting, not a product surface. Dev-only on
+    # purpose: nothing the pipeline or the deploy runs needs to write .xlsx.
+    "openpyxl>=3.1",
 ]
 
 [project.scripts]

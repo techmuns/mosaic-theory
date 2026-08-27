@@ -105,3 +105,10 @@ data/assay_history/
 # Rendered external packs — regenerable exports, never committed (external-record rule
 # archives the MEMO verbatim in docs/ic/; the pack itself is a render of committed data).
 out/
+
+# The calls-tape AUDIT WORKBOOK is an operator working file: it is regenerated from the corpus by
+# `vinci calls sheet`, it carries in-progress human judgement that is not a record until it comes
+# back through `calls import-sheet`, and it is a multi-megabyte binary that would not diff. The
+# durable halves ARE committed: audit.jsonl (the paid LLM reading) and gold_labels.jsonl (the
+# verified result).
+calls_audit_*.xlsx

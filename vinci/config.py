@@ -95,6 +95,10 @@ class Config(BaseModel, frozen=True):
     # Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable — see STATE.md).
     # Accuracy gates the moat hypothesis, so we run the stronger model; swappable config knob.
     graph_llm_model: str = "claude-opus-4-8"
+    #: The calls-tape tag AUDIT (`vinci calls audit`). A cheaper tier than the graph track
+    #: on purpose: this reads a short public tweet and PROPOSES a tag reading for a human to
+    #: confirm — it decides nothing, and the human's sheet is the record.
+    calls_audit_llm_model: str = "claude-sonnet-5"
     # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
     # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
     # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-
