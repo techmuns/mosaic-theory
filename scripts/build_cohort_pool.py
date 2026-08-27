@@ -42,10 +42,18 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SNAP = ROOT / "data" / "snapshots"
 OUT = SNAP / "cohort_pool.jsonl"
 
-#: Stages whose names are worth adding: they exist and trade, they are simply outside the BAND or
-#: below the work floor. `no_price` / `no_shares` cannot contribute a return at all, and the SIC
-#: denylist stages are excluded for the same reason the screen excludes them.
-POOLABLE = ("out_of_band", "below_adv_floor")
+#: Stages whose names are worth adding: they exist and trade, they were simply rejected for
+#: something that has no bearing on whether they moved with their industry.
+#:
+#: `no_shares` WAS EXCLUDED ON A WRONG PREMISE (review, #509). The first cut lumped it with
+#: `no_price` as "cannot contribute a return" — but `no_shares` is a missing SHARE COUNT, which
+#: defeats a MARKET CAP, not a return, and `universe.py` checks it AFTER `no_price`, so every one
+#: of those 1,923 names has both window closes. They were dropped for being un-sizeable, and an
+#: industry's move does not care what a member's market cap is.
+#:
+#: `no_price` stays out: no price, no return. The SIC denylist and the security-type allowlist are
+#: applied below, for the same reasons the screen applies them.
+POOLABLE = ("out_of_band", "below_adv_floor", "no_shares")
 
 #: How many EDGAR resolver failures are tolerated before the run is abandoned. A few dead CIKs are
 #: normal; a wave is an outage, and an outage that only thins the pool is invisible in the output.

@@ -194,3 +194,26 @@ def test_the_pool_cannot_pay_for_the_sic_coverage_guard() -> None:
     degraded = {t: (full.get(t) if t in keep else "") for t in full}
     with pytest.raises(ValueError, match="SIC map covers"):
         cohort_reads(cfg.snapshots_dir, degraded)
+
+
+def test_the_pool_admits_every_stage_that_can_supply_a_return() -> None:
+    """A MISSING SHARE COUNT IS NOT A MISSING PRICE (review, #509).
+
+    The first cut excluded `no_shares` alongside `no_price`, on the stated premise that neither
+    "can contribute a return at all". `no_shares` is a missing SHARE COUNT — it defeats a MARKET
+    CAP, not a return — and `universe.py` checks it AFTER `no_price`, so all 1,923 of those names
+    have both window closes. They were dropped for being un-sizeable, and an industry's move does
+    not care what a member's market cap is.
+
+    `no_price` stays out for the reason the other was wrongly given: no price, no return."""
+    from vinci.cohort import POOL  # noqa: F401  (import proves the module still exposes the pool)
+    src = (ROOT / "scripts" / "build_cohort_pool.py").read_text()
+    import re
+    m = re.search(r"POOLABLE = \(([^)]*)\)", src)
+    assert m, "POOLABLE is gone"
+    stages = set(re.findall(r'"([a-z_]+)"', m.group(1)))
+    assert "no_shares" in stages, (
+        "`no_shares` is excluded again — those names have prices, and dropping them costs the pool "
+        "~1,900 peers on a premise that confuses a share count with a price")
+    assert "no_price" not in stages, "`no_price` names have no return to contribute"
+

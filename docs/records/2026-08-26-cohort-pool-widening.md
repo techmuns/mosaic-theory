@@ -107,3 +107,44 @@ offline suite green with `data/vinci.db` moved aside.
 grounds that they "cannot contribute a return at all". That is false: `no_shares` means no EDGAR
 XBRL SHARE COUNT, and the stage sits AFTER `no_price`, so every one of those names has both window
 closes. It is the same under-representation this PR fixes, one stage over, and needs its own build.
+
+## Amendments
+
+**2026-08-26 — the review found the operator ruling I had skipped, and two premises of mine were
+wrong.** Recorded rather than edited in, per the amendment contract.
+
+**THE WARRANTS.** The pool held **276 non-equity instruments** — 95 warrants, 70 structured
+products, 51 preferreds, 41 ETNs — because `universe.py` applies its security-type allowlist AFTER
+the cap band, so `out_of_band` names never met it. Sixty were the *warrant of a name already
+pooled*: `RVMDW +483%` beside `RVMD +92%`, `PDYNW −98%` inside SIC 7372, the very industry this
+record is about. **STATE.md had this blocked on an operator ruling and I replaced the row without
+applying it.** Fixed by reusing `admit_security_type`, fail-closed.
+
+**THE TRAJECTORY WAS TWO MEASUREMENTS ON ONE LINE.** Only the newest run was widened, so each
+industry's last point was measured over ~2.5x the peers of the earlier ones. *Services-Business
+Services* shipped as `[−7.8%, +11.7%, +14.7%, −7.5%]` where the narrow series ended **+22.9%** — a
+30-point "reversal" no constituent made. Each run now uses its own pool, and the series is
+truncated to the contiguous same-basis tail (one point today).
+
+**AND THE COVERAGE GUARD WAS BEING FED THE ANSWER.** The pool merged *before* the SIC-coverage
+check, and pool rows always carry a resolved SIC — so a screened map resolving only ~48% cleared
+the 80% bar. Coverage is now measured over the screened set, before the merge.
+
+**`no_shares` ADMITTED — and my correction overstated its size.** Excluding it alongside `no_price`
+was wrong: a missing SHARE COUNT defeats a market cap, not a return. But the claim that "all 1,923
+have both window closes" — the reviewer's, which I repeated without checking — is also wrong:
+**1,080 of them have no price at a window endpoint** (recent bars when the screen looked, none on
+2026-02-25). Net **+753** peers, not +1,923. Direction right, magnitude overstated by both of us.
+
+**THE FALSIFIER WAS ONE-SIDED AGAINST ITS OWN PRE-REGISTRATION.** `scripts/cohort_anchoring_falsifier.py`
+states the test fires when the worked-rate "differs between `own` and `cohort`", then tested
+`gap > threshold` — so a 35-point gap the other way would have read "within tolerance" forever.
+Now two-sided.
+
+**FINAL STATE.** Peers **5,002** (1,755 screened + 3,247 pooled), median cohort **34**. Calls:
+own 81 · cohort 65 · unresolved 96 · no-cohort 26. Order, every score and 58 structural flags
+identical after re-ranking.
+
+**STILL OPEN (recorded, not done):** backfill pools for the three prior runs so the trajectory
+regains its earlier points on the same basis.
+
