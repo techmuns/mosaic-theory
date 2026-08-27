@@ -140,3 +140,29 @@ against the repo rather than assumed:
   sits with Google. It is a lead-source input and must be re-verified before any trade acts on it.
 - **NOT MEASURED:** whether the cohort tiering holds beyond the six names the design was drawn
   against. The 12-of-14 reuse figure is a design claim, not an observation.
+
+## Amendments
+
+**2026-08-27 — the squash title on main carries the claim this record corrects.** #508 merged as
+`4de786b` under the title *"The fund has no between-print altitude, and a live position it cannot
+see — the plan, recorded"*. That was the FIRST commit's message on the branch; GitHub used it for
+the squash. The branch's later commits (`8282fd3`, `d66e0e0`) had already retired that claim as a
+FALSE ABSENCE — `vinci/monitor.py` does watch between prints, via a freshness/trigger panel wired
+at `vinci/cli.py:1699-1732` and committed under `data/monitor/`. This record's H1 and FINDING 2
+carry the corrected claim; **the git title does not, and cannot be rewritten without rewriting
+main.**
+
+Why this is worth an amendment rather than a shrug: CLAUDE.md's existence rule sends a reader to
+`git log --grep` and `git log -S` BEFORE asserting a capability is absent. On this repo the git
+title is not decoration — it is the index that rule consults. A stale title there re-creates
+exactly the false-absence inference the rule exists to prevent, and this record was itself
+corrected for committing that error. Appended, not edited: the wrong version stays visible.
+
+**The durable claim, for anyone arriving from `git log`:** a between-print watcher EXISTS. What is
+absent is indicator EVALUATION — every trigger is re-printed verbatim and none is ever measured.
+Measuring an indicator is not adjudicating a trigger; the panel's refusal to adjudicate is
+deliberate (`vinci/monitor.py:23`, `:468`) and nothing in this plan weakens it.
+
+**Operational note for future squashes:** where a branch corrects its own opening claim, the squash
+title must be reset to the corrected one at merge time — the merge dialog's title field, not the
+first commit, is the thing that lands.
