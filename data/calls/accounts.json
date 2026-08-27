@@ -10,7 +10,7 @@
       "n_days": 606,
       "n_cashtags": 411,
       "n_tracked": 411,
-      "n_hand_labels": 268,
+      "n_hand_labels": 303,
       "n_machine_labels": 0,
       "n_llm_labels": 8102
     }
