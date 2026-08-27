@@ -91,18 +91,51 @@ def test_only_the_rows_marked_verified_come_back(acct: Path, tmp_path: Path) -> 
     assert [(r["tweet_id"], r["ticker"], r["bias"]) for r in rows] == [("1", "BBB", "none")]
 
 
-def test_the_final_band_starts_as_the_current_tag_not_the_second_readers(
+def test_the_final_band_starts_at_what_the_corpus_carries_today(
     acct: Path, tmp_path: Path
 ) -> None:
-    """Pre-filling with the LLM's reading would make the machine's second opinion the default
-    answer — the operator would be confirming a guess rather than judging between two."""
+    """The status quo is what the operator confirms or overrides, so FINAL mirrors NOW. Pre-filling
+    it with anything else — the pre-adoption tag, or a reading nobody accepted — would make that
+    the default answer and turn confirmation into a rubber stamp.
+
+    Nothing ships pre-verified: `verified` is the operator saying they read the row, and a sheet
+    arriving with it set would import 8,185 unread rows as ground truth."""
     p = tmp_path / "a.xlsx"
     build_sheet("acct", p)
     _, ws, ix = _open(p)
     for r in range(2, ws.max_row + 1):
-        assert ws.cell(r, ix["final_bias"]).value == ws.cell(r, ix["cur_bias"]).value
-        assert ws.cell(r, ix["final_spec"]).value == ws.cell(r, ix["cur_spec"]).value
+        assert ws.cell(r, ix["final_bias"]).value == ws.cell(r, ix["now_bias"]).value
+        assert ws.cell(r, ix["final_spec"]).value == ws.cell(r, ix["now_spec"]).value
         assert ws.cell(r, ix["verified"]).value in (None, ""), "a row shipped pre-verified"
+
+
+def test_the_before_column_survives_so_a_change_can_be_checked(
+    acct: Path, tmp_path: Path
+) -> None:
+    """THE ADOPTION REPLACED TAGS IN PLACE. Without the WAS column the operator is asked to confirm
+    a tag with no way to see the move that produced it. And where no pre-adoption snapshot exists,
+    WAS must equal NOW and the row read unchanged — never invent a difference."""
+    p = tmp_path / "a.xlsx"
+    build_sheet("acct", p)                      # no labels.machine.json in this fixture
+    _, ws, ix = _open(p)
+    for r in range(2, ws.max_row + 1):
+        assert ws.cell(r, ix["was_bias"]).value == ws.cell(r, ix["now_bias"]).value
+        assert ws.cell(r, ix["changed"]).value == "no", "a change was invented"
+
+    snap = json.loads((acct / "labels.json").read_text())
+    snap["1|AAA"] = {**snap["1|AAA"], "bias": "bearish", "spec": "B"}
+    (acct / "labels.machine.json").write_text(json.dumps(snap))
+    p2 = tmp_path / "b.xlsx"
+    build_sheet("acct", p2)
+    _, ws2, ix2 = _open(p2)
+    row = next(r for r in range(2, ws2.max_row + 1)
+               if ws2.cell(r, ix2["tweet_id"]).value == "1"
+               and ws2.cell(r, ix2["ticker"]).value == "AAA")
+    assert ws2.cell(row, ix2["was_bias"]).value == "bearish"
+    assert ws2.cell(row, ix2["now_bias"]).value == "bullish"
+    assert ws2.cell(row, ix2["changed"]).value == "YES"
+    assert "bias" in (ws2.cell(row, ix2["changed_on"]).value or "")
+    assert ws2.cell(row, ix2["priority"]).value == "1 direction flipped"
 
 
 def test_a_bad_edit_is_refused_before_anything_merges(acct: Path, tmp_path: Path) -> None:

@@ -4,15 +4,21 @@ NOT A PRODUCT SURFACE. This is an operator tool: a spreadsheet you sort, filter 
 feed back with `vinci calls import-sheet`. The dashboard stays read-only and knows nothing about it.
 
 WHY A SHEET AT ALL, when the tape exists. The tape is for reading ONE call against its chart. This
-is for the other job — walking 8,185 rows, sorting by where two readers disagree, and correcting in
+is for the other job — walking 8,185 rows, sorting by what the adoption changed, and correcting in
 bulk. Different question, different instrument.
 
-THE LAYOUT IS THE ARGUMENT. Four bands, left to right: what he POSTED, what the corpus currently
-TAGS it, what a second reader (the LLM) READ, and what actually HAPPENED to the price. Then the
-FINAL band you edit. The final columns are PRE-FILLED WITH THE CURRENT TAG, not with the LLM's
-reading — the status quo is what you are confirming or overriding, and pre-filling the machine's
-second opinion would quietly make it the default answer. Disagreements are coloured so the eye goes
-there; nothing is hidden or pre-decided.
+THE LAYOUT IS THE ARGUMENT. Five bands, left to right: what he POSTED, what it WAS (the original
+machine labeller), what it is NOW (the adopted second reading, with the reasoning behind it), what
+HAPPENED to the price, and the FINAL band you edit.
+
+WHY "WAS" IS STILL HERE. The adoption replaced the machine's tags IN PLACE. Without the before
+column the operator is asked to confirm a tag with no way to see the move that produced it — a bare
+"changed: YES" and nothing to check it against. It reads `labels.machine.json`, the one-time
+pre-adoption snapshot; where none exists WAS equals NOW and every row reads unchanged, rather than
+the sheet inventing a comparison.
+
+The final columns are PRE-FILLED WITH WHAT THE CORPUS CARRIES TODAY — the status quo is what you
+confirm or override. Changes are coloured so the eye goes there; nothing is hidden.
 """
 from __future__ import annotations
 
@@ -26,26 +32,50 @@ from vinci.calls.audit import ACTIONS, BIASES, CLASSES, SPECS, TARGET_TYPES, loa
 #: Left band: identity + the post itself. Frozen, so the text stays visible while you scroll right.
 COLS_POST = ["tweet_id", "date", "time", "ticker", "text", "url", "media", "likes", "views",
              "n_tickers"]
-COLS_CUR = ["src", "cur_class", "cur_bias", "cur_action", "cur_target", "cur_target_type",
-            "cur_hlo", "cur_hhi", "cur_spec", "cur_needs_review"]
-COLS_LLM = ["llm_class", "llm_bias", "llm_action", "llm_target", "llm_target_type", "llm_hlo",
-            "llm_hhi", "llm_spec", "llm_conditional", "llm_retrospective", "llm_probability",
-            "llm_summary", "llm_note", "agree", "differs_on"]
+#: WAS — the upstream machine labeller, as the corpus shipped, from labels.machine.json.
+COLS_WAS = ["was_class", "was_bias", "was_action", "was_target", "was_target_type", "was_hlo",
+            "was_hhi", "was_spec"]
+#: NOW — what the corpus carries today. `src` says which tier wrote it: `hand` is a person, `llm`
+#: the adopted second reading, `machine` the original where nothing replaced it.
+COLS_NOW = ["src", "now_class", "now_bias", "now_action", "now_target", "now_target_type",
+            "now_hlo", "now_hhi", "now_spec", "now_conditional", "now_retrospective",
+            "why", "probability", "summary", "changed", "changed_on"]
 COLS_SCORE = ["status", "entry", "entry_date", "exit", "exit_date", "horizon_days",
               "horizon_assumed", "ret", "bench_ret", "excess", "mfe", "mae", "target_px",
               "target_status", "target_hit", "direction_correct"]
 COLS_FINAL = ["final_bias", "final_action", "final_target", "final_target_type", "final_hlo",
               "final_hhi", "final_spec", "final_class", "final_conditional",
               "final_retrospective", "verified", "notes"]
-COLS = (COLS_POST + COLS_CUR + COLS_LLM + COLS_SCORE + ["flags", "priority"]
+COLS = (COLS_POST + COLS_WAS + COLS_NOW + COLS_SCORE + ["flags", "priority"]
         + COLS_FINAL)
 
-#: The fields whose disagreement is worth colouring. Bias first: it is the one that flips the sign
-#: of every return, so a wrong bias is not a tagging nit, it is an inverted result.
-COMPARED = [("bias", "cur_bias", "llm_bias"), ("target", "cur_target", "llm_target"),
-            ("target_type", "cur_target_type", "llm_target_type"), ("spec", "cur_spec", "llm_spec"),
-            ("class", "cur_class", "llm_class"), ("action", "cur_action", "llm_action"),
-            ("hlo", "cur_hlo", "llm_hlo"), ("hhi", "cur_hhi", "llm_hhi")]
+#: The fields whose MOVEMENT is worth colouring. Bias first: it flips the sign of every return, so
+#: a wrong bias is not a tagging nit, it is an inverted result.
+COMPARED = [("bias", "was_bias", "now_bias"), ("target", "was_target", "now_target"),
+            ("target_type", "was_target_type", "now_target_type"),
+            ("spec", "was_spec", "now_spec"), ("class", "was_class", "now_class"),
+            ("action", "was_action", "now_action"), ("hlo", "was_hlo", "now_hlo"),
+            ("hhi", "was_hhi", "now_hhi")]
+
+#: WHAT TO LOOK AT FIRST. The corpus now carries the adopted reading, so the question is no longer
+#: "which reader is right" but "did the adoption get this row right, and is anything still broken".
+#: Ranked by what it costs if the tag is wrong.
+_DIRECTIONAL = {"bullish", "bearish"}
+_BROKEN_TARGET = {"unparseable", "sign_conflict", "implausible"}
+
+
+def _priority(was_bias: object, now_bias: object, cls: object, changed: list[str],
+              target_status: object) -> str:
+    a, b = _norm(was_bias), _norm(now_bias)
+    if a in _DIRECTIONAL and b in _DIRECTIONAL and a != b:
+        return "1 direction flipped"
+    if str(target_status) in _BROKEN_TARGET:
+        return "2 target unreadable"
+    if "bias" in changed and (a in _DIRECTIONAL) != (b in _DIRECTIONAL):
+        return "4 not a call" if str(cls) in _NON_SIGNAL else "3 call or not"
+    if str(cls) in _NON_SIGNAL:
+        return "4 not a call"
+    return "5 detail moved" if changed else "6 unchanged"
 
 _NON_SIGNAL = {"flow_spam", "promo", "noise", "engagement"}
 
@@ -82,36 +112,12 @@ def _flags(cur: dict[str, Any], res: dict[str, Any] | None) -> str:
     return ", ".join(out)
 
 
-#: WHAT TO LOOK AT FIRST. 8,185 rows is not a queue, it is a wall. This ranks each row by how much
-#: its disagreement COSTS if the current tag is wrong, so the sheet can be sorted into a day's work:
-#:   1 — the two readers give OPPOSITE directions. A wrong bias does not mislabel the row, it
-#:       INVERTS the sign of its return, so these are worth more than every other class combined.
-#:   2 — one reader sees a call and the other sees none, on a post that could carry one. Decides
-#:       whether the row is scored at all.
-#:   3 — the post is not a call by both readings (a flow list, promo, noise). A bulk dismissal:
-#:       set bias to none, mark verified, move on.
-#:   4 — same direction, different target/horizon/spec. Changes whether the target was HIT, not
-#:       whether the call was right.
-#:   5 — the two readers agree; nothing to decide unless you disagree with both.
-_DIRECTIONAL = {"bullish", "bearish"}
-
-
-def _priority(cur_bias: Any, llm_bias: Any, cls: Any, differs: list[str]) -> str:
-    a, b = _norm(cur_bias), _norm(llm_bias)
-    if not differs:
-        return "5 agree"
-    if a in _DIRECTIONAL and b in _DIRECTIONAL and a != b:
-        return "1 opposite direction"
-    if "bias" in differs and (a in _DIRECTIONAL) != (b in _DIRECTIONAL):
-        return "3 not a call" if str(cls) in _NON_SIGNAL else "2 call or not"
-    if str(cls) in _NON_SIGNAL:
-        return "3 not a call"
-    return "4 detail only"
-
 
 def _rows(handle: str) -> list[dict[str, Any]]:
     d = account_dir(handle)
     labels: dict[str, Any] = json.loads((d / "labels.json").read_text())
+    was_p = d / "labels.machine.json"
+    was_all: dict[str, Any] = json.loads(was_p.read_text()) if was_p.is_file() else {}
     posts: dict[str, dict[str, Any]] = {}
     for f in sorted((d / "posts").glob("*.json")):
         for p in json.loads(f.read_text()):
@@ -134,6 +140,7 @@ def _rows(handle: str) -> list[dict[str, Any]]:
         rd = audit.get(tid)
         llm = next((t for t in rd.tickers if t.ticker.upper() == tkr.upper()), None) if rd else None
         res = results.get((tid, tkr))
+        was = was_all.get(key, cur)
         row: dict[str, Any] = {
             "tweet_id": tid, "date": post.get("d"), "time": str(post.get("t"))[11:16],
             "ticker": tkr, "text": post.get("txt") or "", "url": post.get("url"),
@@ -141,41 +148,40 @@ def _rows(handle: str) -> list[dict[str, Any]]:
                                               ("QUOTE", post.get("q"))) if on),
             "likes": post.get("lk"), "views": post.get("vw"),
             "n_tickers": len(post.get("tk") or []),
-            "src": cur.get("src"), "cur_class": cur.get("post_class"), "cur_bias": cur.get("bias"),
-            "cur_action": cur.get("action"), "cur_target": cur.get("target"),
-            "cur_target_type": cur.get("target_type"), "cur_hlo": cur.get("hlo"),
-            "cur_hhi": cur.get("hhi"), "cur_spec": cur.get("spec"),
-            "cur_needs_review": bool(cur.get("needs_review")),
+            "was_class": was.get("post_class"), "was_bias": was.get("bias"),
+            "was_action": was.get("action"), "was_target": was.get("target"),
+            "was_target_type": was.get("target_type"), "was_hlo": was.get("hlo"),
+            "was_hhi": was.get("hhi"), "was_spec": was.get("spec"),
+            "src": cur.get("src"), "now_class": cur.get("post_class"), "now_bias": cur.get("bias"),
+            "now_action": cur.get("action"), "now_target": cur.get("target"),
+            "now_target_type": cur.get("target_type"), "now_hlo": cur.get("hlo"),
+            "now_hhi": cur.get("hhi"), "now_spec": cur.get("spec"),
+            "now_conditional": bool(cur.get("is_conditional")),
+            "now_retrospective": bool(cur.get("is_retrospective")),
         }
         if rd is not None and rd.error is None:
-            row.update(llm_class=rd.post_class, llm_conditional=rd.is_conditional,
-                       llm_retrospective=rd.is_retrospective, llm_probability=rd.probability,
-                       llm_summary=rd.summary)
+            row.update(probability=rd.probability, summary=rd.summary)
         if llm is not None:
-            row.update(llm_bias=llm.bias, llm_action=llm.action, llm_target=llm.target,
-                       llm_target_type=llm.target_type, llm_hlo=llm.horizon_lo_days,
-                       llm_hhi=llm.horizon_hi_days, llm_spec=llm.spec, llm_note=llm.note)
-            diffs = [name for name, a, b in COMPARED if _norm(row.get(a)) != _norm(row.get(b))]
-            row["differs_on"] = ", ".join(diffs)
-            row["agree"] = "NO" if diffs else "yes"
-            row["priority"] = _priority(row.get("cur_bias"), row.get("llm_bias"),
-                                        row.get("cur_class"), diffs)
+            row["why"] = llm.note
         elif rd is not None and rd.error:
-            row["agree"] = "ERR"
-            row["llm_note"] = rd.error
-            # unread by the second reader — a human has to make this one alone
-            row["priority"] = "2 call or not"
-        else:
-            row["agree"] = ""            # not audited (yet)
+            row["why"] = rd.error
+        changed = [name for name, a, b in COMPARED if _norm(row.get(a)) != _norm(row.get(b))]
+        row["changed_on"] = ", ".join(changed)
+        row["changed"] = "YES" if changed else "no"
         if res:
             for col in COLS_SCORE:
                 row[col] = res.get(col)
         row["flags"] = _flags(cur, res)
-        # THE FINAL BAND STARTS AS THE STATUS QUO, never as the LLM's reading.
+        row["priority"] = _priority(row.get("was_bias"), row.get("now_bias"),
+                                    row.get("now_class"), changed,
+                                    (res or {}).get("target_status"))
+        # THE FINAL BAND STARTS AT WHAT THE CORPUS CARRIES TODAY.
         row.update(final_bias=cur.get("bias"), final_action=cur.get("action"),
                    final_target=cur.get("target"), final_target_type=cur.get("target_type"),
                    final_hlo=cur.get("hlo"), final_hhi=cur.get("hhi"), final_spec=cur.get("spec"),
-                   final_class=cur.get("post_class"), final_conditional="", final_retrospective="",
+                   final_class=cur.get("post_class"),
+                   final_conditional="yes" if cur.get("is_conditional") else "",
+                   final_retrospective="yes" if cur.get("is_retrospective") else "",
                    verified="", notes="")
         rows.append(row)
     rows.sort(key=lambda r: (str(r["date"]), str(r["time"]), str(r["ticker"])))
@@ -200,7 +206,7 @@ def build_sheet(handle: str, out: Path) -> int:
     ws.title = "audit"
     ws.append(COLS)
 
-    bands = [(COLS_POST, "FFF2F2F2"), (COLS_CUR, "FFEAF1FB"), (COLS_LLM, "FFF3EEFA"),
+    bands = [(COLS_POST, "FFF2F2F2"), (COLS_WAS, "FFF3EEFA"), (COLS_NOW, "FFEAF1FB"),
              (COLS_SCORE, "FFEFF7EF"), (["flags", "priority"], "FFFDF3E2"),
              (COLS_FINAL, "FFFFF7CC")]
     band_of = {c: fill for cols, fill in bands for c in cols}
@@ -216,8 +222,8 @@ def build_sheet(handle: str, out: Path) -> int:
     idx = {c: i + 1 for i, c in enumerate(COLS)}
     last = len(rows) + 1
     # the text column is the one you actually read — wide and wrapped; everything else stays narrow
-    widths = {"text": 90, "priority": 19, "llm_summary": 46, "llm_note": 40, "notes": 28,
-              "differs_on": 22, "flags": 26, "url": 12, "tweet_id": 15}
+    widths = {"text": 90, "priority": 19, "summary": 46, "why": 40, "notes": 28,
+              "changed_on": 22, "flags": 26, "url": 12, "tweet_id": 15}
     for c, i in idx.items():
         ws.column_dimensions[get_column_letter(i)].width = widths.get(c, 11.5)
     for row in ws.iter_rows(min_row=2, max_row=last, min_col=idx["text"], max_col=idx["text"]):
@@ -246,14 +252,14 @@ def build_sheet(handle: str, out: Path) -> int:
     # DISAGREEMENT IS THE POINT OF THE SHEET, so it is visible without sorting: the whole row tints
     # where the two readers differ, and the bias pair tints harder because a wrong bias inverts the
     # result rather than merely mislabelling it.
-    a_col = get_column_letter(idx["agree"])
+    a_col = get_column_letter(idx["changed"])
     rng = f"A2:{get_column_letter(len(COLS))}{last}"
     ws.conditional_formatting.add(rng, FormulaRule(
-        formula=[f'${a_col}2="NO"'], stopIfTrue=False,
+        formula=[f'${a_col}2="YES"'], stopIfTrue=False,
         fill=PatternFill("solid", fgColor="FFFDEDED")))
-    bias_rng = (f"{get_column_letter(idx['cur_bias'])}2:"
-                f"{get_column_letter(idx['llm_bias'])}{last}")
-    d_col = get_column_letter(idx["differs_on"])
+    bias_rng = (f"{get_column_letter(idx['was_bias'])}2:"
+                f"{get_column_letter(idx['now_bias'])}{last}")
+    d_col = get_column_letter(idx["changed_on"])
     ws.conditional_formatting.add(bias_rng, FormulaRule(
         formula=[f'ISNUMBER(SEARCH("bias",${d_col}2))'],
         stopIfTrue=False, fill=PatternFill("solid", fgColor="FFF8CBAD")))
@@ -265,30 +271,36 @@ def build_sheet(handle: str, out: Path) -> int:
         [],
         ["Bands, left to right:"],
         ["  what he POSTED", "identity, text, media, engagement"],
-        ["  what it is TAGGED now", "cur_* — machine unless src says hand"],
-        ["  what a SECOND READER read",
-         "llm_* — an LLM reading of the same post; PROPOSED, never applied"],
+        ["  what it WAS", "was_* — the original machine labeller, before the adoption"],
+        ["  what it is NOW", "now_* — the adopted second reading; `why` is its reasoning"],
         ["  what HAPPENED", "the scored outcome from `vinci calls score`"],
-        ["  what YOU decide", "final_* — pre-filled with the CURRENT tag; change what is wrong"],
+        ["  what YOU decide", "final_* — pre-filled with NOW; change what is wrong"],
         [],
-        ["agree = NO means the two readers differ; differs_on names the fields. Rows tint red."],
-        ["A wrong BIAS inverts the sign of the return, so that pair tints harder."],
+        ["src says who wrote the current tag:"],
+        ["  hand", "a person read the post — 83 rows, the only ground truth there is"],
+        ["  llm",
+         "the adopted second reading — 77% on bias against those 83, vs the machine's ~55%"],
+        ["  machine", "the original labeller, where nothing replaced it"],
+        [],
+        ["changed = YES means the adoption moved this row; changed_on names the fields."],
+        ["A moved BIAS inverts the sign of the return, so that pair tints harder."],
         ["flags carries the same review reasons the tape's queue uses."],
-        ["priority ranks rows by what the disagreement COSTS — sort by it and work down:"],
-        ["  1 opposite direction",
-         "they disagree on the SIGN. A wrong bias inverts the return."],
-        ["  2 call or not",
-         "one sees a call, the other none. Decides whether the row is scored at all."],
-        ["  3 not a call", "a flow list / promo / noise. Bulk: set bias none, verify, move on."],
-        ["  4 detail only",
-         "same direction, different target or horizon. Changes hit, not right."],
-        ["  5 agree", "nothing to decide unless you disagree with both."],
+        [],
+        ["priority ranks rows by what it costs if the tag is wrong — sort by it and work down:"],
+        ["  1 direction flipped", "bullish <-> bearish. Inverts the return."],
+        ["  2 target unreadable",
+         "no target could be read, or it fights the bias. 'Did he hit it' is unanswerable."],
+        ["  3 call or not", "a direction was added or removed. Decides whether it is scored."],
+        ["  4 not a call", "a flow list / promo / noise. Bulk: verify and move on."],
+        ["  5 detail moved", "target, horizon or spec changed; direction intact."],
+        ["  6 unchanged", "the machine and the second reading already agreed."],
         [],
         ["Set `verified` to yes on rows you have checked. Then:"],
         ["  vinci calls import-sheet <this file>"],
         ["  vinci calls score"],
         [],
-        ["Only rows marked verified=yes are imported. Everything else is left exactly as it was."],
+        ["Only rows marked verified=yes are imported, and they land as src=hand."],
+        ["Everything else is left exactly as it is."],
     ]:
         doc.append(line)
     doc.column_dimensions["A"].width = 34
