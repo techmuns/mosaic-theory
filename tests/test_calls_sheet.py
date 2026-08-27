@@ -10,6 +10,7 @@ So `verified` gates the import, and that is pinned here first and hardest.
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 from pathlib import Path
 from typing import Any
@@ -18,7 +19,12 @@ import pytest
 
 openpyxl = pytest.importorskip("openpyxl", reason="audit sheet is a dev-only tool")
 
-from vinci.calls.sheet import SheetError, build_sheet, read_sheet  # noqa: E402
+from vinci.calls.sheet import (  # noqa: E402
+    SheetError,
+    _price_context,
+    build_sheet,
+    read_sheet,
+)
 
 
 def _corpus(tmp: Path) -> Path:
@@ -47,6 +53,13 @@ def _corpus(tmp: Path) -> Path:
     (d / "days.json").write_text(json.dumps({
         "2026-01-05": {"n": 1, "tk": ["$AAA", "$BBB"], "lab": 0, "sig": 0},
         "2026-01-06": {"n": 1, "tk": ["$AAA"], "lab": 1, "sig": 1}}))
+    (d / "bars").mkdir()
+    # Fri/Mon/Tue closes. Both posts land at 09:00 ET — BEFORE their own session's close.
+    (d / "bars" / "AAA.json").write_text(json.dumps({
+        "ticker": "AAA", "from": "2026-01-02", "to": "2026-01-06", "bars": [
+            ["2026-01-02", 99.0, 101.0, 98.0, 100.0, 1e6],
+            ["2026-01-05", 101.0, 111.0, 100.0, 110.0, 1e6],
+            ["2026-01-06", 111.0, 121.0, 110.0, 120.0, 1e6]]}))
     (d / "meta.json").write_text(json.dumps({
         "handle": "acct", "first": "2026-01-05", "last": "2026-01-06", "n_posts": 2, "n_days": 2,
         "tickers": [], "priced": [], "n_hand_labels": 1, "n_machine_labels": 2}))
@@ -58,6 +71,7 @@ def acct(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     d = _corpus(tmp_path)
     monkeypatch.setattr("vinci.calls.sheet.account_dir", lambda h, **k: d)
     monkeypatch.setattr("vinci.calls.ingest.account_dir", lambda h, **k: d)
+    monkeypatch.setattr("vinci.calls.bars.account_dir", lambda h, **k: d)
     return d
 
 
@@ -182,3 +196,73 @@ def test_a_verified_edit_reaches_the_corpus_and_the_calendar(acct: Path, tmp_pat
     assert lab["post_class"] == "flow_spam", "a class correction could not travel back"
     days = json.loads((acct / "days.json").read_text())
     assert days["2026-01-05"]["lab"] == 1, "the calendar tally did not follow the import"
+
+
+# ---------------------------------------------------------------------------
+# WHERE IT WAS TRADING. A bare "$530" in the text is a bullish call above spot and a bearish one
+# below it; without the anchor the reader cannot tell, and the machine labeller got exactly that
+# wrong on the real $SPY 2024-08-06 row. The anchor must be the last close that had ALREADY
+# PRINTED — reaching forward to the post's own close would let the outcome colour the reading.
+# ---------------------------------------------------------------------------
+
+_BARS = [(dt.date(2026, 1, 2), 99.0, 101.0, 98.0, 100.0, 1e6),
+         (dt.date(2026, 1, 5), 101.0, 111.0, 100.0, 110.0, 1e6),
+         (dt.date(2026, 1, 6), 111.0, 121.0, 110.0, 120.0, 1e6)]
+
+
+@pytest.mark.parametrize(("when", "anchor", "session", "day_close"), [
+    ("2026-01-05T14:00:00+00:00", 100.0, "2026-01-02", 110.0),   # 09:00 ET — pre-market
+    ("2026-01-05T18:00:00+00:00", 100.0, "2026-01-02", 110.0),   # 13:00 ET — intraday
+    ("2026-01-05T21:00:00+00:00", 110.0, "2026-01-05", None),    # 16:00 ET — the close printed
+    ("2026-01-05T23:30:00+00:00", 110.0, "2026-01-05", None),    # 18:30 ET — after hours
+    ("2026-01-04T15:00:00+00:00", 100.0, "2026-01-02", None),    # Sunday — Friday's close stands
+])
+def test_the_anchor_is_the_last_close_that_had_already_printed(
+    when: str, anchor: float, session: str, day_close: float | None,
+) -> None:
+    ctx = _price_context(_BARS, when)
+    assert ctx["px_at_post"] == anchor
+    assert ctx["px_session"] == session
+    assert ctx.get("px_close") == day_close, "the post-day close travels separately, or not at all"
+
+
+def test_an_intraday_post_never_anchors_to_its_own_close() -> None:
+    """THE LOOKAHEAD PIN. 13:00 ET on the 5th: that session closes at 110 three hours later, and
+    the reading must not be able to see it."""
+    ctx = _price_context(_BARS, "2026-01-05T18:00:00+00:00")
+    assert ctx["px_at_post"] != 110.0
+    assert ctx["px_session"] < "2026-01-05"
+
+
+@pytest.mark.parametrize(("bars", "when", "why"), [
+    ([], "2026-01-05T14:00:00+00:00", "a ticker with no bars must not borrow a price"),
+    (_BARS, "2025-12-30T14:00:00+00:00", "a post before the window must not take the first close"),
+    (_BARS, "", "a post with no timestamp cannot be anchored"),
+    (_BARS, "not-a-date", "an unparseable timestamp fails blank, not loud-in-the-wrong-place"),
+])
+def test_no_anchor_is_a_blank_never_a_guess(
+    bars: list[Any], when: str, why: str,
+) -> None:
+    assert _price_context(bars, when) == {}, why
+
+
+def test_the_price_band_reaches_the_workbook_with_the_gap(acct: Path, tmp_path: Path) -> None:
+    """END-TO-END. Post 2 is `$AAA to 200` at 09:00 ET on the 6th: anchored at Monday's 110, the
+    target sits +81.8% above spot — the number that makes the call's direction unarguable."""
+    (acct / "results.jsonl").write_text(json.dumps(
+        {"tweet_id": "2", "ticker": "AAA", "target_px": 200.0, "status": "CLOSED"}) + "\n")
+    p = tmp_path / "a.xlsx"
+    build_sheet("acct", p)
+    _, ws, ix = _open(p)
+    got = {}
+    for r in range(2, ws.max_row + 1):
+        key = (ws.cell(r, ix["tweet_id"]).value, ws.cell(r, ix["ticker"]).value)
+        got[key] = {c: ws.cell(r, ix[c]).value
+                    for c in ("px_at_post", "px_session", "px_close", "target_gap")}
+
+    assert got[("2", "AAA")] == {"px_at_post": 110.0, "px_session": "2026-01-05",
+                                 "px_close": 120.0, "target_gap": pytest.approx(0.8182, abs=5e-5)}
+    assert got[("1", "AAA")]["px_at_post"] == 100.0, "the earlier post takes the earlier anchor"
+    assert got[("1", "AAA")]["target_gap"] is None, "no target means no gap, not a zero"
+    assert got[("1", "BBB")] == {"px_at_post": None, "px_session": None, "px_close": None,
+                                 "target_gap": None}, "$BBB has no bars — every price cell blank"

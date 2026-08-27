@@ -7,9 +7,9 @@ WHY A SHEET AT ALL, when the tape exists. The tape is for reading ONE call again
 is for the other job — walking 8,185 rows, sorting by what the adoption changed, and correcting in
 bulk. Different question, different instrument.
 
-THE LAYOUT IS THE ARGUMENT. Five bands, left to right: what he POSTED, what it WAS (the original
-machine labeller), what it is NOW (the adopted second reading, with the reasoning behind it), what
-HAPPENED to the price, and the FINAL band you edit.
+THE LAYOUT IS THE ARGUMENT. Six bands, left to right: what he POSTED, WHERE IT WAS TRADING when he
+posted, what it WAS (the original machine labeller), what it is NOW (the adopted second reading,
+with the reasoning behind it), what HAPPENED to the price, and the FINAL band you edit.
 
 WHY "WAS" IS STILL HERE. The adoption replaced the machine's tags IN PLACE. Without the before
 column the operator is asked to confirm a tag with no way to see the move that produced it — a bare
@@ -23,15 +23,22 @@ confirm or override. Changes are coloured so the eye goes there; nothing is hidd
 from __future__ import annotations
 
 import json
+from bisect import bisect_right
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from vinci.calls.accounts import account_dir
 from vinci.calls.audit import ACTIONS, BIASES, CLASSES, SPECS, TARGET_TYPES, load_audit
+from vinci.calls.bars import load_bars
 
 #: Left band: identity + the post itself. Frozen, so the text stays visible while you scroll right.
 COLS_POST = ["tweet_id", "date", "time", "ticker", "text", "url", "media", "likes", "views",
              "n_tickers"]
+#: WHERE IT WAS TRADING. The anchor that makes a bare number in the text readable: "$530" is a
+#: bullish call above spot and a bearish one below it, and nothing else on the row says which.
+COLS_PRICE = ["px_at_post", "px_session", "px_close", "target_gap"]
 #: WAS — the upstream machine labeller, as the corpus shipped, from labels.machine.json.
 COLS_WAS = ["was_class", "was_bias", "was_action", "was_target", "was_target_type", "was_hlo",
             "was_hhi", "was_spec"]
@@ -46,7 +53,7 @@ COLS_SCORE = ["status", "entry", "entry_date", "exit", "exit_date", "horizon_day
 COLS_FINAL = ["final_bias", "final_action", "final_target", "final_target_type", "final_hlo",
               "final_hhi", "final_spec", "final_class", "final_conditional",
               "final_retrospective", "verified", "notes"]
-COLS = (COLS_POST + COLS_WAS + COLS_NOW + COLS_SCORE + ["flags", "priority"]
+COLS = (COLS_POST + COLS_PRICE + COLS_WAS + COLS_NOW + COLS_SCORE + ["flags", "priority"]
         + COLS_FINAL)
 
 #: The fields whose MOVEMENT is worth colouring. Bias first: it flips the sign of every return, so
@@ -113,6 +120,47 @@ def _flags(cur: dict[str, Any], res: dict[str, Any] | None) -> str:
 
 
 
+#: US equity regular session close, in exchange-local time. Half-days (13:00 ET) are not modelled:
+#: see `_price_context` for why falling back one session there is the safe error.
+_ET = ZoneInfo("America/New_York")
+_CLOSE_HOUR = 16
+
+
+def _price_context(bars: list[tuple[date, float, float, float, float, float]],
+                   posted_at: str) -> dict[str, Any]:
+    """The price the post could see, and how its own session ended.
+
+    `px_at_post` is the last REGULAR-SESSION CLOSE printed before the post went out — the number
+    the author had in hand. For an intraday post that is the PRIOR session, never the post-day
+    close: that price had not happened yet, and anchoring a reading to it would let the outcome
+    colour the reading. `px_close` carries the post-day close separately, where the two differ.
+
+    Half-day sessions close at 13:00 ET and are not modelled. On those few afternoons the anchor
+    falls back one session — it is never a price that had not printed, and `px_session` always
+    names the session it came from, so the fallback is visible rather than silent.
+
+    Returns {} when the ticker has no bars (8 of the account's symbols are delisted or renamed) or
+    the post predates them — a blank cell, never a guessed price.
+    """
+    if not bars or not posted_at:
+        return {}
+    try:
+        posted = datetime.fromisoformat(posted_at).astimezone(_ET)
+    except ValueError:
+        return {}
+    # the post-day close counts as "seen" only once it has printed
+    cutoff = posted.date() if posted.hour >= _CLOSE_HOUR else posted.date() - timedelta(days=1)
+    days = [b[0] for b in bars]
+    i = bisect_right(days, cutoff) - 1
+    if i < 0:
+        return {}
+    out: dict[str, Any] = {"px_at_post": round(bars[i][4], 4), "px_session": days[i].isoformat()}
+    j = bisect_right(days, posted.date()) - 1
+    if j > i:                      # the post's own session closed after the post went out
+        out["px_close"] = round(bars[j][4], 4)
+    return out
+
+
 def _rows(handle: str) -> list[dict[str, Any]]:
     d = account_dir(handle)
     labels: dict[str, Any] = json.loads((d / "labels.json").read_text())
@@ -130,6 +178,7 @@ def _rows(handle: str) -> list[dict[str, Any]]:
                 r = json.loads(line)
                 results[(str(r["tweet_id"]), r["ticker"])] = r
     audit = load_audit(handle)
+    bars_of: dict[str, list[tuple[date, float, float, float, float, float]]] = {}
 
     rows: list[dict[str, Any]] = []
     for key, cur in labels.items():
@@ -159,6 +208,9 @@ def _rows(handle: str) -> list[dict[str, Any]]:
             "now_conditional": bool(cur.get("is_conditional")),
             "now_retrospective": bool(cur.get("is_retrospective")),
         }
+        if tkr not in bars_of:
+            bars_of[tkr] = load_bars(handle, tkr)
+        row.update(_price_context(bars_of[tkr], str(post.get("t") or "")))
         if rd is not None and rd.error is None:
             row.update(probability=rd.probability, summary=rd.summary)
         if llm is not None:
@@ -171,6 +223,11 @@ def _rows(handle: str) -> list[dict[str, Any]]:
         if res:
             for col in COLS_SCORE:
                 row[col] = res.get(col)
+        # SIGNED DISTANCE FROM SPOT — the direction tell, computed once here rather than left for
+        # the eye to do against a target three bands away.
+        anchor, tgt = row.get("px_at_post"), row.get("target_px")
+        if isinstance(anchor, float) and isinstance(tgt, float) and anchor > 0:
+            row["target_gap"] = round((tgt - anchor) / anchor, 4)
         row["flags"] = _flags(cur, res)
         row["priority"] = _priority(row.get("was_bias"), row.get("now_bias"),
                                     row.get("now_class"), changed,
@@ -206,7 +263,8 @@ def build_sheet(handle: str, out: Path) -> int:
     ws.title = "audit"
     ws.append(COLS)
 
-    bands = [(COLS_POST, "FFF2F2F2"), (COLS_WAS, "FFF3EEFA"), (COLS_NOW, "FFEAF1FB"),
+    bands = [(COLS_POST, "FFF2F2F2"), (COLS_PRICE, "FFEDF4F7"),
+             (COLS_WAS, "FFF3EEFA"), (COLS_NOW, "FFEAF1FB"),
              (COLS_SCORE, "FFEFF7EF"), (["flags", "priority"], "FFFDF3E2"),
              (COLS_FINAL, "FFFFF7CC")]
     band_of = {c: fill for cols, fill in bands for c in cols}
@@ -229,6 +287,12 @@ def build_sheet(handle: str, out: Path) -> int:
     for row in ws.iter_rows(min_row=2, max_row=last, min_col=idx["text"], max_col=idx["text"]):
         for cell in row:
             cell.alignment = Alignment(wrap_text=True, vertical="top")
+    # prices read as prices, and the gap as a signed percentage — a bare 0.0221 is not a tell
+    for col, fmt in (("px_at_post", "0.00"), ("px_close", "0.00"), ("entry", "0.00"),
+                     ("exit", "0.00"), ("target_px", "0.00"), ("target_gap", "+0.0%;-0.0%")):
+        for row in ws.iter_rows(min_row=2, max_row=last, min_col=idx[col], max_col=idx[col]):
+            for cell in row:
+                cell.number_format = fmt
 
     ws.freeze_panes = ws.cell(row=2, column=idx["text"] + 1)   # id/date/ticker/text stay on screen
     ws.auto_filter.ref = f"A1:{get_column_letter(len(COLS))}{last}"
@@ -271,10 +335,16 @@ def build_sheet(handle: str, out: Path) -> int:
         [],
         ["Bands, left to right:"],
         ["  what he POSTED", "identity, text, media, engagement"],
+        ["  WHERE IT WAS TRADING", "px_at_post — the last close printed BEFORE the post went out"],
         ["  what it WAS", "was_* — the original machine labeller, before the adoption"],
         ["  what it is NOW", "now_* — the adopted second reading; `why` is its reasoning"],
         ["  what HAPPENED", "the scored outcome from `vinci calls score`"],
         ["  what YOU decide", "final_* — pre-filled with NOW; change what is wrong"],
+        [],
+        ["px_at_post is the anchor that makes a bare number in the text readable: '$530' is a"],
+        ["bullish call above it and a bearish one below. px_session names the session that close"],
+        ["came from; px_close is the post-day close where the post landed before it."],
+        ["target_gap is the signed distance from px_at_post to the target the scorer used."],
         [],
         ["src says who wrote the current tag:"],
         ["  hand", "a person read the post — 83 rows, the only ground truth there is"],
