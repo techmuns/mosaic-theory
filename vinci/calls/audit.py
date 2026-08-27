@@ -143,7 +143,11 @@ class PostReading(BaseModel, frozen=True):
     is_conditional: bool
     probability: str | None
     summary: str = ""
-    tickers: list[TickerReading]
+    #: DEFAULTED, so a partial response is still worth something. Observed twice on the real
+    #: corpus: the model returned post_class, probability and a summary and simply omitted the
+    #: ticker array. Failing the whole row threw away a correct post-level reading to punish a
+    #: missing sub-field — the row is instead kept, marked, and the operator reads that one tweet.
+    tickers: list[TickerReading] = []
     model: str = ""
     error: str | None = None
 
@@ -160,7 +164,14 @@ def audit_post(client: LlmClient, post: dict[str, Any], tickers: Sequence[str]) 
     tid = str(post["id"])
     try:
         raw = client.extract(system=SYSTEM, user=_user(post, tickers), tool=TOOL)
-        return PostReading(tweet_id=tid, model=client.model, **raw)
+        r = PostReading(tweet_id=tid, model=client.model, **raw)
+        if not r.tickers:
+            # keep the post-level reading, but never let an empty list pass as "no view on any
+            # ticker" — that is indistinguishable from a correct `none` on every one of them
+            return r.model_copy(update={
+                "error": "the model returned no ticker array — post-level fields kept, "
+                         "per-ticker reading is MISSING and this row needs a human"})
+        return r
     except (LlmError, ValidationError, KeyError, TypeError) as exc:
         return PostReading(tweet_id=tid, post_class="noise", is_retrospective=False,
                            is_conditional=False, probability=None, tickers=[],

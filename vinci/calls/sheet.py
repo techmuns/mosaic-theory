@@ -37,7 +37,8 @@ COLS_SCORE = ["status", "entry", "entry_date", "exit", "exit_date", "horizon_day
 COLS_FINAL = ["final_bias", "final_action", "final_target", "final_target_type", "final_hlo",
               "final_hhi", "final_spec", "final_class", "final_conditional",
               "final_retrospective", "verified", "notes"]
-COLS = COLS_POST + COLS_CUR + COLS_LLM + COLS_SCORE + ["flags"] + COLS_FINAL
+COLS = (COLS_POST + COLS_CUR + COLS_LLM + COLS_SCORE + ["flags", "priority"]
+        + COLS_FINAL)
 
 #: The fields whose disagreement is worth colouring. Bias first: it is the one that flips the sign
 #: of every return, so a wrong bias is not a tagging nit, it is an inverted result.
@@ -79,6 +80,33 @@ def _flags(cur: dict[str, Any], res: dict[str, Any] | None) -> str:
     if cur.get("bias") == "mixed":
         out.append("two-sided")
     return ", ".join(out)
+
+
+#: WHAT TO LOOK AT FIRST. 8,185 rows is not a queue, it is a wall. This ranks each row by how much
+#: its disagreement COSTS if the current tag is wrong, so the sheet can be sorted into a day's work:
+#:   1 — the two readers give OPPOSITE directions. A wrong bias does not mislabel the row, it
+#:       INVERTS the sign of its return, so these are worth more than every other class combined.
+#:   2 — one reader sees a call and the other sees none, on a post that could carry one. Decides
+#:       whether the row is scored at all.
+#:   3 — the post is not a call by both readings (a flow list, promo, noise). A bulk dismissal:
+#:       set bias to none, mark verified, move on.
+#:   4 — same direction, different target/horizon/spec. Changes whether the target was HIT, not
+#:       whether the call was right.
+#:   5 — the two readers agree; nothing to decide unless you disagree with both.
+_DIRECTIONAL = {"bullish", "bearish"}
+
+
+def _priority(cur_bias: Any, llm_bias: Any, cls: Any, differs: list[str]) -> str:
+    a, b = _norm(cur_bias), _norm(llm_bias)
+    if not differs:
+        return "5 agree"
+    if a in _DIRECTIONAL and b in _DIRECTIONAL and a != b:
+        return "1 opposite direction"
+    if "bias" in differs and (a in _DIRECTIONAL) != (b in _DIRECTIONAL):
+        return "3 not a call" if str(cls) in _NON_SIGNAL else "2 call or not"
+    if str(cls) in _NON_SIGNAL:
+        return "3 not a call"
+    return "4 detail only"
 
 
 def _rows(handle: str) -> list[dict[str, Any]]:
@@ -130,9 +158,13 @@ def _rows(handle: str) -> list[dict[str, Any]]:
             diffs = [name for name, a, b in COMPARED if _norm(row.get(a)) != _norm(row.get(b))]
             row["differs_on"] = ", ".join(diffs)
             row["agree"] = "NO" if diffs else "yes"
+            row["priority"] = _priority(row.get("cur_bias"), row.get("llm_bias"),
+                                        row.get("cur_class"), diffs)
         elif rd is not None and rd.error:
             row["agree"] = "ERR"
             row["llm_note"] = rd.error
+            # unread by the second reader — a human has to make this one alone
+            row["priority"] = "2 call or not"
         else:
             row["agree"] = ""            # not audited (yet)
         if res:
@@ -169,7 +201,8 @@ def build_sheet(handle: str, out: Path) -> int:
     ws.append(COLS)
 
     bands = [(COLS_POST, "FFF2F2F2"), (COLS_CUR, "FFEAF1FB"), (COLS_LLM, "FFF3EEFA"),
-             (COLS_SCORE, "FFEFF7EF"), (["flags"], "FFFDF3E2"), (COLS_FINAL, "FFFFF7CC")]
+             (COLS_SCORE, "FFEFF7EF"), (["flags", "priority"], "FFFDF3E2"),
+             (COLS_FINAL, "FFFFF7CC")]
     band_of = {c: fill for cols, fill in bands for c in cols}
     for i, c in enumerate(COLS, start=1):
         cell = ws.cell(row=1, column=i)
@@ -183,8 +216,8 @@ def build_sheet(handle: str, out: Path) -> int:
     idx = {c: i + 1 for i, c in enumerate(COLS)}
     last = len(rows) + 1
     # the text column is the one you actually read — wide and wrapped; everything else stays narrow
-    widths = {"text": 90, "llm_summary": 46, "llm_note": 40, "notes": 28, "differs_on": 22,
-              "flags": 26, "url": 12, "tweet_id": 15}
+    widths = {"text": 90, "priority": 19, "llm_summary": 46, "llm_note": 40, "notes": 28,
+              "differs_on": 22, "flags": 26, "url": 12, "tweet_id": 15}
     for c, i in idx.items():
         ws.column_dimensions[get_column_letter(i)].width = widths.get(c, 11.5)
     for row in ws.iter_rows(min_row=2, max_row=last, min_col=idx["text"], max_col=idx["text"]):
@@ -241,6 +274,15 @@ def build_sheet(handle: str, out: Path) -> int:
         ["agree = NO means the two readers differ; differs_on names the fields. Rows tint red."],
         ["A wrong BIAS inverts the sign of the return, so that pair tints harder."],
         ["flags carries the same review reasons the tape's queue uses."],
+        ["priority ranks rows by what the disagreement COSTS — sort by it and work down:"],
+        ["  1 opposite direction",
+         "they disagree on the SIGN. A wrong bias inverts the return."],
+        ["  2 call or not",
+         "one sees a call, the other none. Decides whether the row is scored at all."],
+        ["  3 not a call", "a flow list / promo / noise. Bulk: set bias none, verify, move on."],
+        ["  4 detail only",
+         "same direction, different target or horizon. Changes hit, not right."],
+        ["  5 agree", "nothing to decide unless you disagree with both."],
         [],
         ["Set `verified` to yes on rows you have checked. Then:"],
         ["  vinci calls import-sheet <this file>"],

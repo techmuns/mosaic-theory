@@ -66,6 +66,19 @@ def test_one_bad_post_is_recorded_not_raised() -> None:
     assert r2.error and "ValidationError" in r2.error, "a short response was accepted as a reading"
 
 
+def test_a_response_missing_only_the_ticker_array_keeps_what_it_did_return() -> None:
+    """OBSERVED TWICE ON THE REAL CORPUS. The model returned post_class, probability and a summary
+    and simply omitted the ticker array. Failing the whole row threw away a correct post-level
+    reading to punish a missing sub-field — but an EMPTY list must never pass silently either,
+    because "no view on any ticker" is indistinguishable from a correct `none` on every one."""
+    partial = {k: v for k, v in GOOD.items() if k != "tickers"}
+    r = audit_post(_Stub(partial), POST, ["AAA"])
+    assert r.post_class == "signal_candidate", "the post-level reading was discarded"
+    assert r.summary == "likes it"
+    assert r.tickers == []
+    assert r.error and "no ticker array" in r.error, "an empty reading passed as a complete one"
+
+
 def test_a_resumed_run_does_not_pay_twice(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """THE MONEY PIN. Appended as results land, and already-present ids are skipped, so an
     interruption costs the in-flight call and nothing else."""
