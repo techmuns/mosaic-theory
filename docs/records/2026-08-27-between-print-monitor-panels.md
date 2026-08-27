@@ -2,12 +2,12 @@
 id:
 status: open
 date: 2026-08-27
-prs: []
+prs: [508]
 supersedes:
 superseded-by:
 ---
 
-# The fund has no between-print altitude, and a live position it cannot see — a panel registry and the plan to build it
+# The between-print watcher re-prints its triggers and never measures them, and there is a live position it cannot see — a panel registry and the plan to build it
 
 **WHAT.** Two findings and a design, from reviewing an externally-drafted GOOGL monitoring plan
 (`GOOGL_Monitoring_Plan_Plain_English.md`, 2026-08-17) against this repo.
@@ -19,11 +19,23 @@ closed for SMPL, re-occurring on a bigger position. GOOGL is a quality-book name
 (the memo's binding question — *what does today's price already assume, and is the runway longer
 than that* — is the quality sleeve's page question), and it would be that book's FIRST position.
 
-**FINDING 2 — THE MACHINERY IS STRONG AT UNDERWRITE-TIME AND ABSENT BETWEEN PRINTS.** `vinci/monitor.py`
-is spread/position machinery (decision rows, closes, benchmark assignment), not indicator monitoring.
-Nothing watches a thesis between earnings. SMPL's OWYN deterioration was caught by a re-assembly, not
-by a monitor; its fourth kill criterion has no watcher. That gap — not GOOGL specifically — is why
-this is worth building.
+**FINDING 2 — THE MACHINERY WATCHES FILINGS AND DEADLINES BETWEEN PRINTS, AND NOTHING ELSE.**
+`vinci/monitor.py` is mostly spread/position machinery (decision rows, closes, benchmark
+assignment) — but it is NOT silent between prints, and an earlier draft of this record said it
+was. It carries a **freshness/trigger panel** (`FreshnessRow` · `last_evidence_date` ·
+`next_expected_print` · `freshness_row`), wired into `vinci monitor` (`vinci/cli.py:1699-1732`),
+rendered, and committed to `data/monitor/*.json` — for scenario records that are not ledger
+positions too (`vinci/cli.py:1916`). It flags a filing published since the record's last evidence
+(`unread_print`), ESTIMATES the next print from the filer's own cadence, and re-prints the
+analyst's `reunderwrite_triggers` and any `dated_triggers` whose deadline has passed.
+
+**THE REAL GAP IS INDICATOR EVALUATION, NOT WATCHING.** Every trigger is re-printed VERBATIM;
+none is ever measured. SMPL's fourth kill criterion (*OWYN net sales turn negative year-over-year*,
+`scenarios/SMPL.json`) prints on every monitor run — but nobody computes OWYN net sales, so the
+deterioration was caught by a re-assembly rather than by the panel that was faithfully displaying
+the criterion the whole time. A watcher that re-reads its own instructions is not a watcher. That
+gap — not GOOGL specifically — is why this is worth building, and phases 2-3 must EXTEND the
+freshness panel rather than re-implement filing-watch and the kills list beside it.
 
 **THE DESIGN — PANELS ARE MODULES.** A monitor panel is a `PanelSpec` carrying `key`, `tier`,
 `requires` (tags / R-file notes / feeds / uploads), `config_schema`, `render`, `cadence`, `caveat`.
@@ -41,9 +53,10 @@ Four tiers, and the middle one carries the leverage:
 
 **COHORT MEANS A BUSINESS SHAPE, NOT A SECTOR LABEL.** Capital conversion is not a tech panel:
 tractors commissioning is the same question as servers commissioning, so a trucking name reuses it
-with a different R-file note name. Measured on the design: a second AI-infrastructure name reuses
-**12 of 14** panels unchanged with **no new panel code**; a different sector still gets **7 of 7**
-universal panels free.
+with a different R-file note name. **Claimed, not measured** (the figure is re-stated as unproven
+under WHAT IT COSTS): on the design as drawn, a second AI-infrastructure name would reuse
+**12 of 14** panels unchanged with **no new panel code**, and a different sector would still get
+**7 of 7** universal panels free. No second name has been run through it.
 
 **THE GATING RULE IS THE SAFETY PROPERTY.** `NOT IN THE SET` never renders (a payments name has no
 data-centre panel, and no empty tile pretending otherwise). `IN THE SET BUT REFUSED` renders loudly
@@ -59,8 +72,12 @@ a house habit. Four corrections were applied to that plan and are recorded under
 **HOW VERIFIED.** Nothing is built; this record is the plan and its evidence. What was checked
 against the repo rather than assumed:
 
-- `vinci/monitor.py` read — spread/position machinery, no indicator altitude. The claim that we
-  "already have monitoring" is false and was corrected before this record was written.
+- `vinci/monitor.py` read IN FULL — spread/position machinery PLUS a live freshness/trigger panel
+  (`FreshnessRow`, `freshness_row`, `next_expected_print`, `last_evidence_date`), which the module's
+  own docstring names and which `vinci/cli.py:1699-1732` runs and commits under `data/monitor/`.
+  An earlier draft of this record asserted the panel did not exist; that was a false-absence claim
+  off a partial read, and FINDING 2 above is the corrected version. What is genuinely absent is
+  indicator EVALUATION — no trigger is ever measured, only re-printed.
 - `vinci/sleeves.py:41` — the quality book's vocabulary is `("BUY", "PASS")`, enforced at ledger
   write by `_require_verdict_in_sleeve`. A starter records as BUY in that book.
 - `vinci/themes/schemas.py` — `DriverSpec` confirms the global-code / per-name-config shape the
