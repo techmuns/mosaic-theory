@@ -1323,6 +1323,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
 | 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
+| 7 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row, and nothing watches any thesis between prints. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
 
 **NOT open, recorded because they were recently believed open:** the weekly screen (ran green
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
