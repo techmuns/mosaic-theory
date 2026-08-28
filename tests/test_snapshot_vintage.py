@@ -61,7 +61,7 @@ def test_a_stamp_with_no_committed_run_fails_loud() -> None:
         run_for_stamp(SNAP, "1999-01-01")
 
 
-def test_a_stale_candidate_file_does_not_borrow_a_newer_window(tmp_path: pathlib.Path) -> None:
+def test_a_stale_candidate_file_does_not_borrow_a_newer_window() -> None:
     """THE DRIFT CASE, WHICH HAS NEVER HAPPENED — simulated because waiting for it means shipping
     the bug. A candidate set stamped with an EARLIER run must produce that run's medians, not the
     newest run's. If both stamps returned identical reads, the selection is not doing anything."""
@@ -83,34 +83,105 @@ def test_a_stale_candidate_file_does_not_borrow_a_newer_window(tmp_path: pathlib
 
 
 def test_the_committed_artifacts_agree_on_their_vintage() -> None:
-    """AND THE CORPUS ITSELF. The queue, the candidate records and the newest manifest must all
-    name the same screen run — a disagreement here means one of the three was written against a
-    different world."""
+    """AND THE CORPUS ITSELF. The queue, the candidate records and the newest screen-run LOG must
+    all name the same run — a disagreement here means one of the three was written against a
+    different world.
+
+    KEYED ON THE `.jsonl` RUN LOG, NOT THE MANIFEST, because the run log is the artifact
+    `cohort_reads` actually selects and reads. The two are not interchangeable: `next_run_id`
+    records that a manifest can be committed for a run whose rows were never written
+    (`2026-08-12-01.manifest.json` sat on disk with no row file), and `run_weekly` files the
+    manifest at the UNIVERSE stage — so an aborted run leaves a newer manifest while the newest
+    thing the cohort can be measured over is still the previous run. Asserting against the manifest
+    reddens on that, which is a state this pin is not about, and says nothing about the file the
+    medians come from.
+    """
     cands = [json.loads(x) for x in
              (SNAP / "candidate_records.jsonl").read_text().splitlines() if x.strip()]
     queue = [json.loads(x) for x in
              (SNAP / "ranked_queue.jsonl").read_text().splitlines() if x.strip()]
     cstamps = {str(c["screen_run_at"])[:10] for c in cands}
     qstamps = {str(q["screen_run_at"])[:10] for q in queue}
-    manifest = sorted((SNAP / "screen_runs").glob("*.manifest.json"))[-1]
-    ref = str(json.loads(manifest.read_text())["reference_date"])[:10]
     assert len(cstamps) == 1, f"candidate records carry mixed stamps: {sorted(cstamps)}"
     assert cstamps == qstamps, (
         f"candidate records say {sorted(cstamps)} but the queue says {sorted(qstamps)} — one was "
         f"written against a different screen run")
-    assert ref in cstamps, (
-        f"the newest manifest is {ref} but the committed candidates are {sorted(cstamps)}")
+    newest = screen_run_files(SNAP)[-1]
+    assert run_for_stamp(SNAP, next(iter(cstamps))) == newest, (
+        f"the committed candidates are stamped {sorted(cstamps)} but the newest committed screen "
+        f"run is {newest.stem} — the queue on disk was ranked against a run that is no longer the "
+        f"latest, so its cohort column is measured over an older window than a re-screen would")
 
 
-def test_a_missing_run_degrades_to_no_cohort_rather_than_losing_the_queue(
-    tmp_path: pathlib.Path) -> None:
+def test_a_missing_run_degrades_to_no_cohort_rather_than_losing_the_queue() -> None:
     """INFORM-ONLY MUST NOT BE ABLE TO STOP THE QUEUE (the rule #503 established). `run_for_stamp`
-    raises on an unknown stamp; the writer must turn that into "no cohort", not a lost queue."""
+    raises `ValueError` on an unknown stamp; the writer must turn that into "no cohort", not a lost
+    queue.
+
+    AST, NOT A TEXT SCAN. The first cut asserted the word "except" appeared within 400 characters
+    either side of the call — and the 400 characters BEFORE it are a free-text comment block, so
+    any future comment containing "except"/"exception" would have satisfied this with the
+    `try` deleted. It also never checked WHICH exceptions are caught: `run_for_stamp` raises
+    `ValueError`, and a handler narrowed to `OSError` would leave a stale-candidates re-rank
+    aborting the whole queue write for a display column.
+    """
+    import ast
+
     src = (ROOT / "vinci" / "orchestrator.py").read_text()
-    block = src.split("cohort_reads(", 1)[1][:400]
-    assert "except" in src.split("cohort_reads(", 1)[0][-400:] or "except" in block, (
-        "the cohort_reads call is no longer inside a try/except — a raise here would take the "
-        "whole queue down for a display column")
+    fn = next(n for n in ast.walk(ast.parse(src))
+              if isinstance(n, ast.FunctionDef) and n.name == "rank_from_snapshots")
+    guarded = {
+        id(call)
+        for node in ast.walk(fn) if isinstance(node, ast.Try)
+        # ValueError must be among the types caught, by name or via a bare `except:`.
+        if any(h.type is None or "ValueError" in ast.unparse(h.type) for h in node.handlers)
+        for body in node.body for call in ast.walk(body)
+        if isinstance(call, ast.Call) and ast.unparse(call.func).endswith("cohort_reads")
+    }
+    calls = [n for n in ast.walk(fn)
+             if isinstance(n, ast.Call) and ast.unparse(n.func).endswith("cohort_reads")]
+    assert calls, "rank_from_snapshots no longer calls cohort_reads"
+    for call in calls:
+        assert id(call) in guarded, (
+            "the cohort_reads call is not inside a try that catches ValueError — run_for_stamp "
+            "raises one on an unknown stamp, and an unguarded raise here takes the whole queue "
+            "down for a display column")
+
+
+def test_a_mixed_vintage_candidate_file_gets_no_cohort_and_still_gets_a_queue(
+    tmp_path: pathlib.Path) -> None:
+    """END-TO-END, ON A STAGED COPY OF THE REAL CORPUS. `cands[0].screen_run_at` asserted by
+    accident that `candidate_records.jsonl` is single-vintage — a file carrying rows from two runs
+    (an export interrupted mid-rewrite, a hand-merged file) would bind the cohort to whichever run
+    sits FIRST in the file while the queue is ranked over every row. Same silent mixed-vintage read,
+    one level up.
+
+    So it is REFUSED, not resolved — and refused INSIDE the guard, so the queue still gets written
+    with every row reading "no cohort" (rule #503: inform-only must never stop the queue)."""
+    from vinci.config import Config
+    from vinci.orchestrator import rank_from_snapshots
+
+    if not (SNAP / "candidate_records.jsonl").is_file():
+        pytest.skip("no committed candidate records")
+    snaps = tmp_path / "snapshots"
+    snaps.mkdir(parents=True)
+    for src in SNAP.iterdir():
+        (snaps / src.name).symlink_to(src)
+    rows = [x for x in (SNAP / "candidate_records.jsonl").read_text().splitlines() if x.strip()]
+    if len(rows) < 2:
+        pytest.skip("need two candidate rows to mix their stamps")
+    (snaps / "candidate_records.jsonl").unlink()
+    # One row moved to a DIFFERENT run — and one that exists on disk, so nothing else can be
+    # blamed for the refusal.
+    (snaps / "candidate_records.jsonl").write_text(
+        "\n".join([rows[0].replace("2026-08-24T00:00:00", "2026-07-29T00:00:00"), *rows[1:]])
+        + "\n")
+
+    ranked = rank_from_snapshots(Config(data_dir=tmp_path))
+    assert len(ranked) == len(rows), "the mixed-vintage refusal cost the queue its rows"
+    assert all(r.cohort is None for r in ranked), (
+        "a mixed-vintage candidate file still produced cohort reads — the cohort was measured "
+        "over whichever run happened to be first in the file")
 
 
 def test_the_writer_actually_passes_the_candidates_stamp() -> None:
@@ -136,7 +207,18 @@ def test_the_writer_actually_passes_the_candidates_stamp() -> None:
             "the newest run on disk while the queue is ranked from the candidate file — the exact "
             "mixed-vintage drift this module exists to prevent")
         stamp = next(k.value for k in call.keywords if k.arg == "run_stamp")
-        assert "screen_run_at" in ast.unparse(stamp), (
+        # ONE ASSIGNMENT HOP, so the pin survives the stamp being hoisted into a local (it has to
+        # be, to refuse a mixed-vintage candidate file before the call) WITHOUT degrading into a
+        # substring check on a variable NAME — `run_stamp=whatever_screen_run_at` would otherwise
+        # satisfy a bare `in` while sourcing the stamp from anywhere at all.
+        derived = {
+            t.id
+            for node in ast.walk(fn) if isinstance(node, ast.Assign)
+            if "screen_run_at" in ast.unparse(node.value)
+            for t in node.targets if isinstance(t, ast.Name)
+        }
+        used = {n.id for n in ast.walk(stamp) if isinstance(n, ast.Name)}
+        assert ".screen_run_at" in ast.unparse(stamp) or used & derived, (
             f"run_stamp is {ast.unparse(stamp)!r} — it must come from the CANDIDATES' own "
-            f"screen_run_at, not from anything else")
+            f"screen_run_at, directly or through one local, not from anything else")
 

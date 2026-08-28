@@ -124,7 +124,11 @@ def test_no_open_item_is_listed_twice() -> None:
     Keyed on the LEADING BOLD TITLE rather than the full cell, because the two rows' bodies had
     already drifted apart — a whole-cell comparison would have called them distinct and passed.
     """
-    titles = [re.match(r"\*\*(.+?)\*\*", c).group(1) for c in _rows() if c.startswith("**")]
+    # MATCH-OR-SKIP, never `.match(...).group(...)`: a cell whose bold is left unclosed — the
+    # ordinary typo in a hand-edited table — makes the chained call die with an AttributeError and
+    # a traceback in place of the message below, so the pin stops explaining itself exactly when
+    # the file is being edited by hand.
+    titles = [m.group(1) for c in _rows() if (m := re.match(r"\*\*(.+?)\*\*", c))]
     dupes = {t for t in titles if titles.count(t) > 1}
     assert not dupes, (
         f"§5.0 lists the same item more than once: {sorted(dupes)}. Delete the stale row — two "

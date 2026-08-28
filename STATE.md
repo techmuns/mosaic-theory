@@ -1310,7 +1310,7 @@ external two-name analysis mapped against this inventory:
 
 ## 5. Next steps (ordered, current)
 
-### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-25
+### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-28
 
 **WHY THIS BLOCK EXISTS.** §5 is append-only and had grown to ~9,900 lines across 804 bold headers,
 of which 51 carry a done-marker. Most of the rest are NARRATIVE, not to-dos. "What is still open"
