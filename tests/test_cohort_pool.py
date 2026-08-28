@@ -32,19 +32,49 @@ def _pool_rows() -> list[dict]:
     return [json.loads(x) for x in POOL.read_text().splitlines() if x.strip()]
 
 
-def test_a_pooled_name_can_never_reach_the_queue() -> None:
-    """THE FENCE, and the whole reason the pool is safe to widen. A pooled name was DROPPED by the
-    screen — out of the cap band, or under the work floor. It exists here only to make an
-    industry's median representative. If one ever appeared in the ranked queue, the pool would have
-    become a selection path: a name the screen rejected, bought because a measurement file listed
-    it."""
+def test_no_pooled_name_is_a_candidate_in_the_same_run() -> None:
+    """THE FENCE, and the whole reason the pool is safe to widen. A pooled name was DROPPED by that
+    run's screen — out of the cap band, or under the work floor. It exists to make an industry's
+    median representative, and it must never be something the same run could also buy.
+
+    KEYED PER RUN, because the pool is. The earlier form of this pin compared the pool against
+    TODAY's queue with no vintage in it, which was true only while a single run was pooled — and
+    that run was the queue's own. Backfilling the trajectory's three earlier runs (#509 truncates
+    the series to runs measured over the same peer pool) put 10 names in both sets: names that were
+    out of band in July and have since grown into it. That is a name legitimately entering the
+    universe, not a measurement file leaking into selection, and the pin below still refuses the
+    real thing — checked here across every pooled run, not just the newest.
+    """
     rows = _pool_rows()
+    by_run: dict[str, set[str]] = {}
+    for r in rows:
+        by_run.setdefault(r["run_id"], set()).add(r["ticker"])
+    assert by_run, "no pooled runs"
+    for run_id, peers in sorted(by_run.items()):
+        path = SNAP / "screen_runs" / f"{run_id}.jsonl"
+        if not path.is_file():
+            pytest.fail(f"pool references {run_id}, which has no committed screen run")
+        cands = {json.loads(x)["ticker"] for x in path.read_text().splitlines()
+                 if x.strip() and json.loads(x).get("grain") == "candidate"}
+        leaked = sorted(peers & cands)
+        assert not leaked, (
+            f"{len(leaked)} name(s) are BOTH a peer and a candidate in {run_id}: {leaked[:5]}. "
+            f"The pool is a MEASUREMENT input — a name that run's screen rejected must never "
+            f"re-enter through it.")
+
+
+def test_no_peer_of_the_queues_own_run_is_in_the_queue() -> None:
+    """AND THE LIVE SURFACE. The queue is ranked from one run; nothing that run pooled as a peer
+    may appear in it. This is the same fence at the artifact the human actually reads, and it is
+    the assertion the cross-run case above must not be allowed to weaken."""
+    rows = _pool_rows()
+    latest = screen_run_files(SNAP)[-1].stem
+    peers = {r["ticker"] for r in rows if r["run_id"] == latest}
     queued = {json.loads(x)["ticker"] for x in
               (SNAP / "ranked_queue.jsonl").read_text().splitlines() if x.strip()}
-    leaked = sorted({r["ticker"] for r in rows} & queued)
+    leaked = sorted(peers & queued)
     assert not leaked, (
-        f"{len(leaked)} pooled name(s) are in the ranked queue: {leaked[:5]}. The pool is a "
-        f"MEASUREMENT input — a name the screen rejected must never re-enter through it.")
+        f"{len(leaked)} name(s) pooled for {latest} are in the ranked queue: {leaked[:5]}")
 
 
 def test_the_pool_is_keyed_to_the_run_whose_window_it_was_measured_over() -> None:
@@ -217,3 +247,65 @@ def test_the_pool_admits_every_stage_that_can_supply_a_return() -> None:
         "~1,900 peers on a premise that confuses a share count with a price")
     assert "no_price" not in stages, "`no_price` names have no return to contribute"
 
+
+
+def _select_run():
+    """The builder is a script, not a package module — load it by path."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "build_cohort_pool", ROOT / "scripts" / "build_cohort_pool.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.select_run
+
+
+def test_backfilling_an_earlier_run_selects_that_run(tmp_path: pathlib.Path) -> None:
+    """A SERIES NEEDS MORE THAN ONE POINT, and the earlier points have to be built on the same
+    wide basis — `--run` is what names them. Without a selector the builder can only ever extend
+    the newest run, so the trajectory stays one point forever (#509 truncates it rather than
+    splice a narrow run onto a widened one)."""
+    select_run = _select_run()
+    runs = [tmp_path / f"{d}.jsonl" for d in
+            ("2026-07-29-03", "2026-08-12-01", "2026-08-14-01", "2026-08-24-01")]
+    assert select_run(runs, ["prog"]) == runs[-1], "no --run must still mean the newest"
+    assert select_run(runs, ["prog", "--run", "2026-08-12-01"]) == runs[1]
+    assert select_run(runs, ["prog", "--run", "2026-07-29-03"]) == runs[0]
+
+
+def test_an_unknown_run_id_refuses_rather_than_pooling_the_newest(tmp_path: pathlib.Path) -> None:
+    """FALLING BACK IS THE DANGEROUS FAILURE. Rows filed under a `run_id` whose window they were
+    not measured over is the mixed-vintage read #513 closed one layer up — and just as invisible
+    afterwards, because every row still carries a plausible return. A typo'd id must stop the run,
+    not quietly pool the wrong one."""
+    select_run = _select_run()
+    runs = [tmp_path / "2026-08-24-01.jsonl"]
+    with pytest.raises(SystemExit) as e:
+        select_run(runs, ["prog", "--run", "2026-08-12-01"])
+    assert "2026-08-12-01" in str(e.value) and "2026-08-24-01" in str(e.value), (
+        "the refusal must name both what was asked for and what exists")
+    with pytest.raises(SystemExit):
+        select_run(runs, ["prog", "--run"])  # flag with no value
+
+
+def test_the_builder_actually_calls_the_selector() -> None:
+    """THE CALL-SITE TRAP, and it is not hypothetical: this exact mutation survived the two pins
+    above. They exercise `select_run` directly, so `main` reverting to `runs[-1]` leaves them green
+    while `--run` is accepted and ignored — three backfill invocations would each re-pool the
+    NEWEST run, print a plausible summary, and the trajectory would still be one point.
+
+    So the pin is on the CALL, not the helper: `main` must take its run from `select_run`, and must
+    hand it the argv it was given (passing a literal would restore the same silence)."""
+    import ast
+    src = (ROOT / "scripts" / "build_cohort_pool.py").read_text()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    calls = [n for n in ast.walk(main)
+             if isinstance(n, ast.Call) and ast.unparse(n.func).endswith("select_run")]
+    assert calls, (
+        "main() no longer calls select_run — `--run` is accepted and ignored, so every backfill "
+        "silently re-pools the newest run")
+    argnames = {ast.unparse(a) for c in calls for a in c.args}
+    assert "argv" in argnames, (
+        f"select_run is called without argv ({sorted(argnames)}) — a hardcoded argument makes "
+        f"`--run` unreachable exactly as if the call were gone")
