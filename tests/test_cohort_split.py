@@ -486,7 +486,10 @@ def test_the_cell_distinguishes_all_three_reasons_for_no_cohort() -> None:
         "resolve is being told 'name not screened', which is false")
     assert "unresolved" in view.split("const split =", 1)[1][:400], (
         "the split line no longer distinguishes the unresolved case")
-    for phrase in ("industry not on file", "name not screened", "screened peer"):
+    # "pooled peer", not "screened peer" (review, #509): since the pool widened, the count beside
+    # a thin cohort includes peers the screen DROPPED, so calling them screened was a false claim
+    # about which set the median was taken over.
+    for phrase in ("industry not on file", "name not screened", "pooled peer"):
         assert phrase in view, f"the cell no longer says {phrase!r}"
     assert "escapeHtml(c.call)" in view, "the call reaches a class attribute unescaped"
 

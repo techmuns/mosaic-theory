@@ -131,6 +131,62 @@ def median_halfwidth(values: list[float]) -> float:
     return (ordered[n - k] - ordered[k - 1]) / 2
 
 
+#: The COHORT POOL — peers the screen dropped for being outside the cap band or under the work
+#: floor, but which are still part of their industry's move. Written by
+#: `scripts/build_cohort_pool.py` from committed artifacts, never by the screen.
+POOL = "cohort_pool.jsonl"
+
+
+def pool_for_run(snapshots_dir: pathlib.Path, run_id: str) -> dict[str, tuple[str, float]]:
+    """``{ticker: (sic, rel_ret)}`` for one screen run, or empty when no pool is committed.
+
+    WHY THE POOL EXISTS. The cohort was drawn only from names that reached the gates — the
+    cap-banded universe — so "what the software industry did" came from small-cap software alone.
+    Measured on SIC 7372: the narrow pool reads +14% vs IWM, the industry including ADBE/ADSK/NOW/
+    CRM/VEEV reads −6%. A twenty-point swing that flips the sign, and every queued software name's
+    "own" move was overstated by it. The operator's case was GWRE falling with NOW, CRM and VEEV
+    while none of the three were visible to the cohort at all.
+
+    KEYED BY RUN, because a pool row carries a return measured over THAT run's window. Mixing runs
+    would silently compare a 180-day move against a different 180 days — the exact class of defect
+    the vintage rules in this repo exist for. A pool from another run is ignored, not adapted.
+
+    ABSENT IS ABSENT: no pool file, or none for this run, means the narrow behaviour, unchanged.
+    """
+    path = snapshots_dir / POOL
+    if not path.is_file():
+        return {}
+    out: dict[str, tuple[str, float]] = {}
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        if row.get("run_id") == run_id and row.get("sic"):
+            out[row["ticker"]] = (row["sic"], float(row["rel_ret_vs_market"]))
+    return out
+
+
+def _comparable_tail(pools: list[dict[str, tuple[str, float]]]) -> int:
+    """Index of the first run measured on the SAME peer basis as the newest one.
+
+    A TRAJECTORY IS A SERIES, AND A SERIES HAS TO BE ONE MEASUREMENT. The pool widened what an
+    industry's median is taken over by roughly 2.5x; a run with a committed pool and a run without
+    one are not two points on the same line. Splicing them plots the methodology change as an
+    industry move — Services-Business Services, NEC was committed as
+    ``[-7.8%, +11.7%, +14.7%, -7.5%]`` where the narrow series ended ``+22.9%``, i.e. a 30-point
+    swing that no name in the industry made.
+
+    So the trajectory is truncated to the CONTIGUOUS NEWEST runs that share the newest run's
+    pool-presence. Backfilling older runs is the way to lengthen it again; nothing here imputes a
+    pool for a run that has none, and nothing plots the two bases together.
+    """
+    wide = bool(pools[-1])
+    first = len(pools) - 1
+    while first > 0 and bool(pools[first - 1]) == wide:
+        first -= 1
+    return first
+
+
 def relatives_for_run(path: pathlib.Path) -> dict[str, float]:
     """``{ticker: rel_ret_vs_market}`` for every name that reached the gates in one screen run.
 
@@ -203,32 +259,56 @@ def cohort_reads(
     if not runs:
         return {}
     history = runs[-TRAJECTORY_RUNS:]
-    latest = relatives_for_run(history[-1])
+    screened = relatives_for_run(history[-1])
 
     # FAIL LOUD ON A PARTIAL SIC MAP. A median taken over a cohort whose members mostly resolved to
     # one "unknown" bucket is a FABRICATED analytical value that looks entirely plausible — the
     # exact class CLAUDE.md forbids, and precisely what happened when this was first wired with the
     # candidate-only map. Coverage is checked against the screen log the medians are taken over.
-    if latest:
+    #
+    # MEASURED OVER THE SCREENED SET, BEFORE THE POOL IS MERGED (review, #509). Every pool row
+    # carries a resolved SIC by construction (`pool_for_run` drops rows without one), so folding
+    # 2,770 pooled names into the denominator hands the guard 2,770 free passes: at the committed
+    # sizes a screened map resolving only 48% would clear an 80% bar. The map under test is the
+    # ENTITY-MASTER map for the SCREENED names, so that is what the coverage is of.
+    if screened:
         # RESOLUTION, NOT KEY PRESENCE (review, #503). This counted `sic_map.get(t) is not None`,
         # which a map of BLANK STRINGS satisfies for every name — so a fully unresolved map
         # reported 100% coverage, sailed past this guard, and died deeper in with an OverflowError
         # instead of the clear refusal written here. `industry_for_sic` sends '', None and junk to
         # UNRESOLVED_INDUSTRY, so what matters is whether the SIC lands on a real industry. Not
         # hypothetical: 526 of the 2,485 committed securities rows carry no SIC at all.
-        known = sum(1 for t in latest
+        known = sum(1 for t in screened
                     if industry_for_sic(sic_map.get(t)) != UNRESOLVED_INDUSTRY)
-        if known < MIN_SIC_COVERAGE * len(latest):
+        if known < MIN_SIC_COVERAGE * len(screened):
             raise ValueError(
-                f"the SIC map covers {known}/{len(latest)} screened names "
-                f"({known / len(latest):.0%}) — below {MIN_SIC_COVERAGE:.0%}. Cohort medians would "
-                f"be taken mostly over one 'unknown' bucket and would be silently wrong. Pass the "
-                f"ENTITY MASTER map (`sic_by_ticker(snapshots_dir)`), not the candidate set."
+                f"the SIC map covers {known}/{len(screened)} screened names "
+                f"({known / len(screened):.0%}) — below {MIN_SIC_COVERAGE:.0%}. Cohort medians "
+                f"would be taken mostly over one 'unknown' bucket and would be silently wrong. "
+                f"Pass the ENTITY MASTER map (`sic_by_ticker(snapshots_dir)`), not the candidate "
+                f"set."
             )
-    # The newest run is already parsed as `latest`; re-reading and re-parsing it here cost a
+
+    # WIDEN THE POOL the medians are taken over — never the set of names that get a READ. A pooled
+    # name is a peer, not a candidate: it can move an industry's median, and it can never appear in
+    # the queue, because `tickers` is supplied by the caller from the screened set.
+    #
+    # PER RUN, WITH THAT RUN'S OWN POOL (review, #509). Widening only the newest run made the
+    # trajectory a series of two different measurements: Services-Business Services, NEC read
+    # [-7.8%, +11.7%, +14.7%, +22.9%] narrow and was committed as [-7.8%, +11.7%, +14.7%, -7.5%] —
+    # a 22-point industry "reversal" that is entirely the peer set changing under the series. Each
+    # point is now measured over its own run's pool, and `_comparable_tail` below drops the leading
+    # points that were measured on the other basis rather than plotting them beside it.
+    pools = [pool_for_run(snapshots_dir, p.stem) for p in history]
+    sic_map = {**sic_map, **{t: s for pool in pools for t, (s, _) in pool.items()}}
+    relatives = [screened if p is history[-1] else relatives_for_run(p) for p in history]
+    # The newest run is already parsed as `screened`; re-reading and re-parsing it here cost a
     # second full pass over a ~7,700-line log on every rank (review, #503).
-    medians = [medians_for_run(latest if p is history[-1] else relatives_for_run(p), sic_map)
-               for p in history]
+    widened = [{**rel, **{t: r for t, (_, r) in pool.items()}}
+               for rel, pool in zip(relatives, pools, strict=True)]
+    latest = widened[-1]
+    medians = [medians_for_run(w, sic_map) for w in widened]
+    medians = medians[_comparable_tail(pools):]
     current = medians[-1]
     # how tightly each cohort's OWN median is pinned by its members — the bar a call must clear
     members: dict[str, list[float]] = {}

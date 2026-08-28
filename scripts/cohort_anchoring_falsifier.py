@@ -96,11 +96,18 @@ def main() -> int:
         testable += 1
         po, pc = sum(o) / len(o), sum(c) / len(c)
         gap = po - pc
-        hit = gap > DIVERGENCE_POINTS
+        # TWO-SIDED, BECAUSE THE PRE-REGISTRATION IS (review, #509). The stated falsifier is that
+        # the worked-rate "differs between `own` and `cohort`" — and the first cut tested only
+        # `gap > threshold`, so a 35-point gap the OTHER way (the human preferentially working
+        # industry-driven names) would have reported "within tolerance". Steering is steering
+        # whichever direction it runs in; a one-sided test against a two-sided pre-registration is
+        # the code quietly narrowing the claim it was written to check.
+        hit = abs(gap) > DIVERGENCE_POINTS
         fired.append((lo, hi, gap)) if hit else None
         print(f"  {f'{lo}-{hi}':<14} {f'{sum(o)}/{len(o)} ({po:.0%})':>14} "
               f"{f'{sum(c)}/{len(c)} ({pc:.0%})':>16} {gap:>+7.0%}  "
-              f"{'FIRED — acting as a screen' if hit else 'within tolerance'}")
+              f"{'FIRED — acting as a screen' if hit else 'within tolerance'}"
+              f"{' (cohort favoured)' if hit and gap < 0 else ''}")
 
     print()
     if not testable:

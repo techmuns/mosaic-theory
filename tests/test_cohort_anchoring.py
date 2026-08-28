@@ -100,3 +100,24 @@ def test_the_accepted_risk_is_recorded_with_its_falsifier() -> None:
     block = state.split("ANCHORING THE HUMAN", 1)[1][:900]
     assert "cohort_anchoring_falsifier" in block, "the risk names no harness"
     assert "20-point" in block or "20 point" in block, "the risk records no falsifier threshold"
+
+
+def test_the_test_is_two_sided_because_the_pre_registration_is() -> None:
+    """STEERING IS STEERING WHICHEVER WAY IT RUNS (review, #509).
+
+    The pre-registered falsifier says the worked-rate "differs between `own` and `cohort`" — and
+    the first cut tested `gap > threshold`, so a 35-point gap the OTHER way (a human preferentially
+    working industry-driven names) would have reported "within tolerance". A one-sided test against
+    a two-sided pre-registration is the code quietly narrowing the claim it exists to check, and it
+    would have read as a pass forever in that scenario.
+
+    Pinned on the SOURCE because the live corpus cannot produce a negative gap yet — there is not
+    enough worked data for any band to be testable at all, so a behavioural pin would be vacuous
+    and would go green whatever the comparison said."""
+    src = SCRIPT.read_text()
+    assert "abs(gap) > DIVERGENCE_POINTS" in src, (
+        "the divergence test is not two-sided — a gap favouring `cohort` would report 'within "
+        "tolerance' against a pre-registration that says 'differs'")
+    assert "gap > DIVERGENCE_POINTS" not in src.replace("abs(gap) > DIVERGENCE_POINTS", ""), (
+        "a one-sided comparison survives somewhere in the script")
+
