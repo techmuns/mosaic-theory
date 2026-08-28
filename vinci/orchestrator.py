@@ -116,8 +116,30 @@ def rank_from_snapshots(
     # ALL — a display column taking down the decision surface it decorates. The failure is reported
     # loudly and the rank proceeds with every row reading "no cohort", which is the honest state
     # and exactly what the cell renders when a name has none.
+    #
+    # AND IT IS MEASURED OVER THE RUN THE CANDIDATES CAME FROM, not the newest on disk. Both
+    # artifacts are read here and nothing asserted they were the same vintage — so a re-rank
+    # against a stale candidate file, or a screen landing between these two steps, would subtract a
+    # median measured over one window from returns measured over another. Silent, because each
+    # number looks fine on its own. `run_for_stamp` raises when the stamp names no run, and the
+    # guard below turns that into "no cohort" rather than a lost queue.
+    #
+    # AND THE STAMP IS THE CANDIDATES', PLURAL — not row zero's. Taking `cands[0]` asserts by
+    # accident that the file is single-vintage: a `candidate_records.jsonl` carrying rows from two
+    # runs (an export interrupted mid-rewrite, or a hand-merged file) would bind the cohort to
+    # whichever run happens to sit first in the file while the queue is ranked over both. That is
+    # the same silent mixed-vintage read this guard exists to close, one level up, so it is refused
+    # rather than resolved — inside the guard, so it degrades to "no cohort", never a lost queue.
+    candidate_screen_run_at = sorted({str(c.screen_run_at)[:10] for c in cands})
     try:
-        cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers)
+        if len(candidate_screen_run_at) != 1:
+            raise ValueError(
+                f"candidate_records.jsonl carries {len(candidate_screen_run_at)} screen stamps "
+                f"({', '.join(candidate_screen_run_at)}) — there is no single run the cohort could "
+                f"be measured over, so it is not measured at all"
+            )
+        cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers,
+                               run_stamp=candidate_screen_run_at[0])
     except (ValueError, OSError) as exc:
         print(f"WARNING: cohort split unavailable, ranking without it — {exc}", file=sys.stderr)
         cohorts = {}

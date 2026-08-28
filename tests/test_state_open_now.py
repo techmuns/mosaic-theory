@@ -101,3 +101,50 @@ def test_the_closed_weekly_screen_entry_stays_struck() -> None:
         assert line.lstrip().startswith("**~~"), (
         "the 'queue has not advanced' entry is no longer struck — it contradicts the run recorded "
         "green on 2026-08-25 and a reader gets two answers")
+
+
+def _rows() -> list[str]:
+    """The item cell of every numbered row, in file order."""
+    cells = []
+    for line in _block():
+        m = re.match(r"^\|\s*\d+[a-z]?\s*\|\s*(.+?)\s*\|", line)
+        if m:
+            cells.append(m.group(1))
+    return cells
+
+
+def test_no_open_item_is_listed_twice() -> None:
+    """A duplicated row splits the reader's answer in two, which is this block's whole failure mode.
+
+    OBSERVED 2026-08-28: Phase 2 stood as BOTH row 1 and row 2, in near-identical wording that
+    diverged in its detail — so "is Phase 2 gated on a cost gate?" had two answers in the one place
+    that promises a single one. It arrived the ordinary way: a row promoted up the list without the
+    old one being removed.
+
+    Keyed on the LEADING BOLD TITLE rather than the full cell, because the two rows' bodies had
+    already drifted apart — a whole-cell comparison would have called them distinct and passed.
+    """
+    # MATCH-OR-SKIP, never `.match(...).group(...)`: a cell whose bold is left unclosed — the
+    # ordinary typo in a hand-edited table — makes the chained call die with an AttributeError and
+    # a traceback in place of the message below, so the pin stops explaining itself exactly when
+    # the file is being edited by hand.
+    titles = [m.group(1) for c in _rows() if (m := re.match(r"\*\*(.+?)\*\*", c))]
+    dupes = {t for t in titles if titles.count(t) > 1}
+    assert not dupes, (
+        f"§5.0 lists the same item more than once: {sorted(dupes)}. Delete the stale row — two "
+        f"rows for one item is two answers to 'what is next', which is what this block exists to "
+        f"prevent.")
+
+
+def test_every_open_row_says_who_owns_it() -> None:
+    """A row nobody owns is a row nobody does.
+
+    The owner column is what separates 'an agent may pick this up' from 'this waits on a human
+    ruling' — rows 3-5 today are operator rulings an agent must NOT build past.
+    """
+    for line in _block():
+        if not re.match(r"^\|\s*\d+[a-z]?\s*\|", line):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        assert len(cells) >= 3 and cells[2] in {"agent", "operator"}, (
+            f"open row has no agent/operator owner: {line[:90]}")

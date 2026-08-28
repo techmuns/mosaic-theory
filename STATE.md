@@ -1310,7 +1310,7 @@ external two-name analysis mapped against this inventory:
 
 ## 5. Next steps (ordered, current)
 
-### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-25
+### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-28
 
 **WHY THIS BLOCK EXISTS.** §5 is append-only and had grown to ~9,900 lines across 804 bold headers,
 of which 51 carry a done-marker. Most of the rest are NARRATIVE, not to-dos. "What is still open"
@@ -1327,15 +1327,15 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 
 | # | open item | owner | unlocks / blocked on |
 |--:|---|---|---|
-| 0a | **Backfill a cohort pool for the three prior screen runs** (`2026-07-29-03`, `2026-08-12-01`, `2026-08-14-01`). Until then the cohort TRAJECTORY is ONE point: #509 truncates it to the contiguous runs measured over the same peer pool, because splicing a narrow run onto a widened one plotted a 30-point industry "reversal" that no name made. | agent | nothing — `python scripts/build_cohort_pool.py` per run; ~15 min of cached EDGAR each |
-| 0b | **Pool the `no_shares` stage too** — 1,923 names, more than the whole screened set, are excluded from every industry median on the stated grounds that they "cannot contribute a return". False: `no_shares` is a missing EDGAR SHARE COUNT and the stage sits AFTER `no_price`, so all of them have both window closes. Same under-representation #509 fixed, one stage over. | agent | nothing — ready to build |
-| 1 | **Phase 2 — mechanical no-CIQ triage pass** over the queue, with a COST GATE first (time 10 names before committing to 268). Phase 0 (the LLM cause classifier) folds in here: `cause_class` is dark because no textual de-rating source exists at queue scale — all 525 events are `earnings_gap_down` from the EOD detector, no accession, no document. | agent | operator go-ahead on the cost gate; narrow to top-50 if a full pass will not fit the week |
-| 2 | **Phase 2 — mechanical no-CIQ triage pass** over the queue, with a COST GATE first (time 10 names before committing to 268). **Phase 0 (LLM cause classifier) folds in here**: `cause_class` is dark because no textual de-rating source exists at queue scale — all 525 events are `earnings_gap_down` from the EOD detector, no accession, no document. | agent | operator go-ahead on the cost gate; narrow to top-50 if a full pass will not fit the weekly window |
-| 3 | **Vintage check between `candidate_records.jsonl` and `screen_runs/*.jsonl`** — the queue is ranked from one and cohorts read the newest of the other, with no as-of assertion between them. Two rows already mismatch; degrades honestly today, would widen silently on drift. | agent | nothing — ready to build |
-| 4 | **Anchoring falsifier for the cohort split.** #501 proved the residual is a bad SORT KEY; nothing tracks whether the `name-specific` pill changes what the human underwrites. If BUY rates diverge sharply between `name-specific` and `industry-wide`, the split is acting as a screen whatever the sort key does. | agent | nothing — pre-register it while it is cheap to state |
-| 5 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
-| 6 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
-| 7 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
+| 1 | **Backfill a cohort pool for the three prior screen runs** (`2026-07-29-03`, `2026-08-12-01`, `2026-08-14-01`). Until then the cohort TRAJECTORY is ONE point: #509 truncates it to the contiguous runs measured over the same peer pool, because splicing a narrow run onto a widened one plotted a 30-point industry "reversal" that no name made. | agent | nothing — `python scripts/build_cohort_pool.py` per run; ~15 min of cached EDGAR each |
+| 2 | **Phase 2 — mechanical no-CIQ triage pass** over the queue, with a COST GATE first (time 10 names before committing to 268). Phase 0 (the LLM cause classifier) folds in here: `cause_class` is dark because no textual de-rating source exists at queue scale — all 525 events are `earnings_gap_down` from the EOD detector, no accession, no document. | agent | operator go-ahead on the cost gate; narrow to top-50 if a full pass will not fit the week |
+| 3 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
+| 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
+| 5 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
+
+**PRE-REGISTERED, WAITING ON DATA — not a build:** the cohort anchoring falsifier (#507) is
+written and frozen; it cannot read out until 10 verdicts exist in each arm. Re-opening it as a
+build is the mistake — running it early is what a pre-registration exists to prevent.
 
 **NOT open, recorded because they were recently believed open:** the weekly screen (ran green
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a

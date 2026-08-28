@@ -244,11 +244,39 @@ def screen_run_files(snapshots_dir: pathlib.Path) -> list[pathlib.Path]:
     return sorted((snapshots_dir / "screen_runs").glob("*.jsonl"))
 
 
+def run_for_stamp(snapshots_dir: pathlib.Path, stamp: str) -> pathlib.Path:
+    """The screen run a set of candidates came from, chosen by their OWN stamp, never by recency.
+
+    THE BUG THIS CLOSES. `cohort_reads` used to take the newest run on disk while the queue is
+    ranked from `candidate_records.jsonl`, and NOTHING asserted the two were the same vintage. Today
+    they agree; the moment a re-rank runs against a stale candidate file — or a screen lands between
+    the two steps — the cohort medians would be measured over one window while the returns they are
+    subtracted from come from another. Both numbers look fine; the difference between them is
+    meaningless. That is the mixed-vintage class the as-of rules in this repo exist for, and it
+    fails silently: a median is a plausible number whatever window produced it.
+
+    SAME-DATE RUNS: 2026-07-29 has -01, -02 and -03. The highest suffix for the date wins, which is
+    the existing convention — a later run of the same date supersedes its predecessors.
+
+    Fails loud when the stamp names no run: a cohort measured against a guessed window is worse than
+    no cohort, and there is no safe default here.
+    """
+    day = str(stamp)[:10]
+    same_day = [p for p in screen_run_files(snapshots_dir) if p.stem.startswith(day)]
+    if not same_day:
+        raise ValueError(
+            f"no screen run for {day}, which is what the candidate records are stamped with. The "
+            f"cohort cannot be measured over a window that is not on disk — re-run the screen, or "
+            f"rank from candidates that match a committed run.")
+    return same_day[-1]
+
+
 def cohort_reads(
     snapshots_dir: pathlib.Path,
     sic_map: dict[str, str | None],
     *,
     tickers: Iterable[str] | None = None,
+    run_stamp: str | None = None,
 ) -> dict[str, CohortRead]:
     """``{ticker: CohortRead}`` from the committed screen logs. Empty when there is no log to read.
 
@@ -258,8 +286,12 @@ def cohort_reads(
     runs = screen_run_files(snapshots_dir)
     if not runs:
         return {}
-    history = runs[-TRAJECTORY_RUNS:]
-    screened = relatives_for_run(history[-1])
+    # THE RUN IS CHOSEN BY THE CANDIDATES' OWN STAMP when the caller supplies one — never by
+    # recency. See `run_for_stamp`: taking the newest silently mixes vintages the moment the queue
+    # is ranked from a candidate file older than the newest screen on disk.
+    current_run = run_for_stamp(snapshots_dir, run_stamp) if run_stamp else runs[-1]
+    history = [p for p in runs if p.stem <= current_run.stem][-TRAJECTORY_RUNS:]
+    screened = relatives_for_run(current_run)
 
     # FAIL LOUD ON A PARTIAL SIC MAP. A median taken over a cohort whose members mostly resolved to
     # one "unknown" bucket is a FABRICATED analytical value that looks entirely plausible — the
