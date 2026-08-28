@@ -116,8 +116,16 @@ def rank_from_snapshots(
     # ALL — a display column taking down the decision surface it decorates. The failure is reported
     # loudly and the rank proceeds with every row reading "no cohort", which is the honest state
     # and exactly what the cell renders when a name has none.
+    #
+    # AND IT IS MEASURED OVER THE RUN THE CANDIDATES CAME FROM, not the newest on disk. Both
+    # artifacts are read here and nothing asserted they were the same vintage — so a re-rank
+    # against a stale candidate file, or a screen landing between these two steps, would subtract a
+    # median measured over one window from returns measured over another. Silent, because each
+    # number looks fine on its own. `run_for_stamp` raises when the stamp names no run, and the
+    # guard below turns that into "no cohort" rather than a lost queue.
     try:
-        cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers)
+        cohorts = cohort_reads(snaps, sic_by_ticker(snaps), tickers=queue_tickers,
+                               run_stamp=str(cands[0].screen_run_at))
     except (ValueError, OSError) as exc:
         print(f"WARNING: cohort split unavailable, ranking without it — {exc}", file=sys.stderr)
         cohorts = {}
