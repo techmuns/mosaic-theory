@@ -261,7 +261,7 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     db = ROOT / "data" / "dossiers"
     if not db.is_dir():
         pytest.skip("no local dossiers in this worktree")
-    from vinci.edgar.concepts import points_for_tag
+    from vinci.edgar.concepts import extract_points
 
     #: EXEMPTIONS, KEYED ON THE REASON — never a bare roster, so a new name is in scope the day it
     #: lands and an exemption self-clears if the filer's tagging changes.
@@ -277,7 +277,16 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     served, zero = [], []
     for t in names:
         f = facts_for(t)  # type: ignore[operator]
-        pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
+        # THE CONCEPT, NOT ONE TAG (MC1, 2026-08-28). This read
+        # `points_for_tag("EntityCommonStockSharesOutstanding")` — the dei cover-page tag alone —
+        # while `concepts.py` has mapped the "shares" CONCEPT to that tag with us-gaap fallbacks
+        # all along. ALPHABET DOES NOT TAG THE COVER-PAGE COUNT AT ALL: live EDGAR for CIK
+        # 0001652044 carries exactly one dei tag, EntityPublicFloat. Its count is there under
+        # us-gaap:CommonStockSharesOutstanding (12,230,000,000 at 2026-06-30), which the chain
+        # already reaches — so this call site was the only thing withholding it. Resolving through
+        # the concept changes NOTHING for the names that do tag the cover page (SMPL and V both
+        # still resolve via EntityCommonStockSharesOutstanding, byte-identical values).
+        pts = extract_points(f, "shares")
         out = max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
         d = diluted_outstanding(f, basic_out=out)
         if t in exempt:
@@ -299,7 +308,8 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     assert zero, "no zero-dilution name found — measured at 3 of 11; the state may have gone silent"
     for t in zero:
         f = facts_for(t)  # type: ignore[operator]
-        pts = points_for_tag(f, "EntityCommonStockSharesOutstanding")
+        # SIBLING of the lookup above — same concept, same reason.
+        pts = extract_points(f, "shares")
         out = max(pts, key=lambda p: (p.period_end, p.filed)).value
         assert "reported zero, not an unchecked one" in denominator_note(
             diluted_outstanding(f, basic_out=out)), t
@@ -518,3 +528,25 @@ def test_every_committed_record_states_the_denominator_it_actually_uses() -> Non
         assert "Excluded from the filer's diluted average" in basis, (
             f"{f_.stem}: the exclusions are not stated beside the denominator")
     assert checked >= 5, f"only {checked} records reached the assertion — near-vacuous"
+
+
+def test_the_fleet_check_resolves_shares_through_the_concept_not_one_tag() -> None:
+    """STRUCTURAL, because the defect was a CALL SITE and not the mapping.
+
+    `concepts.py` has always mapped the "shares" concept to the dei cover-page tag WITH us-gaap
+    fallbacks; the fleet check above read the single dei tag directly and so withheld every filer
+    that does not tag the cover page. Alphabet is one: live EDGAR for CIK 0001652044 carries
+    exactly one dei tag (EntityPublicFloat), while its count sits under
+    us-gaap:CommonStockSharesOutstanding. There were TWO such call sites in one function and the
+    first fix caught only one — pin the file, not the line.
+    """
+    import pathlib as _pl
+
+    src = _pl.Path(__file__).read_text()
+    body = src.split("def test_the_fleet_check_resolves_shares", 1)[0]
+    assert 'points_for_tag(f, "EntityCommonStockSharesOutstanding")' not in body, (
+        "a fleet lookup went back to the single dei cover-page tag — that withholds every filer "
+        "which tags shares only under us-gaap, and the concept chain already handles them")
+    assert body.count('extract_points(f, "shares")') == 2, (
+        "both fleet lookups must resolve through the shares CONCEPT — one fixed sibling and one "
+        "left behind is the defect this pin exists to catch")

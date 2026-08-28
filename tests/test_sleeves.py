@@ -217,11 +217,26 @@ def test_a_legacy_ledger_row_reads_screen_and_overshoot() -> None:
     rows = [LedgerEntry.model_validate_json(json.loads(x)["payload"])
             for x in p.read_text().splitlines() if x.strip()]
     assert rows, "the committed ledger is empty — nothing to assert on"
-    for e in rows:
-        assert e.origin is None and e.sleeve is None, (
-            f"{e.entry_id} was BACKFILLED — a sealed row is never rewritten to satisfy a later "
-            f"schema; absent is the record of when it was logged")
-        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE
+
+    # LEGACY MEANS PREDATES THE FIELDS, NOT "every row" (2026-08-28). This asserted None on EVERY
+    # committed row, which held only while every row was legacy. The first row logged AFTER the
+    # fields existed — GOOGL, the quality book's first position, written through the FOLLOWED route
+    # the docstring above says could not reach this ledger — reddened it and the message blamed a
+    # backfill that never happened. The contract is DIRECTIONAL: a row sealed before a field existed
+    # must never acquire it later; a row sealed after may carry it. Split on that, and keep the
+    # legacy reading pinned where it belongs.
+    legacy = [e for e in rows if e.origin is None and e.sleeve is None]
+    tagged = [e for e in rows if e not in legacy]
+    assert legacy, "no legacy rows left to assert the additive-field contract on"
+    for e in legacy:
+        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE, (
+            f"{e.entry_id}: a legacy row must READ screen/overshoot through the helpers")
+    for e in tagged:
+        assert e.origin is not None and e.sleeve is not None, (
+            f"{e.entry_id} carries one of origin/sleeve but not the other — a half-tagged row "
+            f"lands in a filtered curve the other half does not agree with")
+        assert origin_of(e) == e.origin and sleeve_of(e) == e.sleeve, (
+            f"{e.entry_id}: the helpers must return the row's OWN values, not the legacy default")
 
 
 @pytest.mark.parametrize(("field", "bad"), [

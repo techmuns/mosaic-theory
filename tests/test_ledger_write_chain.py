@@ -108,6 +108,11 @@ def test_the_close_pairs_with_its_decision_and_carries_its_provenance(tree: Conf
     close that does not pair breaks every later monitor run at a point far from the command that
     wrote it."""
     with Store(tree.db_path) as store:
+        # RELATIVE, NOT ABSOLUTE (2026-08-28). This counted decisions against a hardcoded 4 while
+        # claiming to test that a close is not counted as one. Recording a real 5th verdict — the
+        # first quality-book position — reddened it, and the failure message named the wrong cause.
+        # The property is that writing a CLOSE leaves the decision count UNCHANGED; pin that.
+        before = len(decision_rows([json.loads(r.model_dump_json()) for r in store.iter_ledger()]))
         close = close_position(
             store, candidate_id=OPEN_CANDIDATE, exit_price=10.86,
             exit_price_as_of=date(2026, 8, 11), reason="closed for the test",
@@ -121,7 +126,7 @@ def test_the_close_pairs_with_its_decision_and_carries_its_provenance(tree: Conf
     assert close.machine_proposal is None and close.disposition is None
     paired = pair_closes(raw)
     assert len(paired) == len(close_rows(raw)), "the close did not pair"
-    assert len(decision_rows(raw)) == 4, "a close was counted as a decision row"
+    assert len(decision_rows(raw)) == before, "a close was counted as a decision row"
 
 
 def test_facts_are_cleared_because_they_belong_to_the_decision(tree: Config) -> None:

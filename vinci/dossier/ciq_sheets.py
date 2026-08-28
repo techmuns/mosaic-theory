@@ -2211,8 +2211,20 @@ def _market_summary_current_year(rows: Rows, metric: str) -> float | None:
 
     Used to IDENTIFY which annual block is consensus, because the two carry identical section
     titles and different numbers. This value is the sheet agreeing with itself; the block that
-    matches it is the one the sheet means by "consensus"."""
-    for r in rows[:60]:
+    matches it is the one the sheet means by "consensus".
+
+    ANCHORED ON THE BLOCK, NOT ON A ROW COUNT (2026-08-28). This scanned a hardcoded ``rows[:60]``,
+    which assumed the Market Summary sits near the top of the sheet. It does not for a MULTI-LISTED
+    filer: Alphabet's header carries four listings (NasdaqGS:GOOGL, NasdaqGS:GOOG and two GDRs)
+    against Eli Lilly's one, which pushes the block from row 28 to row 54 and its Revenue row to
+    row 60 — one past the bound, so the whole consensus block went unidentified and every forward
+    metric with it. The window now starts AT the Market Summary and runs a bounded span from
+    there, the same shape-not-offset rule ``_consensus_fy_header`` already follows. With no such
+    header the scan falls back to the top of the sheet, so a sheet without one reads as before.
+    """
+    start = next((i for i, r in enumerate(rows[:200])
+                  if r and str(r[0]).strip() == "Market Summary"), 0)
+    for r in rows[start:start + 60]:
         cells = [str(c).strip() for c in r]
         if metric in cells:
             k = cells.index(metric)

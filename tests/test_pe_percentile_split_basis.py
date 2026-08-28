@@ -65,7 +65,13 @@ FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
 #:          split does to comparatives. Ratio measured 2.0032. The share COUNT series (99.5M →
 #:          103.6M over 2022-2025) is smooth and shows nothing — the split predates it, so
 #:          checking counts alone would have concluded "no split" and been wrong.
-SPLIT_NAMES = {"NFLX"}
+#: Names whose per-share basis was RESCALED INSIDE the window — never "has ever split".
+#: GOOGL added 2026-08-28 on the filer's own restatement, the standard this module's first test
+#: describes: FY2020 reported 58.61 (2021-02-03, 2022-02-02) then 2.93 (2023-02-03); FY2021
+#: reported 112.2 then 5.61. Both exactly 20.0x — the July-2022 20-for-1, restated in the FY2022
+#: 10-K, and the detector reads 20.0017 over the windowed points. The percentile is correctly
+#: WITHHELD for GOOGL: split-adjusted prices over as-filed EPS would divide one basis by the other.
+SPLIT_NAMES = {"NFLX", "GOOGL"}
 
 
 def _eps(ticker: str) -> list:

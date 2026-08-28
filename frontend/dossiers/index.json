@@ -5,6 +5,7 @@
     "CNXC",
     "EPAM",
     "FUBO",
+    "GOOGL",
     "IT",
     "LLY",
     "MVST",
@@ -39,6 +40,11 @@
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
     "FUBO": {
+      "industry": "Interactive Media and Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "GOOGL": {
       "industry": "Interactive Media and Services",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
@@ -105,6 +111,7 @@
     "CNXC": "mixed \u2014 flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.",
     "EPAM": "mixed \u2014 net-cash, still-growing dollar EBITDA and a floor multiple sit against a management-owned structural North American growth gap and relentless downward revisions.",
     "FUBO": "mixed \u2014 a raised adjusted-EBITDA guide and subscriber inflection sit against a \u221277% year, \u2212$107.8M FCF, and a \u221237% consensus EBITDA cut.",
+    "GOOGL": "mixed \u2014 accelerating revenue and cloud backlog run into a record-high trailing multiple, falling ROIC and rising capex whose payback is unresolved.",
     "IT": "mixed \u2014 franchise economics (RoCE ~19%, 97-99% retention, rising absolute EBITDA) are intact, but revenue has stalled and new business is falling, leaving the discount plausibly earned.",
     "LLY": "strongly-bullish \u2014 extraordinary volume-driven revenue and EBITDA compounding with rising returns, though the premium demands the runway keeps delivering.",
     "MVST": "strongly-bearish \u2014 management-stated going-concern doubt plus a ~$104M near-term wall against negative operating cash flow and falling volumes.",
@@ -123,6 +130,7 @@
     "CNXC": "overshoot",
     "EPAM": "overshoot",
     "FUBO": "overshoot",
+    "GOOGL": "quality",
     "IT": "overshoot",
     "LLY": "quality",
     "MVST": "overshoot",
