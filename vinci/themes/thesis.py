@@ -207,6 +207,18 @@ def stamped(card: ThemeThesis) -> ThemeThesis:
     return card.model_copy(update={"mirror_slug": spec.mirror_slug})
 
 
+def load_all_theses(*, data_dir: Path) -> list[ThemeThesis]:
+    """Every declared card, sorted by driver — the monitor's sweep input (brief Item 2).
+
+    Top-level glob only: ``thesis/archive/`` holds superseded cards, and a superseded falsifier
+    flagged as live would be the stale-criterion class this sweep exists to end."""
+    d = data_dir / THESIS_SUBDIR
+    if not d.is_dir():
+        return []
+    return [ThemeThesis.model_validate_json(p.read_text())
+            for p in sorted(d.glob("*.json"))]
+
+
 def require_thesis_card(driver: str, *, data_dir: Path) -> ThemeThesis:
     """THE GATE — no Stage-4 freeze without a card ("no verdict without the edge", theme level).
 

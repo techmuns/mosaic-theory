@@ -1728,8 +1728,14 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # carrier and `RealizedRow.note()` renders them, so display cannot drift from the data.
     realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
     notes.extend(r.note() for r in realized_rows)
+    # THEME FALSIFIER SWEEP (brief Item 2): every declared thesis card's dated triggers, flagged
+    # when the deadline has passed — beside the scenario dated_triggers rows above, same doctrine
+    # (the machine flags the closed window; whether it FIRED is the human's read).
+    from vinci.themes.thesis import load_all_theses
+    theme_rows = mon.theme_falsifier_rows(load_all_theses(data_dir=cfg.data_dir), today=ref)
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
-                               freshness=fresh, notes=notes, realized=realized_rows)
+                               freshness=fresh, notes=notes, realized=realized_rows,
+                               theme_falsifiers=theme_rows)
     print(mon.render_table(snap))
     # The CLI never rewrites a SUPERSEDED day: re-running the front of the book is routine, while
     # replacing a day that later snapshots sit on top of would overwrite what the book recorded

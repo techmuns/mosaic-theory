@@ -125,6 +125,14 @@ Each line: *what it does* — *verified how*.
   NO composite by pin) — *real runs: gate refused a card-less freeze on the live data dir; 56/0 ·
   108/0 · 37/1 (WERN row) roll-ups committed; 26 new pins; suite 3097 green.*
   *(detail: `docs/records/2026-08-29-theme-thesis-card-and-economics-rollup.md`)*
+- **Theme falsifier sweep** (`vinci/monitor.py::theme_falsifier_rows` + the THEME FALSIFIERS
+  panel) — every declared card's dated triggers swept into the console + the committed monitor
+  snapshot; a passed deadline flags `⚑ … PASSED → re-underwrite due` (flag, never adjudication);
+  zero cards prints a STATED absence. Ships the adjacent fix: scenario `passed_trigger_deadlines`
+  now RENDER (typed+persisted since the catalyst calendar, never shown — latent, all committed
+  days empty) — *live runs: stated absence on the real book; placeholder card → ⚑ PASSED row +
+  typed artifact rows, then demo artifacts deleted; 7 pins; suite 3105 green.*
+  *(detail: `docs/records/2026-08-29-theme-falsifier-sweep.md`)*
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*
@@ -1352,7 +1360,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 3 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
 | 5 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
-| 6 | **Theme thesis brief — Item 2 remaining (monitor sweep of card falsifiers).** Rulings R1–R5 adopted 2026-08-28; Items 1+4 SHIPPED 2026-08-29 (`docs/records/2026-08-29-theme-thesis-card-and-economics-rollup.md`): the card + freeze gate + `THESIS UNSTATED` stamp + economics roll-up are live (Item 3, the anchoring-falsifier report block, shipped separately — PR #516's record). Item 2 extends the monitor's freshness sweep to flag passed card-falsifier deadlines (flag-only, beside the scenario `dated_triggers` rows; indicator MEASUREMENT stays with row 5's PanelSpec plan). OPERATOR SUB-ITEM: declare the first REAL thesis card (`vinci theme-thesis declare` — the build refuses to fabricate that judgment); until then every driver stamps UNSTATED and new freezes refuse. | agent | Item 2: nothing — ready to build. First card: operator's words |
+| 6 | **Declare the first REAL thesis card** (`vinci theme-thesis declare <driver> --file card.json`). The theme-thesis brief's BUILD side is COMPLETE: Items 1+4 (`docs/records/2026-08-29-theme-thesis-card-and-economics-rollup.md`), Item 3 (PR #516 — its record travels with that branch), Item 2 (`docs/records/2026-08-29-theme-falsifier-sweep.md`). Until a card exists every driver stamps `THESIS UNSTATED`, new Stage-4 freezes refuse, and the monitor prints "no thesis cards declared" each run. The card's words are the operator's judgment — no build fabricates them. | operator | the operator's declared thesis (per driver, at their pace) |
 
 **PRE-REGISTERED, WAITING ON DATA — not a build:** the cohort anchoring falsifier (#507) is
 written and frozen; it cannot read out until 10 verdicts exist in each arm. Re-opening it as a
