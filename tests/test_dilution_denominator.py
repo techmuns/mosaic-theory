@@ -253,6 +253,27 @@ def facts_for() -> object:
         socket.create_connection = real  # type: ignore[assignment]
 
 
+
+def _basic_out(f: dict) -> float | None:
+    """The point-in-time basic count, resolved through the "shares" CONCEPT — never one tag.
+
+    ISSUED IS NOT OUTSTANDING (review of #512). The concept chain ends in
+    ``CommonStockSharesIssued``, which for a filer holding treasury stock exceeds the outstanding
+    count; feeding it to the overlay as ``basic_out`` would inflate the denominator and the failure
+    would read as the overlay's fault. No committed name falls through to it today (measured), so
+    this REFUSES rather than silently accepting the wrong basis the day one does.
+    """
+    from vinci.edgar.concepts import extract_points
+
+    pts = extract_points(f, "shares")
+    if not pts:
+        return None
+    c = max(pts, key=lambda p: (p.period_end, p.filed))
+    assert c.tag != "CommonStockSharesIssued", (
+        f"shares resolved via {c.tag}: issued shares are not outstanding shares for a filer with "
+        f"treasury stock — the overlay needs the outstanding count, not the issued one")
+    return c.value
+
 def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     facts_for: object,
 ) -> None:
@@ -261,7 +282,6 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     db = ROOT / "data" / "dossiers"
     if not db.is_dir():
         pytest.skip("no local dossiers in this worktree")
-    from vinci.edgar.concepts import extract_points
 
     #: EXEMPTIONS, KEYED ON THE REASON — never a bare roster, so a new name is in scope the day it
     #: lands and an exemption self-clears if the filer's tagging changes.
@@ -286,8 +306,7 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
         # already reaches — so this call site was the only thing withholding it. Resolving through
         # the concept changes NOTHING for the names that do tag the cover page (SMPL and V both
         # still resolve via EntityCommonStockSharesOutstanding, byte-identical values).
-        pts = extract_points(f, "shares")
-        out = max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
+        out = _basic_out(f)
         d = diluted_outstanding(f, basic_out=out)
         if t in exempt:
             assert d.shares is None, (
@@ -308,9 +327,7 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
     assert zero, "no zero-dilution name found — measured at 3 of 11; the state may have gone silent"
     for t in zero:
         f = facts_for(t)  # type: ignore[operator]
-        # SIBLING of the lookup above — same concept, same reason.
-        pts = extract_points(f, "shares")
-        out = max(pts, key=lambda p: (p.period_end, p.filed)).value
+        out = _basic_out(f)   # SIBLING of the lookup above — same concept, same reason
         assert "reported zero, not an unchecked one" in denominator_note(
             diluted_outstanding(f, basic_out=out)), t
 
@@ -542,11 +559,21 @@ def test_the_fleet_check_resolves_shares_through_the_concept_not_one_tag() -> No
     """
     import pathlib as _pl
 
+    # SCAN THE WHOLE FILE, MINUS THIS GUARD (review of #512). The first cut split on this test's
+    # own `def` and scanned only what came BEFORE it — which is where the guard was appended, so a
+    # fleet lookup added later was invisible to the very check meant to catch it. The exact `== 2`
+    # was brittle for the same reason: a third legitimate call site would red it while being right.
     src = _pl.Path(__file__).read_text()
-    body = src.split("def test_the_fleet_check_resolves_shares", 1)[0]
+    marker = "def test_the_fleet_check_resolves_shares"
+    head, _, tail = src.partition(marker)
+    body = head + "\n".join(tail.split("\n\n\n")[1:])      # every OTHER test, before and after
     assert 'points_for_tag(f, "EntityCommonStockSharesOutstanding")' not in body, (
         "a fleet lookup went back to the single dei cover-page tag — that withholds every filer "
         "which tags shares only under us-gaap, and the concept chain already handles them")
-    assert body.count('extract_points(f, "shares")') == 2, (
-        "both fleet lookups must resolve through the shares CONCEPT — one fixed sibling and one "
-        "left behind is the defect this pin exists to catch")
+    assert body.count("_basic_out(f)") >= 2, (
+        "both fleet lookups must resolve through the shared `_basic_out` — one fixed sibling and "
+        "one left behind is the defect this pin exists to catch")
+    resolver = src.split("def _basic_out", 1)[1].split("\ndef ", 1)[0]
+    assert 'extract_points(f, "shares")' in resolver, (
+        "the shared resolver must read the shares CONCEPT, not a hand-rolled tag list — the "
+        "concept is what carries the us-gaap fallbacks a non-cover-page filer needs")
