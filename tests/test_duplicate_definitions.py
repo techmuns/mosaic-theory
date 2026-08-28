@@ -39,6 +39,22 @@ _QUOTED = re.compile(r"""["']([^"'\n]{1,60})["']""")
 #: the sorted member tuple. Curating one down (27b) means DELETING its line here — which is the
 #: whole point: the baseline can only ever shrink, and shrinking it is a diff someone reviews.
 BASELINE: frozenset[tuple[str, ...]] = frozenset({
+    # (calls tape, 2026-08-25) The FOUR TAG VOCABULARIES — bias, post_class, target_type and the
+    # non-signal class set. Written out in `vinci/calls/{audit,sheet}.py` (the LLM tool schema and
+    # the workbook's dropdowns) and in `frontend/views/calls/tape.js` (the editor and its filters).
+    #
+    # ACCEPTED, NOT SOLVED, and the alternative was worse: DERIVING these from the corpus would
+    # drop any value with zero rows, leaving the operator unable to SET it — the same defect
+    # inverted. What the duplication risks is one side gaining a value the other cannot express,
+    # and that is covered BEHAVIOURALLY by two pins that read the real files:
+    #   · test_calls_audit.py::test_the_tool_vocabulary_matches_what_the_rest_of_the_system_accepts
+    #     — every value the LLM schema can return must be expressible in the tape.
+    #   · test_calls_exhibit.py, the editor-vocabulary pin — every value the CORPUS carries
+    #     must likewise be expressible in the tape.
+    ('bearish', 'bullish', 'mixed', 'neutral', 'none'),
+    ('engagement', 'flow_spam', 'noise', 'pnl_report', 'promo', 'signal_candidate'),
+    ('engagement', 'flow_spam', 'noise', 'promo'),
+    ('none', 'pct', 'point', 'qualitative', 'range'),
     # (A2, 2026-08-03) The EV-gap BRIDGE keys, guarded before rendering in both twins. Genuinely
     # unavoidable: the JS cannot import the Python constant, and the alternative — rendering the
     # bridge without checking its legs — puts "undefined" on the page, which is #176's defect.

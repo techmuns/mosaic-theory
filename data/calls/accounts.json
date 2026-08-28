@@ -9,9 +9,10 @@
       "n_posts": 5641,
       "n_days": 606,
       "n_cashtags": 411,
-      "n_tracked": 214,
-      "n_hand_labels": 83,
-      "n_machine_labels": 8102
+      "n_tracked": 411,
+      "n_hand_labels": 557,
+      "n_machine_labels": 0,
+      "n_llm_labels": 8102
     }
   ]
 }

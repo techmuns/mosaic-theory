@@ -51,6 +51,17 @@ from pydantic import BaseModel
 #: resolved targets sat outside this band and 489 of them were reporting a hit.
 _PLAUSIBLE_LO, _PLAUSIBLE_HI = 0.1, 10.0
 
+#: A TARGET IS A VALUE, NOT A SENTENCE. Anything outside this grammar is prose, and the first
+#: number in a sentence is not the target it describes: "532 breakout to 540/544 or reject to 508"
+#: names 532 as the CURRENT level and 540/544/508 as the outcomes, so reading 532 as the target is
+#: a fabrication dressed as a parse. Observed the moment richer readings entered the corpus — the
+#: earlier machine labeller only ever emitted bare values, so nothing had exercised this.
+#:
+#: Admitted: `172-180`, `-10%`, `$450+`, `$215/$220`, `92.50`, `50-100%`. A qualitative target
+#: ("ATH", "prior highs") is not routed here at all — it has its own status.
+_NUM = r"\$?\s*[-+]?\d+(?:\.\d+)?\s*%?\s*\+?"
+_VALUE_ONLY = re.compile(rf"^\s*{_NUM}\s*(?:(?:[-–—/]|to)\s*{_NUM}\s*)?$", re.I)
+
 #: A signed number is recognised ONLY at the start; any later "-" is a range separator, never a
 #: sign. This is the whole bug fix: "-10-15%" -> (-10, 15), "50-100%" -> (50, 100).
 _PAIR = re.compile(
@@ -145,7 +156,9 @@ def parse_target(
         return TargetParse(price=None, status=TargetStatus.QUALITATIVE)
 
     raw = str(target).replace("$", "").replace(",", "").strip()
-    nums = _numbers(raw)
+    if not _VALUE_ONLY.match(str(target).replace(",", "")):
+        return TargetParse(price=None, status=TargetStatus.UNPARSEABLE)
+    nums = _numbers(raw.replace("/", "-"))
     if nums is None:
         return TargetParse(price=None, status=TargetStatus.UNPARSEABLE)
     lo, hi = nums

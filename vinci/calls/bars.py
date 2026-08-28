@@ -13,6 +13,19 @@ adjusted, disk-cached, fail-loud on a bad status. Nothing here re-implements it.
 
 THE WINDOW comes from ``tickers.json`` (first mention −3mo, last mention +12mo), so a ticker
 mentioned once costs one small call rather than a full-history pull.
+
+A CASHTAG IS NOT ALWAYS A SYMBOL. He posts the ticker he knew; the vendor may want a different
+string. ``tickers.json``'s ``renamed`` map is read as **cashtag → the symbol Polygon serves it
+under**, which covers two cases the fetcher used to fail silently on:
+
+- a RENAME mid-window. Polygon serves each symbol only for the span it was live, so fetching the
+  cashtag alone truncated the window with NOTHING SAID — ``$SQ`` stopped dead at 2025-01-17, the
+  day Block became XYZ, and every later ``$SQ`` post lost its price.
+- NOTATION. ``$BRKB`` is how he types it and ``BRK.B`` is what Polygon answers to; the cashtag
+  returns an empty series and the file looks like a delisting.
+
+The first needs a splice, the second is the successor's series outright — ``_splice_rename``
+handles both, and ``null`` (TWTR) is a delisting with no successor at all.
 """
 from __future__ import annotations
 
@@ -21,12 +34,72 @@ from datetime import date
 from pathlib import Path
 
 from vinci.calls.accounts import account_dir
-from vinci.eod.client import PolygonEodClient
+from vinci.eod.client import PolygonEodClient, RawBar
 
 #: Benchmark for the tape. SPY, because ``tracker.py`` pre-registered SPY and changing the
 #: benchmark changes every excess return. The fund's own screens use IWM; both now exist, so every
 #: rendered comparison names which one it is rather than saying "the benchmark".
 BENCHMARK = "SPY"
+
+
+#: WHAT A RENAME HANDOFF LOOKS LIKE. Both bounds are face-validity, not tuned: a rename hands the
+#: series over at the next session (SQ→XYZ is 4 calendar days, across a holiday weekend), and the
+#: seam is an ordinary session's move ($86.96 → $88.06 open, +1.3%). A months-long hole or a
+#: 2×-style step is not a rename — it is the WRONG PAIR, and splicing it would fabricate one
+#: continuous price history out of two different companies.
+_SEAM_MAX_GAP_DAYS = 10
+_SEAM_MAX_MOVE = 0.5
+#: Where both symbols serve the same date they are the same security, so their adjusted closes
+#: must agree. Beyond this they do not, and the map entry is wrong.
+_OVERLAP_TOL = 0.01
+
+Series = list[tuple[date, RawBar]]
+
+
+def _splice_rename(old: Series, new: Series, *, cashtag: str, successor: str) -> Series:
+    """Join a renamed ticker's two symbol-halves into ONE continuous series.
+
+    The halves do not overlap in practice (``$SQ`` ends 2025-01-17, ``XYZ`` starts 2025-01-21), so
+    this is a concatenation rather than a merge. Where they DO overlap the cashtag's own symbol
+    wins — but only after its closes are checked against the successor's, because agreement on the
+    shared dates is the evidence that these are one security at all.
+
+    RAISES rather than papering over: a bad map entry is a wrong answer, not a missing one, and a
+    silently spliced pair would read as a clean price history forever after.
+    """
+    if not old:
+        return new                      # the window opens after the rename
+    if not new:
+        return old                      # the window closes before it
+    shared = {d for d, _ in old} & {d for d, _ in new}
+    if shared:
+        o, n = dict(old), dict(new)
+        off = [d for d in sorted(shared)
+               if abs(n[d].close / o[d].close - 1.0) > _OVERLAP_TOL]
+        if off:
+            d0 = off[0]
+            raise ValueError(
+                f"${cashtag} → {successor}: the two symbols serve {len(shared)} of the same dates "
+                f"but disagree on {len(off)} of them (e.g. {d0}: {o[d0].close} vs {n[d0].close}) — "
+                f"they are not the same security, so the `renamed` entry is wrong")
+    tail = old[-1]
+    after = [b for b in new if b[0] > tail[0]]
+    if not after:
+        return old
+    head = after[0]
+    gap = (head[0] - tail[0]).days
+    if gap > _SEAM_MAX_GAP_DAYS:
+        raise ValueError(
+            f"${cashtag} → {successor}: {gap} days between {tail[0]} and {head[0]} — a rename "
+            f"hands over at the next session, so this is a suspension or the wrong successor, "
+            f"not a rename; splicing it would hide the hole")
+    move = head[1].open / tail[1].close - 1.0
+    if abs(move) > _SEAM_MAX_MOVE:
+        raise ValueError(
+            f"${cashtag} → {successor}: the seam moves {move:+.1%} ({tail[0]} close "
+            f"{tail[1].close} → {head[0]} open {head[1].open}) — that is a split or the wrong "
+            f"symbol, not a rename")
+    return old + after
 
 
 def bars_dir(handle: str) -> Path:
@@ -56,10 +129,24 @@ def fetch_account_bars(
             rows.append(full[BENCHMARK])
     out = bars_dir(handle)
     out.mkdir(parents=True, exist_ok=True)
+    renamed: dict[str, str | None] = spec.get("renamed") or {}
     counts: dict[str, int] = {}
     for i, t in enumerate(rows, 1):
         sym = t["ticker"]
-        got = cli.daily_bars(sym, _iso(t["fetch_from"]), _iso(t["fetch_to"]))
+        lo, hi = _iso(t["fetch_from"]), _iso(t["fetch_to"])
+        got = cli.daily_bars(sym, lo, hi)
+        # A cashtag with a live successor is fetched TWICE and joined — one call more, for the
+        # half of the window the cashtag's own symbol no longer covers. `null` means delisted with
+        # no successor (TWTR), which is the cashtag alone and an honest short series.
+        successor = renamed.get(sym)
+        spliced_at: str | None = None
+        if successor:
+            nxt = cli.daily_bars(successor, lo, hi)
+            joined = _splice_rename(got, nxt, cashtag=sym, successor=successor)
+            if nxt and joined is not got:
+                seam = [d for d, _ in joined if d >= nxt[0][0]]
+                spliced_at = seam[0].isoformat() if seam and got else None
+            got = joined
         payload = {
             "ticker": sym,
             "from": t["fetch_from"], "to": t["fetch_to"],
@@ -68,6 +155,12 @@ def fetch_account_bars(
             # downloads.
             "bars": [[bd.isoformat(), b.open, b.high, b.low, b.close, b.volume] for bd, b in got],
         }
+        if successor:
+            # PROVENANCE: which symbols this series is actually made of, so a reader never has to
+            # infer from a date why the ticker changed hands mid-file.
+            payload["renamed_to"] = successor
+            if spliced_at:
+                payload["spliced_at"] = spliced_at
         (out / f"{sym}.json").write_text(json.dumps(payload, separators=(",", ":")))
         counts[sym] = len(got)
         if callable(on_progress):

@@ -919,6 +919,16 @@ Each line: *what it does* — *verified how*.
   A RESEARCH INPUT ONLY: it touches no screen, ranker, ledger or spread, and gates nothing. The
   build carries four decisions the operator made explicitly after a design review.
   *(detail: `docs/records/2026-08-26-capability-the-calls-tape-scoring-a-public-commentator-s.md`)*
+- **THE CALLS AUDIT BENCH — and the adopted reading is now CALIBRATED, not ruled** (`vinci/calls/
+  {audit,sheet,ingest,bars}.py`, `vinci calls audit|sheet|import-labels`). An LLM second reading
+  became the corpus (`src: "llm"`, 8,102 rows, the machine's original kept once in
+  `labels.machine.json`); **409 hand labels then measured it — `none` is worth 97%, a directional
+  label 76%, and only 4% name the wrong DIRECTION.** Its weakness is deciding whether a post is a
+  call, not which way. **Six structural hypotheses were tested and all six failed** (no-flips, a
+  bearish-specific bias, a `promo` coin-flip, better-on-bearish, text signatures, multi-cashtag
+  posts): there is no RULE inside it, only a calibration. Seven independent interventions have left
+  the BUY−AVOID-irrelevant headline at **~51%** — this subsystem gates nothing and feeds no spread.
+  *(detail: the ten `docs/records/2026-08-27-calls-*.md` records; start with `…-calls-adopted-reading-calibrated.md`.)*
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**

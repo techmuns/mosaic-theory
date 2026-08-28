@@ -1748,7 +1748,7 @@ def _cmd_calls_accounts(args: argparse.Namespace) -> int:
     for a in idx.accounts:
         print(f"  {a.display:<22} {a.first}..{a.last}  posts={a.n_posts:>6}  "
               f"tracked={a.n_tracked:>4}  hand={a.n_hand_labels:>4}  "
-              f"machine={a.n_machine_labels:>6}")
+              f"machine={a.n_machine_labels:>6}  llm={a.n_llm_labels:>6}")
     return 0
 
 
@@ -1818,6 +1818,117 @@ def _cmd_calls_import(args: argparse.Namespace) -> int:
         print(f"  calendar days recounted {r['days_recounted']:>5}")
         print("  scores are NOT updated — run `vinci calls score` to re-score,")
         print("  and `vinci calls accounts` to refresh the index the dashboard's count reads.")
+    return 0
+
+
+def _cmd_calls_audit(args: argparse.Namespace) -> int:
+    """LLM SECOND READING of every tweet's tags — proposed, never applied.
+
+    Writes `audit.jsonl` beside the corpus, appending as results land and skipping tweet ids
+    already present, so an interrupted run costs only the in-flight call. Nothing here writes a
+    label: the reading is an advisory column in the audit workbook, and the operator's sheet is
+    what becomes the record via `calls import-labels`.
+    """
+    import json as _json
+    import time as _time
+    from pathlib import Path as _Path
+
+    from vinci.calls.accounts import account_dir, load_accounts
+    from vinci.calls.audit import audit_path, run_audit
+    handle = load_accounts().get(args.account).handle
+    posts: list[dict[str, object]] = []
+    for f in sorted((account_dir(handle) / "posts").glob("*.json")):
+        posts.extend(_json.loads(f.read_text()))
+    posts.sort(key=lambda p: str(p.get("d")))
+    # A SECOND READER WRITES BESIDE THE FIRST, never over it: `audit.jsonl` is what the corpus's
+    # tags were adopted from, so a different model needs `--out` and the two get COMPARED against
+    # the hand labels before anything is adopted.
+    out = _Path(args.out) if args.out else None
+    if args.model and not out:
+        raise SystemExit("--model needs --out: a different model must not overwrite the reading "
+                         "the corpus was adopted from. Give it its own file.")
+    if args.only:
+        want = {ln.strip() for ln in _Path(args.only).read_text().splitlines() if ln.strip()}
+        posts = [p for p in posts if str(p["id"]) in want]
+        print(f"  restricted to {len(posts)} of the account's posts by --only")
+    t0 = _time.time()
+
+    def _prog(counts: dict[str, int], _r: object) -> None:
+        n = counts["attempted"]
+        if n % 50 == 0 or n == 1:
+            rate = n / max(_time.time() - t0, 1e-9)
+            print(f"  {n:>5} audited  ({counts['failed']} failed)  "
+                  f"{rate:.1f}/s  eta {(len(posts) - n) / max(rate, 1e-9) / 60:.0f}m", flush=True)
+
+    counts = run_audit(handle, posts=posts,
+                       tickers_of=lambda p: [str(t).lstrip("$") for t in (p.get("tk") or [])],
+                       workers=args.workers, limit=args.limit, on_done=_prog,
+                       out=out, model=args.model)
+    print(f"{handle}: {counts['attempted']} audited, {counts['failed']} failed, "
+          f"{counts['skipped']} already done -> {out or audit_path(handle)}")
+    return 0
+
+
+def _cmd_calls_sheet(args: argparse.Namespace) -> int:
+    """Build the LOCAL audit workbook: every (tweet, ticker) row with its tags, the LLM's second
+    reading beside them, the scored outcome, and editable FINAL columns with dropdowns."""
+    from pathlib import Path as _Path
+
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.sheet import build_sheet
+    handle = load_accounts().get(args.account).handle
+    out = _Path(args.out) if args.out else _Path(f"calls_audit_{handle}.xlsx")
+    n = build_sheet(handle, out)
+    print(f"{handle}: {n} rows -> {out}")
+    print("  edit the FINAL columns, then: vinci calls import-sheet " + str(out))
+    return 0
+
+
+def _cmd_calls_import_sheet(args: argparse.Namespace) -> int:
+    """Merge the rows you marked `verified` in the audit workbook back into the corpus.
+
+    ONLY VERIFIED ROWS. The workbook's final columns are pre-filled with the current tag, so an
+    untouched row would otherwise re-import itself as a HAND label — silently promoting thousands
+    of machine guesses to ground truth. `verified` is you saying you read that one.
+    """
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.ingest import import_rows
+    from vinci.calls.sheet import read_sheet
+    handle = load_accounts().get(args.account).handle
+    rows = read_sheet(Path(args.path))
+    if not rows:
+        print(f"{handle}: no rows marked verified in {args.path} — nothing merged")
+        return 0
+    r = import_rows(handle, rows, dry_run=args.dry_run)
+    verb = "would merge" if args.dry_run else "merged"
+    print(f"{handle}: {verb} {r['rows']} verified row(s) from {args.path}")
+    print(f"  new                {r['new']:>5}")
+    print(f"  updated (hand)     {r['updated']:>5}")
+    print(f"  replaced a guess   {r['replaced_machine']:>5}")
+    if not args.dry_run:
+        print(f"  hand labels now    {r['hand_total']:>5}")
+        print(f"  calendar days recounted {r['days_recounted']:>5}")
+        print("  scores are NOT updated — run `vinci calls score` to re-score.")
+    return 0
+
+
+def _cmd_calls_adopt(args: argparse.Namespace) -> int:
+    """Apply the LLM second reading to the corpus as `src: "llm"`.
+
+    A hand label is never overwritten, and the machine's original is preserved once in
+    labels.machine.json so this is reversible and the comparison stays reconstructible.
+    """
+    from vinci.calls.accounts import load_accounts
+    from vinci.calls.ingest import adopt_audit
+    handle = load_accounts().get(args.account).handle
+    c = adopt_audit(handle, dry_run=args.dry_run)
+    print(f"{handle}: {'would adopt' if args.dry_run else 'adopted'} the second reading")
+    for k, lab in (("adopted", "rows updated"), ("bias_changed", "  of which bias moved"),
+                   ("unchanged", "already identical"), ("hand_kept", "hand labels left alone"),
+                   ("no_reading", "no reading available")):
+        print(f"  {lab:<26}{c[k]:>6}")
+    if not args.dry_run:
+        print("  run `vinci calls score` to re-score on the adopted tags.")
     return 0
 
 
@@ -3581,6 +3692,31 @@ def build_parser() -> argparse.ArgumentParser:
     p_ci.add_argument("--dry-run", action="store_true", dest="dry_run",
                       help="report what would change and write nothing")
     p_ci.set_defaults(func=_cmd_calls_import)
+    p_ca2 = calls_sub.add_parser("audit", help="LLM second reading of every tweet's tags (paid)")
+    p_ca2.add_argument("--account", help="handle (default: the index's default)")
+    p_ca2.add_argument("--workers", type=int, default=8, help="concurrent calls (default 8)")
+    p_ca2.add_argument("--limit", type=int, help="stop after N un-audited tweets (for a dry look)")
+    p_ca2.add_argument("--model", help="override the configured model (requires --out)")
+    p_ca2.add_argument("--out", help="write to this file instead of audit.jsonl — REQUIRED for a "
+                                     "different model, which must not overwrite the first reading")
+    p_ca2.add_argument("--only", help="path to a file of tweet ids, one per line: audit only these")
+    p_ca2.set_defaults(func=_cmd_calls_audit)
+    p_csh = calls_sub.add_parser("sheet", help="build the local audit workbook (.xlsx)")
+    p_csh.add_argument("--account", help="handle (default: the index's default)")
+    p_csh.add_argument("--out", help="output path (default: calls_audit_<handle>.xlsx)")
+    p_csh.set_defaults(func=_cmd_calls_sheet)
+    p_cis = calls_sub.add_parser("import-sheet",
+                                 help="merge the verified rows of an audit workbook")
+    p_cis.add_argument("path", help="the .xlsx built by `calls sheet`")
+    p_cis.add_argument("--account", help="handle (default: the index's default)")
+    p_cis.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="report what would change and write nothing")
+    p_cis.set_defaults(func=_cmd_calls_import_sheet)
+    p_cad = calls_sub.add_parser("adopt-audit",
+                                 help="apply the LLM second reading as src=llm (never over hand)")
+    p_cad.add_argument("--account", help="handle (default: the index's default)")
+    p_cad.add_argument("--dry-run", action="store_true", dest="dry_run")
+    p_cad.set_defaults(func=_cmd_calls_adopt)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)
