@@ -452,6 +452,20 @@ def test_themes_forward_cli_multi_cohort(
     cfg = Config(data_dir=tmp_path / "data")
     cfg.ensure_dirs()
     monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    # the thesis gate (brief Item 1, 2026-08-29) binds every freeze — declare the card it
+    # requires; the gate's own behavior is pinned in test_theme_thesis.py
+    from datetime import date as _date
+
+    from vinci.scenarios import DatedTrigger
+    from vinci.themes import thesis as _th
+
+    _th.write_thesis(_th.stamped(_th.ThemeThesis(
+        driver_key="defense-demand-shift", declared_date=_date(2026, 8, 29),
+        mechanism=_th.ThesisMechanism.POLICY_SIDE,
+        market_mistake="test-seed mistake", null_thesis="test-seed null",
+        first_confirming=DatedTrigger(trigger="seed", deadline="2026-12-31"),
+        falsifiers=(DatedTrigger(trigger="seed falsifier", deadline="2027-06-30"),),
+    )), data_dir=cfg.data_dir)
     ws = tmp_path / "ws.csv"
     ws.write_text(
         "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"

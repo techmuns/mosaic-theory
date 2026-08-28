@@ -2813,6 +2813,60 @@ def _cmd_themes_priced_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_theme_thesis_declare(args: argparse.Namespace) -> int:
+    """Declare a driver's thesis card — operator-typed JSON, validated, stamped, written.
+
+    The card is the theme thesis gate's input (brief Item 1): mechanism (closed enum), the
+    market's mistake stated as a mechanism, the null thesis, and DatedTrigger falsifiers. The
+    machine stamps ``mirror_slug`` from the registry and validates shape; it drafts nothing."""
+    from pydantic import ValidationError
+
+    from vinci.themes import thesis as th
+
+    cfg = get_config()
+    raw = Path(args.file).read_text()
+    try:
+        card = th.ThemeThesis.model_validate_json(raw)
+    except ValidationError as exc:
+        print(f"REFUSED: the card does not validate —\n{exc}")
+        return 1
+    if card.driver_key != args.driver:
+        print(f"REFUSED: the file declares driver_key {card.driver_key!r} but the command names "
+              f"{args.driver!r} — declaring one driver's card under another is the mis-binding "
+              f"the positional argument exists to catch. NOTHING was written.")
+        return 1
+    card = th.stamped(card)  # the registry's mirror_slug — machine-stamped, never operator-typed
+    try:
+        path = th.write_thesis(card, data_dir=cfg.data_dir, supersede=args.supersede)
+    except (FileExistsError, ValueError) as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+    print(f"OK — card written: {path}"
+          f"{' (prior card archived under themes/thesis/archive/)' if args.supersede else ''}")
+    print(f"  mechanism: {card.mechanism.value} · falsifiers: {len(card.falsifiers)} dated · "
+          f"first-confirming due {card.first_confirming.deadline}")
+    print("  consumers armed: theme page (after build) · monitor sweep (Item 2, pending) · "
+          "panel routing (planned)")
+    return 0
+
+
+def _cmd_theme_economics(args: argparse.Namespace) -> int:
+    """Assemble one driver's inform-only economics roll-up from committed artifacts (no
+    composite — brief Item 4, ruling R5) and write ``data/themes/economics/<driver>.json``."""
+    from vinci.themes import rollup as ru
+
+    cfg = get_config()
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    r = ru.build_rollup(args.driver, data_dir=cfg.data_dir, scenarios_root=Path.cwd(),
+                        dossiers_dir=cfg.data_dir / "dossiers", as_of=as_of)
+    path = ru.write_rollup(r, data_dir=cfg.data_dir)
+    print(f"theme economics roll-up written: {path}")
+    print(f"  {r.n_members} members · {r.n_underwritten} underwritten — {r.membership_note}")
+    if not r.rows:
+        print("  (empty roll-up — the artifact carries the reason so the page can say it)")
+    return 0
+
+
 def _cmd_themes_forward(args: argparse.Namespace) -> int:
     """Stage-4 forward-validation harness: load the analyst's dispositioned committed-tier worksheet
     into the append-only ratification ledger, report disposition status, and — once EVERY name is
@@ -2956,6 +3010,17 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     # Everything that can fail is checked here; the ledger and the basket then land together as ONE
     # successful freeze. (`records_from_worksheet` and `freeze_baskets` above are already pure —
     # they parse and validate without writing, which is what makes this ordering possible.)
+    # THE THESIS GATE (brief Item 1, rulings 2026-08-28): no Stage-4 freeze without the driver's
+    # thesis card — "no verdict without saying what the edge IS", at theme level. First in the
+    # preflight cluster: the cheapest check, and NOTHING is written on refusal. The three baskets
+    # frozen before this gate existed stay frozen (ruling R2 — the surface stamps them
+    # THESIS UNSTATED; only a NEW freeze is gated).
+    from vinci.themes import thesis as _thesis
+    try:
+        _thesis.require_thesis_card(driver, data_dir=get_config().data_dir)
+    except FileNotFoundError as exc:
+        print(f"REFUSED: {exc}\n  NOTHING was written — the ledger is untouched.")
+        return 1
     try:
         fwd.assert_basket_writable(driver, data_dir=get_config().data_dir,
                                    supersede=args.supersede_basket)
@@ -3816,6 +3881,31 @@ def build_parser() -> argparse.ArgumentParser:
     p_fwd.add_argument("--real-tier", dest="real_tier",
                        help="comma tickers: looser REAL-tier secondary cohort (clearly labeled)")
     p_fwd.set_defaults(func=_cmd_themes_forward)
+
+    p_tt = sub.add_parser(
+        "theme-thesis",
+        help="the driver's thesis card — the theme thesis gate's input (operator-typed only)")
+    tt_sub = p_tt.add_subparsers(dest="tt_cmd", required=True)
+    p_ttd = tt_sub.add_parser(
+        "declare", help="validate + stamp + write data/themes/thesis/<driver>.json")
+    p_ttd.add_argument("driver", choices=sorted(DRIVER_SPECS),
+                       help="driver key (registry-gated, like themes-forward)")
+    p_ttd.add_argument("--file", required=True,
+                       help="the operator-typed card JSON (ThemeThesis shape; mirror_slug is "
+                            "machine-stamped — do not type it)")
+    p_ttd.add_argument("--supersede", action="store_true",
+                       help="archive the existing card under themes/thesis/archive/ and "
+                            "re-declare (never an in-place edit)")
+    p_ttd.set_defaults(func=_cmd_theme_thesis_declare)
+
+    p_te = sub.add_parser(
+        "theme-economics",
+        help="inform-only per-member economics roll-up for one driver (assembles committed "
+             "records; NO composite)")
+    p_te.add_argument("--driver", required=True, choices=sorted(DRIVER_SPECS))
+    p_te.add_argument("--as-of", dest="as_of",
+                      help="assembly date YYYY-MM-DD (default: today)")
+    p_te.set_defaults(func=_cmd_theme_economics)
 
     p_assay = sub.add_parser(
         "themes-assay",

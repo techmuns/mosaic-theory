@@ -1389,6 +1389,15 @@ tr.uw-ref-excl td.num { text-decoration: line-through; text-decoration-thickness
 /* the design system's own danger tokens — a hardcoded red would not follow dark mode, which is
    exactly where a blocking state must stay legible */
 .uw-survival-fail { border-color: var(--danger-border); background: var(--danger-bg); }
+
+/* THEME THESIS CARD (brief Item 1). The stamp is the loud absent-state — danger-toned like
+   .uw-survival-fail, because a card-less driver GATES new freezes: a blocking state, not a
+   caveat. Tokens, never hardcoded red, so dark mode keeps it legible. */
+.thesis-unstated { display: inline-block; padding: 4px 12px; border: 2px solid var(--danger);
+  border-radius: 4px; background: var(--danger-bg); color: var(--danger-text); font-weight: 600;
+  font-size: 12px; letter-spacing: .08em; }
+.theme-thesis .tt-vintage { font-size: 11px; letter-spacing: .06em; color: var(--accent-text);
+  margin-bottom: 8px; }
 .uw-survival-fail .uw-sec-h .basis { color: var(--danger-text); font-weight: 600; }
 .uw-surv-body { margin-top: 6px; }
 .uw-bad { color: var(--danger-text); font-weight: 600; }

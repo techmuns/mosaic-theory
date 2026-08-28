@@ -593,6 +593,51 @@ def emit_monitor() -> list[str]:
     return days
 
 
+def emit_theme_thesis() -> list[str]:
+    """Mirror committed thesis cards → `frontend/themes/thesis/<mirror_slug>.json`, VERBATIM.
+
+    The card carries its own machine-stamped ``mirror_slug`` (vinci.themes.thesis stamps it from
+    the driver registry at declare time), so this stdlib-only build places the mirror without
+    importing vinci — the same binding discipline as the freeze artifacts, and a parity test pins
+    every committed stamp against the registry. An empty slug == the driver has no theme page yet
+    (a real state — glp1) → data-side card only, nothing mirrored. Verbatim copy: the card is
+    operator prose + dated triggers, already display-ready; a transform here would be a second
+    author. Top-level glob only — `thesis/archive/` (superseded cards) never reaches the page."""
+    src = ROOT / "data" / "themes" / "thesis"
+    if not src.is_dir():
+        return []
+    out = OUT_THEMES / "thesis"
+    out.mkdir(parents=True, exist_ok=True)
+    slugs: list[str] = []
+    for p in sorted(src.glob("*.json")):
+        slug = json.loads(p.read_text()).get("mirror_slug") or ""
+        if not slug:
+            continue
+        shutil.copyfile(p, out / f"{slug}.json")
+        slugs.append(slug)
+    return slugs
+
+
+def emit_theme_economics() -> list[str]:
+    """Mirror committed economics roll-ups → `frontend/themes/economics/<mirror_slug>.json`,
+    verbatim — same stamped-slug binding as `emit_theme_thesis`. The roll-up is inform-only and
+    carries NO composite by pin; the page renders its rows and its `membership_note`, including
+    the loud empty state for a basket-less driver."""
+    src = ROOT / "data" / "themes" / "economics"
+    if not src.is_dir():
+        return []
+    out = OUT_THEMES / "economics"
+    out.mkdir(parents=True, exist_ok=True)
+    slugs: list[str] = []
+    for p in sorted(src.glob("*.json")):
+        slug = json.loads(p.read_text()).get("mirror_slug") or ""
+        if not slug:
+            continue
+        shutil.copyfile(p, out / f"{slug}.json")
+        slugs.append(slug)
+    return slugs
+
+
 def _mirror_calls() -> list[str]:
     """Mirror data/calls/<handle>/ -> frontend/calls/<handle>/ for every account present.
 
@@ -1354,6 +1399,10 @@ def main(argv: list[str] | None = None) -> None:
     theme_srcs = [Path(p) for p in (args.themes_src or [FORWARD])]
     theme_slugs = build_themes(theme_srcs)
 
+    # Thesis cards + economics roll-ups — committed data-side sources, mirrored by stamped slug.
+    thesis_slugs = emit_theme_thesis()
+    econ_slugs = emit_theme_economics()
+
     # Radar sweep bar — regenerated every build (manifest git-ignored → seeded; a run refreshes).
     emit_radar_sweep()
     # Radar inbox + review log — sort latest clusters into unreviewed vs reviewed (non-destructive).
@@ -1365,7 +1414,9 @@ def main(argv: list[str] | None = None) -> None:
         f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
         f"{len(mon_days)} monitor day(s) [latest {mon_days[-1] if mon_days else 'none'}], "
         f"{len(calls_handles)} calls account(s) [{', '.join(calls_handles) or 'none'}], "
-        f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}] → frontend/"
+        f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}], "
+        f"{len(thesis_slugs)} thesis card(s) [{', '.join(thesis_slugs) or 'none'}], "
+        f"{len(econ_slugs)} econ roll-up(s) [{', '.join(econ_slugs) or 'none'}] → frontend/"
     )
 
 
