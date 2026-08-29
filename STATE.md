@@ -110,6 +110,14 @@ Each line: *what it does* — *verified how*.
   fabricated 0.0) + human−machine spread delta; values only, nothing adjudicates or tunes on them —
   *real run 2026-08-29: 0 resolved proposal-bearing rows → both refuse honestly; 4 markdown pins.*
   *(detail: `docs/records/2026-08-29-anchoring-falsifier-measured-in-scoring-report.md`)*
+- **Opus 5 default + two new drivers** (`vinci/config.py::graph_llm_model`,
+  `vinci/themes/drivers.py`) — LLM default bumped to `claude-opus-5` by operator ruling
+  2026-08-29 (4.8-era groundedness benchmark NOT re-run — accepted, falsifier at the knob);
+  registry grew to six with `ai-value-migration` and `glp1-drug-value-chain` (the drug-side
+  sibling glp1-demand-shift always carved out), both slugless until their pages exist —
+  *smoke: one tool-forced extract on opus-5 returned valid structure; registry live in every
+  driver-gated CLI; suite 3073 green.*
+  *(detail: `docs/records/2026-08-29-opus5-default-and-two-drivers.md`)*
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*

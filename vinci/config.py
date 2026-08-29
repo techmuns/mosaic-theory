@@ -91,10 +91,14 @@ class Config(BaseModel, frozen=True):
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
-    # LLM for graph extraction + dossier synthesis. Default Opus 4.8 (groundedness benchmark vs
-    # Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable — see STATE.md).
-    # Accuracy gates the moat hypothesis, so we run the stronger model; swappable config knob.
-    graph_llm_model: str = "claude-opus-4-8"
+    # LLM for graph extraction + dossier synthesis + the theme exposure classifier. Bumped to
+    # Opus 5 by OPERATOR RULING 2026-08-29 (the strongest-available-model policy that picked
+    # Opus 4.8 in the first place, applied to the new generation). The 4.8-era groundedness
+    # benchmark (vs Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable —
+    # see STATE.md) has NOT been re-run on Opus 5 — accepted with its falsifier in the record:
+    # untraceable figures or mis-cites appearing in fresh extractions are the signal to re-run
+    # graph Test 0 on a sample and, if it degrades, flip this knob back. Swappable, not a router.
+    graph_llm_model: str = "claude-opus-5"
     # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
     # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
     # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-

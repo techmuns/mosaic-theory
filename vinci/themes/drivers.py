@@ -281,10 +281,154 @@ GLP1_DEMAND_SHIFT = DriverSpec(
     ),
 )
 
+# --------------------------------------------------------------------------------------------------
+# AI value migration — a WHERE-VALUE-ACCRUES theme over the AI software/platform stack, NOT the
+# physical datacenter build-out (that is AI_DATACENTER, the sibling: chips/HBM/cooling/power are
+# not-driver HERE and route there). LOAD-BEARING analyst judgment encoded from the OPERATOR's
+# stated thesis (2026-08-29) — review verbatim at PR like the defense precedent: if the
+# frontier-to-open catch-up window holds at ~3-6 months or compresses, raw model IP commoditizes
+# and value capture migrates to the layers ABOVE (apps with workflow/user/data/regulatory moats)
+# and BELOW (hyperscaler compute/distribution/data gravity). Direction matters, and one company
+# can sit on BOTH sides (a hyperscaler owns frontier-model IP AND the platform layer) →
+# multi_tag, the glp1 precedent.
+# --------------------------------------------------------------------------------------------------
+AI_VALUE_MIGRATION = DriverSpec(
+    key="ai-value-migration",
+    # NO mirror_slug — deliberate (the glp1 precedent): the theme page does not exist yet; the
+    # slug is declared when the mirror is, not before.
+    description=(
+        "the MIGRATION OF AI VALUE CAPTURE across the software/platform stack — if the "
+        "frontier-to-open-source model catch-up window stays at ~3-6 months or compresses, raw "
+        "frontier-model IP commoditizes and durable AI economics migrate to the layers ABOVE the "
+        "model (application software with workflow/user/data/regulatory moats monetizing AI on "
+        "proprietary data and installed workflows) and BELOW it (hyperscaler compute, cloud "
+        "distribution, data gravity). The structure is PARALLEL stack layers, not a supply "
+        "chain: (1) app-workflow-moat — vertical / system-of-record software with disclosed AI "
+        "monetization on proprietary data or regulated workflows; (2) hyperscaler-platform — "
+        "cloud/compute/distribution capturing disclosed inference and AI-deployment economics; "
+        "(3) model-ip — frontier-model licensing/API economics (the LOSING side if the window "
+        "holds); (4) open-ecosystem — names whose disclosed economics benefit from open-weights "
+        "adoption (tooling, serving, customization). BOTH DIRECTIONS ARE IN SCOPE and the tag "
+        "says which side a name sits on. Exposure must be to the MIGRATION (which layer captures "
+        "AI economics), grounded in disclosed activity — NOT generic 'AI' adjacency, NOT the "
+        "physical AI-datacenter build-out chain (chips/HBM/packaging/cooling/power — the "
+        "ai-datacenter driver), NOT consumer-device AI feature mentions."
+    ),
+    tie_taxonomy=(
+        "driver-specific = disclosed economics tied to a NAMED layer of the migration, on EITHER "
+        "side — RECORD EVERY APPLICABLE SIDE, NOT THE STRONGEST ONE: a hyperscaler that owns "
+        "frontier-model IP AND the platform beneath it carries both tags. Tailwind side: "
+        "application software with a disclosed workflow/user/data/regulatory moat monetizing AI "
+        "(AI attach or module revenue on proprietary data, a regulated system-of-record "
+        "position), or platform/compute with disclosed inference or AI-deployment economics. "
+        "Losing side: revenue disclosed as predominantly frontier-model IP monetization "
+        "(per-token / API / model licensing) WITHOUT a moat layer above or below it. DIRECTION "
+        "IS RECORDED, NOT SCORED — the tag says which way the migration points for this name; "
+        "whether that is good for the equity is the human's call. "
+        "indirect = 'AI-enabled' claims without disclosed layer economics — an AI feature "
+        "mention carrying no attach revenue, no moat disclosure, and no platform economics. "
+        "not-driver = the physical AI-datacenter build-out chain (chips, HBM, advanced "
+        "packaging, thermal/cooling, power, optical — the ai-datacenter driver's territory), "
+        "consumer-device AI, or a name whose AI exposure is a minor undisclosed end-market."
+    ),
+    prefilter_terms=(
+        "artificial intelligence", "generative AI", "AI agent", "agentic", "copilot",
+        "large language model", "foundation model", "open-source model", "open weights",
+        "inference", "fine-tuning", "proprietary data", "system of record",
+        "workflow automation", "vertical software", "per-seat", "consumption-based",
+        "model licensing", "API pricing", "cloud platform", "hyperscaler",
+    ),
+    multi_tag=True,   # one company can own model IP AND the platform/app layers — record all
+    provenance_tags=(
+        ("app-workflow-moat",
+         ("system of record", "workflow", "vertical", "regulated", "proprietary data",
+          "copilot", "attach")),
+        ("hyperscaler-platform",
+         ("cloud", "hyperscaler", "inference", "platform", "distribution")),
+        ("model-ip",
+         ("foundation model", "frontier", "model licensing", "per-token", "api pricing",
+          "large language model")),
+        ("open-ecosystem",
+         ("open-source", "open weights", "fine-tuning", "customization", "serving")),
+    ),
+)
+
+# --------------------------------------------------------------------------------------------------
+# GLP-1 drug value chain — the DRUG-SIDE sibling GLP1_DEMAND_SHIFT explicitly carves out ("the
+# incretin MANUFACTURERS and their CDMO/device supply chain (a separate driver)" — its not-driver
+# text). LOAD-BEARING analyst judgment encoded from the OPERATOR's stated thesis (2026-08-29) —
+# review verbatim at PR: no demand peak; a SECOND GROWTH PHASE driven by affordability/access,
+# supply-constraint resolution, orals, direct-to-patient distribution, generic expansion, and a
+# chronic induction-to-maintenance model — volumes UP, manufacturer pricing COMPRESSED, share
+# FRAGMENTING. The best equity may not be the fastest-growing incumbent → per-name, both-sided
+# tagging (multi_tag): an incumbent franchise is volume-tailwind AND price/share-headwind at once.
+# --------------------------------------------------------------------------------------------------
+GLP1_DRUG_VALUE_CHAIN = DriverSpec(
+    key="glp1-drug-value-chain",
+    # NO mirror_slug yet — same rule as above.
+    description=(
+        "the GLP-1 DRUG VALUE CHAIN's SECOND GROWTH PHASE — incretin therapy transitioning from "
+        "supply-constrained scarcity to a volume-driven, price-competitive, chronic-treatment "
+        "market: affordability/access expansion, resolution of supply constraints, oral "
+        "formulations, direct-to-patient distribution, generic/compounded entry, and an "
+        "induction-to-maintenance chronic model. Treated patient VOLUMES rise while manufacturer "
+        "PRICING compresses and market share FRAGMENTS — so the equity question is per-name, not "
+        "category-level. The structure is PARALLEL categories: (1) incumbent-franchise — "
+        "marketed incretin franchises (two-sided: volume tailwind AND price/share headwind); "
+        "(2) next-gen-assets — differentiated pipelines (orals, amylin, multi-agonists, "
+        "muscle-preserving combinations); (3) manufacturing-infra — peptide API, CDMO / "
+        "fill-finish capacity, devices/auto-injectors (the infrastructure-economics leg); "
+        "(4) access-distribution — direct-to-patient, pharmacy/telehealth fulfillment, and "
+        "generic distribution WITH disclosed incretin volume linkage. BOTH DIRECTIONS ARE IN "
+        "SCOPE and the tag says which side a name sits on. Exposure must be to the drug value "
+        "chain, grounded in disclosed activity — NOT the food/beverage consumption shift (the "
+        "glp1-demand-shift SIBLING driver), NOT payers/PBMs without disclosed incretin "
+        "economics, NOT fitness or weight-management services."
+    ),
+    tie_taxonomy=(
+        "driver-specific = MATERIAL disclosed revenue or pipeline in a named category of the "
+        "chain, on EITHER side — RECORD EVERY APPLICABLE SIDE, NOT THE STRONGEST ONE: an "
+        "incumbent incretin franchise is volume-tailwind AND price/share-headwind at once and "
+        "carries both readings; a CDMO or fill-finish supplier with disclosed incretin capacity "
+        "is infrastructure-tailwind; a differentiated next-generation asset (oral, amylin, "
+        "multi-agonist, muscle-preserving) with disclosed clinical progress is pipeline-side. "
+        "DIRECTION IS RECORDED, NOT SCORED — the tag says which way the second phase points for "
+        "this name; whether the market misprices it is the human's call. "
+        "indirect = category-exposed without the chain being disclosed as material — a broad "
+        "pharma, CDMO, or device maker serving injectables generally with no incretin "
+        "attribution, or distribution with no disclosed GLP-1 volume linkage. "
+        "not-driver = the consumption-shift side (food, beverage, nutrition — the "
+        "glp1-demand-shift sibling driver), payers/PBMs, fitness and coaching services, and "
+        "general pharmacy retail without disclosed incretin economics."
+    ),
+    prefilter_terms=(
+        "GLP-1", "GLP1", "incretin", "semaglutide", "tirzepatide", "obesity",
+        "weight management", "amylin", "dual agonist", "triple agonist", "oral formulation",
+        "peptide", "peptide synthesis", "fill-finish", "sterile injectable", "auto-injector",
+        "prefilled", "CDMO", "contract manufacturing", "capacity expansion", "telehealth",
+        "direct-to-patient", "compounded", "generic",
+    ),
+    multi_tag=True,   # an incumbent is suppressed on price and helped on volume — record both
+    provenance_tags=(
+        ("incumbent-franchise",
+         ("semaglutide", "tirzepatide", "franchise", "net price", "market share")),
+        ("next-gen-assets",
+         ("oral", "amylin", "agonist", "phase 2", "phase 3", "muscle", "pipeline")),
+        ("manufacturing-infra",
+         ("peptide", "fill-finish", "cdmo", "sterile", "capacity", "auto-injector",
+          "contract manufacturing")),
+        ("access-distribution",
+         ("telehealth", "direct-to-patient", "pharmacy", "compounded", "generic",
+          "distribution")),
+    ),
+)
+
 # registry — adding a theme = adding its DriverSpec instance here
 DRIVER_SPECS: dict[str, DriverSpec] = {
     AI_DATACENTER.key: AI_DATACENTER,
+    AI_VALUE_MIGRATION.key: AI_VALUE_MIGRATION,
     DEFENSE_DEMAND_SHIFT.key: DEFENSE_DEMAND_SHIFT,
     GLP1_DEMAND_SHIFT.key: GLP1_DEMAND_SHIFT,
+    GLP1_DRUG_VALUE_CHAIN.key: GLP1_DRUG_VALUE_CHAIN,
     TRUCKLOAD_SUPPLY_PURGE.key: TRUCKLOAD_SUPPLY_PURGE,
 }
