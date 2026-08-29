@@ -136,6 +136,19 @@ def build_rollup(
                 "(exposure scans are local-only; freeze a basket with themes-forward)"),
             n_members=0, n_underwritten=0, rows=())
     baskets = fwd.load_baskets(baskets_file)
+    # FAIL LOUD ON A MISSING SCENARIOS ROOT rather than reporting every member "no underwrite".
+    # `scenarios/` is cwd-relative by the repo's convention, so running this from anywhere but the
+    # repo root finds no records — and the roll-up would COMMIT an artifact stating that nothing
+    # in the theme is underwritten, which is a false claim about the book rather than a missing
+    # file. Checked HERE, after membership: a driver with no basket has nothing to look up, and
+    # its loud-empty roll-up is a real state that must not depend on the caller's directory.
+    scenarios_dir = scenarios_root / "scenarios"
+    if baskets.all_committed and not scenarios_dir.is_dir():
+        raise FileNotFoundError(
+            f"no scenarios directory at {scenarios_dir} — every one of "
+            f"{len(baskets.all_committed)} members would render 'no underwrite' and the committed "
+            f"roll-up would say so falsely. Run from the repo root (or pass the root holding "
+            f"scenarios/).")
     rows: list[MemberEconomics] = []
     for ticker in sorted(baskets.all_committed):
         fields: dict[str, object] = {

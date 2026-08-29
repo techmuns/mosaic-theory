@@ -99,6 +99,28 @@ def test_existing_card_refuses_then_supersede_archives(tmp_path: Path) -> None:
     assert load_thesis("ai-datacenter", data_dir=tmp_path) == second
 
 
+def test_two_supersessions_of_same_dated_cards_do_not_collide_in_the_archive(
+    tmp_path: Path,
+) -> None:
+    """REVIEW FINDING — the archive name is DATE-KEYED, so superseding two cards that share a
+    ``declared_date`` overwrote the first archive and lost the operator's earlier declared
+    judgment. `write_baskets` found and closed this exact hole (its own same-day pin); this file
+    copied the shape without the fix. Declare → fix a typo → fix again, all on one day, is normal.
+    """
+    a = stamped(_card(market_mistake="first declared mistake"))
+    b = stamped(_card(market_mistake="second declared mistake"))
+    c = stamped(_card(market_mistake="third declared mistake"))   # all three share declared_date
+    write_thesis(a, data_dir=tmp_path)
+    write_thesis(b, data_dir=tmp_path, supersede=True)   # archives a
+    write_thesis(c, data_dir=tmp_path, supersede=True)   # archives b — SAME declared_date
+    archived = sorted((tmp_path / "themes/thesis/archive").glob("*.json"))
+    assert len(archived) == 2, (
+        f"a same-day supersession overwrote the earlier archive: {[p.name for p in archived]}")
+    contents = [ThemeThesis.model_validate_json(p.read_text()) for p in archived]
+    assert a in contents and b in contents, "an archived card was lost"
+    assert load_thesis("ai-datacenter", data_dir=tmp_path) == c
+
+
 def test_gate_absent_card_raises_the_remedy(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError, match="theme thesis gate"):
         require_thesis_card("ai-datacenter", data_dir=tmp_path)

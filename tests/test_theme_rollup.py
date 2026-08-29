@@ -109,6 +109,46 @@ def test_unknown_driver_refused() -> None:
                      dossiers_dir=Path("x"), as_of=date(2026, 8, 29))
 
 
+def test_missing_scenarios_root_refuses_instead_of_claiming_no_underwrite(
+    tmp_path: Path,
+) -> None:
+    """REVIEW FINDING — `scenarios/` is cwd-relative, so running the CLI from anywhere but the
+    repo root found no records and the roll-up would COMMIT an artifact claiming every member is
+    un-underwritten. An empty roll-up must mean the corpus is empty, never that the reader was in
+    the wrong directory."""
+    data_dir = tmp_path / "data"
+    _seed_basket(data_dir, ["AAA"], {})
+    with pytest.raises(FileNotFoundError, match="no scenarios directory"):
+        build_rollup("ai-datacenter", data_dir=data_dir, scenarios_root=tmp_path / "elsewhere",
+                     dossiers_dir=data_dir / "dossiers", as_of=date(2026, 8, 29))
+
+
+def test_a_stale_ev_gap_renders_its_own_vintage_not_the_records(tmp_path: Path) -> None:
+    """THE STALENESS PIN the brief promised and this file did not carry. `recompute_derived` never
+    reads the scenario record, so a supersede can leave `mechanical.ev_gap` computed against legs
+    that no longer exist (the ev_gap-stale-after-supersede incident). The roll-up cannot detect
+    that — it CAN refuse to hide it: the gap's own vintages travel beside the number, so a gap
+    older than the underwrite it sits next to is visible to the reader rather than implied fresh.
+    """
+    data_dir, dossiers = tmp_path / "data", tmp_path / "data" / "dossiers"
+    _seed_basket(data_dir, ["AAA"], {})
+    _seed_record(tmp_path, "AAA", ladder=True)          # underwritten 2026-07-20
+    d = dossiers / "AAA"
+    d.mkdir(parents=True)
+    (d / "dossier.json").write_text(json.dumps({"mechanical": {"ev_gap": {
+        "status": "computed", "ratios": {"ev_gap": 1.10},
+        # vintages PREDATE the record's underwrite_date — the stale shape
+        "vintages": {"tev_as_of": "2026-05-01", "consensus_as_of": "2026-04-30"}}}}))
+    r = build_rollup("ai-datacenter", data_dir=data_dir, scenarios_root=tmp_path,
+                     dossiers_dir=dossiers, as_of=date(2026, 8, 29))
+    row = r.rows[0]
+    assert row.underwrite_date == "2026-07-20"
+    # the number never travels without the vintage that would expose it as stale
+    assert row.ev_gap == pytest.approx(1.10)
+    assert row.ev_gap_vintages["tev_as_of"] == "2026-05-01"
+    assert row.ev_gap_vintages["tev_as_of"] < str(row.underwrite_date)
+
+
 def test_no_composite_anywhere() -> None:
     """The roll-up assembles; concluding is the human's. No field may carry an aggregate."""
     forbidden = ("score", "rank", "composite", "mean", "average", "aggregate", "weighted",
@@ -123,6 +163,7 @@ def test_no_composite_anywhere() -> None:
 def test_written_artifact_round_trips_and_carries_no_composite_keys(tmp_path: Path) -> None:
     data_dir = tmp_path / "data"
     _seed_basket(data_dir, ["AAA"], {})
+    _seed_record(tmp_path, "AAA", ladder=True)
     r = build_rollup("ai-datacenter", data_dir=data_dir, scenarios_root=tmp_path,
                      dossiers_dir=data_dir / "dossiers", as_of=date(2026, 8, 29))
     path = write_rollup(r, data_dir=data_dir)

@@ -60,6 +60,34 @@ def test_emitters_mirror_by_stamped_slug_and_skip_slugless_and_archive(
     assert (tmp_path / "frontend" / "themes" / "economics" / "d-slug.json").exists()
 
 
+def test_a_deleted_or_reslugged_card_does_not_leave_a_stale_mirror(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    """REVIEW FINDING — the emitters copied without pruning, so a card deleted (or re-slugged)
+    data-side left its mirror behind and the page kept rendering a declared thesis for a driver
+    that has none: presence-when-absent, the exact inversion of the loud stamp. Safe to prune here
+    because these sources are COMMITTED (unlike build_themes' git-ignored freeze artifacts)."""
+    bd = _load_build()
+    monkeypatch.setattr(bd, "ROOT", tmp_path)
+    monkeypatch.setattr(bd, "OUT_THEMES", tmp_path / "frontend" / "themes")
+    src = tmp_path / "data" / "themes" / "thesis"
+    src.mkdir(parents=True)
+    (src / "a.json").write_text(json.dumps({"mirror_slug": "alpha"}))
+    (src / "b.json").write_text(json.dumps({"mirror_slug": "beta"}))
+    assert sorted(bd.emit_theme_thesis()) == ["alpha", "beta"]
+    out = tmp_path / "frontend" / "themes" / "thesis"
+    # the operator deletes one card, and re-slugs the other
+    (src / "a.json").unlink()
+    (src / "b.json").write_text(json.dumps({"mirror_slug": "beta-2"}))
+    assert bd.emit_theme_thesis() == ["beta-2"]
+    assert sorted(p.name for p in out.glob("*.json")) == ["beta-2.json"], (
+        "a stale mirror survived — the page would render a card its source no longer declares")
+    # every card withdrawn ⇒ the whole mirror dir goes, not an empty shell serving stale files
+    (src / "b.json").unlink()
+    assert bd.emit_theme_thesis() == []
+    assert not out.exists() or not list(out.glob("*.json"))
+
+
 def test_emitters_are_noops_when_no_source_exists(tmp_path: Path, monkeypatch: Any) -> None:
     bd = _load_build()
     monkeypatch.setattr(bd, "ROOT", tmp_path)

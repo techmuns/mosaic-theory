@@ -2836,13 +2836,18 @@ def _cmd_theme_thesis_declare(args: argparse.Namespace) -> int:
               f"the positional argument exists to catch. NOTHING was written.")
         return 1
     card = th.stamped(card)  # the registry's mirror_slug — machine-stamped, never operator-typed
+    # WHETHER A PRIOR CARD EXISTED, read BEFORE the write — the success line below claims an
+    # archive was made, and `--supersede` on a driver with no card archives NOTHING. Printing the
+    # claim off the FLAG rather than the fact told the operator a previous version was recoverable
+    # when none was written; the flag says what was asked for, this says what happened.
+    superseded = th.thesis_path(card.driver_key, data_dir=cfg.data_dir).exists()
     try:
         path = th.write_thesis(card, data_dir=cfg.data_dir, supersede=args.supersede)
     except (FileExistsError, ValueError) as exc:
         print(f"REFUSED: {exc}")
         return 1
     print(f"OK — card written: {path}"
-          f"{' (prior card archived under themes/thesis/archive/)' if args.supersede else ''}")
+          f"{' (prior card archived under themes/thesis/archive/)' if superseded else ''}")
     print(f"  mechanism: {card.mechanism.value} · falsifiers: {len(card.falsifiers)} dated · "
           f"first-confirming due {card.first_confirming.deadline}")
     print("  consumers armed: theme page (after build) · monitor sweep (Item 2, pending) · "

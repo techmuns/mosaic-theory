@@ -174,8 +174,20 @@ def write_thesis(card: ThemeThesis, *, data_dir: Path, supersede: bool = False) 
                 f"a thesis card for {card.driver_key!r} exists (declared "
                 f"{prior.declared_date.isoformat()}). Re-declare with supersede to archive it "
                 f"and write the new card — NOTHING was written.")
-        arch = _archive_path(prior, data_dir=data_dir)
-        arch.parent.mkdir(parents=True, exist_ok=True)
+        # THE ARCHIVE NAME IS DATE-KEYED, so two supersessions of cards sharing a `declared_date`
+        # would collide and the second would overwrite the first archive — losing exactly what
+        # archiving exists to keep. This is the SAME HOLE `write_baskets` already found and closed
+        # (`forward.py`, pinned by `test_two_supersessions_on_one_day_do_not_collide_in_the
+        # _archive`), reproduced here by copying the shape without the fix. Declaring a card,
+        # correcting a typo, and correcting again in one session is a normal thing to do, so it is
+        # disambiguated rather than assumed rare.
+        base = _archive_path(prior, data_dir=data_dir).with_suffix("")
+        base.parent.mkdir(parents=True, exist_ok=True)
+        arch = base.with_suffix(".json")
+        n = 2
+        while arch.exists():
+            arch = base.with_name(f"{base.name}-{n}").with_suffix(".json")
+            n += 1
         arch.write_text(path.read_text())
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(card.model_dump_json(indent=1) + "\n")
