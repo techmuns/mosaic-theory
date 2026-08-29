@@ -57,9 +57,16 @@ def test_block_renders_rate_and_delta_on_the_markdown() -> None:
     md = aggregate(scores, cost_bps=25.0, n_pending=0).to_markdown()
     assert "### The anchoring falsifier, measured (never adjudicated)" in md
     assert "Override rate: 1/3 = 33%" in md
-    assert "Human−machine spread delta: +5.0% (human +35.0% − machine +30.0%" in md
+    assert ("Human−machine spread delta (SCREEN-ORIGIN rows only): +5.0% "
+            "(human +35.0% − machine +30.0%") in md
     # The falsifier's own wording travels with the numbers — the reader concludes, not the block.
     assert "revisit verdict placement" in md
+    # SCOPE PIN: the two quantities sit on DIFFERENT populations (the rate counts dispositions in
+    # every book; the delta subtracts two screen-origin curves), so each must NAME its own — else
+    # a reader takes them for one sample. This is the incomparability the module refuses one level
+    # up, at the surface where it would actually mislead.
+    assert "ALL resolved proposal-bearing rows (every book)" in md
+    assert "delta (SCREEN-ORIGIN rows only)" in md
 
 
 def test_block_prints_insufficient_not_zero_when_no_proposal_rows() -> None:
@@ -72,8 +79,8 @@ def test_block_prints_insufficient_not_zero_when_no_proposal_rows() -> None:
     assert "Override rate: insufficient rows (n=0 proposal-bearing resolved)" in md
     assert "Override rate: 0/0" not in md
     # No machine leg resolved either → the delta refuses too, naming WHICH curve is missing.
-    assert ("Human−machine spread delta: UNDEFINED — no two-leg resolved read yet "
-            "for the machine curve") in md
+    assert ("Human−machine spread delta (SCREEN-ORIGIN rows only): UNDEFINED — no "
+            "two-leg resolved read yet for the machine curve") in md
 
 
 def test_delta_refuses_and_names_both_curves_when_nothing_resolved_two_legged() -> None:
@@ -85,5 +92,5 @@ def test_delta_refuses_and_names_both_curves_when_nothing_resolved_two_legged() 
     # The rate half is computable (1 confirmed, 0 overridden) even while the delta half refuses —
     # the two quantities fail independently, each with its own honest reading.
     assert "Override rate: 0/1 = 0%" in md
-    assert ("Human−machine spread delta: UNDEFINED — no two-leg resolved read yet "
-            "for the human and machine curves") in md
+    assert ("Human−machine spread delta (SCREEN-ORIGIN rows only): UNDEFINED — no two-leg "
+            "resolved read yet for the human and machine curves") in md

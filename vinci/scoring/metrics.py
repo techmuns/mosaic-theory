@@ -387,9 +387,17 @@ class ScoreReport:
             '_The recorded accepted risk (CLAUDE.md): a machine proposal ANCHORS the human — "if_ '
             '_the override rate collapses toward ~0 or the human spread tracks the machine spread_ '
             '_within noise, the anchoring concern is confirmed → revisit verdict placement"._',
-            f"- Override rate: {rate_txt} — cumulative since the pivot; overridden ÷ "
-            f"(confirmed + overridden)",
-            f"- Human−machine spread delta: {delta_txt}",
+            # THE TWO QUANTITIES ARE ON DIFFERENT POPULATIONS, and each says which. The rate counts
+            # dispositions over EVERY resolved row (the disagreement question is about the human,
+            # in whichever book), while the delta subtracts two curves that are both screen-origin
+            # by construction. Printed side by side without their scopes, a reader would take them
+            # for one sample — the same incomparability this file already refuses one level up
+            # ("reading a wider set would make the two incomparable while still printing them side
+            # by side"). Labelled rather than forced onto one set: narrowing the rate would hide
+            # overrides in the followed book, which is where the anchoring risk reads most.
+            f"- Override rate: {rate_txt} — ALL resolved proposal-bearing rows (every book); "
+            f"cumulative since the pivot; overridden ÷ (confirmed + overridden)",
+            f"- Human−machine spread delta (SCREEN-ORIGIN rows only): {delta_txt}",
             "_Values only — the ~0 / within-noise reading is the operator's, and nothing tunes "
             "on these._",
             "",
