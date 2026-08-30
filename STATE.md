@@ -118,6 +118,15 @@ Each line: *what it does* — *verified how*.
   *smoke: one tool-forced extract on opus-5 returned valid structure; registry live in every
   driver-gated CLI; suite 3073 green.*
   *(detail: `docs/records/2026-08-29-opus5-default-and-two-drivers.md`)*
+- **Silicon-ecosystem-moat — the third model-agnostic beneficiary class**
+  (`vinci/themes/drivers.py`, ai-value-migration) — operator ruling 2026-08-30: the winners share
+  MODEL-AGNOSTIC value capture, and a silicon vendor whose software/developer-ecosystem bundle is
+  the moat belongs in this driver, not blanket-excluded to ai-datacenter. Boundary re-drawn:
+  unit/capacity demand → sibling (unchanged); moat economics → fifth tag here; split by economics
+  named in the disclosure, never by company — *real-resolver run: moat sentence tags, HBM
+  unit-demand sentence falls through to unspecified (pinned); suite green (exit 0, 3253
+  collected).*
+  *(detail: `docs/records/2026-08-30-silicon-ecosystem-moat-tag.md`)*
 - **Theme thesis card + economics roll-up** (`vinci/themes/thesis.py`, `vinci/themes/rollup.py`,
   the theme page) — human-typed card (mechanism enum, market mistake, null thesis, dated
   falsifiers) GATES every Stage-4 freeze, first in the #424 preflight; card-less drivers stamp
