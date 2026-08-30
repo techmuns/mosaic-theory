@@ -88,6 +88,29 @@ def test_a_deleted_or_reslugged_card_does_not_leave_a_stale_mirror(
     assert not out.exists() or not list(out.glob("*.json"))
 
 
+def test_a_checkout_without_a_data_tree_keeps_its_committed_mirrors(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    """REVIEW FINDING (2nd pass) on the prune itself — pruning must answer only to 'no card is
+    declared' (data/themes/ present, this subdir absent), NEVER to 'this checkout has no data
+    tree' (sparse / frontend-only clone), which says nothing about what is declared. The first
+    cut deleted committed mirrors in that clone, which is the destructive case `build_themes`
+    avoids by never pruning at all."""
+    bd = _load_build()
+    monkeypatch.setattr(bd, "ROOT", tmp_path)                       # no data/ at all
+    monkeypatch.setattr(bd, "OUT_THEMES", tmp_path / "frontend" / "themes")
+    out = tmp_path / "frontend" / "themes" / "economics"
+    out.mkdir(parents=True)
+    (out / "ai-datacenter.json").write_text('{"committed": "mirror"}')
+    assert bd.emit_theme_economics() == []
+    assert (out / "ai-datacenter.json").exists(), (
+        "a committed mirror was deleted by a checkout that simply has no data tree")
+    # but WITH a data tree and no cards declared, the stale mirror must still go
+    (tmp_path / "data" / "themes").mkdir(parents=True)
+    assert bd.emit_theme_economics() == []
+    assert not (out / "ai-datacenter.json").exists()
+
+
 def test_emitters_are_noops_when_no_source_exists(tmp_path: Path, monkeypatch: Any) -> None:
     bd = _load_build()
     monkeypatch.setattr(bd, "ROOT", tmp_path)

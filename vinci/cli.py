@@ -3023,7 +3023,7 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     from vinci.themes import thesis as _thesis
     try:
         _thesis.require_thesis_card(driver, data_dir=get_config().data_dir)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, ValueError) as exc:   # absent card, or one that will not load
         print(f"REFUSED: {exc}\n  NOTHING was written — the ledger is untouched.")
         return 1
     try:

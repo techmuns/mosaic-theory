@@ -34,7 +34,7 @@ from datetime import date
 from enum import StrEnum
 from pathlib import Path
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ValidationError, field_validator
 
 from vinci.scenarios import DatedTrigger
 
@@ -212,7 +212,16 @@ def require_thesis_card(driver: str, *, data_dir: Path) -> ThemeThesis:
 
     Raises with the remedy in the message; the CLI prints it and writes NOTHING (it runs in the
     #424 preflight cluster, before the ledger append)."""
-    card = load_thesis(driver, data_dir=data_dir)
+    try:
+        card = load_thesis(driver, data_dir=data_dir)
+    except (ValidationError, ValueError) as exc:
+        # A CORRUPT CARD IS NOT AN ABSENT ONE, and the gate must not conflate them: "declare it"
+        # would be wrong advice for a file that exists and is broken. Raised as a stated refusal
+        # rather than a traceback — the freeze still writes nothing either way.
+        raise ValueError(
+            f"the thesis card for {driver!r} exists but does not load "
+            f"({str(exc).splitlines()[0]}) — repair or re-declare it; the freeze wrote nothing"
+        ) from exc
     if card is None:
         raise FileNotFoundError(
             f"no theme thesis card for driver {driver!r} — Stage-4 ratification requires one "

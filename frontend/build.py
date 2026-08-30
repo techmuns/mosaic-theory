@@ -610,8 +610,15 @@ def _mirror_theme_side_files(src: Path, out: Path) -> list[str]:
     including the deploy — an absent source here genuinely means "no card", not "not shipped".
     """
     if not src.is_dir():
-        if out.is_dir():
-            shutil.rmtree(out)   # sources are committed: none present ⇒ no mirror may remain
+        # TWO DIFFERENT ABSENCES, and pruning may only answer to the first. `data/themes/` present
+        # without this subdir means NO CARD IS DECLARED — a real state, so a leftover mirror must
+        # go. `data/themes/` itself missing means this checkout has no data tree at all (a sparse
+        # or frontend-only clone), which says NOTHING about what is declared — deleting committed
+        # mirrors there is the destructive case `build_themes` avoids by never pruning at all.
+        # Measured, not assumed: the first cut of this prune wiped a committed mirror in exactly
+        # that clone.
+        if (ROOT / "data" / "themes").is_dir() and out.is_dir():
+            shutil.rmtree(out)
         return []
     slugs: list[str] = []
     keep: set[str] = set()
