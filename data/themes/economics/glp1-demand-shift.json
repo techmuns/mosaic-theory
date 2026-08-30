@@ -1,0 +1,9 @@
+{
+ "driver_key": "glp1-demand-shift",
+ "mirror_slug": "",
+ "as_of": "2026-08-29",
+ "membership_note": "no frozen basket for this driver — no committed membership to roll up (exposure scans are local-only; freeze a basket with themes-forward)",
+ "n_members": 0,
+ "n_underwritten": 0,
+ "rows": []
+}

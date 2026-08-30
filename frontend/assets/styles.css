@@ -1389,6 +1389,21 @@ tr.uw-ref-excl td.num { text-decoration: line-through; text-decoration-thickness
 /* the design system's own danger tokens — a hardcoded red would not follow dark mode, which is
    exactly where a blocking state must stay legible */
 .uw-survival-fail { border-color: var(--danger-border); background: var(--danger-bg); }
+
+/* THEME IDENTITY BAND (brief Item 1; merged with the ratified definition 2026-08-30).
+   ONE card answers "what is this theme" and "why is it a bet" — the head row carries the title
+   left and its status right, so the state is legible without reading prose. The absent state
+   uses the GATE register (amber `.chip.gate`), NOT danger-red: every driver holds it until its
+   card is declared, so a red alarm here would fire on every page and teach the reader to skip
+   red — which is the one thing the survival-fail panel needs red to keep meaning. */
+.tt-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.tt-head h3 { margin: 0; }
+.tt-meta { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 11.5px; }
+/* the coverage COUNT leads the economics block: sparse coverage is the finding, so it is read
+   as a number, not recovered from a sentence. */
+.tt-stat { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 10px; font-size: 12.5px; }
+.tt-stat-n { font-family: var(--mono); font-size: 20px; font-weight: 650; letter-spacing: -0.02em;
+  color: var(--ink); }
 .uw-survival-fail .uw-sec-h .basis { color: var(--danger-text); font-weight: 600; }
 .uw-surv-body { margin-top: 6px; }
 .uw-bad { color: var(--danger-text); font-weight: 600; }

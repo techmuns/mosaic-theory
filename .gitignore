@@ -85,6 +85,10 @@ data/forward/
 data/themes/*
 !data/themes/baskets/
 !data/themes/ledgers/
+# thesis cards (operator-declared, brief Item 1) + economics roll-ups (derived, Item 4) — both
+# committed classes, same rationale as the baskets: durable inputs/artifacts, not local staging
+!data/themes/thesis/
+!data/themes/economics/
 
 # scan-history archive (themes-exposure) — timestamped scan snapshots + manifest. DATA, never
 # committed (already covered by data/*; explicit here for fail-closed clarity).

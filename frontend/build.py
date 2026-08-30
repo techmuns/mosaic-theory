@@ -593,6 +593,71 @@ def emit_monitor() -> list[str]:
     return days
 
 
+def _mirror_theme_side_files(src: Path, out: Path) -> list[str]:
+    """Mirror a committed per-driver data-side dir → its frontend dir, keyed by the card's own
+    machine-stamped ``mirror_slug``, and PRUNE anything the source no longer justifies.
+
+    THE PRUNE IS THE POINT, and its absence was a real defect: without it a card deleted or
+    re-slugged data-side left its mirror behind forever, so the page kept rendering a declared
+    thesis for a driver that has none — presence-when-absent, the exact inversion of the loud
+    `THESIS UNSTATED` rule these files exist to serve. Every other mirror here (scenarios,
+    monitor, calls) rebuilds its directory for the same reason.
+
+    SAFE TO PRUNE, unlike `build_themes`'s freeze artifacts: those are regenerated from
+    GIT-IGNORED `data/forward/` and must survive a deploy that has no source, which is why that
+    function never rmtree's. These sources are COMMITTED (`.gitignore` carves out
+    `data/themes/thesis/` and `data/themes/economics/`), so they are present on every checkout
+    including the deploy — an absent source here genuinely means "no card", not "not shipped".
+    """
+    if not src.is_dir():
+        # TWO DIFFERENT ABSENCES, and pruning may only answer to the first. `data/themes/` present
+        # without this subdir means NO CARD IS DECLARED — a real state, so a leftover mirror must
+        # go. `data/themes/` itself missing means this checkout has no data tree at all (a sparse
+        # or frontend-only clone), which says NOTHING about what is declared — deleting committed
+        # mirrors there is the destructive case `build_themes` avoids by never pruning at all.
+        # Measured, not assumed: the first cut of this prune wiped a committed mirror in exactly
+        # that clone.
+        if (ROOT / "data" / "themes").is_dir() and out.is_dir():
+            shutil.rmtree(out)
+        return []
+    slugs: list[str] = []
+    keep: set[str] = set()
+    out.mkdir(parents=True, exist_ok=True)
+    for p in sorted(src.glob("*.json")):    # top-level only — archive/ is superseded, never served
+        slug = json.loads(p.read_text()).get("mirror_slug") or ""
+        if not slug:
+            continue                        # no theme page for this driver yet (the glp1 case)
+        shutil.copyfile(p, out / f"{slug}.json")
+        slugs.append(slug)
+        keep.add(f"{slug}.json")
+    for stale in out.glob("*.json"):
+        if stale.name not in keep:
+            stale.unlink()
+    return slugs
+
+
+def emit_theme_thesis() -> list[str]:
+    """Mirror committed thesis cards → `frontend/themes/thesis/<mirror_slug>.json`, VERBATIM.
+
+    The card carries its own machine-stamped ``mirror_slug`` (vinci.themes.thesis stamps it from
+    the driver registry at declare time), so this stdlib-only build places the mirror without
+    importing vinci — the same binding discipline as the freeze artifacts, and a parity test pins
+    every committed stamp against the registry. An empty slug == the driver has no theme page yet
+    (a real state — glp1) → data-side card only, nothing mirrored. Verbatim copy: the card is
+    operator prose + dated triggers, already display-ready; a transform here would be a second
+    author. Top-level glob only — `thesis/archive/` (superseded cards) never reaches the page."""
+    return _mirror_theme_side_files(ROOT / "data" / "themes" / "thesis", OUT_THEMES / "thesis")
+
+
+def emit_theme_economics() -> list[str]:
+    """Mirror committed economics roll-ups → `frontend/themes/economics/<mirror_slug>.json`,
+    verbatim — same stamped-slug binding as `emit_theme_thesis`. The roll-up is inform-only and
+    carries NO composite by pin; the page renders its rows and its `membership_note`, including
+    the loud empty state for a basket-less driver."""
+    return _mirror_theme_side_files(
+        ROOT / "data" / "themes" / "economics", OUT_THEMES / "economics")
+
+
 def _mirror_calls() -> list[str]:
     """Mirror data/calls/<handle>/ -> frontend/calls/<handle>/ for every account present.
 
@@ -1354,6 +1419,10 @@ def main(argv: list[str] | None = None) -> None:
     theme_srcs = [Path(p) for p in (args.themes_src or [FORWARD])]
     theme_slugs = build_themes(theme_srcs)
 
+    # Thesis cards + economics roll-ups — committed data-side sources, mirrored by stamped slug.
+    thesis_slugs = emit_theme_thesis()
+    econ_slugs = emit_theme_economics()
+
     # Radar sweep bar — regenerated every build (manifest git-ignored → seeded; a run refreshes).
     emit_radar_sweep()
     # Radar inbox + review log — sort latest clusters into unreviewed vs reviewed (non-destructive).
@@ -1365,7 +1434,9 @@ def main(argv: list[str] | None = None) -> None:
         f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
         f"{len(mon_days)} monitor day(s) [latest {mon_days[-1] if mon_days else 'none'}], "
         f"{len(calls_handles)} calls account(s) [{', '.join(calls_handles) or 'none'}], "
-        f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}] → frontend/"
+        f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}], "
+        f"{len(thesis_slugs)} thesis card(s) [{', '.join(thesis_slugs) or 'none'}], "
+        f"{len(econ_slugs)} econ roll-up(s) [{', '.join(econ_slugs) or 'none'}] → frontend/"
     )
 
 

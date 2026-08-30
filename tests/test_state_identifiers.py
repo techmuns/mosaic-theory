@@ -148,3 +148,31 @@ def test_the_broad_pattern_has_no_false_positives_on_the_committed_record() -> N
     assert not unresolved, (
         f"tokens matched but not resolvable: {unresolved} — either a dangling citation, or a "
         "non-reference token that needs an exclusion recorded with the instance that forced it")
+
+
+def test_no_committed_conflict_markers_anywhere() -> None:
+    """INVARIANT for a real incident (2026-08-30): a rebase resolution left `<<<<<<<` markers
+    COMMITTED in STATE.md and the whole suite stayed green — the identifier lints check that
+    references resolve, and a file with markers still resolves. That is the same blind spot
+    CLAUDE.md names for dropped entries ("a smaller file that is still internally consistent, so
+    it passes"), and STATE.md is exactly where the #443 rebase hazard lands.
+
+    Cheap, total, and it fails on the file that actually carries the damage."""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    hunted = [root / "STATE.md", root / "CLAUDE.md", *sorted((root / "docs").rglob("*.md"))]
+    for d in ("vinci", "tests", "frontend"):
+        hunted += [p for p in (root / d).rglob("*")
+                   if p.suffix in {".py", ".js", ".css", ".json", ".md"} and p.is_file()]
+    assert len(hunted) > 50, "the sweep found almost nothing — the globs are wrong, not the repo"
+    bad: list[str] = []
+    for p in hunted:
+        try:
+            text = p.read_text()
+        except (UnicodeDecodeError, OSError):
+            continue
+        for n, line in enumerate(text.splitlines(), 1):
+            if line.startswith(("<<<<<<< ", ">>>>>>> ")) or line.rstrip() == "=======":
+                bad.append(f"{p.relative_to(root)}:{n}: {line[:60]}")
+    assert not bad, "committed merge-conflict markers:\n  " + "\n  ".join(bad)

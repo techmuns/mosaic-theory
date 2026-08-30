@@ -552,6 +552,31 @@ export async function getThemeContext(slug) {
   }
 }
 
+// getThemeThesis(slug) -> the driver's declared thesis card (operator-typed only; mirrored
+// VERBATIM by the build under the registry-stamped slug), or null — and null IS the
+// "THESIS UNSTATED" state the page stamps loudly (ruling R2: absence must never look like
+// passage). Shape: vinci.themes.thesis.ThemeThesis.
+export async function getThemeThesis(slug) {
+  try {
+    return await _json(`${THEMES}/thesis/${String(slug).toLowerCase()}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
+// getThemeEconomics(slug) -> the inform-only per-member economics roll-up (NO composite, by pin;
+// vinci.themes.rollup.ThemeEconomicsRollup), or null — not yet assembled, and the page says so
+// rather than rendering nothing.
+export async function getThemeEconomics(slug) {
+  try {
+    return await _json(`${THEMES}/economics/${String(slug).toLowerCase()}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
 // getGraphCoverage() -> {
 //   available, model, stats: {names,withEdges,totalEdges,realEdges,realUsListed},
 //   edges: [{focal, counterpartyName, counterpartyTicker, relType, direction, resolution, evidence}],

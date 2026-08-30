@@ -139,6 +139,19 @@
       ],
       "port": 8801,
       "autoPort": false
+    },
+    {
+      "name": "thesis-preview",
+      "runtimeExecutable": "/Users/work/Documents/GitHub/mosaic-theory/.venv/bin/python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8873",
+        "--directory",
+        "/Users/work/Documents/GitHub/mosaic-theory/.claude/worktrees/analyze-zip-files-quality-9022ad/frontend"
+      ],
+      "port": 8873,
+      "autoPort": false
     }
   ]
 }

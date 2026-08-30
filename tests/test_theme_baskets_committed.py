@@ -235,6 +235,24 @@ def test_from_baskets_refuses_a_driver_that_is_not_the_baskets_own(
 # The ratification ledger — committed too (operator decision, 2026-08-12)
 # --------------------------------------------------------------------------------------------
 
+def _seed_thesis(data_dir: pathlib.Path) -> None:
+    """The thesis gate (brief Item 1, 2026-08-29) binds every Stage-4 freeze — these tests freeze
+    defense in a tmp data_dir, so they declare the card the gate requires. The gate's own
+    behavior (refusal, message, ordering) is pinned in test_theme_thesis.py, not here."""
+    from datetime import date
+
+    from vinci.scenarios import DatedTrigger
+    from vinci.themes.thesis import ThemeThesis, ThesisMechanism, stamped, write_thesis
+
+    write_thesis(stamped(ThemeThesis(
+        driver_key="defense-demand-shift", declared_date=date(2026, 8, 29),
+        mechanism=ThesisMechanism.POLICY_SIDE,
+        market_mistake="test-seed mistake", null_thesis="test-seed null",
+        first_confirming=DatedTrigger(trigger="seed", deadline="2026-12-31"),
+        falsifiers=(DatedTrigger(trigger="seed falsifier", deadline="2027-06-30"),),
+    )), data_dir=data_dir)
+
+
 def test_a_freeze_with_no_ledger_flag_lands_in_the_committed_home(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -253,6 +271,7 @@ def test_a_freeze_with_no_ledger_flag_lands_in_the_committed_home(
     cfg = Config(data_dir=tmp_path / "data")
     cfg.ensure_dirs()
     monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    _seed_thesis(cfg.data_dir)
     ws = tmp_path / "ws.csv"
     ws.write_text(
         "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
@@ -283,6 +302,7 @@ def test_an_explicit_ledger_path_still_wins(
     cfg = Config(data_dir=tmp_path / "data")
     cfg.ensure_dirs()
     monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    _seed_thesis(cfg.data_dir)
     ws = tmp_path / "ws.csv"
     ws.write_text(
         "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
@@ -360,6 +380,7 @@ def _freeze_fixture(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch):
     cfg = Config(data_dir=tmp_path / "data")
     cfg.ensure_dirs()
     monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    _seed_thesis(cfg.data_dir)
     ws = tmp_path / "ws.csv"
     ws.write_text(
         "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
