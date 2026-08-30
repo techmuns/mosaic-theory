@@ -3605,7 +3605,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_monthly.set_defaults(func=_cmd_run_monthly)
 
     p_t0 = sub.add_parser("graph-test0", help="score the EDGAR graph vs CIQ ground truth (Test 0)")
-    p_t0.add_argument("--model", help="LLM model id (default: config; claude-opus-4-8 to diagnose)")
+    p_t0.add_argument("--model", help="LLM model id (default: config, claude-opus-5; pass "
+                                      "claude-opus-4-8 to compare vs the benchmarked baseline)")
     p_t0.add_argument("--ciq-dir", dest="ciq_dir", help="CIQ exports folder (data/manual/ciq)")
     p_t0.add_argument("--max-focals", type=int, dest="max_focals", help="limit focals (smoke test)")
     p_t0.add_argument("--json", action="store_true", help="write graph_test0.json (git-ignored)")
