@@ -105,6 +105,11 @@ Each line: *what it does* — *verified how*.
 - **Scoring harness** (`vinci/scoring`) — BUY−AVOID spread = `buy_mean_return − avoid_mean_return`
   (benchmark-free), over **resolved** verdicts only — *synthetic +20% BUY / −20% AVOID → spread +40%.*
   *(detail: `docs/records/2026-08-26-capability-scoring-harness-vinci-scoring-buy-avoid-spread.md`)*
+- **Anchoring falsifier, measured** (`vinci/scoring/metrics.py::override_rate` + report block) — the
+  pivot's accepted-risk quantities printed beside the falsifier's wording: override rate (never a
+  fabricated 0.0) + human−machine spread delta; values only, nothing adjudicates or tunes on them —
+  *real run 2026-08-29: 0 resolved proposal-bearing rows → both refuse honestly; 4 markdown pins.*
+  *(detail: `docs/records/2026-08-29-anchoring-falsifier-measured-in-scoring-report.md`)*
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*
@@ -1332,6 +1337,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 3 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
 | 5 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
+| 6 | **Theme thesis card — Items 1/4/2 of the adopted brief.** Rulings R1–R5 adopted 2026-08-28 (operator "go ahead"; recorded in `docs/records/2026-08-29-anchoring-falsifier-measured-in-scoring-report.md` §RULINGS): human-typed `ThemeThesis` card gating Stage-4 ratification (loud `THESIS UNSTATED` when absent), inform-only per-member economics roll-up (no composite), dated theme falsifiers swept by the monitor. Item 3 (anchoring-falsifier report block) SHIPPED per the same record. Sequence: Item 1 + Item 4 next, then Item 2. | agent | nothing — ready to build |
 
 **PRE-REGISTERED, WAITING ON DATA — not a build:** the cohort anchoring falsifier (#507) is
 written and frozen; it cannot read out until 10 verdicts exist in each arm. Re-opening it as a

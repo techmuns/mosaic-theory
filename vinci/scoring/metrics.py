@@ -169,6 +169,17 @@ class OverrideOutcome:
     name_return: float
 
 
+def override_rate(n_confirmed: int, n_overridden: int) -> float | None:
+    """The anchoring falsifier's first quantity: overridden / (confirmed + overridden).
+
+    ``None`` — never 0.0 — when no proposal-bearing verdict has resolved: an empty denominator is
+    absence of evidence, and a fabricated 0.0 would read as exactly the collapse-toward-~0 the
+    falsifier watches for. The rate is CUMULATIVE since the pivot (scores carry no dates, so there
+    is no trailing window), and nothing anywhere reads it back into a parameter."""
+    den = n_confirmed + n_overridden
+    return n_overridden / den if den else None
+
+
 @dataclass(frozen=True)
 class ScoreReport:
     """Aggregate scoring over the resolved verdicts, plus the count still pending."""
@@ -346,6 +357,49 @@ class ScoreReport:
             f"- Dispositions (resolved): confirmed {self.n_confirmed} · "
             f"overridden {self.n_overridden} · no-proposal {self.n_no_proposal}",
             *(override_lines or ["- (no resolved overrides yet)"]),
+        ]
+        # THE ANCHORING FALSIFIER, MEASURED — NEVER ADJUDICATED. CLAUDE.md records the pivot's
+        # accepted risk WITH its falsifier, and until this block nothing computed either quantity —
+        # the recorded-criterion-nobody-measures class (SMPL's OWYN trigger printed on every
+        # monitor run while nobody computed OWYN net sales). Values are printed beside the
+        # falsifier's own wording; no threshold constant, no verdict line, and no parameter
+        # anywhere reads these numbers back (never-tune).
+        rate = override_rate(self.n_confirmed, self.n_overridden)
+        den = self.n_confirmed + self.n_overridden
+        rate_txt = (
+            "insufficient rows (n=0 proposal-bearing resolved)" if rate is None
+            else f"{self.n_overridden}/{den} = {rate:.0%}"
+        )
+        if self.buy_avoid_spread is not None and self.machine_buy_avoid_spread is not None:
+            delta = self.buy_avoid_spread - self.machine_buy_avoid_spread
+            delta_txt = (f"{delta:+.1%} (human {pct(self.buy_avoid_spread)} − machine "
+                         f"{pct(self.machine_buy_avoid_spread)}, same resolved screen-origin set)")
+        else:
+            missing = [name for name, v in (("human", self.buy_avoid_spread),
+                                            ("machine", self.machine_buy_avoid_spread))
+                       if v is None]
+            plural = "s" if len(missing) > 1 else ""
+            delta_txt = (f"UNDEFINED — no two-leg resolved read yet for the "
+                         f"{' and '.join(missing)} curve{plural}")
+        lines += [
+            "",
+            "### The anchoring falsifier, measured (never adjudicated)",
+            '_The recorded accepted risk (CLAUDE.md): a machine proposal ANCHORS the human — "if_ '
+            '_the override rate collapses toward ~0 or the human spread tracks the machine spread_ '
+            '_within noise, the anchoring concern is confirmed → revisit verdict placement"._',
+            # THE TWO QUANTITIES ARE ON DIFFERENT POPULATIONS, and each says which. The rate counts
+            # dispositions over EVERY resolved row (the disagreement question is about the human,
+            # in whichever book), while the delta subtracts two curves that are both screen-origin
+            # by construction. Printed side by side without their scopes, a reader would take them
+            # for one sample — the same incomparability this file already refuses one level up
+            # ("reading a wider set would make the two incomparable while still printing them side
+            # by side"). Labelled rather than forced onto one set: narrowing the rate would hide
+            # overrides in the followed book, which is where the anchoring risk reads most.
+            f"- Override rate: {rate_txt} — ALL resolved proposal-bearing rows (every book); "
+            f"cumulative since the pivot; overridden ÷ (confirmed + overridden)",
+            f"- Human−machine spread delta (SCREEN-ORIGIN rows only): {delta_txt}",
+            "_Values only — the ~0 / within-noise reading is the operator's, and nothing tunes "
+            "on these._",
             "",
             "_Tiny n: directional gates, not significance tests. Paper fills are optimistic._",
         ]
