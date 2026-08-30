@@ -122,10 +122,12 @@ Each line: *what it does* — *verified how*.
   (`vinci/themes/drivers.py`, ai-value-migration) — operator ruling 2026-08-30: the winners share
   MODEL-AGNOSTIC value capture, and a silicon vendor whose software/developer-ecosystem bundle is
   the moat belongs in this driver, not blanket-excluded to ai-datacenter. Boundary re-drawn:
-  unit/capacity demand → sibling (unchanged); moat economics → fifth tag here; split by economics
-  named in the disclosure, never by company — *real-resolver run: moat sentence tags, HBM
-  unit-demand sentence falls through to unspecified (pinned); suite green (exit 0, 3253
-  collected).*
+  unit/capacity demand → sibling (now stated RECIPROCALLY in both taxonomies, the glp1
+  precedent); moat economics → fifth tag here; split by economics named in the disclosure,
+  never by company — *real-resolver runs: moat sentence tags; the HBM unit-demand sentence AND
+  a volumes sentence wearing the vendor label "accelerated computing" carry no moat tag (both
+  pinned — the label WAS a keyword at birth and mis-tagged, caught+removed at review); suite
+  green (3122 passed, exit 0).*
   *(detail: `docs/records/2026-08-30-silicon-ecosystem-moat-tag.md`)*
 - **Theme thesis card + economics roll-up** (`vinci/themes/thesis.py`, `vinci/themes/rollup.py`,
   the theme page) — human-typed card (mechanism enum, market mistake, null thesis, dated

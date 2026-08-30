@@ -32,7 +32,11 @@ _AI_DC_TIE_TAXONOMY = (
     "chain-attributable revenue is driver-specific, even though it is not itself a datacenter. "
     "indirect = a generic/weak tie — generic power or equipment 'for data center applications' "
     "with NO AI/GPU language. not-driver = edge/on-device AI (the OPPOSITE of a datacenter) or a "
-    "'broad AI market' adjacency."
+    "'broad AI market' adjacency. A silicon vendor's MODEL-AGNOSTIC software/developer-ecosystem "
+    "MOAT economics (developer base, programming-model lock-in — the moat, not unit demand) "
+    "belong to the ai-value-migration sibling, not here; the vendor's unit/capacity/build-out "
+    "economics stay HERE. (Reciprocal boundary, the glp1 sibling-pair precedent — added "
+    "2026-08-31 with the silicon-ecosystem-moat refinement.)"
 )
 
 # DELIBERATELY BROAD pre-filter over the whole value chain's vocabulary (build 2): a chain enabler
@@ -325,10 +329,10 @@ AI_VALUE_MIGRATION = DriverSpec(
         "never the unit volumes. BOTH DIRECTIONS ARE IN SCOPE and the tag "
         "says which side a name sits on. Exposure must be to the MIGRATION (which layer captures "
         "AI economics), grounded in disclosed activity — NOT generic 'AI' adjacency, NOT the "
-        "physical AI-datacenter build-out chain's UNIT/CAPACITY demand (chips/HBM/packaging/"
-        "cooling/power volumes — the ai-datacenter driver; a silicon vendor's model-agnostic "
-        "software/ecosystem moat is IN SCOPE here as silicon-ecosystem-moat), NOT consumer-device "
-        "AI feature mentions."
+        "physical AI-datacenter build-out chain (chips/HBM/packaging/cooling/power — build-out "
+        "economics of ANY shape, unit demand and pricing/mix/contract revenue alike — the "
+        "ai-datacenter driver; the ONE carve-out routed here is category (5) above), NOT "
+        "consumer-device AI feature mentions."
     ),
     tie_taxonomy=(
         "driver-specific = disclosed economics tied to a NAMED layer of the migration, on EITHER "
@@ -346,11 +350,13 @@ AI_VALUE_MIGRATION = DriverSpec(
         "whether that is good for the equity is the human's call. "
         "indirect = 'AI-enabled' claims without disclosed layer economics — an AI feature "
         "mention carrying no attach revenue, no moat disclosure, and no platform economics. "
-        "not-driver = the physical AI-datacenter build-out chain's UNIT/CAPACITY demand (chips, "
-        "HBM, advanced packaging, thermal/cooling, power, optical VOLUMES — the ai-datacenter "
-        "driver's territory; the same vendor's software/ecosystem-moat economics route HERE, so "
-        "the split is by ECONOMICS NAMED in the disclosure, not by company), consumer-device AI, "
-        "or a name whose AI exposure is a minor undisclosed end-market."
+        "not-driver = the physical AI-datacenter build-out chain (chips, HBM, advanced "
+        "packaging, thermal/cooling, power, optical — build-out economics of ANY shape: unit/"
+        "capacity demand, ASP/mix, chain contract revenue — the ai-datacenter driver's "
+        "territory). The ONE carve-out routing here is the tailwind clause above — a silicon "
+        "vendor's model-agnostic software/developer-ecosystem MOAT economics; the split is by "
+        "ECONOMICS NAMED in the disclosure, not by company. Also not-driver: consumer-device "
+        "AI, or a name whose AI exposure is a minor undisclosed end-market."
     ),
     prefilter_terms=(
         "artificial intelligence", "generative AI", "AI agent", "agentic", "copilot",
@@ -358,7 +364,12 @@ AI_VALUE_MIGRATION = DriverSpec(
         "inference", "fine-tuning", "proprietary data", "system of record",
         "workflow automation", "vertical software", "per-seat", "consumption-based",
         "model licensing", "API pricing", "cloud platform", "hyperscaler",
-        "accelerated computing", "developer ecosystem", "programming model",
+        # NO silicon-specific prefilter terms, deliberately (review 2026-08-31): a silicon-AI
+        # vendor's filing always matches the existing terms ("artificial intelligence",
+        # "inference"), so moat terms here would buy no recall while costing one paced EFTS
+        # query per CIK-batch each and recruiting generic developer-relations filers into full
+        # LLM assessments. Tag keywords run free on candidates' evidence text regardless —
+        # the ai-datacenter precedent (33 of its tag keywords are not prefilter terms).
     ),
     multi_tag=True,   # one company can own model IP AND the platform/app layers — record all
     provenance_tags=(
@@ -373,12 +384,13 @@ AI_VALUE_MIGRATION = DriverSpec(
         ("open-ecosystem",
          ("open-source", "open weights", "fine-tuning", "customization", "serving")),
         # 2026-08-30 refinement — the operator's third model-agnostic beneficiary class. The
-        # keywords name the SOFTWARE moat, deliberately never bare silicon terms ("gpu", "chip"):
-        # a unit-demand sentence must fall through to unspecified here and be read by the
-        # ai-datacenter lens, not mis-tagged as a moat.
+        # keywords name the SOFTWARE moat, deliberately never bare silicon terms ("gpu", "chip")
+        # and never the vendor volume label "accelerated computing" (review 2026-08-31: it tagged
+        # a GPU-shipments sentence, dissolving the boundary — pinned): a unit-demand sentence
+        # must fall through to unspecified here and be read by the ai-datacenter lens, not
+        # mis-tagged as a moat.
         ("silicon-ecosystem-moat",
-         ("accelerated computing", "developer ecosystem", "programming model",
-          "software stack")),
+         ("developer ecosystem", "programming model", "software stack")),
     ),
 )
 

@@ -533,6 +533,14 @@ def test_silicon_ecosystem_moat_tags_the_software_moat_never_unit_demand() -> No
     assert provenance_tags_of(
         "we supply HBM memory and advanced packaging for AI data center GPUs, with capacity "
         "commitments through 2027", spec.provenance_tags) == ("unspecified",)
+    # REVIEW PIN (2026-08-31) — the REALISTIC mis-tag, not just the keyword-free one above: a
+    # pure volumes sentence wearing the standard vendor label "accelerated computing". That
+    # phrase was a tag keyword at birth and DID tag this sentence as a moat (executed during
+    # review), dissolving the ruling's boundary; the keyword is gone and this pin holds the
+    # door shut against re-widening (gpu/chip/accelerated — what the tag comment forbids).
+    assert "silicon-ecosystem-moat" not in provenance_tags_of(
+        "record demand for our accelerated computing platform drove data center revenue up 60% "
+        "on GPU shipments", spec.provenance_tags)
 
 
 def test_only_tickers_partition_subset_and_missing() -> None:
