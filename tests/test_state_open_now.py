@@ -148,3 +148,25 @@ def test_every_open_row_says_who_owns_it() -> None:
         cells = [c.strip() for c in line.strip("|").split("|")]
         assert len(cells) >= 3 and cells[2] in {"agent", "operator"}, (
             f"open row has no agent/operator owner: {line[:90]}")
+
+
+def test_no_two_rows_share_a_number() -> None:
+    """INVARIANT for a real incident (2026-08-30): a rebase resolved onto the merged main by
+    KEEPING BOTH sides of a §5.0 conflict — right for a §2 capability bullet, where the two sides
+    are different builds, and wrong here, where they were two VERSIONS of one row. The table came
+    out with two rows numbered 6, and the suite stayed green: the sibling guard above keys on the
+    leading bold TITLE, and the two versions had been retitled, so it read them as distinct items.
+
+    The row NUMBER is the thing a reader points at ("row 6 is mine"), so a repeated number is a
+    corrupted index however different the prose is."""
+    seen: dict[str, str] = {}
+    dupes: list[str] = []
+    for line in _block():
+        m = re.match(r"^\|\s*(\d+[a-z]?)\s*\|\s*(.+?)\s*\|", line)
+        if not m:
+            continue
+        num, cell = m.group(1), m.group(2)
+        if num in seen:
+            dupes.append(f"row {num}: {seen[num][:60]!r} vs {cell[:60]!r}")
+        seen[num] = cell
+    assert not dupes, "§5.0 rows share a number:\n  " + "\n  ".join(dupes)
