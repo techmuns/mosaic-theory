@@ -44,13 +44,26 @@ remaining half, at the operator's pace.
   `require_thesis_card("glp1-drug-value-chain")` still refuses loudly.
 - Monitor sweep, first real rows: `vinci monitor` on the live book rendered all FOUR dated
   triggers under THEME FALSIFIERS with `(by <date>)` + basis lines, no ⚑ (every window still
-  open), and wrote the snapshot `data/monitor/2026-08-28.json` carrying 4 typed
-  `theme_falsifiers` rows (committed, with its frontend mirror — the first monitor artifact
-  proving the sweep live).
-- Frontend build: `0 thesis card(s) [none]` mirrored — correct by design for a slugless card;
-  the monitor day + index mirrored normally.
-- ARTIFACT-PASS: full offline suite on the freshly-written artifacts — **3120 passed, exit 0**;
+  open), and wrote a snapshot carrying 4 typed `theme_falsifiers` rows. **That day file is
+  deliberately NOT committed** (review 2026-08-31): the Sunday run keyed it `as_of 2026-08-28`
+  — an as-of artifact carrying rows from a card declared 2026-08-30, i.e. evidence predating
+  the thing it evidences. The console run above is the verification; the operator's next
+  scheduled run writes the first committed day with theme rows, honestly dated.
+- Frontend build: `0 thesis card(s) [none]` mirrored — correct by design for a slugless card.
+- ARTIFACT-PASS: full offline suite on the freshly-written artifacts — green, exit 0;
   ruff + `mypy --strict` untouched (no code changed in this PR).
+
+**REVIEW ROUND (2026-08-31, medium code-review of this PR — two findings applied).**
+1. The committed monitor day was withdrawn (above): as-of discipline — replaying the monitor
+   history must never show a card two days before it existed, and an honest re-run of
+   2026-08-28 would have produced a different file for the same key. Related, recorded for the
+   sweep's own follow-up (separate from this PR): the sweep clock uses the calendar `ref` while
+   the snapshot is stamped to the last trading day, and the passed-deadline render drops the
+   row's kind — both live in merged monitor code, not here.
+2. `first_confirming.basis` had restated the nine-ticker roster the trigger already names —
+   two lists that could drift in an artifact that is supersede-archived, never edited. The card
+   was re-declared with the basis carrying the WINDOW and provenance only; the names live once,
+   in the trigger.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - The card's note references PR #520 (the silicon-ecosystem-moat tag) which may merge after this
