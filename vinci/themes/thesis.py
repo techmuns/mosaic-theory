@@ -207,16 +207,33 @@ def stamped(card: ThemeThesis) -> ThemeThesis:
     return card.model_copy(update={"mirror_slug": spec.mirror_slug})
 
 
-def load_all_theses(*, data_dir: Path) -> list[ThemeThesis]:
-    """Every declared card, sorted by driver — the monitor's sweep input (brief Item 2).
+def load_all_theses(*, data_dir: Path) -> tuple[list[ThemeThesis], list[str]]:
+    """Every declared card sorted by driver, AND one message per card that would not load —
+    the monitor's sweep input (brief Item 2).
 
     Top-level glob only: ``thesis/archive/`` holds superseded cards, and a superseded falsifier
-    flagged as live would be the stale-criterion class this sweep exists to end."""
+    flagged as live would be the stale-criterion class this sweep exists to end.
+
+    TWO RETURN CHANNELS, because the blast radius matters. Raising on the first unreadable card
+    killed the ENTIRE ``vinci monitor`` run — position marks and the BUY−AVOID diagnostic
+    included — over a hand-edited theme file that has nothing to do with the book. Fail-loud is
+    kept (the problem is returned, never swallowed, and the caller must render it: an unreadable
+    card is a card whose falsifiers are NOT being watched, which the operator has to see), but it
+    is now scoped to the card that is broken. The tuple makes the error channel impossible to
+    ignore by accident."""
     d = data_dir / THESIS_SUBDIR
     if not d.is_dir():
-        return []
-    return [ThemeThesis.model_validate_json(p.read_text())
-            for p in sorted(d.glob("*.json"))]
+        return [], []
+    cards: list[ThemeThesis] = []
+    problems: list[str] = []
+    for p in sorted(d.glob("*.json")):
+        try:
+            cards.append(ThemeThesis.model_validate_json(p.read_text()))
+        except (ValidationError, ValueError, OSError) as exc:
+            first = str(exc).splitlines()[0] if str(exc) else exc.__class__.__name__
+            problems.append(
+                f"{p.name}: UNREADABLE — {first} · its falsifiers are NOT being watched")
+    return cards, problems
 
 
 def require_thesis_card(driver: str, *, data_dir: Path) -> ThemeThesis:

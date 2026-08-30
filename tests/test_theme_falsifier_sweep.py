@@ -94,8 +94,26 @@ def test_load_all_theses_skips_archive_and_sorts(tmp_path: Path) -> None:
     arch.mkdir(parents=True)
     (arch / "ai-datacenter-2026-01-01.json").write_text(
         stamped(_card()).model_dump_json())
-    cards = load_all_theses(data_dir=tmp_path)
+    cards, problems = load_all_theses(data_dir=tmp_path)
     assert [c.driver_key for c in cards] == ["ai-datacenter", "defense-demand-shift"]
+    assert problems == []
+
+
+def test_one_unreadable_card_does_not_take_the_whole_run_down(tmp_path: Path) -> None:
+    """REVIEW FINDING (2nd pass) — a single hand-edited theme file raised out of the loader, so
+    `vinci monitor` died before marking the book: the position rows and the BUY−AVOID diagnostic
+    were lost to a file that has nothing to do with them. The broken card is now REPORTED, not
+    swallowed and not fatal — an unreadable card is a watch that is not happening, and the
+    operator must see exactly that."""
+    write_thesis(stamped(_card()), data_dir=tmp_path)
+    (tmp_path / "themes/thesis/defense-demand-shift.json").write_text('{"driver_key": OOPS')
+    cards, problems = load_all_theses(data_dir=tmp_path)
+    assert [c.driver_key for c in cards] == ["ai-datacenter"]   # the good card still sweeps
+    assert len(problems) == 1
+    assert "defense-demand-shift.json" in problems[0] and "UNREADABLE" in problems[0]
+    assert "NOT being watched" in problems[0]
+    # the blast radius really is one file — the good card's rows are unaffected
+    assert theme_falsifier_rows(cards, today=date(2026, 8, 29))
 
 
 def test_scenario_passed_deadlines_now_render_in_the_terminal_view() -> None:

@@ -1732,7 +1732,12 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # when the deadline has passed — beside the scenario dated_triggers rows above, same doctrine
     # (the machine flags the closed window; whether it FIRED is the human's read).
     from vinci.themes.thesis import load_all_theses
-    theme_rows = mon.theme_falsifier_rows(load_all_theses(data_dir=cfg.data_dir), today=ref)
+    cards, card_problems = load_all_theses(data_dir=cfg.data_dir)
+    theme_rows = mon.theme_falsifier_rows(cards, today=ref)
+    # AN UNREADABLE CARD IS A WATCH THAT IS NOT HAPPENING, so it is surfaced in the run's own
+    # notes rather than raising: one hand-edited theme file must not take the book's marks and
+    # spread down with it, and it must not pass silently either.
+    notes.extend(f"THEME CARD {p}" for p in card_problems)
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
                                freshness=fresh, notes=notes, realized=realized_rows,
                                theme_falsifiers=theme_rows)
