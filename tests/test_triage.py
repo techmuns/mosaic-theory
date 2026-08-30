@@ -13,6 +13,7 @@ change made on a code that never claimed it. So: provenance out, nothing scored.
 """
 from __future__ import annotations
 
+import ast
 import datetime as dt
 import json
 import pathlib
@@ -139,8 +140,98 @@ def test_every_attached_filing_sits_inside_the_declared_window() -> None:
 def test_the_pass_does_not_reach_the_ranker() -> None:
     """THE LINE. An item code names the event, not its character; turning 2.02 into a CauseClass
     would be an inference dressed as an extraction, reaching the ranker's character axis. Pinned
-    structurally: nothing in the ranker may import the triage module."""
-    for mod in ("rank/ranker.py", "rank/cause.py", "orchestrator.py", "screens/run.py"):
-        src = (ROOT / "vinci" / mod).read_text()
-        assert "vinci.triage" not in src and "from vinci import triage" not in src, (
-            f"{mod} imports the triage module — provenance has reached the decision path")
+    structurally: nothing in the decision path may import the triage module.
+
+    AST OVER THE PACKAGE, NOT A SUBSTRING OVER FOUR NAMED FILES (review). The first cut scanned
+    `"vinci.triage" not in src` across a hardcoded list, and it fails in BOTH directions —
+    demonstrated on this corpus:
+
+    * FALSE NEGATIVE. Adding `vinci/rank/_probe.py` containing `from vinci.triage import
+      CAUSE_ITEMS` left the fence GREEN, because the list did not name that file. A fence that is
+      green while the line is crossed is worse than no fence.
+    * FALSE POSITIVE. Putting `vinci.triage` in `rank/cause.py`'s DOCSTRING — the obvious next
+      edit, since that docstring is where the precondition "needs the de-rating text wired onto
+      events" is recorded — turned it RED with no import anywhere.
+
+    That is the exact lesson `tests/test_cohort_split.py` already carries for the sectors fence:
+    scan the executable shape, never the words describing it."""
+    sources = [p for pkg in ("rank", "screens")
+               for p in sorted((ROOT / "vinci" / pkg).glob("*.py"))]
+    sources.append(ROOT / "vinci" / "orchestrator.py")
+    assert len(sources) > 5, f"the fence walked only {len(sources)} modules — the globs stopped"
+    for src in sources:
+        for node in ast.walk(ast.parse(src.read_text())):
+            mods: list[str] = []
+            if isinstance(node, ast.ImportFrom) and node.module:
+                mods = [node.module]
+                if node.module == "vinci":
+                    mods += [f"vinci.{a.name}" for a in node.names]
+            elif isinstance(node, ast.Import):
+                mods = [a.name for a in node.names]
+            for m in mods:
+                assert not (m == "vinci.triage" or m.startswith("vinci.triage.")), (
+                    f"{src.relative_to(ROOT)} imports {m} — provenance reached the decision path")
+
+
+def _script(name: str):  # type: ignore[no-untyped-def]
+    """The pass and the gate are scripts, not package modules — load them by path."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_a_partial_pass_cannot_replace_the_committed_artifact() -> None:
+    """THE FILE IS WRITTEN WHOLE, so a short run does not append — it REPLACES. `--names 25` left
+    `event_provenance.jsonl` holding 64 rows where 525 had been, and a name lost to EDGAR dropped
+    its events behind one stderr line. Neither is visible afterwards: the file reads complete
+    either way and every row still in it is true, which is the class this repo calls a fabricated
+    record. Pinned on the CALL, because a guard `main` does not consult is decoration."""
+    src = (ROOT / "scripts" / "triage_pass.py").read_text()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    body = ast.unparse(main)
+    assert "OUT.write_text" not in body, (
+        "main writes the committed artifact directly — a --names sample, or a run that lost names "
+        "to EDGAR, would silently replace it with a shorter file that reads just as complete")
+    assert "args.names is not None or errors" in body and "refused" in body, (
+        "the partial-run guard is gone: nothing distinguishes a whole pass from a sample")
+    # AND THE ESCAPE HATCH THE REFUSAL NAMES MUST EXIST — parsed for real, not grepped.
+    args = _script("triage_pass").parse_args(["prog", "--names=25", "--out", "/tmp/x.jsonl"])
+    assert (args.names, str(args.out)) == (25, "/tmp/x.jsonl")
+
+
+def test_the_equals_form_of_names_is_not_silently_ignored() -> None:
+    """`"--names" in argv` ACCEPTED `--names=25` AND IGNORED IT: the gate timed 10 names instead
+    of 25, and the pass ran the whole queue while the operator believed they had asked for a
+    sample — which, before the guard above, also overwrote the artifact. A trailing `--names`
+    raised a bare IndexError rather than saying what was wrong. Pinned on the call too, since a
+    parser `main` does not use leaves the flag exactly as unreachable."""
+    for name, default in (("triage_pass", None), ("triage_cost_gate", 10)):
+        parse = _script(name).parse_args
+        assert parse(["prog", "--names=25"]).names == 25, f"{name}: --names=25 was ignored"
+        assert parse(["prog", "--names", "25"]).names == 25, f"{name}: --names 25 was ignored"
+        assert parse(["prog"]).names == default, f"{name}: the no-flag default changed"
+        with pytest.raises(SystemExit):
+            parse(["prog", "--names"])  # flag with no value
+        main = next(n for n in ast.walk(ast.parse((ROOT / "scripts" / f"{name}.py").read_text()))
+                    if isinstance(n, ast.FunctionDef) and n.name == "main")
+        assert "parse_args(argv)" in ast.unparse(main), (
+            f"{name}: main() does not parse the argv it was handed")
+
+
+def test_the_gate_measures_the_names_the_pass_would_take() -> None:
+    """A GATE THAT PRICES A DIFFERENT POPULATION IS NOT A GATE. The gate admitted `t in recs`,
+    true for a queued name with ZERO gap-downs, while the pass admits `recs.get(t)`. On the
+    committed corpus WING has no gap-down and sat inside the gate's top-25 but not the pass's — so
+    `--names 25` timed 24 eventful names and then reported WING under "no filing near ANY event",
+    a name with no event at all."""
+    gate, pas = _script("triage_cost_gate"), _script("triage_pass")
+    picked, eligible = gate.queue_names(25)
+    assert [t for t, d in picked if not d] == [], "the gate picked a name with no gap-down event"
+    assert [t for t, _ in picked] == [t for t, _ in pas.queue_events()[:25]], (
+        "the gate and the pass disagree about which 25 names are at the top of the queue")
+    assert eligible == len(pas.queue_events()), (
+        "the extrapolation population is not the population the pass would run over")

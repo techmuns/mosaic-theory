@@ -9,12 +9,20 @@ IT SCORES NOTHING. The artifact is provenance the human reads and the preconditi
 Nothing here reaches the ranker, the queue order, or `cause_class` — see `vinci/triage.py` for why
 an item code cannot become a `CauseClass` without turning an extraction into an inference.
 
-    python scripts/triage_pass.py           # the whole queue
-    python scripts/triage_pass.py --names 25
+    python scripts/triage_pass.py                    # the whole queue -> the committed artifact
+    python scripts/triage_pass.py --names 25 --out /tmp/sample.jsonl     # a sample, elsewhere
+
+A PARTIAL RUN NEVER REPLACES THE COMMITTED ARTIFACT (review). This writes the file whole, so a
+`--names 25` sample used to leave `event_provenance.jsonl` holding 64 rows where 525 had been, and
+a resolver/EDGAR failure mid-pass dropped that name's events from the committed record behind one
+stderr line. Neither shape is detectable afterwards: the file reads complete, and every row left in
+it is true. So the committed path is written ONLY by a whole, error-free pass; anything narrower
+needs an explicit `--out`.
 """
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import json
 import pathlib
@@ -56,18 +64,37 @@ def queue_events() -> list[tuple[str, list[dt.date]]]:
     return out
 
 
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    """ARGPARSE, NOT A MEMBERSHIP TEST (review). `"--names" in argv` ignores the ordinary equals
+    form, so `--names=25` ran the WHOLE queue while the operator believed they had asked for a
+    sample — and, before the write guard below, replaced the committed artifact while doing it.
+    `int(argv[i + 1])` also raised a bare IndexError on a trailing flag."""
+    ap = argparse.ArgumentParser(description="Attach the de-rating document to every queued event.")
+    ap.add_argument("--names", type=int, default=None,
+                    help="only the top N queued names (a SAMPLE — needs --out)")
+    ap.add_argument("--out", type=pathlib.Path, default=None,
+                    help=f"write here instead of {OUT.name}; required for a partial run")
+    return ap.parse_args(argv[1:])
+
+
 def main(argv: list[str]) -> int:
     from vinci.config import get_config, load_local_env
     load_local_env()
     from vinci.edgar import EdgarClient
     from vinci.resolver import EntityResolver
 
-    names = queue_events()
-    if "--names" in argv:
-        names = names[: int(argv[argv.index("--names") + 1])]
+    args = parse_args(argv)
+    every = queue_events()
+    names = every[: args.names] if args.names is not None else every
     total = sum(len(d) for _, d in names)
     print(f"  {len(names)} queued names carry {total} gap-down events "
           f"(±{CAUSAL_WINDOW}d, forms {'/'.join(FORMS)})")
+    if not total:
+        # NOT A DIVISION BY ZERO (review). The per-tier summary below divides by `total`; an empty
+        # queue reached it and died in the report rather than saying what was wrong.
+        print("  no gap-down events on the queue — nothing for a triage pass to attach",
+              file=sys.stderr)
+        return 1
 
     cfg = get_config()
     resolver = EntityResolver.from_config(cfg)
@@ -102,16 +129,30 @@ def main(argv: list[str]) -> int:
                                               doc=p.primary_doc)
             rows.append(row)
 
-    OUT.write_text("".join(json.dumps(r, sort_keys=True) + "\n" for r in rows))
     took = time.monotonic() - t0
-    print(f"\n  WROTE {len(rows)} rows to {OUT.relative_to(ROOT)} in {took:.0f}s "
-          f"({errors} resolver/EDGAR failures)")
+    # THE COMMITTED ARTIFACT IS ALL-OR-NOTHING, because this writes the file whole (review). A
+    # sample, or a run that lost names to EDGAR, would otherwise leave a SHORTER file reading
+    # exactly as complete as the one it replaced — the failure nobody can see afterwards.
+    partial = args.names is not None or errors
+    dest, refused = args.out, False
+    if dest is None and partial:
+        refused = True
+        print(f"\n  REFUSING TO REPLACE {OUT.relative_to(ROOT)}: this run covered "
+              f"{len(names)}/{len(every)} queued names with {errors} failure(s), so it would "
+              f"write a file that reads complete and is not. Re-run whole once EDGAR is healthy, "
+              f"or pass --out <path> to keep this sample somewhere else.", file=sys.stderr)
+    else:
+        dest = dest or OUT
+        dest.write_text("".join(json.dumps(r, sort_keys=True) + "\n" for r in rows))
+        shown = dest.relative_to(ROOT) if dest.is_relative_to(ROOT) else dest
+        print(f"\n  WROTE {len(rows)} rows to {shown} in {took:.0f}s "
+              f"({errors} resolver/EDGAR failures)")
     for tier, label in (("named", "cause named by the item code — deterministic"),
                         ("opaque", "document present, code names no cause — the LLM tier"),
                         ("dark", "no filing within the window — dark either way")):
         n = tiers[tier]
         print(f"    {tier:<7} {n:>4}/{total}  ({n / total:.0%})  {label}")
-    return 0
+    return 1 if refused else 0
 
 
 if __name__ == "__main__":

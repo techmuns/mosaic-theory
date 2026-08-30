@@ -1,4 +1,4 @@
-"""COST GATE for the Phase-2 triage pass — measure 10 names before committing to 268.
+"""COST GATE for the Phase-2 triage pass — measure 10 names before committing to the queue.
 
 THE QUESTION. Every queued name's `cause_class` reads UNCLASSIFIED. The classifier
 (`vinci/rank/cause.py`) is built and fenced, and it is dark for a data reason, not a budget one:
@@ -25,6 +25,7 @@ LLM calls, no CIQ, nothing licensed.
 
 from __future__ import annotations
 
+import argparse
 import collections
 import datetime as dt
 import json
@@ -56,11 +57,21 @@ from vinci.triage import (  # noqa: E402
 #: right window is an empirical question this gate is here to answer, so it must not be assumed.
 WINDOWS = (1, 2, 4, 7)
 
-def queue_names(limit: int) -> list[tuple[str, list[dt.date]]]:
-    """Top-of-queue tickers with their gap-down dates, in rank order.
+def queue_names(limit: int) -> tuple[list[tuple[str, list[dt.date]]], int]:
+    """``(top-of-queue tickers with their gap-down dates, how many queue names carry any event)``.
 
     RANK ORDER, NOT A SAMPLE. The pass, if it runs, runs from the top; timing a random draw would
     measure a population the operator will never triage in that order.
+
+    THE SAME NAMES THE PASS WOULD TAKE (review). This admitted `t in recs`, true for a queued name
+    carrying ZERO gap-downs, while `triage_pass.queue_events` admits only `recs.get(t)`. On the
+    committed corpus that is not hypothetical: WING has no gap-down and sat inside the gate's
+    top-25 but not the pass's, so `--names 25` timed 24 eventful names and then reported WING under
+    "no filing near ANY event" — a name with no event at all. A gate that prices a different
+    population than the pass it authorises is not a gate.
+
+    The count returned alongside is how many queue names carry an event, so the extrapolation is
+    over the real population instead of a literal that rots the next time the queue moves.
     """
     recs = {}
     for line in (SNAP / "candidate_records.jsonl").read_text().splitlines():
@@ -74,14 +85,19 @@ def queue_names(limit: int) -> list[tuple[str, list[dt.date]]]:
             for e in (payload["data_record"].get("events") or [])
             if e.get("event_type") == "earnings_gap_down"
         ]
-    out = []
-    for line in (SNAP / "ranked_queue.jsonl").read_text().splitlines():
-        if not line.strip() or len(out) >= limit:
-            continue
-        t = json.loads(line)["ticker"]
-        if t in recs:
-            out.append((t, recs[t]))
-    return out
+    queued = [json.loads(line)["ticker"]
+              for line in (SNAP / "ranked_queue.jsonl").read_text().splitlines() if line.strip()]
+    eligible = [t for t in queued if recs.get(t)]
+    return [(t, recs[t]) for t in eligible[:limit]], len(eligible)
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    """ARGPARSE, NOT A MEMBERSHIP TEST (review). `"--names" in argv` ignores the ordinary equals
+    form, so `--names=25` silently timed 10 names and answered for a different sample than the one
+    asked for; `int(argv[i + 1])` also raised a bare IndexError on a trailing flag."""
+    ap = argparse.ArgumentParser(description="Cost gate for the Phase-2 triage pass.")
+    ap.add_argument("--names", type=int, default=10, help="how many top-of-queue names to time")
+    return ap.parse_args(argv[1:])
 
 
 def main(argv: list[str]) -> int:
@@ -90,11 +106,7 @@ def main(argv: list[str]) -> int:
     from vinci.edgar import EdgarClient
     from vinci.resolver import EntityResolver
 
-    limit = 10
-    if "--names" in argv:
-        limit = int(argv[argv.index("--names") + 1])
-
-    names = queue_names(limit)
+    names, eligible = queue_names(parse_args(argv).names)
     total_events = sum(len(d) for _, d in names)
     print(f"  {len(names)} names off the top of the queue · {total_events} gap-down events")
     if not total_events:
@@ -114,7 +126,7 @@ def main(argv: list[str]) -> int:
         t0 = time.monotonic()
         try:
             cik = resolver.resolve_ticker(ticker).cik
-            since = min(dates) - dt.timedelta(days=widest + 1) if dates else None
+            since = min(dates) - dt.timedelta(days=widest + 1)
             # 6-K TOO, BECAUSE THE 8-K PATH IS BLIND TO FOREIGN ISSUERS. FVRR files 0 8-Ks and
             # 57 6-Ks; so do QFIN, BAK and SLI. Four of the first 25 queued names are foreign
             # private issuers, and every one of their gap-downs read as "no document exists" when
@@ -143,7 +155,11 @@ def main(argv: list[str]) -> int:
             else:
                 hits += 1
                 if prov.tier == "named":
-                    items[sorted(set(prov.items) & set(CAUSE_ITEMS))[0]] += 1
+                    # THE PASS'S OWN CHOICE, NOT A SECOND DERIVATION OF IT (review). Re-picking
+                    # the winning code here is exactly the second copy of the taxonomy the note
+                    # above says must not exist: change the precedence in `vinci.triage` and this
+                    # histogram would go on reporting the old one. `EventProvenance` carries it.
+                    items[next(c for c in prov.items if CAUSE_ITEMS.get(c) == prov.cause)] += 1
                 else:
                     items["6-K" if prov.form == "6-K" else "OPAQUE"] += 1
         if not hits:
@@ -151,7 +167,8 @@ def main(argv: list[str]) -> int:
         print(f"    {ticker:<6} {len(dates)} events · {len(filings)} 8-Ks · "
               f"{hits} matched (±{CAUSAL_WINDOW}d) · {dt_s:.1f}s")
 
-    print(f"\n  COVERAGE — how many of the {total_events} events have an 8-K within N days:")
+    print(f"\n  COVERAGE — how many of the {total_events} events have a "
+          f"{'/'.join(FORMS)} within N days:")
     for w in WINDOWS:
         print(f"    ±{w}d: {matched[w]:>3}/{total_events}  ({matched[w] / total_events:.0%})")
 
@@ -175,9 +192,12 @@ def main(argv: list[str]) -> int:
 
     per = sum(elapsed) / len(elapsed) if elapsed else 0.0
     print(f"\n  COST — {per:.1f}s/name over {len(elapsed)} names, {errors} failures")
-    print(f"    extrapolated to 268: {per * 268 / 60:.0f} min of cached EDGAR, 0 LLM calls, $0")
+    # THE REAL POPULATION, NOT A LITERAL (review). `268` was the queue length the day this was
+    # written; the queue moves weekly, and a hardcoded extrapolation quietly prices the wrong job.
+    print(f"    extrapolated to {eligible}: {per * eligible / 60:.0f} min of cached EDGAR, "
+          f"0 LLM calls, $0")
     if unmatched_names:
-        print(f"    no 8-K near ANY event: {', '.join(unmatched_names)}")
+        print(f"    no {'/'.join(FORMS)} near ANY event: {', '.join(unmatched_names)}")
     return 0
 
 
