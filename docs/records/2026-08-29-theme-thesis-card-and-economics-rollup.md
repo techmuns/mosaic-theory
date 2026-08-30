@@ -43,10 +43,18 @@ A basket-less driver yields a LOUD empty artifact carrying its reason.
 
 *Surfaces.* `frontend/build.py` gains two stdlib emitters mirroring both classes by the stamped
 slug (verbatim; `archive/` never reaches the page); `snapshots.js` gains `getThemeThesis` /
-`getThemeEconomics` (404 → null); the theme page renders the card (vintage LEADING —
-stamp-position rule — mechanism chip, mistake/null beside the committed **radar priced read**
-joined by the page's ONE candidate finder) or the stamp, and the roll-up (underwritten rows
-table + collapsed `no underwrite` list). `.gitignore` carves out `data/themes/thesis/` and
+`getThemeEconomics` (404 → null); the theme page renders ONE identity band (design pass 2026-08-30): the ratified definition,
+then THE CLAIM (mechanism chip + declared date in the head, mistake / null thesis / the
+committed **radar priced read** joined by the page's ONE candidate finder), then WHAT WOULD
+PROVE IT WRONG (dated triggers; a deadline already past carries a `deadline passed` gate chip —
+the same date arithmetic and the same word the monitor uses, never an adjudication), with the
+analyst notes collapsed. **The previous two-card layout was merged**: "THEME THESIS" sat ABOVE
+"WHAT THIS THEME IS", so the reader met an absence stamp before learning what the theme was,
+and the page opened with two competing mastheads. The absent state moved from danger-red to the
+GATE register (amber) with its consequence spelled out — every driver holds that state until its
+card is declared, and a red alarm on every page is how red stops meaning anything. The tier grid
+gained an `Exposure scan` band label, and the roll-up leads with the coverage COUNT (sparseness
+is the finding) above the underwritten table + collapsed `no underwrite` list. `.gitignore` carves out `data/themes/thesis/` and
 `data/themes/economics/` beside the baskets.
 
 **WHY.** The lane could carry a driver from detection to ratification with its thesis living
