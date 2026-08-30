@@ -195,6 +195,11 @@ class MonitorSnapshot(BaseModel):
     rows: list[PositionRow] = Field(default_factory=list)
     spread: SpreadDiagnostic
     freshness: list[FreshnessRow] = Field(default_factory=list)
+    # THEME-LEVEL falsifier deadlines (brief Item 2, 2026-08-29): every declared thesis card's
+    # dated triggers, swept the same way the scenario `dated_triggers` are — a passed deadline is
+    # a FLAG ("re-underwrite due"), never an adjudication that the trigger FIRED. Defaulted, so
+    # every committed pre-Item-2 snapshot still validates (corpus-pinned).
+    theme_falsifiers: list[ThemeFalsifierRow] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     # THE REALIZED BOOK, TYPED. It reached this artifact only as prose inside ``notes``, so the one
     # view that says what the fund actually EARNED could not be read by anything that was not
@@ -224,6 +229,39 @@ class FreshnessRow(BaseModel):
     # the window closed; whether the trigger FIRED is the human's read.
     passed_trigger_deadlines: list[str] = Field(default_factory=list)
     watch_note: str | None = None                            # e.g. WERN avoid_priced
+
+
+class ThemeFalsifierRow(BaseModel):
+    """One dated trigger from a theme thesis card, at sweep time. TYPED FIRST, prose rendered
+    from it (the RealizedRow lesson): ``deadline_passed`` is the machine's whole contribution —
+    the window closed; whether the falsifier FIRED is the human's read, exactly as with the
+    scenario ``dated_triggers`` this mirrors. Indicator MEASUREMENT (the number beside the
+    criterion) is deliberately NOT here — that is the PanelSpec plan's job, and this sweep must
+    never grow into a rival panel."""
+
+    driver_key: str
+    kind: str            # "first-confirming" | "falsifier"
+    trigger: str         # verbatim, the operator's words
+    deadline: str        # ISO (declare-time validated)
+    basis: str = ""
+    deadline_passed: bool = False
+
+
+def theme_falsifier_rows(cards: list[Any], *, today: date) -> list[ThemeFalsifierRow]:
+    """Sweep every declared card's dated triggers. ``cards`` are ``ThemeThesis`` instances
+    (duck-read here so the monitor stays importable without the themes package at type time).
+    Deadlines are ISO by declare-time validation, so a parse failure is a corrupted card and
+    raises LOUDLY rather than being skipped — unlike the scenario path, where an unparseable
+    analyst date legitimately renders verbatim in the dossier instead."""
+    rows: list[ThemeFalsifierRow] = []
+    for card in cards:
+        entries = [("first-confirming", card.first_confirming)]
+        entries += [("falsifier", f) for f in card.falsifiers]
+        for kind, t in entries:
+            rows.append(ThemeFalsifierRow(
+                driver_key=card.driver_key, kind=kind, trigger=t.trigger, deadline=t.deadline,
+                basis=t.basis, deadline_passed=date.fromisoformat(t.deadline) <= today))
+    return rows
 
 
 MonitorSnapshot.model_rebuild()
@@ -624,8 +662,27 @@ def render_table(snap: MonitorSnapshot) -> str:
                 out.append(f"           newer: {nf}")
             for t in f.triggers:
                 out.append(f"           trigger: {t}")
+            # ADJACENT FIX, flagged in the shipping PR rather than silent (Item 2, 2026-08-29):
+            # these flags were TYPED and persisted since the catalyst calendar but never rendered
+            # here — an artifact-only flag the operator's console never showed. Every committed
+            # day carries the field empty, so nothing ever misprinted; the gap was latent.
+            for p in f.passed_trigger_deadlines:
+                out.append(f"           ⚑ {p}")
             if f.watch_note:
                 out.append(f"           note: {f.watch_note}")
+    # THEME FALSIFIERS (brief Item 2) — always printed: "none declared" is a stated state, never
+    # a silent absence (a card exists ⇔ rows exist, since a card carries ≥1 dated trigger).
+    out += ["", "THEME FALSIFIERS (thesis cards; machine flags deadlines — the human concludes)"]
+    if not snap.theme_falsifiers:
+        out.append("  no thesis cards declared")
+    for tf in snap.theme_falsifiers:
+        if tf.deadline_passed:
+            out.append(f"  {tf.driver_key:<24} ⚑ {tf.trigger} — deadline {tf.deadline} PASSED "
+                       f"→ re-underwrite due")
+        else:
+            out.append(f"  {tf.driver_key:<24}   {tf.kind}: {tf.trigger} (by {tf.deadline})")
+        if tf.basis:
+            out.append(f"{'':<28}basis: {tf.basis}")
     for n in snap.notes:
         out.append(f"NOTE: {n}")
     return "\n".join(out)
