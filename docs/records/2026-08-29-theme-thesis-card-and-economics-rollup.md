@@ -26,9 +26,9 @@ archive-and-reissue pattern, never an in-place edit). The card carries a MACHINE
 **THE GATE:** `require_thesis_card` in `themes-forward`'s preflight cluster — FIRST, before
 `assert_basket_writable` and the ledger append (#424 refuse-with-NOTHING-written ordering, pinned
 by a source-order test) — so no Stage-4 freeze runs card-less. The three baskets frozen before the
-gate stay frozen (ruling R2): the page stamps them **`THESIS UNSTATED`** (danger-toned, the
-`.uw-survival-fail` register — a blocking state, not a caveat; ONE shared wording constant,
-twin-pinned into the JS).
+gate stay frozen (ruling R2): the page stamps them **`THESIS UNSTATED`** in the GATE register
+(amber `.chip.gate`, with the consequence spelled out beside it — see *Surfaces* for why the
+first cut's danger-red was wrong here; ONE shared wording constant, twin-pinned into the JS).
 
 *Item 4 — the economics roll-up.* `ThemeEconomicsRollup` (`vinci/themes/rollup.py`), built by
 **`vinci theme-economics --driver <k> --as-of <date>`** → committed
