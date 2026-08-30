@@ -78,6 +78,34 @@ OPAQUE_ITEMS: dict[str, str] = {
 #: lands in the read-required tier — recovered, never promoted.
 FORMS = ("8-K", "6-K")
 
+#: Which cause wins when ONE filing carries several — stated, because alphabetical order was
+#: deciding it. All 14 multi-cause events in the committed corpus keep the label they already have;
+#: this makes that outcome a rule instead of an accident of `sorted()`.
+#:
+#: 2.02 IS NOT LAST, AND SEVERITY IS NOT THE ORDERING. Every event here is an
+#: ``earnings_gap_down`` — the detector selected the bar for gapping on an earnings release. So
+#: when a 2.02 sits at the gap, "results" IS the cause, and the 5.02 or 2.05 filed alongside it is
+#: part of that release, not a competing explanation. A plain severity order would relabel seven
+#: earnings gaps as "officer-or-director-change" and read worse than the accident it replaced.
+#:
+#: What outranks 2.02 is the set that says something is wrong with the COMPANY or its ACCOUNTS
+#: rather than with the quarter: a bankruptcy, a restatement, a delisting notice, an auditor
+#: walking. Those explain a gap better than the release they arrive with. None of them co-occurs
+#: with 2.02 in the corpus today (2.02+4.02: zero events), so this ordering is face-validity on
+#: thin data — it is written down so the next person can disagree with a rule rather than reverse
+#: engineer a sort.
+CAUSE_PRECEDENCE: tuple[str, ...] = (
+    "1.03",  # bankruptcy
+    "4.02",  # non-reliance restatement
+    "3.01",  # listing non-compliance
+    "4.01",  # auditor change
+    "2.04",  # debt acceleration
+    "2.02",  # results  — above the routine co-filings below, which ride along with a release
+    "2.06",  # impairment
+    "2.05",  # restructuring costs
+    "5.02",  # officer or director change
+)
+
 Tier = Literal["named", "opaque", "dark"]
 
 
@@ -90,7 +118,14 @@ class EventProvenance(NamedTuple):
     filing_date: dt.date | None
     items: tuple[str, ...]
     cause: str | None
+    causes: tuple[str, ...]
     primary_doc: str | None
+
+
+def cause_rank(item: str) -> tuple[int, str]:
+    """Sort key placing the most explanatory cause first; unlisted codes fall to the end by code."""
+    return (CAUSE_PRECEDENCE.index(item) if item in CAUSE_PRECEDENCE else len(CAUSE_PRECEDENCE),
+            item)
 
 
 def nearest_filing(filings: list[Filing], gap: dt.date,
@@ -112,10 +147,14 @@ def classify_event(filings: list[Filing], gap: dt.date,
     """Provenance for one gap-down: the filing at it, and whether its code names a cause."""
     f = nearest_filing(filings, gap, window)
     if f is None:
-        return EventProvenance("dark", None, None, None, (), None, None)
-    named = sorted(set(f.items) & set(CAUSE_ITEMS))
+        return EventProvenance("dark", None, None, None, (), None, (), None)
+    named = sorted(set(f.items) & set(CAUSE_ITEMS), key=cause_rank)
     if f.form == "6-K" or not named:
         return EventProvenance("opaque", f.form, f.accession, f.filing_date,
-                               tuple(f.items), None, f.primary_doc)
+                               tuple(f.items), None, (), f.primary_doc)
+    # ALL OF THEM, not just the winner. Collapsing to one headline is what hid a CFO departure
+    # behind "results" on seven events; the singular stays because triage needs something to sort
+    # on, and `causes` carries what the filing actually said.
     return EventProvenance("named", f.form, f.accession, f.filing_date,
-                           tuple(f.items), CAUSE_ITEMS[named[0]], f.primary_doc)
+                           tuple(f.items), CAUSE_ITEMS[named[0]],
+                           tuple(CAUSE_ITEMS[c] for c in named), f.primary_doc)

@@ -121,7 +121,7 @@ def main(argv: list[str]) -> int:
                 "event_type": "earnings_gap_down", "tier": p.tier,
                 "form": p.form, "accession": p.accession,
                 "filing_date": p.filing_date.isoformat() if p.filing_date else None,
-                "items": list(p.items), "cause": p.cause,
+                "items": list(p.items), "cause": p.cause, "causes": list(p.causes),
                 "window_days": CAUSAL_WINDOW,
             }
             if p.accession and p.primary_doc:

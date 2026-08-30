@@ -235,3 +235,59 @@ def test_the_gate_measures_the_names_the_pass_would_take() -> None:
         "the gate and the pass disagree about which 25 names are at the top of the queue")
     assert eligible == len(pas.queue_events()), (
         "the extrapolation population is not the population the pass would run over")
+
+
+def test_the_winning_cause_is_chosen_by_a_stated_rule_not_by_alphabet() -> None:
+    """ALPHABETICAL ORDER WAS DECIDING THIS. `sorted(...)[0]` happened to produce the right label on
+    all 14 multi-cause events in the corpus, which is the worst kind of correct: nothing recorded
+    the intent, so any re-order would have moved committed values silently.
+
+    2.02 BEATS THE ROUTINE CO-FILINGS, and that is not severity. Every event here is an
+    `earnings_gap_down` — the detector picked the bar for gapping on a release — so when a 2.02 sits
+    at the gap, "results" IS the cause and the 5.02/2.05/2.06 filed alongside is part of that
+    release. A plain severity order would relabel seven earnings gaps "officer-or-director-change".
+    """
+    gap = dt.date(2026, 5, 10)
+    for routine in ("5.02", "2.05", "2.06"):
+        p = classify_event([_filing("2026-05-10", "a", ["2.02", routine])], gap)
+        assert p.cause == "results", f"{routine} outranked the earnings release it rode along with"
+
+
+def test_a_broken_company_outranks_a_bad_quarter() -> None:
+    """What DOES beat 2.02 is the set saying something is wrong with the company or its accounts
+    rather than with the quarter. None of these co-occurs with 2.02 in the corpus today (2.02+4.02:
+    zero events), so this is face-validity on thin data — pinned so it is a rule to disagree with
+    rather than a sort to reverse engineer."""
+    gap = dt.date(2026, 5, 10)
+    for worse, label in (("1.03", "bankruptcy"), ("4.02", "non-reliance-restatement"),
+                         ("3.01", "listing-non-compliance"), ("4.01", "auditor-change")):
+        p = classify_event([_filing("2026-05-10", "a", ["2.02", worse])], gap)
+        assert p.cause == label, f"{worse} lost to a results release"
+
+
+def test_no_co_filed_cause_is_hidden_behind_the_headline() -> None:
+    """COLLAPSING TO ONE LABEL IS WHAT HID A CFO DEPARTURE BEHIND "results" on seven events. The
+    singular stays because triage needs something to sort on; `causes` carries what was filed."""
+    p = classify_event([_filing("2026-05-10", "a", ["2.02", "5.02", "9.01"])], dt.date(2026, 5, 10))
+    assert p.cause == "results"
+    assert p.causes == ("results", "officer-or-director-change"), p.causes
+    assert "exhibits" not in " ".join(p.causes), "an attachment marker reached the cause list"
+
+
+def test_the_committed_artifact_agrees_with_its_own_headline() -> None:
+    """CORPUS. `cause` must be the first of `causes`, and every named row must carry both — a
+    headline that is not in the list is a value from some earlier rule left behind by a re-run."""
+    multi = 0
+    for r in _rows():
+        causes = r.get("causes") or []
+        if r["tier"] == "named":
+            assert causes and r["cause"] == causes[0], (
+                f"{r['ticker']} {r['event_date']}: headline {r['cause']!r} "
+                f"is not first in {causes}")
+            multi += len(causes) > 1
+        else:
+            assert not causes, f"{r['ticker']} is {r['tier']} yet names causes"
+    assert multi == 14, (
+        f"{multi} multi-cause events, expected the 14 in the committed corpus — if the pass was "
+        f"re-run against a newer screen this number moves, and the precedence pins above should be "
+        f"re-read against the new set rather than this count simply updated")
