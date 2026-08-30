@@ -104,13 +104,25 @@ def select_run(runs: list[pathlib.Path], argv: list[str]) -> pathlib.Path:
     would file rows under a `run_id` whose window they were not measured over — the same
     mixed-vintage read #513 closed one layer up, and equally invisible afterwards, since every row
     still carries a plausible return.
+
+    BOTH ARGV FORMS, because the trap is the flag being ACCEPTED AND IGNORED (review). The first
+    cut tested `"--run" not in argv`, so `--run=2026-07-29-03` — the ordinary equals form — fell
+    through to `runs[-1]` and re-pooled the NEWEST run under a plausible summary. That is the same
+    silence the call-site pin exists to catch, reached by a different route: the operator's
+    15-minute backfill runs, prints, and leaves the trajectory exactly one point long.
     """
-    if "--run" not in argv:
+    wanted: str | None = None
+    for j, arg in enumerate(argv):
+        if arg == "--run":
+            if j + 1 >= len(argv):
+                raise SystemExit("--run needs a run id, e.g. --run 2026-08-12-01")
+            wanted = argv[j + 1]
+        elif arg.startswith("--run="):
+            wanted = arg.split("=", 1)[1]
+            if not wanted:
+                raise SystemExit("--run needs a run id, e.g. --run 2026-08-12-01")
+    if wanted is None:
         return runs[-1]
-    i = argv.index("--run")
-    if i + 1 >= len(argv):
-        raise SystemExit("--run needs a run id, e.g. --run 2026-08-12-01")
-    wanted = argv[i + 1]
     match = next((r for r in runs if r.stem == wanted), None)
     if match is None:
         raise SystemExit(

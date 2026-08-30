@@ -18,7 +18,13 @@ import pathlib
 
 import pytest
 
-from vinci.cohort import cohort_reads, pool_for_run, screen_run_files, sic_by_ticker
+from vinci.cohort import (
+    cohort_reads,
+    pool_for_run,
+    run_for_stamp,
+    screen_run_files,
+    sic_by_ticker,
+)
 from vinci.config import get_config
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -66,15 +72,27 @@ def test_no_pooled_name_is_a_candidate_in_the_same_run() -> None:
 def test_no_peer_of_the_queues_own_run_is_in_the_queue() -> None:
     """AND THE LIVE SURFACE. The queue is ranked from one run; nothing that run pooled as a peer
     may appear in it. This is the same fence at the artifact the human actually reads, and it is
-    the assertion the cross-run case above must not be allowed to weaken."""
+    the assertion the cross-run case above must not be allowed to weaken.
+
+    THE QUEUE'S OWN STAMP, NEVER THE NEWEST RUN ON DISK (review). Taking `screen_run_files()[-1]`
+    is the recency read #513 closed in `cohort_reads`, and here it does not just mis-measure — it
+    DISARMS. Let a screen land after the rank (the case `run_for_stamp` was written for) and the
+    newest run has no pool yet, so `peers` is empty, the intersection is empty, and the fence
+    passes while saying nothing at all. Keyed to the stamp the queue rows carry, an unpooled newest
+    run cannot make this pin vacuous."""
     rows = _pool_rows()
-    latest = screen_run_files(SNAP)[-1].stem
-    peers = {r["ticker"] for r in rows if r["run_id"] == latest}
-    queued = {json.loads(x)["ticker"] for x in
-              (SNAP / "ranked_queue.jsonl").read_text().splitlines() if x.strip()}
-    leaked = sorted(peers & queued)
+    queue = [json.loads(x) for x in
+             (SNAP / "ranked_queue.jsonl").read_text().splitlines() if x.strip()]
+    stamps = {r["screen_run_at"] for r in queue}
+    assert len(stamps) == 1, f"the queue mixes screen vintages: {sorted(stamps)}"
+    own = run_for_stamp(SNAP, next(iter(stamps))).stem
+    peers = {r["ticker"] for r in rows if r["run_id"] == own}
+    assert peers, (
+        f"the queue is ranked from {own}, which has no pooled peers — this fence would pass "
+        f"vacuously. Pool that run (`python scripts/build_cohort_pool.py --run {own}`).")
+    leaked = sorted(peers & {r["ticker"] for r in queue})
     assert not leaked, (
-        f"{len(leaked)} name(s) pooled for {latest} are in the ranked queue: {leaked[:5]}")
+        f"{len(leaked)} name(s) pooled for {own} are in the ranked queue: {leaked[:5]}")
 
 
 def test_the_pool_is_keyed_to_the_run_whose_window_it_was_measured_over() -> None:
@@ -286,6 +304,23 @@ def test_an_unknown_run_id_refuses_rather_than_pooling_the_newest(tmp_path: path
         "the refusal must name both what was asked for and what exists")
     with pytest.raises(SystemExit):
         select_run(runs, ["prog", "--run"])  # flag with no value
+
+
+def test_the_equals_form_is_not_silently_ignored(tmp_path: pathlib.Path) -> None:
+    """THE SAME TRAP, ONE CHARACTER AWAY (review). `--run=<id>` is the ordinary argv form, and the
+    first cut membership-tested `"--run" in argv`, so it fell straight through to `runs[-1]`:
+    accepted, ignored, and indistinguishable in the output from a backfill that worked. The
+    operator's 15-minute job would run, print a plausible summary, and leave the trajectory one
+    point long — or, on a run not yet pooled, file the newest run's rows while the named one stayed
+    empty. Both forms select, and an unknown id refuses in either."""
+    select_run = _select_run()
+    runs = [tmp_path / f"{d}.jsonl" for d in ("2026-07-29-03", "2026-08-24-01")]
+    assert select_run(runs, ["prog", "--run=2026-07-29-03"]) == runs[0], (
+        "--run=<id> fell through to the newest run — accepted and ignored")
+    with pytest.raises(SystemExit):
+        select_run(runs, ["prog", "--run=2026-08-12-01"])  # unknown id, equals form
+    with pytest.raises(SystemExit):
+        select_run(runs, ["prog", "--run="])  # equals form with no value
 
 
 def test_the_builder_actually_calls_the_selector() -> None:
