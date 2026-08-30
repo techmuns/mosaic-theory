@@ -1,0 +1,336 @@
+{
+  "as_of": "2026-08-28",
+  "price_basis": "price-return both sides (Polygon daily closes; dividends excluded on the position AND the benchmark alike — never mixed with a total-return series)",
+  "rows": [
+    {
+      "ticker": "IT",
+      "verdict": "BUY",
+      "sector": "Unknown",
+      "origin": "screen",
+      "sleeve": "overshoot",
+      "entry_price": 141.06,
+      "entry_date": "2026-07-20",
+      "current_price": 198.39,
+      "current_date": "2026-08-28",
+      "position_return": 0.4064227988090172,
+      "benchmark": "MDY",
+      "benchmark_entry": 683.34,
+      "benchmark_now": 690.55,
+      "benchmark_return": 0.010551116574472275,
+      "excess": 0.39587168223454494,
+      "days_elapsed": 39,
+      "horizon_days": 180,
+      "horizon_date": "2027-01-16",
+      "resolved": false,
+      "closed": true
+    },
+    {
+      "ticker": "SMPL",
+      "verdict": "BUY",
+      "sector": "Consumer Staples",
+      "origin": "screen",
+      "sleeve": "overshoot",
+      "entry_price": 10.92,
+      "entry_date": "2026-07-20",
+      "current_price": 10.93,
+      "current_date": "2026-08-28",
+      "position_return": 0.0009157509157509125,
+      "benchmark": "IWM",
+      "benchmark_entry": 292.31,
+      "benchmark_now": 295.75,
+      "benchmark_return": 0.011768328144777795,
+      "excess": -0.010852577229026883,
+      "days_elapsed": 39,
+      "horizon_days": 180,
+      "horizon_date": "2027-01-16",
+      "resolved": false,
+      "closed": true
+    },
+    {
+      "ticker": "SMPL",
+      "verdict": "BUY",
+      "sector": "Consumer Staples",
+      "origin": "screen",
+      "sleeve": "overshoot",
+      "entry_price": 11.33,
+      "entry_date": "2026-08-04",
+      "current_price": 10.93,
+      "current_date": "2026-08-28",
+      "position_return": -0.035304501323918824,
+      "benchmark": "IWM",
+      "benchmark_entry": 301.71,
+      "benchmark_now": 295.75,
+      "benchmark_return": -0.019754068476351416,
+      "excess": -0.015550432847567408,
+      "days_elapsed": 24,
+      "horizon_days": 549,
+      "horizon_date": "2028-02-04",
+      "resolved": false,
+      "closed": false
+    },
+    {
+      "ticker": "VRRM",
+      "verdict": "AVOID_TERMINAL",
+      "sector": "Industrials",
+      "origin": "screen",
+      "sleeve": "overshoot",
+      "entry_price": 4.71,
+      "entry_date": "2026-06-17",
+      "current_price": 4.39,
+      "current_date": "2026-08-28",
+      "position_return": -0.06794055201698523,
+      "benchmark": "IWM",
+      "benchmark_entry": 289.88,
+      "benchmark_now": 295.75,
+      "benchmark_return": 0.02024975852076727,
+      "excess": -0.0881903105377525,
+      "days_elapsed": 72,
+      "horizon_days": 180,
+      "horizon_date": "2026-12-14",
+      "resolved": false,
+      "closed": false
+    }
+  ],
+  "spread": {
+    "buy_n": 3,
+    "avoid_n": 1,
+    "buy_mean_excess": 0.12315622405265021,
+    "avoid_mean_excess": -0.0881903105377525,
+    "spread": 0.2113465345904027,
+    "resolved_n": 0,
+    "scoped_n": 4,
+    "max_days_elapsed": 72,
+    "sign_convention": "BUY−AVOID = mean(BUY excess) − mean(AVOID excess). An AVOID leg falling against its benchmark carries NEGATIVE excess, so subtracting it makes the spread MORE positive: being right about a terminal decline pays in exactly as being right about an overshoot.",
+    "caveat": "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). A leg's excess is price-return vs its assigned benchmark over the same window.",
+    "undefined_reason": null,
+    "closed_n": 2,
+    "open_buy_n": 1,
+    "open_avoid_n": 1,
+    "spread_open_only": 0.0726398776901851,
+    "open_undefined_reason": null
+  },
+  "freshness": [
+    {
+      "ticker": "AORT",
+      "verdict": "watch",
+      "last_evidence_date": "2026-07-22",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [
+        "8-K 2026-08-06 acc 0001628280-26-054294",
+        "10-Q 2026-08-07 acc 0001628280-26-054746"
+      ],
+      "unread_print": true,
+      "next_expected_print": "2026-09-15",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "price below about $10.50, roughly the base case in today's terms, then re-run at the new price",
+        "the second-quarter report quantifies the recall as bounded AND valve and stent-graft revenue growth holds double-digit - re-underwrite the optimistic and central cases",
+        "reported operating margin at or above 10% for two consecutive halves with spending growing slower than revenue - the cost model is structural; raise the terminal path"
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $25.37: the optimistic case is about 28% below the price and the pessimistic case about 88% below it. The verdict is robust to the dilution override - it fails under either share path - and print-insensitive: the pending second-quarter report can lower the answer, not rescue it."
+    },
+    {
+      "ticker": "BRBR",
+      "verdict": "watch",
+      "last_evidence_date": "2026-08-07",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-09-02",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "Price entering roughly $4 to $5 WITHOUT corresponding deterioration in the business.",
+        "Inventory normalising from $480.6M without material write-offs.",
+        "Cash conversion sustained over consecutive quarters.",
+        "Material reduction in net debt.",
+        "Margin recovery that survives the fiscal 2027 price increase."
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: Analysed and not buying at any price near today's. The operating case is alive — promotion normalised at 17% of category volume, cash generation positive, no near-term maturity — but a possible recovery is not the same thing as a mispricing: at $11.56 the market already gives near-full credit to a $12.30 base case, while the equity carries close to total downside if that recovery fails. Only 0.35 turns of the multiple separate the bear case from no equity at all, and the 4.29x low in its own trading history predates the current capital structure, so there is no floor to measure the downside against."
+    },
+    {
+      "ticker": "EPAM",
+      "verdict": "watch",
+      "last_evidence_date": "2026-08-07",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-09-02",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "North American organic constant-currency growth recovering from about 1.8% toward mid-single digits.",
+        "Delayed large deals signed and contributing to revenue.",
+        "Operating margin on the reported basis reaching 11.5%, against company guidance for fiscal 2026 of 10.5-11.0% — the cell the underwrite records as contested.",
+        "Evidence that revenue from AI-native work is incremental rather than replacing existing engagements."
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor, so the asymmetry is what refuses it. The fall may well have gone further than the business did, on a company that holds net cash and is still growing revenue, but the price does not compensate for the thesis being wrong."
+    },
+    {
+      "ticker": "IT",
+      "verdict": "BUY",
+      "last_evidence_date": "2026-07-22",
+      "last_evidence_source": "bear reason amendment",
+      "newer_filings": [
+        "10-Q 2026-08-04 acc 0000749251-26-000245",
+        "8-K 2026-08-04 acc 0000749251-26-000243"
+      ],
+      "unread_print": true,
+      "next_expected_print": "2026-09-12",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price",
+        "the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%)."
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: position closed flat at the entry price on 2026-07-21 by operator action, before this analysis existed. Under the revised grid no evidence-coherent reading clears the 2.0 bar at that price - about 1.3 to 1 on the most charitable cells, far below 1 on the central ones. Disclosure: under the previously recorded base multiple (15.0x, amended above with reasons), the charitable downside alone would have read 2.03 to 1 - a knife-edge inside the boundary band, flipped by one step on any cell. The base revision is load-bearing; its reasons stand independent of the exit."
+    },
+    {
+      "ticker": "MVST",
+      "verdict": "watch",
+      "last_evidence_date": "2026-07-22",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [
+        "8-K 2026-08-07 acc 0000947871-26-000756",
+        "10-Q 2026-08-10 acc 0001628280-26-055372",
+        "8-K 2026-08-11 acc 0001628280-26-055471"
+      ],
+      "unread_print": true,
+      "next_expected_print": "2026-10-03",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "the maturity wall is refinanced or extended (a material-agreement or debt-obligation filing) - re-underwrite survival",
+        "two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases",
+        "going-concern language removed in a periodic filing - re-underwrite in full"
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $0.92: the pessimistic case values the equity BELOW ZERO and the central case lands near the current price, so there is no asymmetry to buy. The survival gate FAILS on the company's own disclosure - about two years of runway, including the remaining selling-programme capacity, against three years to breakeven."
+    },
+    {
+      "ticker": "NCNO",
+      "verdict": "watch",
+      "last_evidence_date": "2026-07-21",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [
+        "10-Q 2026-08-25 acc 0001902733-26-000101",
+        "8-K 2026-08-25 acc 0001902733-26-000099"
+      ],
+      "unread_print": true,
+      "next_expected_print": "2026-12-03",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "price below about $11.5 - the base case in today's terms with interim free cash flow credited (about 8.17 plus 3.58) - then re-run the underwrite at the new price [amended 2026-07-22: was 'below about $9', which credited no interim cash.]",
+        "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]",
+        "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]"
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow. [amended 2026-07-22: the fail verdict is invariant to interim free cash flow - with four guided years of roughly $137.5M a year (the fiscal-2027 guide is $135-140M) credited in full, the central case reaches about $11.7 and the ratio stays deeply negative - but the optimistic case then reaches roughly the market price, so 'even the optimistic case sits below the price' holds only before interim cash.]"
+    },
+    {
+      "ticker": "SMPL",
+      "verdict": "BUY",
+      "last_evidence_date": "2026-08-05",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-10-23",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.",
+        "FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.",
+        "Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)",
+        "OWYN net sales turn negative year-over-year in any quarter — added 2026-08-19.",
+        "September portfolio-wide price increase fails to stick (elasticity / share loss) (by 2027-01-07)"
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": null
+    },
+    {
+      "ticker": "WERN",
+      "verdict": "watch",
+      "last_evidence_date": "2026-07-21",
+      "last_evidence_source": "bull reason amendment",
+      "newer_filings": [
+        "8-K 2026-07-28 acc 0000793074-26-000129",
+        "8-K 2026-08-05 acc 0000793074-26-000132",
+        "10-Q 2026-08-07 acc 0000793074-26-000140",
+        "8-K 2026-08-10 acc 0000793074-26-000144",
+        "8-K 2026-08-24 acc 0000793074-26-000154"
+      ],
+      "unread_print": true,
+      "next_expected_print": "2026-10-21",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "spot pulls to ~28-30 (where base offers 2:1)",
+        "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
+      ],
+      "passed_trigger_deadlines": [],
+      "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
+    }
+  ],
+  "theme_falsifiers": [
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "first-confirming",
+      "trigger": "At the next quarterly print of at least one named representative per beneficiary class — hyperscaler platform (MSFT / GOOGL / AMZN), app-layer moat (CRM / NOW / VEEV / SAP / META), silicon ecosystem (NVDA) — the disclosed model-agnostic AI monetization line GROWS: AI/cloud inference revenue for the hyperscaler, AI attach or module revenue for the app name, software/developer-ecosystem revenue for the silicon vendor. The prints land on schedule regardless; only the reading is uncertain.",
+      "deadline": "2026-12-15",
+      "basis": "one full scheduled print cycle Oct-early-Dec 2026 (MSFT/GOOGL/AMZN/META/NOW/SAP late Oct; NVDA late Nov; CRM/VEEV early Dec); operator-approved shape 2026-08-30, composed from the operator's named companies",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "The frontier-to-open catch-up window WIDENS materially: the current frontier release holds a capability lead over the best open-weights models beyond ~12 months on the public benchmarks in use at declaration.",
+      "deadline": "2027-06-30",
+      "basis": "two-plus frontier release cycles land inside the window; operator-selected 2026-08-30",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "Frontier-model IP pricing power RISES: per-token / API / seat list prices increase at named frontier labs without disclosed customer churn.",
+      "deadline": "2027-03-31",
+      "basis": "public price lists + customer disclosures; operator-selected 2026-08-30",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "App-layer gross margins COMPRESS from model-licensing input costs at two or more named app-layer representatives — the moat fails to hold pricing above the model input.",
+      "deadline": "2027-06-30",
+      "basis": "two-plus quarterly print cycles of the named app-layer representatives; operator-selected 2026-08-30",
+      "deadline_passed": false
+    }
+  ],
+  "notes": [
+    "IT: sector re-resolved to Unknown for display (the frozen row logged Other — never rewritten)",
+    "IT: benchmark MDY (cap band) SUPERSEDES the ledger row's IWM — the row itself is never mutated",
+    "IT: REALIZED +0.0% (entry $141.06 2026-07-20 → exit $141.06 2026-07-21) — realized P&L, a separate view; the BUY call stays in horizon calibration",
+    "SMPL: REALIZED -3.6% (entry $10.92 2026-07-20 → exit $10.53 2026-07-22) — realized P&L, a separate view; the BUY call stays in horizon calibration"
+  ],
+  "realized": [
+    {
+      "ticker": "IT",
+      "entry_id": "V-IT-screen2-20260706",
+      "close_id": "C-IT-screen2-20260706",
+      "verdict": "BUY",
+      "entry_price": 141.06,
+      "entry_price_as_of": "2026-07-20",
+      "exit_price": 141.06,
+      "exit_price_as_of": "2026-07-21",
+      "realized_return": 0.0
+    },
+    {
+      "ticker": "SMPL",
+      "entry_id": "V-SMPL-screen2-20260706",
+      "close_id": "C-SMPL-screen2-20260706",
+      "verdict": "BUY",
+      "entry_price": 10.92,
+      "entry_price_as_of": "2026-07-20",
+      "exit_price": 10.53,
+      "exit_price_as_of": "2026-07-22",
+      "realized_return": -0.03571428571428581
+    }
+  ]
+}
