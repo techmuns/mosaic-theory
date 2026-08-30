@@ -677,8 +677,11 @@ def render_table(snap: MonitorSnapshot) -> str:
         out.append("  no thesis cards declared")
     for tf in snap.theme_falsifiers:
         if tf.deadline_passed:
-            out.append(f"  {tf.driver_key:<24} ⚑ {tf.trigger} — deadline {tf.deadline} PASSED "
-                       f"→ re-underwrite due")
+            # the kind LEADS the flag (review 2026-08-31): without it a passed FIRST-CONFIRMING
+            # printed indistinguishably from a passed falsifier — the human must see WHICH kind
+            # of window closed before deciding what the re-underwrite is about.
+            out.append(f"  {tf.driver_key:<24} ⚑ {tf.kind}: {tf.trigger} — deadline "
+                       f"{tf.deadline} PASSED → re-underwrite due")
         else:
             out.append(f"  {tf.driver_key:<24}   {tf.kind}: {tf.trigger} (by {tf.deadline})")
         if tf.basis:

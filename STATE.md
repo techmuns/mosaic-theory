@@ -144,6 +144,13 @@ Each line: *what it does* — *verified how*.
   days empty) — *live runs: stated absence on the real book; placeholder card → ⚑ PASSED row +
   typed artifact rows, then demo artifacts deleted; 7 pins; suite 3105 green.*
   *(detail: `docs/records/2026-08-29-theme-falsifier-sweep.md`)*
+- **Sweep clock + flag kind — two review fixes to the theme falsifier sweep** (`vinci/cli.py`,
+  `vinci/monitor.py`) — the sweep now runs on the snapshot's clock (`today=now_date`, not the
+  calendar ref that let a weekend run date a passed flag before its own as_of), and the passed
+  flag LEADS with the row's kind (`⚑ first-confirming: …` vs `⚑ falsifier: …` — previously
+  byte-identical) — *pins: both kinds asserted in one render past the confirming deadline;
+  source pin asserts the ref form ABSENT; suite green.*
+  *(detail: `docs/records/2026-08-31-sweep-clock-and-kind.md`)*
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*
