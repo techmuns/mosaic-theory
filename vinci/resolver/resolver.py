@@ -180,10 +180,21 @@ class EntityResolver:
         return cast(dict[str, Any], data)
 
     def sic_for(self, cik: int | str) -> tuple[str | None, str | None]:
-        """(SIC code, description) — the operating-co universe gate's structural fact."""
+        """(SIC code, description) — the operating-co universe gate's structural fact.
+
+        BOTH HALVES ARE NORMALISED TO None WHEN ABSENT, here at the SOURCE rather than in each
+        caller (review of #528). EDGAR returns `sicDescription: ""` — an empty STRING, not null —
+        for a SIC-less issuer; observed live on FSK, a BDC. That blank is not cosmetic downstream:
+        `Store.upsert_security` COALESCEs `sic_description`, and SQL COALESCE treats '' as PRESENT,
+        so a blank OVERWRITES a stored description instead of deferring to it — re-opening on the
+        sibling column the erasure #523 closed. Normalising in the one place every consumer reads
+        (`resolve_ticker(enrich=True)`, `_enrich_issuer`, `build_universe`, `vinci refresh`, the
+        backfill script) is what stops the next consumer repeating it, which #528's first draft did
+        until a live run caught it.
+        """
         d = self.submissions(cik)
         sic = str(d["sic"]) if d.get("sic") else None
-        return sic, d.get("sicDescription")
+        return sic, (d.get("sicDescription") or None)
 
     # --- internals ----------------------------------------------------------------------------
     def _exchange_for(self, norm_ticker: str) -> str | None:
@@ -211,14 +222,17 @@ class EntityResolver:
         d = self.submissions(issuer.cik)
         sic = str(d["sic"]) if d.get("sic") else None
         former = tuple(fn["name"] for fn in d.get("formerNames", []) if fn.get("name"))
+        # same '' → None rule as `sic_for`; this path reads the payload directly, so it cannot
+        # inherit the normalisation and has to state it.
+        sic_desc = d.get("sicDescription") or None
         secs = tuple(
-            s.model_copy(update={"sic": sic, "sic_description": d.get("sicDescription")})
+            s.model_copy(update={"sic": sic, "sic_description": sic_desc})
             for s in issuer.securities
         )
         return issuer.model_copy(
             update={
                 "sic": sic,
-                "sic_description": d.get("sicDescription"),
+                "sic_description": sic_desc,
                 "former_names": former,
                 "securities": secs,
             }

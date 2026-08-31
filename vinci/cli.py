@@ -45,6 +45,7 @@ from vinci.rank import (
     render_profile_block,
 )
 from vinci.resolver import EntityResolver, ResolutionError
+from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     ORIGIN_FOLLOWED,
@@ -88,6 +89,57 @@ def _cmd_resolve(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def _resolve_for_refresh(resolver: EntityResolver, ticker: str, *,
+                         sic_failures: list[str] | None = None) -> Identity | None:
+    """One ticker for a price backfill: STRICT on the identity, BEST-EFFORT on the SIC.
+
+    WHY `refresh` ENRICHES AT ALL (closes STATE.md §5.0 row 7). This command is how a name that is
+    NOT in the cap band enters the entity master — the ledgered-but-out-of-universe class, which
+    `build_universe` never comes back to enrich because it never admits it. Resolving without the
+    SIC left such a name with a PERMANENT hole: NFLX has sat SIC-less since it arrived exactly this
+    way, and Gartner (#523) was the same class. Fetching it here fills the hole at the point of
+    entry instead of leaving it for a later sweep.
+
+    WHY THE SIC IS TOLERATED AND THE IDENTITY IS NOT. An unknown/ambiguous ticker still FAILS LOUD
+    — mis-resolution is the system's worst failure and the resolver exists to refuse it. But a SIC
+    is an ADORNMENT on a price backfill, and `resolve_ticker(enrich=True)` propagates the raw HTTP
+    error when data.sec.gov is slow, rate-limiting or 500ing. Every ticker is resolved BEFORE any
+    bars are fetched, so an un-caught SEC failure would abort the whole backfill before it started
+    — a price job refusing to run because the SEC was flaky, for data the job does not need. So the
+    SIC is best-effort and SAYS SO OUT LOUD; the bars are the job.
+
+    SAFE ONLY BECAUSE OF #523. `upsert_security` now COALESCEs `sic`, so writing UNKNOWN can no
+    longer erase a stored value. Before that fix this degradation would have been the clobber.
+
+    AND THE TOLERANCE LIVES HERE, NOT IN THE RESOLVER — a soft mode on `EntityResolver` would let
+    every other caller degrade silently, including the universe gate that deliberately fails CLOSED
+    on a missing SIC (`unknown_sic`).
+    """
+    try:
+        ident = resolver.resolve_ticker(ticker)
+    except ResolutionError as exc:
+        print(f"skip {ticker}: {exc}")
+        return None
+    try:
+        sic, sic_desc = resolver.sic_for(ident.cik)
+    except Exception as exc:  # noqa: BLE001 — reported, never guessed; the bars are the job
+        print(f"{ticker}: SIC lookup FAILED ({type(exc).__name__}: {exc}) — refreshing prices with "
+              f"SIC UNKNOWN. Bars are unaffected, and any stored SIC is preserved.")
+        if sic_failures is not None:
+            sic_failures.append(ticker)
+        return ident
+    if sic is None:
+        # ABSENT, not broken — the distinction #523/#525 exist to keep visible.
+        print(f"{ticker}: EDGAR publishes no SIC for this issuer (routine for BDCs and funds) — "
+              f"stored as UNKNOWN, never inferred.")
+    # `or None` is BELT-AND-BRACES, not the primary guard: `sic_for` normalises EDGAR's `""`
+    # description at the source (pinned in `tests/test_resolver.py`). It is kept because this is
+    # the last line before a DURABLE write to the entity master, and `upsert_security` COALESCEs
+    # `sic_description` — SQL COALESCE treats '' as PRESENT, so a blank here would overwrite a
+    # stored description rather than defer to it.
+    return ident.model_copy(update={"sic": sic, "sic_description": sic_desc or None})
+
+
 def _cmd_refresh(args: argparse.Namespace) -> int:
     """Backfill/refresh Polygon EOD bars for the given tickers into the store."""
     cfg = get_config()
@@ -95,15 +147,16 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
     resolver = EntityResolver.from_config(cfg)
     client = PolygonEodClient.from_config(cfg)
     secs = []
+    sic_failures: list[str] = []
+    attempted = 0
     for t in args.tickers:
         if t.upper() in {BENCHMARK_SMALL, BENCHMARK_MID, BENCHMARK_LARGE}:
             # benchmark ETFs are synthetic identities (IDX-*), not SEC issuers — resolver-exempt
             secs.append(benchmark_identity(t.upper()))
             continue
-        try:
-            secs.append(resolver.resolve_ticker(t))
-        except ResolutionError as exc:
-            print(f"skip {t}: {exc}")
+        attempted += 1
+        if (ident := _resolve_for_refresh(resolver, t, sic_failures=sic_failures)) is not None:
+            secs.append(ident)
     start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
     mode = "per-symbol aggs" if args.aggs else "grouped-daily"
     print(f"refreshing {len(secs)} names {start}..{end} via {mode} "
@@ -118,6 +171,17 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
             summary = ingest_prices(
                 client, store, secs, start=start, end=end, progress=stderr_reporter)
     print(f"done: {summary}")
+    if sic_failures:
+        # SAID ONCE, AT THE END, AND AS A TALLY (review of #528). Per-name lines alone are not a
+        # signal: on a long refresh during an SEC outage — or after a change that breaks `sic_for`,
+        # since `except Exception` catches an AttributeError just as readily — every name degrades
+        # to SIC UNKNOWN, the individual lines scroll past inside Polygon's progress output, and
+        # the run still ends `done:` with exit 0. The operator then reasonably reads it as a clean
+        # refresh while the exact hole this command exists to stop being dug is re-dug wholesale.
+        print(f"WARNING: {len(sic_failures)}/{attempted} SIC lookup(s) FAILED — "
+              f"{', '.join(sic_failures)} stored with SIC UNKNOWN (bars are unaffected, and no "
+              f"stored SIC was overwritten). Re-run `scripts/backfill_entity_master_sic.py` once "
+              f"EDGAR is healthy to fill them.")
     return 0
 
 

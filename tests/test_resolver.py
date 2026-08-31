@@ -148,3 +148,33 @@ def test_resolver_against_real_sec_data() -> None:
     meta = r.resolve_ticker("META", enrich=True)
     assert meta.sic == "7370"
     assert meta.sic_description
+
+
+def test_sic_for_normalises_edgars_empty_description_to_absent() -> None:
+    """EDGAR returns `sicDescription: ""` — an empty STRING, not null — for a SIC-less issuer,
+    observed live on FSK (a BDC). Normalised HERE, at the source, because the blank is not cosmetic
+    downstream: `Store.upsert_security` COALESCEs `sic_description`, and SQL COALESCE treats '' as
+    PRESENT, so a blank OVERWRITES a stored description instead of deferring to it — re-opening on
+    the sibling column the erasure #523 closed.
+
+    Pinned at `sic_for` rather than at a call site because EVERY consumer reads through it
+    (`resolve_ticker(enrich=True)`, `_enrich_issuer`, `build_universe`, `vinci refresh`, the
+    backfill script), and #528's first draft normalised in only one of them.
+    """
+    class _Http:
+        def __init__(self, payload: dict[str, object]) -> None:
+            self._payload = payload
+
+        def get_json(self, url: str, **kw: object) -> dict[str, object]:
+            return self._payload
+
+    # the SIC-less issuer: EDGAR's literal payload
+    r = EntityResolver(http=_Http({"sic": "", "sicDescription": ""}),
+                       index=ResolverIndex(SYNTHETIC))
+    assert r.sic_for("0001422183") == (None, None), "'' must read as ABSENT, never as a value"
+
+    # and a real one still comes through untouched
+    r2 = EntityResolver(
+        http=_Http({"sic": "7372", "sicDescription": "Services-Prepackaged Software"}),
+        index=ResolverIndex(SYNTHETIC))
+    assert r2.sic_for("0001065280") == ("7372", "Services-Prepackaged Software")
