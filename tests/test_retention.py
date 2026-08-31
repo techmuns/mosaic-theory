@@ -393,7 +393,11 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
 
     from vinci.universe import DROP_STAGES, build_universe
 
-    assert len(DROP_STAGES) == 8, DROP_STAGES
+    # 9 since 2026-08-31: `ads_count_unresolved` joined the funnel — a depositary receipt whose
+    # ADS-denominated share count will not resolve is DROPPED rather than sized by assuming
+    # 1 ADS = 1 ordinary share. It is a real drop stage, so it emits its retention row like the
+    # rest; the count is asserted so ADDING a stage stays a deliberate act.
+    assert len(DROP_STAGES) == 9, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")
@@ -413,10 +417,12 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # that decided a name — `shares_period_average` (admitted on a period average) and
     # `out_of_band_period_average` (dropped out of band on one). Neither is a drop STAGE: the
     # out-of-band drop still emits its row through `_drop` in the same branch, and this counter
-    # only says how many of those rows the approximation decided. A stage missing its row is
-    # still the failure this guard exists to catch.
+    # only says how many of those rows the approximation decided. `ads_count_used` (2026-08-31) is
+    # the same shape: it counts ADMITTED depositary receipts sized by their ADS-denominated count.
+    # The matching FAILURE, `ads_count_unresolved`, IS a drop stage and goes through `_drop`.
+    # A stage missing its row is still the failure this guard exists to catch.
     assert set(loose) <= {"considered", "in_universe", "shares_period_average",
-                          "out_of_band_period_average"}, (
+                          "out_of_band_period_average", "ads_count_used"}, (
         f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
         "without emitting a row leaves that stage with no evidence trail")
     # and the guard that refuses a run when the two diverge anyway

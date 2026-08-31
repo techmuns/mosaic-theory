@@ -107,11 +107,15 @@ BUILD_UNIVERSE_SEED_TABLES: tuple[str, ...] = tuple(
     t for t in BUILD_UNIVERSE_TABLES if t in NO_ROW_DROP_TABLES)
 
 
+#: Polygon instrument types whose PRICE is quoted per depositary receipt rather than per ordinary
+#: share. The share count used for market cap must be denominated in the same unit as the price.
+DEPOSITARY_TYPES: tuple[str, ...] = ("ADRC", "GDR")
+
 #: EVERY drop this builder can make, in funnel order. Enumerated rather than described, because a
 #: stage missing from the thin grain is a stage with no evidence trail — which just MOVES the blind
 #: spot instead of closing it. Each is emitted with the one input that decided it.
 DROP_STAGES: tuple[str, ...] = (
-    "no_price", "no_shares", "out_of_band", "below_adv_floor",
+    "no_price", "no_shares", "ads_count_unresolved", "out_of_band", "below_adv_floor",
     "unknown_sic", "non_operating", "unknown_type", "non_common_equity",
 )
 
@@ -152,6 +156,14 @@ def build_universe(
 
     closes, adv = latest_close_and_adv(eod, reference_date)
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
+    # ADS-DENOMINATED COUNTS for depositary receipts (2026-08-31). An ADR's price is per ADS while
+    # its XBRL count is per ORDINARY share, and nothing converted between them: TSM computed
+    # $10,635B against Polygon's own $2,165B — a ~5x error that pushed it past the theme band's
+    # $10T ceiling and out of EVERY band. Fetched only for the ADR/GDR tickers that have a close
+    # (~375 on US venues, cached a day), because the details endpoint is per-ticker.
+    adr_tickers = sorted(t for t, ty in sec_types.items()
+                         if ty in DEPOSITARY_TYPES and t in closes)
+    ads_counts = eod.share_class_counts(adr_tickers)
     periods = share_periods or recent_share_periods(reference_date)
     # PERIOD-AVERAGE TIER ON, here only (2026-08-31): the cap band is a COARSE gate, and a filer
     # publishing no instant count was being dropped entirely — 142 operating equities above $100M
@@ -209,21 +221,48 @@ def build_universe(
                 _drop(ident.eod_symbol, "no_price", "no latest close in the grouped-daily pull",
                       StampedInput(value=None, source="Polygon grouped-daily"))
                 continue
-            if sh is None:
-                _drop(ident.eod_symbol, "no_shares", "no EDGAR XBRL share count for the CIK",
-                      StampedInput(value=None,
-                                   source="EDGAR share frames (instant tiers + period average)"))
-                continue
-            market_cap = close * sh
+            # THE COUNT MUST BE DENOMINATED IN THE PRICE'S OWN UNIT, and WHICH count that is
+            # decides which absence is fatal — so the instrument type is read BEFORE any
+            # share-count gate. For a depositary receipt the traded unit is the ADS: the ADS count
+            # is the right input, no ratio arithmetic is needed, and THE XBRL COUNT IS NEVER READ.
+            # Gating an ADR on the XBRL count first (the first draft of this change) demanded an
+            # input it then discarded: measured, EIGHT of the nine names lost at `no_shares` —
+            # NVO, SONY, ERIC, TAK, GRAB, JD, SE, BIDU — carry a perfectly good ADS count and were
+            # being dropped anyway. Only AZN genuinely has neither.
+            is_depositary = sec_types.get(ident.eod_symbol) in DEPOSITARY_TYPES
+            if is_depositary:
+                # an ADR whose ADS count will not resolve is DROPPED LOUDLY — assuming
+                # 1 ADS = 1 ordinary is exactly the silent error this whole change removes
+                ads = ads_counts.get(ident.eod_symbol)
+                if ads is None:
+                    _drop(ident.eod_symbol, "ads_count_unresolved",
+                          "depositary receipt with no ADS-denominated share count — refusing to "
+                          "assume 1 ADS = 1 ordinary share",
+                          StampedInput(value=None, as_of=reference_date,
+                                       source="Polygon share_class_shares_outstanding"))
+                    continue
+                shares_used = ads
+                stats["ads_count_used"] += 1
+            else:
+                if sh is None:
+                    _drop(ident.eod_symbol, "no_shares", "no EDGAR XBRL share count for the CIK",
+                          StampedInput(value=None,
+                                       source="EDGAR share frames (instant tiers + period "
+                                              "average)"))
+                    continue
+                shares_used = sh
+            market_cap = close * shares_used
             # WHICH KIND OF SHARE COUNT DECIDED THIS NAME — computed BEFORE the band test, because
             # the drop path needs it too (review 2026-08-31): the period-average tier newly sizes
             # names that then fall OUT of band, and a retention row claiming a filed EDGAR count
             # as its deciding input would misattribute an exclusion the approximation made.
             tag = share_tag.get(ident.cik, "")
-            approximate = tag == SHARES_TAG_WAVG
-            shares_source = (f"Polygon close x EDGAR {tag}"
-                             + (" (PERIOD AVERAGE - approximate share count)"
-                                if approximate else ""))
+            approximate = (not is_depositary) and tag == SHARES_TAG_WAVG
+            shares_source = (
+                "Polygon close x Polygon share_class_shares_outstanding (ADS-denominated)"
+                if is_depositary else
+                (f"Polygon close x EDGAR {tag}"
+                 + (" (PERIOD AVERAGE - approximate share count)" if approximate else "")))
             if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
                 if approximate:
                     stats["out_of_band_period_average"] += 1
