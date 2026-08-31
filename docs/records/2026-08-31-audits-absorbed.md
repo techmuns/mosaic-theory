@@ -74,6 +74,20 @@ removed file. A path repair that changes what the sentence CLAIMS is not a path 
 **ALSO FIXED IN PASSING:** §5.0 row 5 still opened "a live $50k/5% GOOGL starter has NO ledger row",
 which #512 closed; GOOGL now heads the BOOK.
 
+**WHAT THE GUARD STILL DOES NOT COVER — recorded so it is not trusted for more than it does.**
+Three gaps found in review and left open deliberately, each a scope decision rather than an
+oversight:
+
+- **Deleting or renaming a merged record bypasses it entirely.** The check reads files that exist;
+  a record removed from the tree is never compared. Closing this means deciding whether a record
+  may EVER be deleted — a governance question, not a test change.
+- **A missing `origin/main` makes it a silent no-op that reports GREEN**, rather than skipping
+  loudly. CI always has the ref, so this bites a fresh clone or a detached checkout — exactly where
+  someone would least expect the guard to be absent.
+- **The path exemption blanks an unbounded `docs/[\w./-]+` run**, so a retraction written flush
+  against a path can compare equal. Narrowing it risks refusing legitimate repairs; it is left wide
+  and named here instead.
+
 **VERIFIED.** 290 records; `docs/audits/` does not exist; every pointer into the migrated files
 resolves — `docs/…` paths AND the relative links a `docs/`-prefixed scan cannot see — apart from the
 one line-wrapped citation recorded above. 7 mutations: a mid-body prose edit CAUGHT, an existing
