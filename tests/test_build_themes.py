@@ -171,6 +171,53 @@ def test_emit_radar_sweep_end_to_end(tmp_path: Path, monkeypatch: pytest.MonkeyP
     assert payload["command"] == "python -m vinci.cli themes"
 
 
+def test_a_theme_only_manifest_preserves_the_committed_sweep_date(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """REGRESSION (2026-08-31) — #125 re-armed by an ARTIFACT, not by a path.
+
+    The re-seed guard used to key on `manifest.exists()`. That held only while the manifest was
+    git-ignored; the moment it became a committed artifact carrying THEME-scan rows
+    (ai-value-migration, glp1-drug-value-chain), the file existed, the guard passed, the payload
+    found no component-a ts, and a real 2026-07-14 sweep date reverted to the seeded June-17
+    default on the next deploy — with next_due then reading six weeks in the PAST.
+
+    The source for this bar is a COMPONENT-A ROW, not a file. This pin holds that: a manifest full
+    of theme rows must leave the committed sweep.json exactly as it was."""
+    from datetime import UTC, datetime
+
+    from vinci.themes.scan_history import record_snapshot
+
+    hist = tmp_path / "data" / "scan_history"
+    # a REAL committed sweep.json, the kind a prior component-a run produced
+    out = tmp_path / "frontend" / "radar"
+    out.mkdir(parents=True)
+    committed = {"last_run": "2026-07-14", "source": "manifest", "next_due": "2026-08-13",
+                 "command": "python -m vinci.cli themes"}
+    (out / "sweep.json").write_text(json.dumps(committed, indent=1) + "\n")
+    # ...and a manifest that exists but carries ONLY theme-scan rows
+    record_snapshot([{"ticker": "MSFT"}], driver_slug="ai-value-migration", driver_desc="theme",
+                    history_root=hist, now=datetime(2026, 8, 31, 13, 53, tzinfo=UTC),
+                    git_sha="20e66e7", n_scanned=2907, tier_field=None)
+    record_snapshot([{"ticker": "LLY"}], driver_slug="glp1-drug-value-chain", driver_desc="theme",
+                    history_root=hist, now=datetime(2026, 8, 31, 14, 22, tzinfo=UTC),
+                    git_sha="d8cf782", n_scanned=2907, tier_field=None)
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_sweep()
+    assert json.loads((out / "sweep.json").read_text()) == committed   # untouched
+    assert _BUILD._manifest_has_component_a(hist / "manifest.jsonl") is False
+
+
+def test_an_unreadable_manifest_counts_as_absent_not_as_source(tmp_path: Path) -> None:
+    """A corrupt manifest must PRESERVE the committed date too. The guard exists to protect a real
+    sweep date; re-seeding because a file failed to parse would be the same incident by another
+    route."""
+    m = tmp_path / "manifest.jsonl"
+    m.write_text('{"driver_slug": "component-a"  OOPS\n')
+    assert _BUILD._manifest_has_component_a(m) is False
+
+
 def _review(key: str, members: list[str], decision: str = "parked") -> dict[str, Any]:
     return {"key": key, "display_name": key, "decision": decision, "reviewed": "2026-07-13",
             "by": "analyst", "reason": "x", "members": members}
