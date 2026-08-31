@@ -1,54 +1,54 @@
 {
- "GOOGL": {
-  "assigned_at": "2026-08-28",
-  "band": "large (>$25B)",
-  "benchmark": "SPY",
-  "cap_at_entry_usd": 4230356999999.9995,
-  "entry_date": "2026-08-14",
-  "entry_price": 345.9,
-  "rationale": "cap at entry = 345.9 x 12,230,000,000 sh = $4.23T -> large (>$25B) -> SPY. Alphabet reports ONE combined common-share line across its A/B/C classes, so this is the all-class count against a Class A price; the band is unambiguous either way (any class basis leaves the cap orders of magnitude above the $25B boundary).",
-  "shares": 12230000000.0,
-  "shares_source": "EDGAR XBRL us-gaap:CommonStockSharesOutstanding = 12,230,000,000 as of 2026-06-30 (Q2 10-Q); CommonStockSharesIssued agrees at the same value.",
-  "supersedes": null,
-  "ticker": "GOOGL"
- },
- "IT": {
-  "assigned_at": "2026-07-21",
-  "band": "mid ($4\u201325B)",
-  "benchmark": "MDY",
-  "cap_at_entry_usd": 9869262900.0,
-  "entry_date": "2026-07-20",
-  "entry_price": 141.06,
-  "rationale": "cap at entry = 141.06 \u00d7 69,965,000 sh = $9.87B \u2192 mid ($4\u201325B) \u2192 MDY",
-  "shares": 69965000.0,
-  "shares_source": "scenarios/IT.json facts.diluted_shares \u2014 69.965 M shares; diluted weighted-average (latest 10-Q) (anchor raw count / 1e6); committed anchor block (dossier.json, PR #158/#160-verified) \u2014 EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
-  "supersedes": "ledger row benchmark IWM",
-  "ticker": "IT"
- },
- "SMPL": {
-  "assigned_at": "2026-07-21",
-  "band": "small (<$4B)",
-  "benchmark": "IWM",
-  "cap_at_entry_usd": 1022961586.92,
-  "entry_date": "2026-07-20",
-  "entry_price": 10.92,
-  "rationale": "cap at entry = 10.92 \u00d7 93,677,801 sh = $1.02B \u2192 small (<$4B) \u2192 IWM",
-  "shares": 93677801.0,
-  "shares_source": "scenarios/SMPL.json facts.diluted_shares \u2014 93.677801 M shares; diluted weighted-average (latest 10-Q) (anchor raw count / 1e6); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding \u2014 via committed dossier anchor block (#158/#160/#162-verified)",
-  "supersedes": null,
-  "ticker": "SMPL"
- },
- "VRRM": {
-  "assigned_at": "2026-07-21",
-  "band": "small (<$4B)",
-  "benchmark": "IWM",
-  "cap_at_entry_usd": 715480335.63,
-  "entry_date": "2026-06-17",
-  "entry_price": 4.71,
-  "rationale": "cap at entry = 4.71 \u00d7 151,906,653 sh = $0.72B \u2192 small (<$4B) \u2192 IWM",
-  "shares": 151906653.0,
-  "shares_source": "data/dossiers/VRRM/dossier.json mechanical.stock_info.shares_out \u2014 151906653 shares; EDGAR XBRL shares outstanding (as-of 2026-07-08)",
-  "supersedes": null,
-  "ticker": "VRRM"
- }
+  "GOOGL": {
+    "assigned_at": "2026-08-28",
+    "band": "large (>$25B)",
+    "benchmark": "SPY",
+    "cap_at_entry_usd": 4230356999999.9995,
+    "entry_date": "2026-08-14",
+    "entry_price": 345.9,
+    "rationale": "cap at entry = 345.9 \u00d7 12,230,000,000 sh = $4.23T \u2192 large (>$25B) \u2192 SPY. Alphabet reports ONE combined common-share line across its A/B/C classes, so this is the all-class count against a Class A price; the band is unambiguous either way (any class basis leaves the cap orders of magnitude above the $25B boundary).",
+    "shares": 12230000000.0,
+    "shares_source": "EDGAR XBRL us-gaap:CommonStockSharesOutstanding = 12,230,000,000 as of 2026-06-30 (Q2 10-Q); CommonStockSharesIssued agrees at the same value.",
+    "supersedes": null,
+    "ticker": "GOOGL"
+  },
+  "IT": {
+    "assigned_at": "2026-07-21",
+    "band": "mid ($4\u201325B)",
+    "benchmark": "MDY",
+    "cap_at_entry_usd": 9869262900.0,
+    "entry_date": "2026-07-20",
+    "entry_price": 141.06,
+    "rationale": "cap at entry = 141.06 \u00d7 69,965,000 sh = $9.87B \u2192 mid ($4\u201325B) \u2192 MDY",
+    "shares": 69965000.0,
+    "shares_source": "scenarios/IT.json facts.diluted_shares \u2014 69.965 M shares; diluted weighted-average (latest 10-Q) (anchor raw count / 1e6); committed anchor block (dossier.json, PR #158/#160-verified) \u2014 EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
+    "supersedes": "ledger row benchmark IWM",
+    "ticker": "IT"
+  },
+  "SMPL": {
+    "assigned_at": "2026-07-21",
+    "band": "small (<$4B)",
+    "benchmark": "IWM",
+    "cap_at_entry_usd": 1022961586.92,
+    "entry_date": "2026-07-20",
+    "entry_price": 10.92,
+    "rationale": "cap at entry = 10.92 \u00d7 93,677,801 sh = $1.02B \u2192 small (<$4B) \u2192 IWM",
+    "shares": 93677801.0,
+    "shares_source": "scenarios/SMPL.json facts.diluted_shares \u2014 93.677801 M shares; diluted weighted-average (latest 10-Q) (anchor raw count / 1e6); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding \u2014 via committed dossier anchor block (#158/#160/#162-verified)",
+    "supersedes": null,
+    "ticker": "SMPL"
+  },
+  "VRRM": {
+    "assigned_at": "2026-07-21",
+    "band": "small (<$4B)",
+    "benchmark": "IWM",
+    "cap_at_entry_usd": 715480335.63,
+    "entry_date": "2026-06-17",
+    "entry_price": 4.71,
+    "rationale": "cap at entry = 4.71 \u00d7 151,906,653 sh = $0.72B \u2192 small (<$4B) \u2192 IWM",
+    "shares": 151906653.0,
+    "shares_source": "data/dossiers/VRRM/dossier.json mechanical.stock_info.shares_out \u2014 151906653 shares; EDGAR XBRL shares outstanding (as-of 2026-07-08)",
+    "supersedes": null,
+    "ticker": "VRRM"
+  }
 }
