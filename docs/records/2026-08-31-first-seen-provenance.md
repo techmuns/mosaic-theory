@@ -62,7 +62,14 @@ clean; `pytest -m "not network"` 3376 passed, 0 failed, 144 network-skipped.
 `test_refresh_stamps_first_seen_on_an_identity_it_introduces` (the source, including that a later
 refresh cannot overwrite a true earlier date).
 
-**NOT DONE.** `first_seen` for LLY, NFLX and UBER reads 2026-08-24 — LATER than their own dossiers
-(2026-08-21, 2026-08-10, 2026-08-07), because #527 re-introduced those identities and the store
-genuinely learned them then. It is an honest record of this store's knowledge, not a fabrication,
-and correcting it would mean inventing a date the record does not support. Left as-is, deliberately.
+**NOT DONE — and the list includes a row THIS build wrote (corrected in review).** Four names carry
+a `first_seen` LATER than their own dossier: LLY 2026-08-24 vs 2026-08-21, NFLX 2026-08-24 vs
+2026-08-10, UBER 2026-08-24 vs 2026-08-07 — those three because #527 re-introduced the identities
+and the store genuinely learned them then — **and V 2026-08-13 vs 2026-08-10, which this build's own
+backfill produced**, because the evidence date is the commit where the identity first appears and
+that postdates the dossier commit. The first draft of this record named only the other three, which
+would have left a reader auditing V to treat it as unexplained drift.
+
+In every case the value is an honest record of when the record PROVES the identity was known, not a
+fabrication, and correcting it would mean inventing a date the evidence does not support. Nothing
+compares a dossier's date to `first_seen`, so nothing is broken by it. Left as-is, deliberately.

@@ -318,11 +318,17 @@ def run_weekly(
         _s.rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)
         ahead = _s.identities_first_seen_after(end)
     if ahead:
+        # TWO CAUSES, TWO REMEDIES (review, 2026-08-31). The guard now also returns identities
+        # whose `first_seen` is UNRECORDED, and for those the original wording was simply wrong:
+        # nothing later-dated wrote them, and rolling them back fixes nothing. Naming only the
+        # first cause sends an operator to undo work that is not the problem.
         raise RuntimeError(
-            f"{len(ahead)} identities in the store were first seen AFTER {end} "
-            f"({', '.join(ahead[:5])}{'…' if len(ahead) > 5 else ''}) — a later-dated run wrote "
-            f"them and a run claiming {end} must not judge names it could not have known. Roll "
-            f"those identities back before re-running at this date."
+            f"{len(ahead)} identities in the store are not known to predate {end} "
+            f"({', '.join(ahead[:5])}{'…' if len(ahead) > 5 else ''}) — a run claiming {end} must "
+            f"not judge names it could not have known. Either a LATER-DATED run wrote them (roll "
+            f"those identities back before re-running at this date), or their `first_seen` is "
+            f"UNRECORDED, which cannot confirm they predate {end} and so fails closed — stamp it "
+            f"from evidence (`vinci refresh` has stamped since 2026-08-31; older rows may not)."
         )
     run_id = next_run_id(end, cfg.snapshots_dir)
     universe = build_universe(cfg, reference_date=end,

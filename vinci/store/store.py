@@ -38,6 +38,12 @@ NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities",
 #: Kept as the private alias this module has always used internally.
 _NO_ROW_DROP_TABLES = NO_ROW_DROP_TABLES
 
+#: Prefix of a SYNTHETIC identity — the benchmark ETFs `vinci.universe.benchmark_identity`
+#: builds as `IDX-<symbol>`. Named here rather than inlined as a SQL literal so the one
+#: place that filters on it cannot silently stop matching if the producer ever changes the
+#: convention; `test_the_synthetic_prefix_matches_what_benchmark_identity_builds` ties the two.
+SYNTHETIC_ID_PREFIX = "IDX-"
+
 #: Tables whose committed file must never be REPLACED BY AN EMPTY ONE. Distinct from the
 #: no-row-drop set: those may never shrink at all (an entity master, the ledger), while these are
 #: point-in-time populations that legitimately change membership every build — but never to zero.
@@ -132,9 +138,10 @@ class Store:
         return [
             str(r["internal_id"]) for r in self._conn.execute(
                 "SELECT internal_id FROM securities "
-                "WHERE internal_id NOT LIKE 'IDX-%' AND (first_seen IS NULL OR first_seen > ?) "
+                "WHERE internal_id NOT LIKE ? || '%' "
+                "  AND (first_seen IS NULL OR first_seen > ?) "
                 "ORDER BY internal_id",
-                (_iso(reference_date),),
+                (SYNTHETIC_ID_PREFIX, _iso(reference_date)),
             )
         ]
 

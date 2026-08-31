@@ -86,3 +86,17 @@ def test_refresh_stamps_first_seen_on_an_identity_it_introduces(tmp_path: Path) 
             "SELECT first_seen FROM securities WHERE internal_id = ?",
             ("SEC-0000000001-AAA",)).fetchone()
     assert row["first_seen"] == "2026-03-04", "a refresh must not overwrite a true earlier date"
+
+
+def test_the_synthetic_prefix_matches_what_benchmark_identity_builds() -> None:
+    """TIE THE FILTER TO ITS PRODUCER (review of #533). The exemption used to be a bare `'IDX-%'`
+    SQL literal, duplicating a convention that actually lives in `benchmark_identity`. Every other
+    consumer greps as `startswith("IDX-")`, but a SQL literal changes nothing loudly — it just
+    stops matching, the exemption silently disappears, and every backdated run starts raising on
+    the benchmark rows the screen and orchestrator wrote themselves."""
+    from vinci.store.store import SYNTHETIC_ID_PREFIX
+    from vinci.universe import benchmark_identity
+    for symbol in ("SPY", "IWM", "MDY"):
+        assert benchmark_identity(symbol).internal_id.startswith(SYNTHETIC_ID_PREFIX), (
+            f"benchmark_identity({symbol!r}) no longer builds ids starting "
+            f"{SYNTHETIC_ID_PREFIX!r} — the store's exemption filter will stop matching")
