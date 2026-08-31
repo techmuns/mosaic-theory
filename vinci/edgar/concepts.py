@@ -162,26 +162,43 @@ def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     already in this map, one line below the wrong one, and the resolution order withheld it.
 
     So the freshness test runs BEFORE the alias is accepted, and a stale one falls through to the
-    next. When EVERY alias is stale the last one is still returned rather than refused: a tag also
-    stops being reported when the FACT ceases (a company that repaid its current debt stops tagging
-    it), and turning that into UNKNOWN would manufacture a hole where the filer simply has nothing
-    to report. Distinguishing abandonment from cessation needs the filer's own words, not a date —
-    so this fixes what it can prove and leaves the rest visible via ``stale_served``.
+    next. When EVERY alias is stale the FIRST present one is still returned rather than refused: a
+    tag also stops being reported when the FACT ceases (a company that repaid its current debt stops
+    tagging it), and turning that into UNKNOWN would manufacture a hole where the filer simply has
+    nothing to report. Distinguishing abandonment from cessation needs the filer's own words, not a
+    date — so this fixes what it can prove and leaves the rest visible via ``stale_served``.
+
+    THE ALL-STALE FALLBACK IS THE FIRST ALIAS, NEVER THE LAST. ``CONCEPT_ALIASES`` is ordered by
+    MEANING, not by convenience: ``SalesRevenueNet`` is a last resort because for some filers it is
+    only a COMPONENT of revenue, and ``CommonStockSharesIssued`` is not shares OUTSTANDING. Falling
+    back to whichever alias happened to be iterated last would silently invert that ordering when
+    freshness can separate nothing — a wrong-by-meaning number in place of a merely-old one.
     """
-    frontier = filer_frontier(facts)
-    last: list[ConceptPoint] = []
+    return _resolve(facts, concept, filer_frontier(facts))
+
+
+def _resolve(
+    facts: dict[str, Any], concept: str, frontier: date | None
+) -> list[ConceptPoint]:
+    """The alias walk of :func:`extract_points`, taking an already-computed frontier.
+
+    Split out so ``stale_served`` scans the (large) companyfacts blob for the frontier ONCE rather
+    than three times — its own call, plus one inside the ``extract_points`` it delegates to.
+    """
+    first_present: list[ConceptPoint] = []
     for tag in CONCEPT_ALIASES[concept]:
         points = points_for_tag(facts, tag, concept=concept)
         if not points:
             continue
-        last = points
+        if not first_present:
+            first_present = points
         if frontier is None:
             return points
         if (frontier - max(p.period_end for p in points)).days <= STALE_TAG_LAG_DAYS:
             # present AND current — the alias the filer still uses
             return points
-    # every alias stale: serve the last, and let  name it for the sweep
-    return last
+    # every alias stale: fall back to priority order, and let ``stale_served`` name it for the sweep
+    return first_present
 
 
 def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
@@ -194,7 +211,7 @@ def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
     frontier = filer_frontier(facts)
     if frontier is None:
         return None
-    pts = extract_points(facts, concept)
+    pts = _resolve(facts, concept, frontier)
     if not pts:
         return None
     lag = (frontier - max(p.period_end for p in pts)).days

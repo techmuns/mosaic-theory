@@ -112,3 +112,35 @@ def test_the_allowance_clears_an_annual_series() -> None:
     assert 400 < STALE_TAG_LAG_DAYS < 670, (
         "the allowance must sit above a legitimate annual cadence and below the nearest measured "
         "abandonment (SMPL debt_current, 670d)")
+
+
+def test_when_every_alias_is_stale_the_fallback_is_priority_order_not_iteration_order() -> None:
+    """The all-stale fallback must be the FIRST present alias — the meaning-ordered one.
+
+    `CONCEPT_ALIASES` is ordered by MEANING, not convenience: `LongTermDebt` is the pre-2015
+    catch-all that INCLUDES current maturities, `SalesRevenueNet` is for some filers only a
+    COMPONENT of revenue, `CommonStockSharesIssued` is not shares OUTSTANDING. A fallback that
+    served whichever alias was iterated LAST would silently invert that ordering exactly when
+    freshness can separate nothing — swapping a merely-old number for a wrong-by-meaning one.
+
+    BUILT FROM THE REAL BLOB, not hand-rolled: VITL's own rows, truncated to its 2020 vintage, are
+    a genuine both-present-both-stale pair against VITL's own 2026 frontier. No corpus name has
+    two stale aliases today, which is why this case would otherwise ship untested.
+    """
+    facts = _facts("VITL")
+    aliases = CONCEPT_ALIASES["long_term_debt"]
+    node = facts["facts"]["us-gaap"]
+    for tag in aliases:
+        for unit, rows in node[tag]["units"].items():
+            node[tag]["units"][unit] = [r for r in rows if r["end"] <= "2020-12-31"]
+        assert node[tag]["units"], f"{tag} must still carry real rows for this case to exist"
+
+    frontier = filer_frontier(facts)
+    assert frontier is not None and frontier.year >= 2026, "the filer kept filing other tags"
+    served = extract_points(facts, "long_term_debt")
+    assert served, "every alias stale must still serve something, never manufacture a hole"
+    assert served[0].tag == aliases[0], (
+        f"served {served[0].tag}; the all-stale fallback must be the first alias in priority "
+        f"order ({aliases[0]}), not the last one iterated ({aliases[-1]})")
+    flagged = stale_served(facts, "long_term_debt")
+    assert flagged is not None and flagged[0] == aliases[0], "and it must be NAMED, as itself"
