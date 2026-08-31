@@ -1,0 +1,31 @@
+{
+ "driver_key": "ai-value-migration",
+ "declared_date": "2026-08-30",
+ "mechanism": "supply-side",
+ "market_mistake": "The market still prices raw frontier-model IP as the centre of AI value capture. If the frontier-to-open catch-up window holds at ~3-6 months or compresses further, frontier-grade capability becomes an abundant input rather than a scarce asset: model IP commoditizes, and durable value capture migrates to the model-agnostic layers — ABOVE the model (applications with workflow, user, data and regulatory moats), BELOW it (hyperscaler compute, distribution and data gravity), and BESIDE it (silicon vendors whose software/developer-ecosystem bundle captures AI economics whichever model wins). The mistake is a supply-side one: pricing the model layer as scarce while open-source proliferation makes it abundant — scarcity is moving to the layers that own the workflow, the distribution and the ecosystem.",
+ "null_thesis": "The catch-up window WIDENS again — a capability step-change open weights cannot replicate, or compute/regulatory barriers that re-open the gap. Frontier-model IP retains pricing power as the scarce asset, the model-agnostic layers capture no incremental share of AI economics, and neither the app layer, the hyperscalers, nor the silicon-ecosystem vendors re-rate on this driver.",
+ "first_confirming": {
+  "trigger": "At the next quarterly print of at least one named representative per beneficiary class — hyperscaler platform (MSFT / GOOGL / AMZN), app-layer moat (CRM / NOW / VEEV / SAP / META), silicon ecosystem (NVDA) — the disclosed model-agnostic AI monetization line GROWS: AI/cloud inference revenue for the hyperscaler, AI attach or module revenue for the app name, software/developer-ecosystem revenue for the silicon vendor. The prints land on schedule regardless; only the reading is uncertain.",
+  "deadline": "2026-12-15",
+  "basis": "one full scheduled print cycle, late Oct - early Dec 2026 — every named representative's next quarterly print lands inside it on schedule; operator-approved shape 2026-08-30 (the names live once, in the trigger)"
+ },
+ "falsifiers": [
+  {
+   "trigger": "The frontier-to-open catch-up window WIDENS materially: the current frontier release holds a capability lead over the best open-weights models beyond ~12 months on the public benchmarks in use at declaration.",
+   "deadline": "2027-06-30",
+   "basis": "two-plus frontier release cycles land inside the window; operator-selected 2026-08-30"
+  },
+  {
+   "trigger": "Frontier-model IP pricing power RISES: per-token / API / seat list prices increase at named frontier labs without disclosed customer churn.",
+   "deadline": "2027-03-31",
+   "basis": "public price lists + customer disclosures; operator-selected 2026-08-30"
+  },
+  {
+   "trigger": "App-layer gross margins COMPRESS from model-licensing input costs at two or more named app-layer representatives — the moat fails to hold pricing above the model input.",
+   "deadline": "2027-06-30",
+   "basis": "two-plus quarterly print cycles of the named app-layer representatives; operator-selected 2026-08-30"
+  }
+ ],
+ "note": "Every judgment field traces to the operator: mechanism (supply-side) and the three falsifiers chosen 2026-08-30; market_mistake / null_thesis composed from the operator's stated thesis (2026-08-29) plus the three-beneficiary-class refinement (2026-08-30 — hyperscaler-platform / app-workflow-moat / silicon-ecosystem-moat, the tags of PR #520). first_confirming follows the operator-approved scheduled-print shape using the operator's named companies; NVDA as the silicon-ecosystem representative is the composition's single inference, flagged here.",
+ "mirror_slug": ""
+}
