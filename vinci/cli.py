@@ -65,7 +65,7 @@ from vinci.themes.assay import PriceCloseFn
 from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
 from vinci.themes.assay_schemas import AssayCard, CandidateSpec
 from vinci.themes.drivers import DRIVER_SPECS
-from vinci.universe import benchmark_identity, build_universe
+from vinci.universe import UNIVERSE_BANDS, benchmark_identity, build_universe
 
 
 def _cmd_resolve(args: argparse.Namespace) -> int:
@@ -218,13 +218,20 @@ def _cmd_eod(args: argparse.Namespace) -> int:
 
 
 def _cmd_build_universe(args: argparse.Namespace) -> int:
-    """Build + snapshot the cap-band universe (market cap = close × XBRL shares)."""
+    """Build + snapshot a cap-band universe (market cap = close × XBRL shares).
+
+    ``--band theme`` builds the PARALLEL theme-altitude population into its own snapshot; the
+    default builds the primary forward-validation population exactly as before."""
     cfg = get_config()
     ref = date.fromisoformat(args.ref) if args.ref else date.today()
-    stats = build_universe(reference_date=ref)
-    band = cfg.universe
+    band_name = getattr(args, "band", "primary")
+    stats = build_universe(reference_date=ref, band_name=band_name)
+    band = getattr(cfg, UNIVERSE_BANDS[band_name][0])
     lo, hi = band.market_cap_min_usd / 1e6, band.market_cap_max_usd / 1e9
-    print(f"universe @ {ref} [${lo:.0f}M–${hi:.0f}B, {'/'.join(band.exchanges)}]: {stats}")
+    print(f"universe[{band_name}] @ {ref} [${lo:.0f}M–${hi:.0f}B, "
+          f"{'/'.join(band.exchanges)}]: {stats}")
+    if band_name == "theme":
+        print("  → theme-altitude population only: scans read it, screens/ranker/ledger never do")
     return 0
 
 
@@ -2405,7 +2412,11 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
 
     cfg = get_config()
     cfg.ensure_dirs()
-    universe, snap = det.load_detection_universe(cfg)
+    # THE ONE OPT-IN CALL SITE for the parallel band: an exposure scan reads each name's filings
+    # independently, so a wider population adds names without changing the names already there.
+    # Component A / stage-2 detection deliberately does NOT opt in — its factors are
+    # cross-sectional, so a wider population would move every existing name's residual.
+    universe, snap = det.load_detection_universe(cfg, include_theme_band=True)
     only = _resolve_only_tickers(args)
     if only is not None:  # delta-scan primitive: restrict to the intersection with the universe
         kept, missing = _partition_only(only, {n.ticker.upper() for n in universe})
@@ -2417,6 +2428,17 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
               "(intersection with the committed universe)")
     if args.max_names:
         universe = universe[: args.max_names]
+    # SAY WHICH POPULATION WAS ACTUALLY SCANNED — computed AFTER --only-tickers/--max-names have
+    # narrowed it (review 2026-08-31: printed before, the line described a scan that did not
+    # happen; the theme rows sort last, so any --max-names below the primary count scanned zero
+    # of them while announcing 810). The theme band's own vintage prints beside the count,
+    # because the two bands are built by separate runs and a silently ageing population is the
+    # stale-input class this repo keeps closing.
+    n_theme = sum(1 for n in universe if n.band == "theme")
+    if n_theme:
+        tv = det.theme_band_as_of(cfg)
+        print(f"universe: {len(universe) - n_theme} primary + {n_theme} theme-band "
+              f"(as-of {tv or 'unknown'}; scannable, not tradeable)")
     names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
     ref = date.fromisoformat(args.ref) if args.ref else snap
     startdt = (ref - timedelta(days=args.window_days)).isoformat()
@@ -3476,6 +3498,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_univ = sub.add_parser("build-universe", help="build the cap-band universe")
     p_univ.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
+    p_univ.add_argument("--band", choices=sorted(UNIVERSE_BANDS), default="primary",
+                        help="which population to build: primary (the forward-validation band, "
+                             "default) or theme (the parallel larger band read only by theme "
+                             "scans)")
     p_univ.set_defaults(func=_cmd_build_universe)
 
     p_screen = sub.add_parser("screen", help="run Screen 2 across the cap-band universe")

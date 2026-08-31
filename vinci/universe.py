@@ -84,6 +84,21 @@ def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
 # near-miss). Enumerated from the store calls below, not guessed.
 BUILD_UNIVERSE_TABLES: tuple[str, ...] = ("issuers", "securities", "universe_snapshot")
 
+#: The same export set for the PARALLEL THEME BAND (operator ruling 2026-08-31): the entity master
+#: is SHARED and accumulate-only (a megacap identity is a fact about the world, not about a band),
+#: while membership lands in the band's own point-in-time table. Deriving this from the primary
+#: tuple keeps the two in step if the export set ever grows.
+BUILD_THEME_UNIVERSE_TABLES: tuple[str, ...] = tuple(
+    "theme_universe_snapshot" if t == "universe_snapshot" else t for t in BUILD_UNIVERSE_TABLES)
+
+#: band -> (config attribute, store table, stats filename). The BUILDER IS BAND-AGNOSTIC: every
+#: gate below reads `band`, so the theme band gets the identical operating-company /
+#: tradeability / instrument-type discipline, differing ONLY in the cap bounds it was given.
+UNIVERSE_BANDS: dict[str, tuple[str, str, str]] = {
+    "primary": ("universe", "universe_snapshot", "universe_stats.json"),
+    "theme": ("theme_universe", "theme_universe_snapshot", "theme_universe_stats.json"),
+}
+
 #: The subset of :data:`BUILD_UNIVERSE_TABLES` that may never SHRINK, DERIVED from the store's own
 #: declaration rather than re-listed here — a hand-copied list is one edit away from silently
 #: missing a table the day another accumulate-only one joins the export.
@@ -102,9 +117,14 @@ DROP_STAGES: tuple[str, ...] = (
 
 def build_universe(
     config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None,
-    retain_run_id: str | None = None, retain_dir: Path | None = None,
+    retain_run_id: str | None = None, retain_dir: Path | None = None, band_name: str = "primary",
 ) -> dict[str, int]:
-    """Build + snapshot the cap-band universe as of ``reference_date``. Returns a stats summary.
+    """Build + snapshot a cap-band universe as of ``reference_date``. Returns a stats summary.
+
+    ``band_name`` selects WHICH population is built: ``"primary"`` (the forward-validation
+    population every decision-path consumer reads) or ``"theme"`` (the parallel larger band read
+    only at the theme altitude — operator ruling 2026-08-31). The two never share a table, so a
+    theme build cannot add a row to the population the spread is accumulating against.
 
     RETENTION (thin grain). Every name this builder DROPS gets a row naming the stage, the reason,
     and the single input that decided it. This is the stage nothing has ever measured: a name
@@ -121,7 +141,13 @@ def build_universe(
     resolver = EntityResolver.from_config(cfg)
     eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
-    band = cfg.universe
+    if band_name not in UNIVERSE_BANDS:
+        raise ValueError(f"unknown universe band {band_name!r} — expected one of "
+                         f"{sorted(UNIVERSE_BANDS)}")
+    band_attr, _band_table, stats_filename = UNIVERSE_BANDS[band_name]
+    band = getattr(cfg, band_attr)
+    export_tables = (BUILD_UNIVERSE_TABLES if band_name == "primary"
+                     else BUILD_THEME_UNIVERSE_TABLES)
 
     closes, adv = latest_close_and_adv(eod, reference_date)
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
@@ -166,7 +192,8 @@ def build_universe(
         # dates it was never meant to keep, turning a fix for one table into a silent semantic
         # change in another.
         store.rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)
-        store.clear_universe()  # FULL replace — a rebuild is a clean snapshot, not an accretion
+        # FULL replace, THIS BAND ONLY — a rebuild is a clean snapshot, not an accretion
+        store.clear_universe(band=band_name)
         # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
         for ident in resolver.iter_universe(band.exchanges):
             stats["considered"] += 1
@@ -242,8 +269,9 @@ def build_universe(
                 market_cap=DataField.present(
                     market_cap, as_of=reference_date, source="DERIVED", tier=SourceTier.DERIVED
                 ),
+                band=band_name,
             )
-        store.export_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_TABLES)
+        store.export_snapshots(cfg.snapshots_dir, tables=export_tables)
     # Persist the fail-closed gate-exclusion counts as a committed health snapshot (the ops
     # dashboard reads these; a wrong count signals a gate bug). Derived counts only — no licensed
     # data. SIC-denylist drops = unknown_sic + non_operating; type-allowlist = unknown_type +
@@ -256,7 +284,8 @@ def build_universe(
         "adv_floor_usd": band.adv_floor_usd,
         **stats_out,
     }
-    (cfg.snapshots_dir / "universe_stats.json").write_text(json.dumps(payload, indent=2) + "\n")
+    payload["band"] = band_name   # the population this count describes — never inferred
+    (cfg.snapshots_dir / stats_filename).write_text(json.dumps(payload, indent=2) + "\n")
     if retain_run_id is not None and retain_dir is not None:
         # THE COUNT MUST MATCH THE ROWS, or the thin grain is quietly incomplete. Every stage that
         # increments a stat also appends a row, so a divergence means a drop path was added without

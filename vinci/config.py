@@ -88,6 +88,22 @@ class Config(BaseModel, frozen=True):
 
     data_dir: Path = Field(default=Path("data"))
     universe: UniverseConfig = UniverseConfig()
+    # --- THE PARALLEL THEME BAND (operator ruling 2026-08-31) ---------------------------------
+    # A SECOND, larger band read ONLY at the THEME altitude (exposure scans / theme research).
+    # WHY PARALLEL RATHER THAN WIDENING `universe`: the primary band IS the forward-validation
+    # population — screens, ranker and the BUY-AVOID spread have been accumulating against that
+    # membership since the clock started, so widening it mid-flight changes the experiment's
+    # population mid-experiment. A parallel band adds reach without touching the record: it lands
+    # in its own snapshot (`theme_universe_snapshot`), and NOTHING downstream of the theme scan
+    # reads it (pinned — a theme-band-only name reaching the screen fails the suite).
+    # SCANNABLE IS NOT TRADEABLE: a megacap surfaced by a theme scan still enters the book only
+    # through the existing dossier/underwrite path, where the MC1-MC4 / FPI1-FPI5 readiness gates
+    # bind per name (docs/records/2026-08-21-tiered-gates-*).
+    # The ceiling is a stated number rather than "infinity" so an out-of-band drop is still LOGGED
+    # with its reason: it sits above the largest listed company, and a name exceeding it should
+    # re-open this knob, not vanish. Face-validity, never tuned on forward returns.
+    theme_universe: UniverseConfig = UniverseConfig(
+        market_cap_min_usd=10_000_000_000.0, market_cap_max_usd=1.0e13)
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
