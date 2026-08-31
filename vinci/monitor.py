@@ -32,6 +32,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from vinci.labels import resolve_label
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
 from vinci.sleeves import DEFAULT_SLEEVE
 
@@ -455,6 +456,42 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
         resolved=current_date >= horizon_date,
         closed=closed,
     )
+
+
+# --- display sector (re-resolved at the report layer; the frozen ledger row is never rewritten) --
+def sector_for_display(sic: str | None) -> str | None:
+    """One position's display sector from the entity master's SIC — ``None`` when there is no SIC.
+
+    ABSENT IS NOT A LABEL. `resolve_label(None).sector` answers ``"Unknown"``, and so does a SIC
+    that is PRESENT but unmappable — so collapsing the two dresses a BROKEN LOOKUP as a resolved
+    reading, which is the shape CLAUDE.md forbids (missing data is never silently imputed, and
+    equally never presented as a resolution). Absence returns ``None`` so the artifact records
+    that no sector was read; ``"Unknown"`` then keeps exactly one meaning — a SIC WAS read and did
+    not map. Found via IT/Gartner, whose SIC a partial upsert had destroyed: the monitor printed
+    "sector re-resolved to Unknown", indistinguishable from an honest unmappable code.
+    """
+    if sic is None or not str(sic).strip():
+        return None
+    return resolve_label(sic).sector
+
+
+def sector_note(*, ticker: str, sic: str | None, frozen_sector: str | None) -> str | None:
+    """The display-layer note for one position's sector, or ``None`` when there is nothing to say.
+
+    Two DIFFERENT facts, never one message: a SIC that is ABSENT from the committed entity master
+    (say so, loudly — it is a data defect to repair, not a reading), and a SIC that resolves to a
+    sector DIFFERING from the one frozen in the append-only ledger row (the forward-only
+    correction the 87xx family fix introduced). The frozen row is never rewritten either way.
+    """
+    if sic is None or not str(sic).strip():
+        return (f"{ticker}: SIC ABSENT from the committed entity master — sector UNRESOLVED, "
+                f"NOT re-resolved (the frozen row logged {frozen_sector or '—'}, never "
+                f"rewritten). Repair the entity-master row; do not read this as a sector.")
+    live = sector_for_display(sic)
+    if frozen_sector and frozen_sector != live:
+        return (f"{ticker}: sector re-resolved to {live} for display "
+                f"(the frozen row logged {frozen_sector} — never rewritten)")
+    return None
 
 
 # --- freshness ---------------------------------------------------------------------------------

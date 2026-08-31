@@ -16,6 +16,14 @@ from vinci import monitor as mon
 
 ROOT = Path(__file__).resolve().parents[1]
 
+#: Ledgered names for which EDGAR publishes NO SIC — the escape hatch for
+#: `test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master`, which would otherwise
+#: be unsatisfiable for them. Empty today: the screen's `unknown_sic` gate keeps BDCs and funds out
+#: of the universe, so one can only reach the ledger by a deliberate operator entry. Add a ticker
+#: ONLY after confirming `resolver.sic_for(cik)` really returns None for it — never to green a
+#: suite, which is what inventing a code to satisfy that pin would amount to.
+NO_EDGAR_SIC: frozenset[str] = frozenset()
+
 
 def _row(ticker: str, verdict: str, *, pos: float, bench: float,
          entry: date = date(2026, 1, 1), now: date = date(2026, 3, 1),
@@ -306,3 +314,76 @@ def test_dated_trigger_deadlines_flag_passed_windows_never_adjudicate() -> None:
     assert "guidance cut" in row.triggers
     assert "CV re-accelerates (by 2027-01-07)" in row.triggers
     assert not any("bad date" in t for t in row.triggers + row.passed_trigger_deadlines)
+
+
+def test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master() -> None:
+    """THE PIN AT THE RIGHT LAYER (#464 regression, found 2026-08-31).
+
+    `test_it_sector_resolves_industrials_not_other` above pins the MAPPING — `sector_for_sic`
+    ("8741") — and it stayed green for two weeks while the input to that mapping was destroyed: a
+    `vinci refresh IT NFLX` price backfill upserted Gartner un-enriched and `INSERT OR REPLACE`
+    nulled its 8741. A helper pin cannot see that; only the ARTIFACT can. The monitor re-resolves
+    each position's sector from THIS file on every run, so a ledgered name without a SIC here is a
+    decision surface printing "Unknown" where a real sector exists.
+
+    THIS PIN IS NOT SUBSUMED by `test_an_issuer_never_half_carries_its_sic`. Gartner's CIK owns
+    exactly ONE security, so its destroyed row left no sibling to disagree with and the
+    partial-hole rule was satisfied by the very row that was wrong. Single-security issuers are
+    only reachable from here. Keep both.
+
+    AND IT IS NOT ALWAYS REPAIRABLE, which the failure message has to say. EDGAR publishes NO SIC
+    for BDCs and funds — 40 issuers in the committed master — so a ledgered name from that class
+    would fail this pin with nothing to fetch. The honest resolution there is to record the name
+    in `NO_EDGAR_SIC` below, never to invent a code to green the suite.
+    """
+    snaps = ROOT / "data" / "snapshots"
+    sic_by_ticker = {r["ticker"]: r.get("sic") for r in
+                     (json.loads(ln) for ln in
+                      (snaps / "securities.jsonl").read_text().splitlines() if ln.strip())
+                     if r.get("ticker")}
+    ledgered = {json.loads(ln)["ticker"] for ln in
+                (snaps / "decision_ledger.jsonl").read_text().splitlines() if ln.strip()}
+    assert ledgered, "no ledgered names — this pin would be vacuous"
+    unresolved = sorted(t for t in ledgered - NO_EDGAR_SIC
+                        if mon.sector_for_display(sic_by_ticker.get(t)) is None)
+    assert not unresolved, (
+        f"ledgered name(s) with NO SIC in the entity master: {unresolved}. The monitor will print "
+        f"an UNRESOLVED sector for them. If EDGAR publishes a SIC, the row lost it — repair it "
+        f"(`scripts/backfill_entity_master_sic.py`). If EDGAR publishes NONE (a BDC or fund), add "
+        f"the ticker to NO_EDGAR_SIC above. Never invent a code to green this.")
+
+
+def test_it_row_still_carries_the_87xx_sic_the_sector_is_read_from() -> None:
+    """The repaired row, pinned at the FAMILY level — the same discipline the mapping test states
+    ("never a per-name special case"), so an in-family EDGAR re-classification does not rot it
+    while a NULL still fails."""
+    sec = next(json.loads(ln) for ln in
+               (ROOT / "data" / "snapshots" / "securities.jsonl").read_text().splitlines()
+               if ln.strip() and json.loads(ln)["ticker"] == "IT")
+    assert (sec["sic"] or "").startswith("87"), f"IT's SIC is {sec['sic']!r}, not the 87xx family"
+    assert mon.sector_for_display(sec["sic"]) == "Industrials"
+
+
+def test_an_absent_sic_is_reported_as_absent_never_as_a_resolved_sector() -> None:
+    """ABSENT ≠ RESOLVED — the display half of the same incident.
+
+    `resolve_label(None).sector` answers "Unknown", and so does a PRESENT-but-unmappable SIC, so
+    the old note said "IT: sector re-resolved to Unknown for display" — a broken lookup wearing a
+    resolved label. Absence now returns None (the artifact records that nothing was read) and says
+    so in words that cannot be mistaken for a reading."""
+    for absent in (None, "", "   "):
+        assert mon.sector_for_display(absent) is None
+        note = mon.sector_note(ticker="IT", sic=absent, frozen_sector="Other")
+        assert note is not None
+        assert "ABSENT" in note and "UNRESOLVED" in note
+        # the old note's exact claim shape — "sector re-resolved to <label>" — must not appear
+        assert "sector re-resolved to" not in note, (
+            "an absence must never be phrased as a resolution")
+        assert "Other" in note, "the frozen ledger value is still surfaced, never rewritten"
+
+    # a PRESENT SIC keeps its one meaning, and the forward-only correction note is unchanged
+    assert mon.sector_for_display("8741") == "Industrials"
+    live = mon.sector_note(ticker="IT", sic="8741", frozen_sector="Other")
+    assert live is not None and "re-resolved to Industrials" in live and "ABSENT" not in live
+    # agreement between frozen and live says nothing — no note
+    assert mon.sector_note(ticker="IT", sic="8741", frozen_sector="Industrials") is None

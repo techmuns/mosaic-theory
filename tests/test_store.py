@@ -344,3 +344,67 @@ def test_selective_export_writes_only_build_universe_tables(store: Store, tmp_pa
     written = {p.name for p in snaps.glob("*.jsonl")}
     assert written == {f"{t}.jsonl" for t in BUILD_UNIVERSE_TABLES}
     assert "decision_ledger.jsonl" not in written and "candidate_records.jsonl" not in written
+
+
+# --- the entity master accumulates FACTS, not just rows (#464 regression, found 2026-08-31) -----
+def test_an_unenriched_upsert_never_nulls_a_known_sic(store: Store) -> None:
+    """THE REAL FAILURE SHAPE, replayed on the real name it hit. `vinci refresh IT NFLX` resolves
+    WITHOUT `enrich=True`, so it upserted Gartner carrying `sic=None` and `INSERT OR REPLACE`
+    rewrote 8741 to NULL in the committed entity master. The row survived — the no-row-drop guard
+    counts PKs, not fields — so nothing raised, and the monitor read the destroyed fact as a
+    resolved sector of "Unknown" for two weeks.
+
+    IT is the exposed class: ledgered but OUT of the cap band, so no later `build_universe` ever
+    came back to rewrite its SIC.
+    """
+    enriched = _identity("SEC-0000749251-IT").model_copy(update={
+        "issuer_id": "ISS-0000749251", "cik": "0000749251", "ticker": "IT", "eod_symbol": "IT",
+        "name": "GARTNER INC", "sic": "8741", "sic_description": "Services-Management Services"})
+    store.upsert_security(enriched, first_seen=AS_OF)
+    assert store.get_security("SEC-0000749251-IT").sic == "8741"
+
+    # the `refresh` path: same identity, no SIC fetched
+    store.upsert_security(enriched.model_copy(update={"sic": None, "sic_description": None}))
+    got = store.get_security("SEC-0000749251-IT")
+    assert got is not None and got.sic == "8741", (
+        "a writer that does not KNOW the SIC must leave the known one standing")
+    issuer = store._conn.execute(                                        # noqa: SLF001 — the
+        "SELECT sic, sic_description FROM issuers WHERE cik='0000749251'").fetchone()
+    assert (issuer["sic"], issuer["sic_description"]) == (
+        "8741", "Services-Management Services"), "the issuer row is preserved alongside"
+
+
+def test_the_issuer_row_lands_column_for_column(store: Store) -> None:
+    """THE ISSUERS INSERT HAS NO OTHER READER. `_row_to_identity` reads the SECURITIES table only,
+    so `test_security_round_trip`'s `got == ident` cannot cover the issuer side — and the issuers
+    VALUES clause is now three interleaved COALESCE sub-selects over ten positional parameters,
+    which is exactly the shape where a future edit transposes two same-typed columns (`name` and
+    `country` are adjacent in the tuple and both plain strings) and nothing notices until the
+    corruption reaches the committed `issuers.jsonl` on the next export."""
+    ident = _identity().model_copy(update={
+        "name": "Apple Inc.", "sic": "3571", "sic_description": "Electronic Computers"})
+    store.upsert_security(ident, first_seen=AS_OF)
+    row = dict(store._conn.execute(                                      # noqa: SLF001
+        "SELECT * FROM issuers WHERE cik = ?", (ident.cik,)).fetchone())
+    assert row == {
+        "cik": "0000320193", "issuer_id": "ISS-0000320193", "name": "Apple Inc.",
+        "sic": "3571", "sic_description": "Electronic Computers", "country": "US",
+        "first_seen": AS_OF.isoformat(),
+    }
+
+
+def test_a_real_sic_change_still_overwrites_and_a_new_row_still_writes_none(store: Store) -> None:
+    """THE NEGATIVE PIN. Preserving must not become freezing: a genuine RE-CLASSIFICATION (a
+    non-NULL value) still overwrites, and a name whose SIC was never known still stores NULL —
+    otherwise `sector_for_display` could never report an absence at all."""
+    ident = _identity()
+    store.upsert_security(ident.model_copy(update={"sic": "3571"}), first_seen=AS_OF)
+    store.upsert_security(ident.model_copy(update={"sic": "7372"}))     # EDGAR re-classified it
+    assert store.get_security(ident.internal_id).sic == "7372"
+
+    fresh = _identity("SEC-0001065280-NFLX").model_copy(update={
+        "issuer_id": "ISS-0001065280", "cik": "0001065280", "ticker": "NFLX",
+        "eod_symbol": "NFLX", "name": "NETFLIX INC", "sic": None, "sic_description": None})
+    store.upsert_security(fresh, first_seen=AS_OF)
+    assert store.get_security("SEC-0001065280-NFLX").sic is None, (
+        "a never-known SIC stays NULL — COALESCE preserves, it does not fabricate")
