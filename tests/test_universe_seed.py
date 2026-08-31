@@ -197,7 +197,8 @@ def test_build_universe_itself_seeds_before_it_exports(tmp_path: Path, monkeypat
     class _Edgar:
         @classmethod
         def from_config(cls, _cfg): return cls()
-        def shares_outstanding_by_cik(self, _periods): return {}
+        def shares_outstanding_with_provenance(
+            self, _periods, *, include_period_average=False): return {}, {}
 
     monkeypatch.setattr(uni, "EntityResolver", _Resolver)
     monkeypatch.setattr(uni, "PolygonEodClient", _Eod)

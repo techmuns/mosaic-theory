@@ -155,6 +155,22 @@ Each line: *what it does* — *verified how*.
   MSFT/GOOGL/AMZN/NVDA/LLY/CRM/NOW/VEEV/SAP now scannable; META/NVO/AZN dropped LOUDLY at
   no_shares (MC1/FPI1 classes, measured); 10 pins; suite 3217 green.*
   *(detail: `docs/records/2026-08-31-parallel-theme-universe-band.md`)*
+- **Period-average shares tier — the filers that publish no instant share count are sized**
+  (`vinci/edgar/client.py::shares_outstanding_with_provenance`, `universe.py`) — a THIRD, OPT-IN
+  tier (`us-gaap:WeightedAverageNumberOfSharesOutstandingBasic`, a duration frame) after the two
+  filed-instant tags; it never displaces a filed count, and every row it decides — admitted OR
+  dropped out-of-band — carries the tag in its stamped `source`. MEASURED FIRST: `no_shares`
+  dropped 1,919 rows / 1,420 issuers, of which 827 rows are ETFs/funds the type gate rejects
+  anyway; of the 142 genuinely-missing operating equities above $100M ADV this tier recovers 104
+  (META, ACN, MA, CHTR, CMCSA, NKE, REGN, F, ABNB, DASH, HOOD …). META publishes NEITHER instant
+  tag; GOOGL publishes the us-gaap one — that difference alone decided which was admitted. The
+  remaining 38 are IFRS filers (the frames endpoint 404s for `ifrs-full`) and stay behind
+  FPI1/FPI4. **The approximation TRAVELS**: the same `market_cap` feeds the residual model's
+  size terciles and the ranked queue's display, neither of which carries the tag — recorded, not
+  papered over — *real run at the committed vintage 2026-08-24: no_shares 1,919 → 1,366,
+  membership 1,812 → 2,000, 189 admitted rows + 323 out-of-band drops attributed to the tier,
+  0 identities first-seen after it; 7 behavioural pins; suite 3214 green.*
+  *(detail: `docs/records/2026-08-31-period-average-shares-tier.md`)*
 - **Sweep clock + flag kind — two review fixes to the theme falsifier sweep** (`vinci/cli.py`,
   `vinci/monitor.py`) — the sweep now runs on the snapshot's clock (`today=now_date`, not the
   calendar ref that let a weekend run date a passed flag before its own as_of), and the passed
