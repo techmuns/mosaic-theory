@@ -653,6 +653,8 @@ Each line: *what it does* — *verified how*.
   real `_cmd_refresh`) + `test_sic_for_normalises_edgars_empty_description_to_absent`
   (`tests/test_resolver.py`); six demonstrated failing without their fix.
   *Record: `docs/records/2026-08-31-refresh-enriches-best-effort.md`.*
+- **DOSSIER SECTORS — the clobber's downstream fossil, corrected + pinned (2026-08-31).** 9 of 17
+  dossiers said `Unknown` for a sector their SIC resolved; 3 partitioned pins cover data + served mirror. *Record: `docs/records/2026-08-31-artifact-pass-dossier-sectors.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
   defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
