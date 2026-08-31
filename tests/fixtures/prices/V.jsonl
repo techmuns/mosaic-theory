@@ -430,3 +430,6 @@
 {"bar_date": "2026-08-20", "close": 365.73, "high": 368.93, "internal_id": "SEC-0001403161-V", "low": 363.63, "open": 365.095, "source": "polygon-aggs", "volume": 6151472.731365}
 {"bar_date": "2026-08-21", "close": 371.04, "high": 371.8, "internal_id": "SEC-0001403161-V", "low": 366.656, "open": 367.87, "source": "polygon-aggs", "volume": 6675876.349496}
 {"bar_date": "2026-08-24", "close": 382.41, "high": 383.425, "internal_id": "SEC-0001403161-V", "low": 372.2143, "open": 373.26, "source": "polygon-aggs", "volume": 8480747.033896}
+{"bar_date": "2026-08-25", "close": 384.14, "high": 384.2, "internal_id": "SEC-0001403161-V", "low": 380.27, "open": 381.205, "source": "polygon-aggs", "volume": 6779050.633842}
+{"bar_date": "2026-08-26", "close": 383.9, "high": 385.5699, "internal_id": "SEC-0001403161-V", "low": 381.08, "open": 384.14, "source": "polygon-aggs", "volume": 6079965.407553}
+{"bar_date": "2026-08-27", "close": 379.66, "high": 381.7693, "internal_id": "SEC-0001403161-V", "low": 378.5, "open": 381.14, "source": "polygon-aggs", "volume": 6644590.257921}

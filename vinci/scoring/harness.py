@@ -28,6 +28,15 @@ from vinci.scoring.baseline import close_on_or_before as _close_on_or_before
 from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
 from vinci.store import Store
 
+
+class BenchmarkMismatchError(RuntimeError):
+    """A ledger row sealed a benchmark this scoring run does not apply.
+
+    Raised rather than silently scoring the row against the wrong series — the excess return would
+    be meaningless and the monitor, which honours the sealed value, would disagree about the same
+    row. See the guard in ``score_ledger`` for why honouring it per row is a caller change.
+    """
+
 _DEFAULT_COST_BPS = 25.0  # coarse small-cap one-way cost estimate (round-trip applied in metrics)
 _DEFAULT_BENCHMARK_ID = "IDX-IWM"
 
@@ -73,6 +82,7 @@ def score_ledger(
     # READ ONCE. `iter_ledger` is a DB round-trip that now also re-validates every row (#417), so
     # scanning it twice doubles that for no gain — the second pass below iterates this same list.
     ledger = list(store.iter_ledger())
+
     # An undated close cannot be placed in time, so it cannot be KNOWN to have happened by `as_of`.
     # The schema refuses one outright (a close is fully specified or refused), so this is
     # unreachable rather than lenient — written as a requirement so the filter says what it means.
@@ -108,6 +118,29 @@ def score_ledger(
         entry_date = entry.entry_price_as_of
         horizon_date = entry_date + timedelta(days=entry.horizon_days)
         resolved = as_of >= horizon_date
+
+        # THE SEALED BENCHMARK IS NOT HONOURED HERE, AND SILENCE WOULD HIDE IT (review of #512).
+        # This harness applies ONE series to every row (`benchmark_internal_id`, IWM by default),
+        # while each row SEALS the benchmark its cap band chose at log time. Until GOOGL — the
+        # first large-cap position — every sealed value was IWM, so one series was right for all
+        # of them and the divergence could not appear. Scoring a $4T name against small-caps is an
+        # excess return measured off the wrong series, and the MONITOR path does honour the sealed
+        # value, so the two surfaces would disagree about the same row without saying so.
+        #
+        # GATED ON `resolved`, not on presence: an unresolved row contributes no bench_return to
+        # anything, so refusing while GOOGL merely SITS in the ledger would block the fund's own
+        # metric over a number nobody reads. This fires the moment the number would count.
+        #
+        # Honouring it per row is a CALLER change, not a local one — this package resolves neither
+        # config nor tickers (see the docstring above), so the series must be supplied the way
+        # `baskets` already is.
+        _applied = benchmark_internal_id.removeprefix("IDX-")
+        if resolved and entry.benchmark and entry.benchmark != _applied:
+            raise BenchmarkMismatchError(
+                f"{entry.entry_id} sealed benchmark {entry.benchmark!r} but this run applies "
+                f"{_applied!r}, and the row has now RESOLVED — "
+                f"its excess return would be measured off the wrong series while the monitor uses "
+                f"the sealed one. Supply the per-row benchmark series (as `baskets` is supplied).")
         scoring_date = min(horizon_date, as_of)
 
         name_bars = store.get_price_history(entry.internal_id)

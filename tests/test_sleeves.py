@@ -217,11 +217,43 @@ def test_a_legacy_ledger_row_reads_screen_and_overshoot() -> None:
     rows = [LedgerEntry.model_validate_json(json.loads(x)["payload"])
             for x in p.read_text().splitlines() if x.strip()]
     assert rows, "the committed ledger is empty — nothing to assert on"
-    for e in rows:
+
+    # LEGACY MEANS PREDATES THE FIELDS, NOT "every row" (2026-08-28). This asserted None on EVERY
+    # committed row, which held only while every row was legacy. The first row logged AFTER the
+    # fields existed — GOOGL, the quality book's first position, written through the FOLLOWED route
+    # the docstring above says could not reach this ledger — reddened it and the message blamed a
+    # backfill that never happened. The contract is DIRECTIONAL: a row sealed before a field existed
+    # must never acquire it later; a row sealed after may carry it. Split on that, and keep the
+    # legacy reading pinned where it belongs.
+    # PIN THE IDS, NOT THE PREDICATE (review of #512). The first cut partitioned on
+    # `origin is None and sleeve is None` — the very fields the guard protects — so BACKFILLING a
+    # sealed row moved it into `tagged` and the test passed. That is precisely what the assertion
+    # this replaced used to catch, removed while fixing its false positive. These six ids were
+    # sealed before either field existed; the ledger is append-only, so the set only ever grows by
+    # rows that may legitimately carry them.
+    sealed_pre_field = frozenset({
+        "V-VRRM-screen2-20260617", "V-IT-screen2-20260706",
+        "V-SMPL-screen2-20260706", "V-SMPL-screen2-20260729",
+        "C-IT-screen2-20260706", "C-SMPL-screen2-20260706",
+    })
+    by_id = {e.entry_id: e for e in rows}
+    missing = sealed_pre_field - set(by_id)
+    assert not missing, f"sealed rows vanished from an append-only ledger: {sorted(missing)}"
+    legacy = [by_id[i] for i in sorted(sealed_pre_field)]
+    tagged = [e for e in rows if e.entry_id not in sealed_pre_field]
+    for e in legacy:
         assert e.origin is None and e.sleeve is None, (
             f"{e.entry_id} was BACKFILLED — a sealed row is never rewritten to satisfy a later "
             f"schema; absent is the record of when it was logged")
-        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE
+    for e in legacy:
+        assert origin_of(e) == "screen" and sleeve_of(e) == sl.DEFAULT_SLEEVE, (
+            f"{e.entry_id}: a legacy row must READ screen/overshoot through the helpers")
+    for e in tagged:
+        assert e.origin is not None and e.sleeve is not None, (
+            f"{e.entry_id} carries one of origin/sleeve but not the other — a half-tagged row "
+            f"lands in a filtered curve the other half does not agree with")
+        assert origin_of(e) == e.origin and sleeve_of(e) == e.sleeve, (
+            f"{e.entry_id}: the helpers must return the row's OWN values, not the legacy default")
 
 
 @pytest.mark.parametrize(("field", "bad"), [

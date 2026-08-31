@@ -1,4 +1,17 @@
 {
+  "GOOGL": {
+    "assigned_at": "2026-08-28",
+    "band": "large (>$25B)",
+    "benchmark": "SPY",
+    "cap_at_entry_usd": 4230356999999.9995,
+    "entry_date": "2026-08-14",
+    "entry_price": 345.9,
+    "rationale": "cap at entry = 345.9 \u00d7 12,230,000,000 sh = $4.23T \u2192 large (>$25B) \u2192 SPY. Alphabet reports ONE combined common-share line across its A/B/C classes, so this is the all-class count against a Class A price; the band is unambiguous either way (any class basis leaves the cap orders of magnitude above the $25B boundary).",
+    "shares": 12230000000.0,
+    "shares_source": "EDGAR XBRL us-gaap:CommonStockSharesOutstanding = 12,230,000,000 as of 2026-06-30 (Q2 10-Q); CommonStockSharesIssued agrees at the same value.",
+    "supersedes": null,
+    "ticker": "GOOGL"
+  },
   "IT": {
     "assigned_at": "2026-07-21",
     "band": "mid ($4\u201325B)",
