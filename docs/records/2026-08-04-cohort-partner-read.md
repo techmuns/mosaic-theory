@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-08-04
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/audits/2026-08-04-cohort-partner-read.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Is BRBR the cohort partner? — a read
 
 **Report only. No assembly, no build, no name recommended.** Everything below is measured off the

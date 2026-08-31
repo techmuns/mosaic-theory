@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-08-05
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/audits/2026-08-05-basis-fixes-design.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # The two basis fixes — consumer map and design
 
 **2026-08-05. Report, not a build.** The claim under test: *"they're the same shape — a value
@@ -148,4 +159,4 @@ predates the question" in the version-scoping mechanism.
 Marking is done; **capture is not**. Seventeen guided clauses still drop across four names —
 **SMPL 8, MVST 6, VITL 2, IT 1** — and the cause is sentence SHAPE, not the metric allowlist
 (`gross margin` is already in it). **This gates IT's re-assembly**, which is next in the queue.
-Full measurement: `docs/audits/2026-08-05-guidance-extractor-drops.md`.
+Full measurement: `docs/records/2026-08-05-guidance-extractor-drops.md`.

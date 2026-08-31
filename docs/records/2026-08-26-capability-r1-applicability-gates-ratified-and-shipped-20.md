@@ -25,7 +25,7 @@ verbatim.*
     positive costs one evidence pull, its false negative costs an IT. Consequence-free today
     (AORT is R2-gated)."*
   - **AUDIT CADENCE ADOPTED:** run before any new BUY verdict, and monthly. First artifact:
-    `docs/audits/2026-07-22-r1-applicability.md`.
+    `docs/records/2026-07-22-r1-applicability.md`.
   - **SCHEMA 1.2** — the bear leg carries `bear_basis` (own-history | bear-state-comps |
     peer-reference | analyst) and `margin_basis` (EBIT | EBITDA), required at write from 1.2.
     `margin_basis` binds only where a margin EXISTS: an EV/Revenue leg refuses a margin outright,

@@ -20,7 +20,7 @@ DR-1. **RE-ASSEMBLE SMPL — closes 19c's artifact half** (disposition render 20
     until a roll cites the figure — which is the mechanism working. **Not a re-render:** the
     synthesis is what must change. Do it under 16b's acceptance conditions.
 DR-2. **N1, N3, N4, N5, N6 — FIVE AUDIT FINDINGS WITH NO QUEUE HOME** (disposition render 2026-08-03;
-    content transcribed in `docs/audits/2026-07-28-smpl/disposition.md` §B so a triage decision needs
+    content transcribed in `docs/records/2026-07-28-smpl-disposition.md` §B so a triage decision needs
     no re-read of the report). Each needs a disposition, not necessarily a build:
     **N5 is the cheapest** — the surprise record renders the ANNUAL GAAP series only ("FY2025 −36%")
     while the last three quarters beat normalized EPS +8.3/+12.5/+20.0%; it is a second read off a

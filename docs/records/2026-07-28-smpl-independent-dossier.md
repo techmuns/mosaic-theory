@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-28
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/audits/2026-07-28-smpl/independent-dossier.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Independent Dossier — The Simply Good Foods Company (Nasdaq: SMPL)
 
 **Built:** 2026-07-28 · **Priced at:** $10.28 (CIQ close, 2026-07-24; see §12 on price provenance)

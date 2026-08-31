@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-30
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/audits/2026-07-30-smpl-reverse-solve-correction.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Correction — the SMPL basis reverse-solve was a fit, not a derivation
 
 **2026-07-30.** Recorded because the memo carries the operator's figures, and the probe rule applies

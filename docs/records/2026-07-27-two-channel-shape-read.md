@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-27
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/audits/2026-07-27-two-channel-shape-read.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # TWO-CHANNEL SHAPE-READ — 2026-07-27
 
 Read-only catalog of every PR from **#194 through #222** (the highest merged PR at run time),
