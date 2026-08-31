@@ -1373,7 +1373,6 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 
 | # | open item | owner | unlocks / blocked on |
 |--:|---|---|---|
-| 1 | **Backfill a cohort pool for the three prior screen runs** (`2026-07-29-03`, `2026-08-12-01`, `2026-08-14-01`). Until then the cohort TRAJECTORY is ONE point: #509 truncates it to the contiguous runs measured over the same peer pool, because splicing a narrow run onto a widened one plotted a 30-point industry "reversal" that no name made. | agent | nothing — `python scripts/build_cohort_pool.py` per run; ~15 min of cached EDGAR each |
 | 2 | **Phase 2 — mechanical no-CIQ triage pass** over the queue, with a COST GATE first (time 10 names before committing to 268). Phase 0 (the LLM cause classifier) folds in here: `cause_class` is dark because no textual de-rating source exists at queue scale — all 525 events are `earnings_gap_down` from the EOD detector, no accession, no document. | agent | operator go-ahead on the cost gate; narrow to top-50 if a full pass will not fit the week |
 | 3 | **Should `scenario-supersede` recompute the incoming payload's `result`?** (entry below, ~line 5200) | operator | ruling |
 | 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |

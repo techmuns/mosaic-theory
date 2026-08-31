@@ -27,7 +27,8 @@ ADRs AND FOREIGN ISSUERS ARE INCLUDED — operator ruling 2026-08-26. An industr
 industry's wherever the issuer is domiciled; the fund still only BUYS US names. This changes the
 yardstick, not the shopping list.
 
-    python scripts/build_cohort_pool.py            # extend the pool for the newest screen run
+    python scripts/build_cohort_pool.py                    # the newest screen run
+    python scripts/build_cohort_pool.py --run 2026-08-12-01  # backfill an earlier one
 """
 
 from __future__ import annotations
@@ -39,6 +40,11 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+# THIS REPO'S `vinci`, NOT WHICHEVER ONE THE INTERPRETER FINDS. Running a file under `scripts/`
+# puts that directory on `sys.path[0]`, so a bare `import vinci` resolves through the venv's
+# path config — which points at a DIFFERENT checkout. The script would then measure this
+# worktree's snapshots with another worktree's code and report it as one result.
+sys.path.insert(0, str(ROOT))
 SNAP = ROOT / "data" / "snapshots"
 OUT = SNAP / "cohort_pool.jsonl"
 
@@ -85,6 +91,81 @@ def window_from(run: pathlib.Path) -> tuple[dt.date, dt.date]:
     raise SystemExit(f"no window recorded in {run.name} — cannot match the screen's measurement")
 
 
+def select_run(runs: list[pathlib.Path], argv: list[str]) -> pathlib.Path:
+    """Newest run by default; ``--run <id>`` to backfill an earlier one.
+
+    WHY A SELECTOR EXISTS AT ALL. The pool is per-run, and one run is one point: #509 truncates the
+    industry trajectory to the CONTIGUOUS runs measured over the same peer pool, because splicing a
+    narrow run onto a widened one plotted a 30-point industry "reversal" that no constituent made.
+    A series therefore requires the earlier runs rebuilt on the WIDE basis, which requires naming
+    them.
+
+    An unknown id RAISES rather than falling back to the newest. Silently pooling the wrong run
+    would file rows under a `run_id` whose window they were not measured over — the same
+    mixed-vintage read #513 closed one layer up, and equally invisible afterwards, since every row
+    still carries a plausible return.
+
+    BOTH ARGV FORMS, because the trap is the flag being ACCEPTED AND IGNORED (review). The first
+    cut tested `"--run" not in argv`, so `--run=2026-07-29-03` — the ordinary equals form — fell
+    through to `runs[-1]` and re-pooled the NEWEST run under a plausible summary. That is the same
+    silence the call-site pin exists to catch, reached by a different route: the operator's
+    15-minute backfill runs, prints, and leaves the trajectory exactly one point long.
+    """
+    wanted: str | None = None
+    for j, arg in enumerate(argv):
+        if arg == "--run":
+            if j + 1 >= len(argv):
+                raise SystemExit("--run needs a run id, e.g. --run 2026-08-12-01")
+            wanted = argv[j + 1]
+        elif arg.startswith("--run="):
+            wanted = arg.split("=", 1)[1]
+            if not wanted:
+                raise SystemExit("--run needs a run id, e.g. --run 2026-08-12-01")
+    if wanted is None:
+        return runs[-1]
+    match = next((r for r in runs if r.stem == wanted), None)
+    if match is None:
+        raise SystemExit(
+            f"no committed screen run {wanted!r} — have {', '.join(r.stem for r in runs)}")
+    return match
+
+
+def universe_source(run: pathlib.Path, runs: list[pathlib.Path]) -> pathlib.Path:
+    """The run whose UNIVERSE rows supply this run's pool members — normally the run itself.
+
+    A CANDIDATE-ONLY RE-RUN HAS NO UNIVERSE ROWS TO POOL. `2026-07-29-02` and `-03` are 1,780
+    candidate rows each with not one `grain=universe` line: they re-evaluated that day's candidates
+    against the universe `-01` had already built, and the universe stages were never re-emitted.
+    The trajectory nevertheless asks for `-03` — it is the same-day run `run_for_stamp` resolves to
+    — so pooling it at all means drawing its members from the run that did build the day's universe.
+
+    THE EQUIVALENCE IS CHECKED, NOT ASSUMED. Only a SAME-DAY run qualifies, and only when its
+    window is identical: a pool row is a return over a window, so a donor measured over different
+    dates would file one run's 180 days under another's. Verified for 2026-07-29 — `-01` and `-03`
+    carry byte-identical `band`, `screen` and `stages` manifests, the same `reference_date`, and
+    the same `2026-01-30 -> 2026-07-29` window.
+
+    Every borrowed row records `universe_from`, so the artifact says where its members came from
+    rather than leaving it to be re-derived.
+    """
+    if any(json.loads(x).get("grain") == "universe"
+           for x in run.read_text().splitlines() if x.strip()):
+        return run
+    day = run.stem[:10]
+    want = window_from(run)
+    donors = [r for r in runs
+              if r.stem[:10] == day and r != run
+              and any(json.loads(x).get("grain") == "universe"
+                      for x in r.read_text().splitlines() if x.strip())]
+    donors = [r for r in donors if window_from(r) == want]
+    if not donors:
+        raise SystemExit(
+            f"{run.stem} has no universe rows and no same-day run shares its window "
+            f"({want[0]} -> {want[1]}) — there is nothing to pool it from. Pool the run that "
+            f"built the day's universe instead.")
+    return donors[-1]
+
+
 def main(argv: list[str]) -> int:
     from vinci.config import get_config, load_local_env
     load_local_env()
@@ -99,10 +180,14 @@ def main(argv: list[str]) -> int:
     if not runs:
         print("no committed screen runs", file=sys.stderr)
         return 1
-    run = runs[-1]
+    run = select_run(runs, argv)
     start, end = window_from(run)
     run_id = run.stem
     print(f"  screen run {run_id} · window {start} -> {end} (read from the run, not recomputed)")
+    members = universe_source(run, runs)
+    if members != run:
+        print(f"  {run_id} is a candidate-only re-run with no universe rows — members drawn from "
+              f"{members.stem}, which built the day's universe over the same window")
 
     already = set()
     if OUT.is_file():
@@ -112,7 +197,7 @@ def main(argv: list[str]) -> int:
             print(f"  {len(already)} names already pooled for this run")
 
     wanted = []
-    for line in run.read_text().splitlines():
+    for line in members.read_text().splitlines():
         if not line.strip():
             continue
         row = json.loads(line)
@@ -164,11 +249,13 @@ def main(argv: list[str]) -> int:
                 skipped_sic += 1
                 continue
             rel = (bars_end[ticker].close / bars_start[ticker].close - 1) - bench
-            fh.write(json.dumps({"run_id": run_id, "ticker": ticker, "sic": sic,
-                                 "rel_ret_vs_market": rel, "as_of": end.isoformat(),
-                                 "window_start": start.isoformat(),
-                                 "source": "grouped-daily endpoints, screen window"},
-                                sort_keys=True) + "\n")
+            record = {"run_id": run_id, "ticker": ticker, "sic": sic,
+                      "rel_ret_vs_market": rel, "as_of": end.isoformat(),
+                      "window_start": start.isoformat(),
+                      "source": "grouped-daily endpoints, screen window"}
+            if members != run:
+                record["universe_from"] = members.stem
+            fh.write(json.dumps(record, sort_keys=True) + "\n")
             written += 1
             if i % 500 == 0:
                 print(f"    {i}/{len(wanted)} · written {written}", flush=True)
