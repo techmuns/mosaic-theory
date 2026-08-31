@@ -36,8 +36,11 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 29.8% | 10y history · weak |
 | Median multiple, own history | 26.1x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $706.41 | spot-independent · EV/EBIT 28.3x |
+| Screen value / share | $699.65 | spot-independent · EV/EBIT 28.3x |
 | Overall confidence | weak |  |
+
+**data_quality: vendor_bridge**
+- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
 
 ## The case
 _(top points; the full argument is in Analysis)_

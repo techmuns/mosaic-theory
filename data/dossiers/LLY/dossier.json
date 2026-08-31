@@ -10478,10 +10478,12 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-21T11:05:43.512255Z",
+    "computed_at": "2026-08-31T09:00:53.640126Z",
     "reason": null,
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": {
       "value": 0.298207,
       "unit": "fraction",
@@ -10504,10 +10506,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
     },
     "net_debt": {
-      "value": 41282.6,
+      "value": 47320.0,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 48,871 + finance leases 0 + operating leases 1,362 − cash 8,950 ($M)"
+      "source": "EDGAR: total debt 54,908 + finance leases 0 + operating leases 1,362 − cash 8,950 ($M)"
     },
     "diluted_shares": {
       "value": 893700000.0,
@@ -10522,12 +10524,12 @@
       "source": "committed financial_summary.annual (LTM)"
     },
     "ltm_fcf": {
-      "value": null,
+      "value": 18190.0,
       "unit": "$M",
-      "basis": "free cash flow",
-      "source": "UNKNOWN — no aligned operating-cash-flow + capex pair"
+      "basis": "trailing twelve months (vendor basis)",
+      "source": "CIQ Financials->Cash Flow operating cash flow less capital expenditure [Eli Lilly and Company NYSE LLY Financials_Quarterly.xls sha 611e1bb09e]"
     },
-    "anchor_base_value_per_share": 706.4067,
+    "anchor_base_value_per_share": 699.6511,
     "anchor_ev_ebit": 28.3116,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."

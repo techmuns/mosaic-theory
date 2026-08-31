@@ -129,13 +129,76 @@ def _parse_date(s: str | None) -> date | None:
     return date.fromisoformat(s) if s else None
 
 
+#: A tag is ABANDONED when it lags the filer's OWN newest reported fact by more than this. Measured
+#: against the filer's frontier, not against today, so a filer who is simply late is never called
+#: stale — only one that kept filing while this particular tag stopped. 550 days clears an annual
+#: series (up to ~365d behind a quarterly frontier, plus filing lag and a 53-week year) and is far
+#: below every abandonment in evidence: the nearest real case measured is 670d and the worst 5,907d.
+STALE_TAG_LAG_DAYS = 550
+
+
+def filer_frontier(facts: dict[str, Any]) -> date | None:
+    """The newest period end the filer reports under ANY tag — its own reporting clock."""
+    nsmap = facts.get("facts", {})
+    ends: list[date] = []
+    for ns in _NAMESPACES:
+        for body in (nsmap.get(ns) or {}).values():
+            for rows in (body.get("units") or {}).values():
+                for r in rows:
+                    d = _parse_date(r.get("end"))
+                    if d is not None:
+                        ends.append(d)
+    return max(ends) if ends else None
+
+
 def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
-    """Extract all reported points for a logical concept, trying alias tags in priority order."""
+    """Extract all reported points for a logical concept, trying alias tags in priority order.
+
+    MC1 — AN ABANDONED ALIAS IS SKIPPED, NOT SERVED. First-present-wins alone hands back whatever
+    the filer tagged FIRST in our priority order, even if that series died years ago, because a
+    dead series still carries a confident filed date. Measured live at megacaps: Amazon's
+    ``PaymentsToAcquirePropertyPlantAndEquipment`` last reports 2017-03-31 and Nvidia's 2020-07-26,
+    while BOTH filers report ``PaymentsToAcquireProductiveAssets`` currently — the right number was
+    already in this map, one line below the wrong one, and the resolution order withheld it.
+
+    So the freshness test runs BEFORE the alias is accepted, and a stale one falls through to the
+    next. When EVERY alias is stale the last one is still returned rather than refused: a tag also
+    stops being reported when the FACT ceases (a company that repaid its current debt stops tagging
+    it), and turning that into UNKNOWN would manufacture a hole where the filer simply has nothing
+    to report. Distinguishing abandonment from cessation needs the filer's own words, not a date —
+    so this fixes what it can prove and leaves the rest visible via ``stale_served``.
+    """
+    frontier = filer_frontier(facts)
+    last: list[ConceptPoint] = []
     for tag in CONCEPT_ALIASES[concept]:
         points = points_for_tag(facts, tag, concept=concept)
-        if points:
-            return points  # first alias with data wins
-    return []
+        if not points:
+            continue
+        last = points
+        if frontier is None:
+            return points
+        if (frontier - max(p.period_end for p in points)).days <= STALE_TAG_LAG_DAYS:
+            # present AND current — the alias the filer still uses
+            return points
+    # every alias stale: serve the last, and let  name it for the sweep
+    return last
+
+
+def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
+    """``(tag, lag_days)`` when ``extract_points`` had to serve a stale alias — else ``None``.
+
+    The reporting half of MC1: `extract_points` fixes what a fresher alias can fix, and this names
+    what it could not, so the monthly sweep can show a human the tags whose series has gone quiet
+    rather than leaving them to be discovered in a rendered page.
+    """
+    frontier = filer_frontier(facts)
+    if frontier is None:
+        return None
+    pts = extract_points(facts, concept)
+    if not pts:
+        return None
+    lag = (frontier - max(p.period_end for p in pts)).days
+    return (pts[0].tag, lag) if lag > STALE_TAG_LAG_DAYS else None
 
 
 def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "") -> list[ConceptPoint]:
