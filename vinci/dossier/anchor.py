@@ -710,9 +710,20 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
         updates["reason"] = old.reason
         notes.append(f"PRESERVED operator recipe_hint {old.recipe_hint!r} "
                      f"(machine proposed {new.recipe_hint!r}) — reason kept verbatim")
-    elif old.reason and old.reason != new.reason:
+    elif old.reason and old.reason != new.reason and old.applicable == new.applicable:
         updates["reason"] = old.reason
         notes.append(f"PRESERVED operator reason under the same hint {old.recipe_hint!r}")
+    elif old.reason and old.reason != new.reason:
+        # A REASON DOES NOT OUTLIVE THE STATE IT DESCRIBED (review of #534). This branch exists to
+        # keep an OPERATOR's judgment, but it cannot tell one from a machine refusal — so when an
+        # anchor that was refusing becomes applicable, the old text was a description of the
+        # refusal and is now false. GOOGL and NFLX both gained a base (196.01 / 58.17, confidence
+        # "firm") while keeping "R1 inputs incomplete — see per-input source stamps", and the
+        # renderer prints the reason unconditionally: a refusal sentence under a table stating the
+        # anchor applies. Applicability CHANGED, so the fresh reason wins and the drop is reported.
+        notes.append(
+            f"DROPPED stale reason {old.reason!r} — it described applicable={old.applicable} and "
+            f"this run is applicable={new.applicable}; a reason never outlives its own state")
     fresh_detail = new.data_quality_detail or []
     dropped = [d for d in (old.data_quality_detail or []) if d not in fresh_detail]
     if dropped:

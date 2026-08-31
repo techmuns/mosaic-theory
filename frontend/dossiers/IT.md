@@ -81,6 +81,9 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Screen value / share | $364.07 | spot-independent · EV/EBIT 28.5x |
 | Overall confidence | firm |  |
 
+**data_quality: vendor_bridge**
+- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

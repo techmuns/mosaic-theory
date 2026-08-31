@@ -42,7 +42,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 **data_quality: band_incoherent+band_unreconciled**
 - own_history multiple: band_incoherent (periodicity quarterly)
 - Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
-- market-implied EBITDA 438.5 vs 73.5 recorded (5.96x) — outside the 2.5x band. TEV 650.8 (market cap 586.2 + net debt 64.6) ÷ current multiple 1.484x
+- market-implied EBITDA 453.6 vs 73.5 recorded (6.17x) — outside the 2.5x band. TEV 673.2 (market cap 586.2 + net debt 87.0) ÷ current multiple 1.484x
 
 _own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced_
 

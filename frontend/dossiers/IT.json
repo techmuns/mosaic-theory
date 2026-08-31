@@ -8711,10 +8711,12 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T12:42:57.262114Z",
+    "computed_at": "2026-08-31T13:29:33.416003Z",
     "reason": null,
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": {
       "value": 0.141347,
       "unit": "fraction",
@@ -8755,10 +8757,10 @@
       "source": "committed financial_summary.annual (LTM)"
     },
     "ltm_fcf": {
-      "value": null,
+      "value": 1257.9,
       "unit": "$M",
-      "basis": "free cash flow",
-      "source": "UNKNOWN — no aligned operating-cash-flow + capex pair"
+      "basis": "trailing twelve months (vendor basis)",
+      "source": "CIQ Financials->Cash Flow operating cash flow less capital expenditure [Gartner Inc NYSE IT Financials_Quarterly.xls sha 66405c3bc0]"
     },
     "anchor_base_value_per_share": 364.0728,
     "anchor_ev_ebit": 28.5008,

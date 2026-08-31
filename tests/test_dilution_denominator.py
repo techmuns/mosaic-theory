@@ -341,6 +341,12 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: future drift reds on the first run rather than waiting to be noticed.
 ANCHORS_AWAITING_BACKFILL: set[str] = set()
 
+#: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
+#: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
+#: skipped: the first cut counted them toward the anti-vacuity floor while never comparing them, so
+#: the floor could be met entirely by anchors nothing had checked.
+BRIDGE_ONLY_ANCHORS: set[str] = {"GOOGL", "NFLX", "IT", "LLY"}
+
 
 def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
     facts_for: object,
@@ -369,7 +375,7 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
     dd = ROOT / "data" / "dossiers"
     if not dd.is_dir():
         pytest.skip("no local dossiers in this worktree")
-    diverged, compared = set(), 0
+    diverged, unvalued, compared = set(), set(), 0
     for p in sorted(dd.iterdir()):
         doc = p / "dossier.json"
         if not doc.is_file():
@@ -381,12 +387,22 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
         f = facts_for(p.name)  # type: ignore[operator]
         fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
                                  computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
-        compared += 1
+        # COUNT WHAT WAS ACTUALLY COMPARED (review of #534). `compared` was incremented BEFORE the
+        # None-skip, so a name the recompute could not value still raised the floor — the
+        # anti-vacuity guard counted anchors it never compared. GOOGL and NFLX are exactly that
+        # case: their committed bases come from the CIQ bridge, this recompute passes `ciq=None`
+        # deliberately, so both yield None here and neither is a comparison.
         if fresh.anchor_base_value_per_share is None:
+            unvalued.add(p.name)
             continue
+        compared += 1
         if abs(fresh.anchor_base_value_per_share / committed - 1) > 0.001:
             diverged.add(p.name)
     assert compared >= 5, f"only {compared} anchors reached the comparison — near-vacuous"
+    assert unvalued <= BRIDGE_ONLY_ANCHORS, (
+        f"a committed anchor the ciq=None recompute cannot value, and not a known bridge-only "
+        f"name: {sorted(unvalued - BRIDGE_ONLY_ANCHORS)}. Either its base stopped being "
+        f"reproducible from EDGAR alone, or it belongs in BRIDGE_ONLY_ANCHORS with its reason")
     assert diverged == ANCHORS_AWAITING_BACKFILL, (
         f"committed anchors diverging from a fresh recompute: {sorted(diverged)}, recorded: "
         f"{sorted(ANCHORS_AWAITING_BACKFILL)}. If the backfill has run, shrink the list and update "

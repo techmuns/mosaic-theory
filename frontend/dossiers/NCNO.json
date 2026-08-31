@@ -8041,7 +8041,7 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T12:20:56.367027Z",
+    "computed_at": "2026-08-31T13:29:33.591856Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
@@ -8054,13 +8054,13 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
     },
     "net_debt": {
-      "value": 223.899,
+      "value": 255.337,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+      "source": "EDGAR: total debt 275 + finance leases 51 + operating leases 13 − cash 83 ($M)"
     },
     "diluted_shares": {
-      "value": 109458472.0,
+      "value": 105361192.0,
       "unit": "shares",
       "basis": "diluted weighted-average (latest 10-Q)",
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"

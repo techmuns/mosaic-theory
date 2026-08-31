@@ -8052,13 +8052,13 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-18T12:54:07.833489Z",
+    "computed_at": "2026-08-31T13:29:33.908751Z",
     "reason": "own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced",
     "data_quality": "band_incoherent+band_unreconciled",
     "data_quality_detail": [
       "own_history multiple: band_incoherent (periodicity quarterly)",
       "Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure",
-      "market-implied EBITDA 438.5 vs 73.5 recorded (5.96x) — outside the 2.5x band. TEV 650.8 (market cap 586.2 + net debt 64.6) ÷ current multiple 1.484x"
+      "market-implied EBITDA 453.6 vs 73.5 recorded (6.17x) — outside the 2.5x band. TEV 673.2 (market cap 586.2 + net debt 87.0) ÷ current multiple 1.484x"
     ],
     "margin": {
       "value": 0.060239,
@@ -8082,10 +8082,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
     },
     "net_debt": {
-      "value": 64.593,
+      "value": 87.009,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 8 + finance leases 8 + operating leases 70 − cash 21 ($M)"
+      "source": "EDGAR: total debt 30 + finance leases 8 + operating leases 70 − cash 21 ($M)"
     },
     "diluted_shares": {
       "value": 42935854.0,
