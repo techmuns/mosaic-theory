@@ -35,11 +35,19 @@ because that path is a bare literal. In `__main__` only: `tests/test_cohort_pool
 `build_cohort_pool` to exercise `select_run`, and an import-time chdir would move the whole suite's
 CWD out from under the four modules that isolate with it.
 
-**ELEVEN SCRIPTS, NOT THREE.** The three from #515 plus eight pre-existing instances of the same
-bug. Two of those — `fetch_benchmark_iwm.py`, `price_state_falsifier.py` — were found by the new
-invariant test, not by grep: they reach the data tree through `PolygonEodClient.from_config()`
-without ever naming `get_config`. Fixing three and leaving eight would have repeated, in miniature,
-exactly what the review faulted.
+**TWELVE SCRIPTS, NOT THREE.** The three from #515 plus nine pre-existing instances of the same bug.
+Three of those were found by the new invariant test rather than by grep — `fetch_benchmark_iwm.py`
+and `price_state_falsifier.py` reach the data tree through `PolygonEodClient.from_config()` without
+ever naming `get_config`, and `backfill_entity_master_sic.py` landed on main (#525) DURING this
+branch and was caught on the rebase. Fixing three and leaving nine would have repeated, in
+miniature, exactly what the review faulted.
+
+**AND ONE NEAR-MISS WORTH RECORDING.** The revert was first done with `git checkout main -- \
+ vinci/config.py`, but the local `main` ref was from session start. That restored an OLD config.py
+and silently reverted the 2026-08-29 operator ruling bumping `graph_llm_model` to `claude-opus-5`.
+The check that should have caught it — `git diff main -- vinci/config.py` — was circular, comparing
+against the same stale ref. Diff against `origin/main`, never a local branch ref that has not been
+fetched.
 
 **VERIFIED.** The gate re-run from `scripts/` creates no `scripts/data`, no `scripts/scenarios`, and
 completes at 0.0s/name — a cache HIT where it previously missed and re-fetched. `vinci/config.py`
