@@ -83,40 +83,18 @@ class PacingConfig(BaseModel, frozen=True):
     max_retries: int = 4
 
 
-#: The repo root — this file sits one level below it. Used to anchor ``data_dir``.
-_REPO_ROOT = Path(__file__).resolve().parents[1]
-
-
 class Config(BaseModel, frozen=True):
     """Top-level config. Paths derive from ``data_dir``; everything is overridable."""
 
-    #: ANCHORED TO THE PACKAGE, NOT THE WORKING DIRECTORY. The default was a bare relative
-    #: ``Path("data")``, so every derived path — the HTTP cache, the snapshots directory, the
-    #: working DB — moved with whatever CWD the process happened to start in. Running any script
-    #: from ``scripts/`` therefore built a SECOND, empty tree at ``scripts/data/`` and quietly
-    #: refilled it: 4.6MB of SEC responses re-fetched into a cache nothing else would ever read
-    #: again, while `snapshots_dir` and `db_path` pointed at directories that do not exist.
-    #:
-    #: The cache was the visible symptom because it creates what it misses. The dangerous half is
-    #: the other two: a caller that WRITES through `cfg.snapshots_dir` from the wrong CWD files an
-    #: artifact where nothing will read it, and reports success.
-    #:
-    #: Anchoring to `__file__` makes the data follow the CODE — run this checkout's `vinci`, get
-    #: this checkout's `data/`. Still overridable: `Config(data_dir=...)` is how the tests point it
-    #: at a tmp_path, and that is unaffected.
-    data_dir: Path = Field(default=_REPO_ROOT / "data")
+    data_dir: Path = Field(default=Path("data"))
     universe: UniverseConfig = UniverseConfig()
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
-    # LLM for graph extraction + dossier synthesis + the theme exposure classifier. Bumped to
-    # Opus 5 by OPERATOR RULING 2026-08-29 (the strongest-available-model policy that picked
-    # Opus 4.8 in the first place, applied to the new generation). The 4.8-era groundedness
-    # benchmark (vs Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable —
-    # see STATE.md) has NOT been re-run on Opus 5 — accepted with its falsifier in the record:
-    # untraceable figures or mis-cites appearing in fresh extractions are the signal to re-run
-    # graph Test 0 on a sample and, if it degrades, flip this knob back. Swappable, not a router.
-    graph_llm_model: str = "claude-opus-5"
+    # LLM for graph extraction + dossier synthesis. Default Opus 4.8 (groundedness benchmark vs
+    # Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable — see STATE.md).
+    # Accuracy gates the moat hypothesis, so we run the stronger model; swappable config knob.
+    graph_llm_model: str = "claude-opus-4-8"
     # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
     # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
     # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-

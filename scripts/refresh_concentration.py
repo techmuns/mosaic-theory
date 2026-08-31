@@ -16,6 +16,8 @@ Prereq: the licensed CIQ workbooks under ``data/manual/ciq/<TICKER>/`` (git-igno
 
 from __future__ import annotations
 
+import os
+import pathlib
 import sys
 
 from vinci.config import get_config
@@ -24,6 +26,8 @@ from vinci.dossier.manual_store import LocalFolderStore
 from vinci.dossier.mechanical import _concentration
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def main(argv: list[str]) -> int:
@@ -50,4 +54,7 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    # Run from the repo root: ~28 data roots resolve against the CWD (see the note in
+    # build_cohort_pool.py). In __main__ only, so importing this module cannot chdir the suite.
+    os.chdir(ROOT)
     raise SystemExit(main(sys.argv[1:]))

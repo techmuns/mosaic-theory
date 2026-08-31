@@ -29,6 +29,7 @@ import argparse
 import collections
 import datetime as dt
 import json
+import os
 import pathlib
 import sys
 import time
@@ -202,4 +203,19 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    # RUN FROM THE REPO ROOT, BECAUSE THAT IS THE REPO'S PATH CONVENTION. `Config.data_dir` and ~28
+    # other roots (`vinci/scenarios.py`, `vinci/monitor.py`, `vinci/dossier/refresh.py`, the
+    # `Path("data/…")` literals in `cli.py`) all resolve against the CWD, deliberately and
+    # uniformly — four test modules use `monkeypatch.chdir` for isolation because of it. A script
+    # invoked from `scripts/` therefore addresses a second, empty tree at `scripts/data/` and
+    # refills whatever it misses.
+    #
+    # ANCHORING `data_dir` INSTEAD WOULD BE WORSE, not better: it moves ONE of those roots and
+    # leaves the rest, so `vinci dossier` would read scenarios from `scripts/scenarios` (absent →
+    # "not underwritten", by design) while writing to the now-absolute COMMITTED `data/dossiers/`
+    # — a thesis silently dropped from a tracked artifact. Uniformly wrong beats half-right.
+    #
+    # In `__main__` only: `tests/test_cohort_pool.py` imports this module to exercise `select_run`,
+    # and an import-time chdir would leak into the suite.
+    os.chdir(ROOT)
     raise SystemExit(main(sys.argv))

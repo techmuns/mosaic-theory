@@ -43,6 +43,8 @@ import argparse
 import csv
 import gzip
 import json
+import os
+import pathlib
 import random
 import statistics as st
 import sys
@@ -547,4 +549,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Run from the repo root — the data roots are CWD-relative (see build_cohort_pool.py).
+    os.chdir(pathlib.Path(__file__).resolve().parents[1])
     sys.exit(main())

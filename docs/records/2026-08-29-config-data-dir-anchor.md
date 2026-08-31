@@ -7,32 +7,45 @@ supersedes:
 superseded-by:
 ---
 
-# The data tree follows the code, not the shell
+# Scripts run from the repo root — the CWD convention is honoured, not fought
 
-**THE BUG.** `Config.data_dir` defaulted to a bare relative `Path("data")`, so every derived path —
-`cache_dir`, `snapshots_dir`, `db_path` — moved with whatever CWD the process started in. Running
-any script from `scripts/` built a second, empty tree at `scripts/data/` and quietly refilled it:
-4.6MB of SEC responses re-fetched into a cache nothing else would ever read again.
+**THE BUG.** Running a script from `scripts/` built a second, empty tree at `scripts/data/` and
+quietly refilled it: 4.6MB of SEC responses re-fetched into a cache nothing else would ever read.
 
-**THE CACHE WAS ONLY THE VISIBLE SYMPTOM, because a cache creates what it misses.** The dangerous
-half is silent: `snapshots_dir` and `db_path` pointed at directories that do not exist, so a caller
-writing through `cfg.snapshots_dir` from the wrong CWD files an artifact where nothing will read it
-and reports success. Nothing in the repo does that today — which is exactly why it was worth closing
-before something did.
+**THE FIRST FIX WAS WRONG, AND THE REVIEW WAS RIGHT TO KILL IT.** It anchored `Config.data_dir` to
+`Path(__file__).resolve().parents[1]`. But `data_dir` is one of ~28 roots that resolve against the
+CWD — `vinci/scenarios.py`, `vinci/monitor.py`, `vinci/dossier/refresh.py`, and the
+`Path("data/…")` literals in `cli.py` — and that uniformity is deliberate: four test modules use
+`monkeypatch.chdir` for isolation because of it.
 
-**THE FIX.** `data_dir` anchors to `Path(__file__).resolve().parents[1]` — run this checkout's
-`vinci`, get this checkout's `data/`. That is the right coupling, and it composes with the `sys.path`
-pin added to `scripts/` in #514: under `scripts/`, a bare `import vinci` resolves through the venv's
-`.pth` to a DIFFERENT worktree, and the data must follow whichever code actually loaded.
+Moving one root and leaving 27 is **worse than either endpoint**. `vinci dossier IT` from
+`scripts/` would read the underwrite record from `scripts/scenarios` — absent, and absent means
+"not underwritten" BY DESIGN, per `_read_scenario_card`'s own docstring — while writing to the
+now-absolute **committed** `data/dossiers/IT/`. A tracked artifact silently loses its thesis and the
+run reports success. The old behaviour wrote a throwaway `scripts/data/dossiers` and left the
+committed file alone. Half-right converted "fails uniformly from the wrong CWD" into "succeeds
+except one silent read, into the tree that is under version control".
 
-Still overridable — `Config(data_dir=...)` is how every test that writes points at a `tmp_path`, and
-that is pinned separately so anchoring the default cannot weld the path down.
+`parents[1]` was also wrong for the packaged install: the project declares a hatchling wheel and a
+`vinci` console script, so under `pip install .` the anchor lands in site-packages.
 
-**HOW IT WAS FOUND.** Not by a test. `git status` showed an untracked `scripts/data/` after the
-triage cost gate ran from that directory during #515.
+**THE FIX THAT HOLDS.** `os.chdir(ROOT)` in each script's `__main__`. It corrects **all ~28 roots at
+once**, not one — the config anchor never fixed `vinci themes` writing `scripts/data/scan_history/`,
+because that path is a bare literal. In `__main__` only: `tests/test_cohort_pool.py` imports
+`build_cohort_pool` to exercise `select_run`, and an import-time chdir would move the whole suite's
+CWD out from under the four modules that isolate with it.
 
-**VERIFIED.** The same command from three CWDs (repo root, `scripts/`, `/tmp`) resolves one
-absolute path, and `snapshots_dir`/`db_path` exist from all three. Re-running the gate from
-`scripts/` creates no second tree and completes at 0.0s/name — a cache HIT, where before it missed
-and re-fetched. 4 mutations caught: the relative default restored, the anchor off by one level, an
-absolute path to the wrong tree, and the override ignored.
+**ELEVEN SCRIPTS, NOT THREE.** The three from #515 plus eight pre-existing instances of the same
+bug. Two of those — `fetch_benchmark_iwm.py`, `price_state_falsifier.py` — were found by the new
+invariant test, not by grep: they reach the data tree through `PolygonEodClient.from_config()`
+without ever naming `get_config`. Fixing three and leaving eight would have repeated, in miniature,
+exactly what the review faulted.
+
+**VERIFIED.** The gate re-run from `scripts/` creates no `scripts/data`, no `scripts/scenarios`, and
+completes at 0.0s/name — a cache HIT where it previously missed and re-fetched. `vinci/config.py`
+and `tests/test_config.py` are byte-identical to main. 2 mutations caught: a data-reading script
+dropping its chdir, and a chdir moved inside an importable function.
+
+**WHAT IS NOT FIXED.** The ~28 CWD-relative roots stay CWD-relative. That is the repo's convention
+and the tests depend on it; this record exists so the next attempt to "just anchor `data_dir`" finds
+the reason it was tried and reverted.
