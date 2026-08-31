@@ -1733,7 +1733,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # (the machine flags the closed window; whether it FIRED is the human's read).
     from vinci.themes.thesis import load_all_theses
     cards, card_problems = load_all_theses(data_dir=cfg.data_dir)
-    theme_rows = mon.theme_falsifier_rows(cards, today=ref)
+    # today=now_date, NOT ref (review 2026-08-31): the snapshot is stamped as_of=now_date (last
+    # trading day), and every other as-of computation in this function anchors there. Sweeping on
+    # the calendar ref let a weekend run commit deadline_passed=true into a day file dated BEFORE
+    # the deadline — an immutable artifact asserting a window closed after its own as_of.
+    theme_rows = mon.theme_falsifier_rows(cards, today=now_date)
     # AN UNREADABLE CARD IS A WATCH THAT IS NOT HAPPENING, so it is surfaced in the run's own
     # notes rather than raising: one hand-edited theme file must not take the book's marks and
     # spread down with it, and it must not pass silently either.

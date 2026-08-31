@@ -64,12 +64,26 @@ def test_sweep_flags_passed_and_lists_future_deadlines() -> None:
 def test_render_carries_the_flag_wording_and_never_adjudicates() -> None:
     md = render_table(_snap(theme_falsifier_rows([_card()], today=date(2026, 8, 29))))
     assert "THEME FALSIFIERS (thesis cards; machine flags deadlines — the human concludes)" in md
-    assert "⚑ past-due falsifier — deadline 2026-08-15 PASSED → re-underwrite due" in md
+    # the kind LEADS the flag (review 2026-08-31) — see the passed-first-confirming pin below
+    assert "⚑ falsifier: past-due falsifier — deadline 2026-08-15 PASSED → re-underwrite due" in md
     # the future rows list WITHOUT the flag — a window still open is not a flag
     assert "falsifier: future falsifier (by 2027-01-31)" in md
     assert "future falsifier — deadline 2027-01-31 PASSED" not in md
     # the flag says the WINDOW closed; "fired" is the human's word and must not appear
     assert "fired" not in md.lower()
+
+
+def test_a_passed_first_confirming_flags_with_its_kind_visible() -> None:
+    """REVIEW FINDING (2026-08-31, medium review of the first declared card): the passed-deadline
+    branch dropped ``tf.kind``, so a passed FIRST-CONFIRMING printed byte-identically to a passed
+    falsifier — the console reported a confirmation window closing as if a falsifier's had. The
+    first real card (confirming due 2026-12-15) would have hit this the day the window closed.
+    The kind now leads BOTH branches; this pin runs the sweep past the confirming deadline."""
+    md = render_table(_snap(theme_falsifier_rows([_card()], today=date(2026, 12, 16))))
+    assert ("⚑ first-confirming: confirming datapoint — deadline 2026-11-15 PASSED "
+            "→ re-underwrite due") in md
+    # and the two kinds are distinguishable in the same render
+    assert "⚑ falsifier: past-due falsifier — deadline 2026-08-15 PASSED" in md
 
 
 def test_zero_cards_renders_a_stated_absence() -> None:
@@ -138,3 +152,8 @@ def test_cmd_monitor_wires_the_sweep_into_the_snapshot() -> None:
     assert "load_all_theses" in fn
     assert "theme_falsifier_rows" in fn
     assert "theme_falsifiers=theme_rows" in fn
+    # REVIEW PIN (2026-08-31): the sweep runs on the SNAPSHOT'S clock (now_date, last trading
+    # day), never the calendar ref — sweeping on ref let a weekend run commit
+    # deadline_passed=true into a day file dated BEFORE the deadline.
+    assert "theme_falsifier_rows(cards, today=now_date)" in fn
+    assert "theme_falsifier_rows(cards, today=ref)" not in fn
