@@ -8,6 +8,8 @@ SOXX (sector-adjusted — the deciding number). The gap between them is the find
 from __future__ import annotations
 
 import json
+import os
+import pathlib
 import statistics
 
 from vinci.config import get_config
@@ -21,6 +23,10 @@ CONTROL = {"AAPL", "AMZN", "WMT"}  # famous, saturated-coverage hubs → priced 
 LIVE = {"TSM", "AMAT", "LRCX", "STM", "INTC", "MU", "GFS", "JBL", "PLXS"}  # semis live test
 WINDOWS = [(1, 5), (1, 10), (1, 20)]
 
+# NO `main()` HERE — this file runs at module level, so the chdir goes before the first
+# data-root read rather than in a `__main__` block. Nothing imports it (checked); if
+# anything ever does, give it a main() first.
+os.chdir(pathlib.Path(__file__).resolve().parents[1])
 cfg = get_config()
 r = EntityResolver.from_config(cfg)
 with open("data/graph_coverage.json") as _f:

@@ -25,6 +25,7 @@ Needs a warm cache or network; it is an operator tool, never imported by the sui
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import sys
 from typing import Any
@@ -134,4 +135,7 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    # Run from the repo root: ~28 data roots resolve against the CWD (see the note in
+    # build_cohort_pool.py). In __main__ only, so importing this module cannot chdir the suite.
+    os.chdir(ROOT)
     raise SystemExit(main(sys.argv[1:]))

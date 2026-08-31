@@ -9,6 +9,8 @@ DIRECTIONAL-ONLY, n labelled, and the one positive cross-section is never mined.
 
 from __future__ import annotations
 
+import os
+import pathlib
 import statistics
 
 from vinci.config import get_config
@@ -27,6 +29,10 @@ XSECTOR = {
 }
 LO, HI = 1, 10
 
+# NO `main()` HERE — this file runs at module level, so the chdir goes before the first
+# data-root read rather than in a `__main__` block. Nothing imports it (checked); if
+# anything ever does, give it a main() first.
+os.chdir(pathlib.Path(__file__).resolve().parents[1])
 cfg = get_config()
 r = EntityResolver.from_config(cfg)
 

@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -241,4 +242,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Run from the repo root — the data roots are CWD-relative (see build_cohort_pool.py).
+    os.chdir(ROOT)
     raise SystemExit(main())

@@ -14,6 +14,8 @@ non-OK Polygon status raises; an empty range prints and exits non-zero rather th
 
 from __future__ import annotations
 
+import os
+import pathlib
 import sys
 from datetime import date, timedelta
 
@@ -62,4 +64,6 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    # Run from the repo root — the data roots are CWD-relative (see build_cohort_pool.py).
+    os.chdir(pathlib.Path(__file__).resolve().parents[1])
     raise SystemExit(main(sys.argv[1:]))
