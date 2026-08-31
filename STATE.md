@@ -617,8 +617,14 @@ Each line: *what it does* — *verified how*.
   means UNKNOWN can no longer erase a stored value. **Live-run find:** EDGAR returns
   `sicDescription: ""` (not null) for a SIC-less issuer, and SQL COALESCE treats `''` as PRESENT —
   so the blank would have overwritten a stored description; normalised to None at the boundary.
-  Incident→invariant (shipped Y): `tests/test_refresh_enrich.py` (6 pins, all driven through the
-  real `_cmd_refresh`; four demonstrated failing pre-change).
+  Review moved that normalisation to the SOURCE (`sic_for`) — the first fix patched `cli.py` alone
+  and left `resolve_ticker(enrich=True)`, `_enrich_issuer` and the backfill script still passing the
+  blank. Review also added a SYSTEMIC-failure tally (per-name lines scroll past; a run that loses
+  every SIC now says so once, after the summary) and made the tests hermetic (they had mkdir'd
+  `data/` into the pytest CWD via the un-stubbed `get_config`).
+  Incident→invariant (shipped Y): `tests/test_refresh_enrich.py` (8 pins, all driven through the
+  real `_cmd_refresh`) + `test_sic_for_normalises_edgars_empty_description_to_absent`
+  (`tests/test_resolver.py`); six demonstrated failing without their fix.
   *Record: `docs/records/2026-08-31-refresh-enriches-best-effort.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet

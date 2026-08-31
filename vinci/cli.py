@@ -89,7 +89,8 @@ def _cmd_resolve(args: argparse.Namespace) -> int:
     return exit_code
 
 
-def _resolve_for_refresh(resolver: EntityResolver, ticker: str) -> Identity | None:
+def _resolve_for_refresh(resolver: EntityResolver, ticker: str, *,
+                         sic_failures: list[str] | None = None) -> Identity | None:
     """One ticker for a price backfill: STRICT on the identity, BEST-EFFORT on the SIC.
 
     WHY `refresh` ENRICHES AT ALL (closes STATE.md §5.0 row 7). This command is how a name that is
@@ -124,16 +125,18 @@ def _resolve_for_refresh(resolver: EntityResolver, ticker: str) -> Identity | No
     except Exception as exc:  # noqa: BLE001 — reported, never guessed; the bars are the job
         print(f"{ticker}: SIC lookup FAILED ({type(exc).__name__}: {exc}) — refreshing prices with "
               f"SIC UNKNOWN. Bars are unaffected, and any stored SIC is preserved.")
+        if sic_failures is not None:
+            sic_failures.append(ticker)
         return ident
     if sic is None:
         # ABSENT, not broken — the distinction #523/#525 exist to keep visible.
         print(f"{ticker}: EDGAR publishes no SIC for this issuer (routine for BDCs and funds) — "
               f"stored as UNKNOWN, never inferred.")
-    # EMPTY STRING IS NOT A VALUE, and here it is not merely cosmetic: `upsert_security` COALESCEs
-    # `sic_description`, and SQL COALESCE treats '' as PRESENT — so an empty description would
-    # OVERWRITE a stored one instead of deferring to it, quietly re-opening the erasure #523 shut
-    # for the sibling column. EDGAR really does return '' (observed live on FSK, a BDC: sic None,
-    # sicDescription ''), so this is a live path, not a defensive flourish.
+    # `or None` is BELT-AND-BRACES, not the primary guard: `sic_for` normalises EDGAR's `""`
+    # description at the source (pinned in `tests/test_resolver.py`). It is kept because this is
+    # the last line before a DURABLE write to the entity master, and `upsert_security` COALESCEs
+    # `sic_description` — SQL COALESCE treats '' as PRESENT, so a blank here would overwrite a
+    # stored description rather than defer to it.
     return ident.model_copy(update={"sic": sic, "sic_description": sic_desc or None})
 
 
@@ -144,12 +147,15 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
     resolver = EntityResolver.from_config(cfg)
     client = PolygonEodClient.from_config(cfg)
     secs = []
+    sic_failures: list[str] = []
+    attempted = 0
     for t in args.tickers:
         if t.upper() in {BENCHMARK_SMALL, BENCHMARK_MID, BENCHMARK_LARGE}:
             # benchmark ETFs are synthetic identities (IDX-*), not SEC issuers — resolver-exempt
             secs.append(benchmark_identity(t.upper()))
             continue
-        if (ident := _resolve_for_refresh(resolver, t)) is not None:
+        attempted += 1
+        if (ident := _resolve_for_refresh(resolver, t, sic_failures=sic_failures)) is not None:
             secs.append(ident)
     start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
     mode = "per-symbol aggs" if args.aggs else "grouped-daily"
@@ -165,6 +171,17 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
             summary = ingest_prices(
                 client, store, secs, start=start, end=end, progress=stderr_reporter)
     print(f"done: {summary}")
+    if sic_failures:
+        # SAID ONCE, AT THE END, AND AS A TALLY (review of #528). Per-name lines alone are not a
+        # signal: on a long refresh during an SEC outage — or after a change that breaks `sic_for`,
+        # since `except Exception` catches an AttributeError just as readily — every name degrades
+        # to SIC UNKNOWN, the individual lines scroll past inside Polygon's progress output, and
+        # the run still ends `done:` with exit 0. The operator then reasonably reads it as a clean
+        # refresh while the exact hole this command exists to stop being dug is re-dug wholesale.
+        print(f"WARNING: {len(sic_failures)}/{attempted} SIC lookup(s) FAILED — "
+              f"{', '.join(sic_failures)} stored with SIC UNKNOWN (bars are unaffected, and no "
+              f"stored SIC was overwritten). Re-run `scripts/backfill_entity_master_sic.py` once "
+              f"EDGAR is healthy to fill them.")
     return 0
 
 

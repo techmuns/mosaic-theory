@@ -52,9 +52,18 @@ builds was load-bearing, not incidental.
 `sicDescription: ""` — an empty string, not null — for a SIC-less issuer (observed on FSK, a BDC).
 SQL `COALESCE` treats `''` as PRESENT, so that blank would have **overwritten** a stored
 description instead of deferring to it, re-opening on the sibling column exactly the erasure #523
-closed. Normalised to `None` at the boundary, and the test stub now mirrors EDGAR's real payload
-rather than a tidied-up `None`. *Found only by running it against the live API; the first stub
-returned `None` and the pin would have passed vacuously.*
+closed. *Found only by running it against the live API; the first stub returned `None` and the pin
+would have passed vacuously.*
+
+**AND THE FIRST FIX WAS AT THE WRONG LAYER — corrected in review.** It normalised the blank in
+`vinci/cli.py` alone, which left the defect standing on every path it had not touched:
+`resolve_ticker(enrich=True)`, `_enrich_issuer` (both the securities and the issuer row), and
+`scripts/backfill_entity_master_sic.py`, which feeds the description straight into `model_copy` and
+is committed and re-runnable. The normalisation now lives in **`sic_for`**, the one place every
+consumer reads through, and is pinned there
+(`test_sic_for_normalises_edgars_empty_description_to_absent`). Fixing a shared helper's defect at
+one call site is how the next consumer repeats it — which is precisely what this PR's own first
+draft did.
 
 **VERIFIED (live EDGAR, all four cases through the shipped helper).**
 
@@ -75,11 +84,29 @@ is the dead write #83 fixed in `build_universe`),
 `test_an_issuer_edgar_publishes_no_sic_for_is_reported_not_inferred`,
 `test_an_empty_sic_description_is_stored_as_none_not_as_a_blank`,
 `test_benchmark_etfs_stay_resolver_exempt` (a SIC on SPY would be invented).
-Three of these were run against the PRE-CHANGE call site and FAILED; the empty-description pin was
-run without the normalisation and FAILED. Guards shown able to fail, not merely passing.
+plus, added in review: `test_a_run_that_lost_every_sic_says_so_once_at_the_end` and
+`test_a_clean_run_prints_no_failure_tally`, and `test_sic_for_normalises_edgars_empty_description_
+to_absent` in `tests/test_resolver.py`.
+Three were run against the PRE-CHANGE call site and FAILED; the empty-description pin FAILED
+without the normalisation; the tally pin FAILED without the tally; the resolver pin FAILED without
+the source fix. Guards shown able to fail, not merely passing.
 
-ruff + `mypy --strict vinci` clean; `pytest -m "not network"` **3298 passed, 0 failed, 138
-network-skipped**.
+**TWO MORE THINGS REVIEW CHANGED.** (1) **A systemic SIC failure now says so once, at the end.**
+Per-name lines are not a signal: on a long refresh during an SEC outage — or after a change that
+breaks `sic_for`, since `except Exception` catches an AttributeError just as readily — every name
+degrades, the lines scroll past inside Polygon's progress output, and the run still ends `done:`
+with exit 0, reading as a clean refresh while the hole this command exists to close is re-dug
+wholesale. A tally (`WARNING: n/m SIC lookup(s) FAILED — …`) prints after the run summary. An
+issuer EDGAR simply publishes no SIC for is NOT counted — a warning that fires when nothing is
+wrong trains the operator to ignore it. (2) **The tests are now hermetic.** They had stubbed the
+resolver, store and price-ingest but not `get_config`, so `_cmd_refresh` ran the real
+`ensure_dirs()` and mkdir'd `data/`, `data/cache/` and `data/snapshots/` into the pytest CWD —
+invisible from the repo root, where those already exist. Demonstrated by running the file from an
+empty directory; it now leaves nothing behind.
+
+ruff + `mypy --strict vinci` clean; `pytest -m "not network"` **3302 passed, 0 failed, 138
+network-skipped**. Live re-check after moving the normalisation: NFLX `('7841', 'Services-Video
+Tape Rental')`, IT `('8741', 'Services-Management Services')`, FSK `(None, None)`.
 
 **WHAT THIS DOES NOT DO.** It does not re-verify a SIC that is already stored, so the accepted risk
 recorded with #523 stands unchanged: a SIC EDGAR STOPS publishing still cannot be cleared, and
