@@ -193,6 +193,7 @@ def test_build_universe_itself_seeds_before_it_exports(tmp_path: Path, monkeypat
         def from_config(cls, _cfg): return cls()
         def security_types(self): return {}
         def grouped_daily(self, _d): return {}
+        def share_class_counts(self, _tickers): return {}
 
     class _Edgar:
         @classmethod

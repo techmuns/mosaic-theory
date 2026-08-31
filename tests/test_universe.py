@@ -125,6 +125,8 @@ def test_build_universe_persists_fetched_sic_onto_identity(
 
         def security_types(self) -> dict[str, str]:
             return {"ACME": "CS"}  # common stock → passes the Axis-2 allowlist
+        def share_class_counts(self, tickers: object) -> dict[str, float]:
+            return {}  # domestic common stock — no depositary receipts to price
 
     class _FakeEdgar:
         @classmethod

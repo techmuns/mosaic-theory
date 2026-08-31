@@ -16,7 +16,7 @@ stays out of request URLs, the on-disk cache, and error messages.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
@@ -251,6 +251,29 @@ class PolygonEodClient(EodClient):
             url = data.get("next_url")
             params = None  # the cursor is carried inside next_url
             pages += 1
+        return out
+
+    def share_class_counts(self, tickers: Sequence[str]) -> dict[str, float]:
+        """``{ticker: shares outstanding OF THE TRADED SHARE CLASS}`` — one cached details call per
+        ticker. Absent/zero is OMITTED, never zero-filled: the caller must fail loud.
+
+        WHY THIS EXISTS (measured 2026-08-31). For an ADR the traded unit is the ADS, and the price
+        is per ADS — but the filer's XBRL count is usually per ORDINARY share, and nothing converted
+        between them. TSM's cap computed as $10,635B (close x 25.9bn ordinary) against Polygon's own
+        market_cap of $2,165B: a ~5x error, large enough to push it past the theme band's $10T
+        ceiling and out of every band. This count is denominated in the SAME unit as the price, so
+        price x count needs no ratio arithmetic at all.
+
+        PER-TICKER BY NECESSITY: the bulk reference feed carries only ticker/type/cik (verified), so
+        the share count lives on the details endpoint. Scoped by the caller to ADR/GDR names only —
+        ~375 on US venues — and cached for a day, so a rebuild re-reads nothing."""
+        out: dict[str, float] = {}
+        for t in tickers:
+            raw = self._http.get_json(f"{_REFERENCE}/{t}", ttl_seconds=_ONE_DAY)
+            res = cast(dict[str, Any], raw).get("results") or {}
+            n = res.get("share_class_shares_outstanding")
+            if n:
+                out[t] = float(n)
         return out
 
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
