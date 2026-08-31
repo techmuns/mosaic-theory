@@ -267,6 +267,14 @@ def parse_fts_hit(h: dict[str, Any]) -> FtsHit:
     )
 
 
+#: The XBRL tags accepted as a share count, in PRECEDENCE order. MODULE-LEVEL on purpose: a
+#: consumer stamping provenance must read the tag from here, never through the client class — a
+#: test (or any caller) that substitutes its own client would otherwise shadow the constant and
+#: silently change what "approximate" means at the stamping site.
+SHARES_TAG_DEI = "dei:EntityCommonStockSharesOutstanding"          # filed INSTANT count (primary)
+SHARES_TAG_USGAAP = "us-gaap:CommonStockSharesOutstanding"         # filed INSTANT count (fallback)
+SHARES_TAG_WAVG = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"   # PERIOD AVERAGE
+
 class EdgarClient:
     def __init__(self, http: CachedHttp, efts_http: CachedHttp | None = None) -> None:
         self._http = http
@@ -300,28 +308,69 @@ class EdgarClient:
                 out[pad_cik(row["cik"])] = float(row["val"])
         return out
 
+    def shares_outstanding_with_provenance(
+        self, periods: Sequence[str], *, include_period_average: bool = False
+    ) -> tuple[dict[str, float], dict[str, str]]:
+        """``({cik10: shares}, {cik10: tag})`` — the ONE implementation, provenance included.
+
+        THREE TIERS, strict precedence, later periods winning within a tier. ``dei
+        EntityCommonStockSharesOutstanding`` is PRIMARY (the cover-page count); a name tagging
+        shares only under ``us-gaap:CommonStockSharesOutstanding`` falls back to that frame with
+        the SAME point-in-time discipline; both are filed INSTANT counts.
+
+        THE THIRD TIER IS DIFFERENT IN KIND and is opt-in for exactly that reason
+        (``include_period_average``, measured 2026-08-31):
+        ``us-gaap:WeightedAverageNumberOfSharesOutstandingBasic`` is an AVERAGE OVER THE PERIOD,
+        not a count on a date. It exists because a real and sizeable class of filers publishes NO
+        instant count at all — 142 operating equities above $100M ADV were missing from the
+        universe, 104 of them recoverable here, META among them (it reports neither instant tag;
+        GOOGL reports the us-gaap one, which is the whole difference between the two). A period
+        average is an acceptable input to a COARSE CAP BAND — but NOT confined to one, and the
+        caller must know it: the same `market_cap` is read by `themes/residualize.build_factors`
+        as the SIZE-FACTOR tercile input and rendered on the ranked queue by `rank/ranker.py`,
+        neither of which carries the tag. So every value from this tier is returned WITH its tag —
+        the caller stamps it, and a consumer needing a filed count reads the tag, not the number —
+        and it can never overwrite a filed instant count: a name with dei or us-gaap keeps that
+        number.
+
+        The provenance map is returned BESIDE the values rather than derived by a second pass, so
+        a value and its tag cannot drift apart.
+        """
+        values: dict[str, float] = {}
+        tag_by_cik: dict[str, str] = {}
+
+        def _merge(concept: str, namespace: str, tag: str, *, instant: bool) -> None:
+            for period in periods:
+                # duration frames (an average is measured OVER a quarter) drop the instant suffix
+                key = period if instant else period.rstrip("I")
+                try:
+                    frame = self.frame(concept, namespace=namespace, period=key)
+                except Exception:  # noqa: BLE001 — a missing/empty frame contributes nothing
+                    continue
+                for cik, val in frame.items():
+                    # a LOWER-precedence tier never displaces a value already set by a higher one
+                    if cik in values and tag_by_cik[cik] != tag:
+                        continue
+                    values[cik] = val
+                    tag_by_cik[cik] = tag
+
+        _merge("EntityCommonStockSharesOutstanding", "dei", SHARES_TAG_DEI,
+               instant=True)
+        _merge("CommonStockSharesOutstanding", "us-gaap", SHARES_TAG_USGAAP,
+               instant=True)
+        if include_period_average:
+            _merge("WeightedAverageNumberOfSharesOutstandingBasic", "us-gaap",
+                   SHARES_TAG_WAVG, instant=False)
+        return values, tag_by_cik
+
     def shares_outstanding_by_cik(self, periods: Sequence[str]) -> dict[str, float]:
-        """Merge shares-outstanding frames over recent ``periods`` (later win). dei
-        ``EntityCommonStockSharesOutstanding`` is PRIMARY; a name tagging shares only under
-        ``us-gaap:CommonStockSharesOutstanding`` falls back to that frame with the SAME
-        point-in-time discipline (same ``periods``, same later-win), filling ONLY CIKs the dei
-        frames missed — dei always wins on overlap, so no dei value ever moves."""
-        merged: dict[str, float] = {}
-        for period in periods:
-            try:
-                merged.update(self.frame("EntityCommonStockSharesOutstanding", period=period))
-            except Exception:  # noqa: BLE001 — a missing/empty frame just contributes nothing
-                continue
-        fallback: dict[str, float] = {}
-        for period in periods:
-            try:
-                fallback.update(
-                    self.frame("CommonStockSharesOutstanding", namespace="us-gaap", period=period))
-            except Exception:  # noqa: BLE001 — a missing/empty frame just contributes nothing
-                continue
-        for cik, val in fallback.items():
-            merged.setdefault(cik, val)  # us-gaap fills only where dei is absent (dei primary)
-        return merged
+        """Point-in-time share counts only — the values half of
+        :meth:`shares_outstanding_with_provenance`, with the period-average tier OFF.
+
+        Kept as the default so every existing consumer (the leaders sweep, the assay basket) holds
+        exactly the coverage it was verified on: opting into an approximate count is a decision a
+        caller makes explicitly, never one it inherits."""
+        return self.shares_outstanding_with_provenance(periods)[0]
 
     def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
         """Non-distress signals + step-5 inputs, each enveloped (UNKNOWN where XBRL is absent)."""

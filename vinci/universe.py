@@ -19,6 +19,7 @@ from pathlib import Path
 
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
+from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient
 from vinci.resolver import EntityResolver
 from vinci.schemas.data_record import Identity
@@ -152,7 +153,12 @@ def build_universe(
     closes, adv = latest_close_and_adv(eod, reference_date)
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
     periods = share_periods or recent_share_periods(reference_date)
-    shares = edgar.shares_outstanding_by_cik(periods)
+    # PERIOD-AVERAGE TIER ON, here only (2026-08-31): the cap band is a COARSE gate, and a filer
+    # publishing no instant count was being dropped entirely — 142 operating equities above $100M
+    # ADV, 104 recoverable this way (META among them). Every value carries its tag so the row it
+    # stamps says which kind of number it is.
+    shares, share_tag = edgar.shares_outstanding_with_provenance(
+        periods, include_period_average=True)
 
     # IMPORTED HERE, NOT AT MODULE SCOPE. `vinci.screens.__init__` imports `run`, which imports
     # `vinci.universe` — so a module-scope import of anything under `vinci.screens` makes importing
@@ -205,16 +211,28 @@ def build_universe(
                 continue
             if sh is None:
                 _drop(ident.eod_symbol, "no_shares", "no EDGAR XBRL share count for the CIK",
-                      StampedInput(value=None, source="EDGAR shares_outstanding_by_cik"))
+                      StampedInput(value=None,
+                                   source="EDGAR share frames (instant tiers + period average)"))
                 continue
             market_cap = close * sh
+            # WHICH KIND OF SHARE COUNT DECIDED THIS NAME — computed BEFORE the band test, because
+            # the drop path needs it too (review 2026-08-31): the period-average tier newly sizes
+            # names that then fall OUT of band, and a retention row claiming a filed EDGAR count
+            # as its deciding input would misattribute an exclusion the approximation made.
+            tag = share_tag.get(ident.cik, "")
+            approximate = tag == SHARES_TAG_WAVG
+            shares_source = (f"Polygon close x EDGAR {tag}"
+                             + (" (PERIOD AVERAGE - approximate share count)"
+                                if approximate else ""))
             if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
+                if approximate:
+                    stats["out_of_band_period_average"] += 1
                 _drop(ident.eod_symbol, "out_of_band",
                       f"market cap {market_cap / 1e6:,.1f}M outside "
                       f"[{band.market_cap_min_usd / 1e6:,.0f}M, "
                       f"{band.market_cap_max_usd / 1e6:,.0f}M]",
                       StampedInput(value=market_cap, as_of=reference_date,
-                                   source="Polygon close x EDGAR XBRL shares"))
+                                   source=shares_source))
                 continue
             if (a := adv.get(ident.eod_symbol, 0.0)) < band.adv_floor_usd:
                 _drop(ident.eod_symbol, "below_adv_floor",
@@ -256,6 +274,12 @@ def build_universe(
                                    source="Polygon security reference"))
                 continue
             stats["in_universe"] += 1
+            # Stamped on the admitted row and counted in the run's health numbers, so an
+            # approximate cap never blends in silently. (`shares_source` was derived above, where
+            # the out-of-band drop path needs the same provenance.)
+            if approximate:
+                stats["shares_period_average"] += 1
+            cap_source = shares_source
             # Persist the SIC we ALREADY fetched (above, for the Axis-1 gate) onto the identity so
             # it flows into the committed securities/issuers snapshots — was a dead write (fetched,
             # gated on, then discarded via [0]). The coarse SECTOR is derived downstream
@@ -267,7 +291,7 @@ def build_universe(
                 internal_id=ident.internal_id,
                 in_universe=True,
                 market_cap=DataField.present(
-                    market_cap, as_of=reference_date, source="DERIVED", tier=SourceTier.DERIVED
+                    market_cap, as_of=reference_date, source=cap_source, tier=SourceTier.DERIVED
                 ),
                 band=band_name,
             )

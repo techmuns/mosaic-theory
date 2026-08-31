@@ -408,7 +408,15 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
                 and isinstance(node.target.value, ast.Name) and node.target.value.id == "stats"
                 and isinstance(node.target.slice, ast.Constant)):
             loose.append(str(node.target.slice.value))
-    assert set(loose) <= {"considered", "in_universe"}, (
+    # The allowlist is every stat that counts something OTHER than a drop-with-its-own-stage:
+    # two population totals and, since 2026-08-31, two QUALITY counters about the share count
+    # that decided a name — `shares_period_average` (admitted on a period average) and
+    # `out_of_band_period_average` (dropped out of band on one). Neither is a drop STAGE: the
+    # out-of-band drop still emits its row through `_drop` in the same branch, and this counter
+    # only says how many of those rows the approximation decided. A stage missing its row is
+    # still the failure this guard exists to catch.
+    assert set(loose) <= {"considered", "in_universe", "shares_period_average",
+                          "out_of_band_period_average"}, (
         f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
         "without emitting a row leaves that stage with no evidence trail")
     # and the guard that refuses a run when the two diverge anyway

@@ -131,8 +131,13 @@ def test_build_universe_persists_fetched_sic_onto_identity(
         def from_config(cls, cfg: object) -> _FakeEdgar:
             return cls()
 
-        def shares_outstanding_by_cik(self, periods: object) -> dict[str, float]:
-            return {"0000000001": 5_000_000.0}  # cap = 100 × 5M = $500M (small/mid band)
+        def shares_outstanding_with_provenance(
+            self, periods: object, *, include_period_average: bool = False
+        ) -> tuple[dict[str, float], dict[str, str]]:
+            # cap = 100 × 5M = $500M (small/mid band); a FILED instant count, so the row it
+            # stamps must NOT carry the period-average warning
+            return ({"0000000001": 5_000_000.0},
+                    {"0000000001": "dei:EntityCommonStockSharesOutstanding"})
 
     monkeypatch.setattr(uni, "EntityResolver", _FakeResolver)
     monkeypatch.setattr(uni, "PolygonEodClient", _FakeEod)
