@@ -665,9 +665,15 @@ Each line: *what it does* — *verified how*.
   no `json.load→json.dump`; the value is `resolve_label(<committed SIC>).sector`, exactly what
   assembly computes), leaving synthesis and as-of untouched — a re-assembly would have re-rolled
   twelve synthesis texts and re-dated every artifact, which is a re-underwrite, not a refresh.
-  Incident→invariant (shipped Y): `tests/test_dossier_sector_coherence.py` — no dossier reports
-  Unknown for a sector the entity master can resolve, AND the two never disagree. Full offline
-  suite re-run on the freshly-written artifacts per the ARTIFACT-PASS RULE.
+  Incident→invariant (shipped Y): `tests/test_dossier_sector_coherence.py` — three PARTITIONED
+  pins (a stale name reddens exactly one): no dossier reports Unknown for a sector the entity
+  master can resolve; a dossier that states a sector states the RIGHT one; and the served
+  `frontend/dossiers/<T>.json` carries the same sector as its source. The mirror pin was added in
+  review — `test_every_web_mirror_is_byte_identical_to_its_source` compares only the `.md` files,
+  so a correction applied to `data/` alone would have shipped a stale served JSON with the suite
+  green, the FUBO-banner defect one file type over. A half-applied fix is not hypothetical: this
+  pass's own first commit corrected four of the eight affected names. Full offline suite re-run on
+  the freshly-written artifacts per the ARTIFACT-PASS RULE.
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
   defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
