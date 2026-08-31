@@ -42,8 +42,6 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 **data_quality: vendor_bridge**
 - vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag
 
-_R1 inputs incomplete — see per-input source stamps_
-
 ## The case
 _(top points; the full argument is in Analysis)_
 
