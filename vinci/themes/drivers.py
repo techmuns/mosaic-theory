@@ -359,7 +359,15 @@ AI_VALUE_MIGRATION = DriverSpec(
         "AI, or a name whose AI exposure is a minor undisclosed end-market."
     ),
     prefilter_terms=(
-        "artificial intelligence", "generative AI", "AI agent", "agentic", "copilot",
+        # THE TWO GENERIC AI PHRASES ARE DELIBERATELY ABSENT (measured 2026-08-31, first full
+        # sweep): "artificial intelligence" alone matched 2,579 of 2,907 names and "generative AI"
+        # 985 — every modern 10-K says them, so the cheap filter was passing 92% of the universe
+        # through to the expensive one (2,666 candidates, each costing filing fetches + one LLM
+        # assessment). Dropping BOTH takes the candidate set to 1,266 (-53%) while every one of
+        # the 12 operator-named beneficiaries still clears the filter on its layer vocabulary.
+        # The prefilter buys RECALL and the semantic layer does the discriminating — but recall
+        # bought with a phrase that matches everything is not recall, it is cost.
+        "AI agent", "agentic", "copilot",
         "large language model", "foundation model", "open-source model", "open weights",
         "inference", "fine-tuning", "proprietary data", "system of record",
         "workflow automation", "vertical software", "per-seat", "consumption-based",
@@ -376,8 +384,24 @@ AI_VALUE_MIGRATION = DriverSpec(
         ("app-workflow-moat",
          ("system of record", "workflow", "vertical", "regulated", "proprietary data",
           "copilot", "attach")),
+        # 2026-08-31, MEASURED on the first real scan: the previous keywords
+        # ("cloud", "hyperscaler", "inference", "platform", "distribution") tagged 12 of 12
+        # scanned names — a tag that fires on everything carries no information, and the by-tag
+        # volume read is the whole point of this layer. Bare "cloud"/"platform" match any SaaS
+        # filer; "inference" matches any app-layer name describing an AI feature. These are the
+        # PROVIDER's vocabulary instead — what a filer says when it SELLS the compute layer,
+        # including the named segments the real hyperscalers report under. On the pilot: 12/12 →
+        # 7/12, with all three genuine providers (MSFT/GOOGL/AMZN) retained.
+        # NOTE the residual, which is NOT fixable here: a filer that NAMES a hyperscaler
+        # ("we run on AWS") reads identically to one that IS one. SAP/PLTR/SNOW still tag on
+        # exactly that. Mention-vs-identity is semantic, not lexical — the tag stays PROVENANCE
+        # (approximate, inform-only; the human reads the verbatim fact), and the discrimination
+        # that matters is the LLM's driver_tie grade, not this keyword read.
+        # "inference" deliberately stays in the DESCRIPTION (it is a real part of this layer's
+        # economics, and the description is what the grader reads) while leaving the keyword set.
         ("hyperscaler-platform",
-         ("cloud", "hyperscaler", "inference", "platform", "distribution")),
+         ("hyperscaler", "public cloud", "cloud infrastructure", "infrastructure-as-a-service",
+          "iaas", "aws", "azure", "google cloud", "intelligent cloud")),
         ("model-ip",
          ("foundation model", "frontier", "model licensing", "per-token", "api pricing",
           "large language model")),
