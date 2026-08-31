@@ -838,3 +838,78 @@ def test_ai_value_migration_prefilter_excludes_the_two_generic_ai_phrases() -> N
         assert kept in avm, kept
     # and the sibling driver's own use of the generic phrase is untouched
     assert "artificial intelligence" in DRIVER_SPECS["ai-datacenter"].prefilter_terms
+
+
+def test_glp1_prefilter_replaces_generic_words_with_the_terms_of_art() -> None:
+    """MEASURED on the first full sweep (2026-08-31): this filter passed 1,772 of 2,907 names, and
+    four generic ENGLISH words carried nearly all of it — "compounded" 993 matches / 578 unique,
+    "generic" 663/152, "contract manufacturing" 471/78, "capacity expansion" 308/144 — while every
+    specific molecule term matched 5-30 and contributed ZERO unique names.
+
+    THE POINT OF THIS PIN is the trap the fix avoids. Two of those words are ALSO terms of art in
+    the operator's thesis: compounded semaglutide IS the access-channel leg, generic entry IS the
+    price-compression leg. Deleting them outright would have cut real signal along with the noise,
+    so each bare word is REPLACED by the phrase that carries its meaning. A future editor tempted
+    to re-add the short form should read the numbers above first."""
+    glp1 = DRIVER_SPECS["glp1-drug-value-chain"].prefilter_terms
+    # the ambiguous single words are gone...
+    for banned in ("compounded", "generic", "contract manufacturing", "capacity expansion"):
+        assert banned not in glp1, banned
+    # ...and their MEANING is retained by precise phrases that have NO parent term in the list,
+    # so each can actually contribute (review 2026-08-31 removed three that could not)
+    for phrase in ("compounding pharmacy", "generic entry", "generic competition",
+                   "loss of exclusivity"):
+        assert phrase in glp1, phrase
+    # the manufacturing leg is carried by specific vocabulary, not by the bare word that matched
+    # every manufacturer in the universe
+    for kept in ("CDMO", "fill-finish", "sterile injectable", "peptide"):
+        assert kept in glp1, kept
+    # and the molecules that make the filter MEAN this theme are untouched
+    for mol in ("semaglutide", "tirzepatide", "incretin", "amylin", "GLP-1"):
+        assert mol in glp1, mol
+
+
+def test_no_prefilter_term_is_contained_by_another_term_of_the_same_driver() -> None:
+    """INVARIANT (2026-08-31): a prefilter phrase that CONTAINS another phrase in the same list is
+    dead configuration. EFTS matches the shorter string wherever the longer one appears, so the
+    longer phrase can never contribute a candidate the shorter one did not — it only costs one
+    paced batch-query per CIK batch, every scan, forever.
+
+    Found by review of the glp1 narrowing, which had added three such phrases ("compounded
+    semaglutide" ⊂ "semaglutide", "compounded GLP-1" ⊂ "GLP-1", "peptide manufacturing" ⊂
+    "peptide" — all verified SUBSET=True against the live universe), and which then surfaced a
+    PRE-EXISTING one ("peptide synthesis" ⊂ "peptide"). Checked across EVERY driver, because the
+    mistake is a property of how the filter works, not of one taxonomy.
+
+    NOTE the direction: this forbids REDUNDANCY, not specificity. Replacing a bare word with a
+    precise phrase stays correct as long as the bare word LEAVES the list — which is exactly what
+    the glp1 change does with compounded/generic."""
+    #: TWO pre-existing pairs, recorded rather than silently fixed. `ai-datacenter` and
+    #: `glp1-demand-shift` are LIVE themes with committed scans, frozen baskets and pages;
+    #: editing their analyst-ratified vocabulary changes what future scans surface, which is an
+    #: operator decision belonging in its own change — not smuggled into a glp1-drug-value-chain
+    #: PR. The allowlist keeps the rule enforced for every NEW term while naming the debt.
+    #:
+    #: HYPHENATED pairs (counter-drone/drone, high-protein/protein) are deliberately NOT flagged:
+    #: whether EFTS treats a hyphen as a token boundary was not measured, so the check declines to
+    #: claim they are redundant. Measure before extending the rule to them.
+    known_pre_existing = {("data center power", "data center"), ("protein shake", "protein")}
+    # WORD-BOUNDARY containment, not plain substring — the distinction is the whole correctness of
+    # this check. EFTS searches TOKENS: "semaglutide" matches a filing saying "compounded
+    # semaglutide" (whole token present), but "snack" does NOT match one saying only "snacking"
+    # (different token). A naive `short in long` flags snack/snacking and salty snacks/snack as
+    # redundant when they are genuinely distinct terms — the first draft of this test did exactly
+    # that across three drivers.
+    import re as _re
+
+    for key, spec in DRIVER_SPECS.items():
+        terms = [t.lower() for t in spec.prefilter_terms]
+        contained = [
+            (long, short) for long in terms for short in terms
+            if long != short
+            and _re.search(rf"(?<![\w-]){_re.escape(short)}(?![\w-])", long)
+            and (long, short) not in known_pre_existing
+        ]
+        assert not contained, (
+            f"{key}: these prefilter phrases contain another term in the same list, so they can "
+            f"never match anything the shorter term misses: {contained}")
