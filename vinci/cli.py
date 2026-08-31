@@ -1589,7 +1589,6 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     which SUPERSEDES the ledger row's own field; a leg with no assignment fails LOUD rather than
     being measured against a yardstick nobody chose."""
     from vinci import monitor as mon
-    from vinci.labels import resolve_label
 
     cfg = get_config()
     root = Path.cwd()
@@ -1677,10 +1676,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             if need not in entry_bars or need not in now_bars:
                 raise RuntimeError(f"{tkr}: no {where} bar for {need} "
                                    f"({entry_day} / {now_date}) — refusing to guess a price")
-        live_sector = resolve_label(sic_by_ticker.get(tkr)).sector
-        if payload.get("sector") and payload["sector"] != live_sector:
-            notes.append(f"{tkr}: sector re-resolved to {live_sector} for display "
-                         f"(the frozen row logged {payload['sector']} — never rewritten)")
+        live_sic = sic_by_ticker.get(tkr)
+        live_sector = mon.sector_for_display(live_sic)
+        if (note := mon.sector_note(
+                ticker=tkr, sic=live_sic, frozen_sector=payload.get("sector"))):
+            notes.append(note)
         rows.append(mon.position_row(
             ticker=tkr, verdict=r["verdict"], sector=live_sector,
             origin=origin_of(led_entry), sleeve=sleeve_of(led_entry),

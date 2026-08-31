@@ -282,7 +282,7 @@
 {"cik": "0000744218", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000744218", "name": "Celldex Therapeutics, Inc.", "sic": "2835", "sic_description": "In Vitro & In Vivo Diagnostic Substances"}
 {"cik": "0000745308", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000745308", "name": "ST JOE Co", "sic": "6552", "sic_description": "Land Subdividers & Developers (No Cemeteries)"}
 {"cik": "0000748268", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000748268", "name": "Red Cat Holdings, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
-{"cik": "0000749251", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000749251", "name": "GARTNER INC", "sic": null, "sic_description": null}
+{"cik": "0000749251", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000749251", "name": "GARTNER INC", "sic": "8741", "sic_description": "Services-Management Services"}
 {"cik": "0000750577", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000750577", "name": "HANCOCK WHITNEY CORP", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0000750686", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000750686", "name": "CAMDEN NATIONAL CORP", "sic": "6021", "sic_description": "National Commercial Banks"}
 {"cik": "0000751364", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000751364", "name": "NNN REIT, INC.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}

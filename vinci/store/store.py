@@ -111,16 +111,39 @@ class Store:
         ]
 
     def upsert_security(self, identity: Identity, *, first_seen: date | None = None) -> None:
+        """Write one identity into the accumulate-only entity master.
+
+        A PARTIAL WRITER NEVER ERASES A KNOWN SIC (#464 regression, found 2026-08-31). `INSERT OR
+        REPLACE` rewrites every column, so a caller holding an UN-ENRICHED identity nulled a SIC
+        the enriched path had already fetched. That is exactly what happened: a `vinci refresh IT
+        NFLX` price backfill resolved IT without `enrich=True` and wrote `sic=NULL` over Gartner's
+        8741. The row survived (the no-row-drop guard counts PKs, not fields), so nothing raised —
+        and the monitor then re-resolved IT's sector to "Unknown" in every run, a live decision
+        surface reading a destroyed fact as a resolved label.
+        WHY GARTNER ALONE, out of two backfilled names: NFLX had no SIC to lose, and every OTHER
+        name is re-upserted WITH its SIC by the next `build_universe`. IT is out of the cap band,
+        so no enriched write ever came back for it. Ledgered-but-out-of-universe is the exposed
+        class, and it is the class that most needs the label.
+        So `sic` (and the issuer's `sic_description`) COALESCE onto the stored value the way
+        `first_seen` already does: a writer that does not KNOW the fact leaves the known one
+        standing. Nothing real is lost — `build_universe` EXCLUDES a name whose SIC it cannot
+        read (`unknown_sic`), so it never writes a NULL SIC for an admitted name; a genuine SIC
+        CHANGE is a non-NULL value and still overwrites.
+        """
         self._conn.execute(
             "INSERT OR REPLACE INTO issuers "
             "(cik, issuer_id, name, sic, sic_description, country, first_seen) "
-            "VALUES (?,?,?,?,?,?, COALESCE((SELECT first_seen FROM issuers WHERE cik=?), ?))",
+            "VALUES (?,?,?, COALESCE(?, (SELECT sic FROM issuers WHERE cik=?)), "
+            " COALESCE(?, (SELECT sic_description FROM issuers WHERE cik=?)), ?, "
+            " COALESCE((SELECT first_seen FROM issuers WHERE cik=?), ?))",
             (
                 identity.cik,
                 identity.issuer_id,
                 identity.name,
                 identity.sic,
+                identity.cik,
                 identity.sic_description,
+                identity.cik,
                 identity.country,
                 identity.cik,
                 _iso(first_seen),
@@ -130,7 +153,8 @@ class Store:
             "INSERT OR REPLACE INTO securities "
             "(internal_id, issuer_id, cik, ticker, mic, exchange, eod_symbol, name, "
             " share_class, sic, currency, first_seen) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?, "
+            "VALUES (?,?,?,?,?,?,?,?,?, "
+            " COALESCE(?, (SELECT sic FROM securities WHERE internal_id=?)), ?, "
             " COALESCE((SELECT first_seen FROM securities WHERE internal_id=?), ?))",
             (
                 identity.internal_id,
@@ -143,6 +167,7 @@ class Store:
                 identity.name,
                 identity.share_class,
                 identity.sic,
+                identity.internal_id,
                 identity.currency,
                 identity.internal_id,
                 _iso(first_seen),
