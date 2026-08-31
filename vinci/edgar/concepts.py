@@ -136,6 +136,12 @@ def _parse_date(s: str | None) -> date | None:
 #: below every abandonment in evidence: the nearest real case measured is 670d and the worst 5,907d.
 STALE_TAG_LAG_DAYS = 550
 
+#: How far an alias may trail the BEST alias of its own concept before it counts as left behind.
+#: 200 days sits inside one annual filing cycle, so an alias the filer still updates never trips it
+#: (equally-current siblings measure 0d apart, and priority order is preserved), while a full cycle
+#: behind — GOOGL revenue stopping at FY2024 while `Revenues` reached FY2025, 365d — does.
+SIBLING_LAG_DAYS = 200
+
 
 def filer_frontier(facts: dict[str, Any]) -> date | None:
     """The newest period end the filer reports under ANY tag — its own reporting clock."""
@@ -177,6 +183,19 @@ def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     return _resolve(facts, concept, filer_frontier(facts))
 
 
+def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
+    """How far forward an alias's series reaches, at the grain its consumers read it.
+
+    THE GRAIN IS THE WHOLE POINT (review of #531). The first cut measured an alias's newest point
+    of ANY duration, but the consumers of these concepts read the ANNUAL series. An alias can
+    therefore carry perfectly fresh QUARTERLIES and no annual series at all, sail through a
+    freshness test, and starve every annual reader — which is exactly the UBER defect this guard
+    was built for, still live on BRBR and MVST when the review found it.
+    """
+    pool = [p for p in points if p.is_annual] if annual_grain else points
+    return max((p.period_end for p in pool), default=None)
+
+
 def _resolve(
     facts: dict[str, Any], concept: str, frontier: date | None
 ) -> list[ConceptPoint]:
@@ -185,17 +204,30 @@ def _resolve(
     Split out so ``stale_served`` scans the (large) companyfacts blob for the frontier ONCE rather
     than three times — its own call, plus one inside the ``extract_points`` it delegates to.
     """
-    first_present: list[ConceptPoint] = []
-    for tag in CONCEPT_ALIASES[concept]:
-        points = points_for_tag(facts, tag, concept=concept)
-        if not points:
-            continue
-        if not first_present:
-            first_present = points
-        if frontier is None:
-            return points
-        if (frontier - max(p.period_end for p in points)).days <= STALE_TAG_LAG_DAYS:
-            # present AND current — the alias the filer still uses
+    present = [(tag, pts) for tag in CONCEPT_ALIASES[concept]
+               if (pts := points_for_tag(facts, tag, concept=concept))]
+    if not present:
+        return []
+    first_present = present[0][1]
+    if frontier is None:
+        return first_present
+
+    # MEASURED AGAINST THE BEST SIBLING, NOT THE FILER'S WHOLE FRONTIER (review of #531). Comparing
+    # each alias to the filer's newest fact of any kind let GOOGL through: its served revenue alias
+    # sits 456d behind that frontier — inside the 550d allowance — while its ANNUAL series stops at
+    # FY2024 and `Revenues` already carries FY2025. The question is not "is this alias old" but
+    # "has a SIBLING alias for this same concept moved on without it", which is what abandonment
+    # looks like from the outside.
+    annual_grain = any(any(p.is_annual for p in pts) for _, pts in present)
+    reaches = {tag: _reach(pts, annual_grain=annual_grain) for tag, pts in present}
+    best = max((d for d in reaches.values() if d is not None), default=None)
+    if best is None:
+        return first_present
+    for tag, points in present:
+        got = reaches[tag]
+        # ORDER IS MEANING, so the FIRST alias not left behind wins — never simply the one reaching
+        # furthest, which would promote a component tag (SalesRevenueNet) over the real one.
+        if got is not None and (best - got).days <= SIBLING_LAG_DAYS:
             return points
     # every alias stale: fall back to priority order, and let ``stale_served`` name it for the sweep
     return first_present

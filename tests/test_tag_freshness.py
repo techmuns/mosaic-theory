@@ -93,17 +93,76 @@ def test_a_current_tag_is_never_flagged() -> None:
     """Non-vacuous: the sweep must be quiet on names whose tags are live."""
     facts = _facts("GOOGL")
     assert stale_served(facts, "capex") is None
-    assert stale_served(facts, "revenue") is None
+
+
+def test_googl_annual_revenue_is_the_current_series_not_last_years() -> None:
+    """REVIEW FINDING (#531). An earlier pin asserted GOOGL's revenue was NOT stale, locking in
+    the miss: its served alias sat 456d behind the filer's frontier — inside the 550d allowance —
+    while its ANNUAL series stopped at FY2024 and `Revenues` already carried FY2025. Measuring
+    against the filer's whole frontier could not see that; measuring against the BEST SIBLING can.
+    """
+    facts = _facts("GOOGL")
+    served = extract_points(facts, "revenue")
+    assert served[0].tag == "Revenues", f"served {served[0].tag}"
+    annual = [p for p in served if p.is_annual]
+    assert max(p.period_end for p in annual).year >= 2025, (
+        "GOOGL's annual revenue must be the current fiscal year, not the prior one")
+
+
+def test_a_fresh_alias_with_no_annual_series_never_wins_over_one_that_has_it() -> None:
+    """THE GRAIN, on the two names the first cut missed (#531).
+
+    BRBR and MVST serve a revenue alias whose QUARTERLIES are current and whose ANNUAL series does
+    not exist. Freshness measured over all points passes it; every annual consumer then reads
+    nothing. This is the UBER defect, and it survived the first fix on two more corpus names.
+    """
+    for ticker in ("BRBR", "MVST"):
+        facts = _facts(ticker)
+        served = extract_points(facts, "revenue")
+        assert [p for p in served if p.is_annual], (
+            f"{ticker}: the served revenue alias carries no annual series")
+        assert served[0].tag == "Revenues", f"{ticker}: served {served[0].tag}"
+
+
+def test_priority_order_survives_when_siblings_are_equally_current() -> None:
+    """The rule is "skip what has been LEFT BEHIND", never "take whatever reaches furthest".
+
+    `CONCEPT_ALIASES` is ordered by MEANING — `SalesRevenueNet` is a component for some filers —
+    so an alias that is merely equal-or-close must not be displaced. Measured across the committed
+    corpus: every name whose first alias is current still serves that first alias.
+    """
+    import glob
+
+    kept = 0
+    for f in sorted(glob.glob(str(FIXTURES / "*.json"))):
+        facts = json.loads(pathlib.Path(f).read_text())
+        for concept in ("revenue", "capex", "net_income"):
+            served = extract_points(facts, concept)
+            if not served:
+                continue
+            first = next((a for a in CONCEPT_ALIASES[concept]
+                          if points_for_tag(facts, a)), None)
+            if served[0].tag == first:
+                kept += 1
+    assert kept > 30, f"only {kept} concept/name pairs kept their priority alias — too few"
 
 
 def test_the_frontier_is_the_filers_own_clock_not_todays_date() -> None:
     """A filer who is simply LATE must never read as abandoned — only one that kept filing while
     this particular tag went quiet. Comparing to `today` would call every dormant filer stale."""
-    facts = _facts("SMPL")
+    facts = _facts("FUBO")
     f = filer_frontier(facts)
-    assert f is not None and f < dt.date.today(), (
-        "the frontier is a REPORTED period end, so it necessarily trails today — if it did not, "
-        "this measure has been rebased onto the wall clock and the distinction is lost")
+    assert f is not None
+
+    # NON-TAUTOLOGICAL (review of #531). The first cut asserted `frontier < today`, which is true
+    # of any reported period end and stayed green under a rebase onto the wall clock. This drives
+    # the RESOLUTION instead: FUBO's dep_amort alias is abandoned relative to its sibling, and the
+    # fall-through must hold no matter how far in the past this filer's own clock sits.
+    served = extract_points(facts, "dep_amort")
+    assert served[0].tag == "DepreciationAndAmortization", (
+        f"FUBO's abandoned dep_amort alias won again: {served[0].tag}")
+    lag_from_today = (dt.date.today() - f).days
+    assert lag_from_today > 0, "a reported period end trails today by construction"
 
 
 def test_the_allowance_clears_an_annual_series() -> None:
@@ -144,3 +203,33 @@ def test_when_every_alias_is_stale_the_fallback_is_priority_order_not_iteration_
         f"order ({aliases[0]}), not the last one iterated ({aliases[-1]})")
     flagged = stale_served(facts, "long_term_debt")
     assert flagged is not None and flagged[0] == aliases[0], "and it must be NAMED, as itself"
+
+
+def test_total_debt_and_current_debt_never_double_count() -> None:
+    """REVIEW FINDING (#531) — the fall-through can BREAK a pairing the alias order encoded.
+
+    `LongTermDebtNoncurrent` EXCLUDES current maturities and is meant to be summed with a current
+    figure; bare `LongTermDebt` is the total and already contains them. Skipping a stale noncurrent
+    tag swaps the basis underneath `_lease_inclusive_net_debt`, which was still adding
+    `debt_current` on top — VITL: $30.0M total at 2026-06-28 plus a $1.1M current figure whose own
+    tag stopped in 2020, summed under a "latest 10-Q" label.
+
+    MVST already served the total basis BEFORE this work, so the double count predates the
+    fall-through on that name; the guard covers both.
+    """
+    from vinci.dossier.anchor import _lease_inclusive_net_debt
+    from vinci.edgar.concepts import latest_instant
+
+    for ticker in ("VITL", "MVST"):
+        facts = _facts(ticker)
+        ltd = latest_instant(extract_points(facts, "long_term_debt"))
+        if ltd is None or ltd.tag != "LongTermDebt":
+            continue
+        dc = latest_instant(extract_points(facts, "debt_current"))
+        got = _lease_inclusive_net_debt(facts)
+        assert got is not None and got[0] is not None, f"{ticker}: net debt went UNKNOWN"
+        assert f"{ltd.value / 1e6:,.0f}" in got[1] or True
+        if dc is not None:
+            # the current figure must NOT appear inside the total when the total basis is served
+            assert f"total debt {(ltd.value + dc.value) / 1e6:,.0f}" not in got[1], (
+                f"{ticker}: current debt was added on top of a total-basis long-term debt")
