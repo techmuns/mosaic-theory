@@ -80,7 +80,21 @@ before the work so the work can be checked against it. What was checked:
   one. GOOGL's Variant-1 kill — the *"because recurring economics deteriorate, not a discrete
   legal event"* case — sits in the LEDGER payload's kill text, which no scenario record holds.
   Any evaluator must therefore cover two homes with different shapes, and the ledger's is sealed.
-- **RULING 1 IS AN INFRASTRUCTURE CHANGE, NOT A PANEL.** A static site cannot trigger a job. The
-  options — a GitHub Actions `workflow_dispatch` the page links to, or a small authenticated
-  endpoint — differ in what they expose and who can fire them, and the choice is the operator's.
-  No code should be written for it until that is settled.
+- **RULING 1 IS AN INFRASTRUCTURE CHANGE, NOT A PANEL.** A static site cannot trigger a job.
+  **SETTLED 2026-08-31: a small AUTHENTICATED ENDPOINT**, on the operator's reasoning that the
+  frontend already sits behind login credentials, so the trigger inherits the fence the pages
+  already have rather than introducing a second one. The `workflow_dispatch` alternative was not
+  taken. Two properties this must keep, both from CLAUDE.md rather than from the choice itself:
+  every secret stays in env / Actions secrets and never reaches the endpoint's code or logs, and
+  **no path from it approaches execution** — it may start an assemble, a screen or a monitor day,
+  and nothing that places an order.
+- **WHICH RECORD HOLDS A STRUCTURED CRITERION — SETTLED 2026-08-31: THE SCENARIO RECORD ONLY.**
+  Ledger-payload kill text (GOOGL's causal-clause Variant-1 kill among it) stays PROSE and is not
+  evaluated. That keeps the sealed payload sealed — a schema change to an append-only record the
+  spread is measured from is a far larger act than this work needs — and it draws the evaluable
+  set at exactly the boundary ruling 3 already draws: deterministic criteria get structure, and a
+  criterion whose firing turns on a causal clause stays a sentence a human reads.
+  CONSEQUENCE, stated rather than discovered later: a name underwritten only through the ledger —
+  GOOGL today, which has kill criteria but no scenario record until R3 lands — has NOTHING for the
+  evaluator to read. The panel is therefore blank for it, and blank must not read as "nothing has
+  fired".
