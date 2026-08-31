@@ -513,6 +513,36 @@ def test_truckload_asset_tl_precedes_equipment() -> None:
     assert provenance_tag_of("used truck sales through the dealer network", lyr) == "equipment"
 
 
+def test_silicon_ecosystem_moat_tags_the_software_moat_never_unit_demand() -> None:
+    """BOUNDARY PIN (operator ruling 2026-08-30): ai-value-migration's third model-agnostic
+    beneficiary class — a silicon vendor whose SOFTWARE/developer-ecosystem bundle is the moat.
+    The tag's keywords deliberately name only the software moat, never bare silicon terms
+    ("gpu", "chip"): a unit-demand/build-out sentence must fall through to 'unspecified' under
+    THIS driver's tags (the ai-datacenter sibling reads that fact), because a GPU-volumes fact
+    mis-tagged as a moat would dissolve the boundary the ruling drew — the split is by ECONOMICS
+    NAMED in the disclosure, not by company."""
+    from vinci.themes.exposure import provenance_tags_of
+
+    spec = DRIVER_SPECS["ai-value-migration"]
+    assert spec.multi_tag is True  # one vendor can be moat AND platform — record all
+    hits = provenance_tags_of(
+        "our accelerated computing platform is supported by a broad developer ecosystem and a "
+        "widely adopted programming model", spec.provenance_tags)
+    assert "silicon-ecosystem-moat" in hits
+    # the build-out chain's unit/capacity demand carries NO tag here — ai-datacenter's territory
+    assert provenance_tags_of(
+        "we supply HBM memory and advanced packaging for AI data center GPUs, with capacity "
+        "commitments through 2027", spec.provenance_tags) == ("unspecified",)
+    # REVIEW PIN (2026-08-31) — the REALISTIC mis-tag, not just the keyword-free one above: a
+    # pure volumes sentence wearing the standard vendor label "accelerated computing". That
+    # phrase was a tag keyword at birth and DID tag this sentence as a moat (executed during
+    # review), dissolving the ruling's boundary; the keyword is gone and this pin holds the
+    # door shut against re-widening (gpu/chip/accelerated — what the tag comment forbids).
+    assert "silicon-ecosystem-moat" not in provenance_tags_of(
+        "record demand for our accelerated computing platform drove data center revenue up 60% "
+        "on GPU shipments", spec.provenance_tags)
+
+
 def test_only_tickers_partition_subset_and_missing() -> None:
     """--only-tickers restricts to the intersection with the universe; unknown names come back as
     `missing` (the caller prints + skips them) while the rest proceed — the delta-scan primitive."""
