@@ -1054,16 +1054,37 @@ def _radar_sweep_payload(manifest: Path) -> dict[str, str]:
     return {"last_run": last_run, "source": source, "next_due": next_due, "command": _SWEEP_COMMAND}
 
 
+def _manifest_has_component_a(manifest: Path) -> bool:
+    """Does the scan-history manifest actually carry a COMPONENT-A row?
+
+    THE SOURCE FOR THIS BAR IS NOT THE FILE, IT IS THE ROW. `record_snapshot` writes one
+    multi-driver manifest, so a manifest can exist and be full of THEME-scan rows
+    (ai-value-migration, glp1-drug-value-chain …) while containing nothing the sweep bar can read.
+    An unreadable/corrupt manifest counts as ABSENT for the same reason — the guard's job is to
+    keep the committed date, never to re-seed on a technicality."""
+    if not manifest.exists():
+        return False
+    try:
+        rows = [json.loads(line) for line in manifest.read_text().splitlines() if line.strip()]
+    except (OSError, json.JSONDecodeError):
+        return False
+    return any(r.get("driver_slug") == "component-a" for r in rows)
+
+
 def emit_radar_sweep() -> None:
     """Write frontend/radar/sweep.json for the sweep bar (display-only — nothing fires). Reads
     the ROOT manifest where record_snapshot writes (data/scan_history/manifest.jsonl); the prior
     component-a/manifest.jsonl path never existed, so the bar re-seeded silently (the #125 bug)."""
     out = HERE / "radar"
     manifest = ROOT / "data" / "scan_history" / "manifest.jsonl"
-    # RE-SEED GUARD: no manifest in this worktree ⇒ keep the committed sweep.json. Regenerating
-    # would re-seed a real sweep date back to the June-17 default (the incident this guards).
+    # RE-SEED GUARD, keyed on the ROW not the FILE (2026-08-31). Keying on `manifest.exists()`
+    # reproduced #125 the moment the manifest became a COMMITTED artifact carrying theme-scan
+    # rows: the file existed, the guard passed, the payload found no component-a ts, and a real
+    # 2026-07-14 sweep date reverted to the seeded June-17 default on the next deploy — with
+    # next_due then reading six weeks in the past. The source for this bar is a component-a row.
     if not _preserve_unless_source(
-            "sweep.json", out / "sweep.json", source_present=manifest.exists()):
+            "sweep.json", out / "sweep.json",
+            source_present=_manifest_has_component_a(manifest)):
         return
     out.mkdir(parents=True, exist_ok=True)
     (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
