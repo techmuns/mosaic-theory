@@ -38,6 +38,12 @@ NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities",
 #: Kept as the private alias this module has always used internally.
 _NO_ROW_DROP_TABLES = NO_ROW_DROP_TABLES
 
+#: Prefix of a SYNTHETIC identity — the benchmark ETFs `vinci.universe.benchmark_identity`
+#: builds as `IDX-<symbol>`. Named here rather than inlined as a SQL literal so the one
+#: place that filters on it cannot silently stop matching if the producer ever changes the
+#: convention; `test_the_synthetic_prefix_matches_what_benchmark_identity_builds` ties the two.
+SYNTHETIC_ID_PREFIX = "IDX-"
+
 #: Tables whose committed file must never be REPLACED BY AN EMPTY ONE. Distinct from the
 #: no-row-drop set: those may never shrink at all (an entity master, the ledger), while these are
 #: point-in-time populations that legitimately change membership every build — but never to zero.
@@ -115,11 +121,27 @@ class Store:
         them under that run's manifest — a committed historical screen containing names it could
         not have known. The store is mutable and shared; "I re-ran at the earlier date" does not
         undo what the later attempt wrote.
+
+        A NULL `first_seen` COUNTS AS "after" (review, 2026-08-31). `first_seen > ?` never matches
+        NULL, so an identity whose provenance is unrecorded was INVISIBLE here — and `vinci refresh`
+        introduced exactly those (QQQ, TSM, V), so the one command that adds out-of-band names was
+        also the one whose names this guard could not see. Unknown provenance cannot confirm the
+        name was knowable at `reference_date`, so it fails CLOSED, the way `unknown_sic` excludes a
+        name whose business type the universe cannot confirm. The source is fixed too — `refresh`
+        now stamps — but the guard must not go on trusting a field any writer can omit.
+
+        SYNTHETIC BENCHMARKS ARE EXEMPT, and must be: SPY/IWM/MDY et al. are `IDX-*` identities with
+        no `first_seen` BY CONSTRUCTION (`benchmark_identity`), upserted by the screen and the
+        orchestrator themselves. Counting them would make EVERY backdated run raise on the very
+        rows it just wrote — the guard would fail closed on nothing real.
         """
         return [
             str(r["internal_id"]) for r in self._conn.execute(
-                "SELECT internal_id FROM securities WHERE first_seen > ? ORDER BY internal_id",
-                (_iso(reference_date),),
+                "SELECT internal_id FROM securities "
+                "WHERE internal_id NOT LIKE ? || '%' "
+                "  AND (first_seen IS NULL OR first_seen > ?) "
+                "ORDER BY internal_id",
+                (SYNTHETIC_ID_PREFIX, _iso(reference_date)),
             )
         ]
 

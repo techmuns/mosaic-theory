@@ -69,6 +69,7 @@ class _Config:
 class _Store:
     def __init__(self) -> None:
         self.upserted: list[Identity] = []
+        self.first_seen: list[object] = []
 
     def __enter__(self) -> _Store:
         return self
@@ -78,6 +79,7 @@ class _Store:
 
     def upsert_security(self, ident: Identity, **kw: Any) -> None:
         self.upserted.append(ident)
+        self.first_seen.append(kw.get("first_seen"))
 
 
 def _run(monkeypatch: pytest.MonkeyPatch, resolver: _Resolver, tickers: list[str],
@@ -214,3 +216,24 @@ def test_a_clean_run_prints_no_failure_tally(
     it. An issuer EDGAR simply publishes no SIC for is not a failure and must not be tallied."""
     _run(monkeypatch, _Resolver(sic=None), tmp_path=tmp_path, tickers=["FSK"])
     assert "WARNING" not in capsys.readouterr().out
+
+
+def test_refresh_stamps_first_seen_on_every_identity_it_writes(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """THE CALL SITE, not the store (review of #533). `Store.upsert_security` already COALESCEd
+    `first_seen` correctly; what was broken was that `_cmd_refresh` never PASSED one, so every
+    identity this command introduced carried NULL — invisible to `identities_first_seen_after`,
+    the #442 failed-forward-run guard, because `NULL > date` is never true.
+
+    Pinned HERE because a store-level test cannot see it: deleting the argument from `_cmd_refresh`
+    reverts the exact defect and left the whole suite green, 3377 passed. Benchmarks are included
+    deliberately — they are resolver-exempt, not stamp-exempt, and the guard's own exemption is
+    what keeps their NULL harmless.
+    """
+    from datetime import date as _date
+    code, store, _ = _run(monkeypatch, _Resolver(), tmp_path=tmp_path, tickers=["NFLX", "IWM"])
+    assert code == 0
+    assert len(store.first_seen) == 2, "both identities should have been written"
+    assert all(f == _date.today() for f in store.first_seen), (
+        f"_cmd_refresh must stamp first_seen on every upsert; got {store.first_seen}. A NULL is "
+        f"invisible to the #442 backdated-run guard.")
