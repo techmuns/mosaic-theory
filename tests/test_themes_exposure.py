@@ -770,3 +770,71 @@ def test_no_cli_print_site_resolves_tags_outside_the_shared_helper() -> None:
     tags_def = src[src.index("def _tags("):][:1200]
     assert "provenance_tags_of(" in tags_def and "provenance_tag_of(" in tags_def, (
         "both resolvers must sit inside `_tags` — if they moved, this pin is guarding nothing")
+
+
+def test_hyperscaler_platform_tags_the_provider_not_every_filer_that_says_cloud() -> None:
+    """MEASURED CALIBRATION (2026-08-31), from the FIRST real scan of ai-value-migration.
+
+    The prior keywords ("cloud", "hyperscaler", "inference", "platform", "distribution") tagged
+    12 of 12 scanned names. A tag that fires on everything carries no information, and the by-tag
+    volume read is the entire purpose of this layer. The sentences below are VERBATIM from that
+    scan's committed assessments, frozen here as fixtures — a value-level pin belongs on a frozen
+    fixture, never on a re-drawn artifact, and freezing them is also what makes this a corpus
+    check rather than text invented to fit the keywords.
+
+    THE RESIDUAL IS PINNED TOO, because it is the honest limit: a filer that NAMES a hyperscaler
+    reads identically to one that IS one. That is semantic, not lexical, and the tag stays
+    provenance — the discrimination that matters is the LLM's driver_tie grade."""
+    from vinci.themes.exposure import provenance_tags_of
+
+    tags = DRIVER_SPECS["ai-value-migration"].provenance_tags
+
+    def hp(text: str) -> bool:
+        return "hyperscaler-platform" in provenance_tags_of(text, tags)
+
+    # THE PROVIDERS — the three names that genuinely sell the below-the-model compute layer, on
+    # their own reported segment vocabulary. All three must keep the tag.
+    assert hp("Alphabet reports Google in two segments, Google Services and Google Cloud, and "
+              "discloses that Google Cloud helps customers build for the AI era")
+    assert hp("Segment disclosure: Intelligent Cloud is one of three reportable segments; "
+              "Microsoft 365 Commercial cloud revenue grew")
+    assert hp("AWS is disclosed as one of three reportable segments, serving developers and "
+              "enterprises of all sizes")
+
+    # THE APP LAYER — real sentences that the old keyword set swept in on bare "cloud" alone.
+    assert not hp("Veeva describes itself as the leading provider of industry cloud solutions "
+                  "for the global life sciences industry, spanning cloud software")
+    assert not hp("The 10-K describes ServiceNow as delivering solutions that help organizations "
+                  "govern, secure and manage artificial intelligence")
+    # ...and an AI-feature sentence, which "inference" used to catch on any app-layer filer
+    assert not hp("customers use the platform to run inference on their own enterprise data")
+
+    # THE RESIDUAL, stated rather than papered over: naming a hyperscaler still tags.
+    assert hp("our software is deployed on AWS and other public cloud providers")
+
+
+def test_ai_value_migration_prefilter_excludes_the_two_generic_ai_phrases() -> None:
+    """MEASURED on the first full sweep (2026-08-31): the prefilter passed 2,666 of 2,907 names —
+    92% — to the expensive semantic layer, and per-term measurement named the cause exactly.
+    "artificial intelligence" matched 2,579 on its own and "generative AI" 985; every modern 10-K
+    says them. Dropping BOTH takes the candidate set to 1,266 (-53%) with all 12 operator-named
+    beneficiaries still clearing on their LAYER vocabulary.
+
+    The prefilter exists to buy RECALL cheaply so the semantic layer can discriminate — but recall
+    bought with a phrase that matches everything is not recall, it is cost: each waved-through name
+    costs filing fetches plus one LLM assessment.
+
+    THE SIBLING IS DELIBERATELY UNTOUCHED: `ai-datacenter` keeps "artificial intelligence",
+    because its OTHER terms are hardware-chain vocabulary (HBM, liquid cooling, switchgear) that a
+    software filer never uses — the generic phrase is that driver's only bridge to an AI-cloud
+    name. Same word, different job; measure per driver rather than sweeping the term out globally.
+    """
+    avm = DRIVER_SPECS["ai-value-migration"].prefilter_terms
+    assert "artificial intelligence" not in avm
+    assert "generative AI" not in avm
+    # the layer vocabulary that carries recall in its place is still there
+    for kept in ("inference", "hyperscaler", "system of record", "proprietary data", "copilot",
+                 "agentic", "large language model", "workflow automation"):
+        assert kept in avm, kept
+    # and the sibling driver's own use of the generic phrase is untouched
+    assert "artificial intelligence" in DRIVER_SPECS["ai-datacenter"].prefilter_terms
