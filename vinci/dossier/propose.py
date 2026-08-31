@@ -609,6 +609,13 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
                 "no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
                 "the catalyst path, and a default here would set the IRR the record is graded on. "
                 "State it in years: 1.5 = 18 months.")
+        # (R3) EPS — EMPTY, NEVER PROPOSED. The P/E recipe reads this and nothing else, so a
+        # pre-filled number would be the machine writing the entire underwrite. It sits alongside
+        # `revenue`/`margin` rather than replacing them: the template does not know which recipe
+        # the analyst will choose, and a leg carrying both is refused at compute time by whichever
+        # recipe it turns out to be, which is a louder failure than a template that guessed.
+        cell["eps"] = None
+
         if leg == "bear":
             cell["bear_basis"] = ""                  # own-history | bear-state-comps | peer-… |…
         cell["margin_basis"] = ""                    # EBIT | EBITDA — WHICH LINE, not provenance

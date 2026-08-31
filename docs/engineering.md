@@ -119,6 +119,16 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **R3 / forward-P/E recipe** — the third scenario recipe, and the first EQUITY-basis one.
+  Plain words: value a share as *earnings per share × the multiple the market pays*, with no
+  enterprise-value step. R1 and R2 both build an enterprise value and subtract net debt to get to
+  equity; a P/E multiple is already an equity multiple, so R3 does neither — subtracting net debt
+  would count the leverage twice, since it is already inside the earnings. Home:
+  `vinci/scenarios.py` (`RECIPE_R3`, `BASIS_PE`, `R3_FORMULA`, `_run_r3`).
+- **earnings axis** — the assumption axis R3 requires in place of *revenue* and *margin*. Plain
+  words: "what will EPS be", stated once, because EPS already contains both the revenue and the
+  margin. Requiring the other two would ask an analyst to write up how they derived an input the
+  arithmetic never reads. Home: `AXES_BY_RECIPE[RECIPE_R3]` in `vinci/scenarios.py`.
 - **calls tape** — the browser over a public commentator's posted calls (#499). Plain words: a
   calendar, the posts for a day, and a price chart for whichever cashtag is focused, on ONE screen,
   built to LABEL those posts rather than to present them. A research input only: it feeds no screen,

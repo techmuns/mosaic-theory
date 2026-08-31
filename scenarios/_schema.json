@@ -600,6 +600,18 @@
           "title": "Multiple",
           "type": "number"
         },
+        "eps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eps"
+        },
         "reason": {
           "title": "Reason",
           "type": "string"
@@ -693,12 +705,28 @@
           "title": "Ebitda"
         },
         "ev": {
-          "title": "Ev",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ev"
         },
         "equity": {
-          "title": "Equity",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equity"
         },
         "ev_ebit": {
           "anyOf": [
@@ -798,9 +826,7 @@
         }
       },
       "required": [
-        "value_per_share",
-        "ev",
-        "equity"
+        "value_per_share"
       ],
       "title": "ScenarioOutcome",
       "type": "object"

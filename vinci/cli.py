@@ -1403,6 +1403,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 # carried from the template, which pre-fills it with the gap's anchor year —
                 # the year `propose_anchors` actually struck the revenue at
                 leg_fy=(str(c["leg_fy"]) if c.get("leg_fy") else None),
+                # (R3) the P/E recipe's only driver. Carried from the template like every other
+                # leg field, never defaulted: `_run_r3` refuses a leg without one rather than
+                # assuming a number, and a field the template cannot set is a field a created
+                # record can never carry.
+                eps=(float(c["eps"]) if c.get("eps") is not None else None),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
