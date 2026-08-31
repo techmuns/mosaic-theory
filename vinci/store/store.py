@@ -38,6 +38,19 @@ NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities",
 #: Kept as the private alias this module has always used internally.
 _NO_ROW_DROP_TABLES = NO_ROW_DROP_TABLES
 
+#: Tables whose committed file must never be REPLACED BY AN EMPTY ONE. Distinct from the
+#: no-row-drop set: those may never shrink at all (an entity master, the ledger), while these are
+#: point-in-time populations that legitimately change membership every build — but never to zero.
+#: Zero rows means "not loaded", and writing that over a committed population loses it silently.
+#:
+#: SCOPED TO THE THEME BAND, DELIBERATELY (2026-08-31). `universe_snapshot` has the SAME latent
+#: hazard — `vinci screen` full-exports without rebuilding first, so on a checkout where no build
+#: has run it would blank the committed primary population too — but that predates this band and
+#: guarding it here would redefine three seeding tests whose fakes admit zero names. Recorded as
+#: an adjacent finding rather than silently absorbed: the theme table is the one THIS change
+#: introduces, and the one no build path seeds.
+_NEVER_EMPTY_TABLES: frozenset[str] = frozenset({"theme_universe_snapshot"})
+
 
 def _assert_no_row_drop(path: Path, new_lines: list[str], pk: Sequence[str]) -> None:
     """Refuse (raise) if ``new_lines`` would drop any row already in ``path`` (compared by primary
@@ -213,6 +226,22 @@ class Store:
         )
 
     # --- universe membership ------------------------------------------------------------------
+    #: The two membership populations, keyed by band. "primary" is the forward-validation
+    #: population (screens/ranker/ledger read ONLY this one); "theme" is the parallel larger band
+    #: read only at the theme altitude (operator ruling 2026-08-31). A band name outside this map
+    #: raises — a typo'd band must never silently read or write the wrong population.
+    UNIVERSE_TABLES: dict[str, str] = {
+        "primary": "universe_snapshot", "theme": "theme_universe_snapshot"}
+
+    @classmethod
+    def _universe_table(cls, band: str) -> str:
+        try:
+            return cls.UNIVERSE_TABLES[band]
+        except KeyError:
+            raise ValueError(
+                f"unknown universe band {band!r} — expected one of "
+                f"{sorted(cls.UNIVERSE_TABLES)}") from None
+
     def record_universe(
         self,
         *,
@@ -220,9 +249,10 @@ class Store:
         internal_id: str,
         in_universe: bool,
         market_cap: DataField[float],
+        band: str = "primary",
     ) -> None:
         self._conn.execute(
-            "INSERT OR REPLACE INTO universe_snapshot "
+            f"INSERT OR REPLACE INTO {self._universe_table(band)} "
             "(as_of, internal_id, in_universe, market_cap, source, coverage_status) "
             "VALUES (?,?,?,?,?,?)",
             (
@@ -236,7 +266,7 @@ class Store:
         )
         self._conn.commit()
 
-    def clear_universe(self) -> None:
+    def clear_universe(self, band: str = "primary") -> None:
         """Drop the ENTIRE universe snapshot — a rebuild is a clean, single-generation snapshot (a
         FULL replace across ALL ``as_of``), not an accretion. The prior behaviour cleared only the
         rebuild's own ``as_of``, so on a persistent DB an earlier generation survived and layered on
@@ -245,7 +275,7 @@ class Store:
         ``as_of``). Clearing all guarantees the stored/exported universe is exactly the latest
         build's; consumers read the single generation via ``latest_universe`` (MAX ``as_of``). Same
         clean-snapshot discipline as ``clear_candidates``."""
-        self._conn.execute("DELETE FROM universe_snapshot")
+        self._conn.execute(f"DELETE FROM {self._universe_table(band)}")
         self._conn.commit()
 
     def clear_candidates(self) -> None:
@@ -258,9 +288,9 @@ class Store:
         self._conn.execute("DELETE FROM candidate_records")
         self._conn.commit()
 
-    def get_universe(self, as_of: date) -> list[str]:
+    def get_universe(self, as_of: date, band: str = "primary") -> list[str]:
         rows = self._conn.execute(
-            "SELECT internal_id FROM universe_snapshot "
+            f"SELECT internal_id FROM {self._universe_table(band)} "
             "WHERE as_of = ? AND in_universe = 1 ORDER BY internal_id",
             (_iso(as_of),),
         ).fetchall()
@@ -289,15 +319,20 @@ class Store:
             "SELECT internal_id, market_cap FROM universe_snapshot "
             "WHERE as_of = ? AND in_universe = 1 AND market_cap IS NOT NULL", (_iso(as_of),))}
 
-    def latest_universe(self, on_or_before: date) -> list[str]:
-        """In-universe internal_ids from the most recent universe snapshot at/before a date."""
+    def latest_universe(self, on_or_before: date, band: str = "primary") -> list[str]:
+        """In-universe internal_ids from the most recent universe snapshot at/before a date.
+
+        Defaults to the PRIMARY band deliberately: every decision-path caller (screen, rank,
+        ledger) takes the default, so the parallel theme band cannot leak into the funnel by
+        forgetting an argument."""
         row = self._conn.execute(
-            "SELECT MAX(as_of) m FROM universe_snapshot WHERE as_of <= ? AND in_universe = 1",
+            f"SELECT MAX(as_of) m FROM {self._universe_table(band)} "
+            "WHERE as_of <= ? AND in_universe = 1",
             (_iso(on_or_before),),
         ).fetchone()
         if row is None or row["m"] is None:
             return []
-        return self.get_universe(date.fromisoformat(row["m"]))
+        return self.get_universe(date.fromisoformat(row["m"]), band=band)
 
     # --- prices -------------------------------------------------------------------------------
     def write_prices(self, bars: Iterable[PriceBar]) -> int:
@@ -561,6 +596,22 @@ class Store:
             path = snapshots_dir / f"{table}.jsonl"
             if table in _NO_ROW_DROP_TABLES and path.exists():
                 _assert_no_row_drop(path, lines, pk)
+            if table in _NEVER_EMPTY_TABLES and not lines and path.exists():
+                # A POPULATION IS NEVER LEGITIMATELY EMPTY once it has been committed. Zero rows
+                # here means this table was never LOADED into the working DB, not that the
+                # universe vanished — and a full `export_snapshots()` from a partly-seeded DB
+                # would otherwise blank the committed file. That is silent-failure-shaped: the
+                # theme loader treats a present-but-empty file as "band not built" and quietly
+                # reverts to primary-only, with nothing raised anywhere. (Review 2026-08-31; the
+                # reachable caller was `vinci screen`, which full-exports without rebuilding
+                # first, and the theme band is the first committed table no build path seeds.)
+                existing = sum(1 for x in path.read_text().splitlines() if x.strip())
+                if existing:
+                    raise ValueError(
+                        f"refusing to truncate {path.name} from {existing} row(s) to zero — the "
+                        f"working DB holds no {table} rows, so this export would blank a "
+                        f"committed population. Load it first (rebuild_from_snapshots) or pass "
+                        f"an explicit `tables=` subset that omits it.")
             with path.open("w") as f:
                 for line in lines:
                     f.write(line + "\n")

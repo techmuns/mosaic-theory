@@ -144,6 +144,17 @@ Each line: *what it does* — *verified how*.
   days empty) — *live runs: stated absence on the real book; placeholder card → ⚑ PASSED row +
   typed artifact rows, then demo artifacts deleted; 7 pins; suite 3105 green.*
   *(detail: `docs/records/2026-08-29-theme-falsifier-sweep.md`)*
+- **Parallel theme universe band — the theme altitude gets megacaps** (`vinci/config.py::theme_universe`,
+  `universe.py`, `store`, `themes/detection.py`) — a SECOND cap band ($10B–$10T, all other gates
+  identical) in its own snapshot, read only by theme scans; the primary $300M–$10B band (the
+  forward-validation population the spread accumulates against) is untouched, and
+  `latest_universe` defaults to it so no decision-path caller can opt in by omission, and the scan
+  union is OPT-IN per call site (review: defaulting it on re-cut the residual model's size
+  terciles for every existing name) — *real run at the primary snapshot's OWN vintage 2026-08-24:
+  826 admitted, primary snapshot unmodified, 0 identities first-seen after it,
+  MSFT/GOOGL/AMZN/NVDA/LLY/CRM/NOW/VEEV/SAP now scannable; META/NVO/AZN dropped LOUDLY at
+  no_shares (MC1/FPI1 classes, measured); 10 pins; suite 3217 green.*
+  *(detail: `docs/records/2026-08-31-parallel-theme-universe-band.md`)*
 - **Sweep clock + flag kind — two review fixes to the theme falsifier sweep** (`vinci/cli.py`,
   `vinci/monitor.py`) — the sweep now runs on the snapshot's clock (`today=now_date`, not the
   calendar ref that let a weekend run date a passed flag before its own as_of), and the passed

@@ -59,6 +59,20 @@ CREATE TABLE IF NOT EXISTS universe_snapshot (
     PRIMARY KEY (as_of, internal_id)
 );
 
+-- The PARALLEL THEME BAND's membership (operator ruling 2026-08-31). Same columns, same
+-- point-in-time discipline, SEPARATE table on purpose: the primary `universe_snapshot` is the
+-- forward-validation population and must not gain rows it was never screened on. Read ONLY at the
+-- theme altitude; screens/ranker/ledger never join it.
+CREATE TABLE IF NOT EXISTS theme_universe_snapshot (
+    as_of           TEXT NOT NULL,
+    internal_id     TEXT NOT NULL,
+    in_universe     INTEGER NOT NULL,
+    market_cap      REAL,
+    source          TEXT NOT NULL,
+    coverage_status TEXT NOT NULL DEFAULT 'unknown',
+    PRIMARY KEY (as_of, internal_id)
+);
+
 -- EOD price bars (point-in-time; bar_date is the knowable date) ------------------------------
 CREATE TABLE IF NOT EXISTS prices (
     internal_id     TEXT NOT NULL,
@@ -135,6 +149,7 @@ SNAPSHOT_TABLES: tuple[str, ...] = (
     "issuers",
     "securities",
     "universe_snapshot",
+    "theme_universe_snapshot",
     "fundamentals",
     "events",
     "candidate_records",

@@ -49,10 +49,51 @@ class _Name:
     cik: str
     name: str
     market_cap: float
+    #: WHICH population admitted this name — "primary" (the forward-validation band) or "theme"
+    #: (the parallel larger band, 2026-08-31). Carried so every theme-altitude surface can say
+    #: where a name came from; a row without provenance is a row that invites the wrong inference.
+    band: str = "primary"
 
 
-def load_detection_universe(cfg: Config) -> tuple[list[_Name], date]:
-    """The broad ``in_universe`` set from the committed snapshots (no DB, no network)."""
+def theme_band_as_of(cfg: Config) -> date | None:
+    """The committed theme band's own vintage, or None when the band was never built.
+
+    Split out so a caller can PRINT the vintage beside the count: the two bands are built by
+    separate runs, and a theme population silently ageing behind the primary one is the
+    stale-input class this repo keeps closing elsewhere."""
+    p = cfg.snapshots_dir / "theme_universe_snapshot.jsonl"
+    if not p.exists():
+        return None
+    dates = [date.fromisoformat(json.loads(x)["as_of"])
+             for x in p.read_text().splitlines() if x.strip()]
+    return max(dates) if dates else None
+
+
+def load_detection_universe(
+    cfg: Config, *, include_theme_band: bool = False
+) -> tuple[list[_Name], date]:
+    """The broad ``in_universe`` set from the committed snapshots (no DB, no network).
+
+    DEFAULTS TO THE PRIMARY BAND ALONE — corrected at review, 2026-08-31, and the reason is the
+    whole point of the parallel band. This loader feeds TWO very different consumers:
+
+    * the DRIVER EXPOSURE SCAN, which reads each name's filings independently. Widening its
+      population adds names and changes nothing about the names already there. It opts in.
+    * COMPONENT A / stage-2 residual detection, which builds CROSS-SECTIONAL factors — the SMB
+      leg is a tercile of the population's market caps (``residualize._tercile_spread``) and the
+      sector legs are cohort sums. Adding 810 names spanning $10B-$3.7T re-cuts those terciles,
+      so EVERY existing primary name's residual moves, its clusters move, and a megacap can enter
+      a cluster it is then designated the external "leader" of (``leaders.mega_cap_slice`` is the
+      same >$10B population, and its leave-one-out premise assumes non-membership). None of that
+      is a theme-band feature; it is a silent redefinition of a different measurement.
+
+    So the union is OPT-IN per call site, not per checkout. ``include_theme_band=True`` unions the
+    committed ``theme_universe_snapshot.jsonl`` when present and tags those names ``band="theme"``.
+
+    The returned ``as_of`` is the PRIMARY snapshot's date — the population's own vintage. The
+    theme band's rows are filtered to their own latest ``as_of`` independently (see
+    :func:`theme_band_as_of`), because the two bands are built by separate runs.
+    """
     snaps = cfg.snapshots_dir
     # securities: internal_id → identity
     idents: dict[str, dict[str, str]] = {}
@@ -84,6 +125,34 @@ def load_detection_universe(cfg: Config) -> tuple[list[_Name], date]:
                 market_cap=float(cap),
             )
         )
+    theme_path = snaps / "theme_universe_snapshot.jsonl"
+    if include_theme_band and theme_path.exists():
+        seen = {n.internal_id for n in names}
+        trows = [json.loads(x) for x in theme_path.read_text().splitlines() if x.strip()]
+        if trows:
+            t_as_of = max(date.fromisoformat(r["as_of"]) for r in trows)
+            for r in trows:
+                if date.fromisoformat(r["as_of"]) != t_as_of or not r.get("in_universe"):
+                    continue
+                # A name in BOTH bands keeps its PRIMARY row — the decision-path population wins
+                # the identity, so nothing downstream can see one name under two bands.
+                if r["internal_id"] in seen:
+                    continue
+                ident = idents.get(r["internal_id"])
+                cap = r.get("market_cap")
+                if ident is None or cap is None:
+                    continue
+                seen.add(r["internal_id"])
+                names.append(
+                    _Name(
+                        internal_id=r["internal_id"],
+                        ticker=ident["eod_symbol"],
+                        cik=ident["cik"],
+                        name=ident["name"],
+                        market_cap=float(cap),
+                        band="theme",
+                    )
+                )
     return names, as_of
 
 
