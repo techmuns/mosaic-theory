@@ -482,8 +482,25 @@ _BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "ltm_revenue", "ltm_f
 
 def _with_bridge(anchor: Anchor, bridge: dict[str, Any]) -> Anchor:
     """Attach the source-bound inputs to an anchor whose RECIPE did not resolve — the facts stand
-    on their own footing, and the R2 cohort reads them from here."""
-    return anchor.model_copy(update={k: bridge[k] for k in _BRIDGE_FIELDS})
+    on their own footing, and the R2 cohort reads them from here.
+
+    THE FLAG RIDES WITH THE FACTS (review of #534). ``DQ_VENDOR_BRIDGE`` used to be composed only
+    on the full computation, PAST all four early returns — so a name whose recipe did not resolve
+    carried CIQ-supplied numbers under a null ``data_quality``: FUBO's ``net_debt`` (null → 172.4)
+    and MVST's ``d_and_a`` 33.201 / ``net_debt`` 65.2, each a workbook figure presented as though
+    EDGAR had produced it. That understatement is worst exactly here, because the docstring above
+    says the R2 cohort underwrites FROM these numbers. A vendor fill is a property of the FACTS,
+    not of the recipe, so it is stamped wherever the facts are attached.
+    """
+    updates: dict[str, Any] = {k: bridge[k] for k in _BRIDGE_FIELDS}
+    if bridge["vendor_filled"]:
+        updates["data_quality"] = bg.compose_flag(anchor.data_quality, DQ_VENDOR_BRIDGE)
+        updates["data_quality_detail"] = [
+            *(anchor.data_quality_detail or []),
+            "vendor bridge: " + ", ".join(bridge["vendor_filled"])
+            + " supplied by the CIQ workbook because EDGAR had no usable tag",
+        ]
+    return anchor.model_copy(update=updates)
 
 
 # --- the shared anchor computation (called by assembly AND the backfill writer) ----------------
