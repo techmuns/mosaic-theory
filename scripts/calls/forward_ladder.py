@@ -14,7 +14,10 @@ A CELL WITH FEW ROWS IS A DIFFERENT MARKET, NOT A LONGER HOLD. At 252 days only 
 have elapsed, so that column is survivorship: it is printed with its `n` for exactly that reason,
 and both buckets rise there together.
 
-    python scripts/calls/forward_ladder.py [handle]
+    python -m scripts.calls.forward_ladder [handle]
+
+(as a module, like every other script here — a plain `python scripts/...` run puts the script's own
+directory on `sys.path` and `vinci` is then unimportable.)
 """
 from __future__ import annotations
 
@@ -104,9 +107,8 @@ def main() -> int:
         print(f"  {'direction ok':<14}" + "".join(
             f"{rows[h]['hit']:>16.0%} " if rows[h]["hit"] is not None else f"{'-':>17}"
             for h in LADDER))
-        print(f"  {'  95% CI':<14}" + "".join(
-            f"{'[' + format(rows[h]['ci'][0], '.0%') + ',' + format(rows[h]['ci'][1], '.0%') + ']':>17}"
-            for h in LADDER))
+        cis = [f"[{rows[h]['ci'][0]:.0%},{rows[h]['ci'][1]:.0%}]" for h in LADDER]
+        print(f"  {'  95% CI':<14}" + "".join(f"{c:>17}" for c in cis))
         print(f"  {'median excess':<14}" + "".join(
             f"{rows[h]['median_excess']:>+16.2%} " if rows[h]["median_excess"] is not None
             else f"{'-':>17}" for h in LADDER))
