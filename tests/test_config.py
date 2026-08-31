@@ -152,3 +152,45 @@ def test_state_and_engineering_docs_have_no_orphan_bold() -> None:
     assert not bad, (
         "unbalanced `**` — everything after the orphan renders as literal asterisks:\n"
         + "\n".join(bad))
+
+
+def test_the_data_tree_does_not_move_with_the_working_directory(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """DATA FOLLOWS THE CODE, NOT THE SHELL.
+
+    `data_dir` defaulted to a bare relative `Path("data")`, so every derived path moved with
+    whatever CWD the process started in. Running any script from `scripts/` built a SECOND, empty
+    tree at `scripts/data/` and refilled it — 4.6MB of SEC responses re-fetched into a cache
+    nothing else would ever read, while `snapshots_dir` and `db_path` pointed at directories that
+    do not exist.
+
+    The cache was only the visible symptom, because a cache CREATES what it misses. The dangerous
+    half is silent: a caller writing through `cfg.snapshots_dir` from the wrong CWD files an
+    artifact where nothing will read it, and reports success.
+    """
+    from vinci.config import get_config
+
+    monkeypatch.chdir(tmp_path)
+    cfg = get_config()
+    assert cfg.data_dir.is_absolute(), (
+        f"data_dir is {cfg.data_dir} — relative, so it follows the shell rather than the code")
+    for name, path in (("cache_dir", cfg.cache_dir), ("snapshots_dir", cfg.snapshots_dir),
+                       ("db_path", cfg.db_path)):
+        assert tmp_path not in path.parents, (
+            f"{name} resolved under the CWD ({path}) — a second data tree starts here")
+    assert cfg.snapshots_dir.is_dir(), (
+        f"{cfg.snapshots_dir} does not exist from a foreign CWD — the committed snapshots are "
+        f"unreachable, which is how a write lands somewhere nothing reads")
+
+
+def test_the_data_tree_is_still_overridable() -> None:
+    """Anchoring the DEFAULT must not weld the path down: `Config(data_dir=...)` is how every test
+    that writes points at a tmp_path, and how a caller targets another tree."""
+    from vinci.config import Config
+
+    other = Path("/tmp/somewhere-else")
+    cfg = Config(data_dir=other)
+    assert cfg.cache_dir == other / "cache"
+    assert cfg.snapshots_dir == other / "snapshots"
+    assert cfg.db_path == other / "vinci.db"

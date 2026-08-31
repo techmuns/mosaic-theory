@@ -83,10 +83,28 @@ class PacingConfig(BaseModel, frozen=True):
     max_retries: int = 4
 
 
+#: The repo root — this file sits one level below it. Used to anchor ``data_dir``.
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
 class Config(BaseModel, frozen=True):
     """Top-level config. Paths derive from ``data_dir``; everything is overridable."""
 
-    data_dir: Path = Field(default=Path("data"))
+    #: ANCHORED TO THE PACKAGE, NOT THE WORKING DIRECTORY. The default was a bare relative
+    #: ``Path("data")``, so every derived path — the HTTP cache, the snapshots directory, the
+    #: working DB — moved with whatever CWD the process happened to start in. Running any script
+    #: from ``scripts/`` therefore built a SECOND, empty tree at ``scripts/data/`` and quietly
+    #: refilled it: 4.6MB of SEC responses re-fetched into a cache nothing else would ever read
+    #: again, while `snapshots_dir` and `db_path` pointed at directories that do not exist.
+    #:
+    #: The cache was the visible symptom because it creates what it misses. The dangerous half is
+    #: the other two: a caller that WRITES through `cfg.snapshots_dir` from the wrong CWD files an
+    #: artifact where nothing will read it, and reports success.
+    #:
+    #: Anchoring to `__file__` makes the data follow the CODE — run this checkout's `vinci`, get
+    #: this checkout's `data/`. Still overridable: `Config(data_dir=...)` is how the tests point it
+    #: at a tmp_path, and that is unaffected.
+    data_dir: Path = Field(default=_REPO_ROOT / "data")
     universe: UniverseConfig = UniverseConfig()
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
