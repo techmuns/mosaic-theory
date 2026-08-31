@@ -45,6 +45,7 @@ from vinci.rank import (
     render_profile_block,
 )
 from vinci.resolver import EntityResolver, ResolutionError
+from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     ORIGIN_FOLLOWED,
@@ -88,6 +89,54 @@ def _cmd_resolve(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def _resolve_for_refresh(resolver: EntityResolver, ticker: str) -> Identity | None:
+    """One ticker for a price backfill: STRICT on the identity, BEST-EFFORT on the SIC.
+
+    WHY `refresh` ENRICHES AT ALL (closes STATE.md §5.0 row 7). This command is how a name that is
+    NOT in the cap band enters the entity master — the ledgered-but-out-of-universe class, which
+    `build_universe` never comes back to enrich because it never admits it. Resolving without the
+    SIC left such a name with a PERMANENT hole: NFLX has sat SIC-less since it arrived exactly this
+    way, and Gartner (#523) was the same class. Fetching it here fills the hole at the point of
+    entry instead of leaving it for a later sweep.
+
+    WHY THE SIC IS TOLERATED AND THE IDENTITY IS NOT. An unknown/ambiguous ticker still FAILS LOUD
+    — mis-resolution is the system's worst failure and the resolver exists to refuse it. But a SIC
+    is an ADORNMENT on a price backfill, and `resolve_ticker(enrich=True)` propagates the raw HTTP
+    error when data.sec.gov is slow, rate-limiting or 500ing. Every ticker is resolved BEFORE any
+    bars are fetched, so an un-caught SEC failure would abort the whole backfill before it started
+    — a price job refusing to run because the SEC was flaky, for data the job does not need. So the
+    SIC is best-effort and SAYS SO OUT LOUD; the bars are the job.
+
+    SAFE ONLY BECAUSE OF #523. `upsert_security` now COALESCEs `sic`, so writing UNKNOWN can no
+    longer erase a stored value. Before that fix this degradation would have been the clobber.
+
+    AND THE TOLERANCE LIVES HERE, NOT IN THE RESOLVER — a soft mode on `EntityResolver` would let
+    every other caller degrade silently, including the universe gate that deliberately fails CLOSED
+    on a missing SIC (`unknown_sic`).
+    """
+    try:
+        ident = resolver.resolve_ticker(ticker)
+    except ResolutionError as exc:
+        print(f"skip {ticker}: {exc}")
+        return None
+    try:
+        sic, sic_desc = resolver.sic_for(ident.cik)
+    except Exception as exc:  # noqa: BLE001 — reported, never guessed; the bars are the job
+        print(f"{ticker}: SIC lookup FAILED ({type(exc).__name__}: {exc}) — refreshing prices with "
+              f"SIC UNKNOWN. Bars are unaffected, and any stored SIC is preserved.")
+        return ident
+    if sic is None:
+        # ABSENT, not broken — the distinction #523/#525 exist to keep visible.
+        print(f"{ticker}: EDGAR publishes no SIC for this issuer (routine for BDCs and funds) — "
+              f"stored as UNKNOWN, never inferred.")
+    # EMPTY STRING IS NOT A VALUE, and here it is not merely cosmetic: `upsert_security` COALESCEs
+    # `sic_description`, and SQL COALESCE treats '' as PRESENT — so an empty description would
+    # OVERWRITE a stored one instead of deferring to it, quietly re-opening the erasure #523 shut
+    # for the sibling column. EDGAR really does return '' (observed live on FSK, a BDC: sic None,
+    # sicDescription ''), so this is a live path, not a defensive flourish.
+    return ident.model_copy(update={"sic": sic, "sic_description": sic_desc or None})
+
+
 def _cmd_refresh(args: argparse.Namespace) -> int:
     """Backfill/refresh Polygon EOD bars for the given tickers into the store."""
     cfg = get_config()
@@ -100,10 +149,8 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
             # benchmark ETFs are synthetic identities (IDX-*), not SEC issuers — resolver-exempt
             secs.append(benchmark_identity(t.upper()))
             continue
-        try:
-            secs.append(resolver.resolve_ticker(t))
-        except ResolutionError as exc:
-            print(f"skip {t}: {exc}")
+        if (ident := _resolve_for_refresh(resolver, t)) is not None:
+            secs.append(ident)
     start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
     mode = "per-symbol aggs" if args.aggs else "grouped-daily"
     print(f"refreshing {len(secs)} names {start}..{end} via {mode} "
