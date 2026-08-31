@@ -389,7 +389,14 @@ def _lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str]
     cash = latest_instant(extract_points(facts, "cash"))
     if not (ltd or dc) or cash is None:
         return None
-    td = (ltd.value if ltd else 0.0) + (dc.value if dc else 0.0)
+    # THE TWO TERMS MUST SHARE A BASIS (review of #531). `LongTermDebtNoncurrent` EXCLUDES current
+    # maturities and is meant to be added to a current figure; bare `LongTermDebt` is the total and
+    # already CONTAINS them. The alias order encodes that, and adding `debt_current` on top of the
+    # total double-counts — VITL surfaced it: $30.0M total (2026-06-28) plus a $1.1M current figure
+    # whose own tag stopped in 2020, summed under a "latest 10-Q" label. Which tag was served is the
+    # only thing that says which basis this is, so read it rather than assume the pairing.
+    ltd_is_total = ltd is not None and ltd.tag == "LongTermDebt"
+    td = (ltd.value if ltd else 0.0) + (0.0 if ltd_is_total else (dc.value if dc else 0.0))
     fin = _sum_latest_tags(facts, "FinanceLeaseLiabilityCurrent", "FinanceLeaseLiabilityNoncurrent")
     opl = _sum_latest_tags(facts, "OperatingLeaseLiabilityCurrent",
                            "OperatingLeaseLiabilityNoncurrent")

@@ -129,13 +129,125 @@ def _parse_date(s: str | None) -> date | None:
     return date.fromisoformat(s) if s else None
 
 
+#: A tag is ABANDONED when it lags the filer's OWN newest reported fact by more than this. Measured
+#: against the filer's frontier, not against today, so a filer who is simply late is never called
+#: stale — only one that kept filing while this particular tag stopped. 550 days clears an annual
+#: series (up to ~365d behind a quarterly frontier, plus filing lag and a 53-week year) and is far
+#: below every abandonment in evidence: the nearest real case measured is 670d and the worst 5,907d.
+STALE_TAG_LAG_DAYS = 550
+
+#: How far an alias may trail the BEST alias of its own concept before it counts as left behind.
+#: 200 days sits inside one annual filing cycle, so an alias the filer still updates never trips it
+#: (equally-current siblings measure 0d apart, and priority order is preserved), while a full cycle
+#: behind — GOOGL revenue stopping at FY2024 while `Revenues` reached FY2025, 365d — does.
+SIBLING_LAG_DAYS = 200
+
+
+def filer_frontier(facts: dict[str, Any]) -> date | None:
+    """The newest period end the filer reports under ANY tag — its own reporting clock."""
+    nsmap = facts.get("facts", {})
+    ends: list[date] = []
+    for ns in _NAMESPACES:
+        for body in (nsmap.get(ns) or {}).values():
+            for rows in (body.get("units") or {}).values():
+                for r in rows:
+                    d = _parse_date(r.get("end"))
+                    if d is not None:
+                        ends.append(d)
+    return max(ends) if ends else None
+
+
 def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
-    """Extract all reported points for a logical concept, trying alias tags in priority order."""
-    for tag in CONCEPT_ALIASES[concept]:
-        points = points_for_tag(facts, tag, concept=concept)
-        if points:
-            return points  # first alias with data wins
-    return []
+    """Extract all reported points for a logical concept, trying alias tags in priority order.
+
+    MC1 — AN ABANDONED ALIAS IS SKIPPED, NOT SERVED. First-present-wins alone hands back whatever
+    the filer tagged FIRST in our priority order, even if that series died years ago, because a
+    dead series still carries a confident filed date. Measured live at megacaps: Amazon's
+    ``PaymentsToAcquirePropertyPlantAndEquipment`` last reports 2017-03-31 and Nvidia's 2020-07-26,
+    while BOTH filers report ``PaymentsToAcquireProductiveAssets`` currently — the right number was
+    already in this map, one line below the wrong one, and the resolution order withheld it.
+
+    So the freshness test runs BEFORE the alias is accepted, and a stale one falls through to the
+    next. When EVERY alias is stale the FIRST present one is still returned rather than refused: a
+    tag also stops being reported when the FACT ceases (a company that repaid its current debt stops
+    tagging it), and turning that into UNKNOWN would manufacture a hole where the filer simply has
+    nothing to report. Distinguishing abandonment from cessation needs the filer's own words, not a
+    date — so this fixes what it can prove and leaves the rest visible via ``stale_served``.
+
+    THE ALL-STALE FALLBACK IS THE FIRST ALIAS, NEVER THE LAST. ``CONCEPT_ALIASES`` is ordered by
+    MEANING, not by convenience: ``SalesRevenueNet`` is a last resort because for some filers it is
+    only a COMPONENT of revenue, and ``CommonStockSharesIssued`` is not shares OUTSTANDING. Falling
+    back to whichever alias happened to be iterated last would silently invert that ordering when
+    freshness can separate nothing — a wrong-by-meaning number in place of a merely-old one.
+    """
+    return _resolve(facts, concept, filer_frontier(facts))
+
+
+def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
+    """How far forward an alias's series reaches, at the grain its consumers read it.
+
+    THE GRAIN IS THE WHOLE POINT (review of #531). The first cut measured an alias's newest point
+    of ANY duration, but the consumers of these concepts read the ANNUAL series. An alias can
+    therefore carry perfectly fresh QUARTERLIES and no annual series at all, sail through a
+    freshness test, and starve every annual reader — which is exactly the UBER defect this guard
+    was built for, still live on BRBR and MVST when the review found it.
+    """
+    pool = [p for p in points if p.is_annual] if annual_grain else points
+    return max((p.period_end for p in pool), default=None)
+
+
+def _resolve(
+    facts: dict[str, Any], concept: str, frontier: date | None
+) -> list[ConceptPoint]:
+    """The alias walk of :func:`extract_points`, taking an already-computed frontier.
+
+    Split out so ``stale_served`` scans the (large) companyfacts blob for the frontier ONCE rather
+    than three times — its own call, plus one inside the ``extract_points`` it delegates to.
+    """
+    present = [(tag, pts) for tag in CONCEPT_ALIASES[concept]
+               if (pts := points_for_tag(facts, tag, concept=concept))]
+    if not present:
+        return []
+    first_present = present[0][1]
+    if frontier is None:
+        return first_present
+
+    # MEASURED AGAINST THE BEST SIBLING, NOT THE FILER'S WHOLE FRONTIER (review of #531). Comparing
+    # each alias to the filer's newest fact of any kind let GOOGL through: its served revenue alias
+    # sits 456d behind that frontier — inside the 550d allowance — while its ANNUAL series stops at
+    # FY2024 and `Revenues` already carries FY2025. The question is not "is this alias old" but
+    # "has a SIBLING alias for this same concept moved on without it", which is what abandonment
+    # looks like from the outside.
+    annual_grain = any(any(p.is_annual for p in pts) for _, pts in present)
+    reaches = {tag: _reach(pts, annual_grain=annual_grain) for tag, pts in present}
+    best = max((d for d in reaches.values() if d is not None), default=None)
+    if best is None:
+        return first_present
+    for tag, points in present:
+        got = reaches[tag]
+        # ORDER IS MEANING, so the FIRST alias not left behind wins — never simply the one reaching
+        # furthest, which would promote a component tag (SalesRevenueNet) over the real one.
+        if got is not None and (best - got).days <= SIBLING_LAG_DAYS:
+            return points
+    # every alias stale: fall back to priority order, and let ``stale_served`` name it for the sweep
+    return first_present
+
+
+def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
+    """``(tag, lag_days)`` when ``extract_points`` had to serve a stale alias — else ``None``.
+
+    The reporting half of MC1: `extract_points` fixes what a fresher alias can fix, and this names
+    what it could not, so the monthly sweep can show a human the tags whose series has gone quiet
+    rather than leaving them to be discovered in a rendered page.
+    """
+    frontier = filer_frontier(facts)
+    if frontier is None:
+        return None
+    pts = _resolve(facts, concept, frontier)
+    if not pts:
+        return None
+    lag = (frontier - max(p.period_end for p in pts)).days
+    return (pts[0].tag, lag) if lag > STALE_TAG_LAG_DAYS else None
 
 
 def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "") -> list[ConceptPoint]:
