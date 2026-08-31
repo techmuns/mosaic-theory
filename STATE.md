@@ -653,6 +653,21 @@ Each line: *what it does* — *verified how*.
   real `_cmd_refresh`) + `test_sic_for_normalises_edgars_empty_description_to_absent`
   (`tests/test_resolver.py`); six demonstrated failing without their fix.
   *Record: `docs/records/2026-08-31-refresh-enriches-best-effort.md`.*
+- **ARTIFACT PASS — EIGHT DOSSIERS STOPPED REPORTING A SECTOR THEY KNEW (2026-08-31).** The
+  clobber's downstream fossil, found by running the pass: GOOGL, IT, MVST, NCNO, NFLX, UBER, V and
+  WERN each carried `"sector": "Unknown"` while their SIC resolved. `assemble.py:923` reads
+  `resolve_label(rec.identity.sic).sector` from the STORE AT ASSEMBLY TIME, and the runbook makes
+  `vinci refresh <TICKER> IWM MDY SPY` MANDATORY immediately before assembly — so until #528 the
+  mandatory pre-flight destroyed the SIC of the very name being assembled. Every dossier was built
+  2026-08-18, the day after #464; the nine that read correctly are the ones a later
+  `build_universe` re-enriched. **All eight are out-of-cap-band names** — the same
+  ledgered/followed-but-out-of-universe class as Gartner. Corrected SURGICALLY (one line per file,
+  no `json.load→json.dump`; the value is `resolve_label(<committed SIC>).sector`, exactly what
+  assembly computes), leaving synthesis and as-of untouched — a re-assembly would have re-rolled
+  twelve synthesis texts and re-dated every artifact, which is a re-underwrite, not a refresh.
+  Incident→invariant (shipped Y): `tests/test_dossier_sector_coherence.py` — no dossier reports
+  Unknown for a sector the entity master can resolve, AND the two never disagree. Full offline
+  suite re-run on the freshly-written artifacts per the ARTIFACT-PASS RULE.
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
   defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
@@ -1468,6 +1483,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
 | 5 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
 | 6 | **Declare thesis cards for the remaining drivers** (`vinci theme-thesis declare <driver> --file card.json`). TWO of six declared: `ai-value-migration` 2026-08-30 (supply-side, 3 falsifiers, confirming due 2026-12-15 — `docs/records/2026-08-30-ai-value-migration-card.md`) and `glp1-drug-value-chain` 2026-08-31 (customer-side, 2 demand-side falsifiers, confirming due 2026-11-30 — `docs/records/2026-08-31-glp1-drug-value-chain-card.md`). The remaining four (ai-datacenter, defense-demand-shift, truckload-supply-purge, glp1-demand-shift) refuse new Stage-4 freezes until theirs; the three WITH theme pages also stamp `THESIS UNSTATED` (glp1-demand-shift is slugless, so nothing renders a stamp for it). The card's words are the operator's judgment — no build fabricates them. | operator | the operator's declared thesis (per driver, at their pace) |
+| 7 | **LLY has a committed dossier but NO row in the entity master** (found by the 2026-08-31 artifact pass). `data/dossiers/LLY/` exists, yet no `securities.jsonl` row carries ticker LLY — so its dossier `sector` is permanently `Unknown`, and were it ledgered nothing could resolve its label either. Now cheap to fix: `vinci refresh LLY IWM MDY SPY --start <~14mo> --end <today>` introduces the identity WITH its SIC since #528. Left undone deliberately — it adds an entity-master row, which is beyond the surgical sector pass the operator approved. | operator | ruling (one refresh, then re-run the coherence pin) |
 
 **MEASURED, NOW AN OPERATOR CALL — not a build:** the LLM cause tier. #515 wired a document onto
 every de-rating event and found the escalation is 20% of them (104 of 525), not all: 171 causes are
