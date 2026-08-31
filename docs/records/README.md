@@ -53,6 +53,13 @@ down, as distinct from something that shipped.
 2. **An appended `## Amendments` section** — dated entries at the end, the house style this repo
    already uses (49 entries in the old STATE.md carry in-place `AMENDED <date>` annotations).
 
+3. **A repaired POINTER** — a citation whose target MOVED may be repointed. The path, never the
+   claim. A pointer that no longer resolves has ALREADY destroyed what the record was for; repairing
+   it preserves the meaning rather than changing it. Added 2026-08-31, when absorbing `docs/audits/`
+   showed the rule as written made a directory rename impossible — the reason that absorption sat
+   undone through P1, P2 and P3. The guard enforces the distinction mechanically: it strips
+   `docs/…` paths from both versions and refuses the change if anything else moved.
+
 Anything else — rewriting a sentence, deleting a paragraph, "tidying" — is refused by CI, which
 diffs each record against the merge base. If a record is wrong, **append the correction**; the
 wrong version staying visible is the point. That is Nygard's ADR rule, adapted to how this repo
@@ -72,6 +79,7 @@ already writes.
 
 ## Related conventions this generalizes
 
-- **`docs/audits/`** — ten dated `YYYY-MM-DD-slug.md` records; the pattern this directory
-  generalizes. They move here in P1 of the knowledge-ledger plan.
+- **`docs/audits/`** — ABSORBED 2026-08-31. Its 14 files are records here under their own dates;
+  the 5-file `2026-07-28-smpl/` audit flattened to `2026-07-28-smpl-*.md`, because `ls` is the only
+  index and a subdirectory is invisible to it. The directory is gone: there is one place to look.
 - **`planning/`** — the planning fossils CLAUDE.md already names. Superseded plans, not records.

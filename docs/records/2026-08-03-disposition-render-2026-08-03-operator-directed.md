@@ -9,7 +9,7 @@ migrated-from: STATE.md §5 archive
 ---
 
 **DISPOSITION RENDER — 2026-08-03 (operator-directed, its own session after being dropped from five
-prompts as a rider). `docs/audits/2026-07-28-smpl/disposition.md` — every P and N item, four-state,
+prompts as a rider). `docs/records/2026-07-28-smpl-disposition.md` — every P and N item, four-state,
 MEASURED against code and the committed artifacts rather than read out of this file.** The operator's
 count had been wrong four times, each time answered from tracking; the render is therefore a reading of
 the repo, and STATE was used only to find candidate homes. **THREE ENTRIES HERE WERE CONTRADICTED BY

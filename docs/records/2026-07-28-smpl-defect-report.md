@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-28
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-07-28-smpl-defect-report.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Defect Report — Mosaic Theory Dossier Pipeline
 
 **Subject artefact:** `SMPL-dossier_today.md` (assembled 2026-07-24 13:02 UTC, disposition WATCH 2026-07-27)

@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-22
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-07-22-r1-applicability.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # R1 APPLICABILITY AUDIT — 2026-07-22
 
 Read-only. Flags PRINT, never block (the linter model): the machine surfaces, the human concludes.

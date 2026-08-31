@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-08-04
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-08-04-scenario-create-derivability.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # `scenario-create` — what a proposer can default, and what it cannot
 
 **Step 1 report. STEP 2 NOT BUILT — the stop condition fired.** **Only four of the nine numbers have

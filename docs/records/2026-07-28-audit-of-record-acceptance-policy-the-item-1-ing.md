@@ -14,7 +14,7 @@ of nine platform defects (verified, not asserted: #236 touched STATE.md and docs
 materiality guard exists anywhere in `vinci/`; no price-vs-panel as-of comparison exists; the
 guidance `Situation`-cell path is intact. Re-assembling SMPL today reproduces all nine).
 
-(1) **AUDIT OF RECORD is now the three-artifact folder** `docs/audits/2026-07-28-smpl/` with a
+(1) **AUDIT OF RECORD is now the three-artifact folder** `docs/records/2026-07-28-smpl-audit-of-record.md` with a
 README manifest as index. The earlier single-file export was an ABRIDGEMENT — only two of the
 three artifacts were ever files, the full IC memo having been delivered in conversation — and it
 is REMOVED, not left beside its replacement (two versions of one audit with no precedence marker

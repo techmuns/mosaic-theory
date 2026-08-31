@@ -1,8 +1,9 @@
 """MATERIALITY GUARD — a line too big to go unmentioned may not go unmentioned.
 
-THE DEFECT (external IC audit 2026-07-28, P1; docs/audits/2026-07-28-smpl/). SMPL's CIQ Annual
-Income Statement carries an LTM ``Asset Writedown`` of **−$391.9M** — 43% of the $909M market
-cap, and the sole cause of LTM net income of −$198.8M. It appears in NO tier of the dossier. The
+THE DEFECT (external IC audit 2026-07-28, P1;
+docs/records/2026-07-28-smpl-audit-of-record.md). SMPL's CIQ Annual Income Statement carries an
+LTM ``Asset Writedown`` of **−$391.9M** — 43% of the $909M market cap, and the sole cause of LTM
+net income of −$198.8M. It appears in NO tier of the dossier. The
 bear case instead cites a $60.9M FY2025 impairment, a figure 5.3x too small, while the analyst's
 own ledger V-row had recorded the $331.0M YTD number three days earlier.
 

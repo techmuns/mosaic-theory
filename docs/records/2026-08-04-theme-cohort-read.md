@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-08-04
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-08-04-theme-cohort-read.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Which themes hold multiple candidates — a read, not a recommendation
 
 **Sources, both already on disk — no new screen run.**

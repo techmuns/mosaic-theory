@@ -14,10 +14,12 @@ old shape coming back, because a freeze nothing enforces is a note, not a rule.
 from __future__ import annotations
 
 import contextlib
+import functools
 import importlib.util
 import io
 import pathlib
 import re
+import subprocess
 
 import pytest
 
@@ -434,3 +436,96 @@ def test_no_migrated_section_record_is_left_unpointed() -> None:
         f"{len(orphans)} §2/§4 record(s) that nothing in STATE.md points at: {orphans[:4]}. The "
         f"summary lost its pointer, so the detail is unreachable from the claim it supports.")
 
+
+
+@functools.lru_cache(maxsize=1)
+def _merge_base() -> str | None:
+    """The merge base with origin/main, computed ONCE.
+
+    Cached because the first cut called `git merge-base` and `git show` per record — 292 records,
+    584 subprocesses, and the offline suite went from ~3 minutes to over ten. A guard nobody will
+    wait for gets deleted, so its cost is part of whether it works.
+    """
+    r = subprocess.run(["git", "merge-base", "HEAD", "origin/main"],
+                       cwd=ROOT, capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+@functools.lru_cache(maxsize=1)
+def _changed_records() -> frozenset[str]:
+    """Record filenames that DIFFER from the merge base — the only ones worth reading.
+
+    One `git diff --name-only` replaces the per-record scan: an unchanged record cannot have had
+    its body rewritten, so there is nothing to check.
+    """
+    base = _merge_base()
+    if base is None:
+        return frozenset()
+    r = subprocess.run(["git", "diff", "--name-only", base, "--", "docs/records"],
+                       cwd=ROOT, capture_output=True, text=True)
+    if r.returncode:
+        return frozenset()
+    return frozenset(pathlib.PurePosixPath(x).name for x in r.stdout.split())
+
+
+def _merge_base_text(path: pathlib.Path) -> str | None:
+    """The file's content at the merge base, or None if it is new or unchanged there."""
+    base = _merge_base()
+    if base is None or path.name not in _changed_records():
+        return None
+    rel = path.relative_to(ROOT).as_posix()
+    show = subprocess.run(["git", "show", f"{base}:{rel}"],
+                          cwd=ROOT, capture_output=True, text=True)
+    return show.stdout if show.returncode == 0 else None
+
+
+def _body(text: str) -> str:
+    return text.split("---", 2)[2] if text.startswith("---\n") else text
+
+
+def _strip_paths(text: str) -> str:
+    """Blank every `docs/…` path so a POINTER REPAIR compares equal and a claim does not."""
+    return re.sub(r"docs/[\w./-]+", "«path»", text)
+
+
+def test_a_merged_record_body_is_immutable() -> None:
+    """THE README HAS PROMISED THIS SINCE P0 AND CI NEVER DID IT.
+
+    "Anything else — rewriting a sentence, deleting a paragraph, 'tidying' — is refused by CI, which
+    diffs each record against the merge base." No such check existed: a record body could be edited
+    and the suite stayed green. A rule the machine does not enforce is a rule that drifts, and this
+    one guards the ledger's whole reason for existing — the wrong version staying VISIBLE.
+
+    THE THREE PERMITTED CHANGES, per the README: a `status:` flip, an appended `## Amendments`, and
+    a repaired POINTER. The last is enforced by comparison, not by trust: both versions have their
+    `docs/…` paths blanked, and if anything ELSE differs the change is refused. So a path may move
+    and a claim may not, mechanically.
+    """
+    for p in _records():
+        before = _merge_base_text(p)
+        if before is None:
+            continue  # new record, or no merge base — nothing is frozen yet
+        now = p.read_text()
+        if now == before:
+            continue
+        old_body, new_body = _body(before), _body(now)
+        # An appended `## Amendments` section is the sanctioned correction channel. Split it off
+        # and check the two halves under DIFFERENT rules: the body must not change, and the
+        # amendments must only GROW.
+        #
+        # THE SECOND HALF IS NOT DECORATION. Truncating both sides at the heading and comparing
+        # only what precedes it leaves everything after `## Amendments` unchecked — so an existing
+        # amendment could be silently reworded, and an amendment IS a record of a correction. It
+        # also made a mutation look survivable: a sentence appended past that heading reads as a
+        # new amendment, which is exactly what the channel is for.
+        old_amend = old_body.split("## Amendments")[1] if "## Amendments" in old_body else ""
+        new_amend = new_body.split("## Amendments")[1] if "## Amendments" in new_body else ""
+        old_body = old_body.split("## Amendments")[0]
+        new_body = new_body.split("## Amendments")[0]
+        assert _strip_paths(new_amend).startswith(_strip_paths(old_amend)), (
+            f"{p.name}: an existing `## Amendments` entry was changed. Amendments are append-only "
+            f"— a correction to a correction is another entry, never an edit of the last one.")
+        assert _strip_paths(new_body) == _strip_paths(old_body), (
+            f"{p.name}: a merged record's body changed by more than a repaired pointer. The ledger "
+            f"keeps the wrong version VISIBLE — append a `## Amendments` entry instead of editing. "
+            f"(Paths are exempt: a citation whose target moved may be repointed.)")

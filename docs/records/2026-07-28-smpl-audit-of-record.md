@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-28
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-07-28-smpl-audit-of-record.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # SMPL audit of record — 2026-07-28
 
 **Index and precedence for the three artifacts of this audit.** Read this first; it is the manifest
@@ -64,7 +75,7 @@ disclosed figure.
 
 ## Supersession of the earlier commit
 
-`docs/audits/2026-07-28-smpl-ic-audit.md` (added by #236, removed by this commit) was an
+`docs/records/2026-07-28-smpl-audit-of-record.md` (added by #236, removed by this commit) was an
 **abridged export**: only two of the three artifacts had ever been written to files, so the
 committed copy was the defect report alone, and it lacked material present in the analysis as
 delivered. Its hand-appended erratum is superseded by the properly-scoped erratum now carried in

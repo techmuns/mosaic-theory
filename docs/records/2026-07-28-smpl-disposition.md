@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-28
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-07-28-smpl-disposition.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Disposition — the 2026-07-28 SMPL defect report, item by item
 
 **Rendered:** 2026-08-03, against `defect-report.md` itself — read end to end, not summarised from STATE.

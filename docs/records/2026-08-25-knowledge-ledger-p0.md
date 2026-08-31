@@ -58,3 +58,14 @@ The front-matter is frozen after merge (only `status:` may change), so the corre
 rather than edited in: the wrong version stays visible, which is the point. Found by review of #505,
 which flagged the same defect on that record while it was still unmerged and therefore fixable in
 place.
+
+## Amendments
+
+**2026-08-31 — the absorption finally ran (#530).** The body above says `docs/audits/` "remains a
+second dated-record convention until P1 absorbs it." P1 did not absorb it; the directory outlived
+P1, P2 and P3. All 14 files are now records, and `docs/audits/` no longer exists.
+
+The delay had a cause worth recording: absorbing them means repairing citations inside merged
+record bodies, which this ledger's own contract froze. That is why it kept being deferred rather
+than done. The contract now carries one narrow exception — a MOVED PATH may be repointed, a CLAIM
+may not — and the sentence above is left exactly as written to demonstrate it.

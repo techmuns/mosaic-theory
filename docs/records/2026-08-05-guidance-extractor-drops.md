@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-08-05
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-08-05-guidance-extractor-drops.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # The guidance extractor drops guided lines — measured across all eleven names
 
 **2026-08-05. Report before fixing, as instructed. The fix is NOT what the brief anticipated.**

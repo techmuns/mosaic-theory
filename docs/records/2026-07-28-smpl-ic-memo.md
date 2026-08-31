@@ -1,3 +1,14 @@
+---
+id:
+status: recorded
+date: 2026-07-28
+prs: []
+supersedes:
+superseded-by:
+migrated-from: docs/records/2026-07-28-smpl-ic-memo.md
+date-source: the filename's own date prefix, which the document's heading repeats — not inferred
+---
+
 # Investment Committee Memo — The Simply Good Foods Company (Nasdaq: SMPL)
 
 **Audit of:** `SMPL-dossier_today.md` (assembled 2026-07-24 13:02 UTC; disposition displayed WATCH 2026-07-27)

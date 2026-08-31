@@ -107,7 +107,7 @@ never reads it. Extractor change → its own PR with real-run cost verification,
 
 **THE 2026-07-28 SMPL AUDIT IS NOW FULLY DISPOSITIONED (2026-08-03).** The tail §C did not cover —
 §C's three retractions, §D's methodological item, four of §G's seven — is rendered in
-`docs/audits/2026-07-28-smpl/disposition.md` **§F**, measured against the page as re-assembled
+`docs/records/2026-07-28-smpl-disposition.md` **§F**, measured against the page as re-assembled
 2026-08-03. Two structural results from the pass itself:
 **(1) §C's R2 is NOT a separate item — it forwards to §D's note, and its pointer "(P10-adjacent)" names
 a defect that does not exist** (the report has P1–P9). Counting R2's residue and §D's note separately
@@ -132,7 +132,7 @@ change that re-striking would have been.
 
 **THE THREE RULINGS WERE GIVEN 2026-08-04. Recorded here as the decisions of record; the pending
 statements below are kept for the reasoning that produced them.**
-**THE COHORT-PARTNER READ — 2026-08-04, full render in `docs/audits/2026-08-04-cohort-partner-read.md`.
+**THE COHORT-PARTNER READ — 2026-08-04, full render in `docs/records/2026-08-04-cohort-partner-read.md`.
 REPORT ONLY; no assembly, no build, no name recommended.**
 **COHORT DECIDED 2026-08-04: SMPL + BRBR.**
 
@@ -541,7 +541,7 @@ skipped, and margin-bear acquiring a min default.
 under `<TICKER>-<date>`) is a separate act, so creating never mutates an existing record.
 
 **`scenario-create` — STEP 1 REPORTED, STEP 2 NOT BUILT. The stop condition fired.** Full render in
-`docs/audits/2026-08-04-scenario-create-derivability.md`. **The underwrite is the critical path and
+`docs/records/2026-08-04-scenario-create-derivability.md`. **The underwrite is the critical path and
 has NO writer** — `scenario-refresh`/`scenario-supersede` both need an existing record, `write_record()`
 has zero callers, every record was hand-authored — so the one place analyst judgment enters bypasses
 every guard.
@@ -664,7 +664,7 @@ services/engineering (ACN, GLOB, DXC, SOP + two non-US rows); IT's is informatio
 (EFX, FDS, MCO, SPGI, TRU, VRSK). **A usable pair on horizon, shape and completeness; a weak one on
 comparability** — they intersect only at the IT-services tail of Gartner's set.
 
-**THE THEME-COHORT READ — RUN 2026-08-04, full render in `docs/audits/2026-08-04-theme-cohort-read.md`.**
+**THE THEME-COHORT READ — RUN 2026-08-04, full render in `docs/records/2026-08-04-theme-cohort-read.md`.**
 The A5 blocker was a read nobody had run. From the 2026-07-29 output (**331 candidates**) against the
 **35** committed theme clusters — **no new screen run**, since `RunManifest` is still unpopulated and a
 fresh run would be unattributable.
