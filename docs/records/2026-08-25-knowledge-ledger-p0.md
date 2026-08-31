@@ -61,7 +61,7 @@ place.
 
 ## Amendments
 
-**2026-08-31 — the absorption finally ran (#530).** The body above says `docs/audits/` "remains a
+**2026-08-31 — the absorption finally ran (#540).** The body above says `docs/audits/` "remains a
 second dated-record convention until P1 absorbs it." P1 did not absorb it; the directory outlived
 P1, P2 and P3. All 14 files are now records, and `docs/audits/` no longer exists.
 
