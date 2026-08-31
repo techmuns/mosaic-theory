@@ -5,7 +5,7 @@ date: 2026-07-28
 prs: []
 supersedes:
 superseded-by:
-migrated-from: docs/records/2026-07-28-smpl-audit-of-record.md
+migrated-from: docs/audits/2026-07-28-smpl/README.md
 date-source: the filename's own date prefix, which the document's heading repeats — not inferred
 ---
 
@@ -18,10 +18,10 @@ the memo's §Artifact Manifest specifies.
 
 | File | Purpose | Authoritative for |
 |---|---|---|
-| [`ic-memo.md`](ic-memo.md) | Full Investment Committee audit and stress test — 13 sections plus scoring, the audit trail, the erratum | **The audit finding of record, the decision sequence, the evidence dashboard** |
-| [`defect-report.md`](defect-report.md) | Nine platform + seven name-level defects, each with root cause, fix and acceptance test | **The engineering queue** (STATE.md §Next-steps items 1, 17–24) |
-| [`independent-dossier.md`](independent-dossier.md) | Thesis rebuilt on corrected methodology — brand-level sum-of-parts, cross-section multiples, time-value discipline | **The investment view and entry conditions** |
-| [`disposition.md`](disposition.md) | Every P and N item with a four-state disposition (code / artifact / both / open), measured against code and the committed artifacts 2026-08-03 | **What is actually closed.** Supersedes any count carried in STATE prose |
+| [`2026-07-28-smpl-ic-memo.md`](2026-07-28-smpl-ic-memo.md) | Full Investment Committee audit and stress test — 13 sections plus scoring, the audit trail, the erratum | **The audit finding of record, the decision sequence, the evidence dashboard** |
+| [`2026-07-28-smpl-defect-report.md`](2026-07-28-smpl-defect-report.md) | Nine platform + seven name-level defects, each with root cause, fix and acceptance test | **The engineering queue** (STATE.md §Next-steps items 1, 17–24) |
+| [`2026-07-28-smpl-independent-dossier.md`](2026-07-28-smpl-independent-dossier.md) | Thesis rebuilt on corrected methodology — brand-level sum-of-parts, cross-section multiples, time-value discipline | **The investment view and entry conditions** |
+| [`2026-07-28-smpl-disposition.md`](2026-07-28-smpl-disposition.md) | Every P and N item with a four-state disposition (code / artifact / both / open), measured against code and the committed artifacts 2026-08-03 | **What is actually closed.** Supersedes any count carried in STATE prose |
 
 ## The audited artifact has since MOVED — what changed, and what did not
 
@@ -32,7 +32,7 @@ mention. Recorded here so that is not a surprise.
 | date | change to the committed `dossier.md` | affects a finding? |
 |---|---|---|
 | 2026-07-28 (#245, queue item 26a) | Two lines added — the header date now reads `· extraction unstamped`, and Record & reproduce gains an `Extraction:` row | **No** |
-| 2026-07-30 (`c757a08`) | **SMPL RE-ASSEMBLED** — the hold below was lifted once items 17/18/19b/20/21/28 shipped | **Yes — see [`disposition.md`](disposition.md)** |
+| 2026-07-30 (`c757a08`) | **SMPL RE-ASSEMBLED** — the hold below was lifted once items 17/18/19b/20/21/28 shipped | **Yes — see [`2026-07-28-smpl-disposition.md`](2026-07-28-smpl-disposition.md)** |
 | 2026-07-31 (`04d5936`) | Per-share denominator moved to diluted OUTSTANDING; SMPL 93.678M → 88.461M, r:r 3.83 → 4.78 | **Yes — P7 pt2 closed** |
 
 **A RE-RENDER, NOT A RE-ASSEMBLY.** No extraction ran, no network was touched, no synthesis was
@@ -45,7 +45,7 @@ vintage unknown"**, which is the truthful state of an artifact built before the 
 re-assembled 2026-07-30 and the statement above no longer holds.** It is struck rather than deleted
 because it stood on the page for six days after it stopped being true, which is the drift this
 folder now guards against: a status sentence in prose ages silently while the thing it describes
-moves. **[`disposition.md`](disposition.md) is the current answer**, measured per item rather than
+moves. **[`2026-07-28-smpl-disposition.md`](2026-07-28-smpl-disposition.md) is the current answer**, measured per item rather than
 asserted, and it is where this table's "row that matters" now lives.
 
 The original text, for the record: *SMPL is deliberately NOT re-assembled (four of its five
@@ -61,8 +61,8 @@ other.
 
 | Source | Value | Ratio | Status |
 |---|---|---|---|
-| `ic-memo.md` §10 | PW $14.44 (+40.5%) | **2.15:1** undiscounted | **SUPERSEDED** — audit-stage |
-| `independent-dossier.md` §5 | $16.47 nominal · **$12.69 present value** | **1.36:1 time-adjusted** | **GOVERNS** |
+| `2026-07-28-smpl-ic-memo.md` §10 | PW $14.44 (+40.5%) | **2.15:1** undiscounted | **SUPERSEDED** — audit-stage |
+| `2026-07-28-smpl-independent-dossier.md` §5 | $16.47 nominal · **$12.69 present value** | **1.36:1 time-adjusted** | **GOVERNS** |
 
 The independent dossier rebuilt the valuation on a brand-level model and applied a discount to
 upside that the memo did not (upside requires ~2.5 years of proof; downside reprices in a
@@ -75,16 +75,16 @@ disclosed figure.
 
 ## Supersession of the earlier commit
 
-`docs/records/2026-07-28-smpl-audit-of-record.md` (added by #236, removed by this commit) was an
+`docs/audits/2026-07-28-smpl-ic-audit.md` (added by #236, removed by this commit) was an
 **abridged export**: only two of the three artifacts had ever been written to files, so the
 committed copy was the defect report alone, and it lacked material present in the analysis as
 delivered. Its hand-appended erratum is superseded by the properly-scoped erratum now carried in
-`ic-memo.md`. The file is REMOVED rather than left beside its replacement — two versions of one
+`2026-07-28-smpl-ic-memo.md`. The file is REMOVED rather than left beside its replacement — two versions of one
 audit in a folder with no precedence marker is item 19 (assertion integrity) in our own paperwork.
 
 ## Erratum, and the pattern it belongs to
 
-`ic-memo.md` carries ERRATUM (`kind: note_clear`) on the "There is no WATCH row" claim: scoped to
+`2026-07-28-smpl-ic-memo.md` carries ERRATUM (`kind: note_clear`) on the "There is no WATCH row" claim: scoped to
 the five-row ledger export the auditor received, where the WATCH is a 2026-07-27 record reissue
 held in a separate store. A scoping defect in the audit, **not a finding reversal**.
 
@@ -100,7 +100,7 @@ The memo cites the repo's recorded share count of **93.678M**, not the auditor's
 
 ## What the audit verified as CORRECT — do not "fix" these
 
-`defect-report.md` §D and `ic-memo.md` §2. The own-history multiple band (35 closes, min 6.11 /
+`2026-07-28-smpl-defect-report.md` §D and `2026-07-28-smpl-ic-memo.md` §2. The own-history multiple band (35 closes, min 6.11 /
 median 17.85 / p25 15.20 / p75 20.88), the percentile placements, the margin anchors, all six
 entry-boundary ratios, the EBIT→EBITDA bridge, every transcript-sourced operating claim verbatim,
 the peer medians, and the insider activity all reproduced exactly from source. Three of the

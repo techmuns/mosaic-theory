@@ -479,6 +479,10 @@ def _merge_base_text(path: pathlib.Path) -> str | None:
     return show.stdout if show.returncode == 0 else None
 
 
+def _front(text: str) -> str:
+    return text.split("---", 2)[1] if text.startswith("---\n") else ""
+
+
 def _body(text: str) -> str:
     return text.split("---", 2)[2] if text.startswith("---\n") else text
 
@@ -486,6 +490,58 @@ def _body(text: str) -> str:
 def _strip_paths(text: str) -> str:
     """Blank every `docs/…` path so a POINTER REPAIR compares equal and a claim does not."""
     return re.sub(r"docs/[\w./-]+", "«path»", text)
+
+
+#: The amendments HEADING — a line that is exactly `## Amendments`, matched ONCE.
+#:
+#: Both halves of that sentence were bugs. `str.split("## Amendments")` on a record with TWO such
+#: headings returns three parts, and reading `[0]` and `[1]` left everything after the SECOND
+#: heading unchecked — a merged amendment could then be reworded and CI stayed green. A record with
+#: two headings is not hypothetical: #540 appended a new SECTION rather than a new entry under the
+#: existing one, so `2026-08-25-knowledge-ledger-p0.md` has two. And a plain substring match also
+#: fires on the string in PROSE — `2026-08-31-audits-absorbed.md` names `## Amendments` inline
+#: twice while describing this very guard, which would have cut its body check off at that sentence
+#: and left the rest of the record editable forever.
+_AMENDMENTS = re.compile(r"(?m)^## Amendments[ \t]*$")
+
+
+def _split_amendments(body: str) -> tuple[str, str]:
+    """(body before the FIRST amendments heading, everything from that heading on)."""
+    parts = _AMENDMENTS.split(body, maxsplit=1)
+    return (parts[0], parts[1]) if len(parts) == 2 else (body, "")
+
+
+def _violations(name: str, before: str, now: str) -> list[str]:
+    """Every way `now` breaks the record contract against its merged `before`. Empty == permitted.
+
+    ONE function rather than three asserts so the corpus sweep and the mutation pins exercise the
+    SAME code — a helper the corpus test does not call is a pin on nothing.
+    """
+    if now == before:
+        return []
+    out = []
+    # THE FRONT MATTER IS PART OF THE RECORD. `status:` is the only field the README lets change
+    # after merge — the `prs:` trail on 2026-08-25-knowledge-ledger-p0.md was wrong and had to be
+    # corrected by an APPENDED amendment for exactly that reason. Excluding the header from the
+    # comparison would have let that same field be edited in place with the suite green.
+    drop_status = functools.partial(re.compile(r"(?m)^status:.*$").sub, "status: «any»")
+    if drop_status(_strip_paths(_front(now))) != drop_status(_strip_paths(_front(before))):
+        out.append(
+            f"{name}: the front matter changed by more than `status:`. `id`/`date`/`prs`/"
+            f"`supersedes` are frozen at merge — correct them with an appended `## Amendments` "
+            f"entry, the way the wrong `prs:` trail on the P0 record was corrected.")
+    old_body, old_amend = _split_amendments(_body(before))
+    new_body, new_amend = _split_amendments(_body(now))
+    if not _strip_paths(new_amend).startswith(_strip_paths(old_amend)):
+        out.append(
+            f"{name}: an existing `## Amendments` entry was changed. Amendments are append-only "
+            f"— a correction to a correction is another entry, never an edit of the last one.")
+    if _strip_paths(new_body) != _strip_paths(old_body):
+        out.append(
+            f"{name}: a merged record's body changed by more than a repaired pointer. The ledger "
+            f"keeps the wrong version VISIBLE — append a `## Amendments` entry instead of editing. "
+            f"(Paths are exempt: a citation whose target moved may be repointed.)")
+    return out
 
 
 def test_a_merged_record_body_is_immutable() -> None:
@@ -500,32 +556,67 @@ def test_a_merged_record_body_is_immutable() -> None:
     a repaired POINTER. The last is enforced by comparison, not by trust: both versions have their
     `docs/…` paths blanked, and if anything ELSE differs the change is refused. So a path may move
     and a claim may not, mechanically.
+
+    An appended `## Amendments` section is the sanctioned correction channel, so the record splits
+    at that heading and the two halves are checked under DIFFERENT rules: the body must not change,
+    and the amendments must only GROW. The split is HEADING-ANCHORED and taken ONCE — see
+    `_AMENDMENTS` for the two ways a plain substring split read the wrong region.
     """
-    for p in _records():
-        before = _merge_base_text(p)
-        if before is None:
-            continue  # new record, or no merge base — nothing is frozen yet
-        now = p.read_text()
-        if now == before:
-            continue
-        old_body, new_body = _body(before), _body(now)
-        # An appended `## Amendments` section is the sanctioned correction channel. Split it off
-        # and check the two halves under DIFFERENT rules: the body must not change, and the
-        # amendments must only GROW.
-        #
-        # THE SECOND HALF IS NOT DECORATION. Truncating both sides at the heading and comparing
-        # only what precedes it leaves everything after `## Amendments` unchecked — so an existing
-        # amendment could be silently reworded, and an amendment IS a record of a correction. It
-        # also made a mutation look survivable: a sentence appended past that heading reads as a
-        # new amendment, which is exactly what the channel is for.
-        old_amend = old_body.split("## Amendments")[1] if "## Amendments" in old_body else ""
-        new_amend = new_body.split("## Amendments")[1] if "## Amendments" in new_body else ""
-        old_body = old_body.split("## Amendments")[0]
-        new_body = new_body.split("## Amendments")[0]
-        assert _strip_paths(new_amend).startswith(_strip_paths(old_amend)), (
-            f"{p.name}: an existing `## Amendments` entry was changed. Amendments are append-only "
-            f"— a correction to a correction is another entry, never an edit of the last one.")
-        assert _strip_paths(new_body) == _strip_paths(old_body), (
-            f"{p.name}: a merged record's body changed by more than a repaired pointer. The ledger "
-            f"keeps the wrong version VISIBLE — append a `## Amendments` entry instead of editing. "
-            f"(Paths are exempt: a citation whose target moved may be repointed.)")
+    bad = [m for p in _records()
+           if (before := _merge_base_text(p)) is not None
+           for m in _violations(p.name, before, p.read_text())]
+    assert not bad, "\n".join(bad)
+
+
+def _amended_record() -> str:
+    """A REAL merged record carrying an existing `## Amendments` section.
+
+    The mutations below are applied to THIS, not to a hand-rolled fixture: a record built to the
+    shape the check expects tests the fixture, not the corpus (CLAUDE.md, corpus-before-synthetic).
+    """
+    return next(p.read_text() for p in _records() if _AMENDMENTS.search(p.read_text()))
+
+
+def test_the_immutability_check_reads_past_a_second_amendments_heading() -> None:
+    """THE NEGATIVE PIN. Two `## Amendments` headings is the state #540 itself created — it appended
+    a new SECTION rather than an entry under the existing one. `str.split()[1]` then returned only
+    the text BETWEEN the two headings, so the newest amendment — the one recording that the
+    absorption ran — was outside every comparison and could be reworded with the suite green.
+    """
+    second = "\n\n## Amendments\n\n**2026-08-31 — the second section.** As merged.\n"
+    merged = _amended_record() + second
+    reworded = merged.replace("As merged.", "Silently reworded long after merge.")
+    assert _violations("x.md", merged, merged) == []
+    assert _violations("x.md", merged, reworded), (
+        "an amendment past the SECOND heading was reworded and the guard saw nothing")
+
+
+def test_the_amendments_heading_in_prose_does_not_end_the_body_check() -> None:
+    """`2026-08-31-audits-absorbed.md` names `## Amendments` inline while describing this guard. A
+    substring split cut the body there, leaving the rest of that record editable forever."""
+    base = _amended_record()
+    quoting = base.replace(
+        "\n## Amendments", "\nThe channel is `## Amendments`.\n\n## Amendments", 1)
+    tampered = quoting.replace("The channel is", "The channel WAS")
+    assert _violations("x.md", quoting, tampered), (
+        "prose naming the heading truncated the body check, and a real edit rode in behind it")
+
+
+def test_the_permitted_changes_stay_permitted() -> None:
+    """THE POSITIVE PIN — the three the README grants: a `status:` flip, an appended amendment, a
+    repaired pointer. A guard that refuses these is a guard the next migration deletes."""
+    base = _amended_record()
+    assert _violations("x.md", base, base + "\n**2026-09-01 — a new entry.**\n") == []
+    assert _violations("x.md", base, re.sub(r"(?m)^status:.*$", "status: superseded", base)) == []
+    cited = base.replace("\n## Amendments", "\nSee docs/audits/old.md.\n\n## Amendments", 1)
+    repointed = cited.replace("docs/audits/old.md", "docs/records/2026-01-01-new.md")
+    assert _violations("x.md", cited, repointed) == []
+
+
+def test_a_merged_records_front_matter_is_frozen_apart_from_status() -> None:
+    """`status:` is the ONLY field the README lets change after merge. The P0 record's wrong `prs:`
+    trail was corrected by an APPENDED amendment for exactly this reason — a check that compared
+    only the body would have let the same field be quietly edited instead."""
+    base = _amended_record()
+    assert _violations("x.md", base, re.sub(r"(?m)^date:.*$", "date: 2026-01-01", base)), (
+        "the `date:` was rewritten after merge and the guard saw nothing")

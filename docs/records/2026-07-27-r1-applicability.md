@@ -5,7 +5,7 @@ date: 2026-07-27
 prs: []
 supersedes:
 superseded-by:
-migrated-from: docs/records/2026-07-27-r1-applicability.md
+migrated-from: docs/audits/2026-07-27-r1-applicability.md
 date-source: the filename's own date prefix, which the document's heading repeats — not inferred
 ---
 
