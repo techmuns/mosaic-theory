@@ -467,11 +467,47 @@ GLP1_DRUG_VALUE_CHAIN = DriverSpec(
         "general pharmacy retail without disclosed incretin economics."
     ),
     prefilter_terms=(
+        # MEASURED 2026-08-31 (first full sweep, then a per-term read of the cached EFTS
+        # responses): this filter passed 1,772 of 2,907 names, and FOUR generic ENGLISH words
+        # carried nearly all of it — "compounded" 993 matches / 578 unique, "generic" 663/152,
+        # "contract manufacturing" 471/78, "capacity expansion" 308/144 — while every specific
+        # molecule term (semaglutide, tirzepatide, incretin, amylin) matched 5-30 and contributed
+        # ZERO unique names.
+        #
+        # THE TRAP THIS AVOIDS: two of those words are ALSO terms of art in this thesis —
+        # compounded semaglutide from compounding pharmacies IS the access-channel leg, and
+        # generic entry after expiry IS the price-compression leg. Deleting them would have cut
+        # real signal. So the bare words are REPLACED by phrases that carry the meaning AND have
+        # no parent term already in this list: "compounding pharmacy" (5 names), "generic entry"
+        # (27), "generic competition" (164), "loss of exclusivity" (167 — the most precise
+        # vocabulary pharma has for that leg).
+        #
+        # REVIEW 2026-08-31: the first draft also added "compounded semaglutide", "compounded
+        # GLP-1" and "peptide manufacturing". Each is a strict SUPERSET STRING of a term still
+        # listed below ("semaglutide", "GLP-1", "peptide"), so it can never match a filing the
+        # parent does not already match — verified against the live universe (SUBSET=True for all
+        # three). They bought nothing and cost ~30 paced EFTS queries apiece per scan, so they are
+        # gone. A candidate phrase must clear that test: does anything already here contain it?
+        # The same check also caught a PRE-EXISTING instance — "peptide synthesis" (5 names) is
+        # covered by "peptide" (135) and predates this change; removed here because the rule is
+        # now machine-checked for every driver and a list that fails its own invariant is worse
+        # than the one line saved.
+        #
+        # Result: 1,772 -> 531 candidates (-70%) with 11/11 recall on the names
+        # the first pilot proved driver-specific, and the 1,244 names given up were SAMPLED
+        # through the real scan path: 0 of 20 carried real exposure, 18 of 20 disclosed none at
+        # all (Adobe, Jacobs, Sonoco, Zebra, W.P. Carey, Rivian — what "compounded" as ordinary
+        # English was importing).
+        #
+        # The manufacturing leg the card names stays covered by the SPECIFIC terms below (CDMO,
+        # fill-finish, sterile injectable, peptide synthesis/manufacturing) rather than by bare
+        # "contract manufacturing", which matched every manufacturer in the universe.
         "GLP-1", "GLP1", "incretin", "semaglutide", "tirzepatide", "obesity",
         "weight management", "amylin", "dual agonist", "triple agonist", "oral formulation",
-        "peptide", "peptide synthesis", "fill-finish", "sterile injectable", "auto-injector",
-        "prefilled", "CDMO", "contract manufacturing", "capacity expansion", "telehealth",
-        "direct-to-patient", "compounded", "generic",
+        "peptide", "fill-finish",
+        "sterile injectable", "auto-injector", "prefilled", "CDMO", "telehealth",
+        "direct-to-patient", "compounding pharmacy",
+        "generic entry", "generic competition", "loss of exclusivity",
     ),
     multi_tag=True,   # an incumbent is suppressed on price and helped on volume — record both
     provenance_tags=(
