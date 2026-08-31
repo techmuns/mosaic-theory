@@ -8346,7 +8346,7 @@
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",
     "frontier": "2026-08-17"
   },
-  "sector": "Unknown",
+  "sector": "Industrials",
   "industry": {
     "value": "Cargo Ground Transportation",
     "source_ref": "CIQ Public Company Profile→Primary Industry Classification",
