@@ -574,7 +574,17 @@ Each line: *what it does* — *verified how*.
   `test_a_real_sic_change_still_overwrites_and_a_new_row_still_writes_none`,
   `test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master`,
   `test_it_row_still_carries_the_87xx_sic_the_sector_is_read_from`,
-  `test_an_absent_sic_is_reported_as_absent_never_as_a_resolved_sector`.
+  `test_an_absent_sic_is_reported_as_absent_never_as_a_resolved_sector`,
+  `test_the_issuer_row_lands_column_for_column` (the issuers INSERT is now three interleaved
+  COALESCE sub-selects over ten positional parameters, and `_row_to_identity` reads the SECURITIES
+  table only — so nothing else can catch a transposed column there).
+  **ACCEPTED RISK, with its falsifier (review, 2026-08-31):** the COALESCE means a SIC EDGAR STOPS
+  publishing can no longer be cleared through this path. An operating company converting to a BDC
+  loses its SIC (40 issuers in the committed master already have none), and the stale code would
+  keep resolving to a confident sector; nothing detects it, because
+  `scripts/backfill_entity_master_sic.py` only fetches CIKs that HAVE a hole. Accepted over the
+  silent and far likelier clobber it replaces. *Falsifier:* any name whose committed SIC is absent
+  from a fresh `sic_for` fetch → make the backfill re-verify KNOWN SICs and report withdrawals.
   *Record: `docs/records/2026-08-31-sic-clobber-entity-master.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet

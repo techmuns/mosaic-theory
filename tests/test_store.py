@@ -374,6 +374,25 @@ def test_an_unenriched_upsert_never_nulls_a_known_sic(store: Store) -> None:
         "8741", "Services-Management Services"), "the issuer row is preserved alongside"
 
 
+def test_the_issuer_row_lands_column_for_column(store: Store) -> None:
+    """THE ISSUERS INSERT HAS NO OTHER READER. `_row_to_identity` reads the SECURITIES table only,
+    so `test_security_round_trip`'s `got == ident` cannot cover the issuer side — and the issuers
+    VALUES clause is now three interleaved COALESCE sub-selects over ten positional parameters,
+    which is exactly the shape where a future edit transposes two same-typed columns (`name` and
+    `country` are adjacent in the tuple and both plain strings) and nothing notices until the
+    corruption reaches the committed `issuers.jsonl` on the next export."""
+    ident = _identity().model_copy(update={
+        "name": "Apple Inc.", "sic": "3571", "sic_description": "Electronic Computers"})
+    store.upsert_security(ident, first_seen=AS_OF)
+    row = dict(store._conn.execute(                                      # noqa: SLF001
+        "SELECT * FROM issuers WHERE cik = ?", (ident.cik,)).fetchone())
+    assert row == {
+        "cik": "0000320193", "issuer_id": "ISS-0000320193", "name": "Apple Inc.",
+        "sic": "3571", "sic_description": "Electronic Computers", "country": "US",
+        "first_seen": AS_OF.isoformat(),
+    }
+
+
 def test_a_real_sic_change_still_overwrites_and_a_new_row_still_writes_none(store: Store) -> None:
     """THE NEGATIVE PIN. Preserving must not become freezing: a genuine RE-CLASSIFICATION (a
     non-NULL value) still overwrites, and a name whose SIC was never known still stores NULL —

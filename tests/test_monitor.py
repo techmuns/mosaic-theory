@@ -16,6 +16,14 @@ from vinci import monitor as mon
 
 ROOT = Path(__file__).resolve().parents[1]
 
+#: Ledgered names for which EDGAR publishes NO SIC — the escape hatch for
+#: `test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master`, which would otherwise
+#: be unsatisfiable for them. Empty today: the screen's `unknown_sic` gate keeps BDCs and funds out
+#: of the universe, so one can only reach the ledger by a deliberate operator entry. Add a ticker
+#: ONLY after confirming `resolver.sic_for(cik)` really returns None for it — never to green a
+#: suite, which is what inventing a code to satisfy that pin would amount to.
+NO_EDGAR_SIC: frozenset[str] = frozenset()
+
 
 def _row(ticker: str, verdict: str, *, pos: float, bench: float,
          entry: date = date(2026, 1, 1), now: date = date(2026, 3, 1),
@@ -317,6 +325,16 @@ def test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master() -> N
     nulled its 8741. A helper pin cannot see that; only the ARTIFACT can. The monitor re-resolves
     each position's sector from THIS file on every run, so a ledgered name without a SIC here is a
     decision surface printing "Unknown" where a real sector exists.
+
+    THIS PIN IS NOT SUBSUMED by `test_an_issuer_never_half_carries_its_sic`. Gartner's CIK owns
+    exactly ONE security, so its destroyed row left no sibling to disagree with and the
+    partial-hole rule was satisfied by the very row that was wrong. Single-security issuers are
+    only reachable from here. Keep both.
+
+    AND IT IS NOT ALWAYS REPAIRABLE, which the failure message has to say. EDGAR publishes NO SIC
+    for BDCs and funds — 40 issuers in the committed master — so a ledgered name from that class
+    would fail this pin with nothing to fetch. The honest resolution there is to record the name
+    in `NO_EDGAR_SIC` below, never to invent a code to green the suite.
     """
     snaps = ROOT / "data" / "snapshots"
     sic_by_ticker = {r["ticker"]: r.get("sic") for r in
@@ -326,12 +344,13 @@ def test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master() -> N
     ledgered = {json.loads(ln)["ticker"] for ln in
                 (snaps / "decision_ledger.jsonl").read_text().splitlines() if ln.strip()}
     assert ledgered, "no ledgered names — this pin would be vacuous"
-    unresolved = sorted(t for t in ledgered
+    unresolved = sorted(t for t in ledgered - NO_EDGAR_SIC
                         if mon.sector_for_display(sic_by_ticker.get(t)) is None)
     assert not unresolved, (
-        f"ledgered name(s) with NO SIC in the entity master: {unresolved}. The monitor will "
-        f"print an UNRESOLVED sector for them. Repair the row (EDGAR submissions `sic`) — do not "
-        f"relabel the absence.")
+        f"ledgered name(s) with NO SIC in the entity master: {unresolved}. The monitor will print "
+        f"an UNRESOLVED sector for them. If EDGAR publishes a SIC, the row lost it — repair it "
+        f"(`scripts/backfill_entity_master_sic.py`). If EDGAR publishes NONE (a BDC or fund), add "
+        f"the ticker to NO_EDGAR_SIC above. Never invent a code to green this.")
 
 
 def test_it_row_still_carries_the_87xx_sic_the_sector_is_read_from() -> None:

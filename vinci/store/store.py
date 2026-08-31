@@ -126,9 +126,19 @@ class Store:
         class, and it is the class that most needs the label.
         So `sic` (and the issuer's `sic_description`) COALESCE onto the stored value the way
         `first_seen` already does: a writer that does not KNOW the fact leaves the known one
-        standing. Nothing real is lost — `build_universe` EXCLUDES a name whose SIC it cannot
-        read (`unknown_sic`), so it never writes a NULL SIC for an admitted name; a genuine SIC
-        CHANGE is a non-NULL value and still overwrites.
+        standing. A genuine RE-CLASSIFICATION is a non-NULL value and still overwrites, and
+        `build_universe` EXCLUDES a name whose SIC it cannot read (`unknown_sic`), so it never
+        wanted to write a NULL for an admitted name anyway.
+
+        THE ACCEPTED COST, stated because it is not zero: a SIC EDGAR STOPS publishing can no
+        longer be cleared through this path. That is a real transition — an operating company
+        converting to a BDC loses its SIC, and 40 issuers in the committed master (39 BDCs +
+        Invesco QQQ Trust) already have none — and the stale code would keep resolving to a
+        confident sector for a name EDGAR no longer classifies. Nothing detects it today:
+        `scripts/backfill_entity_master_sic.py` only fetches CIKs that HAVE a hole, so it never
+        re-checks a SIC that is present. Recorded in STATE.md as accepted risk with its falsifier
+        rather than traded for the clobber this replaced, which was both silent and far more
+        likely. Un-accept it by having the backfill re-verify known SICs and report withdrawals.
         """
         self._conn.execute(
             "INSERT OR REPLACE INTO issuers "
