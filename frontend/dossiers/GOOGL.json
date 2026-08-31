@@ -8294,12 +8294,14 @@
   "midcycle": null,
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
-    "applicable": false,
+    "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-28T05:51:38.926051Z",
+    "computed_at": "2026-08-31T12:42:36.500419Z",
     "reason": "R1 inputs incomplete — see per-input source stamps",
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": {
       "value": 0.262717,
       "unit": "fraction",
@@ -8316,10 +8318,10 @@
       "confidence": "firm"
     },
     "d_and_a": {
-      "value": null,
+      "value": 25536.0,
       "unit": "$M",
       "basis": "consolidated latest FY",
-      "source": "UNKNOWN — no D&A tag (combined or split)"
+      "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls sha c105755a5f]"
     },
     "net_debt": {
       "value": 64880.0,
@@ -8345,8 +8347,8 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": null,
-    "anchor_ev_ebit": null,
+    "anchor_base_value_per_share": 196.0087,
+    "anchor_ev_ebit": 21.1509,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }

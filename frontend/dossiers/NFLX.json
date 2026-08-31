@@ -8923,12 +8923,14 @@
   "midcycle": null,
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
-    "applicable": false,
+    "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-08-19T16:16:48.357846Z",
+    "computed_at": "2026-08-31T12:42:36.846594Z",
     "reason": "R1 inputs incomplete — see per-input source stamps",
-    "data_quality": null,
-    "data_quality_detail": [],
+    "data_quality": "vendor_bridge",
+    "data_quality_detail": [
+      "vendor bridge: net_debt supplied by the CIQ workbook because EDGAR had no usable tag"
+    ],
     "margin": {
       "value": 0.114915,
       "unit": "fraction",
@@ -8951,10 +8953,10 @@
       "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2012 (13y behind)"
     },
     "net_debt": {
-      "value": null,
+      "value": 7526.8,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 11,826 + finance leases 0 + operating leases 2,330 − cash 9,099 ($M) — UNDER-CAPTURED: NotesPayable $14,309M alone exceeds the extracted long-term+current total; pull CIQ"
+      "source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [Netflix Inc NasdaqGS NFLX Financials_Quarterly.xls sha 938c5fc416]"
     },
     "diluted_shares": {
       "value": 4261300000.0,
@@ -8974,8 +8976,8 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": null,
-    "anchor_ev_ebit": null,
+    "anchor_base_value_per_share": 58.167,
+    "anchor_ev_ebit": 45.9463,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
