@@ -586,6 +586,25 @@ Each line: *what it does* — *verified how*.
   silent and far likelier clobber it replaces. *Falsifier:* any name whose committed SIC is absent
   from a fresh `sic_for` fetch → make the backfill re-verify KNOWN SICs and report withdrawals.
   *Record: `docs/records/2026-08-31-sic-clobber-entity-master.md`.*
+- **ENTITY-MASTER SIC BACKFILL — 516 → 60, and the remainder is MEANINGFUL (2026-08-31,
+  fix/sic-backfill).** `scripts/backfill_entity_master_sic.py` fetched EDGAR submissions for all
+  418 CIKs with a hole and wrote through the real store path: 378 resolved (456 security rows /
+  638 issuer fields), 0 fetch failures, 0 re-classifications (which it reports and REFUSES to
+  apply — a backfill fills holes). The 40 unresolved are **39 BDCs + Invesco QQQ Trust: EDGAR
+  publishes no SIC for them**, corroborating `universe.py`'s own note that a blank SIC is how a
+  BDC slips a denylist. So a NULL now means "EDGAR has none", not "nobody looked". Field-level
+  diff is SIC-only (0 other field changes, PK sets identical); cohort coverage of the screened set
+  was 100% before AND after with 0 names changing industry bucket, so no committed queue went
+  stale. Incident→invariant (shipped Y): `tests/test_entity_master_sic.py` —
+  `test_an_issuer_never_half_carries_its_sic` (**the clobber's signature**; failed on the
+  pre-backfill corpus with 59 real violations), `test_a_cik_never_disagrees_with_itself_about_its_sic`,
+  `test_every_present_sic_resolves_to_a_real_industry`,
+  `test_synthetic_benchmark_rows_never_carry_a_sic`,
+  `test_no_name_in_the_current_universe_lacks_a_sic`. The three artifact pins are COMPLEMENTS, not
+  layers: the partial-hole rule cannot see a SINGLE-security issuer (Gartner's CIK owns one row —
+  the pin is satisfied by the very row that was destroyed), which is why the ledger and universe
+  pins stay.
+  *Record: `docs/records/2026-08-31-entity-master-sic-backfill.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
   defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
@@ -1401,7 +1420,7 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 4 | **Megacap + non-US-filer (FPI) readiness** — MC1–MC4 / FPI1–FPI5 (entry below) | operator | ruling on which to build |
 | 5 | **Between-print monitor — panel registry.** A live $50k/5% GOOGL starter (entered 2026-08-14) has NO ledger row. And `vinci monitor`'s freshness/trigger panel RE-PRINTS every kill criterion but MEASURES none — SMPL's OWYN trigger printed every run while the deterioration was caught by a re-assembly. Plan + `PanelSpec` design recorded: `docs/records/2026-08-27-between-print-monitor-panels.md` | operator | ruling on phases; phase 0 (record the position) blocks on nothing |
 | 6 | **Declare thesis cards for the remaining drivers** (`vinci theme-thesis declare <driver> --file card.json`). The FIRST real card is declared: `ai-value-migration`, 2026-08-30 — supply-side, 3 operator-selected falsifiers, scheduled-print confirming due 2026-12-15 (`docs/records/2026-08-30-ai-value-migration-card.md`). The other five drivers still stamp `THESIS UNSTATED` and refuse new Stage-4 freezes until theirs; `glp1-drug-value-chain` is nearest (the operator's GLP-1 thesis is stated in-conversation, not yet card-form). The card's words are the operator's judgment — no build fabricates them. | operator | the operator's declared thesis (per driver, at their pace) |
-| 7 | **516 entity-master rows still carry no SIC — backfill, or rule that they stay dark.** None is in the current universe (the `unknown_sic` gate excludes what it cannot confirm) and none is ledgered after IT's repair, so no decision surface reads one today; the exposure is the ledgered-but-out-of-band class, which is exactly how IT was hit. A backfill is ~500 cached EDGAR submissions calls. SEPARATELY, a ruling: should `vinci refresh` resolve with `enrich=True`? It can no longer DESTROY a SIC, but it still stores `null` for a name it introduces (NFLX) — and enriching makes a price backfill depend on an EDGAR fetch per ticker, which the command's `ResolutionError`-only catch would turn into an aborted backfill. `docs/records/2026-08-31-sic-clobber-entity-master.md` | operator | ruling on both; the backfill blocks on nothing |
+| 7 | **Should `vinci refresh` resolve with `enrich=True`?** It can no longer DESTROY a SIC (#523's COALESCE), but it still stores `null` for a name it INTRODUCES — and enriching would make a price backfill depend on an EDGAR submissions fetch per ticker, which the command's `ResolutionError`-only catch would turn into an aborted backfill. *(The 516-row backfill half of this item is DONE — 516 → 60, the remaining 60 being BDCs/funds EDGAR publishes no SIC for: `docs/records/2026-08-31-entity-master-sic-backfill.md`.)* | operator | ruling |
 
 **MEASURED, NOW AN OPERATOR CALL — not a build:** the LLM cause tier. #515 wired a document onto
 every de-rating event and found the escalation is 20% of them (104 of 525), not all: 171 causes are

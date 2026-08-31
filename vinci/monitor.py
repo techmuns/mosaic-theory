@@ -484,9 +484,15 @@ def sector_note(*, ticker: str, sic: str | None, frozen_sector: str | None) -> s
     correction the 87xx family fix introduced). The frozen row is never rewritten either way.
     """
     if sic is None or not str(sic).strip():
+        # BOTH CAUSES NAMED, because they are not the same problem and only one is repairable.
+        # The 2026-08-31 backfill measured it: of 418 CIKs missing a SIC, 378 simply had never
+        # been enriched, but 40 — every one a BDC or fund — have NO SIC AT EDGAR to fetch. That
+        # is the same blank the universe gate fails closed on (`unknown_sic`), so telling the
+        # reader to "repair the row" would send them after a value that does not exist.
         return (f"{ticker}: SIC ABSENT from the committed entity master — sector UNRESOLVED, "
                 f"NOT re-resolved (the frozen row logged {frozen_sector or '—'}, never "
-                f"rewritten). Repair the entity-master row; do not read this as a sector.")
+                f"rewritten). Either EDGAR publishes none for this issuer (routine for BDCs and "
+                f"funds) or the row lost one — check which; do not read this as a sector.")
     live = sector_for_display(sic)
     if frozen_sector and frozen_sector != live:
         return (f"{ticker}: sector re-resolved to {live} for display "
