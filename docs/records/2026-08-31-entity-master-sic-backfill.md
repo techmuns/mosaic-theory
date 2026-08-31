@@ -81,13 +81,23 @@ to fetch. The note now names both causes and asks the reader to check which.
   138 network-skipped** — run on the freshly-written artifacts, per the ARTIFACT-PASS RULE.
 
 **INCIDENT → INVARIANT (shipped Y).** `tests/test_entity_master_sic.py`:
-`test_an_issuer_never_half_carries_its_sic` (**the clobber's signature** — one CIK, one EDGAR SIC,
-so a partial hole is only reachable by a writer that half-knew the fact),
+`test_an_issuer_never_half_carries_its_sic` (one CIK, one EDGAR SIC, so a partial hole is only
+reachable by a writer that half-knew the fact — 59 real violations pre-backfill),
 `test_a_cik_never_disagrees_with_itself_about_its_sic`,
-`test_every_present_sic_resolves_to_a_real_industry`,
+`test_every_present_sic_is_a_real_edgar_code`,
 `test_synthetic_benchmark_rows_never_carry_a_sic` (the negative pin — a SIC on SPY would be
 invented), `test_no_name_in_the_current_universe_lacks_a_sic` (the universe half of the decision
 surface; the ledger half is pinned in `test_monitor.py`).
+
+**WHICH PIN CATCHES WHICH CLOBBER — corrected in review, because the first draft of this record
+got it wrong.** The partial-hole pin is NOT "the clobber's signature" in the sense of covering the
+incident that started this: **Gartner's CIK owns exactly one security**, so the destroyed row left
+no sibling to disagree with and the partial-hole rule was satisfied by the very row that was wrong.
+It catches the 59 MULTI-security cases; the SINGLE-security case is reachable only from
+`test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master` (ledger) and
+`test_no_name_in_the_current_universe_lacks_a_sic` (universe). The three are complements, not
+layers — deleting any one opens a class. That is now stated in the ledger pin's own docstring so
+nobody prunes it as redundant.
 
 **STILL OPEN, unchanged by this build.** Whether `vinci refresh` should resolve with
 `enrich=True`. It can no longer DESTROY a SIC (#523), but it still stores NULL for a name it

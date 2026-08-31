@@ -212,13 +212,19 @@ def main() -> int:
             for internal_id in ids:
                 _upsert(internal_id, sic, desc)
                 written += 1
-            # restore the issuer name if this CIK's rows disagree about it
+            # Restore the issuer name if any row just written disagrees with it. The keeper is
+            # re-upserted LAST unconditionally — including when it is itself one of the rows in
+            # `ids`. Skipping it in that case (an earlier `elif keeper not in ids`) left the rename
+            # in place whenever the keeper happened to be written BEFORE a disagreeing sibling:
+            # the last write wins, so [keeper, other] renames the issuer to `other` and the restore
+            # was skipped precisely because the keeper was in the batch. Re-upserting is idempotent
+            # — same row, same SIC — so doing it always is both simpler and correct.
             if any(str(r["name"]) != issuer_name.get(cik)
                    for r in securities if str(r["internal_id"]) in ids):
                 keeper = sibling_named.get(cik)
                 if keeper is None:
                     unrestorable.append(cik)
-                elif keeper not in ids:
+                else:
                     _upsert(keeper, sic, desc)
                     restored.append(cik)
 

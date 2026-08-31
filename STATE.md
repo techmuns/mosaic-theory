@@ -600,7 +600,10 @@ Each line: *what it does* — *verified how*.
   pre-backfill corpus with 59 real violations), `test_a_cik_never_disagrees_with_itself_about_its_sic`,
   `test_every_present_sic_resolves_to_a_real_industry`,
   `test_synthetic_benchmark_rows_never_carry_a_sic`,
-  `test_no_name_in_the_current_universe_lacks_a_sic`.
+  `test_no_name_in_the_current_universe_lacks_a_sic`. The three artifact pins are COMPLEMENTS, not
+  layers: the partial-hole rule cannot see a SINGLE-security issuer (Gartner's CIK owns one row —
+  the pin is satisfied by the very row that was destroyed), which is why the ledger and universe
+  pins stay.
   *Record: `docs/records/2026-08-31-entity-master-sic-backfill.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
   open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet

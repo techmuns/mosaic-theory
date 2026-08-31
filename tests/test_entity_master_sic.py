@@ -78,10 +78,30 @@ def test_a_cik_never_disagrees_with_itself_about_its_sic() -> None:
                 f"({sorted(per_cik[cik])}) — the two tables disagree about one issuer")
 
 
-def test_every_present_sic_resolves_to_a_real_industry() -> None:
-    """A SIC that is PRESENT must be readable. A stored code that resolves to "Unknown" is a
-    garbage write wearing a value's clothes — worse than a null, which at least reports itself
-    absent (`monitor.sector_for_display`)."""
+def test_every_present_sic_is_a_real_edgar_code() -> None:
+    """A SIC that is PRESENT must be a real EDGAR code — a garbage write wearing a value's clothes
+    is worse than a null, which at least reports itself absent (`monitor.sector_for_display`).
+
+    CHECKED AGAINST THE VENDORED OFFICIAL TABLE, not against `industry_for_sic`. Resolving is far
+    too weak a test to state this: `industry_for_sic` FALLS BACK to `sector_for_sic`, which answers
+    "Other" for every unmapped numeric code, so `9999` and `0000` both "resolve" and only a
+    NON-NUMERIC string could ever have failed. The real invariant is the format EDGAR publishes
+    (four digits) and membership of the SEC's own list — every one of the 332 distinct codes
+    committed today satisfies both.
+    """
+    from vinci.sic_table import SIC_TABLE
+
+    malformed = sorted({(str(r["ticker"]), str(r["sic"])) for r in _real_securities()
+                        if r.get("sic")
+                        and not (str(r["sic"]).isdigit() and len(str(r["sic"])) == 4)})
+    assert not malformed, f"stored SIC(s) that are not 4-digit EDGAR codes: {malformed}"
+
+    off_table = sorted({(str(r["ticker"]), str(r["sic"])) for r in _real_securities()
+                        if r.get("sic") and str(r["sic"]) not in SIC_TABLE})
+    assert not off_table, (
+        f"stored SIC(s) absent from the vendored official SEC list: {off_table}. Either the code "
+        f"is a garbage write, or the table needs re-vendoring — check which before relaxing this.")
+
     unreadable = sorted({(str(r["ticker"]), str(r["sic"])) for r in _real_securities()
                          if r.get("sic") and industry_for_sic(str(r["sic"])) == "Unknown"})
     assert not unreadable, f"stored SIC(s) that resolve to nothing: {unreadable}"
