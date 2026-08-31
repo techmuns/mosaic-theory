@@ -163,7 +163,15 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
           f"(Polygon free tier ≈ 5/min; be patient)…")
     with Store(cfg.db_path) as store:
         for s in secs:
-            store.upsert_security(s)
+            # STAMP `first_seen` — `build_universe` always has (`first_seen=reference_date`) and
+            # this path never did, so every identity `refresh` INTRODUCED carries NULL (QQQ, TSM, V
+            # in the committed master). That is not cosmetic: `identities_first_seen_after` is the
+            # #442 failed-forward-run guard, and its `first_seen > ?` never matches NULL — so a
+            # name this command introduced is INVISIBLE to it, and a backdated `run-weekly` would
+            # admit a name it could not have known, which is the exact leak the guard exists to
+            # stop. `upsert_security` COALESCEs `first_seen`, so this only ever stamps a NEW row;
+            # an identity already in the store keeps the date it was really first seen.
+            store.upsert_security(s, first_seen=date.today())
         if args.aggs:  # ONE call per symbol — for backfilling a NEW name's history (NCNO-class)
             summary = ingest_prices_per_symbol(
                 client, store, secs, start=start, end=end, progress=stderr_reporter)

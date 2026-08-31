@@ -115,10 +115,25 @@ class Store:
         them under that run's manifest — a committed historical screen containing names it could
         not have known. The store is mutable and shared; "I re-ran at the earlier date" does not
         undo what the later attempt wrote.
+
+        A NULL `first_seen` COUNTS AS "after" (review, 2026-08-31). `first_seen > ?` never matches
+        NULL, so an identity whose provenance is unrecorded was INVISIBLE here — and `vinci refresh`
+        introduced exactly those (QQQ, TSM, V), so the one command that adds out-of-band names was
+        also the one whose names this guard could not see. Unknown provenance cannot confirm the
+        name was knowable at `reference_date`, so it fails CLOSED, the way `unknown_sic` excludes a
+        name whose business type the universe cannot confirm. The source is fixed too — `refresh`
+        now stamps — but the guard must not go on trusting a field any writer can omit.
+
+        SYNTHETIC BENCHMARKS ARE EXEMPT, and must be: SPY/IWM/MDY et al. are `IDX-*` identities with
+        no `first_seen` BY CONSTRUCTION (`benchmark_identity`), upserted by the screen and the
+        orchestrator themselves. Counting them would make EVERY backdated run raise on the very
+        rows it just wrote — the guard would fail closed on nothing real.
         """
         return [
             str(r["internal_id"]) for r in self._conn.execute(
-                "SELECT internal_id FROM securities WHERE first_seen > ? ORDER BY internal_id",
+                "SELECT internal_id FROM securities "
+                "WHERE internal_id NOT LIKE 'IDX-%' AND (first_seen IS NULL OR first_seen > ?) "
+                "ORDER BY internal_id",
                 (_iso(reference_date),),
             )
         ]

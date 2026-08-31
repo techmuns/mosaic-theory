@@ -625,27 +625,15 @@ Each line: *what it does* — *verified how*.
   the pin is satisfied by the very row that was destroyed), which is why the ledger and universe
   pins stay.
   *Record: `docs/records/2026-08-31-entity-master-sic-backfill.md`.*
-- **`vinci refresh` FILLS THE SIC AT THE POINT OF ENTRY (2026-08-31, feat/refresh-enrich).** Closes
-  §5.0 row 7, the last open item of the SIC work. `refresh` is how an out-of-band name enters the
-  entity master, and `build_universe` never enriches a name it does not admit — so what `refresh`
-  stored was permanent, and it stored nothing (NFLX's hole; Gartner's class). It now fetches the
-  EDGAR SIC, **best-effort**: `_resolve_for_refresh` keeps the resolver STRICT on the identity
-  (unknown/ambiguous ticker still fails loud) and tolerates only the SIC, because every ticker is
-  resolved BEFORE any bars are fetched — a naive `enrich=True` aborts the whole backfill on one SEC
-  hiccup (demonstrated against the real resolver). The tolerance lives at that ONE call site, never
-  in `EntityResolver`, so the universe gate keeps failing CLOSED. Safe only because #523's COALESCE
-  means UNKNOWN can no longer erase a stored value. **Live-run find:** EDGAR returns
-  `sicDescription: ""` (not null) for a SIC-less issuer, and SQL COALESCE treats `''` as PRESENT —
-  so the blank would have overwritten a stored description; normalised to None at the boundary.
-  Review moved that normalisation to the SOURCE (`sic_for`) — the first fix patched `cli.py` alone
-  and left `resolve_ticker(enrich=True)`, `_enrich_issuer` and the backfill script still passing the
-  blank. Review also added a SYSTEMIC-failure tally (per-name lines scroll past; a run that loses
-  every SIC now says so once, after the summary) and made the tests hermetic (they had mkdir'd
-  `data/` into the pytest CWD via the un-stubbed `get_config`).
-  Incident→invariant (shipped Y): `tests/test_refresh_enrich.py` (8 pins, all driven through the
-  real `_cmd_refresh`) + `test_sic_for_normalises_edgars_empty_description_to_absent`
-  (`tests/test_resolver.py`); six demonstrated failing without their fix.
-  *Record: `docs/records/2026-08-31-refresh-enriches-best-effort.md`.*
+- **`vinci refresh` FILLS THE SIC AT THE POINT OF ENTRY (2026-08-31, #528).** Closed the last SIC
+  item: `refresh` is how an out-of-band name enters the entity master and it stored no SIC (NFLX's
+  hole, Gartner's class). Now fetched BEST-EFFORT — strict on the identity, tolerant on the SIC, so
+  a flaky SEC cannot abort a price backfill. *Record: `docs/records/2026-08-31-refresh-enriches-best-effort.md`.*
+- **`first_seen` PROVENANCE — the leak guard could not see the names `refresh` adds (2026-08-31).**
+  `vinci refresh` never stamped it, so QQQ/TSM/V carried NULL and `NULL > date` is never true —
+  invisible to the #442 failed-forward-run guard. Source stamps, guard fails CLOSED on unknown
+  provenance (synthetic `IDX-*` exempt by construction), 3 rows dated from git evidence.
+  *Record: `docs/records/2026-08-31-first-seen-provenance.md`.*
 - **DOSSIER SECTORS — the clobber's downstream fossil, corrected + pinned (2026-08-31).** 9 of 17
   dossiers said `Unknown` for a sector their SIC resolved; 3 partitioned pins cover data + served mirror. *Record: `docs/records/2026-08-31-artifact-pass-dossier-sectors.md`.*
 - **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
