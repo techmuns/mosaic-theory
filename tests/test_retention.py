@@ -393,13 +393,16 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
 
     from vinci.universe import DROP_STAGES, build_universe
 
+    # 10 since 2026-09-01: `duplicate_class` joined the funnel — one issuer contributes ONE line,
+    # so the non-surviving classes of a multi-class issuer are dropped with the winner named in
+    # the reason. It is a real drop stage and emits its retention row like the rest.
     # 9 since 2026-08-31: `ads_count_unresolved` joined the funnel — a depositary receipt whose
     # ADS-denominated share count will not resolve is DROPPED rather than sized by assuming
     # 1 ADS = 1 ordinary share. It is a real drop stage, so it emits its retention row like the
     # rest; the count is asserted so ADDING a stage stays a deliberate act. Per-class sizing
     # (2026-09-01) deliberately added NO stage: a line whose class count will not resolve keeps
     # the sizing it already had rather than being dropped — see `_per_class_count`.
-    assert len(DROP_STAGES) == 9, DROP_STAGES
+    assert len(DROP_STAGES) == 10, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")
@@ -426,9 +429,17 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # sized by the share-class reference because no XBRL tier had a count. Its FAILURE case is
     # not a new stage — a name with no count in any source still drops at `no_shares`, through
     # `_drop`, exactly as before.
-    # `dual_class_count_used` (2026-09-01) is the same shape once more: it counts ADMITTED lines of
-    # a multi-class issuer sized by their OWN class count instead of the issuer-wide one. Its
-    # failure case IS a stage — `dual_class_unresolved` — and goes through `_drop`.
+    # `dual_class_count_used` (2026-09-01) is the same shape once more: lines of a multi-class
+    # issuer sized by their OWN class count instead of the issuer-wide one.
+    #
+    # THESE THREE COUNT SIZING, NOT ADMISSION, and the distinction is load-bearing because the
+    # committed `universe_stats.json` is read as a health snapshot. `ads_count_used`,
+    # `polygon_count_fallback` and `dual_class_count_used` are incremented in the SIZING branch,
+    # before the band / ADV / SIC / type gates and before de-duplication — which is why a primary
+    # and a theme run of the same date report the SAME 356 / 330 / 145 while admitting 2,113 and
+    # 928 names. `shares_period_average` is the odd one out on purpose: it is stamped with the
+    # admitted row, so it counts ADMITTED names only. Do not read the first three as population
+    # counts.
     # A stage missing its row is still the failure this guard exists to catch.
     assert set(loose) <= {"considered", "in_universe", "shares_period_average",
                           "out_of_band_period_average", "ads_count_used",
