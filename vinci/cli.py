@@ -1563,6 +1563,23 @@ def _result_mismatch(stated: Any, computed: Any) -> str | None:
     return "; ".join(out) or None
 
 
+def _result_is_stated(result: Any) -> bool:
+    """True when the payload actually STATES a result, i.e. it is not the schema's virgin block.
+
+    `ScenarioRecord.result` is `Field(default_factory=Result)`, so a payload that omits `result`
+    (or carries `"result": {}`) arrives as an ALL-DEFAULT `Result()`, not as `None`. That is the
+    analyst declining to state a number — the same posture `scenario-create` starts from — and it
+    must be DERIVED, never refused: every compared field reads `stated None, legs give <x>`, so
+    without this the refusal message's own advice ("drop the stated result and let the recipe
+    compute it") is unfollowable, and the archive-and-reissue that stamps a record under the
+    tiered ladder has no payload shape that works — a stated result freezes the ladder, and an
+    unstated one was refused.
+    """
+    import vinci.scenarios as sc
+
+    return bool(result is not None and result != sc.Result())
+
+
 def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     """ARCHIVE-AND-REISSUE — the ONLY path that supersedes a record (scenario-refresh precedent).
 
@@ -1690,13 +1707,26 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     except (ValueError, KeyError, TypeError) as exc:
         print(f"REFUSED: the incoming payload's legs do not compute — {exc}")
         return 1
-    _mismatch = _result_mismatch(incoming.result, _recomputed.result)
-    if _mismatch:
-        print(f"REFUSED: {incoming.ticker}: the payload's stated result disagrees with its own "
-              f"legs — {_mismatch}. Fix the legs or drop the stated result and let the recipe "
-              f"compute it; a record whose headline number is not derivable from the rows above "
-              f"it cannot be re-checked.")
-        return 1
+    #
+    # A PAYLOAD THAT STATES NOTHING IS DERIVED, NOT REFUSED. `result` defaults to a virgin
+    # `Result()`, so a payload that omits it disagrees with the legs on every compared field
+    # (`stated None, legs give 1.6919…`) — which made the refusal's own advice impossible to
+    # follow and left archive-and-reissue with no working payload shape: a stated result freezes
+    # the tiered ladder (`_with_irr_gate` only stamps a record that was never computed), and an
+    # unstated one was refused. Nothing is silently corrected here — there is no stated number to
+    # correct — and the derivation is PRINTED so it is never a quiet substitution.
+    if _result_is_stated(incoming.result):
+        _mismatch = _result_mismatch(incoming.result, _recomputed.result)
+        if _mismatch:
+            print(f"REFUSED: {incoming.ticker}: the payload's stated result disagrees with its "
+                  f"own legs — {_mismatch}. Fix the legs or drop the stated result and let the "
+                  f"recipe compute it; a record whose headline number is not derivable from the "
+                  f"rows above it cannot be re-checked.")
+            return 1
+    else:
+        print("  ⚠ payload states no result — DERIVED from its own legs "
+              f"(ratio {_recomputed.result.ratio and round(_recomputed.result.ratio, 4)}, "
+              f"gate {_recomputed.result.gate}, regime {_recomputed.result.gate_regime})")
     incoming = _recomputed
 
     try:

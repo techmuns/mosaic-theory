@@ -297,3 +297,72 @@ def test_every_committed_record_would_survive_the_new_supersede_check() -> None:
         assert _result_mismatch(rec.result, again) is None, f.name
         seen += 1
     assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
+
+
+def test_supersede_derives_an_unstated_result_instead_of_refusing_it() -> None:
+    """A payload that STATES no result is DERIVED, not refused (review fix, 2026-09-01).
+
+    `ScenarioRecord.result` is `Field(default_factory=Result)`, NOT nullable — so a payload that
+    omits `result` arrives as an all-default `Result()` and disagrees with its own legs on every
+    compared field. Two things broke on that:
+
+      * the refusal's own advice — "drop the stated result and let the recipe compute it" — was
+        unfollowable: doing exactly that produced `reward: stated None, legs give 51.5145; ...`;
+      * archive-and-reissue had NO working payload shape for stamping the tiered ladder, because
+        `_with_irr_gate` freezes any record that carries a computed result. A stated result froze
+        the ladder; an unstated one was refused. GOOGL's reissue — the sequel both PRs name — was
+        unreachable either way.
+
+    DRIVEN OFF THE COMMITTED GOOGL RECORD, mutated one field at a time.
+    """
+    from vinci.cli import _result_is_stated, _result_mismatch
+
+    doc = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
+
+    # (a) the virgin block is NOT a stated result, however loudly it disagrees with the legs
+    virgin = dict(doc)
+    virgin.pop("result", None)
+    rec = sc.ScenarioRecord.model_validate(virgin)
+    assert _result_is_stated(rec.result) is False
+    assert rec.result is not None, "the premise: it is a virgin Result(), never None"
+    assert _result_mismatch(rec.result, sc.run_recipe(rec.model_copy(deep=True)).result), (
+        "the mismatch report must still FIRE on the virgin block — the fix is that the caller "
+        "does not consult it, not that the comparator went blind")
+
+    # ...and an explicit empty object is the same declining posture
+    empty = dict(doc)
+    empty["result"] = {}
+    assert _result_is_stated(sc.ScenarioRecord.model_validate(empty).result) is False
+
+    # (b) deriving it is what makes the record stampable under the ladder — the whole point
+    derived = sc.run_recipe(rec.model_copy(deep=True))
+    assert derived.result.gate_regime == sc.GATE_REGIME, (
+        "an unstated result must reach the engine UNCOMPUTED so the tiers stamp it; if this "
+        "reddens, reissue can no longer put a record under the ladder")
+    assert derived.result.asymmetry_tier is not None and derived.result.eligible is not None
+
+    # (c) a record that DOES state a result is still compared, and still refused on disagreement
+    stated = sc.ScenarioRecord.model_validate(doc)
+    assert _result_is_stated(stated.result) is True
+    tampered = stated.model_copy(deep=True)
+    tampered.result.ratio = (stated.result.ratio or 0) + 0.5
+    assert _result_is_stated(tampered.result) is True
+    assert "ratio" in (_result_mismatch(
+        tampered.result, sc.run_recipe(tampered.model_copy(deep=True)).result) or ""), (
+        "widening 'unstated' must not have widened into 'unchecked' — a hand-typed ratio is "
+        "still refused, which is the 2026-09-01 ruling")
+
+
+def test_supersede_consults_the_stated_check_before_refusing() -> None:
+    """THE CALL SITE, pinned — a helper-level test stays green when the caller drops it.
+
+    `_result_is_stated` is only worth anything inside `_cmd_scenario_supersede`; guarding the
+    helper alone would let a revert delete the branch and stay green.
+    """
+    src = (ROOT / "vinci" / "cli.py").read_text()
+    supersede = src.split("def _cmd_scenario_supersede", 1)[1].split("\ndef _cmd_", 1)[0]
+    assert "_result_is_stated" in supersede, (
+        "supersede refuses an UNSTATED result again — the payload shape that reissues a record "
+        "under the tiered ladder is unreachable, and the refusal message advises the impossible")
+    assert "_result_mismatch" in supersede, (
+        "supersede no longer refuses a stated disagreement — that is the 2026-09-01 ruling")
