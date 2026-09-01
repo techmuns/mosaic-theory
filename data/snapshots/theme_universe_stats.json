@@ -4,9 +4,7 @@
   "market_cap_max_usd": 10000000000000.0,
   "adv_floor_usd": 3000000.0,
   "considered": 7663,
-  "in_universe": 935,
   "dual_class_count_used": 145,
-  "shares_period_average": 66,
   "polygon_count_fallback": 330,
   "ads_count_used": 356,
   "no_shares": 889,
@@ -19,5 +17,8 @@
   "below_adv_floor": 59,
   "unknown_type": 2,
   "non_common_equity": 21,
+  "duplicate_class": 7,
+  "in_universe": 928,
+  "shares_period_average": 66,
   "band": "theme"
 }

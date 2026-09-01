@@ -10,8 +10,6 @@
   "polygon_count_fallback": 330,
   "ads_count_used": 356,
   "no_shares": 889,
-  "in_universe": 2125,
-  "shares_period_average": 167,
   "ads_count_unresolved": 18,
   "below_adv_floor": 493,
   "non_operating": 40,
@@ -19,5 +17,8 @@
   "non_common_equity": 8,
   "unknown_type": 8,
   "no_price": 533,
+  "duplicate_class": 12,
+  "in_universe": 2113,
+  "shares_period_average": 167,
   "band": "primary"
 }
