@@ -50,53 +50,9 @@ Each line: *what it does* — *verified how*.
   update), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH
   over trailing 365d) − 1` (`eod/features.compute_price_features`, ≥330d history else UNKNOWN).
   *(detail: `docs/records/2026-08-26-capability-screen-2-gates-vinci-screens-g1-drawdown-30-ca.md`)*
-- **Ranker / triage layer** (`vinci/rank`, `rank` CLI) — **orders** the ~307 candidates into a
-  priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.
-  A *transparent* weighted composite of the Tier-1 axes (idiosyncrasy .30 / drawdown-depth .25 /
-  **drawdown-character .25** / multiple-vs-own-5y .20 — **face-validity weights, never
-  return-tuned**), + a minor Tier-2 volume overlay (±0.05, panic-exhausted vs still-distributing),
-  coloured by a Tier-3 LLM cause-annotation that only **demotes/colours** (structural-break vs
-  mean-revert, `UNCLASSIFIED` by default — never fabricated). *drawdown-character folds shape (sharp
-  vs grind) and cause (discrete event vs bleed) into ONE axis today — both rest on the same EOD
-  gap-down detector, so two axes would be false precision; splits back out when 8-K/guidance TEXT
-  events land (§4).* Tradeability is an **ADV gate** (not a quality signal; default floor = universe
-  floor, a no-op re-check — adds no filtering). **Orders, never decides; a lagging/coincident
-  description of the existing setup, not a return prediction.** **Replaces the bare A/B/C band with a
-  legible per-name structural profile** (score *and* profile are the same artifact — priority score +
-  per-axis breakdown that sums back to it; A/B/C kept only as a quick depth tag). Fail-loud: an
-  UNKNOWN axis earns 0 credit and is flagged for depth, never imputed — *ran `rank` on the committed
-  308 snapshot → top-15 legible profiles, every position reconstructs from weight·sub-score + overlay
-  (ICCM's 61.7× active-distribution overlay sinks it from a top-2 quality to #6); 156 UNKNOWN-multiple
-  names flagged; ADV floor $10M gates 75 thin names to the queue bottom; a structural-break flag
-  demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 31 tests incl. an AST guard that
-  `vinci.rank` imports no scoring/ledger/store (no forward-return path). Emits
-  `ranked_queue.{jsonl,md}` snapshots.*
+- **Ranker / triage layer**
   *(detail: `docs/records/2026-08-26-capability-ranker-triage-layer-vinci-rank-rank-cli-orders.md`)*
-- **Dossier-assembler** (`vinci/dossier`, `dossier` CLI) — per-finalist; **assembles and cites, NEVER
-  concludes.** A deterministic source-bound MECHANICAL layer (every fact a `{value, source_ref}`: P/E +
-  percentile / FCF-sign / net-leverage from the screen's EDGAR data-record; the gap-down **8-Ks** fetched
-  + bound as the de-rating cause; **idiosyncratic-vs-shared** = name vs IWM 180d return + the graph-exposed
-  cohort's same-window returns (the G2-vs-market compensation; graph is INPUT, never a predictor);
-  share-count/dilution from EDGAR XBRL; CIQ multiples/quality/segments/customers/consensus from a
-  **manual** export) + a *fenced* LLM SYNTHESIS whose ONLY input is those facts: bull/bear cases, 3–6
-  **named** twin analogues, the decisive question, key unknowns. **The synthesis schema has NO field for a
-  verdict / recommendation / direction / score / probability — concluding is structurally impossible**,
-  locked by a test that walks the schema (mirrors the ranker's no-forward-returns guard); a second AST
-  guard proves the package imports no `ledger`/`scoring` (logging the BUY/AVOID stays the human's act).
-  Post-LLM guardrails flag for human review: uncited points (each must cite a source_ref in the input),
-  untraceable figures (scale-aware: every number must trace to a mechanical value), numeric/unsourced
-  twins, directional language. CIQ via a swappable **ManualDataStore** — `LocalFolderStore` live
-  (`data/manual/ciq/<ticker>/`, git-ignored); `DriveStore` an unimplemented interface (CIQ is
-  manual-export-only by licence). Missing CIQ → sections MISSING + a "pull CIQ" flag, batch continues;
-  parallel across the cohort. *Verified: `dossier --ticker FUBO` end-to-end → mechanical facts
-  source-bound (P/E 12.0 at the 0.16%ile of its 5y range, FCF-sign −1, −88.2% vs IWM, 2 gap-down 8-Ks
-  bound with accessions, shares 29.6M→342.4M +1055%; CIQ MISSING + flagged; graph cohort UNKNOWN — FUBO
-  not in the graph) + a live verdict-free synthesis (claude-sonnet-4-6), every figure tracing to the
-  mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
-  guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}`; the DERIVED
-  `dossier.json`+`dossier.md` are COMMITTED to this PRIVATE repo for the authed deploy (verified:
-  `{value, source_ref}` facts + synthesis + public 10-K phrases, no licensed CIQ), while `llm_call.log`
-  stays git-ignored (regenerated debug log). Revert dossiers to ignored if the repo/deploy goes public.*
+- **Dossier-assembler**
   *(detail: `docs/records/2026-08-26-capability-dossier-assembler-vinci-dossier-dossier-cli-pe.md`)*
 - **Decision ledger** (`vinci/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
@@ -224,255 +180,25 @@ Each line: *what it does* — *verified how*.
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
   nothing.
   *(detail: `docs/records/2026-08-26-capability-read-only-ops-dashboard-frontend-static-fronte.md`)*
-- **Earliness-assay v0 harness (`vinci/themes/assay.py` + `assay_schemas.py` + `assay_candidates.py`;
-  CLI `themes-assay` / `themes-assay-retrocast`) — FALSIFY-OR-SURVIVE, ZERO LLM, backend-only (nothing
-  deploys).** A deterministic retrocast that places each quarter of a candidate theme in a velocity×price
-  QUADRANT and measures EARLY residence — to test the fund's *earliness* premise (that a theme is
-  observable in disclosure BEFORE the basket re-rates) before any capital or extraction is built on it.
-  **Two axes, point-in-time:** (x) disclosed-activity velocity — new filers first-mentioning the driver's
-  terms per quarter (EDGAR full-text search, `from`-paginated, cache-first; a page cap degrades LOUDLY to
-  a lower bound, never silently); (y) an obvious basket's median excess re-rating vs IWM AND SPY (Polygon
-  grouped-daily, as-of only; a missing close is `None`→UNKNOWN, never a silent 0.0). Each quarter →
-  {EARLY / PRICED / QUIET / NARRATIVE / UNKNOWN} under a **boundary sensitivity grid** (2 price-flat
-  thresholds × 2 activity-rising tests = 4 combos); EARLY residence (longest consecutive run) is measured
-  per combo. Output is an **`AssayCard` — assemble-not-conclude: NO score / rank / verdict field** (pinned
-  by a schema-walk guard + an AST no-ledger/no-scoring import guard; `rank` added to the forbidden set —
-  a quadrant is a factual label, not a ranking). **THE_BASKET_RULE (verbatim, printed on every card):**
-  "At as-of, rank filers by DISTINCT filings mentioning ANY of the candidate's terms over the trailing 8
-  quarters (EDGAR full-text). Map CIK->ticker (SEC company_tickers). Keep common stocks whose as-of market
-  cap (XBRL cover-page shares x Polygon close) is $100M-$10B (the Component-A cap band). Take the top 10 by
-  mention count. Purely mechanical + ex-ante: no discretion, no forward information, no price used in
-  selection." **KILL CRITERION (pre-committed, verbatim):** "If the retrocasts show that NEITHER
-  ai-datacenter NOR defense-demand-shift had >=2 consecutive quarters of EARLY-quadrant residence before
-  their re-rates - under ANY boundary combo in the sensitivity grid - the early-window premise is
-  falsified and the assay build STOPS at this harness." **v0 limitations (recorded honestly):** (1) NO
-  commitment/"money" read — velocity is *mention presence*, not disclosed $ commitment; 8-K commitment
-  extraction is **v1**; (2) NO attention/search prior — **v1**; (3) the 8-K-family vs 10-K-family mention
-  split is **PRINTED, not weighted** in v0; (4) **ZERO LLM** by construction; (5) point-in-time ticker map
-  (SEC publishes only the CURRENT CIK↔ticker — noted in a card caveat). Quarters snapshot to
-  `data/assay_history/` (reusing `scan_history.record_snapshot`, tagged `exposure_basis=<reference-combo
-  quadrant>`); cards to `data/assay/`; efts velocity cache to `data/assay_cache/` — all git-ignored,
-  LOCAL-only. Verified: ruff + `mypy --strict vinci` (90) clean; +15 network-free tests (quadrant/
-  residence math incl. the ≥2q-EARLY positive control under EVERY combo, the already-priced negative
-  control, the price-gap→UNKNOWN case; the no-conclude schema+AST guard; the driver-terms identity; the
-  efts cache round-trip; +4 REGRESSIONS below). **Adversarial review (3 lenses × verify-refute, 5
-  confirmed / 4 refuted) caught and FIXED pre-merge three real defects, each now pinned by an
-  end-to-end regression:** (i) efts pages are 100 hits, not 10 — the by-10 step overlapped pages and
-  inflated `cik_counts`/form-splits ~8× (now steps by 100 and stops by position-vs-total, mirroring
-  `exposure.py`); (ii) a cik-less efts hit truncated pagination silently WITHOUT setting `capped`
-  (same fix — the stop no longer reads the CIK-filtered row count); (iii) a share-frame LOOKAHEAD —
-  basket cap-banding read XBRL shares disclosed AFTER as_of (now reuses `universe.recent_share_periods`'
-  40-day filing-lag gate → no forward information, per THE_BASKET_RULE). **Live 4-case retrocast
-  (2026-07-06, real EDGAR+Polygon, ZERO LLM): VERDICT = `INCONCLUSIVE — price axis gapped; the kill
-  criterion cannot be evaluated` (correctly NOT a false FALSIFICATION).** flat20_medrise EARLY
-  residence (longest run / total): ai-datacenter@2026-06-01 = 1/2, defense@2026-06-15 = 0/0 (both
-  POST-re-rate → priced), ai-datacenter@2022-07-01 = 0/0, defense@2023-01-01 = 0/0 — **but both
-  pre-re-rate (EARLY-expected) windows are ENTIRELY price-gapped** (Polygon's ~5y history can't reach
-  the 2016-2020 8-quarter baselines), so a ≥2q EARLY run could be neither observed NOR ruled out. The
-  VELOCITY axis validated cleanly (rich efts back to 2018; sensible point-in-time baskets — VRT/RIOT/
-  KULR for 2022 AI-datacenter, ONDS/RDW/AVAV for 2026 defense; loud lower-bound flags on 34-44 capped
-  term-quarters/case). **Assay v0 SURVIVES (not falsified); it neither confirms nor kills the
-  earliness premise — the binding constraint is PRICE HISTORY (a v1 unlock: deeper EOD back to ~2016),
-  not a design flaw.** Operationally: efts throws transient 500s under the request burst → the harness
-  fails LOUD (never fabricates); a cache-first re-run resumes (idempotent, monotonic) — the retrocast
-  completed via that recovery. On a feat/theme-assay branch; PR opened, NOT merged.**
-  **— ADDENDUM (2026-07-06, deeper-history re-run; the INCONCLUSIVE record above stays — it was TRUE
-  under the 5y constraint):** operator upgraded the Polygon plan; EOD now reaches 2018-01-02 (verified:
-  SPY & IWM both 61/61 bars across Q1-2018). Re-running the SAME 4 cases (efts fully cache-first, ZERO
-  LLM; **+104 pre-2021 grouped-daily bars fetched fresh; NO cache purge — the prior polygon cache held
-  only valid `OK` bars (2021-09-30→2026-07-02), and the old plan's pre-2021 gaps were 403s that netcache
-  never persisted, so zero poison existed**) makes the pre-re-rate windows evaluable and FLIPS the
-  verdict to **`PASS (survives — early-window premise NOT falsified)`**. Evidence: **defense-demand-shift
-  @ 2023-01-01 has a ≥2 consecutive EARLY run under ALL 4 combos** (flat20/flat30 × medrise/sloperise →
-  runs 2/3/2/3) — rising new-filer velocity (521→425→419→366) while basket excess vs IWM AND SPY stayed
-  flat-to-negative through 2021 (+0%/+0%, −10%/−14%, −16%/−25%, −17%/−37%: activity rose BEFORE price),
-  then the basket re-rated NARRATIVE (+22–33%) in 2022. **ai-datacenter @ 2022-07-01** = one isolated
-  EARLY quarter (2022Q1, +7%/+9%, medrise combos only, run 1). The 2026 (post-re-rate) cases are
-  UNCHANGED (ai-dc 1/2, defense 0/0 — their windows were already inside the 5y history), and their EARLY
-  quarters (2025Q1/2026Q1) sit MID-re-rate, not a clean pre-move signal. Residual honesty (median-of-
-  available, n disclosed, NO substitution): defense-2023 early quarters rest on n=7/10 priced members
-  (short-history: DRS IPO-2022 = 2/16 quarter-ends, DPRO 7/16, POWWP 8/16); ai-dc-2022 on n=4–5/10 (many
-  AI-DC names IPO'd 2021+) — every quarter ≥ the 3-member median floor, no smoothing. **The earliness
-  premise SURVIVES on evidence; deeper price history was indeed the unlock. Still NOT merged.**
-- **Earliness-assay v1 — velocity-axis hardening + card legibility (`feat/assay-v1`; ZERO LLM,
-  backend-only, nothing deploys). Everything below is computed ALONGSIDE the recorded v0 basis; the
-  recorded v0 PASS is UNCHANGED and anchored-definition adoption is PENDING OPERATOR SANCTION.**
-  WHAT CHANGED (each recorded side-by-side, never overwriting v0): (1) CALENDAR-ANCHORED new-filers —
-  a CIK is new in the calendar quarter of its first mention vs a FIXED trailing-12q lookback,
-  window-INDEPENDENT (fixes the window burn-in); cards print BOTH columns (window-relative = the
-  recorded basis). (2) PER-TERM DECOMPOSITION — top terms by new-filer contribution per quarter.
-  (3) PLACEBO candidate `placebo-boilerplate` (near-universal boilerplate ≈ raw new-registrant flow,
-  `is_placebo`, operator-swappable); theme cards print a per-quarter RATIO = theme/placebo anchored
-  filers (None-safe). (4) BASKET INTEGRITY — warrant/unit/right classes EXCLUDED (Polygon-type
-  primary + suffix fallback; LIDRW no longer leaks), per-member cap provenance (shares source/count,
-  price date), a print-only >5x-QoQ cap sanity flag. (5) CLI SELF-HEALING — cache-first retries with
-  backoff on transient efts 5xx, fail-loud with the exact missing read on exhaustion. PRESENTATION-
-  ONLY (fed to NO verdict): the classifier-input columns (trailing-4q median + OLS slope, window
-  documented EXCLUSIVE of the current quarter), the DERATED-EARLY annotation (excess < −20% vs BOTH),
-  and the SYMMETRIC ±20/±30 band residence row (|excess| < threshold). +7 network-free tests; ruff +
-  `mypy --strict vinci` clean; suite 520 passed (the 1 failure is the pre-existing `test_t2` dossier
-  case, unrelated).
-  **ACCEPTANCE RUN (2026-07-07, live EDGAR + Polygon, ZERO LLM) — SIDE-BY-SIDE VERDICTS (verbatim):**
-  RECORDED (window-relative v0 basis): `PASS (RECORDED: survives — early-window premise NOT
-  falsified)`. ANCHORED (v1 velocity, PENDING SANCTION): `PASS (ANCHORED: survives — early-window
-  premise NOT falsified)`. **AGREEMENT: verdicts AGREE (PASS); anchored adoption remains PENDING
-  OPERATOR SANCTION.** The RECORDED residence matches the v0 record (merged #86) EXACTLY — the
-  window-relative mechanism is unchanged and v1 reclassified no recorded case (no warrants in the
-  recorded baskets, so the warrant-exclusion fix cannot move them); the anchored velocity clears
-  ≥2q EARLY on the SAME cases (defense-demand-shift @ 2023-01-01: RECORDED flat20_medrise 2/2,
-  flat20_sloperise 3/3 → ANCHORED 5/5, 5/6 — the burn-in fix LENGTHENS the runs, itself a claim to
-  sanction, not adopt).
-  **PLACEBO / RATIO / DECOMPOSITION FINDINGS — THE CONTROL SPEAKS (recorded VERBATIM, honestly):** the
-  placebo null FIRES. For defense-demand-shift @ 2022-01-01 the RATIO (theme/placebo anchored
-  new-filers) is 0.99, 0.79, 0.96, 0.81, 0.77, 0.99, 0.92, 1.00 across 2020Q1..2021Q4 — ~1 throughout
-  and NOT rising; the placebo shows the SAME 2021Q1 spike (placebo anchored 586 vs defense 454). So
-  the 2021 new-filer surge underlying defense's EARLY residence is LARGELY A LISTING-WAVE ARTIFACT,
-  not defense-specific acceleration. The 2021 filers are driven by GENERIC terms — defense (194/163/
-  207/162 per 2021 quarter), military (93/83/82/98) — the shift-specific terms (drone, munitions,
-  missile, autonomy) are secondary. The SYMMETRIC ±band row shows defense-2023's EARLY SURVIVES a
-  symmetric flat rule (flat20_medrise 2/2) — so the recorded PASS is NOT merely a one-sided-flat
-  artifact — but defense-2022's collapses to 0/0 (its EARLY was deep-underperformance-classified-as-
-  flat, flagged DERATED†). **NET (honest): the recorded PASS stands and is robust to the symmetric
-  band, but the velocity axis is substantially CONFOUNDED by the 2021 listing wave (ratio ~1) and
-  driven by generic defense terms — the "earliness" is a price-flat-while-registrants-flood pattern,
-  not demonstrated theme-SPECIFIC anticipation. A CONTROL-SAYS-NO caveat for any live use.** On
-  `feat/assay-v1`; PR opened, NOT merged. Anchored adoption + velocity-confound remediation are v2
-  briefs, PENDING OPERATOR SANCTION.**
-  **— AUDIT (2026-07-07, 6-lens adversarial review of PR #91, each finding double-verified): 1 real
-  fix.** The warrant/unit/right ticker-suffix fallback was UNSOUND — bare single-letter W/U/R with a
-  len>=4 gate false-positived on common stocks (SNOW ends W, PLTR ends R), and on a Polygon
-  security-type OUTAGE (security_types=None) it was applied to EVERY ticker, mass-excluding commons.
-  FIX: bare-letter suffix now requires the >=5-char base+class-letter shape (keeps the real cases —
-  LIDRW/CORZR/SHAZW len-5 — drops the 4-char common false-positives) AND is DISABLED entirely on a
-  metadata outage (metadata is the only authority; no common excluded on a guess). Proven
-  non-regressive: re-running ai-datacenter@2026-06-01 left the basket + recorded quadrants/residence
-  byte-identical (CORZR/SHAZW still excluded). +negative pins (SNOW/PLTR/PANW kept) + an outage pin.
-  Two low fixes: the cap-QoQ sanity flag now compares only CALENDAR-ADJACENT priced quarter-ends (was
-  mislabeling a gap-straddling move 'QoQ'); STATE wording "byte-identical to the merged v0 record"
-  tightened to a precise numeric-match statement. All else the audit raised was refuted or cosmetic.**
-- **Earliness-assay v2 — CONTRAST velocity axis (`feat/assay-v2`; ZERO LLM, backend-only, nothing
+- **Earliness-assay v0 harness (`vinci/themes/assay.py` + `assay_schemas.py` + 
+  `assay_candidates.py`; CLI `themes-assay` / `themes-assay-retrocast`) — FALSIFY-OR-SURVIVE, ZERO
+  LLM, backend-only (nothing deploys).**
+  *(detail: `docs/records/2026-09-01-s2-earliness-assay-v0-harness-vinci-themes-assay-py-ass.md`)*
+- **Earliness-assay v1 — velocity-axis hardening + card legibility (`feat/assay-v1`; ZERO LLM, 
+  backend-only, nothing deploys). Everything below is computed ALONGSIDE the recorded v0 basis;
+  the recorded v0 PASS is UNCHANGED and anchored-definition adoption is PENDING OPERATOR SANCTION.**
+  *(detail: `docs/records/2026-09-01-s2-earliness-assay-v1-velocity-axis-hardening-card-legi.md`)*
+- **Earliness-assay v2 — CONTRAST velocity axis (`feat/assay-v2`; ZERO LLM, backend-only, nothing 
   deploys). v1's controls showed the velocity axis measures LISTING-WAVE flow (theme/placebo ratio
   0.77–1.00; generic terms dominate); v2 rebuilds it around signals a new-listing wave CANNOT
-  produce.** **OPERATOR SANCTIONS (2026-07-07, verbatim):** (1) "Calendar-anchored first-mentions
-  ADOPTED as the headline filer basis for all future cards; window-relative prints as a legacy column;
-  recorded v0/v1 bases preserved unrewritten." (2) "v2 velocity-axis redesign SANCTIONED with the
-  pre-committed SCOPE-STOP below." **WHAT CHANGED:** (a) analyst term TIERS on `CandidateSpec`
-  (`specific_terms` / `context_terms`, additive; `terms` = their union, DRIVER_SPECS identity kept;
-  a partition validator fails loud); (b) INCUMBENCY via data.sec.gov/submissions (NEW source, cached
-  through the shared SEC CachedHttp — no parallel client): a first-mention CIK is an INCUMBENT if its
-  EDGAR filing history began ≥8 quarters before its first-mention quarter (oldest `filings.recent`
-  date ≤ cutoff OR `filings.files` older-archive pages exist / >1000 filings); HEADLINE = incumbent
-  first-mentions on SPECIFIC-tier terms (anchored basis), immune to listing flow by construction, +
-  incumbent-on-context / new-listing / 8-K-vs-10-K-family splits + incumbent decomposition; (c) cards
-  lead with the anchored HEADLINE column (window-relative = legacy), retain the ratio / DERATED /
-  symmetric rows and the side-by-side RECORDED/ANCHORED verdict; (d) CLI retrocast evaluates the
-  contrast criterion mechanically. **DRAFT TIERS (verbatim, PENDING ANALYST RATIFICATION — not for
-  live use):** defense-demand-shift CONTEXT = {defense, military, warfighter, autonomy, ISR}, SPECIFIC
-  = the other 16 prefilter terms; ai-datacenter CONTEXT = {artificial intelligence, data center,
-  accelerator, thermal management, switchgear}, SPECIFIC = the other 13; placebo-boilerplate = ALL
-  SPECIFIC (the machinery null). **PRE-COMMITTED CONTRAST CRITERION + SCOPE-STOP (verbatim):** "CONTRAST
-  is shown for a case if >=2 consecutive pre-re-rate quarters have incumbent-specific first-mentions
-  strictly above that series' own trailing-4q median, with an absolute floor of >=3 in each such
-  quarter, WHILE the placebo incumbent-specific series in those quarters is NOT above its own
-  trailing-4q median. Pre-re-rate windows: defense-demand-shift@2023-01-01 = quarters through 2021Q4;
-  ai-datacenter@2022-07-01 = its full window. SCOPE-STOP: if NEITHER positive control shows contrast,
-  the velocity axis is DEMOTED to a printed diagnostic, further velocity-axis iteration is BARRED, and
-  the assay ships reduced - price-axis PRICED-gate + decomposition + human reading. If the placebo
-  incumbent series ITSELF shows a qualifying run, the incumbency machinery is confounded - report
-  loudly; contrast cannot be claimed either way." +5 network-free tests (incumbency rule, submissions
-  parse + 404/5xx, tier partition, contrast math, anchored-headline render); ruff + `mypy --strict
-  vinci` clean; suite 525 passed (1 pre-existing `test_t2`, unrelated).
-  **ACCEPTANCE RUN (2026-07-07, live EDGAR + Polygon + data.sec.gov, ZERO LLM; all 4 commands OK on
-  attempt 1; ~11.5k submissions cached). VERDICT = `CONFOUNDED` (the third pre-committed path).**
-  Readouts (verbatim): **(9a) HEADLINE incumbent-specific series** — defense-demand-shift@2023-01-01
-  (2019Q2..2023Q1) = [40,45,56,89,43,44,52,103,86,59,39,87,51,32,34,71]; ai-datacenter@2022-07-01
-  (2018Q4..2022Q3) = [17,28,25,17,21,40,15,21,30,57,40,24,30,40,20,15]. **(9b) PLACEBO incumbent-
-  specific = NOT a flat null** — [171,171,134,190,173,161,113,166,167,169,122,136,150,149,102,168]:
-  it DWARFS both themes (100-190 vs 17-103) AND self-qualifies (quarter indices [4,8,9,13,15] /
-  [5,6,10,11,15]). **(9c) CONTRAST VERDICT (verbatim), BOTH positive controls:** "CONFOUNDED — the
-  placebo series itself qualifies; contrast cannot be claimed either way." OUTCOME: "CONFOUNDED — the
-  placebo incumbent-specific itself qualifies; the machinery cannot support a contrast claim. Revisit
-  tiers/incumbency first." **(9d) INCUMBENT decomposition** — defense-2023 incumbent first-mentions
-  (2021) are led by missile/seeker/drone/munitions/artillery/UAV — the SHIFT-SPECIFIC terms (NOT the
-  generic defense/military, which are CONTEXT-tier): a real improvement over v1's generic-term
-  dominance. **(9e) RECORDED/ANCHORED kill verdict UNCHANGED** — PASS (RECORDED) / PASS (ANCHORED),
-  AGREE; v2 did not touch the EARLY-residence verdict. **DISPOSITION — CONFOUNDED (not Phase-B, not
-  the scope-stop reduced-ship):** the incumbency machinery reads as intended ON THE SHOWN EVIDENCE (the
-  (9d) incumbent-specific decomposition surfaces shift-specific terms — missile/seeker/drone/munitions,
-  not the generic CONTEXT terms a listing wave produces), BUT its NULL is broken — the placebo
-  boilerplate baseline is not flat noise
-  (it self-qualifies with counts dwarfing the themes), so per the pre-committed criterion contrast
-  CANNOT be claimed either way. Contrast-based Phase-B is BLOCKED pending a CLEAN null (the anchored-
-  new-on-boilerplate series carries structure it should not — likely quarterly-filer / phrase-coverage
-  effects); the anchored-headline + DRAFT-tier sanctions stand recorded, but reliance on the
-  incumbency-contrast velocity axis is DEFERRED until the machinery/null is revisited (a v3 brief).
-  The control did its job: it said no to the CONTROL ITSELF. On `feat/assay-v2`; PR to be opened, NOT
-  merged.**
+  produce.**
   *(detail: `docs/records/2026-08-26-capability-earliness-assay-v2-contrast-velocity-axis-feat.md`)*
-- **Earliness-assay v2.1 — filing-continuity GATE on incumbent first-mentions (the SANCTIONED FINAL
-  velocity-axis iteration); SCOPE-STOP EXECUTED.** One bounded apparatus repair after the v2 CONFOUNDED
-  result. **OPERATOR SANCTION (2026-07-08, verbatim):** "One bounded apparatus repair sanctioned after
-  the v2 CONFOUNDED result. This is the FINAL velocity-axis iteration: the criterion below executes the
-  scope-stop with no further apparatus appeals." SCOPE FROZEN — tiers / thresholds / combos / anchored
-  definition / basket rule ALL untouched; the ONLY change is the gate. **THE GATE:** an incumbent
-  first-mention COUNTS (new gated HEADLINE) only if the CIK filed in EACH of the 4 calendar quarters
-  immediately before the mention quarter, read from the cached data.sec.gov submissions `recent` window
-  (a cache HIT — zero fresh network on already-seen CIKs) — so a counted first mention can only mean
-  first ADOPTION, never first appearance / re-engagement. Continuity is UNDECIDABLE when cached `recent`
-  cannot reach back that far AND older-archive pages exist → gate-unknown (fail-loud, never assumed
-  continuous). Prior series stay printed. **PRE-COMMITTED FINAL CRITERION (verbatim):** "(i) The gated
-  placebo incumbent-specific series must show NO self-qualifying run (same run definition as v2). (ii) If
-  and only if the placebo is clean, the identical contrast criterion applies to the gated theme series on
-  the two positive controls. (iii) If the placebo STILL self-qualifies OR neither positive control shows
-  contrast, the SCOPE-STOP EXECUTES FINALLY: velocity axis demoted to printed diagnostic, further
-  velocity iteration BARRED, assay ships reduced (price-gate + decomposition + human reading)."
-  **ACCEPTANCE RUN (2026-07-08, live EDGAR + Polygon + data.sec.gov, cache-first, ZERO LLM; retrocast +
-  3 single-card commands OK):** the gate had REAL effect — it ~halved the placebo (defense-aligned gated
-  placebo = `[107,97,82,107,107,74,56,68,77,63,63,70,79,94,75,110]` vs ungated
-  `[171,171,134,190,173,161,113,166,167,169,122,136,150,149,102,168]`; gate-unknown only 1–11/quarter, so
-  coverage is good) and cut the themes ~30% (gated defense@2023-01-01 =
-  `[29,38,43,69,34,32,43,90,68,44,27,71,40,28,23,67]`; gated ai-datacenter@2022-07-01 =
-  `[14,20,21,14,13,28,9,15,20,46,28,16,21,34,14,14]`). **BUT the gated placebo STILL self-qualifies** (a
-  ≥2-quarter run strictly above its own trailing-4q median, floor ≥3) → BOTH positive controls
-  `CONFOUNDED` → **FINAL OUTCOME: SCOPE-STOP EXECUTES FINALLY** (criterion iii). Per the sanction this is
-  TERMINAL: the **velocity axis is DEMOTED to a printed diagnostic, further velocity-axis iteration is
-  BARRED**, and the assay ships REDUCED — price-axis PRICED-gate + incumbent-specific decomposition +
-  human reading. **RECORDED / ANCHORED kill verdict UNCHANGED** — PASS (RECORDED) / PASS (ANCHORED),
-  AGREE; the gate is additive and did not touch the EARLY-residence verdict. The gate itself is RETAINED
-  as a printed diagnostic (it demonstrably separates continuous adopters from re-engagement / first-
-  appearance flow — the placebo's spurious "incumbents" nearly halve under it), NOT a live velocity
-  signal. The control did its job a third and final time: it said no. On `feat/assay-v2-1`; PR to be
-  opened, NOT merged.**
-- _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 534 passed, 1 skipped;
-  +3 gate tests: continuity-gate math, filed_quarters parse/404/throttle, gated-placebo-collapse
-  property)._
-- **Component-A scans now NON-OVERWRITING via scan_history (2026-07-13, `feat/component-a-history`;
-  closes the audit-followup gap at `cli.py` ~521-525).** `_cmd_themes` computes the dump ONCE and writes
-  it BOTH to `candidate_themes.jsonl` (the "latest" pointer, same bytes) AND to an always-on timestamped
-  `scan_history` snapshot (`driver_slug=component-a`, `tier_field=None`), mirroring the exposure/assay
-  pattern — a monthly sweep can no longer clobber the prior harvest (the delta/monitor diffs against
-  immutable snapshots). `record_snapshot` gained an ADDITIVE `tier_field: str | None = "exposure_basis"`:
-  the default path is byte-identical (exposure/assay manifest lines unchanged, still fail-loud on a
-  missing key), and `None` gives Component-A records (no `exposure_basis`) an empty `tier_counts` instead
-  of a KeyError — pinned by a Component-A-shape test + an exposure-default regression test. Parity flags
-  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE:** the June-17 `candidate_themes.jsonl`
-  OUTPUT was absent at first-build time (untracked / never committed; removed when the primary left
-  `feat/own-history-line`), then the raw June-17 output was RESTORED 2026-07-13 from the operator's
-  off-repo copy (35 clusters, first `T000`) → backup `candidate_themes.2026-06-17.backup.jsonl` MADE. The
-  timestamped archive + committable latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron
-  AUTHORED + verified, PUSH STILL BLOCKED 2026-07-13 — the token at `~/.mosaic_gh_token` reports only
-  `repo` scope (NOT `workflow`) despite the re-scope precondition, so the push was rejected again; the
-  file is committed-ready locally, awaiting a `workflow`-scoped token in that file (or a keychain
-  refresh):**
-  `.github/workflows/monthly-themes.yml` (cron `0 7 3 * *` + `workflow_dispatch`), mirroring
-  monthly-score.yml — runs `python -m vinci.cli themes` (documented defaults basis r2 / window 365d /
-  min-breadth 3; the exact June-17 flag string was UNRECORDED, SAID SO in the workflow), job-summary
-  prints snapshot path + manifest line, commits the `candidate_themes.jsonl` pointer (git history = the CI
-  archive; `data/scan_history/` stays git-ignored/local). Evidence: the June-17 harvest = 35 proposals → 2
-  advances (entry below). Backend + workflow only — NOTHING deploys. On `feat/component-a-history`; PR to
-  be opened, NOT merged.
-- _Suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 573 passed; +2 scan_history
-  tests). Dry-run: two Component-A sweeps → 2 immutable snapshots, prior untouched, `tier_counts: {}`._
+- **Earliness-assay v2.1 — filing-continuity GATE on incumbent first-mentions (the SANCTIONED 
+  FINAL velocity-axis iteration); SCOPE-STOP EXECUTED.**
+  *(detail: `docs/records/2026-09-01-s2-earliness-assay-v2-1-filing-continuity-gate-on-incum.md`)*
+- **Component-A scans now NON-OVERWRITING via scan_history (2026-07-13, 
+  `feat/component-a-history`; closes the audit-followup gap at `cli.py` ~521-525).**
+  *(detail: `docs/records/2026-09-01-s2-component-a-scans-now-non-overwriting-via-scan-histo.md`)*
 - **HARVEST DISPOSITION (2026-07-13, analyst) — Component-A 2026-06-17 harvest (35 clusters)**
   dispositioned per `component_a_harvest_2026-06-17.md` + priced-check
   (`data/priced_check/report_all.txt`, as-of 2026-07-10) + the deep-research evidence doc: **T007 ADVANCE
@@ -547,29 +273,9 @@ Each line: *what it does* — *verified how*.
   not market.** Verified: `pytest tests/test_edgar.py::test_shares_us_gaap_fallback_dei_primary` (pins
   dei-wins-on-overlap / us-gaap-only-recovered / neither-still-`no_shares`); ruff + `mypy --strict vinci`
   clean.
-- **UNIVERSE REBUILT post-#119 + `--only-tickers` delta-scan primitive (2026-07-13,
-  feat/scan-only-tickers; PR open, not merged).** (1) Rebuilt the cap-band universe with the post-#119
-  builder (`vinci build-universe --ref 2026-07-06`, matching the committed snapshot's as_of so the delta
-  isolates the shares recovery, not price drift): **in_universe 1760 → 1800 (net +40: +47 recovered,
-  −7 dropped).** The +47 is dominated by the #119 us-gaap shares fallback clearing names past `no_shares`;
-  it is FAR below the 213 "recoverable-past-`no_shares`" because the downstream cap-band ($300M–$10B) /
-  ADV-floor ($3M) / security-type gates cut most recovered names — the #119 caveat, now quantified. The
-  −7 (AGX/SUZ/TBRG/IRD/GLSI/OLPX/PAYP) are EDGAR-frame drift, NOT #119: the fallback only ADDS shares
-  (dei wins on overlap) so it cannot drop a name — these reflect ~1 week of fresh 10-Q frame data between
-  the Jul-6 snapshot and the Jul-13 rebuild (EDGAR frames are live; no historical frame snapshot to
-  isolate against). The rebuilt universe_snapshot/securities/issuers are **NOT committed here** — the
-  full-DB `export_snapshots` also rewrote `candidate_records.jsonl` (−275) and `decision_ledger.jsonl`
-  (−1, a forbidden ledger-DELETE) from a stale working DB, so ALL snapshot changes were reverted to
-  protect the append-only ledger; the counts above are the recorded FACT, the artifact refresh is left to
-  the weekly cron / a clean artifact pass. (2) `themes-exposure` gained `--only-tickers T1,T2,…` /
-  `--only-file <path>`: restricts a scan to the intersection of the named set and the universe
-  (`_resolve_only_tickers` + `_partition_only`) — unknown names are printed and skipped, an EMPTY
-  intersection ERRORS (never scans nothing silently). This is the **monitor's future DELTA-SCAN
-  primitive** — restrict a scan to a named subset with NO new code path. Verified: ruff + `mypy --strict
-  vinci` clean; network-free tests (subset / unknown-name fail-loud / empty-intersection error / argparse
-  wiring). (3) **Theme-#3 delta scan of the 47 recovered names PENDING** (sanctioned, small; runs
-  post-merge via `--only-tickers` against the restored rebuild); the theme-#3 FREEZE remains gated on
-  delta completion — the recovered names must be scanned before the funnel is treated as complete.
+- **UNIVERSE REBUILT post-#119 + `--only-tickers` delta-scan primitive (2026-07-13, 
+  feat/scan-only-tickers; PR open, not merged).**
+  *(detail: `docs/records/2026-09-01-s2-universe-rebuilt-post-119-only-tickers-delta-scan-pr.md`)*
 - **LEDGER-EXPORT SEAM CLOSED + universe canonical at 1800 (2026-07-13, feat/ledger-export-guard; PR
   open, not merged).** `store.export_snapshots` dumps the ENTIRE working DB (all 7 SNAPSHOT_TABLES); in
   #121 a STALE working DB rewrote `candidate_records.jsonl` (−275) and `decision_ledger.jsonl` (1→0) — a
@@ -590,30 +296,8 @@ Each line: *what it does* — *verified how*.
   `candidate_records` byte-identical to HEAD. **The July theme-#3 sweep is gated on THIS merge** — it runs
   on the canonical 1800 (the 47 recovered names in-universe; #121's delta already showed 0 surfaced among
   them, this is the standing record). ruff + `mypy --strict vinci` + pytest green.
-- **THE ENTITY MASTER ACCUMULATES FACTS, NOT JUST ROWS (2026-08-31, fix/sic-absent).** `INSERT OR
-  REPLACE` let an UN-ENRICHED `upsert_security` (the `vinci refresh` price-backfill path) null a SIC
-  the enriched path had fetched — #464 destroyed IT/Gartner's `8741`, and `vinci monitor` then read
-  the hole as a resolved sector of "Unknown" on a ledgered position for two weeks. The no-row-drop
-  guard compares PKs, not fields, and the standing pin was on the MAPPING, not the artifact. `sic`
-  now COALESCEs like `first_seen`; an ABSENT SIC returns `None` from `monitor.sector_for_display`
-  (so "Unknown" keeps its one meaning — a SIC was read and did not map) and says ABSENT in words;
-  IT's row repaired from live EDGAR. Incident→invariant (shipped Y):
-  `test_an_unenriched_upsert_never_nulls_a_known_sic`,
-  `test_a_real_sic_change_still_overwrites_and_a_new_row_still_writes_none`,
-  `test_every_ledgered_name_carries_a_sic_in_the_committed_entity_master`,
-  `test_it_row_still_carries_the_87xx_sic_the_sector_is_read_from`,
-  `test_an_absent_sic_is_reported_as_absent_never_as_a_resolved_sector`,
-  `test_the_issuer_row_lands_column_for_column` (the issuers INSERT is now three interleaved
-  COALESCE sub-selects over ten positional parameters, and `_row_to_identity` reads the SECURITIES
-  table only — so nothing else can catch a transposed column there).
-  **ACCEPTED RISK, with its falsifier (review, 2026-08-31):** the COALESCE means a SIC EDGAR STOPS
-  publishing can no longer be cleared through this path. An operating company converting to a BDC
-  loses its SIC (40 issuers in the committed master already have none), and the stale code would
-  keep resolving to a confident sector; nothing detects it, because
-  `scripts/backfill_entity_master_sic.py` only fetches CIKs that HAVE a hole. Accepted over the
-  silent and far likelier clobber it replaces. *Falsifier:* any name whose committed SIC is absent
-  from a fresh `sic_for` fetch → make the backfill re-verify KNOWN SICs and report withdrawals.
-  *Record: `docs/records/2026-08-31-sic-clobber-entity-master.md`.*
+- **THE ENTITY MASTER ACCUMULATES FACTS, NOT JUST ROWS (2026-08-31, fix/sic-absent).**
+  *(detail: `docs/records/2026-09-01-s2-the-entity-master-accumulates-facts-not-just-rows-20.md`)*
 - **ENTITY-MASTER SIC BACKFILL — 516 → 60, and the remainder is MEANINGFUL (2026-08-31,
   fix/sic-backfill).** `scripts/backfill_entity_master_sic.py` fetched EDGAR submissions for all
   418 CIKs with a hole and wrote through the real store path: 378 resolved (456 security rows /
@@ -664,52 +348,12 @@ Each line: *what it does* — *verified how*.
   `freeze_baskets`. Verified: ruff + `mypy --strict vinci` clean; network-free tests
   `test_llm_error_is_unassessed_not_none`, `test_scan_error_unassessed_and_non_4xx_no_abort`,
   `test_scan_aborts_fast_on_repeated_quota_4xx`, `test_valid_assessment_grade_unaffected_by_error_bucket`.
-- **THEME #3 truckload-supply-purge FROZEN — third driver through the multi-cohort forward machinery
-  (2026-07-14, feat/theme3-freeze; PR open, not merged).** Cohort = the combined 781-assessed scan (main
-  `20260713T141114Z__bd4be31`, 759 + delta2 22, 0 surfaced) → 37 surfaced (tier 0 binding / 1 quantified /
-  10 committed / 26 aspirational). Froze ALL 37 surfaced (mirrors the defense all-surfaced pattern):
-  0 RATIFIED · 37 PASSED · 37 naive baseline — the zero-ratified UNDEFINED-with-reason path applies (no
-  BUY leg → RATIFIED-dependent spreads UNDEFINED, not computed; frozen outputs are AVOID-discipline +
-  exposure-carry DIAGNOSTICS, beta-confounded). Dispositions analyst-ratified 2026-07-14
-  (`data/research/theme3_truckload_triage_2026-07-14.md`). **WATCHLIST (3, re-underwrite):** WERN —
-  *"DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E
-  99th percentile of own history — a trough-earnings artifact, not the bar). Thesis-break (all three):
-  FMCSA non-domiciled-CDL rule stayed/reversed, or ACT driver availability returns to surplus."*; MRTN +
-  HTLD (identical) — *"Re-underwrite when TL revenue per loaded mile turns positive YoY for two
-  consecutive reported quarters, OR on a ≥20% derate from the 2026-07-13 close while ACT capacity data
-  stays tight."* **AVOID-CONTROLS (3, ⊆ PASSED):** RXO (pure asset-light brokerage — losing side), LSTR
-  (borderline BCO/asset-light, analyst call 2026-07-14), ARCB (66% LTL — purge-orthogonal). **NOTED, not
-  frozen as candidates:** TFIN (freight factoring), KDK (autonomous trucking — second-order), FA (driver
-  screening — sleeper). Remaining surfaced = PARK/REJECT (tie-gate honest output). **STRUCTURAL FINDING:**
-  NO surfaced name discloses the driver itself (FMCSA rule / ELD purge / SCOTUS) — grades encode
-  structural business-model exposure; underwriting theme #3 = structural carrier exposure × external
-  driver-liveness evidence (ACT / spot-rate / FMCSA, OUTSIDE filings) × the 2:1 bar (dossier). Pre-triage
-  face-check CLOSED: WERN / RXO / ARCB matched directional expectation 3/3. Frontend mirrored via build.py:
-  `frontend/themes/truckload-supply-purge.json` + `index.json` (3 drivers); ai-datacenter + defense
-  byte-identical; DEPLOYS on merge (viewer gains theme #3). NEXT: **DOSSIER-NOW on WERN** (single-name
-  underwrite at the 2:1 bar on normalized earnings). ruff + `mypy --strict vinci` + pytest green.
-- **RADAR SCREEN — every theme idea on one map (2026-07-14, feat/radar-screen; PR open, not merged;
-  DEPLOYS on merge — viewer gains a "Radar" tab under Themes).** Shipped per operator sign-off 2026-07-14
-  (DESIGN option A: quadrant-map hero + detail panel BELOW). A read-only, **zero-LLM** mirror of the
-  analyst's own dispositions: 6 theme ideas plotted on evidence-the-idea-is-real (x) × price-already-moved
-  (y), color-coded by status (live-teal / watch-amber / parked+priced-gray / past-gray-hollow), selected
-  ring, hover tooltip, click-to-select; a detail panel renders the analyst's wake-up rules + comparison
-  legs **VERBATIM**; a Theme/Status/Found-by/Price-12mo list (paginates past 12). **No run buttons —
-  nothing fires here** (the machine assembles/cites, never concludes; past markers are story-placed, not
-  measured). **DATA CONTRACT:** `frontend/radar/candidates.json` is **analyst-owned** (the 6 entries +
-  every disposition/rule authored by hand, committed, never machine-written); `frontend/radar/sweep.json`
-  is **emitted by build.py** (`_radar_sweep_payload`: `last_run` = latest ts in the git-ignored
-  `data/scan_history/component-a/manifest.jsonl`, else seeded `2026-06-17`; `next_due` = last_run + 30d;
-  the run **command is single-sourced in build.py** `_SWEEP_COMMAND = "python -m vinci.cli themes"` — the
-  screen renders it, never hardcodes it). **Verified — mock-first rule satisfied:** rendered the view from
-  committed JSON in preview (no backend), confirmed quadrant/dots/captions/axes, sweep bar (green dot,
-  seeded 2026-06-17, next-due 2026-07-17), filter counts (All 6 / Live 1 / Watch 1 / Parked 1 / Too late 1
-  / Past 2), BOTH detail panels verbatim (Truckload WERN/MRTN/HTLD + RXO/LSTR/ARCB; In-silico's 4 wake-up
-  rules), the 6-row list, and all interactions (filter narrows dots+list, dot/row click selects, "full
-  page →" routes to the theme page, "▸ run command" reveals+copies the command chip) — **zero console
-  errors**. Two sweep-payload tests pinned (`test_radar_sweep_seeded_fallback_and_next_due`,
-  `…_reads_manifest_latest_ts`). ruff + `mypy --strict vinci` + pytest (593) + `node --check` all
-  frontend JS green; `frontend/themes/*.json` byte-identical to HEAD (radar adds, never churns themes).
+- **THEME #3 truckload-supply-purge FROZEN — third driver through the multi-cohort forward 
+  machinery (2026-07-14, feat/theme3-freeze; PR open, not merged).**
+  *(detail: `docs/records/2026-09-01-s2-theme-3-truckload-supply-purge-frozen-third-driver-t.md`)*
+- **RADAR SCREEN — every theme idea on one map (2026-07-14, feat/radar-screen; PR open, not 
+  merged; DEPLOYS on merge — viewer gains a "Radar" tab under Themes).**
+  *(detail: `docs/records/2026-09-01-s2-radar-screen-every-theme-idea-on-one-map-2026-07-14.md`)*
 - **COMPONENT-A SWEEP #2 — first month-over-month harvest (2026-07-14; run from `-main` at origin/main
   `119ecbb`; zero-LLM, no commits — snapshots git-ignored).** `python -m vinci.cli themes` (canonical
   defaults r2 / 365d / min_breadth 3, ref = snapshot as_of 2026-07-06) on the widened 1,800 universe →
@@ -732,51 +376,13 @@ Each line: *what it does* — *verified how*.
   component-a ts (not a later decoy) — the prior unit test passed a manifest path directly, so it never
   exercised the hardcoded wrong path (test-layer lesson: pin the emitter, not just the pure payload).
   ruff + `mypy --strict vinci` + pytest + `node --check` green; every other frontend file byte-identical.
-- **RADAR INBOX LANE + REVIEW LOG — shipped per operator sanction 2026-07-14 (feat/radar-inbox-log; PR
-  open, not merged; DEPLOYS on merge).** The Radar gains (1) an INBOX lane left of the quadrant — current
-  sweep clusters NOT yet matched to a review (11 from the 2026-07-14 sweep), hollow-gray dots by 12mo
-  rel-strength (NO quadrant x-position — an unjudged cluster has no "how real" reading yet); and (2) a
-  REVIEW LOG below the list — the analyst's recorded dispositions (search, All/Rejected-only, expandable
-  members + membership-drift note, paginated past 15). **DATA CONTRACT:** `frontend/radar/reviews.json`
-  is the **single analyst-owned record** of group reviews (35 June-17 clusters; STATE points here, never
-  copies reasons); `frontend/radar/{inbox,log}.json` are **emitted by build.py** (`emit_radar_inbox_log`
-  joins the latest component-a snapshot × reviews.json by MEMBER OVERLAP ≥50% of the smaller set —
-  cluster_ids are per-run, never matched on id; non-destructive when a source is absent). Today's split:
-  **46 clusters → 35 matched / 11 inbox; 35 reviews (1 gone** = June auto-parts ADNT/ALV/LEA). The
-  machine SORTS (matched→log, unmatched→inbox) but NEVER decides — every inbox detail carries "review is
-  recorded in reviews.json — this screen never decides." **JUNE BACK-FILL ATTRIBUTION:** of the 35
-  reasons, **29 are advisor-drafted (analyst-agreed)** and 6 are analyst-direct — recorded in each
-  entry's `by` field, never laundered. Verified in preview (rendered from committed JSON, zero console
-  errors): inbox count, lane dots + tooltips, dot-click detail, log search "quantum"→1, Rejected-only→6,
-  a June row's verbatim reason. Emitter tests pinned (`test_radar_inbox_log_join` 50%-boundary /
-  drift-to-inbox / gone / deltas, `…_deterministic`). ruff + `mypy --strict vinci` + pytest (597) +
-  `node --check` all JS green; `themes/*.json` + `candidates.json` + `sweep.json` BYTE-IDENTICAL.
-  **SCOPE CAP (operator-ratified 2026-07-14, recorded verbatim):** *"Radar polish is CAPPED after this
-  PR: no further Radar UI work until a first BUY, a fired watchlist trigger, or actual LP usage of the
-  site."*
-- **RADAR RESTRUCTURED TO TABS — final structural pass per operator direction 2026-07-15
+- **RADAR INBOX LANE + REVIEW LOG — shipped per operator sanction 2026-07-14 
+  (feat/radar-inbox-log; PR open, not merged; DEPLOYS on merge).**
+  *(detail: `docs/records/2026-09-01-s2-radar-inbox-lane-review-log-shipped-per-operator-san.md`)*
+- **RADAR RESTRUCTURED TO TABS — final structural pass per operator direction 2026-07-15 
   (feat/radar-tabs-restructure; PR open, not merged; DEPLOYS on merge). VIEW-LAYER ONLY — all data
-  contracts BYTE-IDENTICAL (candidates/sweep/reviews/inbox/log/themes JSON), build.py UNTOUCHED.** One
-  Radar nav stage, three internal sub-tabs **Map · Inbox · Log**. **REMOVED (the clutter):** the status
-  filter-chip row (All/Live/…; code comment retains it only if judged themes exceed 12), the inbox lane
-  inside the map SVG (killing the y-axis-label collision — map is now full-width), the always-open detail
-  panel, the long footer paragraphs (each tab now ≤1 muted line), and the Found-by column (moved to the
-  drawer). **ADDED:** a slim one-line sweep status above the tabs (dot · "scan Jul 14 · next Aug 13" ·
-  run-command copy); a **drawer** (collapsed by default, one open at a time) opened by a map dot OR a
-  judged-list row — title + status chip · one-line summary · Watching/Comparison ticker rows · muted
-  "found by …" · "full page →" · a "Wake-up rules ▾" expander revealing the rules VERBATIM from
-  candidates.json (wall-of-text removed from the default view, verbatim preserved); the **Inbox tab**
-  (full-width table sorted by |price move| ASCENDING — "least-moved first"); the **Log tab** (search +
-  Rejected-only + verbatim reasons). Inbox tab badge is WARNING-styled when any item is >14 days old.
-  **Deep links** #/radar/inbox and #/radar/log load the right tab (router params, like themes sub-routes);
-  tab clicks sync the URL via replaceState without re-fetching. Copy pass: sentence case throughout,
-  12–13px body, right-aligned tabular numbers, reused chip classes, no new colors. Verified in preview
-  (all data files byte-identical, zero console errors): each tab; drawer from the Truckload dot AND its
-  list row; the wake-up-rules expander shows verbatim text; inbox sort order + a row expanded; log search
-  "quantum"→1; Rejected-only→6; deep links load the right tab; Overview + Watchlist unregressed. ruff +
-  `mypy --strict vinci` + pytest (598) + `node --check` all JS green. **The standing SCOPE CAP re-applies
-  verbatim after this PR:** *"Radar polish is CAPPED after this PR: no further Radar UI work until a first
-  BUY, a fired watchlist trigger, or actual LP usage of the site."*
+  contracts BYTE-IDENTICAL (candidates/sweep/reviews/inbox/log/themes JSON), build.py UNTOUCHED.**
+  *(detail: `docs/records/2026-09-01-s2-radar-restructured-to-tabs-final-structural-pass-per.md`)*
 - **INBOX INDUSTRY HINT — operator-sanctioned one-line cap exception (2026-07-15, chore/inbox-industry-hint;
   PR open, not merged; DEPLOYS on merge).** build.py `_industry_hint` adds an `industry_hint` per UNREVIEWED
   inbox cluster — the most common 4-digit member SIC + coverage ("Prepackaged software · 7/7"), or "mixed:
@@ -786,30 +392,9 @@ Each line: *what it does* — *verified how*.
   decisions recorded; every data file except `inbox.json` byte-identical; build.py-only emitter + view. The
   standing SCOPE CAP re-applies verbatim after this PR. ruff + `mypy --strict vinci` + pytest (601) +
   `node --check` green.
-- **COMPONENT-A DRAFTING LAYER — operator-sanctioned LLM assist (2026-07-15, feat/themes-draft; PR open,
-  not merged; DEPLOYS on merge).** The machine now DRAFTS a working name + a HYPOTHESIS + an ADVISORY
-  disposition (`keep-for-checks`|`park`|`reject`) for each UNREVIEWED cluster — the human still OWNS the
-  decision. `vinci/themes/drafts.py` reuses the graph LLM client (`llm.extract`), the LlmError→unassessed
-  pattern, and the #123 abort-fast (3 consecutive same-4xx → `DraftAbortedError`, persists nothing). Two
-  new CLIs: **`themes-draft`** (ONE LLM call per unreviewed cluster → `record_snapshot` driver_slug
-  `component-a-drafts` + a `frontend/radar/drafts.json` latest-pointer; **idempotent** — reuses drafts
-  whose `source` == the current snapshot basename, no double spend) and **`themes-review`** (append the
-  analyst's disposition to `reviews.json`; validates the key against the latest snapshot; refuses a dup
-  without `--amend`; attributes `by:"analyst"`, or `"analyst (ratified advisor draft)"` ONLY when the
-  recorded decision AND reason match the draft — the advisory suggestion never becomes the decision on its
-  own). build.py joins `draft_name`/`draft_read`(=terse reason)/`draft_suggested` onto UNREVIEWED inbox
-  rows by member overlap (ids are per-run); the fuller hypothesis stays in `drafts.json` (machine-complete).
-  The Inbox view shows the draft name + a dashed **DRAFT** chip + a muted *"draft: <suggested> — <read>
-  (advisor)"* line on unreviewed rows only; reviewed rows (Log tab) keep the analyst's name, no chip.
-  **VERIFIED by the one-time backfill: 11/11 unreviewed clusters drafted, 0 unassessed-error, all framed
-  as hypotheses with no citations** (Crypto-Mining & AI Compute, B2B Vertical SaaS, Semi Test & Subfab,
-  Copper Miners Beta, Rare Earth Miners, …); the idempotent re-run reused with no LLM spend. Every data
-  file except `inbox.json` + the new `drafts.json` byte-identical; the git-ignored `component-a-drafts`
-  scan-history snapshot is NOT committed. The standing SCOPE CAP re-applies verbatim after this PR. ruff +
-  `mypy --strict vinci`(+tests) + pytest (614) + `node --check` green.
-  - **Incident→invariant:** #123 fabricated-on-error → the LlmError→unassessed record + abort-fast are
-    pinned by `test_draft_error_becomes_unassessed_never_fabricated`, `_aborts_fast_on_repeated_4xx`, and
-    `_invalid_suggested_is_unassessed_not_fabricated` (a bad-enum tool result fails loud, never coerced).
+- **COMPONENT-A DRAFTING LAYER — operator-sanctioned LLM assist (2026-07-15, feat/themes-draft; 
+  PR open, not merged; DEPLOYS on merge).**
+  *(detail: `docs/records/2026-09-01-s2-component-a-drafting-layer-operator-sanctioned-llm-a.md`)*
 - **JUL-14 REVIEWS RECORDED — the human dispositioned all 11 inbox clusters (2026-07-15, operator
   recording; PR open, not merged; DEPLOYS on merge).** 10 `park` + 1 `reject` (T034 Crypto Treasury
   Proxies = "collapsed gimmicks"). Reasons were ADVISOR-DRAFTED and analyst-RATIFIED verbatim (operator:
