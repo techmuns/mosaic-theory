@@ -1471,6 +1471,10 @@ build is the mistake — running it early is what a pre-registration exists to p
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
 blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
 
+**FIXED 2026-09-01 — the offline suite was red on MAIN, and no build put it there:** the weekly
+dating pin stubbed a session 10+ days behind `date.today()`, so it rotted into a standing red on
+2026-09-01. It freezes the clock now — `docs/records/2026-09-01-weekly-test-clock-freeze.md`.
+
 
 ### LIVE QUEUE — MIGRATED 2026-08-25 (P1); NOT authoritative, and no longer here
 

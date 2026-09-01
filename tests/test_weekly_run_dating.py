@@ -114,7 +114,29 @@ def test_run_weekly_takes_its_date_from_the_data_and_not_the_clock(
     fixes nothing, and a helper-level pin stays green while the call site rots."""
     from vinci import cli
 
-    friday = dt.date(2026, 8, 21)
+    # THE CLOCK IS FROZEN, AND IT HAS TO BE (fixed 2026-09-01). This is the ONE case in this file
+    # that reaches the real clock — every other passes `today=` explicitly to
+    # `last_completed_session`. It stubbed a FIXED session (Fri 2026-08-21) while `_cmd_run_weekly`
+    # searched back 10 days from `date.today()`, so it was a time bomb: green through 2026-08-31,
+    # then permanently red from 2026-09-01 (an 11-day gap) with "no completed trading session
+    # found" — a failure about the calendar, not about the behaviour under test. A test that rots
+    # into a standing red teaches people to skim past failures, which costs more than the bug it
+    # was watching for.
+    #
+    # Freezing beats dating the stub relative to today: `today - 3` lands on a weekend one week in
+    # three (the helper skips `weekday() >= 5`, so that spelling failed on the first run), and a
+    # stub at `today - 1` would let a naive `date.today() - 1` pass. Monday-after-Friday is also
+    # the exact shape of the 2026-08-24 incident this whole module exists for. `cli.date` is the
+    # seam the production call site actually reads; subclassing keeps `date.fromisoformat` — used
+    # by the `--end` branch — intact, and `setattr` raises if the seam is ever renamed away.
+    monday, friday = dt.date(2026, 8, 24), dt.date(2026, 8, 21)
+
+    class _FrozenDate(dt.date):
+        @classmethod
+        def today(cls) -> _FrozenDate:
+            return cls(monday.year, monday.month, monday.day)
+
+    monkeypatch.setattr(cli, "date", _FrozenDate)
     monkeypatch.setattr(cli, "PolygonEodClient",
                         type("_P", (), {"from_config": staticmethod(
                             lambda _cfg: _Sessions({friday}))}))
