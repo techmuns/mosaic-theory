@@ -20,8 +20,8 @@
     "universe": 1354
    },
    "frozenTiers": {
-    "firm": 0,
-    "partial": 0,
+    "firm": 4,
+    "partial": 353,
     "early": 0
    },
    "firstTest": "2026-12-15",
@@ -47,8 +47,8 @@
     "universe": 547
    },
    "frozenTiers": {
-    "firm": 0,
-    "partial": 0,
+    "firm": 1,
+    "partial": 43,
     "early": 0
    },
    "firstTest": "2026-11-30",

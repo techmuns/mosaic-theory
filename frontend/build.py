@@ -731,8 +731,18 @@ _DRIVER_SLUG: dict[str, tuple[str, str]] = {
 }
 # the concreteness → rank ladder + the driver-tie gate, mirroring vinci.themes.exposure so the tier
 # shape derives IDENTICALLY from the ledger's (grade, driver_tie) as the backend's exposure_basis.
-_CONC_RANK = {"none": 0, "stated-intent": 1, "committed-capacity": 2,
-              "quantified-revenue": 3, "binding-contract": 4}
+#: TWO VOCABULARIES REACH THIS RANK, and only one used to be in it (2026-09-01). A ledger row's
+#: `grade` is the FACT-concreteness word in the July freezes ("committed-capacity") but the
+#: ASSESSMENT's `exposure_basis` word in every freeze `themes-forward` writes
+#: ("committed-capacity-or-capex"). The second spelling was absent, so `.get(grade, 0)` scored it 0
+#: and ALL 183 names on both 2026-09-01 themes rendered `none` — "no exposure disclosed" — on a
+#: page whose whole subject is their exposure. Both spellings map to the same rank; the `-or-capex`
+#: suffix is the same tier by a different name, as `_SCAN_BASIS` already says.
+_CONC_RANK = {"none": 0, "no-theme-exposure-disclosed": 0,
+              "stated-intent": 1, "aspirational-intent-only": 1,
+              "committed-capacity": 2, "committed-capacity-or-capex": 2,
+              "quantified-revenue": 3, "quantified-revenue-share": 3,
+              "binding-contract": 4, "binding-contracts-with-terms": 4}
 _BASIS = {0: "none", 1: "aspirational", 2: "committed", 3: "quantified", 4: "binding"}
 # scan exposure_basis → tier bucket (the FULL theme exposure shape lives in the scan, not the
 # freeze; a freeze may scope a subset — ai-datacenter froze only its committed enablers, defense
