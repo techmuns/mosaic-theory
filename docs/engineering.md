@@ -119,6 +119,14 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Former-registrant-name marker / registrant key / restyle** — the rename-vintage caveat on a
+  dossier. Plain words: *this CIK used to file under a different company name, so the multi-year
+  numbers on this page may not all belong to the same business* — the reverse-merger / SPAC-shell
+  class (FUBO was FaceBank, MVST was Tuscan Holdings, TECX was AvroBio). A **restyle** is the
+  opposite and must never flag: the same company's name written differently (casing, word order,
+  EDGAR's `/DE/` state suffix, accents). The **registrant key** is the token set that tells the two
+  apart. Home: `vinci/dossier/mechanical.py` (`_former_name_flags`, `_registrant_key`),
+  `vinci/edgar/submissions.py` (`parse_former_names`).
 - **R3 / forward-P/E recipe** — the third scenario recipe, and the first EQUITY-basis one.
   Plain words: value a share as *earnings per share × the multiple the market pays*, with no
   enterprise-value step. R1 and R2 both build an enterprise value and subtract net debt to get to

@@ -23,6 +23,7 @@ from pydantic import BaseModel
 
 from vinci.config import Config, get_config
 from vinci.edgar.concepts import extract_points, latest_annual, latest_instant
+from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.envelope import DataField, SourceTier
@@ -43,14 +44,6 @@ class FtsHit(BaseModel, frozen=True):
     form: str | None
     file_date: date | None
     display_names: list[str]
-
-
-class FormerName(BaseModel, frozen=True):
-    """One prior registrant name on a CIK, with the span it was in force (submissions JSON)."""
-
-    name: str
-    from_date: date | None  # absent on some very old rows — the END of the span is what matters
-    to_date: date  # the day the registrant stopped filing under this name
 
 
 class Filing(BaseModel, frozen=True):
@@ -413,37 +406,27 @@ class EdgarClient:
         data = cast(dict[str, Any], self._efts.get_json(url, ttl_seconds=_ONE_DAY))
         return parse_fts_response(data)
 
-    # --- former registrant names (reverse-merger / rename vintage) ----------------------------
-    def former_names(self, cik: int | str) -> list[FormerName]:
-        """Every prior registrant name on this CIK, from the submissions ``formerNames`` array.
+    # --- registrant names (reverse-merger / rename vintage) ------------------------------------
+    def _submissions(self, cik: int | str) -> dict[str, Any]:
+        """The submissions document for a CIK. ONE fetch shape for every consumer in this class —
+        the URL and the TTL are stated once, so a change to either cannot land at one call site and
+        not the other (which would silently double the SEC request rate per dossier)."""
+        raw = self._http.get_json(_SUBMISSIONS.format(cik=pad_cik(cik)), ttl_seconds=_ONE_DAY)
+        return cast(dict[str, Any], raw)
+
+    def registrant_history(self, cik: int | str) -> RegistrantHistory:
+        """This CIK's current registrant name plus every prior span.
 
         Reads the SAME cached submissions JSON as :meth:`recent_filings` (1-day TTL), so after any
-        filing scan this is a cache hit, never a second fetch. Entries missing a name or an end
-        date are SKIPPED, not guessed — an unreadable rename row must not fabricate a vintage."""
-        cik10 = pad_cik(cik)
-        raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
-        data = cast(dict[str, Any], raw)
-        out: list[FormerName] = []
-        for row in data.get("formerNames") or []:
-            name = (row.get("name") or "").strip()
-            to_raw = (row.get("to") or "").split("T")[0]
-            if not name or not to_raw:
-                continue
-            from_raw = (row.get("from") or "").split("T")[0]
-            out.append(FormerName(
-                name=name,
-                from_date=date.fromisoformat(from_raw) if from_raw else None,
-                to_date=date.fromisoformat(to_raw),
-            ))
-        return out
+        filing scan this is a cache hit rather than a second fetch."""
+        return parse_registrant_history(self._submissions(cik))
 
     # --- recent filings (8-K detection via submissions) ---------------------------------------
     def recent_filings(
         self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
     ) -> list[Filing]:
         cik10 = pad_cik(cik)
-        raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
-        data = cast(dict[str, Any], raw)
+        data = self._submissions(cik10)
         recent = data.get("filings", {}).get("recent", {})
         out: list[Filing] = []
         n = len(recent.get("accessionNumber", []))
