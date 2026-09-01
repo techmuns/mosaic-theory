@@ -1509,7 +1509,20 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     # Preserved records carry their OWN block forward verbatim: a fresh `Result` has no ladder
     # fields, so skipping the update would STRIP a stamped record rather than freeze it.
     prior = rec.result.gate_regime if rec.result is not None else None
-    frozen = rec.result is not None and prior != GATE_REGIME
+    # A RECORD THAT WAS NEVER COMPUTED IS NOT A FROZEN ONE (2026-09-01). `ScenarioRecord.result`
+    # defaults to an empty `Result()`, so `rec.result is not None` is TRUE on a record under
+    # construction — and `scenario-create` builds exactly that before calling the engine. The
+    # freeze therefore fired on every FIRST compute and copied the ladder out of the virgin block,
+    # i.e. all None. Measured on the committed corpus: NOT ONE of the nine records carries
+    # `gate_regime`, including GOOGL written through `scenario-create` on 2026-09-01 — the ladder
+    # shipped 2026-08-21 and has never stamped anything. Fifth instance of the built-and-unreachable
+    # shape; found by asking what a record reads under the ladder, not by a test.
+    #
+    # THE FREEZE ITSELF IS UNCHANGED for anything that HAS been computed: a record carrying a
+    # regime that is not current stays frozen, which is #489's rule and the reason a sealed record
+    # cannot be silently re-judged when `GATE_REGIME` advances.
+    computed_before = rec.result is not None and rec.result != Result()
+    frozen = computed_before and prior != GATE_REGIME
     ladder: dict[str, Any] = {}
     if frozen:
         ladder = {f: getattr(rec.result, f) for f in LADDER_FIELDS}
