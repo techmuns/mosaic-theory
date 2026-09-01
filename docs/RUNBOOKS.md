@@ -262,32 +262,82 @@ name-level contradiction). **No canonical count.**
 
 ## d. THEME-ADVANCE LOOP
 
-Registration → ratification → exposure scan → triage → freeze → mirror. **Worked example: theme #3
-truckload-supply-purge** (PR **#124**; STATE.md §"THEME #3 truckload-supply-purge FROZEN";
-`data/research/theme3_truckload_triage_2026-07-14.md`).
+**Idea → spec → CARD → scan → worksheet → disposition → freeze → SHORTLIST → CIQ → UNDERWRITE →
+mirror → read-out.** Every step below was verified against the live CLI on 2026-09-01; the two
+marked **NO COMMAND** genuinely have none, and saying so here is the point — they are where the
+workflow stalls and where an agent improvises a different answer each time.
 
-1. **Candidate registration** — add the idea to `frontend/radar/candidates.json` with a **source + date
-   tag** (`"component-a · Jun 17"`, `"analyst idea · Jul 13"`). Hand-curated; rules render VERBATIM.
-   *(Source: `candidates.json` `_note` + entries.)*
+The loop was previously documented only as far as the mirror, which is why two frozen themes
+reached 183 ratified names with **one** of them underwritten: the steps that turn confirmed
+EXPOSURE into an investment view were not written down.
+
+1. **Candidate registration** — add the idea to `frontend/radar/candidates.json` with a **source +
+   date tag**. Hand-curated; rules render VERBATIM.
 2. **Spec ratification** — the analyst edits the `DriverSpec` in `vinci/themes/drivers.py`
    (`description` + `tie_taxonomy`). **Analyst edits = ownership; `tie_taxonomy` is the load-bearing
-   judgment — encoded VERBATIM, do NOT re-draft it (it IS the experiment).** *(Source: `drivers.py`
-   comments: "Verbatim from the analyst-approved … do NOT re-draft it".)*
-3. **Exposure scan** — `python -m vinci.cli themes-exposure --driver <key>` (LLM classification into
-   binding / quantified / committed / aspirational / none). **`--only-tickers A,B,C`** is the delta-scan
-   primitive (restrict to names, intersected with the universe; an empty intersection **errors**, never
-   scans nothing). `--out` writes audit-grade JSONL. *(Source: `themes-exposure --help`.)*
-4. **Triage sheet** — the analyst dispositions the surfaced names into
-   `committed_review_worksheet.csv`. *(Source: `themes-forward --help` `--worksheet`.)*
-5. **Freeze** — `python -m vinci.cli themes-forward --worksheet <csv> --ledger <jsonl> --driver <key>
-   [--baskets-out … --watchlist … --watchlist-triggers … --avoid-controls … --real-tier …] [--measure]`.
-   The zero-RATIFIED path yields UNDEFINED-with-reason spreads (no BUY leg); `--measure` measures
-   forward on Polygon EOD (read-only). *(Source: `themes-forward --help`; STATE.md §THEME #3 FROZEN.)*
-6. **Frontend mirror + context.json entry** — build the theme's `frontend/themes/<slug>.json` +
-   `index.json` mirror, and add its `frontend/themes/context.json` entry. **`driver_summary` is QUOTED
-   from the ratified spec (single-source, pinned by `tests/test_theme_context.py`)**; `analyst_notes`
-   are analyst-owned. Frozen `themes/*.json` are byte-identical thereafter — see §e surgical-edit rule.
-   *(Source: STATE.md §"THEME-CONTEXT PAGE CONTENT"; `tests/test_theme_context.py`.)*
+   judgment — encoded VERBATIM, do NOT re-draft it (it IS the experiment).**
+   **`mirror_slug` is declared LAST**, when the theme page exists — not at spec time. The binding
+   pin refuses a slug pointing at a mirror nothing has written.
+3. **Thesis card — GATES THE FREEZE.**
+   `python -m vinci.cli theme-thesis declare --driver <key> --file card.json`
+   Writes `data/themes/thesis/<driver>.json`. A driver **cannot freeze** without one, and a theme
+   page carrying no card stamps `THESIS UNSTATED`. Every judgment field is the operator's —
+   mechanism, market_mistake, null_thesis, falsifiers. **`first_confirming` must name a number the
+   filings ACTUALLY publish**: a trigger asking for a line nobody discloses is unfalsifiable, and
+   you find that out on the deadline. Dry-run it against a real recent print BEFORE declaring.
+4. **Exposure scan** — `python -m vinci.cli themes-exposure --driver <key>` (LLM classification into
+   binding / quantified / committed / aspirational / none). **`--only-tickers A,B,C`** / `--only-file`
+   is the delta primitive for names newly admitted to the universe. `--out` writes audit-grade JSONL.
+   Scan history **accumulates** under `data/scan_history/<driver>/`: the full sweep plus every later
+   delta. "Screened" is the UNION, latest-wins per ticker — never the newest file alone.
+5. **Worksheet — NO COMMAND. Nothing in the repo writes it.**
+   `themes-forward --worksheet` CONSUMES `<driver>_committed_review_worksheet.csv`; no code path
+   produces it. It is assembled by hand from the scan archive, and the assembly has a trap that has
+   already shipped a wrong sheet once: the row's evidence must be
+   **`vinci.themes.exposure.grade_driving_fact(assessment)`** — the fact whose EFFECTIVE grade (after
+   the driver-tie gate) SET `exposure_basis`. Picking "the most driver-specific fact" instead showed
+   a NEGATIVE fact ("No disclosed GLP-1 exposure") as the evidence for a positive grade on 15 of 44
+   rows, and `grade_driver_tie` — which is sealed into the ledger — was wrong on all of them.
+   Columns: `ticker, cik, chain_layer, machine_grade, grade_driver_tie, grade_fact, grade_accession,
+   DISPOSITION, RATIONALE`. Include only rows whose `exposure_basis` is committed-tier or above, and
+   only tickers still in a live band. **A `themes-worksheet` command is owed.**
+6. **Disposition** — the analyst fills `DISPOSITION` + `RATIONALE` only; every other column is the
+   evidence they judged and must come back byte-identical (check it). Vocabulary: `ratify` (BUY leg),
+   `pass` (AVOID leg — first-class control data, NOT a discard), `dig-deeper` (temporary; **blocks
+   the freeze** until resolved). A blank disposition is PENDING, never assumed.
+7. **Freeze** — `python -m vinci.cli themes-forward --driver <key> --worksheet <csv>`
+   Appends the ratification ledger (`data/themes/ledgers/<driver>.jsonl`, APPEND-ONLY, no delete
+   path) and writes the basket. Entry dates stamp at freeze; the forward clock starts.
+   **There is no dry run**: `--baskets-out` is applied AFTER the default write, so pointing it at a
+   scratch path still writes the committed basket. A second freeze REFUSES without
+   `--supersede-basket`.
+8. **Shortlist — NO COMMAND.** A frozen basket is not an underwrite queue: 168 ratified names cannot
+   be priced by hand. Rank by the two fields the ledger already carries — `driver_tie` then
+   effective `basis` — and underwrite downward:
+   `binding + driver-specific` → `quantified + driver-specific` → `committed + driver-specific`.
+   An `indirect` tie is capped at committed by the tie gate and is the last call on anyone's time.
+9. **CIQ pull — MANUAL, and the real gate.** R3 underwrites as `EPS x forward P/E`; forward
+   estimates are in no API this repo holds. This is v6.2.1's S2.0 "PM action outside conversation".
+   Raw workbooks stay in `data/manual/ciq/` and are **never committed**.
+10. **Underwrite — the investment gate, and the step that makes a BUY.**
+    `python -m vinci.cli scenario-propose <TICKER> --out <T>-underwrite.json` emits the template;
+    the analyst fills assumptions and the bear/base/bull legs; `scenario-create <TICKER> --from <file>`
+    scores it. The ladder (regime `2026-08-21`, face-validity, never outcome-tuned):
+    **base-to-bear ratio** <1.0 poor · 1.0-1.75 below_target · 1.75-2.0 target_met · >=2.0 preferred;
+    **base IRR** <12% fails · 12-15% minimum_met · >=15% preferred. IRR NEVER replaces asymmetry.
+    A name that clears exposure but fails here is a WATCH with a re-underwrite trigger, not a BUY.
+    **RATIFIED IS NOT PRICED** — ratifying confirms exposure is real and says nothing about cost.
+11. **Frontend mirror** — `python3 frontend/build.py`. The index ACCUMULATES: a page this run did not
+    rebuild is carried forward, because every historical theme scan is preserved. `driver_summary` in
+    `context.json` is QUOTED from the ratified spec; `analyst_notes` are analyst-owned.
+12. **Read-out** — on the card's `first_confirming` date, read the named prints and record whether it
+    confirmed. `themes-forward --measure` accrues the forward spread (read-only, Polygon EOD).
+    A flat spread over a BUY leg that was never priced says the leg was an exposure map, not a
+    thesis — check that before concluding the theme failed.
+
+**Where the two live themes stand (2026-09-01):** both frozen at step 7 — glp1-drug-value-chain
+15 BUY / 29 AVOID, ai-value-migration 168 BUY / 189 AVOID. Steps 8-10 have run on **one** name of
+183. That gap, not the read-out dates, is the work.
 
 ---
 
