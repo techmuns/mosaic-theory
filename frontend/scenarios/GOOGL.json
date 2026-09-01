@@ -1,0 +1,114 @@
+{
+ "ticker": "GOOGL",
+ "recipeId": "R3_forward_pe",
+ "recipeDesc": "R3_forward_pe",
+ "recipeFormula": [
+  "value/share = EPS \u00d7 forward P/E multiple"
+ ],
+ "assumptions": [
+  {
+   "axis": "earnings",
+   "method": "bear: Normalized EPS on the ~Aug-2027 fundamental horizon; all three legs struck on the same Street-like diluted-share basis, so they differ by economics and not by share count. $15.388, ~4% below the target-period Street range $16.02\u201316.07. IC memo 2026-08-17 \u00a74. \u00b7 base: $16.221, modestly above that Street range. IC memo 2026-08-17 \u00a74. \u00b7 bull: $16.649, above it. IC memo 2026-08-17 \u00a74.",
+   "unratified": true,
+   "references": []
+  },
+  {
+   "axis": "multiple",
+   "method": "bear: Normalized P/NTM turns set by judgment rather than by a statistic \u2014 the company's own multiple quartiles over its trading history (p25 21.46x, median 24.24x, p75 26.75x) are labelled `P/NTM EPS` and are NOT proven to share this normalized denominator, a basis match the memo records as LIMITED, so they are context and not load-bearing. 20.5x is compression from today's ~26.03x, and it is the SINGLE BINDING ASSUMPTION of this underwrite: Bear EPS exceeds today's NTM $13.28698, so the whole downside is a de-rating rather than an earnings fall. IC memo 2026-08-17 \u00a75 and \u00a77A. \u00b7 base: 24.5x, a partial de-rate from today's ~26.03x. IC memo 2026-08-17 \u00a75. \u00b7 bull: 26.0x holds today's ~26.03x, conditional on demonstrated capital productivity \u2014 FY27 EBIT revisions outrunning FY27 capex revisions. IC memo 2026-08-17 \u00a75 and \u00a77A.",
+   "unratified": true,
+   "references": []
+  }
+ ],
+ "multipleBasis": "P/E",
+ "underwriteDate": "2026-08-17",
+ "analyst": "operator",
+ "spot": 345.9,
+ "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 \u2014 WSJ market data, corroborated by FT historical prices",
+ "facts": [],
+ "scenarios": [
+  {
+   "name": "bear",
+   "multiple": 20.5,
+   "reason": "IC memo 2026-08-17 \u00a77A. Normalized EPS $15.388 at 20.5x \u2014 the de-rating case: Bear EPS EXCEEDS today's NTM $13.29, so the downside is multiple compression from ~26x, not an earnings fall. A ruling on either remedies docket is its most likely trigger.",
+   "yearsToTerminal": 1.0,
+   "eps": 15.388,
+   "valuePerShare": 315.45,
+   "opIncome": null,
+   "ebitda": null,
+   "ev": null,
+   "equity": null,
+   "evEbit": null,
+   "normFcf": null
+  },
+  {
+   "name": "base",
+   "multiple": 24.5,
+   "reason": "IC memo 2026-08-17 \u00a77A. Normalized EPS $16.221 at 24.5x \u2014 Search and Cloud economics run modestly above consolidated expectations while the capital build proves less damaging than the Q2 reset implies. Both locked variants hold, neither dramatically.",
+   "yearsToTerminal": 1.0,
+   "eps": 16.221,
+   "valuePerShare": 397.41,
+   "opIncome": null,
+   "ebitda": null,
+   "ev": null,
+   "equity": null,
+   "evEbit": null,
+   "normFcf": null
+  },
+  {
+   "name": "bull",
+   "multiple": 26.0,
+   "reason": "IC memo 2026-08-17 \u00a77A. Normalized EPS $16.649 at 26.0x \u2014 today's multiple sustained on demonstrated capital productivity: FY27 EBIT revisions outrunning FY27 capex revisions, which is the memo's single most important live screen.",
+   "yearsToTerminal": 1.0,
+   "eps": 16.649,
+   "valuePerShare": 432.87,
+   "opIncome": null,
+   "ebitda": null,
+   "ev": null,
+   "equity": null,
+   "evEbit": null,
+   "normFcf": null
+  }
+ ],
+ "reward": 51.51,
+ "risk": 30.45,
+ "ratio": 1.69,
+ "bar": 2.0,
+ "ratioUndefined": null,
+ "passFail": "FAIL",
+ "irr": 0.1489,
+ "irrFloor": 0.15,
+ "irrPassFail": "FAIL",
+ "horizonYears": 1.0,
+ "gate": "FAIL",
+ "currentState": {
+  "status": "pending_analyst",
+  "ratio": 1.69,
+  "bar": 2.0,
+  "passFail": "FAIL",
+  "spot": 345.9,
+  "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 \u2014 WSJ market data, corroborated by FT historical prices",
+  "underwriteDate": "2026-08-17",
+  "nextEvidence": {
+   "date": "2026-10-20",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
+  },
+  "ceiling2to1": 342.77
+ },
+ "verdict": {
+  "status": "pending_analyst",
+  "recorded": null,
+  "rationale": null,
+  "reunderwriteTriggers": [],
+  "avoidPriced": false,
+  "avoidPricedNote": null
+ },
+ "ledger": {
+  "verdict": "BUY",
+  "entryId": "V-GOOGL",
+  "entryPrice": 345.9,
+  "entryPriceAsOf": "2026-08-14",
+  "decidedAt": "2026-08-28T11:24:47.926278",
+  "sleeve": "quality"
+ }
+}

@@ -260,7 +260,15 @@ def test_uw_card_methodology_block_owns_its_print_fate() -> None:
         "orderedAssumptions must rank known axes by AXIS_ORDER (revenue first) and unknown last")
     # degrade: both helpers return "" on absent data — no fabricated block
     assert re.search(r'function recipeLine\(c\) \{[^}]*?return "";', uw, re.S)
-    assert 'if (!withRefs.length) return "";' in uw
+    # WAS `!withRefs.length` — "no axis carries references" (2026-09-01). The degrade condition
+    # moved to "no axes at all" because an axis WITHOUT references is no longer nothing to show:
+    # it renders its chosen trio under a stated "set by judgment" row, which is a fact the reader
+    # needs and not a fabricated block. The invariant this line guards — absent data yields "",
+    # never invented content — is unchanged.
+    assert 'if (!axes.length) return "";' in uw
+    assert "no reference values" in uw, (
+        "an axis with no references must SAY so — an empty table reads as nothing-to-say when "
+        "the truth is nothing-anchors-this")
     assert 'if (!lines) return "";' in uw
 
 
@@ -998,23 +1006,56 @@ def test_a_new_reference_without_a_vintage_is_refused_and_a_committed_one_is_not
             }), root=tmp_path)
 
 
-def test_every_committed_record_predates_the_vintage_rule(tmp_path: Path) -> None:
-    """The 70 unstamped references are NOT backfilled — P3 pt1 does not close on code. This pin
-    is the reason that is safe: all eight committed records sit below VINTAGE_REQUIRED_FROM, so
-    nothing in the tree is silently in violation. It reddens the day someone bumps a record's
-    schema_version without stamping its references — which is exactly when the backfill stops
-    being optional."""
+def test_no_committed_record_is_silently_in_violation_of_the_vintage_rule(tmp_path: Path) -> None:
+    """The 70 unstamped references are NOT backfilled — P3 pt1 does not close on code. This pin is
+    the reason that is safe: no committed record carries a reference that the vintage rule would
+    demand a stamp for. It reddens the day someone bumps a record's schema_version without
+    stamping its references — which is exactly when the backfill stops being optional.
+
+    WAS "every record PREDATES the rule" (2026-09-01). That was the same claim by a shortcut, and
+    the shortcut was a fact about the corpus rather than the invariant: it held only while no
+    record had crossed 1.4. GOOGL's R3 record is at 1.5 and carries ZERO references — no committed
+    statistic anchors a forward P/E — so it is not in violation and there is nothing to stamp, yet
+    the shortcut called it one. Asserting the rule itself is STRICTER, not weaker: a 1.4+ record
+    that DID carry an unstamped reference now reddens, where the old form would equally have
+    reddened but told the reader the wrong thing about why.
+    """
+    def unstamped(rec: dict[str, object]) -> list[str]:
+        """Every reference the vintage rule would demand a stamp for — empty when compliant."""
+        ver = rec["schema_version"]
+        assert isinstance(ver, str)
+        if sc._schema_ver(ver) < sc._schema_ver(sc.VINTAGE_REQUIRED_FROM):
+            return []                                 # predates the rule — its refs go unstamped
+        axes = rec.get("assumptions") or {}
+        assert isinstance(axes, dict)
+        return [f"{axis}/{r.get('label')!r}" for axis, a in axes.items()
+                for r in (a.get("references") or []) if not r.get("vintage")]
+
+    # THE CHECK CAN FIRE — asserted before it is trusted. GOOGL is the only record at or past the
+    # rule and it carries ZERO references, so the corpus loop below would pass over an inert
+    # helper without noticing. The shape here is a REAL committed record with its schema bumped
+    # and nothing else touched, which is precisely the situation the pin exists to catch.
     root = Path(__file__).resolve().parents[1] / "scenarios"
+    canary = json.loads((root / "SMPL.json").read_text())
+    assert not unstamped(canary), "SMPL is below the rule — it must report nothing as written"
+    canary["schema_version"] = "1.5"
+    assert unstamped(canary), (
+        "the vintage check is INERT: a record bumped to 1.5 with SMPL's unstamped references must "
+        "be reported, or the corpus loop below proves nothing")
+
     seen = 0
     for f in sorted(root.glob("*.json")):
         if f.name.startswith("_"):
             continue
         rec = json.loads(f.read_text())
         seen += 1
-        assert sc._schema_ver(rec["schema_version"]) < sc._schema_ver(sc.VINTAGE_REQUIRED_FROM), (
+        assert not unstamped(rec), (
             f"{f.name} is at schema {rec['schema_version']} — at or past "
-            f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage")
-    assert seen == 8, f"expected the 8 committed records, walked {seen}"
+            f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage; "
+            f"{unstamped(rec)} carry none")
+    # EXACT, not a floor: adding a record must force a conscious look at this rule rather than
+    # sliding past it. Nine as of GOOGL, 2026-09-01.
+    assert seen == 9, f"expected the 9 committed records, walked {seen}"
 
 
 def _ref_keys(payload: dict[str, object], axis: str = "revenue") -> set[str]:
@@ -1097,7 +1138,7 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
             f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
             "next real diff is unreadable. If a field was just added, declare it in "
             "REF_FIELDS_INTRODUCED_IN or AXIS_FIELDS_INTRODUCED_IN.")
-    assert seen == 8, f"expected the 8 committed records, walked {seen}"
+    assert seen == 9, f"expected the 9 committed records, walked {seen}"
 
     # THE ARCHIVE IS THE ONLY RECORD BELOW 1.3, and therefore the only one that exercises
     # version-scoping AT ALL: seven records that share a version cannot fail a version check.

@@ -37,7 +37,7 @@ structurally impossible: `14%` can no longer be written as a bare number, only a
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from vinci.dossier.schemas import PrimarySource
@@ -55,6 +55,18 @@ DEVIATION_TOL = 0.0025
 ANCHORED: tuple[tuple[str, str], ...] = (("revenue", "base"), ("margin", "base"),
                                          ("multiple", "base"))
 AXES: tuple[str, ...] = ("revenue", "margin", "multiple")
+
+#: An axis whose LEG FIELD is named differently. `earnings` reads `eps` for the same reason the
+#: card's `AXIS_LEG_KEY` maps it: the axis names the assumption an analyst states, the field names
+#: the number the recipe reads, and for a forward-P/E leg those differ. Without the mapping the
+#: validator asks for a leg key that does not exist and refuses every R3 record — the
+#: capability-that-cannot-fire shape this create path has already produced once.
+#: `horizon` -> `years_to_terminal` joins it: R2's axes include a horizon, and nothing hit this
+#: before because every caller passed the R1 trio regardless of recipe. The moment the real axes
+#: were passed, three committed R2 records refused on "horizon is required and absent" while
+#: carrying the number under its own name. Same table as the card's `AXIS_LEG_KEY`, and it should
+#: stay that way — two spellings of one mapping is how the next one goes missing.
+AXIS_LEG_FIELD: dict[str, str] = {"earnings": "eps", "horizon": "years_to_terminal"}
 LEGS: tuple[str, ...] = ("bear", "base", "bull")
 
 #: WHY each unproposed cell is unproposed. Carried into the refusal so the analyst is told the
@@ -90,6 +102,11 @@ class Anchor:
 
     axis: str
     leg: str
+    #: Which multiple this anchors, STRUCTURED — `EV/EBITDA`, `P/E`. Carried rather than re-read
+    #: out of `stat_label` ("EV/EBITDA trailing median"): the label is a rendered string and a
+    #: parse of it is the display-formatting-as-data defect this repo has already paid for twice.
+    #: `None` on an axis where basis is meaningless (revenue, margin) — never a guess.
+    basis: str | None = field(default=None, kw_only=True)
     #: DISPLAY units — what the `RefPoint` renders (`15.4481` + `"%"`), per REF_UNITS.
     value: float
     unit: str
@@ -152,10 +169,10 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
     if isinstance(oh, dict) and isinstance(oh.get("median"), (int, float)):
         out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x",
                           float(oh["median"]), "median",
-                          f"{oh.get('metric')} trailing median",
+                          f"{oh.get('metric')} trailing median",  # basis= below
                           f"valuation.own_history {oh.get('metric')} "
                           f"({oh.get('n_closes')} closes, {oh.get('source_file')})",
-                          str(oh.get("as_of"))))
+                          str(oh.get("as_of")), basis=str(oh.get("metric") or "") or None))
     return out
 
 
@@ -192,12 +209,49 @@ def check_tier_agreement(doc: dict[str, Any], recipe_id: str) -> None:
             "AORT already carries this shape, so it is a real state and not a hypothetical.")
 
 
-def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) -> list[str]:
+def _anchors_on_basis(anchors: list[Anchor], basis: str | None) -> list[Anchor]:
+    """`anchors`, minus any struck on a DIFFERENT multiple than the record uses.
+
+    An own-history EV/EBITDA median cannot anchor a forward P/E: 24.5 against 17.37 reports a
+    +41% deviation on a leg that is not the same kind of number. Dropping it does not skip the
+    check — an unanchored leg must then state its `multiple_derivation`, which is the stricter
+    outcome and the right one for a turn no committed statistic supports.
+
+    CONSERVATIVE BY CONSTRUCTION: an anchor is dropped only when both bases are known AND
+    neither names the other, so `EV/EBITDA (NTM)` still anchors an `EV/EBITDA` record and an
+    unknown basis keeps every anchor it had. Uncertainty leaves the check ON.
+    """
+    if not basis:
+        return anchors
+
+    def names_the_same_multiple(have: str) -> bool:
+        x, y = have.strip().upper(), basis.strip().upper()
+        return x in y or y in x
+
+    return [a for a in anchors if not a.basis or names_the_same_multiple(a.basis)]
+
+
+def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor],
+                  *, axes: tuple[str, ...] | None = None,
+                  basis: str | None = None) -> list[str]:
     """Every problem with a supplied leg set, as a list — never the first one only.
 
     A partial answer sends the analyst round the loop once per defect; the whole list is one pass.
+
+    ``axes`` IS PER-RECIPE; `None` — an unmapped recipe — falls back to R1/R2's trio, which is
+    exactly the behaviour before this parameter existed. The fallback is not a guess covering a
+    broken recipe: `run_recipe` refuses an unknown `recipe_id` on its own terms, and this pass
+    should not pre-empt that refusal with a misleading list of missing-axis complaints.
+
+    An R3 record models earnings and multiple and reads NO revenue or margin, so validating it
+    against the trio demands two numbers the arithmetic never touches and refuses a well-formed
+    record — a create path that cannot create. The caller supplies
+    ``scenarios.axes_for(recipe_id, multiple_basis)`` rather than this module deciding, so there is
+    one definition of a recipe's axes and not a second one here to drift from it.
     """
-    by: dict[tuple[str, str], Anchor] = {(a.axis, a.leg): a for a in anchors}
+    axes = axes or AXES
+    by: dict[tuple[str, str], Anchor] = {(a.axis, a.leg): a
+                                         for a in _anchors_on_basis(anchors, basis)}
     problems: list[str] = []
 
     for leg in LEGS:
@@ -206,11 +260,12 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) ->
                             "underwrite has no reward:risk")
             continue
         s = supplied[leg]
-        for axis in AXES:
-            if s.get(axis) is None:
+        for axis in axes:
+            field = AXIS_LEG_FIELD.get(axis, axis)
+            if s.get(field) is None:
                 why = UNPROPOSED_REASON.get((axis, leg))
                 problems.append(
-                    f"{leg}.{axis} is required and absent"
+                    f"{leg}.{field} is required and absent"
                     + (f" — not proposed because {why}" if why else ""))
                 continue
             a = by.get((axis, leg))
@@ -221,27 +276,29 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor]) ->
                 # from. Reusing that name would let "EBIT" satisfy a provenance requirement it
                 # does not answer — one name, two meanings, which is the defect class this repo
                 # keeps paying for.
-                if not str(s.get(f"{axis}_derivation") or "").strip():
+                if not str(s.get(f"{field}_derivation") or "").strip():
                     problems.append(
-                        f"{leg}.{axis} has no anchor, so it must state where it came from "
-                        f"({axis}_derivation) — a number with neither an anchor nor a stated "
+                        f"{leg}.{field} has no anchor, so it must state where it came from "
+                        f"({field}_derivation) — a number with neither an anchor nor a stated "
                         "derivation cannot be reviewed")
                 continue
             # anchored: equal to the anchor, or an explicit adjustment with its reason
             # COMPARED IN SCHEMA UNITS. `a.value`/`a.unit` are the display pair; comparing a
             # supplied 0.14 against a displayed 15.4481 would flag every matching margin leg.
-            val = float(s[axis])
+            val = float(s[field])
             ref = a.schema_value
             drift = abs(val - ref) / abs(ref) if ref else (0.0 if val == ref else float("inf"))
-            if drift > DEVIATION_TOL and not str(s.get(f"{axis}_adjustment") or "").strip():
+            if drift > DEVIATION_TOL and not str(s.get(f"{field}_adjustment") or "").strip():
                 problems.append(
-                    f"{leg}.{axis} = {val:g} deviates from its anchor {a.value:g}{a.unit} by "
-                    f"{val - ref:+g} and states no reason — set {axis}_adjustment. "
+                    f"{leg}.{field} = {val:g} deviates from its anchor {a.value:g}{a.unit} by "
+                    f"{val - ref:+g} and states no reason — set {field}_adjustment. "
                     "(This is the §D defect: an averaged number whose derivation is unstated.)")
     return problems
 
 
-def record_legs_for_validation(rec: Any) -> dict[str, dict[str, Any]]:
+def record_legs_for_validation(rec: Any,
+                               *, axes: tuple[str, ...] | None = None
+                               ) -> dict[str, dict[str, Any]]:
     """A committed `ScenarioRecord`'s legs in the shape `validate_legs` reads.
 
     WHY AN ADAPTER RATHER THAN A DIRECT CALL. `validate_legs` was written for the TEMPLATE, whose
@@ -260,16 +317,26 @@ def record_legs_for_validation(rec: Any) -> dict[str, dict[str, Any]]:
     CELL; a record states one reason per LEG, so a leg whose `reason` explains its revenue move but
     not its multiple move passes here and would not pass `scenario-create`. This closes the §D hole
     — a bare number with no stated derivation — without pretending to be cell-level parity.
+
+    ``axes`` IS THE RECIPE'S, defaulting to R1/R2's trio — the FOURTH consumer of the module-level
+    `AXES` and the last to be taught. Emitting `revenue_derivation` for a forward-P/E record maps
+    provenance onto axes it does not have while leaving `eps` unmapped entirely, so the supersede
+    guard would refuse every R3 record on axes its arithmetic never reads. The leg VALUES are
+    emitted unconditionally because a record simply has whichever of them it has, and the validator
+    only looks at the axes it was given.
     """
     out: dict[str, dict[str, Any]] = {}
     assumptions = getattr(rec, "assumptions", None) or {}
     for leg, s in (rec.scenarios or {}).items():
         d: dict[str, Any] = {"revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
+                             "eps": getattr(s, "eps", None),
+                             "years_to_terminal": getattr(s, "years_to_terminal", None),
                              "reason": s.reason}
-        for axis in AXES:
+        for axis in (axes or AXES):
+            field = AXIS_LEG_FIELD.get(axis, axis)
             ad = assumptions.get(axis)
-            d[f"{axis}_derivation"] = (getattr(ad, "method", "") or "") if ad else ""
-            d[f"{axis}_adjustment"] = s.reason or ""
+            d[f"{field}_derivation"] = (getattr(ad, "method", "") or "") if ad else ""
+            d[f"{field}_adjustment"] = s.reason or ""
         out[leg] = d
     return out
 
@@ -654,8 +721,9 @@ def legs_from_template(tpl: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return out
 
 
-def assumptions_from(doc: dict[str, Any],
-                     legs: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def assumptions_from(doc: dict[str, Any], legs: dict[str, dict[str, Any]],
+                     *, axes: tuple[str, ...] | None = None,
+                     basis: str | None = None) -> dict[str, dict[str, Any]]:
     """The per-axis `AssumptionDerivation` payload — where the record's PROVENANCE actually lives.
 
     WITHOUT THIS THE WHOLE DESIGN LEAKS, and the first cut of `scenario-create` leaked it. The
@@ -671,15 +739,28 @@ def assumptions_from(doc: dict[str, Any],
     So: each axis gets its anchor as a source- and vintage-bearing `RefPoint`, and a `method`
     sentence assembled from what the analyst actually said on each leg. The method is required
     non-blank by the schema, and here it is composed only of analyst words — never invented.
+
+    ``axes``/``basis`` ARE THE SAME PER-RECIPE PAIR `validate_legs` TAKES, and they are not
+    optional in practice: this is that function's sibling, reading the identical leg keys off the
+    identical legs. Teaching one recipe-awareness and not the other is this repo's most-repeated
+    defect — the record would validate on `earnings`/`multiple` and then compose its provenance
+    over `revenue`/`margin`, writing a record whose stated method covers axes its arithmetic does
+    not use and omits the two it does. Both callers pass both, from `scenarios.axes_for`.
     """
-    by = {(a.axis, a.leg): a for a in propose_anchors(doc)}
+    axes = axes or AXES
+    by = {(a.axis, a.leg): a for a in _anchors_on_basis(propose_anchors(doc), basis)}
     out: dict[str, dict[str, Any]] = {}
-    for axis in AXES:
+    for axis in axes:
+        # the LEG FIELD, not the axis — an `earnings` axis states itself in `eps_derivation`,
+        # beside the `eps` it explains. Reading `earnings_derivation` here would find nothing and
+        # silently fall through to the "stated per leg" placeholder, dropping the analyst's own
+        # words out of the one field built to carry them.
+        field = AXIS_LEG_FIELD.get(axis, axis)
         said: list[str] = []
         for leg in LEGS:
             cell = legs.get(leg) or {}
             if (axis, leg) in by:
-                adj = str(cell.get(f"{axis}_adjustment") or "").strip()
+                adj = str(cell.get(f"{field}_adjustment") or "").strip()
                 # NAME THE STATISTIC IN WORDS, not the house label: the prose linter flags
                 # "anchor" as a house token ("state the claim, not the house label"), and it is
                 # right — a reader wants "at the eight-year operating-margin median", not a word
@@ -688,7 +769,7 @@ def assumptions_from(doc: dict[str, Any],
                 a = by[(axis, leg)]
                 said.append(f"{leg}: {adj}" if adj else f"{leg}: at the {a.label}")
             else:
-                drv = str(cell.get(f"{axis}_derivation") or "").strip()
+                drv = str(cell.get(f"{field}_derivation") or "").strip()
                 if drv:
                     said.append(f"{leg}: {drv}")
         refs = [a.as_refpoint().model_dump() for (ax, _lg), a in by.items() if ax == axis]

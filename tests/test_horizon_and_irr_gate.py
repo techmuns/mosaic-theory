@@ -200,10 +200,17 @@ def test_every_committed_record_passes_the_supersede_guard_it_will_now_face() ->
     for t, r in records.items():
         doss = ROOT / "data" / "dossiers" / t / "dossier.json"
         anchors = propose_anchors(json.loads(doss.read_text())) if doss.is_file() else []
+        # THE RECIPE'S AXES, exactly as `scenario-supersede` passes them. Defaulting to the R1
+        # trio here would refuse GOOGL's R3 record for a revenue and a margin its arithmetic
+        # never reads — the same shape mismatch this test exists to catch, reintroduced by the
+        # test itself.
+        axes = sc.axes_for(r.recipe_id, r.multiple_basis)
         raw = {leg: {"revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
                      "reason": s.reason} for leg, s in r.scenarios.items()}
-        naive_refusals += bool(validate_legs(raw, anchors))
-        probs = validate_legs(record_legs_for_validation(r), anchors)
+        naive_refusals += bool(validate_legs(raw, anchors, axes=axes,
+                                             basis=r.multiple_basis))
+        probs = validate_legs(record_legs_for_validation(r, axes=axes), anchors,
+                              axes=axes, basis=r.multiple_basis)
         if probs:
             adapted_refusals[t] = probs
     assert naive_refusals == len(records), (

@@ -390,7 +390,18 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         "facts": [{"key": k, "value": f["value"], "unit": f["unit"], "basis": f["basis"],
                    "source": f["source"]} for k, f in (rec.get("facts") or {}).items()],
         "scenarios": [
-            {"name": n, "revenue": s["revenue"], "margin": s["margin"], "multiple": s["multiple"],
+            # (R3) revenue/margin EMITTED CONDITIONALLY, in place, for the same reason `eps` is:
+            # a forward-P/E record carries neither — its record drops the keys rather than assert
+            # a null someone looked for and did not find. The unconditional bracket read here was
+            # what actually broke, and it broke in the real build rather than in a test: the card
+            # builder wants them for DISPLAY, where a None would have rendered harmlessly, so
+            # "the arithmetic would have failed first" was not true of this consumer. Order is
+            # unchanged and R1/R2 records always carry both, so their cards stay byte-identical
+            # under the emit-determinism pin.
+            {"name": n,
+             **({"revenue": s["revenue"]} if s.get("revenue") is not None else {}),
+             **({"margin": s["margin"]} if s.get("margin") is not None else {}),
+             "multiple": s["multiple"],
              "reason": s["reason"],
              **({"yearsToTerminal": s["years_to_terminal"]}
                 if s.get("years_to_terminal") is not None else {}),

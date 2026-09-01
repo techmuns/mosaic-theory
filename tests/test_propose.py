@@ -557,3 +557,144 @@ def test_no_committed_name_crashes_the_template_builder() -> None:
                         f"be a stated ProposalRefusedError, never a raw exception")
     assert built, f"no committed name builds a template — refused={refused}"
     assert refused, "no committed name refuses — the refusal path has gone vacuous"
+
+
+# ---------------------------------------------------------------------------------------------
+# R3 — a recipe whose axes are NOT the R1 trio. The create path validated legs, composed
+# assumptions, and serialized them all against a module-level `AXES = (revenue, margin,
+# multiple)`. Every one of those three refused or corrupted a well-formed forward-P/E record:
+# it demanded two numbers R3's arithmetic never reads, compared a P/E turn against an EV/EBITDA
+# median, and would have composed provenance over the axes the record does not use.
+# Driven off the REAL committed GOOGL dossier and the REAL committed record — the recipe was
+# unreachable through the sanctioned path, so a synthetic fixture would only have re-pinned the
+# shape the bug already had.
+# ---------------------------------------------------------------------------------------------
+
+R3_AXES = ("earnings", "multiple")
+
+
+def _r3_legs(**over) -> dict[str, dict]:
+    """Three legs shaped as an R3 template writes them — `eps`, never `revenue`/`margin`."""
+    out = {leg: {"eps": 16.0, "multiple": 24.0,
+                 "eps_derivation": "stated", "multiple_derivation": "stated"} for leg in LEGS}
+    for leg, patch in over.items():
+        out[leg].update(patch)
+    return out
+
+
+def test_r3_axes_are_not_asked_for_revenue_or_margin():
+    """The refusal that made R3 uncreatable: nine problems, six of them for axes it never reads."""
+    ancs = propose_anchors(_doc("GOOGL"))
+    trio = validate_legs(_r3_legs(), ancs)                       # today's default — the R1 shape
+    assert [p for p in trio if ".revenue" in p or ".margin" in p], (
+        "guard is inert: the R1 default must still demand revenue/margin, or this test proves "
+        "nothing about the recipe-aware path below")
+    r3 = validate_legs(_r3_legs(), ancs, axes=R3_AXES, basis="P/E")
+    assert not [p for p in r3 if ".revenue" in p or ".margin" in p], r3
+
+
+def test_r3_multiple_is_not_anchored_to_the_ev_ebitda_band():
+    """A P/E turn compared against an own-history EV/EBITDA median is a category error.
+
+    Dropping that anchor does not weaken the check — it makes it STRICTER: the leg becomes
+    unanchored, so it must state its `multiple_derivation` or be refused.
+    """
+    ancs = propose_anchors(_doc("GOOGL"))
+    mult = [a for a in ancs if a.axis == "multiple"]
+    assert mult and mult[0].basis and "EBITDA" in mult[0].basis.upper(), (
+        f"GOOGL's committed multiple anchor is no longer an EV/EBITDA statistic ({mult}) — this "
+        "test's premise moved, not the code")
+    far = _r3_legs(base={"multiple": 24.5, "multiple_derivation": ""})
+    assert not [p for p in validate_legs(far, ancs, axes=R3_AXES, basis="P/E")
+                if "deviates from its anchor" in p]
+    assert [p for p in validate_legs(far, ancs, axes=R3_AXES, basis="P/E")
+            if p.startswith("base.multiple has no anchor")], "unanchored must still demand a why"
+    # ...and the SAME anchor still binds a record that IS on its basis
+    assert [p for p in validate_legs(_legs(base={"multiple": 99.0}), ancs, basis=mult[0].basis)
+            if p.startswith("base.multiple") and "deviates" in p]
+
+
+def test_r3_earnings_axis_reads_the_eps_leg_field():
+    """`earnings` states itself in `eps_derivation`, beside the `eps` it explains.
+
+    The sibling defect: `validate_legs` reading the leg field while `assumptions_from` read the
+    axis name would validate the analyst's words and then drop them out of the record.
+    """
+    from vinci.dossier.propose import assumptions_from
+
+    doc = _doc("GOOGL")
+    bare = validate_legs(_r3_legs(bear={"eps": None}), propose_anchors(doc),
+                         axes=R3_AXES, basis="P/E")
+    assert [p for p in bare if p.startswith("bear.eps is required")], bare
+    got = assumptions_from(doc, _r3_legs(base={"eps_derivation": "FY27 normalized, memo §4"}),
+                           axes=R3_AXES, basis="P/E")
+    assert sorted(got) == ["earnings", "multiple"], sorted(got)
+    assert "FY27 normalized, memo §4" in got["earnings"]["method"], got["earnings"]["method"]
+
+
+def test_committed_r3_record_is_shaped_by_its_recipe():
+    """END-TO-END on the committed record: no null axis its arithmetic never reads.
+
+    A `"revenue": null` on a P/E underwrite asserts someone looked for a revenue and found none.
+    Absent is the true statement, and `LEG_FIELDS_DROPPED_WHEN_NONE` is how the record says it.
+    """
+    rec = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
+    assert rec["recipe_id"] == "R3_forward_pe" and rec["multiple_basis"] == "P/E"
+    assert sorted(rec["assumptions"]) == ["earnings", "multiple"]
+    for leg, cell in rec["scenarios"].items():
+        assert "revenue" not in cell and "margin" not in cell, (leg, sorted(cell))
+        assert isinstance(cell["eps"], float) and isinstance(cell["multiple"], float)
+    for axis in ("earnings", "multiple"):
+        # PHRASING-INDEPENDENT: the method is composed from analyst prose that will be reworded on
+        # any re-underwrite. What must hold is that each leg contributed its own words.
+        method = rec["assumptions"][axis]["method"]
+        assert all(f"{leg}:" in method for leg in LEGS), (axis, method)
+
+
+def test_r1_records_keep_their_axes_when_the_drop_list_grew():
+    """`revenue`/`margin` drop ONLY when None, and on an R1 record they are never None.
+
+    The mechanism exists to leave the committed corpus byte-identical; this is that claim, asserted
+    against the corpus rather than trusted.
+    """
+    import vinci.scenarios as sc
+
+    assert {"revenue", "margin"} <= set(sc.LEG_FIELDS_DROPPED_WHEN_NONE)
+    seen = 0
+    for path in sorted((ROOT / "scenarios").glob("*.json")):
+        rec = json.loads(path.read_text())
+        if rec.get("recipe_id") == "R3_forward_pe" or "scenarios" not in rec:
+            continue
+        for leg, cell in rec["scenarios"].items():
+            assert cell.get("revenue") is not None, (path.name, leg)
+            assert cell.get("margin") is not None, (path.name, leg)
+            seen += 1
+    assert seen >= 3, f"corpus check ran over {seen} legs — it is not exercising anything"
+
+
+def test_an_anchor_is_dropped_only_when_it_names_a_different_multiple():
+    """The basis filter, both directions — it must REFUSE a mismatch and KEEP everything else.
+
+    A filter that drops too eagerly is worse than none: it would silently un-anchor a legitimate
+    R1 multiple, turning a real deviation check into a derivation sentence nobody re-reads. So
+    uncertainty leaves the check ON — an unknown basis on either side keeps the anchor, and a
+    qualified spelling (`EV/EBITDA (NTM)`) still anchors its plain form.
+    """
+    from vinci.dossier.propose import _anchors_on_basis
+
+    def anc(basis):
+        return Anchor("multiple", "base", 17.4, "x", 17.4, "median", "lbl", "src", "2026-08",
+                      basis=basis)
+
+    kept = lambda rec, a: bool(_anchors_on_basis([anc(a)], rec))  # noqa: E731
+    # NEGATIVE — the one case the filter exists for
+    assert not kept("P/E", "EV/EBITDA")
+    assert not kept("EV/EBITDA", "P/E")
+    # POSITIVE — every other combination survives
+    assert kept("EV/EBITDA", "EV/EBITDA")
+    assert kept("EV/EBITDA", "EV/EBITDA (NTM)")
+    assert kept("EV/EBITDA (NTM)", "EV/EBITDA")
+    assert kept("P/E", "P/E")
+    assert kept("p/e", " P/E ")                      # case and padding are not a basis difference
+    assert kept("P/E", None), "an anchor with no stated basis is not evidence of a mismatch"
+    assert kept(None, "EV/EBITDA"), "a record with no stated basis keeps every anchor it had"

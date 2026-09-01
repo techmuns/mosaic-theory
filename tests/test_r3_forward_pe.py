@@ -146,8 +146,22 @@ def test_the_page_shows_the_driver_that_produced_the_value() -> None:
 
 
 def test_an_absent_revenue_renders_as_absent_not_as_zero() -> None:
-    rows = [ln for ln in _rendered() if ln.startswith("| bear |")]
-    assert rows and rows[0].startswith("| bear | — |"), rows
+    """NO REVENUE COLUMN AT ALL on a record where no leg has one (2026-09-01).
+
+    The em-dash was the right answer while the column was unconditional — it stopped a `$0M`
+    revenue printing beside a real $397.41/share. Dropping the column satisfies that intent more
+    strongly: the R3 row read `| — | $15.388 | — | 20.5x |`, two empty columns flanking the only
+    number that produced the value. What must never appear is a FABRICATED zero, and that is what
+    this asserts; the em-dash form still guards the mixed case, pinned in `test_dossier.py`.
+    """
+    lines = _rendered()
+    head = next(ln for ln in lines if ln.startswith("| scenario |"))
+    rows = [ln for ln in lines if ln.startswith("| bear |")]
+    assert "revenue" not in head and "margin" not in head, (
+        f"no R3 leg carries a revenue or a margin, so neither column belongs: {head!r}")
+    assert rows and rows[0].startswith("| bear | $15.388 | 20.5x |"), rows
+    assert "$0" not in rows[0] and "| 0 |" not in rows[0], (
+        f"a fabricated zero driver reached the row: {rows[0]!r}")
 
 
 def test_the_stamped_chain_renders_even_though_the_recipe_has_no_facts() -> None:

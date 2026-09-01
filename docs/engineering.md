@@ -206,6 +206,12 @@ PR (CLAUDE.md: coin-time translation).
   until the human's verdict of record is logged.
 - **mech / mechanical** — the deterministic assembled-facts layer of a dossier
   (`vinci/dossier/mechanical.py`); **synthesis** = the LLM framing layer (no verdict field).
+- **axis / leg field** — an **axis** is an assumption a recipe models and an analyst states
+  (`earnings`, `multiple`, `revenue`, `margin`, `horizon`); a **leg field** is the key the number
+  is stored under on a leg (`eps`, `multiple`, `years_to_terminal`). They match for R1's trio and
+  differ for the others, so `AXIS_LEG_FIELD` maps between them (`vinci/dossier/propose.py`, mirrored
+  as `AXIS_LEG_KEY` in `frontend/views/shared/uw-card.js`). A recipe's axes come from
+  `scenarios.axes_for(recipe_id, multiple_basis)` — never from a module-level default.
 - **what-broke / gap card / event ledger** — the drawdown anatomy: per-gap-down 8-K cards, the
   annotated daily chart, the per-gap list ("What broke — and did it fall alone?", both renderers).
 - **idio / idio strip** — idiosyncratic-vs-shared decomposition (name vs benchmark/cohort) in the

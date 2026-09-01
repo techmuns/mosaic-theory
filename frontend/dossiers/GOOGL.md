@@ -5,6 +5,16 @@ _August 28, 2026 · extraction 2026-08-16.1_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $397.41 (+14.9% vs entry-vintage spot) · **Spot** $345.90 (entry-vintage — frozen at underwrite 2026-08-17) · **Reward** $51.51 · **Risk** $30.45 · **Reward : risk** 1.69 : 1 (bar 2 : 1) · **Base IRR** 14.9% (floor 15%, 1y) · **Gate** FAIL (both tests)
+
+_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+
+_Spot source: Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 — WSJ market data, corroborated by FT historical prices_
+
+**Underwrite disposition:** PENDING_ANALYST — _the BUY/AVOID verdict of record is the ledger's_
+
+> **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
+
 Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.
 **Mixed** — accelerating revenue and cloud backlog run into a record-high trailing multiple, falling ROIC and rising capex whose payback is unresolved.
 - **Segments:** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
@@ -26,7 +36,21 @@ _7 key unknowns + the evidence for/against — in Analysis_
 - **Free cash flow:** positive [10]
 
 ## Scenario analysis
-_no scenario record for this name_
+_R3_forward_pe_
+
+| scenario | EPS | multiple | value / sh | vs entry-vintage spot |
+| --- | ---: | ---: | ---: | ---: |
+| bear | $15.388 | 20.5x | $315.45 | -8.8% |
+| base | $16.221 | 24.5x | $397.41 | +14.9% |
+| bull | $16.649 | 26x | $432.87 | +25.1% |
+
+- **bear** — IC memo 2026-08-17 §7A. Normalized EPS $15.388 at 20.5x — the de-rating case: Bear EPS EXCEEDS today's NTM $13.29, so the downside is multiple compression from ~26x, not an earnings fall. A ruling on either remedies docket is its most likely trigger.
+- **base** — IC memo 2026-08-17 §7A. Normalized EPS $16.221 at 24.5x — Search and Cloud economics run modestly above consolidated expectations while the capital build proves less damaging than the Q2 reset implies. Both locked variants hold, neither dramatically.
+- **bull** — IC memo 2026-08-17 §7A. Normalized EPS $16.649 at 26.0x — today's multiple sustained on demonstrated capital productivity: FY27 EBIT revisions outrunning FY27 capex revisions, which is the memo's single most important live screen.
+
+**Scenario inputs** — this recipe reads no record-level facts; each leg carries its own inputs, and the chain below is how they combine.
+
+_Chain (P/E):_ value/share = EPS × forward P/E multiple
 
 ### Screening context — how this name surfaced — _not a verdict_
 
@@ -34,7 +58,7 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Method | R3_forward_pe | applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
 | Median multiple, own history | 17.4x | 37 closes · firm · EV/EBITDA |
 | Screen value / share | $196.01 | spot-independent · EV/EBIT 21.2x |
@@ -42,6 +66,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 
 **data_quality: vendor_bridge**
 - vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
+
+_OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -248,7 +274,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 ### The EV gap — our base case vs the street
 
-_No gap is struck for this name: no scenario record for this name — the route is known, the gap is not. The consensus side alone still routes to **two-ratio** at FY2026, so the form is known even though the comparison is not._
+_No gap is struck for this name: shares unavailable. The consensus side alone still routes to **two-ratio** at FY2026, so the form is known even though the comparison is not._
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 25.8x as-of 2026-06-30 — trailing range 10.9–24.8x (median 17.4x) over 37 closes → 100%ile → near-ceiling; P/LTM EPS 27.3x [24]
@@ -446,6 +472,22 @@ _1 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Earnings · **DRAFT — not ratified by the analyst**
+
+bear: Normalized EPS on the ~Aug-2027 fundamental horizon; all three legs struck on the same Street-like diluted-share basis, so they differ by economics and not by share count. $15.388, ~4% below the target-period Street range $16.02–16.07. IC memo 2026-08-17 §4. · base: $16.221, modestly above that Street range. IC memo 2026-08-17 §4. · bull: $16.649, above it. IC memo 2026-08-17 §4.
+
+_No reference points recorded — stated as judgment._
+
+### Multiple · **DRAFT — not ratified by the analyst**
+
+bear: Normalized P/NTM turns set by judgment rather than by a statistic — the company's own multiple quartiles over its trading history (p25 21.46x, median 24.24x, p75 26.75x) are labelled `P/NTM EPS` and are NOT proven to share this normalized denominator, a basis match the memo records as LIMITED, so they are context and not load-bearing. 20.5x is compression from today's ~26.03x, and it is the SINGLE BINDING ASSUMPTION of this underwrite: Bear EPS exceeds today's NTM $13.28698, so the whole downside is a de-rating rather than an earnings fall. IC memo 2026-08-17 §5 and §7A. · base: 24.5x, a partial de-rate from today's ~26.03x. IC memo 2026-08-17 §5. · bull: 26.0x holds today's ~26.03x, conditional on demonstrated capital productivity — FY27 EBIT revisions outrunning FY27 capex revisions. IC memo 2026-08-17 §5 and §7A.
+
+_No reference points recorded — stated as judgment._
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-08-10)

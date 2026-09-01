@@ -42,6 +42,15 @@ function fact(label, valHtml, { hi = false } = {}) {
 }
 
 const leg = (c, name) => (c.scenarios || []).find((s) => s.name === name) || null;
+// A leg row belongs on the card when the RECORD ACTUALLY CARRIES ITS NUMBER — asked of the legs,
+// never of a recipe list, so a recipe added later needs no edit here and cannot be forgotten.
+// Every formatter already renders a missing number as an em-dash, so the failure this prevents is
+// not `undefined` on the page: it is a P/E card printing "Revenue —, Op margin —" and NO EPS row,
+// showing every input except the one that produced its value. That is the same half-wiring as the
+// emitter fix in `frontend/build.py` (review of #542) — which emitted `eps` while this file, its
+// only consumer, still had nowhere to display it.
+const hasLegField = (c, k) =>
+  (c.scenarios || []).some((s) => typeof s[k] === "number" && isFinite(s[k]));
 const num = (v) => (typeof v === "number" && isFinite(v) ? v : null);
 
 // signed % vs spot, e.g. "+95.3%" / "−13.5%" (true minus, not a hyphen)
@@ -549,9 +558,12 @@ function legsTable(c) {
               (l) => money(l.valuePerShare), { name: true })}
         ${row("vs spot", delta, { cls: " uw-vs" })}
         ${isR2(c) ? row("Years to terminal", (l) => oneDp(l.years ?? l.yearsToTerminal, "y")) : ""}
-        ${row(isR2(c) ? "Terminal revenue ($M)" : "Revenue ($M)", (l) => thousands(l.revenue))}
-        ${onRevenueBasis(c) ? "" :
+        ${hasLegField(c, "revenue")
+          ? row(isR2(c) ? "Terminal revenue ($M)" : "Revenue ($M)", (l) => thousands(l.revenue))
+          : ""}
+        ${onRevenueBasis(c) || !hasLegField(c, "margin") ? "" :
           row(isR2(c) ? "Terminal op margin" : "Op margin", (l) => pct(l.margin))}
+        ${hasLegField(c, "eps") ? row("EPS ($)", (l) => money(l.eps)) : ""}
         ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
       </tbody>
     </table></div>
@@ -639,11 +651,17 @@ function methodLines(c) {
 // does not editorialize a gap). Own "M" endnote scope INSIDE the <details>: marker and Sources
 // list share print fate (the same invariant as the Inputs block).
 function methodRefsDetails(c) {
-  const withRefs = orderedAssumptions(c).filter((a) => (a.references || []).length);
-  if (!withRefs.length) return "";
+  // EVERY axis, not only the ones carrying references. Filtering to axes WITH references was a
+  // corpus-shaped assumption — true of all eleven R1/R2 cards, false the moment a forward-P/E
+  // record arrived: GOOGL's turns and normalized EPS are set by judgment, no committed statistic
+  // anchors either, so the whole block vanished and took the chosen trio AND the recipe formula
+  // with it. An absent block reads as "nothing to say" when the truth is "nothing anchors this" —
+  // absent-vs-broken collapsed, which is exactly the distinction this card exists to keep.
+  const axes = orderedAssumptions(c);
+  if (!axes.length) return "";
   const legs = ["bear", "base", "bull"]
     .map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
-  const tables = () => withRefs.map((a) => {
+  const tables = () => axes.map((a) => {
     const fmt = axisFmt(a.axis);
     // (schema 1.3) the leg a reference anchors renders as a chip FROM THE FIELD (labels are never
     // parsed), and an excluded row dims with its reason stated — before this, "NOT a reference
@@ -654,6 +672,11 @@ function methodRefsDetails(c) {
         p.excluded ? `<span class="muted"> — excluded: ${escapeHtml(p.excludedReason || "")}</span>` : ""
       }</td><td class="num">${mono(String(p.value))} ${escapeHtml(p.unit)}</td>
         <td class="uw-ref-cite">${citeMark(p.source)}</td></tr>`).join("");
+    // Stated, never implied by an empty table. The words are the analyst's own, carried on the
+    // axis method; this row only says that no reference number stands behind them.
+    const unanchored = (a.references || []).length ? ""
+      : `<tr class="uw-ref-excl"><td colspan="3" class="muted">no reference values — this axis was
+          set by judgment, and the method above is where it says so</td></tr>`;
     const chosen = legs.length
       ? `<tr class="name-row"><td>chosen (${legs.map((l) => escapeHtml(l.name)).join(" · ")})</td>
           <td class="num">${legs.map((l) => fmt(axisLegValue(l, a.axis))).join(" · ")}</td><td></td></tr>` : "";
@@ -663,7 +686,7 @@ function methodRefsDetails(c) {
       `<div class="uw-axis-note muted"><b>${escapeHtml(n.date)}</b> — ${escapeHtml(n.text)}${
         n.source ? `${citeMark(n.source)}` : ""}</div>`).join("");
     return `<div class="uw-method-h">${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</div>
-      <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>${notes}`;
+      <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${unanchored}${chosen}</tbody></table></div>${notes}`;
   }).join("");
   return `<details class="uw-method"><summary>Reference values — what each assumption was set against</summary>${
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;

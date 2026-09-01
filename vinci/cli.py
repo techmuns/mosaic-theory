@@ -1349,7 +1349,13 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         print(f"REFUSED: {exc}")
         return 1
 
-    problems = validate_legs(legs_from_template(tpl), propose_anchors(doc))
+    # AXES AND BASIS FROM THE RECIPE, never the module default: R3 models earnings and multiple
+    # and reads no revenue or margin, so the R1 trio would demand two numbers its arithmetic never
+    # touches and refuse a well-formed record — a create path that cannot create.
+    _rid = str(tpl.get("recipe_id") or "")
+    _basis = str(tpl.get("multiple_basis") or "") or None
+    problems = validate_legs(legs_from_template(tpl), propose_anchors(doc),
+                             axes=sc.axes_for(_rid, _basis), basis=_basis)
     # THE HORIZON, checked on the TEMPLATE rather than after construction: `ScenarioInput` accepts
     # `years_to_terminal=None` (R2 legacy records need it nullable), so a record built first would
     # validate and only fail later — the analyst deserves it in the same refusal list as everything
@@ -1421,7 +1427,8 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
             assumptions={ax: sc.AssumptionDerivation(
                 method=a["method"],
                 references=[sc.RefPoint(**r) for r in a["references"]])
-                for ax, a in assumptions_from(doc, legs).items()},
+                for ax, a in assumptions_from(doc, legs, axes=sc.axes_for(_rid, _basis),
+                                              basis=_basis).items()},
         )
         rec = sc.run_recipe(rec)
         path = sc.write_record(rec)
@@ -1588,7 +1595,9 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     except ProposalRefusedError as exc:
         print(f"REFUSED: {exc}")
         return 2
-    problems = validate_legs(record_legs_for_validation(incoming), anchors)
+    _axes = sc.axes_for(incoming.recipe_id, incoming.multiple_basis)
+    problems = validate_legs(record_legs_for_validation(incoming, axes=_axes), anchors,
+                             axes=_axes, basis=incoming.multiple_basis)
     problems += sc.horizon_problems(incoming)     # no new record lands without a realisation date
     # ...and none lands struck at a year the decomposition does not use, unexplained. `doc` is
     # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
