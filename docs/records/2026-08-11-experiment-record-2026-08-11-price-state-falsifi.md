@@ -31,3 +31,16 @@ passed, and a 28-state panel shows every trend state is one 2025–26 regime mea
 § "Fundamental vs quant" bullet. NEXT (approved plan): PR-B1 queue "evidence strip"
 (insiders / short interest / share-count direction + price tail, display-only, AST-fenced),
 PR-B2 dossier twin, Phase C F-Score display pending separate operator green-light.
+## Amendments
+
+**2026-09-01 — the "NEXT (approved plan)" line above is STALE and must not be acted on.** Both of
+its remaining items were closed on 2026-08-12/13; the work sat unmerged on
+`feat/dossier-evidence-line` and is recorded now.
+
+- **Net issuance (Pontiff-Woodgate) is NOT strong evidence in this pool — FALSIFIED.** rho
+  −0.023→−0.006, shuffle 98%→34%, MIXED at every horizon. The leg stays display-only and fenced.
+- **PR-B2 (the dossier twin) is CLOSED as unnecessary, not deferred** — every leg of the strip is
+  already a first-class, source-bound dossier fact in both renderers.
+
+Record: `docs/records/2026-09-01-net-issuance-falsified-pr-b2-closed.md`. The wider screen-gate
+audit that picks up the same thread: `docs/records/2026-09-01-screen-gate-audit-g1-g2-g3.md`.
