@@ -396,7 +396,9 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # 9 since 2026-08-31: `ads_count_unresolved` joined the funnel — a depositary receipt whose
     # ADS-denominated share count will not resolve is DROPPED rather than sized by assuming
     # 1 ADS = 1 ordinary share. It is a real drop stage, so it emits its retention row like the
-    # rest; the count is asserted so ADDING a stage stays a deliberate act.
+    # rest; the count is asserted so ADDING a stage stays a deliberate act. Per-class sizing
+    # (2026-09-01) deliberately added NO stage: a line whose class count will not resolve keeps
+    # the sizing it already had rather than being dropped — see `_per_class_count`.
     assert len(DROP_STAGES) == 9, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
@@ -424,10 +426,13 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # sized by the share-class reference because no XBRL tier had a count. Its FAILURE case is
     # not a new stage — a name with no count in any source still drops at `no_shares`, through
     # `_drop`, exactly as before.
+    # `dual_class_count_used` (2026-09-01) is the same shape once more: it counts ADMITTED lines of
+    # a multi-class issuer sized by their OWN class count instead of the issuer-wide one. Its
+    # failure case IS a stage — `dual_class_unresolved` — and goes through `_drop`.
     # A stage missing its row is still the failure this guard exists to catch.
     assert set(loose) <= {"considered", "in_universe", "shares_period_average",
                           "out_of_band_period_average", "ads_count_used",
-                          "polygon_count_fallback"}, (
+                          "polygon_count_fallback", "dual_class_count_used"}, (
         f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
         "without emitting a row leaves that stage with no evidence trail")
     # and the guard that refuses a run when the two diverge anyway
