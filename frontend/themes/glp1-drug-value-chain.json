@@ -1,0 +1,638 @@
+{
+ "driver": "glp1-drug-value-chain",
+ "slug": "glp1-drug-value-chain",
+ "label": "GLP-1 drug value chain",
+ "freezeDate": "2026-09-01",
+ "freezeTimestamp": "2026-09-01T00:00:00",
+ "ratifiedCount": 15,
+ "passedCount": 29,
+ "surfacedCount": 140,
+ "frozenCount": 44,
+ "watchlistCount": 0,
+ "tierShape": {
+  "binding": 1,
+  "quantified": 0,
+  "committed": 43,
+  "aspirational": 96,
+  "none": 407,
+  "surfaced": 140,
+  "universe": 547
+ },
+ "frozenTiers": {
+  "firm": 0,
+  "partial": 0,
+  "early": 0
+ },
+ "categories": [
+  {
+   "tag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "n": 8
+  },
+  {
+   "tag": "manufacturing-infra+access-distribution",
+   "n": 7
+  },
+  {
+   "tag": "next-gen-assets+manufacturing-infra",
+   "n": 7
+  },
+  {
+   "tag": "manufacturing-infra",
+   "n": 7
+  },
+  {
+   "tag": "incumbent-franchise+next-gen-assets+manufacturing-infra",
+   "n": 4
+  },
+  {
+   "tag": "next-gen-assets+manufacturing-infra+access-distribution",
+   "n": 4
+  },
+  {
+   "tag": "next-gen-assets",
+   "n": 3
+  },
+  {
+   "tag": "access-distribution",
+   "n": 2
+  },
+  {
+   "tag": "incumbent-franchise+manufacturing-infra+access-distribution",
+   "n": 2
+  }
+ ],
+ "names": [
+  {
+   "ticker": "A",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "10-K describes a specialty CDMO segment (BIOVECTRA plus nucleic acid solutions) whose disclosed capabilities include \"peptide purification\" alongside microbial fermentation, bioreagents and highly potent APIs, offering clinical-to-commercial scale production to pharmaceutical customers \u2014 peptide capability is disclosed but with no incretin/GLP-1 customer, capacity or revenue attribution.",
+   "accession": "0001090872-25-000087",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1090872/000109087225000087/0001090872-25-000087-index.htm",
+   "rationale": "BIOVECTRA is described by management as a specialty CDMO for siRNA, peptides and GLP-1s, and GLP-1 revenue grew over 70% YoY in FQ3-26 across both the CDMO and analytical-lab businesses; peptide API tonnage and QC column/instrument pull both scale with units and with the NUMBER of manufacturers, so fragmentation is additive rather than dilutive.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AHCO",
+   "substructureTag": "access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Resupply/one-time sale products (~63% of FY2025 net revenue) are itemized as PAP masks and supplies, continuous glucose monitors, diabetes management supplies, orthopedic bracing, wound care, HME accessories, incontinence supplies, 'medications', enteral supplies and other products \u2014 the 'medications' category is not broken out and no incretin/GLP-1 attribution is disclosed.",
+   "accession": "0001628280-26-011213",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1725255/000162828026011213/0001628280-26-011213-index.htm",
+   "rationale": "Corrected evidence confirms the read: 'medications' sits unbroken inside a resupply catalogue of PAP, CGM and HME products with no incretin attribution, and the Diabetes Health distribution business is being sold to Cardinal; nothing in the remaining P&L scales with treated GLP-1 patients.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALT",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Lead product candidate pemvidutide (formerly ALT-801) is a balanced 1:1 glucagon/GLP-1 dual receptor agonist in clinical development for MASH, alcohol use disorder (AUD) and alcohol-associated liver disease (ALD); the company describes itself as a late clinical-stage biopharmaceutical company developing novel therapies for serious liver diseases and states it is heavily dependent on pemvidutide's success.",
+   "accession": "0001326190-26-000018",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1326190/000132619026000018/0001326190-26-000018-index.htm",
+   "rationale": "Pemvidutide is a genuine 1:1 GLP-1/glucagon dual agonist and the company does still list obesity as an indication, but every funded trial sits elsewhere - Phase 3 in MASH now recruiting, RECLAIM Phase 2 in alcohol use disorder positive in July 2026, RESTORE in ALD enrolling - and the 48-week IMPACT weight loss of 7.5% reflects MASH-optimised dosing; the equity reprices on liver and addiction binaries, not on obesity treated volume.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMGN",
+   "substructureTag": "next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "MariTide (maridebart cafraglutide) is disclosed as a differentiated antibody-peptide conjugate that activates the GLP-1 receptor and antagonizes GIPR; in March 2025 Amgen initiated two global Phase 3 studies in chronic weight management (one in adults with obesity/overweight without Type 2 diabetes, one with Type 2 diabetes).",
+   "accession": "0000318154-26-000010",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000010/0000318154-26-000010-index.htm",
+   "rationale": "MariTide is a differentiated antibody-peptide conjugate (GLP-1 agonist / GIPR antagonist) delivering up to ~20% weight loss at 52 weeks in Phase 2 on monthly-or-less dosing, now in the Phase 3 MARITIME program; dosing-interval differentiation is exactly the axis the thesis says is underestimated, though there is no revenue before ~2028 and the base business dilutes it heavily.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMLX",
+   "substructureTag": "next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Lead investigational asset avexitide is described as a first-in-class GLP-1 receptor ANTAGONIST, designed to bind the GLP-1 receptor on pancreatic beta cells and inhibit the effect of GLP-1 to mitigate hypoglycemia; developed for post-bariatric hypoglycemia (PBH) and congenital hyperinsulinism, with FDA Breakthrough Therapy Designation in both, Rare Pediatric Disease Designation in Congenital HI, and Orphan Drug Designation for hyperinsulinemic hypoglycemia.",
+   "accession": "0001193125-26-086645",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1658551/000119312526086645/0001193125-26-086645-index.htm",
+   "rationale": "Phase 3 LUCIDITY read out positive on 18 August 2026 with a 55% reduction in composite Level 2 and 3 hypoglycaemic events (p=0.000003) and an NDA planned by year-end, but avexitide is a GLP-1 receptor ANTAGONIST and the enrolled population is strictly post-Roux-en-Y gastric bypass, so its addressable market is post-surgical rather than post-incretin; carries the keyword and none of the mechanism.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMPH",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company manufactures and sells certain APIs and cites market sizing for the U.S. injectable drug market (over $480 billion in 2025, with its generic/biosimilar portfolio targeting over $7 billion of it) and notes constrained injectable supply versus rising demand \u2014 generic injectable/API infrastructure framing with no incretin or GLP-1 capacity attribution.",
+   "accession": "0001297184-26-000009",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1297184/000129718426000009/0001297184-26-000009-index.htm",
+   "rationale": "Verdict stands but the corrected grade is still wrong: the same accession it quotes (0001297184-26-000009) discloses two GLP-1 APIs developed and manufactured at ANP with small-batch R&D sales begun and a GLP-1 ANDA guided to 2027 - real capability, immaterial in this window, so pass on materiality; the fact's 'no incretin attribution' claim is false against its own filing.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMRX",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Metsera, Inc. collaboration agreement (entered September 30, 2024) under which Amneal became Metsera's preferred global supply partner for Metsera's portfolio of weight loss medicines; Amneal is responsible for specified manufacturing and development activities and, following regulatory approval, will supply commercial products to Metsera at cost plus a margin plus tiered low single-digit percentages of Metsera's gross profit.",
+   "accession": "0001723128-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1723128/000172312826000011/0001723128-26-000011-index.htm",
+   "rationale": "Resolving the park to pass: the Metsera supply agreement, gross-profit share and $150-200m of committed India capex are real, but Metsera's programmes are unapproved with Pfizer's own timeline pointing to 2028, and the sole marketed incretin - generic exenatide - launched into a discontinued reference brand with no market to disrupt; zero incretin revenue exists in any near window, so this is an option on someone else's pipeline - re-engage on MET-097i pivotal data, approval, or first disclosed supply revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ATR",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Injectables accounted for approximately 19% of Pharma segment net sales in 2025; Pharma was approximately 46% of total Net Sales and 69% of Adjusted EBITDA excluding non-allocated corporate costs \u2014 a blended figure covering vaccines, anti-thrombotics, small molecules, GLP-1 and biologics, with no GLP-1 breakout.",
+   "accession": "0000896622-26-000007",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/896622/000089662226000007/0000896622-26-000007-index.htm",
+   "rationale": "Changing my ratify: the corrected 10-K mix quantifies what I could only estimate - Injectables was ~19% of Pharma segment sales and Pharma ~46% of group, so the division is ~9% of consolidated revenue, within which GLP-1 is blended across vaccines, anti-thrombotics, small molecules and biologics with no breakout; a genuine, named driver of a low-single-digit slice cannot move the consolidated equity, which is the same dilution logic that passed TMO - re-engage if Aptar ever splits GLP-1 out of Injectables.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BAX",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Baxter completed the sale of its BioPharma Solutions (BPS) contract manufacturing/sterile fill-finish business on September 29, 2023 for $3.96 billion in cash, reporting it as discontinued operations \u2014 i.e., the CDMO/fill-finish infrastructure leg has been divested and is no longer part of the company.",
+   "accession": "0001628280-26-007733",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/10456/000162828026007733/0001628280-26-007733-index.htm",
+   "rationale": "Corrected evidence strengthens the pass decisively: Baxter sold its BioPharma Solutions sterile fill-finish CDMO - the one business that could have carried GLP-1 exposure - in September 2023 for $3.96bn, and the 2026 calls contain no GLP-1, incretin or peptide reference; the relevant asset left the company before the window opened.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BDX",
+   "substructureTag": "incumbent-franchise+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "BD's Pharmaceutical Systems organizational unit (reorganized into a standalone \"BioPharma Systems\" segment effective October 1, 2025) supplies prefillable drug delivery systems \u2014 prefillable syringes, safety, shielding and self-injection systems plus combination-product testing and technical/regulatory support services \u2014 to pharmaceutical companies for use as containers for injectable pharmaceutical products marketed as drug/device combinations. No GLP-1/incretin customer, program, volume or revenue attribution is disclosed.",
+   "accession": "0000010795-25-000099",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/10795/000001079525000099/0000010795-25-000099-index.htm",
+   "rationale": "The FQ3-26 10-Q attributes BioPharma Systems growth directly to sales of GLP-1 delivery products, over 80 novel and biosimilar GLP-1 molecules are contracted on BD prefillable syringes and autoinjectors (up from ~40 in mid-2024), and $110m of Nebraska capex was committed by name to GLP-1; management notes biosimilar devices carry HIGHER ASPs than novel-molecule syringes, which makes fragmentation an explicit tailwind rather than a risk.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BHVN",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "10-K discloses that in Q4 2025 the company prioritized three key late-stage clinical programs, one of which is a myostatin-activin pathway targeting agent for neuromuscular and metabolic diseases, including obesity \u2014 i.e., a muscle-preserving asset positioned for the obesity/metabolic setting.",
+   "accession": "0001935979-26-000020",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1935979/000193597926000020/0001935979-26-000020-index.htm",
+   "rationale": "Resolving the park to pass: the Phase 2 is once-weekly and once-monthly taldefgrobep as MONOTHERAPY, the GLP-1 combination evidence is mouse-model only, and topline was still pending at the 10 August 2026 results - so no human obesity efficacy data exists and the maintenance-adjunct framing is preclinical; fails the same proof-of-concept line applied to PTGX, LXRX and SEPN - re-engage on the 2H-26 topline.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CAH",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "10-K states that with respect to GLP-1 medications, during fiscal 2026 the company experienced increased demand which positively impacted Pharma segment revenue and consolidated revenue; however, increased GLP-1 sales did not meaningfully contribute to segment profit.",
+   "accession": "0000721371-26-000038",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/721371/000072137126000038/0000721371-26-000038-index.htm",
+   "rationale": "The 10-K names GLP-1 demand as a driver of both Pharma segment and consolidated revenue, which is unambiguous exposure to treated volumes; ratified on an unsigned reading, with the same filing's statement that the increase did not meaningfully contribute to segment profit carried alongside it - the clearest case on the sheet of volume that reaches revenue but not earnings.",
+   "cohorts": []
+  },
+  {
+   "ticker": "COR",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Cencora describes itself as one of the largest global pharmaceutical sourcing and distribution companies, distributing brand-name, specialty brand-name, and generic pharmaceuticals (including injectable pharmaceuticals) to retail, mail order, clinic, health-system and other customers \u2014 the filing makes no attribution of any revenue or volume to GLP-1 / incretin products.",
+   "accession": "0001140859-25-000131",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1140859/000114085925000131/0001140859-25-000131-index.htm",
+   "rationale": "US Healthcare Solutions revenue growth is explicitly attributed to unit volume in GLP-1 diabetes and weight-loss products, so exposure to treated volumes is direct and disclosed; ratified on an unsigned reading, with the company's own statement that GLP-1 sales carry lower gross margins and partly offset OneOncology-driven margin expansion carried alongside it, since branded distributor economics track WAC and compress as manufacturer price falls.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ENTX",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "On July 26, 2026 the Company entered a Securities Purchase Agreement with institutional and accredited investors, including funds affiliated with BVF Partners L.P., for a private placement of 134,803,910 ordinary shares (or pre-funded warrants) at $2.04 per share for aggregate proceeds of approximately $275.0 million; the placement closed July 28, 2026 with 122,961,215 ordinary shares and 11,842,695 pre-funded warrants issued. No allocation of proceeds to any incretin program is disclosed in the filing text.",
+   "accession": "0001178913-26-003617",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1638097/000117891326003617/0001178913-26-003617-index.htm",
+   "rationale": "Corrected evidence confirms the read: the July 2026 $275m BVF-led placement discloses no allocation to any incretin programme, the oral GLP-1/glucagon asset (EB618, partnered with OPKO) remains preclinical with primate data only, and the company's own most advanced candidate is EB613 oral PTH(1-34) for osteoporosis.",
+   "cohorts": []
+  },
+  {
+   "ticker": "GPCR",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Lead product candidate aleniglipron (GSBR-1290) is an oral small molecule selective GLP-1 receptor agonist, the company's most advanced program; company describes itself as developing novel oral small molecule therapeutics targeting GPCRs to overcome the limitations of biologics and peptide therapies.",
+   "accession": "0001104659-26-020562",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1888886/000110465926020562/0001104659-26-020562-index.htm",
+   "rationale": "Aleniglipron delivered placebo-adjusted mean weight loss of 11.3% at 120mg in the core Phase 2b ACCESS study at 36 weeks and up to 15.3% at 240mg in exploratory ACCESS II, with 44-week ACCESS II results of -13.6%, -15.3% and -15.0% versus +1.1% placebo, no AE-related discontinuations at the 2.5mg starting titration, a Nature Medicine publication and Phase 3 starting Q3 2026 on $1.4bn of cash; a pure play on the oral leg, which is the exact mechanism through which treated volumes expand and incumbent pricing compresses.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HALO",
+   "substructureTag": "incumbent-franchise+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company develops, manufactures and commercializes drug-device combination products using advanced auto-injector technologies intended to improve convenience, reliability, tolerability, patient comfort and adherence \u2014 a device/auto-injector capability disclosed generically for injectables, with no incretin/GLP-1 attribution.",
+   "accession": "0001159036-26-000024",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1159036/000115903626000024/0001159036-26-000024-index.htm",
+   "rationale": "Corrected evidence describes generic auto-injector capability with no incretin attribution, and the only obesity linkage - the non-exclusive ENHANZE licence to Skye for nimacimab, a non-incretin CB1 antibody - has since gone dormant with Skye pausing nimacimab R&D; royalty economics remain oncology and immunology driven.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HIMS",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Hims & Hers describes its digital platform as enabling access to treatments for chronic conditions including weight loss, with prescriptions fulfilled online through its wholly-owned licensed pharmacies \u2014 i.e., a direct-to-patient telehealth/pharmacy fulfillment channel; the filing does not attribute any revenue to GLP-1/incretin products.",
+   "accession": "0001773751-26-000022",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1773751/000177375126000022/0001773751-26-000022-index.htm",
+   "rationale": "Resolving the park to ratify on fresh primary data: Q2-26 answered the question I parked - domestic revenue re-accelerated to +16% on the branded-GLP-1 pivot (group +38% to $753m, guidance raised to $3.1-3.3bn, 125k+ Wegovy shipments in six weeks, ~2.9m subscribers), so treated-volume growth is demonstrably accruing to the channel; carried alongside it, the structural costs - gross margin down from 76% to 64% on manufacturer-set pricing, negative free cash flow, and the 29 July FTC complaint - the same volume-rich, margin-thin profile on which the distributors were ratified.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KE",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company describes itself as providing contract development and manufacturing organization (CDMO) solutions including drug delivery devices and solutions, medical disposables, precision molded plastics, clean room (Class 7 and 8) assembly, cold chain management, sterilization management, and 'drug integration' \u2014 no GLP-1 or incretin product, customer, or volume is named or attributed.",
+   "accession": "0001606757-26-000032",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1606757/000160675726000032/0001606757-26-000032-index.htm",
+   "rationale": "Verified: automotive is 46% and industrial 24% of fiscal 2026 revenue against medical at 29-30%, with no GLP-1 or incretin attribution in any 2026 disclosure; the 1 July 2026 Helvoet acquisition ($103m for ~$56m of revenue) does add micro-moulding for drug delivery alongside microfluidics and diagnostics and is the one item here worth re-checking, but it is roughly 4% of pro-forma revenue with no incretin customer named.",
+   "cohorts": []
+  },
+  {
+   "ticker": "LGND",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Captisol is described as an infrastructure-light, royalty-generating formulation platform technology licensed to partners with associated material sales, but no incretin/GLP-1 formulation or peptide API/CDMO incretin use is disclosed.",
+   "accession": "0000886163-26-000006",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/886163/000088616326000006/0000886163-26-000006-index.htm",
+   "rationale": "Corrected evidence confirms the read: Captisol is a royalty-generating formulation platform with no disclosed incretin or peptide application, the royalty portfolio is led by Filspari, and the XOMA acquisition adds diversification without incretin participation.",
+   "cohorts": []
+  },
+  {
+   "ticker": "LLY",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Lilly markets Mounjaro (tirzepatide), described as a glucose-dependent insulinotropic polypeptide (GIP) and GLP-1 receptor agonist, approved for adults with type 2 diabetes \u2014 a marketed incretin franchise in the Cardiometabolic Health portfolio (volume-tailwind side of the incumbent franchise).",
+   "accession": "0000059478-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000013/0000059478-26-000013-index.htm",
+   "rationale": "Holds both sides of the second-growth-phase mechanism: the incumbent tirzepatide franchise plus Foundayo (orforglipron), approved April 2026 and launched through LillyDirect at $149 self-pay, $25 commercial and $50 Medicare Part D, with retatrutide behind it; a scalable small-molecule oral priced deliberately for access is the single largest volume-expansion instrument in the category, so Lilly is running the price-for-volume trade rather than being run over by it.",
+   "cohorts": []
+  },
+  {
+   "ticker": "LXRX",
+   "substructureTag": "next-gen-assets",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "LX9851, an orally-delivered small molecule drug candidate developed as a treatment for obesity and associated cardiometabolic disorders, has been exclusively licensed worldwide (royalty-bearing) to Novo Nordisk to develop, manufacture and commercialize; Lexicon completed preclinical development in preparation for IND filing and commencement of clinical development by Novo Nordisk.",
+   "accession": "0001062822-26-000050",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1062822/000106282226000050/0001062822-26-000050-index.htm",
+   "rationale": "Correcting the record: LX9851 is a first-in-class NON-incretin oral ACSL5 inhibitor, Novo Nordisk initiated a Phase 1 single and multiple ascending dose study in overweight and obese people in March 2026, and the economics are disclosed - $45m received to date, two $10m milestones in 2026, up to $950m remaining plus tiered royalties; preclinical data showing enhanced weight loss alongside semaglutide and reduced post-treatment regain puts it on the maintenance leg, but with no human efficacy data it fails the proof-of-concept line and the equity is driven by sotagliflozin and pilavapadin.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MBX",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company announced an 'Obesity Portfolio Update' on May 11, 2026, including initial Phase 1 clinical data for MBX 4291 supporting potential for once-monthly dosing, plus nomination of additional obesity candidates; hosted an 'Obesity Day' investor event on its expanding obesity portfolio of products.",
+   "accession": "0001193125-26-215676",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1776111/000119312526215676/0001193125-26-215676-index.htm",
+   "rationale": "Reversing my ratify: the May 2026 Phase 1 readout for MBX 4291 was initial BLINDED data supporting dosing interval, not a treatment-versus-placebo efficacy comparison, so it does not clear the human proof-of-concept line I applied to PTGX, LXRX and SEPN; the qualifying 12-week MAD readout is due Q4 2026 and the most advanced asset remains canvuparatide in hypoparathyroidism, now in Phase 3.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MCK",
+   "substructureTag": "access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "North American Pharmaceutical segment distributes branded, generic, specialty, biosimilar and OTC pharmaceutical drugs to customers in the U.S. and Canada through a network of 27 U.S. distribution centers, including two strategic redistribution centers; no GLP-1/incretin product, volume, or revenue attribution is disclosed anywhere in the filing stream.",
+   "accession": "0000927653-26-000069",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/927653/000092765326000069/0000927653-26-000069-index.htm",
+   "rationale": "Roughly $15bn of GLP-1 distribution revenue in a single quarter, up 24% year over year and 13% sequentially, is the largest disclosed dollar exposure to treated volumes anywhere on the sheet; ratified on an unsigned reading, while noting the category is margin-dilutive and that the cash-pay and manufacturer-DTC shift pressures the high-margin Prescription Technology Solutions business.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MLAB",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Biopharmaceutical Development division develops, manufactures, sells and services peptide synthesis solutions that automate chemical synthesis of peptides from amino acids, used in peptide-based therapeutics; the segment also sells related consumables and service/support agreements. No GLP-1/incretin customer, program, or revenue attribution is disclosed.",
+   "accession": "0000724004-26-000047",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/724004/000072400426000047/0000724004-26-000047-index.htm",
+   "rationale": "Gyros peptide synthesisers serve discovery and development-scale synthesis, not the commercial-scale SPPS that produces incretin API, and no GLP-1 customer or revenue is attributed; Biopharmaceutical Development is one of four divisions of a sub-$1bn-cap company, so even a favourable read would not move the equity.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRK",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "\"Other revenues\" of $515 million in 2025 are described as primarily miscellaneous corporate revenues including revenue hedging and revenue from third-party manufacturing arrangements \u2014 third-party manufacturing is disclosed only generically, with no incretin/peptide fill-finish or API attribution.",
+   "accession": "0000310158-26-000063",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/310158/000031015826000063/0000310158-26-000063-index.htm",
+   "rationale": "Corrected evidence is generic third-party manufacturing with no peptide attribution, but the fuller filing picture holds the verdict either way: the Januvia/Janumet DPP-4 franchise sits on the losing side of incretin substitution and the sole incretin asset, MK-4082 (licensed HS-10535), is in Phase 1 safety and PK only with no human obesity efficacy data.",
+   "cohorts": []
+  },
+  {
+   "ticker": "NVO",
+   "substructureTag": "next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company discloses owned manufacturing footprint for diabetes and biopharmaceutical products, with main production facilities in Denmark and the United States (North Carolina and Indiana), plus sites in Koriyama, Japan and Tianjin, China \u2014 internal manufacturing infrastructure, but no incretin/GLP-1 capacity, fill-finish or device volumes are attributed to these sites in the supplied text.",
+   "accession": "0000353278-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/353278/000035327826000012/0000353278-26-000012-index.htm",
+   "rationale": "Resolving the park to ratify: the latest primary print shows the volume-to-revenue linkage intact and positive - Q2-26 adjusted sales +7% CER with volume now outweighing price, obesity care +16% CER, guidance raised twice, 5m+ cumulative US Wegovy pill prescriptions with ~80% of pill patients treatment-naive - which is the same standard that ratified the distributors; carried alongside it, the price side is severe and dated ($675 US list from 1 January 2027, Medicare at $274, generics live in Brazil and Canada, CagriSema non-superior to tirzepatide), so the position is volume-winner-at-compressed-price, with the September 2026 Capital Markets Day and the 2027 list reset as the tests that could break the linkage.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OMDA",
+   "substructureTag": "next-gen-assets",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Omada launched a GLP-1 Care Track in 2023, embedded in its cardiometabolic programs, to support members on GLP-1 therapy before, during and after treatment; over 150,000 members across its programs had used GLP-1s as of December 31, 2025.",
+   "accession": "0001628280-26-015637",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1611115/000162828026015637/0001628280-26-015637-index.htm",
+   "rationale": "GLP-1 Care Track plus GLP-1 Flex Care sit on relationships with all three leading PBMs (~80% of prescription claims), an Optum Rx Weight Engage listing and Lilly Employer Connect integration, with revenue up 42% in Q1-26 and FY26 guidance raised to $334-340m; the wrapper is paid per member and is indifferent to the drug's price, and its stated opportunity is the ~55% of large employers not yet covering GLP-1s - the access-expansion leg monetised directly.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OPK",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "EirGen Pharma Limited holds a royalty interest in mazdutide (a GLP-1/glucagon dual agonist incretin asset) under a license agreement with Eli Lilly and Company dated February 25, 2010, for which EirGen receives royalty payments on sales of mazdutide in China ('Mazdutide Payments'). That royalty interest was pledged as collateral securing the Company's senior secured notes.",
+   "accession": "0001193125-26-352370",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/944809/000119312526352370/0001193125-26-352370-index.htm",
+   "rationale": "Resolving the park to pass: the 3% worldwide mazdutide royalty is genuine and unit-linked, but China sales began only in Q3-25, the near-window royalty run-rate is single-digit millions against a roughly $1bn market cap, and the August 2026 HCRx notes pledge the stream with mazdutide payments capped at $187.5m - the equity's P&L remains diagnostics-driven, so the exposure is real and immaterial in this window; re-engage on a disclosed mazdutide royalty run-rate or note amortisation.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PFE",
+   "substructureTag": "next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Consolidated results disclosed with no GLP-1/incretin line: Q2 2026 total revenues $15,034 million (vs $14,653 million) and six-month revenues $29,484 million; R&D expense rose to $2,809 million in the quarter and $5,299 million YTD, and acquired IPR&D expense was $153 million YTD 2026 vs $11 million \u2014 none of which is broken out to any obesity/incretin program.",
+   "accession": "0000078003-26-000095",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/78003/000007800326000095/0000078003-26-000095-index.htm",
+   "rationale": "The Metsera acquisition closed 13 November 2025 at $47.50 per share cash for an initial enterprise value of $4.9bn plus a CVR of up to $22.50 per share, bringing four differentiated clinical-stage programmes including MET-097i monthly GLP-1 and MET-233i monthly amylin plus oral candidates, with the February 2026 Sciwind deal adding China commercialisation rights to ecnoglutide; the largest single transfer of next-generation obesity assets in the set, paired with in-house manufacturing scale - offset by heavy dilution in a $60bn+ revenue base and management's own 2028 market timeline.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PODD",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "FDA clearance in August 2024 for an expanded Omnipod 5 indication for people with type 2 diabetes (adults 18+) in the U.S., addressing an estimated ~6 million insulin-requiring type 2 patients plus ~3 million U.S. basal-only type 2 patients in served countries \u2014 the type 2 population overlaps the incretin-treated population, but the filing discloses no GLP-1 co-therapy economics, attach rate, or incretin-linked volume.",
+   "accession": "0001145197-26-000028",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1145197/000114519726000028/0001145197-26-000028-index.htm",
+   "rationale": "The corrected fact raises the right question and answers it: the expanded Omnipod 5 type 2 indication overlaps the incretin-treated population, but the filing discloses no GLP-1 co-therapy economics, attach rate or incretin-linked volume - pump adoption is driven by insulin dependence, which incretins if anything defer, so the overlap is demographic, not economic.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PTGX",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Obesity program: in June 2025 the company nominated PN-477, described as a potential best-in-class novel triple GLP-1/GIP/GCG receptor agonist peptide with both oral (PN-477o) and subcutaneous (PN-477sc) routes, as a development candidate for obesity; designed for total body weight loss, improved GI tolerability and improved fat-to-lean mass ratio with once-daily oral dosing and once-weekly SC optionality. IND-enabling studies are underway, with Phase 1 initiation anticipated by mid-2026 (PN-477sc) and 2H 2026 (PN-477o).",
+   "accession": "0001104659-26-019696",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1377121/000110465926019696/0001104659-26-019696-index.htm",
+   "rationale": "PN-477 is a credible triple GLP-1/GIP/GCG agonist with both oral and subcutaneous routes, but it is still in IND-enabling studies with Phase 1 only beginning mid-to-late 2026 and no human data, while the equity is driven by icotrokinra and rusfertide; the closest of the preclinical names to graduating - re-check on Phase 1 initiation.",
+   "cohorts": []
+  },
+  {
+   "ticker": "RGEN",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company operates 19 manufacturing sites (US plus Estonia, France, Germany, Ireland, the Netherlands, Sweden, Taiwan) supplying consumables and systems (filtration, fluid management, pre-packed chromatography columns) into biologics production; capacity investments are described generically for biologics, with no disclosed incretin/peptide capacity or customer attribution.",
+   "accession": "0001193125-26-076528",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/730272/000119312526076528/0001193125-26-076528-index.htm",
+   "rationale": "Corrected evidence confirms the read: nineteen sites supplying filtration, fluid management and chromatography into biologics production, with capacity investment described generically for biologics and no incretin or peptide capacity or customer disclosed - consistent with the 2026 calls, where growth is Proteins, Process Analytics and new modalities, none of them peptides.",
+   "cohorts": []
+  },
+  {
+   "ticker": "RPRX",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "2025 Portfolio Receipts of $3.3 billion, $2.6 billion of Capital Deployment and $4.7 billion of announced transaction potential value are disclosed in aggregate, with no line item or breakout attributable to incretin/GLP-1 products.",
+   "accession": "0001802768-26-000003",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1802768/000180276826000003/0001802768-26-000003-index.htm",
+   "rationale": "Corrected evidence shows $3.3bn of 2025 Portfolio Receipts with no incretin line item; the one GLP-1-linked stream that does exist - the Soliqua and Lyxumia lixisenatide royalties bought from Zealand for $205m - is a first-generation prandial GLP-1 in run-off that shrinks as modern incretins take share, so exposure exists, is immaterial, and points the wrong way.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SEPN",
+   "substructureTag": "next-gen-assets",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "10-K forward-looking statements disclose a partnership with Novo Nordisk A/S for potential oral small molecule therapies for metabolic-related diseases, including targeting the GLP-1, GIP and glucagon receptors, to address unmet need in obesity and type 2 diabetes; the Company describes potential milestone payments and royalty payments from commercial product sales, along with tiered royalties based on global net sales, if any.",
+   "accession": "0001193125-26-098507",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1984086/000119312526098507/0001193125-26-098507-index.htm",
+   "rationale": "The Novo collaboration is more substantive than first credited - $195m upfront received, $26.7m of collaboration revenue recognised in Q2 2026, Novo funding all R&D across five GPCR targets including GLP-1, GIP and glucagon, with roughly $498m of per-programme milestones plus tiered royalties - but every incretin programme sits at discovery stage with Novo taking over only from IND-enabling, and Septerna's own lead is SEP-479 in hypoparathyroidism; the payments are indexed to research progress, not to treated volumes.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SGMT",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "In the Phase 2b FASCINATE-2 trial in 168 biopsy-confirmed MASH patients, a prespecified subgroup analysis showed statistically significant fibrosis improvement by 1 stage with no worsening of MASH in patients on a stable background dose of a GLP-1 receptor agonist (denifanstat 42% vs. placebo 0%, p=0.034) \u2014 disclosed clinical data on denifanstat used on top of GLP-1 therapy.",
+   "accession": "0001104659-26-026140",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1400118/000110465926026140/0001104659-26-026140-index.htm",
+   "rationale": "The company has itself stepped back from the linkage: its April 2026 strategic update states no further MASH clinical development until non-dilutive financing is secured, and the registrational Phase 3 now planned for 2H 2026 is in moderate-to-severe acne; the GLP-1 tie remains a prespecified subgroup of the completed FASCINATE-2 Phase 2b (42% vs 0%, p=0.034) with no active combination programme behind it.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SHC",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company describes itself as a global provider of outsourced terminal sterilization, lab testing and advisory services; in 2025 customers included over 40 of the top 50 medical device companies and nine of the top ten global pharmaceutical companies. No GLP-1 or incretin customer, product or revenue attribution is disclosed.",
+   "accession": "0001822479-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1822479/000182247926000015/0001822479-26-000015-index.htm",
+   "rationale": "Verified across the Q1 and Q2 2026 calls: no GLP-1 or incretin reference, with Sterigenics growth driven by 4.5% and 4.3% pricing plus volume/mix and Nordion by cobalt-60 harvest timing; the customer base is weighted to medical devices and the growth algorithm is price-led, which is the inverse of the unit-led economics this thesis rewards.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SRRK",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company completed the Phase 2 EMBRAZE study of apitegromab (anti-myostatin monoclonal antibody), which it says demonstrated proof-of-concept in apitegromab's ability to drive statistically significant preservation of lean mass during tirzepatide-induced weight loss \u2014 i.e., a muscle-preserving asset studied in combination with a named incretin agent.",
+   "accession": "0001104659-26-022551",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1727196/000110465926022551/0001104659-26-022551-index.htm",
+   "rationale": "Reversing my ratify: EMBRAZE did prove lean-mass preservation on tirzepatide background (85% fat / 15% lean versus 70% / 30% on placebo, n=102), but Scholar Rock is now seeking a partner for obesity and no longer funds it as a core programme, leaving apitegromab's value in SMA; I flagged that dilution in my own rationale and then ratified anyway, which was inconsistent.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TMO",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Pharma services business (Patheon) is disclosed as providing \"the entire spectrum of development, manufacturing and clinical trials services for both small-molecule and large-molecule pharmaceuticals\" \u2014 i.e., CDMO/commercial drug manufacturing capacity serving pharma/biotech customers, with no GLP-1/incretin or peptide-specific attribution disclosed.",
+   "accession": "0000097745-26-000018",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/97745/000009774526000018/0000097745-26-000018-index.htm",
+   "rationale": "Exposure is real - a $420m peptide API investment across Greenville and Ferentino announced March 2026, explicitly GLP-1-driven, on top of the largest fill-finish CDMO network - but it is a slice of a slice of a roughly $45bn revenue base with no peptide or GLP-1 revenue ever disclosed, in contrast to Agilent, Waters, West, BD and Aptar which all quantify it; this is a dilution call, not a denial - override if segment-level sizing shows otherwise.",
+   "cohorts": []
+  },
+  {
+   "ticker": "UFPT",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "The Company describes itself as a CDMO serving top medical device manufacturers, with targeted product segments that include 'therapeutics' and 'biopharma,' and lists 'biopharma drug manufacturing' among examples of its custom medical products \u2014 no incretin/GLP-1 attribution disclosed.",
+   "accession": "0001628280-26-012816",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/914156/000162828026012816/0001628280-26-012816-index.htm",
+   "rationale": "Verified across the Q1 and Q2 2026 calls: growth is attributed to robotic surgery, patient surfaces, interventional and surgical, cardiovascular, infection prevention and orthopaedics, with no GLP-1, injectable or drug-delivery attribution anywhere and a deliberate exit from automotive; a MedTech component CDMO whose units do not scale with incretin doses dispensed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VKTX",
+   "substructureTag": "next-gen-assets+manufacturing-infra",
+   "driverTie": "driver-specific",
+   "grade": "binding-contracts-with-terms",
+   "basis": "none",
+   "gradeFact": "March 2025 broad, multi-year Manufacturing Agreements with Corden Pharma Colorado, Inc. and affiliates (CordenPharma) covering both API and final finished product supply for VK2735, securing dedicated capacity for annual manufacture and supply of multiple metric tons of VK2735 API.",
+   "accession": "0001193125-26-046876",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1607678/000119312526046876/0001193125-26-046876-index.htm",
+   "rationale": "Corrected evidence upgrades the case from pipeline to secured supply: March 2025 multi-year manufacturing agreements with CordenPharma cover both API and finished product for VK2735, with dedicated capacity for multiple metric tons of API annually - binding contracts sitting under a wholly-owned dual GLP-1/GIP agonist with 13.1% placebo-adjusted Phase 2 weight loss at 13 weeks, both Phase 3 VANQUISH trials enrolled, maintenance data due Q3-26 and the oral Phase 3 starting Q4-26.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VTRS",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Company discloses global generic/off-patent manufacturing and supply-chain infrastructure \u2014 27 manufacturing, packaging and distribution sites and API capability referenced in the glossary (API defined as active pharmaceutical ingredients) \u2014 but with no disclosed peptide/incretin API, fill-finish or device capacity or incretin customer linkage.",
+   "accession": "0001792044-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1792044/000179204426000013/0001792044-26-000013-index.htm",
+   "rationale": "Resolving the park to pass: the first-to-file semaglutide position is real - ANDAs on Ozempic and Wegovy, the October 2024 Novo settlement, the July 2025 Delaware win - but the Viatris generic still lacks FDA approval, Apotex just took the first tentative approval on generic Ozempic, the settlement entry date is undisclosed, and the US launch consensus remains 2031-33; a genuine option with an undated clock and zero in-window economics - re-engage on Viatris ANDA approval, settlement-date disclosure, or a litigation outcome that pulls entry forward.",
+   "cohorts": []
+  },
+  {
+   "ticker": "WAT",
+   "substructureTag": "manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Q2 FY2026 total net revenues of $1,645 million (product $1,220M, service $425M) and six-month revenues of $2,912M are reported on a blended basis with no breakout of any GLP-1/incretin-related end-market revenue.",
+   "accession": "0001193125-26-344691",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1000697/000119312526344691/0001193125-26-344691-index.htm",
+   "rationale": "Confirming the ratify with the corrected grade in view: the 10-Q indeed reports revenue on a blended basis with no GLP-1 breakout, but the ratify was never built on the filing - the Q2-26 earnings call disclosed GLP-1 testing revenue growing over 40% with the Americas over 30%, Europe over 36% and India nearly doubling, alongside BioResolve Peptide columns purpose-built for GLP-1 impurity work; a GLP-1-specific growth attribution in the company's own reporting clears the bar, and the India signal is the fragmentation leg made visible.",
+   "cohorts": []
+  },
+  {
+   "ticker": "WST",
+   "substructureTag": "manufacturing-infra+access-distribution",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "West describes itself as a leading global manufacturer of integrated containment and delivery systems for injectable drugs \u2014 elastomer stoppers/seals, syringe and cartridge components, vials, plungers, self-injection devices for at-home delivery of injectable therapies \u2014 sold to biologic, generic and pharmaceutical drug customers. No incretin/GLP-1 attribution is disclosed anywhere in the filing text supplied.",
+   "accession": "0000105770-26-000010",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/105770/000010577026000010/0000105770-26-000010-index.htm",
+   "rationale": "GLP-1 is 18% of net sales (10% elastomer, 8% West Vantage), GLP-1 HVP components are growing high-teens, capex is explicitly aligned to it, and management is already supplying the generic GLP-1 rollout in Asia off existing stoppers and plungers while calling orals market-expanding rather than cannibalistic; per-component economics are indifferent to what the drug sells for and every new entrant is an additional customer - the purest expression of volume-times-fragmentation on the sheet.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ZTS",
+   "substructureTag": "incumbent-franchise+next-gen-assets+manufacturing-infra",
+   "driverTie": "indirect",
+   "grade": "committed-capacity-or-capex",
+   "basis": "none",
+   "gradeFact": "Contract manufacturing (Client Supply Services, providing contract manufacturing services to third parties) together with human health products represented approximately 1% of total 2025 revenue; no counterparty, molecule class, peptide API or fill-finish capacity is identified, and no incretin/GLP-1 attribution is disclosed.",
+   "accession": "0001555280-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1555280/000155528026000011/0001555280-26-000011-index.htm",
+   "rationale": "Corrected evidence confirms the read: contract manufacturing plus human health is roughly 1% of revenue with no counterparty or molecule class identified, and the companion-animal obesity pipeline mention carries no named GLP-1 asset in a separate out-of-pocket market with no linkage to human incretin volumes.",
+   "cohorts": []
+  }
+ ],
+ "watchlist": [],
+ "avoidControls": [],
+ "realTier": [],
+ "forward": {
+  "cohorts": {
+   "buy": 15,
+   "naive": 44,
+   "passed": 29,
+   "watchlist": 0,
+   "avoidControls": 0,
+   "realTier": 0
+  },
+  "undefinedMeasures": [
+   [
+    "RATIFIED-PASSED (\u00a73a, the core edge-measure)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED-NAIVE(equal-weight) (\u00a73b-i)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED vs keyword/co-movement screen (\u00a73b-ii, deferred)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ]
+  ],
+  "diagnostics": [
+   {
+    "name": "avoid-discipline",
+    "status": "PENDING",
+    "confound": "glp1-drug-value-chain-BETA-CONFOUNDED + regime-dependent \u2014 was declining to buy the committed tier costly or vindicated in THIS window? Largely a glp1-drug-value-chain-beta bet, NOT selection skill.",
+    "note": "0 days forward from freeze \u2014 accrues over calendar time."
+   },
+   {
+    "name": "exposure-carry",
+    "status": "PENDING",
+    "confound": "PARTIALLY beta-controlled \u2014 both cohorts are glp1-drug-value-chain-labelled so the common glp1-drug-value-chain-beta largely cancels in the divergence; isolates whether the exposure GRADE (real vs not) carries forward info. The more informative of the two \u2014 still NOT an edge verdict.",
+    "note": "genuine-exposure (watchlist) vs other-PASSED divergence; pending forward."
+   }
+  ],
+  "honestyLabel": "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation of the semantic-primary edge.",
+  "powerNote": "UNPOWERED \u2014 DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters across >=4 drivers, sign-consistent). A forward-directional read, never a significance test."
+ },
+ "firstTest": "2026-11-30"
+}
