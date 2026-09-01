@@ -8704,12 +8704,36 @@ def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
         result=Result(per_scenario={"base": ScenarioOutcome(value_per_share=12.0)}))
 
     lines = dr._scenario_table_lines(card)
+    head = next(x for x in lines if x.startswith("| scenario |"))
     row = next(x for x in lines if x.startswith("| base |"))
     cells = [c.strip() for c in row.strip("|").split("|")]
+    # NO LEG CARRIES A MARGIN, SO THERE IS NO MARGIN COLUMN (2026-09-01). The em-dash was the
+    # right answer while the column was unconditional; dropping it satisfies the same intent more
+    # strongly — nothing to format, nothing to fabricate — and it makes the md agree with the
+    # card, whose `onRevenueBasis` already suppressed the op-margin row for a revenue-basis
+    # record. cells: scenario · revenue · multiple · value/sh · vs spot
+    assert "margin" not in head, f"no leg has a margin, so no margin column: {head!r}"
+    # the DRIVER cells only — the trailing vs-spot column is a percentage by design
+    assert not [c for c in cells[1:4] if "%" in c], "never a fabricated 0.0% margin"
+    assert cells[1] == "500" and cells[2] == "2.5x" and cells[3] == "$12.00"
+
+    # ...AND THE EM-DASH STILL GUARDS THE MIXED CASE, which is the one the column can actually be
+    # present for: one leg states a margin and another does not, so the column stays and the
+    # absence must render rather than raise. Same real model, two legs.
+    mixed = card.model_copy(update={"scenarios": {
+        "base": card.scenarios["base"],
+        "bull": ScenarioInput(revenue=600.0, margin=0.18, multiple=2.5, years_to_terminal=2.0,
+                              margin_basis="EBIT", reason="margin-basis leg")}})
+    mixed = mixed.model_copy(update={"result": Result(per_scenario={
+        "base": ScenarioOutcome(value_per_share=12.0),
+        "bull": ScenarioOutcome(value_per_share=15.0)})})
+    m_lines = dr._scenario_table_lines(mixed)
+    assert "margin" in next(x for x in m_lines if x.startswith("| scenario |"))
+    m_cells = [c.strip() for c in
+               next(x for x in m_lines if x.startswith("| base |")).strip("|").split("|")]
     # cells: scenario · revenue · margin · multiple · value/sh · vs spot
-    assert cells[2] == "—", f"absent margin must render as an em-dash, got {cells[2]!r}"
-    assert "%" not in cells[2]  # never a fabricated 0.0% margin
-    assert cells[1] == "500" and cells[3] == "2.5x" and cells[4] == "$12.00"
+    assert m_cells[2] == "—", f"absent margin must render as an em-dash, got {m_cells[2]!r}"
+    assert "%" not in m_cells[2]
 
 
 def test_assembly_writes_no_synthesis_less_dossier_over_a_good_one_undetected() -> None:
@@ -9891,6 +9915,7 @@ def test_assumption_methodology_renders_in_both_twins_e2e() -> None:
     if pend is None:
         pytest.skip("no record is pending_analyst — the undecided branch has no live exemplar")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    rendered_any = 0
     for t in names:                              # EVERY record, not just the first
         driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -9918,8 +9943,21 @@ console.log(JSON.stringify({{
         web = json.loads(out.stdout)
         assert web["inAppendix"], f"{t}: web lost the methodology section from the appendix"
         assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
-        # `and web["sources"]` — all([]) is vacuously true, so an empty list must not pass
-        assert web["sources"] and all(web["sources"]), f"{t}: web dropped a source"
+        # COUNTED AGAINST THE RECORD, not required to be non-empty (2026-09-01). `all([])` is
+        # vacuously true, so the old form demanded >=1 source to stop a renderer that dropped
+        # every one of them from passing — right guard, wrong bound: it also demanded that every
+        # record HAVE a source, which was a fact about the corpus. GOOGL's R3 record carries none
+        # because no committed statistic anchors a forward P/E, so the vacuous case is now real.
+        # Pinning the COUNT to the record answers the original concern exactly: drop a source in
+        # the renderer and the count falls short, whatever the record holds.
+        want = sum(len(a.references or []) for a in
+                   (_read_scenario_card(t).assumptions or {}).values())
+        assert len(web["sources"]) == want and all(web["sources"]), (
+            f"{t}: web rendered {sum(web['sources'])} of the record's {want} sources")
+        rendered_any += sum(web["sources"])
+    # ...AND THE CORPUS MUST STILL EXERCISE THE NON-EMPTY BRANCH, or every per-name check above is
+    # vacuous together. This is the assertion the old `web["sources"] and ...` was really making.
+    assert rendered_any, "no committed record rendered a single source — the check is inert"
 
 def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
     """P5 pt1 IN THE EXHIBIT — the half item 20 left open, found on the DEPLOYED page.

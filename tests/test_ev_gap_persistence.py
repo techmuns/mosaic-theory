@@ -228,3 +228,29 @@ def test_no_leg_and_no_consensus_says_so_rather_than_naming_only_one() -> None:
                      tev_as_of=None, consensus_as_of=None)
     assert g["status"] == "not-computed"
     assert "neither side of the comparison exists" in g["reason"]
+
+
+def test_a_forward_pe_leg_is_refused_with_a_reason_rather_than_crashing() -> None:
+    """REVIEW FIX (R3). `our_ebitda` is revenue × margin; a forward-P/E leg values a share as
+    EPS × multiple and carries NEITHER, so `total_gap`'s `float(leg["revenue"])` reached
+    `float(None)` and raised TypeError — unhandled inside `ev_gap_transform`, which would take
+    down `refresh_dossier` for the whole name. It is masked on GOOGL today only because that
+    record states no `diluted_shares` and is refused one line earlier; a share count on any R3
+    record un-masks it. Every other missing input here yields a stated `not-computed`, and so
+    must this one.
+    """
+    from vinci.dossier.refresh import _base_leg
+
+    r3 = {**R2_LEG, "revenue": None, "margin": None, "multiple_basis": "P/E"}
+    g = build_ev_gap(None, r3, tev=1500.0, net_debt=200.0, shares=50.0,
+                     tev_as_of=None, consensus_as_of=None)
+    assert g["status"] == "not-computed"
+    assert "no revenue and margin" in g["reason"], g["reason"]
+    # NOT A SYNTHETIC SHAPE: the committed R3 record really produces it through the same reader
+    # `ev_gap_transform` uses. (Skipped if the record is not committed on this checkout.)
+    leg = _base_leg("GOOGL")
+    if leg is not None:
+        assert leg["revenue"] is None and leg["margin"] is None, leg
+        live = build_ev_gap(None, leg, tev=1500.0, net_debt=200.0, shares=50.0,
+                            tev_as_of=None, consensus_as_of=None)
+        assert live["status"] == "not-computed" and "no revenue and margin" in live["reason"]

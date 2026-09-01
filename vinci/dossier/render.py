@@ -2960,6 +2960,14 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     spot = card.spot
     rows: list[str] = []
     any_eps = any(x.eps is not None for x in card.scenarios.values())
+    # ...AND THE COLUMNS THEMSELVES GO, not just their cells (2026-09-01). The `—` treatment below
+    # was the right call for an R2 leg that omits ONE driver inside an otherwise-full table; it is
+    # the wrong one for R3, where NEITHER revenue nor margin exists and the row read
+    # "| — | $15.388 | — | 20.5x |" — two empty columns flanking the only number that produced the
+    # value. Same rule as the EPS column and the card's leg rows: a column appears when the record
+    # carries its number. R1/R2 legs always carry both, so their tables stay byte-identical.
+    any_rev = any(x.revenue is not None for x in card.scenarios.values())
+    any_marg = any(x.margin is not None for x in card.scenarios.values())
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         p = per.get(nm)
@@ -2975,9 +2983,10 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
         # share as EPS × multiple and carries no revenue at all, so the first cut printed
         # "$0M revenue → $397.41/share" — a fabricated driver next to a real value. The EPS column
         # appears only when some leg has one, so R1/R2 tables stay byte-identical.
-        rev = "—" if s.revenue is None else f"{s.revenue:,.0f}"
+        rev_cell = (f" {'—' if s.revenue is None else f'{s.revenue:,.0f}'} |") if any_rev else ""
+        marg_cell = f" {marg} |" if any_marg else ""
         eps_cell = (f" {'—' if s.eps is None else f'${s.eps:,.3f}'} |") if any_eps else ""
-        rows.append(f"| {nm} | {rev} |{eps_cell} {marg} | {s.multiple:g}x | "
+        rows.append(f"| {nm} |{rev_cell}{eps_cell}{marg_cell} {s.multiple:g}x | "
                     f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
     if not rows:
         return []
@@ -2985,11 +2994,13 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     # leads this page — so the header names the BASIS. It deliberately does NOT carry
     # `underwrite_date`: that is the freeze date, not the date the price was struck, and stamping
     # it here would assert a vintage the record cannot support (see `_underwrite_lines`).
+    rev_head, rev_rule = (" revenue $M |", " ---: |") if any_rev else ("", "")
     eps_head, eps_rule = (" EPS |", " ---: |") if any_eps else ("", "")
+    marg_head, marg_rule = (" margin |", " ---: |") if any_marg else ("", "")
     out = [f"_{card.recipe_desc}_", "",
-           f"| scenario | revenue $M |{eps_head} margin | multiple | value / sh | "
+           f"| scenario |{rev_head}{eps_head}{marg_head} multiple | value / sh | "
            "vs entry-vintage spot |",
-           f"| --- | ---: |{eps_rule} ---: | ---: | ---: | ---: |", *rows, ""]
+           f"| --- |{rev_rule}{eps_rule}{marg_rule} ---: | ---: | ---: |", *rows, ""]
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is not None and s.reason:

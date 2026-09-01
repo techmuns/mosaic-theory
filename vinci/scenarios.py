@@ -178,7 +178,14 @@ LADDER_FIELDS: tuple[str, ...] = (
 #: materialise, and absent-key and None say one thing — *this record is not a P/E underwrite*. A
 #: null on an R1 record would assert the opposite, that someone looked for an EPS and found none.
 #: Dropping it keeps all eight committed records byte-identical, and an R3 leg carries its value.
-LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps")
+#: `revenue`/`margin` (2026-09-01, R3) join for the mirror of the `eps` argument. On an R1 or R2
+#: record they are the underwrite and are never None, so the drop never fires and all eight
+#: committed records stay byte-identical — verified against the corpus, not assumed. On an R3
+#: record they are the axes the arithmetic does not use, and a null there asserts something false:
+#: that someone looked for a revenue and found none. Absent is the true statement.
+#: NOT `margin_basis`/`bear_basis`, which ARE null across the committed corpus today — adding
+#: those would churn every record the mechanism exists to leave alone.
+LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "revenue", "margin")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence

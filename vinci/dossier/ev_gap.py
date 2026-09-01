@@ -583,6 +583,17 @@ def build_ev_gap(
     if shares <= 0:
         return nope(f"share count is {shares:g} — not a usable denominator, so no per-share "
                     "bridge can be struck (present, but not positive)")
+    # A LEG THAT CARRIES NO REVENUE OR MARGIN HAS NO OUR-SIDE HERE (2026-09-01, R3). `our_ebitda`
+    # is revenue × margin; a forward-P/E leg values a share as EPS × multiple and holds neither,
+    # so `total_gap` reaches `float(None)` and raises TypeError — an unhandled crash inside
+    # `ev_gap_transform`, taking down the whole refresh for that name. It is masked today only
+    # because GOOGL's record states no `diluted_shares` and is refused one line above; the moment
+    # an R3 record carries a share count it bites. Stated `not-computed`, the same as every other
+    # missing input, rather than a traceback.
+    if leg.get("revenue") is None or leg.get("margin") is None:
+        return nope("this record's legs carry no revenue and margin (a forward-P/E underwrite "
+                    "values a share as EPS × multiple), so there is no EBITDA to strike our side "
+                    "of an EV gap from — the comparison is not defined for this recipe")
     try:
         total_gap(leg, tev=tev)          # proves our leg converts before anything is claimed
     except BasisMismatchError as exc:
