@@ -102,6 +102,32 @@ function freshnessPanel(mon) {
     // the window closed, never an adjudication that the trigger fired.
     const passed = (f.passed_trigger_deadlines || [])
       .map((x) => `<div class="fact-caveat" style="margin-top:6px;">⏰ ${escapeHtml(x)}</div>`).join("");
+    // (ruling 3) THE EVALUATED CRITERIA. Three states, rendered as three DIFFERENT things, because
+    // that is the whole property: UNKNOWN and NOT_FIRED recommend opposite actions and must never
+    // look alike. FIRED is the loudest row on the card; UNKNOWN carries its cause where a reader
+    // looks for a number; NOT_FIRED states the reading that makes it false. The number and its
+    // source ride along so the human can check the machine rather than trust it — and the
+    // disposition stays theirs: this is a highlight, never an action.
+    const stateClass = { FIRED: "avoid", UNKNOWN: "conditional", NOT_FIRED: "live" };
+    const measured = (f.measured || []).map((m) => {
+      const num = (m.observed === null || m.observed === undefined)
+        ? "" : ` <span class="mono">${escapeHtml(String(m.observed))}${m.unit ? " " + escapeHtml(m.unit) : ""}</span>`;
+      const src = m.source ? `<div class="foot">${escapeHtml(m.source)}</div>` : "";
+      return `<li><span class="pill ${stateClass[m.state] || "locked"}">${escapeHtml(m.state)}</span>
+        ${escapeHtml(m.trigger)}${num}
+        <div class="muted" style="font-size:11px;">${escapeHtml(m.reason)}</div>${src}</li>`;
+    }).join("");
+    // AN EMPTY LIST IS NOT "NOTHING FIRED". A record with no measured criterion has falsifiers
+    // that are all judgments — a different sentence from a quiet page, and the panel says which
+    // rather than leaving the absence to be read as reassurance.
+    const measuredBlock = measured
+      ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.05em;">measured criteria</span><ul>${measured}</ul></div>`
+      : ((f.triggers || []).length
+          ? `<div class="foot" style="margin-top:6px;">no measured criteria — every falsifier above is a judgment, so none is machine-checked</div>`
+          : "");
+    const stale = (f.stale_tags || []).length
+      ? `<div class="fact-caveat" style="margin-top:6px;">stale tag(s), served but not current: ${escapeHtml((f.stale_tags || []).join(", "))}</div>`
+      : "";
     return `
       <div class="card" style="margin-bottom:10px;">
         <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
@@ -114,6 +140,8 @@ function freshnessPanel(mon) {
         ${f.next_expected_print ? `<div class="foot" style="margin-top:6px;">next print ~${fmtDate(f.next_expected_print)} — ${escapeHtml(f.next_expected_basis || "estimate")}</div>` : ""}
         ${newer ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Filed since the record's evidence</span><ul class="kv-list">${newer}</ul></div>` : ""}
         ${trigs ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Re-underwrite triggers (verbatim — not adjudicated)</span><ul class="kv-list">${trigs}</ul></div>` : ""}
+        ${measuredBlock}
+        ${stale}
         ${f.watch_note ? `<div class="fact-caveat" style="margin-top:6px;">${escapeHtml(f.watch_note)}</div>` : ""}
       </div>`;
   };
