@@ -819,7 +819,9 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     Computes the anchor from the committed mechanical layer + EDGAR (no CIQ workbook, no LLM, no
     re-assembly) and writes ONLY the ``anchor`` block into dossier.json: the model round-trips, so
     re-dumping reproduces the committed bytes plus the new field, leaving every other field
-    byte-identical. dossier.md is untouched — the anchor is data-only (the UI ignores it)."""
+    byte-identical. dossier.md is then RE-RENDERED from that record: the anchor is not data-only —
+    the page prints its base value and its reason, so leaving the markdown alone published the
+    previous anchor beside the new one (review of #534)."""
     from vinci.dossier.anchor import (
         Anchor,
         anchor_changed,
@@ -828,6 +830,7 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         replace_anchor_block,
     )
     from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.refresh import _rerender_only
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
     from vinci.resolver import EntityResolver
@@ -881,6 +884,25 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         else:
             # byte-preserving replace/insert (a model round-trip drifts older-schema fields)
             path.write_text(replace_anchor_block(original, anchor))
+            # AND THE PAGE, because the UI does NOT ignore the anchor (review of #534). This wrote
+            # only dossier.json on the claim that the block is data-only; the renderer prints both
+            # the base and the reason, so every backfill left the page asserting the PREVIOUS
+            # anchor — GOOGL's read "$706.41" against a record saying 699.65, and later a refusal
+            # sentence under an applicable one. Two committed artifacts disagreeing is the exact
+            # failure `refresh_dossier` was written about; it recurred here because this command
+            # writes its own. `_rerender_only` re-renders FROM the stored record: no recompute, no
+            # LLM, no re-assembly — the page catches up to the JSON and nothing else moves.
+            # GUARDED LIKE EVERY OTHER PER-TICKER STEP (review of #536). An unguarded raise here
+            # kills the batch AFTER this name's JSON is written — leaving exactly the stale-page
+            # state this call exists to prevent, and stranding every later name too. A page that
+            # cannot be re-rendered is reported and the run continues: the JSON is already correct,
+            # and the corpus invariant reds on the stale page rather than the batch dying quietly.
+            try:
+                if _rerender_only(path):
+                    print(f"  {t}: dossier.md re-rendered to match the new anchor")
+            except Exception as exc:  # noqa: BLE001 — one page must not strand the rest
+                print(f"  {t}: WARNING — dossier.json written but dossier.md could NOT be "
+                      f"re-rendered ({exc}); the page is stale until it is", file=sys.stderr)
         done.append((t, anchor, old_base, moved))
     n_moved = sum(1 for _t, _a, _o, mv in done if mv)
     mode = "DRY-RUN (nothing written)" if args.dry_run else "written"
