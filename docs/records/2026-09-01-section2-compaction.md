@@ -46,5 +46,28 @@ a second, looser number would not have touched either cause.)
 byte-for-byte (P3's method). Verified after the fact too: all 11 records contain their block
 verbatim against the pre-compaction file, and all **68 pointers resolve**.
 
+**WHY THE CAP IS A SHARED BUDGET, AND WHAT THAT MEANS.** CI checks out the MERGE RESULT for a
+`pull_request` event (`actions/checkout@v4`, no explicit `ref:`), so the cap is measured on
+PR-merged-into-main, not on the branch. Every open PR therefore draws from one 2,100-line budget:
+each is green alone, and whichever merges last pays. The failing PR is not the one that consumed
+the budget, and its only remedy is compacting somebody else's entries — which is precisely why the
+last person to hit it left it. Headroom is what makes that collision rare; it is not a property the
+guard can enforce away.
+
+**A PER-PR DELTA CAP WAS CONSIDERED AND REJECTED — it would be dead code.** The obvious fix for
+misattribution is to bound each PR's own contribution instead of the shared total. Measured over
+the 33 STATE.md-touching commits since P3: median **2** lines, mean 4.7, p90 16, **max 25**. A cap
+at 25, 30, 40 or 50 fires on **none of them**. Sizing it on the last 200 commits instead would
+suggest 40 (42% would fire) — but that window is mostly PRE-P3, a regime the migration ended. Sizing
+a guard against a shape the file no longer has is root cause B repeated, so it is recorded here
+rather than built.
+
+**WHICH LEAVES THE ACTUAL SHAPE OF THE PROBLEM: monotonic inflow, no outflow.** Post-P3 per-PR
+behaviour is disciplined — nobody is dumping narratives. The +151 lines came from 33 commits
+averaging 4.7 lines each, every one of them reasonable. §2 gains a bullet per capability shipped
+(73 → 91 since P3) and **nothing ever removes one**. A fixed cap against a monotonic list is hit
+again by arithmetic; the only question is when. So compaction is not a one-off repair, it is the
+outflow, and the headroom pin is what schedules it before it becomes an emergency.
+
 **VERIFIED.** 3 mutations: a 26-line §2 entry with no pointer CAUGHT; the same entry with a pointer
 ALLOWED; the file creeping to 99 lines under the cap CAUGHT.
