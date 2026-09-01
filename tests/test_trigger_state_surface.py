@@ -121,3 +121,57 @@ def test_the_number_and_its_source_ride_along() -> None:
 def test_the_stale_tags_reach_the_page() -> None:
     """MC1's reporting half had no caller since it shipped; the tags it names now render."""
     assert "stale_tags" in _panel_src()
+
+
+def test_a_building_streak_is_read_from_satisfied_not_from_state() -> None:
+    """THE BUG THIS PIN EXISTS FOR, caught while wiring the history rather than by review.
+
+    Every prior reading of a BUILDING streak records `NOT_FIRED` by definition — the comparison
+    held but the count was still short. Reading `state` to decide whether a prior reading counted
+    therefore treats each one as a failure, the streak can never exceed 1, and a multi-reading
+    criterion NEVER FIRES no matter how long the condition persists. Measured: with two prior
+    satisfying readings and `sustain=3`, reading `state` gives "1 of the 3"; reading `satisfied`
+    gives FIRED on 3.
+    """
+    rec, mech = _record_and_mech()
+    rec = _with(rec, {"trigger": "nde > 1.0x for three readings", "threshold": 1.0,
+                      "sustain": 3, **_NDE})
+    prior = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+         "source": f"period-{i}", "satisfied": True, "state": "NOT_FIRED"}]}]}
+        for i in (1, 2)]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=prior)
+    assert row.measured[0].state == "FIRED", (
+        f"a building streak was not counted: {row.measured[0].reason}")
+    assert "3 consecutive readings" in row.measured[0].reason
+
+
+def test_a_rerun_of_the_same_day_cannot_extend_a_streak() -> None:
+    """Two guards cover this and both are load-bearing: the caller passes only days STRICTLY
+    EARLIER than the one being built, and the evaluator de-duplicates on `source_ref`. Either
+    alone would leave running the monitor twice able to advance a kill."""
+    rec, mech = _record_and_mech()
+    cur = mech["quality"]["net_debt_to_ebitda"].get("source_ref")
+    rec = _with(rec, {"trigger": "nde > 1.0x twice", "threshold": 1.0, "sustain": 2, **_NDE})
+    same = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+         "source": cur, "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=same)
+    assert row.measured[0].state == "NOT_FIRED" and "1 of the 2" in row.measured[0].reason
+
+
+def test_an_amended_threshold_starts_its_streak_again() -> None:
+    """History is matched on the TEST, not the sentence. A changed threshold is a different
+    criterion, so its prior readings do not carry over — and a reworded sentence, which is the
+    same test, keeps its streak."""
+    rec, mech = _record_and_mech()
+    rec = _with(rec, {"trigger": "nde > 1.0x twice", "threshold": 1.0, "sustain": 2, **_NDE})
+    other = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 2.0,
+         "source": "period-1", "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=other)
+    assert row.measured[0].state == "UNKNOWN", "a different threshold's history was carried over"
+    assert "no history was supplied" in row.measured[0].reason

@@ -75,6 +75,11 @@ class TriggerState:
 
     state: str
     reason: str
+    #: Did the COMPARISON hold on this reading — a different fact from whether the criterion FIRED.
+    #: On a sustain criterion they diverge: the comparison can hold while the streak is still short,
+    #: which is NOT_FIRED. Recording only the state would make that reading look like one where the
+    #: comparison failed, and the next day's streak would count from the wrong place.
+    satisfied: bool | None = None
     observed: float | None = None
     unit: str | None = None
     source: str | None = None
@@ -181,7 +186,7 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
     shown = (f"{float(value):,.10g} {trig.unit} {trig.comparator} "
              f"{trig.threshold:,.10g} {trig.unit}")
     if not ok:
-        return TriggerState(NOT_FIRED, f"{shown} is false", float(value), trig.unit, source)
+        return TriggerState(NOT_FIRED, f"{shown} is false", False, float(value), trig.unit, source)
     if trig.sustain > 1:
         # THE SUSTAIN COUNT IS PART OF THE CRITERION, NOT A REFINEMENT. "two consecutive quarters"
         # is a different test from "once", and treating one reading as satisfying it would fire
@@ -191,7 +196,7 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
                 UNKNOWN,
                 f"{shown} holds on this reading, but the criterion requires {trig.sustain} "
                 f"consecutive readings and no history was supplied — firing on one would be a "
-                f"weaker test than the analyst wrote", float(value), trig.unit, source)
+                f"weaker test than the analyst wrote", True, float(value), trig.unit, source)
         run = _streak(source, history)
         if run is None:
             # No source_ref: a repeat of the same reading is indistinguishable from a new period,
@@ -200,15 +205,15 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
                 UNKNOWN,
                 f"{shown} holds, but this metric carries no source_ref, so a fresh reading cannot "
                 f"be told from the same one seen again — a {trig.sustain}-reading criterion cannot "
-                f"be counted without that", float(value), trig.unit, source)
+                f"be counted without that", True, float(value), trig.unit, source)
         if run < trig.sustain:
             # A REAL ANSWER, NOT A REFUSAL. With a history in hand the criterion HAS been evaluated
             # and has not fired; the streak is stated so the reader can see how close it is.
             return TriggerState(
                 NOT_FIRED,
                 f"{shown} holds on {run} of the {trig.sustain} consecutive readings the criterion "
-                f"requires", float(value), trig.unit, source)
+                f"requires", True, float(value), trig.unit, source)
         return TriggerState(
             FIRED, f"{shown} holds on {run} consecutive readings ({trig.sustain} required)",
-            float(value), trig.unit, source)
-    return TriggerState(FIRED, f"{shown} holds", float(value), trig.unit, source)
+            True, float(value), trig.unit, source)
+    return TriggerState(FIRED, f"{shown} holds", True, float(value), trig.unit, source)
