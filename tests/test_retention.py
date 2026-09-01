@@ -420,9 +420,14 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # only says how many of those rows the approximation decided. `ads_count_used` (2026-08-31) is
     # the same shape: it counts ADMITTED depositary receipts sized by their ADS-denominated count.
     # The matching FAILURE, `ads_count_unresolved`, IS a drop stage and goes through `_drop`.
+    # `polygon_count_fallback` (2026-09-01) is the same shape again: it counts ADMITTED names
+    # sized by the share-class reference because no XBRL tier had a count. Its FAILURE case is
+    # not a new stage — a name with no count in any source still drops at `no_shares`, through
+    # `_drop`, exactly as before.
     # A stage missing its row is still the failure this guard exists to catch.
     assert set(loose) <= {"considered", "in_universe", "shares_period_average",
-                          "out_of_band_period_average", "ads_count_used"}, (
+                          "out_of_band_period_average", "ads_count_used",
+                          "polygon_count_fallback"}, (
         f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
         "without emitting a row leaves that stage with no evidence trail")
     # and the guard that refuses a run when the two diverge anyway
