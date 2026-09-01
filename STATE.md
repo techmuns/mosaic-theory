@@ -1134,10 +1134,8 @@ testable** — no band clears 10 names per arm and 5 worked.
     this PR's own `load_bars`/`load_sector_map`/`sector_forward`, so the numbers are re-derivable
     from the constants stated here, but committing the panel beside the falsifier is an open call
     for the operator.
-- **NET ISSUANCE DOES NOT DISCRIMINATE IN THIS POOL — FALSIFIED (2026-08-12); PR-B2 CLOSED as unnecessary.** rho −0.023→−0.006, shuffle 98%→34%, MIXED at every horizon; tercile MEANS reverse, medians do not — a tail. Leg stays display-only, its fence now load-bearing.
-  *Record: `docs/records/2026-09-01-net-issuance-falsified-pr-b2-closed.md`.*
-- **SCREEN-GATE AUDIT — G1/G2/G3 measured separately (2026-08-13). RECORD-ONLY; no threshold moved, and none may be set from its tables.** G1's −30/−50% intake is the universe's WORST band and clears the bar as a NEGATIVE (−2.3 pts, all four phase blocks negative, positive in 6/30 months, 65% of what G1 admits); the deep buckets are ONE Mar–Aug 2025 episode; G2 shows no dose-response among laggards; G3 admits 55% of the queue unassessed and binds on 7%. Widening G1 downward to −20% tested and refused.
-  *Record: `docs/records/2026-09-01-screen-gate-audit-g1-g2-g3.md`; open item §5.0 row 8.*
+- **NET ISSUANCE DOES NOT DISCRIMINATE IN THIS POOL — FALSIFIED (2026-08-12); PR-B2 CLOSED as unnecessary.** rho −0.023→−0.006, shuffle 98%→34%, MIXED at every horizon; tercile MEANS reverse, medians do not — a tail. Leg stays display-only, its fence now load-bearing. *Record: `docs/records/2026-09-01-net-issuance-falsified-pr-b2-closed.md`.*
+- **SCREEN-GATE AUDIT — G1/G2/G3 measured separately (2026-08-13). RECORD-ONLY; no threshold moved, and none may be set from its tables.** G1's −30/−50% intake is the universe's WORST band and clears the bar as a NEGATIVE (−2.3 pts, all four phase blocks negative, positive in 6/30 months, 65% of what G1 admits); the deep buckets are ONE Mar–Aug 2025 episode; G2 shows no dose-response among laggards; G3 admits 55% of the queue unassessed and binds on 7%. Widening G1 downward to −20% tested and refused. *Record: `docs/records/2026-09-01-screen-gate-audit-g1-g2-g3.md`; open item §5.0 row 8.*
 
 ## 4. Deferred — CAPITAL-gated on the spread; BUILD per the GOVERNOR
 
