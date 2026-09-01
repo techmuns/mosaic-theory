@@ -641,6 +641,11 @@ Each line: *what it does* — *verified how*.
   *(detail: `docs/records/2026-08-26-capability-the-calls-tape-scoring-a-public-commentator-s.md`)*
 - **R3 reached the sanctioned create path; GOOGL is the first record written through it** — six paths read a module-level `AXES` trio; all six now take them from `axes_for(...)`.
   GOOGL R:R **1.692x vs the 2.0x bar -> FAIL**, IRR 14.89% vs 15%. *4th unwired capability. (detail: `docs/records/2026-09-01-r3-reaches-the-create-path.md`)*
+- **The tiered ladder shipped 2026-08-21 and had NEVER stamped a record** (`vinci/scenarios.py::_with_irr_gate`). `ScenarioRecord.result` defaults to an empty
+  `Result()`, so the freeze guard read every FIRST compute as a sealed legacy record and copied the ladder out of the virgin block. All nine committed records carry
+  `gate_regime: None`, GOOGL included — written through `scenario-create` the same day the tiers were asked for. *FIFTH unwired capability; found by asking what a record reads
+  under the ladder, not by a test.* Sealed records stay frozen (#489's rule) — pinned both ways, corpus provably unmoved. | GOOGL under the ladder: `below_target` /
+  `minimum_met` / not eligible at its frozen $345.90, and `preferred` / `preferred` / eligible at the verified 2026-08-31 close of $339.35.
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**

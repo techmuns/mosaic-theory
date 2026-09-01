@@ -531,3 +531,58 @@ console.log(JSON.stringify(out));
     assert res["__unknown__"] == "unresolved", (
         "an unlisted tier must render NEUTRAL, never as a failure — the fallthrough this fixed")
     assert res["__empty__"], "an absent tier must render nothing at all"
+
+
+def test_a_first_compute_stamps_the_ladder_and_a_sealed_record_does_not() -> None:
+    """THE LADDER SHIPPED 2026-08-21 AND HAD NEVER STAMPED ANYTHING (found 2026-09-01).
+
+    `ScenarioRecord.result` defaults to an empty `Result()`, so `rec.result is not None` is true on
+    a record under construction — and `scenario-create` builds exactly that before calling the
+    engine. The freeze therefore fired on every FIRST compute and copied the ladder out of the
+    virgin block, i.e. all None. The corpus said so plainly: not one of the nine committed records
+    carried `gate_regime`, GOOGL included, written through `scenario-create` the same day.
+
+    BOTH HALVES ARE PINNED, because either alone is satisfiable by a wrong fix: stamping
+    everything would re-judge sealed records the day `GATE_REGIME` advances (#489's rule), and
+    freezing everything is the bug this replaces.
+    """
+    doc = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
+
+    # (a) a record with NO computed result — what the create path hands the engine — must stamp
+    virgin = dict(doc)
+    virgin.pop("result", None)
+    out = sc.run_recipe(sc.ScenarioRecord.model_validate(virgin))
+    assert out.result.gate_regime == sc.GATE_REGIME, (
+        "a first compute did not stamp the ladder — the create path produces records the tiers "
+        "never reach, which is how this shipped unnoticed for eleven days")
+    assert out.result.asymmetry_tier == sc.asymmetry_tier(out.result.ratio)
+    assert out.result.return_tier == sc.return_tier(out.result.irr)
+    assert out.result.eligible is False, "GOOGL is below the 1.75x eligibility line"
+
+    # (b) a record already carrying a DIFFERENT regime stays frozen — #489's protection
+    sealed = sc.ScenarioRecord.model_validate(doc)
+    sealed = sealed.model_copy(update={"result": sealed.result.model_copy(
+        update={"gate_regime": "2099-01-01", "asymmetry_tier": "preferred"})})
+    kept = sc.run_recipe(sealed)
+    assert kept.result.gate_regime == "2099-01-01" and kept.result.asymmetry_tier == "preferred", (
+        "a record sealed under another regime was re-judged — that is exactly what the freeze "
+        "exists to prevent when GATE_REGIME advances")
+
+
+def test_the_committed_corpus_is_unmoved_by_the_stamping_fix() -> None:
+    """THE COST OF THE FIX, measured over the corpus rather than argued.
+
+    Every committed record carries a computed result and no regime, so every one stays frozen and
+    recomputes to what it already says. A fix that silently re-judged the live book would be a
+    different change entirely, and this is the assertion that says it did not.
+    """
+    seen = 0
+    for f in sorted((ROOT / "scenarios").glob("*.json")):
+        if f.name.startswith("_"):
+            continue
+        rec = sc.ScenarioRecord.model_validate(json.loads(f.read_text()))
+        again = sc.run_recipe(rec.model_copy(deep=True))
+        assert again.result.gate_regime == rec.result.gate_regime, f.name
+        assert (again.result.ratio or 0) == pytest.approx(rec.result.ratio or 0), f.name
+        seen += 1
+    assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
