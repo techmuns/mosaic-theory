@@ -6,8 +6,10 @@ one Polygon grouped-daily call (cached) for every close, and a handful of EDGAR 
 every filer's shares. Membership is snapshotted with an ``as_of`` so future backtests aren't
 survivorship-biased.
 
-Coarse-band caveat: market cap uses the issuer's *total* shares against each security's price, so a
-non-primary dual-class line is approximate — fine for a coarse band, not a valuation.
+Market cap uses the issuer's *total* shares against each security's price, EXCEPT where the issuer
+lists more than one class: there each line is sized by its own ``share_class_shares_outstanding``,
+because the total gave every class the whole company's cap (2026-09-01). A line with no per-class
+count is dropped at ``dual_class_unresolved`` rather than sized by the issuer-wide number.
 """
 
 from __future__ import annotations
@@ -213,7 +215,55 @@ def build_universe(
         # FULL replace, THIS BAND ONLY — a rebuild is a clean snapshot, not an accretion
         store.clear_universe(band=band_name)
         # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
-        for ident in resolver.iter_universe(band.exchanges):
+        # ONE COUNT PER CLASS, NOT ONE COUNT PER ISSUER (2026-09-01). A filed XBRL count is keyed
+        # by CIK, so every listed class of one issuer was sized with the SAME number and each line
+        # carried the WHOLE company's cap: Alphabet appeared four times for $9,672B against a real
+        # $3,947B, and CENT/CENTA, UA/UAA, LEN/LEN.B, ZG/Z all double-counted the same way. The
+        # reference count is per-class (`share_class_shares_outstanding`; GOOGL reports 5,868M
+        # against a 12,230M `weighted_shares_outstanding`), so multi-class issuers are sized from
+        # it. Materialised because the CIK's OTHER lines have to be known before the first one is
+        # sized — a streaming pass cannot tell a second class from a first.
+        idents = list(resolver.iter_universe(band.exchanges))
+        # A SIBLING ONLY COUNTS IF IT IS ITSELF ADMISSIBLE EQUITY — two gates, both measured.
+        # PRICED, because an unpriced sibling is dropped at `no_price` and never competes for the
+        # cap. ADMITTED TYPE, because a CIK's other listed lines are usually NOT share classes:
+        # the first draft counted any two securities sharing a CIK and swept in every SPAC unit,
+        # warrant and note, routing 1,760 lines down this path (935 sized, 825 dropped) against
+        # the 46 that are real classes. Those lines still drop — they always did — but at
+        # `unknown_type` / `non_common_equity` / `no_shares`, which is what their exclusion is
+        # actually about; `dual_class_unresolved` would have claimed 825 of them and made the
+        # funnel lie about why. Same gate, same reason as the fallback's in #543.
+        def _admissible(i: Identity) -> bool:
+            return (i.eod_symbol in closes
+                    and admit_security_type(sec_types.get(i.eod_symbol),
+                                            band.allowed_security_types))
+
+        multi_class_ciks = {c for c, n in Counter(
+            i.cik for i in idents if _admissible(i)).items() if n > 1}
+        class_counts = eod.share_class_counts(sorted(
+            i.eod_symbol for i in idents if i.cik in multi_class_ciks and _admissible(i)))
+
+        def _per_class_count(i: Identity) -> float | None:
+            """This line's OWN share count, or None to leave its sizing exactly as it was.
+
+            STRICTLY NON-REGRESSIVE, and that is a deliberate retreat from a first draft that
+            DROPPED a multi-class line whose per-class count would not resolve. Refusing to size a
+            name from a number known to be wrong is the right instinct, but the sibling test is a
+            heuristic and it misfires: ACGL — Arch Capital, $34.5B of genuine common — publishes no
+            `share_class_shares_outstanding`, while ACGLN, a PREFERRED depositary line typed `CS`
+            by the same feed, publishes one. The heuristic read that as two classes and excluded
+            the common. A name wrongly EXCLUDED from the validation population is as damaging as
+            one wrongly admitted, and it is the harder error to notice.
+
+            So a line resolves or it keeps the behaviour it already had. The lines that do not
+            resolve are the ones that were never share classes — ADAMK is "Adamas Trust, Inc.
+            9.600% Senior Notes", GOOGM/GOOGN are "Alphabet Inc. Depositary Shares" — and they
+            stay mis-sized exactly as they are today. Removing them is a real improvement and it
+            belongs to instrument typing, on its own evidence: it is not this change's to take as
+            a side effect.
+            """
+            return class_counts.get(i.eod_symbol) if i.cik in multi_class_ciks else None
+        for ident in idents:
             stats["considered"] += 1
             close = closes.get(ident.eod_symbol)
             sh = shares.get(ident.cik)
@@ -243,6 +293,11 @@ def build_universe(
                     continue
                 shares_used = ads
                 stats["ads_count_used"] += 1
+            elif (per_class := _per_class_count(ident)) is not None:
+                # BEFORE the `sh is None` test, because the defect is a filed count that IS
+                # present and IS wrong for this line — falling through to it is the bug.
+                shares_used = per_class
+                stats["dual_class_count_used"] += 1
             elif sh is None:
                 # FALLBACK, NEVER A REPLACEMENT (2026-09-01). A name with a filed count keeps
                 # it — this branch is reached only when EVERY XBRL tier came back empty, so it
@@ -288,10 +343,17 @@ def build_universe(
             # names that then fall OUT of band, and a retention row claiming a filed EDGAR count
             # as its deciding input would misattribute an exclusion the approximation made.
             tag = share_tag.get(ident.cik, "")
-            approximate = (not is_depositary) and tag == SHARES_TAG_WAVG
+            # a multi-class line is sized from the reference, not from any XBRL tier, so the
+            # filed tag must not label it — it would count the line as a period-average admission
+            # and misattribute an out-of-band drop to an approximation that never ran
+            approximate = (not is_depositary and _per_class_count(ident) is None
+                           and tag == SHARES_TAG_WAVG)
             if is_depositary:
                 shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
                                  "(ADS-denominated)")
+            elif _per_class_count(ident) is not None:
+                shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
+                                 "(PER-CLASS - issuer lists more than one class)")
             elif sh is None:
                 shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
                                  "(FALLBACK - no filed count in any XBRL tier)")
