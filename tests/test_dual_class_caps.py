@@ -55,6 +55,8 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
          class_counts: dict[str, float],
          xbrl_shares: dict[str, float] | None = None,
          xbrl_tag: str = "dei:EntityCommonStockSharesOutstanding",
+         volumes: dict[str, float] | None = None,
+         retain: bool = False,
          sec_types: dict[str, str] | None = None) -> tuple[dict, dict[str, dict]]:
     """Run the REAL builder over several fake lines; return (stats, {ticker: exported row})."""
     idents = [_ident(t, c) for t, c in lines]
@@ -73,7 +75,9 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
         def grouped_daily(self, day: date) -> dict[str, RawBar]:
             if day != _REF:
                 return {}
-            return {t: RawBar(ticker=t, open=p, high=p, low=p, close=p, volume=10_000_000)
+            # volume decides ADV, which decides WHICH class survives de-duplication
+            return {t: RawBar(ticker=t, open=p, high=p, low=p, close=p,
+                              volume=(volumes or {}).get(t, 10_000_000))
                     for t, p in closes.items()}
         def security_types(self) -> dict[str, str]: return types
         def share_class_counts(self, tickers: object) -> dict[str, float]:
@@ -94,7 +98,9 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
     monkeypatch.setattr(uni, "PolygonEodClient", _E)
     monkeypatch.setattr(uni, "EdgarClient", _Ed)
     stats = build_universe(Config(data_dir=tmp_path), reference_date=_REF,
-                           share_periods=["CY2026Q1I"])
+                           share_periods=["CY2026Q1I"],
+                           retain_run_id=("2026-06-12-01" if retain else None),
+                           retain_dir=(tmp_path / "retain" if retain else None))
     snap = tmp_path / "snapshots" / "universe_snapshot.jsonl"
     rows = [json.loads(x) for x in snap.read_text().splitlines() if x.strip()] \
         if snap.exists() else []
@@ -111,13 +117,15 @@ def test_each_listed_class_is_sized_by_its_own_count_not_the_issuers_total(
         monkeypatch, tmp_path, lines=[("AAA", _CIK), ("AAB", _CIK)],
         closes={"AAA": 100.0, "AAB": 100.0},
         class_counts={"AAA": 20_000_000.0, "AAB": 10_000_000.0},
-        xbrl_shares={_CIK: 30_000_000.0})
-    assert stats["in_universe"] == 2
+        xbrl_shares={_CIK: 30_000_000.0},
+        volumes={"AAA": 50_000_000.0, "AAB": 1_000_000.0})       # AAA is the tradeable line
+    # BOTH lines are sized per-class — the counter runs at sizing, before de-duplication picks one
     assert stats["dual_class_count_used"] == 2
+    # ...and exactly one is admitted, because one issuer contributes one line
+    assert stats["in_universe"] == 1
+    assert stats["duplicate_class"] == 1
+    assert set(rows) == {"AAA"}
     assert rows["AAA"]["market_cap"] == 100.0 * 20_000_000.0     # NOT 100 x 30,000,000
-    assert rows["AAB"]["market_cap"] == 100.0 * 10_000_000.0     # NOT 100 x 30,000,000
-    total = rows["AAA"]["market_cap"] + rows["AAB"]["market_cap"]
-    assert total == 100.0 * 30_000_000.0, "the classes must sum to the issuer, not to double it"
 
 
 def test_the_per_class_count_wins_over_a_filed_count_that_is_present(
@@ -129,7 +137,8 @@ def test_the_per_class_count_wins_over_a_filed_count_that_is_present(
     _, rows = _run(monkeypatch, tmp_path, lines=[("AAA", _CIK), ("AAB", _CIK)],
                    closes={"AAA": 50.0, "AAB": 50.0},
                    class_counts={"AAA": 10_000_000.0, "AAB": 20_000_000.0},
-                   xbrl_shares={_CIK: 30_000_000.0})
+                   xbrl_shares={_CIK: 30_000_000.0},
+                   volumes={"AAA": 50_000_000.0, "AAB": 1_000_000.0})
     assert rows["AAA"]["market_cap"] == 50.0 * 10_000_000.0
     assert "share_class_shares_outstanding" in rows["AAA"]["source"]
     assert "PER-CLASS" in rows["AAA"]["source"]
@@ -149,12 +158,13 @@ def test_a_line_whose_per_class_count_will_not_resolve_is_left_exactly_as_it_was
     stats, rows = _run(monkeypatch, tmp_path, lines=[("AAA", _CIK), ("AAB", _CIK)],
                        closes={"AAA": 100.0, "AAB": 100.0},
                        class_counts={"AAB": 10_000_000.0},          # AAA does not resolve
-                       xbrl_shares={_CIK: 30_000_000.0})
-    assert stats["in_universe"] == 2, "neither line may be dropped by this change"
-    assert stats["dual_class_count_used"] == 1
-    assert rows["AAB"]["market_cap"] == 100.0 * 10_000_000.0        # fixed
+                       xbrl_shares={_CIK: 30_000_000.0},
+                       volumes={"AAA": 50_000_000.0, "AAB": 1_000_000.0})
+    assert stats["dual_class_count_used"] == 1                      # only AAB could be re-sized
+    # AAA survives de-duplication on ADV, so its sizing is observable — and unchanged
     assert rows["AAA"]["market_cap"] == 100.0 * 30_000_000.0        # untouched, as before
     assert "EDGAR" in rows["AAA"]["source"]
+    assert stats.get("no_shares", 0) == 0, "this change may not drop a line for want of a count"
 
 
 def test_a_single_class_issuer_still_uses_its_filed_xbrl_count(
@@ -210,13 +220,16 @@ def test_a_depositary_line_of_a_multi_class_issuer_still_takes_the_ads_path(
     """BRANCH ORDER. Both paths read the same reference field, but the ADR branch must keep
     precedence — its stamp is what says the count is ADS-denominated, and the drop stage it owns
     (`ads_count_unresolved`) is the one that names the real failure for a receipt."""
-    _, rows = _run(monkeypatch, tmp_path, lines=[("AAA", _CIK), ("AAD", _CIK)],
-                   closes={"AAA": 100.0, "AAD": 100.0},
-                   class_counts={"AAA": 20_000_000.0, "AAD": 10_000_000.0},
-                   xbrl_shares={_CIK: 30_000_000.0},
-                   sec_types={"AAA": "CS", "AAD": "ADRC"})
+    stats, rows = _run(monkeypatch, tmp_path, lines=[("AAA", _CIK), ("AAD", _CIK)],
+                       closes={"AAA": 100.0, "AAD": 100.0},
+                       class_counts={"AAA": 20_000_000.0, "AAD": 10_000_000.0},
+                       xbrl_shares={_CIK: 30_000_000.0},
+                       volumes={"AAA": 1_000_000.0, "AAD": 50_000_000.0},
+                       sec_types={"AAA": "CS", "AAD": "ADRC"})
+    # each line took its OWN branch — counted at sizing, before de-duplication keeps one
+    assert stats["ads_count_used"] == 1 and stats["dual_class_count_used"] == 1
+    # the ADR wins on ADV here, so the surviving row must carry the ADS stamp, not the per-class one
     assert "ADS-denominated" in rows["AAD"]["source"]
-    assert "PER-CLASS" in rows["AAA"]["source"]
 
 
 def test_a_warrant_sibling_does_not_make_the_common_line_multi_class(

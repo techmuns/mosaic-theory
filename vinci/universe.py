@@ -118,7 +118,7 @@ DEPOSITARY_TYPES: tuple[str, ...] = ("ADRC", "GDR")
 #: spot instead of closing it. Each is emitted with the one input that decided it.
 DROP_STAGES: tuple[str, ...] = (
     "no_price", "no_shares", "ads_count_unresolved", "out_of_band", "below_adv_floor",
-    "unknown_sic", "non_operating", "unknown_type", "non_common_equity",
+    "unknown_sic", "non_operating", "unknown_type", "non_common_equity", "duplicate_class",
 )
 
 
@@ -213,6 +213,58 @@ def build_universe(
         # change in another.
         store.rebuild_from_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_SEED_TABLES)
         # FULL replace, THIS BAND ONLY — a rebuild is a clean snapshot, not an accretion
+        admitted: list[tuple[Identity, float, str, bool]] = []
+
+        def _one_line_per_issuer(
+            rows: list[tuple[Identity, float, str, bool]]
+        ) -> list[tuple[Identity, float, str, bool]]:
+            """ONE ISSUER, ONE LINE — keep the most TRADEABLE class and drop its siblings.
+
+            WHY. Sizing each class correctly (#546) stopped the caps double-counting, but it did
+            not stop the same COMPANY entering the population twice: ZG and Z were two names, so
+            one issuer's forward return could enter the BUY-AVOID spread twice and count double in
+            the only number that proves this fund works. 12 duplicate lines in the primary band and
+            7 in the theme band, on the 2026-08-24 build.
+
+            THE SURVIVOR IS THE HIGHEST-ADV LINE, and that is a face-validity choice measured
+            against the alternative, never tuned on returns. Liquidity is the right axis because a
+            position can only ever be taken in the line the fund can actually trade, and ADV is
+            already a gate here. Against "keep the largest cap" the two rules disagree on 4 of the
+            17 issuers, and ADV is right on all four:
+
+                ADAMAS   ADV keeps ADAM (the common); CAP would keep ADAMK — a BOND
+                HEICO    ADV keeps HEI  ($177M/day); CAP would keep HEI.A ($79M/day)
+                UNDER A. ADV keeps UAA  ($52M/day);  CAP would keep UA    ($19M/day)
+                GREIF    ADV keeps GEF  ($19M/day);  CAP would keep GEF.B ($8M/day)
+
+            The ADAMAS case is the one that settles it: a cap rule would have deleted the real
+            common and kept the mistyped senior note as the issuer's sole representative.
+
+            Ties break on market cap then ticker, so the choice is deterministic and a re-run can
+            never silently swap which line the ledger accumulates against.
+            """
+            by_cik: dict[str, list[tuple[Identity, float, str, bool]]] = defaultdict(list)
+            for row in rows:
+                by_cik[row[0].cik].append(row)
+            kept: list[tuple[Identity, float, str, bool]] = []
+            for lines in by_cik.values():
+                ranked = sorted(
+                    lines,
+                    key=lambda r: (-adv.get(r[0].eod_symbol, 0.0), -r[1], r[0].eod_symbol))
+                winner = ranked[0]
+                kept.append(winner)
+                for loser in ranked[1:]:
+                    _drop(loser[0].eod_symbol, "duplicate_class",
+                          f"another listed class of the same issuer is more tradeable — "
+                          f"{winner[0].eod_symbol} carries "
+                          f"${adv.get(winner[0].eod_symbol, 0.0) / 1e6:,.1f}M/day against this "
+                          f"line's ${adv.get(loser[0].eod_symbol, 0.0) / 1e6:,.1f}M; one issuer "
+                          f"contributes one line so a single company's forward return cannot "
+                          f"enter the spread twice",
+                          StampedInput(value=adv.get(loser[0].eod_symbol, 0.0),
+                                       as_of=reference_date, source="Polygon ADV"))
+            return kept
+
         store.clear_universe(band=band_name)
         # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
         # ONE COUNT PER CLASS, NOT ONE COUNT PER ISSUER (2026-09-01). A filed XBRL count is keyed
@@ -410,18 +462,22 @@ def build_universe(
                       StampedInput(value=(ptype if ptype else None), as_of=reference_date,
                                    source="Polygon security reference"))
                 continue
+            # ADMISSION IS DEFERRED, not decided here — one issuer contributes ONE line, and which
+            # line survives cannot be known until every sibling has cleared the same gates.
+            # Persist the SIC we ALREADY fetched (above, for the Axis-1 gate) onto the identity so
+            # it flows into the committed securities/issuers snapshots — was a dead write (fetched,
+            # gated on, then discarded via [0]). The coarse SECTOR is derived downstream
+            # (sectors.sector_for_sic); SIC itself is never a screen/rank/verdict input.
+            ident = ident.model_copy(update={"sic": sic, "sic_description": sic_desc})
+            admitted.append((ident, market_cap, shares_source, approximate))
+
+        for ident, market_cap, cap_source, approximate in _one_line_per_issuer(admitted):
             stats["in_universe"] += 1
             # Stamped on the admitted row and counted in the run's health numbers, so an
             # approximate cap never blends in silently. (`shares_source` was derived above, where
             # the out-of-band drop path needs the same provenance.)
             if approximate:
                 stats["shares_period_average"] += 1
-            cap_source = shares_source
-            # Persist the SIC we ALREADY fetched (above, for the Axis-1 gate) onto the identity so
-            # it flows into the committed securities/issuers snapshots — was a dead write (fetched,
-            # gated on, then discarded via [0]). The coarse SECTOR is derived downstream
-            # (sectors.sector_for_sic); SIC itself is never a screen/rank/verdict input.
-            ident = ident.model_copy(update={"sic": sic, "sic_description": sic_desc})
             store.upsert_security(ident, first_seen=reference_date)
             store.record_universe(
                 as_of=reference_date,

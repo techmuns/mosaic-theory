@@ -393,13 +393,16 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
 
     from vinci.universe import DROP_STAGES, build_universe
 
+    # 10 since 2026-09-01: `duplicate_class` joined the funnel — one issuer contributes ONE line,
+    # so the non-surviving classes of a multi-class issuer are dropped with the winner named in
+    # the reason. It is a real drop stage and emits its retention row like the rest.
     # 9 since 2026-08-31: `ads_count_unresolved` joined the funnel — a depositary receipt whose
     # ADS-denominated share count will not resolve is DROPPED rather than sized by assuming
     # 1 ADS = 1 ordinary share. It is a real drop stage, so it emits its retention row like the
     # rest; the count is asserted so ADDING a stage stays a deliberate act. Per-class sizing
     # (2026-09-01) deliberately added NO stage: a line whose class count will not resolve keeps
     # the sizing it already had rather than being dropped — see `_per_class_count`.
-    assert len(DROP_STAGES) == 9, DROP_STAGES
+    assert len(DROP_STAGES) == 10, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")

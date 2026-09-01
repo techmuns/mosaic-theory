@@ -1474,10 +1474,10 @@ build is the mistake — running it early is what a pre-registration exists to p
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
 blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
 
-**OPEN 2026-09-01 — the primary band moved AGAIN, to 2,125.** Multi-class lines are now sized by
-their own class count (Alphabet was $9,672B across four lines against a real $3,947B); +7 names,
-none dropped — `docs/records/2026-09-01-per-class-share-counts.md`. Sign-off still owed on the
-whole 2,000 -> 2,125 move, and de-duplication (ZG and Z are still two names) stays open.
+**OPEN 2026-09-01 — the primary band is 2,113 and the whole move needs sign-off.** Multi-class
+lines are sized by their own class count (`docs/records/2026-09-01-per-class-share-counts.md`), and
+one issuer now contributes ONE line, the most tradeable of them
+(`docs/records/2026-09-01-one-line-per-issuer.md`). 2,000 -> 2,125 -> 2,113; snapshots need a pass.
 
 
 ### LIVE QUEUE — MIGRATED 2026-08-25 (P1); NOT authoritative, and no longer here
