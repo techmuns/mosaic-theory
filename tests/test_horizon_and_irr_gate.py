@@ -235,3 +235,134 @@ def test_a_record_whose_gate_never_ran_gains_no_gate_keys_on_re_serialisation() 
         out = sc._version_scoped(rec).get("result") or {}
         leaked = [f for f in sc.GATE_FIELDS if f in out]
         assert not leaked, f"{p.name} gained {leaked} — it predates the gate and cannot claim one"
+
+
+def test_supersede_refuses_a_result_its_own_legs_do_not_produce() -> None:
+    """`scenario-supersede` recomputes the incoming `result` and REFUSES a disagreement.
+
+    `scenario-create` runs `validate_legs -> run_recipe -> write_record`; supersede ran the
+    validator and then wrote whatever `result` the payload carried. A hand-typed ratio that
+    disagrees with the legs above it is the machine concluding from a number nobody derived, and
+    the BUY-AVOID spread accumulates from exactly these figures.
+
+    DRIVEN OFF A COMMITTED RECORD, mutated one field at a time — a fixture built to the shape the
+    check wants would prove only that the comparator compares.
+    """
+    import vinci.scenarios as sc
+    from vinci.cli import _RESULT_COMPARED, _result_mismatch
+
+    smpl = (ROOT / "scenarios" / "SMPL.json").read_text()
+    rec = sc.ScenarioRecord.model_validate(json.loads(smpl))
+    computed = sc.run_recipe(rec.model_copy(deep=True))
+
+    # the committed record agrees with its own legs — the guard must not refuse what exists
+    assert _result_mismatch(rec.result, computed.result) is None
+
+    # a hand-typed ratio is caught, and the message names BOTH numbers
+    tampered = rec.model_copy(deep=True)
+    tampered.result.ratio = (rec.result.ratio or 0) + 0.5
+    why = _result_mismatch(tampered.result, computed.result)
+    assert why and "ratio" in why and "legs give" in why, why
+
+    # so is a flipped verdict field, which carries no float tolerance at all
+    flipped = rec.model_copy(deep=True)
+    flipped.result.pass_fail = "FAIL" if rec.result.pass_fail == "PASS" else "PASS"
+    assert "pass_fail" in (_result_mismatch(flipped.result, computed.result) or "")
+
+    # ...but repr-level noise is NOT a disagreement — it would refuse every JSON round-trip
+    noisy = rec.model_copy(deep=True)
+    noisy.result.ratio = (rec.result.ratio or 0) + 1e-9
+    assert _result_mismatch(noisy.result, computed.result) is None
+
+    assert "gate" in _RESULT_COMPARED and "irr" in _RESULT_COMPARED, (
+        "the compared set must cover the gate fields, or a record could supersede with a verdict "
+        "its legs do not support")
+
+
+def test_every_committed_record_would_survive_the_new_supersede_check() -> None:
+    """THE COST OF THE GUARD, measured rather than assumed: it refuses nothing that exists.
+
+    A guard that would block legitimate supersedes of records already on disk is a guard that
+    stops the fund working. Asserted over the whole corpus, not a sample.
+    """
+    import vinci.scenarios as sc
+    from vinci.cli import _result_mismatch
+
+    seen = 0
+    for f in sorted((ROOT / "scenarios").glob("*.json")):
+        if f.name.startswith("_"):
+            continue
+        rec = sc.ScenarioRecord.model_validate(json.loads(f.read_text()))
+        again = sc.run_recipe(rec.model_copy(deep=True)).result
+        assert _result_mismatch(rec.result, again) is None, f.name
+        seen += 1
+    assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
+
+
+def test_supersede_derives_an_unstated_result_instead_of_refusing_it() -> None:
+    """A payload that STATES no result is DERIVED, not refused (review fix, 2026-09-01).
+
+    `ScenarioRecord.result` is `Field(default_factory=Result)`, NOT nullable — so a payload that
+    omits `result` arrives as an all-default `Result()` and disagrees with its own legs on every
+    compared field. Two things broke on that:
+
+      * the refusal's own advice — "drop the stated result and let the recipe compute it" — was
+        unfollowable: doing exactly that produced `reward: stated None, legs give 51.5145; ...`;
+      * archive-and-reissue had NO working payload shape for stamping the tiered ladder, because
+        `_with_irr_gate` freezes any record that carries a computed result. A stated result froze
+        the ladder; an unstated one was refused. GOOGL's reissue — the sequel both PRs name — was
+        unreachable either way.
+
+    DRIVEN OFF THE COMMITTED GOOGL RECORD, mutated one field at a time.
+    """
+    from vinci.cli import _result_is_stated, _result_mismatch
+
+    doc = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
+
+    # (a) the virgin block is NOT a stated result, however loudly it disagrees with the legs
+    virgin = dict(doc)
+    virgin.pop("result", None)
+    rec = sc.ScenarioRecord.model_validate(virgin)
+    assert _result_is_stated(rec.result) is False
+    assert rec.result is not None, "the premise: it is a virgin Result(), never None"
+    assert _result_mismatch(rec.result, sc.run_recipe(rec.model_copy(deep=True)).result), (
+        "the mismatch report must still FIRE on the virgin block — the fix is that the caller "
+        "does not consult it, not that the comparator went blind")
+
+    # ...and an explicit empty object is the same declining posture
+    empty = dict(doc)
+    empty["result"] = {}
+    assert _result_is_stated(sc.ScenarioRecord.model_validate(empty).result) is False
+
+    # (b) deriving it is what makes the record stampable under the ladder — the whole point
+    derived = sc.run_recipe(rec.model_copy(deep=True))
+    assert derived.result.gate_regime == sc.GATE_REGIME, (
+        "an unstated result must reach the engine UNCOMPUTED so the tiers stamp it; if this "
+        "reddens, reissue can no longer put a record under the ladder")
+    assert derived.result.asymmetry_tier is not None and derived.result.eligible is not None
+
+    # (c) a record that DOES state a result is still compared, and still refused on disagreement
+    stated = sc.ScenarioRecord.model_validate(doc)
+    assert _result_is_stated(stated.result) is True
+    tampered = stated.model_copy(deep=True)
+    tampered.result.ratio = (stated.result.ratio or 0) + 0.5
+    assert _result_is_stated(tampered.result) is True
+    assert "ratio" in (_result_mismatch(
+        tampered.result, sc.run_recipe(tampered.model_copy(deep=True)).result) or ""), (
+        "widening 'unstated' must not have widened into 'unchecked' — a hand-typed ratio is "
+        "still refused, which is the 2026-09-01 ruling")
+
+
+def test_supersede_consults_the_stated_check_before_refusing() -> None:
+    """THE CALL SITE, pinned — a helper-level test stays green when the caller drops it.
+
+    `_result_is_stated` is only worth anything inside `_cmd_scenario_supersede`; guarding the
+    helper alone would let a revert delete the branch and stay green.
+    """
+    src = (ROOT / "vinci" / "cli.py").read_text()
+    supersede = src.split("def _cmd_scenario_supersede", 1)[1].split("\ndef _cmd_", 1)[0]
+    assert "_result_is_stated" in supersede, (
+        "supersede refuses an UNSTATED result again — the payload shape that reissues a record "
+        "under the tiered ladder is unreachable, and the refusal message advises the impossible")
+    assert "_result_mismatch" in supersede, (
+        "supersede no longer refuses a stated disagreement — that is the 2026-09-01 ruling")
