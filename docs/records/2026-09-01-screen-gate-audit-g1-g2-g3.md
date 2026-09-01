@@ -86,7 +86,8 @@ The standing bar, identical to the panel and the issuance test: **≥99th percen
 within-month shuffle null AND the same sign across four disjoint phase blocks.** Applied per
 bucket, not just to the headline. G1 and G2 are pure price, so they were evaluated on the whole
 liquid universe **including the names they reject** — which the queue by construction cannot show.
-G3 needs a valuation history and could only be tested inside the queue.
+G3 needs a valuation history, so it was tested inside the queue via the `multiple_pctile` proxy.
+**CORRECTED IN REVIEW (2026-09-01), and the correction narrows the limitation rather than removing it:** the gate's OWN outcome is not discarded — `vinci/screens/run.py` records `g3_multiple_floor` and `admitted` on every retained row's **`per_gate`** field, and four committed runs carry them over the full ~1,800-name population INCLUDING the G1/G2 rejects (`screen_runs/2026-07-29-03.jsonl`, `2026-08-12-01`, `2026-08-14-01`, `2026-08-24-01`). The real limit is HISTORY, not visibility: four point-in-time runs spanning 2026-07-29 to 2026-08-24 cannot carry a 30-month backdated forward test, so the proxy was still required for the table above — but **"the outcome is recorded nowhere" is false and must not be repeated.**
 
 **Widening G1 downward to −20% was tested and REFUSED.** The `flat float + cash-burning` cohort was
 rebuilt inside each drawdown band against **all liquid names in that band**, requiring EDGAR for

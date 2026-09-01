@@ -82,12 +82,14 @@ a first-class dossier fact, already rendered, already source-bound, in BOTH rend
 
 | leg | Python | JS twin |
 |---|---|---|
-| Insider activity (Form 4) | `render.py:1616` | `dossier.js` positioning block |
-| Short interest (FINRA) | `render.py:1620` | same |
-| Share-count trend | `render.py:3399` | `dossier.js:2671` |
-| Own-history range position | `render.py:3656` | `dossier.js:1942` |
+| Insider activity (Form 4) | `render.py:1650` | `views/shared/dossier.js:3901` |
+| Short interest (FINRA) | `render.py:1654` | `views/shared/dossier.js:3903` |
+| Share-count trend | `render.py:3535` | `views/shared/dossier.js:2730` |
+| Own-history range position | `render.py:3792` (+ `:3259`) | `views/shared/dossier.js:3058` (+ `:1979`) |
 
-And they are **populated, not merely wired** — across all 14 committed dossiers: insider 14/14,
+*(Line numbers RE-CHECKED against main at recording time, 2026-09-01. The JS twin lives at `frontend/views/shared/dossier.js` — an earlier draft of this table cited a nonexistent `frontend/dossier.js` and 2026-08-12 line numbers that had drifted 34–136 lines; corrected in review. Line numbers drift — the anchors are the fact LABELS, which are stable.)*
+
+And they are **populated, not merely wired** — **as of the 2026-08-12 run, across the 14 dossiers committed THEN** (main carries 17 as of 2026-09-01; the three added since were not re-counted and the ratios below must not be read as current): insider 14/14,
 short interest 14/14, share-count trend 13/14, range position 13/14 (the two gaps are FUBO, sealed
 at the time by its own `known_wrong.json`, and V).
 
