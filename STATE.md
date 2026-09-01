@@ -1036,7 +1036,7 @@ external two-name analysis mapped against this inventory:
 
 ### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-28
 
-**FROZEN 2026-09-01 — the forward clock is RUNNING on its first driver.** `glp1-drug-value-chain` froze at 15 BUY / 29 AVOID from the analyst's 44 dispositioned rows; the first ratification ledger the repo holds (`docs/records/2026-09-01-glp1-stage4-freeze.md`). **STILL OPEN:** `ai-value-migration` cannot freeze until 6 names resolve — ARM, AVGO, DGXX, IBM, MMED, QCOM.
+**FROZEN 2026-09-01 — the forward clock is RUNNING on BOTH declared drivers.** `glp1-drug-value-chain` at 15 BUY / 29 AVOID (`docs/records/2026-09-01-glp1-stage4-freeze.md`) and `ai-value-migration` at 168 BUY / 189 AVOID (`docs/records/2026-09-01-aivm-stage4-freeze.md`) — the repo's first two ratification ledgers. **STILL OPEN:** neither renders (`mirror_slug=''` on both), so two frozen baskets are invisible on the Themes page; and the AI BUY leg is 47% of its sheet, a lower-powered test than GLP-1's 34%.
 
 **WHY THIS BLOCK EXISTS.** §5 is append-only and had grown to ~9,900 lines across 804 bold headers,
 of which 51 carry a done-marker. Most of the rest are NARRATIVE, not to-dos. "What is still open"
