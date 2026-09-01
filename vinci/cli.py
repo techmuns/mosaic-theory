@@ -1537,6 +1537,32 @@ def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
     return 0
 
 
+#: The `result` fields a supersede compares. THE DECISION-BEARING ONES ONLY, named explicitly
+#: rather than diffing the whole model: `per_scenario` carries floats that differ in the last bit
+#: on a re-run, and a whole-object comparison would refuse legitimate payloads over noise no
+#: reader could act on. These six are what the gate, the card headline and the spread are struck
+#: from — if any of them moves, the record says something different.
+_RESULT_COMPARED: tuple[str, ...] = ("reward", "risk", "ratio", "pass_fail", "irr", "gate")
+
+
+def _result_mismatch(stated: Any, computed: Any) -> str | None:
+    """A human-readable diff of the decision-bearing result fields, or None when they agree.
+
+    Floats compare with a relative tolerance: the recipe is deterministic, but a payload that
+    round-tripped through JSON at lower precision is a formatting artefact and not a disagreement
+    about the arithmetic. 1e-6 is far below any figure a reader acts on and far above repr noise.
+    """
+    out: list[str] = []
+    for f in _RESULT_COMPARED:
+        a, b = getattr(stated, f, None), getattr(computed, f, None)
+        if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+            if abs(a - b) > max(1e-6, abs(b) * 1e-6):
+                out.append(f"{f}: stated {a:.6g}, legs give {b:.6g}")
+        elif a != b:
+            out.append(f"{f}: stated {a!r}, legs give {b!r}")
+    return "; ".join(out) or None
+
+
 def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     """ARCHIVE-AND-REISSUE — the ONLY path that supersedes a record (scenario-refresh precedent).
 
@@ -1647,6 +1673,31 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     mine = [mon.entry_of(r) for r in mon.decision_rows(rows)
             if mon.entry_of(r).get("ticker", "").upper() == outgoing.ticker.upper()]
     open_position = bool(mine) and any(e["entry_id"] not in closed for e in mine)
+
+    # THE INCOMING `result` IS RECOMPUTED FROM ITS OWN LEGS, AND A DISAGREEMENT IS REFUSED.
+    # `scenario-create` runs `validate_legs -> run_recipe -> write_record`; supersede ran the
+    # validator and then wrote whatever `result` the payload happened to carry. A hand-typed
+    # ratio that disagrees with the legs above it is the machine CONCLUDING from a number nobody
+    # derived — the one thing this repo's records exist not to do — and the spread is accumulated
+    # from exactly these figures.
+    #
+    # REFUSED, NOT SILENTLY OVERWRITTEN: a supplied number that disagrees is either a stale paste
+    # or a real disagreement about the arithmetic, and both deserve the analyst's eyes rather than
+    # a quiet correction they never see. Measured before shipping: all nine committed records
+    # recompute to their stored ratio exactly, so this refuses nothing that exists today.
+    try:
+        _recomputed = sc.run_recipe(incoming.model_copy(deep=True))
+    except (ValueError, KeyError, TypeError) as exc:
+        print(f"REFUSED: the incoming payload's legs do not compute — {exc}")
+        return 1
+    _mismatch = _result_mismatch(incoming.result, _recomputed.result)
+    if _mismatch:
+        print(f"REFUSED: {incoming.ticker}: the payload's stated result disagrees with its own "
+              f"legs — {_mismatch}. Fix the legs or drop the stated result and let the recipe "
+              f"compute it; a record whose headline number is not derivable from the rows above "
+              f"it cannot be re-checked.")
+        return 1
+    incoming = _recomputed
 
     try:
         archived, live = sc.supersede_record(

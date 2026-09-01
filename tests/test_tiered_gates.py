@@ -342,16 +342,21 @@ def test_supersede_writes_the_payloads_result_verbatim() -> None:
     which the committed corpus shows directly: both archived SMPL records carry
     `gate: UNDEFINED, irr: null` while the live record carries a computed gate.
 
-    Pinned as BEHAVIOUR so the corrected sentence is machine-checked rather than merely reworded:
-    if supersede ever starts recomputing, this reddens and the STATE record must be re-ruled."""
+    STILL TRUE OF THE LIBRARY, AND DELIBERATELY SO (operator ruling 2026-09-01). The ruling moved
+    the COMMAND, not this primitive: `_cmd_scenario_supersede` recomputes and refuses a mismatch
+    before it ever calls `supersede_record`, which stays a pure archive-and-link that writes what
+    it is handed. Keeping the primitive verbatim is what lets the archived record keep its own
+    historical numbers — recomputing there would re-value a sealed record under today's engine.
+    The command-level behaviour is pinned in `test_scenario_create_is_the_migration_path` and in
+    `test_supersede_refuses_a_result_its_own_legs_do_not_produce`."""
     live_rec = _load(ROOT / "scenarios" / "SMPL.json")
     assert live_rec.result is not None and live_rec.result.gate_regime is None
 
     incoming = live_rec.model_copy(update={"supersedes": None, "superseded_by": None})
     _archived, live = sc.supersede_record(live_rec, incoming)
     assert live.result is not None and live.result.gate_regime is None, (
-        "supersede recomputed the incoming payload — the engine comment and the STATE record "
-        "both say it does not; re-rule the migration path before changing this")
+        "the supersede PRIMITIVE recomputed — it must stay verbatim so an archived record keeps "
+        "its historical numbers; the recompute belongs at the command, where it can refuse")
 
     # the source-of-truth for "pre-existing": the archived corpus predates the IRR gate too
     arch = ROOT / "scenarios" / "archive"
@@ -368,8 +373,18 @@ def test_scenario_create_is_the_migration_path() -> None:
     create = src.split("def _cmd_scenario_create", 1)[1].split("\ndef _cmd_", 1)[0]
     supersede = src.split("def _cmd_scenario_supersede", 1)[1].split("\ndef _cmd_", 1)[0]
     assert "run_recipe" in create, "scenario-create no longer runs the engine — migration path gone"
-    assert "run_recipe" not in supersede, (
-        "supersede now runs the engine — the corrected STATE claim and the test above are stale")
+    # RE-RULED BY THE OPERATOR 2026-09-01 (STATE §5.0 row 3). This asserted the opposite until
+    # today: supersede did NOT call the engine, and both this line and the pin above told whoever
+    # changed it to get the question ruled first. It was — supersede now recomputes the incoming
+    # `result` from its own legs and REFUSES a disagreement, so the analyst is told rather than
+    # silently corrected. The ruling's own condition was measured before it was taken: all nine
+    # committed records recompute to their stored ratio exactly, so nothing on disk is refused.
+    assert "run_recipe" in supersede, (
+        "supersede no longer recomputes — that reverses the 2026-09-01 operator ruling; re-rule "
+        "before changing it")
+    assert "_result_mismatch" in supersede, (
+        "supersede recomputes but no longer REFUSES a disagreement — silently overwriting an "
+        "analyst's stated result is the half of this ruling that was explicitly not taken")
 
 
 def test_every_tier_map_covers_the_whole_enum_in_both_languages() -> None:

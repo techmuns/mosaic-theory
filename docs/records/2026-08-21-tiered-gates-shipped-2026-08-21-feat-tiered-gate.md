@@ -163,3 +163,30 @@ ordering that falls out: **LLY now → AZN pilot (USD IFRS) → NVDA workbook ch
 behind the FX policy (FPI1)**. MC1–MC2 bind trust in any megacap's numbers; MC3 binds any
 P/E-framed underwrite and waits on the book-blind ruling. No build is queued by this record —
 each item is an operator decision or a verify-at-onboarding gate.
+## Amendments
+
+**2026-09-01 — the supersede recompute to-do is RULED: yes, recompute AND refuse a mismatch.**
+The body's OPERATOR TO-DO asked whether `scenario-supersede` should recompute the incoming
+payload's `result`. Ruled by the operator today. `_cmd_scenario_supersede` now recomputes from the
+incoming legs and REFUSES when the supplied figure disagrees, naming both numbers.
+
+The body's stated objection — that recomputing "would also silently re-run the engine over
+analyst-authored numbers" — is answered by the shape of the fix rather than set aside: it refuses
+instead of overwriting, so a disagreement reaches the analyst rather than being quietly corrected.
+Silent overwrite was offered and explicitly NOT taken.
+
+The `supersede_record` PRIMITIVE stays verbatim by design, and the body's claim about it remains
+true. Recomputing there would re-value a sealed archived record under today's engine, which is the
+opposite of what an archive is for; the guard belongs at the command, where it can refuse.
+
+COST MEASURED BEFORE THE RULING WAS TAKEN: all nine committed records recompute to their stored
+ratio exactly, so the guard refuses nothing that exists on disk. Pinned by
+`test_supersede_refuses_a_result_its_own_legs_do_not_produce` plus a corpus cost check; the two
+pins that guarded the old behaviour are re-ruled rather than deleted — both had said in their own
+words that a change here required this ruling first.
+
+**2026-09-01 — MC3 is DONE and MC1 is tracked elsewhere.** The body lists MC1–MC4 / FPI1–FPI5 as
+open. MC3 ("no P/E-basis recipe — a P/E-framed underwrite is REFUSED today") shipped with R3, and
+GOOGL is the first record written through it. MC1's detection half shipped (`stale_served`,
+`filer_frontier`); its reporting half is dead by construction and is tracked as STATE §5.0 row 11.
+MC2, MC4 and FPI1–FPI5 remain — restated in STATE §5.0 row 4 with the operator's build order.
