@@ -258,7 +258,19 @@ class MeasuredTriggerRow(BaseModel):
     """
 
     trigger: str                    # the analyst's sentence, verbatim
+    #: THE TEST, carried so a prior day can be matched to a current criterion by what it MEASURES
+    #: rather than by its prose. Matching on the sentence would let a typo fix reset a kill streak
+    #: and would silently CARRY one across an AMENDED THRESHOLD — a different test, which must
+    #: start again. These three are that identity.
+    metric: str = ""
+    comparator: str = ""
+    threshold: float | None = None
     state: str                      # FIRED | NOT_FIRED | UNKNOWN
+    #: Whether the COMPARISON held on this reading — recorded because it diverges from `state` on a
+    #: sustain criterion (held, but the streak is short → NOT_FIRED). Reading the state alone when
+    #: counting a streak would treat that reading as a failure and restart the count from the wrong
+    #: place, which is the quiet way a two-quarter kill never fires.
+    satisfied: bool | None = None
     reason: str                     # why — on every state, not only the refusals
     observed: float | None = None
     unit: str | None = None
@@ -574,6 +586,20 @@ def _stale_tags(mechanical: dict[str, Any] | None) -> list[str]:
     same shape as the dilution overlay this repo already records. It needs companyfacts, which the
     monitor does not hold; what IS available here is the dossier's own recorded flags, so this
     reads those rather than inventing a second source for the same fact.
+
+    AND THAT SUBSTITUTE DOES NOT WORK — stated here rather than discovered later (review, #556).
+    `SourceStatus` has exactly three members: PRESENT, UNKNOWN, MISSING. There is no `stale`, so
+    the scan below cannot match by CONSTRUCTION, not merely in today's corpus (census over the
+    committed dossiers: 1471 present, 233 unknown, 3 suppressed, **0 stale**). This function
+    therefore returns `[]` on every input and the monitor's stale-tag row is always empty.
+
+    IT IS LEFT IN PLACE, NOT DELETED, and that is a deliberate and narrow call: it renders nothing
+    today and rendered nothing before this PR, so removing it would change a surface without
+    changing a reader's information, while wiring it for real needs companyfacts in the monitor —
+    a build, not a review edit. What was NOT acceptable was leaving the docstring claiming a
+    working substitute. `test_the_stale_tag_scan_cannot_match_and_says_so` pins the gap so the day
+    `SourceStatus` gains a `stale` member this is revisited instead of quietly starting to matter.
+    Recorded in STATE.md §5.0 with its falsifier.
     """
     if not mechanical:
         return []
@@ -587,8 +613,53 @@ def _stale_tags(mechanical: dict[str, Any] | None) -> list[str]:
     return sorted(set(out))
 
 
-def _measured_rows(record: dict[str, Any],
-                   mechanical: dict[str, Any] | None) -> list[MeasuredTriggerRow]:
+def _history_for(ticker: str, trig: Any,
+                 prior_days: list[dict[str, Any]]) -> list[Any] | None:
+    """Prior readings of THIS NAME's criterion, newest first, from already-committed monitor days.
+
+    THE HISTORY IS THE MONITOR DAYS THEMSELVES. They are dated, committed and append-only, and
+    each already records what every criterion read — so a separate observation store would be a
+    second copy of a fact the repo keeps, free to drift from it.
+
+    MATCHED ON THE TEST, NOT THE SENTENCE. An amended threshold is a DIFFERENT criterion and its
+    streak starts again; a reworded sentence is the same test and keeps its streak. Matching on
+    prose would get both backwards.
+
+    AND MATCHED ON THE NAME. A monitor day carries EVERY followed name's freshness row, and the
+    (metric, comparator, threshold) triple is a criterion's identity WITHIN one record, never
+    across the book — `quality.net_debt_to_ebitda > 3.0x` is the same triple on every name that
+    writes it. Scanning rows name-blind pooled other issuers' readings into this one's streak,
+    each carrying its own `source_ref`, so the de-duplication that stops a re-run extending a
+    streak could not stop them: two peers reading the same day would satisfy a two-quarter kill
+    on one observation apiece.
+
+    Returns None when no prior day carries this row at all — "never measured" is not "measured and
+    did not hold", and the evaluator turns the first into UNKNOWN rather than a broken streak.
+    """
+    from vinci.triggers import Observation
+
+    seen: list[Any] = []
+    found = False
+    for day in prior_days:                       # newest first, supplied by the caller
+        for row in (day.get("freshness") or []):
+            if str(row.get("ticker") or "") != ticker:
+                continue
+            for m in (row.get("measured") or []):
+                if (m.get("metric") == trig.metric and m.get("comparator") == trig.comparator
+                        and m.get("threshold") == trig.threshold):
+                    found = True
+                    # CARRIED, NOT COERCED. `bool(None)` turned a day the metric could not be
+                    # read into a day the criterion demonstrably did not hold — the third state
+                    # collapsing into the second, on the one path that counts a kill.
+                    _sat = m.get("satisfied")
+                    seen.append(Observation(source=m.get("source"),
+                                            satisfied=None if _sat is None else bool(_sat)))
+    return seen if found else None
+
+
+def _measured_rows(ticker: str, record: dict[str, Any],
+                   mechanical: dict[str, Any] | None,
+                   prior_days: list[dict[str, Any]] | None = None) -> list[MeasuredTriggerRow]:
     """Evaluate this record's measured criteria. Absent dossier → UNKNOWN WITH ITS CAUSE.
 
     An absent mechanical layer is exactly the case that must not silently become "nothing fired":
@@ -598,26 +669,31 @@ def _measured_rows(record: dict[str, Any],
     from vinci.scenarios import MeasuredTrigger
     from vinci.triggers import UNKNOWN, evaluate
 
+    prior_days = prior_days or []
     raw = (record.get("verdict") or {}).get("measured_triggers") or []
     out: list[MeasuredTriggerRow] = []
     for item in raw:
         trig = MeasuredTrigger.model_validate(item)
         if mechanical is None:
             out.append(MeasuredTriggerRow(
-                trigger=trig.trigger, state=UNKNOWN,
+                trigger=trig.trigger, metric=trig.metric, comparator=trig.comparator,
+                threshold=trig.threshold, state=UNKNOWN,
                 reason=(f"no committed dossier was supplied for this run, so {trig.metric!r} could "
                         f"not be read — the criterion is unmeasured, not quiet")))
             continue
-        st = evaluate(trig, mechanical)
-        out.append(MeasuredTriggerRow(trigger=trig.trigger, state=st.state, reason=st.reason,
-                                      observed=st.observed, unit=st.unit, source=st.source))
+        st = evaluate(trig, mechanical, history=_history_for(ticker, trig, prior_days))
+        out.append(MeasuredTriggerRow(
+            trigger=trig.trigger, metric=trig.metric, comparator=trig.comparator,
+            threshold=trig.threshold, state=st.state, satisfied=st.satisfied, reason=st.reason,
+            observed=st.observed, unit=st.unit, source=st.source))
     return out
 
 
 def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
                   filings: list[tuple[str, date, str]], today: date,
                   watch_note: str | None = None,
-                  mechanical: dict[str, Any] | None = None) -> FreshnessRow:
+                  mechanical: dict[str, Any] | None = None,
+                  prior_days: list[dict[str, Any]] | None = None) -> FreshnessRow:
     """Build one freshness row. ``filings`` = (form, date, accession) for the name's periodic +
     earnings filings. A filing dated AFTER the record's last evidence date sets ``unread_print``
     — a flag for the human, never a verdict on any trigger.
@@ -637,7 +713,7 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
     # flag list; a future one joins the display list with its date. Both verbatim + labeled —
     # the machine never adjudicates whether a trigger fired.
     triggers = list((record.get("verdict") or {}).get("reunderwrite_triggers") or [])
-    measured = _measured_rows(record, mechanical)
+    measured = _measured_rows(ticker, record, mechanical, prior_days)
     passed: list[str] = []
     for dt in (record.get("verdict") or {}).get("dated_triggers") or []:
         trig, deadline = str(dt.get("trigger") or ""), str(dt.get("deadline") or "")

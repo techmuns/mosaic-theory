@@ -1808,6 +1808,25 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                          f"row's {payload['benchmark']} — the row itself is never mutated")
 
     fresh: list[mon.FreshnessRow] = []
+    # PRIOR MONITOR DAYS ARE THE OBSERVATION HISTORY (step 2). They are dated, committed and
+    # append-only, and each already records what every measured criterion read — so a separate
+    # store would be a second copy of a fact this repo keeps, free to drift from it.
+    #
+    # STRICTLY EARLIER THAN THE DAY BEING BUILT, newest first. A re-run of TODAY must not read its
+    # own previous output as a prior observation: that would let running the monitor twice extend a
+    # streak, which is the exact defect the source_ref de-duplication exists to prevent, reached by
+    # a different door.
+    _mon_dir = root / "data" / "monitor"
+    prior_days: list[dict[str, Any]] = []
+    if _mon_dir.is_dir():
+        for _p in sorted(_mon_dir.glob("*.json"), reverse=True):
+            # A DAY IS A DATED FILENAME — the same test `mon.write_snapshot` already applies to
+            # this directory (`_SNAPSHOT_DAY`), rather than a second ad-hoc rule naming the one
+            # non-day file we happen to know about. `benchmark_assignments.json` is excluded by
+            # not being a date, and so is the next artifact that lands beside it.
+            if not mon._SNAPSHOT_DAY.fullmatch(_p.stem) or _p.stem >= ref.isoformat():
+                continue
+            prior_days.append(json.loads(_p.read_text()))
     edgar = EdgarClient.from_config(cfg)
     for name in sorted({r["ticker"] for r in rows_raw} | _watch_tickers(root)):
         rec_path = root / "scenarios" / f"{name}.json"
@@ -1836,7 +1855,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                 if dpath.is_file() else None)
         fresh.append(mon.freshness_row(
             ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
-            record=record, filings=filings, today=ref, watch_note=note, mechanical=mech))
+            record=record, filings=filings, today=ref, watch_note=note, mechanical=mech,
+            prior_days=prior_days))
 
     # DUAL MEASUREMENT (ratified §7, 2026-07-22). The CALL is scored at its horizon regardless of
     # whether the position was exited — an exit is a capital decision, not a retraction, and

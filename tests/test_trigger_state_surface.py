@@ -121,3 +121,119 @@ def test_the_number_and_its_source_ride_along() -> None:
 def test_the_stale_tags_reach_the_page() -> None:
     """MC1's reporting half had no caller since it shipped; the tags it names now render."""
     assert "stale_tags" in _panel_src()
+
+
+def test_a_building_streak_is_read_from_satisfied_not_from_state() -> None:
+    """THE BUG THIS PIN EXISTS FOR, caught while wiring the history rather than by review.
+
+    Every prior reading of a BUILDING streak records `NOT_FIRED` by definition — the comparison
+    held but the count was still short. Reading `state` to decide whether a prior reading counted
+    therefore treats each one as a failure, the streak can never exceed 1, and a multi-reading
+    criterion NEVER FIRES no matter how long the condition persists. Measured: with two prior
+    satisfying readings and `sustain=3`, reading `state` gives "1 of the 3"; reading `satisfied`
+    gives FIRED on 3.
+    """
+    rec, mech = _record_and_mech()
+    rec = _with(rec, {"trigger": "nde > 1.0x for three readings", "threshold": 1.0,
+                      "sustain": 3, **_NDE})
+    prior = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+         "source": f"period-{i}", "satisfied": True, "state": "NOT_FIRED"}]}]}
+        for i in (1, 2)]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=prior)
+    assert row.measured[0].state == "FIRED", (
+        f"a building streak was not counted: {row.measured[0].reason}")
+    assert "3 consecutive readings" in row.measured[0].reason
+
+
+def test_a_rerun_of_the_same_day_cannot_extend_a_streak() -> None:
+    """Two guards cover this and both are load-bearing: the caller passes only days STRICTLY
+    EARLIER than the one being built, and the evaluator de-duplicates on `source_ref`. Either
+    alone would leave running the monitor twice able to advance a kill."""
+    rec, mech = _record_and_mech()
+    cur = mech["quality"]["net_debt_to_ebitda"].get("source_ref")
+    rec = _with(rec, {"trigger": "nde > 1.0x twice", "threshold": 1.0, "sustain": 2, **_NDE})
+    same = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+         "source": cur, "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=same)
+    assert row.measured[0].state == "NOT_FIRED" and "1 of the 2" in row.measured[0].reason
+
+
+def test_an_amended_threshold_starts_its_streak_again() -> None:
+    """History is matched on the TEST, not the sentence. A changed threshold is a different
+    criterion, so its prior readings do not carry over — and a reworded sentence, which is the
+    same test, keeps its streak."""
+    rec, mech = _record_and_mech()
+    rec = _with(rec, {"trigger": "nde > 1.0x twice", "threshold": 1.0, "sustain": 2, **_NDE})
+    other = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 2.0,
+         "source": "period-1", "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=other)
+    assert row.measured[0].state == "UNKNOWN", "a different threshold's history was carried over"
+    assert "no history was supplied" in row.measured[0].reason
+
+
+def test_another_names_readings_do_not_extend_this_names_streak() -> None:
+    """REVIEW FIX. A monitor day carries EVERY followed name's freshness row, and the criterion
+    identity `(metric, comparator, threshold)` is unique WITHIN a record, never across the book:
+    `quality.net_debt_to_ebitda > 1.0x` is the same triple on every name that writes it. Scanned
+    name-blind, two peers reading on the same day supplied two "consecutive" observations — each
+    with its own `source_ref`, so the de-duplication that stops a monitor re-run extending a
+    streak could not stop them, and a two-reading kill fired on one reading of this name.
+    """
+    rec, mech = _record_and_mech()
+    rec = _with(rec, {"trigger": "nde > 1.0x twice", "threshold": 1.0, "sustain": 2, **_NDE})
+    peers = [{"freshness": [
+        {"ticker": "AORT", "measured": [
+            {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+             "source": "AORT FQ2", "satisfied": True, "state": "NOT_FIRED"}]},
+        {"ticker": "NCNO", "measured": [
+            {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+             "source": "NCNO FQ2", "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech, prior_days=peers)
+    assert row.measured[0].state == "UNKNOWN", (
+        f"another name's readings were counted into SMPL's streak: {row.measured[0].reason}")
+    assert "no history was supplied" in row.measured[0].reason
+    # ...and the pin is not inert: the SAME rows under this name's ticker DO complete the streak.
+    mine = [{"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 1.0,
+         "source": "SMPL FQ2", "satisfied": True, "state": "NOT_FIRED"}]}]}]
+    assert freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                         mechanical=mech, prior_days=mine).measured[0].state == "FIRED"
+
+
+def test_the_stale_tag_scan_cannot_match_and_says_so() -> None:
+    """`_stale_tags` is DEAD BY CONSTRUCTION, and this pin exists so that stays deliberate.
+
+    It scans mechanical nodes for `status == "stale"`. `SourceStatus` has three members — PRESENT,
+    UNKNOWN, MISSING — so no assembled dossier can carry that value: the monitor's stale-tag row is
+    unconditionally empty and `stale_served` still has no production caller. The reporting half of
+    #531 is NOT delivered.
+
+    THIS PIN IS THE FALSIFIER, not an endorsement. It reddens the moment `SourceStatus` gains a
+    `stale` member — which is exactly when someone must decide whether to finish the wiring
+    (companyfacts in the monitor) or drop the row. A test asserting the empty list against today's
+    corpus would instead go green forever and hide that decision.
+    """
+    import json
+    import pathlib
+
+    from vinci.dossier.schemas import SourceStatus
+    from vinci.monitor import _stale_tags
+
+    assert "stale" not in {m.value for m in SourceStatus}, (
+        "SourceStatus gained a `stale` member — `_stale_tags` can now match, so decide: finish "
+        "the wiring (companyfacts in the monitor) or remove the row. Do not just update this pin.")
+
+    # ...and it really does return nothing on every committed dossier, not merely on a fixture
+    root = pathlib.Path(__file__).resolve().parents[1] / "data" / "dossiers"
+    seen = 0
+    for f in sorted(root.glob("*/dossier.json")):
+        assert _stale_tags(json.loads(f.read_text()).get("mechanical")) == []
+        seen += 1
+    assert seen >= 8, f"corpus scan covered {seen} dossiers — it is not exercising anything"

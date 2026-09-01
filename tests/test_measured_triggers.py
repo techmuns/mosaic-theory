@@ -80,12 +80,17 @@ def test_a_bool_is_not_a_number() -> None:
 
 
 def test_a_sustain_count_refuses_rather_than_firing_on_one_reading() -> None:
-    """"Two consecutive quarters" is a DIFFERENT test from "once". Nothing here records a prior
-    observation yet, so a satisfied single reading is UNKNOWN — firing would be the weaker test the
-    analyst deliberately did not write."""
+    """"Two consecutive quarters" is a DIFFERENT test from "once", so a satisfied single reading
+    never fires it.
+
+    AMENDED (step 2): the refusal is now conditional on having NO history rather than absolute —
+    with prior readings in hand the criterion CAN be counted and returns a real answer. The
+    property this pin protects is unchanged and is what the amendment must not lose: one reading
+    alone never fires a multi-reading criterion.
+    """
     r = evaluate(_t(threshold=1.0, sustain=2), _mech("SMPL"))
     assert r.state == UNKNOWN
-    assert "consecutive observations" in r.reason and "weaker test" in r.reason
+    assert "consecutive readings" in r.reason and "no history was supplied" in r.reason
 
 
 def test_a_stated_unit_that_disagrees_refuses_rather_than_comparing() -> None:
@@ -207,3 +212,121 @@ def test_a_record_that_states_one_keeps_it() -> None:
     kept = (scoped.get("verdict") or {}).get("measured_triggers")
     assert kept and kept[0]["trigger"].startswith("Quest"), kept
     assert kept[0]["sustain"] == 2
+
+
+# --- sustain: the count is in READINGS, not in monitor runs ------------------------------------
+
+
+def _hist(*pairs: tuple[str | None, bool]) -> list:
+    from vinci.triggers import Observation
+    return [Observation(source=s, satisfied=ok) for s, ok in pairs]
+
+
+_SUS = {"metric": "q.x", "comparator": ">", "threshold": 1.0, "unit": "x", "sustain": 2}
+_MECH = {"q": {"x": {"value": 1.5, "status": "present", "source_ref": "Q2 2026"}}}
+
+
+def test_the_same_reading_seen_twice_does_not_satisfy_a_two_reading_criterion() -> None:
+    """THE CASE THE WHOLE DESIGN EXISTS FOR. "Two consecutive quarters" is stated in the ANALYST's
+    cadence; the monitor can run twice in an afternoon. Counting runs would fire a kill on one
+    observation the analyst deliberately wrote to need two. Readings are told apart by their
+    `source_ref`, which already names the period — carried WHOLE and compared for equality, never
+    parsed, because reaching into it for the quarter is the class this module refuses.
+    """
+    r = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH, history=_hist(("Q2 2026", True)))
+    assert r.state == NOT_FIRED
+    assert "1 of the 2" in r.reason
+
+
+def test_a_genuinely_prior_period_completes_the_streak() -> None:
+    r = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH, history=_hist(("Q1 2026", True)))
+    assert r.state == FIRED and "2 consecutive readings" in r.reason
+
+
+def test_a_broken_streak_restarts_and_does_not_reach_past_the_break() -> None:
+    r = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH,
+                 history=_hist(("Q1 2026", False), ("Q4 2025", True)))
+    assert r.state == NOT_FIRED and "1 of the 2" in r.reason
+
+
+def test_no_history_supplied_stays_unknown_rather_than_guessing_a_streak() -> None:
+    r = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH, history=None)
+    assert r.state == UNKNOWN and "no history was supplied" in r.reason
+
+
+def test_a_metric_without_a_source_ref_cannot_be_counted() -> None:
+    """Without it a repeat reading is indistinguishable from a new period, and counting monitor
+    RUNS instead would satisfy a two-quarter test in an afternoon."""
+    r = evaluate(MeasuredTrigger(trigger="t", **_SUS),
+                 {"q": {"x": {"value": 1.5, "status": "present"}}}, history=_hist((None, True)))
+    assert r.state == UNKNOWN and "no source_ref" in r.reason
+
+
+def test_satisfied_diverges_from_state_on_a_short_streak() -> None:
+    """The two are different facts, and conflating them is how a two-quarter kill never fires: a
+    reading where the comparison HELD but the streak was short records NOT_FIRED, and counting the
+    next day's streak off `state` alone would treat it as a failure and restart from zero."""
+    short = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH, history=_hist())
+    assert short.state == NOT_FIRED and short.satisfied is True
+    fired = evaluate(MeasuredTrigger(trigger="t", **_SUS), _MECH, history=_hist(("Q1", True)))
+    assert fired.state == FIRED and fired.satisfied is True
+    false = evaluate(MeasuredTrigger(trigger="t", **{**_SUS, "threshold": 9.0}), _MECH)
+    assert false.state == NOT_FIRED and false.satisfied is False
+
+
+def test_an_unreadable_prior_reading_refuses_the_count_instead_of_restarting_it() -> None:
+    """A day the metric could not be read is NOT a day the criterion failed.
+
+    `_history_for` coerced the stored `satisfied` with `bool(...)`, so an UNKNOWN prior reading
+    (`satisfied: null`) arrived as `False` and `_streak` broke on it. The kill criterion's clock
+    silently restarted: the reader was told "holds on 1 of the 2 consecutive readings" — the exact
+    sentence a genuinely-failed period produces — with nothing saying the missing period was
+    unreadable rather than benign. That is the third state collapsing into the second, inside the
+    module whose whole purpose is keeping the three apart, on the one path that counts a kill.
+
+    THREE INPUTS MUST GIVE THREE ANSWERS. The middle one is the regression.
+    """
+    from vinci.scenarios import MeasuredTrigger
+    from vinci.triggers import FIRED, NOT_FIRED, UNKNOWN, Observation, _streak, evaluate
+
+    trig = MeasuredTrigger(trigger="leverage kill", metric="quality.net_debt_to_ebitda",
+                           comparator=">", threshold=3.0, unit="x", sustain=2, basis="CIQ")
+    mech = {"quality": {"net_debt_to_ebitda": {"value": 4.2, "source_ref": "CIQ FQ3 2026"}}}
+
+    def state(satisfied: bool | None) -> object:
+        return evaluate(trig, mech,
+                        history=[Observation(source="CIQ FQ2 2026", satisfied=satisfied)]).state
+
+    assert state(True) == FIRED, "two satisfied readings must fire a sustain-2 criterion"
+    assert state(False) == NOT_FIRED, "a genuinely failed prior period restarts the count"
+    assert state(None) == UNKNOWN, (
+        "an UNREADABLE prior period must refuse the count, not restart it — otherwise it is "
+        "indistinguishable from a period that was measured and did not hold")
+
+    # ...and the reason must SAY which, or the reader cannot act on either
+    why = evaluate(trig, mech,
+                   history=[Observation(source="CIQ FQ2 2026", satisfied=None)]).reason
+    assert "UNKNOWN" in why and "source_ref" not in why, (
+        f"the refusal must name the unreadable reading, not the other cause: {why!r}")
+
+    # `_streak` refuses in its own right, not only through `evaluate`
+    assert _streak("CIQ FQ3 2026", [Observation(source="CIQ FQ2 2026", satisfied=None)]) is None
+    assert _streak("CIQ FQ3 2026", [Observation(source="CIQ FQ2 2026", satisfied=True)]) == 2
+
+
+def test_the_history_read_carries_the_third_state_off_a_committed_row() -> None:
+    """END-TO-END on the stored shape: `satisfied: null` on a monitor row must reach `Observation`
+    as None. A unit pin on `_streak` alone would stay green with the `bool()` coercion restored,
+    because the coercion lives in the READER, not the counter."""
+    from vinci.monitor import _history_for
+    from vinci.scenarios import MeasuredTrigger
+
+    trig = MeasuredTrigger(trigger="k", metric="quality.net_debt_to_ebitda", comparator=">",
+                           threshold=3.0, unit="x", sustain=2, basis="CIQ")
+    day = {"freshness": [{"ticker": "SMPL", "measured": [
+        {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "threshold": 3.0,
+         "satisfied": None, "source": "CIQ FQ2 2026"}]}]}
+    got = _history_for("SMPL", trig, [day])
+    assert got is not None and len(got) == 1
+    assert got[0].satisfied is None, (
+        f"a stored null must stay None, not become False: {got[0].satisfied!r}")
