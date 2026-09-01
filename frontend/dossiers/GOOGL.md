@@ -5,18 +5,23 @@ _August 28, 2026 · extraction 2026-08-16.1_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $397.41 (+14.9% vs entry-vintage spot) · **Spot** $345.90 (entry-vintage — frozen at underwrite 2026-08-17) · **Reward** $51.51 · **Risk** $30.45 · **Reward : risk** 1.69 : 1 (bar 2 : 1) · **Base IRR** 14.9% (floor 15%, 1y) · **Gate** FAIL (both tests)
+**Target (base)** $397.41 (+17.1% vs entry-vintage spot) · **Spot** $339.35 (entry-vintage — frozen at underwrite 2026-09-01) · **Reward** $58.06 · **Risk** $23.90 · **Reward : risk** 2.43 : 1 (bar 2 : 1) · **Base IRR** 17.1% (floor 15%, 1y) · **Gate** PASS (both tests)
 
-_judged under the 2:1 / 15% regime (pre-2026-08-21; tiers not applied)_
+**Asymmetry** preferred · **Return** preferred · **Eligibility** ELIGIBLE (≥1.75:1 & ≥12%)
+_gate regime 2026-08-21 · IRR price-only — excludes dividends; conservative for dividend payers_
 
-_Spot source: Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 — WSJ market data, corroborated by FT historical prices_
+_Spot source: Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-31 — Polygon daily aggregates_
 
-**Underwrite disposition:** PENDING_ANALYST — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** CONFIRMED (2026-09-01) · entry $345.90 (entry-vintage) — _the BUY/AVOID verdict of record is the ledger's_
 
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
+### Thesis — our rationale
+_Prices quoted below are entry-vintage (2026-09-01); the live close is in Snapshot, above._
+
+The underwrite missed its asymmetry line at the 14 Aug spot of $345.90, where the ratio was 1.69x against 1.75x. It clears at the 31 Aug close of $339.35, where the same legs give 2.43x and a 17.1% base return. The improvement comes from the price falling, not from anything changing in the business, and the ratio is sensitive to that: risk is thin, so it leaves the preferred band above $342.77 and stops being eligible above $345.26. I am confirming the position on that basis, with the entry unchanged at $345.90.
+
 Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.
-**Mixed** — accelerating revenue and cloud backlog run into a record-high trailing multiple, falling ROIC and rising capex whose payback is unresolved.
 - **Segments:** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
 - **Geography:** United States 48%; Europe, The Middle East, and Africa (EMEA) 29%; Asia-Pacific (APAC) 17%; Other Americas 6%; Unallocated -0% [2]
 - **Snapshot:** Nasdaq · CMP $342.00 (2026-08-26) · cap $4195.0B (2026-08-12) · 52-wk $205.28–$408.61 · shares 12.2B · book value/sh $50.90 [3]
@@ -40,9 +45,9 @@ _R3_forward_pe_
 
 | scenario | EPS | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: |
-| bear | $15.388 | 20.5x | $315.45 | -8.8% |
-| base | $16.221 | 24.5x | $397.41 | +14.9% |
-| bull | $16.649 | 26x | $432.87 | +25.1% |
+| bear | $15.388 | 20.5x | $315.45 | -7.0% |
+| base | $16.221 | 24.5x | $397.41 | +17.1% |
+| bull | $16.649 | 26x | $432.87 | +27.6% |
 
 - **bear** — IC memo 2026-08-17 §7A. Normalized EPS $15.388 at 20.5x — the de-rating case: Bear EPS EXCEEDS today's NTM $13.29, so the downside is multiple compression from ~26x, not an earnings fall. A ruling on either remedies docket is its most likely trigger.
 - **base** — IC memo 2026-08-17 §7A. Normalized EPS $16.221 at 24.5x — Search and Cloud economics run modestly above consolidated expectations while the capital build proves less damaging than the Q2 reset implies. Both locked variants hold, neither dramatically.

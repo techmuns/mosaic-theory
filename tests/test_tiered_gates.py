@@ -31,6 +31,14 @@ from vinci.dossier.render import _underwrite_lines
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = sorted(p for p in (ROOT / "scenarios").glob("*.json") if not p.name.startswith("_"))
+#: SPLIT BY WHAT EACH RECORD ACTUALLY CARRIES, not by an assumption about the whole book. Until
+#: 2026-09-01 every committed record was pre-ladder, so "the corpus" and "the legacy corpus" were
+#: the same set and the freeze pins below could parametrize over everything. GOOGL's reissue is the
+#: first record to carry a regime, and a pin that reads the book as uniformly legacy now fails on
+#: the one record that proves the ladder works.
+_REGIME = {p: (json.loads(p.read_text()).get("result") or {}).get("gate_regime") for p in RECORDS}
+LEGACY_RECORDS = [p for p in RECORDS if _REGIME[p] is None]
+LADDER_RECORDS = [p for p in RECORDS if _REGIME[p] is not None]
 
 
 
@@ -193,7 +201,7 @@ def test_the_divergence_zone_eligible_but_not_preferred() -> None:
     assert r.eligible is True, "ratio ≥1.75 and IRR ≥12% — the new line must clear"
 
 
-@pytest.mark.parametrize("path", RECORDS, ids=lambda p: p.stem)
+@pytest.mark.parametrize("path", LEGACY_RECORDS, ids=lambda p: p.stem)
 def test_a_recompute_never_migrates_a_legacy_record(path: Path) -> None:
     """THE FREEZE RULING AT THE ENGINE: recomputing a committed record WITH its result present is
     the refresh path, and it must reproduce the committed result EXACTLY — no regime, no tiers,
@@ -218,8 +226,8 @@ def test_the_regime_survives_its_own_recompute() -> None:
 
 # --- the sealed book stays frozen ---------------------------------------------------------------
 
-@pytest.mark.parametrize("path", RECORDS, ids=lambda p: p.stem)
-def test_committed_records_carry_no_regime_and_their_cards_gain_no_keys(path: Path) -> None:
+@pytest.mark.parametrize("path", LEGACY_RECORDS, ids=lambda p: p.stem)
+def test_a_legacy_record_carries_no_regime_and_its_card_gains_no_keys(path: Path) -> None:
     """THE FREEZE RULING, at both layers: the committed JSON has no ladder fields, and the
     display card built from it emits none of the new keys — absence is what lets the card render
     the 'judged under the 2:1 / 15% regime' line instead of the tiers."""
@@ -235,8 +243,13 @@ def test_committed_records_carry_no_regime_and_their_cards_gain_no_keys(path: Pa
 
 def test_a_new_regime_card_emits_the_keys_and_the_view_renders_them() -> None:
     """The other half: a recomputed record's card carries the ladder, and every emitted key is
-    named in uw-card.js — the card-key parity discipline, asserted here for the new keys since
-    the committed corpus cannot exercise them yet."""
+    named in uw-card.js — the card-key parity discipline.
+
+    WAS "the committed corpus cannot exercise them yet" (true until 2026-09-01). GOOGL's reissue
+    is the first committed record carrying a regime, and it is exercised directly by
+    `test_a_committed_ladder_record_carries_consistent_tiers` below. This synthesised case stays:
+    it covers SMPL's shape, which reaches `eligible is True` by a different route.
+    """
     rec = sc.run_recipe(_fresh(_load(ROOT / "scenarios" / "SMPL.json")))
     card = _build()._scenario_card(json.loads(rec.model_dump_json()), {})
     for k in ("gateRegime", "asymmetryTier", "returnTier", "eligible", "eligibleRatio",
@@ -572,7 +585,12 @@ def test_a_first_compute_stamps_the_ladder_and_a_sealed_record_does_not() -> Non
         "never reach, which is how this shipped unnoticed for eleven days")
     assert out.result.asymmetry_tier == sc.asymmetry_tier(out.result.ratio)
     assert out.result.return_tier == sc.return_tier(out.result.irr)
-    assert out.result.eligible is False, "GOOGL is below the 1.75x eligibility line"
+    # DERIVED, NOT PINNED TO A VALUE. The first cut asserted `eligible is False` because GOOGL
+    # sat below 1.75x at its 2026-08-14 spot; the record was reissued at a lower spot and the
+    # assertion inverted. A committed artifact is redrawn — pin the RULE (eligible is exactly the
+    # conjunction of the two lines), and leave value-level pins to frozen fixtures.
+    assert out.result.eligible == (out.result.ratio >= sc.ELIGIBLE_RATIO
+                                   and out.result.irr >= sc.ELIGIBLE_IRR)
 
     # (b) a record already carrying a DIFFERENT regime stays frozen — #489's protection
     sealed = sc.ScenarioRecord.model_validate(doc)
@@ -601,3 +619,46 @@ def test_the_committed_corpus_is_unmoved_by_the_stamping_fix() -> None:
         assert (again.result.ratio or 0) == pytest.approx(rec.result.ratio or 0), f.name
         seen += 1
     assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
+
+
+@pytest.mark.parametrize("path", LADDER_RECORDS, ids=lambda p: p.stem)
+def test_a_committed_ladder_record_carries_consistent_tiers(path: Path) -> None:
+    """THE MIRROR OF THE FREEZE PIN, and the first one a real record can answer.
+
+    A record carrying a regime must carry tiers that AGREE with its own numbers, and its card must
+    emit the ladder keys. Pinned as a DERIVATION, never as a value: these records are redrawn on
+    every reissue, so `asymmetry_tier == "preferred"` would rot the moment the spot moves — which
+    is exactly how the first cut of the stamping pin broke.
+    """
+    rec = _load(path)
+    r = rec.result
+    assert r is not None and r.gate_regime == sc.GATE_REGIME
+    assert r.asymmetry_tier == sc.asymmetry_tier(r.ratio), f"{path.stem}: tier disagrees with ratio"
+    assert r.return_tier == sc.return_tier(r.irr), f"{path.stem}: tier disagrees with IRR"
+    assert r.eligible == (r.ratio is not None and r.ratio >= sc.ELIGIBLE_RATIO
+                          and r.irr is not None and r.irr >= sc.ELIGIBLE_IRR)
+    card = _build()._scenario_card(json.loads(path.read_text()), {})
+    # `eligibleUndefined` is CONDITIONAL by design — it carries the REASON eligibility could not
+    # be determined, and a determinate record has none to give. Requiring it would demand the
+    # emitter write an empty explanation for a question that was answered.
+    always = [k for k in NEW_CARD_KEYS if k != "eligibleUndefined"]
+    missing = [k for k in always if k not in card]
+    assert not missing, f"{path.stem}: a ladder record's card omits {missing}"
+    assert ("eligibleUndefined" in card) == (r.eligible_undefined is not None), (
+        f"{path.stem}: the undefined-reason key must appear exactly when there IS a reason")
+
+
+def test_the_corpus_still_exercises_both_sides_of_the_freeze() -> None:
+    """NEITHER PARAMETRIZED SET MAY GO EMPTY, or its pin silently stops running.
+
+    The freeze pins above parametrize over `LEGACY_RECORDS` and the mirror over `LADDER_RECORDS`.
+    An empty list is a green test that asserts nothing — the failure mode a split like this
+    creates. Both sides carry a record today; if one empties, that is a fact about the book worth
+    seeing rather than a pin quietly retiring itself.
+    """
+    assert LEGACY_RECORDS, (
+        "no pre-ladder record remains — the freeze pins no longer run; if the book has fully "
+        "migrated, retire them deliberately rather than letting them pass vacuously")
+    assert LADDER_RECORDS, (
+        "no committed record carries the ladder — that was the eleven-day defect #563 fixed, and "
+        "this pin exists so its return is noticed")
