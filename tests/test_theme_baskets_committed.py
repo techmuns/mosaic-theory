@@ -87,9 +87,22 @@ def test_the_committed_baskets_carry_no_licensed_or_verbatim_filing_text() -> No
         assert doc["watchlist_triggers"] == {}, (
             f"{p.name} carries verbatim trigger prose — the basket is a membership record; the "
             f"trigger text belongs to the mirror and the ledger")
-        # a crude length guard: any single string long enough to be a filing quote
-        longest = max((len(v) for v in doc["layer_of"].values()), default=0)
-        assert longest < 60, f"{p.name}: a layer label of {longest} chars looks like prose"
+        # WHAT the label contains, not how long it is (2026-09-01). This was a crude `len < 60`
+        # guard, which the first MULTI-TAG driver to reach a committed basket broke on a legitimate
+        # value: glp1-drug-value-chain declares `multi_tag=True`, so
+        # "incumbent-franchise+next-gen-assets+manufacturing-infra+access-distribution" is 75 chars
+        # of four declared tags, not prose. Length was only ever a proxy for "is this a filing
+        # quote" — checking the components against the driver's OWN declared tags is the thing the
+        # proxy stood for, and it still refuses a quote, which cannot be a list of declared tags.
+        from vinci.themes.drivers import DRIVER_SPECS
+
+        declared = {t for t, _ in DRIVER_SPECS[doc["driver"]].provenance_tags} | {"unspecified"}
+        for ticker, label in doc["layer_of"].items():
+            unknown = [part for part in label.split("+") if part not in declared]
+            assert not unknown, (
+                f"{p.name}: {ticker} carries layer label {label!r} whose component(s) {unknown} "
+                f"are not declared tags of {doc['driver']} — a filing quote or prose has leaked "
+                f"into a membership field")
 
 
 def test_only_the_canonical_paths_are_tracked_not_the_loose_ad_hoc_names() -> None:
@@ -359,12 +372,20 @@ def test_the_three_july_ledgers_are_absent_and_not_fabricated() -> None:
     (`rationale`, `gradeFact`, `accession` per name), which is the honest surviving record."""
     from vinci.themes.forward import LEDGER_SUBDIR
 
+    # UPDATED DELIBERATELY 2026-09-01, exactly as this pin's own message instructs. The three JULY
+    # ledgers are still absent and still must not be fabricated. `glp1-drug-value-chain` is a
+    # different thing: it was frozen from a REAL analyst worksheet on 2026-09-01 (44 dispositioned
+    # rows, 15 ratified / 29 passed, zero pending), so its ledger records what was appended and
+    # when — the property the July rebuilds could not have had. Naming the July three rather than
+    # asserting an empty directory keeps the pin pointed at the fabrication it exists to prevent,
+    # instead of at any freeze that ever happens again.
+    july = {"ai-datacenter.jsonl", "defense-demand-shift.jsonl", "truckload-supply-purge.jsonl"}
     live = sorted(p.name for p in (ROOT / "data" / LEDGER_SUBDIR).glob("*.jsonl")) \
         if (ROOT / "data" / LEDGER_SUBDIR).is_dir() else []
-    assert live == [], (
-        f"a ratification ledger appeared for a July 2026 theme: {live}. Those files were lost; if "
-        f"one has been RE-FROZEN from a real worksheet that is good — update this pin deliberately "
-        f"rather than deleting it.")
+    assert not (july & set(live)), (
+        f"a ratification ledger appeared for a July 2026 theme: {sorted(july & set(live))}. Those "
+        f"files were lost; if one has been RE-FROZEN from a real worksheet that is good — update "
+        f"this pin deliberately rather than deleting it.")
     # and the mirrors still carry what survived, so the gap is documented rather than total
     mirror = json.loads((ROOT / "frontend" / "themes" / "defense.json").read_text())
     assert all(n.get("rationale") for n in mirror["names"]), (
