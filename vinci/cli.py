@@ -1825,9 +1825,18 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                 if v.get("avoid_priced") else None)
         logged = next((r["verdict"] for r in rows_raw if r["ticker"] == name), None)
         status = str(v.get("status") or "—")
+        # THE DOSSIER IS RESOLVED HERE, not inside the monitor (ruling 3). `freshness_row` takes
+        # the mechanical layer as a parameter for the same reason the scoring package takes its
+        # baskets: that module resolves neither config nor paths, so a reader that had to FIND a
+        # dossier would put file layout inside a pure function. Absent — a name with no committed
+        # dossier — the measured criteria report UNKNOWN with that as their stated cause, which is
+        # the honest reading and not a quiet page.
+        dpath = root / "data" / "dossiers" / name / "dossier.json"
+        mech = (json.loads(dpath.read_text()).get("mechanical")
+                if dpath.is_file() else None)
         fresh.append(mon.freshness_row(
             ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
-            record=record, filings=filings, today=ref, watch_note=note))
+            record=record, filings=filings, today=ref, watch_note=note, mechanical=mech))
 
     # DUAL MEASUREMENT (ratified §7, 2026-07-22). The CALL is scored at its horizon regardless of
     # whether the position was exited — an exit is a capital decision, not a retraction, and

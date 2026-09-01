@@ -229,7 +229,40 @@ class FreshnessRow(BaseModel):
     # each a FLAG ("… — deadline YYYY-MM-DD PASSED → re-underwrite due"), never an adjudication:
     # the window closed; whether the trigger FIRED is the human's read.
     passed_trigger_deadlines: list[str] = Field(default_factory=list)
+    # (ruling 3) the EVALUATED form of the criteria above, for the criteria that carry arithmetic.
+    # Empty is the normal state and does NOT mean "nothing fired": it means this record states no
+    # measured criterion — every one of its falsifiers is a judgment. The renderer must say which.
+    measured: list[MeasuredTriggerRow] = Field(default_factory=list)
+    #: (MC1) tags whose series has gone quiet, named rather than silently served. `stale_served`
+    #: has had no caller since #531 shipped it, so the 7 stale tags it can name reached no human.
+    stale_tags: list[str] = Field(default_factory=list)
     watch_note: str | None = None                            # e.g. WERN avoid_priced
+
+
+class MeasuredTriggerRow(BaseModel):
+    """One MEASURED criterion, evaluated at monitor time (ruling 3, 2026-08-31).
+
+    TYPED HERE SO `PanelSpec` READS IT RATHER THAN RECOMPUTING. `ThemeFalsifierRow` below records
+    that indicator measurement "is the PanelSpec plan's job, and this sweep must never grow into a
+    rival panel" — the same rule binds here. This row is not a panel: it is the evaluated STATE
+    hung on the trigger list this row already carried in prose, so the panel that renders it later
+    consumes one answer instead of computing a second one that could disagree.
+
+    THE STATE IS THREE-VALUED AND `UNKNOWN` IS NOT A QUIET NO. A criterion the evaluator could not
+    read must look different on the page from one that has not fired; they recommend opposite
+    actions. `reason` is populated on every state, because a human reading FIRED needs the number
+    as much as one reading UNKNOWN needs the cause.
+
+    THE MACHINE PROPOSES A FIRING STATUS; THE HUMAN DECIDES THE ACTION. Nothing here moves a
+    position, and `state == "FIRED"` is a highlight, never a disposition.
+    """
+
+    trigger: str                    # the analyst's sentence, verbatim
+    state: str                      # FIRED | NOT_FIRED | UNKNOWN
+    reason: str                     # why — on every state, not only the refusals
+    observed: float | None = None
+    unit: str | None = None
+    source: str | None = None       # the metric's own source_ref, so the number is checkable
 
 
 class ThemeFalsifierRow(BaseModel):
@@ -533,12 +566,68 @@ def next_expected_print(filing_dates: list[date], *,
     return future[0], "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
 
 
+def _stale_tags(mechanical: dict[str, Any] | None) -> list[str]:
+    """(MC1) The tags whose series has gone quiet, named for a human.
+
+    `stale_served` shipped in #531 and has had NO CALLER since, so the seven stale tags it can
+    name reached nobody — the reporting half of that work was built and left unwired, which is the
+    same shape as the dilution overlay this repo already records. It needs companyfacts, which the
+    monitor does not hold; what IS available here is the dossier's own recorded flags, so this
+    reads those rather than inventing a second source for the same fact.
+    """
+    if not mechanical:
+        return []
+    out: list[str] = []
+    for block in mechanical.values():
+        if not isinstance(block, dict):
+            continue
+        for name, node in block.items():
+            if isinstance(node, dict) and str(node.get("status") or "") == "stale":
+                out.append(str(name))
+    return sorted(set(out))
+
+
+def _measured_rows(record: dict[str, Any],
+                   mechanical: dict[str, Any] | None) -> list[MeasuredTriggerRow]:
+    """Evaluate this record's measured criteria. Absent dossier → UNKNOWN WITH ITS CAUSE.
+
+    An absent mechanical layer is exactly the case that must not silently become "nothing fired":
+    the criteria exist and were simply not measurable on this run, which is a different sentence
+    from a quiet page and reaches the human as one.
+    """
+    from vinci.scenarios import MeasuredTrigger
+    from vinci.triggers import UNKNOWN, evaluate
+
+    raw = (record.get("verdict") or {}).get("measured_triggers") or []
+    out: list[MeasuredTriggerRow] = []
+    for item in raw:
+        trig = MeasuredTrigger.model_validate(item)
+        if mechanical is None:
+            out.append(MeasuredTriggerRow(
+                trigger=trig.trigger, state=UNKNOWN,
+                reason=(f"no committed dossier was supplied for this run, so {trig.metric!r} could "
+                        f"not be read — the criterion is unmeasured, not quiet")))
+            continue
+        st = evaluate(trig, mechanical)
+        out.append(MeasuredTriggerRow(trigger=trig.trigger, state=st.state, reason=st.reason,
+                                      observed=st.observed, unit=st.unit, source=st.source))
+    return out
+
+
 def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
                   filings: list[tuple[str, date, str]], today: date,
-                  watch_note: str | None = None) -> FreshnessRow:
+                  watch_note: str | None = None,
+                  mechanical: dict[str, Any] | None = None) -> FreshnessRow:
     """Build one freshness row. ``filings`` = (form, date, accession) for the name's periodic +
     earnings filings. A filing dated AFTER the record's last evidence date sets ``unread_print``
-    — a flag for the human, never a verdict on any trigger."""
+    — a flag for the human, never a verdict on any trigger.
+
+    ``mechanical`` is the name's committed dossier mechanical layer, SUPPLIED BY THE CALLER rather
+    than read here — the same rule the scoring package follows for baskets, and for the same
+    reason: this module resolves neither config nor paths, so a reader that had to find a dossier
+    would put file layout inside a pure function. Absent, the measured criteria are reported
+    UNKNOWN with that as their stated cause, never silently skipped.
+    """
     ev, ev_src = last_evidence_date(record)
     newer = [f"{form} {d.isoformat()} acc {acc}"
              for form, d, acc in sorted(filings, key=lambda t: t[1])
@@ -548,6 +637,7 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
     # flag list; a future one joins the display list with its date. Both verbatim + labeled —
     # the machine never adjudicates whether a trigger fired.
     triggers = list((record.get("verdict") or {}).get("reunderwrite_triggers") or [])
+    measured = _measured_rows(record, mechanical)
     passed: list[str] = []
     for dt in (record.get("verdict") or {}).get("dated_triggers") or []:
         trig, deadline = str(dt.get("trigger") or ""), str(dt.get("deadline") or "")
@@ -566,6 +656,7 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
         newer_filings=newer, unread_print=bool(newer),
         next_expected_print=nxt, next_expected_basis=basis,
         triggers=triggers, passed_trigger_deadlines=passed,
+        measured=measured, stale_tags=_stale_tags(mechanical),
         watch_note=watch_note,
     )
 
