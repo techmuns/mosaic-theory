@@ -27,12 +27,20 @@ const STAGE_CHIP = { measuring: ["live", "Measuring"], scanned: ["", "Scanned"],
                      declared: ["", "Declared"], archived: ["locked", "Archived"] };
 
 const STAGES = [
-  ["measuring", "Clock running", "live",
+  ["measuring", "Clock running",
     (d) => `First test ${d.firstTest ? fmtDate(d.firstTest) : "— date not declared"}`],
-  ["scanned", "Scanned, not yet reviewed", "",
-    (d) => `Send worksheet — ${fmtInt((d.frozenTiers || {}).firm + (d.frozenTiers || {}).partial || d.frozenCount || 0)} names`],
-  ["declared", "Declared, not yet scanned", "", () => "Run the scan"],
-  ["archived", "Archived — scanned earlier, no verdicts on file", "locked",
+  ["scanned", "Scanned, not yet reviewed",
+    (d) => {
+      // ABSENCE vs ZERO. A scanned-but-unfrozen driver has NO frozenTiers at all, which is when
+      // frozenCount is the right stand-in; a driver that HAS tiers and sums to 0 must report 0.
+      // `a + b || fallback` conflated the two, and a missing key made the sum NaN — also falsy —
+      // so both silently reported the fallback instead.
+      const ft = d.frozenTiers;
+      const n = ft ? (ft.firm ?? 0) + (ft.partial ?? 0) : (d.frozenCount ?? 0);
+      return `Send worksheet — ${fmtInt(n)} names`;
+    }],
+  ["declared", "Declared, not yet scanned", () => "Run the scan"],
+  ["archived", "Archived — scanned earlier, no verdicts on file",
     () => "Declare a thesis card first"],
 ];
 
@@ -78,7 +86,6 @@ export async function render(root, { item, frame }) {
   }
 
   const pf = idx.pooledForward || {};
-  const cd = idx.crossDriver || {};
 
   // POOLED forward — ONE compact honest strip; verbose enumeration behind "methodology".
   const nThemes = idx.drivers.length;
@@ -141,7 +148,7 @@ export async function render(root, { item, frame }) {
       </tr>`;
   };
 
-  const body = STAGES.map(([key, title, tone, needs]) => {
+  const body = STAGES.map(([key, title, needs]) => {
     const rows = idx.drivers.filter((d) => (d.stage || "archived") === key);
     if (!rows.length) return "";
     return `<tr class="th-grp"><td colspan="6">${escapeHtml(title)} · ${rows.length}</td></tr>`
