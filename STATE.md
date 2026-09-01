@@ -54,6 +54,13 @@ Each line: *what it does* — *verified how*.
   *(detail: `docs/records/2026-08-26-capability-ranker-triage-layer-vinci-rank-rank-cli-orders.md`)*
 - **Dossier-assembler**
   *(detail: `docs/records/2026-08-26-capability-dossier-assembler-vinci-dossier-dossier-cli-pe.md`)*
+- **Former-registrant-name marker** (`vinci/dossier/mechanical._former_name_flags`) — a human
+  caveat when the CIK filed under a different name inside the deepest window the page reads
+  (`midcycle.MIN_YEARS`+1 = 11y) — the reverse-merger/SPAC vintage class; restyles (casing, word
+  order, EDGAR's `/DE/` suffix, accents) collapse and never flag, and a rename AFTER the reference
+  date is not announced — *replayed over 1,880 cached CIKs: 527 flag (28%), **zero false
+  positives**; today MVST/AORT/VRRM/FUBO + TECX/ORKA on onboarding.*
+  *(detail: `docs/records/2026-09-01-former-registrant-name-marker.md`)*
 - **Decision ledger** (`vinci/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*

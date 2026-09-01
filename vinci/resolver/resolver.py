@@ -19,6 +19,7 @@ from typing import Any, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
+from vinci.edgar.submissions import parse_former_names
 from vinci.netcache import CachedHttp
 from vinci.resolver.errors import (
     AmbiguousResolutionError,
@@ -221,7 +222,11 @@ class EntityResolver:
     def _enrich_issuer(self, issuer: ResolvedIssuer) -> ResolvedIssuer:
         d = self.submissions(issuer.cik)
         sic = str(d["sic"]) if d.get("sic") else None
-        former = tuple(fn["name"] for fn in d.get("formerNames", []) if fn.get("name"))
+        # ONE parse of the formerNames array, shared with EdgarClient.registrant_history — this
+        # path had its own inline comprehension, and two parsers of one source is the twin-drift
+        # class (review, #558): a change to either skip rule would have landed in only one, and
+        # the dossier's rename caveat could then disagree with the resolved issuer record.
+        former = tuple(fn.name for fn in parse_former_names(d))
         # same '' → None rule as `sic_for`; this path reads the payload directly, so it cannot
         # inherit the normalisation and has to state it.
         sic_desc = d.get("sicDescription") or None
