@@ -220,13 +220,28 @@ def _anchors_on_basis(anchors: list[Anchor], basis: str | None) -> list[Anchor]:
     CONSERVATIVE BY CONSTRUCTION: an anchor is dropped only when both bases are known AND
     neither names the other, so `EV/EBITDA (NTM)` still anchors an `EV/EBITDA` record and an
     unknown basis keeps every anchor it had. Uncertainty leaves the check ON.
+
+    "NAMES THE OTHER" IS A WHOLE-NAME CONTAINMENT, NOT A SUBSTRING. `BASIS_EBIT = "EV/EBIT"` is a
+    literal substring of `BASIS_EBITDA = "EV/EBITDA"` — both are live R2 bases — so a bare `in`
+    read the two most confusable multiples in the repo as the same one, which is the exact
+    category error this filter exists to catch, one letter finer. The shorter name must end at a
+    boundary inside the longer: `EV/EBITDA (NTM)` and `NTM EV/EBITDA` still name `EV/EBITDA`,
+    while `EV/EBITDA` does not name `EV/EBIT`.
     """
     if not basis:
         return anchors
 
+    def _names(long: str, short: str) -> bool:
+        i = long.find(short)
+        if i < 0:
+            return False
+        before = long[i - 1] if i else ""
+        after = long[i + len(short):i + len(short) + 1]
+        return not (before.isalnum() or after.isalnum())
+
     def names_the_same_multiple(have: str) -> bool:
         x, y = have.strip().upper(), basis.strip().upper()
-        return x in y or y in x
+        return _names(x, y) or _names(y, x)
 
     return [a for a in anchors if not a.basis or names_the_same_multiple(a.basis)]
 

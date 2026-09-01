@@ -698,3 +698,13 @@ def test_an_anchor_is_dropped_only_when_it_names_a_different_multiple():
     assert kept("p/e", " P/E ")                      # case and padding are not a basis difference
     assert kept("P/E", None), "an anchor with no stated basis is not evidence of a mismatch"
     assert kept(None, "EV/EBITDA"), "a record with no stated basis keeps every anchor it had"
+    # REVIEW FIX — the two most confusable bases in the repo, and one is a literal SUBSTRING of
+    # the other, so a bare `in` read them as the same multiple. Both are live R2 bases.
+    import vinci.dossier.terminal_margin as _tm
+    assert _tm.BASIS_EBIT in _tm.BASIS_EBITDA, (
+        "the premise moved: EV/EBIT is no longer a substring of EV/EBITDA")
+    assert not kept(_tm.BASIS_EBIT, _tm.BASIS_EBITDA), (
+        "an EV/EBITDA own-history median anchored an EV/EBIT record")
+    assert not kept(_tm.BASIS_EBITDA, _tm.BASIS_EBIT)
+    # ...and a genuine qualifier still names its plain form, in both word orders
+    assert kept("EV/EBITDA", "NTM EV/EBITDA") and kept("NTM EV/EBITDA", "EV/EBITDA")
