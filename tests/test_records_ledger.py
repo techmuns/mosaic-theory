@@ -620,3 +620,67 @@ def test_a_merged_records_front_matter_is_frozen_apart_from_status() -> None:
     base = _amended_record()
     assert _violations("x.md", base, re.sub(r"(?m)^date:.*$", "date: 2026-01-01", base)), (
         "the `date:` was rewritten after merge and the guard saw nothing")
+
+
+#: A §2 capability entry at or above this many lines is a NARRATIVE, and its detail belongs in a
+#: record with a pointer — the convention §2 already documents and nothing enforced.
+#:
+#: ROOT CAUSE, MEASURED 2026-09-01. The only guard was the whole-file cap above. A total cannot
+#: tell a 3-line capability summary from a 70-line build narrative, and it fires hundreds of lines
+#: downstream, landing on whichever build happens to be last — STATE.md sat at 2,095 of 2,100 with
+#: five lines of headroom, and the history shows it hitting 2,100 exactly and being trimmed
+#: just-in-time. 14 of 91 bullets held 459 lines: 45% of the section in 15% of its entries, the
+#: largest 70 lines. Three of those already had pointers, so their detail was DUPLICATED.
+#:
+#: 21 comes from the live distribution, not an ideal. The cap above justified its slack by
+#: "a 2-3 line summary in §2" — only 17 of 91 entries were ever that short (median 6, mean 11,
+#: p90 23). Sizing a guard against a shape the file has never had is what let 155 lines of slack
+#: last six days. This one is set where the narratives actually begin.
+SECTION_2_ENTRY_MAX = 21
+
+
+def _section_2_bullets() -> list[tuple[str, int, bool]]:
+    """(title line, line count, carries a record pointer) for every §2 capability entry."""
+    lines = STATE.read_text().splitlines()
+    start = next(i for i, x in enumerate(lines) if x.startswith("## 2."))
+    end = next(i for i, x in enumerate(lines) if x.startswith("## 3."))
+    body = lines[start:end]
+    idx = [i for i, x in enumerate(body) if re.match(r"^- \*\*", x)]
+    out = []
+    for j, i in enumerate(idx):
+        stop = idx[j + 1] if j + 1 < len(idx) else len(body)
+        block = body[i:stop]
+        pointed = any(re.search(r"\*\(detail: `docs/records/[\w.\-]+\.md`\)\*", x) for x in block)
+        out.append((body[i][:80], stop - i, pointed))
+    return out
+
+
+def test_a_long_section_2_entry_keeps_its_detail_in_a_record() -> None:
+    """THE CONVENTION §2 DOCUMENTS, NOW ENFORCED. A capability's summary lives in the snapshot; the
+    narrative lives in a record behind a `*(detail: …)*` pointer. Nothing checked that, so the
+    section grew back to 1,023 lines — and the whole-file cap that eventually caught it could only
+    say "too big", never WHICH entry or what to do about it."""
+    over = [(t, n) for t, n, pointed in _section_2_bullets() if n >= SECTION_2_ENTRY_MAX
+            and not pointed]
+    assert not over, (
+        f"{len(over)} §2 entr(ies) run >= {SECTION_2_ENTRY_MAX} lines with no record pointer:\n" +
+        "\n".join(f"  {n:>4} lines  {t}" for t, n in over) +
+        "\n\nMove the detail: `python scripts/compact_state_section2.py` writes the record and "
+        "leaves the summary plus a pointer. Do not shorten by DELETING — the ledger keeps the "
+        "full account, the snapshot keeps the claim.")
+
+
+def test_the_snapshot_is_not_flush_against_its_cap() -> None:
+    """A CAP DISCOVERED AT THE MOMENT OF BREACH IS A CAP THAT GETS RAISED.
+
+    STATE.md reached exactly 2,100 on 2026-08-30 and was trimmed back the same day; six days after
+    P3 shrank it to 1,944 it was at 2,095 — five lines. Every build near the limit pays a
+    just-in-time tax, and the cheapest way out is always to raise the number. Failing early forces
+    the migration while it is still one entry rather than a section.
+    """
+    n = len(STATE.read_text().splitlines())
+    cap = 2100
+    assert cap - n >= 100, (
+        f"STATE.md is {n:,} lines — only {cap - n} under the {cap:,} cap. Move a §2 or §4 entry's "
+        f"detail into docs/records/ now, while it is one entry. Raising the cap is a decision to "
+        f"let the snapshot grow; make it deliberately, not because a build bumped into it.")
