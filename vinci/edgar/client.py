@@ -45,6 +45,14 @@ class FtsHit(BaseModel, frozen=True):
     display_names: list[str]
 
 
+class FormerName(BaseModel, frozen=True):
+    """One prior registrant name on a CIK, with the span it was in force (submissions JSON)."""
+
+    name: str
+    from_date: date | None  # absent on some very old rows — the END of the span is what matters
+    to_date: date  # the day the registrant stopped filing under this name
+
+
 class Filing(BaseModel, frozen=True):
     """A filing from the submissions feed (used for 8-K event detection)."""
 
@@ -404,6 +412,30 @@ class EdgarClient:
             url += f"&startdt={startdt}&enddt={enddt}"
         data = cast(dict[str, Any], self._efts.get_json(url, ttl_seconds=_ONE_DAY))
         return parse_fts_response(data)
+
+    # --- former registrant names (reverse-merger / rename vintage) ----------------------------
+    def former_names(self, cik: int | str) -> list[FormerName]:
+        """Every prior registrant name on this CIK, from the submissions ``formerNames`` array.
+
+        Reads the SAME cached submissions JSON as :meth:`recent_filings` (1-day TTL), so after any
+        filing scan this is a cache hit, never a second fetch. Entries missing a name or an end
+        date are SKIPPED, not guessed — an unreadable rename row must not fabricate a vintage."""
+        cik10 = pad_cik(cik)
+        raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
+        data = cast(dict[str, Any], raw)
+        out: list[FormerName] = []
+        for row in data.get("formerNames") or []:
+            name = (row.get("name") or "").strip()
+            to_raw = (row.get("to") or "").split("T")[0]
+            if not name or not to_raw:
+                continue
+            from_raw = (row.get("from") or "").split("T")[0]
+            out.append(FormerName(
+                name=name,
+                from_date=date.fromisoformat(from_raw) if from_raw else None,
+                to_date=date.fromisoformat(to_raw),
+            ))
+        return out
 
     # --- recent filings (8-K detection via submissions) ---------------------------------------
     def recent_filings(

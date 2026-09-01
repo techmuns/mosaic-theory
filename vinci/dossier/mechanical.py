@@ -3865,6 +3865,80 @@ def _peer_capital_intensity(peers: Any, resolver: EntityResolver,
         grid, resolve=resolver.resolve_ticker, companyfacts=edgar.companyfacts)
 
 
+#: How far back a former registrant name still marks the page. The widest trailing block the
+#: dossier renders is the 5-fiscal-year trend (margin_trend / financial summary); a change older
+#: than ~6y (5 FYs + up to a year of report/filing lag) predates every rendered vintage, so the
+#: marker would caption rows that no longer exist. Face-validity constant — never outcome-tuned.
+_FORMER_NAME_LOOKBACK_DAYS = 2190
+
+
+#: Tokens that style a registrant record without naming the business — legal-form suffixes plus
+#: EDGAR's own "ET AL". Every member was demanded by a REAL restyle observed live (LLY "LILLY ELI
+#: & CO ET AL", AORT-class "Group, Inc." drops); the set stays CLOSED — grow it only from an
+#: observed false positive, never speculatively. "holdings" is deliberately absent: SPAC shells
+#: are literally "<name> Holdings" (MVST's Tuscan Holdings) and must keep their identity.
+_REGISTRANT_STYLE_TOKENS = frozenset(
+    {"inc", "incorporated", "corp", "corporation", "co", "company", "ltd", "limited",
+     "llc", "lp", "plc", "group", "sa", "nv", "ag", "et", "al"})
+
+_TRAILING_FILER_SUFFIX = re.compile(r"/\s*[A-Za-z]{1,3}\.?\s*$")
+
+
+def _registrant_key(name: str) -> frozenset[str]:
+    """Style-insensitive identity for a registrant name, as a token set.
+
+    Three restyle classes — all observed LIVE, none a predecessor — must collapse to the current
+    name: casing/punctuation ("APPLE INC" vs "Apple Inc."), word order (LLY filed as "LILLY ELI &
+    CO" until 2019), and a trailing filer-record suffix (FUBO's "fuboTV Inc. /FL" state-of-
+    incorporation row, AAPL's "/ FA"). Only a change that survives all three is a NAME change."""
+    bare = _TRAILING_FILER_SUFFIX.sub("", name)
+    tokens = re.split(r"[^a-z0-9]+", bare.lower())
+    return frozenset(t for t in tokens if t and t not in _REGISTRANT_STYLE_TOKENS)
+
+
+def _former_name_flags(
+    edgar: EdgarClient, cik: str, current_name: str, reference_date: date
+) -> list[str]:
+    """Human caveats for prior registrant names still inside the rendered lookback, oldest first.
+
+    Emitted as plain caveat strings (``dossier_flags`` default-shows anything unrecognised, so
+    these reach the human without a renderer change). One flag per distinct former registrant;
+    casing variants collapse to the widest span. A submissions fetch failure emits an explicit
+    "not checked" caveat — silence would read as a confirmed clean history."""
+    try:
+        rows = edgar.former_names(cik)
+    except Exception:  # noqa: BLE001 — the marker must never abort an assembly
+        return ["former-name check unavailable — submissions fetch failed; rename history "
+                "not checked"]
+    cutoff = reference_date - timedelta(days=_FORMER_NAME_LOOKBACK_DAYS)
+    cur = _registrant_key(current_name)
+    spans: dict[frozenset[str], tuple[str, date | None, date]] = {}
+    for r in rows:
+        key = _registrant_key(r.name)
+        if not key or key == cur:
+            continue  # a restyling of the current name marks nothing
+        held = spans.get(key)
+        if held is None:
+            spans[key] = (r.name, r.from_date, r.to_date)
+            continue
+        froms = [x for x in (held[1], r.from_date) if x is not None]
+        spans[key] = (
+            r.name if r.to_date > held[2] else held[0],
+            min(froms) if froms else None,
+            max(held[2], r.to_date),
+        )
+    out = []
+    for name, frm, to in sorted(spans.values(), key=lambda x: x[2]):
+        if to < cutoff:
+            continue  # every rendered vintage postdates this name — nothing left to caption
+        since = f"{frm.isoformat()} \u2192 " if frm is not None else "until "
+        out.append(
+            f'former registrant name: this CIK filed as "{name}" ({since}{to.isoformat()}) '
+            f"\u2014 multi-year series on this page may span a different underlying business; "
+            f"verify continuity across the change (SEC submissions formerNames, CIK {cik})")
+    return out
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -4041,4 +4115,10 @@ def assemble_mechanical(
         _latest_earnings_print(edgar, record.identity.cik),
     )) is not None:
         flags.append(fresh_flag)
+    # former-registrant-name vintage (the reverse-merger class): multi-year blocks on this page can
+    # silently span a DIFFERENT underlying business filed under the same CIK — FUBO (FaceBank),
+    # TECX (AvroBio), ORKA (ARCA) are the live proof. The marker states the filed fact and directs
+    # verification; it never asserts a mechanism (a bare rename — AAPL 2019 — is not a predecessor).
+    flags += _former_name_flags(
+        edgar, record.identity.cik, record.identity.name, reference_date)
     return mech, flags

@@ -54,6 +54,12 @@ Each line: *what it does* — *verified how*.
   *(detail: `docs/records/2026-08-26-capability-ranker-triage-layer-vinci-rank-rank-cli-orders.md`)*
 - **Dossier-assembler**
   *(detail: `docs/records/2026-08-26-capability-dossier-assembler-vinci-dossier-dossier-cli-pe.md`)*
+- **Former-registrant-name marker** (`vinci/dossier/mechanical._former_name_flags`) — a human
+  caveat when the CIK filed under a different name inside the rendered ~6y lookback (the
+  reverse-merger/SPAC vintage class; casing/word-order/"/FL" restyles collapse and never flag) —
+  *live sweep, all 17 committed CIKs + TECX/ORKA/NU: today flags MVST (Tuscan Holdings) + AORT
+  (CryoLife); backdated 2022 adds FUBO's four-shell chain + VRRM (Gores); LLY/AAPL restyles never.*
+  *(detail: `docs/records/2026-09-01-former-registrant-name-marker.md`)*
 - **Decision ledger** (`vinci/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
