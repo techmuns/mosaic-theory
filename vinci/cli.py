@@ -892,8 +892,17 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             # failure `refresh_dossier` was written about; it recurred here because this command
             # writes its own. `_rerender_only` re-renders FROM the stored record: no recompute, no
             # LLM, no re-assembly — the page catches up to the JSON and nothing else moves.
-            if _rerender_only(path):
-                print(f"  {t}: dossier.md re-rendered to match the new anchor")
+            # GUARDED LIKE EVERY OTHER PER-TICKER STEP (review of #536). An unguarded raise here
+            # kills the batch AFTER this name's JSON is written — leaving exactly the stale-page
+            # state this call exists to prevent, and stranding every later name too. A page that
+            # cannot be re-rendered is reported and the run continues: the JSON is already correct,
+            # and the corpus invariant reds on the stale page rather than the batch dying quietly.
+            try:
+                if _rerender_only(path):
+                    print(f"  {t}: dossier.md re-rendered to match the new anchor")
+            except Exception as exc:  # noqa: BLE001 — one page must not strand the rest
+                print(f"  {t}: WARNING — dossier.json written but dossier.md could NOT be "
+                      f"re-rendered ({exc}); the page is stale until it is", file=sys.stderr)
         done.append((t, anchor, old_base, moved))
     n_moved = sum(1 for _t, _a, _o, mv in done if mv)
     mode = "DRY-RUN (nothing written)" if args.dry_run else "written"

@@ -105,7 +105,10 @@ class AnchorInput(BaseModel, frozen=True):
 
 class Anchor(BaseModel, frozen=True):
     """The R1 anchor block — source-bound, spot-independent. Optional on the Dossier so committed
-    JSON predating it round-trips byte-identically; the UI ignores it for now (data-only)."""
+    JSON predating it round-trips byte-identically. The UI does NOT ignore it: the page prints
+    the base value and the reason, which is why `anchor-backfill` re-renders `dossier.md` after
+    writing the JSON. An earlier version of this line claimed otherwise, and that claim is what
+    left LLY's page reading $706.41 against a record saying 699.65 (review of #536)."""
 
     recipe_hint: str                    # RECIPE_R1 | RECIPE_R2 | RECIPE_UNKNOWN | RECIPE_UNRESOLVED
     applicable: bool

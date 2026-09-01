@@ -72,3 +72,37 @@ def test_the_backfill_re_renders_the_page_it_invalidates() -> None:
         "the JSON write must remain byte-preserving")
     assert "the UI ignores it" not in src, (
         "the docstring still claims the page ignores the anchor — it prints its base and reason")
+
+
+def test_one_unrenderable_page_does_not_strand_the_rest_of_the_batch() -> None:
+    """REVIEW FINDING (#536). The re-render was the only unguarded per-ticker step in the loop.
+
+    An unguarded raise lands in the worst possible place: AFTER this name's JSON is written, so it
+    leaves precisely the stale-page state the call exists to prevent — and takes every later name
+    with it. Every other step in that loop catches and continues; this one now does too, reporting
+    the stale page rather than dying quietly mid-batch.
+    """
+    import inspect
+
+    from vinci.cli import _cmd_anchor_backfill
+
+    src = inspect.getsource(_cmd_anchor_backfill)
+    body = src.split("_rerender_only(path)", 1)[0]
+    assert body.rstrip().endswith("try:") or "try:" in body.split("replace_anchor_block")[-1], (
+        "the re-render must sit inside a try — an unguarded raise strands the batch after a write")
+    assert "could NOT be" in src and "stale until it is" in src, (
+        "a swallowed failure must SAY the page is stale; a silent continue is worse than the raise")
+
+
+def test_the_docstring_no_longer_claims_the_page_ignores_the_anchor() -> None:
+    """The `Anchor` docstring still asserted "the UI ignores it (data-only)" — the very claim this
+    work disproves and pins against in the CLI. A false comment outlives the reader who could
+    correct it."""
+    import inspect
+
+    from vinci.dossier.anchor import Anchor
+
+    doc = " ".join((inspect.getdoc(Anchor) or "").split())   # newline-insensitive
+    assert "UI ignores it" not in doc, "the false data-only claim is still in the docstring"
+    assert "prints the base value and the reason" in doc, (
+        "the docstring should say what the page actually does with the block")
