@@ -170,3 +170,48 @@ def test_no_two_rows_share_a_number() -> None:
             dupes.append(f"row {num}: {seen[num][:60]!r} vs {cell[:60]!r}")
         seen[num] = cell
     assert not dupes, "§5.0 rows share a number:\n  " + "\n  ".join(dupes)
+
+
+#: Whole-file ceiling for STATE.md — OPERATOR RULING 2026-08-31.
+#:
+#: WHY A NUMBER AT ALL. The knowledge-ledger plan took this file 19,241 -> 1,892 lines, and five
+#: days later it was 2,085: roughly 38 lines a day, which doubles it in about seven weeks. P0
+#: recorded the original growth as "doubling every ~4 weeks", so the same shape had already
+#: returned. Two of eight sections were capped (§5.0 at 60 lines, §5's archive frozen); the other
+#: six and the file as a whole were not, so nothing distinguished legitimate growth from the drift
+#: that produced 19,241 lines until it was unreadable again.
+#:
+#: WHY 2,500 AND NOT SMALLER. Set by the OPERATOR, not derived here — and deliberately generous:
+#: 415 lines of headroom over today. P3's lesson was that a number invented before knowing what
+#: the file contains (the retracted ≤600 target) forces real information out to satisfy an
+#: arbitrary bound. This one is a TRIPWIRE, not a diet: it fires long before the file stops being
+#: readable in one sitting, which P3 named as the actual goal.
+#:
+#: WHAT TO DO WHEN IT TRIPS — and this is the whole point of the message below. **Move detail into
+#: a record under `docs/records/`. Never delete it.** The snapshot keeps the one-line claim and a
+#: pointer; the ledger keeps the full account forever. Raising this constant instead is a decision
+#: to let the file grow, which is exactly the choice that has to be deliberate rather than silent.
+STATE_MAX_LINES = 2500
+
+
+def test_state_md_stays_readable_in_one_sitting() -> None:
+    """The whole file, not just the sections that happen to be capped."""
+    n = len(STATE.read_text().splitlines())
+    assert n <= STATE_MAX_LINES, (
+        f"STATE.md is {n:,} lines, over the {STATE_MAX_LINES:,} ceiling (operator ruling, "
+        f"2026-08-31). It reached 19,241 once and the knowledge-ledger plan spent four PRs "
+        f"getting it back to 1,892 — this is the tripwire that stops that happening twice.\n\n"
+        f"THE FIX IS TO MOVE DETAIL, NEVER TO DELETE IT: write the full account to a new file "
+        f"under docs/records/ and leave the one-line claim plus a pointer here. Raising the "
+        f"ceiling is a decision to let the file grow — make it deliberately, in the PR body, or "
+        f"not at all.")
+
+
+def test_the_ceiling_leaves_room_to_work() -> None:
+    """A ceiling with no headroom is a ceiling that gets raised on the next ordinary build, which
+    is how a limit stops meaning anything. If this fails, the file has grown into its tripwire and
+    the answer is a migration, not a bigger number."""
+    n = len(STATE.read_text().splitlines())
+    assert STATE_MAX_LINES - n >= 100, (
+        f"only {STATE_MAX_LINES - n} lines of headroom under the {STATE_MAX_LINES:,} ceiling. "
+        f"Move a section's detail into docs/records/ before the next build has to.")
