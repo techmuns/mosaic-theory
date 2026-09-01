@@ -346,6 +346,29 @@ def _standalone_record(cfg: Config, ticker: str, reference_date: date) -> DataRe
     # this is the record-level input, not the page's comparison.
     bench = benchmark_identity(BENCHMARK_SMALL)
     with Store(cfg.db_path) as store:
+        # TAKE THE SIC FROM THE STORE — the entity master already knows it. The resolver's index
+        # (`company_tickers.json`) carries ticker/CIK/name/exchange and NOTHING ELSE, so
+        # `resolve_ticker` returns `sic=None`; the store's row was filled from the submissions
+        # payload by the universe build. The screen route never saw this because it iterates
+        # `store.iter_securities()` directly (`screens/run.py`), so only the MAINTENANCE route was
+        # building records off the thin identity — and the SIC is what `resolve_label(...).sector`
+        # reads, so the page rendered `sector: Unknown` for a name whose sector the entity master
+        # already knew. Live: TECX, SIC 2836 -> Health Care (review of #558's onboarding run).
+        #
+        # ONLY the SIC, never the whole row (review of #564). The store's identity is a SNAPSHOT of
+        # the last universe build that touched the name, and the maintenance route is precisely the
+        # class no build touches again — an out-of-band followed name is never re-upserted (the
+        # #464 note on `upsert_security` records exactly that for IT). Swapping the whole identity
+        # would therefore make `name`/`exchange`/`mic` STALER than the live resolver index, and
+        # `identity.name` is not cosmetic: it is passed to the covenant/maturity extraction as the
+        # registrant to search for. `sic` is the one field the resolver has no cheap answer for.
+        # Guarded by `is not None` so a row that never learned its SIC cannot erase one either —
+        # the same COALESCE rule `upsert_security` applies on the way in. Falls through untouched
+        # when the store has no row at all: a name can be followed before any universe build has
+        # seen it, and a thin identity still assembles a page.
+        stored = store.get_security(identity.internal_id)
+        if stored is not None and stored.sic is not None:
+            identity = identity.model_copy(update={"sic": stored.sic})
         bars = store.get_price_history(identity.internal_id)
         bench_bars = store.get_price_history(bench.internal_id)
     # TRUNCATE TO THE REFERENCE DATE — `compute_price_features` takes `bars[-1]` as "latest" and
