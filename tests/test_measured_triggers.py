@@ -36,7 +36,9 @@ def _t(**kw: object) -> MeasuredTrigger:
 def test_a_threshold_not_crossed_reads_not_fired_with_its_number() -> None:
     r = evaluate(_t(threshold=3.0), _mech("SMPL"))
     assert r.state == NOT_FIRED and r.observed is not None
-    assert "is false" in r.reason and str(r.observed)[:3] in r.reason
+    # the OBSERVED NUMBER, formatted the way the reason formats it — not a str() prefix, which
+    # matches by luck at 1.5 and stops matching the moment the value is grouped or exponent-form.
+    assert "is false" in r.reason and f"{r.observed:,.10g}" in r.reason
 
 
 def test_a_threshold_crossed_reads_fired_and_says_what_fired_it() -> None:
@@ -84,6 +86,51 @@ def test_a_sustain_count_refuses_rather_than_firing_on_one_reading() -> None:
     r = evaluate(_t(threshold=1.0, sustain=2), _mech("SMPL"))
     assert r.state == UNKNOWN
     assert "consecutive observations" in r.reason and "weaker test" in r.reason
+
+
+def test_a_stated_unit_that_disagrees_refuses_rather_than_comparing() -> None:
+    """GOOGL's kill is written in $bn; the mechanical layer records revenue in $M. The comparison
+    SUCCEEDS across that gap and `shown` labels both sides with the analyst's unit, so the wrong
+    answer reads as a confident NOT_FIRED. The stated unit exists to make that refusable."""
+    mech = {"quality": {"rev": {"value": 214_100.0, "unit": "$M", "status": "present"}}}
+    r = evaluate(_t(metric="quality.rev", comparator="<", threshold=214.1, unit="$bn"), mech)
+    assert r.state == UNKNOWN, r
+    assert "$M" in r.reason and "$bn" in r.reason
+
+
+def test_a_matching_unit_still_compares() -> None:
+    """NON-VACUOUS: the refusal is conditional on disagreement, not on the node stating a unit."""
+    mech = {"quality": {"rev": {"value": 5.0, "unit": "x", "status": "present"}}}
+    assert evaluate(_t(metric="quality.rev"), mech).state == FIRED
+    assert evaluate(_t(metric="quality.rev", unit=" X "), mech).state == FIRED
+
+
+def test_a_non_finite_reading_is_unknown_not_not_fired() -> None:
+    """NaN loses every comparison. Left unchecked it reaches NOT_FIRED — the exact bare-False that
+    reassures where it should alarm, arrived at through the arithmetic instead of around it."""
+    for bad in (float("nan"), float("inf")):
+        r = evaluate(_t(), {"quality": {"net_debt_to_ebitda": {"value": bad,
+                                                               "status": "present"}}})
+        assert r.state == UNKNOWN, (bad, r)
+        assert "finite" in r.reason
+
+
+def test_a_metric_recorded_as_null_is_not_reported_as_a_bad_path() -> None:
+    """A null value IS in the dossier. Saying "the path does not resolve" sends the operator after
+    a typo that is not there — a wrong cause on a state whose only content is its cause."""
+    r = evaluate(_t(), {"quality": {"net_debt_to_ebitda": None}})
+    assert r.state == UNKNOWN
+    assert "does not resolve" not in r.reason and "not a number" in r.reason
+
+
+def test_the_reason_does_not_round_the_two_sides_into_looking_equal() -> None:
+    """A kill criterion is decided AT its threshold, which is where 4 significant digits print
+    "3 x > 3 x holds" — a sentence that reads as self-contradictory on the only readings that
+    matter."""
+    mech = {"quality": {"net_debt_to_ebitda": {"value": 3.00004, "status": "present"}}}
+    r = evaluate(_t(), mech)
+    assert r.state == FIRED
+    assert "3.00004" in r.reason
 
 
 def test_fired_is_the_only_true_and_unknown_is_never_a_quiet_no() -> None:
