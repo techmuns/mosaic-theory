@@ -83,6 +83,10 @@ export async function render(root, { item, frame }) {
   const nMeasuring = measuring.length;
   const nBuy = measuring.reduce((n, d) => n + (d.ratifiedCount || 0), 0);
   const nAvoid = measuring.reduce((n, d) => n + (d.passedCount || 0), 0);
+  // RATIFIED IS NOT PRICED. Ratifying confirms the EXPOSURE is real; the investment gate is the
+  // underwrite (reward-to-risk vs a 2:1 bar, IRR vs a 15% floor, at spot) and it is a separate
+  // step. Showing the count keeps a 168-name buy leg from reading as 168 investment decisions.
+  const nUW = measuring.reduce((n, d) => n + (d.underwrittenCount || 0), 0);
   // the soonest declared first-confirming date across the running clocks — the next moment this
   // page can say anything it cannot say today
   const nextTest = measuring.map((d) => d.firstTest).filter(Boolean).sort()[0] || null;
@@ -95,6 +99,8 @@ export async function render(root, { item, frame }) {
           <div class="th-val">${fmtInt(nMeasuring)} <span class="th-of">of ${nThemes}</span></div></div>
         <div class="th-stat"><div class="th-lab">Names under test</div>
           <div class="th-val">${fmtInt(nBuy)} <span class="th-of">buy</span> · ${fmtInt(nAvoid)} <span class="th-of">avoid</span></div></div>
+        <div class="th-stat"><div class="th-lab">Priced</div>
+          <div class="th-val ${nUW ? "" : "th-undef"}">${fmtInt(nUW)} <span class="th-of">of ${fmtInt(nBuy)} ratified</span></div></div>
         <div class="th-stat"><div class="th-lab">Next read-out</div>
           <div class="th-val">${nextTest ? fmtDate(nextTest) : DASH}</div></div>
       </div>
@@ -145,8 +151,9 @@ export async function render(root, { item, frame }) {
         <th>Needs next</th>
       </tr>
     </thead><tbody>${body}</tbody></table>
-    <div class="foot" style="margin-top:8px;">Buy and Avoid are the analyst's verdicts, never the
-      machine's. Tap a theme to drill in.</div>`;
+    <div class="foot" style="margin-top:8px;">Buy and Avoid are the analyst's verdicts on
+      <b>exposure</b>, never the machine's — a ratified name has not yet been priced. The
+      underwrite (reward-to-risk, IRR at spot) is the separate gate the Priced count tracks.</div>`;
 
   // Cross-theme watchlist — COLLAPSED; the per-theme drivers fetch on first expand (lazy).
   const totalWatch = fmtInt(pf.totalWatchlist ?? idx.drivers.reduce((s, d) => s + (d.watchlistCount || 0), 0));

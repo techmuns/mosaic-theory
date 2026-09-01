@@ -79,6 +79,25 @@ the tab that was already open is not verification.
    outside the repo; inventing a `reviewing` stage would be asserting state the build cannot
    observe. FALSIFIER: if the operator wants that distinction, the worksheet's issue/return has to
    be recorded in the repo first.
-2. **Neither frozen driver has a `mirror_slug`,** so the thesis card still mirrors nothing and the
-   theme DETAIL page is unchanged by this work. The index reaches both pages; the detail redesign
-   is not built.
+2. **The detail-page redesign is not built.** Both drivers now carry a `mirror_slug` (declared on
+   the condition the registry itself set — "the slug is declared when the mirror is, not before" —
+   which #562 satisfied), so their cards mirror and their pages resolve. The DETAIL layout from the
+   canvas is not implemented; the index reaches the existing page.
+
+**RATIFIED IS NOT PRICED, and the surface said otherwise.** A challenge worth recording: the index
+called 183 names the BUY leg, which reads as 183 investment decisions. It is not. Ratifying confirms
+a name's EXPOSURE is real — the analyst's rationales argue exposure and materiality, and almost
+never price. The investment gate is the UNDERWRITE, a separate step: reward-to-risk against a 2:1
+bar and IRR against a 15% floor, at spot. GOOGL has one on file and it reads **FAIL** — ratio 1.69
+against 2.0, IRR 14.9% against 15%, with 2:1 clearing only below 342.77 against a 345.90 spot.
+
+The evidence that the two are separate is in the July themes: they carry **0 ratified and 11 on
+watch**, because names with real exposure that failed on price went to watch. Ours carry **183
+ratified and 0 on watch** — no price test ever ran. Of the 183, exactly **one** (NCNO) has an
+underwrite record.
+
+The index now carries an `underwrittenCount` and shows **Priced — 1 of 183 ratified** beside the
+legs, and the footnote says a ratified name has not yet been priced. This does not close the gap; it
+stops the surface from hiding it. ACCEPTED, with its falsifier: if the BUY−AVOID spread reads flat,
+the first thing to check is whether the buy leg was ever an investment thesis or only an exposure
+map — a spread over efficiently-priced megacaps should be ~0 by construction.

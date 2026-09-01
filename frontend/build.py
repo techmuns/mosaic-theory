@@ -844,6 +844,8 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     # The declared first-confirming DATE — the next moment this driver can say something it cannot
     # say today. Read from the card rather than restated, so the page can never drift from the
     # deadline the operator actually declared.
+    cards = _scenario_cards()
+
     first_test = None
     _card = ROOT / "data" / "themes" / "thesis" / f"{driver_key}.json"
     if driver_key and _card.exists():
@@ -898,8 +900,6 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     else:
         surfaced = frozen
         tier_shape = {**tier, "none": None, "surfaced": frozen, "universe": None}
-
-    cards = _scenario_cards()
 
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
@@ -961,6 +961,12 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         # BUY minus AVOID: carrying only the buy count let the surface imply a one-legged
         # measurement, and the control cohort is the half that makes it a test at all.
         "passedCount": len(baskets.get("passed", [])), "surfacedCount": surfaced,
+        # HOW MANY RATIFIED NAMES HAVE FACED A PRICE (2026-09-01). Ratifying a name confirms its
+        # EXPOSURE is real; it says nothing about what the exposure costs. The investment gate is
+        # the underwrite — reward-to-risk against a 2:1 bar and IRR against a 15% floor, at spot —
+        # and it is a SEPARATE step that has run on a fraction of the ledger. Surfacing the count
+        # keeps the two from reading as one: a theme can be 168 names ratified and 1 underwritten.
+        "underwrittenCount": sum(1 for t in baskets.get("ratified", []) if t in cards),
         "frozenCount": frozen, "watchlistCount": len(baskets.get("watchlist", [])),
         "tierShape": tier_shape, "frozenTiers": frozen_tiers, "categories": categories,
         "names": names, "watchlist": watchlist, "avoidControls": avoid_controls,
@@ -1073,8 +1079,8 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
         display = _theme_display(baskets, _jsonl(lp), list(scanned.values()) if sps else None)
         (OUT_THEMES / f"{display['slug']}.json").write_text(json.dumps(display, indent=1))
         summaries.append({k: display[k] for k in ("slug", "label", "freezeDate", "ratifiedCount",
-                          "passedCount", "surfacedCount", "frozenCount", "watchlistCount",
-                          "tierShape", "frozenTiers", "firstTest")})
+                          "passedCount", "underwrittenCount", "surfacedCount", "frozenCount",
+                          "watchlistCount", "tierShape", "frozenTiers", "firstTest")})
     # ACCUMULATE, NEVER REPLACE — the operator's standing rule: every historical theme scan is
     # preserved, this one and every future one. `summaries` holds only what THIS run rebuilt, and
     # the index was written from it alone, so pointing discovery at the canonical freeze orphaned
@@ -1093,8 +1099,9 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
             print(f"WARN theme: {old_page.name} unreadable — kept on disk, left out of index")
             continue
         summaries.append({k: doc.get(k) for k in (
-            "slug", "label", "freezeDate", "ratifiedCount", "passedCount", "surfacedCount",
-            "frozenCount", "watchlistCount", "tierShape", "frozenTiers", "firstTest")})
+            "slug", "label", "freezeDate", "ratifiedCount", "passedCount", "underwrittenCount",
+            "surfacedCount", "frozenCount", "watchlistCount", "tierShape", "frozenTiers",
+            "firstTest")})
     # STAGE — where each driver sits in the pipeline, derived from what is on disk rather than
     # asserted: a ratification ledger means the forward clock is running; a scan without one means
     # the machine has read but no human has ruled; a card alone means declared and unscanned; a
