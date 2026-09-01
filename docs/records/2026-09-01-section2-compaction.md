@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-09-01
-prs: [TBD]
+prs: [555]
 supersedes:
 superseded-by:
 ---
