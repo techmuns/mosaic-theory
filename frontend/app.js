@@ -57,7 +57,7 @@ const EDGES = [
       // then the radar intake (candidates -> inbox -> log). Theme pages and tier tables are
       // DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), framed with these same tabs.
       { route: "themes", label: "Themes",
-        does: "Every frozen theme at a glance — verdict vs scan counts, the cross-theme watchlist, and the radar intake state." },
+        does: "Where each driver stands, and what it needs next." },
       { route: "themes/radar", label: "Radar",
         does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
     ],

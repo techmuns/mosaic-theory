@@ -13,15 +13,25 @@ import { fmtInt, fmtDate, DASH, escapeHtml, gradeBucket, tierPill } from "../../
 // ≥2:1 line while #487 made ≥1.75:1 the ELIGIBILITY line and ≥2:1 the PREFERRED rung, so a name
 // that is eligible-but-not-preferred read as failing here and passing on its own card. Both lines
 // are now named, and neither is stated as the thing a Buy "cleared" — the analyst's verdict is.
-const VS_KEY = `<div class="vs-key">
-  <div class="vs-key-row"><span class="vs-key-tag verdict">Verdict · analyst</span>
-    <span><b>Buys</b> are the analyst's call; the machine's reward-to-risk read is tiered —
-    eligible ≥1.75:1, preferred ≥2:1 · <b>Watch</b> = real exposure that
-    failed only on price / materiality, carries a re-underwrite trigger</span></div>
-  <div class="vs-key-row"><span class="vs-key-tag scan">Scan · machine read</span>
-    <span><b>firm</b> = contracted / quantified · <b>partial</b> = real activity, not contracted ·
-    <b>early</b> = stated intent · <b>none</b> = no exposure disclosed</span></div>
-</div>`;
+// The verdict/scan key is GONE with the columns it described (2026-09-01): firm/partial/early/none
+// left the table when rows regrouped by stage, and a legend for absent columns misdirects. What
+// survives of it — that Buy/Avoid are the ANALYST's call — is one line under the table, where the
+// reader is when the question occurs to them.
+
+// STAGE — where a driver sits in the pipeline, and the ONE thing standing between it and the next
+// stage. The index is a work queue before it is a scoreboard: a reader's first question is "what
+// needs me", and before this the page could not answer it. `measuring` is the only stage with legs,
+// which is why the three archived July drivers read 0 Buys — they have no ratification ledger, not
+// a failed thesis, and the two states used to look identical here.
+const STAGES = [
+  ["measuring", "Clock running", "live",
+    (d) => `First test ${d.firstTest ? fmtDate(d.firstTest) : "— date not declared"}`],
+  ["scanned", "Scanned, not yet reviewed", "",
+    (d) => `Send worksheet — ${fmtInt((d.frozenTiers || {}).firm + (d.frozenTiers || {}).partial || d.frozenCount || 0)} names`],
+  ["declared", "Declared, not yet scanned", "", () => "Run the scan"],
+  ["archived", "Archived — scanned earlier, no verdicts on file", "locked",
+    () => "Declare a thesis card first"],
+];
 
 // One compact watchlist row: ticker · theme · firmness · the one-line trigger. A recorded verdict
 // SUPERSEDES the freeze trigger (pill + first re-underwrite trigger); the theme page has the rest.
@@ -68,17 +78,28 @@ export async function render(root, { item, frame }) {
   const cd = idx.crossDriver || {};
 
   // POOLED forward — ONE compact honest strip; verbose enumeration behind "methodology".
-  const nThemes = fmtInt(cd.driversFrozen ?? idx.drivers.length);
+  const nThemes = idx.drivers.length;
+  const measuring = idx.drivers.filter((d) => d.stage === "measuring");
+  const nMeasuring = measuring.length;
+  const nBuy = measuring.reduce((n, d) => n + (d.ratifiedCount || 0), 0);
+  const nAvoid = measuring.reduce((n, d) => n + (d.passedCount || 0), 0);
+  // the soonest declared first-confirming date across the running clocks — the next moment this
+  // page can say anything it cannot say today
+  const nextTest = measuring.map((d) => d.firstTest).filter(Boolean).sort()[0] || null;
   const strip = `
     <div class="pooled-strip">
-      <div class="ps-row">
-        <div>
-          <div class="ps-tag">Theme edge · unvalidated research surface</div>
-          <div style="margin-top:2px;"><b class="ps-buys">${fmtInt(pf.totalBuys ?? 0)} Buys</b><span class="ps-sub">across ${nThemes} themes · ${fmtInt(pf.totalWatchlist ?? 0)} on watch</span></div>
-        </div>
+      <div class="th-band">
+        <div class="th-stat"><div class="th-lab">Buy−Avoid spread</div>
+          <div class="th-val th-undef">UNDEFINED</div></div>
+        <div class="th-stat"><div class="th-lab">Clocks running</div>
+          <div class="th-val">${fmtInt(nMeasuring)} <span class="th-of">of ${nThemes}</span></div></div>
+        <div class="th-stat"><div class="th-lab">Names under test</div>
+          <div class="th-val">${fmtInt(nBuy)} <span class="th-of">buy</span> · ${fmtInt(nAvoid)} <span class="th-of">avoid</span></div></div>
+        <div class="th-stat"><div class="th-lab">Next read-out</div>
+          <div class="th-val">${nextTest ? fmtDate(nextTest) : DASH}</div></div>
       </div>
       <details class="ps-why">
-        <summary>Spread not measurable yet — no Buy verdicts, so no buy leg (<b>UNDEFINED</b>, never 0.0) · diagnostics not ready · methodology</summary>
+        <summary>Both legs are sealed; the spread stays <b>UNDEFINED</b> (never 0.0) until verdicts resolve forward · methodology</summary>
         <div class="ps-why-body">
           <ul class="kv-list" style="margin-bottom:9px;">${(pf.undefinedMeasures || []).map(([m, r]) =>
             `<li><b>${escapeHtml(m)}</b> — <span class="muted">UNDEFINED: ${escapeHtml(r)}</span></li>`).join("")}
@@ -95,34 +116,37 @@ export async function render(root, { item, frame }) {
 
   // Tier counts are PLAIN NUMBERS here — the tier tables are reached via the theme page (one
   // path), so the theme name is the single drill affordance per row.
-  const row = (d) => {
-    const ft = d.frozenTiers || {}, t = d.tierShape || {};
+  const row = (d, needs) => {
+    const t = d.tierShape || {};
+    const legs = d.stage === "measuring";
     return `
       <tr>
         <td><a href="#/themes/${escapeHtml(d.slug)}" style="font-weight:650;">${escapeHtml(d.label)}</a>
-          <div class="foot">snapshot ${fmtDate(d.freezeDate)} · ${fmtInt(d.surfacedCount)} surfaced of ${t.universe == null ? DASH : fmtInt(t.universe)} scanned</div></td>
-        <td class="num v-num">${fmtInt(d.ratifiedCount)}</td>
-        <td class="num v-num">${fmtInt(d.watchlistCount)}</td>
-        <td class="num scan-num scan-first">${fmtInt(ft.firm || 0)}</td>
-        <td class="num scan-num">${fmtInt(ft.partial || 0)}</td>
-        <td class="num scan-num">${fmtInt(ft.early || 0)}</td>
-        <td class="num scan-num muted">${t.none == null ? DASH : fmtInt(t.none)}</td>
+          <div class="foot">${d.freezeDate ? `froze ${fmtDate(d.freezeDate)}` : "not frozen"}</div></td>
+        <td class="num v-num">${legs ? fmtInt(d.ratifiedCount) : `<span class="muted">${DASH}</span>`}</td>
+        <td class="num v-num">${legs && d.passedCount != null ? fmtInt(d.passedCount) : `<span class="muted">${DASH}</span>`}</td>
+        <td class="num scan-num">${t.universe == null ? `<span class="muted">${DASH}</span>` : fmtInt(t.universe)}</td>
+        <td class="th-needs">${escapeHtml(needs(d))}</td>
       </tr>`;
   };
 
+  const body = STAGES.map(([key, title, tone, needs]) => {
+    const rows = idx.drivers.filter((d) => (d.stage || "archived") === key);
+    if (!rows.length) return "";
+    return `<tr class="th-grp"><td colspan="5">${escapeHtml(title)} · ${rows.length}</td></tr>`
+      + rows.map((d) => row(d, needs)).join("");
+  }).join("");
+
   const table = `
-    <table class="data vs-table"><thead>
+    <table class="data th-table"><thead>
       <tr>
-        <th rowspan="2">Theme</th>
-        <th class="grp grp-verdict" colspan="2">Verdict · analyst</th>
-        <th class="grp grp-scan scan-first" colspan="4">Scan · machine read</th>
+        <th>Theme</th>
+        <th class="num">Buy</th><th class="num">Avoid</th><th class="num">Screened</th>
+        <th>Needs next</th>
       </tr>
-      <tr>
-        <th class="num">Buys</th><th class="num">Watch</th>
-        <th class="num scan-first">Firm</th><th class="num">Partial</th><th class="num">Early</th><th class="num">None</th>
-      </tr>
-    </thead><tbody>${idx.drivers.map(row).join("")}</tbody></table>
-    <div class="foot" style="margin-top:8px;">Tap a theme to drill in — brief, names, flags, and the first-analysis cards.</div>`;
+    </thead><tbody>${body}</tbody></table>
+    <div class="foot" style="margin-top:8px;">Buy and Avoid are the analyst's verdicts, never the
+      machine's. Tap a theme to drill in.</div>`;
 
   // Cross-theme watchlist — COLLAPSED; the per-theme drivers fetch on first expand (lazy).
   const totalWatch = fmtInt(pf.totalWatchlist ?? idx.drivers.reduce((s, d) => s + (d.watchlistCount || 0), 0));
@@ -146,7 +170,7 @@ export async function render(root, { item, frame }) {
       <a href="#/themes/radar" style="margin-left:auto;">Radar →</a>
     </div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: strip + VS_KEY + table + wlSection + intake });
+  root.innerHTML = frame(item, { bodyHtml: strip + table + wlSection + intake });
 
   // Lazy watchlist: fetch every theme's driver JSON only when the section first opens.
   const det = root.querySelector("#landing-watchlist");
