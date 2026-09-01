@@ -114,7 +114,18 @@ def test_run_weekly_takes_its_date_from_the_data_and_not_the_clock(
     fixes nothing, and a helper-level pin stays green while the call site rots."""
     from vinci import cli
 
-    friday = dt.date(2026, 8, 21)
+    # RELATIVE TO TODAY, NOT A LITERAL (2026-09-01). THIS test is the one that reads the real
+    # clock: it calls `_cmd_run_weekly` with no `--end`, so production probes back from
+    # `today - 1` for only ten ITERATIONS — weekend days consume one each. The pinned 2026-08-21
+    # fell out of that window the moment the calendar passed 2026-08-31, and the test began
+    # failing on every branch, main included. A test asserting the CALL SITE must not read the
+    # wall clock cannot itself carry a ten-day shelf life.
+    #
+    # The sibling above keeps its literal ON PURPOSE: it passes an explicit `today=monday` to the
+    # helper, so its window is fixed and a relative date would only obscure what it pins.
+    friday = dt.date.today() - dt.timedelta(days=1)
+    while friday.weekday() >= 5:
+        friday -= dt.timedelta(days=1)
     monkeypatch.setattr(cli, "PolygonEodClient",
                         type("_P", (), {"from_config": staticmethod(
                             lambda _cfg: _Sessions({friday}))}))
