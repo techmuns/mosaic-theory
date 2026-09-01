@@ -59,7 +59,12 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
     ('FY 2026', 'FY 2027', 'FY 2028', 'NTM'),
     ('Liquidity', 'Operational', 'Overall', 'Solvency'),
     ('character', 'depth', 'idiosyncrasy', 'multiple'),
-    ('horizon', 'margin', 'multiple', 'revenue'),
+    # RETIRED 2026-09-01 (R3). This recorded a coincidence, not a shared definition:
+    # `AXES_BY_RECIPE[R2]` and the card's `AXIS_ORDER` happened to hold the same four
+    # names. They are different objects — one is the axes a RECIPE requires, the other the
+    # display order across ALL recipes — and adding R3's `earnings` to the display list
+    # separated them. The entry is deleted rather than updated, which is what this pin
+    # asks for when a duplicate stops existing.
     ('LTM EBITDA', 'NTM EBITDA', 'NTM Revenue'),
     ('base', 'bear', 'bull'),
 })

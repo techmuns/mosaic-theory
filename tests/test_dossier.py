@@ -8676,24 +8676,34 @@ def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
     """(review fix, PR #188 interaction) An R2 EV/Revenue leg applies its multiple to REVENUE and
     never reads a margin, so ``ScenarioInput.margin`` is None by design rather than missing. The
     md table must render that absence as an em-dash — formatting None raises TypeError, and
-    substituting 0% would fabricate a driver the arithmetic never used."""
-    class _S:
-        revenue, margin, multiple, reason = 500.0, None, 2.5, "revenue-basis leg"
+    substituting 0% would fabricate a driver the arithmetic never used.
 
-    class _P:
-        value_per_share = 12.0
+    BUILT FROM THE REAL MODEL, NOT A HAND-ROLLED STUB (review of #542). The stub this replaces had
+    already broken once when the renderer began reading a field it lacked — its own comment says
+    so — and it broke a SECOND time when `eps` arrived. A fixture shaped to what the test needs
+    dictates the production signature and goes stale on every field the model gains; the real type
+    cannot. That is CLAUDE.md's fixture rule, and the second failure is what says the pin was at
+    the wrong layer.
+    """
+    from vinci.scenarios import (
+        AssumptionDerivation,
+        Result,
+        ScenarioInput,
+        ScenarioOutcome,
+        ScenarioRecord,
+    )
 
-    class _R:
-        per_scenario = {"base": _P()}
+    card = ScenarioRecord(
+        ticker="TEST", recipe_id="R2_terminal_margin", recipe_desc="R2 EV/Revenue",
+        multiple_basis="EV/Revenue", underwrite_date="2026-07-01", analyst="t",
+        spot=10.0, spot_source="test", spot_as_of="2026-07-01", facts={},
+        assumptions={ax: AssumptionDerivation(method="test")
+                     for ax in ("revenue", "multiple", "horizon")},
+        scenarios={"base": ScenarioInput(revenue=500.0, multiple=2.5, years_to_terminal=2.0,
+                                         reason="revenue-basis leg")},
+        result=Result(per_scenario={"base": ScenarioOutcome(value_per_share=12.0)}))
 
-    class _Card:
-        result, spot, recipe_desc = _R(), 10.0, "R2 EV/Revenue"
-        scenarios = {"base": _S()}
-        # required on the real model since it existed; the stub simply predated the renderer
-        # reading it (item 1e dates the "vs spot" column off this field).
-        underwrite_date, facts, recipe_formula, multiple_basis = "2026-07-01", {}, [], "EV/Revenue"
-
-    lines = dr._scenario_table_lines(typing.cast(Any, _Card()))
+    lines = dr._scenario_table_lines(card)
     row = next(x for x in lines if x.startswith("| base |"))
     cells = [c.strip() for c in row.strip("|").split("|")]
     # cells: scenario · revenue · margin · multiple · value/sh · vs spot

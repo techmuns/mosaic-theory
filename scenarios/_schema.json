@@ -581,8 +581,16 @@
       "description": "One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%).",
       "properties": {
         "revenue": {
-          "title": "Revenue",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revenue"
         },
         "margin": {
           "anyOf": [
@@ -599,6 +607,18 @@
         "multiple": {
           "title": "Multiple",
           "type": "number"
+        },
+        "eps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eps"
         },
         "reason": {
           "title": "Reason",
@@ -654,7 +674,6 @@
         }
       },
       "required": [
-        "revenue",
         "multiple",
         "reason"
       ],
@@ -693,12 +712,28 @@
           "title": "Ebitda"
         },
         "ev": {
-          "title": "Ev",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ev"
         },
         "equity": {
-          "title": "Equity",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equity"
         },
         "ev_ebit": {
           "anyOf": [
@@ -798,9 +833,7 @@
         }
       },
       "required": [
-        "value_per_share",
-        "ev",
-        "equity"
+        "value_per_share"
       ],
       "title": "ScenarioOutcome",
       "type": "object"

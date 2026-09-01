@@ -609,9 +609,16 @@ function axisFmt(axis) {
 // value up by axis name — until R2 added `horizon`, whose leg field is `yearsToTerminal`. The
 // lookup then resolved to undefined and PRINTED it, in the first R2 record ever written and (via
 // the T1 print rule, which force-opens every details block) in every PDF export of it.
-const AXIS_LEG_KEY = { horizon: "yearsToTerminal" };
+// An axis whose leg field is named differently. `earnings` -> `eps` joins `horizon` here for the
+// SAME reason the comment above records for `yearsToTerminal`: an axis with no mapping reads
+// `leg[axis]`, finds nothing, and prints `undefined · undefined · undefined` in a row that
+// force-opens in every PDF. R3 records model earnings/multiple, so without this line the chosen
+// trio for a P/E underwrite prints undefined where its only driver belongs (review of #542).
+const AXIS_LEG_KEY = { horizon: "yearsToTerminal", earnings: "eps" };
 const axisLegValue = (leg, axis) => leg[AXIS_LEG_KEY[axis] || axis];
-const AXIS_ORDER = ["revenue", "margin", "multiple", "horizon"];
+// R3's axes are appended, not interleaved: a record carries EITHER the R1/R2 trio or the R3 pair,
+// so ordering both in one list costs nothing and keeps this a single source of truth.
+const AXIS_ORDER = ["revenue", "margin", "earnings", "multiple", "horizon"];
 function orderedAssumptions(c) {
   const rank = (a) => { const i = AXIS_ORDER.indexOf(a.axis); return i < 0 ? 99 : i; };
   return [...(c.assumptions || [])].sort((x, y) => rank(x) - rank(y));
@@ -754,7 +761,14 @@ function methodFact(c) {
   if (!lines) return "";
   // no fact() wrapper: a "Method" label over a summary that says "How each axis was modeled"
   // is the same word twice — the summary IS the label
-  const axes = onRevenueBasis(c) ? "revenue, multiple and horizon" : "revenue, margin and multiple";
+  // DERIVED FROM THE RECORD'S OWN AXES, not from a basis guess (review of #542). This read
+  // "revenue, margin and multiple" over an R3 card whose axes are earnings and multiple — a
+  // heading contradicting the list beneath it. Naming the axes the record actually carries is
+  // both correcter and shorter than another basis branch.
+  const named = orderedAssumptions(c).map((a) => a.axis);
+  const axes = named.length
+    ? named.slice(0, -1).join(", ") + (named.length > 1 ? " and " : "") + named[named.length - 1]
+    : "each";
   return `<details class="uw-method-block">
     <summary>How each axis was modeled — ${axes} methodology</summary>
     <div>${lines}${methodRefsDetails(c)}</div></details>`;

@@ -2959,6 +2959,7 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     per = card.result.per_scenario or {}
     spot = card.spot
     rows: list[str] = []
+    any_eps = any(x.eps is not None for x in card.scenarios.values())
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         p = per.get(nm)
@@ -2970,7 +2971,13 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
         # never reads a margin, so the record omits one rather than fabricating a driver the
         # arithmetic ignores. Render the absence as "—" — never format None, never invent 0%.
         marg = "—" if s.margin is None else f"{s.margin:.1%}"
-        rows.append(f"| {nm} | {s.revenue:,.0f} | {marg} | {s.multiple:g}x | "
+        # REVENUE IS OPTIONAL FOR THE SAME REASON MARGIN IS (review of #542). An R3 leg values a
+        # share as EPS × multiple and carries no revenue at all, so the first cut printed
+        # "$0M revenue → $397.41/share" — a fabricated driver next to a real value. The EPS column
+        # appears only when some leg has one, so R1/R2 tables stay byte-identical.
+        rev = "—" if s.revenue is None else f"{s.revenue:,.0f}"
+        eps_cell = (f" {'—' if s.eps is None else f'${s.eps:,.3f}'} |") if any_eps else ""
+        rows.append(f"| {nm} | {rev} |{eps_cell} {marg} | {s.multiple:g}x | "
                     f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
     if not rows:
         return []
@@ -2978,9 +2985,11 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     # leads this page — so the header names the BASIS. It deliberately does NOT carry
     # `underwrite_date`: that is the freeze date, not the date the price was struck, and stamping
     # it here would assert a vintage the record cannot support (see `_underwrite_lines`).
+    eps_head, eps_rule = (" EPS |", " ---: |") if any_eps else ("", "")
     out = [f"_{card.recipe_desc}_", "",
-           "| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |",
-           "| --- | ---: | ---: | ---: | ---: | ---: |", *rows, ""]
+           f"| scenario | revenue $M |{eps_head} margin | multiple | value / sh | "
+           "vs entry-vintage spot |",
+           f"| --- | ---: |{eps_rule} ---: | ---: | ---: | ---: |", *rows, ""]
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is not None and s.reason:
@@ -3008,7 +3017,12 @@ def _scenario_input_lines(card: ScenarioRecord) -> list[str]:
 
     Distinct from item 24, which is the shares-BASIS policy question: this discloses whatever basis
     was chosen, and says which one it was."""
-    if not card.facts:
+    # THE FORMULA IS NOT A FACT, AND THE EARLY RETURN CONFLATED THEM (review of #542). This
+    # returned on empty `facts` — reasonable while every recipe had some — but R3 records carry
+    # NONE BY CONSTRUCTION: `_run_r3` refuses the enterprise facts outright, because a P/E multiple
+    # already values equity. So the one recipe whose arithmetic a reader is least likely to guess
+    # was the one whose stamped chain never printed. Return only when there is nothing at all.
+    if not card.facts and not card.recipe_formula:
         return []
 
     def num(v: float) -> str:
@@ -3020,9 +3034,16 @@ def _scenario_input_lines(card: ScenarioRecord) -> list[str]:
 
     rows = [f"| {name.replace('_', ' ')} | {num(f.value)} {f.unit} | {f.basis} | {f.source} |"
             for name, f in card.facts.items()]
-    out = ["**Scenario inputs** — every value in the grid recomputes from these.", "",
-           "| input | value | basis | source |",
-           "| --- | ---: | --- | --- |", *rows, ""]
+    out: list[str] = []
+    if rows:
+        out = ["**Scenario inputs** — every value in the grid recomputes from these.", "",
+               "| input | value | basis | source |",
+               "| --- | ---: | --- | --- |", *rows, ""]
+    elif card.recipe_formula:
+        # A recipe with no record-level facts still has a chain worth printing, and saying WHY
+        # there are none is the point: a blank table would read as an omission.
+        out = ["**Scenario inputs** — this recipe reads no record-level facts; each leg carries "
+               "its own inputs, and the chain below is how they combine.", ""]
     # THE CHAIN, not just the numbers. `recipe_formula` is stamped onto the record by `run_recipe`
     # and was rendered by NOTHING — so a reader with the inputs still had to guess how they
     # combine. That guess is not hypothetical: verifying this very block, the D&A add-back was

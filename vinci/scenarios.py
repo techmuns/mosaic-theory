@@ -174,7 +174,11 @@ LADDER_FIELDS: tuple[str, ...] = (
 #: when it is None keeps every committed record, live and archived, byte-identical, and a record
 #: that DOES state a year carries it. No schema bump, and therefore no collision with the 1.4
 #: fielded-reference rule the committed records cannot yet satisfy.
-LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy",)
+#: `eps` (2026-08-31, R3) takes the same treatment for the same reason: it has no default to
+#: materialise, and absent-key and None say one thing — *this record is not a P/E underwrite*. A
+#: null on an R1 record would assert the opposite, that someone looked for an EPS and found none.
+#: Dropping it keeps all eight committed records byte-identical, and an R3 leg carries its value.
+LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -366,11 +370,20 @@ class AssumptionDerivation(BaseModel):
 class ScenarioInput(BaseModel):
     """One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%)."""
 
-    revenue: float                 # $M  (R2: TERMINAL-year revenue)
+    # $M (R2: TERMINAL-year revenue). OPTIONAL FROM R3 (review of #542): a forward-P/E leg has no
+    # revenue driver — EPS is the whole input — so requiring one forced every R3 leg to fabricate a
+    # number, which is precisely what this recipe refuses for `margin` two fields down. R1 and R2
+    # refuse a None below rather than reading it as zero.
+    revenue: float | None = None
     # decimal fraction of revenue (R2: TERMINAL EBIT margin). **OMITTED on an EV/Revenue record** —
     # that basis never reads a margin, so recording one would show a driver the value never used.
     margin: float | None = None
     multiple: float                # turns, on `multiple_basis` (R2: the EXIT multiple)
+    # (R3) earnings per share for this leg, in $/share — the ONLY driver a P/E recipe reads. Left
+    # None on R1/R2, where the value is built from revenue and a margin instead. It is a separate
+    # field rather than a reuse of `revenue` because the two carry different units ($/share vs $M)
+    # and a recipe that read the wrong one would be off by a factor of the share count.
+    eps: float | None = None
     reason: str                    # WHY this deviates from the anchor — required, never blank
     # (R2) years from today to this leg's terminal year. Per LEG, not per record: a bear case that
     # takes longer to arrive is worth less today, and forcing one horizon on all three legs would
@@ -440,8 +453,14 @@ class ScenarioOutcome(BaseModel):
     # none is fabricated to fill the field.
     op_income: float | None = None
     ebitda: float | None = None
-    ev: float                      # $M
-    equity: float                  # $M
+    # $M. REQUIRED-IN-SPIRIT ON AN ENTERPRISE RECIPE, absent on an equity one (R3, 2026-08-31):
+    # a forward-P/E leg produces neither an enterprise value nor an equity total — it lands on
+    # value-per-share directly. Supplying a number here for such a leg would be a fabricated one,
+    # so the fields go None instead. `_rd` in the frontend builder already passes None through
+    # ("absent cross-check renders as absent rather than as 0"), so the card shows nothing where
+    # there is nothing.
+    ev: float | None = None        # $M
+    equity: float | None = None    # $M
     ev_ebit: float | None = None   # CROSS-CHECK
     norm_fcf: float | None = None  # CROSS-CHECK ($M)
     # (R2) the terminal-year bridge and its present value. `value_per_share` above carries the PV —
@@ -960,12 +979,37 @@ RECIPE_R1 = "R1_midcycle_margin_evebitda"
 # refused for a known recipe at any schema version; completeness (all axes present) binds from
 # schema 1.1. A future recipe declares its axes here when it exists — never speculatively.
 RECIPE_R2 = "R2_terminal_margin"
+
+#: R3 — a FORWARD P/E underwrite: earnings per share × the multiple the market pays for them.
+#:
+#: THE FIRST EQUITY-BASIS RECIPE, and that is the whole of what makes it different. R1 and R2 both
+#: build an ENTERPRISE value and subtract net debt to reach equity; P/E lands on equity per share
+#: directly, because leverage is already inside the earnings. Subtracting net debt here would
+#: count it twice. The guard in ``_run_r3`` refuses the EV-recipe facts outright rather than
+#: ignoring them, because a record carrying ``net_debt`` under a P/E basis is not a harmless extra
+#: field — it is someone having thought this was an enterprise recipe.
+RECIPE_R3 = "R3_forward_pe"
+BASIS_PE = "P/E"
+
+#: The whole arithmetic, stamped onto the record like R1's. It is ONE step, and the two lines the
+#: enterprise recipes need — the net-debt bridge and the share divide — are absent by construction
+#: rather than by omission. A reader comparing this to R1_FORMULA sees the difference immediately,
+#: which is the point of stamping a formula at all.
+R3_FORMULA: tuple[str, ...] = (
+    "value/share = EPS × forward P/E multiple",
+)
+
 AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
     RECIPE_R1: ("revenue", "margin", "multiple"),
     # R2 models the HORIZON as a fourth axis: when the terminal year arrives is an assumption in
     # its own right (it drives both the discount and the accumulated dilution), so it is stated and
     # reviewed like the other three rather than buried in the leg inputs.
     RECIPE_R2: ("revenue", "margin", "multiple", "horizon"),
+    # R3 models TWO axes. There is no margin axis because EPS already contains the margin, and no
+    # revenue axis for the same reason — requiring either would ask the analyst to write up how
+    # they derived an input the arithmetic never reads, which is the "reviewable-looking paragraph
+    # attached to nothing" the EV/Revenue note below refuses for R2.
+    RECIPE_R3: ("earnings", "multiple"),
 }
 
 # R2 on an EV/Revenue basis models THREE axes: the margin axis does not exist, because the value
@@ -1047,6 +1091,9 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         if s.years_to_terminal is None:
             raise ValueError(f"{name}: an R2 leg needs years_to_terminal — the horizon drives both "
                              "the discount and the accumulated dilution")
+        if s.revenue is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R2} values a leg from TERMINAL revenue — a "
+                             f"leg without one cannot be computed")
         v = tmod.terminal_value(
             tmod.TerminalLeg(name=name, years=s.years_to_terminal, revenue=s.revenue,
                              margin=s.margin, multiple=s.multiple, reason=s.reason),
@@ -1415,6 +1462,68 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
         "ceiling2to1": ceiling, **ladder})
 
 
+def _run_r3(rec: ScenarioRecord) -> ScenarioRecord:
+    """(R3) Value each leg as ``eps × multiple`` — a forward P/E underwrite.
+
+    THE ARITHMETIC IS ONE LINE, AND THE REFUSALS ARE THE REST. What earns the code is everything
+    this recipe must NOT do:
+
+    * **No net-debt bridge.** R1 and R2 reach equity by subtracting net debt from an enterprise
+      value. A P/E multiple is already an equity multiple — leverage is inside the earnings — so
+      subtracting it again counts it twice. The EV-recipe facts are REFUSED rather than ignored: a
+      record carrying ``net_debt`` under a P/E basis is not an extra field, it is someone having
+      believed this was an enterprise recipe, and a silent ignore would let that belief survive.
+    * **No margin.** EPS contains it. A leg stating both would show a driver the value never reads.
+    * **No share count.** EPS is already per-share; a diluted-share fact would be the same
+      double-count as net debt, one layer down.
+
+    UNITS: ``eps`` in $/share and ``multiple`` in turns → value/share in $, with no scale factor
+    anywhere. That is deliberate: both 1e6 defects this file records came from a scale applied in
+    the wrong place, and the cheapest way not to have a third is a recipe with no scale to apply.
+
+    The machine records the bar test; it does NOT touch ``verdict``.
+    """
+    if rec.multiple_basis != BASIS_PE:
+        raise ValueError(
+            f"record multiple_basis {rec.multiple_basis!r} is not {BASIS_PE!r} — {RECIPE_R3} is an "
+            f"EQUITY-basis recipe and refuses to compute on an enterprise unit")
+    # a record CLAIMING a different arithmetic than the engine's is a lie — refuse, never silently
+    # overwrite. R1 and R2 both enforce this and R3 did not (review of #542): a record misstating
+    # its own formula was quietly corrected on write, which is the one outcome the stamp exists to
+    # prevent.
+    if rec.recipe_formula and rec.recipe_formula != list(R3_FORMULA):
+        raise ValueError("record's recipe_formula does not match R3_FORMULA — refusing to compute "
+                         "under a misstated recipe")
+    for key in ("net_debt", "d_and_a", "diluted_shares"):
+        if key in rec.facts:
+            raise ValueError(
+                f"{RECIPE_R3} carries fact {key!r}, which belongs to an ENTERPRISE recipe. A P/E "
+                f"multiple already values equity per share, so bridging with {key!r} would count "
+                f"it twice — restate the record on an EV basis, or drop the fact")
+    per: dict[str, ScenarioOutcome] = {}
+    for name, sc in rec.scenarios.items():
+        if sc.eps is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R3} values a leg from its EPS — a leg "
+                             f"without one cannot be computed")
+        if sc.margin is not None:
+            raise ValueError(
+                f"{name}: recipe {RECIPE_R3} reads EPS, which already contains the margin — a leg "
+                f"stating margin {sc.margin!r} shows a driver the value never reads")
+        per[name] = ScenarioOutcome(value_per_share=round(sc.eps * sc.multiple, 4),
+                                    years=sc.years_to_terminal)
+    res = Result(per_scenario=per, bar=BAR)
+    if "base" in per and "bear" in per:
+        from vinci.dossier import midcycle as mc
+        rr = mc.reward_risk(base_vps=per["base"].value_per_share,
+                            bear_vps=per["bear"].value_per_share, spot=rec.spot)
+        res = Result(per_scenario=per, reward=rr.reward, risk=rr.risk, ratio=rr.ratio,
+                     ratio_undefined=rr.undefined, bar=BAR,
+                     pass_fail=("UNDEFINED" if rr.ratio is None else
+                                ("PASS" if rr.clears_bar else "FAIL")))
+    res = _with_irr_gate(res, rec)
+    return rec.model_copy(update={"result": res, "recipe_formula": list(R3_FORMULA)})
+
+
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     """Compute ``result{}`` for a record via the mid-cycle block, and return a NEW record with it.
 
@@ -1427,9 +1536,11 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
 
     if rec.recipe_id == RECIPE_R2:
         return _run_r2(rec)
+    if rec.recipe_id == RECIPE_R3:
+        return _run_r3(rec)
     if rec.recipe_id != RECIPE_R1:
         raise ValueError(f"unknown recipe_id {rec.recipe_id!r} — this runner implements "
-                         f"{RECIPE_R1} and {RECIPE_R2}")
+                         f"{RECIPE_R1}, {RECIPE_R2} and {RECIPE_R3}")
     if rec.multiple_basis != mc.MULTIPLE_BASIS:
         raise ValueError(f"record multiple_basis {rec.multiple_basis!r} != block basis "
                          f"{mc.MULTIPLE_BASIS!r} — refusing to compute on a mismatched unit")
@@ -1478,6 +1589,9 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
         # R1 IS a margin recipe — mid-cycle margin × own-history multiple. `margin` became
         # nullable for R2's EV/Revenue basis; on R1 an absent one has no meaning, so refuse here
         # rather than let a None reach the block as a silent zero.
+        if s.revenue is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R1} values a leg from revenue × margin — a "
+                             f"leg without a revenue cannot be computed")
         if s.margin is None:
             raise ValueError(f"{name}: recipe {RECIPE_R1} is a mid-cycle MARGIN recipe — a leg "
                              "without a margin cannot be computed")

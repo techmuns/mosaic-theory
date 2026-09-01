@@ -1394,7 +1394,12 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                     if tpl.get("spot_as_of") else None),
             facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
             scenarios={leg: sc.ScenarioInput(
-                revenue=float(c["revenue"]), margin=float(c["margin"]),
+                # BOTH CONDITIONAL (review of #542). `margin` was unconditional, so a template
+                # edited for R3 — which refuses a margin, because EPS already contains it — could
+                # not be built at all: the `eps` plumbing below was unreachable, a capability that
+                # cannot fire. `revenue` follows for the same reason, one recipe later.
+                revenue=(float(c["revenue"]) if c.get("revenue") is not None else None),
+                margin=(float(c["margin"]) if c.get("margin") is not None else None),
                 multiple=float(c["multiple"]), reason=str(c.get("reason") or ""),
                 # carried from the template, never defaulted — `horizon_problems` refuses below if
                 # the analyst left it empty
@@ -1403,6 +1408,11 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 # carried from the template, which pre-fills it with the gap's anchor year —
                 # the year `propose_anchors` actually struck the revenue at
                 leg_fy=(str(c["leg_fy"]) if c.get("leg_fy") else None),
+                # (R3) the P/E recipe's only driver. Carried from the template like every other
+                # leg field, never defaulted: `_run_r3` refuses a leg without one rather than
+                # assuming a number, and a field the template cannot set is a field a created
+                # record can never carry.
+                eps=(float(c["eps"]) if c.get("eps") is not None else None),
                 bear_basis=(c.get("bear_basis") or None),
                 margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
