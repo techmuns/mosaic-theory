@@ -632,11 +632,24 @@ def test_a_committed_ladder_record_carries_consistent_tiers(path: Path) -> None:
     """
     rec = _load(path)
     r = rec.result
-    assert r is not None and r.gate_regime == sc.GATE_REGIME
-    assert r.asymmetry_tier == sc.asymmetry_tier(r.ratio), f"{path.stem}: tier disagrees with ratio"
-    assert r.return_tier == sc.return_tier(r.irr), f"{path.stem}: tier disagrees with IRR"
-    assert r.eligible == (r.ratio is not None and r.ratio >= sc.ELIGIBLE_RATIO
-                          and r.irr is not None and r.irr >= sc.ELIGIBLE_IRR)
+    assert r is not None and r.gate_regime is not None
+    # THE RECORD'S OWN LINES, NEVER THE MODULE'S. A record computed under a regime that is no
+    # longer current is FROZEN at its own thresholds (`_stamp`: `frozen = computed_before and
+    # prior != GATE_REGIME`), and it keeps `eligible_ratio` / `eligible_irr` beside the verdict
+    # they produced. Reading `sc.ELIGIBLE_*` here would red this pin on every sealed record the
+    # day `GATE_REGIME` advances — the same rot that broke the stamping pin, one regime later.
+    assert r.eligible == (r.ratio is not None and r.eligible_ratio is not None
+                          and r.ratio >= r.eligible_ratio
+                          and r.irr is not None and r.eligible_irr is not None
+                          and r.irr >= r.eligible_irr)
+    # the tier FUNCTIONS speak for the CURRENT regime only, so they judge current-regime records.
+    if r.gate_regime == sc.GATE_REGIME:
+        assert r.asymmetry_tier == sc.asymmetry_tier(r.ratio), \
+            f"{path.stem}: tier disagrees with ratio"
+        assert r.return_tier == sc.return_tier(r.irr), f"{path.stem}: tier disagrees with IRR"
+    else:                       # a frozen record still carries BOTH tiers — absence is the defect
+        assert r.asymmetry_tier is not None and r.return_tier is not None, (
+            f"{path.stem}: frozen at regime {r.gate_regime} but missing a tier")
     card = _build()._scenario_card(json.loads(path.read_text()), {})
     # `eligibleUndefined` is CONDITIONAL by design — it carries the REASON eligibility could not
     # be determined, and a determinate record has none to give. Requiring it would demand the
