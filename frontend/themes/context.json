@@ -28,5 +28,29 @@
   "analyst_notes": [
    "Scanned after the market had already re-rated it — kept as a calibration case; the lesson the radar exists to prevent."
   ]
+ },
+ "ai-value-migration": {
+  "driver_summary": {
+   "quote": "the MIGRATION OF AI VALUE CAPTURE across the software/platform stack — if the frontier-to-open-source model catch-up window stays at ~3-6 months or compresses, raw frontier-model IP commoditizes and durable AI economics migrate to the layers ABOVE the model (application software with workflow/user/data/regulatory moats monetizing AI on proprietary data and installed workflows) and BELOW it (hyperscaler compute, cloud distribution, data gravity).",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "The market isn't making the mistake the thesis names — it's already repriced the driver, violently and asymmetrically: seat software below the S&P's multiple for the first time (~22.7x from 84x) while AI infra sits at highs, yet AVGO fell 13% on a +143% AI quarter. Abundant capability is priced as annihilation above the model and infinite demand below it; both can't be true, and the only leg plausibly cheap is the moated ABOVE names drowned alongside the casualties.",
+   "The evidence mostly isn't in the filings — only 4 of 357 names carry binding contracts with terms, and the modal ratified 10-K says “no AI monetization broken out.” The proof lives in earnings releases and contracts (AVGO's $10.8B AI line, ARM's doubling data-center royalties, CRWV's $60.7B RPO) and in the tape.",
+   "The losers are anyone selling a unit abundance shrinks: seats (TEAM, WDAY, MNDY), billable hours (EPAM, CNXC — KFRC named GenAI in its own filing), and substitutable data middlemen, with ZoomInfo the cleanest corpse.",
+   "I'd drop it if the catch-up window widens past ~6 months (it already moved 3→4), if near-frontier open weights keep pricing at frontier levels — capability converging without price commoditizing kills the supply-side argument — or if the moated ABOVE names never decouple from the seat casualties, leaving the migration no destination that re-rates."
+  ]
+ },
+ "glp1-drug-value-chain": {
+  "driver_summary": {
+   "quote": "the GLP-1 DRUG VALUE CHAIN's SECOND GROWTH PHASE — incretin therapy transitioning from supply-constrained scarcity to a volume-driven, price-competitive, chronic-treatment market: affordability/access expansion, resolution of supply constraints, oral formulations, direct-to-patient distribution, generic/compounded entry, and an induction-to-maintenance chronic model.",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "The exposure and the label have decoupled: the quantified GLP-1 economics sit in names carrying no theme premium — West at 18% of sales, Waters' testing line up 40%, BD's segment growth attributed to it by name — while the premium concentrates on two incumbents whose own disclosures show price doing the damage. Novo's Q2 is the tell: record units and shrinking dollars in one release, and the market has to pick which line to capitalize.",
+   "Almost none of this is in the filings. Every load-bearing number came from a call, a deck, a docket or an FDA action; the 10-Ks lag it or blend it away, and the filings-text pipeline mis-graded a fifth of the sheet — twice on the same names even after correction. A filings-anchored scanner is structurally late here.",
+   "The losing side is anyone paid off list price or off scarcity: the January 2027 WAC reset halves the base distribution fees ride on, compounding's margin is already gone (Hims' twelve-point gross-margin reset is the receipt), and Januvia's slide, lixisenatide's run-off and the bariatric-surgery funnel are the quiet substitution losers.",
+   "I'd drop it on three tells, fastest first: West's GLP-1 component line decelerating while incumbent volumes still grow — fragmentation isn't buying capacity, so infrastructure dies first; the ~80% treatment-naive share of oral uptake reverting toward switchers — no second phase, just mix shift inside the same pool; and category volume growth falling below the price-compression rate, at which point it is a demand peak, the market was right, and the whole sheet is a control group."
+  ]
  }
 }

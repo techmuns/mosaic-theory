@@ -12,17 +12,19 @@ import json
 from pathlib import Path
 from typing import Any
 
-from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT, TRUCKLOAD_SUPPLY_PURGE
+from vinci.themes.drivers import DRIVER_SPECS
 
 _CONTEXT = Path(__file__).resolve().parents[1] / "frontend" / "themes" / "context.json"
 
 # theme-page slug (getThemeDriver fetches ./themes/<slug>.json) → the ratified spec it quotes.
 # NB: the defense theme's slug is "defense", not the driver key "defense-demand-shift".
-_SLUG_TO_SPEC = {
-    "ai-datacenter": AI_DATACENTER,
-    "defense": DEFENSE_DEMAND_SHIFT,
-    "truckload-supply-purge": TRUCKLOAD_SUPPLY_PURGE,
-}
+#
+# DERIVED FROM THE REGISTRY, NOT HAND-LISTED (2026-09-01). This was a literal map of the three July
+# slugs, so the guard could not grow: `ai-value-migration` and `glp1-drug-value-chain` were given a
+# `mirror_slug` — which is exactly what makes a driver render a theme page — and BOTH escaped every
+# assertion here in silence, page and all. A driver that has a page is a driver whose page content
+# is pinned; the two facts are the same fact, so they read from one source now.
+_SLUG_TO_SPEC = {s.mirror_slug: s for s in DRIVER_SPECS.values() if s.mirror_slug}
 
 
 def _first_sentence(description: str) -> str:
