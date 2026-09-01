@@ -51,6 +51,21 @@ def _same_unit(a: str, b: str) -> bool:
 
 
 @dataclass(frozen=True)
+class Observation:
+    """One prior reading of a criterion, as recorded on a committed monitor day.
+
+    ``source`` is the metric's own ``source_ref``, carried WHOLE and treated as an opaque identity
+    token — never parsed. It already names the period ("CIQ Net Debt $325M [FQ3/CQ2 May-30-2026] ÷
+    …"), and reaching into that string for the quarter would be the display-string-as-data class
+    this module exists to refuse. Used only for EQUALITY: two readings sharing a source_ref are
+    the same observation looked at twice.
+    """
+
+    source: str | None
+    satisfied: bool
+
+
+@dataclass(frozen=True)
 class TriggerState:
     """The evaluation, its reason, and what was read to reach it.
 
@@ -90,7 +105,35 @@ def resolve_metric(mechanical: dict[str, Any], path: str) -> tuple[Any, str | No
     return node, (src if isinstance(src, str) else None)
 
 
-def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any]) -> TriggerState:
+def _streak(current_source: str | None, history: list[Observation]) -> int | None:
+    """How many DISTINCT consecutive readings have satisfied the criterion, current one included.
+
+    THE COUNT IS IN READINGS, NOT IN MONITOR DAYS, and that distinction is the whole reason this
+    function exists. "Two consecutive quarters" is stated in the ANALYST's cadence; the monitor can
+    run twice in an afternoon, and counting those as two would satisfy a two-quarter criterion in a
+    single day — firing a kill on one observation the analyst deliberately wrote to need two.
+    Distinct readings are separated by their ``source_ref``, which already carries the period.
+
+    Returns None when the readings cannot be told apart — a metric with no ``source_ref`` gives no
+    way to distinguish a fresh period from the same number seen again, and guessing would rebuild
+    the defect above. The caller turns that into UNKNOWN.
+    """
+    if current_source is None:
+        return None
+    seen: list[str] = [current_source]
+    for obs in history:                      # most recent first
+        if not obs.satisfied:
+            break                            # the streak is broken; older readings cannot extend it
+        if obs.source is None:
+            return None
+        if obs.source == seen[-1]:
+            continue                         # the same reading again, not another period
+        seen.append(obs.source)
+    return len(seen)
+
+
+def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
+             *, history: list[Observation] | None = None) -> TriggerState:
     """Evaluate one measured trigger against a dossier's mechanical layer.
 
     EVERY FAILURE PATH RETURNS `UNKNOWN` WITH ITS CAUSE. There is deliberately no path that
@@ -141,12 +184,31 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any]) -> TriggerState:
         return TriggerState(NOT_FIRED, f"{shown} is false", float(value), trig.unit, source)
     if trig.sustain > 1:
         # THE SUSTAIN COUNT IS PART OF THE CRITERION, NOT A REFINEMENT. "two consecutive quarters"
-        # is a different test from "once", and treating a single reading as satisfying it would
-        # fire early on exactly the criteria an analyst wrote the count to protect. Nothing here
-        # carries a history of prior observations yet, so this REFUSES rather than assuming one.
+        # is a different test from "once", and treating one reading as satisfying it would fire
+        # early on exactly the criteria an analyst wrote the count to protect.
+        if history is None:
+            return TriggerState(
+                UNKNOWN,
+                f"{shown} holds on this reading, but the criterion requires {trig.sustain} "
+                f"consecutive readings and no history was supplied — firing on one would be a "
+                f"weaker test than the analyst wrote", float(value), trig.unit, source)
+        run = _streak(source, history)
+        if run is None:
+            # No source_ref: a repeat of the same reading is indistinguishable from a new period,
+            # and counting monitor RUNS instead would satisfy a two-quarter test in an afternoon.
+            return TriggerState(
+                UNKNOWN,
+                f"{shown} holds, but this metric carries no source_ref, so a fresh reading cannot "
+                f"be told from the same one seen again — a {trig.sustain}-reading criterion cannot "
+                f"be counted without that", float(value), trig.unit, source)
+        if run < trig.sustain:
+            # A REAL ANSWER, NOT A REFUSAL. With a history in hand the criterion HAS been evaluated
+            # and has not fired; the streak is stated so the reader can see how close it is.
+            return TriggerState(
+                NOT_FIRED,
+                f"{shown} holds on {run} of the {trig.sustain} consecutive readings the criterion "
+                f"requires", float(value), trig.unit, source)
         return TriggerState(
-            UNKNOWN,
-            f"{shown} holds on this reading, but the criterion requires {trig.sustain} consecutive "
-            f"observations and no prior reading is recorded — firing on one would be a weaker test "
-            f"than the analyst wrote", float(value), trig.unit, source)
+            FIRED, f"{shown} holds on {run} consecutive readings ({trig.sustain} required)",
+            float(value), trig.unit, source)
     return TriggerState(FIRED, f"{shown} holds", float(value), trig.unit, source)
