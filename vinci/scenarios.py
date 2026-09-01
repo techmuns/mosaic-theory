@@ -713,6 +713,12 @@ class Verdict(BaseModel):
     # (catalyst calendar) the DATED form — analyst-typed trigger deadlines; additive-only so every
     # legacy record round-trips unchanged; `verdict.rationale` untouched → seal-safe.
     dated_triggers: list[DatedTrigger] = Field(default_factory=list)
+    # (ruling 3) The MEASURED form — the same additive, analyst-typed, seal-safe shape as
+    # `dated_triggers` above. It sits BESIDE `reunderwrite_triggers`, never in place of it: each
+    # entry carries the analyst's sentence AND the arithmetic, and only a criterion that is
+    # genuinely deterministic gets one. A name with none is a name whose criteria are all
+    # judgments, which is a legitimate state and must not read as "nothing has fired".
+    measured_triggers: list[MeasuredTrigger] = Field(default_factory=list)
     # A recorded BUY is the start of a forward track, so the spread needs the price and the
     # asymmetry AT the moment of the call — not the underwrite-date spot, which has since moved.
     # Both stay None for a verdict that opens no position (watch / passed).
@@ -786,6 +792,72 @@ class DatedTrigger(BaseModel):
     basis: str = ""       # optional: how the deadline was chosen ("second print after verdict")
 
     model_config = {"frozen": True}
+
+
+COMPARATORS: tuple[str, ...] = ("<", "<=", ">", ">=")
+
+
+class MeasuredTrigger(BaseModel):
+    """(ruling 3, 2026-08-31) A re-underwrite trigger the machine can EVALUATE, written BESIDE the
+    analyst's sentence and never parsed out of it.
+
+    THE PROSE IS NOT REPLACED, AND THAT IS THE WHOLE DESIGN. All 27 committed criteria are
+    sentences; a regex over an analyst's sentence is the worst instance of the
+    display-string-as-data class this repo has already paid for three times, because a criterion
+    that silently fails to parse reads EXACTLY like one that has not fired. So ``trigger`` carries
+    the sentence verbatim and the fields beside it carry the arithmetic — two representations, one
+    written by a human, neither derived from the other.
+
+    ANALYST-TYPED ONLY, like ``DatedTrigger`` above: the machine never invents a metric, a
+    threshold or a comparator. What the machine may do is READ the metric and say whether the
+    comparison holds. The operator decides what to do about it.
+
+    ONLY DETERMINISTIC CRITERIA GET ONE. A criterion whose firing turns on a causal clause — "FY27
+    EBIT falls below X BECAUSE recurring economics deteriorate, not because of a discrete legal
+    event" — stays prose, because no comparison settles the "because". Leaving it unstructured is
+    the honest outcome, not a gap to be filled.
+    """
+
+    trigger: str            # the falsifier in the analyst's own words — kept, never superseded
+    #: A dotted path into the dossier's MECHANICAL layer, e.g. "quality.net_debt_to_ebitda". A path
+    #: rather than a name from a fixed registry, because the mechanical layer is where the
+    #: source-stamped scalars already live — inventing a parallel vocabulary would be a second
+    #: source of truth for the same numbers.
+    metric: str
+    comparator: str         # one of COMPARATORS
+    threshold: float
+    #: STATED, and checked against the resolved value's own unit at evaluation. A threshold in $bn
+    #: compared against a value in $M is the scale defect this repo has recorded twice; the unit is
+    #: carried so the evaluator can REFUSE the comparison rather than perform it wrongly.
+    unit: str
+    #: How many consecutive observations must satisfy it. SMPL's "two consecutive quarters" is a
+    #: real part of the criterion: firing on one reading would be a different, weaker test.
+    sustain: int = 1
+    basis: str = ""         # optional: where the metric is read and why that is the right series
+
+    model_config = {"frozen": True}
+
+    @field_validator("comparator")
+    @classmethod
+    def _known_comparator(cls, v: str) -> str:
+        if v not in COMPARATORS:
+            raise ValueError(f"comparator {v!r} is not one of {COMPARATORS}")
+        return v
+
+    @field_validator("metric", "unit", "trigger")
+    @classmethod
+    def _not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("metric, unit and trigger are all required — a measured trigger "
+                             "without one of them cannot be evaluated OR read")
+        return v
+
+    @field_validator("sustain")
+    @classmethod
+    def _positive_sustain(cls, v: int) -> int:
+        if v < 1:
+            raise ValueError("sustain counts observations and is at least 1")
+        return v
 
 
 class StatedLimit(BaseModel):
@@ -1751,6 +1823,13 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
     if (out.get("result") or {}).get("gate_regime") is None:
         for field in LADDER_FIELDS:
             (out.get("result") or {}).pop(field, None)
+    # the VERDICT level (ruling 3, 2026-08-31): a record that states no MEASURED trigger carries no
+    # key for one. Same absent-vs-empty rule as `leg_fy` and the quantity kinds below — an empty
+    # list would assert "this analyst considered measured triggers and wrote none", where the truth
+    # for all eight committed records is "this record predates the question". The distinction is
+    # the whole point of version-scoping, and getting it wrong sprays a default across the corpus.
+    if isinstance(out.get("verdict"), dict) and not out["verdict"].get("measured_triggers"):
+        out["verdict"].pop("measured_triggers", None)
     # the FACT level (2026-08-21): an unstamped fact carries NO key for a quantity kind, the same
     # absent-vs-null rule `leg_fy` follows — "this record never stated the quantity" is a
     # different sentence from a null, and every record predating the field must round-trip

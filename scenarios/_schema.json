@@ -141,6 +141,50 @@
       "title": "Fact",
       "type": "object"
     },
+    "MeasuredTrigger": {
+      "description": "(ruling 3, 2026-08-31) A re-underwrite trigger the machine can EVALUATE, written BESIDE the\nanalyst's sentence and never parsed out of it.\n\nTHE PROSE IS NOT REPLACED, AND THAT IS THE WHOLE DESIGN. All 27 committed criteria are\nsentences; a regex over an analyst's sentence is the worst instance of the\ndisplay-string-as-data class this repo has already paid for three times, because a criterion\nthat silently fails to parse reads EXACTLY like one that has not fired. So ``trigger`` carries\nthe sentence verbatim and the fields beside it carry the arithmetic \u2014 two representations, one\nwritten by a human, neither derived from the other.\n\nANALYST-TYPED ONLY, like ``DatedTrigger`` above: the machine never invents a metric, a\nthreshold or a comparator. What the machine may do is READ the metric and say whether the\ncomparison holds. The operator decides what to do about it.\n\nONLY DETERMINISTIC CRITERIA GET ONE. A criterion whose firing turns on a causal clause \u2014 \"FY27\nEBIT falls below X BECAUSE recurring economics deteriorate, not because of a discrete legal\nevent\" \u2014 stays prose, because no comparison settles the \"because\". Leaving it unstructured is\nthe honest outcome, not a gap to be filled.",
+      "properties": {
+        "trigger": {
+          "title": "Trigger",
+          "type": "string"
+        },
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "comparator": {
+          "title": "Comparator",
+          "type": "string"
+        },
+        "threshold": {
+          "title": "Threshold",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "sustain": {
+          "default": 1,
+          "title": "Sustain",
+          "type": "integer"
+        },
+        "basis": {
+          "default": "",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trigger",
+        "metric",
+        "comparator",
+        "threshold",
+        "unit"
+      ],
+      "title": "MeasuredTrigger",
+      "type": "object"
+    },
     "RefPoint": {
       "description": "One source-bound REFERENCE value an assumption was modeled against (a history median, an\nanchor, a floor, a peak). ``label`` names what it is (the ``basis`` role); recorded in\ndisplay-natural units (``4.06`` + ``\"%\"``, ``6.56`` + ``\"x\"``) \u2014 no consumer re-scales it.\n\n(schema 1.3) The STRUCTURE a label used to carry as prose is fields now: ``role`` (what\nstatistic), ``leg`` (which case it anchors \u2014 None for frame-level context, which most are),\nand ``excluded`` (shown-but-not-used, with its reason). Labels stay verbatim analyst text and\nare never parsed \u2014 the fields are the machine-readable duplicate of what the label says to a\nhuman, and the ONLY thing a consumer may select on.",
       "properties": {
@@ -1243,6 +1287,13 @@
             "$ref": "#/$defs/DatedTrigger"
           },
           "title": "Dated Triggers",
+          "type": "array"
+        },
+        "measured_triggers": {
+          "items": {
+            "$ref": "#/$defs/MeasuredTrigger"
+          },
+          "title": "Measured Triggers",
           "type": "array"
         },
         "entry_price": {
