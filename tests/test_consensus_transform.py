@@ -140,11 +140,24 @@ def test_every_dossier_carries_levels_except_the_standing_rule_exemptions() -> N
     thin coverage as missing would delete the evidence that coverage is thin."""
     import json
 
-    #: WHY each name is exempt — never a bare list. EMPTY since 2026-08-13: FUBO's standing rule
-    #: cleared when its post-combination re-assembly landed, so it now carries levels like every
-    #: other name. The dict stays (rather than the check losing its exemption mechanism) because the
-    #: next sealed record needs somewhere to be named WITH ITS REASON.
-    exempt: dict[str, str] = {}
+    #: WHY each name is exempt — never a bare list. FUBO's standing rule cleared on 2026-08-13 when
+    #: its post-combination re-assembly landed, so it carries levels like every other name.
+    #:
+    #: TECX is exempt on a DIFFERENT KIND of reason, and the distinction is the point. FUBO's was a
+    #: STATE — a sealed record, which time cleared. TECX's is a PROPERTY of the business: it is
+    #: pre-revenue clinical-stage, so the street publishes price targets and loss-per-share
+    #: estimates (9 analysts, mean $77.56, all Buy/Outperform at 2026-08-24) but no revenue or
+    #: EBITDA LEVELS — there is no revenue to forecast. The absence is what the coverage actually
+    #: looks like, not a failed extraction, and the surrounding Estimates blocks prove the export
+    #: parsed: eps_trend, revision_history and consensus_stats all populate from the same workbook.
+    #: SELF-CLEARING BY CONSTRUCTION: the day TX45 reaches a revenue line the street models, this
+    #: name starts carrying levels and the `assert not has` below fires — the exemption cannot
+    #: outlive its own reason silently. (Operator-accepted 2026-09-01.)
+    exempt: dict[str, str] = {
+        "TECX": "pre-revenue clinical-stage — the street covers it (9 analysts, targets and EPS "
+                "estimates) but publishes no revenue/EBITDA levels because there is no revenue "
+                "to forecast; the same Estimates export populates eps_trend and consensus_stats",
+    }
 
     missing = []
     for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
