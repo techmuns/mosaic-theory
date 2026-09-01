@@ -11,12 +11,14 @@ superseded-by:
 
 **WHAT.** On 2026-09-01 the operator approved **2,113** as the primary-band population — the
 population every forward BUY−AVOID return accumulates against. The approval was given in session,
-in response to the summary reproduced below, in the words "2113 approved". The §5.0 row that had
-been carrying "needs sign-off" since 2026-08-31 is closed by this record.
+in the words "2113 approved", against the four-change summary set out under THE EVIDENCE below.
+The §5.0 row that had been carrying "needs sign-off" since 2026-08-31 is closed by this record;
+the two defects it also carried are NOT closed and stay open there.
 
 **WHAT WAS APPROVED, precisely.** The size and composition of the primary band as built at
-reference date 2026-08-24 and committed in #553 — not a rule, a threshold or a future policy. A
-later build that moves the number moves it again; this settles the baseline, not the mechanism.
+reference date 2026-08-24 and committed in #553 — not a rule, a threshold or a future policy. This
+settles the BASELINE, not the mechanism: a later build that moves the number owes its own sign-off
+and cannot inherit this one.
 
 **THE EVIDENCE THE DECISION WAS MADE AGAINST.** Four changes moved the number in a week, each
 verified by a real run with an A/B against the base commit:

@@ -1474,10 +1474,11 @@ build is the mistake — running it early is what a pre-registration exists to p
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
 blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
 
-**SETTLED 2026-09-01 — the primary band is 2,113 and the operator has signed it off**
-(`docs/records/2026-09-01-population-signoff-2113.md`). Multi-class lines are sized by their own
-class count and one issuer contributes ONE line, the most tradeable. Still open inside that
-population: instrument typing, and survivor stickiness on a 90-day ADV average.
+**OPEN 2026-09-01 — two defects INSIDE the signed-off population.** (1) Instrument typing: the
+feed types bonds and depositary receipts as `CS`, and the three that left did so only by trading
+less than their sibling. (2) Survivor stickiness: a 90-day ADV average can move which ticker the
+ledger accumulates against mid-record. Sign-off itself is SETTLED at 2,113 (operator, 2026-09-01 —
+`docs/records/2026-09-01-population-signoff-2113.md`); these two are not closed by it.
 
 
 ### LIVE QUEUE — MIGRATED 2026-08-25 (P1); NOT authoritative, and no longer here
