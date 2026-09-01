@@ -309,8 +309,10 @@ GLP1_DEMAND_SHIFT = DriverSpec(
 # --------------------------------------------------------------------------------------------------
 AI_VALUE_MIGRATION = DriverSpec(
     key="ai-value-migration",
-    # NO mirror_slug — deliberate (the glp1 precedent): the theme page does not exist yet; the
-    # slug is declared when the mirror is, not before.
+    # DECLARED 2026-09-01, on the condition this comment set: "the slug is declared when the mirror
+    # is, not before." #562 made the mirror — `build_themes` now reads the canonical committed
+    # freeze, so frontend/themes/ai-value-migration.json exists and the binding pin resolves.
+    mirror_slug="ai-value-migration",
     description=(
         "the MIGRATION OF AI VALUE CAPTURE across the software/platform stack — if the "
         "frontier-to-open-source model catch-up window stays at ~3-6 months or compresses, raw "
@@ -430,7 +432,8 @@ AI_VALUE_MIGRATION = DriverSpec(
 # --------------------------------------------------------------------------------------------------
 GLP1_DRUG_VALUE_CHAIN = DriverSpec(
     key="glp1-drug-value-chain",
-    # NO mirror_slug yet — same rule as above.
+    # DECLARED 2026-09-01 — same condition, same reason: the mirror now exists (#562).
+    mirror_slug="glp1-drug-value-chain",
     description=(
         "the GLP-1 DRUG VALUE CHAIN's SECOND GROWTH PHASE — incretin therapy transitioning from "
         "supply-constrained scarcity to a volume-driven, price-competitive, chronic-treatment "

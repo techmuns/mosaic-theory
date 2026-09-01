@@ -718,15 +718,31 @@ def _git_sha() -> str | None:
 # run points --themes-src at the freeze artifacts. Read-only transform; no backend import.
 # --------------------------------------------------------------------------------------------------
 # slug + display label per driver (falls back to a slugified driver string for a future theme)
+#: driver name (as the freeze writes it) -> (page slug, display label). The July freezes wrote a
+#: PROSE driver name ("AI-datacenter value chain"); `themes-forward` writes the DRIVER KEY
+#: ("ai-value-migration"), and the fallback below only title-safes a slug — it cannot invent a
+#: label, so an unmapped key rendered as the raw slug in the index. Both spellings are mapped.
 _DRIVER_SLUG: dict[str, tuple[str, str]] = {
     "AI-datacenter value chain": ("ai-datacenter", "AI-datacenter"),
     "defense-demand-shift": ("defense", "Defense demand-shift"),
     "truckload-supply-purge": ("truckload-supply-purge", "Truckload supply purge"),
+    "ai-value-migration": ("ai-value-migration", "AI value migration"),
+    "glp1-drug-value-chain": ("glp1-drug-value-chain", "GLP-1 drug value chain"),
 }
 # the concreteness → rank ladder + the driver-tie gate, mirroring vinci.themes.exposure so the tier
 # shape derives IDENTICALLY from the ledger's (grade, driver_tie) as the backend's exposure_basis.
-_CONC_RANK = {"none": 0, "stated-intent": 1, "committed-capacity": 2,
-              "quantified-revenue": 3, "binding-contract": 4}
+#: TWO VOCABULARIES REACH THIS RANK, and only one used to be in it (2026-09-01). A ledger row's
+#: `grade` is the FACT-concreteness word in the July freezes ("committed-capacity") but the
+#: ASSESSMENT's `exposure_basis` word in every freeze `themes-forward` writes
+#: ("committed-capacity-or-capex"). The second spelling was absent, so `.get(grade, 0)` scored it 0
+#: and ALL 183 names on both 2026-09-01 themes rendered `none` — "no exposure disclosed" — on a
+#: page whose whole subject is their exposure. Both spellings map to the same rank; the `-or-capex`
+#: suffix is the same tier by a different name, as `_SCAN_BASIS` already says.
+_CONC_RANK = {"none": 0, "no-theme-exposure-disclosed": 0,
+              "stated-intent": 1, "aspirational-intent-only": 1,
+              "committed-capacity": 2, "committed-capacity-or-capex": 2,
+              "quantified-revenue": 3, "quantified-revenue-share": 3,
+              "binding-contract": 4, "binding-contracts-with-terms": 4}
 _BASIS = {0: "none", 1: "aspirational", 2: "committed", 3: "quantified", 4: "binding"}
 # scan exposure_basis → tier bucket (the FULL theme exposure shape lives in the scan, not the
 # freeze; a freeze may scope a subset — ai-datacenter froze only its committed enablers, defense
@@ -805,12 +821,50 @@ def _edgar_url(cik: str | None, source_ref: str) -> str | None:
     return f"https://www.sec.gov/Archives/edgar/data/{c}/{acc.replace('-', '')}/{acc}-index.htm"
 
 
+#: Stage order on the index — the pipeline's own order, so the rows a human can act on lead and
+#: the archive sits at the bottom. Not alphabetical: "what needs me next" is the reading order.
+_STAGE_ORDER = {"measuring": 0, "scanned": 1, "declared": 2, "archived": 3}
+
+
+def _driver_key_for(slug: str) -> str | None:
+    """The DriverSpec key whose `mirror_slug` (or own key) produced this page slug.
+
+    Stage is read off the data tree, which is keyed by DRIVER KEY, while a page is keyed by SLUG —
+    and the two differ (`defense-demand-shift` publishes as `defense`). Resolved without importing
+    vinci: this build is deliberately stdlib-only so the Cloudflare deploy can run it.
+    """
+    if (ROOT / "data" / "themes" / "baskets" / f"{slug}.json").exists():
+        return slug
+    for card in sorted((ROOT / "data" / "themes" / "thesis").glob("*.json")):
+        try:
+            if json.loads(card.read_text()).get("mirror_slug") == slug:
+                return card.stem
+        except json.JSONDecodeError:
+            continue
+    return None
+
+
 def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
                    scan: list[dict[str, Any]] | None) -> dict[str, Any]:
     """The display subset the 4 theme views read — cohorts, tier shape, per-name grade_fact +
     accession + rationale + trigger, the UNDEFINED-spread reasons, and the honesty label."""
     driver = baskets["driver"]
     slug, label = _slug(driver)
+    driver_key = baskets.get("driver_key") or _driver_key_for(slug)
+    # The declared first-confirming DATE — the next moment this driver can say something it cannot
+    # say today. Read from the card rather than restated, so the page can never drift from the
+    # deadline the operator actually declared.
+    cards = _scenario_cards()
+
+    first_test = None
+    _card = ROOT / "data" / "themes" / "thesis" / f"{driver_key}.json"
+    if driver_key and _card.exists():
+        try:
+            first_test = ((json.loads(_card.read_text()).get("first_confirming") or {})
+                          .get("deadline"))
+        except json.JSONDecodeError:
+            first_test = None
+
     wl_set, ac_set = set(baskets.get("watchlist", [])), set(baskets.get("avoid_controls", []))
     rt_set = set(baskets.get("real_tier", []))
     triggers = baskets.get("watchlist_triggers", {}) or {}
@@ -856,8 +910,6 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     else:
         surfaced = frozen
         tier_shape = {**tier, "none": None, "surfaced": frozen, "universe": None}
-
-    cards = _scenario_cards()
 
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
@@ -914,11 +966,22 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         "driver": driver, "slug": slug, "label": label,
         "freezeDate": (baskets.get("freeze_timestamp") or "")[:10],
         "freezeTimestamp": baskets.get("freeze_timestamp", ""),
-        "ratifiedCount": len(baskets.get("ratified", [])), "surfacedCount": surfaced,
+        "ratifiedCount": len(baskets.get("ratified", [])),
+        # THE AVOID LEG, which no consumer could reach before (2026-09-01). The spread is
+        # BUY minus AVOID: carrying only the buy count let the surface imply a one-legged
+        # measurement, and the control cohort is the half that makes it a test at all.
+        "passedCount": len(baskets.get("passed", [])), "surfacedCount": surfaced,
+        # HOW MANY RATIFIED NAMES HAVE FACED A PRICE (2026-09-01). Ratifying a name confirms its
+        # EXPOSURE is real; it says nothing about what the exposure costs. The investment gate is
+        # the underwrite — reward-to-risk against a 2:1 bar and IRR against a 15% floor, at spot —
+        # and it is a SEPARATE step that has run on a fraction of the ledger. Surfacing the count
+        # keeps the two from reading as one: a theme can be 168 names ratified and 1 underwritten.
+        "underwrittenCount": sum(1 for t in baskets.get("ratified", []) if t in cards),
         "frozenCount": frozen, "watchlistCount": len(baskets.get("watchlist", [])),
         "tierShape": tier_shape, "frozenTiers": frozen_tiers, "categories": categories,
         "names": names, "watchlist": watchlist, "avoidControls": avoid_controls,
         "realTier": list(baskets.get("real_tier", [])), "forward": forward,
+        "firstTest": first_test,
     }
 
 
@@ -934,8 +997,14 @@ def _theme_index(summaries: list[dict[str, Any]]) -> dict[str, Any]:
         "drivers": summaries,
         "crossDriver": {
             "driversFrozen": n, "totalRatified": total_buys, "totalWatchlist": total_wl,
+            # THE THRESHOLD IS A BRANCH, NOT A SENTENCE (2026-09-01). This asserted UNPOWERED
+            # unconditionally and interpolated the comparison, so the first run to cross
+            # _MIN_THEMES rendered the false claim "5 < 4 themes". Crossing it is a real change in
+            # what the diagnostic can say, and it must not arrive as a typo.
             "line": (f"{n} theme{'s' if n != 1 else ''} in snapshot; exposure-carry diagnostic "
-                     f"poolable but UNPOWERED ({n} < {_MIN_THEMES} themes)."),
+                     + (f"poolable but UNPOWERED ({n} < {_MIN_THEMES} themes)."
+                        if n < _MIN_THEMES else
+                        f"poolable across {n} themes — still UNRESOLVED until verdicts mature.")),
         },
         # the POOLED forward state — cross-theme facts that live at the portfolio altitude (not per
         # theme). On the snapshot day every horizon is 0 days forward → everything PENDING.
@@ -968,7 +1037,7 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
     frontend/themes/<slug>.json + index.json. NON-DESTRUCTIVE: if NO source is found (the Cloudflare
     deploy — the source is git-ignored), it leaves the committed output untouched and WARNs, so the
     Edge-2 frontend and any prior theme commit still build/serve."""
-    pairs: list[tuple[Path, Path, Path | None]] = []
+    pairs: list[tuple[Path, Path, list[Path]]] = []
     for d in themes_srcs:
         if not d.exists():
             continue
@@ -978,7 +1047,25 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
                 print(f"WARN theme: {bp.name} has no sibling {lp.name} — skipped")
                 continue
             scans = sorted(d.glob("*scan*.jsonl"))
-            pairs.append((bp, lp, scans[0] if scans else None))
+            pairs.append((bp, lp, scans[:1]))
+    # THE CANONICAL COMMITTED FREEZE, which `themes-forward` has written since 2026-09-01 and which
+    # nothing here read (2026-09-01). The loop above globs `forward_*_baskets.json` under
+    # git-ignored `data/forward/` — a layout that no longer exists, so `pairs` came back EMPTY on
+    # every run and the preserve-guard below kept three July pages frozen in place. The two drivers
+    # with a real ratification ledger were structurally unreachable: the surface showed the three
+    # LEAST-evidenced drivers and hid the two best. Same transform, same display shape — the ledger
+    # field names were already read both ways (`chain_layer`/`substructure_tag`,
+    # `machine_grade`/`grade`), so only the discovery was wrong.
+    for bp in sorted((ROOT / "data" / "themes" / "baskets").glob("*.json")):
+        lp = ROOT / "data" / "themes" / "ledgers" / f"{bp.stem}.jsonl"
+        if not lp.exists():
+            continue                     # basket without a ledger: a July archive, handled below
+        hist = sorted((ROOT / "data" / "scan_history" / bp.stem).glob("*.jsonl"))
+        # THE UNION OF THE HISTORY, NOT ITS NEWEST FILE. A scan archive accumulates: the full sweep
+        # plus every later DELTA over newly-eligible names. Taking `hist[-1]` read the delta alone
+        # and reported ai-value-migration as 102 names screened against a true 1,354 — a 13x
+        # understatement of the machine's reach, on the one number that says how much was looked at.
+        pairs.append((bp, lp, hist))
     # RE-SEED GUARD (same class as sweep.json): no freeze source in this worktree — e.g. the
     # Cloudflare deploy, where the source is git-ignored — ⇒ keep the committed theme JSON.
     # The embedded underwrite CARDS are the one part the guard's own principle still permits:
@@ -991,14 +1078,53 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
         return []
     OUT_THEMES.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
-    for bp, lp, sp in pairs:
+    for bp, lp, sps in pairs:
         baskets = json.loads(bp.read_text())
-        display = _theme_display(baskets, _jsonl(lp), _jsonl(sp) if sp else None)
+        # LATEST WINS PER NAME across the archive, so a re-scan supersedes rather than double-counts
+        scanned: dict[str, dict[str, Any]] = {}
+        for sp in sps:
+            for row in _jsonl(sp):
+                if row.get("ticker"):
+                    scanned[row["ticker"]] = row
+        display = _theme_display(baskets, _jsonl(lp), list(scanned.values()) if sps else None)
         (OUT_THEMES / f"{display['slug']}.json").write_text(json.dumps(display, indent=1))
         summaries.append({k: display[k] for k in ("slug", "label", "freezeDate", "ratifiedCount",
-                          "surfacedCount", "frozenCount", "watchlistCount", "tierShape",
-                          "frozenTiers")})
-    summaries.sort(key=lambda s: s["slug"])
+                          "passedCount", "underwrittenCount", "surfacedCount", "frozenCount",
+                          "watchlistCount", "tierShape", "frozenTiers", "firstTest")})
+    # ACCUMULATE, NEVER REPLACE — the operator's standing rule: every historical theme scan is
+    # preserved, this one and every future one. `summaries` holds only what THIS run rebuilt, and
+    # the index was written from it alone, so pointing discovery at the canonical freeze orphaned
+    # the three July drivers: their `<slug>.json` survived on disk (this function never rmtree's)
+    # while the index that links to them listed two. A page with no way to reach it is a deletion
+    # the file listing hides. Any committed page this run did not rebuild is carried forward from
+    # its own JSON, which is the only source that still describes it — their freeze sources were
+    # lost in July.
+    rebuilt = {s["slug"] for s in summaries}
+    for old_page in sorted(OUT_THEMES.glob("*.json")):
+        if old_page.name in {"index.json", "context.json"} or old_page.stem in rebuilt:
+            continue
+        try:
+            doc = json.loads(old_page.read_text())
+        except json.JSONDecodeError:
+            print(f"WARN theme: {old_page.name} unreadable — kept on disk, left out of index")
+            continue
+        summaries.append({k: doc.get(k) for k in (
+            "slug", "label", "freezeDate", "ratifiedCount", "passedCount", "underwrittenCount",
+            "surfacedCount", "frozenCount", "watchlistCount", "tierShape", "frozenTiers",
+            "firstTest")})
+    # STAGE — where each driver sits in the pipeline, derived from what is on disk rather than
+    # asserted: a ratification ledger means the forward clock is running; a scan without one means
+    # the machine has read but no human has ruled; a card alone means declared and unscanned; a
+    # page with none of them is a July archive. This is the one column that makes the index a work
+    # queue instead of a scoreboard, and it is what lets it stay legible at twenty drivers.
+    for summary in summaries:
+        drv = _driver_key_for(summary["slug"])
+        has_ledger = bool(drv) and (ROOT / "data" / "themes" / "ledgers" / f"{drv}.jsonl").exists()
+        has_scan = bool(drv) and (ROOT / "data" / "scan_history" / drv).is_dir()
+        has_card = bool(drv) and (ROOT / "data" / "themes" / "thesis" / f"{drv}.json").exists()
+        summary["stage"] = ("measuring" if has_ledger else "scanned" if has_scan
+                            else "declared" if has_card else "archived")
+    summaries.sort(key=lambda s: (_STAGE_ORDER.get(s.get("stage", "archived"), 9), s["slug"]))
     (OUT_THEMES / "index.json").write_text(json.dumps(_theme_index(summaries), indent=1))
     return [s["slug"] for s in summaries]
 

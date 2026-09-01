@@ -1,10 +1,66 @@
 {
  "drivers": [
   {
+   "slug": "ai-value-migration",
+   "label": "AI value migration",
+   "freezeDate": "2026-09-01",
+   "ratifiedCount": 168,
+   "passedCount": 189,
+   "underwrittenCount": 1,
+   "surfacedCount": 839,
+   "frozenCount": 357,
+   "watchlistCount": 0,
+   "tierShape": {
+    "binding": 4,
+    "quantified": 2,
+    "committed": 356,
+    "aspirational": 477,
+    "none": 515,
+    "surfaced": 839,
+    "universe": 1354
+   },
+   "frozenTiers": {
+    "firm": 4,
+    "partial": 353,
+    "early": 0
+   },
+   "firstTest": "2026-12-15",
+   "stage": "measuring"
+  },
+  {
+   "slug": "glp1-drug-value-chain",
+   "label": "GLP-1 drug value chain",
+   "freezeDate": "2026-09-01",
+   "ratifiedCount": 15,
+   "passedCount": 29,
+   "underwrittenCount": 0,
+   "surfacedCount": 140,
+   "frozenCount": 44,
+   "watchlistCount": 0,
+   "tierShape": {
+    "binding": 1,
+    "quantified": 0,
+    "committed": 43,
+    "aspirational": 96,
+    "none": 407,
+    "surfaced": 140,
+    "universe": 547
+   },
+   "frozenTiers": {
+    "firm": 1,
+    "partial": 43,
+    "early": 0
+   },
+   "firstTest": "2026-11-30",
+   "stage": "measuring"
+  },
+  {
    "slug": "ai-datacenter",
    "label": "AI-datacenter",
    "freezeDate": "2026-07-02",
    "ratifiedCount": 0,
+   "passedCount": null,
+   "underwrittenCount": null,
    "surfacedCount": 450,
    "frozenCount": 56,
    "watchlistCount": 5,
@@ -21,13 +77,17 @@
     "firm": 0,
     "partial": 56,
     "early": 0
-   }
+   },
+   "firstTest": null,
+   "stage": "archived"
   },
   {
    "slug": "defense",
    "label": "Defense demand-shift",
    "freezeDate": "2026-07-03",
    "ratifiedCount": 0,
+   "passedCount": null,
+   "underwrittenCount": null,
    "surfacedCount": 108,
    "frozenCount": 108,
    "watchlistCount": 3,
@@ -44,13 +104,17 @@
     "firm": 2,
     "partial": 65,
     "early": 41
-   }
+   },
+   "firstTest": null,
+   "stage": "archived"
   },
   {
    "slug": "truckload-supply-purge",
    "label": "Truckload supply purge",
    "freezeDate": "2026-07-14",
    "ratifiedCount": 0,
+   "passedCount": null,
+   "underwrittenCount": null,
    "surfacedCount": 37,
    "frozenCount": 37,
    "watchlistCount": 3,
@@ -67,23 +131,25 @@
     "firm": 1,
     "partial": 10,
     "early": 26
-   }
+   },
+   "firstTest": null,
+   "stage": "archived"
   }
  ],
  "crossDriver": {
-  "driversFrozen": 3,
-  "totalRatified": 0,
+  "driversFrozen": 5,
+  "totalRatified": 183,
   "totalWatchlist": 11,
-  "line": "3 themes in snapshot; exposure-carry diagnostic poolable but UNPOWERED (3 < 4 themes)."
+  "line": "5 themes in snapshot; exposure-carry diagnostic poolable across 5 themes \u2014 still UNRESOLVED until verdicts mature."
  },
  "pooledForward": {
-  "totalBuys": 0,
+  "totalBuys": 183,
   "totalWatchlist": 11,
   "powerFloor": {
-   "themes": 3,
+   "themes": 5,
    "needed": 4,
-   "pct": 75,
-   "label": "3 of ~4-5 themes \u2014 unpowered"
+   "pct": 100,
+   "label": "5 of ~4-5 themes \u2014 unpowered"
   },
   "undefinedMeasures": [
    [

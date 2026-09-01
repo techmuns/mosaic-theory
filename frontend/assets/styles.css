@@ -1686,3 +1686,33 @@ table.data th.peer-desc-h { text-align: left; }
 .pill.ck-cohort { background: var(--danger-bg); color: var(--danger); }
 .pill.ck-unresolved { background: var(--surface-2); color: var(--ink-2); }
 .pill.ck-no-cohort { background: transparent; color: var(--ink-3); border: 1px dashed var(--line-2); }
+
+/* --- themes index: stage-grouped work queue (2026-09-01) ------------------------------------
+   Replaces the filled pooled-strip tiles with the same flat masthead band `.uw-statband` uses on
+   the underwrite card: hairline top/bottom, no fill, no shadow. Four filled cards competed with
+   the table they sat above; the band reads as a masthead and gives the table the page back. */
+/* THE STRIP IS NO LONGER A CARD. `.pooled-strip` painted the amber gate gradient behind this
+   block, which was right when it led with "0 Buys" as an unmet-gate warning and is wrong now that
+   it carries the measured legs: the amber read as an alarm about numbers that are simply pending.
+   Flat, on the page background, hairlines only — the gate register stays reserved for the gate. */
+.pooled-strip:has(.th-band) { border: 0; background: none; border-radius: 0; padding: 0; }
+.pooled-strip:has(.th-band) .ps-why { border-top: 1px solid var(--line); }
+.th-band { display: flex; border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); margin-bottom: 0; }
+.th-stat { padding: 8px 16px 7px; border-left: 1px solid var(--line); }
+.th-stat:first-child { padding-left: 0; border-left: 0; }
+.th-stat:last-child { padding-right: 0; }
+.th-lab { font-size: 10.6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 600; }
+.th-val { font-size: 20px; font-weight: 650; font-family: var(--mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 1px; }
+/* UNDEFINED is not a number and must not be styled as one — the spread is undefined until verdicts
+   resolve, and rendering 0.0 here would be a claim the ledger cannot support. */
+.th-val.th-undef { color: var(--locked); }
+.th-of { font-size: 12px; color: var(--ink-3); font-family: var(--sans); font-weight: 400; }
+
+/* stage bands — the grouping that separates "no verdicts yet" from "verdicts lost" */
+.th-table tbody tr.th-grp td {
+  background: var(--surface-2); padding: 5px 10px; font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--ink-2); font-weight: 600;
+  border-bottom: 1px solid var(--line-2);
+}
+.th-needs { font-size: 12.5px; color: var(--ink-2); }
+.th-table tbody tr.th-grp:not(:first-child) td { border-top: 1px solid var(--line-2); }

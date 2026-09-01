@@ -645,3 +645,56 @@ def test_mirror_reseed_guard_fails_loud_when_nothing_to_preserve(
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+# --- the themes SURFACE: accumulation, stage, and the threshold sentence (2026-09-01) -----------
+
+
+def test_the_index_carries_forward_a_page_this_run_did_not_rebuild() -> None:
+    """THE TRAP THE OPERATOR'S RULE EXISTS FOR: every historical theme scan is preserved.
+
+    `build_themes` writes `index.json` from the summaries it built THIS run. When discovery moved
+    to the canonical committed freeze — which only the two 2026-09-01 drivers have — the three July
+    pages survived on disk (this builder never rmtree's) while the index that links to them listed
+    two. A page nothing can reach is a deletion the file listing hides, which is exactly the shape
+    the preserve rule forbids. Pinned on the committed artifacts, so it fails the moment the index
+    stops describing a page that exists beside it."""
+    themes = _BUILD_PY.parent / "themes"
+    on_disk = {p.stem for p in themes.glob("*.json")} - {"index", "context"}
+    listed = {d["slug"] for d in json.loads((themes / "index.json").read_text())["drivers"]}
+    assert on_disk <= listed, (
+        f"theme pages exist that the index does not list: {sorted(on_disk - listed)} — they are "
+        f"unreachable from the surface, which is a silent deletion of that scan's history")
+
+
+def test_every_listed_driver_carries_a_stage() -> None:
+    """Stage is what makes the index a work queue rather than a scoreboard — and what separates
+    'no verdicts yet' from 'verdicts lost'. Without it the three archived July drivers read 0 Buys
+    identically to a freshly frozen driver that simply has not resolved."""
+    drivers = json.loads((_BUILD_PY.parent / "themes" / "index.json").read_text())["drivers"]
+    assert drivers, "no drivers in the committed index"
+    known = set(_BUILD._STAGE_ORDER)
+    for d in drivers:
+        assert d.get("stage") in known, f"{d['slug']} has stage {d.get('stage')!r}, not in {known}"
+    # a driver with a ratification ledger is measuring; one without cannot be
+    for d in drivers:
+        has_ledger = (_BUILD_PY.parents[1] / "data" / "themes" / "ledgers"
+                      / f"{_BUILD._driver_key_for(d['slug']) or ''}.jsonl").exists()
+        assert (d["stage"] == "measuring") == has_ledger, (
+            f"{d['slug']} stage={d['stage']} but ledger-present={has_ledger}")
+
+
+def test_the_pooled_line_never_states_a_false_comparison() -> None:
+    """IT ASSERTED 'UNPOWERED (n < 4)' UNCONDITIONALLY and interpolated the comparison, so the
+    first run to cross _MIN_THEMES rendered the literal falsehood '5 < 4 themes'. Crossing the
+    threshold is a real change in what the diagnostic may claim; it must not arrive as a typo."""
+    n = _BUILD._MIN_THEMES
+    for k in (n - 1, n, n + 1):
+        line = _BUILD._theme_index(
+            [{"slug": f"d{i}", "ratifiedCount": 0, "watchlistCount": 0} for i in range(k)]
+        )["crossDriver"]["line"]
+        if k < n:
+            assert f"{k} < {n}" in line and "UNPOWERED" in line, line
+        else:
+            assert "UNPOWERED" not in line, f"{k} themes still claims UNPOWERED: {line}"
+            assert f"{k} < {n}" not in line, f"false comparison rendered: {line}"

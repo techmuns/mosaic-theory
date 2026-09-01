@@ -1,0 +1,26 @@
+{
+ "driver_key": "glp1-drug-value-chain",
+ "declared_date": "2026-08-31",
+ "mechanism": "customer-side",
+ "market_mistake": "The market prices the GLP-1 category as if demand is peaking and as if the incumbent duopoly's economics are the category's economics. The second growth phase is demand-side: affordability and access expansion, supply-constraint resolution, oral formulations, direct-to-patient distribution, generic entry after key expiries, and a chronic induction-to-maintenance treatment model \u2014 volumes UP while manufacturer net pricing COMPRESSES and share FRAGMENTS. The mistake is customer-side: reading price compression and share fragmentation as category weakness when they are the signature of an access-driven second demand phase \u2014 and pricing every position in the drug value chain off the incumbents' price curve, when the best equity may be an incumbent with underestimated volume/revision upside, a next-generation asset, or the manufacturing and access infrastructure.",
+ "null_thesis": "Demand has in fact peaked: volumes flatten as the early-adopter cohort saturates and discontinuation stays high (no durable chronic-maintenance model), access expansion stalls at the payer wall, orals and next-generation assets disappoint, and the incumbent duopoly holds share and net price. The category's economics remain the duopoly's economics \u2014 no second phase arrives, and neither incumbents on volume, next-gen entrants, nor the manufacturing/access infrastructure re-rate on this driver.",
+ "first_confirming": {
+  "trigger": "At the incumbents' next quarterly prints \u2014 LLY (late Oct 2026) and NVO (early Nov 2026) \u2014 incretin franchise VOLUMES (units/scripts, not dollars) GROW while disclosed net price per unit COMPRESSES: the phase-2 signature (access-driven volume with price give-up) in a single print. The prints land on schedule regardless; only the reading is uncertain.",
+  "deadline": "2026-11-30",
+  "basis": "one scheduled print cycle \u2014 both incumbents report by mid-Nov 2026; operator-approved shape 2026-08-31 (the names are the composition's inference, flagged in the note)"
+ },
+ "falsifiers": [
+  {
+   "trigger": "The demand peak CONFIRMS: incumbent incretin franchise volumes (units/scripts, not dollars) FLATTEN or decline across two consecutive quarterly prints \u2014 the second growth phase fails on volume.",
+   "deadline": "2027-06-30",
+   "basis": "three-plus quarterly print cycles of the incumbent franchises (Q3'26, FY'26, Q1'27 all land inside the window); operator-selected 2026-08-31"
+  },
+  {
+   "trigger": "Access expansion STALLS: coverage/reimbursement expansion and direct-to-patient channel volumes stall or reverse at the payer wall \u2014 the access driver of the second phase dies.",
+   "deadline": "2027-03-31",
+   "basis": "payer coverage disclosures + the incumbents' direct-to-patient channel disclosures across the 2026-2027 guidance cycle; operator-selected 2026-08-31"
+  }
+ ],
+ "note": "Every judgment field traces to the operator: mechanism (customer-side) and both falsifiers selected 2026-08-31 from an offered set \u2014 the pricing-power and share-fragmentation falsifiers were offered and NOT selected; the operator kept the demand-side legs. market_mistake / null_thesis composed from the operator's stated thesis (2026-08-29: no demand peak; second growth phase on affordability/access, supply resolution, orals, direct-to-patient, generics, chronic induction-to-maintenance; volumes up, pricing compressed, share fragmenting; best equity possibly incumbent volume upside, next-gen assets, or infrastructure). first_confirming follows the operator-approved scheduled-print shape; LLY and NVO as the incumbent representatives are the composition's inference from the operator's 'incumbent' class (the NVDA precedent), flagged here \u2014 NVO is a non-US filer (the FPI readiness ruling stands open), named only as a disclosure to read, never a universe action.",
+ "mirror_slug": "glp1-drug-value-chain"
+}
