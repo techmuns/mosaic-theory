@@ -23,6 +23,9 @@ import { fmtInt, fmtDate, DASH, escapeHtml, gradeBucket, tierPill } from "../../
 // needs me", and before this the page could not answer it. `measuring` is the only stage with legs,
 // which is why the three archived July drivers read 0 Buys — they have no ratification ledger, not
 // a failed thesis, and the two states used to look identical here.
+const STAGE_CHIP = { measuring: ["live", "Measuring"], scanned: ["", "Scanned"],
+                     declared: ["", "Declared"], archived: ["locked", "Archived"] };
+
 const STAGES = [
   ["measuring", "Clock running", "live",
     (d) => `First test ${d.firstTest ? fmtDate(d.firstTest) : "— date not declared"}`],
@@ -125,10 +128,12 @@ export async function render(root, { item, frame }) {
   const row = (d, needs) => {
     const t = d.tierShape || {};
     const legs = d.stage === "measuring";
+    const [chipTone, chipText] = STAGE_CHIP[d.stage] || ["", "—"];
     return `
       <tr>
         <td><a href="#/themes/${escapeHtml(d.slug)}" style="font-weight:650;">${escapeHtml(d.label)}</a>
           <div class="foot">${d.freezeDate ? `froze ${fmtDate(d.freezeDate)}` : "not frozen"}</div></td>
+        <td><span class="chip ${chipTone}">${escapeHtml(chipText)}</span></td>
         <td class="num v-num">${legs ? fmtInt(d.ratifiedCount) : `<span class="muted">${DASH}</span>`}</td>
         <td class="num v-num">${legs && d.passedCount != null ? fmtInt(d.passedCount) : `<span class="muted">${DASH}</span>`}</td>
         <td class="num scan-num">${t.universe == null ? `<span class="muted">${DASH}</span>` : fmtInt(t.universe)}</td>
@@ -139,14 +144,14 @@ export async function render(root, { item, frame }) {
   const body = STAGES.map(([key, title, tone, needs]) => {
     const rows = idx.drivers.filter((d) => (d.stage || "archived") === key);
     if (!rows.length) return "";
-    return `<tr class="th-grp"><td colspan="5">${escapeHtml(title)} · ${rows.length}</td></tr>`
+    return `<tr class="th-grp"><td colspan="6">${escapeHtml(title)} · ${rows.length}</td></tr>`
       + rows.map((d) => row(d, needs)).join("");
   }).join("");
 
   const table = `
     <table class="data th-table"><thead>
       <tr>
-        <th>Theme</th>
+        <th>Driver</th><th>Stage</th>
         <th class="num">Buy</th><th class="num">Avoid</th><th class="num">Screened</th>
         <th>Needs next</th>
       </tr>
