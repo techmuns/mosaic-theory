@@ -346,6 +346,20 @@ def _standalone_record(cfg: Config, ticker: str, reference_date: date) -> DataRe
     # this is the record-level input, not the page's comparison.
     bench = benchmark_identity(BENCHMARK_SMALL)
     with Store(cfg.db_path) as store:
+        # PREFER THE STORE'S IDENTITY — it is the SAME `Identity` type, already ENRICHED. The
+        # resolver's index (`company_tickers.json`) carries ticker/CIK/name/exchange and NOTHING
+        # ELSE, so `resolve_ticker` returns `sic=None`; the store's row was filled from the
+        # submissions payload by the universe build. The screen route never saw this because it
+        # iterates `store.iter_securities()` directly (`screens/run.py`), so only the MAINTENANCE
+        # route was building records off the thin identity — and the SIC is what
+        # `resolve_label(...).sector` reads, so the page rendered `sector: Unknown` for a name
+        # whose sector the entity master already knew. Live: TECX, SIC 2836 -> Health Care
+        # (review of #558's onboarding run). Fall back to the resolver's when the store has no
+        # row — a name can be followed before any universe build has seen it, and a thin identity
+        # still assembles a page.
+        stored = store.get_security(identity.internal_id)
+        if stored is not None:
+            identity = stored
         bars = store.get_price_history(identity.internal_id)
         bench_bars = store.get_price_history(bench.internal_id)
     # TRUNCATE TO THE REFERENCE DATE — `compute_price_features` takes `bars[-1]` as "latest" and
