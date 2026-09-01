@@ -44,11 +44,18 @@ different mechanism: 353 of 357 rows sit at `committed-capacity-or-capex` becaus
 10-K text, so DGXX's $1.1B Cerebras note and AVGO's $10.8B AI line never lift the grade. The note is
 stored as written; the operator was told the mechanism and can amend it.
 
+**A FIDELITY DEFECT IN THIS RECORD'S OWN SUBJECT, corrected 2026-09-01.** Both the superseded note
+and its replacement were stored with CURLY quotes where the operator typed straight ones (`“no AI
+monetization broken out.”`, `“from” leg`) — introduced by the heredoc that wrote them, not by the
+operator. Both are restored below and in `context.json`. Small, and exactly the class this file
+exists to prevent: a record that reproduces a corrupted copy is not an archive, and "verbatim" was
+asserted twice while a character had changed.
+
 **THE SUPERSEDED NOTE, VERBATIM (4 items):**
 
 1. The market isn't making the mistake the thesis names — it's already repriced the driver, violently and asymmetrically: seat software below the S&P's multiple for the first time (~22.7x from 84x) while AI infra sits at highs, yet AVGO fell 13% on a +143% AI quarter. Abundant capability is priced as annihilation above the model and infinite demand below it; both can't be true, and the only leg plausibly cheap is the moated ABOVE names drowned alongside the casualties.
 
-2. The evidence mostly isn't in the filings — only 4 of 357 names carry binding contracts with terms, and the modal ratified 10-K says “no AI monetization broken out.” The proof lives in earnings releases and contracts (AVGO's $10.8B AI line, ARM's doubling data-center royalties, CRWV's $60.7B RPO) and in the tape.
+2. The evidence mostly isn't in the filings — only 4 of 357 names carry binding contracts with terms, and the modal ratified 10-K says "no AI monetization broken out." The proof lives in earnings releases and contracts (AVGO's $10.8B AI line, ARM's doubling data-center royalties, CRWV's $60.7B RPO) and in the tape.
 
 3. The losers are anyone selling a unit abundance shrinks: seats (TEAM, WDAY, MNDY), billable hours (EPAM, CNXC — KFRC named GenAI in its own filing), and substitutable data middlemen, with ZoomInfo the cleanest corpse.
 
