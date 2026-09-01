@@ -1036,6 +1036,12 @@ external two-name analysis mapped against this inventory:
 
 ### 5.0 — OPEN NOW (read THIS; everything below is archive) · restamped 2026-08-28
 
+**FIXED 2026-09-01 — the deploy answered a missing asset with the app shell, not a 404.**
+The two frozen themes' detail pages hung on "Loading theme…" on Cloudflare while rendering
+locally; 19 graceful-absence branches key on `e.status === 404` and Pages returns 200 + HTML
+(`docs/records/2026-09-01-app-shell-is-not-a-404.md`). **STILL OPEN:** neither 2026-09-01
+driver has a `context.json` entry, and that guard checks a hardcoded list of the July three.
+
 **SURFACED 2026-09-01 — the themes index now shows both frozen drivers.** It read "0 Buys across 3 themes" while 183 ratified names sat in two drivers it could not see: the builder globbed a git-ignored layout that no longer exists. Re-cut as a stage-grouped work queue, July history preserved — `docs/records/2026-09-01-themes-surface-stage-queue.md`. **STILL OPEN:** neither frozen driver has a `mirror_slug`, so the theme DETAIL page is unchanged.
 
 **FROZEN 2026-09-01 — the forward clock is RUNNING on BOTH declared drivers.** `glp1-drug-value-chain` at 15 BUY / 29 AVOID (`docs/records/2026-09-01-glp1-stage4-freeze.md`) and `ai-value-migration` at 168 BUY / 189 AVOID (`docs/records/2026-09-01-aivm-stage4-freeze.md`) — the repo's first two ratification ledgers. **STILL OPEN:** neither renders (`mirror_slug=''` on both), so two frozen baskets are invisible on the Themes page; and the AI BUY leg is 47% of its sheet, a lower-powered test than GLP-1's 34%.
