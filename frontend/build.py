@@ -394,6 +394,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
              "reason": s["reason"],
              **({"yearsToTerminal": s["years_to_terminal"]}
                 if s.get("years_to_terminal") is not None else {}),
+             # (R3) the P/E leg's only driver. Emitted the same conditional way as the horizon, so
+             # R1/R2 cards stay byte-identical under the emit-determinism pin — and so a P/E card
+             # stops showing every input EXCEPT the one that produced its value (review of #542).
+             **({"eps": s["eps"]} if s.get("eps") is not None else {}),
              **({"valuePerShare": _rd(o["value_per_share"], 2), "opIncome": _rd(o["op_income"], 1),
                  "ebitda": _rd(o["ebitda"], 1), "ev": _rd(o["ev"], 1),
                  "equity": _rd(o["equity"], 1), "evEbit": _rd(o.get("ev_ebit"), 1),

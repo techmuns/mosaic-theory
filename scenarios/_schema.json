@@ -581,8 +581,16 @@
       "description": "One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%).",
       "properties": {
         "revenue": {
-          "title": "Revenue",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revenue"
         },
         "margin": {
           "anyOf": [
@@ -666,7 +674,6 @@
         }
       },
       "required": [
-        "revenue",
         "multiple",
         "reason"
       ],

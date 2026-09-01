@@ -370,7 +370,11 @@ class AssumptionDerivation(BaseModel):
 class ScenarioInput(BaseModel):
     """One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%)."""
 
-    revenue: float                 # $M  (R2: TERMINAL-year revenue)
+    # $M (R2: TERMINAL-year revenue). OPTIONAL FROM R3 (review of #542): a forward-P/E leg has no
+    # revenue driver — EPS is the whole input — so requiring one forced every R3 leg to fabricate a
+    # number, which is precisely what this recipe refuses for `margin` two fields down. R1 and R2
+    # refuse a None below rather than reading it as zero.
+    revenue: float | None = None
     # decimal fraction of revenue (R2: TERMINAL EBIT margin). **OMITTED on an EV/Revenue record** —
     # that basis never reads a margin, so recording one would show a driver the value never used.
     margin: float | None = None
@@ -1087,6 +1091,9 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         if s.years_to_terminal is None:
             raise ValueError(f"{name}: an R2 leg needs years_to_terminal — the horizon drives both "
                              "the discount and the accumulated dilution")
+        if s.revenue is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R2} values a leg from TERMINAL revenue — a "
+                             f"leg without one cannot be computed")
         v = tmod.terminal_value(
             tmod.TerminalLeg(name=name, years=s.years_to_terminal, revenue=s.revenue,
                              margin=s.margin, multiple=s.multiple, reason=s.reason),
@@ -1480,6 +1487,13 @@ def _run_r3(rec: ScenarioRecord) -> ScenarioRecord:
         raise ValueError(
             f"record multiple_basis {rec.multiple_basis!r} is not {BASIS_PE!r} — {RECIPE_R3} is an "
             f"EQUITY-basis recipe and refuses to compute on an enterprise unit")
+    # a record CLAIMING a different arithmetic than the engine's is a lie — refuse, never silently
+    # overwrite. R1 and R2 both enforce this and R3 did not (review of #542): a record misstating
+    # its own formula was quietly corrected on write, which is the one outcome the stamp exists to
+    # prevent.
+    if rec.recipe_formula and rec.recipe_formula != list(R3_FORMULA):
+        raise ValueError("record's recipe_formula does not match R3_FORMULA — refusing to compute "
+                         "under a misstated recipe")
     for key in ("net_debt", "d_and_a", "diluted_shares"):
         if key in rec.facts:
             raise ValueError(
@@ -1575,6 +1589,9 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
         # R1 IS a margin recipe — mid-cycle margin × own-history multiple. `margin` became
         # nullable for R2's EV/Revenue basis; on R1 an absent one has no meaning, so refuse here
         # rather than let a None reach the block as a silent zero.
+        if s.revenue is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R1} values a leg from revenue × margin — a "
+                             f"leg without a revenue cannot be computed")
         if s.margin is None:
             raise ValueError(f"{name}: recipe {RECIPE_R1} is a mid-cycle MARGIN recipe — a leg "
                              "without a margin cannot be computed")

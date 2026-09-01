@@ -46,7 +46,7 @@ def _record(**over: object) -> ScenarioRecord:
                 method="P/NTM turns; bear de-rates to 20.5x"),
         },
         "scenarios": {
-            n: ScenarioInput(revenue=0.0, eps=e, multiple=m, reason=f"memo {n} leg")
+            n: ScenarioInput(eps=e, multiple=m, reason=f"memo {n} leg")
             for n, (e, m, _) in MEMO_LEGS.items()
         },
     }
@@ -97,9 +97,9 @@ def test_an_enterprise_basis_is_refused() -> None:
 
 
 def test_a_leg_without_eps_cannot_be_computed() -> None:
-    legs = {n: ScenarioInput(revenue=0.0, eps=e, multiple=m, reason="x")
+    legs = {n: ScenarioInput(eps=e, multiple=m, reason="x")
             for n, (e, m, _) in MEMO_LEGS.items()}
-    legs["base"] = ScenarioInput(revenue=0.0, multiple=24.5, reason="no eps")
+    legs["base"] = ScenarioInput(multiple=24.5, reason="no eps")
     with pytest.raises(ValueError, match="values a leg from its EPS"):
         run_recipe(_record(scenarios=legs))
 
@@ -107,9 +107,9 @@ def test_a_leg_without_eps_cannot_be_computed() -> None:
 def test_a_leg_stating_a_margin_is_refused() -> None:
     """EPS already contains the margin. A leg stating both shows a driver the value never reads —
     the same objection the EV/Revenue note makes against requiring a margin methodology on R2."""
-    legs = {n: ScenarioInput(revenue=0.0, eps=e, multiple=m, reason="x")
+    legs = {n: ScenarioInput(eps=e, multiple=m, reason="x")
             for n, (e, m, _) in MEMO_LEGS.items()}
-    legs["base"] = ScenarioInput(revenue=0.0, eps=16.221, margin=0.36, multiple=24.5, reason="x")
+    legs["base"] = ScenarioInput(eps=16.221, margin=0.36, multiple=24.5, reason="x")
     with pytest.raises(ValueError, match="already contains the margin"):
         run_recipe(_record(scenarios=legs))
 
@@ -126,3 +126,53 @@ def test_the_stamped_formula_shows_the_two_steps_it_does_not_take() -> None:
     assert out.recipe_formula == ["value/share = EPS × forward P/E multiple"]
     joined = " ".join(out.recipe_formula)
     assert "net debt" not in joined and "diluted shares" not in joined
+
+
+# --- the SURFACE: a value whose driver never renders is not shown, it is asserted -------------
+
+
+def _rendered() -> list[str]:
+    from vinci.dossier.render import _scenario_table_lines
+    return _scenario_table_lines(run_recipe(_record()))
+
+
+def test_the_page_shows_the_driver_that_produced_the_value() -> None:
+    """REVIEW FINDING (#542). The md table had no EPS column, so an R3 leg printed its revenue —
+    which R3 legs do not have — beside a real value: "$0M revenue → $397.41/share"."""
+    body = "\n".join(_rendered())
+    assert "| EPS |" in body, "no EPS column on a record whose only driver is EPS"
+    assert "$16.221" in body, "the base leg's EPS is absent from the page"
+    assert "$0" not in body.split("| bear")[0], "a fabricated revenue reached the header"
+
+
+def test_an_absent_revenue_renders_as_absent_not_as_zero() -> None:
+    rows = [ln for ln in _rendered() if ln.startswith("| bear |")]
+    assert rows and rows[0].startswith("| bear | — |"), rows
+
+
+def test_the_stamped_chain_renders_even_though_the_recipe_has_no_facts() -> None:
+    """`_scenario_input_lines` returned early on empty `facts`, and R3 records carry NONE by
+    construction — so the one recipe whose arithmetic a reader is least likely to guess was the
+    one whose stamped chain never printed."""
+    body = "\n".join(_rendered())
+    assert "value/share = EPS × forward P/E multiple" in body
+    assert "reads no record-level facts" in body, (
+        "an empty inputs table must say WHY it is empty, or it reads as an omission")
+
+
+def test_an_r1_table_is_untouched_by_the_conditional_column() -> None:
+    """NON-REGRESSION: the EPS column appears only when a leg carries one, so every committed
+    R1/R2 card stays byte-identical under the emit-determinism pin."""
+    import json
+    import pathlib
+
+    from vinci.dossier.render import _scenario_table_lines
+    from vinci.scenarios import ScenarioRecord
+
+    p = pathlib.Path(__file__).resolve().parents[1] / "scenarios" / "SMPL.json"
+    if not p.is_file():
+        pytest.skip("no committed SMPL record")
+    rec = ScenarioRecord.model_validate(json.loads(p.read_text()))
+    body = "\n".join(_scenario_table_lines(rec))
+    assert "| EPS |" not in body, "an R1 record grew an EPS column"
+    assert "| scenario | revenue $M | margin |" in body

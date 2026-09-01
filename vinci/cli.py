@@ -1394,7 +1394,12 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                     if tpl.get("spot_as_of") else None),
             facts={k: sc.Fact(**v) for k, v in (tpl.get("facts") or {}).items()},
             scenarios={leg: sc.ScenarioInput(
-                revenue=float(c["revenue"]), margin=float(c["margin"]),
+                # BOTH CONDITIONAL (review of #542). `margin` was unconditional, so a template
+                # edited for R3 — which refuses a margin, because EPS already contains it — could
+                # not be built at all: the `eps` plumbing below was unreachable, a capability that
+                # cannot fire. `revenue` follows for the same reason, one recipe later.
+                revenue=(float(c["revenue"]) if c.get("revenue") is not None else None),
+                margin=(float(c["margin"]) if c.get("margin") is not None else None),
                 multiple=float(c["multiple"]), reason=str(c.get("reason") or ""),
                 # carried from the template, never defaulted — `horizon_problems` refuses below if
                 # the analyst left it empty
