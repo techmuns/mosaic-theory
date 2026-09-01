@@ -269,7 +269,17 @@ class PolygonEodClient(EodClient):
         ~375 on US venues — and cached for a day, so a rebuild re-reads nothing."""
         out: dict[str, float] = {}
         for t in tickers:
-            raw = self._http.get_json(f"{_REFERENCE}/{t}", ttl_seconds=_ONE_DAY)
+            # ONE BAD TICKER MUST NOT KILL A TEN-MINUTE BUILD. `get_json` raises on a
+            # non-retryable status or exhausted retries, and this is called per-name from inside
+            # the universe loop — so a single 404 (a delisted-but-still-priced symbol) would abort
+            # the whole run, which has no partial-progress recovery. The value is OPTIONAL by
+            # design: absent already means "drop this name loudly", so skipping a failed lookup
+            # yields the same, already-counted outcome. Same idiom, same reasoning as
+            # `mention_prefilter(skip_errors=True)`: a conservative gap, never a fabricated value.
+            try:
+                raw = self._http.get_json(f"{_REFERENCE}/{t}", ttl_seconds=_ONE_DAY)
+            except HttpError:
+                continue
             res = cast(dict[str, Any], raw).get("results") or {}
             n = res.get("share_class_shares_outstanding")
             if n:

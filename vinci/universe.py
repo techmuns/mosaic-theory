@@ -243,13 +243,44 @@ def build_universe(
                     continue
                 shares_used = ads
                 stats["ads_count_used"] += 1
-            else:
-                if sh is None:
-                    _drop(ident.eod_symbol, "no_shares", "no EDGAR XBRL share count for the CIK",
+            elif sh is None:
+                # FALLBACK, NEVER A REPLACEMENT (2026-09-01). A name with a filed count keeps
+                # it — this branch is reached only when EVERY XBRL tier came back empty, so it
+                # can add names and can never move an admitted cap.
+                #
+                # MEASURED before building: of the 1,240 names still lost here after #541, 711
+                # are FUND/UNIT/WARRANT types the instrument allowlist rejects anyway, leaving
+                # 529 operating equities of which 23 trade above $100M/day. Those 23 are NOT
+                # an IFRS problem — the largest are MULTI-CLASS US FILERS (V, BRK.B, STZ, TSN,
+                # DUOL, PLNT, SEI, FWONK, ARES, BAM) whose cover-page count is
+                # dimension-qualified and so never reaches the XBRL frames. 19 of 22 probed
+                # carry a Polygon share count; an `ifrs-full` branch would have reached at
+                # most 5 and none of the largest. Fetched ONE ticker at a time and only for
+                # allowlisted instrument types, so the call is made only where it can pay.
+                fallback: float | None = None
+                # the reference is consulted ONLY for instrument types the universe would admit,
+                # so the drop reason must say WHICH of the two sources actually ran — a retention
+                # row asserting a lookup that never happened is a fabricated evidence trail
+                consulted = admit_security_type(sec_types.get(ident.eod_symbol),
+                                                band.allowed_security_types)
+                if consulted:
+                    fallback = eod.share_class_counts([ident.eod_symbol]).get(ident.eod_symbol)
+                if fallback is None:
+                    reason = ("no share count in any XBRL tier and none from the share-class "
+                              "reference either" if consulted else
+                              "no share count in any XBRL tier; the share-class reference was NOT "
+                              "consulted (instrument type is not admitted, so the name is "
+                              "excluded regardless)")
+                    _drop(ident.eod_symbol, "no_shares", reason,
                           StampedInput(value=None,
-                                       source="EDGAR share frames (instant tiers + period "
-                                              "average)"))
+                                       source=("EDGAR share frames (instant tiers + period "
+                                               "average) + Polygon share class" if consulted else
+                                               "EDGAR share frames (instant tiers + period "
+                                               "average)")))
                     continue
+                shares_used = fallback
+                stats["polygon_count_fallback"] += 1
+            else:
                 shares_used = sh
             market_cap = close * shares_used
             # WHICH KIND OF SHARE COUNT DECIDED THIS NAME — computed BEFORE the band test, because
@@ -258,11 +289,16 @@ def build_universe(
             # as its deciding input would misattribute an exclusion the approximation made.
             tag = share_tag.get(ident.cik, "")
             approximate = (not is_depositary) and tag == SHARES_TAG_WAVG
-            shares_source = (
-                "Polygon close x Polygon share_class_shares_outstanding (ADS-denominated)"
-                if is_depositary else
-                (f"Polygon close x EDGAR {tag}"
-                 + (" (PERIOD AVERAGE - approximate share count)" if approximate else "")))
+            if is_depositary:
+                shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
+                                 "(ADS-denominated)")
+            elif sh is None:
+                shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
+                                 "(FALLBACK - no filed count in any XBRL tier)")
+            else:
+                shares_source = (f"Polygon close x EDGAR {tag}"
+                                 + (" (PERIOD AVERAGE - approximate share count)"
+                                    if approximate else ""))
             if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
                 if approximate:
                     stats["out_of_band_period_average"] += 1

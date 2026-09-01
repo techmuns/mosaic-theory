@@ -47,6 +47,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
          close: float = 100.0) -> tuple[dict, dict]:
     """Run the REAL builder over one fake name; return (stats, the exported universe row or {})."""
     ident = _ident(ticker)
+    calls: list[tuple[str, ...]] = []
 
     class _R:
         @classmethod
@@ -62,6 +63,9 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
                                     close=close, volume=1_000_000)} if day == _REF else {})
         def security_types(self) -> dict[str, str]: return {ticker: sec_type}
         def share_class_counts(self, tickers: object) -> dict[str, float]:
+            # the same reference field serves both paths: the ADS count for a depositary
+            # receipt, the share-class count as a LAST-RESORT fallback for anything else
+            calls.append(tuple(tickers))                    # what was ACTUALLY consulted
             return {ticker: ads_shares} if ads_shares is not None else {}
 
     class _Ed:
@@ -83,6 +87,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
     snap = tmp_path / "snapshots" / "universe_snapshot.jsonl"
     rows = [json.loads(x) for x in snap.read_text().splitlines() if x.strip()] if snap.exists() \
         else []
+    _run.last_calls = calls          # type: ignore[attr-defined]
     return stats, (rows[0] if rows else {})
 
 
@@ -178,6 +183,92 @@ def test_a_domestic_name_with_no_xbrl_count_is_still_dropped_at_no_shares(
     assert stats["no_shares"] == 1
     assert stats.get("in_universe", 0) == 0
     assert row == {}
+
+
+def test_a_filer_with_no_xbrl_count_anywhere_falls_back_to_the_share_class_count(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """PHASE 2 (2026-09-01), scoped by measurement. After #541, 1,240 names were still lost at
+    `no_shares` — but 711 are FUND/UNIT/WARRANT types the allowlist rejects anyway, leaving 529
+    operating equities of which only 23 trade above $100M/day. Those 23 are NOT an IFRS problem:
+    the largest are MULTI-CLASS US FILERS (V, BRK.B, STZ, TSN, DUOL, PLNT, SEI, FWONK, ARES, BAM)
+    whose cover-page count is dimension-qualified and never reaches the XBRL frames. 19 of 22
+    probed carry a share-class count; an `ifrs-full` branch — the original Phase 2 — would have
+    reached at most 5, and none of the largest."""
+    stats, row = _run(monkeypatch, tmp_path, ticker="VXX1", sec_type="CS",
+                      xbrl_shares=None, ads_shares=5_000_000.0)   # $500M — inside the band
+    assert stats["in_universe"] == 1
+    assert stats["polygon_count_fallback"] == 1
+    assert stats.get("no_shares", 0) == 0
+    assert row["market_cap"] == 100.0 * 5_000_000.0
+    assert "FALLBACK" in row["source"] and "no filed count in any XBRL tier" in row["source"]
+
+
+def test_the_fallback_never_displaces_a_filed_count(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """THE BOUND ON THE BLAST RADIUS. A name with a filed count keeps it, even when a share-class
+    count is also available and disagrees — so this change can only ADD names, never move a cap
+    that is already admitted. Without this the fallback would silently re-source the whole
+    universe off a reference feed."""
+    stats, row = _run(monkeypatch, tmp_path, ticker="ACM2", sec_type="CS",
+                      xbrl_shares=5_000_000.0, ads_shares=9_999_999.0)
+    assert stats["in_universe"] == 1
+    assert stats.get("polygon_count_fallback", 0) == 0
+    assert row["market_cap"] == 100.0 * 5_000_000.0          # the FILED count, not the reference
+    assert "EDGAR dei:EntityCommonStockSharesOutstanding" in row["source"]
+    assert "FALLBACK" not in row["source"]
+
+
+def test_a_name_with_no_count_in_any_source_still_drops_at_no_shares(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """THE AZN SHAPE — measured: AZN, BSP and JMKE have no count in any source. Absent beats
+    invented, so they still drop, and the reason now names BOTH sources it tried."""
+    stats, row = _run(monkeypatch, tmp_path, ticker="AZN2", sec_type="CS",
+                      xbrl_shares=None, ads_shares=None)
+    assert stats["no_shares"] == 1
+    assert stats.get("in_universe", 0) == 0
+    assert row == {}
+
+
+def test_a_non_admitted_type_is_not_claimed_to_have_been_looked_up(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """REVIEW FINDING (2026-09-01). The fallback is consulted only for instrument types the
+    universe would admit — so for a FUND/UNIT/WARRANT the reference call never runs. The first
+    draft nevertheless wrote the reason 'and none from the share-class reference either', which
+    asserts a lookup that did not happen; on the real run roughly 711 of the 889 `no_shares` rows
+    are exactly these types. The retention row IS the evidence trail, so it must say which of the
+    two sources actually ran."""
+    stats, row = _run(monkeypatch, tmp_path, ticker="FUNDX", sec_type="FUND",
+                      xbrl_shares=None, ads_shares=7_000_000.0)
+    assert stats["no_shares"] == 1
+    assert row == {}
+    # the depositary PREFETCH still runs (with an empty ticker list, since a FUND is not an ADR);
+    # the property that matters is that THIS NAME was never looked up
+    calls = _run.last_calls               # type: ignore[attr-defined]
+    assert all("FUNDX" not in c for c in calls), calls
+
+
+def test_a_failed_reference_lookup_drops_the_name_and_not_the_build(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """REVIEW FINDING (2026-09-01). `get_json` raises on a non-retryable status, and this is now
+    called per-name from inside the universe loop — so one 404 for a delisted-but-still-priced
+    symbol would abort a ten-minute build with no partial-progress recovery. The datum is OPTIONAL
+    (absent already means 'drop loudly'), so a failed lookup yields the same, already-counted
+    outcome. Same idiom as `mention_prefilter(skip_errors=True)`."""
+    from vinci.eod.client import PolygonEodClient
+    from vinci.netcache import HttpError
+
+    class _Boom:
+        def get_json(self, url: str, **kw: object) -> dict[str, object]:
+            raise HttpError(f"Non-retryable 404 from {url}")
+
+    client = PolygonEodClient.__new__(PolygonEodClient)
+    client._http = _Boom()                # type: ignore[attr-defined]
+    assert client.share_class_counts(["DEAD"]) == {}      # skipped, not raised
 
 
 def test_depositary_types_are_a_subset_of_the_admitted_instrument_allowlist() -> None:
