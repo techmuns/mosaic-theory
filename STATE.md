@@ -1474,10 +1474,10 @@ build is the mistake — running it early is what a pre-registration exists to p
 2026-08-25, run 32827750106 — queue at `screen_run_at 2026-08-24`); the book-blind ruling as a
 blocker on LLY/R3 (the 2026-08-21 fund-wide ladder decoupled it — see the tiered-gates entry).
 
-**OPEN 2026-09-01 — the primary band is 2,113 and the whole move needs sign-off.** Multi-class
-lines are sized by their own class count (`docs/records/2026-09-01-per-class-share-counts.md`), and
-one issuer now contributes ONE line, the most tradeable of them
-(`docs/records/2026-09-01-one-line-per-issuer.md`). 2,000 -> 2,125 -> 2,113, snapshots caught up.
+**SETTLED 2026-09-01 — the primary band is 2,113 and the operator has signed it off**
+(`docs/records/2026-09-01-population-signoff-2113.md`). Multi-class lines are sized by their own
+class count and one issuer contributes ONE line, the most tradeable. Still open inside that
+population: instrument typing, and survivor stickiness on a 90-day ADV average.
 
 
 ### LIVE QUEUE — MIGRATED 2026-08-25 (P1); NOT authoritative, and no longer here
