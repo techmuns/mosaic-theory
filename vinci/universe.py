@@ -469,6 +469,12 @@ def build_universe(
             # gated on, then discarded via [0]). The coarse SECTOR is derived downstream
             # (sectors.sector_for_sic); SIC itself is never a screen/rank/verdict input.
             ident = ident.model_copy(update={"sic": sic, "sic_description": sic_desc})
+            # UPSERTED HERE, NOT WITH THE WINNERS. `securities`/`issuers` are ACCUMULATE-ONLY and
+            # an identity is never pruned — the entity master has to resolve a ledgered name after
+            # it leaves the universe. De-duplication decides MEMBERSHIP, not existence, so a class
+            # that loses to a more tradeable sibling must still be known to the master (and still
+            # carry a refreshed SIC); only its universe row is withheld.
+            store.upsert_security(ident, first_seen=reference_date)
             admitted.append((ident, market_cap, shares_source, approximate))
 
         for ident, market_cap, cap_source, approximate in _one_line_per_issuer(admitted):
@@ -478,7 +484,6 @@ def build_universe(
             # the out-of-band drop path needs the same provenance.)
             if approximate:
                 stats["shares_period_average"] += 1
-            store.upsert_security(ident, first_seen=reference_date)
             store.record_universe(
                 as_of=reference_date,
                 internal_id=ident.internal_id,

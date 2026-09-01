@@ -47,11 +47,34 @@ newly admitted: 0        survivor caps changed: 0
 
 Both zeros matter: de-duplication may only ever REMOVE, and it must not re-size anything it keeps.
 
-Six pins in `tests/test_issuer_dedup.py`, all driving the real builder, plus four sizing pins in
+Eight pins in `tests/test_issuer_dedup.py`, all driving the real builder, plus four sizing pins in
 `tests/test_dual_class_caps.py` re-aimed onto the survivor. **Two mutations, both red on the right
 pins:** de-duplication disabled → 4 of 6 red (the two no-over-reach pins correctly stay green,
 since they do not depend on it firing); ranking by CAP instead of ADV → exactly the ADAMAS pin
 reds, which is the pin that encodes the measured choice.
+
+**THREE REVIEW FIXES, one of which was a real defect.**
+
+1. **De-duplicated lines were falling out of the ACCUMULATE-ONLY entity master.** The first draft
+   moved `store.upsert_security` into the winners-only pass, so a losing class was never written to
+   `securities`/`issuers`. Those tables may never shrink — an identity is never pruned, because the
+   master has to resolve a ledgered name after it leaves the universe, and a shrinking
+   accumulate-only table is the shape that froze the weekly screen for four consecutive weeks in
+   2026-08. Measured on a fresh data dir: the master wrote **3,041 rows instead of 3,060 — exactly
+   the 19 de-duplicated lines short.** The upsert now happens for every gate-passing line;
+   de-duplication decides MEMBERSHIP, not existence. Universe membership is unchanged by the fix
+   (2,113 / 928, 12 / 7 duplicates).
+2. **Nothing pinned that de-duplication runs AFTER the gates.** The regression is silent and total:
+   ranked before the gates, an out-of-band class would win its issuer's slot and then be dropped
+   `out_of_band`, taking the whole company out of the population while its in-band sibling — which
+   clears every gate — is never admitted. Now pinned, and the pin reds under exactly that mutation.
+3. **The sizing counters do not count admissions, and the allowlist comment said they did.**
+   `ads_count_used`, `polygon_count_fallback` and `dual_class_count_used` are incremented in the
+   sizing branch, before every gate — which is why a primary and a theme run of the same date report
+   the SAME 356 / 330 / 145 while admitting 2,113 and 928 names. `shares_period_average` is stamped
+   with the admitted row and does count admissions. `universe_stats.json` is read as a health
+   snapshot, so the comment now states which is which. (Pre-existing convention for the first two;
+   the inaccurate claim was introduced with `dual_class_count_used` in #546.)
 
 **A SIDE EFFECT WORTH NAMING: the three contaminants are gone.** #546 knowingly left ADAMK (a bond)
 in the primary population and GOOGM/GOOGN (depositary shares) in the theme band, on the grounds
