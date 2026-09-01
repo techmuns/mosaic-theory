@@ -1820,7 +1820,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     prior_days: list[dict[str, Any]] = []
     if _mon_dir.is_dir():
         for _p in sorted(_mon_dir.glob("*.json"), reverse=True):
-            if _p.stem == "benchmark_assignments" or _p.stem >= ref.isoformat():
+            # A DAY IS A DATED FILENAME — the same test `mon.write_snapshot` already applies to
+            # this directory (`_SNAPSHOT_DAY`), rather than a second ad-hoc rule naming the one
+            # non-day file we happen to know about. `benchmark_assignments.json` is excluded by
+            # not being a date, and so is the next artifact that lands beside it.
+            if not mon._SNAPSHOT_DAY.fullmatch(_p.stem) or _p.stem >= ref.isoformat():
                 continue
             prior_days.append(json.loads(_p.read_text()))
     edgar = EdgarClient.from_config(cfg)

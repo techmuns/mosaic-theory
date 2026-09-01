@@ -62,7 +62,12 @@ class Observation:
     """
 
     source: str | None
-    satisfied: bool
+    #: `None` = THIS READING WAS UNKNOWN — the comparison was never made, because the metric could
+    #: not be read that day. It is NOT `False`. `MeasuredTriggerRow.satisfied` is `bool | None` for
+    #: exactly this reason and the history must carry the third state through, or the module built
+    #: to keep FIRED / NOT_FIRED / UNKNOWN apart flattens them back to two on the one path where a
+    #: kill criterion is actually counted.
+    satisfied: bool | None
 
 
 @dataclass(frozen=True)
@@ -122,11 +127,20 @@ def _streak(current_source: str | None, history: list[Observation]) -> int | Non
     Returns None when the readings cannot be told apart — a metric with no ``source_ref`` gives no
     way to distinguish a fresh period from the same number seen again, and guessing would rebuild
     the defect above. The caller turns that into UNKNOWN.
+
+    ...AND EQUALLY WHEN A READING IS UNKNOWN. `satisfied is None` means that day's comparison was
+    never made, not that it failed. Treating it as a failure silently RESTARTS the clock on a kill
+    criterion the analyst wrote to need N consecutive periods: the count begins again, the reader
+    is told "1 of 2", and nothing says the missing period was unreadable rather than benign. This
+    function already refuses to guess when it cannot tell two readings apart; it cannot honestly
+    count through one it could not read either.
     """
     if current_source is None:
         return None
     seen: list[str] = [current_source]
     for obs in history:                      # most recent first
+        if obs.satisfied is None:
+            return None                      # unreadable: the run cannot be counted, only refused
         if not obs.satisfied:
             break                            # the streak is broken; older readings cannot extend it
         if obs.source is None:
@@ -199,6 +213,16 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
                 f"weaker test than the analyst wrote", True, float(value), trig.unit, source)
         run = _streak(source, history)
         if run is None:
+            # TWO CAUSES, NAMED APART. Both refuse to count, and a reader who cannot tell which
+            # one they are looking at cannot act on either.
+            if source is not None and any(o.satisfied is None for o in history):
+                return TriggerState(
+                    UNKNOWN,
+                    f"{shown} holds now, but an earlier reading of this criterion was itself "
+                    f"UNKNOWN — the comparison was never made that period, so a "
+                    f"{trig.sustain}-reading run cannot be counted through it. Treating the gap "
+                    f"as a failure would restart the count and read as though the criterion had "
+                    f"been tested and not held", True, float(value), trig.unit, source)
             # No source_ref: a repeat of the same reading is indistinguishable from a new period,
             # and counting monitor RUNS instead would satisfy a two-quarter test in an afternoon.
             return TriggerState(
