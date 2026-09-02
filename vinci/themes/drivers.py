@@ -606,6 +606,13 @@ AI_COMPUTE_PLATFORM = DriverSpec(
         # SELF-DESCRIPTION — the scaled clouds name their own segment, never the category
         "cloud revenue", "cloud services", "ai infrastructure", "tensor processing",
         "custom accelerator", "data center capacity",
+        # PROVISIONAL — NEVER RUN. These 15 terms were added 2026-09-02 when the driver was
+        # reframed, and `ai-compute-platform` was FALSIFIED PRE-DECLARATION before any scan used
+        # them. They are validated only to the extent that a targeted probe showed TLN and VST
+        # match them (6 and 3 terms) while matching ZERO of the terms above — which proves the
+        # blind spot was real, NOT that this list is well-formed. No driver has been graded on
+        # them. A NEW DRIVER MUST NOT INHERIT THEM UNVALIDATED: probe first, the way the GOOGL
+        # hole was found, or they carry the same defect forward under a different name.
         # POWERED INFRASTRUCTURE (2026-09-02) — added when the driver was reframed away from
         # "neoclouds". The prior list was built for the COMPUTE layer and so could not see the
         # population the reframed driver is about: REITs, IPPs, power developers, interconnect

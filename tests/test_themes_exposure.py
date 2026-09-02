@@ -1060,3 +1060,43 @@ def test_a_running_text_exhibit_yields_nothing_rather_than_a_guess() -> None:
             "Registrant Jurisdiction of Organization Abernathy Data LLC 50.1% Delaware "
             "Akela Data LLC 100% Delaware</p>")
     assert parse_exhibit_21(flat) == []
+
+
+def test_a_swallowed_prefilter_query_is_counted_not_silent() -> None:
+    """SILENT RECALL LOSS — escalated 2026-09-02 as its own defect, separate from the closed card.
+
+    `scan_driver_exposure` hardcodes skip_errors=True, and until now the skip was an uncounted
+    `break`. AES and ETN matched an OLD prefilter term yet never reached the 745-name scan, which
+    vocabulary cannot explain. That makes every denominator in the theme pipeline — 745 here, 357 on
+    the parent sheet — "N that SUCCEEDED" out of an unknown base. The gap stays (it is the right
+    trade for a long scan); being unable to MEASURE it does not.
+    """
+    from vinci.netcache import HttpError
+    from vinci.themes.exposure import mention_prefilter
+
+    class _Failing:
+        def get_json(self, url: str, **kw: object) -> object:
+            raise HttpError(503, "efts unavailable", url)
+
+    skipped: list[str] = []
+    got = mention_prefilter(cast(Any, _Failing()), ["0000000001", "0000000002"], ("alpha", "beta"),
+                            startdt="2026-01-01", enddt="2026-09-02",
+                            skip_errors=True, skipped=skipped)
+    assert got == {}
+    assert len(skipped) == 2                       # one per phrase — the gap is now a NUMBER
+    assert all("batch of 2 CIKs" in s for s in skipped)
+    assert any("'alpha'" in s for s in skipped)
+
+
+def test_the_prefilter_still_fails_loud_by_default() -> None:
+    """NEGATIVE PIN — counting the skips must not turn fail-loud into fail-quiet anywhere else."""
+    from vinci.netcache import HttpError
+    from vinci.themes.exposure import mention_prefilter
+
+    class _Failing:
+        def get_json(self, url: str, **kw: object) -> object:
+            raise HttpError(503, "efts unavailable", url)
+
+    with pytest.raises(HttpError):
+        mention_prefilter(cast(Any, _Failing()), ["0000000001"], ("alpha",),
+                          startdt="2026-01-01", enddt="2026-09-02")

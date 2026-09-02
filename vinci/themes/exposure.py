@@ -167,6 +167,7 @@ def mention_prefilter(
     forms: str = "8-K,10-Q,10-K,20-F,40-F,6-K",  # incl. foreign issuers (20-F/6-K) — CAMT etc.
     max_pages: int = 5,
     skip_errors: bool = False,
+    skipped: list[str] | None = None,
     progress: ProgressFn | None = None,
 ) -> dict[str, set[str]]:
     """Batched-CIK efts: which universe CIKs mention each driver phrase recently. Returns
@@ -174,7 +175,14 @@ def mention_prefilter(
 
     Default is fail-loud (a bad efts body raises). ``skip_errors=True`` (for a long universe scan)
     skips a batch×phrase that errors after retries and keeps going — a conservative recall gap (a
-    missed mention just means a name is not scanned), never a fabricated mention."""
+    missed mention just means a name is not scanned), never a fabricated mention.
+
+    PASS ``skipped`` TO LEARN HOW BIG THAT GAP WAS. Until 2026-09-02 the skip was silent and
+    uncounted, which made every downstream denominator "N that SUCCEEDED" out of an unknown base —
+    a scan reporting 745 graded names could have dropped any number and nothing said so. Each
+    entry is one ``batch×phrase`` query that errored, and a batch holds up to 100 CIKs, so one
+    entry can cost up to 100 names their match on that phrase. An empty list is the only thing
+    that licenses reading the yield as complete."""
     matched: dict[str, set[str]] = {}
     batches = [ciks_padded[i:i + 100] for i in range(0, len(ciks_padded), 100)]
     rep = ProgressReporter("efts prefilter", len(batches) * len(phrases), emit=progress)
@@ -189,9 +197,12 @@ def mention_prefilter(
                                 efts.get_json(_efts_url(phrase, batch, frm, forms, startdt, enddt),
                                               ttl_seconds=_ONE_WEEK))
                     page, total = parse_efts_ciks(data)
-                except HttpError:
+                except HttpError as exc:
                     if not skip_errors:
                         raise
+                    if skipped is not None:  # COUNT the gap — a silent skip is an unknown base
+                        skipped.append(f"{phrase!r} × batch of {len(batch)} CIKs "
+                                       f"(from={frm}): {type(exc).__name__}: {exc}")
                     break  # transient efts error — skip this batch×phrase, keep scanning
                 for c in page:
                     if c in bset:
@@ -624,8 +635,20 @@ def scan_driver_exposure(
     false-positive rate directly."""
     ciks = [c for _, c in names]
     ticker_by_cik = {c: t for t, c in names}
+    prefilter_skips: list[str] = []
     matched = mention_prefilter(efts_http, ciks, spec.prefilter_terms, startdt=startdt, enddt=enddt,
-                                skip_errors=True, progress=progress)
+                                skip_errors=True, skipped=prefilter_skips, progress=progress)
+    if prefilter_skips:
+        # NOT a warning to be scrolled past: the scan's denominator is now unknown, so every count
+        # derived from it ("N graded", any share of N) is N-that-succeeded over an unknown base.
+        print(f"!! PREFILTER RECALL GAP — {len(prefilter_skips)} batch×phrase quer(ies) "
+              f"errored and were SKIPPED. Each batch holds up to 100 CIKs, so this scan's "
+              f"population is a LOWER BOUND and its denominator is unknown. "
+              f"Do not report a share of it.")
+        for line in prefilter_skips[:10]:
+            print(f"   {line}")
+        if len(prefilter_skips) > 10:
+            print(f"   … and {len(prefilter_skips) - 10} more")
     candidates = sorted(matched)
     since = date.fromisoformat(startdt)
     rep = ProgressReporter("exposure scan", len(candidates), emit=progress)
