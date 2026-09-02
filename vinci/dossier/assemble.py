@@ -545,9 +545,45 @@ def _refuse_synthesis_overwrite(dossier: Dossier, folder: Path) -> None:
         "synthesis and refuses per claim when the prose cites one that moved.")
 
 
+def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
+    """A write that would replace a COMMITTED drawdown cause with a DEGRADED-FEED one is refused.
+
+    THE SAME DOOR AS ``_refuse_synthesis_overwrite``, one block over. Before 2026-09-02 an
+    unreadable filing index raised out of ``assemble_mechanical``, so the name landed in
+    ``assemble_cohort``'s ``errors``, ``_cmd_dossier`` returned non-zero, and the committed artifact
+    was never touched. Making the block degrade to UNKNOWN (#570) fixed the name being silently
+    DROPPED, but it also removed the only signal that a run was degraded: ``errors`` comes back
+    empty, ``vinci dossier`` exits 0 — past the "A PARTIAL FAILURE MUST NOT EXIT 0" guard — and the
+    standing artifact pass then commits blank drawdown blocks over good ones. A single SEC
+    fair-access 403 is enough, because ``netcache`` raises 403 on the FIRST attempt with no retry.
+
+    So the degrade-and-continue stands for a FRESH name (a present record marked UNKNOWN is
+    auditable; an absent one is not), and is refused only where it would DESTROY an established
+    finding. Gated on the committed file, not on a mode, exactly as the synthesis guard is."""
+    dc = dossier.mechanical.drawdown_cause if dossier.mechanical is not None else None
+    if dc is None or dc.shape.status is SourceStatus.PRESENT:
+        return  # this build read the index fine — nothing to protect against
+    existing = folder / "dossier.json"
+    if not existing.exists():
+        return
+    try:
+        prior = json.loads(existing.read_text())["mechanical"]["drawdown_cause"]["shape"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return  # an unreadable prior file is not evidence of a finding to protect
+    if prior.get("status") != SourceStatus.PRESENT.value:
+        return
+    raise DossierAssemblyError(
+        f"{dossier.ticker}: this build could not read the EDGAR filing index "
+        f"({dc.shape.note}) and the committed dossier HAS an attributed drawdown cause — writing "
+        "would replace an established finding with UNKNOWN. Re-assemble once the feed recovers. "
+        "This refusal is also what keeps `vinci dossier` from exiting 0 on a degraded run and "
+        "letting the artifact pass commit blank blocks over good ones.")
+
+
 def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     folder = out_root / dossier.ticker
     _refuse_synthesis_overwrite(dossier, folder)
+    _refuse_degraded_drawdown_overwrite(dossier, folder)
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
     (folder / "dossier.md").write_text(

@@ -59,7 +59,7 @@ was not made here.
 
 **WHAT THIS CLOSES.**
 
-- **STATE.md §5.0 row 12 is STRUCK** — the accepted risk it recorded is resolved.
+- **STATE.md §5.0 row 16 is STRUCK** — the accepted risk it recorded is resolved.
 - `docs/records/2026-09-02-submissions-memo.md` gains an `## Amendments` entry: the submissions
   memo's measured 187.4 s → 15.5 s now applies to every name, not the no-gap subset.
 - **The accepted-risk pin from #569 did not fire, and was replaced.** It asserted the absence of a

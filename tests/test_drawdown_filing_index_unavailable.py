@@ -176,3 +176,65 @@ def test_a_name_with_no_gap_downs_is_unaffected() -> None:
 
     assert cause.shape.value == "gradual bleed — no discrete gap-down detected"
     assert cause.gap_down_dates.value is None
+
+
+def test_a_record_with_no_cik_does_not_manufacture_no_company_filing() -> None:
+    """A missing CIK means the index was never READ, so "no company filing" — a finding about the
+    issuer — was never established. Before this fix `lookup_failed` was set only on the HttpError
+    path, so the `if cik else []` arm fell straight through to the healthy branch and stated it.
+    Five siblings guard the same way (mechanical.py:1938, 2083, 2384, 2592, 2933)."""
+    cause = _cause(_WorkingEdgar(), [_GAP], cik="")
+
+    assert cause.shape.value is None
+    assert "no company filing" not in str(cause.shape.note)
+    assert "no CIK" in (cause.shape.note or "")
+
+
+def test_no_edgar_failure_escapes_the_drawdown_path() -> None:
+    """THE PROPERTY PIN. Two earlier versions asserted the SHAPE of the source (is there a `try`?
+    does its handler name `HttpError`?) while claiming to assert the property; the second passed
+    even against code that caught `HttpError` and raised `RuntimeError`.
+
+    So this one calls the function. For every failure `recent_filings` can realistically raise on a
+    degraded or malformed feed, `_drawdown_cause` must RETURN — an escape drops the whole name out
+    of `assemble_mechanical`."""
+    import json as _json
+
+    class _Raises:
+        def __init__(self, exc: BaseException) -> None:
+            self.exc = exc
+
+        def recent_filings(self, cik: str | int, **kw: Any) -> Any:
+            raise self.exc
+
+    failures: list[BaseException] = [
+        HttpError("Exhausted retries for https://data.sec.gov/submissions/CIK1.json"),
+        HttpError("Non-retryable 403 from data.sec.gov: rate limited"),
+        KeyError("form"),                       # submissions doc missing a parallel array
+        ValueError("Invalid isoformat string"),  # blank filingDate
+        _json.JSONDecodeError("Expecting value", "<html>", 0),  # 200 + HTML interstitial
+        IndexError("list index out of range"),
+    ]
+    for exc in failures:
+        cause = _cause(_Raises(exc), [_GAP])  # must not raise
+        assert cause.shape.value is None, f"{type(exc).__name__} was not degraded"
+
+
+def test_the_drawdown_path_reads_submissions_exactly_once() -> None:
+    """An N+1 guard on `_drawdown_filings`: a refactor to one `recent_filings` per gap date would
+    cost nothing observable now that the memo absorbs it."""
+    import ast
+    import pathlib as _pathlib
+
+    # cwd-independent, per the tests/test_calls_parity.py convention
+    root = _pathlib.Path(__file__).resolve().parents[1]
+    tree = ast.parse((root / "vinci" / "dossier" / "mechanical.py").read_text())
+    fn = next(
+        n for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and n.name == "_drawdown_filings"
+    )
+    calls = [
+        n for n in ast.walk(fn)
+        if isinstance(n, ast.Call) and getattr(n.func, "attr", None) == "recent_filings"
+    ]
+    assert len(calls) == 1, "the drawdown path should read the submissions index exactly once"

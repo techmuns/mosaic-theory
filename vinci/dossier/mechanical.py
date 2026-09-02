@@ -405,17 +405,29 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
     # not appear. Returning `[]` here instead would be WORSE than that crash: every gap date would
     # then render "no company filing" below, which is a claim about the WORLD manufactured out of a
     # tooling failure. So the failure is carried as its own state and surfaces as UNKNOWN.
-    lookup_failed = False
-    try:
-        filings = _drawdown_filings(edgar, http, cik, gaps) if cik else []
-    except HttpError:
-        filings, lookup_failed = [], True
+    # `not cik` is a LOOKUP FAILURE too, not an empty result: with no CIK the index was never read,
+    # so the "no company filing" finding below was never established. Five siblings guard this the
+    # same way (1938, 2083, 2384, 2592, 2933 — `note="no CIK for the filing-index lookup"`).
+    lookup_failed = not cik
+    why = "no CIK for the filing-index lookup" if not cik else "EDGAR filing index unavailable"
+    filings: list[FilingRef] = []
+    if cik:
+        try:
+            filings = _drawdown_filings(edgar, http, cik, gaps)
+        # WIDER THAN HttpError, deliberately. `recent_filings` also raises `KeyError` on a
+        # submissions doc missing a parallel array, and `ValueError` — which `json.JSONDecodeError`
+        # subclasses — when SEC answers 200 with an HTML interstitial or a blank `filingDate`.
+        # `assay.py:430` records that malformed shape as OBSERVED, and six siblings on this same
+        # call already catch the wider tuple (3078, 3136; rank/structural.py:170). Catching only
+        # HttpError left the name silently dropped through a neighbouring door.
+        except (HttpError, KeyError, ValueError, IndexError):
+            filings, lookup_failed = [], True
     by_gap = {f.gap_date: f for f in filings}
     shape: Sourced[str]
     if gaps and lookup_failed:
         shape = Sourced.unknown(
-            note="EDGAR filing index unavailable — the gap-down dates are known but their causes "
-            "could not be read; read the filings at those dates by hand"
+            note=f"{why} — the gap-down dates are known but their causes could not be read; "
+            "read the filings at those dates by hand"
         )
     elif gaps:
         parts = [
@@ -453,7 +465,7 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
             # the same distinction as `shape`: "we could not look" must not read as "there was
             # nothing to find", or a degraded run reports an absence it never established.
             else Sourced.unknown(
-                note="EDGAR filing index unavailable — no catalyst 8-K could be identified"
+                note=f"{why} — no catalyst 8-K could be identified"
                 if lookup_failed
                 else "no catalyst 8-K to follow for a revised-guidance exhibit"
             )

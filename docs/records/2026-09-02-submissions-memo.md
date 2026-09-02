@@ -129,7 +129,7 @@ so a degraded feed no longer drops the name. Consequences for the claims in this
 
 - **The scope limit no longer holds.** The measured 187.4 s → 15.5 s applies to EVERY name, not only
   the no-gap subset. The "no payoff" row of the regime table above is now historical.
-- **STATE.md §5.0 row 12 is struck**, the item being closed.
+- **STATE.md §5.0 row 16 is struck**, the item being closed.
 - **The pin named above did NOT fire when the fix landed, and has been replaced.**
   `test_the_first_submissions_call_site_is_still_unprotected_which_bounds_this_memo` asserted the
   absence of a `try` INSIDE `_drawdown_filings`, but the correct fix wraps the call one frame up in
