@@ -241,3 +241,33 @@ def evaluate(trig: MeasuredTrigger, mechanical: dict[str, Any],
             FIRED, f"{shown} holds on {run} consecutive readings ({trig.sustain} required)",
             True, float(value), trig.unit, source)
     return TriggerState(FIRED, f"{shown} holds", True, float(value), trig.unit, source)
+
+
+def resolvable_metrics(mechanical: dict[str, Any]) -> list[tuple[str, float, str | None]]:
+    """Every dotted path in this mechanical layer that `evaluate` could actually read.
+
+    A criterion naming a path that resolves to nothing evaluates to UNKNOWN on every run, and on
+    the dashboard that is indistinguishable from a criterion that is working and has not fired.
+    The write path refuses such a criterion, and a refusal is only useful if it can say what the
+    name DOES offer — so the same walk that finds nothing produces the menu.
+
+    THE TEST IS THE EVALUATOR'S OWN, not a second opinion about it: a path qualifies when
+    `resolve_metric` returns a node carrying a numeric `value`, which is exactly the shape
+    `evaluate` goes on to compare. Anything the evaluator would refuse is absent from this list by
+    construction, rather than by a rule written twice and drifting.
+    """
+    out: list[tuple[str, float, str | None]] = []
+
+    def walk(node: Any, path: str) -> None:
+        if not isinstance(node, dict):
+            return
+        if "value" in node and "source_ref" in node:      # a Sourced leaf, not a container
+            val = node.get("value")
+            if isinstance(val, (int, float)) and not isinstance(val, bool):
+                out.append((path, float(val), node.get("source_ref")))
+            return
+        for key, child in node.items():
+            walk(child, f"{path}.{key}" if path else str(key))
+
+    walk(mechanical, "")
+    return sorted(out)

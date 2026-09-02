@@ -6,6 +6,7 @@ bare False. Most of these pins exist to keep them apart.
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 
 import pytest
@@ -190,8 +191,18 @@ def test_a_record_stating_no_measured_trigger_carries_no_key_for_one() -> None:
         seen += 1
         rec = sc.read_record(f.stem, root=ROOT)
         scoped = sc._version_scoped(rec)
-        assert "measured_triggers" not in (scoped.get("verdict") or {}), (
-            f"{f.name} gained an empty measured_triggers key")
+        # ABSENT-vs-EMPTY, PER RECORD — not "no record has one" (corrected 2026-09-02). The
+        # original read the corpus rather than the rule: it asserted the key appears NOWHERE,
+        # which held only while nothing could write one. `scenario-criterion` is that write path,
+        # so the first criterion the operator arms would have reddened this pin — the same
+        # corpus-shaped assertion that broke three times on the tiered ladder the day a record
+        # first carried it. The rule is unchanged: no stated trigger, no key; a stated one, a
+        # non-empty list. Never an empty list, which is the default-spray this guards.
+        got = (scoped.get("verdict") or {}).get("measured_triggers", "ABSENT")
+        if rec.verdict.measured_triggers:
+            assert isinstance(got, list) and got, f"{f.name} dropped a STATED measured trigger"
+        else:
+            assert got == "ABSENT", f"{f.name} gained an empty measured_triggers key"
     assert seen >= 8, f"walked only {seen} committed records"
 
 
@@ -330,3 +341,56 @@ def test_the_history_read_carries_the_third_state_off_a_committed_row() -> None:
     assert got is not None and len(got) == 1
     assert got[0].satisfied is None, (
         f"a stored null must stay None, not become False: {got[0].satisfied!r}")
+
+
+def test_the_write_path_refuses_a_metric_the_dossier_cannot_resolve() -> None:
+    """`scenario-criterion` REFUSES an unresolvable metric, and that refusal is its whole point.
+
+    A criterion naming a path the dossier does not carry evaluates to UNKNOWN on every run, which
+    on the dashboard is indistinguishable from a working criterion that has not fired — the
+    absent-vs-broken collapse, on the surface built to keep three states apart. SMPL's own "Quest
+    revenue growth" is the live example: real arithmetic, but a BRAND figure read from a transcript
+    and LLM-fenced by the covenant discipline, so no anchored path carries it.
+
+    DRIVEN OFF THE COMMITTED DOSSIER, and the refusal must NAME what the dossier does offer — a
+    refusal the analyst cannot act on sends them to grep the schema.
+    """
+    import subprocess
+    import sys
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Quest revenue growth <= 0% YoY for two consecutive quarters",
+         "--metric", "operating_drivers.quest_net_sales_yoy",
+         "--comparator", "<=", "--threshold", "0", "--unit", "%", "--sustain", "2", "--dry-run"],
+        capture_output=True, text=True, cwd=ROOT,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 1, f"an unresolvable metric must be refused, got {proc.returncode}"
+    assert "REFUSED" in proc.stdout
+    assert "quality.net_debt_to_ebitda" in proc.stdout, (
+        "the refusal must list what SMPL CAN resolve, or the analyst cannot act on it")
+
+
+def test_the_write_path_accepts_a_resolvable_metric_and_reports_what_it_reads() -> None:
+    """The accepting side: it resolves through the EVALUATOR's own reader, and shows the state the
+    criterion reads TODAY — a criterion already firing when written is a fact the analyst should
+    meet at the keyboard, not discover on the next monitor day.
+
+    `--dry-run` so the pin never writes to a committed record: the threshold is the operator's
+    judgment, and a test that armed a real falsifier would be inventing one.
+    """
+    import subprocess
+    import sys
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Leverage past 3.0x net debt / EBITDA",
+         "--metric", "quality.net_debt_to_ebitda",
+         "--comparator", ">", "--threshold", "3.0", "--unit", "x", "--dry-run"],
+        capture_output=True, text=True, cwd=ROOT,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "NOT_FIRED" in proc.stdout, "it must report the state the criterion reads today"
+    assert "nothing written" in proc.stdout
+    # the resolved value carries its OWN source, so the analyst can see WHICH series armed it
+    assert "CIQ" in proc.stdout, "the resolved value must show its source_ref"

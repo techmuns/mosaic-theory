@@ -1580,6 +1580,113 @@ def _result_is_stated(result: Any) -> bool:
     return bool(result is not None and result != sc.Result())
 
 
+def _cmd_scenario_criterion(args: argparse.Namespace) -> int:
+    """Attach a STRUCTURED criterion to a record, beside the analyst's prose — never parsed from it.
+
+    THE WRITE PATH THAT DID NOT EXIST. `MeasuredTrigger` shipped with the evaluator (#552), the
+    sustain history (#556) and the three-state card, and NOTHING could put one on a record: zero
+    committed records carry a single structured criterion, so the whole chain evaluated an empty
+    list on every run. Sixth instance of the built-and-unreachable shape in this repo, and the
+    plan's stated next step — "criteria gain a structured form written BESIDE the prose"
+    (`docs/records/2026-08-31-phase-rulings.md`).
+
+    IT REFUSES A METRIC THAT DOES NOT RESOLVE, and that refusal is the point. A criterion naming a
+    path this name's dossier does not carry evaluates to UNKNOWN on every run, which on the
+    dashboard is indistinguishable from a working criterion that has not fired — the
+    absent-vs-broken collapse, on the surface built to keep three states apart. Caught at write
+    time, when the analyst is present to fix it, the failure costs a sentence; caught never, it
+    costs a falsifier nobody notices is dead. SMPL's own "Quest revenue growth" is the live
+    example: real arithmetic, but a BRAND figure read from a transcript and LLM-fenced by the
+    covenant discipline, so no anchored path carries it.
+
+    THE THRESHOLD, THE COMPARATOR AND THE SENTENCE ARE THE ANALYST'S. This command types what they
+    dictate and refuses what cannot be read; it never chooses a number.
+    """
+    import vinci.scenarios as sc
+    from vinci.triggers import evaluate, resolvable_metrics, resolve_metric
+
+    t = args.ticker.upper()
+    root = Path.cwd()
+    path = root / "scenarios" / f"{t}.json"
+    if not path.is_file():
+        print(f"REFUSED: no committed record for {t} — a criterion attaches to an underwrite.")
+        return 1
+    doc_path = root / "data" / "dossiers" / t / "dossier.json"
+    if not doc_path.is_file():
+        print(f"REFUSED: no committed dossier for {t}, so no metric can be resolved or refused. "
+              f"A criterion written blind is one nobody can evaluate.")
+        return 1
+
+    rec = sc.ScenarioRecord.model_validate(json.loads(path.read_text()))
+    mech = (json.loads(doc_path.read_text()).get("mechanical") or {})
+
+    # RESOLVE BEFORE WRITING, through the evaluator's own resolver — not a second opinion about
+    # what "resolvable" means, which would drift from the thing that actually reads it.
+    node, source = resolve_metric(mech, args.metric)
+    value = node.get("value") if isinstance(node, dict) else None
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        menu = resolvable_metrics(mech)
+        print(f"REFUSED: {t} carries no numeric value at {args.metric!r}. A criterion on a path "
+              f"this dossier does not hold reads UNKNOWN on every run, which looks exactly like a "
+              f"criterion that has not fired.")
+        if menu:
+            print(f"\n  {len(menu)} paths on {t} that CAN be evaluated:")
+            for mpath, mval, _src in menu:
+                print(f"    {mpath:52s} {mval:,.4g}")
+        else:
+            print(f"  {t}'s dossier carries no numeric, source-bound path at all.")
+        return 1
+
+    trig = sc.MeasuredTrigger(
+        trigger=args.trigger, metric=args.metric, comparator=args.comparator,
+        threshold=args.threshold, unit=args.unit, sustain=args.sustain,
+        basis=args.basis or (source or ""))
+
+    existing = list(rec.verdict.measured_triggers)
+    if any(x.metric == trig.metric and x.comparator == trig.comparator
+           and x.threshold == trig.threshold and x.sustain == trig.sustain for x in existing):
+        print(f"REFUSED: {t} already carries this exact criterion — a duplicate would be counted "
+              f"twice by the monitor and read as two independent falsifiers.")
+        return 1
+
+    # WHAT IT READS TODAY, printed before the write. A criterion that is ALREADY firing at the
+    # moment it is written is a fact the analyst should see now, not discover on the next run.
+    state = evaluate(trig, mech)
+    print(f"=== scenario-criterion {t} ===")
+    print(f"  trigger    {trig.trigger}")
+    print(f"  measures   {trig.metric} {trig.comparator} {trig.threshold:g} {trig.unit}"
+          f"{f', sustained {trig.sustain} readings' if trig.sustain > 1 else ''}")
+    print(f"  resolves   {value:,.6g}  [{source or 'no source_ref'}]")
+    print(f"  reads      {state.state} — {state.reason}")
+    if args.dry_run:
+        print("  --dry-run: nothing written")
+        return 0
+
+    out = rec.model_copy(update={"verdict": rec.verdict.model_copy(
+        update={"measured_triggers": [*existing, trig]})})
+    # `write_record` takes the REPO root and appends `scenarios/` itself. Passing the scenarios
+    # directory wrote `scenarios/scenarios/SMPL.json` while this line reported the path it had
+    # MEANT to write — a success message for a file that was never touched.
+    written = sc.write_record(out, root=root)
+
+    # READ BACK WHAT LANDED, and refuse to claim otherwise. Records are VERSION-SCOPED: a record
+    # whose declared `schema_version` predates `measured_triggers` drops the field on write, by
+    # design (#302), and a command that printed "written" regardless would tell the analyst their
+    # falsifier is armed when the file does not carry it. The check costs one read; not doing it
+    # cost the first run of this command.
+    landed = ((json.loads(written.read_text()).get("verdict") or {})
+              .get("measured_triggers") or [])
+    if len(landed) != len(existing) + 1:
+        print(f"REFUSED (nothing armed): {t}'s record declares schema "
+              f"{rec.schema_version}, which has no `measured_triggers` field, so the write "
+              f"dropped it — the record on disk is unchanged. Criteria need a record at the "
+              f"schema that knows them; reissue this name through `scenario-supersede` before "
+              f"attaching one.")
+        return 1
+    print(f"  written    {written}  ({len(landed)} measured criteria; the prose is untouched)")
+    return 0
+
+
 def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     """ARCHIVE-AND-REISSUE — the ONLY path that supersedes a record (scenario-refresh precedent).
 
@@ -3631,6 +3738,11 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    # the comparator choices come from the MODEL, never a copy of them here: a second list would
+    # accept a comparator the validator refuses, and the user would meet the refusal after typing
+    # the whole criterion rather than in the usage line.
+    from vinci.scenarios import COMPARATORS
+
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -3882,6 +3994,30 @@ def build_parser() -> argparse.ArgumentParser:
     p_ss.add_argument("--dry-run", action="store_true", dest="dry_run",
                       help="print the pair and write nothing")
     p_ss.set_defaults(func=_cmd_scenario_supersede)
+
+    p_crit = sub.add_parser(
+        "scenario-criterion",
+        help="attach a STRUCTURED re-underwrite criterion beside the prose — refuses a metric the "
+             "name's dossier cannot resolve")
+    p_crit.add_argument("ticker")
+    p_crit.add_argument("--trigger", required=True,
+                        help="the falsifier in YOUR words — kept verbatim, never superseded")
+    p_crit.add_argument("--metric", required=True,
+                        help="dotted path into the dossier's mechanical layer "
+                             "(e.g. quality.net_debt_to_ebitda)")
+    p_crit.add_argument("--comparator", required=True,
+                        choices=list(COMPARATORS))
+    p_crit.add_argument("--threshold", required=True, type=float)
+    p_crit.add_argument("--unit", required=True,
+                        help="the THRESHOLD's unit — checked against the value's own at evaluation")
+    p_crit.add_argument("--sustain", type=int, default=1,
+                        help="consecutive readings required (default 1)")
+    p_crit.add_argument("--basis", default="",
+                        help="where the metric is read and why that series "
+                             "(default: its source_ref)")
+    p_crit.add_argument("--dry-run", action="store_true", dest="dry_run",
+                        help="resolve, evaluate and print — write nothing")
+    p_crit.set_defaults(func=_cmd_scenario_criterion)
 
     p_audit = sub.add_parser("audit", help="standing read-only audits over committed artifacts")
     audit_sub = p_audit.add_subparsers(dest="audit_what", required=True)
