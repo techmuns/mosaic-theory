@@ -41,12 +41,38 @@ async function _fetch(path) {
   return res;
 }
 
+// A HOST THAT ANSWERS A MISSING ASSET WITH THE APP SHELL, NOT A 404 (2026-09-01). Every graceful
+// absence below is written as `catch (e) { if (e.status === 404) return null; }`, which only works
+// where the server returns a real 404 — `python -m http.server` does, and Cloudflare Pages does
+// NOT: for a path matching no asset it serves index.html at status 200. `res.ok` is then true,
+// `.json()` throws a SyntaxError carrying no `.status`, and all 19 of those catches RETHROW.
+//
+// That is not cosmetic. The theme page awaits its optional economics roll-up, so the two drivers
+// frozen on 2026-09-01 — the first with no economics file — hung on "Loading theme…" forever in
+// the deploy while rendering perfectly on a local server. Any optional artifact absent from a
+// deploy had the same failure available to it.
+//
+// Detected by SHAPE, and deliberately narrow: a body opening with `<` is markup where JSON was
+// asked for, i.e. the shell. A genuinely malformed JSON file still throws its SyntaxError — this
+// must not become a blanket "unparseable means absent".
+function _absentFromShell(path, text) {
+  if (!/^\s*</.test(text)) return null;
+  const err = new Error(`snapshot absent (host served the app shell, not a 404) for ${path}`);
+  err.status = 404;
+  return err;
+}
+
 async function _json(path) {
-  return (await _fetch(path)).json();
+  const text = await (await _fetch(path)).text();
+  const absent = _absentFromShell(path, text);
+  if (absent) throw absent;
+  return JSON.parse(text);
 }
 
 async function _jsonl(path) {
   const text = await (await _fetch(path)).text();
+  const absent = _absentFromShell(path, text);
+  if (absent) throw absent;
   return text.split("\n").filter((l) => l.trim()).map((l) => JSON.parse(l));
 }
 
