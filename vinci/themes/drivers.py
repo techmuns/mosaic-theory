@@ -561,10 +561,13 @@ AI_COMPUTE_PLATFORM = DriverSpec(
         "driver-specific: CRWV is BELOW because it sells the compute. A storage neocloud also "
         "qualifies — BLZE sells storage under someone else's compute, and its case rests on one "
         "contracted counterparty, so it qualifies but is not a clean BELOW expression. "
-        "Colocation is in scope, but THE BOUNDARY IS OWNERSHIP OF THE INTERCONNECTION, NOT THE "
-        "BUILDING: EQIX qualifies on cross-connect density; the same test puts DGXX here because "
-        "it owns the land, substation and grid interconnect. Data gravity counts only as the "
-        "HYPERSCALER'S OWN, strictly. "
+        "Colocation is in scope, and THE RULE IS DECLARED AT CLASS LEVEL so it resolves every "
+        "future name without re-litigation: OWNS THE INTERCONNECTION, IN; LEASES THE SPACE, "
+        "OUT. EQIX is therefore IN on cross-connect density and its xScale JV capacity is OUT "
+        "as leased landlord economics; DGXX is IN on owning the land, substation and grid "
+        "interconnect. A 10-K carries many facts, so a name showing both an owned-interconnection "
+        "fact and a leased-space fact is the grader working correctly — the CLASS rule decides "
+        "it, not a per-name ruling. Data gravity counts only as the HYPERSCALER'S OWN, strictly. "
         "indirect = real compute/platform activity whose tie to the driver is generic or "
         "undisclosed — an infrastructure or cloud-adjacent operator with no disclosed AI-compute "
         "economics, or a reseller of someone else's platform. (COMPOSED, not the operator's — "
@@ -586,9 +589,23 @@ AI_COMPUTE_PLATFORM = DriverSpec(
     # `grid interconnect` is KEPT despite being utility-adjacent: it is how the operator's own
     # example (DGXX owning the land, substation and grid interconnect) would describe itself, and
     # losing the named case to tidy the list would be the wrong trade.
+    # SECOND TIGHTENING, and the one that mattered (2026-09-02). The first cut was too broad
+    # (1,011 of 3,036 on utility vocabulary); the second was too NARROW in a way that was worse,
+    # because it was narrow exactly where the counter-evidence sits. Every surviving term was
+    # OBSERVER vocabulary — "hyperscaler", "neocloud", "IaaS" are what the trade press calls these
+    # companies, not what they call themselves. So the scan missed the observed: GOOGL never
+    # cleared the prefilter, and a scan of the compute layer that excludes Google Cloud is not
+    # measuring the compute layer. Reported as a finding in a draft card, which is worse than the
+    # miss: it read an instrument gap as evidence for the thesis, precisely where the disconfirming
+    # evidence would have been. SELF-DESCRIPTION terms are added below — the words a hyperscaler
+    # actually uses about itself in its own filings.
     prefilter_terms=(
+        # observer vocabulary — catches the neoclouds and the interconnection owners
         "hyperscaler", "infrastructure-as-a-service", "iaas", "gpu cloud", "ai cloud",
         "neocloud", "accelerated compute", "cross-connect", "grid interconnect", "data gravity",
+        # SELF-DESCRIPTION — the scaled clouds name their own segment, never the category
+        "cloud revenue", "cloud services", "ai infrastructure", "tensor processing",
+        "custom accelerator", "data center capacity",
     ),
     provenance_tags=(
         ("hyperscaler-compute", ("hyperscaler", "public cloud", "cloud infrastructure",
