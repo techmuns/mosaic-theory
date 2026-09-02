@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-09-02
-prs: []
+prs: [571]
 supersedes:
 superseded-by:
 ---
@@ -53,9 +53,10 @@ F2 and the two healthy-feed pins matter as much as F1: a flag that fired on a wo
 appear on every dossier and train the reader to ignore the channel, and a flag that fired when the
 company GENUINELY filed nothing would relabel a finding as a degradation.
 
-*Suite:* 3476 passed before, **3480 passed, 132 skipped, 37 deselected** after; `ruff check .`
-clean; `mypy --strict vinci` clean (139 files). No committed dossier changes — the condition cannot
-fire on a healthy assembly.
+*Suite:* 3476 passed before, **3481 passed, 132 skipped, 37 deselected** after; `ruff check .`
+clean; `mypy --strict vinci` clean (139 files). The +5 is 4 new pins plus one case from
+`tests/test_record_hygiene.py`, which parametrizes over `docs/records/` and so grew by this file.
+No committed dossier changes — the condition cannot fire on a healthy assembly.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
