@@ -191,3 +191,77 @@ The tier has gone **4 → 7 → 9 → 6** (the last being v2 applied on paper), 
 prose**. The gate is therefore: enforce v2 in the grader, run it twice, require agreement. That one
 step tests the gate's effect and tier stability together. Until then the card is not declarable on
 its own terms — independent of anyone's judgement about the thesis.
+
+---
+
+**2026-09-02 — a position is taken on the crypto-origin cohort, and it reframes the driver.**
+
+The cohort property is **ungateable** — 67% before and after every magnitude gate — so it had to be
+explained rather than left standing as an unexplained property of the tier. Two readings were
+available: (a) the tier measures stranded-power redeployment and disclosure incentive, a confound; or
+(b) that *is* the finding, because the parties holding energized shells and grid interconnect can
+move fastest.
+
+**(b) is taken.** The disclosure-incentive reading does not survive the size and counterparty quality
+of what is disclosed — a 401 MW 20-year lease to Anthropic, 378 MW to a Google-credit-supported
+Fluidstack, $36.2bn to CoreWeave and investment-grade hyperscalers are not manufacturable as
+disclosure theatre. RIOT owns its Rockdale 700 MW interconnection fee simple; WULF has ~1,007 MW
+contracted. **The driver is reframed around powered infrastructure, not "neoclouds."**
+
+### What taking (b) costs
+
+**The null had to be rewritten.** The old null's failure condition was that *"owners of land,
+substation and grid interconnect are repriced as **landlords** rather than as holders of the scarce
+asset."* That is now the thesis's own population, so it cannot also be the null. The rewritten null
+attacks the **rent, not the role**: ordinary landlord rent rather than scarce-asset rent — backlog
+that does not convert, unremarkable escalators and renewal pricing, credit support that is necessary
+because tenants are weak, and new-build capacity arriving fast enough that an already-energized site
+is a few quarters of timing rather than durable scarcity.
+
+**The confirming test no longer tests the tier.** The machine's own `key_unknowns` are explicit:
+WULF *"does not disclose selling compute itself — tenants (Fluidstack, Core42, Anthropic) are the
+parties selling compute"*, and for RIOT *"whether Riot sells compute is not disclosed; the disclosed
+model is a landlord lease to AMD."* So the v2 tier splits **3 landlords (APLD, RIOT, WULF) against 3
+sellers (BLZE, CRWV, WYFI)**, and CRWV — the confirming name — is a seller. Its conversion ratio
+reads the seller half and says nothing about whether powered-shell rent is scarce-asset rent. A
+landlord-side test (realized rent per contracted MW, escalator capture, renewal pricing) is **owed**,
+and is currently unbuildable because no landlord in the tier discloses rent per MW.
+
+**It must stay falsifiable on its own terms:** if new-build powered capacity reaches contract as fast
+as already-energized sites, the incumbency is timing, not a scarce asset.
+
+### Gate v3 — tie is the third axis
+
+v2 does kind then size and never asks whether the contract is *this driver's*. RIOT is the proof:
+right kind, right size, counterparty **AMD — a chip vendor, not an AI tenant**. The tie axis already
+exists in grading (`DriverTie` caps concreteness, and RIOT graded driver-specific); what is missing
+is tie as an explicit **adjudicated** gate step. v3 = kind → size → tie-adjudicated.
+
+The reframing **resolves RIOT in favour of keeping it** — if the driver is powered infrastructure, a
+lease of energized capacity is on-driver whatever the tenant runs. That is evidence *for* the
+reframing: it makes a previously undecidable adjudication determinate. Under the old compute-capture
+framing RIOT drops and the tier is 5. Operator's call; `tie_taxonomy` is not redrafted here.
+
+### Falsifier 2 is already partly met — it moves into the card
+
+WULF has **546 of ~1,007 contracted MW with Fluidstack** (378 Akela + 168 Abernathy), and Abernathy
+runs through a JV WULF holds 50.1% of **with the tenant's own affiliate**. That is *"backlog revealed
+as one customer rather than a market"* in substantial part, before any cancellation. A falsifier
+partly satisfied before the clock starts is a present condition, not a future test.
+
+**CRWV is unresolved, not clean.** Its `key_unknowns` state plainly: *"no customer is named and no
+customer-concentration percentages are given; the composition of the $60.7bn RPO by counterparty is
+not disclosed here."* Absence of evidence, recorded as such — and it must be pulled before the tier
+is used, because if CRWV's RPO is also concentrated then the two names carrying the tier share one
+failure mode and the cohort is not a market at all.
+
+### The declaration gate, corrected
+
+**"Run twice and agree" does not test stability.** Every tier change so far was methodology, not
+noise: 4→7 a different universe, 7→9 the prefilter fix, 9→6 gate v2. The same code over the same
+corpus agrees trivially — the same shape as the magnitude probe that answered YES for all nine names
+and measured nothing.
+
+**The test must be time-separated:** enforce v2 (with v3's tie step), run now, run again after next
+quarter's filings land, check **membership persistence across the two dates**. That falls naturally
+against the 2026-12-31 confirming deadline, so one calendar event serves both.
