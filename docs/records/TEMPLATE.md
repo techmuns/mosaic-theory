@@ -15,4 +15,6 @@ superseded-by:
 
 **HOW VERIFIED.** The real run, the mutation, the pin. "Tests pass" is not verification.
 
+**BOUNDARY.** For every count above: its WINDOW, FILTER, POPULATION and UNIT, plus the commit or date it was measured at. Delete this line only if the record states no counts.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.** Any risk taken knowingly, with its falsifier.

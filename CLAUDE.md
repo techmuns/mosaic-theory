@@ -58,7 +58,8 @@ verdict placement.
    is immutable, so a reversal adds a file and flips a status instead of rewriting a claim.*
 3. Keep STATE.md accuracy-first: falsified is falsified, unproven is unproven. Never upgrade a hedged
    claim to a confident one to make progress look better.
-4. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
+4. **A SUPERSEDE MUST TOUCH THE SNAPSHOT, or the snapshot must cite the ARCHIVE PATH.** When a record is reissued/archived (`scenarios/archive/<T>-<date>.json`), EVERY STATE.md site quoting its figures is now stale. #567 reissued GOOGL confirmed at 2.4299x/PASS and touched no STATE.md; §5.0 row 9 went on citing `scenarios/GOOGL.json` BY NAME while quoting the archive's 1.692x/FAIL, and on 2026-09-02 that shipped a false claim about a live position into a record. Either update the sites or name the archive path beside the number — a snapshot that names the LIVE file while quoting the ARCHIVE is the shape.
+5. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
    `git diff origin/main -- STATE.md`: it must be NON-EMPTY for a build that changed reality, and
    STATE.md must appear in the PR's own file list before you merge. Every build appends near the
    same region, so a rebase onto a moved `main` conflicts there almost every time, and resolving
@@ -177,6 +178,7 @@ verdict placement.
   one; and a $100m materiality gate selected on CURRENCY of disclosure, admitting a bond issuance
   and an intercompany loan while excluding the two largest contracted-capacity names. Same error,
   four surfaces — which is why the rule is here and not in one more gate.
+- **EVERY COUNT STATES ITS BOUNDARY** — window, filter, population, unit, and the commit or date it was measured at — whenever it enters a RECORD, a COMMIT MESSAGE or STATE.md. Not conversational arithmetic that lands nowhere. `docs/records/TEMPLATE.md` carries the field, because a rule you must remember is weaker than a field you must fill. (On 2026-09-02 one session produced seven instances of one error — a 400-day probe of a 290-day scan; a cache count that was the whole calendar day; a citation sweep that silently excluded STATE.md; a superseded archive read as the live record.)
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never
