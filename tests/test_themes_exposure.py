@@ -29,13 +29,21 @@ from vinci.themes.drivers import (
 )
 from vinci.themes.exposure import (
     assess_exposure,
+    flag_intra_population_control,
     grade_driving_fact,
     is_real_exposure,
     mention_prefilter,
     parse_efts_ciks,
     provenance_tag_of,
 )
-from vinci.themes.schemas import DriverSpec, ExposureAssessment, ExposureBasis, ExposureFact
+from vinci.themes.schemas import (
+    DriverSpec,
+    DriverTie,
+    ExposureAssessment,
+    ExposureBasis,
+    ExposureConcreteness,
+    ExposureFact,
+)
 
 _STREAM = [
     ("8-K 2026-01-15 (acc A1)", "On January 10, 2026 ..."),
@@ -913,3 +921,60 @@ def test_no_prefilter_term_is_contained_by_another_term_of_the_same_driver() -> 
         assert not contained, (
             f"{key}: these prefilter phrases contain another term in the same list, so they can "
             f"never match anything the shorter term misses: {contained}")
+
+
+# --------------------------------------------------------------------------------------------------
+# Same asset, two tickers — the intra-population control-pair flag (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+def _assessment(ticker: str, facts: list[str]) -> ExposureAssessment:
+    """Build from the REAL type (CLAUDE.md: fixtures are never hand-rolled to the test's shape)."""
+    return ExposureAssessment(
+        ticker=ticker, cik=f"000{abs(hash(ticker)) % 10**7:07d}", driver="d",
+        exposure_basis=ExposureBasis.BINDING_CONTRACTS,
+        disclosed_facts=[
+            ExposureFact(fact=f, concreteness=ExposureConcreteness.BINDING_CONTRACT,
+                         driver_tie=DriverTie.DRIVER_SPECIFIC, source_ref="0001-25-000001")
+            for f in facts
+        ],
+        primary_business="", key_unknowns=[], stream_refs=["0001-25-000001"],
+    )
+
+
+def test_control_pair_is_flagged_on_both_sides() -> None:
+    """POSITIVE PIN — the real observed pair: BTBT disclosed ~70.5% of WYFI and both graded
+    binding-contract in the live ai-compute-platform scan, one asset counted twice in a nine-name
+    tier. The flag must reach BOTH rows, since either is the one a reader opens."""
+    rows = flag_intra_population_control([
+        _assessment("BTBT", ["The Company holds an approximately 70.5% majority equity stake in "
+                             "WhiteFiber Inc. (Nasdaq: WYFI) following the July 2025 IPO."]),
+        _assessment("WYFI", ["Data center hosting revenue under a binding 5-year agreement."]),
+        _assessment("CRWV", ["Remaining performance obligations of $60.7 billion."]),
+    ])
+    by_ticker = {r.ticker: r for r in rows}
+    assert any("CONTROL PAIR" in f and "WYFI" in f for f in by_ticker["BTBT"].flags)
+    assert any("CONTROL PAIR" in f and "BTBT" in f for f in by_ticker["WYFI"].flags)
+    assert by_ticker["CRWV"].flags == []          # an unrelated name is untouched
+
+
+def test_bare_ticker_words_do_not_create_control_pairs() -> None:
+    """NEGATIVE PIN — the real observed failure shape. An unqualified \\b[A-Z]{2,5}\\b scan of the
+    745-name corpus matched the English words 'AI' (C3.ai's symbol) and 'IT' (Gartner's), inventing
+    8 false pairs against 1 true one. Only an EXCHANGE-QUALIFIED cite may form a pair."""
+    rows = flag_intra_population_control([
+        _assessment("NEE", ["NextEra Energy Resources, a wholly owned subsidiary, develops AI "
+                            "data center capacity and IT infrastructure for the segment."]),
+        _assessment("MARA", ["Majority ownership of the AI hosting joint venture is retained."]),
+        _assessment("AI", ["Enterprise AI application revenue."]),
+        _assessment("IT", ["Research and advisory revenue."]),
+    ])
+    assert all(r.flags == [] for r in rows), [r.flags for r in rows if r.flags]
+
+
+def test_control_of_a_name_outside_the_scan_is_not_flagged() -> None:
+    """NEGATIVE PIN — the flag exists to stop DOUBLE-COUNTING WITHIN a tier. A subsidiary that is
+    not in the population cannot be counted twice, so it is not this guard's business."""
+    rows = flag_intra_population_control([
+        _assessment("WULF", ["The Company holds a 50.1% majority equity interest in Nautilus "
+                             "Cryptomine LLC (Nasdaq: XXXX), an unconsolidated affiliate."]),
+    ])
+    assert rows[0].flags == []

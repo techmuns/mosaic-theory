@@ -26,6 +26,7 @@ from __future__ import annotations
 import concurrent.futures as cf
 import re
 import urllib.parse
+from collections.abc import Sequence
 from datetime import date, timedelta
 from typing import Any, cast
 
@@ -665,4 +666,75 @@ def scan_driver_exposure(
                     reason = f"{type(exc).__name__}: {exc}"
                     raise ScanAbortedError(status, reason, remaining, out) from exc
             rep.tick(i)
-    return matched, out
+    return matched, flag_intra_population_control(out)
+
+
+# --------------------------------------------------------------------------------------------------
+# Same asset, two tickers (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+# BTBT holds ~70.5% of WYFI, and BOTH graded binding-contract in the ai-compute-platform scan — one
+# asset counted twice in a nine-name tier. It had already been caught by hand once on the parent
+# sheet and came back unnoticed, so the catch belongs in the scan, not in the reader.
+#
+# This FLAGS and never drops. Which side of a control pair carries the exposure is an adjudication
+# (the parent may be a holding company whose only exposure IS the sub, or the sub may be a sliver of
+# a diversified parent) — assemble-not-conclude.
+_MAJORITY_CONTROL = re.compile(
+    r"majority[- ](?:equity|ownership|owned|stake|interest)"
+    r"|majority stake"
+    r"|controlling (?:equity |ownership |financial )?interest"
+    r"|(?:5[1-9]|[6-9][0-9]|100)(?:\.[0-9]+)?%[^.]{0,40}(?:equity|ownership|stake|interest|owned)"
+    r"|wholly[- ]owned subsidiary",
+    re.I,
+)
+# A ticker cited the way a filing actually cites another PUBLIC company: exchange-qualified.
+# The bare-symbol form cannot be used — an unqualified \b[A-Z]{2,5}\b scan of this corpus matched
+# the English words "AI" (C3.ai) and "IT" (Gartner) and produced 8 false pairs against 1 true one.
+_QUALIFIED_TICKER = re.compile(
+    r"\((?:nasdaq|nyse|nyse american|amex|cboe)[^)]{0,20}:\s*([A-Z]{1,5})\)", re.I)
+_CONTROL_WINDOW = 250  # chars either side of the control phrase the ticker cite must fall within
+
+
+def flag_intra_population_control(
+    rows: Sequence[ExposureAssessment],
+) -> list[ExposureAssessment]:
+    """Flag every pair where one scanned issuer discloses MAJORITY CONTROL of ANOTHER scanned
+    issuer, so a tier cannot silently count one asset twice. Both sides are flagged, since either
+    row may be the one a reader opens.
+
+    PRECISION was verified on the live 745-name ai-compute-platform corpus: one pair (BTBT -> WYFI),
+    zero false positives. RECALL IS LOW BY CONSTRUCTION and the flag must not be read as a clean
+    bill: ``disclosed_facts`` are driver-exposure extracts, not the filing, so a control
+    relationship surfaces only where it happened to be relevant to the driver AND the subsidiary was
+    cited exchange-qualified — true of just 2 of those 745 rows. A pair this misses is a pair the
+    analyst still owns. The complete source is EDGAR Exhibit 21 (Subsidiaries of the Registrant),
+    which is not extracted anywhere in this repo yet.
+    """
+    in_population = {r.ticker for r in rows}
+    controls: dict[str, list[tuple[str, str]]] = {}   # parent -> [(sub, quoted phrase)]
+    for row in rows:
+        text = " ".join(f.fact for f in row.disclosed_facts)
+        for m in _MAJORITY_CONTROL.finditer(text):
+            window = text[max(0, m.start() - _CONTROL_WINDOW): m.end() + _CONTROL_WINDOW]
+            for sub in _QUALIFIED_TICKER.findall(window):
+                if sub in in_population and sub != row.ticker:
+                    pair = (sub, m.group(0))
+                    if pair not in controls.setdefault(row.ticker, []):
+                        controls[row.ticker].append(pair)
+    if not controls:
+        return list(rows)
+    flagged: list[ExposureAssessment] = []
+    for row in rows:
+        notes: list[str] = []
+        for sub, phrase in controls.get(row.ticker, []):
+            notes.append(
+                f"CONTROL PAIR: this issuer discloses majority control of {sub}, also in this scan "
+                f"('{phrase}') — counting both double-counts one asset")
+        for parent, pairs in controls.items():
+            for sub, phrase in pairs:
+                if sub == row.ticker:
+                    notes.append(
+                        f"CONTROL PAIR: {parent}, also in this scan, discloses majority control of "
+                        f"this issuer ('{phrase}') — counting both double-counts one asset")
+        flagged.append(row.model_copy(update={"flags": [*row.flags, *notes]}) if notes else row)
+    return flagged
