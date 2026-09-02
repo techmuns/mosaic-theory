@@ -407,3 +407,99 @@ def test_the_prose_reader_covers_every_claim_field_the_synthesis_has() -> None:
     doc["mechanical"] = before
     assert moved_cited_claims(before, after, doc), (
         "a figure cited only in decisive_question slipped the refusal")
+
+
+# ==================================================================================================
+# A DEGRADED FEED MUST NOT OVERWRITE AN ESTABLISHED DRAWDOWN CAUSE (review of #569/#570/#571)
+# ==================================================================================================
+
+
+class _Shape:
+    def __init__(self, status: object, note: str | None = None) -> None:
+        self.status, self.note = status, note
+
+
+class _DC:
+    def __init__(self, status: object, note: str | None = None) -> None:
+        self.shape = _Shape(status, note)
+
+
+class _Mech:
+    def __init__(self, dc: object) -> None:
+        self.drawdown_cause = dc
+
+
+class _Dossier:
+    def __init__(self, ticker: str, dc: object) -> None:
+        self.ticker, self.mechanical = ticker, _Mech(dc)
+
+
+def _committed(folder: pathlib.Path, status: str) -> None:
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "dossier.json").write_text(
+        json.dumps({"mechanical": {"drawdown_cause": {"shape": {"status": status}}}})
+    )
+
+
+def test_a_degraded_drawdown_refuses_to_overwrite_an_established_one(
+    tmp_path: pathlib.Path,
+) -> None:
+    """THE DATA-LOSS PIN. Before #570 an unreadable filing index RAISED, so the name landed in
+    `assemble_cohort`'s `errors`, `vinci dossier` exited non-zero, and the committed artifact was
+    untouched. Degrading to UNKNOWN fixed the name being dropped but deleted that signal: `errors`
+    comes back empty, the CLI exits 0 past its own "A PARTIAL FAILURE MUST NOT EXIT 0" guard, and
+    the standing artifact pass then commits blank drawdown blocks over good ones. One SEC 403 is
+    enough — netcache raises 403 on the FIRST attempt with no retry."""
+    import vinci.dossier.assemble as asm
+    from vinci.dossier.schemas import SourceStatus
+
+    folder = tmp_path / "SMPL"
+    _committed(folder, "present")
+    degraded = _Dossier("SMPL", _DC(SourceStatus.UNKNOWN, "EDGAR filing index unavailable"))
+
+    with pytest.raises(asm.DossierAssemblyError, match="replace an established finding"):
+        asm._refuse_degraded_drawdown_overwrite(degraded, folder)  # type: ignore[arg-type]
+
+
+def test_a_fresh_name_still_writes_its_degraded_drawdown(tmp_path: pathlib.Path) -> None:
+    """THE CONTROL. #570's improvement stands where nothing is destroyed: a present record marked
+    UNKNOWN is auditable, an absent name is not. No committed file -> no refusal."""
+    import vinci.dossier.assemble as asm
+    from vinci.dossier.schemas import SourceStatus
+
+    degraded = _Dossier("NEW", _DC(SourceStatus.UNKNOWN, "EDGAR filing index unavailable"))
+    asm._refuse_degraded_drawdown_overwrite(degraded, tmp_path / "NEW")  # type: ignore[arg-type]
+
+
+def test_a_healthy_build_overwrites_freely(tmp_path: pathlib.Path) -> None:
+    """The guard must not fire on the normal path, or every re-assembly stops."""
+    import vinci.dossier.assemble as asm
+    from vinci.dossier.schemas import SourceStatus
+
+    folder = tmp_path / "AORT"
+    _committed(folder, "present")
+    healthy = _Dossier("AORT", _DC(SourceStatus.PRESENT))
+    asm._refuse_degraded_drawdown_overwrite(healthy, folder)  # type: ignore[arg-type]
+
+
+def test_a_prior_unknown_drawdown_does_not_block(tmp_path: pathlib.Path) -> None:
+    """Re-running a degraded name over an already-degraded artifact destroys no finding."""
+    import vinci.dossier.assemble as asm
+    from vinci.dossier.schemas import SourceStatus
+
+    folder = tmp_path / "MECH"
+    _committed(folder, "unknown")
+    degraded = _Dossier("MECH", _DC(SourceStatus.UNKNOWN, "EDGAR filing index unavailable"))
+    asm._refuse_degraded_drawdown_overwrite(degraded, folder)  # type: ignore[arg-type]
+
+
+def test_the_degraded_precondition_is_wired_into_the_write() -> None:
+    """A guard nobody calls is not a guard — same reasoning as the synthesis twin above."""
+    import inspect
+
+    import vinci.dossier.assemble as asm
+
+    src = inspect.getsource(asm._write)
+    assert "_refuse_degraded_drawdown_overwrite(dossier, folder)" in src
+    guard = src.index("_refuse_degraded_drawdown_overwrite")
+    assert guard < src.index('"dossier.json").write_text')
