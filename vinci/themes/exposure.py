@@ -703,12 +703,16 @@ def flag_intra_population_control(
     row may be the one a reader opens.
 
     PRECISION was verified on the live 745-name ai-compute-platform corpus: one pair (BTBT -> WYFI),
-    zero false positives. RECALL IS LOW BY CONSTRUCTION and the flag must not be read as a clean
-    bill: ``disclosed_facts`` are driver-exposure extracts, not the filing, so a control
-    relationship surfaces only where it happened to be relevant to the driver AND the subsidiary was
-    cited exchange-qualified — true of just 2 of those 745 rows. A pair this misses is a pair the
-    analyst still owns. The complete source is EDGAR Exhibit 21 (Subsidiaries of the Registrant),
-    which is not extracted anywhere in this repo yet.
+    zero false positives. **RECALL IS UNKNOWN** — not low, UNKNOWN: there is no ground-truth set of
+    control pairs for this universe, so nothing here quantifies what fraction it finds. What IS
+    measurable is how rare its only input signal is: ``disclosed_facts`` are driver-exposure
+    extracts rather than filing text, and an exchange-qualified subsidiary cite appeared in 2 of
+    those 745 rows.
+
+    Read ``control_pair_coverage`` beside any result. An empty return is NOT a clean bill, and a
+    scan that reports no pairs must never print as though it had cleared the population — that is
+    the shape of a check that returns the same answer whatever it is given. The complete source is
+    EDGAR Exhibit 21 (Subsidiaries of the Registrant), not extracted anywhere in this repo yet.
     """
     in_population = {r.ticker for r in rows}
     controls: dict[str, list[tuple[str, str]]] = {}   # parent -> [(sub, quoted phrase)]
@@ -738,3 +742,28 @@ def flag_intra_population_control(
                         f"this issuer ('{phrase}') — counting both double-counts one asset")
         flagged.append(row.model_copy(update={"flags": [*row.flags, *notes]}) if notes else row)
     return flagged
+
+
+def control_pair_coverage(rows: Sequence[ExposureAssessment]) -> str:
+    """What the control-pair check could SEE, stated whether or not it found anything.
+
+    A zero-pair result is the dangerous one: it reads as "population clean" when it may mean
+    "population unreadable". This exists so the scan cannot print a pass it has not earned — the
+    same failure shape as a magnitude check that answered YES for every name and therefore measured
+    nothing. The wording says UNKNOWN even when pairs WERE found, because finding one bounds
+    nothing about the rest.
+    """
+    n = len(rows)
+    readable = sum(
+        1 for r in rows
+        if _QUALIFIED_TICKER.search(" ".join(f.fact for f in r.disclosed_facts))
+    )
+    pairs = sum(1 for r in rows for f in r.flags if f.startswith("CONTROL PAIR"))
+    share = f"{readable / n:.1%}" if n else "n/a"
+    return (
+        f"control pairs: {pairs} flag(s) over {n} rows — COVERAGE UNKNOWN. The check reads "
+        f"driver-exposure extracts, not filings, and can only see an exchange-qualified subsidiary "
+        f"cite: {readable} of {n} rows ({share}) carry one. With no ground-truth set its recall is "
+        f"unquantified, so this neither clears the population nor bounds how many pairs remain. "
+        f"Complete source: EDGAR Exhibit 21, not extracted."
+    )

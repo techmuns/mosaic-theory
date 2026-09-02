@@ -89,3 +89,29 @@ control of a name OUTSIDE the population is not flagged, because it cannot be do
 | incident | invariant | shipped |
 | --- | --- | --- |
 | BTBT/WYFI counted as two names in one tier, after a prior manual catch on another sheet | cross-row control-pair flag on every scan, both sides annotated | Y (recall-limited; limit recorded above) |
+
+## Amendments
+
+**2026-09-02 — "recall is low" is corrected to "recall is UNKNOWN".** The body above says recall is
+low by construction. That overstates what is known: there is no ground-truth set of control pairs
+for this universe, so nothing measures what fraction the check finds. What *is* measurable is how
+rare its only input signal is — an exchange-qualified subsidiary cite, present in 2 of 745 rows.
+
+The operational risk this creates is the one that matters: a future scan reporting no control pairs
+would read as a clean bill when it may mean near-blindness — the same failure shape as the magnitude
+probe that answered YES for all nine names and therefore measured nothing.
+
+`control_pair_coverage` now emits an explicit **COVERAGE UNKNOWN** line beside every scan, printed
+by the CLI, saying how many rows carried a readable signal and stating that the result neither
+clears the population nor bounds how many pairs remain. It says UNKNOWN even when pairs *were*
+found, because one hit bounds nothing about the rest. Live corpus:
+
+```
+control pairs: 2 flag(s) over 745 rows — COVERAGE UNKNOWN. The check reads driver-exposure
+extracts, not filings, and can only see an exchange-qualified subsidiary cite: 2 of 745 rows
+(0.3%) carry one. With no ground-truth set its recall is unquantified, so this neither clears
+the population nor bounds how many pairs remain. Complete source: EDGAR Exhibit 21, not extracted.
+```
+
+Pinned by `test_coverage_never_prints_as_a_clean_bill`, which asserts the statement says UNKNOWN in
+both the zero-pair and the pair-found states. Building the Exhibit 21 extractor remains the fix.

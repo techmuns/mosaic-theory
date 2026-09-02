@@ -29,6 +29,7 @@ from vinci.themes.drivers import (
 )
 from vinci.themes.exposure import (
     assess_exposure,
+    control_pair_coverage,
     flag_intra_population_control,
     grade_driving_fact,
     is_real_exposure,
@@ -978,3 +979,24 @@ def test_control_of_a_name_outside_the_scan_is_not_flagged() -> None:
                              "Cryptomine LLC (Nasdaq: XXXX), an unconsolidated affiliate."]),
     ])
     assert rows[0].flags == []
+
+
+def test_coverage_never_prints_as_a_clean_bill() -> None:
+    """A ZERO-PAIR RESULT IS THE DANGEROUS ONE. It reads as 'population clean' when it may mean
+    'population unreadable' — the shape of a check that returns the same answer whatever it is
+    given (the magnitude probe that answered YES for all nine names and measured nothing). The
+    statement must say UNKNOWN even when it DID find a pair, because one hit bounds nothing."""
+    clean = [_assessment("AAAA", ["No ownership language at all."]),
+             _assessment("BBBB", ["Nor here."])]
+    found = flag_intra_population_control([
+        _assessment("BTBT", ["holds an approximately 70.5% majority equity stake in WhiteFiber "
+                             "Inc. (Nasdaq: WYFI)."]),
+        _assessment("WYFI", ["Hosting revenue."]),
+    ])
+    for rows, pairs in ((clean, 0), (found, 2)):
+        line = control_pair_coverage(rows)
+        assert "COVERAGE UNKNOWN" in line                 # never a pass, in either state
+        assert f"{pairs} flag(s)" in line
+        assert "recall is unquantified" in line
+        assert "Exhibit 21" in line                       # names the complete source it lacks
+    assert "0 of 2 rows (0.0%)" in control_pair_coverage(clean)   # says HOW blind it was

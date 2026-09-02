@@ -2695,6 +2695,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.themes import detection as det
     from vinci.themes.exposure import (
         ScanAbortedError,
+        control_pair_coverage,
         grade_driving_fact,
         is_real_exposure,
         provenance_tag_of,
@@ -2764,6 +2765,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
               f"un-scanned ({len(abort.remaining)}): {shown}")
         print("   NOT writing --out or scan-history — a poisoned queue is worse than none.")
         return 2
+    # A zero-pair control check must never print as a clean bill (see control_pair_coverage).
+    print(control_pair_coverage(results))
     dumped = [a.model_dump(mode="json") for a in results]  # ONE dump — --out + history share bytes
     if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
         Path(args.out).write_text("\n".join(json.dumps(r) for r in dumped))
