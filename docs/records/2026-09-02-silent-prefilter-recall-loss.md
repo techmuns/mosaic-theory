@@ -70,14 +70,14 @@ decision. That conflated re-running the **prefilter** with **re-grading**.
 
 The expensive half is the LLM pass over 745 names. **The denominator is set by the efts prefilter
 alone** — no LLM, no Polygon: the universe is already committed at
-`data/snapshots/theme_universe_snapshot.jsonl` and `universe_snapshot.jsonl` (3,041 CIKs in band). So
+`data/snapshots/theme_universe_snapshot.jsonl` and `universe_snapshot.jsonl` (3,036 distinct CIKs in band, across 3,041 securities rows). So
 bounding a past scan's denominator is ~31 batches × the driver's terms of cached efts queries under
 the now-instrumented code, and it can run unattended.
 
 **Decision taken rather than left implicit: re-run the parent's prefilter.** `ai-value-migration` is
 a *declared* driver underpinning 168 ratifies, and its 357 is the denominator every share on that
 sheet is computed against — that is worth a few hundred cached queries. Tracked as STATE.md §5.0
-row 16. The alternative (logging the unknown as accepted on the parent card) was rejected for the
+row 14. The alternative (logging the unknown as accepted on the parent card) was rejected for the
 same reason.
 
 What genuinely does **not** retro-measure is the LLM grading: a name the prefilter missed was never
