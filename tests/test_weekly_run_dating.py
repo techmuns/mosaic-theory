@@ -114,7 +114,15 @@ def test_run_weekly_takes_its_date_from_the_data_and_not_the_clock(
     fixes nothing, and a helper-level pin stays green while the call site rots."""
     from vinci import cli
 
-    friday = dt.date(2026, 8, 21)
+    # DERIVED FROM TODAY, NEVER NAMED. `last_completed_session` only looks back
+    # `_SESSION_LOOKBACK_DAYS`, so a hard-coded date silently leaves that window as the calendar
+    # advances and the test fails for a reason that has nothing to do with the behaviour it pins.
+    # It did exactly that: written against 2026-08-21, red from 2026-09-01 once that date was 11
+    # days old. Second instance of this bug class in this file's neighbourhood — see
+    # `test_the_calendars_hand_label_tally_follows_the_import`, which named 2024-08-01 and went red
+    # the day an operator labelled it.
+    today = dt.date.today()
+    friday = today - dt.timedelta(days=(today.weekday() - 4) % 7 or 7)
     monkeypatch.setattr(cli, "PolygonEodClient",
                         type("_P", (), {"from_config": staticmethod(
                             lambda _cfg: _Sessions({friday}))}))
