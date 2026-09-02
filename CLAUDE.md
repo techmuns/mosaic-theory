@@ -157,6 +157,17 @@ verdict placement.
   fluent noise; `Synthesis` still has no verdict field). `mixed` proposes NOTHING — a two-sided
   read is the human's call, never a coin-flip. The human logs the verdict of record by hand
   (confirm/override); the ledger seals the proposal + disposition beside it.
+- **A GRADE IS ECONOMIC SUBSTANCE; DISCLOSURE FORM IS A SEPARATE FIELD.** `ExposureConcreteness` /
+  `ExposureBasis` record what KIND of evidence a filing offers — a $32,549 binding contract and a
+  $60.7bn one are the SAME basis by design. **Nothing may rank economic capture from them alone**;
+  substance needs MAGNITUDE + KIND, neither of which is a structured field today. **Before any new
+  gate ships, answer in writing: DOES THIS SELECT ON FORM?** Four surfaces have already failed that
+  question — `machine_grade` graded form and was read as size; the `ai-compute-platform` prefilter
+  used OBSERVER vocabulary and so excluded the observed (GOOGL was missing from a scan of the
+  compute layer); the disclosure-asymmetry concession read a disclosure asymmetry as an economic
+  one; and a $100m materiality gate selected on CURRENCY of disclosure, admitting a bond issuance
+  and an intercompany loan while excluding the two largest contracted-capacity names. Same error,
+  four surfaces — which is why the rule is here and not in one more gate.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never

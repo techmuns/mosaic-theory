@@ -528,7 +528,119 @@ GLP1_DRUG_VALUE_CHAIN = DriverSpec(
 )
 
 # registry — adding a theme = adding its DriverSpec instance here
+# LOAD-BEARING analyst judgment, encoded VERBATIM in tie_taxonomy (do NOT re-draft it — it IS the
+# experiment). Declared 2026-09-02 by splitting the BELOW class out of ai-value-migration, on the
+# operator's finding that the parent thesis is three sub-theses that can move in OPPOSITE
+# directions on one premise ("abundant capability is priced as annihilation above the model and
+# infinite demand below it; both can't be true"), so a single basket spanning them measures the
+# average of opposing bets and nets toward zero however right either half is.
+#
+# NOT a duplicate of ai-datacenter, checked before declaring: of the 64 BELOW-tagged ratified names
+# in ai-value-migration, exactly ONE (RXT) had been scanned under ai-datacenter. That driver is the
+# PHYSICAL build-out (chips → HBM → packaging → cooling → power → optical → colocation); this one is
+# the platform/economic layer that sells the compute. The boundary between them is the operator's
+# interconnection test, below.
+AI_COMPUTE_PLATFORM = DriverSpec(
+    key="ai-compute-platform",
+    # NO mirror_slug yet — declared when the mirror exists, not before (the glp1 precedent).
+    description=(
+        "the AI COMPUTE PLATFORM LAYER — BELOW the model in the AI value stack: hyperscaler "
+        "compute, distribution and data gravity. If frontier-grade capability commoditizes, the "
+        "scarce asset moves to whoever SELLS THE COMPUTE and OWNS THE INTERCONNECTION the models "
+        "run on. In scope: scaled hyperscaler compute; neoclouds selling compute; operators owning "
+        "the land, substation and grid interconnect; colocation earning on cross-connect density; "
+        "and the hyperscaler's OWN data gravity. Out of scope: the silicon/ecosystem layer BESIDE "
+        "the model, leased JV capacity that is landlord economics, and data vendors whose moat is "
+        "format and semantic lock-in rather than gravity."
+    ),
+    tie_taxonomy=(
+        # Every clause below is the operator's own, 2026-09-02, in answer to the four boundary
+        # questions the scan turns on. The `indirect` bucket is the residual and is the ONE part
+        # composed rather than quoted — flagged for correction.
+        "driver-specific = sells the compute or owns the interconnection. A neocloud is "
+        "driver-specific: CRWV is BELOW because it sells the compute. A storage neocloud also "
+        "qualifies — BLZE sells storage under someone else's compute, and its case rests on one "
+        "contracted counterparty, so it qualifies but is not a clean BELOW expression. "
+        "Colocation is in scope, and THE RULE IS DECLARED AT CLASS LEVEL so it resolves every "
+        "future name without re-litigation: OWNS THE INTERCONNECTION, IN; LEASES THE SPACE, "
+        "OUT. EQIX is therefore IN on cross-connect density and its xScale JV capacity is OUT "
+        "as leased landlord economics; DGXX is IN on owning the land, substation and grid "
+        "interconnect. A 10-K carries many facts, so a name showing both an owned-interconnection "
+        "fact and a leased-space fact is the grader working correctly — the CLASS rule decides "
+        "it, not a per-name ruling. Data gravity counts only as the HYPERSCALER'S OWN, strictly. "
+        "indirect = real compute/platform activity whose tie to the driver is generic or "
+        "undisclosed — an infrastructure or cloud-adjacent operator with no disclosed AI-compute "
+        "economics, or a reseller of someone else's platform. (COMPOSED, not the operator's — "
+        "correct this clause before it decides anything.) "
+        "not-driver = adjacent-but-distinct. The silicon/ecosystem layer is BESIDE, not BELOW — "
+        "ARM and AVGO stay driver-specific to their own class and must NOT be collapsed into BELOW "
+        "to tidy the taxonomy. Leased JV capacity is landlord economics and belongs to "
+        "ai-datacenter (EQIX's xScale is the case). Data vendors that RENT their infrastructure "
+        "from AWS, Azure and GCP are not-driver — SNOW and MDB rent, the gravity accrues "
+        "underneath them, and their moat is format and semantic lock-in, a different mechanism "
+        "currently being dissolved by open table formats."
+    ),
+    # TIGHTENED BEFORE THE FIRST GRADED RUN (2026-09-02). The first cut surfaced 1,011 of 3,036 —
+    # a third of the universe for a driver that should be narrow — because eight of its seventeen
+    # terms are ordinary filing vocabulary, not platform vocabulary: `megawatt`, `substation` and
+    # `interconnection` are in every utility's filings, `colocation` in anyone who rents a rack,
+    # and `public cloud` / `cloud infrastructure` / `compute capacity` in nearly every software
+    # 10-K. Those were dropped. What remains is language a company uses only if it IS this layer.
+    # `grid interconnect` is KEPT despite being utility-adjacent: it is how the operator's own
+    # example (DGXX owning the land, substation and grid interconnect) would describe itself, and
+    # losing the named case to tidy the list would be the wrong trade.
+    # SECOND TIGHTENING, and the one that mattered (2026-09-02). The first cut was too broad
+    # (1,011 of 3,036 on utility vocabulary); the second was too NARROW in a way that was worse,
+    # because it was narrow exactly where the counter-evidence sits. Every surviving term was
+    # OBSERVER vocabulary — "hyperscaler", "neocloud", "IaaS" are what the trade press calls these
+    # companies, not what they call themselves. So the scan missed the observed: GOOGL never
+    # cleared the prefilter, and a scan of the compute layer that excludes Google Cloud is not
+    # measuring the compute layer. Reported as a finding in a draft card, which is worse than the
+    # miss: it read an instrument gap as evidence for the thesis, precisely where the disconfirming
+    # evidence would have been. SELF-DESCRIPTION terms are added below — the words a hyperscaler
+    # actually uses about itself in its own filings.
+    prefilter_terms=(
+        # observer vocabulary — catches the neoclouds and the interconnection owners
+        "hyperscaler", "infrastructure-as-a-service", "iaas", "gpu cloud", "ai cloud",
+        "neocloud", "accelerated compute", "cross-connect", "grid interconnect", "data gravity",
+        # SELF-DESCRIPTION — the scaled clouds name their own segment, never the category
+        "cloud revenue", "cloud services", "ai infrastructure", "tensor processing",
+        "custom accelerator", "data center capacity",
+        # PROVISIONAL — NEVER RUN. These 15 terms were added 2026-09-02 when the driver was
+        # reframed, and `ai-compute-platform` was FALSIFIED PRE-DECLARATION before any scan used
+        # them. They are validated only to the extent that a targeted probe showed TLN and VST
+        # match them (6 and 3 terms) while matching ZERO of the terms above — which proves the
+        # blind spot was real, NOT that this list is well-formed. No driver has been graded on
+        # them. A NEW DRIVER MUST NOT INHERIT THEM UNVALIDATED: probe first, the way the GOOGL
+        # hole was found, or they carry the same defect forward under a different name.
+        # POWERED INFRASTRUCTURE (2026-09-02) — added when the driver was reframed away from
+        # "neoclouds". The prior list was built for the COMPUTE layer and so could not see the
+        # population the reframed driver is about: REITs, IPPs, power developers, interconnect
+        # owners and the Core Scientific-type operators. This is the GOOGL lesson arriving in the
+        # same place — a vocabulary that describes the thesis rather than the filings excludes
+        # exactly the names that would test it.
+        "powered shell", "powered land", "energized", "energization", "critical it load",
+        "interconnection queue", "interconnection agreement", "substation", "behind-the-meter",
+        "power purchase agreement", "independent power producer", "megawatts of capacity",
+        "load ramp", "colocation", "utility interconnection",
+    ),
+    provenance_tags=(
+        ("hyperscaler-compute", ("hyperscaler", "public cloud", "cloud infrastructure",
+                                 "infrastructure-as-a-service", "iaas")),
+        ("neocloud", ("gpu cloud", "ai cloud", "neocloud", "accelerated compute")),
+        ("interconnection", ("cross-connect", "grid interconnect", "interconnection queue",
+                             "interconnection agreement", "substation", "utility interconnection")),
+        ("data-gravity", ("data gravity", "egress")),
+        ("powered-infrastructure", ("powered shell", "powered land", "energized", "energization",
+                                    "critical it load", "behind-the-meter", "load ramp",
+                                    "megawatts of capacity", "colocation")),
+        ("power-supply", ("power purchase agreement", "independent power producer")),
+    ),
+    multi_tag=True,
+)
+
 DRIVER_SPECS: dict[str, DriverSpec] = {
+    AI_COMPUTE_PLATFORM.key: AI_COMPUTE_PLATFORM,
     AI_DATACENTER.key: AI_DATACENTER,
     AI_VALUE_MIGRATION.key: AI_VALUE_MIGRATION,
     DEFENSE_DEMAND_SHIFT.key: DEFENSE_DEMAND_SHIFT,

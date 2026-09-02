@@ -26,6 +26,7 @@ from __future__ import annotations
 import concurrent.futures as cf
 import re
 import urllib.parse
+from collections.abc import Sequence
 from datetime import date, timedelta
 from typing import Any, cast
 
@@ -166,6 +167,7 @@ def mention_prefilter(
     forms: str = "8-K,10-Q,10-K,20-F,40-F,6-K",  # incl. foreign issuers (20-F/6-K) — CAMT etc.
     max_pages: int = 5,
     skip_errors: bool = False,
+    skipped: list[str] | None = None,
     progress: ProgressFn | None = None,
 ) -> dict[str, set[str]]:
     """Batched-CIK efts: which universe CIKs mention each driver phrase recently. Returns
@@ -173,7 +175,14 @@ def mention_prefilter(
 
     Default is fail-loud (a bad efts body raises). ``skip_errors=True`` (for a long universe scan)
     skips a batch×phrase that errors after retries and keeps going — a conservative recall gap (a
-    missed mention just means a name is not scanned), never a fabricated mention."""
+    missed mention just means a name is not scanned), never a fabricated mention.
+
+    PASS ``skipped`` TO LEARN HOW BIG THAT GAP WAS. Until 2026-09-02 the skip was silent and
+    uncounted, which made every downstream denominator "N that SUCCEEDED" out of an unknown base —
+    a scan reporting 745 graded names could have dropped any number and nothing said so. Each
+    entry is one ``batch×phrase`` query that errored, and a batch holds up to 100 CIKs, so one
+    entry can cost up to 100 names their match on that phrase. An empty list is the only thing
+    that licenses reading the yield as complete."""
     matched: dict[str, set[str]] = {}
     batches = [ciks_padded[i:i + 100] for i in range(0, len(ciks_padded), 100)]
     rep = ProgressReporter("efts prefilter", len(batches) * len(phrases), emit=progress)
@@ -188,9 +197,12 @@ def mention_prefilter(
                                 efts.get_json(_efts_url(phrase, batch, frm, forms, startdt, enddt),
                                               ttl_seconds=_ONE_WEEK))
                     page, total = parse_efts_ciks(data)
-                except HttpError:
+                except HttpError as exc:
                     if not skip_errors:
                         raise
+                    if skipped is not None:  # COUNT the gap — a silent skip is an unknown base
+                        skipped.append(f"{phrase!r} × batch of {len(batch)} CIKs "
+                                       f"(from={frm}): {type(exc).__name__}: {exc}")
                     break  # transient efts error — skip this batch×phrase, keep scanning
                 for c in page:
                     if c in bset:
@@ -623,8 +635,20 @@ def scan_driver_exposure(
     false-positive rate directly."""
     ciks = [c for _, c in names]
     ticker_by_cik = {c: t for t, c in names}
+    prefilter_skips: list[str] = []
     matched = mention_prefilter(efts_http, ciks, spec.prefilter_terms, startdt=startdt, enddt=enddt,
-                                skip_errors=True, progress=progress)
+                                skip_errors=True, skipped=prefilter_skips, progress=progress)
+    if prefilter_skips:
+        # NOT a warning to be scrolled past: the scan's denominator is now unknown, so every count
+        # derived from it ("N graded", any share of N) is N-that-succeeded over an unknown base.
+        print(f"!! PREFILTER RECALL GAP — {len(prefilter_skips)} batch×phrase quer(ies) "
+              f"errored and were SKIPPED. Each batch holds up to 100 CIKs, so this scan's "
+              f"population is a LOWER BOUND and its denominator is unknown. "
+              f"Do not report a share of it.")
+        for line in prefilter_skips[:10]:
+            print(f"   {line}")
+        if len(prefilter_skips) > 10:
+            print(f"   … and {len(prefilter_skips) - 10} more")
     candidates = sorted(matched)
     since = date.fromisoformat(startdt)
     rep = ProgressReporter("exposure scan", len(candidates), emit=progress)
@@ -665,4 +689,104 @@ def scan_driver_exposure(
                     reason = f"{type(exc).__name__}: {exc}"
                     raise ScanAbortedError(status, reason, remaining, out) from exc
             rep.tick(i)
-    return matched, out
+    return matched, flag_intra_population_control(out)
+
+
+# --------------------------------------------------------------------------------------------------
+# Same asset, two tickers (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+# BTBT holds ~70.5% of WYFI, and BOTH graded binding-contract in the ai-compute-platform scan — one
+# asset counted twice in a nine-name tier. It had already been caught by hand once on the parent
+# sheet and came back unnoticed, so the catch belongs in the scan, not in the reader.
+#
+# This FLAGS and never drops. Which side of a control pair carries the exposure is an adjudication
+# (the parent may be a holding company whose only exposure IS the sub, or the sub may be a sliver of
+# a diversified parent) — assemble-not-conclude.
+_MAJORITY_CONTROL = re.compile(
+    r"majority[- ](?:equity|ownership|owned|stake|interest)"
+    r"|majority stake"
+    r"|controlling (?:equity |ownership |financial )?interest"
+    r"|(?:5[1-9]|[6-9][0-9]|100)(?:\.[0-9]+)?%[^.]{0,40}(?:equity|ownership|stake|interest|owned)"
+    r"|wholly[- ]owned subsidiary",
+    re.I,
+)
+# A ticker cited the way a filing actually cites another PUBLIC company: exchange-qualified.
+# The bare-symbol form cannot be used — an unqualified \b[A-Z]{2,5}\b scan of this corpus matched
+# the English words "AI" (C3.ai) and "IT" (Gartner) and produced 8 false pairs against 1 true one.
+_QUALIFIED_TICKER = re.compile(
+    r"\((?:nasdaq|nyse|nyse american|amex|cboe)[^)]{0,20}:\s*([A-Z]{1,5})\)", re.I)
+_CONTROL_WINDOW = 250  # chars either side of the control phrase the ticker cite must fall within
+
+
+def flag_intra_population_control(
+    rows: Sequence[ExposureAssessment],
+) -> list[ExposureAssessment]:
+    """Flag every pair where one scanned issuer discloses MAJORITY CONTROL of ANOTHER scanned
+    issuer, so a tier cannot silently count one asset twice. Both sides are flagged, since either
+    row may be the one a reader opens.
+
+    PRECISION was verified on the live 745-name ai-compute-platform corpus: one pair (BTBT -> WYFI),
+    zero false positives. **RECALL IS UNKNOWN** — not low, UNKNOWN: there is no ground-truth set of
+    control pairs for this universe, so nothing here quantifies what fraction it finds. What IS
+    measurable is how rare its only input signal is: ``disclosed_facts`` are driver-exposure
+    extracts rather than filing text, and an exchange-qualified subsidiary cite appeared in 2 of
+    those 745 rows.
+
+    Read ``control_pair_coverage`` beside any result. An empty return is NOT a clean bill, and a
+    scan that reports no pairs must never print as though it had cleared the population — that is
+    the shape of a check that returns the same answer whatever it is given. The complete source is
+    EDGAR Exhibit 21 (Subsidiaries of the Registrant), not extracted anywhere in this repo yet.
+    """
+    in_population = {r.ticker for r in rows}
+    controls: dict[str, list[tuple[str, str]]] = {}   # parent -> [(sub, quoted phrase)]
+    for row in rows:
+        text = " ".join(f.fact for f in row.disclosed_facts)
+        for m in _MAJORITY_CONTROL.finditer(text):
+            window = text[max(0, m.start() - _CONTROL_WINDOW): m.end() + _CONTROL_WINDOW]
+            for sub in _QUALIFIED_TICKER.findall(window):
+                if sub in in_population and sub != row.ticker:
+                    pair = (sub, m.group(0))
+                    if pair not in controls.setdefault(row.ticker, []):
+                        controls[row.ticker].append(pair)
+    if not controls:
+        return list(rows)
+    flagged: list[ExposureAssessment] = []
+    for row in rows:
+        notes: list[str] = []
+        for sub, phrase in controls.get(row.ticker, []):
+            notes.append(
+                f"CONTROL PAIR: this issuer discloses majority control of {sub}, also in this scan "
+                f"('{phrase}') — counting both double-counts one asset")
+        for parent, pairs in controls.items():
+            for sub, phrase in pairs:
+                if sub == row.ticker:
+                    notes.append(
+                        f"CONTROL PAIR: {parent}, also in this scan, discloses majority control of "
+                        f"this issuer ('{phrase}') — counting both double-counts one asset")
+        flagged.append(row.model_copy(update={"flags": [*row.flags, *notes]}) if notes else row)
+    return flagged
+
+
+def control_pair_coverage(rows: Sequence[ExposureAssessment]) -> str:
+    """What the control-pair check could SEE, stated whether or not it found anything.
+
+    A zero-pair result is the dangerous one: it reads as "population clean" when it may mean
+    "population unreadable". This exists so the scan cannot print a pass it has not earned — the
+    same failure shape as a magnitude check that answered YES for every name and therefore measured
+    nothing. The wording says UNKNOWN even when pairs WERE found, because finding one bounds
+    nothing about the rest.
+    """
+    n = len(rows)
+    readable = sum(
+        1 for r in rows
+        if _QUALIFIED_TICKER.search(" ".join(f.fact for f in r.disclosed_facts))
+    )
+    pairs = sum(1 for r in rows for f in r.flags if f.startswith("CONTROL PAIR"))
+    share = f"{readable / n:.1%}" if n else "n/a"
+    return (
+        f"control pairs: {pairs} flag(s) over {n} rows — COVERAGE UNKNOWN. The check reads "
+        f"driver-exposure extracts, not filings, and can only see an exchange-qualified subsidiary "
+        f"cite: {readable} of {n} rows ({share}) carry one. With no ground-truth set its recall is "
+        f"unquantified, so this neither clears the population nor bounds how many pairs remain. "
+        f"Complete source: EDGAR Exhibit 21, not extracted."
+    )

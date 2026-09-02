@@ -29,13 +29,22 @@ from vinci.themes.drivers import (
 )
 from vinci.themes.exposure import (
     assess_exposure,
+    control_pair_coverage,
+    flag_intra_population_control,
     grade_driving_fact,
     is_real_exposure,
     mention_prefilter,
     parse_efts_ciks,
     provenance_tag_of,
 )
-from vinci.themes.schemas import DriverSpec, ExposureAssessment, ExposureBasis, ExposureFact
+from vinci.themes.schemas import (
+    DriverSpec,
+    DriverTie,
+    ExposureAssessment,
+    ExposureBasis,
+    ExposureConcreteness,
+    ExposureFact,
+)
 
 _STREAM = [
     ("8-K 2026-01-15 (acc A1)", "On January 10, 2026 ..."),
@@ -913,3 +922,181 @@ def test_no_prefilter_term_is_contained_by_another_term_of_the_same_driver() -> 
         assert not contained, (
             f"{key}: these prefilter phrases contain another term in the same list, so they can "
             f"never match anything the shorter term misses: {contained}")
+
+
+# --------------------------------------------------------------------------------------------------
+# Same asset, two tickers — the intra-population control-pair flag (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+def _assessment(ticker: str, facts: list[str]) -> ExposureAssessment:
+    """Build from the REAL type (CLAUDE.md: fixtures are never hand-rolled to the test's shape)."""
+    return ExposureAssessment(
+        ticker=ticker, cik=f"000{abs(hash(ticker)) % 10**7:07d}", driver="d",
+        exposure_basis=ExposureBasis.BINDING_CONTRACTS,
+        disclosed_facts=[
+            ExposureFact(fact=f, concreteness=ExposureConcreteness.BINDING_CONTRACT,
+                         driver_tie=DriverTie.DRIVER_SPECIFIC, source_ref="0001-25-000001")
+            for f in facts
+        ],
+        primary_business="", key_unknowns=[], stream_refs=["0001-25-000001"],
+    )
+
+
+def test_control_pair_is_flagged_on_both_sides() -> None:
+    """POSITIVE PIN — the real observed pair: BTBT disclosed ~70.5% of WYFI and both graded
+    binding-contract in the live ai-compute-platform scan, one asset counted twice in a nine-name
+    tier. The flag must reach BOTH rows, since either is the one a reader opens."""
+    rows = flag_intra_population_control([
+        _assessment("BTBT", ["The Company holds an approximately 70.5% majority equity stake in "
+                             "WhiteFiber Inc. (Nasdaq: WYFI) following the July 2025 IPO."]),
+        _assessment("WYFI", ["Data center hosting revenue under a binding 5-year agreement."]),
+        _assessment("CRWV", ["Remaining performance obligations of $60.7 billion."]),
+    ])
+    by_ticker = {r.ticker: r for r in rows}
+    assert any("CONTROL PAIR" in f and "WYFI" in f for f in by_ticker["BTBT"].flags)
+    assert any("CONTROL PAIR" in f and "BTBT" in f for f in by_ticker["WYFI"].flags)
+    assert by_ticker["CRWV"].flags == []          # an unrelated name is untouched
+
+
+def test_bare_ticker_words_do_not_create_control_pairs() -> None:
+    """NEGATIVE PIN — the real observed failure shape. An unqualified \\b[A-Z]{2,5}\\b scan of the
+    745-name corpus matched the English words 'AI' (C3.ai's symbol) and 'IT' (Gartner's), inventing
+    8 false pairs against 1 true one. Only an EXCHANGE-QUALIFIED cite may form a pair."""
+    rows = flag_intra_population_control([
+        _assessment("NEE", ["NextEra Energy Resources, a wholly owned subsidiary, develops AI "
+                            "data center capacity and IT infrastructure for the segment."]),
+        _assessment("MARA", ["Majority ownership of the AI hosting joint venture is retained."]),
+        _assessment("AI", ["Enterprise AI application revenue."]),
+        _assessment("IT", ["Research and advisory revenue."]),
+    ])
+    assert all(r.flags == [] for r in rows), [r.flags for r in rows if r.flags]
+
+
+def test_control_of_a_name_outside_the_scan_is_not_flagged() -> None:
+    """NEGATIVE PIN — the flag exists to stop DOUBLE-COUNTING WITHIN a tier. A subsidiary that is
+    not in the population cannot be counted twice, so it is not this guard's business."""
+    rows = flag_intra_population_control([
+        _assessment("WULF", ["The Company holds a 50.1% majority equity interest in Nautilus "
+                             "Cryptomine LLC (Nasdaq: XXXX), an unconsolidated affiliate."]),
+    ])
+    assert rows[0].flags == []
+
+
+def test_coverage_never_prints_as_a_clean_bill() -> None:
+    """A ZERO-PAIR RESULT IS THE DANGEROUS ONE. It reads as 'population clean' when it may mean
+    'population unreadable' — the shape of a check that returns the same answer whatever it is
+    given (the magnitude probe that answered YES for all nine names and measured nothing). The
+    statement must say UNKNOWN even when it DID find a pair, because one hit bounds nothing."""
+    clean = [_assessment("AAAA", ["No ownership language at all."]),
+             _assessment("BBBB", ["Nor here."])]
+    found = flag_intra_population_control([
+        _assessment("BTBT", ["holds an approximately 70.5% majority equity stake in WhiteFiber "
+                             "Inc. (Nasdaq: WYFI)."]),
+        _assessment("WYFI", ["Hosting revenue."]),
+    ])
+    for rows, pairs in ((clean, 0), (found, 2)):
+        line = control_pair_coverage(rows)
+        assert "COVERAGE UNKNOWN" in line                 # never a pass, in either state
+        assert f"{pairs} flag(s)" in line
+        assert "recall is unquantified" in line
+        assert "Exhibit 21" in line                       # names the complete source it lacks
+    assert "0 of 2 rows (0.0%)" in control_pair_coverage(clean)   # says HOW blind it was
+
+
+def test_form_and_substance_stay_separated_in_the_schema() -> None:
+    """THE FOURTH INSTANCE CLOSED WITH A CHECK, not another gate (CLAUDE.md INVARIANT RULE).
+
+    Four surfaces have now made the same error: `machine_grade` graded FORM and was read as SIZE;
+    the prefilter used OBSERVER vocabulary and excluded the observed; the structural concession read
+    a disclosure asymmetry as an economic one; the $100m floor selected on CURRENCY of disclosure.
+    The default is what needs fixing, so the two enums that get mistaken for economic grades must
+    SAY they are not, and a quiet redefinition has to go red here.
+    """
+    from vinci.themes import schemas
+    for enum in (schemas.ExposureBasis, schemas.ExposureConcreteness):
+        doc = " ".join((enum.__doc__ or "").split())
+        assert "DISCLOSURE FORM, NEVER ECONOMIC SUBSTANCE" in doc, (
+            f"{enum.__name__} no longer states it is form, not substance — the statement is the "
+            f"guard: it is what a reader building a gate on this field is supposed to hit first")
+    spec_doc = " ".join((schemas.DriverSpec.__doc__ or "").split())
+    assert "DOES THIS SELECT ON FORM?" in spec_doc, (
+        "DriverSpec no longer carries the standing pre-ship question for new gates")
+
+
+# --------------------------------------------------------------------------------------------------
+# Exhibit 21 — the complete source for control pairs (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+def test_exhibit_21_parses_the_real_btbt_table() -> None:
+    """POSITIVE PIN, from the LIVE document. BTBT's Exhibit 21 is what makes the control pair
+    findable at full recall — the extract-based flag could only see it because WhiteFiber happened
+    to be cited exchange-qualified in one fact."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    doc = ("<table><tr><td>NAME</td><td>SUBSIDIARIES OF THE REGISTRANT JURISDICTION</td>"
+           "<td>OWNERSHIP</td></tr>"
+           "<tr><td>Bit Digital USA, Inc.</td><td>Delaware, USA</td><td>100%</td></tr>"
+           "<tr><td>Financi&#232;re Marjos SCA</td><td>France</td><td>25%</td></tr>"
+           "<tr><td>WhiteFiber, Inc.</td><td>Cayman Islands</td><td>70.5%</td></tr></table>")
+    rows = parse_exhibit_21(doc)
+    assert ("WhiteFiber, Inc.", 70.5) in rows
+    assert all(n != "NAME" for n, _ in rows)                    # header dropped
+    assert ("Financière Marjos SCA", 25.0) in rows              # a minority stake is still reported
+
+
+def test_exhibit_21_never_invents_an_ownership_percentage() -> None:
+    """NEGATIVE PIN — the real CORZ shape. Its exhibit lists subsidiaries with NO percentage column;
+    a parser that filled in 100% would be fabricating the number the guard turns on."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    rows = parse_exhibit_21("<table><tr><td>Name of Subsidiary</td></tr>"
+                            "<tr><td>American Property Acquisition, LLC</td></tr></table>")
+    assert rows == [("American Property Acquisition, LLC", None)]
+
+
+def test_a_running_text_exhibit_yields_nothing_rather_than_a_guess() -> None:
+    """NEGATIVE PIN — the real WULF shape, which is NOT a table. The boundary between a jurisdiction
+    and the next entity name cannot be found without guessing; a first attempt returned the table
+    HEADER as an entity name. Returning nothing is the correct failure, and the docstring says an
+    empty result is an unparsed document and never an empty subsidiary list."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    flat = ("<p>Legal Entity Name Percentage of Voting Securities Owned Directly or Indirectly by "
+            "Registrant Jurisdiction of Organization Abernathy Data LLC 50.1% Delaware "
+            "Akela Data LLC 100% Delaware</p>")
+    assert parse_exhibit_21(flat) == []
+
+
+def test_a_swallowed_prefilter_query_is_counted_not_silent() -> None:
+    """SILENT RECALL LOSS — escalated 2026-09-02 as its own defect, separate from the closed card.
+
+    `scan_driver_exposure` hardcodes skip_errors=True, and until now the skip was an uncounted
+    `break`. AES and ETN matched an OLD prefilter term yet never reached the 745-name scan, which
+    vocabulary cannot explain. That makes every denominator in the theme pipeline — 745 here, 357 on
+    the parent sheet — "N that SUCCEEDED" out of an unknown base. The gap stays (it is the right
+    trade for a long scan); being unable to MEASURE it does not.
+    """
+    from vinci.netcache import HttpError
+    from vinci.themes.exposure import mention_prefilter
+
+    class _Failing:
+        def get_json(self, url: str, **kw: object) -> object:
+            raise HttpError(503, "efts unavailable", url)
+
+    skipped: list[str] = []
+    got = mention_prefilter(cast(Any, _Failing()), ["0000000001", "0000000002"], ("alpha", "beta"),
+                            startdt="2026-01-01", enddt="2026-09-02",
+                            skip_errors=True, skipped=skipped)
+    assert got == {}
+    assert len(skipped) == 2                       # one per phrase — the gap is now a NUMBER
+    assert all("batch of 2 CIKs" in s for s in skipped)
+    assert any("'alpha'" in s for s in skipped)
+
+
+def test_the_prefilter_still_fails_loud_by_default() -> None:
+    """NEGATIVE PIN — counting the skips must not turn fail-loud into fail-quiet anywhere else."""
+    from vinci.netcache import HttpError
+    from vinci.themes.exposure import mention_prefilter
+
+    class _Failing:
+        def get_json(self, url: str, **kw: object) -> object:
+            raise HttpError(503, "efts unavailable", url)
+
+    with pytest.raises(HttpError):
+        mention_prefilter(cast(Any, _Failing()), ["0000000001"], ("alpha",),
+                          startdt="2026-01-01", enddt="2026-09-02")
