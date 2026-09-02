@@ -266,8 +266,12 @@ function entryCell(c) {
   // when the verdict was TYPED; on a reissue struck after the entry that is a different day, and
   // printing it beside the entry price labels a real price with a date it was not struck at.
   // Falls back through the superseded predecessor's row before it reaches `v.recorded`.
+  // ...but only when the borrowed row is the row THIS price came from. The date must describe the
+  // price rendered beside it; a live record that types a NEW entry while its predecessor still
+  // holds an older row would otherwise stamp the new price with the old position's open date.
   const sl = c.supersededLedger;
-  const asOf = (led && led.entryPriceAsOf) || (sl && sl.entryPriceAsOf) || v.recorded || "";
+  const slAsOf = sl && num(sl.entryPrice) === e ? sl.entryPriceAsOf : "";
+  const asOf = (led && led.entryPriceAsOf) || slAsOf || v.recorded || "";
   const sub = [r !== null ? `${r.toFixed(2)} : 1` : "", asOf].filter(Boolean).join(" · ");
   return statCell("Entry", money(e), escapeHtml(sub));
 }
@@ -349,10 +353,20 @@ function mastheadFoot(c) {
   // page's own appendix. The predecessor that does own the row is named instead.
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
     const sl = c.supersededLedger;
+    // CLOSE-AWARE, like the verdict chip (external-honesty pass 2026-07-27). The word "BUY" never
+    // renders without the fact that the position was closed, and this line is a place it renders:
+    // SMPL-2026-07-27 borrows a row closed 2026-07-22, and reading it as a live BUY was the same
+    // defect one surface over.
+    const scl = sl && sl.closed;
+    const closeNote = scl
+      ? ` (closed ${escapeHtml(scl.exitPriceAsOf || "")}${
+        typeof scl.exitPrice === "number" ? ` at $${scl.exitPrice.toFixed(2)}` : ""})`
+      : "";
     bits.push(sl
       ? `${escapeHtml(sl.verdict || "verdict")} logged${
         sl.decidedAt ? ` ${escapeHtml(String(sl.decidedAt).slice(0, 10))}` : ""
-      } against the superseded ${escapeHtml(sl.recordKey)} — this record supersedes it`
+      } against the superseded ${escapeHtml(sl.recordKey)}${closeNote
+      } — this record supersedes it`
       : "no ledger verdict logged");
   }
   if (v.avoidPriced) {
