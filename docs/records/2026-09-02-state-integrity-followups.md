@@ -178,5 +178,6 @@ survives is item 3 — cheap, high-frequency, no machinery. The two that died ar
 proposed building infrastructure to guard a twice-seen failure in a two-writer file.
 
 The real queue was untouched throughout: NVO into the 21 Sep CMD, the SMPL supersession, the IRR
-total-return fix that currently inverts the NVO verdict, and the pre-registration completeness
+total-return question — since closed as ALREADY-RULED (Ruling 4, 2026-08-21); there was no verdict
+of record to invert — and the pre-registration completeness
 checklist from the GOOGL audit.

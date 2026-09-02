@@ -31,26 +31,46 @@ dividend **forecast**. Using **declared/trailing** dividends would be a fact rat
 so it is a *different* change that Ruling 4 does not directly cover. Neither change is being made.
 Recorded so the distinction does not have to be re-derived next time.
 
-## The reason to leave it alone while a name is pending
+## The reason to leave it alone — evidenced at the date the ruling was made
 
-**GOOGL is committed at IRR 14.89% against a 15% floor** — a gap of **0.11pp**. Any dividend
-inclusion above roughly a 0.11% yield flips its IRR test from FAIL to PASS. Its overall gate still
-fails on asymmetry (1.692x vs the 2.0x bar), so **no position changes** — but the fund's first
-confirmed position carries a recorded FAIL on precisely the test that was proposed for change.
+**When Ruling 4 was made on 2026-08-21, GOOGL's then-live underwrite was IRR 14.89% against the 15%
+floor — 0.11pp short — and reward/risk 1.692x against the 2.0x bar.** Any dividend inclusion above
+roughly a 0.11% yield would have flipped its IRR test from FAIL to PASS.
 
-That is the argument, and it is the repo's own standard rather than a preference. `IRR_FLOOR`'s
-docstring: *"a per-name floor would be the easiest possible place to manufacture a pass. NOT tuned on
-outcomes."* The tiered-gates record: *"the thresholds are the GOOGL memo's pre-existing hurdles, set
-before any name was pending on them — GOOGL itself FAILED its own 1.75x. Never outcome-tuned."*
+**The operator ruled price-only anyway, declining the change that would have rescued their own name.**
+That is the face-validity evidence, and it is stronger than a present-tense argument: the convention
+was fixed while the fund's own candidate was inside the margin the change would have closed.
 
-**Changing a return convention while a name is pending on it, in the direction that flips it to pass,
-is that shape** — even when the intent is unrelated. Ruling 4 stands, and the case for leaving it
-alone is stronger while NVO is on the watchlist than it was when the ruling was made.
+The standard it satisfies is the repo's own. `IRR_FLOOR`'s docstring: *"a per-name floor would be the
+easiest possible place to manufacture a pass. NOT tuned on outcomes."* The tiered-gates record: *"the
+thresholds are the GOOGL memo's pre-existing hurdles, set before any name was pending on them —
+GOOGL itself FAILED its own 1.75x. Never outcome-tuned."*
+
+**Changing a return convention while a name sits inside the margin it would close is that shape** —
+which is exactly the position the ruling was made from, and declined.
+
+> **Those GOOGL figures are the ARCHIVE, and the first draft of this record stated them in the
+> present tense.** `scenarios/archive/GOOGL-2026-08-17.json` carries 1.692x / 14.89% / gate FAIL /
+> `pending_analyst`. The LIVE record `scenarios/GOOGL.json` was reissued at a verified spot by #567
+> and carries **2.4299x / 17.11% / gate PASS / `confirmed`** at $339.35. **GOOGL passes the IRR test
+> today.** The draft read a superseded archive as current — the same read-at-the-wrong-boundary
+> error this session has now produced seven times. The argument survives and improves, because it
+> belongs at the ruling's date rather than today's.
+>
+> **Where the stale figure came from, and it is still there:** STATE.md §5.0 row 9 cites
+> `scenarios/GOOGL.json` by name while quoting the archive's numbers, and STATE.md:649 repeats them.
+> #567 confirmed GOOGL **without touching STATE.md** — a merged build that changed reality without
+> updating the snapshot. Flagged for the operator; not corrected here, since whether row 9 now closes
+> is their call, not this record's.
 
 ## What is NOT established here
 
 **NVO is WATCHLIST, not a position** — pending the 21 Sep CMD, which is why no scenario record and no
-ledger row exist for it. The figures quoted above (limit DKK 297 preferred / 303–304 target, spot
+DECISION-ledger row exist for it. Precisely: no `scenarios/NVO.json`, no archive entry, zero rows in
+`data/snapshots/decision_ledger.jsonl`. It is **not** absent from the repo, though — it carries a
+`disposition: ratified` BUY row in `data/themes/ledgers/glp1-drug-value-chain.jsonl` (2026-09-01) on
+a driver whose forward clock is running. "Not a position" holds; "no ledger row" holds only under the
+decision-ledger reading, and is stated that way here rather than loosely. The figures quoted above (limit DKK 297 preferred / 303–304 target, spot
 300.85, base 354.1, bear 250.9, horizon 31 Dec 2027, price-only 12.7% / 1.07x, total-return 15.5% /
 1.70x) are **recalled from a prior session and are not repo artifacts**. They must be confirmed
 against the operator's own record before anything is computed from them. Nothing in this record
