@@ -178,6 +178,7 @@ verdict placement.
   one; and a $100m materiality gate selected on CURRENCY of disclosure, admitting a bond issuance
   and an intercompany loan while excluding the two largest contracted-capacity names. Same error,
   four surfaces — which is why the rule is here and not in one more gate.
+- **EVERY COUNT STATES ITS BOUNDARY** — window, filter, population, unit, and the commit or date it was measured at — whenever it enters a RECORD, a COMMIT MESSAGE or STATE.md. Not conversational arithmetic that lands nowhere. `docs/records/TEMPLATE.md` carries the field, because a rule you must remember is weaker than a field you must fill. (On 2026-09-02 one session produced seven instances of one error — a 400-day probe of a 290-day scan; a cache count that was the whole calendar day; a citation sweep that silently excluded STATE.md; a superseded archive read as the live record.)
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never

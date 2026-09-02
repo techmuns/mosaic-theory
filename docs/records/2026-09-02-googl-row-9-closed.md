@@ -82,7 +82,33 @@ confirmed position is the gap worth keeping visible.
 
 ## Citation coverage
 
-`docs/records/2026-09-01-r3-reaches-the-create-path.md:87` cites "STATE §5.0 row 9". That row no
-longer exists; **this record is its closure statement**, and row 20 carries the surviving half.
+Two citations point at row 9. **`docs/records/2026-09-01-r3-reaches-the-create-path.md:87`** — this
+record is its closure statement, and row 20 carries the surviving half. **STATE.md row 4 itself** read
+*"GOOGL is the first record — row 9"*, an IN-SNAPSHOT pointer into a row this change deletes;
+repointed here to this record.
+
+*The first draft of this section audited `docs/records/` only and missed the STATE.md one — the same
+narrowed population that produced the "21 citations repo-wide" error earlier today. Nothing guards
+it: `test_state_identifiers.py` matches `S<n>`/`D<n>` tokens, not §5.0 "row N", so a green suite is
+not evidence here.*
 `docs/records/2026-09-02-irr-total-return-already-ruled.md:60` flagged the staleness that this change
 resolves.
+
+## Also closed here — §5.0 row 19 (every count states its boundary)
+
+Row 19's own schedule read *"with the next CLAUDE.md / template touch"*. **This is one**, so the
+trigger is honoured rather than left to fire unwatched — the failure mode argued about one row above.
+
+Shipped, ~10 minutes as sized:
+
+- **`docs/records/TEMPLATE.md` gains a `BOUNDARY` field** — window, filter, population, unit, and the
+  commit or date measured at, for every count in the record. *A rule you must remember is weaker than
+  a field you must fill*, which is why the field is the fix and the CLAUDE.md line is only its
+  statement of principle.
+- **CLAUDE.md** carries that principle, scoped deliberately to counts entering a record, a commit
+  message or STATE.md — **not** conversational arithmetic that lands nowhere.
+
+**Row 19 deleted.** Its evidence is the session that produced it: seven instances of one error, the
+last of which — *"GOOGL is the only scenario with an unratified multiple"* — was caught by the
+pre-merge read **inside this very PR**, in the row closing a defect about an unchecked claim. Five of
+the nine live records carry an unratified multiple; GOOGL is the only **confirmed** one.
