@@ -273,10 +273,22 @@ def _superseded_ledger(
     if not led:
         return None
     return {"recordKey": prior,
-            **{k: led[j] for k, j in (("verdict", "verdict"), ("decidedAt", "decided_at"),
-                                      ("entryPrice", "entry_price"),
-                                      ("entryPriceAsOf", "entry_price_as_of"))
-               if led.get(j) is not None}}
+            # ROUNDED LIKE THE OWNED ROW (`_rd(..., 2)` below) — same field, same shape, so the
+            # two are comparable: the card pairs the borrowed as-of date with the borrowed price
+            # only when it IS the price on screen, and an unrounded twin would fail that identity.
+            **{k: (_rd(led[j], 2) if j == "entry_price" else led[j])
+               for k, j in (("verdict", "verdict"), ("decidedAt", "decided_at"),
+                            ("entryPrice", "entry_price"),
+                            ("entryPriceAsOf", "entry_price_as_of"))
+               if led.get(j) is not None},
+            # `closed` RIDES WITH THE VERDICT HERE TOO (external-honesty pass 2026-07-27, extended
+            # 2026-09-01). The rule is that no surface may render the word "BUY" without the fact
+            # that the position was closed — and this block is a new surface for exactly that word.
+            # Dropping it made SMPL-2026-07-27's foot read "BUY logged 2026-07-21 against the
+            # superseded SMPL-2026-07-21" for a position closed 2026-07-22, on a card that had
+            # been correct before. Same shape as the owned row's `closed`, so one renderer reads
+            # both; omitted on an open position, so those stay byte-identical.
+            **({"closed": led["_closed"]} if led.get("_closed") else {})}
 
 
 def _record_key(rec: dict[str, Any]) -> str:
@@ -390,6 +402,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
     per = r.get("per_scenario") or {}
     v = rec.get("verdict") or {}
     led = _ledger_for_record(rec, ledger)
+    # ONCE, not twice: the emit below is a conditional spread, and calling the helper in both the
+    # value and the condition re-ran the ownership walk AND re-read the predecessor off disk for
+    # every card.
+    sled = _superseded_ledger(rec, ledger)
     return {
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
         # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
@@ -527,8 +543,7 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # is right about ownership: the answer is to name where the row lives, not to move it.
         # Emitted only when this record owns none itself, so a record with its own row is
         # byte-identical.
-        **({"supersededLedger": _superseded_ledger(rec, ledger)}
-           if _superseded_ledger(rec, ledger) else {}),
+        **({"supersededLedger": sled} if sled else {}),
         **({"supersededBy": rec["superseded_by"]} if rec.get("superseded_by") else {}),
         **({"archiveKey": f'{str(rec["ticker"]).upper()}-{rec["underwrite_date"]}'}
            if rec.get("superseded_by") else {}),

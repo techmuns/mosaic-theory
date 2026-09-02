@@ -7,6 +7,7 @@ the verdict off ``pending_analyst``.
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import pydantic
@@ -1166,6 +1167,7 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
         "version-scoping is untested against any real record and needs a new source of one")
 
 
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
 def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it() -> None:
     """A record reissued AFTER the decision it inherits owns no ledger row, and must SAY WHERE the
     row lives rather than "no ledger verdict logged".
@@ -1205,6 +1207,11 @@ for (const f of readdirSync("frontend/scenarios")) {{
     // inside the record KEY ("…superseded SMPL-2026-07-21"), so a foot naming the WRONG row still
     // contained the right string and the pin passed under mutation.
     footDate: (t.match(/logged ([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}})/) || ["",""])[1],
+    // THE CLOSE, ON THE BORROWED LINE. The word "BUY" never renders without the fact that the
+    // position was closed — the rule the verdict chip has carried since 2026-07-27, which this
+    // second surface for that word dropped: SMPL-2026-07-27 read "BUY logged 2026-07-21" for a
+    // row closed 2026-07-22.
+    footClosed: /against the superseded [^ ]+ \\(closed [0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}}/.test(t),
     hasSupersededLedger: !!c.supersededLedger,
     supersededKey: (c.supersededLedger || {{}}).recordKey || "",
     ownsRow: !!(c.ledger && c.ledger.entryId),
@@ -1243,6 +1250,12 @@ console.log(JSON.stringify(out));
             assert r["footDate"] == truth[:10], (
                 f"{name}: the foot attributes the row decided {r['footDate']} to {key}, but {key} "
                 f"owns the one decided {truth[:10]} — foot={r['foot']!r}")
+            # a BORROWED row that has been CLOSED says so on the same line — the external-honesty
+            # rule, oracled against the predecessor's own card exactly as the date is.
+            was_closed = bool((json.loads(src.read_text()).get("ledger") or {}).get("closed"))
+            assert r["footClosed"] == was_closed, (
+                f"{name}: borrows {key}'s row (closed={was_closed}) but the line "
+                f"{'omits' if was_closed else 'invents'} the close — foot={r['foot']!r}")
         assert r["names"] == r["hasSupersededLedger"], (
             f"{name}: the line and the emitted block must appear together, never one alone")
         if r["ownsRow"]:
@@ -1250,6 +1263,7 @@ console.log(JSON.stringify(out));
                 f"{name}: owns its own row — it must neither deny nor borrow one")
 
 
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
 def test_a_card_owning_a_ledger_row_shows_its_entry_even_with_an_empty_verdict_block() -> None:
     """A record can OWN a logged position while its own `verdict` block is empty.
 
