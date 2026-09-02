@@ -2935,7 +2935,16 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         # figures", which is the WEB's heading and appears nowhere in the md — a pointer to a
         # section that does not exist, in the batch whose subject is false claims about the page.
         out += ["### Thesis — our rationale",
-                f"_Prices quoted below are entry-vintage ({card.underwrite_date}); "
+                # THE DATE THE PRICES WERE STRUCK, not the date the underwrite was written
+                # (2026-09-01). "entry-vintage" is the right WORD — these are the frozen spot's
+                # prices, as `vs entry-vintage spot` says two tables down — but the date beside it
+                # was `underwrite_date`, when the analyst WROTE the underwrite. `spot_as_of` is
+                # when the quoted price closed. They differ on EVERY committed record: a day or
+                # two normally, seventeen on a reissue, so the stamp has always named a date none
+                # of the prices below it belong to. Falls back to `underwrite_date` for the two
+                # records stating no `spot_as_of`, where it is the only date there is.
+                f"_Prices quoted below are entry-vintage "
+                f"({card.spot_as_of or card.underwrite_date}); "
                 f"the live close is in Snapshot, above._", "", thesis, ""]
     # (item 22 / audit N7) what would REOPEN the name. Recorded on every watch record — 16 triggers
     # across 6 names — rendered on the web card and, until now, nowhere in the md. A trigger the

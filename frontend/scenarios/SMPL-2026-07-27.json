@@ -261,6 +261,13 @@
   "ceiling2to1": 13.47
  },
  "supersedes": "SMPL-2026-07-21",
+ "supersededLedger": {
+  "recordKey": "SMPL-2026-07-21",
+  "verdict": "BUY",
+  "decidedAt": "2026-07-21T00:00:00",
+  "entryPrice": 10.92,
+  "entryPriceAsOf": "2026-07-20"
+ },
  "supersededBy": "SMPL-2026-08-05",
  "archiveKey": "SMPL-2026-07-27",
  "verdict": {

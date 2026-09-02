@@ -1164,3 +1164,125 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
         f"none of the {archived} archived record(s) sits below schema {sc.FIELDED_REFS_FROM} — "
         "this pin's value is that the archive holds a record BELOW the gates; without one, "
         "version-scoping is untested against any real record and needs a new source of one")
+
+
+def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it() -> None:
+    """A record reissued AFTER the decision it inherits owns no ledger row, and must SAY WHERE the
+    row lives rather than "no ledger verdict logged".
+
+    `_ledger_for_record` is correct to withhold the row — that rule exists so a reissue cannot
+    headline a verdict it never made (SMPL, 2026-07-27), and this pin does NOT relax it. What was
+    wrong was the card: GOOGL's live record printed "no ledger verdict logged" on a name holding a
+    logged BUY, contradicting its own appendix, and sub-labelled the entry with the record's own
+    date instead of the day the position opened.
+
+    END-TO-END through the REAL renderer on the REAL committed cards, because the defect was
+    invisible to every unit: the build emits, the card reads, and only their combination lied.
+    """
+    import subprocess
+
+    root = Path(__file__).resolve().parents[1]
+    uw = (root / "frontend" / "views" / "shared" / "uw-card.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync, readdirSync }} from "node:fs";
+const {{ uwCard }} = await import("{uw}");
+const out = {{}};
+for (const f of readdirSync("frontend/scenarios")) {{
+  if (!f.endsWith(".json") || f === "index.json") continue;
+  const c = JSON.parse(readFileSync("frontend/scenarios/" + f));
+  const h = uwCard(c, {{ ticker: true, mark: null }});
+  const t = (typeof h === "string" ? h : (h.main||"") + (h.detail||""))
+    .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ");
+  out[f.replace(".json","")] = {{
+    denies: t.includes("no ledger verdict logged"),
+    names: /logged \\d{{4}}-\\d{{2}}-\\d{{2}} against the superseded/.test(t),
+    entry: (t.match(/Entry [^D]*/) || [""])[0].trim(),
+    foot: (t.match(/[A-Z]+ logged [^.]{{0,90}}/) || [""])[0].trim(),
+    // THE DATE THE FOOT ATTRIBUTES, captured on its own. Testing `date in foot` matched the copy
+    // inside the record KEY ("…superseded SMPL-2026-07-21"), so a foot naming the WRONG row still
+    // contained the right string and the pin passed under mutation.
+    footDate: (t.match(/logged ([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}})/) || ["",""])[1],
+    hasSupersededLedger: !!c.supersededLedger,
+    supersededKey: (c.supersededLedger || {{}}).recordKey || "",
+    ownsRow: !!(c.ledger && c.ledger.entryId),
+  }};
+}}
+console.log(JSON.stringify(out));
+"""
+    proc = subprocess.run(["node", "--input-type=module", "-e", driver],
+                          capture_output=True, text=True, check=True, cwd=root)
+    res = json.loads(proc.stdout)
+
+    g = res["GOOGL"]
+    assert g["hasSupersededLedger"] and not g["ownsRow"], (
+        "GOOGL's live record is the exemplar: it owns no row and inherits one. If that changed, "
+        "this pin needs a new exemplar rather than deleting")
+    assert g["names"] and not g["denies"], f"the reissue still denies its own position: {g}"
+    assert "2026-08-14" in g["entry"], (
+        f"the entry must carry the date the position OPENED, not the record's own: {g['entry']}")
+
+    # THE LINE MUST NAME THE PREDECESSOR'S OWN ROW, and this is the assertion that caught the
+    # first cut. It synthesised the predecessor from THIS record and stripped `superseded_by`,
+    # which disabled the sibling clause that assigns rows — so SMPL's middle record attributed the
+    # 2026-08-05 BUY (owned by the LIVE record) to SMPL-2026-07-21, which owns the 2026-07 one. A
+    # real position, named against the wrong record, on a card that had been correct before.
+    # THE ORACLE IS THE PREDECESSOR'S OWN CARD, not the block under test. Comparing the foot
+    # against `supersededLedger` proved nothing: the first cut got BOTH wrong from one bad lookup
+    # and the assertion passed. The predecessor's card carries the row it actually owns, so it can
+    # contradict this one — which is the whole point of an oracle.
+    for name, r in res.items():
+        if r["names"]:
+            key = r["supersededKey"]
+            src = root / "frontend" / "scenarios" / f"{key}.json"
+            assert src.is_file(), f"{name}: names {key}, which is not a committed card"
+            truth = (json.loads(src.read_text()).get("ledger") or {}).get("decidedAt") or ""
+            assert truth, f"{name}: names {key}, which owns no ledger row at all"
+            assert r["footDate"] == truth[:10], (
+                f"{name}: the foot attributes the row decided {r['footDate']} to {key}, but {key} "
+                f"owns the one decided {truth[:10]} — foot={r['foot']!r}")
+        assert r["names"] == r["hasSupersededLedger"], (
+            f"{name}: the line and the emitted block must appear together, never one alone")
+        if r["ownsRow"]:
+            assert not r["denies"] and not r["names"], (
+                f"{name}: owns its own row — it must neither deny nor borrow one")
+
+
+def test_a_card_owning_a_ledger_row_shows_its_entry_even_with_an_empty_verdict_block() -> None:
+    """A record can OWN a logged position while its own `verdict` block is empty.
+
+    GOOGL-2026-08-17 is exactly that: the BUY was decided against it, then it was superseded before
+    a verdict was typed, so the confirm lives on the reissue. Reading only the verdict block printed
+    "— no position" beside that same card's BUY pill — two claims about one name, contradicting each
+    other on one card. The ledger is the verdict OF RECORD, so it answers when the block does not.
+    """
+    import subprocess
+
+    root = Path(__file__).resolve().parents[1]
+    uw = (root / "frontend" / "views" / "shared" / "uw-card.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ uwCard }} = await import("{uw}");
+const c = JSON.parse(readFileSync("frontend/scenarios/GOOGL-2026-08-17.json"));
+const h = uwCard(c, {{ ticker: true, mark: null }});
+const t = (typeof h === "string" ? h : (h.main||"") + (h.detail||""))
+  .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ");
+console.log(JSON.stringify({{
+  entry: (t.match(/Entry [^D]*/) || [""])[0].trim(),
+  verdictEntry: (c.verdict || {{}}).entryPrice ?? null,
+  ledgerEntry: (c.ledger || {{}}).entryPrice ?? null,
+}}));
+"""
+    r = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                  capture_output=True, text=True, check=True,
+                                  cwd=root).stdout)
+    assert r["verdictEntry"] is None and r["ledgerEntry"] is not None, (
+        "the exemplar requires a card whose row carries an entry its verdict block does not; "
+        f"got {r}")
+    assert "no position" not in r["entry"], f"owns a logged entry yet renders none: {r['entry']}"
+    assert f"{r['ledgerEntry']:,.2f}" in r["entry"], r["entry"]

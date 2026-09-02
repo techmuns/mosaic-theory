@@ -16,7 +16,7 @@ _Spot source: Polygon EOD daily close 2026-07-17 (live)_
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-19); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-07-17); the live close is in Snapshot, above._
 
 WATCH at $46. The underwrite fails our 2:1 bar — the base case values the business roughly 22% below the market price, so the recovery is already paid for. A sound franchise at the wrong price, not a broken one. We revisit below about $28–30, or on evidence that normal profitability is genuinely higher than the company's own history suggests.
 

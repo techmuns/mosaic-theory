@@ -17,7 +17,7 @@ _Spot source: Alphabet Class A / GOOGL / Nasdaq completed regular-session close,
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-09-01); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-08-31); the live close is in Snapshot, above._
 
 The underwrite missed its asymmetry line at the 14 Aug spot of $345.90, where the ratio was 1.69x against 1.75x. It clears at the 31 Aug close of $339.35, where the same legs give 2.43x and a 17.1% base return. The improvement comes from the price falling, not from anything changing in the business, and the ratio is sensitive to that: risk is thin, so it leaves the preferred band above $342.77 and stops being eligible above $345.26. I am confirming the position on that basis, with the entry unchanged at $345.90.
 
