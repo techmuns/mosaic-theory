@@ -144,3 +144,40 @@ None of the five errors was caught by the author or by the operator's sign-off. 
 the **independent pre-merge read** re-deriving the numbers. Recorded because it says what that read is
 for: it is not a second opinion on the argument, it is the only step that recomputes. Weight
 accordingly — an approval clears the reasoning, never the arithmetic.
+## Amendments
+
+### CLOSED WON'T-DO — items 1 and 2 (2026-09-02)
+
+**Operator ruling, same day they were opened.** §5.0 rows 17 and 18 are deleted; this section is
+their closing record, naming the items and the outcome as item 1's own ruling requires.
+
+**Item 1 (#443-shape guard) and Item 2 (position-independent citations): WON'T DO.**
+
+> *"Guards against a failure mode that has occurred in one file that two people touch, where the cost
+> of the bug is a caught merge conflict and the cost of the fix is sessions."*
+
+Both firings were caught. The blast radius is one file with two writers. The fix is measured in
+sessions and the bug is measured in one resolved conflict — and the guard would itself have to be
+maintained across the same numbering churn it exists to police.
+
+**Item 3 (every count states its boundary) STAYS OPEN** — ten minutes, lands with the next template
+touch, and it fires constantly rather than twice.
+
+**Headroom (§5.0 approaching its 60-line cap): fix when it blocks, not before.** Closing these two
+rows returns the block to 57, so it is not blocking now either.
+
+### What this record is actually evidence of
+
+The PR that opened these three items **built nothing, took four review cycles, and produced six new
+instances of the boundary error it was documenting**. The pipeline spent several rounds auditing
+itself. Two of the three items it produced were closed won't-do the same day.
+
+That is the finding worth keeping from all of it, and it is not about §5.0 numbering: **an
+investigation that generates its own follow-up queue will keep generating one.** The rule that
+survives is item 3 — cheap, high-frequency, no machinery. The two that died are the ones that
+proposed building infrastructure to guard a twice-seen failure in a two-writer file.
+
+The real queue was untouched throughout: NVO into the 21 Sep CMD, the SMPL supersession, the IRR
+total-return question — since closed as ALREADY-RULED (Ruling 4, 2026-08-21); there was no verdict
+of record to invert — and the pre-registration completeness
+checklist from the GOOGL audit.
