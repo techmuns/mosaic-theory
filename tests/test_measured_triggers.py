@@ -6,6 +6,7 @@ bare False. Most of these pins exist to keep them apart.
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 
 import pytest
@@ -190,8 +191,18 @@ def test_a_record_stating_no_measured_trigger_carries_no_key_for_one() -> None:
         seen += 1
         rec = sc.read_record(f.stem, root=ROOT)
         scoped = sc._version_scoped(rec)
-        assert "measured_triggers" not in (scoped.get("verdict") or {}), (
-            f"{f.name} gained an empty measured_triggers key")
+        # ABSENT-vs-EMPTY, PER RECORD — not "no record has one" (corrected 2026-09-02). The
+        # original read the corpus rather than the rule: it asserted the key appears NOWHERE,
+        # which held only while nothing could write one. `scenario-criterion` is that write path,
+        # so the first criterion the operator arms would have reddened this pin — the same
+        # corpus-shaped assertion that broke three times on the tiered ladder the day a record
+        # first carried it. The rule is unchanged: no stated trigger, no key; a stated one, a
+        # non-empty list. Never an empty list, which is the default-spray this guards.
+        got = (scoped.get("verdict") or {}).get("measured_triggers", "ABSENT")
+        if rec.verdict.measured_triggers:
+            assert isinstance(got, list) and got, f"{f.name} dropped a STATED measured trigger"
+        else:
+            assert got == "ABSENT", f"{f.name} gained an empty measured_triggers key"
     assert seen >= 8, f"walked only {seen} committed records"
 
 
@@ -330,3 +341,148 @@ def test_the_history_read_carries_the_third_state_off_a_committed_row() -> None:
     assert got is not None and len(got) == 1
     assert got[0].satisfied is None, (
         f"a stored null must stay None, not become False: {got[0].satisfied!r}")
+
+
+def test_the_write_path_refuses_a_metric_the_dossier_cannot_resolve() -> None:
+    """`scenario-criterion` REFUSES an unresolvable metric, and that refusal is its whole point.
+
+    A criterion naming a path the dossier does not carry evaluates to UNKNOWN on every run, which
+    on the dashboard is indistinguishable from a working criterion that has not fired — the
+    absent-vs-broken collapse, on the surface built to keep three states apart. SMPL's own "Quest
+    revenue growth" is the live example: real arithmetic, but a BRAND figure read from a transcript
+    and LLM-fenced by the covenant discipline, so no anchored path carries it.
+
+    DRIVEN OFF THE COMMITTED DOSSIER, and the refusal must NAME what the dossier does offer — a
+    refusal the analyst cannot act on sends them to grep the schema.
+    """
+    import subprocess
+    import sys
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Quest revenue growth <= 0% YoY for two consecutive quarters",
+         "--metric", "operating_drivers.quest_net_sales_yoy",
+         "--comparator", "<=", "--threshold", "0", "--unit", "%", "--sustain", "2", "--dry-run"],
+        capture_output=True, text=True, cwd=ROOT,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 1, f"an unresolvable metric must be refused, got {proc.returncode}"
+    assert "REFUSED" in proc.stdout
+    assert "quality.net_debt_to_ebitda" in proc.stdout, (
+        "the refusal must list what SMPL CAN resolve, or the analyst cannot act on it")
+
+
+def test_the_write_path_accepts_a_resolvable_metric_and_reports_what_it_reads(
+        tmp_path: pathlib.Path) -> None:
+    """The accepting side: it resolves through the EVALUATOR's own reader, and shows the state the
+    criterion reads TODAY — a criterion already firing when written is a fact the analyst should
+    meet at the keyboard, not discover on the next monitor day.
+
+    RUN AGAINST A COPY OF THE CORPUS, NOT THE LIVE TREE (corrected 2026-09-02). Pointed at `ROOT`
+    this pin re-issued the very criterion the command's own duplicate guard refuses, so the day
+    the operator armed `quality.net_debt_to_ebitda > 3.0x` on SMPL — the first real use of the
+    command this test covers — it returned 1 and reddened CI. The copy is stripped of any
+    committed criterion, so the pin tests the WRITE PATH rather than the corpus's current
+    contents.
+
+    AND IT PINS NO VALUE. `NOT_FIRED` and the provider token in the source_ref are both properties
+    of a living re-assembled dossier, not of this command: the assertions are that the resolved
+    number matches what the dossier holds, that the state is one of the three the module defines,
+    and that the value arrives with a non-empty source — all phrasing- and value-independent.
+    """
+    import shutil
+    import subprocess
+    import sys
+
+    shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    shutil.copytree(ROOT / "data" / "dossiers" / "SMPL", tmp_path / "data" / "dossiers" / "SMPL")
+    rec_path = tmp_path / "scenarios" / "SMPL.json"
+    rec = json.loads(rec_path.read_text())
+    rec["verdict"].pop("measured_triggers", None)     # a clean slate, whatever the corpus holds
+    rec_path.write_text(json.dumps(rec, indent=2, ensure_ascii=False) + "\n")
+    mech = json.loads(
+        (tmp_path / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())["mechanical"]
+    expected = mech["quality"]["net_debt_to_ebitda"]["value"]
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Leverage past 3.0x net debt / EBITDA",
+         "--metric", "quality.net_debt_to_ebitda",
+         "--comparator", ">", "--threshold", "3.0", "--unit", "x", "--dry-run"],
+        capture_output=True, text=True, cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    reads = next(ln for ln in proc.stdout.splitlines() if ln.strip().startswith("reads"))
+    assert any(st in reads for st in ("FIRED", "NOT_FIRED", "UNKNOWN")), (
+        f"it must report the state the criterion reads today: {reads!r}")
+    assert "nothing written" in proc.stdout
+    resolves = next(ln for ln in proc.stdout.splitlines() if ln.strip().startswith("resolves"))
+    assert f"{float(expected):,.6g}" in resolves, (
+        f"the printed reading must be the dossier's own: {resolves!r}")
+    # the resolved value carries its OWN source, so the analyst can see WHICH series armed it
+    assert "[" in resolves and "no source_ref" not in resolves, (
+        f"the resolved value must show its source_ref: {resolves!r}")
+
+
+def test_the_write_path_refuses_a_criterion_the_evaluator_cannot_read(
+        tmp_path: pathlib.Path) -> None:
+    """A criterion that resolves to a NUMBER can still be unreadable, and arming one is the same
+    absent-vs-broken collapse the unresolvable-path refusal exists to stop.
+
+    The numeric check the command runs before writing is WEAKER than `evaluate`: a unit on the
+    threshold that disagrees with the value's own comes back UNKNOWN from the evaluator while
+    sailing through an `isinstance(value, float)` test. `--dry-run` reports it and stops; a real
+    write must refuse it, because on the card an UNKNOWN criterion is indistinguishable from a
+    working one that has not fired.
+    """
+    import subprocess
+    import sys
+
+    shutil_src = ROOT / "data" / "dossiers" / "SMPL" / "dossier.json"
+    if not shutil_src.is_file():
+        pytest.skip("no committed SMPL dossier")
+    import shutil
+    shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    shutil.copytree(ROOT / "data" / "dossiers" / "SMPL", tmp_path / "data" / "dossiers" / "SMPL")
+    doc_path = tmp_path / "data" / "dossiers" / "SMPL" / "dossier.json"
+    doc = json.loads(doc_path.read_text())
+    # a STATED unit on the node, which is what makes the evaluator's refusal reachable
+    doc["mechanical"]["quality"]["net_debt_to_ebitda"]["unit"] = "x"
+    doc_path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
+    rec_path = tmp_path / "scenarios" / "SMPL.json"
+    rec = json.loads(rec_path.read_text())
+    rec["verdict"].pop("measured_triggers", None)     # a clean slate, whatever the corpus holds
+    rec_path.write_text(json.dumps(rec, indent=2, ensure_ascii=False) + "\n")
+    before = rec_path.read_text()
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Leverage past 3.0 turns", "--metric", "quality.net_debt_to_ebitda",
+         "--comparator", ">", "--threshold", "3.0", "--unit", "$bn"],
+        capture_output=True, text=True, cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "nothing armed" in proc.stdout, proc.stdout
+    assert rec_path.read_text() == before, (
+        "a refused criterion must leave the record untouched")
+
+
+def test_a_malformed_criterion_refuses_rather_than_traces_back(
+        tmp_path: pathlib.Path) -> None:
+    """`--sustain 0` is a typing mistake, and every other bad input to this command answers with
+    one printed REFUSED line. A raw pydantic traceback reads as a crash in the tool rather than a
+    correction to the input."""
+    import shutil
+    import subprocess
+    import sys
+
+    shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    shutil.copytree(ROOT / "data" / "dossiers" / "SMPL", tmp_path / "data" / "dossiers" / "SMPL")
+    proc = subprocess.run(
+        [sys.executable, "-m", "vinci.cli", "scenario-criterion", "SMPL",
+         "--trigger", "Leverage past 3.0 turns", "--metric", "quality.net_debt_to_ebitda",
+         "--comparator", ">", "--threshold", "3.0", "--unit", "x", "--sustain", "0"],
+        capture_output=True, text=True, cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert proc.returncode == 1
+    assert "REFUSED" in proc.stdout, proc.stdout
+    assert "Traceback" not in proc.stderr, proc.stderr
