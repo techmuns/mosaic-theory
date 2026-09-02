@@ -528,7 +528,74 @@ GLP1_DRUG_VALUE_CHAIN = DriverSpec(
 )
 
 # registry — adding a theme = adding its DriverSpec instance here
+# LOAD-BEARING analyst judgment, encoded VERBATIM in tie_taxonomy (do NOT re-draft it — it IS the
+# experiment). Declared 2026-09-02 by splitting the BELOW class out of ai-value-migration, on the
+# operator's finding that the parent thesis is three sub-theses that can move in OPPOSITE
+# directions on one premise ("abundant capability is priced as annihilation above the model and
+# infinite demand below it; both can't be true"), so a single basket spanning them measures the
+# average of opposing bets and nets toward zero however right either half is.
+#
+# NOT a duplicate of ai-datacenter, checked before declaring: of the 64 BELOW-tagged ratified names
+# in ai-value-migration, exactly ONE (RXT) had been scanned under ai-datacenter. That driver is the
+# PHYSICAL build-out (chips → HBM → packaging → cooling → power → optical → colocation); this one is
+# the platform/economic layer that sells the compute. The boundary between them is the operator's
+# interconnection test, below.
+AI_COMPUTE_PLATFORM = DriverSpec(
+    key="ai-compute-platform",
+    # NO mirror_slug yet — declared when the mirror exists, not before (the glp1 precedent).
+    description=(
+        "the AI COMPUTE PLATFORM LAYER — BELOW the model in the AI value stack: hyperscaler "
+        "compute, distribution and data gravity. If frontier-grade capability commoditizes, the "
+        "scarce asset moves to whoever SELLS THE COMPUTE and OWNS THE INTERCONNECTION the models "
+        "run on. In scope: scaled hyperscaler compute; neoclouds selling compute; operators owning "
+        "the land, substation and grid interconnect; colocation earning on cross-connect density; "
+        "and the hyperscaler's OWN data gravity. Out of scope: the silicon/ecosystem layer BESIDE "
+        "the model, leased JV capacity that is landlord economics, and data vendors whose moat is "
+        "format and semantic lock-in rather than gravity."
+    ),
+    tie_taxonomy=(
+        # Every clause below is the operator's own, 2026-09-02, in answer to the four boundary
+        # questions the scan turns on. The `indirect` bucket is the residual and is the ONE part
+        # composed rather than quoted — flagged for correction.
+        "driver-specific = sells the compute or owns the interconnection. A neocloud is "
+        "driver-specific: CRWV is BELOW because it sells the compute. A storage neocloud also "
+        "qualifies — BLZE sells storage under someone else's compute, and its case rests on one "
+        "contracted counterparty, so it qualifies but is not a clean BELOW expression. "
+        "Colocation is in scope, but THE BOUNDARY IS OWNERSHIP OF THE INTERCONNECTION, NOT THE "
+        "BUILDING: EQIX qualifies on cross-connect density; the same test puts DGXX here because "
+        "it owns the land, substation and grid interconnect. Data gravity counts only as the "
+        "HYPERSCALER'S OWN, strictly. "
+        "indirect = real compute/platform activity whose tie to the driver is generic or "
+        "undisclosed — an infrastructure or cloud-adjacent operator with no disclosed AI-compute "
+        "economics, or a reseller of someone else's platform. (COMPOSED, not the operator's — "
+        "correct this clause before it decides anything.) "
+        "not-driver = adjacent-but-distinct. The silicon/ecosystem layer is BESIDE, not BELOW — "
+        "ARM and AVGO stay driver-specific to their own class and must NOT be collapsed into BELOW "
+        "to tidy the taxonomy. Leased JV capacity is landlord economics and belongs to "
+        "ai-datacenter (EQIX's xScale is the case). Data vendors that RENT their infrastructure "
+        "from AWS, Azure and GCP are not-driver — SNOW and MDB rent, the gravity accrues "
+        "underneath them, and their moat is format and semantic lock-in, a different mechanism "
+        "currently being dissolved by open table formats."
+    ),
+    prefilter_terms=(
+        "hyperscaler", "public cloud", "cloud infrastructure", "infrastructure-as-a-service",
+        "iaas", "ai cloud", "gpu cloud", "compute capacity", "accelerated compute",
+        "cross-connect", "interconnection", "colocation", "substation", "grid interconnect",
+        "megawatt", "data gravity", "egress",
+    ),
+    provenance_tags=(
+        ("hyperscaler-compute", ("hyperscaler", "public cloud", "cloud infrastructure",
+                                 "infrastructure-as-a-service", "iaas")),
+        ("neocloud", ("gpu cloud", "ai cloud", "accelerated compute", "compute capacity")),
+        ("interconnection", ("cross-connect", "interconnection", "colocation", "substation",
+                             "grid interconnect", "megawatt")),
+        ("data-gravity", ("data gravity", "egress")),
+    ),
+    multi_tag=True,
+)
+
 DRIVER_SPECS: dict[str, DriverSpec] = {
+    AI_COMPUTE_PLATFORM.key: AI_COMPUTE_PLATFORM,
     AI_DATACENTER.key: AI_DATACENTER,
     AI_VALUE_MIGRATION.key: AI_VALUE_MIGRATION,
     DEFENSE_DEMAND_SHIFT.key: DEFENSE_DEMAND_SHIFT,
