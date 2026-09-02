@@ -58,7 +58,8 @@ verdict placement.
    is immutable, so a reversal adds a file and flips a status instead of rewriting a claim.*
 3. Keep STATE.md accuracy-first: falsified is falsified, unproven is unproven. Never upgrade a hedged
    claim to a confident one to make progress look better.
-4. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
+4. **A SUPERSEDE MUST TOUCH THE SNAPSHOT, or the snapshot must cite the ARCHIVE PATH.** When a record is reissued/archived (`scenarios/archive/<T>-<date>.json`), EVERY STATE.md site quoting its figures is now stale. #567 reissued GOOGL confirmed at 2.4299x/PASS and touched no STATE.md; §5.0 row 9 went on citing `scenarios/GOOGL.json` BY NAME while quoting the archive's 1.692x/FAIL, and on 2026-09-02 that shipped a false claim about a live position into a record. Either update the sites or name the archive path beside the number — a snapshot that names the LIVE file while quoting the ARCHIVE is the shape.
+5. **A REBASE SILENTLY EATS STATE ENTRIES — re-check after every one.** Run
    `git diff origin/main -- STATE.md`: it must be NON-EMPTY for a build that changed reality, and
    STATE.md must appear in the PR's own file list before you merge. Every build appends near the
    same region, so a rebase onto a moved `main` conflicts there almost every time, and resolving

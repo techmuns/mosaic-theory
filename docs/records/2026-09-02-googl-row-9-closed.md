@@ -28,8 +28,27 @@ so it leaves the preferred band above $342.77 and stops being eligible above $34
 the position on that basis, with the entry unchanged at $345.90."*
 
 So the ledger entry is **$345.90** and `verdict.ratio_at_entry` is **1.6919956** — the *failing*
-number. The position is confirmed on the 31 Aug reading while entered at the 14 Aug price. Recorded
-because "GOOGL passes" is true of the live record and not of the entry, and the two get conflated.
+number. The position is confirmed on the 31 Aug reading while entered at the 14 Aug price. ### The gate is read at a different date than the entry, and the two disagree
+
+Stated plainly, because it is the boundary error in its most expensive form — a claim about a **live
+position**, not a commit message:
+
+| read at | ratio | IRR | gate |
+|---|---|---|---|
+| **entry**, $345.90 (14 Aug) | **1.6920x** — below both the 2.0 bar and the 1.75 eligibility line | **14.89%** — below the 15% floor | **FAIL** |
+| **confirmation**, $339.35 (31 Aug) | **2.4299x** | **17.11%** | **PASS** |
+
+**The gate status is a function of the current quote, not a property of the position.** The operator's
+own rationale bounds it: the record leaves the preferred band above **$342.77** and stops being
+eligible above **$345.26** — and the entry sits at **$345.90**, above both. So at the price actually
+paid, this position does not clear its own eligibility line; it clears at a lower quote recorded two
+weeks later.
+
+That compounds with how thin the IRR margin is: 14.89% against a 15% floor is 0.11pp, so the same
+legs cross the return gate on a small move in the quote. Nothing here is wrong — both readings are on
+the record, linked, and the operator confirmed on a stated basis. What is wrong is saying **"GOOGL
+passes"** without a date attached: it is true of the live record and false at the entry, and this
+session conflated exactly that once already.
 
 ## Why STATE.md carried the wrong figures until now
 
