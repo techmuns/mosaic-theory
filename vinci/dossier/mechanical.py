@@ -472,15 +472,15 @@ def _drawdown_cause(
     # both halves are pinned together in
     # tests/test_drawdown_filing_index_unavailable.py::
     # test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so.
-    drawdown_flags = (
-        [
-            f"drawdown-cause: EDGAR filing index unavailable — "
-            f"{len(gaps)} gap-down date(s) carry no attributed cause; "
-            f"re-assemble when the feed recovers"
-        ]
-        if gaps and lookup_failed
-        else []
-    )
+    drawdown_flags: list[str] = []
+    if gaps and lookup_failed:
+        # DISTINCT dates, not events: `gaps` is not de-duplicated upstream, and this count is the
+        # only number the machine tier reports about the outage.
+        n_dates = len({g.isoformat() for g in gaps})
+        fix = "re-assemble when the feed recovers" if cik else "resolve the CIK, then re-assemble"
+        drawdown_flags.append(
+            f"drawdown-cause: {why} — {n_dates} gap-down date(s) carry no attributed cause; {fix}"
+        )
     cause = DrawdownCause(
         shape=shape,
         gap_down_dates=dates_field,

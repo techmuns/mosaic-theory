@@ -80,3 +80,24 @@ untouched; there is exactly one production caller.
 
 *Not done:* no batch-level rollup of the flag. Counting degraded names across a run is the obvious
 next use of a machine-tier flag, and it is not built here.
+
+## Amendments
+
+**2026-09-02 — review of the stack corrected two claims in the body above.**
+
+1. **"promoting it would print the same sentence twice" was wrong.** `mechanical.py:2773` already
+   emits `catalyst: submissions feed unavailable (…) — no print row` for the SAME outage, and
+   `catalyst:` is NOT on `_QA_MARKERS` — so the analyst already receives one feed complaint about
+   it, phrased differently. Hiding this twin means the human gets no COUNT of how many blocks the
+   outage blanked. The hiding still stands (operator ruling), but on the narrower ground that the
+   drawdown block itself names the outage at the point of use — not on non-duplication.
+2. **The precondition for hiding was FALSE on the web.** `frontend/views/shared/dossier.js`'s
+   `whatHappened()` gated the Shape fact on `status === "present"`, so a degraded drawdown rendered
+   nothing on the web Brief and page 1 of the PDF — silent there, with its flag hidden, which is
+   exactly what this record's FALSIFIER forbids. The helper-level pin could not see it. Fixed by
+   removing the gate (the Python twin was always unconditional), and now bound by
+   `tests/test_parity_pins.py::test_the_web_brief_renders_a_degraded_drawdown_shape_like_render_py`.
+
+Also corrected: the flag counts DISTINCT dates (`gaps` is not de-duplicated upstream), and its
+advice matches the cause — a missing CIK says "resolve the CIK", not "re-assemble when the feed
+recovers".

@@ -1204,7 +1204,13 @@ function companyInner(d, m, card = null) {
 // NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
 function whatHappened(m, sleeve) {
   const dc = m.drawdown_cause || {};
-  const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape, fmtShape) : "";
+  // RENDER AN UNKNOWN SHAPE TOO — `fact()` already prints "UNKNOWN — <note>", and the twin
+  // `render.py::_brief_lines` appends this line unconditionally. The old `status === "present"`
+  // gate predated any UNKNOWN shape existing; #570 made the block degrade to UNKNOWN on an
+  // unreadable filing index, and this gate then dropped exactly that state — leaving a degraded
+  // drawdown SILENT on the web Brief and page 1 of the PDF while its qa flag is hidden by
+  // `flags._QA_MARKERS`. That combination is what the hide-list entry's FALSIFIER forbids.
+  const shape = dc.shape ? fact("Shape", dc.shape, fmtShape) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
