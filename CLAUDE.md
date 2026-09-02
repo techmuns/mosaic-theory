@@ -112,7 +112,9 @@ verdict placement.
   at 290 days; at the scan's own window they match nothing, and the absence was correct behaviour.)
   **And TEST AN ANOMALY BEFORE IT EARNS A RECORD ENTRY** — that one reached an escalation, a STATE.md
   row, a record and a commit message before it was re-probed at the right window. Flagging rather
-  than asserting is necessary and was done; it is not sufficient. (Two real
+  than asserting is necessary and was done; it is not sufficient. (The two incidents cited above —
+  the ranker's screen-time cap and the D3 ordering — are evidence for the NEVER-ASSERT-ABSENCE rule,
+  not for this one.) (Two real
   incidents: the ranker's screen-time cap and the D3 bull/bear ordering were both denied while
   existing — generic-vocabulary greps missed the house terms.)
 - **Coin a term → translate it once, at coin-time.** A PR that introduces a house term (the next

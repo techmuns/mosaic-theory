@@ -424,3 +424,15 @@ presence in STATE.md, which is the authoritative ledger. An unwatched trigger ne
 row is deleted, but a **falsified card that leaves a live trigger keeps a row for the trigger**.
 Code is not the ledger. Tracked as STATE.md §5.0 row 15; next natural read is APLD's next lease
 disclosure.
+
+## Amendment — pointer repair (2026-09-02)
+
+The amendment above says *"Tracked as STATE.md §5.0 **row 15**."* That is now wrong: closing the
+prefilter-recall item deleted its row and renumbered this one, so the standing trigger is **§5.0 row
+14**, and **no row 15 exists**. The body is left as filed because merged record bodies are immutable;
+this is the forward repair.
+
+Caught by the pre-merge sacred-file read, which noted the round trip was severed in one direction —
+STATE.md row 14 cites this record as its narrative, while this record pointed at a row that no longer
+exists. No machine guard covers this: `tests/test_state_identifiers.py` lints `S<n>`/`D<n>` tokens,
+not `§5.0 row <n>` citations.

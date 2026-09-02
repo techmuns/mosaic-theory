@@ -144,6 +144,11 @@ reached the 745-name scan, which "vocabulary cannot explain." It can:
 | 400 days — the window my probe used | `hyperscaler` | `hyperscaler` |
 
 The matching filing is older than 290 days. **Their absence from the scan was correct behaviour**,
+and the table is true **of the vocabulary the scan actually ran with** — the 16 prefilter terms at
+`1176a2b`, not the 31 on HEAD after the powered-infrastructure widening. Against HEAD's expanded
+list the same cache shows ETN matching `colocation` at the scan's own window, which is a fact about
+the *widened* list and not about the run. Stating the vocabulary version is the same discipline as
+stating the window,
 and the anomaly was a window mismatch between my probe and the scan it was probing. It was flagged
 rather than asserted, which is the only reason it cost a check instead of a false record.
 
@@ -152,9 +157,19 @@ rather than asserted, which is the only reason it cost a check instead of a fals
 **It clears the parent's 357. It does not clear pre-instrumentation scans generally.** One universe,
 one window, one run.
 
-The premise that it was a warm replay does not hold, and the measurement is better than that: **1,910
-efts cache entries were written during the run**, so most of its requests were **live fetches, not
-cache hits**, and zero of them errored. That is stronger than a cached re-run would have been.
+The premise that it was a warm replay does not hold: **560 of the run's 591 requests were live
+fetches (94.8%)**, and zero errored. Only 31 were cache hits, all on `hyperscaler` — the single term
+shared with `ai-compute-platform`, pre-warmed at the identical window and batching earlier the same
+day. The original scan's 1,084 cached entries were still inside the one-week TTL but did **not**
+serve this run: the cache key is the full URL including the CIK batch, and this run batched a
+different universe (3,036 CIKs), so the URLs did not match.
+
+> **A correction that belongs in this record more than most.** The first version of this paragraph
+> claimed *1,910* entries. That figure counted the **whole calendar day** — 1,287 of them belong to
+> the unrelated `ai-compute-platform` work merged as #572 hours earlier. It is off by 3.4x, and it is
+> a number measured at the **wrong boundary**, which is precisely the failure this record documents
+> in the 400-day probe of a 290-day scan. Caught by the pre-merge read, not by me. The corrected
+> figure makes the point better than the wrong one did.
 
 But the failure mode is **load-dependent**, which is what actually limits this. `skip_errors` catches
 an `HttpError`, and the efts 500s seen earlier in this work appeared **under burst** at higher
