@@ -26,6 +26,7 @@ from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, share_count_change
+from vinci.edgar.going_concern import find_going_concern_statement
 from vinci.graph.filings import html_to_text
 from vinci.netcache import CachedHttp, HttpError
 from vinci.rank.profile import StructuralDisqualifier
@@ -41,7 +42,9 @@ _DILUTION_PRICE_DROP = -0.50  # ≤ −50% from the 52w high confirms the "into 
 # item codes whose BODY we read (going-concern can sit in a results/other-event 8-K; 4.01 needs the
 # auditor-exit text). Pure item-code signals (3.01, 4.02) don't need the body to fire.
 _BODY_ITEMS = frozenset({"2.02", "4.01", "8.01", "4.02"})
-_GOING_CONCERN = re.compile(r"going concern|substantial doubt", re.IGNORECASE)
+# _GOING_CONCERN (a bare `going concern|substantial doubt` match) RETIRED 2026-09-01 — it sank
+# 4 of 10 names wrongly. Detection now lives in `vinci.edgar.going_concern`, shared with the
+# dossier's filing reader so the demote and the page cannot disagree about what a filer said.
 
 # AUDITOR EXIT — a GENUINE auditor departure, not any resignation. The verb must sit next to an
 # auditor token (the bug fired on a co-filed director "resigned" or a routine 4.01 firm switch).
@@ -129,11 +132,20 @@ def classify_structural_disqualifier(
                 signal="non-reliance/restatement (4.02)", source=_src(f),
                 detail="prior financial statements not to be relied upon",
             )
-    for f in filings:  # (2) going-concern / substantial doubt in the filing text
-        if f.body and _GOING_CONCERN.search(f.body):
+    for f in filings:  # (2) going-concern / substantial doubt STATED in the filing text
+        # SHARED DETECTOR, not a local regex. This leg used to match a bare
+        # `going concern|substantial doubt` anywhere in the body — and DEMOTE-ONLY means it SANK
+        # the name for it. Measured 2026-09-01 on the live queue: 10 of 268 names sunk, 4 WRONGLY.
+        # "going concern VALUE" is a valuation term (EOSE); "carry on the acquired business AS A
+        # GOING CONCERN" is the M&A sense and Tilray was the BUYER (TLRY); a safe-harbor risk list
+        # names it as one risk among dozens (BKKT); a forward-looking assumption says the filer
+        # WILL continue (PPTA). None is a statement that this issuer is in doubt. The sibling
+        # auditor-exit leg below already states the rule this one broke — DEMOTE-ONLY → bias to
+        # precision, an ambiguous mention stays unflagged.
+        if f.body and (hit := find_going_concern_statement(f.body)) is not None:
             return StructuralDisqualifier(
                 signal="going-concern / substantial doubt", source=_src(f),
-                detail="filing text raises going-concern / substantial doubt",
+                detail=f"filing text states going-concern doubt: {hit.sentence[:180]}",
             )
     for f in filings:  # (3) delisting / listing-deficiency notice
         if "3.01" in f.items:

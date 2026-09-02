@@ -22,6 +22,7 @@ from vinci.dossier.schemas import (
     MaturityWall,
     OperatingDriver,
 )
+from vinci.edgar.going_concern import find_going_concern_statement
 from vinci.resolver.index import pad_cik
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
@@ -49,17 +50,22 @@ def _sentence(text: str, pos: int, *, cap: int = 400) -> str:
 
 
 # --- (1) going concern ---------------------------------------------------------------------------
-_SUBDOUBT = re.compile(r"raise\s+substantial\s+doubt\s+about\s+[^.]*?going\s+concern", re.I)
+# THE DETECTION LIVES IN `vinci.edgar.going_concern`, shared with the ranker's structural demote.
+# It used to be a local `raise substantial doubt about … going concern` match, which fired on the
+# ASU 2014-15 EVALUATION sentence every filer writes — so TECX's page asserted substantial doubt
+# for a company holding $227.1M and guiding runway into Q1 2029, and the synthesis then wrote a
+# strongly-bearish verdict citing it. One detector, two consumers: the demote and the page must
+# never disagree about whether a filer said this (the twin-drift class).
 _PLANS = re.compile(r"(plans?\s+to\s+alleviate[^.]*\.)", re.I)
 
 
 def _going_concern(text: str, src: str) -> GoingConcern | None:
-    m = _SUBDOUBT.search(text)
-    if m is None:
+    hit = find_going_concern_statement(text)
+    if hit is None:
         return None
-    pm = _PLANS.search(text, m.end(), m.end() + 900)
+    pm = _PLANS.search(text, hit.start, hit.start + 900)
     return GoingConcern(
-        substantial_doubt=True, verbatim=_sentence(text, m.start()),
+        substantial_doubt=True, verbatim=hit.sentence,
         plans=" ".join(pm.group(1).split())[:300] if pm else "", source_ref=src,
     )
 
