@@ -16,7 +16,7 @@ _Spot source: Polygon EOD grouped-daily close 2026-07-17 (live)_
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-20); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-07-17); the live close is in Snapshot, above._
 
 BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business — five straight years of 18–21% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes — a shrinking Gartner deserving ~12x — with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case — base revenue -20% (~$5,144M) at a 13% margin and an 8x exit — reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.] [amended 2026-07-22: position closed 2026-07-21 at 141.06 - the entry price, flat before costs - by operator action immediately after entry. The re-underwrite completed 2026-07-22 set the downside from market evidence and no coherent grid clears the 2:1 bar, confirming the exit; the record moves to watch. The August 5 report is still read; it informs re-engagement, not this exit.]
 

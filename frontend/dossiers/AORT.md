@@ -16,7 +16,7 @@ _Spot source: Polygon AORT close 2026-07-20 (live at underwrite)_
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-22); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-07-20); the live close is in Snapshot, above._
 
 WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base case is worth about $10 a share in today's terms - under half the market price - and even the optimistic case sits a quarter below it. The market is paying today for margins this company has never printed: breaking even needs roughly 15% operating margins at the stock's own historical floor multiple, against a best-ever year of 10%, margins that moved backwards last year, three-and-a-half turns of debt, and a product recall whose cost is not yet quantified. A real franchise, priced past its delivery. We revisit near $10, or on proof the 2024 cost discipline was structural rather than a one-year event.
 
