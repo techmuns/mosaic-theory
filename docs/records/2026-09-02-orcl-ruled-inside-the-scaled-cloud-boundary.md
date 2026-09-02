@@ -413,3 +413,14 @@ filename guard that rejected BTBT's real exhibit, a header row leaking through a
 running-text layout (WULF's) whose entity/jurisdiction boundary cannot be found without guessing.
 **That last one returns nothing rather than a guess**, and the docstring says an empty result is an
 unparsed document and never an empty subsidiary list.
+
+## Amendment — the trigger keeps a ledger row (2026-09-02)
+
+Closing an item deletes its §5.0 row, and applying that rule to this card **stranded its one
+surviving asset**: `REANIMATION_TRIGGER` would have lived in `vinci/themes/rent_series.py` with no
+presence in STATE.md, which is the authoritative ledger. An unwatched trigger never fires.
+
+**General rule, recorded so the next falsified-with-live-trigger card follows it:** a closed item's
+row is deleted, but a **falsified card that leaves a live trigger keeps a row for the trigger**.
+Code is not the ledger. Tracked as STATE.md §5.0 row 15; next natural read is APLD's next lease
+disclosure.

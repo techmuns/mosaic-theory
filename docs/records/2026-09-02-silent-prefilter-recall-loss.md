@@ -60,3 +60,26 @@ more than the current unknown.
 | incident | invariant | shipped |
 | --- | --- | --- |
 | AES/ETN matched a prefilter term yet never reached the scan; denominators unmeasurable | errored batch×phrase queries are counted and printed as a recall-gap banner | Y (forward-only; prior scans not retro-measurable) |
+
+## Amendments
+
+**2026-09-02 — "cannot be retro-measured" is an OVERSTATEMENT; the re-run is scheduled.**
+
+The body above says the scans already run cannot be retro-measured and that re-running is a cost
+decision. That conflated re-running the **prefilter** with **re-grading**.
+
+The expensive half is the LLM pass over 745 names. **The denominator is set by the efts prefilter
+alone** — no LLM, no Polygon: the universe is already committed at
+`data/snapshots/theme_universe_snapshot.jsonl` and `universe_snapshot.jsonl` (3,041 CIKs in band). So
+bounding a past scan's denominator is ~31 batches × the driver's terms of cached efts queries under
+the now-instrumented code, and it can run unattended.
+
+**Decision taken rather than left implicit: re-run the parent's prefilter.** `ai-value-migration` is
+a *declared* driver underpinning 168 ratifies, and its 357 is the denominator every share on that
+sheet is computed against — that is worth a few hundred cached queries. Tracked as STATE.md §5.0
+row 16. The alternative (logging the unknown as accepted on the parent card) was rejected for the
+same reason.
+
+What genuinely does **not** retro-measure is the LLM grading: a name the prefilter missed was never
+assessed, so re-running the prefilter bounds the *population*, not the *grades*. A materially larger
+candidate set would mean the graded 745 needs extending, which is a second, real cost.
