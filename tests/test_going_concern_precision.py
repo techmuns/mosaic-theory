@@ -173,7 +173,8 @@ def test_an_alleviated_or_denied_doubt_is_not_doubt() -> None:
 
 
 def test_text_without_the_phrase_is_not_doubt() -> None:
-    assert states_going_concern_doubt("The Company reported record revenue for the quarter.") is False
+    plain = "The Company reported record revenue for the quarter."
+    assert states_going_concern_doubt(plain) is False
     assert find_going_concern_statement("") is None
 
 
