@@ -60,7 +60,7 @@ data — both firings were caught by a human read, and a read is not guaranteed.
 
 **All figures below are AS OF THIS COMMIT, over a stated population: every git-tracked file,
 including STATE.md.** Every figure moved while this section was being written — `main` advanced under
-it three times — and three successive drafts were each wrong at their own boundary.
+it **twice** (#570, then #571) — and three successive drafts were each wrong at their own boundary.
 
 **What.** **22 citations across 17 files** point at `§5.0 row <n>`. `test_state_identifiers.py` lints
 `S<n>`/`D<n>` tokens and **not** these.
