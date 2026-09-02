@@ -58,40 +58,48 @@ data — both firings were caught by a human read, and a read is not guaranteed.
 
 ## 2 — §5.0 row numbers are load-bearing citations with nothing protecting them (§5.0 row 18)
 
-**What.** **20 citations repo-wide** point at `§5.0 row <n>` — *count taken at this commit; it was
-17 on `main`, and this record's own three citations are the difference.* `test_state_identifiers.py`
-lints `S<n>`/`D<n>` tokens and **not** these. This PR broke such a pointer twice and repaired it twice.
+**All figures in this section are AS OF THIS COMMIT.** Every one of them moved while the section was
+being written — twice, because `main` advanced under it twice. That is itself the argument.
 
-**Seven of the 20 are already broken on `main`** — five records plus **`vinci/cli.py:96`** cite rows
-whose numbers have since drifted. The case is stronger than the first draft of this record stated,
-and the first draft's own "17" was a second instance of the boundary error: a pre-merge count written
-in the present tense into text that is read post-merge.
+**What.** **21 citations across 16 files** point at `§5.0 row <n>`. `test_state_identifiers.py` lints
+`S<n>`/`D<n>` tokens and **not** these.
 
-**Why it is now worse than cosmetic.** The **gap at row 15 is load-bearing on two independent
-claims**: the ORCL record's appended repair asserts "no row 15 exists", and #569's own record cites
-row 16. Anyone tidying the numbering falsifies both — and tidying a numeric gap is exactly the kind
-of thing a future build does without thinking. It is held together by convention alone.
+**Four do not resolve at all:**
+
+| citation | status |
+|---|---|
+| `…orcl-ruled-inside-the-scaled-cloud-boundary.md` → row 15 | deliberate gap, covered by an appended repair |
+| `…submissions-memo.md` → row 16 (×2) | **dangling** — #570 closed row 16 |
+| `…drawdown-filing-index-unavailable.md` → row 16 | **dangling — and this is #570's OWN record** |
+
+**#570 closed row 16 correctly and left three pointers hanging, including its own, on `main`, while
+this row was being drafted.** The defect is neither hypothetical nor historical; it recurred during
+the PR that documents it. A further **six** citations resolve to a row whose *meaning* has drifted
+(rows 6 and 7) — those point at a real row that no longer means what the citing text says.
+
+**Three earlier drafts of this section were each wrong at their own boundary:** "17" was true of
+`main` and false as merged; "20" was true before #570; the count is now 21. The number was correct
+each time it was measured and stale each time it was read. That is the whole case for item 3, and for
+citing identity rather than position.
 
 **Fix: position-independent citation** — a stable per-row id, cited instead of the position. Linting
 `§5.0 row <n>` is a **detector**, not the fix; it would have caught the breakage after the fact
 rather than made it impossible.
 
-**Size: ~1 session** — scheme, migration of the **20** existing citations, lint.
+**Size: ~1 session** — scheme, migration of the **21** existing citations, lint, plus repair of the four dangling pointers.
 
 **Schedule: after item 1.** Item 1 stops data loss; this one stops confusion.
 
 **Interim risk, weighted above "accepted".** A numeric gap is what a future build tidies without
-thinking, and this one is load-bearing on two live claims. Mitigation shipped now rather than
-deferred: a note directly under the §5.0 table says why row 15 is empty and warns against closing it —
-**and against renumbering any row**, because closing the gap breaks **five** citations at this commit,
-not two: the ORCL repair, #569's record, and this record's own rows 17–19. The first draft of the note
-said "two", under-warning by three, all three added by this same PR. The note now states the **class**
-(every cited row number is load-bearing until item 2 lands) with the count marked as of this commit,
-because the number moves with every row added.
-That does not fix the dependency — it turns a **silent** falsification into a **visible** one, which
-is the most a convention can buy until stable ids land. (Placed *under* the table, not inside it: a
-non-table line inside a markdown table terminates its rendering, and the line-count guards are blind
-to that — a defect this session already shipped once.)
+thinking, and there are now **two** gaps (15 and 16) carrying four citations between them.
+Mitigation shipped rather than deferred: a note under the §5.0 table names both gaps, says why each
+exists, and warns against renumbering **any** row — because a renumber would break the three
+citations to rows 17–19 *on top of* the four already broken. It does not fix the dependency; it turns
+a **silent** falsification into a **visible** one, which is the most a convention can buy.
+
+(Placed *under* the table, not inside it: a non-table line inside a markdown table terminates its
+rendering and the line-count guards are blind to that — a defect this session already shipped once.)
+
 
 ## 3 — Every count states its boundary (§5.0 row 19)
 
