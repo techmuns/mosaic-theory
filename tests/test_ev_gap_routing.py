@@ -94,7 +94,13 @@ def test_cnxc_has_exactly_the_two_forward_years_the_adjacent_check_needs() -> No
 #:
 #: FUBO: no EBITDA line in `consensus_levels` (Revenue only) — the street does not publish an EBITDA
 #: consensus for it, which is a property of the coverage, not of our extraction.
-UNROUTED_BY_DESIGN = frozenset({"FUBO"})
+#:
+#: TECX: no `consensus_levels` AT ALL. Pre-revenue clinical-stage, so the street publishes price
+#: targets and loss-per-share estimates but forecasts no revenue and no EBITDA — there is nothing
+#: to route. Same class as FUBO (a property of the coverage) one step further along, and it
+#: self-clears the day TX45 reaches a modelled revenue line. Recorded in full beside the sibling
+#: exemption in `test_consensus_transform.py`. (Operator-accepted 2026-09-01.)
+UNROUTED_BY_DESIGN = frozenset({"FUBO", "TECX"})
 
 
 def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
