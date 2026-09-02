@@ -36,8 +36,15 @@ edited*: an in-diff marker is exactly what the #443 shape defeats, since the sam
 row can supply its own excuse.
 
 It falls out cleanly on the two live cases: **#569's row, deleted with no such record → fails**;
-**row 13 and the prefilter row, deleted by PRs that wrote their closing records → pass**.
-Delete-on-close keeps working and the silent path closes.
+while the **`ai-compute-platform` card row (closed by #572)** and the **prefilter-recall row (closed
+by #576)**, both deleted by PRs that wrote their closing records, **→ pass**. Delete-on-close keeps
+working and the silent path closes.
+
+> **Named by identity, not by number — and the first draft of this record got it wrong.** It said
+> "row 13". The card row was row 13 *only on #572's branch*; on `main` row 13 is a different,
+> still-open item (the UNIT-unchecked accepted risk). A number stated at the feature-branch boundary
+> and read in the post-merge file — the exact defect item 3 exists to stop, committed into the record
+> arguing for it.
 
 **Coupling, caught at ruling time:** the rule names rows by **identity**, so it presumes item 2.
 **Until stable ids exist the guard must match on row CONTENT, never on number** — otherwise it
@@ -51,8 +58,14 @@ data — both firings were caught by a human read, and a read is not guaranteed.
 
 ## 2 — §5.0 row numbers are load-bearing citations with nothing protecting them (§5.0 row 18)
 
-**What.** 17 citations repo-wide point at `§5.0 row <n>`. `test_state_identifiers.py` lints
-`S<n>`/`D<n>` tokens and **not** these. This PR broke such a pointer twice and repaired it twice.
+**What.** **20 citations repo-wide** point at `§5.0 row <n>` — *count taken at this commit; it was
+17 on `main`, and this record's own three citations are the difference.* `test_state_identifiers.py`
+lints `S<n>`/`D<n>` tokens and **not** these. This PR broke such a pointer twice and repaired it twice.
+
+**Seven of the 20 are already broken on `main`** — five records plus **`vinci/cli.py:96`** cite rows
+whose numbers have since drifted. The case is stronger than the first draft of this record stated,
+and the first draft's own "17" was a second instance of the boundary error: a pre-merge count written
+in the present tense into text that is read post-merge.
 
 **Why it is now worse than cosmetic.** The **gap at row 15 is load-bearing on two independent
 claims**: the ORCL record's appended repair asserts "no row 15 exists", and #569's own record cites
@@ -63,13 +76,18 @@ of thing a future build does without thinking. It is held together by convention
 `§5.0 row <n>` is a **detector**, not the fix; it would have caught the breakage after the fact
 rather than made it impossible.
 
-**Size: ~1 session** — scheme, migration of the 17 existing citations, lint.
+**Size: ~1 session** — scheme, migration of the **20** existing citations, lint.
 
 **Schedule: after item 1.** Item 1 stops data loss; this one stops confusion.
 
 **Interim risk, weighted above "accepted".** A numeric gap is what a future build tidies without
 thinking, and this one is load-bearing on two live claims. Mitigation shipped now rather than
-deferred: a note directly under the §5.0 table says why row 15 is empty and warns against closing it.
+deferred: a note directly under the §5.0 table says why row 15 is empty and warns against closing it —
+**and against renumbering any row**, because closing the gap breaks **five** citations at this commit,
+not two: the ORCL repair, #569's record, and this record's own rows 17–19. The first draft of the note
+said "two", under-warning by three, all three added by this same PR. The note now states the **class**
+(every cited row number is load-bearing until item 2 lands) with the count marked as of this commit,
+because the number moves with every row added.
 That does not fix the dependency — it turns a **silent** falsification into a **visible** one, which
 is the most a convention can buy until stable ids land. (Placed *under* the table, not inside it: a
 non-table line inside a markdown table terminates its rendering, and the line-count guards are blind
