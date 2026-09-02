@@ -14,10 +14,13 @@ the pure :func:`compute_fundamental_snapshot` so it is unit-testable without the
 
 from __future__ import annotations
 
+import threading
 import urllib.parse
+from collections import OrderedDict
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import date
-from typing import Any, cast
+from typing import Any, NoReturn, cast
 
 from pydantic import BaseModel
 
@@ -284,16 +287,46 @@ SHARES_TAG_WAVG = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"   # PE
 _SUBMISSIONS_MEMO_MAX = 2
 
 
+@dataclass(frozen=True)
+class _RememberedFailure:
+    """A remembered ``HttpError``, stored as its TYPE and ARGS — never the instance.
+
+    Storing the exception object keeps its ``__traceback__`` alive, and with it every frame the
+    error propagated through and all of their locals — including
+    ``CachedHttp._fetch_with_retries``'s ``resp`` (a full SEC error page) and the chained transport
+    exception's own frames. Measured at ~12 MB pinned by ONE remembered failure, against the
+    ~0.5 MB per document that ``_SUBMISSIONS_MEMO_MAX`` is sized for, and ``assemble_cohort`` runs
+    8 clients at once. Type + args is everything the re-raise needs.
+    """
+
+    kind: type[HttpError]
+    args: tuple[Any, ...]
+
+    def raise_again(self) -> NoReturn:
+        raise self.kind(*self.args)
+
+
 class EdgarClient:
     def __init__(self, http: CachedHttp, efts_http: CachedHttp | None = None) -> None:
         self._http = http
         # efts is rate-sensitive → its own slower client; falls back to the data client if unset.
         self._efts = efts_http or http
         # Per-INSTANCE memo of the parsed submissions document (see `_submissions`). Deliberately a
-        # plain dict rather than `functools.lru_cache` on the method: an lru_cache keys on `self`
+        # plain mapping rather than `functools.lru_cache` on the method: an lru_cache keys on `self`
         # and would keep every client — and every document it ever touched — alive for the process
         # lifetime. This dies with the client, which is what "for the life of one run" means here.
-        self._submissions_memo: dict[str, dict[str, Any] | HttpError] = {}
+        #
+        # ORDERED + LOCKED. `OrderedDict` so a memo HIT can `move_to_end`, making eviction true LRU:
+        # a plain dict evicts by FIRST INSERTION, which would drop the CIK currently being assembled
+        # (the one with ~13 reads still ahead of it) the moment a second and third CIK were read.
+        # The lock is not optional: this is the first mutable state on `EdgarClient`, and
+        # `vinci/themes/exposure.py::scan_driver_exposure` drives ONE client from a
+        # `ThreadPoolExecutor` — an unguarded `pop(next(iter(...)))` there raced into
+        # `RuntimeError: dictionary changed size during iteration` and `KeyError` under test.
+        self._submissions_memo: OrderedDict[str, dict[str, Any] | _RememberedFailure] = (
+            OrderedDict()
+        )
+        self._submissions_lock = threading.Lock()
 
     @classmethod
     def from_config(cls, config: Config | None = None) -> EdgarClient:
@@ -420,11 +453,30 @@ class EdgarClient:
         return parse_fts_response(data)
 
     # --- registrant names (reverse-merger / rename vintage) ------------------------------------
-    def _remember_submissions(self, cik10: str, outcome: dict[str, Any] | HttpError) -> None:
-        """Record one CIK's outcome, evicting oldest-first past ``_SUBMISSIONS_MEMO_MAX``."""
-        self._submissions_memo[cik10] = outcome
-        while len(self._submissions_memo) > _SUBMISSIONS_MEMO_MAX:
-            self._submissions_memo.pop(next(iter(self._submissions_memo)))
+    def _remember_submissions(
+        self, cik10: str, outcome: dict[str, Any] | _RememberedFailure
+    ) -> None:
+        """Record one CIK's outcome, evicting LEAST-RECENTLY-USED past ``_SUBMISSIONS_MEMO_MAX``.
+
+        Locked, and `popitem(last=False)` rather than `pop(next(iter(...)))` — the latter reads the
+        mapping while mutating it, which races on the one client shared across threads."""
+        with self._submissions_lock:
+            self._submissions_memo[cik10] = outcome
+            self._submissions_memo.move_to_end(cik10)
+            while len(self._submissions_memo) > _SUBMISSIONS_MEMO_MAX:
+                self._submissions_memo.popitem(last=False)
+
+    def _recall_submissions(self, cik10: str) -> dict[str, Any] | _RememberedFailure | None:
+        """The remembered outcome for ``cik10``, or None on a miss — refreshing LRU position.
+
+        A separate reader so the whole hit path is inside one lock acquisition; the fetch on a miss
+        deliberately runs OUTSIDE the lock (holding it across the network would serialise every
+        worker, and a duplicate fetch is absorbed by the disk cache)."""
+        with self._submissions_lock:
+            remembered = self._submissions_memo.get(cik10)
+            if remembered is not None:
+                self._submissions_memo.move_to_end(cik10)
+            return remembered
 
     def _submissions(self, cik: int | str) -> dict[str, Any]:
         """The submissions document for a CIK. ONE fetch shape for every consumer in this class —
@@ -450,30 +502,36 @@ class EdgarClient:
         `parse_former_names` and `recent_filings` only read — and that property is pinned by
         `test_submissions_memo.py::test_the_memoized_document_is_not_mutated_by_its_consumers`.
 
-        SCOPE, stated because it is easy to overclaim: on a DEGRADED feed this helps only names
-        whose assembly reaches a SECOND read. `vinci/dossier/mechanical.py:285`
-        (`_drawdown_filings`) is the one submissions call site of 13 with no handler and the FIRST
-        to run, so a name carrying
-        `earnings_gap_down` events (9 of 17 committed dossiers) still aborts on its first storm and
-        the memo is never read twice. Accepted knowingly — STATE.md §5.0 row 16.
+        SCOPE. This helps any assembly that reaches a SECOND read, which is now all of them.
+        Until 2026-09-02 it was not: `_drawdown_filings` was the one submissions call site of 13
+        with no handler and the FIRST to run, so a name carrying `earnings_gap_down` events (9 of 17
+        committed dossiers) aborted the whole assembly on its first storm and never reached the
+        memo. `_drawdown_cause` now catches `HttpError` and degrades to UNKNOWN, so the measured
+        187.4 s -> 15.5 s applies to every name rather than to the no-gap subset.
         """
         cik10 = pad_cik(cik)
-        remembered = self._submissions_memo.get(cik10)
+        remembered = self._recall_submissions(cik10)
         if remembered is not None:
-            if isinstance(remembered, HttpError):
-                # A FRESH equivalent, chained to the original: same type and same args, so every
-                # existing `except HttpError` / `except (HttpError, KeyError)` handler behaves
-                # identically, without re-raising one instance ~13 times and growing its traceback.
-                raise HttpError(*remembered.args) from remembered
+            if isinstance(remembered, _RememberedFailure):
+                # A FRESH equivalent of the SAME type with the SAME args, so every existing
+                # `except HttpError` / `except (HttpError, KeyError)` handler behaves identically.
+                remembered.raise_again()
             return remembered
         try:
             raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
         except HttpError as exc:
-            self._remember_submissions(cik10, exc)
+            self._remember_submissions(cik10, _RememberedFailure(type(exc), exc.args))
             raise
-        doc = cast(dict[str, Any], raw)
-        self._remember_submissions(cik10, doc)
-        return doc
+        if not isinstance(raw, dict):
+            # FAIL LOUD rather than memoize a non-object. A JSON `null` body stored as `None` would
+            # be indistinguishable from a memo MISS on every later read (re-fetching 13 times
+            # silently), and would then `AttributeError` inside `recent_filings`' `data.get(...)`.
+            # Raising here makes it an HttpError, which the consumers already degrade on.
+            raise HttpError(
+                f"submissions payload for CIK{cik10} is {type(raw).__name__}, not a JSON object"
+            )
+        self._remember_submissions(cik10, raw)
+        return raw
 
     def registrant_history(self, cik: int | str) -> RegistrantHistory:
         """This CIK's current registrant name plus every prior span.

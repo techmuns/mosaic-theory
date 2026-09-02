@@ -329,47 +329,6 @@ def test_the_memo_does_not_outlive_the_client() -> None:
     assert first._submissions_memo is not second._submissions_memo
 
 
-def test_the_first_submissions_call_site_is_still_unprotected_which_bounds_this_memo() -> None:
-    """THE ACCEPTED RISK, PINNED (STATE.md §5.0 row 16).
-
-    `_drawdown_filings` holds the ONE submissions call site of 13 with no exception handler, and
-    `_drawdown_cause` runs it FIRST in `assemble_mechanical`. So on a degraded feed a name carrying
-    `earnings_gap_down` events raises out of the whole assembly before any second read happens, and
-    the memo above cannot help it — which is why this change claims a payoff only for names with no
-    gap-down events (measured 187 s → 15.5 s) and none for the rest (9 of 17 committed dossiers).
-
-    This pin exists so the SCOPE CLAIM cannot rot silently. Its FALSIFIER is someone wrapping that
-    call site: this test then reddens, and whoever does it should widen the memo's stated payoff and
-    strike row 12. It asserts today's shape deliberately — it is not an endorsement of it.
-    """
-    import ast
-    import pathlib
-
-    src = pathlib.Path("vinci/dossier/mechanical.py").read_text()
-    tree = ast.parse(src)
-    fn = next(
-        n for n in ast.walk(tree)
-        if isinstance(n, ast.FunctionDef) and n.name == "_drawdown_filings"
-    )
-    calls = [
-        n for n in ast.walk(fn)
-        if isinstance(n, ast.Call) and getattr(n.func, "attr", None) == "recent_filings"
-    ]
-    assert len(calls) == 1, "the drawdown path should read submissions exactly once"
-
-    guarded = [
-        t for t in ast.walk(fn)
-        if isinstance(t, ast.Try)
-        and t.body[0].lineno
-        <= calls[0].lineno
-        <= max(getattr(x, "end_lineno", x.lineno) for x in t.body)
-    ]
-    assert not guarded, (
-        "mechanical.py's drawdown `recent_filings` is now inside a try — the accepted risk in "
-        "STATE.md §5.0 row 16 is resolved. Widen the memo's stated payoff and strike the row."
-    )
-
-
 def test_each_client_memoizes_into_its_own_dict() -> None:
     """`assemble_cohort` runs 8 worker threads and each `assemble_one` builds its own `EdgarClient`,
     so the memo must be per-instance state, never shared or class-level. A class attribute would
@@ -381,3 +340,79 @@ def test_each_client_memoizes_into_its_own_dict() -> None:
 
     assert a._submissions_memo != {}
     assert b._submissions_memo == {}
+
+
+def test_a_non_object_payload_fails_loud_instead_of_memoizing_none() -> None:
+    """A JSON `null` (or list) body must NOT be stored. `None` would be indistinguishable from a
+    memo MISS on every later read — re-fetching 13 times silently while still occupying a bounded
+    slot — and would then AttributeError inside `recent_filings`' `data.get(...)`. Fail loud as an
+    HttpError, which every consumer already degrades on."""
+    for payload in (None, [], "not a document"):
+        http = _CountingHttp({})
+        http.get_json = (  # type: ignore[method-assign]
+            lambda *a, _p=payload, **k: _p  # bind now, not at call time (ruff B023)
+        )
+        edgar = EdgarClient(http=http)  # type: ignore[arg-type]
+
+        with pytest.raises(HttpError) as exc:
+            edgar._submissions(_CIK_A)
+        assert "not a JSON object" in str(exc.value)
+        assert None not in edgar._submissions_memo.values()
+
+
+def test_the_hot_cik_survives_eviction_because_a_hit_refreshes_it() -> None:
+    """TRUE LRU, not insertion-FIFO. A plain dict evicts by FIRST INSERTION and does not reorder on
+    re-assignment, so the CIK currently being assembled — the one with ~13 reads still ahead of it —
+    was the first to be dropped once two other CIKs were read. `_recall_submissions` now
+    `move_to_end`s on a hit. The earlier pin could not see this: its fixture inserted the hot CIK
+    last, so it passed identically under FIFO and LRU."""
+    docs = {
+        f"{n:010d}": _submissions_doc(cik10=f"{n:010d}", name=f"Issuer {n}", former=f"Old {n}")
+        for n in (1, 2, 3)
+    }
+    http = _CountingHttp(docs)
+    edgar = EdgarClient(http=http)  # type: ignore[arg-type]
+
+    edgar._submissions("0000000001")          # the hot one, inserted FIRST
+    edgar._submissions("0000000002")
+    edgar._submissions("0000000001")          # ...but read again — under LRU this refreshes it
+    edgar._submissions("0000000003")          # evicts the LEAST-recently-used, which is #2
+
+    assert "0000000001" in edgar._submissions_memo, "the hot CIK was evicted — eviction is FIFO"
+    assert "0000000002" not in edgar._submissions_memo
+    assert len(http.urls) == 3, "the hot CIK was re-fetched despite being in the memo"
+
+
+def test_the_memo_survives_concurrent_use_of_one_client() -> None:
+    """`_submissions_memo` is the first mutable state on `EdgarClient`, and ONE client is shared
+    across a `ThreadPoolExecutor` by `vinci/themes/exposure.py::scan_driver_exposure`
+    (built at `vinci/cli.py`). The original `pop(next(iter(...)))` read the mapping while mutating
+    it: reproduced as `RuntimeError: dictionary changed size during iteration` and `KeyError` under
+    8 threads. Those land in the scan's per-name `except Exception` and drop a name from the
+    exposure population, blaming EDGAR for a local race."""
+    import threading
+
+    docs = {
+        f"{n:010d}": _submissions_doc(cik10=f"{n:010d}", name=f"Issuer {n}", former=f"Old {n}")
+        for n in range(1, 25)
+    }
+    http = _CountingHttp(docs)
+    edgar = EdgarClient(http=http)  # type: ignore[arg-type]
+    errors: list[BaseException] = []
+
+    def hammer() -> None:
+        try:
+            for _ in range(300):
+                for cik10 in docs:
+                    edgar._submissions(cik10)
+        except BaseException as exc:  # noqa: BLE001 — the point is that NOTHING escapes
+            errors.append(exc)
+
+    threads = [threading.Thread(target=hammer) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    assert not errors, f"the memo raced under 8 threads: {errors[:3]}"
+    assert len(edgar._submissions_memo) <= _SUBMISSIONS_MEMO_MAX
