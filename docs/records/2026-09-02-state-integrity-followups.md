@@ -29,10 +29,22 @@ the re-check is a human step. It is lintable, just not from one file: it needs *
 **Guard.** Diff §5.0 rows against the **merge base** and fail on any row present in either parent and
 absent from the result **without a close marker**.
 
-**Size: ~half a day, gated on one design ruling** — what marks a legitimate close. A commit-message
-token, a struck-through row kept in place, or an explicit deleted-rows manifest. The guard is
-straightforward once that is chosen; choosing it is the actual decision. It needs the merge base, so
-it is a CI workflow step or a test that shells to git.
+**RULED 2026-09-02 (operator).** A close is legitimate when **a record exists naming the row's
+identity and its outcome** — closed / falsified / superseded — and **the guard checks for that
+record**, not for a marker in the diff. *Evidence of closure must live outside the file being
+edited*: an in-diff marker is exactly what the #443 shape defeats, since the same edit that drops a
+row can supply its own excuse.
+
+It falls out cleanly on the two live cases: **#569's row, deleted with no such record → fails**;
+**row 13 and the prefilter row, deleted by PRs that wrote their closing records → pass**.
+Delete-on-close keeps working and the silent path closes.
+
+**Coupling, caught at ruling time:** the rule names rows by **identity**, so it presumes item 2.
+**Until stable ids exist the guard must match on row CONTENT, never on number** — otherwise it
+inherits the mutable-numbering problem it exists to prevent, and a renumber reads as a delete.
+
+**Size: ~half a day, no longer gated.** It needs the merge base, so it is a CI workflow step or a
+test that shells to git.
 
 **Schedule: before the next STATE-touching PR.** This is the only one of the three actively losing
 data — both firings were caught by a human read, and a read is not guaranteed.
@@ -53,8 +65,15 @@ rather than made it impossible.
 
 **Size: ~1 session** — scheme, migration of the 17 existing citations, lint.
 
-**Schedule: after item 1.** Item 1 stops data loss; this one stops confusion. **Interim risk
-accepted:** the gap holds by convention until this lands.
+**Schedule: after item 1.** Item 1 stops data loss; this one stops confusion.
+
+**Interim risk, weighted above "accepted".** A numeric gap is what a future build tidies without
+thinking, and this one is load-bearing on two live claims. Mitigation shipped now rather than
+deferred: a note directly under the §5.0 table says why row 15 is empty and warns against closing it.
+That does not fix the dependency — it turns a **silent** falsification into a **visible** one, which
+is the most a convention can buy until stable ids land. (Placed *under* the table, not inside it: a
+non-table line inside a markdown table terminates its rendering, and the line-count guards are blind
+to that — a defect this session already shipped once.)
 
 ## 3 — Every count states its boundary (§5.0 row 19)
 
@@ -71,11 +90,18 @@ stated.
 All four survived reasoning review, **including the operator's** — they are invisible without
 re-running the count. The third landed inside the record documenting the first two.
 
-**Fix: one line in CLAUDE.md** — any count entering a record, a commit message or STATE.md states its
-boundary: window, filter, population, unit.
+**Fix: put it where counts get WRITTEN, not only in CLAUDE.md.** A **boundary field** in
+`docs/records/TEMPLATE.md` (and the PR/commit shape) stating window, filter, population and unit.
+**A rule you must remember is weaker than a field you must fill.** The CLAUDE.md line stays as the
+statement of principle; the field is what enforces it at the moment the number is written.
 
-**Size: ~10 minutes.** **Schedule: with the next CLAUDE.md touch.** It is a discipline rather than
-machinery, so it gains nothing from being rushed and loses nothing by waiting for a natural edit.
+**Size: ~10 minutes.** **Schedule: with the next CLAUDE.md / template touch.** It is discipline plus
+one template field, so it gains nothing from being rushed and loses nothing by waiting for a natural
+edit.
+
+**Scope it deliberately:** counts entering a **record, a commit message or STATE.md**. Not
+conversational arithmetic that never lands anywhere — re-deriving that slows the channel for no
+gain.
 
 ## Note on where these came from
 
