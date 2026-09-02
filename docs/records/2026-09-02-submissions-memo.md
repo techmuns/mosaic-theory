@@ -120,3 +120,23 @@ untouched, as is the `EdgarClient` built at `assemble.py:366` (outside `assemble
 - `recent_filings`' filler allocation (`vinci/edgar/client.py:440, 441, 449`) builds `[""] * n` /
   `[None] * n` inside the per-filing loop. It is O(kept × n), not O(n²) — both `continue` guards
   precede it — so size any claim off the kept count, not the ~1,000-filing cap.
+
+## Amendments
+
+**2026-09-02 — the accepted risk above is RESOLVED, same day, by #570.** `mechanical.py`'s drawdown
+path now catches `HttpError` and degrades to UNKNOWN instead of raising out of `assemble_mechanical`,
+so a degraded feed no longer drops the name. Consequences for the claims in this record:
+
+- **The scope limit no longer holds.** The measured 187.4 s → 15.5 s applies to EVERY name, not only
+  the no-gap subset. The "no payoff" row of the regime table above is now historical.
+- **STATE.md §5.0 row 12 is struck**, the item being closed.
+- **The pin named above did NOT fire when the fix landed, and has been replaced.**
+  `test_the_first_submissions_call_site_is_still_unprotected_which_bounds_this_memo` asserted the
+  absence of a `try` INSIDE `_drawdown_filings`, but the correct fix wraps the call one frame up in
+  `_drawdown_cause` — so the pin stayed green and would have let row 12 rot silently. It pinned a
+  SHAPE (where the `try` sits) rather than the PROPERTY (whether an `HttpError` can escape). Its
+  replacement, `test_the_degraded_feed_payoff_is_no_longer_bounded_by_an_unprotected_call_site`,
+  asserts the property and was mutation-tested against a revert of the fix.
+
+The body above is left as written, per the amendment contract: the wrong version staying visible is
+the point. Record for the fix: `docs/records/2026-09-02-drawdown-filing-index-unavailable.md`.

@@ -398,9 +398,26 @@ def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> S
 def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) -> DrawdownCause:
     gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
     cik = record.identity.cik
-    filings = _drawdown_filings(edgar, http, cik, gaps) if cik else []
+    # AN UNREADABLE FILING INDEX IS NOT THE SAME FINDING AS "THE COMPANY FILED NOTHING".
+    # This was the one submissions call site of 13 with no handler, and the FIRST to run, so a
+    # degraded feed raised out of `assemble_mechanical` and `assemble_cohort`'s per-name `task`
+    # dropped the whole name into its `errors` list — the run survived and the name silently did
+    # not appear. Returning `[]` here instead would be WORSE than that crash: every gap date would
+    # then render "no company filing" below, which is a claim about the WORLD manufactured out of a
+    # tooling failure. So the failure is carried as its own state and surfaces as UNKNOWN.
+    lookup_failed = False
+    try:
+        filings = _drawdown_filings(edgar, http, cik, gaps) if cik else []
+    except HttpError:
+        filings, lookup_failed = [], True
     by_gap = {f.gap_date: f for f in filings}
-    if gaps:
+    shape: Sourced[str]
+    if gaps and lookup_failed:
+        shape = Sourced.unknown(
+            note="EDGAR filing index unavailable — the gap-down dates are known but their causes "
+            "could not be read; read the filings at those dates by hand"
+        )
+    elif gaps:
         parts = [
             f"{gd.isoformat()} "
             f"{_gap_label(by_gap[gd.isoformat()].items, by_gap[gd.isoformat()].events)}"
@@ -433,7 +450,13 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         revised_guidance=(
             _revised_guidance(http, cik, filings)
             if cik and filings
-            else Sourced.unknown(note="no catalyst 8-K to follow for a revised-guidance exhibit")
+            # the same distinction as `shape`: "we could not look" must not read as "there was
+            # nothing to find", or a degraded run reports an absence it never established.
+            else Sourced.unknown(
+                note="EDGAR filing index unavailable — no catalyst 8-K could be identified"
+                if lookup_failed
+                else "no catalyst 8-K to follow for a revised-guidance exhibit"
+            )
         ),
         # the detector's own params, copied from the screen constants (ONE source of truth) so the
         # renderers can mark coverage honestly (window boundary + pre-window drops).
