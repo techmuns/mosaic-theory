@@ -237,6 +237,60 @@ def _ledger_for_record(
     return led
 
 
+def _superseded_ledger(
+    rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None,
+) -> dict[str, Any] | None:
+    """The ledger row this record's SUPERSEDED predecessor owns — or None.
+
+    Only for a record that owns NO row of its own: a live reissue struck after the decision it
+    inherits. What the reader needs is not the row (it belongs to the predecessor, and
+    `_ledger_for_record` is right to say so) but the FACT that one exists and where — otherwise the
+    card reads "no ledger verdict logged" on a name holding an open position.
+
+    Walks ONE link back, deliberately. A longer chain would need the whole ancestry, and the
+    honest answer for a reader is the nearest record that carries the row; the card links the
+    chain either way, so a second hop is a click, not a hidden fact.
+    """
+    if _ledger_for_record(rec, ledger) is not None:
+        return None                      # it owns its own row — nothing to borrow
+    prior = str(rec.get("supersedes") or "")
+    if not prior:
+        return None
+    # THE PREDECESSOR AS COMMITTED, never a record synthesised from this one. The first cut passed
+    # `{**rec, underwrite_date: <prior>, superseded_by: None}` — and stripping `superseded_by`
+    # disabled the very sibling clause that assigns rows correctly. On SMPL's middle record it
+    # attributed the 2026-08-05 BUY (owned by the LIVE record) to SMPL-2026-07-21, which owns the
+    # 2026-07 one: a real position, named against the wrong record, on a card that had been
+    # correct before. Read the predecessor off disk and let the ownership rule judge IT.
+    src = ROOT / "scenarios" / "archive" / f"{prior}.json"
+    if not src.is_file():
+        return None
+    try:
+        prior_rec = json.loads(src.read_text())
+    except (OSError, ValueError):
+        return None
+    led = _ledger_for_record(prior_rec, ledger)
+    if not led:
+        return None
+    return {"recordKey": prior,
+            # ROUNDED LIKE THE OWNED ROW (`_rd(..., 2)` below) — same field, same shape, so the
+            # two are comparable: the card pairs the borrowed as-of date with the borrowed price
+            # only when it IS the price on screen, and an unrounded twin would fail that identity.
+            **{k: (_rd(led[j], 2) if j == "entry_price" else led[j])
+               for k, j in (("verdict", "verdict"), ("decidedAt", "decided_at"),
+                            ("entryPrice", "entry_price"),
+                            ("entryPriceAsOf", "entry_price_as_of"))
+               if led.get(j) is not None},
+            # `closed` RIDES WITH THE VERDICT HERE TOO (external-honesty pass 2026-07-27, extended
+            # 2026-09-01). The rule is that no surface may render the word "BUY" without the fact
+            # that the position was closed — and this block is a new surface for exactly that word.
+            # Dropping it made SMPL-2026-07-27's foot read "BUY logged 2026-07-21 against the
+            # superseded SMPL-2026-07-21" for a position closed 2026-07-22, on a card that had
+            # been correct before. Same shape as the owned row's `closed`, so one renderer reads
+            # both; omitted on an open position, so those stay byte-identical.
+            **({"closed": led["_closed"]} if led.get("_closed") else {})}
+
+
 def _record_key(rec: dict[str, Any]) -> str:
     """The key a record is indexed under: its ARCHIVE KEY once superseded, else its ticker."""
     t = str(rec.get("ticker", "")).upper()
@@ -348,6 +402,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
     per = r.get("per_scenario") or {}
     v = rec.get("verdict") or {}
     led = _ledger_for_record(rec, ledger)
+    # ONCE, not twice: the emit below is a conditional spread, and calling the helper in both the
+    # value and the condition re-ran the ownership walk AND re-read the predecessor off disk for
+    # every card.
+    sled = _superseded_ledger(rec, ledger)
     return {
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
         # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
@@ -476,6 +534,16 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # never hidden — it says what replaced it, and the live record says what it replaced, so a
         # reader can walk the chain in either direction without leaving the surface.
         **({"supersedes": rec["supersedes"]} if rec.get("supersedes") else {}),
+        # (2026-09-01) THE ROW THIS RECORD'S PREDECESSOR OWNS. `_ledger_for_record` is correct to
+        # withhold the row from a record underwritten AFTER the decision — that rule exists so a
+        # reissue cannot headline a verdict it never made (SMPL, 2026-07-27). But the card then
+        # printed "no ledger verdict logged" on a name that HAS a logged position, contradicting
+        # its own appendix, and sub-labelled the entry with this record's date instead of the
+        # date the position was actually opened. Both are the READER being misled by a rule that
+        # is right about ownership: the answer is to name where the row lives, not to move it.
+        # Emitted only when this record owns none itself, so a record with its own row is
+        # byte-identical.
+        **({"supersededLedger": sled} if sled else {}),
         **({"supersededBy": rec["superseded_by"]} if rec.get("superseded_by") else {}),
         **({"archiveKey": f'{str(rec["ticker"]).upper()}-{rec["underwrite_date"]}'}
            if rec.get("superseded_by") else {}),

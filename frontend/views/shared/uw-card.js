@@ -246,18 +246,33 @@ function headlineCell(c) {
 // says so plainly rather than rendering an empty slot.
 function entryCell(c) {
   const v = c.verdict || {};
-  const e = num(v.entryPrice);
+  // THE LEDGER ROW IS AN ENTRY TOO (2026-09-01). A record can OWN a logged position while its own
+  // verdict block is empty — an archived record superseded before its verdict was typed, which is
+  // exactly GOOGL-2026-08-17: the BUY was decided against it, the confirm was recorded on the
+  // reissue. Reading only the verdict block printed "— no position" beside that card's own BUY
+  // pill, two claims about the same name contradicting each other on one card. The ledger is the
+  // verdict OF RECORD, so it answers when the block does not.
+  const e = num(v.entryPrice) ?? num(c.ledger && c.ledger.entryPrice);
   if (e === null) {
     return statCell("Entry", "— no position",
       headlineState(c) === "base" ? "confirm or override sets the target" : "no entry recorded",
       { txt: true });
   }
-  const r = num(v.ratioAtEntry);
+  const r = num(v.ratioAtEntry) ?? num(c.ledger && c.ledger.ratioAtEntry);
   const led = c.ledger;
   // terse on purpose: the cell is ~190px, and a sub that wraps costs a line on EVERY cell in the
   // band (they share a row height) — the long forms live in the table and the foot
-  const sub = [r !== null ? `${r.toFixed(2)} : 1` : "",
-    (led && led.entryPriceAsOf) || v.recorded || ""].filter(Boolean).join(" · ");
+  // THE DATE THE POSITION WAS OPENED, never the date this record was written. `v.recorded` is
+  // when the verdict was TYPED; on a reissue struck after the entry that is a different day, and
+  // printing it beside the entry price labels a real price with a date it was not struck at.
+  // Falls back through the superseded predecessor's row before it reaches `v.recorded`.
+  // ...but only when the borrowed row is the row THIS price came from. The date must describe the
+  // price rendered beside it; a live record that types a NEW entry while its predecessor still
+  // holds an older row would otherwise stamp the new price with the old position's open date.
+  const sl = c.supersededLedger;
+  const slAsOf = sl && num(sl.entryPrice) === e ? sl.entryPriceAsOf : "";
+  const asOf = (led && led.entryPriceAsOf) || slAsOf || v.recorded || "";
+  const sub = [r !== null ? `${r.toFixed(2)} : 1` : "", asOf].filter(Boolean).join(" · ");
   return statCell("Entry", money(e), escapeHtml(sub));
 }
 
@@ -331,9 +346,28 @@ function mastheadFoot(c) {
     bits.push("judged under the 2:1 / 15% regime (pre-2026-08-21)");
   }
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
-  // only meaningful while no ledger row exists — a logged name says so in the foot instead
+  // NAME WHERE THE ROW LIVES RATHER THAN DENYING IT (2026-09-01). A record reissued AFTER the
+  // decision it inherits owns no ledger row — `_ledger_for_record` withholds it so a reissue
+  // cannot headline a verdict it never made. Saying "no ledger verdict logged" on such a card is
+  // true of the RECORD and false to the READER: the name holds a logged position, stated in this
+  // page's own appendix. The predecessor that does own the row is named instead.
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
-    bits.push("no ledger verdict logged");
+    const sl = c.supersededLedger;
+    // CLOSE-AWARE, like the verdict chip (external-honesty pass 2026-07-27). The word "BUY" never
+    // renders without the fact that the position was closed, and this line is a place it renders:
+    // SMPL-2026-07-27 borrows a row closed 2026-07-22, and reading it as a live BUY was the same
+    // defect one surface over.
+    const scl = sl && sl.closed;
+    const closeNote = scl
+      ? ` (closed ${escapeHtml(scl.exitPriceAsOf || "")}${
+        typeof scl.exitPrice === "number" ? ` at $${scl.exitPrice.toFixed(2)}` : ""})`
+      : "";
+    bits.push(sl
+      ? `${escapeHtml(sl.verdict || "verdict")} logged${
+        sl.decidedAt ? ` ${escapeHtml(String(sl.decidedAt).slice(0, 10))}` : ""
+      } against the superseded ${escapeHtml(sl.recordKey)}${closeNote
+      } — this record supersedes it`
+      : "no ledger verdict logged");
   }
   if (v.avoidPriced) {
     bits.push(`⚠ avoid-priced${v.avoidPricedNote ? ` — ${escapeHtml(v.avoidPricedNote)}` : ""}`);

@@ -194,13 +194,21 @@ def test_the_spot_s_own_provenance_reaches_the_print_reader() -> None:
 def test_the_sealed_rationale_is_labelled_rather_than_edited() -> None:
     """The rationale is the analyst's sealed text and quotes entry-vintage prices inside it
     ("WATCH at $10.53 — not held"). The vintage is supplied AROUND it: labelled, not corrected.
-    Rewriting the number would falsify the record instead of dating it."""
+    Rewriting the number would falsify the record instead of dating it.
+
+    THE LABEL NAMES `spot_as_of`, NOT `underwrite_date` (corrected 2026-09-01). This pinned the
+    date the underwrite was WRITTEN beside prices struck when the quoted spot CLOSED — they differ
+    on every committed record, by a day or two normally and by seventeen on GOOGL's reissue, so the
+    stamp named a date none of the prices below it belonged to. The word "entry-vintage" is right
+    and unchanged: these ARE the frozen prices, as `vs entry-vintage spot` says two tables down.
+    Falls back to `underwrite_date` for the records that state no `spot_as_of`.
+    """
     for name, _d, card in CARDED:
         md = _md(name)
         if "### Thesis — our rationale" not in md:
             continue
         head = md.split("### Thesis — our rationale", 1)[1]
-        assert f"entry-vintage ({card.underwrite_date})" in head[:300], name
+        assert f"entry-vintage ({card.spot_as_of or card.underwrite_date})" in head[:300], name
         assert card.verdict.rationale is not None
         assert card.verdict.rationale in md, f"{name}: sealed rationale text was altered"
 

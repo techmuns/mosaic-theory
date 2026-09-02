@@ -16,7 +16,7 @@ _Spot source: Polygon NCNO close 2026-07-20 (live at underwrite)_
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-07-21); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-07-20); the live close is in Snapshot, above._
 
 WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.
 

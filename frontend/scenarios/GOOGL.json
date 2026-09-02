@@ -20,10 +20,10 @@
   }
  ],
  "multipleBasis": "P/E",
- "underwriteDate": "2026-08-17",
+ "underwriteDate": "2026-09-01",
  "analyst": "operator",
- "spot": 345.9,
- "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 \u2014 WSJ market data, corroborated by FT historical prices",
+ "spot": 339.35,
+ "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-31 \u2014 Polygon daily aggregates",
  "facts": [],
  "scenarios": [
   {
@@ -69,25 +69,33 @@
    "normFcf": null
   }
  ],
- "reward": 51.51,
- "risk": 30.45,
- "ratio": 1.69,
+ "reward": 58.06,
+ "risk": 23.9,
+ "ratio": 2.43,
  "bar": 2.0,
  "ratioUndefined": null,
- "passFail": "FAIL",
- "irr": 0.1489,
+ "passFail": "PASS",
+ "irr": 0.1711,
  "irrFloor": 0.15,
- "irrPassFail": "FAIL",
+ "irrPassFail": "PASS",
  "horizonYears": 1.0,
- "gate": "FAIL",
+ "gate": "PASS",
+ "gateRegime": "2026-08-21",
+ "asymmetryTier": "preferred",
+ "returnTier": "preferred",
+ "eligibleRatio": 1.75,
+ "eligibleIrr": 0.12,
+ "eligible": true,
+ "ceilingEligible": 345.26,
+ "irrConvention": "price-only \u2014 excludes dividends; conservative for dividend payers",
  "currentState": {
-  "status": "pending_analyst",
-  "ratio": 1.69,
+  "status": "confirmed",
+  "ratio": 2.43,
   "bar": 2.0,
-  "passFail": "FAIL",
-  "spot": 345.9,
-  "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 \u2014 WSJ market data, corroborated by FT historical prices",
-  "underwriteDate": "2026-08-17",
+  "passFail": "PASS",
+  "spot": 339.35,
+  "spotSource": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-31 \u2014 Polygon daily aggregates",
+  "underwriteDate": "2026-09-01",
   "nextEvidence": {
    "date": "2026-10-20",
    "what": "Next results print",
@@ -95,20 +103,22 @@
   },
   "ceiling2to1": 342.77
  },
+ "supersedes": "GOOGL-2026-08-17",
+ "supersededLedger": {
+  "recordKey": "GOOGL-2026-08-17",
+  "verdict": "BUY",
+  "decidedAt": "2026-08-28T11:24:47.926278",
+  "entryPrice": 345.9,
+  "entryPriceAsOf": "2026-08-14"
+ },
  "verdict": {
-  "status": "pending_analyst",
-  "recorded": null,
-  "rationale": null,
+  "status": "confirmed",
+  "recorded": "2026-09-01",
+  "rationale": "The underwrite missed its asymmetry line at the 14 Aug spot of $345.90, where the ratio was 1.69x against 1.75x. It clears at the 31 Aug close of $339.35, where the same legs give 2.43x and a 17.1% base return. The improvement comes from the price falling, not from anything changing in the business, and the ratio is sensitive to that: risk is thin, so it leaves the preferred band above $342.77 and stops being eligible above $345.26. I am confirming the position on that basis, with the entry unchanged at $345.90.",
   "reunderwriteTriggers": [],
+  "entryPrice": 345.9,
+  "ratioAtEntry": 1.69,
   "avoidPriced": false,
   "avoidPricedNote": null
- },
- "ledger": {
-  "verdict": "BUY",
-  "entryId": "V-GOOGL",
-  "entryPrice": 345.9,
-  "entryPriceAsOf": "2026-08-14",
-  "decidedAt": "2026-08-28T11:24:47.926278",
-  "sleeve": "quality"
  }
 }

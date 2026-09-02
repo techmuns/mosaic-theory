@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.5",
+  "ticker": "GOOGL",
+  "limit": null,
+  "recipe_id": "R3_forward_pe",
+  "recipe_desc": "R3_forward_pe",
+  "recipe_formula": [
+    "value/share = EPS × forward P/E multiple"
+  ],
+  "multiple_basis": "P/E",
+  "underwrite_date": "2026-08-17",
+  "analyst": "operator",
+  "spot": 345.9,
+  "spot_source": "Alphabet Class A / GOOGL / Nasdaq completed regular-session close, 2026-08-14 — WSJ market data, corroborated by FT historical prices",
+  "spot_as_of": "2026-08-14",
+  "facts": {},
+  "scenarios": {
+    "bear": {
+      "multiple": 20.5,
+      "eps": 15.388,
+      "reason": "IC memo 2026-08-17 §7A. Normalized EPS $15.388 at 20.5x — the de-rating case: Bear EPS EXCEEDS today's NTM $13.29, so the downside is multiple compression from ~26x, not an earnings fall. A ruling on either remedies docket is its most likely trigger.",
+      "years_to_terminal": 1.0,
+      "bear_basis": "analyst",
+      "margin_basis": null
+    },
+    "base": {
+      "multiple": 24.5,
+      "eps": 16.221,
+      "reason": "IC memo 2026-08-17 §7A. Normalized EPS $16.221 at 24.5x — Search and Cloud economics run modestly above consolidated expectations while the capital build proves less damaging than the Q2 reset implies. Both locked variants hold, neither dramatically.",
+      "years_to_terminal": 1.0,
+      "bear_basis": null,
+      "margin_basis": null,
+      "leg_fy": "2026"
+    },
+    "bull": {
+      "multiple": 26.0,
+      "eps": 16.649,
+      "reason": "IC memo 2026-08-17 §7A. Normalized EPS $16.649 at 26.0x — today's multiple sustained on demonstrated capital productivity: FY27 EBIT revisions outrunning FY27 capex revisions, which is the memo's single most important live screen.",
+      "years_to_terminal": 1.0,
+      "bear_basis": null,
+      "margin_basis": null
+    }
+  },
+  "assumptions": {
+    "earnings": {
+      "method": "bear: Normalized EPS on the ~Aug-2027 fundamental horizon; all three legs struck on the same Street-like diluted-share basis, so they differ by economics and not by share count. $15.388, ~4% below the target-period Street range $16.02–16.07. IC memo 2026-08-17 §4. · base: $16.221, modestly above that Street range. IC memo 2026-08-17 §4. · bull: $16.649, above it. IC memo 2026-08-17 §4.",
+      "references": [],
+      "notes": [],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "multiple": {
+      "method": "bear: Normalized P/NTM turns set by judgment rather than by a statistic — the company's own multiple quartiles over its trading history (p25 21.46x, median 24.24x, p75 26.75x) are labelled `P/NTM EPS` and are NOT proven to share this normalized denominator, a basis match the memo records as LIMITED, so they are context and not load-bearing. 20.5x is compression from today's ~26.03x, and it is the SINGLE BINDING ASSUMPTION of this underwrite: Bear EPS exceeds today's NTM $13.28698, so the whole downside is a de-rating rather than an earnings fall. IC memo 2026-08-17 §5 and §7A. · base: 24.5x, a partial de-rate from today's ~26.03x. IC memo 2026-08-17 §5. · bull: 26.0x holds today's ~26.03x, conditional on demonstrated capital productivity — FY27 EBIT revisions outrunning FY27 capex revisions. IC memo 2026-08-17 §5 and §7A.",
+      "references": [],
+      "notes": [],
+      "ratified_by": null,
+      "ratified": null
+    }
+  },
+  "gate_adjudication": null,
+  "tier": null,
+  "survival_input": null,
+  "result": {
+    "ceiling2to1": 342.77416666666664,
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 315.454,
+        "op_income": null,
+        "ebitda": null,
+        "ev": null,
+        "equity": null,
+        "ev_ebit": null,
+        "norm_fcf": null,
+        "years": 1.0,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      },
+      "base": {
+        "value_per_share": 397.4145,
+        "op_income": null,
+        "ebitda": null,
+        "ev": null,
+        "equity": null,
+        "ev_ebit": null,
+        "norm_fcf": null,
+        "years": 1.0,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      },
+      "bull": {
+        "value_per_share": 432.874,
+        "op_income": null,
+        "ebitda": null,
+        "ev": null,
+        "equity": null,
+        "ev_ebit": null,
+        "norm_fcf": null,
+        "years": 1.0,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
+      }
+    },
+    "survival": null,
+    "hurdle": null,
+    "reward": 51.5145,
+    "risk": 30.44599999999997,
+    "ratio": 1.6919956644551024,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "FAIL",
+    "horizon_years": 1.0,
+    "irr": 0.14892888117953174,
+    "irr_undefined": null,
+    "irr_floor": 0.15,
+    "irr_pass_fail": "FAIL",
+    "gate": "FAIL"
+  },
+  "verdict": {
+    "status": "pending_analyst",
+    "recorded": null,
+    "rationale": null,
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
+    "reunderwrite_triggers": [],
+    "dated_triggers": [],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": false,
+    "avoid_priced_note": null
+  },
+  "refresh_log": [],
+  "supersedes": null,
+  "superseded_by": "GOOGL-2026-09-01"
+}

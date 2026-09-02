@@ -15,6 +15,14 @@
     "chars": 0,
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
+  "GOOGL": {
+    "chars": 517,
+    "sha256": "bfe52f30cca4290fcc4ed4ae4bb2aa1630b751764181e3563d50249922570a0a"
+  },
+  "GOOGL-2026-08-17": {
+    "chars": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
   "IT": {
     "chars": 632,
     "sha256": "dd5ca6d29748bee5eed082766f1ad83ae7dbd6b6dfc1dfb3137394a266f62089"

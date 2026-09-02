@@ -16,7 +16,7 @@ _Spot source: EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store fro
 > **Not shown here:** any prior position, close or realized return for this name. This surface reads the underwrite record only — the ledger is the record of positions. **See the Decision log.**
 
 ### Thesis — our rationale
-_Prices quoted below are entry-vintage (2026-08-05); the live close is in Snapshot, above._
+_Prices quoted below are entry-vintage (2026-08-04); the live close is in Snapshot, above._
 
 The market prices this as a broken business in a shrinking category. It is share loss inside a growing one: retail takeaway fell 6.7% while the purposeful-nutrition category grew about 10% over the same window. Atkins is the drag at −24.6% net sales; Quest holds its share. A high-single-digit portfolio price increase takes effect in September, and the January print is the first evidence on whether it sticks. Bought at $11.33 against a $19.64 value that assumes nine times EBITDA — below where the company itself traded in September 2025, and near the median for comparable companies today. The case fails if the profit reset proves permanent rather than cyclical.
 
