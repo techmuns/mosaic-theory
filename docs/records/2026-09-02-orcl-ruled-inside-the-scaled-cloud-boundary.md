@@ -265,3 +265,81 @@ and measured nothing.
 **The test must be time-separated:** enforce v2 (with v3's tie step), run now, run again after next
 quarter's filings land, check **membership persistence across the two dates**. That falls naturally
 against the 2026-12-31 confirming deadline, so one calendar event serves both.
+
+---
+
+**2026-09-02 — instance five: a scoped absence read as a global one, by me, in the same hour.**
+
+I proposed pulling CRWV's counterparty concentration as unresolved. It was already disclosed: FY2025
+10-K (filed 2026-03-02) — **Microsoft ~67% of revenue** (up from 62%) and **68% of net accounts
+receivable**, no other customer above 10%; Q1 FY2026 top-two 65%.
+
+The `key_unknown` said no concentration was given **for the $60.7bn RPO** — true, the RPO is not
+decomposed — but the 10-K discloses it on **revenue and receivables**. The field even carried its own
+qualifiers (*"not disclosed **here**"*, *"in the supplied text"*) and I read past them.
+
+**Rule added:** an extractor's absence is scoped to what it read. Quoting a `key_unknown` as evidence
+of absence **carries its scope qualifier**, or it is misquoted. `key_unknowns` are statements about
+the supplied text, never about the world.
+
+## Falsifier 2 is substantially met on both tier-carrying names
+
+WULF **546 of ~1,007 MW** to Fluidstack, whose affiliate co-owns the JV; CRWV **67% Microsoft**. A
+present condition of the cohort, not a future trigger.
+
+## The landlord metric is buildable — my "unbuildable" was also a scoped absence
+
+APLD discloses TCV, MW **and** a ~15-year base term *per lease*, so implied rent per MW per year is
+derivable straight from filings. The five leases reconcile exactly to the $36.2bn / 1,410 MW headline.
+
+| lease | signed | MW | TCV | $m/MW/yr | counterparty |
+|---|---|---:|---:|---:|---|
+| CoreWeave ELN-02/03 + Bldg 4 | 2025-05/08 | 400 | $11.0bn | **1.833** | CoreWeave |
+| Polaris Forge 2 | 2025-10-22 | 200 | $5.0bn | **1.667** | IG hyperscaler |
+| Delta Forge 1 | 2026-04-23 | 300 | $7.5bn | **1.667** | IG hyperscaler |
+| Polaris Forge 3 | undated | 300 | $7.5bn | 1.667 | high-IG hyperscaler |
+| Delta Forge 2 | undated | 210 | $5.2bn | 1.651 | high-IG hyperscaler |
+
+**Flat to −9.1% over ~11 months. The scarcity thesis predicts rising rent per MW; it is not rising.**
+
+*Confound:* the highest print is the CoreWeave lease and the later ones are investment-grade, so a
+weaker tenant paying more explains part of the decline. But the one comparison **free of credit mix**
+— IG to IG, 2025-10 → 2026-04 — is **exactly flat**, with no scarcity premium accruing through the
+largest compute buildout on record.
+
+WULF and RIOT still disclose no TCV. WULF's FY2025 10-K exhibit index and its 2026-07-06 Anthropic
+8-K were checked: **EX-10.32 is a Google *recognition* agreement** referring to *"Base Rent as set
+forth in the Lease"* with no figures, and the 8-K carries only a press release. *Scope of that check,
+stated: one 10-K exhibit index and one 8-K, not every filing.*
+
+**Exhibit 21 is cheaper than I implied.** WULF's is a 1,072-byte exhibit headed *"Legal Entity Name /
+Percentage of Voting Securities Owned"* — already the structured ownership table the control-pair
+guard needs.
+
+## Prefilter widened for the reframed driver
+
+Fifteen powered-infrastructure terms added (powered shell/land, energized, critical IT load,
+interconnection queue/agreement, substation, behind-the-meter, PPA, IPP, load ramp, colocation,
+utility interconnection), with two new provenance tags.
+
+The old list's gap was **narrower than feared**: CORZ, EQIX, DLR, CEG, NRG, OKLO, SMR, GEV, PWR and
+IREN were all already in the graded 745. **VST, TLN, AES, ETN and AMRC are not** — but whether that
+is a prefilter miss or a universe absence **is not determinable from the archive alone** and needs
+the universe rebuild (Polygon key). Recorded that way deliberately: the error being fixed all thread
+is exactly the promotion of a scoped absence to a global one.
+
+## Where the evidence points
+
+The landlords' contracted backlog resolves, in substance, to a handful of hyperscaler balance sheets
+— WULF → Fluidstack → Google credit support; APLD → CoreWeave → 67% Microsoft. With the flat
+rent-per-MW series, that is **four independent readings running the null's way** (single-counterparty
+concentration at both tier carriers, credit support that is load-bearing rather than incidental, and
+no scarcity premium in realized lease pricing) and **none running the card's way**, all arriving
+before declaration.
+
+The rescue available is real but narrow: concentration is counterparty *risk* and does not by itself
+disprove scarcity — a scarce asset let to one strong tenant is still scarce. But the **rent series is
+the direct test of scarcity, and it is flat.**
+
+**On the card's own evidence the null is currently better supported than the thesis.** That is a
+finding, not a reason to keep searching for a better framing.

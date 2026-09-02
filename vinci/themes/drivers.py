@@ -606,13 +606,28 @@ AI_COMPUTE_PLATFORM = DriverSpec(
         # SELF-DESCRIPTION — the scaled clouds name their own segment, never the category
         "cloud revenue", "cloud services", "ai infrastructure", "tensor processing",
         "custom accelerator", "data center capacity",
+        # POWERED INFRASTRUCTURE (2026-09-02) — added when the driver was reframed away from
+        # "neoclouds". The prior list was built for the COMPUTE layer and so could not see the
+        # population the reframed driver is about: REITs, IPPs, power developers, interconnect
+        # owners and the Core Scientific-type operators. This is the GOOGL lesson arriving in the
+        # same place — a vocabulary that describes the thesis rather than the filings excludes
+        # exactly the names that would test it.
+        "powered shell", "powered land", "energized", "energization", "critical it load",
+        "interconnection queue", "interconnection agreement", "substation", "behind-the-meter",
+        "power purchase agreement", "independent power producer", "megawatts of capacity",
+        "load ramp", "colocation", "utility interconnection",
     ),
     provenance_tags=(
         ("hyperscaler-compute", ("hyperscaler", "public cloud", "cloud infrastructure",
                                  "infrastructure-as-a-service", "iaas")),
         ("neocloud", ("gpu cloud", "ai cloud", "neocloud", "accelerated compute")),
-        ("interconnection", ("cross-connect", "grid interconnect")),
+        ("interconnection", ("cross-connect", "grid interconnect", "interconnection queue",
+                             "interconnection agreement", "substation", "utility interconnection")),
         ("data-gravity", ("data gravity", "egress")),
+        ("powered-infrastructure", ("powered shell", "powered land", "energized", "energization",
+                                    "critical it load", "behind-the-meter", "load ramp",
+                                    "megawatts of capacity", "colocation")),
+        ("power-supply", ("power purchase agreement", "independent power producer")),
     ),
     multi_tag=True,
 )
