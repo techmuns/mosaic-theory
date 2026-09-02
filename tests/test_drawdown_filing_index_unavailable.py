@@ -98,6 +98,11 @@ class _NoHttp:
 
 
 def _cause(edgar: object, gaps: list[date], cik: str = _CIK) -> Any:
+    cause, _flags = _drawdown_cause(_Record(gaps, cik), edgar, _NoHttp())  # type: ignore[arg-type]
+    return cause
+
+
+def _cause_and_flags(edgar: object, gaps: list[date], cik: str = _CIK) -> Any:
     return _drawdown_cause(_Record(gaps, cik), edgar, _NoHttp())  # type: ignore[arg-type]
 
 
@@ -178,26 +183,96 @@ def test_a_name_with_no_gap_downs_is_unaffected() -> None:
     assert cause.gap_down_dates.value is None
 
 
+# --- the degraded-feed flag, and WHICH AUDIENCE it reaches ---------------------------------------
+
+
+def test_a_degraded_feed_raises_a_flag_naming_how_many_dates_lost_their_cause() -> None:
+    """The UNKNOWN note renders at the point of use, but a blank cause under a real price gap is a
+    decision fact, so it also gets a top-level flag — the `stock-info:` twin pattern."""
+    _cause, flags = _cause_and_flags(_FailingEdgar(), [_GAP, _GAP + timedelta(days=30)])
+
+    assert len(flags) == 1
+    assert flags[0].startswith("drawdown-cause: EDGAR filing index unavailable")
+    assert "2 gap-down date(s)" in flags[0]
+    assert "re-assemble" in flags[0]
+
+
+def test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so() -> None:
+    """THE AUDIENCE PIN — operator ruling 2026-09-02, and it asserts BOTH halves on purpose.
+
+    `flags.partition` routes by PREFIX: anything matching `flags._QA_MARKERS` is hidden (dev/JSON
+    only), everything else is re-voiced to the human caveat channel. That module's default is to
+    show a new flag ("fail toward transparency"), and by that default this one would be a caveat —
+    it is data completeness, not machine discipline. It is hidden by explicit ruling instead.
+
+    The ruling is only safe while the human is told AT THE POINT OF USE, so this pins the hiding and
+    the rendered UNKNOWN line TOGETHER. If the drawdown block ever stops saying "EDGAR filing index
+    unavailable" on the human surface, this test fails even though the routing is untouched — which
+    is the whole point: hiding the flag must never be what makes an outage silent.
+    """
+    from vinci.dossier.flags import partition
+    from vinci.dossier.render import _fact, _fmt_shape
+
+    cause, flags = _cause_and_flags(_FailingEdgar(), [_GAP])
+    caveats, qa_flags = partition(flags)
+
+    # (a) the flag is machine-tier — dev/JSON only, off the analyst's surface
+    assert qa_flags and qa_flags[0].startswith("drawdown-cause: EDGAR filing index unavailable")
+    assert caveats == []
+
+    # (b) ...which is ONLY acceptable because the rendered block itself carries the message
+    rendered = _fact("Shape", cause.shape, _fmt_shape)
+    assert "_UNKNOWN_" in rendered
+    assert "EDGAR filing index unavailable" in rendered
+
+
+def test_a_healthy_feed_raises_no_flag() -> None:
+    """The negative pin. A flag that fired on a working feed would appear on every dossier and
+    train the reader to ignore the channel."""
+    assert _cause_and_flags(_WorkingEdgar(), [_GAP])[1] == []
+    assert _cause_and_flags(_WorkingEdgar(), [])[1] == []
+
+
+def test_a_healthy_feed_that_genuinely_finds_nothing_raises_no_flag() -> None:
+    """"The company filed nothing" is a FINDING, established from a readable feed. It is not a
+    degradation and must not be flagged as one."""
+
+    class _EmptyEdgar:
+        def recent_filings(self, cik: str | int, **kw: Any) -> list[Filing]:
+            return []
+
+    assert _cause_and_flags(_EmptyEdgar(), [_GAP])[1] == []
+
+
+# --- the review fixes: no-CIK, and the flag's date count ----------------------------------------
+
+
 def test_a_record_with_no_cik_does_not_manufacture_no_company_filing() -> None:
     """A missing CIK means the index was never READ, so "no company filing" — a finding about the
     issuer — was never established. Before this fix `lookup_failed` was set only on the HttpError
     path, so the `if cik else []` arm fell straight through to the healthy branch and stated it.
     Five siblings guard the same way (mechanical.py:1938, 2083, 2384, 2592, 2933)."""
-    cause = _cause(_WorkingEdgar(), [_GAP], cik="")
+    cause, flags = _cause_and_flags(_WorkingEdgar(), [_GAP], cik="")
 
     assert cause.shape.value is None
     assert "no company filing" not in str(cause.shape.note)
     assert "no CIK" in (cause.shape.note or "")
+    assert flags and "no CIK" in flags[0]
+    # the advice must match the cause — "re-assemble when the feed recovers" is wrong here
+    assert "resolve the CIK" in flags[0]
+
+
+def test_the_flag_counts_distinct_dates_not_events() -> None:
+    """`gaps` is not de-duplicated upstream, and this count is the only number the machine tier
+    reports about the outage — so two events on one date must not read as two dates."""
+    _c, flags = _cause_and_flags(_FailingEdgar(), [_GAP, _GAP, _GAP])
+
+    assert "1 gap-down date(s)" in flags[0]
 
 
 def test_no_edgar_failure_escapes_the_drawdown_path() -> None:
-    """THE PROPERTY PIN. Two earlier versions asserted the SHAPE of the source (is there a `try`?
-    does its handler name `HttpError`?) while claiming to assert the property; the second passed
-    even against code that caught `HttpError` and raised `RuntimeError`.
-
-    So this one calls the function. For every failure `recent_filings` can realistically raise on a
-    degraded or malformed feed, `_drawdown_cause` must RETURN — an escape drops the whole name out
-    of `assemble_mechanical`."""
+    """THE PROPERTY PIN (carried from #570, in the tuple-returning form). Two earlier versions
+    asserted the SHAPE of the source while claiming to assert the property."""
     import json as _json
 
     class _Raises:
@@ -210,23 +285,22 @@ def test_no_edgar_failure_escapes_the_drawdown_path() -> None:
     failures: list[BaseException] = [
         HttpError("Exhausted retries for https://data.sec.gov/submissions/CIK1.json"),
         HttpError("Non-retryable 403 from data.sec.gov: rate limited"),
-        KeyError("form"),                       # submissions doc missing a parallel array
-        ValueError("Invalid isoformat string"),  # blank filingDate
-        _json.JSONDecodeError("Expecting value", "<html>", 0),  # 200 + HTML interstitial
+        KeyError("form"),
+        ValueError("Invalid isoformat string"),
+        _json.JSONDecodeError("Expecting value", "<html>", 0),
         IndexError("list index out of range"),
     ]
     for exc in failures:
-        cause = _cause(_Raises(exc), [_GAP])  # must not raise
+        cause, flags = _cause_and_flags(_Raises(exc), [_GAP])  # must not raise
         assert cause.shape.value is None, f"{type(exc).__name__} was not degraded"
+        assert flags, f"{type(exc).__name__} degraded silently — no flag"
 
 
 def test_the_drawdown_path_reads_submissions_exactly_once() -> None:
-    """An N+1 guard on `_drawdown_filings`: a refactor to one `recent_filings` per gap date would
-    cost nothing observable now that the memo absorbs it."""
+    """An N+1 guard on `_drawdown_filings` (carried from #570)."""
     import ast
     import pathlib as _pathlib
 
-    # cwd-independent, per the tests/test_calls_parity.py convention
     root = _pathlib.Path(__file__).resolve().parents[1]
     tree = ast.parse((root / "vinci" / "dossier" / "mechanical.py").read_text())
     fn = next(

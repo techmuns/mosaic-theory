@@ -395,7 +395,15 @@ def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> S
     return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
 
 
-def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) -> DrawdownCause:
+def _drawdown_cause(
+    record: DataRecord, edgar: EdgarClient, http: CachedHttp
+) -> tuple[DrawdownCause, list[str]]:
+    """The drawdown block, plus any flags for the human-review channel.
+
+    Returns flags rather than carrying them on `DrawdownCause` deliberately: a `qa_flags` field on
+    the model (the shape `CatalystCalendar` and `OperatingDriversExtract` use) would add a key to
+    every committed `dossier.json`, and this condition fires only on a degraded feed. A tuple keeps
+    the artifact untouched — there is exactly one production caller."""
     gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
     cik = record.identity.cik
     # AN UNREADABLE FILING INDEX IS NOT THE SAME FINDING AS "THE COMPANY FILED NOTHING".
@@ -455,7 +463,22 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         if gaps
         else Sourced.unknown(note="no gap-down events on the data-record")
     )
-    return DrawdownCause(
+    # THE LOUD TWIN of the UNKNOWN note above. The note renders at the point of use (`_fact` prints
+    # "_UNKNOWN_ — <note>"), but a blank cause under a real price gap is a decision fact: the reader
+    # must be able to tell "EDGAR was down, re-assemble" from "the company filed nothing", which is
+    # a finding. Same role as the `stock-info:` twin of the CMP-row note, and routed the same way —
+    # `flags.partition` sends anything off the QA hide-list to the human caveat channel, which is
+    # that module's stated default ("fail toward transparency ... never silently hidden").
+    drawdown_flags = (
+        [
+            f"drawdown-cause: EDGAR filing index unavailable — "
+            f"{len(gaps)} gap-down date(s) carry no attributed cause; "
+            f"re-assemble when the feed recovers"
+        ]
+        if gaps and lookup_failed
+        else []
+    )
+    cause = DrawdownCause(
         shape=shape,
         gap_down_dates=dates_field,
         filings=filings,
@@ -475,6 +498,7 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         gap_threshold=GAP_DOWN_THRESHOLD,
         gap_window_days=DECLINE_WINDOW_DAYS,
     )
+    return cause, drawdown_flags
 
 
 # --- (B1) informative drawdown: join each gap-down's 8-K to its parsed EX-99.1 drivers -----------
@@ -4033,7 +4057,7 @@ def assemble_mechanical(
     screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below)."""
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
-    drawdown = _drawdown_cause(record, edgar, http)
+    drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
         record, edgar, drawdown.revised_guidance, reference_date)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
@@ -4195,4 +4219,5 @@ def assemble_mechanical(
     # TECX (AvroBio), ORKA (ARCA) are the live proof. The marker states the filed fact and directs
     # verification; it never asserts a mechanism (a bare rename — AAPL 2019 — is not a predecessor).
     flags += _former_name_flags(edgar, record.identity.cik, reference_date)
+    flags += drawdown_flags  # degraded-feed twin of the UNKNOWN drawdown-cause note
     return mech, flags
