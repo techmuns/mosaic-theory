@@ -577,18 +577,24 @@ AI_COMPUTE_PLATFORM = DriverSpec(
         "underneath them, and their moat is format and semantic lock-in, a different mechanism "
         "currently being dissolved by open table formats."
     ),
+    # TIGHTENED BEFORE THE FIRST GRADED RUN (2026-09-02). The first cut surfaced 1,011 of 3,036 —
+    # a third of the universe for a driver that should be narrow — because eight of its seventeen
+    # terms are ordinary filing vocabulary, not platform vocabulary: `megawatt`, `substation` and
+    # `interconnection` are in every utility's filings, `colocation` in anyone who rents a rack,
+    # and `public cloud` / `cloud infrastructure` / `compute capacity` in nearly every software
+    # 10-K. Those were dropped. What remains is language a company uses only if it IS this layer.
+    # `grid interconnect` is KEPT despite being utility-adjacent: it is how the operator's own
+    # example (DGXX owning the land, substation and grid interconnect) would describe itself, and
+    # losing the named case to tidy the list would be the wrong trade.
     prefilter_terms=(
-        "hyperscaler", "public cloud", "cloud infrastructure", "infrastructure-as-a-service",
-        "iaas", "ai cloud", "gpu cloud", "compute capacity", "accelerated compute",
-        "cross-connect", "interconnection", "colocation", "substation", "grid interconnect",
-        "megawatt", "data gravity", "egress",
+        "hyperscaler", "infrastructure-as-a-service", "iaas", "gpu cloud", "ai cloud",
+        "neocloud", "accelerated compute", "cross-connect", "grid interconnect", "data gravity",
     ),
     provenance_tags=(
         ("hyperscaler-compute", ("hyperscaler", "public cloud", "cloud infrastructure",
                                  "infrastructure-as-a-service", "iaas")),
-        ("neocloud", ("gpu cloud", "ai cloud", "accelerated compute", "compute capacity")),
-        ("interconnection", ("cross-connect", "interconnection", "colocation", "substation",
-                             "grid interconnect", "megawatt")),
+        ("neocloud", ("gpu cloud", "ai cloud", "neocloud", "accelerated compute")),
+        ("interconnection", ("cross-connect", "grid interconnect")),
         ("data-gravity", ("data gravity", "egress")),
     ),
     multi_tag=True,

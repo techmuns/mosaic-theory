@@ -64,6 +64,27 @@ the scaled hyperscalers disclose no AI economics at all. The evidence runs oppos
 intuition, so a scan that surfaces mostly hyperscalers on a filings read has probably found the
 prefilter, not the driver.
 
+**THE PREFILTER WAS TIGHTENED BEFORE THE FIRST GRADED RUN, on a measured count.** The first cut
+surfaced **1,011 of 3,036** — a third of the universe for a driver that should be narrow. Eight of
+its seventeen terms were ordinary filing vocabulary rather than platform vocabulary: `megawatt`,
+`substation` and `interconnection` appear in every utility's filings, `colocation` in anyone who
+rents a rack, `public cloud` / `cloud infrastructure` / `compute capacity` in nearly every software
+10-K. Dropping them took the candidate set to **241**, and the run was stopped before a single name
+was graded, so the first cut cost no LLM spend at all.
+
+`grid interconnect` was KEPT despite being utility-adjacent: it is how the operator's own named
+case (DGXX, owning the land, substation and grid interconnect) would describe itself, and losing a
+named example to tidy the term list would be the wrong trade.
+
+**A PROBE THAT LIED, worth recording because the mechanism recurs.** The per-term hit counts were
+first measured with a direct `mention_prefilter` call, which returned **0 for all seventeen terms**
+— impossible, since the same terms had just surfaced 1,011 names. The call passed
+`skip_errors=True`, which swallows EFTS failures and yields empty sets, so total failure was
+indistinguishable from "no matches". That is the same shape as the deploy defect fixed the same day
+(a graceful-absence path hiding a hard failure), and the lesson is the same: the number that can be
+read off the real pipeline (`exposure scan 1/N`, printed before any grading) beat the bespoke
+measurement that had to be trusted.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
 1. **ONE CLAUSE OF THE TAXONOMY IS COMPOSED, NOT QUOTED** — the `indirect` residual. It is marked
