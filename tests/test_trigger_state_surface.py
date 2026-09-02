@@ -74,9 +74,20 @@ def test_the_prose_falsifiers_are_not_replaced_by_the_measured_ones() -> None:
 
 
 def test_a_record_with_no_measured_criteria_carries_an_empty_list_not_a_false_all_clear() -> None:
-    """Every committed record is in this state today. The row must be able to SAY so — the
-    renderer distinguishes 'no measured criteria' from 'measured, none fired'."""
+    """The row must be able to SAY 'no measured criteria' — the renderer distinguishes that from
+    'measured, none fired'.
+
+    DRIVEN OFF A RECORD STATED TO CARRY NONE, not off whatever the corpus happens to hold
+    (corrected 2026-09-02). The original read the live SMPL record and asserted the row came back
+    empty — true only while nothing could WRITE a criterion. `vinci scenario-criterion` is that
+    write path, so the first criterion the operator arms would have reddened this pin: the same
+    corpus-shaped assertion the sibling pin in `test_measured_triggers.py` was corrected for, in
+    the file that ships beside it. The rule under test is unchanged and does not depend on the
+    corpus: a record stating no measured criteria produces an empty `measured`, and its prose
+    falsifiers survive.
+    """
     rec, mech = _record_and_mech()
+    rec = _with(rec)                     # STATED to carry none — the case the row must say
     row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
                         mechanical=mech)
     assert row.measured == []

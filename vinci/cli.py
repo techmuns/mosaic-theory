@@ -1602,8 +1602,10 @@ def _cmd_scenario_criterion(args: argparse.Namespace) -> int:
     THE THRESHOLD, THE COMPARATOR AND THE SENTENCE ARE THE ANALYST'S. This command types what they
     dictate and refuses what cannot be read; it never chooses a number.
     """
+    from pydantic import ValidationError
+
     import vinci.scenarios as sc
-    from vinci.triggers import evaluate, resolvable_metrics, resolve_metric
+    from vinci.triggers import UNKNOWN, evaluate, resolvable_metrics, resolve_metric
 
     t = args.ticker.upper()
     root = Path.cwd()
@@ -1637,10 +1639,20 @@ def _cmd_scenario_criterion(args: argparse.Namespace) -> int:
             print(f"  {t}'s dossier carries no numeric, source-bound path at all.")
         return 1
 
-    trig = sc.MeasuredTrigger(
-        trigger=args.trigger, metric=args.metric, comparator=args.comparator,
-        threshold=args.threshold, unit=args.unit, sustain=args.sustain,
-        basis=args.basis or (source or ""))
+    try:
+        trig = sc.MeasuredTrigger(
+            trigger=args.trigger, metric=args.metric, comparator=args.comparator,
+            threshold=args.threshold, unit=args.unit, sustain=args.sustain,
+            basis=args.basis or (source or ""))
+    except ValidationError as exc:
+        # THE MODEL'S OWN REFUSALS REACH THE ANALYST AS REFUSALS. `--sustain 0` and a blank
+        # `--trigger` are both typing mistakes at the keyboard, and a raw pydantic traceback in
+        # the middle of a command whose every other refusal is one printed line reads as a crash
+        # in the tool rather than a correction to the input.
+        print(f"REFUSED: that is not a well-formed criterion — {exc.error_count()} problem(s):")
+        for err in exc.errors():
+            print(f"    {'.'.join(str(x) for x in err['loc']) or '(record)'}: {err['msg']}")
+        return 1
 
     existing = list(rec.verdict.measured_triggers)
     if any(x.metric == trig.metric and x.comparator == trig.comparator
@@ -1657,10 +1669,35 @@ def _cmd_scenario_criterion(args: argparse.Namespace) -> int:
     print(f"  measures   {trig.metric} {trig.comparator} {trig.threshold:g} {trig.unit}"
           f"{f', sustained {trig.sustain} readings' if trig.sustain > 1 else ''}")
     print(f"  resolves   {value:,.6g}  [{source or 'no source_ref'}]")
+    # THE UNIT IS ASSERTED, NOT CHECKED — say so, every time, because the evaluator cannot.
+    # `evaluate` refuses only a node that STATES a disagreeing unit, and across the committed
+    # corpus ZERO of 479 resolvable paths state one, so that refusal has never fired and cannot.
+    # A mis-stated unit therefore produces a CONFIDENT WRONG ANSWER rather than an UNKNOWN: a $M
+    # value read against a $bn threshold reports `551.974 $bn > 1 $bn holds` — FIRED, on a kill
+    # criterion, when $551.974M is $0.55bn and the truth is NOT_FIRED. A false FIRED is worse than
+    # a false UNKNOWN, and the analyst is the only one who can catch it, so the check is put in
+    # front of them beside the number and its source — which usually names the scale itself.
+    if not (isinstance(node, dict) and node.get("unit")):
+        print(f"  ⚠ UNIT UNCHECKED — this reading states no unit of its own, so {args.unit!r} is "
+              f"taken on trust. Confirm {value:,.6g} is in {args.unit} against the source above; a "
+              f"wrong unit here reads as a confident FIRED, not an error.")
     print(f"  reads      {state.state} — {state.reason}")
     if args.dry_run:
         print("  --dry-run: nothing written")
         return 0
+    if state.state == UNKNOWN and state.satisfied is None:
+        # THE NUMERIC CHECK ABOVE IS WEAKER THAN THE EVALUATOR, and only the evaluator's own
+        # verdict settles whether this criterion can be read. A node recorded with a
+        # non-`present` status, a non-finite reading, or a unit that disagrees with the
+        # threshold's all resolve to a number and all come back UNKNOWN — armed, they are
+        # indistinguishable on the card from a criterion that is working and quiet, which is the
+        # exact collapse this command exists to refuse. `satisfied is None` IS that test: the
+        # comparison was never made. A sustain criterion whose comparison DID hold but which has
+        # no history yet carries `satisfied=True` and is armed normally — a brand-new criterion
+        # has no history by definition, and refusing it would refuse the whole sustain feature.
+        print(f"REFUSED (nothing armed): the evaluator cannot read this criterion today, so armed "
+              f"it would read UNKNOWN on every run — {state.reason}")
+        return 1
 
     out = rec.model_copy(update={"verdict": rec.verdict.model_copy(
         update={"measured_triggers": [*existing, trig]})})
@@ -1669,19 +1706,23 @@ def _cmd_scenario_criterion(args: argparse.Namespace) -> int:
     # MEANT to write — a success message for a file that was never touched.
     written = sc.write_record(out, root=root)
 
-    # READ BACK WHAT LANDED, and refuse to claim otherwise. Records are VERSION-SCOPED: a record
-    # whose declared `schema_version` predates `measured_triggers` drops the field on write, by
-    # design (#302), and a command that printed "written" regardless would tell the analyst their
-    # falsifier is armed when the file does not carry it. The check costs one read; not doing it
-    # cost the first run of this command.
+    # READ BACK WHAT LANDED, and refuse to claim otherwise: a command that printed "written"
+    # regardless would tell the analyst their falsifier is armed when the file does not carry it,
+    # and that is the failure the first run of this command actually produced (it reported a path
+    # it had only MEANT to write). The check costs one read.
+    #
+    # IT DOES NOT NAME A CAUSE, because it cannot know one. An earlier draft blamed
+    # version-scoping — "this record's schema has no `measured_triggers` field" — which is not
+    # what `_version_scoped` does: it drops the key only when the list is EMPTY (absent-vs-empty),
+    # never by schema version, so every committed record (all schema 1.3) keeps an appended
+    # criterion. Naming a cause the check cannot establish sends the analyst to
+    # `scenario-supersede` for a condition that does not exist.
     landed = ((json.loads(written.read_text()).get("verdict") or {})
               .get("measured_triggers") or [])
     if len(landed) != len(existing) + 1:
-        print(f"REFUSED (nothing armed): {t}'s record declares schema "
-              f"{rec.schema_version}, which has no `measured_triggers` field, so the write "
-              f"dropped it — the record on disk is unchanged. Criteria need a record at the "
-              f"schema that knows them; reissue this name through `scenario-supersede` before "
-              f"attaching one.")
+        print(f"REFUSED (nothing armed): {written} was written but carries {len(landed)} measured "
+              f"criteria where {len(existing) + 1} were expected — the criterion did not land, so "
+              f"do not treat this falsifier as armed. Inspect the record before retrying.")
         return 1
     print(f"  written    {written}  ({len(landed)} measured criteria; the prose is untouched)")
     return 0
