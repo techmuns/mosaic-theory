@@ -107,14 +107,27 @@ class Config(BaseModel, frozen=True):
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
-    # LLM for graph extraction + dossier synthesis + the theme exposure classifier. Bumped to
-    # Opus 5 by OPERATOR RULING 2026-08-29 (the strongest-available-model policy that picked
-    # Opus 4.8 in the first place, applied to the new generation). The 4.8-era groundedness
-    # benchmark (vs Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable —
-    # see STATE.md) has NOT been re-run on Opus 5 — accepted with its falsifier in the record:
-    # untraceable figures or mis-cites appearing in fresh extractions are the signal to re-run
-    # graph Test 0 on a sample and, if it degrades, flip this knob back. Swappable, not a router.
-    graph_llm_model: str = "claude-opus-5"
+    # LLM for graph extraction + dossier synthesis + the theme exposure classifier.
+    #
+    # REVERTED TO OPUS 4.8 BY OPERATOR RULING 2026-09-01, reversing the 2026-08-29 bump to Opus 5.
+    # The 2026-08-29 ruling accepted a stated risk — the 4.8-era groundedness benchmark was not
+    # re-run — with the falsifier "untraceable figures or mis-cites in fresh extractions". THAT
+    # FALSIFIER WATCHED THE WRONG FAILURE MODE. What broke was not bad content but ABSENT content:
+    # Opus 5 returns a tool_use block MISSING REQUIRED FIELDS, so `synthesize()` refuses and the
+    # assembly hard-stops. No groundedness check could have seen it — there is nothing to ground.
+    #
+    # MEASURED before reverting (real API calls, prompts built exactly as `synthesize()` builds
+    # them, max_tokens=16384 throughout): TECX 5 FAIL / 4 PASS on Opus 5 and 2 PASS / 0 FAIL on
+    # 4.8; SMPL (overshoot, full financials — nothing like TECX) 2 FAIL / 1 PASS on Opus 5; V
+    # 4 PASS / 0 FAIL. Fleet-wide and stochastic, not a property of one name or sleeve.
+    # NOT truncation: stop_reason is `tool_use`, never `max_tokens`, and the FAILING calls burn
+    # MORE output tokens (8.7-10.1k) than the passing ones (3.9-6.6k) while returning fewer fields.
+    # All 18 committed syntheses were produced by 4.8; none by Opus 5 — the bump was never
+    # exercised on the synthesis path, which is why this sat undetected for three days.
+    #
+    # Record: docs/records/2026-09-01-opus5-synthesis-regression.md. Re-raising this knob requires
+    # measuring a PASS RATE over >=5 runs on >=3 names (include SMPL and TECX), not one green run.
+    graph_llm_model: str = "claude-opus-4-8"
     # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
     # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
     # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-

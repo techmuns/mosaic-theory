@@ -74,12 +74,18 @@ Each line: *what it does* — *verified how*.
   *real run 2026-08-29: 0 resolved proposal-bearing rows → both refuse honestly; 4 markdown pins.*
   *(detail: `docs/records/2026-08-29-anchoring-falsifier-measured-in-scoring-report.md`)*
 - **Opus 5 default + two new drivers** (`vinci/config.py::graph_llm_model`,
-  `vinci/themes/drivers.py`) — LLM default bumped to `claude-opus-5` by operator ruling
-  2026-08-29 (4.8-era groundedness benchmark NOT re-run — accepted, falsifier at the knob);
-  registry grew to six with `ai-value-migration` and `glp1-drug-value-chain` (the drug-side
-  sibling glp1-demand-shift always carved out), both slugless until their pages exist —
-  *smoke: one tool-forced extract on opus-5 returned valid structure; registry live in every
-  driver-gated CLI; suite 3073 green.*
+  `vinci/themes/drivers.py`) — **THE MODEL HALF IS REVERTED: the default is `claude-opus-4-8`
+  again (operator ruling 2026-09-01).** Opus 5 returns a synthesis tool call MISSING REQUIRED
+  FIELDS ~50% of the time, fleet-wide (TECX 5F/4P, SMPL 2F/1P, V 0F/4P; 4.8 2P/0F) — not
+  truncation, not prompt size, not the sleeve. All 18 committed syntheses were written by 4.8 and
+  none by Opus 5, so the bump was never exercised on the synthesis path; the accepted falsifier
+  watched GROUNDEDNESS and the failure was ABSENCE. The 2026-08-29 entry's own evidence was
+  *one* green extract — against a stochastic ~50% failure. Guard shipped:
+  `tests/test_llm_default_is_exercised.py`. Reversal record:
+  `docs/records/2026-09-01-opus5-synthesis-regression.md`. The DRIVERS half stands: registry grew
+  to six with `ai-value-migration` and `glp1-drug-value-chain` (the drug-side sibling
+  glp1-demand-shift always carved out), both slugless until their pages exist — *registry live in
+  every driver-gated CLI; suite 3073 green at the time.*
   *(detail: `docs/records/2026-08-29-opus5-default-and-two-drivers.md`)*
 - **Silicon-ecosystem-moat — the third model-agnostic beneficiary class**
   (`vinci/themes/drivers.py`, ai-value-migration) — operator ruling 2026-08-30: the winners share
