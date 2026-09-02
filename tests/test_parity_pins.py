@@ -889,3 +889,31 @@ def test_print_chunk_probe_mirrors_the_print_rules_it_cannot_see() -> None:
     assert 'addEventListener("afterprint", unsplitWideTablesAfterPrint)' in js
     # a suppressed bulk tier must never be measured or split (P5)
     assert 'closest(".ds-bulk")' in js
+
+
+def test_the_web_brief_renders_a_degraded_drawdown_shape_like_render_py() -> None:
+    """py↔JS PARITY on the line that justifies hiding the `drawdown-cause:` qa flag.
+
+    `flags._QA_MARKERS` hides that flag on the stated ground that "the READER IS ALREADY TOLD at the
+    point of use" — true in `render.py::_brief_lines`, which appends `_fact("Shape", …)` whenever a
+    drawdown block exists, UNKNOWN included. The JS twin `whatHappened()` used to gate on
+    `dc.shape.status === "present"`. That predated any UNKNOWN shape existing; #570 introduced the
+    first one, and the gate then dropped exactly that state — leaving a degraded drawdown SILENT on
+    the web Brief and page 1 of the PDF while its flag was hidden. That is the combination the
+    hide-list entry's own FALSIFIER forbids, and a helper-level pin could not see it.
+
+    Bound as a source-string pin (the `test_web_brief_proposal_mirror_static` pattern) because the
+    two renderers cannot share an import."""
+    js = _src("frontend/views/shared/dossier.js")
+    m = re.search(r"const shape = (.+?);", js)
+    assert m, "whatHappened()'s shape line moved — re-point this pin"
+    shape_line = m.group(1)
+
+    assert 'status === "present"' not in shape_line, (
+        "the web Brief gates the drawdown Shape on status=present again, so an UNKNOWN "
+        "(degraded-feed) shape renders nothing — while flags._QA_MARKERS hides its qa flag. "
+        "Either render the UNKNOWN here, or remove 'drawdown-cause:' from the hide-list."
+    )
+    # and the Python side must still be unconditional, or the parity claim is empty
+    py = _src("vinci/dossier/render.py")
+    assert 'out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))' in py
