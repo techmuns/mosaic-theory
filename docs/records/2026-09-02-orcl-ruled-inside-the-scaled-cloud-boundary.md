@@ -343,3 +343,73 @@ the direct test of scarcity, and it is flat.**
 
 **On the card's own evidence the null is currently better supported than the thesis.** That is a
 finding, not a reason to keep searching for a better framing.
+
+---
+
+# FALSIFIED PRE-DECLARATION — 2026-09-02
+
+The card was never declared. It was tested before it was stated, the evidence ran against it, and it
+is recorded rather than reframed a third time.
+
+## The falsifying argument is structural, not statistical
+
+**A landlord signing 15-year fixed-TCV contracts is monetizing certainty, not scarcity.** An owner of
+a scarce, appreciating asset takes *short* terms so it can reprice; locking a fixed total contract
+value for fifteen years is what you do when today's price is good, or when the capital structure
+needs certainty more than upside.
+
+It is **five-for-five at APLD** (~15-year base terms on every lease) and holds across the whole
+landlord cohort: CORZ *"initial terms of 10 years or more"*, WULF 10/20/25-year leases, RIOT's
+10-year AMD lease. **Every landlord in the tier has sold the option to reprice.** This does not
+depend on the price series at all, which is why it carries the finding.
+
+## Correction: the series is flat, not −9.1%
+
+| | |
+|---|---|
+| all dated, credit-**mixed** | **−9.1%** |
+| IG-only range (incl. undated) | **−1.0%** |
+| credit-clean dated series | **+0.0%**, two points, six months apart |
+
+The −9.1% was almost entirely the CoreWeave credit spread — which I identified as a confounder and
+then let carry the headline anyway. Reported as **flat**. It is also thinner than the table looks:
+two of five leases are undated, so the credit-clean series is two points.
+
+## CORZ cannot supply a second point
+
+Checked against the **full FY2025 10-K**, not an excerpt: no *"total contract value"*, no
+*"contracted revenue"*, no RPO, no per-kW/MW figure (n=0 for each). Its leases are triple-net or
+modified gross with *"pass-through provisions that allow us to recover the cost of customer power
+usage"* — so revenue per MW includes power that APLD's contracted-revenue composition does not state.
+**Not comparable.** The series remains single-issuer.
+
+## The conclusion is scoped, not generalised
+
+It is **not** "no scarcity premium in powered infrastructure." VST and TLN are **in the theme
+universe**, matched **zero** old prefilter terms, and are caught only by the widened list (6 and 3
+terms respectively). The graded population never contained the IPP class.
+
+**The falsification is scoped to the landlord/colocation segment the old prefilter could see.**
+Extending it further would be the absent-evidence error at conclusion level — the error this whole
+thread has been closing.
+
+*(AES and ETN matched an old term yet are absent from the 745, which vocabulary does not explain —
+possibly the `skip_errors` recall gap. Flagged, not asserted.)*
+
+## What survives
+
+**The rent series is registered as a standing instrument** — `vinci/themes/rent_series.py`, holding
+the five reduced leases, the credit-clean selector, and an explicit `REANIMATION_TRIGGER`: implied
+$/MW/yr rising across two credit-comparable leases two quarters apart at any issuer, **or** a second
+issuer beginning to disclose contract value with MW and term. Either reopens the driver on evidence.
+
+A killed card that leaves a working trigger is worth more than a declared one with four readings
+against it.
+
+**Exhibit 21 extraction shipped** — `vinci/themes/subsidiaries.py` returns BTBT → *WhiteFiber, Inc.
+70.5%* from the filed source, which is the control pair the extract-based flag could only see by
+luck. Verified on three live filings. Three defects were found only by running it against them: a
+filename guard that rejected BTBT's real exhibit, a header row leaking through as an entity, and a
+running-text layout (WULF's) whose entity/jurisdiction boundary cannot be found without guessing.
+**That last one returns nothing rather than a guess**, and the docstring says an empty result is an
+unparsed document and never an empty subsidiary list.

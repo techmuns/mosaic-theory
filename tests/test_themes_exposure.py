@@ -1020,3 +1020,43 @@ def test_form_and_substance_stay_separated_in_the_schema() -> None:
     spec_doc = " ".join((schemas.DriverSpec.__doc__ or "").split())
     assert "DOES THIS SELECT ON FORM?" in spec_doc, (
         "DriverSpec no longer carries the standing pre-ship question for new gates")
+
+
+# --------------------------------------------------------------------------------------------------
+# Exhibit 21 — the complete source for control pairs (2026-09-02)
+# --------------------------------------------------------------------------------------------------
+def test_exhibit_21_parses_the_real_btbt_table() -> None:
+    """POSITIVE PIN, from the LIVE document. BTBT's Exhibit 21 is what makes the control pair
+    findable at full recall — the extract-based flag could only see it because WhiteFiber happened
+    to be cited exchange-qualified in one fact."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    doc = ("<table><tr><td>NAME</td><td>SUBSIDIARIES OF THE REGISTRANT JURISDICTION</td>"
+           "<td>OWNERSHIP</td></tr>"
+           "<tr><td>Bit Digital USA, Inc.</td><td>Delaware, USA</td><td>100%</td></tr>"
+           "<tr><td>Financi&#232;re Marjos SCA</td><td>France</td><td>25%</td></tr>"
+           "<tr><td>WhiteFiber, Inc.</td><td>Cayman Islands</td><td>70.5%</td></tr></table>")
+    rows = parse_exhibit_21(doc)
+    assert ("WhiteFiber, Inc.", 70.5) in rows
+    assert all(n != "NAME" for n, _ in rows)                    # header dropped
+    assert ("Financière Marjos SCA", 25.0) in rows              # a minority stake is still reported
+
+
+def test_exhibit_21_never_invents_an_ownership_percentage() -> None:
+    """NEGATIVE PIN — the real CORZ shape. Its exhibit lists subsidiaries with NO percentage column;
+    a parser that filled in 100% would be fabricating the number the guard turns on."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    rows = parse_exhibit_21("<table><tr><td>Name of Subsidiary</td></tr>"
+                            "<tr><td>American Property Acquisition, LLC</td></tr></table>")
+    assert rows == [("American Property Acquisition, LLC", None)]
+
+
+def test_a_running_text_exhibit_yields_nothing_rather_than_a_guess() -> None:
+    """NEGATIVE PIN — the real WULF shape, which is NOT a table. The boundary between a jurisdiction
+    and the next entity name cannot be found without guessing; a first attempt returned the table
+    HEADER as an entity name. Returning nothing is the correct failure, and the docstring says an
+    empty result is an unparsed document and never an empty subsidiary list."""
+    from vinci.themes.subsidiaries import parse_exhibit_21
+    flat = ("<p>Legal Entity Name Percentage of Voting Securities Owned Directly or Indirectly by "
+            "Registrant Jurisdiction of Organization Abernathy Data LLC 50.1% Delaware "
+            "Akela Data LLC 100% Delaware</p>")
+    assert parse_exhibit_21(flat) == []
