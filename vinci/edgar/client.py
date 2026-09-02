@@ -276,11 +276,24 @@ SHARES_TAG_DEI = "dei:EntityCommonStockSharesOutstanding"          # filed INSTA
 SHARES_TAG_USGAAP = "us-gaap:CommonStockSharesOutstanding"         # filed INSTANT count (fallback)
 SHARES_TAG_WAVG = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"   # PERIOD AVERAGE
 
+#: How many CIKs' submissions documents one client remembers at a time. TWO, not unbounded: one
+#: assembly touches ONE CIK across ~13 reads, so 2 is already slack — while `vinci/cli.py`'s monitor
+#: loop and the theme scans hold ONE client across MANY CIKs and read each exactly ONCE, where an
+#: unbounded memo would be pure cost (a parsed submissions dict is 3.6-3.9x its text: ~0.53 MB at
+#: the corpus median, ~17 MB at the 4.32 MB max — a 2,000-name sweep would retain ~1.0 GB unused).
+_SUBMISSIONS_MEMO_MAX = 2
+
+
 class EdgarClient:
     def __init__(self, http: CachedHttp, efts_http: CachedHttp | None = None) -> None:
         self._http = http
         # efts is rate-sensitive → its own slower client; falls back to the data client if unset.
         self._efts = efts_http or http
+        # Per-INSTANCE memo of the parsed submissions document (see `_submissions`). Deliberately a
+        # plain dict rather than `functools.lru_cache` on the method: an lru_cache keys on `self`
+        # and would keep every client — and every document it ever touched — alive for the process
+        # lifetime. This dies with the client, which is what "for the life of one run" means here.
+        self._submissions_memo: dict[str, dict[str, Any] | HttpError] = {}
 
     @classmethod
     def from_config(cls, config: Config | None = None) -> EdgarClient:
@@ -407,12 +420,60 @@ class EdgarClient:
         return parse_fts_response(data)
 
     # --- registrant names (reverse-merger / rename vintage) ------------------------------------
+    def _remember_submissions(self, cik10: str, outcome: dict[str, Any] | HttpError) -> None:
+        """Record one CIK's outcome, evicting oldest-first past ``_SUBMISSIONS_MEMO_MAX``."""
+        self._submissions_memo[cik10] = outcome
+        while len(self._submissions_memo) > _SUBMISSIONS_MEMO_MAX:
+            self._submissions_memo.pop(next(iter(self._submissions_memo)))
+
     def _submissions(self, cik: int | str) -> dict[str, Any]:
         """The submissions document for a CIK. ONE fetch shape for every consumer in this class —
         the URL and the TTL are stated once, so a change to either cannot land at one call site and
-        not the other (which would silently double the SEC request rate per dossier)."""
-        raw = self._http.get_json(_SUBMISSIONS.format(cik=pad_cik(cik)), ttl_seconds=_ONE_DAY)
-        return cast(dict[str, Any], raw)
+        not the other (which would silently double the SEC request rate per dossier).
+
+        MEMOIZED PER INSTANCE, success AND failure. `CachedHttp` caches on DISK only, so each of the
+        ~13 reads one dossier assembly makes of this document cost a disk read plus TWO json parses
+        (the cache envelope, then the payload). The parse saving is small and honest — ~8.6 ms per
+        dossier, ~4.3 s per 500-name batch. **The failure memo is the point.** `_write_cache` runs
+        only on success, so a degraded feed makes EVERY caller re-run the full retry storm
+        (5 attempts, 1+2+4+8 s backoff ≈ 15.6 s; ≈165 s if SEC hangs to the 30 s timeout rather than
+        erroring). Remembering the failure pays that storm ONCE per CIK per run.
+
+        THE REMEMBERED FAILURE RE-RAISES — it never returns None or {}. Nearly every consumer treats
+        "no filings" as a legitimate empty answer, so returning an empty document on a remembered
+        failure would silently blank the 8-K / Form 4 / catalyst blocks across a degraded run with
+        the suite green. Only `HttpError` is remembered; anything else propagates unmemoized.
+
+        The document is returned BY REFERENCE, not copied: `copy.deepcopy` measures 1.86 ms against
+        0.42 ms for a fresh parse, so copying would cost 4.4x the work it saves and make this a net
+        pessimization. That is safe because no consumer mutates it — `parse_registrant_history` /
+        `parse_former_names` and `recent_filings` only read — and that property is pinned by
+        `test_submissions_memo.py::test_the_memoized_document_is_not_mutated_by_its_consumers`.
+
+        SCOPE, stated because it is easy to overclaim: on a DEGRADED feed this helps only names
+        whose assembly reaches a SECOND read. `vinci/dossier/mechanical.py:285`
+        (`_drawdown_filings`) is the one submissions call site of 13 with no handler and the FIRST
+        to run, so a name carrying
+        `earnings_gap_down` events (9 of 17 committed dossiers) still aborts on its first storm and
+        the memo is never read twice. Accepted knowingly — STATE.md §5.0 row 16.
+        """
+        cik10 = pad_cik(cik)
+        remembered = self._submissions_memo.get(cik10)
+        if remembered is not None:
+            if isinstance(remembered, HttpError):
+                # A FRESH equivalent, chained to the original: same type and same args, so every
+                # existing `except HttpError` / `except (HttpError, KeyError)` handler behaves
+                # identically, without re-raising one instance ~13 times and growing its traceback.
+                raise HttpError(*remembered.args) from remembered
+            return remembered
+        try:
+            raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
+        except HttpError as exc:
+            self._remember_submissions(cik10, exc)
+            raise
+        doc = cast(dict[str, Any], raw)
+        self._remember_submissions(cik10, doc)
+        return doc
 
     def registrant_history(self, cik: int | str) -> RegistrantHistory:
         """This CIK's current registrant name plus every prior span.
