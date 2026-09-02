@@ -28,5 +28,31 @@
   "analyst_notes": [
    "Scanned after the market had already re-rated it — kept as a calibration case; the lesson the radar exists to prevent."
   ]
+ },
+ "ai-value-migration": {
+  "driver_summary": {
+   "quote": "the MIGRATION OF AI VALUE CAPTURE across the software/platform stack — if the frontier-to-open-source model catch-up window stays at ~3-6 months or compresses, raw frontier-model IP commoditizes and durable AI economics migrate to the layers ABOVE the model (application software with workflow/user/data/regulatory moats monetizing AI on proprietary data and installed workflows) and BELOW it (hyperscaler compute, cloud distribution, data gravity).",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "Pricing. The odd thing isn't that the market centres model IP — it's that the market already ran this trade. Since the February selloff it has separated regulatory depth, proprietary workflow data and systems of record that are hard to rip out from ordinary software: buyers pay a premium for exactly those three things, and anything less is priced like ordinary software. That is close to verbatim the discriminator all 357 verdicts were adjudicated on, which makes the 168 ratifies a quality screen more than a mispricing — durability already paid for isn't a trade.",
+   "Evidence. Not in the filings. The modal ratified 10-K says no AI monetization is broken out; the hard terms live in 8-Ks and earnings releases — DGXX's $1.1B Cerebras note, AVGO's $10.8B AI line, CRWV's $60.7B RPO. The sheet's own machine_grade column understates this badly, because it was never refreshed when the 65 REVISIT rows were corrected.",
+   "Losers. Anyone selling a unit abundance shrinks: seats (TEAM's first-ever enterprise seat decline, WDAY, MNDY), billable hours (EPAM, CNXC, KFRC — which names GenAI in its own filing), and substitutable data middlemen, with ZoomInfo the cleanest corpse. Plus the deliberate null-side holders, ORBS and SPCX.",
+   "Kill criteria. The window already moved against it, 3→4 months; past ~6 kills the premise. Near-frontier open weights holding frontier-level pricing would kill the supply-side argument even with the window intact. But the binding constraint is prior to both: with 354 model-agnostic names against three frontier-lab proxies and GOOGL and TSM absent, there is no \"from\" leg — the migration isn't measurable on this universe, so the thesis as written can't be falsified here.",
+   "This supersedes the earlier note, which asserted the de-rating was indiscriminate; the selloff overwhelmingly hit horizontal, general-purpose SaaS while vertical software with domain expertise, regulatory moats and embedded workflows was structurally insulated, so that claim was wrong and the correction is logged rather than overwritten. And the tradeable question has moved: not whether value migrates, but where these verdicts disagree with the line the market has already drawn — which needs multiples the sheet doesn't currently carry.",
+   "One caveat on my own confidence: the vertical-versus-horizontal divergence comes mostly from M&A and private-multiple commentary, not a public-equity factor study, so I have direction but not magnitude. The same source attributes only 60–70% of the selloff to AI fears, with the remainder re-rating growth deceleration that predates the driver — which is a further reason not to lean on the selloff as evidence about the driver at all."
+  ]
+ },
+ "glp1-drug-value-chain": {
+  "driver_summary": {
+   "quote": "the GLP-1 DRUG VALUE CHAIN's SECOND GROWTH PHASE — incretin therapy transitioning from supply-constrained scarcity to a volume-driven, price-competitive, chronic-treatment market: affordability/access expansion, resolution of supply constraints, oral formulations, direct-to-patient distribution, generic/compounded entry, and an induction-to-maintenance chronic model.",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "The exposure and the label have decoupled: the quantified GLP-1 economics sit in names carrying no theme premium — West at 18% of sales, Waters' testing line up 40%, BD's segment growth attributed to it by name — while the premium concentrates on two incumbents whose own disclosures show price doing the damage. Novo's Q2 is the tell: record units and shrinking dollars in one release, and the market has to pick which line to capitalize.",
+   "Almost none of this is in the filings. Every load-bearing number came from a call, a deck, a docket or an FDA action; the 10-Ks lag it or blend it away, and the filings-text pipeline mis-graded a fifth of the sheet — twice on the same names even after correction. A filings-anchored scanner is structurally late here.",
+   "The losing side is anyone paid off list price or off scarcity: the January 2027 WAC reset halves the base distribution fees ride on, compounding's margin is already gone (Hims' twelve-point gross-margin reset is the receipt), and Januvia's slide, lixisenatide's run-off and the bariatric-surgery funnel are the quiet substitution losers.",
+   "I'd drop it on three tells, fastest first: West's GLP-1 component line decelerating while incumbent volumes still grow — fragmentation isn't buying capacity, so infrastructure dies first; the ~80% treatment-naive share of oral uptake reverting toward switchers — no second phase, just mix shift inside the same pool; and category volume growth falling below the price-compression rate, at which point it is a demand peak, the market was right, and the whole sheet is a control group."
+  ]
  }
 }
