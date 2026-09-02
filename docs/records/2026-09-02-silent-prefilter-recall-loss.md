@@ -121,6 +121,18 @@ prefilter yield 1,353  ->  graded  ->  ratified + passed 357
 The comparison that means something is 1,348 against 1,353. Recorded because mixing two stages'
 counts is the denominator confusion this record exists about.
 
+### The rule this actually teaches
+
+Not "flag, don't assert" — that was done, and the anomaly was flagged rather than asserted
+throughout. The rule is **TEST THE ANOMALY BEFORE IT EARNS A RECORD ENTRY.** This one reached an
+escalation, a STATE.md row, a record and a commit message before anyone spent the ninety seconds
+needed to re-probe it at the scan's own window. A flagged-but-untested observation is cheap to check
+and expensive to publish, and it was published first.
+
+**Added to the probe protocol** (CLAUDE.md, beside the never-assert-absence rule): *read the prior
+scan's parameters — window, forms, reference date — before probing it; a probe run at different
+parameters is measuring a different question.*
+
 ### The motivating anomaly was my own artifact
 
 AES and ETN were escalated because they matched an old prefilter term on a direct probe yet never
@@ -135,11 +147,29 @@ The matching filing is older than 290 days. **Their absence from the scan was co
 and the anomaly was a window mismatch between my probe and the scan it was probing. It was flagged
 rather than asserted, which is the only reason it cost a check instead of a false record.
 
+### Scope of this clearance — do not over-read it
+
+**It clears the parent's 357. It does not clear pre-instrumentation scans generally.** One universe,
+one window, one run.
+
+The premise that it was a warm replay does not hold, and the measurement is better than that: **1,910
+efts cache entries were written during the run**, so most of its requests were **live fetches, not
+cache hits**, and zero of them errored. That is stronger than a cached re-run would have been.
+
+But the failure mode is **load-dependent**, which is what actually limits this. `skip_errors` catches
+an `HttpError`, and the efts 500s seen earlier in this work appeared **under burst** at higher
+concurrency. A single-threaded re-run at this request rate is a gentler exercise of that path than a
+full parallel scan. Zero skips here means *this run did not trip it*, not *the path cannot trip*.
+
 ### What that leaves standing
 
-The **defect is real**: `skip_errors=True` is hardcoded and, before this, the `break` was uncounted —
-a scan could lose up to 100 CIKs per swallowed query and report a clean number. The instrumentation
-and the banner stay.
+**RECLASSIFIED: this is a LATENT-DEFECT GUARD, not a bug fix.** The defect is real in code —
+`skip_errors=True` is hardcoded and, before this, the `break` was uncounted, so a scan could lose up
+to 100 CIKs per swallowed query and report a clean number. But no occurrence has ever been observed.
+Zero observed occurrences means **unmeasured until now, not safe**: before the instrumentation there
+was no way to see one, so the absence of sightings is not evidence of absence — the same
+absent-evidence error this whole thread has been closing, and it would be an easy one to make in the
+guard's own favour. The instrumentation and the banner stay on that basis.
 
 **But there is no evidence it has ever fired.** Both instrumented runs — this one and the
 ai-compute-platform corpus check — report **0 skips**. The honest status is a guard against an
