@@ -83,3 +83,67 @@ same reason.
 What genuinely does **not** retro-measure is the LLM grading: a name the prefilter missed was never
 assessed, so re-running the prefilter bounds the *population*, not the *grades*. A materially larger
 candidate set would mean the graded 745 needs extending, which is a second, real cost.
+
+## Result of the scheduled re-run — 2026-09-02
+
+> **Pointer correction, not a rewrite.** The amendment above says *"Tracked as STATE.md §5.0 row
+> 14."* That row is **now deleted** — the re-run below closed the item, and closing deletes the row.
+> §5.0 row 14 is today the standing-trigger row, a different item. The merged text is left as filed
+> because record bodies are immutable; this is the forward correction.
+
+Run as scheduled: the parent's 19 prefilter terms over the committed universe (3,036 distinct CIKs),
+the CLI's default 290-day window ending at the snapshot `as_of` (2025-11-07 … 2026-08-24), under the
+instrumented code.
+
+```
+probed CIKs      3036
+SKIPPED queries     0      <- the measurement this run existed for
+matched NOW      1348
+graded THEN      1353      (1266 main run + 102 delta scan, union)
+  NOW not THEN      0
+  THEN not NOW      5
+```
+
+**No detectable silent loss.** `NOW \ THEN = 0` — every name the re-run finds was already graded, so
+the original run missed nothing this one can see. The five in the other direction are the shrinkage
+direction (filings ageing out of a window that ends earlier than the delta scan did), not loss.
+**`ai-value-migration`'s denominator is sound**, and with it the sheet built on top of it.
+
+### The row's own phrasing was a category error
+
+It said "report the candidate count **against 357**." A prefilter yield does not compare to 357: the
+357 is `ratified + passed`, a **downstream** selection from the graded population.
+
+```
+prefilter yield 1,353  ->  graded  ->  ratified + passed 357
+```
+
+The comparison that means something is 1,348 against 1,353. Recorded because mixing two stages'
+counts is the denominator confusion this record exists about.
+
+### The motivating anomaly was my own artifact
+
+AES and ETN were escalated because they matched an old prefilter term on a direct probe yet never
+reached the 745-name scan, which "vocabulary cannot explain." It can:
+
+| window | AES | ETN |
+|---|---|---|
+| **290 days — the scan's actual window** | **0 terms** | **0 terms** |
+| 400 days — the window my probe used | `hyperscaler` | `hyperscaler` |
+
+The matching filing is older than 290 days. **Their absence from the scan was correct behaviour**,
+and the anomaly was a window mismatch between my probe and the scan it was probing. It was flagged
+rather than asserted, which is the only reason it cost a check instead of a false record.
+
+### What that leaves standing
+
+The **defect is real**: `skip_errors=True` is hardcoded and, before this, the `break` was uncounted —
+a scan could lose up to 100 CIKs per swallowed query and report a clean number. The instrumentation
+and the banner stay.
+
+**But there is no evidence it has ever fired.** Both instrumented runs — this one and the
+ai-compute-platform corpus check — report **0 skips**. The honest status is a guard against an
+unobserved failure mode, not a fix for an observed one. The prior claim that "every denominator in
+the theme pipeline is a lower bound over an unknown base" is **withdrawn for the parent**, which is
+now measured; it remains formally true only for scans run before instrumentation whose skip count
+was never recorded.
