@@ -652,6 +652,10 @@ Each line: *what it does* — *verified how*.
   `gate_regime: None`, GOOGL included — written through `scenario-create` the same day the tiers were asked for. *FIFTH unwired capability; found by asking what a record reads
   under the ladder, not by a test.* Sealed records stay frozen (#489's rule) — pinned both ways, corpus provably unmoved. | GOOGL under the ladder: `below_target` /
   `minimum_met` / not eligible at its frozen $345.90, and `preferred` / `preferred` / eligible at the verified 2026-08-31 close of $339.35.
+- **MC2 — segment ECONOMICS reach the machine, via the only route that carries them** (`vinci/edgar/segments.py`). MC2's premise was partly stale: `concentration.segment_ebitda` already works for the two names whose CIQ export holds an EBITDA row (UBER, VRRM). The gap is the FIVE multi-segment names with segmented revenue and no earnings — GOOGL, IT, EPAM,
+  AORT, WERN — and companyfacts cannot fill it: measured on the committed fixtures, NOT ONE row carries a dimensional qualifier, so segment operating income is absent from the source already pulled. The filing's own rendered R-files do carry it. *Verified by RECONCILIATION on GOOGL's FY2025 10-K (acc 0001652044-26-000018), both sides to the dollar: segment revenue
+  402,963 + hedging (127) = 402,836 = disclosed Total revenues; 139,404 + 13,910 - 7,515 - 16,760 = 129,039 = disclosed Total income from operations — the second also proves the parenthesised-negative sign, which read positive breaks that sum by twice its size.* NOTE two presentations in one table: Services/Cloud state revenue AND costs (income is the
+  difference) while Other Bets and reconciling items state income DIRECTLY under a dimensional heading; reading one shape loses half the table. Pinned offline on the filing frozen byte-for-byte; mutation-tested on the sign and on report selection. **SCOPE: the EXTRACTOR only — wiring it into assembly for those five names is not done.**
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**
