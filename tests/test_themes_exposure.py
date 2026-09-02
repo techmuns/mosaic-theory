@@ -1000,3 +1000,23 @@ def test_coverage_never_prints_as_a_clean_bill() -> None:
         assert "recall is unquantified" in line
         assert "Exhibit 21" in line                       # names the complete source it lacks
     assert "0 of 2 rows (0.0%)" in control_pair_coverage(clean)   # says HOW blind it was
+
+
+def test_form_and_substance_stay_separated_in_the_schema() -> None:
+    """THE FOURTH INSTANCE CLOSED WITH A CHECK, not another gate (CLAUDE.md INVARIANT RULE).
+
+    Four surfaces have now made the same error: `machine_grade` graded FORM and was read as SIZE;
+    the prefilter used OBSERVER vocabulary and excluded the observed; the structural concession read
+    a disclosure asymmetry as an economic one; the $100m floor selected on CURRENCY of disclosure.
+    The default is what needs fixing, so the two enums that get mistaken for economic grades must
+    SAY they are not, and a quiet redefinition has to go red here.
+    """
+    from vinci.themes import schemas
+    for enum in (schemas.ExposureBasis, schemas.ExposureConcreteness):
+        doc = " ".join((enum.__doc__ or "").split())
+        assert "DISCLOSURE FORM, NEVER ECONOMIC SUBSTANCE" in doc, (
+            f"{enum.__name__} no longer states it is form, not substance — the statement is the "
+            f"guard: it is what a reader building a gate on this field is supposed to hit first")
+    spec_doc = " ".join((schemas.DriverSpec.__doc__ or "").split())
+    assert "DOES THIS SELECT ON FORM?" in spec_doc, (
+        "DriverSpec no longer carries the standing pre-ship question for new gates")

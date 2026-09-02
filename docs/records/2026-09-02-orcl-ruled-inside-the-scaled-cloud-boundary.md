@@ -120,3 +120,74 @@ and GOOGL grade committed-capacity unquantified — and the card's own guardrail
 licenses no inference in either direction. **It is a hypothesis with one scheduled test, not a
 thesis with evidence.** That is an honest position and may be worth declaring as such, but it must
 be declared deliberately and as that — never by default because a PR went green.
+
+## Amendments
+
+**2026-09-02 — the "6-of-9 → 2-of-6" claim is WRONG and is corrected to 6-of-9 → 4-of-6.**
+
+The body above says gate v2 drops the tier's crypto-origin share from 6-of-9 to 2-of-6. That was the
+one figure suggesting v2 improved the tier's **composition** rather than merely its size, and it does
+not survive. Under one stated entity-level rule — *the operating company was founded as, or drew
+substantially all revenue from, crypto mining/staking before pivoting to AI/HPC hosting* — applied
+to both tiers:
+
+| | crypto-origin | share |
+|---|---|---|
+| before (9) | APLD, BTBT, CIFR, CRWV, RIOT, WULF | **6/9 = 67%** |
+| after v2 (6) | APLD, CRWV, RIOT, WULF | **4/6 = 67%** |
+
+**The share is unchanged.** Parent-inclusive (WYFI inheriting Bit Digital's origin) it goes 78% →
+83%, slightly worse. The error was counting only the obvious miners among the kept names and
+forgetting that APLD is ex-Applied Blockchain and CoreWeave was founded as Atlantic Crypto, an
+Ethereum mining operation.
+
+**What that means for v2:** it fixes the *kind* defect — a bond and an intercompany loan no longer
+qualify a name — and leaves the cohort confound exactly where it was. The two names it removes are
+themselves crypto-origin, and both names it admits on capacity are too. No gate defined on
+disclosure magnitude can reduce this confound.
+
+**2026-09-02 — MW floor sensitivity, run the same way as the dollar floor.**
+
+```
+>=  1 MW  n=2  RIOT, WULF          >= 25 MW  n=2  RIOT, WULF
+>=  5 MW  n=2  RIOT, WULF          >= 50 MW  n=1  WULF
+>= 10 MW  n=2  RIOT, WULF
+```
+
+Flat across 1–25 MW; only above 25 does it bind. The 5 MW floor is not load-bearing and that concern
+dissolves. Two that do not: the $25.7m/MW conversion is APLD's **blended** figure over 15-year base
+terms, so applying it across issuers assumes comparable per-MW economics *and* duration (WULF 10–25
+years, RIOT 10) — it sets an order of magnitude and nothing finer. And **RIOT's counterparty is AMD,
+a chip vendor, not an AI tenant**: 25 MW leased to AMD may be silicon bring-up rather than serving AI
+demand, which is a **driver-tie** question no magnitude gate can see. RIOT may not belong in the tier
+on tie grounds regardless of any floor. RIOT also sits *exactly* on 25 MW, so a floor there would be
+knife-edge; 5 MW is near no observed value.
+
+**2026-09-02 — related-party sweep: BTBT's defect did NOT propagate.**
+
+BTBT is the only tier member whose grade rests on an intercompany transaction — its counterparty,
+Enovum NC-1 Venture LLC, is an indirect wholly-owned subsidiary of White Fiber Operating Partnership,
+i.e. of WYFI, which BTBT ~70.5% owns and consolidates. Sweeping all nine members' binding facts found
+three other affiliate structures, none of that shape:
+
+- **WULF** — Abernathy is developed through a JV (FS CS 1 LLC), WULF holding 50.1% with Fluidstack CS
+  I Inc., and pre-leased to Fluidstack USA III: the **tenant is affiliated with WULF's own JV
+  partner**. Third-party revenue, not an internal transfer, but worth the analyst's eye — and it
+  compounds a concentration already visible: **546 of WULF's ~1,007 contracted MW are Fluidstack**
+  (378 Akela + 168 Abernathy), which is falsifier 2's territory.
+- **CIFR** — notes issued by its own wholly-owned indirect subsidiary. A financing, already removed
+  by v2's kind rule; not a related-party revenue defect.
+- **APLD** — the affiliate is the *counterparty's* (CoreWeave assigned a lease to its own
+  subsidiary). APLD's revenue stays third-party. Not a defect.
+
+*Provenance note from the operator: their original magnitude observation ran off the parent sheet's
+four-name cohort (BLZE, CRWV, PRGS, WYFI) and was therefore uncontaminated; it was the 745-name tier
+that carried the defect.*
+
+**2026-09-02 — the declaration gate, stated so it is not re-litigated.**
+
+The card's own rule is that no claim rests on tier membership until **two consecutive runs agree**.
+The tier has gone **4 → 7 → 9 → 6** (the last being v2 applied on paper), and **v2 is unenforced
+prose**. The gate is therefore: enforce v2 in the grader, run it twice, require agreement. That one
+step tests the gate's effect and tier stability together. Until then the card is not declarable on
+its own terms — independent of anyone's judgement about the thesis.

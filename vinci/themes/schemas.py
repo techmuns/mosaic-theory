@@ -291,7 +291,11 @@ class ThemeStage2(BaseModel, frozen=True):
 class ExposureConcreteness(StrEnum):
     """How CONCRETE one disclosed exposure fact is — the Part-6 discriminator (a mere mention of the
     driver ≠ binding exposure; a tenant-less 'we appointed an SVP of X' is intent, a quantified
-    share-of-revenue attributable to the driver IS exposure). Graded, never a verdict."""
+    share-of-revenue attributable to the driver IS exposure). Graded, never a verdict.
+
+    THIS IS DISCLOSURE FORM, NEVER ECONOMIC SUBSTANCE (CLAUDE.md, form-vs-substance guardrail).
+    Nothing may rank economic capture from this field alone: substance needs MAGNITUDE + KIND, and
+    neither is a structured field in this schema today."""
 
     BINDING_CONTRACT = "binding-contract"  # signed agreement, named counterparty + terms (MW/years)
     COMMITTED_CAPACITY = "committed-capacity"  # committed capex/MW/capacity, no binding revenue yet
@@ -327,7 +331,12 @@ class ExposureBasis(StrEnum):
     """The STRONGEST disclosed basis across the stream — a factual read of disclosure concreteness,
     NOT a score/rank/membership verdict (assemble-not-conclude; pinned by the no-conclude guard).
     REAL (FP bar) = binding-contract or quantified-revenue; committed/aspirational/none = not.
-    UNASSESSED_ERROR = a scan FAILED to assess this name (LLM/quota) — never a genuine none."""
+    UNASSESSED_ERROR = a scan FAILED to assess this name (LLM/quota) — never a genuine none.
+
+    THIS IS DISCLOSURE FORM, NEVER ECONOMIC SUBSTANCE. A binding contract worth $32,549 and one
+    worth $60.7bn are the SAME basis here, by design — the field says what KIND of evidence exists,
+    not how much it is worth. Ranking capture from it is the error CLAUDE.md's form-vs-substance
+    guardrail exists to stop."""
 
     BINDING_CONTRACTS = "binding-contracts-with-terms"
     COMMITTED_CAPACITY = "committed-capacity-or-capex"
@@ -357,6 +366,15 @@ class ExposureAssessment(BaseModel, frozen=True):
 
 class DriverSpec(BaseModel, frozen=True):
     """A per-theme configuration that parameterizes the semantic exposure classifier for ANY driver.
+
+    STANDING RULE FOR EVERY SPEC AND EVERY GATE BUILT ON ONE (2026-09-02, after the fourth
+    instance): a grade is defined on ECONOMIC SUBSTANCE; DISCLOSURE FORM is recorded separately and
+    never stands in for it. Before any new gate ships, answer in writing: DOES THIS SELECT ON FORM?
+    Four have already failed that question — `machine_grade` graded form and was read as size; this
+    driver's prefilter used OBSERVER vocabulary and so excluded the observed (GOOGL); the
+    disclosure-asymmetry concession read a disclosure asymmetry as an economic one; and the $100m
+    materiality gate selected on CURRENCY of disclosure, admitting a bond issuance and an
+    intercompany loan while excluding the two largest contracted-capacity names.
 
     The classifier code path (the generic system prompt + tool + the two-axis grading) is
     driver-AGNOSTIC; a DriverSpec supplies everything driver-specific. AI-datacenter is ONE instance
