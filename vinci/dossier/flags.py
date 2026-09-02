@@ -43,7 +43,24 @@ _QA_MARKERS: tuple[str, ...] = (
     "(P3)",  # a decision caveat; the human-facing summary is one line INSIDE the covenant block.
     "transcripts on file but unparseable",  # PR-B §3-now — an OPS action (install LibreOffice),
     "operating-drivers:",  # PR-B — mechanism-tier per-source honest-miss notes → dev/JSON QA, not
-)  # an analyst caveat; a no-driver name renders the honest empty Mechanism line, not a caveat.
+    # an analyst caveat; a no-driver name renders the honest empty Mechanism line, not a caveat.
+    #
+    # OPERATOR RULING 2026-09-02 — an EDGAR outage that blanks the drawdown cause is dev/JSON QA.
+    # This one is an EXCEPTION to the module's default above, taken deliberately, so it is argued
+    # here rather than assumed: the default routes a new flag to the human, and by that default this
+    # would have been a caveat (data completeness, not machine discipline — the `UNTRACEABLE` line).
+    # It is hidden anyway because the READER IS ALREADY TOLD at the point of use: `_drawdown_cause`
+    # degrades `shape` to UNKNOWN and `_fact` renders "_UNKNOWN_ — EDGAR filing index unavailable…"
+    # in the drawdown block itself (#570). So the human surface is NOT silent — this flag is the
+    # machine's twin of a message the analyst already sees, and promoting it would put the same
+    # sentence in two places on every affected name of a degraded run. The visible-absence rule is
+    # satisfied by the rendered UNKNOWN, not by this flag.
+    # FALSIFIER: if that UNKNOWN note ever stops rendering, this entry must be removed — the flag is
+    # then the only signal, and hiding it would make the outage silent. Pinned by
+    # `test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so`, which asserts BOTH
+    # halves together (hidden AND the note present), so the two cannot drift apart.
+    "drawdown-cause:",
+)
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).
 _WHERE_HUMAN: dict[str, str] = {

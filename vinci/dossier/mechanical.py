@@ -463,12 +463,15 @@ def _drawdown_cause(
         if gaps
         else Sourced.unknown(note="no gap-down events on the data-record")
     )
-    # THE LOUD TWIN of the UNKNOWN note above. The note renders at the point of use (`_fact` prints
-    # "_UNKNOWN_ — <note>"), but a blank cause under a real price gap is a decision fact: the reader
-    # must be able to tell "EDGAR was down, re-assemble" from "the company filed nothing", which is
-    # a finding. Same role as the `stock-info:` twin of the CMP-row note, and routed the same way —
-    # `flags.partition` sends anything off the QA hide-list to the human caveat channel, which is
-    # that module's stated default ("fail toward transparency ... never silently hidden").
+    # THE MACHINE-TIER TWIN of the UNKNOWN note above. The human is told at the point of use
+    # (`_fact` prints "_UNKNOWN_ — EDGAR filing index unavailable…"); this flag exists so a degraded
+    # run is also MEASURABLE — greppable and countable across a batch, which the rendered note is
+    # not. `"drawdown-cause:"` is on `flags._QA_MARKERS`, so it stays dev/JSON only (operator
+    # ruling 2026-09-02 — an exception to that module's show-by-default rule, argued at the
+    # hide-list entry). The exception holds ONLY while the block itself still names the outage;
+    # both halves are pinned together in
+    # tests/test_drawdown_filing_index_unavailable.py::
+    # test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so.
     drawdown_flags = (
         [
             f"drawdown-cause: EDGAR filing index unavailable — "
