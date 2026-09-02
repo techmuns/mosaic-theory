@@ -105,7 +105,16 @@ verdict placement.
   docs/engineering.md §House vocabulary), run `git log --all -i --grep=<concept>` AND `git log
   -S<term>` (pickaxe searches diff content, vocabulary-independent), and READ the definition of
   every symbol the search surfaces near the topic — a call site's name is a claim, not proof.
-  Still not found → report "not found under <searches tried>", NEVER "doesn't exist". (Two real
+  Still not found → report "not found under <searches tried>", NEVER "doesn't exist".
+  **When probing a PRIOR RUN, read its PARAMETERS FIRST — window, forms, reference date.** A probe at
+  different parameters measures a different question, and the mismatch reads exactly like a defect in
+  the thing probed. (AES/ETN were escalated as "silent recall loss" off a 400-day probe of a scan run
+  at 290 days; at the scan's own window they match nothing, and the absence was correct behaviour.)
+  **And TEST AN ANOMALY BEFORE IT EARNS A RECORD ENTRY** — that one reached an escalation, a STATE.md
+  row, a record and a commit message before it was re-probed at the right window. Flagging rather
+  than asserting is necessary and was done; it is not sufficient. (The two incidents cited above —
+  the ranker's screen-time cap and the D3 ordering — are evidence for the NEVER-ASSERT-ABSENCE rule,
+  not for this one.) (Two real
   incidents: the ranker's screen-time cap and the D3 bull/bear ordering were both denied while
   existing — generic-vocabulary greps missed the house terms.)
 - **Coin a term → translate it once, at coin-time.** A PR that introduces a house term (the next
