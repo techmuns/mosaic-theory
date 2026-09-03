@@ -433,3 +433,5 @@
 {"bar_date": "2026-08-25", "close": 346.96, "high": 350.16, "internal_id": "SEC-0001652044-GOOGL", "low": 345.6, "open": 349.64, "source": "polygon-aggs", "volume": 20649680.689253}
 {"bar_date": "2026-08-26", "close": 342.0, "high": 346.88, "internal_id": "SEC-0001652044-GOOGL", "low": 340.18, "open": 346.62, "source": "polygon-aggs", "volume": 20420257.696679}
 {"bar_date": "2026-08-27", "close": 340.65, "high": 341.69, "internal_id": "SEC-0001652044-GOOGL", "low": 338.52, "open": 339.67, "source": "polygon-aggs", "volume": 23391389.573422}
+{"bar_date": "2026-08-28", "close": 346.59, "high": 349.14, "internal_id": "SEC-0001652044-GOOGL", "low": 340.27, "open": 340.705, "source": "polygon-aggs", "volume": 25347206.366614}
+{"bar_date": "2026-08-31", "close": 339.35, "high": 344.59, "internal_id": "SEC-0001652044-GOOGL", "low": 337.156, "open": 343.825, "source": "polygon-aggs", "volume": 33493632.762951}
