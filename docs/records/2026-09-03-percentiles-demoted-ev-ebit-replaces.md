@@ -42,9 +42,17 @@ LIMITED problem. Same sheet, same Close convention, same 38 settled quarters:
 37, WAT 68 vs 63, MCK 95 vs 95), so the earlier readings were not misleading — they were merely not
 admissible as evidence. Now there is a basis that is.
 
-*EV-based measures carry their own sensitivity: EV includes net debt, so a leverage change moves the
-multiple without the business moving. That is live for MCK (net debt +39%, shares −46% over the
-window) and should be stated wherever its +28.6% is used.*
+**An earlier draft of this record carried a caveat that ran the wrong way** — that EV includes net
+debt so leverage moves the multiple. **EV/EBIT is capital-structure-NEUTRAL, and that is precisely why
+it is the right replacement.** A buyback lowers market cap and raises net debt by roughly the same
+amount, whether funded by cash or debt, leaving EV substantially unchanged; only proceeds *leaving the
+firm* leak, which a buyback does not do.
+
+That makes MCK's reading a confirmation rather than a caveat. A −46% share count mechanically pushes
+a P/E multiple **down** — which is why its trailing `P/LTM EPS` sits at the 46th percentile — while
+the capital-structure-neutral `EV/NTM EBIT` sits at the **95th**. The neutral measure says the
+re-rating is genuine, and the EPS-based measure is the one distorted by the buyback, not the other way
+round. Both forward measures agree at the 95th.
 
 ## The within-series evidence, which survives the ruling
 
@@ -63,11 +71,30 @@ answer five comp bases could not produce.
 
 ### Anchor sensitivity — the 18-month window flips sign
 
-At **18 months** the same comparison is fragile: the daily series gives 37.38 → 36.94 (**−1.2%**), the
-quarterly close gives 36.51 → 36.94 (**+1.2%**). Both are correct; they differ by a four-week anchor,
-because WST's multiple fell ~10 points inside one quarter (45.90 Dec-24 → 36.51 Mar-25 → 34.40
-Jun-25 → 37.42 Sep-25). **The 24-month window is the one to quote** — −18.4% / −13.0% is unambiguous
-and the conclusion is stronger there. An 18-month figure should not be cited without its anchor.
+**Measured properly with a ±6-week anchor sweep, the 18-month window is unusable and the 24-month one
+is sound:**
+
+| window | clean sweep range | sign flips? |
+|---|---|---|
+| 18 months | **−24.7% to +20.1%** | **yes** |
+| 24 months | **−21.1% to −6.8%** | **no** |
+
+By window length the instability is visible: 12m +6.2%, 15m +12.2%, **18m −1.2%**, 21m −18.3%,
+24m −20.8%. It only settles from 21 months, because the Dec-24 → Mar-25 quarter drop (45.90 → 36.51)
+puts an 18-month anchor on the cliff edge. **Quote the 24-month figure with its sweep range attached;
+drop the 18-month one entirely** — a single number there is an artifact of where the anchor landed.
+
+### Six revision-lag artifact days, and one of them nearly shipped
+
+The daily series carries **6 days out of 2,512 where price moved and consensus had not yet been cut**,
+so the ratio is briefly meaningless: 2020-03-16, 2022-10-27, **2024-07-25**, 2024-10-24, 2025-02-13,
+2025-07-24 — **every one an earnings date**. Each is a single day more than 8% from both neighbours in
+opposite directions.
+
+A first pass at the 24-month sweep anchored on 2024-07-25 (37.04 → **35.57** → 41.25) and reported a
+range of −21.1% to **+3.8%**, i.e. a sign flip that does not exist. Cleaned, the range is −21.1% to
+−6.8% and holds. **This is a general hazard for any daily-multiple work and a further argument for the
+quarterly settled basis**, whose quarter-end closes are far less likely to land on an earnings day.
 
 ## Momentum is not dispersion — state which leg it sets
 
