@@ -656,6 +656,10 @@ Each line: *what it does* — *verified how*.
   AORT, WERN — and companyfacts cannot fill it: measured on the committed fixtures, NOT ONE row carries a dimensional qualifier, so segment operating income is absent from the source already pulled. The filing's own rendered R-files do carry it. *Verified by RECONCILIATION on GOOGL's FY2025 10-K (acc 0001652044-26-000018), both sides to the dollar: segment revenue
   402,963 + hedging (127) = 402,836 = disclosed Total revenues; 139,404 + 13,910 - 7,515 - 16,760 = 129,039 = disclosed Total income from operations — the second also proves the parenthesised-negative sign, which read positive breaks that sum by twice its size.* NOTE two presentations in one table: Services/Cloud state revenue AND costs (income is the
   difference) while Other Bets and reconciling items state income DIRECTLY under a dimensional heading; reading one shape loses half the table. Pinned offline on the filing frozen byte-for-byte; mutation-tested on the sign and on report selection. **SCOPE: the EXTRACTOR only — wiring it into assembly for those five names is not done.**
+- **"Built but not running" reads from the filing — the plan's item 2** (`vinci/edgar/commissioning.py`). Reproduces the monitoring plan's own series from the notes: 35.7% (Dec-24) -> 38.6% (Dec-25) -> **49.7%** (Jun-26), with the 10-K and 10-Q
+  agreeing independently on the period they share. Neither input exists in companyfacts (both are dimensional PP&E members), so this is the R-file route #578 opened, generalised by topic. **SCOPE STATED, NOT ASSUMED:** the plan's ratio divides ALL not-yet-in-service
+  assets by the TECHNICAL-INFRASTRUCTURE member alone — a whole over a part — so the like-for-like figure (40.4% vs 49.7%) is carried beside it and the direction holds either way. The note number moves (R70 in the 10-K, R64 in the 10-Q), which is the plan's own
+  Part 7 trap 2; resolution is by ShortName. *NO CONSUMER YET — the panel that would show it is phase 3 of the PanelSpec plan, unbuilt.*
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**
