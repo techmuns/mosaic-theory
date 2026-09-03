@@ -67,8 +67,19 @@ The set is mostly CROs, sequencing and instruments. Split by business:
 | CRO / sequencing (FTRE, CRL, MEDP, ILMN) | −5.3 | +11.6 | +7.0 |
 | containment (STVN, AVTR) | −43.4 | −29.9 | −9.5 |
 
-**Nearly all the headline widening is against INSTRUMENTS** — a different business from drug
-containment and delivery. Against CRO/sequencing it is small and mixed.
+**CORRECTED BEFORE MERGE — "almost entirely instruments" was wrong, and the subset is not a stable
+basis.** The CRO/sequencing figure depends entirely on whether Illumina is in it:
+
+| CRO subset | 2022 | 2023 | 2024 |
+|---|---|---|---|
+| CRO only (FTRE, CRL, MEDP) | **+11.1** | **+30.4** | **+28.7** |
+| + Illumina (as tabled above) | −5.3 | +11.6 | +7.0 |
+| CRL, MEDP, ILMN (no Fortrea) | −17.9 | −8.8 | −16.3 |
+
+**One member changes the sign.** On the CRO-only reading the widening is *larger* than against
+instruments on two of three splits, so it is broad-based against 8 of 10 peers with containment the
+lone exception — not an instruments artifact. That a three-to-four-name subset flips sign on one
+constituent is itself the result: **the subset decomposition is too thin to arbitrate.**
 
 **The containment −43.4 is an artifact, not evidence of narrowing.** Before 2021-08 that subset is
 **Avantor alone** — a leveraged post-IPO name on a low multiple — so the pre-period is a WST-vs-AVTR
@@ -89,6 +100,25 @@ Current spread **+34.2%** against a **+12.2%** median over the whole window.
 **So WST HAS widened against its truest peer — but only clearly on the 2024 split, and only over five
 years.** The pre-2021 containment comparison cannot be made from this file at all.
 
+### And STVN is not a control group
+
+**Stevanato's own forward P/E went 33.1 → 36.7 post-2023, +10.9%** (n=1,272, verified on this file).
+Stevanato makes vials and syringes for injectables — **it is a GLP-1 containment beneficiary too**.
+"WST vs STVN" measures one exposed name against another, so a spread that stays flat is consistent
+with both re-rating together, and a spread that widens says which re-rated more, not whether either
+re-rated on the driver.
+
+**FIVE BASES, FOUR ANSWERS:** the point-in-time snapshot says expensive (+48% to peers), own history
+says mid-range (37th percentile), the full-set spread says re-rated, the containment subset says
+cheap (an Avantor artifact), and STVN says expensive. That is not measurement error — **WST has no
+clean comparator.** Instruments and CROs are different businesses that de-rated on biotech funding;
+the only true containment peer carries the same driver.
+
+**THE COMP-SPREAD TEST CANNOT ANSWER THIS, AND THE RESPONSE IS TO STOP RATHER THAN FIND A SIXTH
+BASIS.** The premium question is settled properly at step 10 — scenario legs, reward at spot, the
+ratified 2:1 test — which is the fund's own discipline and the only version that feeds a memo. The
+shortlist needs names worth the effort, and WST clears on materiality at 18% of net sales.
+
 ## What this does to the premium half
 
 - **Own history: WST is at the 37th percentile** and stable across all three splits — no re-rating.
@@ -100,6 +130,14 @@ but its answer depends entirely on which peers, and the only genuine business co
 2021. **The premium half on WST is not settled by this file** — the honest statement is that WST has
 not re-rated on its own history, has widened against a cluster that does something else, and sits at
 an unusually wide premium to the one peer that does what it does.
+
+## Caution on the detector — verified on ONE format
+
+The sentinel rule is **leading-run-specific and verified against a single file**. If CIQ uses the same
+constant for MID-SERIES gaps — a delisting/relisting, a reporting change, a coverage suspension — the
+run is not leading and this misses it entirely. Recorded as **verified-on-one-format, not general**.
+Extending to mid-series gaps needs a second export exhibiting one; guessing the shape from this file
+would be the same over-generalisation the rule was built to avoid.
 
 ## Still owed
 
