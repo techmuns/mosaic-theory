@@ -100,3 +100,24 @@ LLY and NVO for volume growth with price compression; tell 1 watches whether tha
 the supplier line. **If the incumbents show the phase-2 signature and West's component line does not
 follow, the thesis is right about the phase and wrong about who captures it** — which is the shortlist's
 own falsifier and is not currently a card falsifier.
+## Amendments
+
+### MCK ADDED TO THE STEP-9 PULL — 2026-09-03
+
+**Operator ruling, the same day this record flagged it.** MCK joins WST, WAT and BDX. The shortlist
+is now **four names**.
+
+The reason is the one this record's own correction was about: **excluding MCK rested on an unstated
+premium judgement, which is a shortlist selected on half the criterion** — the identical error caught
+in the body above, one level up. MCK's ~$15bn of quarterly GLP-1 distribution revenue, +24% YoY,
+clears the shortlist by an order of magnitude on the materiality half, and **the premium half is
+answerable from the multiples the CIQ pull produces anyway** — so deciding it by omission, before the
+data that settles it, was the wrong order.
+
+**It cuts both ways, and both are carried into the pull.** Exposure to treated VOLUMES makes MCK the
+sheet's cleanest read on drop tell 3 (*category volume growth falling below the price-compression
+rate*). Against that, **distribution fees ride on the base the January 2027 WAC reset halves**, which
+the analyst note lists as a losing-side mechanism — so MCK is simultaneously the best volume read and
+the most directly exposed to the reset. The underwrite has to hold both.
+
+The non-filing `source_ref` warning applies to MCK as it does to the other three.

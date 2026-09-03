@@ -66,3 +66,31 @@ its as-of date and source, horizon, and the share basis. With those, the name ru
 `scenario-propose`/`scenario-create` on the sanctioned path and both readings can sit on one record —
 price-only gated, total-return recorded beside it, per the standing convention (Ruling 4, 2026-08-21;
 `docs/records/2026-09-02-irr-total-return-already-ruled.md`).
+## Amendments
+
+### CLOSED 2026-09-03 — NVO is not underwritten, and the recalled figures are struck
+
+**OPERATOR RULING: accept 1.066x and stop underwriting NVO.** The arithmetic moots the convention
+question — asymmetry disqualifies the name under either reading, so **there is no CMD-dependent
+verdict to prepare** and the 21 Sep CMD is not a gate on anything in this repo. NVO stays a ratified
+BUY leg on the frozen `glp1-drug-value-chain` sheet, where its forward return accrues to the spread
+like every other ratified name. It is not a position and is not being taken to step 10.
+
+**STRUCK AS UNSOURCED — do not reconcile to these.** `15.45%`, `1.66x`, `1.70x`, and the limits
+`DKK 297` / `303–304` are **withdrawn**. They are not repo artifacts and they do not survive their own
+arithmetic:
+
+| the recalled figure | why it is struck |
+|---|---|
+| total-return 1.66–1.70x | needs **+30 DKK** on the base leg, ~10% of spot; the actual dividend over ~1.36y is ~10 DKK, giving ~1.27x. Not a restatement of these legs |
+| 15.45% / 12.70% | 12.70% implies a **1.363y** horizon where the calendar to 2027-12-31 gives **1.325y** — a second boundary mismatch inside the same recall |
+| DKK 297 / 303–304 limits | no source in the repo; nothing derives them |
+
+**What survives, and only this:** the three legs (spot 300.85, base 354.10, bear 250.90) are
+internally consistent — they reproduce the ratio to four figures — so the **repo arithmetic stands**:
+**1.0661x, below the 1.75 eligibility line and the 2.0 bar.** That is the finding. The legs remain
+marked operator-recalled; nothing further is computed from them.
+
+**Fourth item this session where recall did not survive the files** — after the GOOGL archive read as
+live, the AES/ETN window mismatch, and the citation counts. The pattern is not that recall is wrong;
+it is that recalled *figures* carry no boundary, so the check is cheap and the correction is not.
