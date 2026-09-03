@@ -26,8 +26,28 @@ Promoted verbatim from the analyst note, which is the selection criterion:
 > attributed to it by name — while the premium concentrates on two incumbents whose own disclosures
 > show price doing the damage."*
 
-The prong is **materiality without premium**. Each of the three carries a *quantified*, named GLP-1
-economic, which is what separates them from the other twelve.
+The prong is **materiality without premium**, and BOTH halves are load-bearing. A quantified, named
+GLP-1 economic is NOT what distinguishes these three — **13 of the 15 ratified names carry one**;
+only CAH and COR do not. What the analyst selected on is a quantified economic **in a name the
+market is not already paying a theme premium for**, which is why the note contrasts them against
+*"two incumbents whose own disclosures show price doing the damage"*.
+
+> *An earlier draft of this record said the quantified economic "is what separates them from the
+> other twelve". False — it drops the premium half of the criterion and asserts an unchecked
+> universal on the remainder. Corrected before merge, since a record body is immutable after it.*
+
+**ONE NAME THE STATED CRITERION APPEARS TO ADMIT AND THE SHORTLIST DOES NOT — flagged, not
+actioned.** **MCK** discloses *"roughly $15bn of GLP-1 distribution revenue in a single quarter, up
+24% year over year"*, which its own ledger rationale calls **"the largest disclosed dollar exposure
+to treated volumes anywhere on the sheet"**. On the materiality half it clears every shortlisted
+name by an order of magnitude. Whether it clears the **premium** half is a pricing judgement this
+repo does not hold — distributors are not obviously theme-priced, which would make MCK qualify. The
+shortlist is the analyst's act and is left exactly as given; this is recorded so the omission is a
+decision rather than an oversight, and it is answerable with the multiples the CIQ pull produces
+anyway. **The third drop tell cuts both ways on MCK:** its exposure is to treated VOLUMES, making it
+the sheet's cleanest read on *category volume growth falling below the price-compression rate* —
+while distribution fees ride on the base the January 2027 WAC reset halves, which the analyst note
+lists as a losing-side mechanism.
 
 | | ledger grade | tie | the quantified economic |
 |---|---|---|---|
