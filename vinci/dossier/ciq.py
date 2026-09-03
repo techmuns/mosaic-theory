@@ -169,6 +169,11 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "key_developments": ("key development",),
     "profile": ("company profile", "tearsheet"),
     "comps": ("comparable", "comps"),  # "Company Comparable Analysis <name>.xls" (peer comps)
+    # CIQ Charting export (2026-09-03). Sheets are `Pane 1` / `Raw` / `Attributions` — NOT the
+    # Financials/Estimates layout — and the header row VARIES by chart type, so nothing here may
+    # hardcode a position (notes lines 72, 361). Unregistered until now, which meant
+    # `CiqBundle.from_files` DROPPED a charting export silently.
+    "charting": ("charting", "chart export"),
 }
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
 _UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed"})
