@@ -12,6 +12,7 @@
     "NCNO",
     "NFLX",
     "SMPL",
+    "TECX",
     "UBER",
     "V",
     "VITL",
@@ -79,6 +80,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "TECX": {
+      "industry": "Biotechnology",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "UBER": {
       "industry": "Passenger Ground Transportation",
       "source": "ciq-gics",
@@ -118,6 +124,7 @@
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
     "NFLX": "strongly-bullish \u2014 franchise still compounding revenue, margin, ROIC and view hours with a fortress balance sheet, versus a decelerating-top-line counter-case.",
     "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
+    "TECX": "mixed \u2014 a cash-rich, analyst-favored single-asset clinical bet whose entire value hinges on one undated, unproven TX45 readout against an accelerating burn.",
     "UBER": "mixed \u2014 genuine operating inflection (EBITDA, ROIC, FCF, 22% bookings) against a rich decade-long consensus, cut GAAP EPS, and rising cost lines.",
     "V": "mixed \u2014 a genuinely lengthening volume/VAS runway and rising ROIC against a fully-earned but growth-matched premium and a year of market underperformance.",
     "VITL": "mixed \u2014 an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.",
@@ -137,6 +144,7 @@
     "NCNO": "overshoot",
     "NFLX": "overshoot",
     "SMPL": "overshoot",
+    "TECX": "quality",
     "UBER": "quality",
     "V": "quality",
     "VITL": "overshoot",
