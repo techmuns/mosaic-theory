@@ -138,7 +138,7 @@ def test_a_details_report_that_names_no_economics_is_refused() -> None:
     unverified, so the economics report is NAMED rather than positioned."""
     geo_only = ("<Report><HtmlFileName>R91.htm</HtmlFileName><ShortName>Information about "
                 "Segments - Long-Lived Assets by Geographic Area (Details)</ShortName></Report>")
-    with pytest.raises(SegmentReportUnavailableError, match="name no revenue or income line"):
+    with pytest.raises(SegmentReportUnavailableError, match="do not match the refinement"):
         _pick_report(geo_only)
 
     econ = ("<Report><HtmlFileName>R90.htm</HtmlFileName><ShortName>Information about Segments"

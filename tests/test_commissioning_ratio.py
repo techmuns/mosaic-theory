@@ -97,3 +97,77 @@ def test_the_report_is_resolved_by_name_because_its_number_moves() -> None:
     assert re.search(r"property and equipment", short, re.I)
     # ...and the number genuinely differs from the 10-K's, which is the whole point
     assert fname != "R70.htm"
+
+
+KACC = "0001652044-26-000018"          # the FY2025 10-K — the 38.6% leg, and a DIFFERENT R-number
+
+
+class _FrozenK:
+    def get_text(self, url: str, *, ttl_seconds: float | None = None,
+                 params: dict[str, object] | None = None) -> str:
+        return (FIX / f"GOOGL-{KACC}-{url.rsplit('/', 1)[-1]}").read_text()
+
+
+def test_the_10k_leg_agrees_with_the_10q_on_the_period_they_share() -> None:
+    """TWO FILINGS, ONE PERIOD, INDEPENDENTLY — the strongest check available offline.
+
+    The 10-Q states Dec-31-2025 as its comparative; the 10-K states it as its current year. Nothing
+    makes them agree except the parser reading both correctly, and the report NUMBER differs
+    between them (R64 vs R70), so this also exercises name-resolution end to end.
+
+    The earlier commit claimed this leg verified while committing only the 10-Q fixture — the claim
+    was true of a live run and unpinned, which is how a verification quietly becomes a memory.
+    """
+    q = {c.period: c for c in commissioning(_Frozen(), "0001652044", ACC)}       # type: ignore[arg-type]
+    k = {c.period: c for c in commissioning(_FrozenK(), "0001652044", KACC)}     # type: ignore[arg-type]
+
+    shared = "Dec. 31, 2025"
+    assert shared in q and shared in k, "the two filings no longer overlap on a period"
+    assert q[shared].not_yet_in_service == k[shared].not_yet_in_service == 78_592.0
+    assert q[shared].in_service == k[shared].in_service == 203_679.0
+    assert round(k[shared].ratio * 100, 1) == 38.6
+
+    # ...and the 10-K reaches a year the 10-Q does not, giving the plan's full move
+    assert round(k["Dec. 31, 2024"].ratio * 100, 1) == 35.7
+    assert round(q["Jun. 30, 2026"].ratio * 100, 1) == 49.7
+
+
+def test_the_two_ratios_are_both_reported_and_differ() -> None:
+    """The plan's ratio and the like-for-like one are DIFFERENT NUMBERS, and both are stated.
+
+    `assets not yet in service` is one member spanning every asset type; `technical infrastructure`
+    is one of three in-service members. The plan's 49.7% therefore divides a whole by a part. That
+    is kept, because it is the operator's tracked series — but the coherent comparison is carried
+    beside it rather than left implied, and this pin is what stops the two being conflated again.
+    """
+    cur = {c.period: c for c in commissioning(_Frozen(), "0001652044", ACC)}["Jun. 30, 2026"]  # type: ignore[arg-type]
+    assert round(cur.ratio * 100, 1) == 49.7
+    assert cur.like_for_like is not None
+    assert round(cur.like_for_like * 100, 1) == 40.4
+    # the denominator of the like-for-like is the filing's OWN stated total, not a local sum
+    assert cur.in_service_total == 304_310.0
+
+
+def test_a_spacer_cell_in_the_header_does_not_relabel_every_figure() -> None:
+    """THE COLUMN SHIFT, CONSTRUCTED — because the real note has no spacer that exposes it.
+
+    Period headers were collected with blanks dropped while value rows keep them, so a single
+    spacer cell pairs the two lists one place out: the June figures come back stamped December and
+    the June column disappears. Both lists still zip, so nothing complains. This is the same defect
+    the segment parser carried, reappearing in the module written to avoid it — which is why it is
+    pinned here rather than trusted to the fix.
+    """
+    real = (FIX / f"GOOGL-{ACC}-R64.htm").read_text()
+    # one empty cell inserted between the caption and the first date, nothing else touched
+    spacer = '</th>\n<th class="th"></th>\n<th class="th">'
+    holed = real.replace('</th>\n<th class="th">', spacer, 1)
+    assert holed != real, "the spacer was not introduced"
+
+    class _Spaced:
+        def get_text(self, url: str, *, ttl_seconds: float | None = None,
+                     params: dict[str, object] | None = None) -> str:
+            name = url.rsplit("/", 1)[-1]
+            return holed if name == "R64.htm" else (FIX / f"GOOGL-{ACC}-{name}").read_text()
+
+    with pytest.raises(CommissioningUnavailableError, match="do not line up"):
+        commissioning(_Spaced(), "0001652044", ACC)  # type: ignore[arg-type]

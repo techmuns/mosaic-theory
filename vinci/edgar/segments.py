@@ -127,7 +127,8 @@ def _number(cell: str) -> float | None:
 
 
 def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
-                 refine: re.Pattern[str] = _ECONOMICS) -> tuple[str, str]:
+                 refine: re.Pattern[str] = _ECONOMICS,
+                 what: str = "segment") -> tuple[str, str]:
     """(filename, short name) of the DETAILS report on ``topic`` — or raise, naming what was there.
 
     PARAMETERISED because the same resolution serves any note. The PP&E note the commissioning
@@ -156,20 +157,20 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
         return economics[0]
     if len(economics) > 1:
         raise SegmentReportUnavailableError(
-            "more than one segment report names revenue or income, so which one holds the "
-            f"economics is ambiguous and is not guessed: {[c[1] for c in economics]}")
+            f"more than one {what} report matches the refinement, so which one holds the figures "
+            f"is ambiguous and is not guessed: {[c[1] for c in economics]}")
     if detailed:
         raise SegmentReportUnavailableError(
-            "this filing's segment (Details) reports name no revenue or income line, so none of "
-            f"them carries economics — reading one anyway would file geography or asset figures "
-            f"as segment earnings: {[c[1] for c in detailed]}")
+            f"this filing's {what} (Details) reports do not match the refinement, so none of them "
+            f"carries the figures wanted — reading one anyway would file the wrong table's "
+            f"numbers under this name: {[c[1] for c in detailed]}")
     if candidates:
         raise SegmentReportUnavailableError(
-            "this filing names segment reports but none is a (Details) table, so it carries the "
+            f"this filing names {what} reports but none is a (Details) table, so it carries the "
             f"note without the numbers: {[c[1] for c in candidates]}")
     raise SegmentReportUnavailableError(
-        "this filing indexes no report naming a segment — a single-segment filer discloses none, "
-        "and that is an answer rather than a failure")
+        f"this filing indexes no report naming a {what} — for segments a single-segment filer "
+        f"discloses none, and that is an answer rather than a failure")
 
 
 def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]:
