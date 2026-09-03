@@ -6,6 +6,7 @@ OFFLINE. The fixture is Alphabet's Q2 2026 10-Q (acc 0001652044-26-000071) as fi
 from __future__ import annotations
 
 import pathlib
+import re
 
 import pytest
 
@@ -171,3 +172,47 @@ def test_a_spacer_cell_in_the_header_does_not_relabel_every_figure() -> None:
 
     with pytest.raises(CommissioningUnavailableError, match="do not line up"):
         commissioning(_Spaced(), "0001652044", ACC)  # type: ignore[arg-type]
+
+
+def test_a_missing_ppe_note_is_not_explained_with_the_segment_notes_story() -> None:
+    """A refusal must tell the reader THIS note's story, not another note's.
+
+    `_pick_report` is shared with the segment route, and its "why nothing is here" clause was
+    hardcoded to segments while `what` was parameterised — so a filing with no property note
+    refused with "a single-segment filer discloses none, and that is an answer rather than a
+    failure". For segments that clause is true and useful: a single-segment filer really does
+    disclose none. For fixed assets it is FALSE — every operating company holds them, so absence
+    is a presentation choice, and the balances may sit under a note named for the asset itself.
+    Observed live on WERN (a trucking filer, no property-named report) and LLY, 2026-09-03.
+
+    Pinned as the CLAIM, not as wording: the new text mentions single-segment filers in order to
+    deny the analogy, so a token scan would pass on the very message it is meant to reject.
+    """
+    class _NoPpeReport:
+        def get_text(self, url: str, *, ttl_seconds: float | None = None,
+                     params: dict[str, object] | None = None) -> str:
+            text = (FIX / f"GOOGL-{ACC}-{url.rsplit('/', 1)[-1]}").read_text()
+            if url.endswith("FilingSummary.xml"):
+                return re.sub(r"Property and [Ee]quipment", "Widgets", text)
+            return text
+
+    with pytest.raises(CommissioningUnavailableError) as got:
+        commissioning(_NoPpeReport(), "0001652044", ACC)  # type: ignore[arg-type]
+    msg = str(got.value)
+    assert "indexes no report naming a property-and-equipment" in msg
+    # The segment note's conclusion must NOT be asserted of this one.
+    assert "a single-segment filer discloses none, and that is an answer" not in msg
+    assert "always holds fixed assets" in msg
+
+
+def test_the_segment_route_keeps_its_own_absence_meaning() -> None:
+    """The sibling call site: parameterising the clause must not blank it for segments.
+
+    A default that silently became empty would strip the segment route's explanation while every
+    commissioning test stayed green — the sibling-call-site class.
+    """
+    from vinci.edgar.segments import SegmentReportUnavailableError, _pick_report
+
+    with pytest.raises(SegmentReportUnavailableError) as got:
+        _pick_report("<FilingSummary></FilingSummary>")
+    assert "a single-segment filer discloses none, and that is an answer" in str(got.value)

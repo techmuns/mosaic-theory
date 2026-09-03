@@ -141,8 +141,15 @@ def commissioning(http: CachedHttp, cik: str, accession: str) -> list[Commission
     acc = accession.replace("-", "")
     summary = http.get_text(_FILING_SUMMARY.format(cik=cik_n, acc=acc), ttl_seconds=None)
     try:
-        fname, short = _pick_report(summary, topic=_PPE_REPORT, refine=_ANY,
-                                     what="property-and-equipment")
+        fname, short = _pick_report(
+            summary, topic=_PPE_REPORT, refine=_ANY, what="property-and-equipment",
+            # Absence means something DIFFERENT here than it does for segments: every operating
+            # filer holds fixed assets, so a missing PP&E note is a presentation choice (rolled
+            # into another note, or named for the asset itself — a fleet, a network), never the
+            # "this filer genuinely has none" that single-segment absence means.
+            absent_means="unlike a single-segment filer, an operating company always holds fixed "
+                         "assets — so this is a presentation difference, and the balances may sit "
+                         "under a note named for the asset rather than for property")
     except SegmentReportUnavailableError as exc:
         raise CommissioningUnavailableError(
             f"no property-and-equipment (Details) report in {accession}: {exc}") from exc

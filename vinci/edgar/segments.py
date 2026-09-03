@@ -128,7 +128,9 @@ def _number(cell: str) -> float | None:
 
 def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
                  refine: re.Pattern[str] = _ECONOMICS,
-                 what: str = "segment") -> tuple[str, str]:
+                 what: str = "segment",
+                 absent_means: str = "a single-segment filer discloses none, and that is an "
+                                     "answer rather than a failure") -> tuple[str, str]:
     """(filename, short name) of the DETAILS report on ``topic`` — or raise, naming what was there.
 
     PARAMETERISED because the same resolution serves any note. The PP&E note the commissioning
@@ -168,9 +170,14 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
         raise SegmentReportUnavailableError(
             f"this filing names {what} reports but none is a (Details) table, so it carries the "
             f"note without the numbers: {[c[1] for c in candidates]}")
+    # The "why nothing is here" clause is PER TOPIC. It was hardcoded to segments while `what` was
+    # parameterised, so a missing PP&E note refused with "for segments a single-segment filer
+    # discloses none" — the wrong note's reasoning, in the one message a human reads to find out
+    # what went wrong. A refusal that explains itself with another topic's story is worse than a
+    # bare one, because it is believed.
     raise SegmentReportUnavailableError(
-        f"this filing indexes no report naming a {what} — for segments a single-segment filer "
-        f"discloses none, and that is an answer rather than a failure")
+        f"this filing indexes no report naming a {what}"
+        + (absent_means and f" — {absent_means}" or ""))
 
 
 def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]:
