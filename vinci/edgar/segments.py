@@ -126,8 +126,14 @@ def _number(cell: str) -> float | None:
     return -val if neg else val
 
 
-def _pick_report(summary_xml: str) -> tuple[str, str]:
-    """(filename, short name) of the segment DETAILS report — or raise, naming what was there.
+def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
+                 refine: re.Pattern[str] = _ECONOMICS) -> tuple[str, str]:
+    """(filename, short name) of the DETAILS report on ``topic`` — or raise, naming what was there.
+
+    PARAMETERISED because the same resolution serves any note. The PP&E note the commissioning
+    ratio reads sat at R70 in the FY2025 10-K and R64 in the Q2 10-Q — the drift the monitoring
+    plan's Part 7 records ("R64, R64, R70 and R62 across its last four filings"), and the reason
+    every consumer must resolve by NAME rather than number.
 
     A filing carries several segment reports and only one holds the numbers; the others are the
     accounting policy and a tables-only stub. Preferring "(Details)" is not a heuristic about
@@ -137,7 +143,7 @@ def _pick_report(summary_xml: str) -> tuple[str, str]:
     for block in re.findall(r"<Report[^>]*>(.*?)</Report>", summary_xml, re.S):
         fname = re.search(r"<HtmlFileName>(.*?)</HtmlFileName>", block)
         short = re.search(r"<ShortName>(.*?)</ShortName>", block)
-        if fname and short and _SEGMENT_REPORT.search(short.group(1)):
+        if fname and short and topic.search(short.group(1)):
             candidates.append((fname.group(1), _html.unescape(short.group(1))))
     detailed = [c for c in candidates if _DETAILS.search(c[1])]
     # DOCUMENT ORDER IS NOT A CONTRACT. GOOGL's 10-K carries TWO "(Details)" reports naming
@@ -145,7 +151,7 @@ def _pick_report(summary_xml: str) -> tuple[str, str]:
     # the first returned geography figures labelled as segment economics whenever the renderer
     # happened to emit them in the other order. Only GOOGL's ordering was ever checked; the four
     # other multi-segment names are unverified. So the ECONOMICS report is named, not positioned.
-    economics = [c for c in detailed if _ECONOMICS.search(c[1])]
+    economics = [c for c in detailed if refine.search(c[1])]
     if len(economics) == 1:
         return economics[0]
     if len(economics) > 1:
