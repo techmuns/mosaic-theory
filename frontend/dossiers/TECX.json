@@ -551,7 +551,6 @@
       "benchmark_basis": "cap-band: $0.6B @ 2026-08-24 → small (<$4B) → IWM"
     },
     "consensus_context": {
-      "consensus_levels": null,
       "eps_trend": {
         "value": "EPS (GAAP) FY 2026: 8↑/0↓ last mo",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
