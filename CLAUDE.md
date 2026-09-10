@@ -107,6 +107,13 @@ verdict placement.
   -S<term>` (pickaxe searches diff content, vocabulary-independent), and READ the definition of
   every symbol the search surfaces near the topic — a call site's name is a claim, not proof.
   Still not found → report "not found under <searches tried>", NEVER "doesn't exist".
+  **A PHRASE QUOTED FROM ONE SOURCE IS THAT SOURCE'S VOCABULARY, NOT ITS SECTOR'S** — running it
+  across peers is a ONE-vocabulary search wearing the costume of a verified one. McKesson's
+  `fee-for-service` returned nothing at Cardinal or Cencora on 2026-09-10 (the one Cardinal hit was
+  Medicare reimbursement policy, a different sense of the phrase) while Cardinal's answer sat under
+  `distribution services agreement` / `percentage of the wholesale acquisition cost`. Same class as
+  the `ai-compute-platform` prefilter below: both search for a thing in the words of someone
+  standing outside it.
   **When probing a PRIOR RUN, read its PARAMETERS FIRST — window, forms, reference date.** A probe at
   different parameters measures a different question, and the mismatch reads exactly like a defect in
   the thing probed. (AES/ETN were escalated as "silent recall loss" off a 400-day probe of a scan run
