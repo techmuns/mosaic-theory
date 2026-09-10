@@ -351,6 +351,20 @@ EXPOSURE into an investment view were not written down.
     bull 26.0x sits **0.03** from the current 26.03x and **0.75** from p75 26.75x — a
     distribution-derived bull would sit at p75. Base landing near the median is coincidental
     corroboration, and it is exactly the proximity that invites a reader to infer derivation.*
+    **THE ANCHOR NEEDS ITS OWN SANITY CHECK — not only the displacement a reason.** The method
+    makes TODAY'S multiple the reference for every leg, so it silently imports whatever the market
+    did that day. Before anchoring, state that current is UNDISTORTED, and use the corroborators to
+    say it: a reference that may not GENERATE a target can still DETECT a distorted anchor, and
+    that is what they are for. Three classes disqualify a bare current anchor —
+    **(a) a post-deal entity**, where the denominator changed under the history (WAT: 26.4x reads
+    63rd percentile, but the n=38 series is pre-BD-Biosciences, so the percentile itself is a
+    `BASIS MATCH: LIMITED` mismatch and the anchor is UNVERIFIABLE);
+    **(b) a one-off in the denominator**, where current EPS is not a run-rate;
+    **(c) a percentile extreme** (MCK: 19.9x against a 13.1x own median, **95th percentile** — an
+    anchor that assumes the extreme persists). Where current IS defensible, say why: GOOGL's 26.03x
+    sits between its own median 24.24x and p75 26.75x; WST's 36.9x is the **37th** percentile of its
+    own history, below median. **A distorted anchor is a reason to price off something else, or to
+    state the distortion as the binding assumption — never to anchor anyway and displace from it.**
     **DISPLACEMENT MAGNITUDE IS ANALYST JUDGMENT, and where the memo gives no reason for a
     displacement the record says so rather than supplying one** — authoring a justification for a
     bear leg on a record already at PASS is manufacturing support for the outcome, the shape

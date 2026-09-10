@@ -282,6 +282,12 @@ incomplete regardless of code state.
 - **INVARIANT RULE.** Every incident closes by shipping a machine check (lint / guard / coherence
   test), or is recorded in STATE.md as consciously accepted risk. STATE.md keeps the table:
   incident → invariant → shipped Y/N.
+  **AN ACCEPTED RISK IS A CLAIM, AND AN UNVERIFIED ONE IS AN ASSUMPTION WEARING A FORMAL LABEL.**
+  Before writing "accepted", show that the risk EXISTS and that the cheap fix is genuinely
+  unavailable — the label is a conclusion, not a way to stop checking. On 2026-09-10 a record
+  accepted a stale `frontend/dossiers/GOOGL.md` as needing "a full assemble with LLM phases"; two
+  e2e guards refused it, and the render path turned out to be deterministic with no LLM phase, so
+  the fix was one call. **The formal words made an unchecked assumption look like a decision.**
 - **PREVIEW RULE.** Render/layout PRs run a Phase-1 preview from committed JSON and **STOP for
   approval**; data/extractor PRs go straight to build with real-run verification.
   **EXTENDED 2026-07-21 — a card preview MUST include the EXPANDED / print-tier state, not just the
