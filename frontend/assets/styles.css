@@ -1716,3 +1716,127 @@ table.data th.peer-desc-h { text-align: left; }
 }
 .th-needs { font-size: 12.5px; color: var(--ink-2); }
 .th-table tbody tr.th-grp:not(:first-child) td { border-top: 1px solid var(--line-2); }
+
+/* ── MONITOR PANELS (phase 6) ───────────────────────────────────────────────────────────────────
+   The grid. Its one load-bearing visual job: a REFUSED tile must not be mistakable for a tile that
+   is simply quiet. Refusals get their own border, ground and badge — the absent-vs-broken class is
+   this repo's most repeated defect, and a grid of tiles is where it recurs most cheaply because a
+   reader scanning twelve of them reads silence as "fine". A panel that does not apply emits no tile
+   at all (see vinci/panels_emit.py), so there is nothing to style for that case — by design. */
+.pn-wrap { margin: 0 0 8px; }
+.pn-note { font-size: 12px; color: var(--ink-2); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-2); background: var(--surface); padding: 9px 11px;
+  border-radius: 0 6px 6px 0; margin: 0 0 16px; }
+.pn-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.pn-tab { font-family: var(--mono); font-size: 11px;
+  padding: 3px 9px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--ink-2);
+  text-decoration: none; }
+.pn-tab.on { background: var(--accent-bg); border-color: var(--accent-border);
+  color: var(--accent-text); font-weight: 600; }
+.pn-tier { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--ink-3); margin: 18px 0 8px; font-weight: 600; }
+.pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 12px; }
+
+.pn-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 9px;
+  padding: 12px 13px; display: flex; flex-direction: column; }
+.pn-panel.refused { border-color: var(--danger-border); background: var(--danger-bg); }
+.pn-panel h3 { margin: 0 0 9px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; display: flex;
+  justify-content: space-between; align-items: flex-start; gap: 8px; }
+.pn-badge:not(:empty) { background: var(--danger); color: #fff; border-radius: 3px;
+  padding: 1px 5px; font-size: 9px; letter-spacing: 0.08em; white-space: nowrap; }
+.pn-body { flex: 1; }
+.pn-big { font-size: 25px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1;
+  margin: 0 0 6px; }
+.pn-big small { display: block; font-size: 11px; font-weight: 400; color: var(--ink-3);
+  letter-spacing: 0; margin-top: 3px; }
+.pn-sub { color: var(--ink-3); font-size: 11.5px; margin: 7px 0 0; }
+.pn-mono { font-family: var(--mono); font-size: 10.5px;
+  color: var(--ink-3); margin: 2px 0; }
+.pn-spark { display: block; margin-top: 9px; color: var(--ink-3); }
+.pn-range { display: block; width: 100%; height: 12px; margin-top: 8px; color: var(--ink-2); }
+
+.pn-bars { margin-top: 2px; }
+.pn-bar { display: flex; align-items: center; gap: 7px; margin: 4px 0; }
+.pn-bl { flex: 0 0 92px; font-size: 10.5px; color: var(--ink-3); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.pn-bt { position: relative; flex: 1; height: 8px; background: var(--line); border-radius: 2px; }
+.pn-bf { position: absolute; top: 0; height: 8px; border-radius: 2px; }
+.pn-bf.pos { background: var(--pos-text); }
+.pn-bf.neg { background: var(--danger); }
+.pn-bv { flex: 0 0 64px; text-align: right; font-variant-numeric: tabular-nums; font-size: 10.5px; }
+
+.pn-time { list-style: none; margin: 0; padding: 0; }
+.pn-time li { position: relative; padding: 0 0 9px 15px; border-left: 2px solid var(--line); }
+.pn-time li:last-child { padding-bottom: 0; }
+.pn-time li::before { content: ""; position: absolute; left: -5px; top: 3px; width: 8px;
+  height: 8px; border-radius: 50%; background: var(--line-2); }
+.pn-time li.unread::before { background: var(--pn-hot); }
+.pn-time li.next::before { background: var(--surface); border: 2px solid var(--line-2); }
+.pn-time b { display: block; font-size: 11.5px; font-weight: 600; }
+.pn-time span { color: var(--ink-3); font-size: 10px; }
+.pn-flag { color: var(--pn-hot); font-weight: 600; font-size: 11.5px; margin: 9px 0 0; }
+
+.pn-kills { margin: 0; padding-left: 16px; }
+.pn-kills li { font-size: 11.5px; margin: 0 0 7px; }
+.pn-read, .pn-noread { display: block; font-size: 10.5px; margin-top: 2px;
+  font-variant-numeric: tabular-nums; }
+.pn-read { color: var(--ink-2); }
+.pn-noread { color: var(--ink-3); font-style: italic; }
+.pn-warn { color: var(--pn-hot); font-weight: 600; }
+
+.pn-partial-head { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-3); margin: 10px 0 4px; font-weight: 600; }
+.pn-partial li { color: var(--ink-2); }
+
+.pn-tbl { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.pn-tbl th { text-align: left; font-weight: 400; color: var(--ink-3); font-size: 10.5px;
+  padding: 2px 0; }
+.pn-tbl td { text-align: right; font-variant-numeric: tabular-nums; font-size: 11.5px;
+  padding: 2px 0; }
+
+.pn-why { font-size: 12px; margin: 0 0 7px; }
+.pn-missing { margin: 0 0 7px; padding-left: 15px; }
+.pn-missing li { font-size: 11.5px; margin: 3px 0; }
+.pn-missing code { background: var(--surface); border: 1px solid var(--danger-border);
+  border-radius: 3px; padding: 0 3px; font-size: 10px; }
+.pn-missing span { display: block; color: var(--ink-3); font-size: 10.5px; }
+.pn-up { margin: 0; font-size: 11px; color: var(--danger-text); background: var(--surface);
+  border: 1px dashed var(--danger-border); border-radius: 5px; padding: 6px 7px; }
+
+.pn-caveat { margin: 9px 0 0; font-size: 10.5px; color: var(--warn-text);
+  background: var(--conditional-bg); border-left: 2px solid var(--warn);
+  padding: 5px 7px; border-radius: 0 4px 4px 0; }
+/* WHAT WOULD CHANGE THE CALL is MAIN BODY, never an on-demand tier: it is decision text, and the
+   design's guard is that a panel which cannot answer it is decoration. Hiding it behind a
+   disclosure triangle would make the guard unreadable exactly when it matters. */
+.pn-changes { margin: 10px 0 0; padding-top: 9px; border-top: 1px dashed var(--line);
+  font-size: 11px; color: var(--ink-2); }
+.pn-changes span { display: block; font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 3px; font-weight: 600; }
+.pn-prov { margin-top: 9px; border-top: 1px solid var(--line); padding-top: 7px; }
+.pn-prov > summary { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-3); cursor: pointer; font-weight: 600; }
+.pn-prov > summary::-webkit-details-marker { display: none; }
+.pn-prov ol { margin: 6px 0 0; padding-left: 16px; }
+.pn-prov li { font-size: 10px; color: var(--ink-3); margin: 2px 0; word-break: break-word; }
+
+/* The one colour this block introduces. Declared in BOTH theme layers the app actually uses —
+   `[data-theme="dark"]` is the sidebar toggle's stamp and is what decides the page, so a token
+   defined only under `prefers-color-scheme` would miss a reader who toggled. Every other colour
+   above is an existing token (`--surface`, `--danger*`, `--pos-text`, `--warn*`) and follows the
+   theme for free; an earlier cut invented `--card` / `--bad*` / `--good`, none of which exist, so
+   the fallbacks froze the grid to one palette and left READY tiles fully transparent. */
+:root { --pn-hot: #b8551f; }
+:root[data-theme="dark"] { --pn-hot: #fb923c; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pn-hot: #fb923c; }
+}
+/* The panel grid prints. Its Sources tier force-opens under the global T1 rule above — no
+   carve-out here, and none wanted: a tile's provenance is provenance, never a bulk log. */
+@media print {
+  .pn-tabs { display: none !important; }
+  .pn-grid { grid-template-columns: 1fr 1fr !important; }
+  .pn-panel { break-inside: avoid; }
+}

@@ -33,6 +33,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from vinci.labels import resolve_label
+from vinci.panels_emit import PanelRow
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
 from vinci.sleeves import DEFAULT_SLEEVE
 
@@ -208,6 +209,17 @@ class MonitorSnapshot(BaseModel):
     # lines are now RENDERED from these rows (``RealizedRow.note``), so there is one definition and
     # the display cannot drift from the data.
     realized: list[RealizedRow] = Field(default_factory=list)
+    # THE PANEL GRID (phase 6), as STRUCTURED rows — the consumer phases 2-4 were built for and did
+    # not have. Defaulted for the same reason `theme_falsifiers` is: every committed pre-phase-6
+    # snapshot must still validate, and they are corpus-pinned.
+    #
+    # A `not_in_set` panel IS ABSENT FROM THIS LIST rather than present with a falsy state. That is
+    # the gating rule surviving serialization: a row saying "does not apply" is a tile waiting to be
+    # drawn, and the rule is that those never draw. Every row here renders.
+    #
+    # Typed as a forward reference to avoid a cycle — `vinci.panels_emit` imports the panel stack,
+    # which must not import the monitor.
+    panels: list[PanelRow] = Field(default_factory=list)
 
 
 class FreshnessRow(BaseModel):
