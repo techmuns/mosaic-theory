@@ -160,3 +160,17 @@ symmetric detector finds the same six WST days the original pass did.
 (2016-09-06 → 2026-09-02) x 11 series, header row 35, 3,674 sentinel cells dropped. Spike test:
 |move in| > 8% and |move out| > 8% with opposite signs. Peer test: >5% single-day move among series
 carrying data that day. Measured 2026-09-10.
+
+**2026-09-10 (second entry) — naming the class, because this is its second instance in eight days.**
+*"Every one an earnings date"* was **inferred from the spike shape and written as though sourced.**
+No date list was consulted; the only calendar on disk, WST's Key Developments export, covers 2026
+alone (179 of 196 year-mentions) and lists no 2020, 2022, 2024 or 2025 earnings date, so the claim
+was **unverifiable at the moment it was written**, not merely wrong.
+
+**Same class as the fabricated PR number** (2026-09-03: work attributed to `#583`, which was a
+different branch entirely). Both are a plausible detail generated to complete a sentence and then
+stated with the confidence of a looked-up fact. Neither is a reasoning error — the surrounding
+analysis was right both times — which is what makes the class hard to catch by reading. **The tell
+is the SHAPE OF THE SENTENCE, not its content: a specific, checkable particular that no tool call in
+the transcript produced.** CLAUDE.md already forbids asserting absence off one search; this is its
+mirror — asserting PRESENCE off none.
