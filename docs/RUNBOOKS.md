@@ -325,7 +325,13 @@ EXPOSURE into an investment view were not written down.
    (correctly scoped revenue, against a prong that never said revenue or earnings). Every figure
    came from `context.json` prose and none carried its scope. The field governs RECORDS, and this
    stage writes none — which is exactly why the rule has to sit here.*
-9. **CIQ pull — MANUAL, and the real gate.** R3 underwrites as `EPS x forward P/E`; forward
+9. **CIQ pull — MANUAL, and the real gate. SIZING FIRST, VALUATION SECOND: it prices nothing that
+   has not already cleared sizing on PRIMARY SOURCES.** *Cause: the 2026-09-01 `glp1-drug-value-chain`
+   pull bought four workbook sets — consensus, multiple distributions, revision drift, all real
+   step-10 inputs — for four names of which four were later disqualified on PROSE the pull never
+   touched (three on calls, one on a 10-K). Two further names were settled from EDGAR filings already
+   in `data/cache/sec/` at zero marginal cost. Step 8 shortlists on prose and step 9 buys valuation
+   data; nothing between them tested the figure, which is how four unsized names reached a pull.* R3 underwrites as `EPS x forward P/E`; forward
    estimates are in no API this repo holds. This is v6.2.1's S2.0 "PM action outside conversation".
    Raw workbooks stay in `data/manual/ciq/` and are **never committed**.
 10. **Underwrite — the investment gate, and the step that makes a BUY.**

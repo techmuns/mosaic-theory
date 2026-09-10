@@ -192,3 +192,18 @@ alone is not the rule.
 against sources already cited in it; correction 3 restates the run already reported in its BOUNDARY
 field (17,234 cached files, 24 CAH/COR/MCK primary docs by CIK, vocabularies listed there).
 Dated 2026-09-10.
+
+**2026-09-10 (third entry) — "no profit statement" was WRONG, and it was a SAMPLING error.**
+Amendment 1 above says Cencora gives *"a sensitivity, no sign"*, and the body says *"whether volume
+offsets price is not determinable from these filings."* **Both are false.** Cencora states the sign
+three times across the two filings this record already cites: *"higher sales of GLP-1 products,
+**which have lower gross profit margins**"* (FY2025 10-K), and again for the quarter and for the
+nine-month period in the Q3 FY2026 10-Q. **GLP-1 is DILUTIVE to its segment gross margin, disclosed
+and unprompted. COR is GATED** — see `docs/records/2026-09-10-cor-gated-agilent-unsized-from-edgar.md`.
+
+**How it was missed, because the mechanism matters more than the miss:** the scan behind this record
+printed **the first 3 of 5 GLP-1 mentions per document**, and the conclusion was drawn from that
+sample. The margin sentences are the 4th and 5th. **The count was reported correctly and the
+population was read partially, and the report did not say which** — a claim about five made from
+three, in the record whose whole subject is claims used past their scope. Truncating output is not
+sampling: a scan that prints a subset must say so, and a conclusion must come from the whole.
