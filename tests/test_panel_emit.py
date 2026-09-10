@@ -278,6 +278,13 @@ console.log(JSON.stringify({
 def test_every_truncated_list_in_the_renderer_states_its_own_truncation_node() -> None:
     """A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md, 2026-09-10).
 
+    THE INCIDENT, carried forward from `tests/test_panels_render_truncation.py` (#601), which this
+    branch deletes because it pins `vinci/panels_render.py` — a module this branch removed. Its
+    coverage moves HERE, one layer up, where the renderer a human actually reads now lives:
+    a scan printed the first 3 of 5 GLP-1 mentions and the conclusion drawn from that sample —
+    *"no profit statement"* — was contradicted by the 4th and 5th and reached a merged record
+    (`docs/records/2026-09-10-cah-cor-verified-not-assumed.md`, amendment 3).
+
     #601 fixed exactly two instances of this in `vinci/panels_render.py` — and THIS branch renamed
     that file, so the fix landed on a file that no longer exists here while the identical `[:N]`
     lived on in `panels.js`, the renderer that replaced it. A rename is a sibling call site with the
