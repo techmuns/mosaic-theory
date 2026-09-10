@@ -139,3 +139,35 @@ figure against a quarter's actual. Mixing them is why the result is a range and 
 range is wide enough to absorb it: WAT reaches the 2% line only at ~152 bps, which is 5x the stated
 plan and beyond the width of any period mismatch. **Falsifier: WAT discloses a GLP-1 revenue figure
 or segment share above 2% of total revenue** — at which point the prong is met and the name returns.
+## Amendments
+**2026-09-10 (same day, after review) — every percentage in this record now names its population,
+and the 2% comparison is withdrawn as a gate.**
+
+**THE RANGE RECONCILES; THE PROSE DID NOT SAY ON WHAT.** `30 bps / 40% = 0.75%` and the ceiling
+`0.79%` sit adjacent in the body on **different denominators**, which reads as a doubling that did
+not double. It did double — on the same base:
+
+| | contribution | growth | **share of LEGACY WATERS** ($3.401bn) | **share of TOTAL COMPANY** ($6.446bn) |
+|---|---|---|---|---|
+| low end | 30 bps | **50%** | **0.60%** | **0.32%** |
+| stated plan | 30 bps | 40% | 0.75% | 0.40% |
+| high end | **60 bps** | **40%** | **1.50%** | **0.79%** |
+
+Doubling the contribution takes the legacy share **0.75% → 1.50%**, exactly 2x. The total-company
+column is that same series multiplied by `3.401/6.446 = 0.528`. **So the two ranges are
+`0.60%–1.50%` of legacy Waters and `0.32%–0.79%` of the total company** — and a bare "0.32%–0.79%"
+beside a bare "0.75%" states neither. That is the defect this record diagnoses in three other
+numbers, committed in the number that diagnosed them.
+
+**THE 2% IS WITHDRAWN AS A THRESHOLD.** The body reads *"below the operator's own noise line of 2%"*
+and *"the noise line"* in the inversion table. **There is no such line.** The operator used 2%
+illustratively — *"+40% on 2% of revenue is noise; on 20% it's the thesis"* — and **the fund has no
+ratified materiality threshold**. Treating an offhand figure as a gate is the same failure as the
+rest of this record: a number used past the scope it was stated in. The finding does not need it —
+**WAT is 0.32%–0.79% of the company it would be underwritten as, against WST at 10% of sales,
+a 13x–31x gap** — and that comparison stands on its own without a bar to clear. Setting a
+materiality threshold, if the fund wants one, is the operator's act and is now an open item.
+
+**The inversion table's row labels are wrong for the same reason.** Read the 152 bps and 758 bps
+as *"what it would take to reach the share WST discloses, and a fifth of it"* — arithmetic about a
+gap, not distance from a gate.
