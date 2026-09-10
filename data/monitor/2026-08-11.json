@@ -3840,7 +3840,7 @@
       "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
       "cadence": "quarterly",
       "missing": [],
-      "reason": "every requirement for 'cost_of_borrowing' resolved, yet no value could be built from the committed artifacts — the requirement check and the payload builder disagree, which is a wiring bug rather than missing disclosure",
+      "reason": "no tranche states both a principal and a fixed coupon (2 instrument(s), 0musd non-lease principal, of which 0musd floating; 1musd of lease liabilities excluded as not borrowed money) — a weighted average struck here would be a number about nothing",
       "value": {},
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)"
