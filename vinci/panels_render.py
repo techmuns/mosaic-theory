@@ -87,14 +87,30 @@ def _bars(items: list[tuple[str, float]]) -> str:
     return "".join(out)
 
 
+#: How many "filed since" dots the timeline draws before it summarises the rest.
+_TIMELINE_DOTS = 4
+#: How many form-mix bars the dilution panel draws before it summarises the rest.
+_FORM_BARS = 5
+
+
 def _timeline(*, last: str | None, newer: list[str], nxt: str | None) -> str:
-    """Read → filed-since → expected. The gap IS the panel, so it is drawn as distance."""
+    """Read → filed-since → expected. The gap IS the panel, so it is drawn as distance.
+
+    **A TRUNCATED VIEW STATES ITS OWN TRUNCATION.** This panel exists to show how far behind the
+    evidence is; drawing the first four and stopping renders a nine-filing gap identically to a
+    four-filing one, and nothing in the output says which it was. The overflow dot carries the
+    remainder so the drawn distance cannot understate the real one.
+    """
     dots = []
     if last:
         dots.append(f'<li class="read"><b>{_esc(last)}</b><span>last read</span></li>')
-    for n in newer[:4]:
+    for n in newer[:_TIMELINE_DOTS]:
         head = _esc(n.split(" acc ")[0])
         dots.append(f'<li class="unread"><b>{head}</b><span>filed since</span></li>')
+    if len(newer) > _TIMELINE_DOTS:
+        rest = len(newer) - _TIMELINE_DOTS
+        dots.append(f'<li class="unread"><b>+{rest} more</b>'
+                    f'<span>of {len(newer)} filed since</span></li>')
     if nxt:
         dots.append(f'<li class="next"><b>{_esc(nxt)}</b><span>next (est)</span></li>')
     return f'<ol class="timeline">{"".join(dots)}</ol>' if dots else ""
@@ -214,14 +230,20 @@ def payloads_for(*, dossier: dict[str, Any] | None, row: dict[str, Any] | None,
         forms: dict[str, int] = {}
         for f in dil.get("filings") or []:
             forms[str(f.get("form"))] = forms.get(str(f.get("form")), 0) + 1
-        top = sorted(forms.items(), key=lambda kv: -kv[1])[:5]
+        top = sorted(forms.items(), key=lambda kv: -kv[1])[:_FORM_BARS]
         mx = max((n for _, n in top), default=1)
         rows = "".join(
             f'<div class="barrow"><span class="blab">{_esc(k)}</span>'
             f'<span class="btrack"><i class="bfill pos" style="left:0;width:{n / mx * 100:.0f}%">'
             f'</i></span><span class="bval">{n}</span></div>' for k, n in top)
+        # A TRUNCATED VIEW STATES ITS OWN TRUNCATION — one committed dossier carries 8 form types
+        # against 5 bars, and without this line the chart reads as the whole mix.
+        drawn = sum(n for _, n in top)
+        total = sum(forms.values())
+        more = (f'<p class="sub">showing {len(top)} of {len(forms)} form types '
+                f'({drawn} of {total} filings)</p>' if len(forms) > len(top) else "")
         out["dilution"] = {
-            "body": f'<div class="bars">{rows}</div><p class="sub">'
+            "body": f'<div class="bars">{rows}</div>{more}<p class="sub">'
                     f'{_esc(dil["line"]["value"])}</p>',
             "sources": [str((dil.get("line") or {}).get("source_ref") or "")],
         }
