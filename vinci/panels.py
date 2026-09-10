@@ -33,7 +33,7 @@ property is testable before any panel exists to test it with.
 """
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -230,6 +230,10 @@ class PanelRegistry:
     def __len__(self) -> int:
         return len(self._by_key)
 
+    def __iter__(self) -> Iterator[str]:
+        """Registration order — which is RENDER order, so iteration is the render sequence."""
+        return iter(self._by_key)
+
     def keys(self) -> tuple[str, ...]:
         return tuple(self._by_key)
 
@@ -369,9 +373,47 @@ SEGMENT_ECONOMICS = PanelSpec(
 )
 
 
+COST_OF_BORROWING = PanelSpec(
+    key="cost_of_borrowing",
+    tier="cohort",
+    title="Cost of borrowing",
+    requires=(
+        Requirement(
+            kind="metric_path",
+            detail="capital_structure.instruments",
+            why="the weighted average is struck per tranche from the CIQ capital panel's "
+            "structured principal and coupon; no single disclosed figure carries it",
+        ),
+    ),
+    cadence="quarterly",
+    changes_the_call="Every leverage leg is underwritten at a cost of debt. A stack repricing "
+    "upward as tranches mature raises the bar the business must clear before equity sees anything, "
+    "and it moves without any operating news at all.",
+    caveat="The average covers only tranches stating BOTH a principal and a FIXED coupon, and its "
+    "coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its "
+    "own share rather than averaged in at zero, which would fabricate a lower cost exactly where a "
+    "name carries most floating debt.",
+)
+
+
 def default_registry() -> PanelRegistry:
-    """The panels this repo can draw today. Phases 3–5 add the universal, cohort and theme sets."""
-    return PanelRegistry((COMMISSIONING, SEGMENT_ECONOMICS))
+    """The COHORT panels this repo can draw today — three of the design's five.
+
+    A panel is registered when something can DRAW it, never when it would be nice to have one. The
+    two unregistered members of the cohort five are blocked on extraction, not on design, and the
+    blockers are recorded rather than stubbed:
+
+      * **the race** (estimate-revision breadth) — the counts EXIST: `_revision_breadth` in
+        `ciq_sheets.py` computes upward/downward and then discards them into the display string
+        "47↑/0↓ last mo". Parsing them back out is the prohibited re-parse, so the fix belongs in
+        the extractor (emit the structured pair beside the line) and lands only on re-assembly.
+      * **backlog** — appears nowhere as a structured field. Searched as "backlog", "remaining
+        performance obligation" and "RPO" across the corpus, plus `git log --grep` and `git log -S`:
+        it exists only inside management-commentary PROSE on three names. That is a new extractor,
+        not a panel. (Note for the next searcher: a bare /RPO/i sweep reports 18 of 18 because it
+        matches inside "Corporate".)
+    """
+    return PanelRegistry((COMMISSIONING, SEGMENT_ECONOMICS, COST_OF_BORROWING))
 
 
 def _explain(req: Requirement, upstream: str) -> str:

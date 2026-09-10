@@ -1,32 +1,71 @@
 {
-  "LLY": {
-    "followed_since": "2026-08-21",
-    "reason": "Incretin/GLP-1 franchise followed under the QUALITY book: the question is whether durable demand and manufacturing scale outlast what the price already pays, not whether a de-rating is overdone — the name is near its highs and has never broken, which is the shape the overshoot twin cannot ask about. Also the natural first ticker for the GLP-1 demand-shift driver registered with zero names (#484). The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
-  },
-  "NFLX": {
-    "followed_since": "2026-08-10",
-    "reason": "Global streaming network followed as an OVERSHOOT candidate: down ~41% from its high with EV/EBITDA at the 7.9th percentile of its own history, the question is whether the de-rating overshoots a business whose mechanism is intact. Re-tagged from `quality` 2026-08-19 — the anchor already selects R1 (drawdown reversion), so the sleeve was the only thing out of place. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it.",
-    "sleeve": "overshoot"
-  },
-  "UBER": {
-    "followed_since": "2026-08-07",
-    "reason": "Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
-  },
-  "V": {
-    "followed_since": "2026-08-10",
-    "reason": "Global payments network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
-    "sleeve": "quality"
-  },
-  "GOOGL": {
-    "followed_since": "2026-08-27",
-    "reason": "Alphabet Class A, HELD — a $50,000 / 5.0% NAV starter entered 2026-08-14 at ~$345 under an external IC memo, recorded here so the machinery can see a live position it was previously blind to. Followed under the QUALITY book: the binding question is duration — whether Search and Cloud economics outlast what a ~26x normalized NTM multiple already pays for — not whether a de-rating is overdone, which is the overshoot twin's question and the wrong one here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. Class A specifically: the memo, the $345.90 verified close and the frozen legs are all Class A, and GOOG (Class C) is a distinct security.",
-    "sleeve": "quality"
-  },
-  "TECX": {
-    "followed_since": "2026-09-01",
-    "sleeve": "quality",
-    "reason": "Clinical-stage heart-and-lung biotech followed under the QUALITY book, accepted by the operator 2026-09-01. One drug matters: TX45, for pulmonary hypertension caused by heart failure. Phase 1b was positive in both heart-failure types (HFpEF, and HFrEF topline 2025-10-29); the Phase 2 that decides it (APEX, PH-HFpEF) completed enrolment 2026-06-10, its independent data monitoring committee recommended continuation without modification in July 2026, and topline is guided to early Q1 2027. Cash of $227.1M at 2026-06-30 is guided to fund operations into Q1 2029 — the company reaches its own answer without needing to raise. The binding question is therefore what the price already assumes about that one readout, not whether a de-rating is overdone: nothing broke here, so the overshoot twin's question does not apply. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (down 22% from its 52w high against a 30% floor, and AHEAD of IWM over 180d), which is the screen behaving correctly rather than a gap to route around."
+ "LLY": {
+  "followed_since": "2026-08-21",
+  "reason": "Incretin/GLP-1 franchise followed under the QUALITY book: the question is whether durable demand and manufacturing scale outlast what the price already pays, not whether a de-rating is overdone — the name is near its highs and has never broken, which is the shape the overshoot twin cannot ask about. Also the natural first ticker for the GLP-1 demand-shift driver registered with zero names (#484). The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
+  "sleeve": "quality",
+  "panels": {
+   "segment_economics": {
+    "note_name": "Segment Information"
+   },
+   "cost_of_borrowing": {}
   }
+ },
+ "NFLX": {
+  "followed_since": "2026-08-10",
+  "reason": "Global streaming network followed as an OVERSHOOT candidate: down ~41% from its high with EV/EBITDA at the 7.9th percentile of its own history, the question is whether the de-rating overshoots a business whose mechanism is intact. Re-tagged from `quality` 2026-08-19 — the anchor already selects R1 (drawdown reversion), so the sleeve was the only thing out of place. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it.",
+  "sleeve": "overshoot",
+  "panels": {
+   "commissioning": {
+    "note_name": "Balance Sheet Components - Schedule of Property and Equipment"
+   },
+   "segment_economics": {
+    "note_name": "Segment and Geographic Information - Schedule of Segment Reporting Financial Information"
+   },
+   "cost_of_borrowing": {}
+  }
+ },
+ "UBER": {
+  "followed_since": "2026-08-07",
+  "reason": "Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
+  "sleeve": "quality",
+  "panels": {
+   "segment_economics": {
+    "note_name": "Segment Information and Geographic Information - Schedule of Segment Reporting Information"
+   },
+   "cost_of_borrowing": {}
+  }
+ },
+ "V": {
+  "followed_since": "2026-08-10",
+  "reason": "Global payments network followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it.",
+  "sleeve": "quality",
+  "panels": {
+   "segment_economics": {
+    "note_name": "Segment Information"
+   },
+   "cost_of_borrowing": {}
+  }
+ },
+ "GOOGL": {
+  "followed_since": "2026-08-27",
+  "reason": "Alphabet Class A, HELD — a $50,000 / 5.0% NAV starter entered 2026-08-14 at ~$345 under an external IC memo, recorded here so the machinery can see a live position it was previously blind to. Followed under the QUALITY book: the binding question is duration — whether Search and Cloud economics outlast what a ~26x normalized NTM multiple already pays for — not whether a de-rating is overdone, which is the overshoot twin's question and the wrong one here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. Class A specifically: the memo, the $345.90 verified close and the frozen legs are all Class A, and GOOG (Class C) is a distinct security.",
+  "sleeve": "quality",
+  "panels": {
+   "commissioning": {
+    "note_name": "Supplemental Financial Statement Information - Property and Equipment"
+   },
+   "segment_economics": {
+    "note_name": "Information about Segments and Geographic Areas - Revenue and Operating Income"
+   },
+   "cost_of_borrowing": {}
+  }
+ },
+ "TECX": {
+  "followed_since": "2026-09-01",
+  "sleeve": "quality",
+  "reason": "Clinical-stage heart-and-lung biotech followed under the QUALITY book, accepted by the operator 2026-09-01. One drug matters: TX45, for pulmonary hypertension caused by heart failure. Phase 1b was positive in both heart-failure types (HFpEF, and HFrEF topline 2025-10-29); the Phase 2 that decides it (APEX, PH-HFpEF) completed enrolment 2026-06-10, its independent data monitoring committee recommended continuation without modification in July 2026, and topline is guided to early Q1 2027. Cash of $227.1M at 2026-06-30 is guided to fund operations into Q1 2029 — the company reaches its own answer without needing to raise. The binding question is therefore what the price already assumes about that one readout, not whether a de-rating is overdone: nothing broke here, so the overshoot twin's question does not apply. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; this name sits inside the band but fails the screen's entry gates on their own terms (down 22% from its 52w high against a 30% floor, and AHEAD of IWM over 180d), which is the screen behaving correctly rather than a gap to route around.",
+  "panels": {
+   "cost_of_borrowing": {}
+  }
+ }
 }
