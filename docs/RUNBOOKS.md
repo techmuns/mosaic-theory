@@ -316,6 +316,15 @@ EXPOSURE into an investment view were not written down.
    effective `basis` — and underwrite downward:
    `binding + driver-specific` → `quantified + driver-specific` → `committed + driver-specific`.
    An `indirect` tie is capped at committed by the tie gate and is the last call on anyone's time.
+   **EVERY SHORTLIST ENTRY CARRIES ITS `BOUNDARY` — window, filter, population, unit — beside the
+   figure that admitted it.** Same four words as `docs/records/TEMPLATE.md`, applied one stage
+   earlier; no command is built for this, it is a FORMAT RULE on the entry itself. *Cause: the
+   2026-09-01 `glp1-drug-value-chain` shortlist ran four names and all four broke on one of the
+   four words — BDX on population (a count with no base), WAT on population (a rate with no
+   denominator), WST on population (a segment's revenue share read as the driver's), MCK on unit
+   (correctly scoped revenue, against a prong that never said revenue or earnings). Every figure
+   came from `context.json` prose and none carried its scope. The field governs RECORDS, and this
+   stage writes none — which is exactly why the rule has to sit here.*
 9. **CIQ pull — MANUAL, and the real gate.** R3 underwrites as `EPS x forward P/E`; forward
    estimates are in no API this repo holds. This is v6.2.1's S2.0 "PM action outside conversation".
    Raw workbooks stay in `data/manual/ciq/` and are **never committed**.
