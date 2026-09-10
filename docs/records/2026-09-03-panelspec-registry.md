@@ -104,6 +104,17 @@ believed. Pinned as the **claim**, not the wording: the replacement mentions sin
 in order to deny the analogy, so a token scan would pass on the very message it rejects. The
 sibling call site is pinned too, so a default that silently emptied would redden.
 
+## Constraint this places on phase 3
+
+`decide` refuses a `have`/`because` key matching no requirement of the panel being decided — a
+mis-keyed `have` would otherwise read as "not there" and raise a LOUD refusal naming a requirement
+the filing satisfies, which is worse than a blank tile because it is believed.
+
+The consequence for the renderer: **`have` is sliced PER PANEL, never shared across the grid.** The
+natural shortcut — probe everything once into one map and hand the same map to every panel — raises.
+That is deliberate (a panel is told about its own requirements and no others), but it is a shape
+phase 3 has to build for rather than discover.
+
 ## The caveat channel
 
 `PanelSpec.caveat` carries a standing qualification — not an error, a fact about what the number
