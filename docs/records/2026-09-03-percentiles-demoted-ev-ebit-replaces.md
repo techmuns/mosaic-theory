@@ -130,3 +130,33 @@ what excludes them, and it only works if it requires a figure.
 mechanical check — and both `#586` and `#588` merged **on top of findings recorded in it** while it
 sat open. The evidence was sound and nothing depended on the sequence, but the ledger now reads as
 though the conclusions preceded their support. Noted so the order is not mistaken for provenance.
+## Amendments
+
+**2026-09-10 — the six artifact days were characterised wrongly three times. The DAY LIST is
+right; the rule drawn from it was not.** Re-run against the same export through a symmetric
+detector now shipped as `vinci.dossier.ciq_charting.find_spikes`.
+
+- **"every one an earnings date" is WRONG and would encode a wrong rule.** **2020-03-16 is a false
+  positive on cause**: all **9 series live that day fell more than 5%** (WST −10.7%, the peers −5.7%
+  to −18.8%) — the COVID crash, market-wide, not a stale WST denominator. It is also not an earnings
+  date. And the claim was never checkable from disk in the first place: the Key Developments export
+  covers **2026 only** (179 of 196 year-mentions) and lists **no** 2020/2022/2024/2025 earnings date.
+  It was inferred from the spike shape and written as if sourced. **SHAPE IS THE TELL, CAUSE IS THE
+  PEER SET** — `Spike.market_wide` reports it, and `find_spikes` drops nothing, because dropping a
+  day is a judgement about cause.
+- **The detector must be SYMMETRIC or it misses a third of the class.** Four of the six are V's;
+  **2024-10-24 (+13.1% / −10.4%) and 2025-07-24 (+14.2% / −8.0%) are inverted V's** — consensus cut
+  first, price caught up after. Same lag, opposite order. Across all 11 series **45 spikes in 27,632
+  cells**, of which **14 are inverted**: a V-only test silently returns 31.
+- **The quoted triple for 2024-07-25 is wrong.** The body reads *"(37.04 → 35.57 → 41.25)"*.
+  **37.04 is 2020-03-16's spike value**, transposed from the row above; the correct prior day is
+  **40.58**, so the anchor's move in was −12.3%, not −4.0%.
+
+**Unaffected:** the 24-month sweep range **−21.1% to −6.8%** and its conclusion that 24m holds while
+18m flips, and the ruling that the **quarterly settled basis** is the one to use. Both stand — the
+symmetric detector finds the same six WST days the original pass did.
+
+**BOUNDARY.** Same export, same population: `WST_Peers_Charting`, Pane 1, 2,512 dates
+(2016-09-06 → 2026-09-02) x 11 series, header row 35, 3,674 sentinel cells dropped. Spike test:
+|move in| > 8% and |move out| > 8% with opposite signs. Peer test: >5% single-day move among series
+carrying data that day. Measured 2026-09-10.

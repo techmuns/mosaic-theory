@@ -121,3 +121,15 @@ the analyst note lists as a losing-side mechanism — so MCK is simultaneously t
 the most directly exposed to the reset. The underwrite has to hold both.
 
 The non-filing `source_ref` warning applies to MCK as it does to the other three.
+## Amendments
+
+**2026-09-10 — WST's materiality is 10% of total company sales, not 18%.** The table above records
+*"GLP-1 is 18% of net sales (10% elastomer, 8% West Vantage)"*. The 10% half is sourced —
+`Q1 2026 Earnings Call, Apr 23, 2026`: *"HVP components GLP-1 revenues grew significantly and
+contributed 10% of total company sales."* **The 8% West Vantage half is not disclosed anywhere in
+the pull**; across 53 GLP-1 sentences in the two transcripts that one is the only figure. The 18%
+that IS in the corpus belongs to something else — *"West Vantage, the new brand name Contract
+Manufacturing segment, which represents 18% of our business"* — the segment's total revenue share,
+GLP-1 and non-GLP-1 alike, and 17% by Q2. **WST still clears the materiality prong at 10%**; the
+figure it was ordered on was wrong, and it propagated into five later records and STATE.md.
+See `docs/records/2026-09-10-wat-glp1-base-sized.md`.

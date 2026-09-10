@@ -141,3 +141,90 @@ def read_charting(rows: list[list[Any]]) -> ChartingSeries:
             cleaned = list(col)
         values[c] = tuple(cleaned)
     return ChartingSeries(hdr, label, cols, tuple(dates), values, sentinels, non_numeric)
+
+
+@dataclass(frozen=True)
+class Spike:
+    """One single-day round-trip in a daily series: a move in, and a move back out.
+
+    A forward multiple is ``price / consensus``. Both move, but they do not move at the same
+    INSTANT — a price reacts on the day, a consensus is republished after. For the day in between
+    the ratio is a stale denominator against a live numerator, and the level it prints is not a
+    valuation anyone held. Anchor a window on that day and the window is measuring the lag.
+    """
+
+    when: date
+    prev: float
+    value: float
+    nxt: float
+    #: fractional move INTO the day and back OUT of it; opposite signs by construction
+    in_move: float
+    out_move: float
+    #: how many OTHER series carried data that day, and how many moved with it
+    peers_live: int
+    peers_moved: int
+
+    @property
+    def shape(self) -> str:
+        """``V`` (down then up) or ``inverted-V`` (up then down). BOTH ARE THE SAME DEFECT.
+
+        A detector written for the shape that was noticed first finds only half the class: in the
+        2026-09-03 WST peers export a ``V``-only test returns 4 of 6, silently dropping 2024-10-24
+        (+13.1% / −10.4%) and 2025-07-24 (+14.2% / −8.0%) — the days where consensus was cut FIRST
+        and price caught up after. Same lag, opposite order.
+        """
+        return "V" if self.in_move < 0 else "inverted-V"
+
+    @property
+    def market_wide(self) -> bool:
+        """True when the peer set moved too — so the day is a real market move, not a lag artifact.
+
+        SHAPE IS NOT CAUSE, and neither is the calendar. 2020-03-16 has a textbook ``V``
+        (41.48 → 37.04 → 40.63) and is the COVID crash: all 9 series live that day fell more than
+        5%, WST's −10.7% among the smallest. Excluding it as a stale denominator would be excluding
+        a real observation. A rule keyed on earnings dates gets this backwards twice — that day is
+        not one, and a genuine earnings-day re-rating is not an artifact either.
+        """
+        return self.peers_live > 0 and self.peers_moved / self.peers_live >= 0.5
+
+
+def find_spikes(
+    series: ChartingSeries,
+    column: str,
+    *,
+    threshold: float = 0.08,
+    peer_threshold: float = 0.05,
+) -> list[Spike]:
+    """Single-day round-trips in ``column``, each carrying its own market-wide control.
+
+    A day qualifies when the move IN and the move OUT both exceed ``threshold`` **and have
+    opposite signs** — the sign test is what makes this symmetric, and what stops a genuine
+    two-day trend from being called a round-trip. Every hit is returned; the caller decides.
+    ``market_wide`` is reported, never applied, because dropping a day is a judgement about
+    cause and this function only measures shape and breadth.
+    """
+    if column not in series.values:
+        raise KeyError(f"{column!r} not in {series.columns}")
+    col = series.values[column]
+    others = [c for c in series.columns if c != column]
+    out: list[Spike] = []
+    for t in range(1, len(col) - 1):
+        a, b, c = col[t - 1], col[t], col[t + 1]
+        if a is None or b is None or c is None or a == 0 or b == 0:
+            continue
+        in_move, out_move = b / a - 1, c / b - 1
+        if abs(in_move) <= threshold or abs(out_move) <= threshold:
+            continue
+        if in_move * out_move >= 0:  # same direction ⇒ a trend, not a round-trip
+            continue
+        live = moved = 0
+        for other in others:
+            w = series.values[other]
+            was, now = w[t - 1], w[t]
+            if was is None or now is None or was == 0:
+                continue
+            live += 1
+            if abs(now / was - 1) > peer_threshold:
+                moved += 1
+        out.append(Spike(series.dates[t], a, b, c, in_move, out_move, live, moved))
+    return out
