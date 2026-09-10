@@ -12,7 +12,12 @@ import re
 
 import pytest
 
-from vinci.borrowing import Borrowing, BorrowingUnavailableError, borrowing
+from vinci.borrowing import (
+    _NOT_FLOATING,
+    Borrowing,
+    BorrowingUnavailableError,
+    borrowing,
+)
 from vinci.panels import default_registry
 from vinci.panels_declare import (
     PanelDeclarationError,
@@ -111,6 +116,60 @@ def test_the_coupon_cell_is_read_through_the_shared_ciq_helper() -> None:
                       ROWS[0]], source_ref="s").n_covered == 1
 
 
+def test_lease_liabilities_are_not_borrowings_and_leave_every_figure_alone() -> None:
+    """REVIEW FINDING, and the largest one. The CIQ panel lists operating- and finance-lease
+    liabilities as tranches typed 'Capital Lease' whose `coupon` is the ASC-842 discount rate the
+    filer imputed — not a cost of borrowed money.
+
+    Including them did not shade the figure, it REPLACED it. Measured on the committed corpus: the
+    whole of SMPL's 6.00%, WERN's 4.70%, EPAM's 4.80% and VITL's figures were lease rates and
+    nothing else, and TECX — which has no borrowings at all — reported 15.47%, the corpus's highest,
+    off a $0.4M finance lease and a $0.9M operating lease.
+    """
+    lease = {"principal_musd": 900.0, "coupon": "17.620%", "floating_rate": "NA",
+             "type": "Capital Lease", "description": "Operating Lease Liability"}
+    b = borrowing([*ROWS, lease], source_ref="s")
+    assert b.weighted_avg_coupon_pct == pytest.approx(4.0), "a lease rate entered the average"
+    assert b.total_musd == pytest.approx(5190.0), "lease principal entered the denominator"
+    assert b.floating_musd == pytest.approx(3190.0)
+    assert b.lease_musd == pytest.approx(900.0), "the fact must survive, on its own field"
+    assert b.all_in_rate_pct == pytest.approx(
+        borrowing(ROWS, source_ref="s").all_in_rate_pct), "a lease rate entered the all-in basis"
+
+
+def test_a_stack_whose_only_priced_tranches_are_leases_refuses() -> None:
+    """TECX's shape exactly: two lease liabilities and no borrowings. A 15.47% cost of borrowing for
+    a name that has not borrowed is worse than a blank tile, because it is believed."""
+    with pytest.raises(BorrowingUnavailableError, match="lease liabilities excluded"):
+        borrowing([{"principal_musd": 0.4, "coupon": "10.640%", "floating_rate": "NA",
+                    "type": "Capital Lease"},
+                   {"principal_musd": 0.9, "coupon": "17.620%", "floating_rate": "NA",
+                    "type": "Capital Lease"}], source_ref="s")
+
+
+def test_a_tranche_with_no_floating_flag_at_all_leans_floating_as_documented() -> None:
+    """REVIEW FINDING. `str(row.get("floating_rate") or "")` collapsed an ABSENT/NULL field onto
+    CIQ's explicit empty "not floating" cell, so a failed extraction read as FIXED and put a
+    possibly-resettable coupon into the contracted average — the module's stated default, inverted.
+    """
+    with pytest.raises(BorrowingUnavailableError):
+        borrowing([{"principal_musd": 500.0, "coupon": "4.500%"}], source_ref="s")
+    with pytest.raises(BorrowingUnavailableError):
+        borrowing([{"principal_musd": 500.0, "coupon": "4.500%", "floating_rate": None}],
+                  source_ref="s")
+    # ...while CIQ's own empty cell still means fixed, which is what ROWS[2] pins.
+    assert borrowing([ROWS[2]], source_ref="s").covered_musd == pytest.approx(1000.0)
+
+
+def test_passing_the_fact_envelope_instead_of_the_list_is_loud_not_a_refusal() -> None:
+    """REVIEW FINDING. The dossier holds the list inside `{value, source_ref, status}`, so the
+    envelope is the shape a caller most easily passes by mistake — and the refusal branch then said
+    "no debt to price" about a name with a nineteen-tranche stack. A wiring bug must not be able to
+    render as an answer."""
+    with pytest.raises(TypeError, match="instrument LIST"):
+        borrowing({"value": ROWS, "source_ref": "x", "status": "present"}, source_ref="s")
+
+
 def test_an_undeclared_panel_is_silent_and_a_declared_one_is_not() -> None:
     """Substance from the declaration. LLY and V publish no property-named report, so neither
     DECLARES commissioning — and a panel a name does not run renders nothing at all."""
@@ -155,25 +214,86 @@ def test_the_declared_note_name_resolves_what_the_repo_wide_pattern_cannot() -> 
     assert fname.endswith(".htm")
 
 
-def test_a_declaration_naming_an_unregistered_panel_is_loud_at_read() -> None:
+def test_a_declaration_naming_an_unregistered_panel_is_loud_at_read(
+        tmp_path: pathlib.Path) -> None:
     """Validated at READ, not at render — a typo'd key would otherwise surface as a missing tile on
-    a page nobody was watching."""
+    a page nobody was watching.
+
+    WRITES TO `tmp_path`, not into `tests/fixtures/`. The earlier cut built a real directory inside
+    the repo and removed it in a `finally`, so an interrupt left an untracked, un-ignored
+    `followed.json` in the working tree.
+    """
     reg = default_registry()
     bad = {"X": {"followed_since": "2026-01-01", "sleeve": "quality",
                  "panels": {"no_such_panel": {}}}}
-    p = ROOT / "tests" / "fixtures" / "_decl_tmp"
-    (p / "data").mkdir(parents=True, exist_ok=True)
-    (p / "data" / "followed.json").write_text(json.dumps(bad))
-    try:
-        with pytest.raises(PanelDeclarationError, match="not registered"):
-            read_declarations(root=p, registry=reg)
-        bad["X"]["panels"] = {"cost_of_borrowing": {"nope": "x"}}
-        (p / "data" / "followed.json").write_text(json.dumps(bad))
-        with pytest.raises(PanelDeclarationError, match="does not read"):
-            read_declarations(root=p, registry=reg)
-    finally:
-        import shutil
-        shutil.rmtree(p, ignore_errors=True)
+    (tmp_path / "data").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "data" / "followed.json").write_text(json.dumps(bad))
+    with pytest.raises(PanelDeclarationError, match="not registered"):
+        read_declarations(root=tmp_path, registry=reg)
+    bad["X"]["panels"] = {"cost_of_borrowing": {"nope": "x"}}
+    (tmp_path / "data" / "followed.json").write_text(json.dumps(bad))
+    with pytest.raises(PanelDeclarationError, match="does not read"):
+        read_declarations(root=tmp_path, registry=reg)
+
+
+def test_an_absent_follow_list_raises_rather_than_declaring_nothing(
+        tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. `{}` for a missing file is indistinguishable downstream from "nobody
+    declared anything" — every cohort panel `not_in_set`, a grid of silent tiles — and the first of
+    the two is a wiring bug (wrong root, wrong cwd). Absent-vs-broken at this module's own edge."""
+    with pytest.raises(PanelDeclarationError, match="no follow list at"):
+        read_declarations(root=tmp_path, registry=default_registry())
+
+
+def test_a_lowercase_ticker_key_declares_the_panel_rather_than_silently_nothing(
+        tmp_path: pathlib.Path) -> None:
+    """REVIEW FINDING. `vinci/followed.py` uppercases at this edge and this reader did not, so
+    `{"googl": {...}}` declared nothing: `declared_for("GOOGL", …)` missed it and the panel rendered
+    `not_in_set` — the blank tile that reads as "this name has no such question"."""
+    reg = default_registry()
+    (tmp_path / "data").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "data" / "followed.json").write_text(json.dumps(
+        {"googl": {"followed_since": "2026-01-01", "sleeve": "quality",
+                   "panels": {"cost_of_borrowing": {}}}}))
+    decl = read_declarations(root=tmp_path, registry=reg)
+    assert declared_for("GOOGL", decl) == frozenset({"cost_of_borrowing"})
+    assert declared_for("googl", decl) == frozenset({"cost_of_borrowing"})
+
+
+def test_a_case_colliding_pair_of_tickers_refuses_instead_of_dropping_one(
+        tmp_path: pathlib.Path) -> None:
+    reg = default_registry()
+    (tmp_path / "data").mkdir(parents=True, exist_ok=True)
+    entry = {"followed_since": "2026-01-01", "sleeve": "quality",
+             "panels": {"cost_of_borrowing": {}}}
+    (tmp_path / "data" / "followed.json").write_text(json.dumps({"V": entry, "v": entry}))
+    with pytest.raises(PanelDeclarationError, match="more than once"):
+        read_declarations(root=tmp_path, registry=reg)
+
+
+def test_an_unconfigured_note_panel_is_never_probed_with_the_default_note_name() -> None:
+    """REVIEW FINDING. `decide` refuses an unfilled config BEFORE it looks at `have`, so probing
+    first fetched a FilingSummary to ask about the DEFAULT note name — Alphabet's — against another
+    filer's accounts, which is the one query this module's docstring says must never be sent. The
+    answer was then discarded."""
+    reg = default_registry()
+    asked: list[str] = []
+
+    def probe(detail: str) -> tuple[bool, str]:
+        asked.append(detail)
+        return True, ""
+
+    # declared, note_name deliberately unset
+    decl: dict[str, dict[str, dict[str, str]]] = {"ZZZZ": {"commissioning": {}}}
+    got = {d.key: d for d in resolve_cohort(
+        "ZZZZ", dossier=None, declarations=decl, registry=reg, note_probe=probe)}
+    assert got["commissioning"].state == "refused"
+    assert "config 'note_name' is not set" in got["commissioning"].reason
+    # ...and `segment_economics`, which ZZZZ does not declare at all, is not probed either: an
+    # undeclared panel renders nothing, so fetching a filing to decide its form is a round trip for
+    # a tile that does not exist.
+    assert got["segment_economics"].state == "not_in_set"
+    assert asked == [], f"probed the default note name anyway: {asked}"
 
 
 def test_every_declaration_in_the_live_file_validates() -> None:
@@ -197,9 +317,12 @@ def test_cost_of_borrowing_computes_for_every_dossier_that_lists_instruments() -
         ins = (cs.get("instruments") or {}).get("value")
         if not isinstance(ins, list) or not ins:
             continue
+        # `_NOT_FLOATING` IS IMPORTED, NOT RETYPED. A copy of the production set here would go stale
+        # the moment the set changed and this invariant would then assert the old classification
+        # while reporting green.
         priced = [r for r in ins if isinstance(r, dict) and r.get("principal_musd")
-                  and str(r.get("floating_rate") or "").strip().lower()
-                  in ("", "na", "n/a", "-", "–", "none", "no", "false", "fixed")]
+                  and str(r.get("type") or "").strip().lower() != "capital lease"
+                  and str(r.get("floating_rate") or "").strip().lower() in _NOT_FLOATING]
         try:
             b = borrowing(ins, source_ref="corpus")
         except BorrowingUnavailableError:

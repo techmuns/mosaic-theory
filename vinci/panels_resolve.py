@@ -217,6 +217,20 @@ def resolve_cohort(
         cfg = config_for(ticker, key, declarations)
         have: dict[str, bool] = {}
         because: dict[str, str] = {}
+        # SUBSTANCE BEFORE FORM, AT THIS LAYER TOO. `decide` is careful to settle `not_in_set` and
+        # the unfilled-config refusal before it ever looks at `have` — but an earlier cut of this
+        # loop ran the probes first regardless, so a name that does NOT declare `commissioning`
+        # still sent a FilingSummary fetch asking for the DEFAULT note name, which is ALPHABET's,
+        # against that filer's accounts. The answer was then thrown away by `decide`. That is both
+        # the query this module's docstring says must never be sent and a network round trip for a
+        # tile that renders nothing.
+        settled = (
+            key not in declared
+            or any(r.config_key and not (cfg.get(r.config_key) or "").strip()
+                   for r in spec.requires))
+        if settled:
+            out.append(registry.decide(key, declared=key in declared, config=cfg))
+            continue
         for req in (r.resolve(cfg) for r in spec.requires):
             if req.kind == "rfile_note":
                 if note_probe is None:

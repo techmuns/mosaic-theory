@@ -55,10 +55,26 @@ def read_declarations(
     """
     p = followed_path(root)
     if not p.exists():
-        return {}
+        # NOT `{}`. An absent file and a file in which nobody declared anything are the same value
+        # downstream — every cohort panel `not_in_set`, a grid of silent tiles — and the first of
+        # those is a wiring bug (a wrong root, a run from the wrong cwd). Absent-vs-broken, at the
+        # edge this module exists to guard.
+        raise PanelDeclarationError(
+            f"no follow list at {p} — panel declarations live in it, and returning 'nobody "
+            f"declared anything' for a missing file would render every cohort panel as silence")
     raw: dict[str, Any] = json.loads(p.read_text())
     out: dict[str, dict[str, dict[str, str]]] = {}
-    for ticker, entry in sorted(raw.items()):
+    seen: set[str] = set()
+    for raw_ticker, entry in sorted(raw.items()):
+        # UPPERCASED, as `vinci/followed.py` does at the same edge. A lowercase key would otherwise
+        # declare nothing at all — `declared_for("GOOGL", …)` misses `"googl"` — and the panel would
+        # render as `not_in_set`, which is indistinguishable from "this name has no such question".
+        ticker = str(raw_ticker).upper()
+        if ticker in seen:
+            raise PanelDeclarationError(
+                f"{ticker} appears more than once in the follow list (keys differing only by "
+                f"case); one set of panel declarations would be silently discarded")
+        seen.add(ticker)
         decl = (entry or {}).get(PANELS_KEY)
         if decl is None:
             continue
@@ -91,12 +107,16 @@ def read_declarations(
 def declared_for(
     ticker: str, declarations: dict[str, dict[str, dict[str, str]]],
 ) -> frozenset[str]:
-    """The panel keys this name declares — SUBSTANCE. Absent name ⇒ declares nothing."""
-    return frozenset(declarations.get(ticker, {}))
+    """The panel keys this name declares — SUBSTANCE. Absent name ⇒ declares nothing.
+
+    The lookup is UPPERCASED to match `read_declarations`, so a caller holding a ticker in the
+    store's own casing cannot silently miss a declaration and render `not_in_set`.
+    """
+    return frozenset(declarations.get(ticker.upper(), {}))
 
 
 def config_for(
     ticker: str, panel_key: str, declarations: dict[str, dict[str, dict[str, str]]],
 ) -> dict[str, str]:
     """This name's config for one panel — FORM. Empty when undeclared or unconfigured."""
-    return dict(declarations.get(ticker, {}).get(panel_key, {}))
+    return dict(declarations.get(ticker.upper(), {}).get(panel_key, {}))

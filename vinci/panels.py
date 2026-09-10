@@ -392,7 +392,10 @@ COST_OF_BORROWING = PanelSpec(
     caveat="The average covers only tranches stating BOTH a principal and a FIXED coupon, and its "
     "coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its "
     "own share rather than averaged in at zero, which would fabricate a lower cost exactly where a "
-    "name carries most floating debt.",
+    "name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists "
+    "them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, "
+    "and their principal is reported separately. The denominator is the LISTED tranches, which for "
+    "several names is a fraction of the stack the same panel's summary totals.",
 )
 
 
