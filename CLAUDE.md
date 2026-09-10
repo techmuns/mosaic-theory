@@ -186,6 +186,14 @@ verdict placement.
   and an intercompany loan while excluding the two largest contracted-capacity names. Same error,
   four surfaces — which is why the rule is here and not in one more gate.
 - **EVERY COUNT STATES ITS BOUNDARY** — window, filter, population, unit, and the commit or date it was measured at — whenever it enters a RECORD, a COMMIT MESSAGE or STATE.md. Not conversational arithmetic that lands nowhere. `docs/records/TEMPLATE.md` carries the field, because a rule you must remember is weaker than a field you must fill. (On 2026-09-02 one session produced seven instances of one error — a 400-day probe of a 290-day scan; a cache count that was the whole calendar day; a citation sweep that silently excluded STATE.md; a superseded archive read as the live record.)
+- **A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION** — "showing 3 of 5", in the scan, never in the
+  reader's memory of it. **A sample knows it is a sample; a truncated print does not**, and a
+  CORRECT COUNT printed beside a PARTIAL BODY is what makes it convincing. On 2026-09-10 a scan
+  reported "GLP-1 mentions: 5" and printed the first 3; the conclusion drawn — *"no profit
+  statement"* — was contradicted by the 4th and 5th, and reached a merged record. Same family as
+  EVERY COUNT STATES ITS BOUNDARY: the population was there, it just was not stated. Applies to
+  every `[:N]` that a human or an LLM will read as a whole — scan output, error lists, rendered
+  panels (`vinci/panels_render.py` carried two, caught before a consumer existed).
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never
