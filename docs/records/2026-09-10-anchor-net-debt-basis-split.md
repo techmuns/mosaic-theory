@@ -52,9 +52,15 @@ by comparing `anchor.net_debt.value` against the `CIQ Net Debt $…M` figure par
 
 - 16 names carry BOTH figures (FUBO and TECX carry no CIQ net debt).
 - **11 of 16 disagree** by more than $1M.
-- **GOOGL is the ONLY sign flip**, and the only gap of material size: $186,563M. The next largest
-  are V ($2,419M) and LLY ($2,158M), both names with long-term investment balances; the remaining
-  gaps are $8M–$153M and read as ordinary lease/period-end basis differences.
+- **GOOGL is the ONLY sign flip**, and its gap is two orders of magnitude larger than any other:
+  $186,563M. The full disagreeing set, re-derived 2026-09-10 over the 16 two-figure names
+  (|anchor − CIQ| > $1M, UNIT $M): GOOGL 186,563 · V 2,419 · LLY 2,158 · **UBER 1,254** · IT 152.8 ·
+  AORT 128.7 · VITL 84.0 · NCNO 31.3 · BRBR 8.6 · VRRM 7.9 · WERN 7.5. **UBER's $1.25bn gap was
+  omitted from an earlier cut of this list and the tail was stated as "$8M–$153M" — wrong at both
+  ends.** V, LLY and UBER all carry investment balances; only below IT do the gaps read as ordinary
+  lease/period-end basis differences. So "GOOGL is the only MATERIAL gap" holds only against a bar
+  above $2.4bn — a bar this fund has not set (§5.0 row 23), and one that UBER, a followed quality
+  name carrying $521M of short-term investments, sits closest to.
 - Independently, 5 of 19 names measured carry a SHORT-TERM investment tag at the same instant as
   their cash tag: GOOGL $186,563M, ORKA $857M, UBER $521M, NFLX $29M, VRRM $5M. Only GOOGL's is
   large enough relative to debt to flip a sign.

@@ -78,6 +78,20 @@ as-of by design — CMP is the latest close on every committed page.
   Financials — Annual, Financials — Quarterly, Estimates Report, Business Relationships, and
   **Company Comparable Analysis** (the cap). Into `data/manual/ciq/ORKA/`, git-ignored, never
   committed. Tracked as STATE.md §5.0 row 25.
+- **THE FOLLOW ENTRY IS NOT INERT — it joins the QUALITY BOOK'S PASSIVE COMPARATOR, and that was
+  not stated when the decision was recorded.** `resolve_baskets` / `Basket.members_as_of`
+  (`vinci/scoring/baseline.py`) build the quality sleeve's kill-test basket from `followed.json`
+  AS OF each verdict's entry date, so from `followed_since` 2026-09-10 every quality verdict
+  entered on or after that date is measured against a 5-name equal-weight basket that now
+  includes ORKA — a name this record says cannot be assembled at all. TWO consequences, both by
+  design and neither previously written down: (1) the comparator gains a high-variance member
+  (+190% over six months on this record's own figures) whose weight is 1/5; (2) `basket_return`
+  REFUSES the whole comparator — `vs_basket` prints "unavailable" for EVERY quality verdict in the
+  window — if ORKA lacks a close at either end of it, and ORKA's bars live only in the git-ignored
+  store. Verdicts entered before 2026-09-10 are unaffected (the roster is as-of, per #409).
+  ACCEPTED: no quality verdict has been entered on or after 2026-09-10, so nothing is measured
+  against it yet. FALSIFIER: a quality-book scoring run reporting `vs_basket` unavailable, or a
+  basket line naming ORKA, before its CIQ export lands.
 - **ACCEPTED RISK — the dossier's cap remains single-sourced.** A name whose comps workbook is
   absent cannot be assembled at all, however good its EDGAR coverage. That is deliberate for the
   quality book; whether it should hold for every sleeve is UNSETTLED and not decided here.
