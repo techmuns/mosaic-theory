@@ -81,12 +81,12 @@ move, and the **all-in** rate, which is what is paid and resets — with the cov
 
 The gap is material, not cosmetic:
 
-| name | fixed (coverage) | all-in (coverage) | floating |
-|---|---|---|---|
-| AORT | 5.63% (16%) | **7.81% (100%)** | 84% |
-| NCNO | 6.80% (23%) | 5.94% (100%) | 77% |
-| WERN | 4.70% (5%) | 4.52% (46%) | 95% |
-| V | 2.85% (100%) | 2.85% (100%) | 0% |
+| name | fixed (coverage) | all-in (coverage) | floating | lease held out |
+|---|---|---|---|---|
+| AORT | 6.05% (0.4%) | **8.23% (100%)** | 100% | 42m |
+| GOOGL | 4.16% (81%) | 4.16% (81%) | 1% | 18,453m |
+| V | 2.80% (100%) | 2.80% (100%) | 0% | 913m |
+| TECX · VITL · EPAM · NCNO · SMPL · WERN | **REFUSED** | | | |
 
 Reporting only the fixed average would understate AORT's cost of borrowing by 218bp. Names with no
 floating debt show identical figures, which is the face-validity check.
@@ -109,6 +109,56 @@ obligation" and "RPO" across the corpus, plus `git log --grep` and `git log -S`:
 management-commentary PROSE, on three names. A new extractor, not a panel. *Note for the next
 searcher: a bare `/RPO/i` sweep reports 18 of 18 because it matches inside "Corporate".*
 
+
+## CORRECTION (review of #598) — leases are not borrowings, and my face-validity check was the fabrication
+
+**The first cut of this panel averaged LEASE liabilities into the cost of borrowing.** The CIQ
+capital panel lists operating- and finance-lease liabilities as tranches typed `Capital Lease`, and
+their `coupon` cell is the ASC-842 discount rate the filer imputed — not a contracted coupon on
+borrowed money. The discriminating field, `type`, was in the same structured rows I was already
+reading for `principal_musd`, `coupon` and `floating_rate`. I did not look at it.
+
+It did not shade the figure, it replaced it. Measured on the committed corpus, **all 18 names** had
+lease principal inside their average:
+
+| name | lease share of the averaged principal |
+|---|---|
+| TECX, VITL | **100%** — no priced borrowings at all |
+| EPAM | 82.6% |
+| MVST | 55.4% |
+| GOOGL | 31.8% |
+
+**The part worth recording is how I validated it.** This record and PR #598 both cited TECX's
+**15.47%** — "the corpus high" — as a face-validity check for a distressed biotech. TECX has no
+borrowings. The figure was a $0.4M finance lease at 10.640% and a $0.9M operating lease at 17.620%,
+and it looked exactly like what a distressed biotech should pay, which is precisely why I believed
+it. A face-validity check that confirms a fabricated number is worse than no check: it converts a
+defect into published evidence. Face validity tests whether a number is PLAUSIBLE; it cannot test
+whether it is the number you think it is. Only the basis can.
+
+Fixed by filtering on the structured `type`. Verified complete and exclusive on the corpus in two
+vocabularies: no lease-looking description carries another type, no `Capital Lease` row lacks
+"lease" in its description, and a second sweep for right-of-use / sale-leaseback / rental terms
+finds nothing the filter misses. (Its one apparent hit was `ROU` matching inside "G**rou**p" — the
+same false-positive class as `RPO` inside "Corporate", twice in one phase.) Lease principal is
+reported as its own field so nothing is deleted, and a name whose only priced tranches are leases
+now REFUSES: TECX, VITL, EPAM, NCNO, SMPL and WERN all do.
+
+### Residual, surfaced rather than fixed
+
+**AORT now reports a 6.05% fixed average struck over ONE $0.9M bond in a $220.9M stack — 0.4%
+coverage, which displays as "0%".** That is structurally the same defect one level down: a headline
+number about almost nothing. It is not fixed here because the remedy is a coverage THRESHOLD, and a
+threshold is a tunable that must be set on face validity as a deliberate decision, not chosen
+mid-merge. Nothing consumes these figures yet (no renderer exists), so nothing is currently
+misleading anyone — but a cohort renderer must not print a fixed average without its coverage
+beside it, and should refuse below whatever floor the operator sets.
+
+Two adjacent denominator questions the review raised and left to judgment, both recorded and
+neither fixed: unparseable coupon RANGES (`"3.000% - 4.000%"`) sit in the denominator only, so
+MVST's coverage + floating share = 37% with the residue unnamed; and `total_musd` counts LISTED
+tranches only — GOOGL's 67,504musd against the same panel's 122,189musd total principal.
+
 ## Verification
 
 Real runs throughout. Cost of borrowing hand-verified against GOOGL: 4.0237% over 58,004 of 67,504
@@ -116,7 +166,8 @@ musd (85.9% coverage), matching the module to four decimals, with a 9,000musd un
 500musd floating tranche correctly excluded. Cohort resolution run offline (notes refuse) and against
 live EDGAR (all declared panels ready).
 
-Five mutations, all caught. **One of them passed at first and is the lesson:** deleting the floating
+Five mutations, all caught (plus nine review fixes, each with its own regression pin).
+**One of them passed at first and is the lesson:** deleting the floating
 guard changed nothing, because the fixture gave every floating row coupon `"NA"` — so the
 coupon-is-None check was silently doing the exclusion. Eight corpus tranches have a coupon AND a
 benchmark, so the fixture was reshaped to AORT's real row; the mutation is now caught by three tests.
