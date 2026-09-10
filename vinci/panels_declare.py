@@ -44,8 +44,30 @@ def followed_path(root: Path | None = None) -> Path:
     return (root or Path.cwd()) / "data" / "followed.json"
 
 
+def all_registries() -> PanelRegistry:
+    """Every registered panel, across every tier.
+
+    `followed.json` is ONE file describing a name's whole grid, so validating it against a single
+    tier's registry rejects legitimate declarations from the others. That is not hypothetical: the
+    moment GOOGL declared `multiple_and_price` (universal) the emitter — which passed the COHORT
+    registry — refused the whole file and took the grid down with it. The declaration reader has to
+    know about every tier, because the file does.
+    """
+    from vinci.panels import default_registry
+    from vinci.panels_theme import theme_registry
+    from vinci.panels_universal import universal_registry
+
+    merged = PanelRegistry()
+    for reg in (universal_registry(), default_registry(), theme_registry()):
+        for key in reg:
+            spec = reg.get(key)
+            assert spec is not None
+            merged.register(spec)
+    return merged
+
+
 def read_declarations(
-    *, root: Path | None = None, registry: PanelRegistry,
+    *, root: Path | None = None, registry: PanelRegistry | None = None,
 ) -> dict[str, dict[str, dict[str, str]]]:
     """`{ticker: {panel_key: {config_key: value}}}`, validated against the registry.
 
@@ -53,6 +75,7 @@ def read_declarations(
     on a page nobody was watching — the blank-tile failure one layer up from the gating rule. An
     unknown key raises here, naming the registered set, before anything renders.
     """
+    registry = registry or all_registries()
     p = followed_path(root)
     if not p.exists():
         # NOT `{}`. An absent file and a file in which nobody declared anything are the same value
@@ -93,12 +116,31 @@ def read_declarations(
             if not isinstance(cfg, dict):
                 raise PanelDeclarationError(
                     f"{ticker}/{key}: config must be an object, got {type(cfg).__name__}")
-            unknown = sorted(set(cfg) - set(spec.config_schema))
+            # BOTH KINDS OF CONFIG ARE ACCEPTED HERE and each is checked against its own schema:
+            # `config_schema` keys parameterise what the panel PROBES, `render_config` keys what it
+            # SAYS. A name declares them in one object because that is how an operator thinks about
+            # it; the two are only separate in the spec, where the no-op guard differs.
+            known = set(spec.config_schema) | set(spec.render_config)
+            unknown = sorted(set(cfg) - known)
             if unknown:
                 raise PanelDeclarationError(
                     f"{ticker}/{key} supplies config {unknown} that the panel does not read — it "
-                    f"declares {sorted(spec.config_schema)}. A config key nothing consumes is a "
-                    f"silent no-op, which is how a name appears configured and is not.")
+                    f"declares {sorted(known)}. A config key nothing consumes is a silent no-op, "
+                    f"which is how a name appears configured and is not.")
+            for ck, opt in spec.render_config.items():
+                if ck not in cfg or not opt.allowed:
+                    continue
+                if str(cfg[ck]) not in opt.allowed:
+                    # THE FALSIFIER, AS A MACHINE CHECK. The record attaches one to
+                    # `load_bearing_axis`: "a third R3 record matching neither archetype, at which
+                    # point the field must be a statement rather than an enum." A name that fits
+                    # none of the listed values raises HERE, at declare time, naming that ruling —
+                    # rather than being quietly mis-filed under whichever value was closest.
+                    raise PanelDeclarationError(
+                        f"{ticker}/{key} sets {ck}={cfg[ck]!r}, which is not one of "
+                        f"{sorted(opt.allowed)}. If this name genuinely fits none of them, that is "
+                        f"the falsifier on this field: it must become a free statement rather than "
+                        f"a closed set, and that is an operator ruling — not a value to force.")
             per_name[key] = {k: str(v) for k, v in cfg.items()}
         out[ticker] = per_name
     return out

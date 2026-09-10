@@ -17,7 +17,7 @@ type, because a guard enforced by reviewer attention passes on a tired day.
 """
 from __future__ import annotations
 
-from vinci.panels import PanelRegistry, PanelSpec, Requirement
+from vinci.panels import PanelRegistry, PanelSpec, RenderOption, Requirement
 
 THE_CALL = PanelSpec(
     key="the_call",
@@ -74,10 +74,26 @@ MULTIPLE_AND_PRICE = PanelSpec(
         ),
     ),
     cadence="daily",
-    changes_the_call="This is the panel the source plan omitted and the design added, because for "
-    "a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, "
-    "the entire downside is compression rather than earnings. A multiple travelling toward the "
-    "bear case while earnings hold is the call breaking on the only axis that can break it.",
+    # ARCHETYPE-NEUTRAL (row 26). The previous text read "for a quality megacap the multiple IS the
+    # trade … the call breaking on THE ONLY AXIS THAT CAN BREAK IT" — GOOGL's condition verbatim,
+    # generalised to every name and FALSE for a name whose call breaks on earnings arrival, where
+    # the multiple has been paid nothing for. It said the distance MEANS something it only means for
+    # one archetype. This states the distance and lets the name say which axis binds.
+    changes_the_call="The distance between today's multiple and the one underwritten is what this "
+    "panel measures. Whether closing that distance is what breaks the call depends on which axis "
+    "the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one "
+    "whose case is earnings arrival can travel a long way on this line without the thesis moving. "
+    "The name declares which, and until it does this panel reports a distance and claims nothing "
+    "about what it costs.",
+    render_config={
+        "load_bearing_axis": RenderOption(
+            means="which axis this name's underwrite actually rests on, read off its own record "
+            "— 'multiple' when the case turns on the multiple re-rating or de-rating (GOOGL: bear "
+            "EPS already exceeds today's NTM, so the entire downside is compression), 'earnings' "
+            "when "
+            "price has tracked earnings and the multiple contributes nothing",
+            allowed=("multiple", "earnings")),
+    },
     caveat="A trailing multiple and a forward multiple are different numbers and this panel must "
     "name which it shows — the repo has already shipped one defect from two EBITDA rows on "
     "different bases sitting in one table.",

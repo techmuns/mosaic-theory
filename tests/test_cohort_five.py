@@ -174,7 +174,7 @@ def test_an_undeclared_panel_is_silent_and_a_declared_one_is_not() -> None:
     """Substance from the declaration. LLY and V publish no property-named report, so neither
     DECLARES commissioning — and a panel a name does not run renders nothing at all."""
     reg = default_registry()
-    decl = read_declarations(root=ROOT, registry=reg)
+    decl = read_declarations(root=ROOT)
     states = {d.key: d.state for d in resolve_cohort(
         "LLY", dossier=None, declarations=decl, registry=reg, note_probe=None)}
     assert states["commissioning"] == "not_in_set"
@@ -185,7 +185,7 @@ def test_without_a_filing_probe_a_note_requirement_refuses_rather_than_assuming(
     """A declaration is an intention, not evidence. Assuming the note exists because a human wrote
     its name down is how one filer's note gets read as another's."""
     reg = default_registry()
-    decl = read_declarations(root=ROOT, registry=reg)
+    decl = read_declarations(root=ROOT)
     got = {d.key: d for d in resolve_cohort(
         "GOOGL", dossier=None, declarations=decl, registry=reg, note_probe=None)}
     assert got["commissioning"].state == "refused"
@@ -205,7 +205,7 @@ def test_the_declared_note_name_resolves_what_the_repo_wide_pattern_cannot() -> 
     summary = (FIX / f"GOOGL-{ACC}-FilingSummary.xml").read_text()
     with pytest.raises(SegmentReportUnavailableError, match="more than one segment report"):
         _pick_report(summary)
-    decl = read_declarations(root=ROOT, registry=default_registry())
+    decl = read_declarations(root=ROOT)
     note = config_for("GOOGL", "segment_economics", decl)["note_name"]
     fname, short = _pick_report(
         summary, topic=re.compile(re.escape(note), re.I), refine=re.compile(r".", re.S),
@@ -298,12 +298,15 @@ def test_an_unconfigured_note_panel_is_never_probed_with_the_default_note_name()
 
 def test_every_declaration_in_the_live_file_validates() -> None:
     """Invariant over the living file — not a count, which would be a corpus-shaped assertion."""
-    reg = default_registry()
-    decl = read_declarations(root=ROOT, registry=reg)
+    decl = read_declarations(root=ROOT)
     assert decl, "no declarations at all — this check would prove nothing"
+    # Against the MERGED registry: the file spans every tier, so `reg` alone is the wrong yardstick
+    # and asserting through it is what broke when a universal panel gained a declaration.
+    from vinci.panels_declare import all_registries
+    every = all_registries()
     for ticker, panels in decl.items():
         for key in panels:
-            assert key in reg, f"{ticker} declares unregistered {key}"
+            assert key in every, f"{ticker} declares unregistered {key}"
         assert declared_for(ticker, decl) == frozenset(panels)
 
 

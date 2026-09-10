@@ -104,6 +104,26 @@ class Requirement(BaseModel, frozen=True):
         return v.strip()
 
 
+class RenderOption(BaseModel, frozen=True):
+    """One per-name knob that parameterises what a panel SAYS, not what it probes.
+
+    A SECOND KIND OF CONFIG, kept apart from `config_schema` deliberately. `config_schema` keys are
+    read by a REQUIREMENT — they decide what gets probed, and a key no requirement reads is a silent
+    no-op, which `_schema_matches_requirements` refuses. A render key is consumed by the RENDERER
+    instead, so that same check would reject it while being right about probe keys. Conflating the
+    two would cost the no-op protection on the half that has it; this keeps both.
+    """
+
+    #: What this key configures, in words a declaring operator can act on.
+    means: str
+    #: The values this key accepts. EMPTY MEANS FREE TEXT, and the difference is load-bearing: a
+    #: closed set gives typo protection now, and the day a name fits none of the listed values the
+    #: read raises rather than mis-filing it — which is exactly the falsifier the record attaches to
+    #: `load_bearing_axis` ("a third R3 record matching neither archetype, at which point the field
+    #: must be a statement rather than an enum"). Recorded as a MACHINE CHECK rather than a note.
+    allowed: tuple[str, ...] = ()
+
+
 class PanelSpec(BaseModel, frozen=True):
     """A monitor panel as a module: what it is, what it needs, how often, and what it must caveat.
 
@@ -123,6 +143,10 @@ class PanelSpec(BaseModel, frozen=True):
     #: "a trucking name reuses this panel with a different R-file note name" was an aspiration the
     #: type could not express.
     config_schema: dict[str, str] = {}
+    #: PER-NAME RENDER CONFIG — what the panel says, parameterised by name. See `RenderOption`: this
+    #: is separate from `config_schema` because those keys are read by requirements and this one is
+    #: read by the renderer, and the no-op guard below is only correct about the former.
+    render_config: dict[str, RenderOption] = {}
     #: How often the underlying source actually changes — the plan's Part 5 rule is to poll at the
     #: rate the SOURCE moves, never the rate one would like to know.
     cadence: Literal["event", "daily", "weekly", "monthly", "quarterly"] = "event"

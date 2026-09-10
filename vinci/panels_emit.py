@@ -53,11 +53,17 @@ class PanelRow(BaseModel):
     #: READY only — structured values; shapes documented in `vinci/panels_payload`.
     value: dict[str, Any] = Field(default_factory=dict)
     sources: list[str] = Field(default_factory=list)
+    #: The name's own RENDER config, resolved. Empty when the name declared none — and the renderer
+    #: must then say nothing about it rather than assume a default, which is the whole point of the
+    #: field: a panel that claims an axis for a name that never declared one is back to stating one
+    #: position's archetype as universal.
+    render_config: dict[str, str] = Field(default_factory=dict)
 
 
 def _row(dec: PanelDecision, *, ticker: str, registry: PanelRegistry,
          value: dict[str, Any] | None, sources: list[str] | None,
-         no_value_reason: str = "") -> PanelRow | None:
+         no_value_reason: str = "",
+         render_config: dict[str, str] | None = None) -> PanelRow | None:
     """A decision → a row, or None for `not_in_set`.
 
     `no_value_reason` is the BUILDER'S OWN account of why it produced nothing, when it has one. A
@@ -84,6 +90,7 @@ def _row(dec: PanelDecision, *, ticker: str, registry: PanelRegistry,
         changes_the_call=spec.changes_the_call, caveat=spec.caveat, cadence=spec.cadence,
         missing=[{"kind": r.kind, "detail": r.detail, "why": r.why} for r in dec.missing],
         reason=reason, value=value or {}, sources=sources or [],
+        render_config=render_config or {},
     )
 
 
@@ -149,8 +156,15 @@ def panel_rows_for(
         dossier=dossier, row=row, freshness=freshness, record=record, registry=ureg,
     ):
         v, src = builders.get(dec.key, (None, []))
+        # THE NAME'S OWN RENDER CONFIG, resolved here so the renderer needs no second lookup. Only
+        # keys the SPEC declares are carried: a stray key in `followed.json` is already refused at
+        # read, and this keeps a later one from riding through as if the panel understood it.
+        uspec = ureg.get(dec.key)
+        declared_cfg = (declarations.get(ticker) or {}).get(dec.key) or {}
+        rc = {k: str(declared_cfg[k]) for k in (uspec.render_config if uspec else {})
+              if k in declared_cfg}
         r = _row(dec, ticker=ticker, registry=ureg, value=v, sources=src,
-                 no_value_reason=why_empty.get(dec.key, ""))
+                 no_value_reason=why_empty.get(dec.key, ""), render_config=rc)
         if r is not None:
             out.append(r)
 
@@ -221,7 +235,8 @@ def emit_panels(
     has panels — GOOGL had none in the 2026-08-11 snapshot while carrying a live position — and
     taking only `rows` would have made the grid invisible for exactly the names it was built for.
     """
-    decl = read_declarations(root=root, registry=default_registry())
+    # EVERY TIER, not the cohort one — the file describes a name's whole grid.
+    decl = read_declarations(root=root)
     fresh = {str(f.get("ticker")): f for f in freshness}
     row_tickers = {str(r.get("ticker")) for r in rows}
     out: list[PanelRow] = []
