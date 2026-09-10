@@ -194,6 +194,15 @@ verdict placement.
   EVERY COUNT STATES ITS BOUNDARY: the population was there, it just was not stated. Applies to
   every `[:N]` that a human or an LLM will read as a whole — scan output, error lists, rendered
   panels (`vinci/panels_render.py` carried two, caught before a consumer existed).
+- **A CUMULATIVE NUMBER IS NOT A STATE — SEGMENT THE PATH BEFORE NAMING A REGIME.** A net change
+  over a window says where the series ENDED, never what it has been DOING, and the two can be
+  opposite. WST's forward multiple is ~flat over 18 months — **−15.6% over the first twelve and
+  +18.4% over the last six**, every segment from 36m to 6m negative and then a hard reversal. Read
+  as a state, "flat" said *compression stopped 18 months ago*; segmented, it stopped **six** months
+  ago and the current regime is a re-rating. **Same family as EVERY COUNT STATES ITS BOUNDARY, one
+  level down: the path was there, the net just did not carry it.** Any claim of the form "X has been
+  doing Y" needs the segments, not the endpoints — and a leg of an underwrite is exactly such a
+  claim.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never

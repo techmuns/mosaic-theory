@@ -57,25 +57,72 @@ here is the same measurement with the six artifact days removed.)*
 **21-month-and-longer** phenomenon — it ran in the window 24-to-roughly-19 months ago and has not
 been running since. **The compression and the +24.2% revision are sequential.**
 
-## What each WST leg may actually claim
+## AND "FLAT SINCE 18 MONTHS" IS ITSELF A CUMULATIVE ARTIFACT
 
-| leg | the framing | what the matched window supports |
+The matched-window finding above is right and **its reading was still wrong.** Segment the path
+instead of netting it:
+
+| segment | from | to | level | change |
+|---|---|---|---:|---:|
+| 36m → 30m | 2023-09-01 | 2024-03-04 | 49.94 → 47.12 | **−5.7%** |
+| 30m → 24m | 2024-03-04 | 2024-09-03 | 47.12 → 45.24 | −4.0% |
+| 24m → 21m | 2024-09-03 | 2024-12-02 | 45.24 → 45.20 | −0.1% |
+| **21m → 18m** | 2024-12-02 | 2025-03-04 | 45.20 → 36.97 | **−18.2%** |
+| 18m → 12m | 2025-03-04 | 2025-09-02 | 36.97 → 34.77 | −6.0% |
+| 12m → 6m | 2025-09-02 | 2026-03-04 | 34.77 → 31.20 | **−10.3%** |
+| **6m → now** | 2026-03-04 | 2026-09-02 | 31.20 → 36.94 | **+18.4%** |
+
+**Every segment from 36 months to 6 months ago is NEGATIVE.** The 18-month total is ~flat because it
+is **−15.6% over the first twelve and +18.4% in the last six** — an average of falling then rising,
+not a regime.
+
+**So compression did not stop 18 months ago. It ran CONTINUOUSLY until roughly SIX months ago, then
+reversed hard.** *"Compression stopped 18 months ago"* and *"the flat-multiple regime persists"* both
+read a **cumulative figure as a state** — the same defect as the mixed windows, one level down: **a
+net number standing in for a path.**
+
+*(Operator's segment table gives −4.7% for 36→30m against −5.7% here; every other segment matches to
+the decimal, as do the −15.6% / +18.4% halves and the −0.1% compound. Noted rather than reconciled —
+it is an anchor-date difference and changes nothing.)*
+
+## The legs, third framing — and this one has a path behind it
+
+| leg | superseded framing | what the SEGMENTED path supports |
 |---|---|---|
-| **bear** | *"the observed de-rate continues"* | **weaker than framed** — the de-rate is not currently running, so bear is *"the compression RESUMES"*, a different and harder claim |
-| **bull** | *"compression stops"* — the harder leg | **stronger than framed** — on 18 months it already has; bull is *"the current flat-multiple regime persists"* |
-| **base** | the residual | **now has a question to answer**: at what rate does absorption resume? Bear = fully, bull = not at all, base = a stated rate — and the history gives 18 months at ~zero and a 21m+ period at ~−18% to speak to |
+| **bear** | *"the compression resumes"* | **"the recent six-month re-rating GIVES BACK"** — easier than resumption, with **30 months of prior direction** behind it |
+| **bull** | *"the flat regime persists"* | **"the six-month re-rating HOLDS OR EXTENDS"** — a live regime claim with **two quarters** of support, not an average |
+| **base** | a rate between 0% and −18% | a rate **between −10.3% and +18.4% per half-year** — the two most recent segments, which is the range the path actually spans |
 
-**None of this makes WST worse.** It relocates the burden: the bull leg is better evidenced than
-assumed and the bear leg needs a resumption argument it did not need under the old framing.
+## What survives is CLEANER than the version it replaces
 
-## What is UNAFFECTED
+On the matched 18 months, both series present:
 
-The 2026-09-03 conclusion — **earnings arrived without a re-rating, so WST's premium is not a theme
-premium** — **stands**. That argument needs the 24-month compression and the direction of revisions;
-it never needed the two to share a window. The **anchor check also still passes**: 36.9x is the 37th
-percentile of WST's own n=38 history, below median.
+| | |
+|---|---|
+| multiple | **−1.2%** (record basis) / −0.1% (artifact days dropped) |
+| consensus FY2027 | **+24.2%** (8.02 → 9.96) |
+| **implied price** | **+22.7%** / +24.1% |
 
-**BOUNDARY.** Source: the operator's `WST_Peers_Charting` export, Pane 1, **2,512 dates × 11 series**
+**Price tracked earnings roughly one-for-one. No re-rating either way.** That is a **matched-window**
+statement of the premium conclusion, and it is stronger than the mixed-window version it replaces:
+**WST is not paid a theme premium, and is not marked down either — the market pays for earnings as
+they arrive and will not pay ahead.**
+
+## THE CONSEQUENCE FOR THE TRIPLET, and it inverts GOOGL
+
+**The multiple contributes nothing to base.** If the market pays for earnings as they arrive and no
+more, then **all base upside must come from earnings continuing to arrive** — which makes the
+**EARNINGS axis load-bearing and the multiple axis the context**.
+
+**That is the exact reverse of GOOGL**, whose ratified record states that bear EPS *exceeds* today's
+NTM so *"the entire bear outcome is a de-rating"* — there the multiple was the whole story and the
+memo names its bear multiple the binding assumption. **Two R3 records, opposite load-bearing axes.**
+The standing method survives that (anchor-and-displace governs the multiple axis either way), but a
+reviewer reading WST against GOOGL should expect the scrutiny to fall on a different line.
+
+**BOUNDARY.** Segment marks are the nearest clean observation to each `now − months × 30.44` date,
+named in the table with the dates actually used. Source: the operator's `WST_Peers_Charting` export,
+Pane 1, **2,512 dates × 11 series**
 (2016-09-06 → 2026-09-02), header row 35, 3,674 sentinel cells dropped; WST column only, **2,506
 clean daily observations** after removing the six revision-lag days `find_spikes` identifies. Current
 = **36.94 @ 2026-09-02**. Anchor sweep **±6 weeks**, matching the 2026-09-03 run's parameter; ~56–59
@@ -90,6 +137,9 @@ Backing an implied forward-EPS series out of `price ÷ forward P/E` would extend
 24 months — but `data/vinci.db` holds **zero price rows for WST** (checked via the `securities` join;
 GOOGL is empty too), so that route is unavailable on disk, not merely inconvenient. **The
 decomposition is therefore a FRAME the legs must each take a position within, not an arithmetic that
-settles them.** **Falsifier: a consensus vintage series reaching 24 months** — EPS revisions from a
+settles them.** *The open Polygon anchor-snapshot build fixes exactly this gap — an immutable spot
+series at underwrite time is what the implied-EPS route needs — which argues for its PRIORITY rather
+than for reopening this skip. Recorded as §5.0 row 25.* **Falsifier: a consensus vintage series
+reaching 24 months** — EPS revisions from a
 source with deeper history — which would make the matched decomposition computable and turn base's
 rate from a judgement into a measurement.
