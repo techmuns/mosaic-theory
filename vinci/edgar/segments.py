@@ -152,13 +152,30 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
     with the segment note's conclusion. A third topic that forgets it gets a loud ValueError before
     any I/O, never the segment story.
     """
+    # THE GUARD KEYS ON THE TOPIC PATTERN, NOT ON THE `what` LABEL. Keying it on `what` made a
+    # DISPLAY STRING load-bearing — the house rule this repo holds precisely because display text
+    # drifts. It also failed open in the one way that matters: a caller passing a new `topic` and
+    # forgetting BOTH keywords inherited the segment clause AND got its note mislabelled "segment",
+    # so the refusal was wrong twice over and silent about both. `topic` is the thing that actually
+    # decides which note is being resolved, so it is the thing the guard reads.
+    if topic is not _SEGMENT_REPORT and absent_means is None:
+        raise ValueError(
+            f"_pick_report(topic={topic.pattern!r}) must state what ABSENCE means for its OWN "
+            f"note: the segment clause ('{_SEGMENT_ABSENCE}') is not transferable — a "
+            f"single-segment filer really discloses no segment note, while every operating company "
+            f"holds fixed assets — and inheriting it is the defect this parameter exists to "
+            f"prevent. Pass absent_means=…")
+    # --- F3: a BLANK clause is the same hole as a missing one, and passed the None-only check.
+    # `absent_means=""` shipped a bare refusal ("this filing indexes no report naming a goodwill
+    # note") with no explanation at all, and the `if absent_means else ""` render branch encoded
+    # that hole rather than closing it. Sibling `Requirement._not_blank` strips for this reason.
+    if absent_means is not None and not absent_means.strip():
+        raise ValueError(
+            "_pick_report(absent_means=…) may not be blank: the clause is the whole reason this "
+            "parameter exists, and an empty one renders a refusal that explains nothing")
     if absent_means is None:
-        if what != "segment":
-            raise ValueError(
-                f"_pick_report(what={what!r}) must state what ABSENCE means for its OWN note: the "
-                f"segment clause ('{_SEGMENT_ABSENCE}') is not transferable, and inheriting it is "
-                f"the defect this parameter exists to prevent. Pass absent_means=…")
         absent_means = _SEGMENT_ABSENCE
+    absent_means = absent_means.strip()
     candidates: list[tuple[str, str]] = []
     for block in re.findall(r"<Report[^>]*>(.*?)</Report>", summary_xml, re.S):
         fname = re.search(r"<HtmlFileName>(.*?)</HtmlFileName>", block)
@@ -193,8 +210,7 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
     # what went wrong. A refusal that explains itself with another topic's story is worse than a
     # bare one, because it is believed.
     raise SegmentReportUnavailableError(
-        f"this filing indexes no report naming a {what}"
-        + (f" — {absent_means}" if absent_means else ""))
+        f"this filing indexes no report naming a {what} — {absent_means}")
 
 
 def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]:

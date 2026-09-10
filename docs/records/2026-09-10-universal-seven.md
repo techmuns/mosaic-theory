@@ -79,6 +79,63 @@ nothing to measure anywhere in the corpus: the `scenario-criterion` write path s
 has never been exercised. The panel is correct, loud, and empty — and it will stay empty until a
 criterion is armed on a real name. That is an operator action, not a code gap.
 
+## Review fixes, and the design-sync gap they surfaced
+
+Four findings applied. Three were small; the second is the one that matters for fidelity to the
+approved plan.
+
+**`config_schema` was missing, and the tier promises were therefore unfulfilled.** The design lists
+`config_schema` as part of a panel, and stakes the whole portability claim on it — universal panels
+vary by *"config only"*, cohort panels by *"the metric pair, the note name, the segment"*. Phase 2
+declared `render` deferred out loud and dropped `config_schema` silently. The consequence was
+concrete and contradicted this repo's own argument: `commissioning` hardcoded
+`detail="property and equipment"` — **Alphabet's** heading — on the SHARED spec, so a WERN
+commissioning panel would have probed for Alphabet's note and refused naming the wrong filer's
+accounts. The module's docstring argues at length that a trucking name commissioning tractors asks
+the same economic question under a different note name; the type could not express it.
+
+Fixed: `Requirement.config_key` makes `detail` a DEFAULT that a name's config replaces, and
+`PanelSpec.config_schema` declares what varies. The two are validated against each other — a key no
+requirement reads is a silent no-op at every call site, and one no schema declares cannot be
+supplied. An unset key REFUSES loudly rather than quietly probing the default, because silently
+probing the default is exactly how one filer's note gets read as another's.
+
+**The absence-clause guard keyed on a DISPLAY STRING.** `absent_means` was required when
+`what != "segment"` — but `what` is the label printed in the message, not the thing that decides
+which note is resolved. A caller passing a new `topic` and forgetting both keywords inherited the
+segment clause AND had its note mislabelled "segment": wrong twice, silent about both. Observed: a
+`goodwill` topic returned *"no report naming a segment — a single-segment filer discloses none"*. Now
+keyed on the topic pattern. The guard caught an existing call in this repo's own test suite on its
+first run.
+
+**A blank clause passed the None-only check**, shipping a refusal that explained nothing — the
+render branch `if absent_means else ""` encoded the hole rather than closing it. Now rejected.
+
+**`detail` alone as the probe key** collapsed two requirements sharing a detail under different
+kinds into ONE probe, so a panel could report READY with a disclosure never probed — invisible to
+the mis-key guard, because the key it was handed was legitimate. Keys are now `<kind>:<detail>`.
+
+**One bug this patch introduced and the tests caught:** the missing-config refusal was placed ABOVE
+the `declared` check, so a panel that does not apply to a name reported REFUSED for want of a note
+name it never needed — a loud tile for a question nobody asked, the gating rule inverted. Substance
+is now decided before any form complaint, and that order is pinned.
+
+**Methodology note.** A fast mutate/restore cycle left a `.pyc` newer than the restored source, and
+Python trusted the cached bytecode from the mutated version — two tests reported failing against
+correct code. The hazard cuts both ways: stale bytecode can make a mutation run report the wrong
+verdict in either direction. Mutation runs here clear `__pycache__`.
+
+Five mutations, all caught, each by the right test: key the guard on the label; let a blank clause
+through; collapse the probe key; ignore per-name config; put the config refusal before the declared
+check.
+
+## What phase 4 inherits
+
+The two cohort panels now REQUIRE a per-name `note_name`, and nothing supplies one yet — so both
+refuse with "config is not set" until a name is onboarded. That is the correct state (loud, not
+silent) and it is phase 4's first task: the cohort five, starting with the note name resolved per
+filer rather than per repo.
+
 ## Verification
 
 Real run on the committed corpus (above). Rendered numbers checked against source for SMPL: entry

@@ -165,9 +165,12 @@ def resolve_universal(
         for req in spec.requires:
             ok, why = _resolve_requirement(
                 req, mechanical=mechanical, row=row, freshness=freshness, record=record)
-            have[req.detail] = ok
+            # KIND-QUALIFIED KEY: `detail` alone collapsed two requirements sharing a detail under
+            # different kinds into one probe, so a panel could report READY with a disclosure never
+            # probed. `probe_key` is the single place that shape is decided.
+            have[req.probe_key] = ok
             if not ok and why:
-                because[req.detail] = why
+                because[req.probe_key] = why
         out.append(reg.decide(
             spec.key, declared=spec.key in want, have=have, because=because))
     return out
