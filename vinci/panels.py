@@ -37,7 +37,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 #: The four tiers from the approved design. `cohort` carries the leverage: it is a BUSINESS SHAPE,
 #: not a sector label — tractor commissioning and server commissioning are one panel with a
@@ -46,7 +46,8 @@ PanelTier = Literal["universal", "cohort", "theme", "name"]
 
 #: What a requirement is ABOUT. Kept as data rather than a callable so a spec can be read, diffed
 #: and reviewed without executing it — and so a refusal can name the thing that failed.
-RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload"]
+RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload",
+                          "ledger_row", "snapshot_field", "criterion"]
 
 
 class Requirement(BaseModel, frozen=True):
@@ -62,6 +63,33 @@ class Requirement(BaseModel, frozen=True):
     #: Why this panel needs it, in one line — printed in the refusal, so a reader who has never
     #: seen the panel learns what is missing rather than a key they must go look up.
     why: str
+    #: WHEN SET, `detail` IS A DEFAULT AND THE NAME SUPPLIES THE REAL ONE. This is the design's
+    #: per-name config, and without it the tier promises were unfulfilled: cohort means *"the metric
+    #: pair, the note name, the segment"* vary per name, yet `commissioning` hardcoded
+    #: "property and equipment" — ALPHABET's note name — on the shared spec. A WERN commissioning
+    #: panel would then probe for Alphabet's note and refuse naming the wrong filer's accounts,
+    #: which is the exact failure this module's own docstring argues against. The key must appear in
+    #: the owning `PanelSpec.config_schema`.
+    config_key: str = ""
+
+    @property
+    def probe_key(self) -> str:
+        """The key a caller reports this requirement's disclosure under.
+
+        KIND-QUALIFIED, because `detail` alone collapsed two requirements that share a detail under
+        different kinds into ONE probe — a panel could report READY with a disclosure never probed,
+        and the mis-key guard could not see it because the key it was given was legitimate.
+        """
+        return f"{self.kind}:{self.detail}"
+
+    def resolve(self, config: Mapping[str, str] | None) -> Requirement:
+        """This requirement with its per-name detail applied, or itself when it takes no config."""
+        if not self.config_key:
+            return self
+        supplied = (config or {}).get(self.config_key)
+        if not supplied or not supplied.strip():
+            return self
+        return self.model_copy(update={"detail": supplied.strip()})
 
     @field_validator("detail", "why")
     @classmethod
@@ -88,9 +116,23 @@ class PanelSpec(BaseModel, frozen=True):
     #: Plain-words title. The panel grid is read by a human under time pressure.
     title: str
     requires: tuple[Requirement, ...] = ()
+    #: WHAT VARIES PER NAME: config key → what it means, in words. The approved design lists
+    #: `config_schema` as part of a panel and an earlier phase dropped it silently while declaring
+    #: `render` deferred out loud. It is the mechanism behind the tier claims — universal panels
+    #: vary by "config only", cohort panels by the note name and the metric pair — so without it
+    #: "a trucking name reuses this panel with a different R-file note name" was an aspiration the
+    #: type could not express.
+    config_schema: dict[str, str] = {}
     #: How often the underlying source actually changes — the plan's Part 5 rule is to poll at the
     #: rate the SOURCE moves, never the rate one would like to know.
     cadence: Literal["event", "daily", "weekly", "monthly", "quarterly"] = "event"
+    #: WHAT WOULD CHANGE THE CALL — the design's face-validity guard, made structural rather than
+    #: left to review. The record states it plainly: *"every panel must state what would change the
+    #: call; a panel that cannot answer that is decoration and should be cut, not shrunk"*, against
+    #: the accepted risk that *"fifteen panels that each look important make none of them
+    #: important"*. A guard enforced by reviewer attention is a guard that passes on a tired day, so
+    #: it is a REQUIRED non-blank field: a decorative panel cannot be constructed at all.
+    changes_the_call: str
     #: A standing qualification the panel must always carry beside its number. NOT an error — a
     #: fact about what the number is. The commissioning ratio needs one: it divides all
     #: not-yet-in-service assets by the technical-infrastructure member alone, so "49.7%" without
@@ -99,14 +141,31 @@ class PanelSpec(BaseModel, frozen=True):
     #: docstring did.
     caveat: str = ""
 
-    @field_validator("key", "title")
+    @model_validator(mode="after")
+    def _schema_matches_requirements(self) -> PanelSpec:
+        used = {r.config_key for r in self.requires if r.config_key}
+        declared = set(self.config_schema)
+        if used - declared:
+            raise ValueError(
+                f"panel {self.key!r} has requirement(s) keyed on {sorted(used - declared)} which "
+                f"config_schema does not declare — a name could not know what to supply")
+        if declared - used:
+            raise ValueError(
+                f"panel {self.key!r} declares config {sorted(declared - used)} that no requirement "
+                f"reads — a config key nothing consumes is a silent no-op at every call site")
+        return self
+
+    @field_validator("key", "title", "changes_the_call")
     @classmethod
     def _not_blank(cls, v: str) -> str:
         # `key` is the registry key AND the key a name declares a panel by, so it is normalised
         # rather than merely checked — " commissioning" registering beside "commissioning" is two
         # panels for one question, and `register`'s duplicate guard would not see it.
         if not v.strip():
-            raise ValueError("a panel carries a key and a human title")
+            raise ValueError(
+                "a panel carries a key, a human title, and a statement of what would change the "
+                "call — the last is the face-validity guard: a panel that cannot answer it is "
+                "decoration and must be cut, not shrunk")
         return v.strip()
 
 
@@ -181,6 +240,7 @@ class PanelRegistry:
         declared: bool,
         have: Mapping[str, bool] | None = None,
         because: Mapping[str, str] | None = None,
+        config: Mapping[str, str] | None = None,
     ) -> PanelDecision:
         """Decide one panel for one name.
 
@@ -212,22 +272,43 @@ class PanelRegistry:
                 f"{sorted(self._by_key)}")
         have = have or {}
         because = because or {}
-        details = {r.detail for r in spec.requires}
+        # PER-NAME DETAILS FIRST: the requirements this name is actually probed against are the
+        # spec's requirements with its own config applied, so a trucking name's commissioning panel
+        # asks about ITS note and refuses naming ITS accounts — never Alphabet's.
+        reqs = tuple(r.resolve(config) for r in spec.requires)
+        details = {r.probe_key for r in reqs}
         unknown = sorted((have.keys() | because.keys()) - details)
         if unknown:
             raise KeyError(
                 f"panel {key!r} was told about requirement(s) it does not have: {unknown}; it "
-                f"requires {sorted(details)}. A key matching no requirement is a wiring bug, and "
-                f"silently reads as 'not there'.")
+                f"requires {sorted(details)} (keys are '<kind>:<detail>'). A key matching no "
+                f"requirement is a wiring bug, and silently reads as 'not there'.")
+        # SUBSTANCE IS DECIDED BEFORE ANY FORM CHECK, and the order is load-bearing. An earlier
+        # draft of this patch put the missing-config refusal above this line, so a panel that does
+        # not apply to a name reported REFUSED for want of a note name it never needed — a loud
+        # tile for a question nobody asked, which is the gating rule inverted. `not_in_set` wins
+        # over every form complaint because a panel outside the set has no form to satisfy.
         if not declared:
             return PanelDecision(key=key, state="not_in_set")
-        missing = tuple(r for r in spec.requires if not have.get(r.detail, False))
+        unfilled = tuple(r for r in reqs if r.config_key and not (config or {}).get(r.config_key))
+        if unfilled:
+            # A REFUSAL, not a raise: the panel genuinely applies and genuinely cannot be computed,
+            # which is exactly the in-set-refused state. Raising would make an un-onboarded note
+            # name look like a programming error rather than a step nobody has taken yet.
+            return PanelDecision(
+                key=key, state="refused", missing=unfilled,
+                reason="; ".join(
+                    f"{r.kind} config {r.config_key!r} is not set for this name, so the panel "
+                    f"would probe the DEFAULT {r.detail!r} — "
+                    f"{spec.config_schema.get(r.config_key, '')}"
+                    for r in unfilled))
+        missing = tuple(r for r in reqs if not have.get(r.probe_key, False))
         if missing:
             return PanelDecision(
                 key=key,
                 state="refused",
                 missing=missing,
-                reason="; ".join(_explain(r, because.get(r.detail, "")) for r in missing),
+                reason="; ".join(_explain(r, because.get(r.probe_key, "")) for r in missing),
             )
         return PanelDecision(key=key, state="ready")
 
@@ -247,9 +328,18 @@ COMMISSIONING = PanelSpec(
             detail="property and equipment",
             why="the not-yet-in-service and in-service balances are only in the PP&E note; "
             "no XBRL tag carries the split",
+            config_key="note_name",
         ),
     ),
+    config_schema={
+        "note_name": "the heading this filer presents its fixed-asset note under — Alphabet says "
+        "'property and equipment', and a trucking name commissioning tractors asks the SAME "
+        "economic question under a name of its own, which is why this is config and not code",
+    },
     cadence="quarterly",
+    changes_the_call="A ratio that climbs while the in-service base stops growing says capital is "
+    "going in and not yet earning — the duration question the memo calls the whole trade. Falling "
+    "back toward the in-service growth rate says the buildout is converting.",
     caveat="Assets not yet in service spans EVERY asset type, while the denominator is the "
     "technical-infrastructure member alone — so this is not a commissioning RATE. The "
     "like-for-like figure is reported beside it.",
@@ -265,9 +355,17 @@ SEGMENT_ECONOMICS = PanelSpec(
             detail="segment",
             why="per-segment operating income is disclosed in the segment note, not as a "
             "top-level tag",
+            config_key="note_name",
         ),
     ),
+    config_schema={
+        "note_name": "the heading this filer presents segment economics under; 'segment' is the "
+        "common case but the report that carries the FIGURES is named per filer",
+    },
     cadence="quarterly",
+    changes_the_call="Operating income falling in a segment whose revenue still grows re-prices "
+    "the mix: it means the growth is being bought. Which segment carries the margin is the thing "
+    "a single consolidated line hides.",
 )
 
 

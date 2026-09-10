@@ -28,6 +28,9 @@ GOOGL_SEGMENT_AMBIGUOUS = (
     "ambiguous and is not guessed: ['Revenues - Revenue by Segment (Details)', 'Information "
     "about Segments and Geographic Areas - Revenue and Operating Income/Loss by Segment (Details)']"
 )
+PPE_CFG = {"note_name": "property and equipment"}
+PPE_KEY = "rfile_note:property and equipment"
+
 WERN_NO_PPE = (
     "no property-and-equipment (Details) report in 0000793074-26-000140: this filing indexes no "
     "report naming a property-and-equipment — unlike a single-segment filer, an operating company "
@@ -43,7 +46,7 @@ def test_not_in_set_renders_nothing_even_when_every_requirement_is_met() -> None
     and if `decide` ever derived membership from `have`, this is the assertion that reddens.
     """
     d = default_registry().decide(
-        "commissioning", declared=False, have={"property and equipment": True}
+        "commissioning", declared=False, have={"rfile_note:property and equipment": True}
     )
     assert d.state == "not_in_set"
     assert d.renders is False
@@ -53,7 +56,7 @@ def test_not_in_set_renders_nothing_even_when_every_requirement_is_met() -> None
 
 def test_refused_renders_and_names_the_requirement() -> None:
     """The other half: substance says yes, form cannot deliver — so it is LOUD."""
-    d = default_registry().decide("commissioning", declared=True, have={})
+    d = default_registry().decide("commissioning", declared=True, have={}, config=PPE_CFG)
     assert d.state == "refused"
     assert d.renders is True
     assert [r.detail for r in d.missing] == ["property and equipment"]
@@ -70,8 +73,8 @@ def test_the_two_negative_states_never_look_alike() -> None:
     only reason it is written as a comparison.
     """
     reg = default_registry()
-    absent = reg.decide("commissioning", declared=False, have={})
-    broken = reg.decide("commissioning", declared=True, have={})
+    absent = reg.decide("commissioning", declared=False, have={}, config=PPE_CFG)
+    broken = reg.decide("commissioning", declared=True, have={}, config=PPE_CFG)
     assert absent.state != broken.state
     assert absent.renders != broken.renders
     assert bool(absent.reason) != bool(broken.reason)
@@ -89,8 +92,9 @@ def test_the_extractors_real_refusal_reaches_the_reader_verbatim() -> None:
     d = reg.decide(
         "segment_economics",
         declared=True,
-        have={"segment": False},
-        because={"segment": GOOGL_SEGMENT_AMBIGUOUS},
+        have={"rfile_note:segment": False},
+        because={"rfile_note:segment": GOOGL_SEGMENT_AMBIGUOUS},
+        config={"note_name": "segment"},
     )
     assert d.state == "refused"
     assert GOOGL_SEGMENT_AMBIGUOUS in d.reason
@@ -98,8 +102,9 @@ def test_the_extractors_real_refusal_reaches_the_reader_verbatim() -> None:
     c = reg.decide(
         "commissioning",
         declared=True,
-        have={"property and equipment": False},
-        because={"property and equipment": WERN_NO_PPE},
+        have={"rfile_note:property and equipment": False},
+        because={"rfile_note:property and equipment": WERN_NO_PPE},
+        config={"note_name": "property and equipment"},
     )
     assert WERN_NO_PPE in c.reason
 
@@ -113,7 +118,7 @@ def test_a_declared_panel_that_does_not_exist_is_loud_not_blank() -> None:
 def test_ready_only_when_substance_and_form_both_hold() -> None:
     reg = default_registry()
     assert reg.decide(
-        "commissioning", declared=True, have={"property and equipment": True}
+        "commissioning", declared=True, have={PPE_KEY: True}, config=PPE_CFG
     ).state == "ready"
 
 
@@ -135,7 +140,7 @@ def test_specs_are_frozen_and_refuse_blank_declarations() -> None:
     with pytest.raises(ValueError):
         Requirement(kind="tag", detail="x", why="")
     with pytest.raises(ValueError):
-        PanelSpec(key="k", tier="name", title=" ")
+        PanelSpec(key="k", tier="name", title=" ", changes_the_call="c")
 
 
 def test_registry_refuses_a_duplicate_key() -> None:
@@ -154,11 +159,11 @@ def test_a_key_and_a_requirement_detail_are_normalised_not_merely_checked() -> N
     the blank check.
     """
     assert Requirement(kind="tag", detail="  x  ", why=" y ").detail == "x"
-    assert PanelSpec(key=" k ", tier="name", title=" T ").key == "k"
+    assert PanelSpec(key=" k ", tier="name", title=" T ", changes_the_call="c").key == "k"
 
-    reg = PanelRegistry((PanelSpec(key="dup", tier="name", title="T"),))
+    reg = PanelRegistry((PanelSpec(key="dup", tier="name", title="T", changes_the_call="c"),))
     with pytest.raises(ValueError, match="already registered"):
-        reg.register(PanelSpec(key=" dup ", tier="name", title="T"))
+        reg.register(PanelSpec(key=" dup ", tier="name", title="T", changes_the_call="c"))
 
 
 def test_a_requirement_key_that_matches_nothing_is_refused_not_read_as_absent() -> None:
@@ -179,7 +184,7 @@ def test_a_requirement_key_that_matches_nothing_is_refused_not_read_as_absent() 
         )
     # ...and the correctly-keyed call still answers, so the guard is not simply refusing everything.
     assert reg.decide(
-        "commissioning", declared=True, have={"property and equipment": True}
+        "commissioning", declared=True, have={PPE_KEY: True}, config=PPE_CFG
     ).state == "ready"
 
 
@@ -191,3 +196,110 @@ def test_the_unregistered_panel_refusal_names_the_registered_set() -> None:
     """
     with pytest.raises(KeyError, match="commissioning"):
         default_registry().decide("comissioning", declared=True)
+
+
+# --- review fixes, each pinned with the failure it closes -------------------------------------
+
+def test_a_new_topic_must_state_its_own_absence_meaning_or_fail_loudly() -> None:
+    """The guard reads the TOPIC PATTERN, not the `what` LABEL.
+
+    Keyed on `what`, the guard made a DISPLAY STRING load-bearing — the rule this repo holds
+    because display text drifts — and failed open in the way that matters: a caller passing a new
+    `topic` and forgetting BOTH keywords inherited the segment clause AND had its note mislabelled
+    "segment", so
+    the refusal was wrong twice and silent about both. Observed: a `goodwill` topic returned
+    *"no report naming a segment — a single-segment filer discloses none"*.
+    """
+    import re as _re
+
+    from vinci.edgar.segments import _pick_report
+
+    with pytest.raises(ValueError, match="must state what ABSENCE means"):
+        _pick_report("<FilingSummary></FilingSummary>", topic=_re.compile("goodwill"))
+    # The segment route still needs no keyword — it is the one topic the default clause is true of.
+    from vinci.edgar.segments import SegmentReportUnavailableError
+    with pytest.raises(SegmentReportUnavailableError):
+        _pick_report("<FilingSummary></FilingSummary>")
+
+
+def test_a_blank_absence_clause_is_the_same_hole_as_a_missing_one() -> None:
+    """`absent_means=""` passed a None-only check and shipped a refusal explaining nothing."""
+    import re as _re
+
+    from vinci.edgar.segments import _pick_report
+
+    for blank in ("", "   "):
+        with pytest.raises(ValueError, match="may not be blank"):
+            _pick_report("<FilingSummary></FilingSummary>", topic=_re.compile("goodwill"),
+                         what="goodwill note", absent_means=blank)
+
+
+def test_two_requirements_sharing_a_detail_are_probed_separately() -> None:
+    """`detail` alone as the lookup key collapsed them into ONE probe.
+
+    A panel could then report READY with a disclosure never probed, and the mis-key guard could not
+    see it because the key it was handed was legitimate. The key is kind-qualified for this reason.
+    """
+    spec = PanelSpec(
+        key="two", tier="name", title="T", changes_the_call="c",
+        requires=(Requirement(kind="tag", detail="revenue", why="a"),
+                  Requirement(kind="rfile_note", detail="revenue", why="b")))
+    reg = PanelRegistry((spec,))
+    # Satisfying only the TAG leaves the note unprobed — which must refuse, not pass.
+    d = reg.decide("two", declared=True, have={"tag:revenue": True})
+    assert d.state == "refused"
+    assert [r.kind for r in d.missing] == ["rfile_note"]
+    assert reg.decide(
+        "two", declared=True,
+        have={"tag:revenue": True, "rfile_note:revenue": True}).state == "ready"
+
+
+def test_a_cohort_panel_probes_this_filers_note_not_the_one_it_was_written_against() -> None:
+    """THE DESIGN-SYNC GAP: the approved plan's `config_schema` was dropped silently.
+
+    The design says a cohort panel varies per name by *"the metric pair, the note name, the
+    segment"*, and argues its own case with WERN — a trucking filer commissioning tractors asks the
+    same economic question under a different note name. Yet `commissioning` hardcoded
+    "property and equipment", ALPHABET's heading, on the SHARED spec. A WERN panel would have probed
+    for Alphabet's note and refused naming the wrong filer's accounts, contradicting the argument in
+    the module's own docstring.
+    """
+    reg = default_registry()
+    wern = {"note_name": "revenue equipment"}
+    ok = reg.decide("commissioning", declared=True,
+                    have={"rfile_note:revenue equipment": True}, config=wern)
+    assert ok.state == "ready"
+    bad = reg.decide("commissioning", declared=True,
+                     have={"rfile_note:revenue equipment": False}, config=wern)
+    assert [r.detail for r in bad.missing] == ["revenue equipment"]
+    assert "property and equipment" not in bad.reason, "refused naming Alphabet's note, not WERN's"
+
+
+def test_an_unset_note_name_refuses_rather_than_probing_the_default() -> None:
+    """Silently probing the default is how the wrong filer's note gets read as this one's."""
+    d = default_registry().decide("commissioning", declared=True, have={}, config=None)
+    assert d.state == "refused"
+    assert "'note_name' is not set" in d.reason
+
+
+def test_substance_is_decided_before_any_form_complaint() -> None:
+    """The order inside `decide` is load-bearing, and this patch got it wrong once.
+
+    With the missing-config refusal above the `declared` check, a panel that does not apply to a
+    name reported REFUSED for want of a note name it never needed — a loud tile for a question
+    nobody asked, which is the gating rule inverted.
+    """
+    d = default_registry().decide("commissioning", declared=False, have={}, config=None)
+    assert d.state == "not_in_set"
+    assert d.reason == ""
+
+
+def test_a_config_schema_and_its_requirements_must_agree() -> None:
+    """A key nothing reads is a silent no-op at every call site; one nothing declares cannot be
+    supplied."""
+    with pytest.raises(ValidationError, match="config_schema does not declare"):
+        PanelSpec(key="a", tier="name", title="T", changes_the_call="c",
+                  requires=(Requirement(kind="tag", detail="d", why="w", config_key="k"),))
+    with pytest.raises(ValidationError, match="no requirement reads"):
+        PanelSpec(key="b", tier="name", title="T", changes_the_call="c",
+                  config_schema={"orphan": "nothing reads this"})

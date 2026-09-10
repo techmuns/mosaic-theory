@@ -93,7 +93,10 @@ def test_the_report_is_resolved_by_name_because_its_number_moves() -> None:
     from vinci.edgar.segments import _pick_report
 
     summary = (FIX / f"GOOGL-{ACC}-FilingSummary.xml").read_text()
-    fname, short = _pick_report(summary, topic=_PPE_REPORT, refine=_ANY)
+    # `absent_means` is REQUIRED of every non-segment topic — this call previously relied on the
+    # hole that made it optional, and the guard that closed it caught this line first.
+    fname, short = _pick_report(summary, topic=_PPE_REPORT, refine=_ANY,
+                                absent_means="an operating company always holds fixed assets")
     assert fname == "R64.htm", f"resolved {fname}"
     assert re.search(r"property and equipment", short, re.I)
     # ...and the number genuinely differs from the 10-K's, which is the whole point
