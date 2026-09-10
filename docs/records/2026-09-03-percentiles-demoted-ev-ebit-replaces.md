@@ -174,3 +174,22 @@ analysis was right both times — which is what makes the class hard to catch by
 is the SHAPE OF THE SENTENCE, not its content: a specific, checkable particular that no tool call in
 the transcript produced.** CLAUDE.md already forbids asserting absence off one search; this is its
 mirror — asserting PRESENCE off none.
+
+**2026-09-10 (third entry) — the table is right and the sentence under it reads two windows as one.**
+The columns are labelled **`P/NTM EPS 24m`** and **`FY27E consensus 18m`**; the sentence beneath them,
+*"WST took the earnings and the multiple compressed,"* reads them as ONE co-movement. They are not.
+
+Re-run at this record's own ±6-week sweep, the six artifact days dropped: **12m +6.2% · 15m +11.5% ·
+18m −0.1% · 21m −18.3% · 24m −18.4%**, sweeps reproducing this record exactly (18m −24.7% to +20.1%,
+24m −21.1% to −6.8%). **Over the MATCHED 18-month window — the only one both series support, because
+`Trends` carries vintages no further — the multiple is ~FLAT and sign-unstable.** The compression is a
+**21-month-and-longer** phenomenon. *(This record's 18m point reads −1.2%; −0.1% here is the same
+measurement with the six revision-lag days removed.)*
+
+**So the compression and the +24.2% revision are SEQUENTIAL, not simultaneous** — the multiple
+compressed in the window 24-to-roughly-19 months ago, and over the most recent 18 months, during which
+consensus rose 24.2%, it has been flat. **Each fact survives alone; the conjunction does not.**
+What this record concluded from it — that earnings arrived without a re-rating, and that WST's premium
+is not a theme premium — is UNAFFECTED: that argument needs the 24-month compression and the direction
+of revisions, not a shared window. What changes is the reading of the CURRENT regime, and therefore
+what an underwrite's legs may claim. See `docs/records/2026-09-10-base-gets-its-own-mechanism.md`.

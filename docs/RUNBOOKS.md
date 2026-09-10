@@ -365,6 +365,19 @@ EXPOSURE into an investment view were not written down.
     sits between its own median 24.24x and p75 26.75x; WST's 36.9x is the **37th** percentile of its
     own history, below median. **A distorted anchor is a reason to price off something else, or to
     state the distortion as the binding assumption — never to anchor anyway and displace from it.**
+    **THE BASE LEG GETS ITS OWN MECHANISM — never the residual between bear and bull.** If bear is
+    "the observed compression continues" and bull is "it stops", a base struck between them is an
+    INTERPOLATION, not a case: nothing in the world does half of two opposite things. State what
+    base ASSUMES — typically the RATE at which the multiple keeps absorbing earnings growth, which
+    is a number the history can speak to — and state it against a measured rate, not against the
+    other two legs. *`price return = earnings growth + multiple change` is the decomposition that
+    makes this writable: each leg is a position on how the two split, and base's position has to be
+    named like the others'.*
+    **AND THE TWO HALVES MUST SHARE A WINDOW.** A multiple change measured over 24 months beside a
+    consensus change measured over 18 is not a decomposition — it is two facts in one sentence.
+    (WST: the 24m compression is −18.4% and the +24.2% FY27 revision is an 18-MONTH figure because
+    `Trends` carries vintages no further; over the MATCHED 18 months the multiple is ~flat and
+    sign-unstable, so the compression and the revision are SEQUENTIAL, not simultaneous.)
     **DISPLACEMENT MAGNITUDE IS ANALYST JUDGMENT, and where the memo gives no reason for a
     displacement the record says so rather than supplying one** — authoring a justification for a
     bear leg on a record already at PASS is manufacturing support for the outcome, the shape
