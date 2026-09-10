@@ -124,18 +124,32 @@ def kills(freshness: dict[str, Any], record: dict[str, Any] | None) -> dict[str,
     `unit_checked` is carried because 0 of 479 resolvable paths in the corpus carry a unit, so the
     evaluator's unit check has never fired — a `$551.974M` reading against a `$bn` threshold would
     read as crossed. The flag travels with the reading so the surface can mark it.
+
+    THE READING IS THE MONITOR'S ALREADY-EVALUATED ANSWER, not a second evaluation of the record.
+    `MeasuredTriggerRow` exists precisely so "the panel that renders it later consumes one answer
+    instead of computing a second one that could disagree", and it is already on the freshness row
+    as `measured`. The record's raw `measured_triggers` are the FALLBACK — a criterion the monitor
+    did not evaluate still gets its metric and threshold printed, with no reading.
+
+    THE JOIN IS ON `trigger`, WHICH IS THE ONLY KEY EITHER SHAPE CARRIES. An earlier cut keyed on
+    `criterion`/`text` and read `reading`/`unit_checked` — none of which exist on `MeasuredTrigger`
+    or `MeasuredTriggerRow` — so every criterion would have rendered "no measured metric" even with
+    a fully measured trigger beside it. The corpus could not catch it: no record carries one yet.
     """
-    measured = ((record or {}).get("verdict") or {}).get("measured_triggers") or []
-    by_text = {str(m.get("criterion") or m.get("text") or ""): m for m in measured
-               if isinstance(m, dict)}
+    rows = [m for m in (freshness.get("measured") or []) if isinstance(m, dict)]
+    raw = [m for m in (((record or {}).get("verdict") or {}).get("measured_triggers") or [])
+           if isinstance(m, dict)]
+    by_text: dict[str, dict[str, Any]] = {str(m.get("trigger") or ""): m for m in raw}
+    by_text.update({str(m.get("trigger") or ""): m for m in rows})  # evaluated wins
     out = []
     for text in (freshness.get("triggers") or []):
         m = by_text.get(str(text)) or {}
         out.append({
             "text": text,
-            "metric": m.get("metric"), "reading": _num(m.get("reading")),
+            "metric": m.get("metric") or None, "reading": _num(m.get("observed")),
             "threshold": _num(m.get("threshold")),
-            "unit_checked": bool(m.get("unit_checked")),
+            # The evaluator resolves the value's OWN unit; its absence is the unchecked comparison.
+            "unit_checked": bool(m.get("unit")),
         })
     return {"criteria": out}
 
@@ -164,8 +178,14 @@ def sources(primary: dict[str, Any]) -> dict[str, Any]:
     return {"refs": refs}
 
 
-def cost_of_borrowing(capital_structure: dict[str, Any]) -> dict[str, Any] | None:
-    """None when the stack cannot be priced — the caller turns that into the panel's refusal.
+def cost_of_borrowing(capital_structure: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
+    """`(payload, why-not)` — None when the stack cannot be priced, WITH ITS OWN REASON.
+
+    THE REASON IS RETURNED RATHER THAN SWALLOWED. `borrowing()` already composes the precise cause
+    ("no tranche states both a principal and a fixed coupon (11 instrument(s), 220,900musd …)"), and
+    an earlier cut dropped it on the floor — the emitter then relabelled the refusal "a wiring bug
+    rather than missing disclosure", which told the reader a code defect about a name whose
+    disclosure genuinely cannot be priced. Fail loud, never fabricate: the sentence travels.
 
     COVERAGE TRAVELS WITH THE RATE, always. AORT's fixed average is struck over one $0.9M bond in a
     $220.9M stack; a renderer that shows 6.05% without 0.4% beside it repeats the lease defect one
@@ -174,11 +194,11 @@ def cost_of_borrowing(capital_structure: dict[str, Any]) -> dict[str, Any] | Non
     ins = capital_structure.get("instruments") or {}
     try:
         b = borrowing(ins.get("value"), source_ref=str(ins.get("source_ref") or ""))
-    except BorrowingUnavailableError:
-        return None
-    return {
+    except BorrowingUnavailableError as exc:
+        return None, str(exc)
+    return ({
         "fixed_pct": b.weighted_avg_coupon_pct, "fixed_coverage": b.coverage,
         "all_in_pct": b.all_in_rate_pct, "all_in_coverage": b.all_in_coverage,
         "floating_share": b.floating_share, "lease_musd": b.lease_musd,
         "total_musd": b.total_musd, "n_covered": b.n_covered, "n_total": b.n_total,
-    }
+    }, "")

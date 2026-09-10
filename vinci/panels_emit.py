@@ -54,8 +54,15 @@ class PanelRow(BaseModel):
 
 
 def _row(dec: PanelDecision, *, ticker: str, registry: PanelRegistry,
-         value: dict[str, Any] | None, sources: list[str] | None) -> PanelRow | None:
-    """A decision → a row, or None for `not_in_set`."""
+         value: dict[str, Any] | None, sources: list[str] | None,
+         no_value_reason: str = "") -> PanelRow | None:
+    """A decision → a row, or None for `not_in_set`.
+
+    `no_value_reason` is the BUILDER'S OWN account of why it produced nothing, when it has one. A
+    builder that knows the cause must not have it replaced by the generic wiring-bug sentence below:
+    that sentence asserts a code defect, and asserting one about a name whose disclosure genuinely
+    cannot be priced is a fabricated cause on a reader-facing refusal.
+    """
     if dec.state == "not_in_set":
         return None
     spec = registry.get(dec.key)
@@ -66,9 +73,10 @@ def _row(dec: PanelDecision, *, ticker: str, registry: PanelRegistry,
     state, reason = dec.state, dec.reason
     if state == "ready" and not value:
         state = "refused"
-        reason = (f"every requirement for {dec.key!r} resolved, yet no value could be built from "
-                  f"the committed artifacts — the requirement check and the payload builder "
-                  f"disagree, which is a wiring bug rather than missing disclosure")
+        reason = no_value_reason or (
+            f"every requirement for {dec.key!r} resolved, yet no value could be built from "
+            f"the committed artifacts — the requirement check and the payload builder "
+            f"disagree, which is a wiring bug rather than missing disclosure")
     return PanelRow(
         ticker=ticker, key=dec.key, tier=spec.tier, title=spec.title, state=state,
         changes_the_call=spec.changes_the_call, caveat=spec.caveat, cadence=spec.cadence,
@@ -85,14 +93,23 @@ def panel_rows_for(
     freshness: dict[str, Any] | None,
     record: dict[str, Any] | None,
     declarations: dict[str, dict[str, dict[str, str]]],
+    row_absence_reason: str = "",
 ) -> list[PanelRow]:
-    """Every renderable panel for one name — universal seven first, then declared cohort panels."""
+    """Every renderable panel for one name — universal seven first, then declared cohort panels.
+
+    `row_absence_reason` is `select_row`'s own account of WHY there is no single live row, when the
+    reason is something other than "this name has no rows". It must travel: a name with two OPEN
+    decisions has rows, and a refusal telling the reader the position is "invisible to the book" is
+    false about the one fact the reader would act on.
+    """
     m = (dossier or {}).get("mechanical") or {}
     ureg = universal_registry()
     creg = default_registry()
     out: list[PanelRow] = []
 
     builders: dict[str, tuple[dict[str, Any] | None, list[str]]] = {}
+    #: Per-key cause for an empty payload, when the builder knows it. See `_row`.
+    why_empty: dict[str, str] = {}
     if row:
         builders["the_call"] = (pay.the_call(row), [
             f"monitor snapshot row · entry {row.get('entry_date')} · benchmark "
@@ -120,14 +137,18 @@ def panel_rows_for(
         builders["sources"] = (pay.sources(prim), [])
     cs = m.get("capital_structure") or {}
     if cs:
-        builders["cost_of_borrowing"] = (pay.cost_of_borrowing(cs), [
+        cob, cob_why = pay.cost_of_borrowing(cs)
+        builders["cost_of_borrowing"] = (cob, [
             str((cs.get("instruments") or {}).get("source_ref") or "")])
+        if cob_why:
+            why_empty["cost_of_borrowing"] = cob_why
 
     for dec in resolve_universal(
         dossier=dossier, row=row, freshness=freshness, record=record, registry=ureg,
     ):
         v, src = builders.get(dec.key, (None, []))
-        r = _row(dec, ticker=ticker, registry=ureg, value=v, sources=src)
+        r = _row(dec, ticker=ticker, registry=ureg, value=v, sources=src,
+                 no_value_reason=why_empty.get(dec.key, ""))
         if r is not None:
             out.append(r)
 
@@ -139,9 +160,18 @@ def panel_rows_for(
         ticker, dossier=dossier, declarations=declarations, registry=creg, note_probe=None,
     ):
         v, src = builders.get(dec.key, (None, []))
-        r = _row(dec, ticker=ticker, registry=creg, value=v, sources=src)
+        r = _row(dec, ticker=ticker, registry=creg, value=v, sources=src,
+                 no_value_reason=why_empty.get(dec.key, ""))
         if r is not None:
             out.append(r)
+    # THE AMBIGUITY REASON TRAVELS, appended rather than substituted: the requirement's own `why`
+    # still says which field was wanted, and this says why no row could supply it. Only rows that
+    # refused FOR WANT OF A ROW are touched.
+    if row is None and row_absence_reason:
+        for r in out:
+            if r.state == "refused" and any(
+                    mi.get("kind") in ("ledger_row", "snapshot_field") for mi in r.missing):
+                r.reason = f"{r.reason} {row_absence_reason}".strip()
     return out
 
 
@@ -164,10 +194,10 @@ def emit_panels(
     row_tickers = {str(r.get("ticker")) for r in rows}
     out: list[PanelRow] = []
     for ticker in sorted(row_tickers | set(fresh) | set(decl)):
-        sel, _ambiguous = select_row(rows, ticker)
+        sel, ambiguous = select_row(rows, ticker)
         out.extend(panel_rows_for(
             ticker,
             dossier=dossier_for(ticker), row=sel, freshness=fresh.get(ticker),
-            record=record_for(ticker), declarations=decl,
+            record=record_for(ticker), declarations=decl, row_absence_reason=ambiguous,
         ))
     return out

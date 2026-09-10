@@ -19,8 +19,8 @@
 //
 // EXHIBITS CITE VIA ENDNOTES, never an inline caption — house rule. Each exhibit's provenance
 // resolves to the tile's own Sources tier; nothing prints "Source: …" beneath a chart.
-import { getMonitor } from "../../lib/snapshots.js";
-import { DASH, escapeHtml, fmtDate, fmtInt, fmtPct, fmtPrice } from "../../lib/format.js";
+import { getMonitor, verdictWord } from "../../lib/snapshots.js";
+import { DASH, escapeHtml, fmtDate, fmtInt, fmtPrice } from "../../lib/format.js";
 
 const pp = (v, d = 2) => (typeof v === "number" && isFinite(v)
   ? (v >= 0 ? "+" : "") + (v * 100).toFixed(d) + "pp" : DASH);
@@ -116,7 +116,9 @@ const BODY = {
   the_call(v) {
     const sub = [v.sleeve, v.entry_date ? `entered ${fmtDate(v.entry_date)} at ${fmtPrice(v.entry_price)}` : null]
       .filter(Boolean).join(" · ");
-    return `<p class="pn-big">${escapeHtml(String(v.verdict || DASH))}<small>${escapeHtml(sub)}</small></p>
+    // verdictWord, not the raw field: the decision log and the dossier both shorten AVOID_TERMINAL
+    // to AVOID, and a third view printing the enum would be the same verdict spelled three ways.
+    return `<p class="pn-big">${escapeHtml(verdictWord(v.verdict) || DASH)}<small>${escapeHtml(sub)}</small></p>
       <p class="pn-sub">now ${fmtPrice(v.current_price)} · ${v.closed ? "CLOSED" : "held"}${
       v.horizon_date ? ` · horizon ${escapeHtml(fmtDate(v.horizon_date))}` : ""}</p>`;
   },
@@ -130,9 +132,14 @@ const BODY = {
     return `<p class="pn-big">${x(v.current)}<small>${escapeHtml(String(v.metric || ""))} · ${
       pctc(v.percentile)}ile of its historical range</small></p>`
       + rangeBar(v)
-      + `<p class="pn-sub">range ${x(v.low)}–${x(v.high)} · median ${x(v.median)} · ${
-        fmtInt(v.n_closes)} closes${v.range_excludes_current
-        ? ", excluding today's mark" : ""}</p>`
+      // THE MARK'S OWN AS-OF LEADS THE LINE, and it is NOT the monitor day. The dossier's multiple
+      // is stamped when the valuation panel was pulled: VRRM's reads 2026-03-31 and LLY's 2026-08-20
+      // in the same 2026-08-11 snapshot. Calling the appended point "today's mark" under the page's
+      // "As of <monitor day>" header asserted a vintage the payload contradicts — and this repo's
+      // rule is that a vintage mark LEADS the numbers it governs, read after them it does not work.
+      + `<p class="pn-sub">as of ${escapeHtml(fmtDate(v.as_of))} · range ${x(v.low)}–${x(v.high)} · median ${
+        x(v.median)} · ${fmtInt(v.n_closes)} closes${v.range_excludes_current
+        ? `, excluding the current mark (${escapeHtml(fmtDate(v.as_of))})` : ""}</p>`
       + sparkline(v.series, { current: v.current, nClose: v.n_closes,
         excludesCurrent: v.range_excludes_current });
   },
@@ -187,14 +194,26 @@ const BODY = {
 
 // --- tiles ----------------------------------------------------------------------------------
 
+// A row renders as a refusal when it SAYS it is one, or when its body could not be built — and the
+// two must be indistinguishable on the page, because an empty ready tile is indistinguishable from a
+// panel that does not apply. The upstream demotion (`panels_emit._row`) only fires on a FALSY
+// payload, and several payloads are never falsy (`kills` is always `{criteria: [...]}`, empty or
+// not), so the renderer is the layer that has to settle it. Exported as one predicate so the tile's
+// border, its badge and the header's ready/refused COUNT cannot disagree about the same row.
+function renderedBody(row) {
+  if (row.state === "refused") return "";
+  const f = BODY[row.key];
+  return f ? f(row.value || {}) : "";
+}
+
+export function rendersAsRefusal(row) {
+  return row.state === "refused" || !renderedBody(row);
+}
+
 function tile(row) {
-  const isRefused = row.state === "refused";
-  let body = "";
-  if (!isRefused) {
-    const f = BODY[row.key];
-    body = f ? f(row.value || {}) : "";
-  }
-  if (isRefused || !body) {
+  let body = renderedBody(row);
+  const isRefused = rendersAsRefusal(row);
+  if (isRefused) {
     // A REFUSAL IS A TILE — bordered, badged, and carrying its reason in full. And a READY row whose
     // body could not be built is shown the same way rather than as an empty frame: an empty tile is
     // indistinguishable from a panel that does not apply, which is the one thing the rule forbids.
@@ -208,9 +227,15 @@ function tile(row) {
     const partial = row.key === "kills" && (row.value?.criteria || []).length
       ? `<ul class="pn-kills pn-partial">${row.value.criteria.map((c) =>
           `<li>${escapeHtml(String(c.text))}</li>`).join("")}</ul>` : "";
+    // A REFUSAL WITH NO REASON IS THE BLANK TILE THIS BLOCK EXISTS TO PREVENT, so a row the
+    // RENDERER demoted (the artifact called it ready and carried a payload nothing could be drawn
+    // from) states that as its cause rather than leaving the tile to explain nothing.
+    const why = row.reason || (row.state === "refused" ? "" : `the artifact marks this panel READY \
+but its committed value carries nothing this surface can draw — the requirement check and the \
+payload disagree, which is a wiring bug rather than missing disclosure`);
     body = `<p class="pn-why">This panel applies to this name and <b>cannot be computed</b>.</p>
       ${req ? `<ul class="pn-missing">${req}</ul>` : ""}
-      ${row.reason ? `<p class="pn-up">${escapeHtml(row.reason)}</p>` : ""}
+      ${why ? `<p class="pn-up">${escapeHtml(why)}</p>` : ""}
       ${partial ? `<p class="pn-partial-head">The criteria themselves, unmeasured:</p>${partial}` : ""}`;
   }
   const srcs = (row.sources || []).filter(Boolean);
@@ -233,7 +258,11 @@ export function panelGridHtml(rows, { ticker } = {}) {
   const groups = Object.entries(byTier).filter(([, v]) => v.length).map(([t, v]) =>
     `<h4 class="pn-tier">${escapeHtml(t)}</h4><div class="pn-grid">${
       v.map(tile).join("")}</div>`).join("");
-  const nRef = mine.filter((r) => r.state === "refused").length;
+  // COUNTED BY THE SAME PREDICATE THE TILE USES. Counting `state === "refused"` while the tile drew
+  // a refusal for an unbuildable body let the header say "1 ready · 0 refused" over a tile reading
+  // "cannot be computed" — the header would have been the reassuring half of an absent-vs-broken
+  // mismatch, which is the defect the whole block exists to prevent.
+  const nRef = mine.filter(rendersAsRefusal).length;
   return `<div class="pn-wrap" data-ticker="${escapeHtml(String(ticker || ""))}">
     <p class="pn-note"><b>${fmtInt(mine.length - nRef)} ready · ${fmtInt(nRef)} refused.</b>
       A panel that does not apply to this name is not here at all — it emits no tile. A panel that

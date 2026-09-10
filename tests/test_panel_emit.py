@@ -140,3 +140,136 @@ def test_a_row_is_typed_rather_than_a_loose_dict() -> None:
     with pytest.raises(ValidationError):
         PanelRow(ticker="X", key="k", tier="universal", title="T",  # type: ignore[call-arg]
                  state="ready")
+
+
+# --------------------------------------------------------------------------------------------
+# Review fixes (PR #603). Each test below would have caught the defect it names.
+# --------------------------------------------------------------------------------------------
+
+
+def test_the_kills_payload_joins_on_the_only_key_a_measured_trigger_carries() -> None:
+    """`MeasuredTrigger`/`MeasuredTriggerRow` carry `trigger`, `metric`, `threshold`, `observed` —
+    NOT `criterion`/`text`/`reading`/`unit_checked`. Keying on the latter made every criterion
+    "no measured metric — re-printed only" with a fully measured trigger sitting beside it, and the
+    corpus could not catch it because no committed record carries one yet.
+    """
+    from vinci.panels_payload import kills
+
+    crit = "Quest revenue growth <= 0% YoY for two consecutive quarters"
+    v = kills(
+        {"triggers": [crit], "measured": [{
+            "trigger": crit, "metric": "quality.quest_growth_yoy", "comparator": "<=",
+            "threshold": 0.0, "state": "NOT_FIRED", "reason": "read 0.031", "observed": 0.031,
+            "unit": "ratio"}]},
+        None,
+    )
+    (c,) = v["criteria"]
+    assert c["text"] == crit
+    assert c["reading"] == 0.031, "the monitor's evaluated reading must reach the surface"
+    assert c["metric"] == "quality.quest_growth_yoy"
+    assert c["threshold"] == 0.0
+    assert c["unit_checked"] is True, "a resolved unit means the comparison WAS unit-checked"
+
+
+def test_the_kills_payload_falls_back_to_the_record_and_never_invents_a_reading() -> None:
+    """A criterion the monitor did not evaluate still prints its metric and threshold — and NO
+    reading. A fabricated zero here would read as a crossed threshold."""
+    from vinci.panels_payload import kills
+
+    crit = "net debt / EBITDA above 4.0x"
+    v = kills(
+        {"triggers": [crit]},
+        {"verdict": {"measured_triggers": [{
+            "trigger": crit, "metric": "quality.net_debt_to_ebitda", "comparator": ">",
+            "threshold": 4.0, "unit": "x"}]}},
+    )
+    (c,) = v["criteria"]
+    assert c["metric"] == "quality.net_debt_to_ebitda" and c["threshold"] == 4.0
+    assert c["reading"] is None, "never a coerced zero for an unmeasured criterion"
+
+
+def test_an_unpriceable_stack_refuses_with_its_own_cause_not_a_claim_of_a_wiring_bug() -> None:
+    """E2E over the committed artifact. TECX's capital structure lists tranches and none states both
+    a principal and a fixed coupon — a disclosure fact, which `borrowing()` already words precisely.
+    Relabelling it "a wiring bug rather than missing disclosure" told the reader a code defect about
+    a real disclosure gap: a fabricated cause on a reader-facing refusal.
+    """
+    rows = [p for p in (_snap().get("panels") or [])
+            if p["key"] == "cost_of_borrowing" and p["state"] == "refused"]
+    assert rows, "no refused cost_of_borrowing row — this check would prove nothing"
+    for p in rows:
+        assert "wiring bug" not in p["reason"], f"{p['ticker']} blames the code for its disclosure"
+        assert p["reason"].strip(), f"{p['ticker']} refuses silently"
+
+
+def test_two_open_rows_refuse_with_the_ambiguity_rather_than_with_unrecorded() -> None:
+    """`select_row` refuses by name when a ticker carries more than one OPEN decision, and its
+    sentence was being discarded — the tile then said "this name has no row in the latest committed
+    monitor snapshot", i.e. that the position is invisible to the book — false, and the one
+    fact a reader would act on.
+    """
+    rows = [
+        {"ticker": "ZZZZ", "verdict": "BUY", "closed": False, "entry_date": "2026-01-05"},
+        {"ticker": "ZZZZ", "verdict": "BUY", "closed": False, "entry_date": "2026-04-05"},
+    ]
+    out = emit_panels(rows=rows, freshness=[], dossier_for=lambda _t: None,
+                      record_for=lambda _t: None, root=ROOT)
+    call = next(r for r in out if r.key == "the_call" and r.ticker == "ZZZZ")
+    assert call.state == "refused"
+    assert "2 OPEN decision rows" in call.reason, call.reason
+    assert "2026-01-05" in call.reason and "2026-04-05" in call.reason
+
+
+def test_the_renderer_and_its_header_agree_about_a_ready_row_it_cannot_draw_node() -> None:
+    """The upstream demotion only fires on a FALSY payload, and `kills` is always
+    ``{criteria: [...]}`` — empty or not. So a READY row with empty criteria reached the page
+    as refusal TEXT wearing the READY class, with no badge, counted as "1 ready · 0 refused": the
+    header was the reassuring half of an absent-vs-broken mismatch.
+
+    Also pinned here: the verdict prints through `verdictWord` (AVOID_TERMINAL → AVOID, as the
+    decision log and the dossier already do), and the multiple's own as-of is on the page, because
+    the appended point is the dossier's mark and NOT the monitor day (VRRM's reads 2026-03-31).
+    """
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const url = pathToFileURL(path.resolve("frontend/views/shared/panels.js")).href;
+const { panelGridHtml } = await import(url);
+const base = { ticker: "AAA", tier: "universal", changes_the_call: "c", caveat: "",
+  cadence: "event", missing: [], reason: "", sources: [] };
+const hollow = panelGridHtml([{ ...base, key: "kills", title: "Kills", state: "ready",
+  value: { criteria: [] } }], { ticker: "AAA" });
+const call = panelGridHtml([{ ...base, key: "the_call", title: "The call", state: "ready",
+  value: { verdict: "AVOID_TERMINAL", sleeve: "s", entry_date: "2026-01-05", entry_price: 10,
+           current_price: 11, closed: false, horizon_date: "2027-01-05", benchmark: "SPY" } }],
+  { ticker: "AAA" });
+const mult = panelGridHtml([{ ...base, key: "multiple_and_price", title: "M", state: "ready",
+  value: { metric: "EV/EBITDA", current: 8.5, low: 10.4, high: 23.2, median: 14.0,
+           percentile: 0.02, n_closes: 2, as_of: "2026-03-31",
+           series: [["2026-02-28", 9.1], ["2026-03-15", 9.6], ["2026-03-31", 8.5]],
+           current_is_last_point: true, range_excludes_current: true } }], { ticker: "AAA" });
+console.log(JSON.stringify({
+  hollowWearsRefusedClass: /class="pn-panel refused"/.test(hollow),
+  hollowBadged: /pn-badge">REFUSED</.test(hollow),
+  hollowStatesACause: /pn-up/.test(hollow),
+  hollowCounted: hollow.includes("0 ready · 1 refused"),
+  verdictShortened: call.includes(">AVOID<") && !call.includes("AVOID_TERMINAL"),
+  multiplePrintsItsAsOf: mult.includes("as of Mar 31, 2026"),
+  multipleDoesNotSayToday: !/today's mark/.test(mult),
+}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver], capture_output=True,
+                         text=True, check=True, cwd=ROOT)
+    res = json.loads(out.stdout)
+    assert res["hollowWearsRefusedClass"] and res["hollowBadged"], res
+    assert res["hollowStatesACause"], "a refusal with no reason is the blank tile, again"
+    assert res["hollowCounted"], "the header must be counted by the predicate the tile uses"
+    assert res["verdictShortened"], res
+    assert res["multiplePrintsItsAsOf"] and res["multipleDoesNotSayToday"], res
