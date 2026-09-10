@@ -135,7 +135,7 @@ def test_specs_are_frozen_and_refuse_blank_declarations() -> None:
     with pytest.raises(ValueError):
         Requirement(kind="tag", detail="x", why="")
     with pytest.raises(ValueError):
-        PanelSpec(key="k", tier="name", title=" ")
+        PanelSpec(key="k", tier="name", title=" ", changes_the_call="c")
 
 
 def test_registry_refuses_a_duplicate_key() -> None:
@@ -154,11 +154,11 @@ def test_a_key_and_a_requirement_detail_are_normalised_not_merely_checked() -> N
     the blank check.
     """
     assert Requirement(kind="tag", detail="  x  ", why=" y ").detail == "x"
-    assert PanelSpec(key=" k ", tier="name", title=" T ").key == "k"
+    assert PanelSpec(key=" k ", tier="name", title=" T ", changes_the_call="c").key == "k"
 
-    reg = PanelRegistry((PanelSpec(key="dup", tier="name", title="T"),))
+    reg = PanelRegistry((PanelSpec(key="dup", tier="name", title="T", changes_the_call="c"),))
     with pytest.raises(ValueError, match="already registered"):
-        reg.register(PanelSpec(key=" dup ", tier="name", title="T"))
+        reg.register(PanelSpec(key=" dup ", tier="name", title="T", changes_the_call="c"))
 
 
 def test_a_requirement_key_that_matches_nothing_is_refused_not_read_as_absent() -> None:

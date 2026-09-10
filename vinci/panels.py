@@ -46,7 +46,8 @@ PanelTier = Literal["universal", "cohort", "theme", "name"]
 
 #: What a requirement is ABOUT. Kept as data rather than a callable so a spec can be read, diffed
 #: and reviewed without executing it — and so a refusal can name the thing that failed.
-RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload"]
+RequirementKind = Literal["tag", "rfile_note", "metric_path", "feed", "upload",
+                          "ledger_row", "snapshot_field", "criterion"]
 
 
 class Requirement(BaseModel, frozen=True):
@@ -91,6 +92,13 @@ class PanelSpec(BaseModel, frozen=True):
     #: How often the underlying source actually changes — the plan's Part 5 rule is to poll at the
     #: rate the SOURCE moves, never the rate one would like to know.
     cadence: Literal["event", "daily", "weekly", "monthly", "quarterly"] = "event"
+    #: WHAT WOULD CHANGE THE CALL — the design's face-validity guard, made structural rather than
+    #: left to review. The record states it plainly: *"every panel must state what would change the
+    #: call; a panel that cannot answer that is decoration and should be cut, not shrunk"*, against
+    #: the accepted risk that *"fifteen panels that each look important make none of them
+    #: important"*. A guard enforced by reviewer attention is a guard that passes on a tired day, so
+    #: it is a REQUIRED non-blank field: a decorative panel cannot be constructed at all.
+    changes_the_call: str
     #: A standing qualification the panel must always carry beside its number. NOT an error — a
     #: fact about what the number is. The commissioning ratio needs one: it divides all
     #: not-yet-in-service assets by the technical-infrastructure member alone, so "49.7%" without
@@ -99,14 +107,17 @@ class PanelSpec(BaseModel, frozen=True):
     #: docstring did.
     caveat: str = ""
 
-    @field_validator("key", "title")
+    @field_validator("key", "title", "changes_the_call")
     @classmethod
     def _not_blank(cls, v: str) -> str:
         # `key` is the registry key AND the key a name declares a panel by, so it is normalised
         # rather than merely checked — " commissioning" registering beside "commissioning" is two
         # panels for one question, and `register`'s duplicate guard would not see it.
         if not v.strip():
-            raise ValueError("a panel carries a key and a human title")
+            raise ValueError(
+                "a panel carries a key, a human title, and a statement of what would change the "
+                "call — the last is the face-validity guard: a panel that cannot answer it is "
+                "decoration and must be cut, not shrunk")
         return v.strip()
 
 
@@ -250,6 +261,9 @@ COMMISSIONING = PanelSpec(
         ),
     ),
     cadence="quarterly",
+    changes_the_call="A ratio that climbs while the in-service base stops growing says capital is "
+    "going in and not yet earning — the duration question the memo calls the whole trade. Falling "
+    "back toward the in-service growth rate says the buildout is converting.",
     caveat="Assets not yet in service spans EVERY asset type, while the denominator is the "
     "technical-infrastructure member alone — so this is not a commissioning RATE. The "
     "like-for-like figure is reported beside it.",
@@ -268,6 +282,9 @@ SEGMENT_ECONOMICS = PanelSpec(
         ),
     ),
     cadence="quarterly",
+    changes_the_call="Operating income falling in a segment whose revenue still grows re-prices "
+    "the mix: it means the growth is being bought. Which segment carries the margin is the thing "
+    "a single consolidated line hides.",
 )
 
 
