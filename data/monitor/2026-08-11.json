@@ -128,6 +128,8 @@
         "reported operating margin at or above 10% for two consecutive halves with spending growing slower than revenue - the cost model is structural; raise the terminal path"
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $25.37: the optimistic case is about 28% below the price and the pessimistic case about 88% below it. The verdict is robust to the dilution override - it fails under either share path - and print-insensitive: the pending second-quarter report can lower the answer, not rescue it."
     },
     {
@@ -147,6 +149,8 @@
         "Margin recovery that survives the fiscal 2027 price increase."
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: Analysed and not buying at any price near today's. The operating case is alive — promotion normalised at 17% of category volume, cash generation positive, no near-term maturity — but a possible recovery is not the same thing as a mispricing: at $11.56 the market already gives near-full credit to a $12.30 base case, while the equity carries close to total downside if that recovery fails. Only 0.35 turns of the multiple separate the bear case from no equity at all, and the 4.29x low in its own trading history predates the current capital structure, so there is no floor to measure the downside against."
     },
     {
@@ -165,6 +169,8 @@
         "Evidence that revenue from AI-native work is incremental rather than replacing existing engagements."
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one bar while the base-case return of 21.82% clears the floor, so the asymmetry is what refuses it. The fall may well have gone further than the business did, on a company that holds net cash and is still growing revenue, but the price does not compensate for the thesis being wrong."
     },
     {
@@ -184,6 +190,8 @@
         "the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%)."
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: position closed flat at the entry price on 2026-07-21 by operator action, before this analysis existed. Under the revised grid no evidence-coherent reading clears the 2.0 bar at that price - about 1.3 to 1 on the most charitable cells, far below 1 on the central ones. Disclosure: under the previously recorded base multiple (15.0x, amended above with reasons), the charitable downside alone would have read 2.03 to 1 - a knife-edge inside the boundary band, flipped by one step on any cell. The base revision is load-bearing; its reasons stand independent of the exit."
     },
     {
@@ -205,6 +213,8 @@
         "going-concern language removed in a periodic filing - re-underwrite in full"
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $0.92: the pessimistic case values the equity BELOW ZERO and the central case lands near the current price, so there is no asymmetry to buy. The survival gate FAILS on the company's own disclosure - about two years of runway, including the remaining selling-programme capacity, against three years to breakeven."
     },
     {
@@ -222,6 +232,8 @@
         "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]"
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow. [amended 2026-07-22: the fail verdict is invariant to interim free cash flow - with four guided years of roughly $137.5M a year (the fiscal-2027 guide is $135-140M) credited in full, the central case reaches about $11.7 and the ratio stays deeply negative - but the optimistic case then reaches roughly the market price, so 'even the optimistic case sits below the price' holds only before interim cash.]"
     },
     {
@@ -240,6 +252,8 @@
         "September portfolio-wide price increase fails to stick (elasticity / share loss) (by 2027-01-07)"
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": null
     },
     {
@@ -261,9 +275,12 @@
         "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
       ],
       "passed_trigger_deadlines": [],
+      "measured": [],
+      "stale_tags": [],
       "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
     }
   ],
+  "theme_falsifiers": [],
   "notes": [
     "IT: sector re-resolved to Industrials for display (the frozen row logged Other — never rewritten)",
     "IT: benchmark MDY (cap band) SUPERSEDES the ledger row's IWM — the row itself is never mutated",
@@ -292,6 +309,4758 @@
       "exit_price": 10.53,
       "exit_price_as_of": "2026-07-22",
       "realized_return": -0.03571428571428581
+    }
+  ],
+  "panels": [
+    {
+      "ticker": "AORT",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "AORT",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "price below about $10.50, roughly the base case in today's terms, then re-run at the new price",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "the second-quarter report quantifies the recall as bounded AND valve and stent-graft revenue growth holds double-digit - re-underwrite the optimistic and central cases",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "reported operating margin at or above 10% for two consecutive halves with spending growing slower than revenue - the cost model is structural; raise the terminal path",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "AORT",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 20.575168,
+        "low": 18.75201,
+        "high": 75.372341,
+        "median": 32.106241,
+        "percentile": 0.07142857142857142,
+        "n_closes": 42,
+        "as_of": "2026-07-17",
+        "series": [
+          [
+            "2016-03-31",
+            21.991067
+          ],
+          [
+            "2016-06-30",
+            19.61555
+          ],
+          [
+            "2016-09-30",
+            21.816905
+          ],
+          [
+            "2016-12-30",
+            19.347615
+          ],
+          [
+            "2017-03-31",
+            22.472413
+          ],
+          [
+            "2017-06-30",
+            26.850037
+          ],
+          [
+            "2017-09-29",
+            33.158462
+          ],
+          [
+            "2017-12-29",
+            39.241091
+          ],
+          [
+            "2018-03-29",
+            44.972728
+          ],
+          [
+            "2018-06-29",
+            75.372341
+          ],
+          [
+            "2018-09-28",
+            73.116967
+          ],
+          [
+            "2018-12-31",
+            47.887193
+          ],
+          [
+            "2019-03-29",
+            41.855872
+          ],
+          [
+            "2019-06-28",
+            33.399208
+          ],
+          [
+            "2019-09-30",
+            33.186324
+          ],
+          [
+            "2019-12-31",
+            38.918066
+          ],
+          [
+            "2020-03-31",
+            20.666323
+          ],
+          [
+            "2020-06-30",
+            24.277364
+          ],
+          [
+            "2020-09-30",
+            29.165206
+          ],
+          [
+            "2020-12-31",
+            38.752326
+          ],
+          [
+            "2021-03-31",
+            33.591506
+          ],
+          [
+            "2021-06-30",
+            36.411898
+          ],
+          [
+            "2021-09-30",
+            25.50142
+          ],
+          [
+            "2021-12-31",
+            25.154776
+          ],
+          [
+            "2022-03-31",
+            35.549334
+          ],
+          [
+            "2022-06-30",
+            35.309022
+          ],
+          [
+            "2022-09-30",
+            32.847943
+          ],
+          [
+            "2022-12-30",
+            35.338891
+          ],
+          [
+            "2023-03-31",
+            31.602026
+          ],
+          [
+            "2023-06-30",
+            36.996361
+          ],
+          [
+            "2023-09-29",
+            30.008326
+          ],
+          [
+            "2023-12-29",
+            26.069387
+          ],
+          [
+            "2024-03-28",
+            26.139588
+          ],
+          [
+            "2024-06-28",
+            26.443099
+          ],
+          [
+            "2024-09-30",
+            25.201407
+          ],
+          [
+            "2024-12-31",
+            25.164274
+          ],
+          [
+            "2025-03-31",
+            22.554517
+          ],
+          [
+            "2025-06-30",
+            32.456561
+          ],
+          [
+            "2025-09-30",
+            41.770718
+          ],
+          [
+            "2025-12-31",
+            41.791383
+          ],
+          [
+            "2026-03-31",
+            31.755921
+          ],
+          [
+            "2026-06-30",
+            18.75201
+          ],
+          [
+            "2026-07-17",
+            20.575168
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "AORT",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-07-22",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [
+          "8-K 2026-08-06 acc 0001628280-26-054294",
+          "10-Q 2026-08-07 acc 0001628280-26-054746"
+        ],
+        "next_expected_print": "2026-09-15",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": true
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "AORT",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2024-03-01) · employee-plan (S-8) 1 (S-8, last 2025-08-08) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "S-3ASR",
+            1
+          ],
+          [
+            "S-8",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226"
+      ]
+    },
+    {
+      "ticker": "AORT",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "AORT",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001628280-26-054746",
+          "8-K 0001628280-26-054294 EX-99.1",
+          "8-K 0001628280-26-035798 EX-99.1",
+          "8-K 0001628280-26-032097 EX-99.1",
+          "8-K 0001628280-26-007674 EX-99.1",
+          "8-K 0001628280-25-050164 EX-99.1",
+          "8-K 0001628280-25-038873 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "BRBR",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "BRBR",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "Price entering roughly $4 to $5 WITHOUT corresponding deterioration in the business.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Inventory normalising from $480.6M without material write-offs.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Cash conversion sustained over consecutive quarters.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Material reduction in net debt.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Margin recovery that survives the fiscal 2027 price increase.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "BRBR",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 9.180781,
+        "low": 4.287579,
+        "high": 27.868415,
+        "median": 19.761409,
+        "percentile": 0.1111111111111111,
+        "n_closes": 27,
+        "as_of": "2026-08-07",
+        "series": [
+          [
+            "2019-12-31",
+            4.287579
+          ],
+          [
+            "2020-03-31",
+            16.216707
+          ],
+          [
+            "2020-06-30",
+            15.261314
+          ],
+          [
+            "2020-09-30",
+            18.826208
+          ],
+          [
+            "2020-12-31",
+            18.654756
+          ],
+          [
+            "2021-03-31",
+            19.856059
+          ],
+          [
+            "2021-06-30",
+            21.635948
+          ],
+          [
+            "2021-09-30",
+            21.50289
+          ],
+          [
+            "2021-12-31",
+            19.786045
+          ],
+          [
+            "2022-03-31",
+            27.868415
+          ],
+          [
+            "2022-06-30",
+            17.815925
+          ],
+          [
+            "2022-09-30",
+            15.125091
+          ],
+          [
+            "2022-12-30",
+            17.196028
+          ],
+          [
+            "2023-03-31",
+            19.761409
+          ],
+          [
+            "2023-06-30",
+            20.001294
+          ],
+          [
+            "2023-09-29",
+            21.167787
+          ],
+          [
+            "2023-12-29",
+            25.249105
+          ],
+          [
+            "2024-03-28",
+            25.314926
+          ],
+          [
+            "2024-06-28",
+            22.351307
+          ],
+          [
+            "2024-09-30",
+            21.418541
+          ],
+          [
+            "2024-12-31",
+            24.464536
+          ],
+          [
+            "2025-03-31",
+            22.825303
+          ],
+          [
+            "2025-06-30",
+            18.124714
+          ],
+          [
+            "2025-09-30",
+            14.208559
+          ],
+          [
+            "2025-12-31",
+            11.037542
+          ],
+          [
+            "2026-03-31",
+            8.818111
+          ],
+          [
+            "2026-06-30",
+            8.494121
+          ],
+          [
+            "2026-08-07",
+            9.180781
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "BRBR",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-08-07",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [],
+        "next_expected_print": "2026-08-25",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": false
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "BRBR",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "S-8",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983"
+      ]
+    },
+    {
+      "ticker": "BRBR",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "BRBR",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001772016-26-000022",
+          "8-K 0001628280-26-052137 EX-99.1",
+          "8-K 0001628280-26-030115 EX-99.1",
+          "8-K 0001628280-26-004789 EX-99.1",
+          "8-K 0001628280-25-053329 EX-99.1",
+          "8-K 0001628280-25-052773 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "EPAM",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "EPAM",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "North American organic constant-currency growth recovering from about 1.8% toward mid-single digits.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Delayed large deals signed and contributing to revenue.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Operating margin on the reported basis reaching 11.5%, against company guidance for fiscal 2026 of 10.5-11.0% — the cell the underwrite records as contested.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Evidence that revenue from AI-native work is incremental rather than replacing existing engagements.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "EPAM",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 5.360909,
+        "low": 4.262664,
+        "high": 57.212924,
+        "median": 22.414586,
+        "percentile": 0.02631578947368421,
+        "n_closes": 38,
+        "as_of": "2026-08-07",
+        "series": [
+          [
+            "2017-03-31",
+            20.608112
+          ],
+          [
+            "2017-06-30",
+            22.77791
+          ],
+          [
+            "2017-09-29",
+            22.727797
+          ],
+          [
+            "2017-12-29",
+            26.229298
+          ],
+          [
+            "2018-03-29",
+            26.31361
+          ],
+          [
+            "2018-06-29",
+            27.322453
+          ],
+          [
+            "2018-09-28",
+            28.016796
+          ],
+          [
+            "2018-12-31",
+            21.408619
+          ],
+          [
+            "2019-03-29",
+            29.763385
+          ],
+          [
+            "2019-06-28",
+            24.292333
+          ],
+          [
+            "2019-09-30",
+            24.274937
+          ],
+          [
+            "2019-12-31",
+            26.929513
+          ],
+          [
+            "2020-03-31",
+            22.635593
+          ],
+          [
+            "2020-06-30",
+            29.314772
+          ],
+          [
+            "2020-09-30",
+            36.537661
+          ],
+          [
+            "2020-12-31",
+            38.719176
+          ],
+          [
+            "2021-03-31",
+            40.516902
+          ],
+          [
+            "2021-06-30",
+            51.018334
+          ],
+          [
+            "2021-09-30",
+            52.901591
+          ],
+          [
+            "2021-12-31",
+            57.212924
+          ],
+          [
+            "2022-03-31",
+            22.193579
+          ],
+          [
+            "2022-06-30",
+            20.046063
+          ],
+          [
+            "2022-09-30",
+            23.801649
+          ],
+          [
+            "2022-12-30",
+            20.729891
+          ],
+          [
+            "2023-03-31",
+            18.465326
+          ],
+          [
+            "2023-06-30",
+            14.526579
+          ],
+          [
+            "2023-09-29",
+            16.240099
+          ],
+          [
+            "2023-12-29",
+            20.205515
+          ],
+          [
+            "2024-03-28",
+            18.928039
+          ],
+          [
+            "2024-06-28",
+            12.446055
+          ],
+          [
+            "2024-09-30",
+            14.037167
+          ],
+          [
+            "2024-12-31",
+            15.789887
+          ],
+          [
+            "2025-03-31",
+            11.292338
+          ],
+          [
+            "2025-06-30",
+            12.00655
+          ],
+          [
+            "2025-09-30",
+            9.692096
+          ],
+          [
+            "2025-12-31",
+            13.491229
+          ],
+          [
+            "2026-03-31",
+            8.002404
+          ],
+          [
+            "2026-06-30",
+            4.262664
+          ],
+          [
+            "2026-08-07",
+            5.360909
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "EPAM",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-08-07",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [],
+        "next_expected_print": "2026-09-02",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": false
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "EPAM",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "S-8",
+            3
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685"
+      ]
+    },
+    {
+      "ticker": "EPAM",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "EPAM",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001352010-26-000046",
+          "8-K 0001352010-26-000043 EX-99.1",
+          "8-K 0001352010-26-000026 EX-99.1",
+          "8-K 0001352010-26-000010 EX-99.1",
+          "8-K 0001352010-25-000053 EX-99.1",
+          "8-K 0001352010-25-000050 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 25.809247,
+        "low": 10.934315,
+        "high": 24.782368,
+        "median": 17.365283,
+        "percentile": 1.0,
+        "n_closes": 37,
+        "as_of": "2026-06-30",
+        "series": [
+          [
+            "2017-03-31",
+            16.659732
+          ],
+          [
+            "2017-06-30",
+            17.538375
+          ],
+          [
+            "2017-09-29",
+            17.947729
+          ],
+          [
+            "2017-12-29",
+            18.387363
+          ],
+          [
+            "2018-03-29",
+            17.365283
+          ],
+          [
+            "2018-06-29",
+            18.578737
+          ],
+          [
+            "2018-09-28",
+            19.282916
+          ],
+          [
+            "2018-12-31",
+            15.788764
+          ],
+          [
+            "2019-03-29",
+            17.60915
+          ],
+          [
+            "2019-06-28",
+            14.854759
+          ],
+          [
+            "2019-09-30",
+            16.183809
+          ],
+          [
+            "2019-12-31",
+            17.215785
+          ],
+          [
+            "2020-03-31",
+            13.767523
+          ],
+          [
+            "2020-06-30",
+            17.049333
+          ],
+          [
+            "2020-09-30",
+            18.374552
+          ],
+          [
+            "2020-12-31",
+            21.2367
+          ],
+          [
+            "2021-03-31",
+            22.204411
+          ],
+          [
+            "2021-06-30",
+            23.477481
+          ],
+          [
+            "2021-09-30",
+            21.25664
+          ],
+          [
+            "2021-12-31",
+            20.427852
+          ],
+          [
+            "2022-03-31",
+            18.303308
+          ],
+          [
+            "2022-06-30",
+            13.422001
+          ],
+          [
+            "2022-09-30",
+            11.521566
+          ],
+          [
+            "2022-12-30",
+            10.934315
+          ],
+          [
+            "2023-03-31",
+            13.234257
+          ],
+          [
+            "2023-06-30",
+            15.384011
+          ],
+          [
+            "2023-09-29",
+            16.454258
+          ],
+          [
+            "2023-12-29",
+            16.642059
+          ],
+          [
+            "2024-03-28",
+            17.32194
+          ],
+          [
+            "2024-06-28",
+            19.165507
+          ],
+          [
+            "2024-09-30",
+            16.522989
+          ],
+          [
+            "2024-12-31",
+            17.686616
+          ],
+          [
+            "2025-03-31",
+            13.642264
+          ],
+          [
+            "2025-06-30",
+            14.833976
+          ],
+          [
+            "2025-09-30",
+            19.832636
+          ],
+          [
+            "2025-12-31",
+            24.782368
+          ],
+          [
+            "2026-03-31",
+            21.955508
+          ],
+          [
+            "2026-06-30",
+            25.809247
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24",
+        "forms": [
+          [
+            "424B5",
+            19
+          ],
+          [
+            "424B2",
+            9
+          ],
+          [
+            "S-3ASR",
+            2
+          ],
+          [
+            "S-8",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264"
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001652044-26-000071",
+          "8-K 0001652044-26-000066 EX-99.1",
+          "8-K 0001193125-26-257724 EX-99.1",
+          "8-K 0001652044-26-000043 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "commissioning",
+      "tier": "cohort",
+      "title": "Built but not running",
+      "state": "refused",
+      "changes_the_call": "A ratio that climbs while the in-service base stops growing says capital is going in and not yet earning — the duration question the memo calls the whole trade. Falling back toward the in-service growth rate says the buildout is converting.",
+      "caveat": "Assets not yet in service spans EVERY asset type, while the denominator is the technical-infrastructure member alone — so this is not a commissioning RATE. The like-for-like figure is reported beside it.",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Supplemental Financial Statement Information - Property and Equipment",
+          "why": "the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split"
+        }
+      ],
+      "reason": "rfile_note 'Supplemental Financial Statement Information - Property and Equipment' — the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "segment_economics",
+      "tier": "cohort",
+      "title": "Segment revenue and operating income",
+      "state": "refused",
+      "changes_the_call": "Operating income falling in a segment whose revenue still grows re-prices the mix: it means the growth is being bought. Which segment carries the margin is the thing a single consolidated line hides.",
+      "caveat": "",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Information about Segments and Geographic Areas - Revenue and Operating Income",
+          "why": "per-segment operating income is disclosed in the segment note, not as a top-level tag"
+        }
+      ],
+      "reason": "rfile_note 'Information about Segments and Geographic Areas - Revenue and Operating Income' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "GOOGL",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "ready",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "fixed_pct": 4.159703373331918,
+        "fixed_coverage": 0.8063256094627268,
+        "all_in_pct": 4.159703373331918,
+        "all_in_coverage": 0.8063256094627268,
+        "floating_share": 0.010193388975645956,
+        "lease_musd": 18453.0,
+        "total_musd": 49051.399999999994,
+        "n_covered": 12,
+        "n_total": 19
+      },
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "ready",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "verdict": "BUY",
+        "sleeve": "overshoot",
+        "entry_date": "2026-07-20",
+        "entry_price": 141.06,
+        "current_price": 187.27,
+        "closed": true,
+        "horizon_date": "2027-01-16",
+        "benchmark": "MDY"
+      },
+      "sources": [
+        "monitor snapshot row · entry 2026-07-20 · benchmark MDY (cap band, assigned at entry)"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%).",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 7.968092,
+        "low": 7.458903,
+        "high": 37.827356,
+        "median": 23.382523,
+        "percentile": 0.02631578947368421,
+        "n_closes": 38,
+        "as_of": "2026-07-17",
+        "series": [
+          [
+            "2017-03-31",
+            22.906794
+          ],
+          [
+            "2017-06-30",
+            29.203212
+          ],
+          [
+            "2017-09-29",
+            37.793557
+          ],
+          [
+            "2017-12-29",
+            37.827356
+          ],
+          [
+            "2018-03-29",
+            35.104841
+          ],
+          [
+            "2018-06-29",
+            35.700489
+          ],
+          [
+            "2018-09-28",
+            32.901373
+          ],
+          [
+            "2018-12-31",
+            23.807402
+          ],
+          [
+            "2019-03-29",
+            25.820547
+          ],
+          [
+            "2019-06-28",
+            24.587594
+          ],
+          [
+            "2019-09-30",
+            22.258974
+          ],
+          [
+            "2019-12-31",
+            23.930772
+          ],
+          [
+            "2020-03-31",
+            16.953391
+          ],
+          [
+            "2020-06-30",
+            17.895837
+          ],
+          [
+            "2020-09-30",
+            18.190355
+          ],
+          [
+            "2020-12-31",
+            21.440441
+          ],
+          [
+            "2021-03-31",
+            22.896223
+          ],
+          [
+            "2021-06-30",
+            25.836309
+          ],
+          [
+            "2021-09-30",
+            26.115048
+          ],
+          [
+            "2021-12-31",
+            24.912056
+          ],
+          [
+            "2022-03-31",
+            21.558512
+          ],
+          [
+            "2022-06-30",
+            17.674979
+          ],
+          [
+            "2022-09-30",
+            19.244851
+          ],
+          [
+            "2022-12-30",
+            22.467219
+          ],
+          [
+            "2023-03-31",
+            20.13898
+          ],
+          [
+            "2023-06-30",
+            20.90407
+          ],
+          [
+            "2023-09-29",
+            20.456573
+          ],
+          [
+            "2023-12-29",
+            26.21763
+          ],
+          [
+            "2024-03-28",
+            28.694975
+          ],
+          [
+            "2024-06-28",
+            27.01446
+          ],
+          [
+            "2024-09-30",
+            29.6795
+          ],
+          [
+            "2024-12-31",
+            28.046746
+          ],
+          [
+            "2025-03-31",
+            23.959012
+          ],
+          [
+            "2025-06-30",
+            22.957644
+          ],
+          [
+            "2025-09-30",
+            14.739886
+          ],
+          [
+            "2025-12-31",
+            14.179316
+          ],
+          [
+            "2026-03-31",
+            9.342744
+          ],
+          [
+            "2026-06-30",
+            7.458903
+          ],
+          [
+            "2026-07-17",
+            7.968092
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-07-22",
+        "last_evidence_source": "bear reason amendment",
+        "newer_filings": [
+          "10-Q 2026-08-04 acc 0000749251-26-000245",
+          "8-K 2026-08-04 acc 0000749251-26-000243"
+        ],
+        "next_expected_print": "2026-09-12",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": true
+      },
+      "sources": [
+        "last evidence via bear reason amendment",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B5",
+            2
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "ready",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "position_return": 0.327591095987523,
+        "benchmark": "MDY",
+        "benchmark_return": 0.03762402318026159,
+        "excess": 0.2899670728072614,
+        "days_elapsed": 22,
+        "horizon_days": 180
+      },
+      "sources": [
+        "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+      ]
+    },
+    {
+      "ticker": "IT",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0000749251-26-000245",
+          "8-K 0000749251-26-000243 EX-99.1",
+          "8-K 0000749251-26-000165 EX-99.1",
+          "8-K 0000749251-26-000028 EX-99.1",
+          "8-K 0000749251-25-000080 EX-99.1",
+          "8-K 0000749251-25-000044 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 27.539607,
+        "low": 13.292352,
+        "high": 61.889554,
+        "median": 26.1163045,
+        "percentile": 0.5789473684210527,
+        "n_closes": 38,
+        "as_of": "2026-08-20",
+        "series": [
+          [
+            "2017-03-31",
+            17.301918
+          ],
+          [
+            "2017-06-30",
+            16.557578
+          ],
+          [
+            "2017-09-29",
+            16.104307
+          ],
+          [
+            "2017-12-29",
+            15.332024
+          ],
+          [
+            "2018-03-29",
+            13.292352
+          ],
+          [
+            "2018-06-29",
+            13.599792
+          ],
+          [
+            "2018-09-28",
+            15.279142
+          ],
+          [
+            "2018-12-31",
+            15.598826
+          ],
+          [
+            "2019-03-29",
+            16.73552
+          ],
+          [
+            "2019-06-28",
+            14.964897
+          ],
+          [
+            "2019-09-30",
+            15.456113
+          ],
+          [
+            "2019-12-31",
+            18.734682
+          ],
+          [
+            "2020-03-31",
+            18.832496
+          ],
+          [
+            "2020-06-30",
+            21.582107
+          ],
+          [
+            "2020-09-30",
+            19.52573
+          ],
+          [
+            "2020-12-31",
+            21.737427
+          ],
+          [
+            "2021-03-31",
+            21.430286
+          ],
+          [
+            "2021-06-30",
+            25.486936
+          ],
+          [
+            "2021-09-30",
+            23.994515
+          ],
+          [
+            "2021-12-31",
+            26.745673
+          ],
+          [
+            "2022-03-31",
+            27.416646
+          ],
+          [
+            "2022-06-30",
+            28.045955
+          ],
+          [
+            "2022-09-30",
+            30.318879
+          ],
+          [
+            "2022-12-30",
+            34.19207
+          ],
+          [
+            "2023-03-31",
+            31.368635
+          ],
+          [
+            "2023-06-30",
+            49.440052
+          ],
+          [
+            "2023-09-29",
+            50.289345
+          ],
+          [
+            "2023-12-29",
+            47.22918
+          ],
+          [
+            "2024-03-28",
+            57.951136
+          ],
+          [
+            "2024-06-28",
+            61.889554
+          ],
+          [
+            "2024-09-30",
+            52.50944
+          ],
+          [
+            "2024-12-31",
+            43.158494
+          ],
+          [
+            "2025-03-31",
+            39.672106
+          ],
+          [
+            "2025-06-30",
+            33.080537
+          ],
+          [
+            "2025-09-30",
+            28.860186
+          ],
+          [
+            "2025-12-31",
+            34.371504
+          ],
+          [
+            "2026-03-31",
+            26.938292
+          ],
+          [
+            "2026-06-30",
+            30.397626
+          ],
+          [
+            "2026-08-20",
+            27.539607
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "LLY",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B2",
+            10
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175"
+      ]
+    },
+    {
+      "ticker": "LLY",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0000059478-26-000081",
+          "8-K 0000059478-26-000077 EX-99.1",
+          "8-K 0000059478-26-000008 EX-99.1",
+          "8-K 0000059478-25-000251 EX-99.1",
+          "8-K 0000059478-25-000202 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "segment_economics",
+      "tier": "cohort",
+      "title": "Segment revenue and operating income",
+      "state": "refused",
+      "changes_the_call": "Operating income falling in a segment whose revenue still grows re-prices the mix: it means the growth is being bought. Which segment carries the margin is the thing a single consolidated line hides.",
+      "caveat": "",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Segment Information",
+          "why": "per-segment operating income is disclosed in the segment note, not as a top-level tag"
+        }
+      ],
+      "reason": "rfile_note 'Segment Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "LLY",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "ready",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "fixed_pct": 4.165599187774488,
+        "fixed_coverage": 0.9716405229224827,
+        "all_in_pct": 4.165599187774488,
+        "all_in_coverage": 0.9716405229224827,
+        "floating_share": 0.017849620517067812,
+        "lease_musd": 1362.0,
+        "total_musd": 42017.69999999999,
+        "n_covered": 50,
+        "n_total": 56
+      },
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)"
+      ]
+    },
+    {
+      "ticker": "MVST",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "MVST",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "the maturity wall is refinanced or extended (a material-agreement or debt-obligation filing) - re-underwrite survival",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "going-concern language removed in a periodic filing - re-underwrite in full",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "MVST",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 9.353821,
+        "low": 9.977753,
+        "high": 66.923428,
+        "median": 19.3103885,
+        "percentile": 0.0,
+        "n_closes": 6,
+        "as_of": "2026-08-12",
+        "series": [
+          [
+            "2025-03-31",
+            66.923428
+          ],
+          [
+            "2025-06-30",
+            27.048983
+          ],
+          [
+            "2025-09-30",
+            22.817382
+          ],
+          [
+            "2025-12-31",
+            15.803395
+          ],
+          [
+            "2026-03-31",
+            9.977753
+          ],
+          [
+            "2026-06-30",
+            10.547153
+          ],
+          [
+            "2026-08-12",
+            9.353821
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "MVST",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-07-22",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [
+          "8-K 2026-08-07 acc 0000947871-26-000756",
+          "10-Q 2026-08-10 acc 0001628280-26-055372",
+          "8-K 2026-08-11 acc 0001628280-26-055471"
+        ],
+        "next_expected_print": "2026-08-12",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": true
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "MVST",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 2 (S-3/S-3/A, last 2025-04-28); prospectus supplements 1 (424B5, last 2025-10-03) — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B5",
+            1
+          ],
+          [
+            "S-3",
+            1
+          ],
+          [
+            "S-3/A",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882"
+      ]
+    },
+    {
+      "ticker": "MVST",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "MVST",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001628280-26-055372",
+          "8-K 0001628280-26-055471 EX-99.1",
+          "8-K 0001628280-26-033601 EX-99.1",
+          "8-K 0001628280-26-018235 EX-99.1",
+          "8-K 0001628280-25-051130 EX-99.1",
+          "8-K 0001628280-25-039708 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "NCNO",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NCNO",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "price below about $11.5 - the base case in today's terms with interim free cash flow credited (about 8.17 plus 3.58) - then re-run the underwrite at the new price [amended 2026-07-22: was 'below about $9', which credited no interim cash.]",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "NCNO",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 27.841318,
+        "low": 25.755549,
+        "high": 221.124925,
+        "median": 82.90876499999999,
+        "percentile": 0.1,
+        "n_closes": 10,
+        "as_of": "2026-07-17",
+        "series": [
+          [
+            "2024-03-28",
+            221.124925
+          ],
+          [
+            "2024-06-28",
+            124.594033
+          ],
+          [
+            "2024-09-30",
+            111.904251
+          ],
+          [
+            "2024-12-31",
+            104.694598
+          ],
+          [
+            "2025-03-31",
+            85.562609
+          ],
+          [
+            "2025-06-30",
+            80.254921
+          ],
+          [
+            "2025-09-30",
+            71.839265
+          ],
+          [
+            "2025-12-31",
+            54.19204
+          ],
+          [
+            "2026-03-31",
+            28.733401
+          ],
+          [
+            "2026-06-30",
+            25.755549
+          ],
+          [
+            "2026-07-17",
+            27.841318
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "NCNO",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-07-21",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [],
+        "next_expected_print": "2026-08-26",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": false
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "NCNO",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "no shelf/supplement/fresh registration · employee-plan (S-8) 3 (S-8, last 2026-03-31) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "S-8",
+            3
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024"
+      ]
+    },
+    {
+      "ticker": "NCNO",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NCNO",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001902733-26-000066",
+          "8-K 0001902733-26-000064 EX-99.1",
+          "8-K 0001902733-26-000019 EX-99.1",
+          "8-K 0001902733-25-000133 EX-99.1",
+          "8-K 0001902733-25-000130 EX-99.1",
+          "8-K 0001902733-25-000105 EX-99.1",
+          "8-K 0001902733-25-000074 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 20.454938,
+        "low": 12.672372,
+        "high": 157.668517,
+        "median": 43.346486999999996,
+        "percentile": 0.07894736842105263,
+        "n_closes": 38,
+        "as_of": "2026-08-07",
+        "series": [
+          [
+            "2017-03-31",
+            149.269372
+          ],
+          [
+            "2017-06-30",
+            102.994619
+          ],
+          [
+            "2017-09-29",
+            114.538625
+          ],
+          [
+            "2017-12-29",
+            105.864502
+          ],
+          [
+            "2018-03-29",
+            144.788889
+          ],
+          [
+            "2018-06-29",
+            157.668517
+          ],
+          [
+            "2018-09-28",
+            116.233074
+          ],
+          [
+            "2018-12-31",
+            71.183034
+          ],
+          [
+            "2019-03-29",
+            96.108033
+          ],
+          [
+            "2019-06-28",
+            79.401766
+          ],
+          [
+            "2019-09-30",
+            53.339228
+          ],
+          [
+            "2019-12-31",
+            52.5849
+          ],
+          [
+            "2020-03-31",
+            59.950975
+          ],
+          [
+            "2020-06-30",
+            62.213067
+          ],
+          [
+            "2020-09-30",
+            57.658909
+          ],
+          [
+            "2020-12-31",
+            57.867618
+          ],
+          [
+            "2021-03-31",
+            50.092583
+          ],
+          [
+            "2021-06-30",
+            42.000915
+          ],
+          [
+            "2021-09-30",
+            44.692059
+          ],
+          [
+            "2021-12-31",
+            41.235274
+          ],
+          [
+            "2022-03-31",
+            25.684707
+          ],
+          [
+            "2022-06-30",
+            12.672372
+          ],
+          [
+            "2022-09-30",
+            16.97101
+          ],
+          [
+            "2022-12-30",
+            21.313682
+          ],
+          [
+            "2023-03-31",
+            25.043021
+          ],
+          [
+            "2023-06-30",
+            32.260311
+          ],
+          [
+            "2023-09-29",
+            26.657258
+          ],
+          [
+            "2023-12-29",
+            31.580889
+          ],
+          [
+            "2024-03-28",
+            34.298883
+          ],
+          [
+            "2024-06-28",
+            33.843786
+          ],
+          [
+            "2024-09-30",
+            32.574891
+          ],
+          [
+            "2024-12-31",
+            36.687063
+          ],
+          [
+            "2025-03-31",
+            35.689597
+          ],
+          [
+            "2025-06-30",
+            47.741878
+          ],
+          [
+            "2025-09-30",
+            38.935106
+          ],
+          [
+            "2025-12-31",
+            29.66079
+          ],
+          [
+            "2026-03-31",
+            28.799368
+          ],
+          [
+            "2026-06-30",
+            20.32581
+          ],
+          [
+            "2026-08-07",
+            20.454938
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "NFLX",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2024-07-29); prospectus supplements 4 (424B2/424B5, last 2026-07-21) — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B2",
+            2
+          ],
+          [
+            "424B5",
+            2
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568"
+      ]
+    },
+    {
+      "ticker": "NFLX",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001065280-26-000212",
+          "8-K 0001065280-26-000211 EX-99.1",
+          "8-K 0001065280-26-000137 EX-99.1",
+          "8-K 0001065280-26-000033 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "commissioning",
+      "tier": "cohort",
+      "title": "Built but not running",
+      "state": "refused",
+      "changes_the_call": "A ratio that climbs while the in-service base stops growing says capital is going in and not yet earning — the duration question the memo calls the whole trade. Falling back toward the in-service growth rate says the buildout is converting.",
+      "caveat": "Assets not yet in service spans EVERY asset type, while the denominator is the technical-infrastructure member alone — so this is not a commissioning RATE. The like-for-like figure is reported beside it.",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Balance Sheet Components - Schedule of Property and Equipment",
+          "why": "the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split"
+        }
+      ],
+      "reason": "rfile_note 'Balance Sheet Components - Schedule of Property and Equipment' — the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "segment_economics",
+      "tier": "cohort",
+      "title": "Segment revenue and operating income",
+      "state": "refused",
+      "changes_the_call": "Operating income falling in a segment whose revenue still grows re-prices the mix: it means the growth is being bought. Which segment carries the margin is the thing a single consolidated line hides.",
+      "caveat": "",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Segment and Geographic Information - Schedule of Segment Reporting Financial Information",
+          "why": "per-segment operating income is disclosed in the segment note, not as a top-level tag"
+        }
+      ],
+      "reason": "rfile_note 'Segment and Geographic Information - Schedule of Segment Reporting Financial Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "NFLX",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "ready",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "fixed_pct": 4.753813967904126,
+        "fixed_coverage": 1.0,
+        "all_in_pct": 4.753813967904126,
+        "all_in_coverage": 1.0,
+        "floating_share": 0.0,
+        "lease_musd": 2513.0,
+        "total_musd": 14519.0,
+        "n_covered": 12,
+        "n_total": 22
+      },
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "ready",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "verdict": "BUY",
+        "sleeve": "overshoot",
+        "entry_date": "2026-08-04",
+        "entry_price": 11.33,
+        "current_price": 10.86,
+        "closed": false,
+        "horizon_date": "2028-02-04",
+        "benchmark": "IWM"
+      },
+      "sources": [
+        "monitor snapshot row · entry 2026-08-04 · benchmark IWM (cap band, assigned at entry)"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "Quest revenue growth <= 0% YoY for two consecutive quarters — the growth engine is dead; re-underwrite the bull and base cases.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "FY26 guidance cut at the fiscal Q4 print (~October 2026), or initial FY27 guidance below ~$1.30B — the base revenue path fails.",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "September portfolio-wide price increase fails to stick (elasticity / share loss) (by 2027-01-07)",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 5.561928,
+        "low": 6.109363,
+        "high": 28.877589,
+        "median": 17.851406,
+        "percentile": 0.0,
+        "n_closes": 35,
+        "as_of": "2026-08-11",
+        "series": [
+          [
+            "2017-12-29",
+            17.250649
+          ],
+          [
+            "2018-03-31",
+            16.299991
+          ],
+          [
+            "2018-06-30",
+            16.486458
+          ],
+          [
+            "2018-09-30",
+            20.485672
+          ],
+          [
+            "2018-12-31",
+            22.638922
+          ],
+          [
+            "2019-03-29",
+            22.40121
+          ],
+          [
+            "2019-06-28",
+            24.763034
+          ],
+          [
+            "2019-09-30",
+            27.173071
+          ],
+          [
+            "2019-12-31",
+            28.877589
+          ],
+          [
+            "2020-03-31",
+            23.996625
+          ],
+          [
+            "2020-06-30",
+            19.972007
+          ],
+          [
+            "2020-09-30",
+            19.436061
+          ],
+          [
+            "2020-12-31",
+            23.160666
+          ],
+          [
+            "2021-03-31",
+            20.023659
+          ],
+          [
+            "2021-06-30",
+            23.227802
+          ],
+          [
+            "2021-09-30",
+            19.121318
+          ],
+          [
+            "2021-12-31",
+            21.283008
+          ],
+          [
+            "2022-03-31",
+            19.097943
+          ],
+          [
+            "2022-06-30",
+            18.032883
+          ],
+          [
+            "2022-09-30",
+            15.53553
+          ],
+          [
+            "2022-12-30",
+            17.851406
+          ],
+          [
+            "2023-03-31",
+            18.956623
+          ],
+          [
+            "2023-06-30",
+            17.42491
+          ],
+          [
+            "2023-09-29",
+            16.51383
+          ],
+          [
+            "2023-12-29",
+            17.381156
+          ],
+          [
+            "2024-03-28",
+            14.863279
+          ],
+          [
+            "2024-06-28",
+            14.513839
+          ],
+          [
+            "2024-09-30",
+            13.977626
+          ],
+          [
+            "2024-12-31",
+            16.160949
+          ],
+          [
+            "2025-03-31",
+            13.837177
+          ],
+          [
+            "2025-06-30",
+            12.210078
+          ],
+          [
+            "2025-09-30",
+            9.535583
+          ],
+          [
+            "2025-12-31",
+            7.671103
+          ],
+          [
+            "2026-03-31",
+            6.109363
+          ],
+          [
+            "2026-06-30",
+            6.19328
+          ],
+          [
+            "2026-08-11",
+            5.561928
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-08-05",
+        "last_evidence_source": "underwrite_date",
+        "newer_filings": [],
+        "next_expected_print": "2026-10-23",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": false
+      },
+      "sources": [
+        "last evidence via underwrite_date",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2026-02-06) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "S-8",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "ready",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "position_return": -0.04148278905560465,
+        "benchmark": "IWM",
+        "benchmark_return": -0.002386397534055784,
+        "excess": -0.03909639152154887,
+        "days_elapsed": 7,
+        "horizon_days": 549
+      },
+      "sources": [
+        "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+      ]
+    },
+    {
+      "ticker": "SMPL",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001702744-26-000023",
+          "8-K 0001702744-26-000021 EX-99.1",
+          "8-K 0001702744-26-000010 EX-99.1",
+          "8-K 0001702744-26-000004 EX-99.1",
+          "8-K 0001702744-25-000043 EX-99.1",
+          "8-K 0001702744-25-000035 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "refused",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "valuation.ev_ebitda",
+          "why": "the current multiple is the left-hand side of the distance; without it there is no distance to draw"
+        },
+        {
+          "kind": "metric_path",
+          "detail": "valuation.range_position",
+          "why": "a multiple alone is not a position — 25.8x means nothing until it is placed in the name's own range, which is what makes compression visible"
+        }
+      ],
+      "reason": "metric_path 'valuation.ev_ebitda' — the current multiple is the left-hand side of the distance; without it there is no distance to draw. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no meaningful current multiple, and an older quarter is not one; metric_path 'valuation.range_position' — a multiple alone is not a position — 25.8x means nothing until it is placed in the name's own range, which is what makes compression visible. TEV/LTM EBITDA is NM at the latest Close [2026-06-30] — no range position",
+      "value": {},
+      "sources": [
+        "",
+        ""
+      ]
+    },
+    {
+      "ticker": "TECX",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24",
+        "forms": [
+          [
+            "424B3",
+            7
+          ],
+          [
+            "424B5",
+            7
+          ],
+          [
+            "S-4/A",
+            3
+          ],
+          [
+            "S-8",
+            3
+          ],
+          [
+            "S-1",
+            2
+          ],
+          [
+            "S-8 POS",
+            2
+          ],
+          [
+            "S-3",
+            1
+          ],
+          [
+            "S-4",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838"
+      ]
+    },
+    {
+      "ticker": "TECX",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001193125-26-338062",
+          "8-K 0001193125-26-338000 EX-99.1",
+          "8-K 0001193125-26-266040 EX-99.1",
+          "8-K 0001193125-26-212069 EX-99.1",
+          "8-K 0001193125-26-076843 EX-99.1",
+          "8-K 0001193125-25-269573 EX-99.1",
+          "8-K 0001193125-25-256958 EX-99.1",
+          "8-K 0001193125-25-175567 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "TECX",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "refused",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "every requirement for 'cost_of_borrowing' resolved, yet no value could be built from the committed artifacts — the requirement check and the payload builder disagree, which is a wiring bug rather than missing disclosure",
+      "value": {},
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)"
+      ]
+    },
+    {
+      "ticker": "UBER",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 19.20143,
+        "low": 20.462545,
+        "high": 113.799426,
+        "median": 39.621742,
+        "percentile": 0.0,
+        "n_closes": 12,
+        "as_of": "2026-08-05",
+        "series": [
+          [
+            "2023-09-29",
+            113.799426
+          ],
+          [
+            "2023-12-29",
+            76.645506
+          ],
+          [
+            "2024-03-28",
+            68.086526
+          ],
+          [
+            "2024-06-28",
+            55.746596
+          ],
+          [
+            "2024-09-30",
+            49.937249
+          ],
+          [
+            "2024-12-31",
+            33.283021
+          ],
+          [
+            "2025-03-31",
+            39.269376
+          ],
+          [
+            "2025-06-30",
+            39.974108
+          ],
+          [
+            "2025-09-30",
+            37.020003
+          ],
+          [
+            "2025-12-31",
+            30.266348
+          ],
+          [
+            "2026-03-31",
+            22.202859
+          ],
+          [
+            "2026-06-30",
+            20.462545
+          ],
+          [
+            "2026-08-05",
+            19.20143
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "UBER",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2026-02-13); prospectus supplements 4 (424B2/424B3, last 2025-09-10) · employee-plan (S-8) 2 (S-8, last 2025-02-14) — routine — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B2",
+            2
+          ],
+          [
+            "424B3",
+            2
+          ],
+          [
+            "S-8",
+            2
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059"
+      ]
+    },
+    {
+      "ticker": "UBER",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001543151-26-000032",
+          "8-K 0001543151-26-000027 EX-99.1",
+          "8-K 0001543151-26-000019 EX-99.1",
+          "8-K 0001543151-26-000011 EX-99.1",
+          "8-K 0001543151-25-000030 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "segment_economics",
+      "tier": "cohort",
+      "title": "Segment revenue and operating income",
+      "state": "refused",
+      "changes_the_call": "Operating income falling in a segment whose revenue still grows re-prices the mix: it means the growth is being bought. Which segment carries the margin is the thing a single consolidated line hides.",
+      "caveat": "",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Segment Information and Geographic Information - Schedule of Segment Reporting Information",
+          "why": "per-segment operating income is disclosed in the segment note, not as a top-level tag"
+        }
+      ],
+      "reason": "rfile_note 'Segment Information and Geographic Information - Schedule of Segment Reporting Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "UBER",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "ready",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "fixed_pct": 3.5539504716981134,
+        "fixed_coverage": 1.0,
+        "all_in_pct": 3.5539504716981134,
+        "all_in_coverage": 1.0,
+        "floating_share": 0.0,
+        "lease_musd": 1781.0,
+        "total_musd": 10600.0,
+        "n_covered": 8,
+        "n_total": 15
+      },
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)"
+      ]
+    },
+    {
+      "ticker": "V",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 21.604626,
+        "low": 17.474997,
+        "high": 32.215707,
+        "median": 22.37811,
+        "percentile": 0.4473684210526316,
+        "n_closes": 38,
+        "as_of": "2026-08-07",
+        "series": [
+          [
+            "2017-03-31",
+            18.592827
+          ],
+          [
+            "2017-06-30",
+            18.540152
+          ],
+          [
+            "2017-09-29",
+            19.324008
+          ],
+          [
+            "2017-12-29",
+            19.855739
+          ],
+          [
+            "2018-03-29",
+            20.369053
+          ],
+          [
+            "2018-06-29",
+            21.67513
+          ],
+          [
+            "2018-09-28",
+            23.471986
+          ],
+          [
+            "2018-12-31",
+            20.264803
+          ],
+          [
+            "2019-03-29",
+            23.075406
+          ],
+          [
+            "2019-06-28",
+            24.853396
+          ],
+          [
+            "2019-09-30",
+            23.805529
+          ],
+          [
+            "2019-12-31",
+            24.545414
+          ],
+          [
+            "2020-03-31",
+            20.522108
+          ],
+          [
+            "2020-06-30",
+            23.903043
+          ],
+          [
+            "2020-09-30",
+            25.985095
+          ],
+          [
+            "2020-12-31",
+            29.563262
+          ],
+          [
+            "2021-03-31",
+            28.966316
+          ],
+          [
+            "2021-06-30",
+            32.215707
+          ],
+          [
+            "2021-09-30",
+            28.465664
+          ],
+          [
+            "2021-12-31",
+            25.412374
+          ],
+          [
+            "2022-03-31",
+            24.411104
+          ],
+          [
+            "2022-06-30",
+            20.426613
+          ],
+          [
+            "2022-09-30",
+            17.474997
+          ],
+          [
+            "2022-12-30",
+            19.503275
+          ],
+          [
+            "2023-03-31",
+            20.534598
+          ],
+          [
+            "2023-06-30",
+            21.014817
+          ],
+          [
+            "2023-09-29",
+            19.575574
+          ],
+          [
+            "2023-12-29",
+            21.245113
+          ],
+          [
+            "2024-03-28",
+            22.255118
+          ],
+          [
+            "2024-06-28",
+            22.501102
+          ],
+          [
+            "2024-09-30",
+            21.557492
+          ],
+          [
+            "2024-12-31",
+            24.035461
+          ],
+          [
+            "2025-03-31",
+            25.879317
+          ],
+          [
+            "2025-06-30",
+            25.418621
+          ],
+          [
+            "2025-09-30",
+            23.356195
+          ],
+          [
+            "2025-12-31",
+            23.225335
+          ],
+          [
+            "2026-03-31",
+            19.259212
+          ],
+          [
+            "2026-06-30",
+            21.289889
+          ],
+          [
+            "2026-08-07",
+            21.604626
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "V",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "shelf registrations 1 (S-3ASR, last 2024-07-24); prospectus supplements 6 (424B2/424B3, last 2026-04-13); merger registrations 5 (S-4/S-4/A, last 2026-04-06) — 3y window to 2026-08-14",
+        "forms": [
+          [
+            "424B2",
+            4
+          ],
+          [
+            "S-4/A",
+            3
+          ],
+          [
+            "424B3",
+            2
+          ],
+          [
+            "S-4",
+            2
+          ],
+          [
+            "S-3ASR",
+            1
+          ]
+        ],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096"
+      ]
+    },
+    {
+      "ticker": "V",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001403161-26-000104",
+          "8-K 0001403161-26-000103 EX-99.1",
+          "8-K 0001403161-26-000077 EX-99.1",
+          "8-K 0001403161-26-000044 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "segment_economics",
+      "tier": "cohort",
+      "title": "Segment revenue and operating income",
+      "state": "refused",
+      "changes_the_call": "Operating income falling in a segment whose revenue still grows re-prices the mix: it means the growth is being bought. Which segment carries the margin is the thing a single consolidated line hides.",
+      "caveat": "",
+      "cadence": "quarterly",
+      "missing": [
+        {
+          "kind": "rfile_note",
+          "detail": "Segment Information",
+          "why": "per-segment operating income is disclosed in the segment note, not as a top-level tag"
+        }
+      ],
+      "reason": "rfile_note 'Segment Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "V",
+      "key": "cost_of_borrowing",
+      "tier": "cohort",
+      "title": "Cost of borrowing",
+      "state": "ready",
+      "changes_the_call": "Every leverage leg is underwritten at a cost of debt. A stack repricing upward as tranches mature raises the bar the business must clear before equity sees anything, and it moves without any operating news at all.",
+      "caveat": "The average covers only tranches stating BOTH a principal and a FIXED coupon, and its coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its own share rather than averaged in at zero, which would fabricate a lower cost exactly where a name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, and their principal is reported separately. The denominator is the LISTED tranches, which for several names is a fraction of the stack the same panel's summary totals.",
+      "cadence": "quarterly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "fixed_pct": 2.804441359483302,
+        "fixed_coverage": 1.0,
+        "all_in_pct": 2.804441359483302,
+        "all_in_coverage": 1.0,
+        "floating_share": 0.0,
+        "lease_musd": 913.0,
+        "total_musd": 25392.0,
+        "n_covered": 18,
+        "n_total": 21
+      },
+      "sources": [
+        "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)"
+      ]
+    },
+    {
+      "ticker": "VRRM",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "ready",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "verdict": "AVOID_TERMINAL",
+        "sleeve": "overshoot",
+        "entry_date": "2026-06-17",
+        "entry_price": 4.71,
+        "current_price": 4.78,
+        "closed": false,
+        "horizon_date": "2026-12-14",
+        "benchmark": "IWM"
+      },
+      "sources": [
+        "monitor snapshot row · entry 2026-06-17 · benchmark IWM (cap band, assigned at entry)"
+      ]
+    },
+    {
+      "ticker": "VRRM",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "VRRM",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 8.493199,
+        "low": 10.422118,
+        "high": 23.220795,
+        "median": 13.621933,
+        "percentile": 0.0,
+        "n_closes": 19,
+        "as_of": "2026-03-31",
+        "series": [
+          [
+            "2021-06-30",
+            23.220795
+          ],
+          [
+            "2021-09-30",
+            17.475961
+          ],
+          [
+            "2021-12-31",
+            15.43251
+          ],
+          [
+            "2022-03-31",
+            16.05601
+          ],
+          [
+            "2022-06-30",
+            12.798522
+          ],
+          [
+            "2022-09-30",
+            11.570953
+          ],
+          [
+            "2022-12-30",
+            10.422118
+          ],
+          [
+            "2023-03-31",
+            11.912788
+          ],
+          [
+            "2023-06-30",
+            12.707214
+          ],
+          [
+            "2023-09-29",
+            12.625514
+          ],
+          [
+            "2023-12-29",
+            14.33233
+          ],
+          [
+            "2024-03-28",
+            14.635857
+          ],
+          [
+            "2024-06-28",
+            15.651495
+          ],
+          [
+            "2024-09-30",
+            15.703533
+          ],
+          [
+            "2024-12-31",
+            13.621933
+          ],
+          [
+            "2025-03-31",
+            13.047687
+          ],
+          [
+            "2025-06-30",
+            14.109848
+          ],
+          [
+            "2025-09-30",
+            13.520951
+          ],
+          [
+            "2025-12-31",
+            11.979534
+          ],
+          [
+            "2026-03-31",
+            8.493199
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "VRRM",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "refused",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "next_expected_print",
+          "why": "the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet"
+        }
+      ],
+      "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. the snapshot carries no 'next_expected_print' for this name",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "VRRM",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
+        "forms": [],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+      ]
+    },
+    {
+      "ticker": "VRRM",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "ready",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "position_return": 0.014861995753715496,
+        "benchmark": "IWM",
+        "benchmark_return": 0.03832620394646069,
+        "excess": -0.023464208192745195,
+        "days_elapsed": 55,
+        "horizon_days": 180
+      },
+      "sources": [
+        "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
+      ]
+    },
+    {
+      "ticker": "VRRM",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0001193125-26-335490",
+          "8-K 0001193125-26-335111 EX-99.1",
+          "8-K 0001193125-26-239351 EX-99.1",
+          "8-K 0001193125-26-209031 EX-99.1",
+          "8-K 0001193125-26-067015 EX-99.1"
+        ]
+      },
+      "sources": []
+    },
+    {
+      "ticker": "WERN",
+      "key": "the_call",
+      "tier": "universal",
+      "title": "The call",
+      "state": "refused",
+      "changes_the_call": "Nothing here changes the call — this IS the call, and it is the anchor every other panel is read against. It earns its place by making the other six answerable: a number that moved is only meaningful against the verdict and basis it was underwritten on.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "ledger_row",
+          "detail": "verdict",
+          "why": "the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show"
+        }
+      ],
+      "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "WERN",
+      "key": "kills",
+      "tier": "universal",
+      "title": "Kill criteria, with the number beside each",
+      "state": "refused",
+      "changes_the_call": "A criterion whose metric has crossed its threshold is the call changing, and this is the only panel whose whole purpose is to say so. It SURFACES the crossing; the human declares the kill — the machine never adjudicates.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "criterion",
+          "detail": "measured_triggers",
+          "why": "a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose"
+        }
+      ],
+      "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
+      "value": {
+        "criteria": [
+          {
+            "text": "spot pulls to ~28-30 (where base offers 2:1)",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          },
+          {
+            "text": "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)",
+            "metric": null,
+            "reading": null,
+            "threshold": null,
+            "unit_checked": false
+          }
+        ]
+      },
+      "sources": [
+        "scenario record measured_triggers"
+      ]
+    },
+    {
+      "ticker": "WERN",
+      "key": "multiple_and_price",
+      "tier": "universal",
+      "title": "Multiple & price — distance to the underwritten multiple",
+      "state": "ready",
+      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "metric": "EV/EBITDA (TEV/LTM)",
+        "current": 8.269904,
+        "low": 4.783578,
+        "high": 9.08525,
+        "median": 6.6768255,
+        "percentile": 0.9473684210526315,
+        "n_closes": 38,
+        "as_of": "2026-08-18",
+        "series": [
+          [
+            "2017-03-31",
+            6.432794
+          ],
+          [
+            "2017-06-30",
+            6.990781
+          ],
+          [
+            "2017-09-29",
+            8.054287
+          ],
+          [
+            "2017-12-29",
+            8.314218
+          ],
+          [
+            "2018-03-29",
+            7.629506
+          ],
+          [
+            "2018-06-29",
+            7.585949
+          ],
+          [
+            "2018-09-28",
+            6.807407
+          ],
+          [
+            "2018-12-31",
+            5.503217
+          ],
+          [
+            "2019-03-29",
+            5.618211
+          ],
+          [
+            "2019-06-28",
+            4.783578
+          ],
+          [
+            "2019-09-30",
+            5.762331
+          ],
+          [
+            "2019-12-31",
+            5.976599
+          ],
+          [
+            "2020-03-31",
+            6.010571
+          ],
+          [
+            "2020-06-30",
+            6.946999
+          ],
+          [
+            "2020-09-30",
+            6.507626
+          ],
+          [
+            "2020-12-31",
+            6.017317
+          ],
+          [
+            "2021-03-31",
+            6.900194
+          ],
+          [
+            "2021-06-30",
+            6.125878
+          ],
+          [
+            "2021-09-30",
+            6.030401
+          ],
+          [
+            "2021-12-31",
+            6.744992
+          ],
+          [
+            "2022-03-31",
+            5.821584
+          ],
+          [
+            "2022-06-30",
+            5.197245
+          ],
+          [
+            "2022-09-30",
+            5.152948
+          ],
+          [
+            "2022-12-30",
+            5.528512
+          ],
+          [
+            "2023-03-31",
+            6.557752
+          ],
+          [
+            "2023-06-30",
+            6.608659
+          ],
+          [
+            "2023-09-29",
+            6.187426
+          ],
+          [
+            "2023-12-29",
+            7.011875
+          ],
+          [
+            "2024-03-28",
+            6.946759
+          ],
+          [
+            "2024-06-28",
+            6.757957
+          ],
+          [
+            "2024-09-30",
+            7.544026
+          ],
+          [
+            "2024-12-31",
+            7.54235
+          ],
+          [
+            "2025-03-31",
+            6.952606
+          ],
+          [
+            "2025-06-30",
+            6.953115
+          ],
+          [
+            "2025-09-30",
+            6.205009
+          ],
+          [
+            "2025-12-31",
+            7.074754
+          ],
+          [
+            "2026-03-31",
+            6.823695
+          ],
+          [
+            "2026-06-30",
+            9.08525
+          ],
+          [
+            "2026-08-18",
+            8.269904
+          ]
+        ],
+        "current_is_last_point": true,
+        "range_excludes_current": true
+      },
+      "sources": [
+        "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+      ]
+    },
+    {
+      "ticker": "WERN",
+      "key": "filing_watch",
+      "tier": "universal",
+      "title": "Filing watch — what has printed since the underwrite",
+      "state": "ready",
+      "changes_the_call": "An unread print is the single commonest way a thesis goes stale without anyone deciding it should: the numbers on the page are from before the filing. It changes the call by saying the call is being made on old evidence.",
+      "caveat": "The expected date is an ESTIMATE from the filer's own prior cadence, not a scheduled date — a late print is not yet a missed one.",
+      "cadence": "daily",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "last_evidence_date": "2026-07-21",
+        "last_evidence_source": "bull reason amendment",
+        "newer_filings": [
+          "8-K 2026-07-28 acc 0000793074-26-000129",
+          "8-K 2026-08-05 acc 0000793074-26-000132",
+          "10-Q 2026-08-07 acc 0000793074-26-000140",
+          "8-K 2026-08-10 acc 0000793074-26-000144"
+        ],
+        "next_expected_print": "2026-08-21",
+        "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+        "unread_print": true
+      },
+      "sources": [
+        "last evidence via bull reason amendment",
+        "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
+      ]
+    },
+    {
+      "ticker": "WERN",
+      "key": "dilution",
+      "tier": "universal",
+      "title": "Dilution pipeline",
+      "state": "ready",
+      "changes_the_call": "Per-share value is the denominator of every leg underwritten. A live shelf being drawn on moves that denominator without any operating news at all, which is why it is watched separately from the business.",
+      "caveat": "",
+      "cadence": "weekly",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
+        "forms": [],
+        "window_days": 1095
+      },
+      "sources": [
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+      ]
+    },
+    {
+      "ticker": "WERN",
+      "key": "attribution",
+      "tier": "universal",
+      "title": "Attribution — position against its assigned benchmark",
+      "state": "refused",
+      "changes_the_call": "It does not change the call — it says whether the call is being PAID, which is the fund's only evidence its discriminator works. A position whose whole return is its benchmark's return is a call that has not yet been right about anything.",
+      "caveat": "Both sides are PRICE returns with dividends excluded — the bias is not zero and not symmetric, and this panel must never be read beside a total-return series.",
+      "cadence": "daily",
+      "missing": [
+        {
+          "kind": "snapshot_field",
+          "detail": "excess",
+          "why": "the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them"
+        }
+      ],
+      "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "WERN",
+      "key": "sources",
+      "tier": "universal",
+      "title": "Sources — what the numbers above rest on",
+      "state": "ready",
+      "changes_the_call": "A figure whose source cannot be reached is not evidence, and the fund's source-binding rule exists so the human verifies instead of trusting the summary. This panel is what makes the other six auditable rather than merely legible.",
+      "caveat": "",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "refs": [
+          "10-Q 0000793074-26-000140",
+          "8-K 0000793074-26-000129 EX-99.1",
+          "8-K 0000793074-26-000092 EX-99.1",
+          "8-K 0000793074-26-000009 EX-99.1"
+        ]
+      },
+      "sources": []
     }
   ]
 }
