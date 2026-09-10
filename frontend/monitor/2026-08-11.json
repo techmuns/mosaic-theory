@@ -330,7 +330,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. ai-datacenter is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "ai-value-migration",
@@ -350,7 +351,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. ai-value-migration HAS a declared thesis card, but this monitor day carries no theme falsifier rows for it — the snapshot predates the sweep, or the sweep did not run. The thesis exists and is unwatched on this day; re-run `vinci monitor`. This is NOT the same as having declared no thesis.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "defense-demand-shift",
@@ -370,7 +372,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. defense-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "glp1-demand-shift",
@@ -390,7 +393,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. glp1-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "glp1-drug-value-chain",
@@ -410,7 +414,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. glp1-drug-value-chain HAS a declared thesis card, but this monitor day carries no theme falsifier rows for it — the snapshot predates the sweep, or the sweep did not run. The thesis exists and is unwatched on this day; re-run `vinci monitor`. This is NOT the same as having declared no thesis.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "truckload-supply-purge",
@@ -430,7 +435,8 @@
       ],
       "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. truckload-supply-purge is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -450,7 +456,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -496,7 +503,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -504,7 +512,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -698,7 +706,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -725,7 +734,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -754,7 +764,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -774,7 +785,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "AORT",
@@ -798,7 +810,8 @@
           "8-K 0001628280-25-038873 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -818,7 +831,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -878,7 +892,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -886,7 +901,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -1020,7 +1035,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -1044,7 +1060,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -1069,7 +1086,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -1089,7 +1107,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "BRBR",
@@ -1112,7 +1131,8 @@
           "8-K 0001628280-25-052773 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1132,7 +1152,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1185,7 +1206,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1193,7 +1215,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -1371,7 +1393,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1395,7 +1418,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1424,7 +1448,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1444,7 +1469,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "EPAM",
@@ -1467,7 +1493,8 @@
           "8-K 0001352010-25-000050 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1487,7 +1514,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1507,7 +1535,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. the record carries kill criteria as PROSE with no measured form, so they can only be re-printed — which is precisely the gap this phase exists to close",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1515,7 +1544,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -1689,7 +1718,10 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {
+        "load_bearing_axis": "multiple"
+      }
     },
     {
       "ticker": "GOOGL",
@@ -1709,7 +1741,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1746,7 +1779,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1766,7 +1800,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1787,7 +1822,8 @@
           "8-K 0001652044-26-000043 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1807,7 +1843,8 @@
       ],
       "reason": "rfile_note 'Supplemental Financial Statement Information - Property and Equipment' — the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1827,7 +1864,8 @@
       ],
       "reason": "rfile_note 'Information about Segments and Geographic Areas - Revenue and Operating Income' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "GOOGL",
@@ -1853,7 +1891,8 @@
       },
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -1878,7 +1917,8 @@
       },
       "sources": [
         "monitor snapshot row · entry 2026-07-20 · benchmark MDY (cap band, assigned at entry)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -1917,7 +1957,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -1925,7 +1966,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -2103,7 +2144,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -2130,7 +2172,8 @@
       "sources": [
         "last evidence via bear reason amendment",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -2159,7 +2202,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -2182,7 +2226,8 @@
       },
       "sources": [
         "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "IT",
@@ -2205,7 +2250,8 @@
           "8-K 0000749251-25-000044 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2225,7 +2271,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2245,7 +2292,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2253,7 +2301,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -2431,7 +2479,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2451,7 +2500,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2480,7 +2530,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2500,7 +2551,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2522,7 +2574,8 @@
           "8-K 0000059478-25-000202 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2542,7 +2595,8 @@
       ],
       "reason": "rfile_note 'Segment Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "LLY",
@@ -2568,7 +2622,8 @@
       },
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2588,7 +2643,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2634,7 +2690,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2642,7 +2699,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -2692,7 +2749,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2720,7 +2778,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2753,7 +2812,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2773,7 +2833,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "MVST",
@@ -2796,7 +2857,8 @@
           "8-K 0001628280-25-039708 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -2816,7 +2878,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -2862,7 +2925,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -2870,7 +2934,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -2936,7 +3000,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -2960,7 +3025,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -2985,7 +3051,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -3005,7 +3072,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NCNO",
@@ -3029,7 +3097,8 @@
           "8-K 0001902733-25-000074 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3049,7 +3118,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3069,7 +3139,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3077,7 +3148,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -3255,7 +3326,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3275,7 +3347,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3308,7 +3381,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3328,7 +3402,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3349,7 +3424,8 @@
           "8-K 0001065280-26-000033 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3369,7 +3445,8 @@
       ],
       "reason": "rfile_note 'Balance Sheet Components - Schedule of Property and Equipment' — the not-yet-in-service and in-service balances are only in the PP&E note; no XBRL tag carries the split. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3389,7 +3466,8 @@
       ],
       "reason": "rfile_note 'Segment and Geographic Information - Schedule of Segment Reporting Financial Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "NFLX",
@@ -3415,7 +3493,8 @@
       },
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3440,7 +3519,8 @@
       },
       "sources": [
         "monitor snapshot row · entry 2026-08-04 · benchmark IWM (cap band, assigned at entry)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3493,7 +3573,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3501,7 +3582,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -3667,7 +3748,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3691,7 +3773,8 @@
       "sources": [
         "last evidence via underwrite_date",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3716,7 +3799,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3739,7 +3823,8 @@
       },
       "sources": [
         "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "SMPL",
@@ -3762,7 +3847,8 @@
           "8-K 0001702744-25-000035 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3782,7 +3868,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3802,7 +3889,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3810,7 +3898,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "refused",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [
@@ -3830,7 +3918,8 @@
       "sources": [
         "",
         ""
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3850,7 +3939,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3903,7 +3993,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3923,7 +4014,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3948,7 +4040,8 @@
           "8-K 0001193125-25-175567 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "TECX",
@@ -3964,7 +4057,8 @@
       "value": {},
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -3984,7 +4078,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4004,7 +4099,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4012,7 +4108,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -4086,7 +4182,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4106,7 +4203,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4143,7 +4241,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4163,7 +4262,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4185,7 +4285,8 @@
           "8-K 0001543151-25-000030 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4205,7 +4306,8 @@
       ],
       "reason": "rfile_note 'Segment Information and Geographic Information - Schedule of Segment Reporting Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "UBER",
@@ -4231,7 +4333,8 @@
       },
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4251,7 +4354,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4271,7 +4375,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4279,7 +4384,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -4457,7 +4562,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4477,7 +4583,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4518,7 +4625,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4538,7 +4646,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4559,7 +4668,8 @@
           "8-K 0001403161-26-000044 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4579,7 +4689,8 @@
       ],
       "reason": "rfile_note 'Segment Information' — per-segment operating income is disclosed in the segment note, not as a top-level tag. no filing probe was supplied to this run, so whether the named note is in the latest filing is UNKNOWN — a declaration records an intention, not evidence, and assuming the note exists is how one filer's note gets read as another's",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "V",
@@ -4605,7 +4716,8 @@
       },
       "sources": [
         "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4630,7 +4742,8 @@
       },
       "sources": [
         "monitor snapshot row · entry 2026-06-17 · benchmark IWM (cap band, assigned at entry)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4650,7 +4763,8 @@
       ],
       "reason": "criterion 'measured_triggers' — a criterion with no resolvable metric can only be re-printed, which is the gap this phase exists to close — the panel needs the measured form, not the prose. no scenario record on file, so there is no measured criterion to put a number beside — the kill text exists only as prose",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4658,7 +4772,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -4760,7 +4874,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4780,7 +4895,8 @@
       ],
       "reason": "snapshot_field 'next_expected_print' — the panel's job is the gap between what was read and what has since been filed; the expected date is what makes an absence meaningful rather than merely quiet. the snapshot carries no 'next_expected_print' for this name",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4800,7 +4916,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4823,7 +4940,8 @@
       },
       "sources": [
         "Polygon daily closes, price return both sides (dividends excluded on the position AND the benchmark alike)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "VRRM",
@@ -4845,7 +4963,8 @@
           "8-K 0001193125-26-067015 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -4865,7 +4984,8 @@
       ],
       "reason": "ledger_row 'verdict' — the panel shows the verdict OF RECORD — the human's confirm/override, beside the machine's proposal; without the row there is no call to show. this name has no row in the latest committed monitor snapshot, so there is no verdict of record to show — an unrecorded position is invisible to the book, which is the state phase 0 exists to fix",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -4904,7 +5024,8 @@
       },
       "sources": [
         "scenario record measured_triggers"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -4912,7 +5033,7 @@
       "tier": "universal",
       "title": "Multiple & price — distance to the underwritten multiple",
       "state": "ready",
-      "changes_the_call": "This is the panel the source plan omitted and the design added, because for a quality megacap the multiple IS the trade: where bear EPS already exceeds today's NTM EPS, the entire downside is compression rather than earnings. A multiple travelling toward the bear case while earnings hold is the call breaking on the only axis that can break it.",
+      "changes_the_call": "The distance between today's multiple and the one underwritten is what this panel measures. Whether closing that distance is what breaks the call depends on which axis the name's own underwrite rests on — a position whose downside is a de-rate breaks here; one whose case is earnings arrival can travel a long way on this line without the thesis moving. The name declares which, and until it does this panel reports a distance and claims nothing about what it costs.",
       "caveat": "A trailing multiple and a forward multiple are different numbers and this panel must name which it shows — the repo has already shipped one defect from two EBITDA rows on different bases sitting in one table.",
       "cadence": "daily",
       "missing": [],
@@ -5090,7 +5211,8 @@
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -5119,7 +5241,8 @@
       "sources": [
         "last evidence via bull reason amendment",
         "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -5139,7 +5262,8 @@
       },
       "sources": [
         "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
-      ]
+      ],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -5159,7 +5283,8 @@
       ],
       "reason": "snapshot_field 'excess' — the decomposition is the point: a position up 30% in a market up 28% is not the same call as one up 30% in a flat market, and only the excess distinguishes them. this name is in neither the snapshot's rows nor its freshness list",
       "value": {},
-      "sources": []
+      "sources": [],
+      "render_config": {}
     },
     {
       "ticker": "WERN",
@@ -5180,7 +5305,8 @@
           "8-K 0000793074-26-000009 EX-99.1"
         ]
       },
-      "sources": []
+      "sources": [],
+      "render_config": {}
     }
   ]
 }

@@ -264,6 +264,26 @@ export function rendersAsRefusal(row) {
   return row.state === "refused" || !renderedBody(row);
 }
 
+//: The per-name half of "what would change the call". SILENT WHEN UNDECLARED, and that is the
+//: point: the panel text was rewritten to claim no axis precisely so a name that has not named one
+//: gets a distance and no story about what it costs. Inventing a default here would put one
+//: position's archetype back on every name, which is the defect this field exists to close.
+const AXIS = {
+  multiple: "This name's underwrite rests on the MULTIPLE — closing this distance is the call "
+    + "breaking.",
+  earnings: "This name's underwrite rests on EARNINGS ARRIVAL — this line can travel a long way "
+    + "without the thesis moving.",
+};
+
+function axisLine(row) {
+  const a = (row.render_config || {}).load_bearing_axis;
+  if (!a) return "";
+  // An unrecognised value is SHOWN, not swallowed: the declare-time check already refuses one, so
+  // seeing it here means the artifact predates that check — and a silent drop would hide it.
+  const said = AXIS[a] || `Declared load-bearing axis: ${escapeHtml(String(a))} (unrecognised).`;
+  return `<span class="pn-axis">${AXIS[a] ? escapeHtml(said) : said}</span>`;
+}
+
 function tile(row) {
   let body = renderedBody(row);
   const isRefused = rendersAsRefusal(row);
@@ -313,7 +333,8 @@ payload disagree, which is a wiring bug rather than missing disclosure`);
       class="pn-badge">${isRefused ? "REFUSED" : ""}</span></h3>
     <div class="pn-body">${body}</div>
     ${!isRefused && row.caveat ? `<p class="pn-caveat">${escapeHtml(row.caveat)}</p>` : ""}
-    <p class="pn-changes"><span>What would change the call</span>${escapeHtml(row.changes_the_call)}</p>
+    <p class="pn-changes"><span>What would change the call</span>${escapeHtml(row.changes_the_call)}${
+      axisLine(row)}</p>
     ${srcs.length ? `<details class="pn-prov"><summary>Sources</summary><ol>${
       srcs.map((s) => `<li>${escapeHtml(String(s))}</li>`).join("")}</ol></details>` : ""}
   </section>`;
