@@ -280,7 +280,64 @@
       "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
     }
   ],
-  "theme_falsifiers": [],
+  "theme_falsifiers": [
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "first-confirming",
+      "trigger": "At the next quarterly print of at least one named representative per beneficiary class — hyperscaler platform (MSFT / GOOGL / AMZN), app-layer moat (CRM / NOW / VEEV / SAP / META), silicon ecosystem (NVDA) — the disclosed model-agnostic AI monetization line GROWS: AI/cloud inference revenue for the hyperscaler, AI attach or module revenue for the app name, software/developer-ecosystem revenue for the silicon vendor. The prints land on schedule regardless; only the reading is uncertain.",
+      "deadline": "2026-12-15",
+      "basis": "one full scheduled print cycle, late Oct - early Dec 2026 — every named representative's next quarterly print lands inside it on schedule; operator-approved shape 2026-08-30 (the names live once, in the trigger)",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "The frontier-to-open catch-up window WIDENS materially: the current frontier release holds a capability lead over the best open-weights models beyond ~12 months on the public benchmarks in use at declaration.",
+      "deadline": "2027-06-30",
+      "basis": "two-plus frontier release cycles land inside the window; operator-selected 2026-08-30",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "Frontier-model IP pricing power RISES: per-token / API / seat list prices increase at named frontier labs without disclosed customer churn.",
+      "deadline": "2027-03-31",
+      "basis": "public price lists + customer disclosures; operator-selected 2026-08-30",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "ai-value-migration",
+      "kind": "falsifier",
+      "trigger": "App-layer gross margins COMPRESS from model-licensing input costs at two or more named app-layer representatives — the moat fails to hold pricing above the model input.",
+      "deadline": "2027-06-30",
+      "basis": "two-plus quarterly print cycles of the named app-layer representatives; operator-selected 2026-08-30",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "glp1-drug-value-chain",
+      "kind": "first-confirming",
+      "trigger": "At the incumbents' next quarterly prints — LLY (late Oct 2026) and NVO (early Nov 2026) — incretin franchise VOLUMES (units/scripts, not dollars) GROW while disclosed net price per unit COMPRESSES: the phase-2 signature (access-driven volume with price give-up) in a single print. The prints land on schedule regardless; only the reading is uncertain.",
+      "deadline": "2026-11-30",
+      "basis": "one scheduled print cycle — both incumbents report by mid-Nov 2026; operator-approved shape 2026-08-31 (the names are the composition's inference, flagged in the note)",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "glp1-drug-value-chain",
+      "kind": "falsifier",
+      "trigger": "The demand peak CONFIRMS: incumbent incretin franchise volumes (units/scripts, not dollars) FLATTEN or decline across two consecutive quarterly prints — the second growth phase fails on volume.",
+      "deadline": "2027-06-30",
+      "basis": "three-plus quarterly print cycles of the incumbent franchises (Q3'26, FY'26, Q1'27 all land inside the window); operator-selected 2026-08-31",
+      "deadline_passed": false
+    },
+    {
+      "driver_key": "glp1-drug-value-chain",
+      "kind": "falsifier",
+      "trigger": "Access expansion STALLS: coverage/reimbursement expansion and direct-to-patient channel volumes stall or reverse at the payer wall — the access driver of the second phase dies.",
+      "deadline": "2027-03-31",
+      "basis": "payer coverage disclosures + the incumbents' direct-to-patient channel disclosures across the 2026-2027 guidance cycle; operator-selected 2026-08-31",
+      "deadline_passed": false
+    }
+  ],
   "notes": [
     "IT: sector re-resolved to Industrials for display (the frozen row logged Other — never rewritten)",
     "IT: benchmark MDY (cap band) SUPERSEDES the ledger row's IWM — the row itself is never mutated",
@@ -312,6 +369,193 @@
     }
   ],
   "panels": [
+    {
+      "ticker": "ai-datacenter",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. ai-datacenter is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "ai-value-migration",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "ready",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "driver_key": "ai-value-migration",
+        "triggers": [
+          {
+            "kind": "first-confirming",
+            "trigger": "At the next quarterly print of at least one named representative per beneficiary class — hyperscaler platform (MSFT / GOOGL / AMZN), app-layer moat (CRM / NOW / VEEV / SAP / META), silicon ecosystem (NVDA) — the disclosed model-agnostic AI monetization line GROWS: AI/cloud inference revenue for the hyperscaler, AI attach or module revenue for the app name, software/developer-ecosystem revenue for the silicon vendor. The prints land on schedule regardless; only the reading is uncertain.",
+            "deadline": "2026-12-15",
+            "basis": "one full scheduled print cycle, late Oct - early Dec 2026 — every named representative's next quarterly print lands inside it on schedule; operator-approved shape 2026-08-30 (the names live once, in the trigger)",
+            "basis_kind": "timing",
+            "deadline_passed": false,
+            "days_remaining": 126
+          },
+          {
+            "kind": "falsifier",
+            "trigger": "Frontier-model IP pricing power RISES: per-token / API / seat list prices increase at named frontier labs without disclosed customer churn.",
+            "deadline": "2027-03-31",
+            "basis": "public price lists + customer disclosures; operator-selected 2026-08-30",
+            "basis_kind": "external",
+            "deadline_passed": false,
+            "days_remaining": 232
+          },
+          {
+            "kind": "falsifier",
+            "trigger": "The frontier-to-open catch-up window WIDENS materially: the current frontier release holds a capability lead over the best open-weights models beyond ~12 months on the public benchmarks in use at declaration.",
+            "deadline": "2027-06-30",
+            "basis": "two-plus frontier release cycles land inside the window; operator-selected 2026-08-30",
+            "basis_kind": "external",
+            "deadline_passed": false,
+            "days_remaining": 323
+          },
+          {
+            "kind": "falsifier",
+            "trigger": "App-layer gross margins COMPRESS from model-licensing input costs at two or more named app-layer representatives — the moat fails to hold pricing above the model input.",
+            "deadline": "2027-06-30",
+            "basis": "two-plus quarterly print cycles of the named app-layer representatives; operator-selected 2026-08-30",
+            "basis_kind": "timing",
+            "deadline_passed": false,
+            "days_remaining": 323
+          }
+        ],
+        "n_passed": 0,
+        "n_unverifiable": 2
+      },
+      "sources": [
+        "data/themes/thesis/<driver>.json — the operator's declared card"
+      ]
+    },
+    {
+      "ticker": "defense-demand-shift",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. defense-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "glp1-demand-shift",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. glp1-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "glp1-drug-value-chain",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "ready",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [],
+      "reason": "",
+      "value": {
+        "driver_key": "glp1-drug-value-chain",
+        "triggers": [
+          {
+            "kind": "first-confirming",
+            "trigger": "At the incumbents' next quarterly prints — LLY (late Oct 2026) and NVO (early Nov 2026) — incretin franchise VOLUMES (units/scripts, not dollars) GROW while disclosed net price per unit COMPRESSES: the phase-2 signature (access-driven volume with price give-up) in a single print. The prints land on schedule regardless; only the reading is uncertain.",
+            "deadline": "2026-11-30",
+            "basis": "one scheduled print cycle — both incumbents report by mid-Nov 2026; operator-approved shape 2026-08-31 (the names are the composition's inference, flagged in the note)",
+            "basis_kind": "timing",
+            "deadline_passed": false,
+            "days_remaining": 111
+          },
+          {
+            "kind": "falsifier",
+            "trigger": "Access expansion STALLS: coverage/reimbursement expansion and direct-to-patient channel volumes stall or reverse at the payer wall — the access driver of the second phase dies.",
+            "deadline": "2027-03-31",
+            "basis": "payer coverage disclosures + the incumbents' direct-to-patient channel disclosures across the 2026-2027 guidance cycle; operator-selected 2026-08-31",
+            "basis_kind": "external",
+            "deadline_passed": false,
+            "days_remaining": 232
+          },
+          {
+            "kind": "falsifier",
+            "trigger": "The demand peak CONFIRMS: incumbent incretin franchise volumes (units/scripts, not dollars) FLATTEN or decline across two consecutive quarterly prints — the second growth phase fails on volume.",
+            "deadline": "2027-06-30",
+            "basis": "three-plus quarterly print cycles of the incumbent franchises (Q3'26, FY'26, Q1'27 all land inside the window); operator-selected 2026-08-31",
+            "basis_kind": "timing",
+            "deadline_passed": false,
+            "days_remaining": 323
+          }
+        ],
+        "n_passed": 0,
+        "n_unverifiable": 1
+      },
+      "sources": [
+        "data/themes/thesis/<driver>.json — the operator's declared card"
+      ]
+    },
+    {
+      "ticker": "truckload-supply-purge",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. truckload-supply-purge is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
     {
       "ticker": "AORT",
       "key": "the_call",
