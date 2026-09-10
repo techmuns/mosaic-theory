@@ -17,6 +17,7 @@ therefore distinguishable in the JSON by a reader who has never seen this code.
 """
 from __future__ import annotations
 
+from datetime import date as _date
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -25,6 +26,7 @@ from vinci import panels_payload as pay
 from vinci.panels import PanelDecision, PanelRegistry, default_registry
 from vinci.panels_declare import read_declarations
 from vinci.panels_resolve import resolve_cohort, resolve_universal, select_row
+from vinci.panels_theme import resolve_theme, theme_registry
 from vinci.panels_universal import universal_registry
 
 
@@ -172,6 +174,36 @@ def panel_rows_for(
             if r.state == "refused" and any(
                     mi.get("kind") in ("ledger_row", "snapshot_field") for mi in r.missing):
                 r.reason = f"{r.reason} {row_absence_reason}".strip()
+    return out
+
+
+def theme_panel_rows(
+    *,
+    driver_keys: list[str],
+    declared_cards: set[str],
+    theme_falsifiers: list[dict[str, Any]],
+    today: _date,
+) -> list[PanelRow]:
+    """Theme panels, keyed by DRIVER rather than by ticker.
+
+    `ticker` carries the `driver_key` — the tier's whole point is that a theme panel attaches to the
+    driver, not the name, so the row's subject is the driver and the renderer groups on it. Named
+    `ticker` because `PanelRow` is one shape for every tier and a second identity field would let a
+    consumer read the wrong one.
+    """
+    reg = theme_registry()
+    out: list[PanelRow] = []
+    for key, dec, payload in resolve_theme(
+        driver_keys, declared_cards=declared_cards,
+        theme_falsifiers=theme_falsifiers, today=today, registry=reg,
+    ):
+        # The driver key is in hand, so the citation names the FILE a reader can open. A literal
+        # "<driver>.json" in a sources list is a placeholder that reads as provenance.
+        r = _row(dec, ticker=key, registry=reg, value=payload,
+                 sources=[f"data/themes/thesis/{key}.json — the operator's declared card"]
+                 if payload else [])
+        if r is not None:
+            out.append(r)
     return out
 
 

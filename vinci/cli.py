@@ -2142,11 +2142,29 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             f = root / "scenarios" / f"{t}.json"
             return _pj.loads(f.read_text()) if f.is_file() else None
 
-        panel_rows = emit_panels(
+        # THEME PANELS attach to the DRIVER, not the ticker, so they are emitted from the driver
+        # set and the sweep rows computed just above — never re-derived from the cards, which would
+        # be the rival computation `ThemeFalsifierRow` explicitly reserves against.
+        from vinci.panels_emit import theme_panel_rows
+
+        tracked = sorted({p.stem for p in (cfg.data_dir / "themes" / "baskets").glob("*.json")}
+                         | {p.stem for p in (cfg.data_dir / "themes" / "economics").glob("*.json")})
+        # THE ASSIGNMENT IS ATOMIC, and that is the whole point of building into a local first.
+        # Seeding `panel_rows` with the theme tier and then `+=`-ing the rest meant a failure in
+        # `emit_panels` — the documented unregistered-panel case — left a THEME-ONLY block on the
+        # snapshot. The renderer shows its "grid unavailable" notice only when the block is EMPTY,
+        # so a broken run would have rendered as a complete six-tile grid with the failure note
+        # buried in `notes`: a partial page that looks whole, which is the absent-vs-broken class
+        # wearing the one disguise this whole build exists to strip off.
+        _theme = theme_panel_rows(
+            driver_keys=tracked, declared_cards={c.driver_key for c in cards},
+            theme_falsifiers=[r.model_dump(mode="json") for r in theme_rows], today=now_date)
+        _named = emit_panels(
             rows=[r.model_dump(mode="json") for r in rows],
             freshness=[f.model_dump(mode="json") for f in fresh],
             dossier_for=_dossier_for, record_for=_record_for, root=root,
         )
+        panel_rows = [*_theme, *_named]
     except Exception as exc:  # noqa: BLE001 — surfaced as a note; see the comment above
         notes.append(f"PANEL GRID UNAVAILABLE ({type(exc).__name__}): {exc}")
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),

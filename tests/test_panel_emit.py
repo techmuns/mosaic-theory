@@ -129,9 +129,24 @@ def test_the_multiple_payload_states_that_its_range_excludes_todays_mark() -> No
 def test_emit_is_deterministic_over_the_committed_corpus() -> None:
     """Re-running the emitter on the same committed inputs reproduces the artifact's block. An
     artifact that cannot be regenerated is not derived data, it is hand-edited state."""
+    import datetime as _dt
+
+    from vinci.panels_emit import theme_panel_rows
+
     snap = _snap()
-    again = emit_panels(rows=snap["rows"], freshness=snap["freshness"],
-                        dossier_for=_dossier, record_for=_record, root=ROOT)
+    cards = {json.loads(p.read_text())["driver_key"]
+             for p in (ROOT / "data" / "themes" / "thesis").glob("*.json")}
+    themes = ROOT / "data" / "themes"
+    tracked = sorted({p.stem for p in (themes / "baskets").glob("*.json")}
+                     | {p.stem for p in (themes / "economics").glob("*.json")})
+    # THEME ROWS FIRST, matching the CLI's own order — the artifact is a sequence, so a
+    # reproduction that emits the same rows in a different order is not a reproduction.
+    again = theme_panel_rows(
+        driver_keys=tracked, declared_cards=cards,
+        theme_falsifiers=snap.get("theme_falsifiers") or [],
+        today=_dt.date.fromisoformat(snap["as_of"]))
+    again += emit_panels(rows=snap["rows"], freshness=snap["freshness"],
+                         dossier_for=_dossier, record_for=_record, root=ROOT)
     got = [json.loads(r.model_dump_json()) for r in again]
     assert got == (snap.get("panels") or [])
 

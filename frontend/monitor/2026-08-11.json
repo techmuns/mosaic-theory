@@ -313,6 +313,126 @@
   ],
   "panels": [
     {
+      "ticker": "ai-datacenter",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. ai-datacenter is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "ai-value-migration",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. ai-value-migration HAS a declared thesis card, but this monitor day carries no theme falsifier rows for it — the snapshot predates the sweep, or the sweep did not run. The thesis exists and is unwatched on this day; re-run `vinci monitor`. This is NOT the same as having declared no thesis.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "defense-demand-shift",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. defense-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "glp1-demand-shift",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. glp1-demand-shift is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "glp1-drug-value-chain",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. glp1-drug-value-chain HAS a declared thesis card, but this monitor day carries no theme falsifier rows for it — the snapshot predates the sweep, or the sweep did not run. The thesis exists and is unwatched on this day; re-run `vinci monitor`. This is NOT the same as having declared no thesis.",
+      "value": {},
+      "sources": []
+    },
+    {
+      "ticker": "truckload-supply-purge",
+      "key": "theme_thesis",
+      "tier": "theme",
+      "title": "Declared thesis — what would falsify it, and by when",
+      "state": "refused",
+      "changes_the_call": "A falsifier whose window has closed is the thesis owing an answer — the fund said what would prove it wrong and by when, and the date arrived. It does not declare the thesis dead: the machine says the window closed, the human reads whether it fired.",
+      "caveat": "No trigger on any committed card carries a metric or a threshold, so nothing here is measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+      "cadence": "event",
+      "missing": [
+        {
+          "kind": "metric_path",
+          "detail": "thesis_card",
+          "why": "the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline"
+        }
+      ],
+      "reason": "metric_path 'thesis_card' — the panel watches a DECLARED thesis; a driver with no card has no mechanism, no market mistake and no falsifiers, so there is nothing to hold to a deadline. truckload-supply-purge is tracked by the fund — it carries a basket and/or an economics roll-up — but no thesis card is declared for it: no mechanism, no market mistake and no falsifiers on file. Nothing is broken; nothing was declared.",
+      "value": {},
+      "sources": []
+    },
+    {
       "ticker": "AORT",
       "key": "the_call",
       "tier": "universal",
