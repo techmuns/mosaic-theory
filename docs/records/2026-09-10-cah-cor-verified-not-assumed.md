@@ -120,3 +120,75 @@ came from the second vocabulary. **Cencora's fee mix is characterised as "certai
 no share given**, so "price-linked" describes the mechanism it discloses, not a measured proportion
 — MCK's ">95%" has no Cencora counterpart. **Falsifier for the COR disposition: Cencora disclosing
 either a GLP-1 profit contribution or the share of branded compensation that is price-linked.**
+## Amendments
+
+**2026-09-10 (same day, after review) — four corrections, three of them to this record's own
+reasoning.**
+
+### 1. The COR disposition is struck. It was a transmission story, not a disclosure.
+
+The body reads *"a compensation component that rides price appreciation runs **against** the
+compression leg"* and *"a distributor whose branded margin rides a price that the thesis says
+compresses is exposed to the driver's wrong leg."* **Both are struck.**
+
+They are the same shape as the WAC mechanism this session already struck from STATE row 21 —
+*"distribution fees ride the base the Jan-2027 WAC reset halves"* — **a plausible transmission story
+standing in for a disclosure**, and it is worse here because it appears in the record that struck
+the first one, three sections later.
+
+**What Cencora actually discloses, and nothing beyond it:**
+
+- DSAs *"have a price appreciation component to them"* — a mechanism, no share given
+- gross profit *"continues to be subject to fluctuation based upon the timing and extent of
+  manufacturer"* price changes — a sensitivity, no sign
+- GLP-1 sales **+25.5%**, *"offset in part by a decline in manufacturer prices"* — **both halves in
+  one clause, and the clause does not say which dominates**
+
+**Which dominates is not determinable from the filings. That is the entire finding.** COR is open,
+and the reasoning above must not be allowed to close it by implication. **The pull settles it.**
+
+### 2. The MCK gate rests on the weaker of the two documents. Recorded as a standing fact.
+
+CAH's *"did not meaningfully contribute to segment profit"* is a **10-K** statement, repeated in the
+10-Q. MCK's *"no impact on operating profit"* and *">95%… fee-for-service"* are **call-only**, and
+**McKesson's own 10-K and 10-Q mention GLP-1 zero times.** The gate pushed hardest on is the one
+carried by the softer source. It stands — corroborated by a better-documented peer reaching the same
+conclusion by an opposite mechanism — but the source tier is now on the record beside it, not
+implied. *This is the step-9 warning from `2026-09-03-glp1-shortlist-step-8.md` landing on the name
+nobody applied it to: the load-bearing numbers are call disclosures, and MCK's are too.*
+
+### 3. A PHRASE QUOTED FROM ONE ISSUER IS THAT ISSUER'S VOCABULARY, NOT THE SECTOR'S.
+
+`fee-for-service` came from **McKesson's call**. Searched across Cardinal and Cencora it returned
+**nothing for either** — and the single Cardinal hit was Medicare reimbursement policy, *"the basis
+for payments beginning to transition from a fee-for-service model to value-based payments"*, an
+unrelated sense of the same phrase. Cardinal's answer was there the whole time under
+`distribution services agreement` / `percentage of the wholesale acquisition cost`.
+
+**A one-issuer phrase run across peers is a ONE-VOCABULARY SEARCH WEARING THE COSTUME OF A VERIFIED
+ONE** — it looks like a term of art because one company uses it as one. **Same class as the
+`ai-compute-platform` prefilter that used OBSERVER vocabulary and so excluded the observed** (GOOGL
+absent from a scan of the compute layer). Both search for a thing in the words of someone standing
+outside it. Added as a clause to CLAUDE.md's never-assert-absence rule, which already required two
+vocabularies and did not say that a borrowed house term is only ever the first.
+
+### 4. The testability invariant needs BOTH halves, or a large basket passes it while testing nothing.
+
+The body's form — *"at least two names whose exposure is SIZED and whose fortunes are not the same
+company's"* — is the first half only, and the two known instances fail on **different** halves:
+
+| | leg being claimed | counter-leg |
+|---|---|---|
+| **`glp1-drug-value-chain`** | **FAILS** — one sized name (WST) | present (LLY/NVO price curve) |
+| **`ai-value-migration`** | passes on count — 168 ratified | **FAILS** — no model-IP leg to measure migration FROM |
+
+**Restated:** *a theme is testable only if its basket holds (a) **at least two independently-fated
+names whose exposure is SIZED on the leg being claimed**, AND (b) **a measurable COUNTER-LEG wherever
+value is claimed to be leaving something.*** A migration thesis with no measurable origin is not
+half-tested, it is untested — and 168 ratified names hide that, which is exactly why the count half
+alone is not the rule.
+
+**BOUNDARY.** No new measurement. Corrections 1, 2 and 4 restate claims in this record's own body
+against sources already cited in it; correction 3 restates the run already reported in its BOUNDARY
+field (17,234 cached files, 24 CAH/COR/MCK primary docs by CIK, vocabularies listed there).
+Dated 2026-09-10.
