@@ -2142,7 +2142,17 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             f = root / "scenarios" / f"{t}.json"
             return _pj.loads(f.read_text()) if f.is_file() else None
 
-        panel_rows = emit_panels(
+        # THEME PANELS attach to the DRIVER, not the ticker, so they are emitted from the driver
+        # set and the sweep rows computed just above — never re-derived from the cards, which would
+        # be the rival computation `ThemeFalsifierRow` explicitly reserves against.
+        from vinci.panels_emit import theme_panel_rows
+
+        tracked = sorted({p.stem for p in (cfg.data_dir / "themes" / "baskets").glob("*.json")}
+                         | {p.stem for p in (cfg.data_dir / "themes" / "economics").glob("*.json")})
+        panel_rows = theme_panel_rows(
+            driver_keys=tracked, declared_cards={c.driver_key for c in cards},
+            theme_falsifiers=[r.model_dump(mode="json") for r in theme_rows], today=now_date)
+        panel_rows += emit_panels(
             rows=[r.model_dump(mode="json") for r in rows],
             freshness=[f.model_dump(mode="json") for f in fresh],
             dossier_for=_dossier_for, record_for=_record_for, root=root,

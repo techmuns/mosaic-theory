@@ -209,6 +209,28 @@ const BODY = {
       above</small></p>` + shown.map((r) =>
       `<p class="pn-mono">${escapeHtml(String(r))}</p>`).join("") + more;
   },
+  theme_thesis(v) {
+    const ts = v.triggers || [];
+    if (!ts.length) return "";
+    // THE BASIS RENDERS BESIDE THE TRIGGER, because a criterion nobody can check is not a
+    // criterion — and a basis naming a source OUTSIDE this repo is marked as such rather than
+    // sharing the look of one checkable against filing cadence. An unchecked claim must not borrow
+    // the credibility of a checked one.
+    return `<ul class="pn-theme">${ts.map((t) => {
+      const days = typeof t.days_remaining === "number"
+        ? (t.days_remaining < 0 ? `${fmtInt(-t.days_remaining)}d past`
+          : `${fmtInt(t.days_remaining)}d left`) : DASH;
+      const kind = t.basis_kind === "timing" ? "checkable"
+        : t.basis_kind === "external" ? "outside this repo" : "no basis stated";
+      return `<li class="${t.deadline_passed ? "passed" : ""}">
+        <span class="pn-tk">${escapeHtml(String(t.kind || ""))}</span>
+        ${escapeHtml(String(t.trigger || ""))}
+        <span class="pn-tmeta">${escapeHtml(fmtDate(t.deadline))} · ${days}${
+        t.deadline_passed ? " · WINDOW CLOSED" : ""}</span>
+        <span class="pn-tbasis ${t.basis_kind}">basis (${kind}): ${
+        escapeHtml(String(t.basis || "—"))}</span></li>`;
+    }).join("")}</ul>`;
+  },
   cost_of_borrowing(v) {
     // COVERAGE IS NEVER OPTIONAL BESIDE A RATE. AORT's fixed average is struck over one $0.9M bond
     // in a $220.9M stack; printing 6.05% alone repeats the lease defect one level down.
@@ -249,9 +271,12 @@ function tile(row) {
     // A REFUSAL IS A TILE — bordered, badged, and carrying its reason in full. And a READY row whose
     // body could not be built is shown the same way rather than as an empty frame: an empty tile is
     // indistinguishable from a panel that does not apply, which is the one thing the rule forbids.
+    // THE `why` IS NOT REPEATED HERE. `reason` is composed upstream as "<kind> <detail> — <why>.
+    // <upstream>", so printing `m.why` in this list too rendered the same sentence twice in every
+    // refused tile, one paragraph apart — which reads as two different findings on a first pass.
+    // The list names WHAT is missing; the block below says why and carries the extractor's words.
     const req = (row.missing || []).map((m) =>
-      `<li><code>${escapeHtml(m.kind)}</code> ${escapeHtml(m.detail)}
-        <span>${escapeHtml(m.why)}</span></li>`).join("");
+      `<li><code>${escapeHtml(m.kind)}</code> ${escapeHtml(m.detail)}</li>`).join("");
     // A REFUSAL STILL SHOWS WHAT IT DOES HAVE. `kills` refuses on every name in the corpus because
     // no record carries a measured criterion — but the criteria PROSE exists, and hiding it behind
     // the refusal would leave the reader with less than the terminal view already gives them. The
@@ -272,7 +297,8 @@ payload disagree, which is a wiring bug rather than missing disclosure`);
   }
   const srcs = (row.sources || []).filter(Boolean);
   return `<section class="pn-panel ${isRefused ? "refused" : "ready"}">
-    <h3>${escapeHtml(row.title)}<span class="pn-badge">${isRefused ? "REFUSED" : ""}</span></h3>
+    <h3>${escapeHtml(row.tier === "theme" ? `${row.ticker} — ${row.title}` : row.title)}<span
+      class="pn-badge">${isRefused ? "REFUSED" : ""}</span></h3>
     <div class="pn-body">${body}</div>
     ${!isRefused && row.caveat ? `<p class="pn-caveat">${escapeHtml(row.caveat)}</p>` : ""}
     <p class="pn-changes"><span>What would change the call</span>${escapeHtml(row.changes_the_call)}</p>
@@ -282,7 +308,10 @@ payload disagree, which is a wiring bug rather than missing disclosure`);
 }
 
 export function panelGridHtml(rows, { ticker } = {}) {
-  const mine = (rows || []).filter((r) => !ticker
+  // A THEME ROW'S `ticker` IS A DRIVER KEY — the tier attaches to the driver, not the name. The
+  // ticker filter must therefore let theme rows through, or the whole tier disappears from every
+  // page while looking exactly like a tier that emitted nothing.
+  const mine = (rows || []).filter((r) => r.tier === "theme" || !ticker
     || String(r.ticker).toUpperCase() === String(ticker).toUpperCase());
   if (!mine.length) return "";
   const byTier = { universal: [], cohort: [], theme: [], name: [] };
