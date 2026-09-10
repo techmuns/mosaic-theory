@@ -273,3 +273,88 @@ console.log(JSON.stringify({
     assert res["hollowCounted"], "the header must be counted by the predicate the tile uses"
     assert res["verdictShortened"], res
     assert res["multiplePrintsItsAsOf"] and res["multipleDoesNotSayToday"], res
+
+
+def test_every_truncated_list_in_the_renderer_states_its_own_truncation_node() -> None:
+    """A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md, 2026-09-10).
+
+    #601 fixed exactly two instances of this in `vinci/panels_render.py` — and THIS branch renamed
+    that file, so the fix landed on a file that no longer exists here while the identical `[:N]`
+    lived on in `panels.js`, the renderer that replaced it. A rename is a sibling call site with the
+    evidence removed: the conflict was a modify/delete, and resolving it by deleting would have
+    dropped the fix silently.
+
+    THREE sites here, not the two #601 had. `sources` truncates too, and it is the worst-placed of
+    the three: it prints a CORRECT count in the headline over a PARTIAL body, in the one tile a
+    reader opens to CHECK rather than to trust — which is precisely the pair the rule names as what
+    makes a truncation convincing.
+    """
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { panelGridHtml } = await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href);
+const base = { ticker: "AAA", tier: "universal", changes_the_call: "c", caveat: "",
+  cadence: "event", missing: [], reason: "", sources: [], state: "ready" };
+const nine = Array.from({length: 9}, (_, i) => `10-Q 2026-0${i+1}-01 acc 000${i}`);
+const tl = panelGridHtml([{ ...base, key: "filing_watch", title: "F",
+  value: { last_evidence_date: "2026-01-01", newer_filings: nine,
+           next_expected_print: "2026-11-01", unread_print: true } }], { ticker: "AAA" });
+const forms = [["424B2", 20], ["8-K", 9], ["S-8", 4], ["S-3", 3], ["424B5", 2],
+               ["6-K", 1], ["FWP", 1], ["S-4", 1]];
+const dil = panelGridHtml([{ ...base, key: "dilution", title: "D",
+  value: { line: "a line", forms, window_days: 1095 } }], { ticker: "AAA" });
+const refs = Array.from({length: 8}, (_, i) => `10-Q 000165204${i}-26-0000${i}`);
+const src = panelGridHtml([{ ...base, key: "sources", title: "S", value: { refs } }],
+  { ticker: "AAA" });
+// ...and the same three when nothing overflows: no summary line may appear.
+const tl2 = panelGridHtml([{ ...base, key: "filing_watch", title: "F",
+  value: { last_evidence_date: "2026-01-01", newer_filings: nine.slice(0, 3),
+           next_expected_print: "2026-11-01", unread_print: false } }], { ticker: "AAA" });
+const src2 = panelGridHtml([{ ...base, key: "sources", title: "S",
+  value: { refs: refs.slice(0, 2) } }], { ticker: "AAA" });
+console.log(JSON.stringify({
+  timelineStatesRest: /\+5 more/.test(tl) && /of 9 filed since/.test(tl),
+  timelineDrawsFour: (tl.match(/filed since/g) || []).length === 5,   // 4 dots + the overflow
+  formsStateRest: /showing 5 of 8 form types/.test(dil) && /38 of 41 filings/.test(dil),
+  sourcesStateRest: /showing 5 of 8/.test(src),
+  sourcesHeadlineIsTheTruth: /pn-big">8</.test(src),
+  quietTimelineSaysNothing: !/more/.test(tl2),
+  quietSourcesSayNothing: !/showing/.test(src2),
+}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=ROOT)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+    assert got == dict.fromkeys(got, True), got
+
+
+def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
+    """CORPUS BEFORE SYNTHETIC — the pin above is built by hand, so this proves the condition is
+    REAL rather than invented, and it cannot pass vacuously.
+
+    TECX carries 8 form types against 5 bars and 8 source refs against 5 lines, both in the
+    committed artifact. The timeline cap has NO corpus witness (WERN's 4 exactly meets it and does
+    not exceed it), which is recorded rather than papered over: #601 noted the same asymmetry, and
+    a fix with no witness is proven by construction only.
+    """
+    forms_max = refs_max = newer_max = 0
+    for p in _snap().get("panels") or []:
+        v = p.get("value") or {}
+        forms_max = max(forms_max, len(v.get("forms") or []))
+        refs_max = max(refs_max, len(v.get("refs") or []))
+        newer_max = max(newer_max, len(v.get("newer_filings") or []))
+    assert forms_max > 5, f"no committed dossier overflows the form bars (max {forms_max})"
+    assert refs_max > 5, f"no committed dossier overflows the source list (max {refs_max})"
+    # Stated, not asserted: the timeline cap is unwitnessed on this corpus today.
+    assert newer_max <= 4, (
+        f"a name now carries {newer_max} newer filings — the timeline cap HAS a corpus witness, so "
+        f"pin it in the node test above and retire this line")

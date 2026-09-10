@@ -342,6 +342,19 @@ EXPOSURE into an investment view were not written down.
     **base IRR** <12% fails · 12-15% minimum_met · >=15% preferred. IRR NEVER replaces asymmetry.
     A name that clears exposure but fails here is a WATCH with a re-underwrite trigger, not a BUY.
     **RATIFIED IS NOT PRICED** — ratifying confirms exposure is real and says nothing about cost.
+    **THE STANDING R3 MULTIPLE METHOD IS ANCHOR-AND-DISPLACE** (ratified on GOOGL 2026-09-10):
+    every leg is a DISPLACEMENT from the name's VERIFIED CURRENT forward multiple — bull holds it,
+    base compresses on duration, bear de-rates — and **never a draw from a distribution**. Own-history
+    quartiles, an EV/EBIT cross-check and peer context CORROBORATE; per the `BASIS MATCH: LIMITED`
+    ruling none of them is load-bearing, because a historical `P/NTM EPS` row is not proven to share
+    the normalized denominator the current figure uses. *The tell that separates the two: on GOOGL,
+    bull 26.0x sits **0.03** from the current 26.03x and **0.75** from p75 26.75x — a
+    distribution-derived bull would sit at p75. Base landing near the median is coincidental
+    corroboration, and it is exactly the proximity that invites a reader to infer derivation.*
+    **DISPLACEMENT MAGNITUDE IS ANALYST JUDGMENT, and where the memo gives no reason for a
+    displacement the record says so rather than supplying one** — authoring a justification for a
+    bear leg on a record already at PASS is manufacturing support for the outcome, the shape
+    `IRR_FLOOR`'s own docstring forbids.
 11. **Frontend mirror** — `python3 frontend/build.py`. The index ACCUMULATES: a page this run did not
     rebuild is carried forward, because every historical theme scan is preserved. `driver_summary` in
     `context.json` is QUOTED from the ratified spec; `analyst_notes` are analyst-owned.

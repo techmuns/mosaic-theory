@@ -29,6 +29,15 @@ const pctc = (v, d = 0) => (typeof v === "number" && isFinite(v)
   ? (v * 100).toFixed(d) + "%" : DASH);
 const rate = (v, d = 2) => (typeof v === "number" && isFinite(v) ? v.toFixed(d) + "%" : DASH);
 
+// A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md, 2026-09-10). These three caps were
+// ported from vinci/panels_render.py, which #601 fixed and this branch then RENAMED — so the fix
+// landed on a file that no longer exists here while the identical `[:N]` lived on in the renderer
+// that replaced it. A sample knows it is a sample; a truncated print does not, and a correct count
+// beside a partial body is what makes it convincing.
+const TIMELINE_DOTS = 4;   // "filed since" dots before the overflow dot
+const FORM_BARS = 5;       // form-mix bars before the summary line
+const SOURCE_REFS = 5;     // primary filings listed before the summary line
+
 // --- exhibits -------------------------------------------------------------------------------
 // Geometry is computed from the SAME numbers that are printed beside it, so a bar can never
 // disagree with its own label — the failure the design's first draft was rebuilt for.
@@ -97,9 +106,17 @@ function timeline({ last_evidence_date, newer_filings, next_expected_print }) {
     li.push(`<li class="read"><b>${escapeHtml(fmtDate(last_evidence_date))}</b>
       <span>last read</span></li>`);
   }
-  for (const n of (newer_filings || []).slice(0, 4)) {
+  const newer = newer_filings || [];
+  for (const n of newer.slice(0, TIMELINE_DOTS)) {
     li.push(`<li class="unread"><b>${escapeHtml(String(n).split(" acc ")[0])}</b>
       <span>filed since</span></li>`);
+  }
+  // Without this, a nine-filing gap renders identically to a four-filing one — in the panel that
+  // exists to show the size of the gap. The overflow dot carries the remainder so the drawn
+  // distance cannot understate the real one.
+  if (newer.length > TIMELINE_DOTS) {
+    li.push(`<li class="unread"><b>+${fmtInt(newer.length - TIMELINE_DOTS)} more</b>
+      <span>of ${fmtInt(newer.length)} filed since</span></li>`);
   }
   if (next_expected_print) {
     li.push(`<li class="next"><b>${escapeHtml(fmtDate(next_expected_print))}</b>
@@ -164,18 +181,33 @@ const BODY = {
   },
   dilution(v) {
     const f = v.forms || [];
-    const mx = Math.max(1, ...f.map((i) => i[1]));
-    return `<div class="pn-bars">${f.slice(0, 5).map(([k, n]) =>
+    const top = f.slice(0, FORM_BARS);
+    const mx = Math.max(1, ...top.map((i) => i[1]));
+    // One committed dossier carries 8 form types against 5 bars; without the summary the chart
+    // reads as the whole mix.
+    const drawn = top.reduce((a, i) => a + i[1], 0);
+    const total = f.reduce((a, i) => a + i[1], 0);
+    const more = f.length > top.length
+      ? `<p class="pn-sub">showing ${fmtInt(top.length)} of ${fmtInt(f.length)} form types
+         (${fmtInt(drawn)} of ${fmtInt(total)} filings)</p>` : "";
+    return `<div class="pn-bars">${top.map(([k, n]) =>
       `<div class="pn-bar"><span class="pn-bl">${escapeHtml(k)}</span>
         <span class="pn-bt"><i class="pn-bf pos" style="left:0;width:${(n / mx * 100).toFixed(0)}%"></i></span>
-        <span class="pn-bv">${fmtInt(n)}</span></div>`).join("")}</div>`
+        <span class="pn-bv">${fmtInt(n)}</span></div>`).join("")}</div>${more}`
       + (v.line ? `<p class="pn-sub">${escapeHtml(String(v.line))}</p>` : "");
   },
   sources(v) {
     const refs = v.refs || [];
+    const shown = refs.slice(0, SOURCE_REFS);
+    // The count in the headline is CORRECT and the body is PARTIAL — exactly the pair the rule
+    // names as what makes a truncation convincing. This is the tile a reader opens to CHECK rather
+    // than trust, so an unstated remainder here is the worst-placed instance of the three.
+    const more = refs.length > shown.length
+      ? `<p class="pn-sub">showing ${fmtInt(shown.length)} of ${fmtInt(refs.length)} —
+         the full list is in the day's monitor JSON</p>` : "";
     return `<p class="pn-big">${fmtInt(refs.length)}<small>primary filings behind the numbers
-      above</small></p>` + refs.slice(0, 5).map((r) =>
-      `<p class="pn-mono">${escapeHtml(String(r))}</p>`).join("");
+      above</small></p>` + shown.map((r) =>
+      `<p class="pn-mono">${escapeHtml(String(r))}</p>`).join("") + more;
   },
   cost_of_borrowing(v) {
     // COVERAGE IS NEVER OPTIONAL BESIDE A RATE. AORT's fixed average is struck over one $0.9M bond
