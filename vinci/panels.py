@@ -66,9 +66,14 @@ class Requirement(BaseModel, frozen=True):
     @field_validator("detail", "why")
     @classmethod
     def _not_blank(cls, v: str) -> str:
+        # STRIPPED, NOT MERELY CHECKED. `detail` is the LOOKUP KEY a caller reports disclosure
+        # under (`decide(have={detail: True})`), so a spec authored with a stray trailing space
+        # would never match the key the caller sends and the panel would refuse forever with a
+        # requirement the filing actually satisfies. `require_sleeve` normalises for the same
+        # reason. Validating on `.strip()` while STORING the unstripped value is the bug.
         if not v.strip():
             raise ValueError("a requirement states WHAT it needs and WHY; neither may be blank")
-        return v
+        return v.strip()
 
 
 class PanelSpec(BaseModel, frozen=True):
@@ -97,9 +102,12 @@ class PanelSpec(BaseModel, frozen=True):
     @field_validator("key", "title")
     @classmethod
     def _not_blank(cls, v: str) -> str:
+        # `key` is the registry key AND the key a name declares a panel by, so it is normalised
+        # rather than merely checked — " commissioning" registering beside "commissioning" is two
+        # panels for one question, and `register`'s duplicate guard would not see it.
         if not v.strip():
             raise ValueError("a panel carries a key and a human title")
-        return v
+        return v.strip()
 
 
 # --------------------------------------------------------------------------------------------
@@ -184,16 +192,35 @@ class PanelRegistry:
         An UNDECLARED panel is `not_in_set` EVEN WHEN every requirement is satisfied. A name that
         happens to file the note does not thereby acquire the economic question — that inversion
         is the failure the standing rule was written for.
+
+        A `have`/`because` KEY THAT MATCHES NO REQUIREMENT IS REFUSED, for the same reason an
+        unregistered panel is: it is a wiring bug that would otherwise pass as an answer. A
+        mis-keyed `have` reads as "not there" and refuses a panel whose disclosure is present —
+        a LOUD refusal naming a requirement the filing actually satisfies, which is worse than a
+        blank tile because it is believed. A mis-keyed `because` silently drops the extractor's
+        own words, leaving the generic head — and the extractor's refusal reaching the reader
+        verbatim is this module's whole job.
         """
         spec = self._by_key.get(key)
         if spec is None:
             # Not silence: a name declaring a panel that does not exist is a CONFIGURATION bug,
-            # and configuration bugs that render as blank tiles are how a grid lies. Loud.
-            raise KeyError(f"panel {key!r} is not registered; declared panels must exist")
-        if not declared:
-            return PanelDecision(key=key, state="not_in_set")
+            # and configuration bugs that render as blank tiles are how a grid lies. Loud. The
+            # admissible set is NAMED, per the registry convention (`require_sleeve`): a refusal
+            # that says only "unknown" leaves the reader hunting for which entry to edit.
+            raise KeyError(
+                f"panel {key!r} is not registered; declared panels must exist — registered: "
+                f"{sorted(self._by_key)}")
         have = have or {}
         because = because or {}
+        details = {r.detail for r in spec.requires}
+        unknown = sorted((have.keys() | because.keys()) - details)
+        if unknown:
+            raise KeyError(
+                f"panel {key!r} was told about requirement(s) it does not have: {unknown}; it "
+                f"requires {sorted(details)}. A key matching no requirement is a wiring bug, and "
+                f"silently reads as 'not there'.")
+        if not declared:
+            return PanelDecision(key=key, state="not_in_set")
         missing = tuple(r for r in spec.requires if not have.get(r.detail, False))
         if missing:
             return PanelDecision(

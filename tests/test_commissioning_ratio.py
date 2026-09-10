@@ -216,3 +216,20 @@ def test_the_segment_route_keeps_its_own_absence_meaning() -> None:
     with pytest.raises(SegmentReportUnavailableError) as got:
         _pick_report("<FilingSummary></FilingSummary>")
     assert "a single-segment filer discloses none, and that is an answer" in str(got.value)
+
+
+def test_a_third_topic_cannot_inherit_the_segment_absence_story_by_forgetting_a_keyword() -> None:
+    """The defect class, closed rather than fixed once.
+
+    Parameterising the clause fixed the PP&E route; leaving the SEGMENT sentence as the default
+    left the next topic one forgotten keyword away from telling the wrong note's story again —
+    and `what=` is already easy to remember because the message is visibly wrong without it,
+    while an inherited absence clause reads perfectly and is false. So every topic but segments
+    must state its own, and forgetting raises before any fetch. The segment route's own
+    no-keyword call is pinned by the test above, so this one only shows every OTHER topic refused.
+    """
+    from vinci.edgar.segments import _pick_report
+
+    with pytest.raises(ValueError, match="must state what ABSENCE means"):
+        _pick_report("<FilingSummary></FilingSummary>",
+                     topic=re.compile("goodwill", re.I), what="goodwill")

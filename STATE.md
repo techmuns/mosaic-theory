@@ -659,7 +659,7 @@ Each line: *what it does* — *verified how*.
 - **"Built but not running" reads from the filing — the plan's item 2** (`vinci/edgar/commissioning.py`). Reproduces the monitoring plan's own series from the notes: 35.7% (Dec-24) -> 38.6% (Dec-25) -> **49.7%** (Jun-26), with the 10-K and 10-Q
   agreeing independently on the period they share. Neither input exists in companyfacts (both are dimensional PP&E members), so this is the R-file route #578 opened, generalised by topic. **SCOPE STATED, NOT ASSUMED:** the plan's ratio divides ALL not-yet-in-service
   assets by the TECHNICAL-INFRASTRUCTURE member alone — a whole over a part — so the like-for-like figure (40.4% vs 49.7%) is carried beside it and the direction holds either way. The note number moves (R70 in the 10-K, R64 in the 10-Q), which is the plan's own
-  Part 7 trap 2; resolution is by ShortName. *NO CONSUMER YET — phase 2 (#TBD) registers the panel and decides whether it may render; the RENDERER is phase 3, unbuilt.*
+  Part 7 trap 2; resolution is by ShortName. *NO CONSUMER YET — phase 2 (#590) registers the panel and decides whether it may render; the RENDERER is phase 3, unbuilt.*
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
 **ACCEPTED RISK — THE COHORT SPLIT MAY BE ANCHORING THE HUMAN (opened 2026-08-26, PR #507).**

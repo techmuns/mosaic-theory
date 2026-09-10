@@ -63,6 +63,10 @@ _DETAILS = re.compile(r"\(details\)", re.I)
 #: ...and which of the DETAILS reports holds ECONOMICS rather than geography or long-lived assets.
 #: Named rather than positional — see `_pick_report` for the report this distinguishes it from.
 _ECONOMICS = re.compile(r"revenue|income|profit|loss|ebitda", re.I)
+#: What ABSENCE means for the SEGMENT note, and for that note only. Named rather than left as a
+#: bare default so the next topic cannot inherit it silently — see `_pick_report`.
+_SEGMENT_ABSENCE = ("a single-segment filer discloses none, and that is an answer rather than a "
+                    "failure")
 
 
 class SegmentReportUnavailableError(RuntimeError):
@@ -129,8 +133,7 @@ def _number(cell: str) -> float | None:
 def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
                  refine: re.Pattern[str] = _ECONOMICS,
                  what: str = "segment",
-                 absent_means: str = "a single-segment filer discloses none, and that is an "
-                                     "answer rather than a failure") -> tuple[str, str]:
+                 absent_means: str | None = None) -> tuple[str, str]:
     """(filename, short name) of the DETAILS report on ``topic`` — or raise, naming what was there.
 
     PARAMETERISED because the same resolution serves any note. The PP&E note the commissioning
@@ -141,7 +144,21 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
     A filing carries several segment reports and only one holds the numbers; the others are the
     accounting policy and a tables-only stub. Preferring "(Details)" is not a heuristic about
     wording — it is the SEC renderer's own suffix for the report that holds the tagged facts.
+
+    ``absent_means`` IS REQUIRED OF EVERY TOPIC BUT SEGMENTS, and that is the point rather than an
+    awkwardness. What a MISSING note means is the one thing in this function that does not
+    generalise — a single-segment filer really discloses no segment note, while every operating
+    company holds fixed assets — so leaving it to a default is how the PP&E route came to refuse
+    with the segment note's conclusion. A third topic that forgets it gets a loud ValueError before
+    any I/O, never the segment story.
     """
+    if absent_means is None:
+        if what != "segment":
+            raise ValueError(
+                f"_pick_report(what={what!r}) must state what ABSENCE means for its OWN note: the "
+                f"segment clause ('{_SEGMENT_ABSENCE}') is not transferable, and inheriting it is "
+                f"the defect this parameter exists to prevent. Pass absent_means=…")
+        absent_means = _SEGMENT_ABSENCE
     candidates: list[tuple[str, str]] = []
     for block in re.findall(r"<Report[^>]*>(.*?)</Report>", summary_xml, re.S):
         fname = re.search(r"<HtmlFileName>(.*?)</HtmlFileName>", block)
@@ -177,7 +194,7 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
     # bare one, because it is believed.
     raise SegmentReportUnavailableError(
         f"this filing indexes no report naming a {what}"
-        + (absent_means and f" — {absent_means}" or ""))
+        + (f" — {absent_means}" if absent_means else ""))
 
 
 def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]:

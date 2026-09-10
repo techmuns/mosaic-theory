@@ -142,3 +142,52 @@ def test_registry_refuses_a_duplicate_key() -> None:
     reg = PanelRegistry((SEGMENT_ECONOMICS,))
     with pytest.raises(ValueError, match="already registered"):
         reg.register(SEGMENT_ECONOMICS)
+
+
+def test_a_key_and_a_requirement_detail_are_normalised_not_merely_checked() -> None:
+    """`detail` is the LOOKUP KEY a caller reports disclosure under, and `key` is the registry's.
+
+    Validating on `.strip()` while STORING the unstripped string accepts " commissioning" beside
+    "commissioning" — two registry entries for one question, invisible to the duplicate guard —
+    and a `detail` with a trailing space that NO caller key can ever match, so the panel refuses
+    forever while naming a requirement the filing satisfies. The guard is the normalisation, not
+    the blank check.
+    """
+    assert Requirement(kind="tag", detail="  x  ", why=" y ").detail == "x"
+    assert PanelSpec(key=" k ", tier="name", title=" T ").key == "k"
+
+    reg = PanelRegistry((PanelSpec(key="dup", tier="name", title="T"),))
+    with pytest.raises(ValueError, match="already registered"):
+        reg.register(PanelSpec(key=" dup ", tier="name", title="T"))
+
+
+def test_a_requirement_key_that_matches_nothing_is_refused_not_read_as_absent() -> None:
+    """A mis-keyed `have`/`because` is a WIRING bug, and the two ways it fails are both silent.
+
+    A `have` key that matches no requirement leaves the real one defaulting to False, so the
+    panel refuses LOUDLY and names a requirement the filing actually satisfies — worse than a
+    blank tile, because a named refusal is believed. A mis-keyed `because` drops the extractor's
+    verbatim words, leaving the generic head, which is the one thing `_explain` exists to carry.
+    """
+    reg = default_registry()
+    with pytest.raises(KeyError, match="does not have"):
+        reg.decide("commissioning", declared=True, have={"property & equipment": True})
+    with pytest.raises(KeyError, match="does not have"):
+        reg.decide(
+            "commissioning", declared=True, have={"property and equipment": False},
+            because={"ppe": WERN_NO_PPE},
+        )
+    # ...and the correctly-keyed call still answers, so the guard is not simply refusing everything.
+    assert reg.decide(
+        "commissioning", declared=True, have={"property and equipment": True}
+    ).state == "ready"
+
+
+def test_the_unregistered_panel_refusal_names_the_registered_set() -> None:
+    """House convention (`require_sleeve`): refuse an unlisted value NAMING the admissible set.
+
+    "unknown panel" alone leaves the operator hunting for which declaration to edit; the likely
+    cause is a typo one character from a real key.
+    """
+    with pytest.raises(KeyError, match="commissioning"):
+        default_registry().decide("comissioning", declared=True)
