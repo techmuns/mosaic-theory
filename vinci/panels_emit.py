@@ -197,8 +197,10 @@ def theme_panel_rows(
         driver_keys, declared_cards=declared_cards,
         theme_falsifiers=theme_falsifiers, today=today, registry=reg,
     ):
+        # The driver key is in hand, so the citation names the FILE a reader can open. A literal
+        # "<driver>.json" in a sources list is a placeholder that reads as provenance.
         r = _row(dec, ticker=key, registry=reg, value=payload,
-                 sources=["data/themes/thesis/<driver>.json — the operator's declared card"]
+                 sources=[f"data/themes/thesis/{key}.json — the operator's declared card"]
                  if payload else [])
         if r is not None:
             out.append(r)

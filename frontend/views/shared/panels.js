@@ -275,8 +275,17 @@ function tile(row) {
     // <upstream>", so printing `m.why` in this list too rendered the same sentence twice in every
     // refused tile, one paragraph apart — which reads as two different findings on a first pass.
     // The list names WHAT is missing; the block below says why and carries the extractor's words.
-    const req = (row.missing || []).map((m) =>
-      `<li><code>${escapeHtml(m.kind)}</code> ${escapeHtml(m.detail)}</li>`).join("");
+    // ...and the `why` is dropped from this list ONLY when `reason` already carries it. `decide()`
+    // composes reason as "<kind> <detail> — <why>. <upstream>" on the normal path, but its
+    // MISSING-CONFIG branch builds its own sentence from `config_schema` and never mentions `why` —
+    // so an unconditional drop would lose the explanation entirely on exactly the refusal a name
+    // hits when it has been half-onboarded. Latent today (0 of 124 committed rows take that
+    // branch) and cheap to keep correct.
+    const req = (row.missing || []).map((m) => {
+      const dup = m.why && String(row.reason || "").includes(m.why);
+      return `<li><code>${escapeHtml(m.kind)}</code> ${escapeHtml(m.detail)}${
+        dup ? "" : `<span>${escapeHtml(m.why || "")}</span>`}</li>`;
+    }).join("");
     // A REFUSAL STILL SHOWS WHAT IT DOES HAVE. `kills` refuses on every name in the corpus because
     // no record carries a measured criterion — but the criteria PROSE exists, and hiding it behind
     // the refusal would leave the reader with less than the terminal view already gives them. The
@@ -290,7 +299,10 @@ function tile(row) {
     const why = row.reason || (row.state === "refused" ? "" : `the artifact marks this panel READY \
 but its committed value carries nothing this surface can draw — the requirement check and the \
 payload disagree, which is a wiring bug rather than missing disclosure`);
-    body = `<p class="pn-why">This panel applies to this name and <b>cannot be computed</b>.</p>
+    // SUBJECT-AWARE. The h3 was taught that a theme tile is about a DRIVER and this sentence was
+    // not, so all six committed theme tiles read "applies to this name" under a driver heading.
+    const subject = row.tier === "theme" ? "this driver" : "this name";
+    body = `<p class="pn-why">This panel applies to ${subject} and <b>cannot be computed</b>.</p>
       ${req ? `<ul class="pn-missing">${req}</ul>` : ""}
       ${why ? `<p class="pn-up">${escapeHtml(why)}</p>` : ""}
       ${partial ? `<p class="pn-partial-head">The criteria themselves, unmeasured:</p>${partial}` : ""}`;
@@ -305,6 +317,19 @@ payload disagree, which is a wiring bug rather than missing disclosure`);
     ${srcs.length ? `<details class="pn-prov"><summary>Sources</summary><ol>${
       srcs.map((s) => `<li>${escapeHtml(String(s))}</li>`).join("")}</ol></details>` : ""}
   </section>`;
+}
+
+export function tabTickers(rows) {
+  // THE TAB STRIP IS A NAME STRIP. Theme rows carry a DRIVER KEY in `ticker` (the tier attaches to
+  // the driver, not the name), so deriving tabs from every row appended six driver tabs that could
+  // not be selected: clicking one set the asked-for value to something absent from this list, the
+  // view fell back to the first ticker, and NO tab highlighted. A control that looks live and does
+  // nothing is worse than an absent one — the reader concludes the data is empty, not the link dead.
+  //
+  // EXPORTED because it was the one part of this fix a test could not reach: tabs are built inside
+  // `render()`, which needs the DOM, so the first pin passed against the un-fixed code.
+  return [...new Set((rows || []).filter((r) => r.tier !== "theme")
+    .map((r) => String(r.ticker)))].sort();
 }
 
 export function panelGridHtml(rows, { ticker } = {}) {
@@ -352,7 +377,7 @@ export async function render(root, params, { item, frame }) {
          grid. Re-run <span class="mono">python -m vinci monitor</span> to emit it.</div>` });
     return;
   }
-  const tickers = [...new Set(rows.map((r) => String(r.ticker)))].sort();
+  const tickers = tabTickers(rows);
   // `params` is the ARRAY of path segments after the route (see app.js `parseHash`), matching
   // `dossier.js`. An earlier cut read `params.ticker`, which is always undefined here and would
   // have pinned every deep link to the first ticker without erroring.
