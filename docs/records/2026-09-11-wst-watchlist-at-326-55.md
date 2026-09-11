@@ -185,3 +185,59 @@ because at −4.00% it is the entire distance between the bear and a no-haircut 
 exit is observed — the reverse of CIQ's own convention. B was computed as the control and agrees
 within 0.7pp of IRR, which is why A's derivation is acceptable rather than merely convenient.
 **Falsifier for the whole record: the Q3 print resetting guidance in either direction.**
+## Amendments
+**2026-09-11 — two bounds this record left open, both of which change how it should be READ.**
+
+### 1. The vial haircut never reaches the verdict — and it was never lost, it was never sourced
+
+**The body under-bounds it, and a reader would take the bear leg as load-bearing. It is not.**
+
+| haircut | bear EPS | bear $ | risk leg | R:R | vs 2.0 bar |
+|---:|---:|---:|---:|---:|---|
+| none | 11.3405 | 326.38 | 7.21 | **8.07x** | PASS |
+| −3.8% | 10.9096 | 313.98 | 19.61 | 2.97x | PASS |
+| **−4.0% as struck** | 10.8869 | **313.32** | 20.27 | **2.87x** | PASS |
+| −4.7% | 10.8075 | 311.04 | 22.55 | 2.58x | PASS |
+| **−5.9% worst case** | 10.6714 | 307.12 | 26.47 | **2.20x** | PASS |
+
+**R:R clears 2.0 across the entire plausible range — it first breaks at −6.71%, beyond the worst
+case.** And **IRR is 13.13% at every haircut**: it reads base against spot and **never touches the
+bear leg at all**. **The verdict is driven by RETURN, not RISK**, and the vial figure cannot move it.
+
+**The live assumption is the OPERATING MARGIN, not the ASP gap.** Reaching −3.8%/−4.2% requires an
+operating margin near **28–31%**; at **20–25%** the same 20% volume shift gives **−4.7% to −5.9%**.
+The range belongs beside the point estimate.
+
+**And the label in the body is wrong.** It says the derivation is *"not recoverable from disk."* It
+was **never derived from a source**: it is operator domain knowledge applied to a chosen 20% shift.
+**"Operator-supplied" is the correct label — not "lost."** Legitimate under this fund's model, where
+the human's judgment is the input the machine cannot produce; the defect would be presenting it as
+measured, not holding it.
+
+### 2. The bull leg is struck on a DIFFERENT BASIS from the other two — stamp it
+
+Bear **28.78x** and base **34.55x** are both **Estimates-basis**: the anchor is spot ÷ a day-weighted
+NTM EPS built from the Estimates annual grid. **Bull 41.67x is the median of the historical
+forward-P/E series** — the series the GOOGL ruling demotes to *"valuation context, not load-bearing
+evidence."*
+
+**So a demoted reference is acting as a target generator**, which is precisely what anchor-and-
+displace forbids. **It does not reach the verdict**: `R:R = (base − spot) / (spot − bear)` reads base
+and bear only, so **the bull is printed and never ratioed.** And **there is no clean fix** — the
+Estimates workbook's `Multiples` sheet carries NTM and FY2026–FY2031 **forward** multiples and **no
+back-history at all**, so an Estimates-basis median does not exist to be used.
+
+*One nuance found while checking, which narrows but does not remove the objection: the two candidate
+history sources agree when settled identically — quarter-ending the charting series gives **41.67x**
+against the `Financials→Multiples` quarterly median of **41.7x** — and the charting series' current
+end reproduces the Estimates NTM P/E to 0.002 (36.94 vs 36.9377). **Neither fact proves the
+HISTORICAL denominator**, which is the whole content of `BASIS MATCH: LIMITED`.*
+
+**Read $472.60 accordingly**: struck off the `P/NTM EPS` history, a different and demoted basis from
+the two legs that decide the call, printed rather than ratioed.
+
+**BOUNDARY.** No new source. Sensitivity computed on this record's own legs — base $391.79 fixed at
+34.55x, spot $333.59, bear multiple 28.78x, exit NTM EPS 11.34051; haircut grid and the −6.71%
+breakpoint solved at 1bp resolution. Median comparison uses the same `WST_Peers_Charting` population
+already stated (2,506 clean daily observations, quarter-settled n=38) against the quartiles recorded
+2026-09-03. Dated 2026-09-11.
