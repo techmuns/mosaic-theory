@@ -11,6 +11,7 @@
     "MVST",
     "NCNO",
     "NFLX",
+    "ORKA",
     "SMPL",
     "TECX",
     "UBER",
@@ -75,6 +76,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "ORKA": {
+      "industry": "Biotechnology",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "SMPL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -123,6 +129,7 @@
     "MVST": "strongly-bearish \u2014 management-stated going-concern doubt plus a ~$104M near-term wall against negative operating cash flow and falling volumes.",
     "NCNO": "strongly-bullish \u2014 positive-and-rising EBITDA/FCF plus accelerating ACV/subscription mechanism against a forward multiple below peers; growth gap the main offset.",
     "NFLX": "strongly-bullish \u2014 franchise still compounding revenue, margin, ROIC and view hours with a fortress balance sheet, versus a decelerating-top-line counter-case.",
+    "ORKA": "mixed \u2014 validated early clinical data and a large cash cushion against zero revenue, accelerating burn, heavy dilution and a price that has already multiplied.",
     "SMPL": "mixed \u2014 a genuine self-funded, low-leverage franchise with a growing core brand offset by an unbroken share-loss trend and two contracting brands.",
     "TECX": "mixed \u2014 a cash-rich, analyst-favored single-asset clinical bet whose entire value hinges on one undated, unproven TX45 readout against an accelerating burn.",
     "UBER": "mixed \u2014 genuine operating inflection (EBITDA, ROIC, FCF, 22% bookings) against a rich decade-long consensus, cut GAAP EPS, and rising cost lines.",
@@ -143,6 +150,7 @@
     "MVST": "overshoot",
     "NCNO": "overshoot",
     "NFLX": "overshoot",
+    "ORKA": "quality",
     "SMPL": "overshoot",
     "TECX": "quality",
     "UBER": "quality",
