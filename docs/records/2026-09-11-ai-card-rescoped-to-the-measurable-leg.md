@@ -70,7 +70,7 @@ archived card — only `first_confirming` and the appended `note` entry differ.
 
 ---
 
-# ITEM 3 — the sampling design, PROPOSED not run
+# ITEM 3 — the sampling design, RULED 2026-09-11, NOT YET RUN
 
 The question: **do the 168 ratified verdicts sit on the expensive side of the market's own line?** If
 the market already separated regulatory depth / proprietary workflow data / systems of record from
@@ -104,27 +104,84 @@ stratifying on sector is nearly moot. **The live confound is SIZE**: ratified sk
 have nothing to do with durability, so **an unmatched ratified-vs-passed comparison would largely
 measure size and would manufacture a "the market already prices it" result.**
 
-**The proposed design:**
+**THE DESIGN, RULED 2026-09-11:**
 
 1. **Contrast: ratified vs passed** — same scan, same freeze, differing only on the verdict. The
    built-in control, per *"the control says no."*
-2. **Matched pairs on SIC2 × size band**, not independent samples — kills the confound by
-   construction and halves the N.
-3. **Measure: within-stratum percentile RANK of the forward multiple**, never the raw level.
-4. **N = 30 pairs = 60 names ≈ 6 panes**, drawn proportionally across the three SIC-73 bands to
-   preserve the size mix. The full 104 pairs would be ~19 panes; the sample answers a **class**
-   question, not a per-name one.
-5. **PRE-REGISTER THE THRESHOLD BEFORE THE PULL** — a median within-stratum rank gap of **≥10
-   points** counts as *the market already prices it*. Set now, from face validity, never after
-   seeing numbers; this is the `ai-compute-platform` lesson.
-6. **The design must be able to return NO GAP**, and does — a matched-pair test yields a signed
-   median difference with an interval.
-7. **The output either way is the tradeable set**: if a gap exists, the interesting names are the
-   **ratified names in the cheap tail** — where the verdict disagrees with the market.
+2. **Matched pairs on SIC2 × size band**, never independent samples.
+3. **Measure: the WITHIN-STRATUM percentile RANK of the forward multiple**, never the raw level.
+4. **N = ALL 69 SIC-73 PAIRS, not a sample of 30** — ~13 panes against 6. **At N=30 the design
+   cannot see its own threshold:**
 
-**Three things to rule on**: the threshold (≥10 points), N (30 pairs), and whether the frame is the
-whole basket or SIC 73 alone — since the other 25 sectors supply 35 pairs across 25 cells, which is
-one or two pairs each and will not carry a stratified estimate.
+   | SD of paired rank differences | N=30 | **N=69** | N=104 |
+   |---:|---:|---:|---:|
+   | 20 | 78% | **99%** | 100% |
+   | 25 | 59% | **91%** | 98% |
+   | 30 | **45%** | **79%** | 92% |
+   | 35 | 35% | **66%** | 83% |
+
+   *(true gap 10 rank points, α=0.05 two-sided)*
+
+   **At SD=30 an N=30 null is more likely a miss than a finding — 45% power.** That is the failure
+   mode this repo has now named twice: **a check that stays silent on what it cannot see reads as
+   coverage.** An underpowered null would say *"no gap"* and mean *"couldn't tell"*, on the question
+   deciding whether 168 names are underwritable.
+
+   **And N=69 is the N at which the pre-registered threshold becomes detectable**, which is a
+   stronger reason than power alone: the smallest gap visible at 80% power is **10.1 rank points at
+   N=69 (SD=30)** against 15.3 at N=30. **The N and the threshold are matched, not chosen
+   separately.** Taking all 69 also **removes the sampling step, and with it a place for selection
+   to enter.**
+5. **PRE-REGISTER, BEFORE THE PULL — three commitments, not one:**
+   - **Threshold: a median within-stratum rank gap of ≥10 points** counts as *the market already
+     prices it*. Face validity, never tuned on outcomes.
+   - **The economic translation is pre-registered as a COMPUTATION, not a number**: at the stratum
+     median, 10 rank points will be converted to **turns of multiple** on the pulled distribution
+     and reported beside the rank gap. It cannot be stated now — the rank-to-turns mapping depends
+     on the density of the multiple distribution, which is what the pull produces. Committing to
+     report it is the part available in advance.
+   - **THE UNDERPOWERED-NULL DISTINCTION:** a below-threshold result is reported **with its
+     confidence interval**, so *"no gap"* and *"cannot tell"* are distinguishable **on the page**
+     rather than by inference. A CI spanning the threshold is a non-result and must say so.
+6. **The design must be able to return NO GAP**, and does.
+7. **Output: the ratified names in the cheap tail** — where the verdict disagrees with the market.
+
+**FRAME: SIC 73 ALONE — AND THE RULED SCOPE LIMIT IS WRONG ON THE FACTS, in the direction that makes
+the frame BETTER.** The ruling stated that *"SIC 73 is software and computer services, so the
+strongest ratifies — the non-manufacturable data and regulated-gate names — mostly sit outside it."*
+**Measured: six of the seven named sit INSIDE.**
+
+| | SIC | inside SIC 73? |
+|---|---|---|
+| VRSK | 7374 | **yes** |
+| TRU | **7320** | **yes** |
+| EFX | **7320** | **yes** |
+| MCO | **7320** | **yes** |
+| CSGP | 7389 | **yes** |
+| MSCI | 7389 | **yes** |
+| IQV | 8731 | no |
+
+**SIC 73 is BUSINESS SERVICES, not software** — it carries consumer-credit-reporting (**7320**) and
+data/analytics (7374, 7389) alongside prepackaged software (7372). **So the frame DOES reach the
+regulated-gate and non-manufacturable-data cohort the thesis leaned on hardest**, which was the
+stated reason for the limitation.
+
+**What it actually excludes: 50 ratified names, 30% of the 168** — led by SIC 36 electronics (9),
+61 credit institutions (7), 35 industrial machinery (6), 80 health services (4), 87 research/CRO (3,
+IQV among them), 38 instruments (3). **The real limit is that the test cannot speak to the
+HARDWARE, FINANCIAL and HEALTHCARE edges of the basket** — not to its regulated-data core.
+
+*Composition of the 118 ratified inside SIC 73, all eight codes: 7372 prepackaged software **70** ·
+7389 **17** · 7370 **11** · 7374 **8** · 7373 **6** · 7320 credit reporting **3** · 7371 **2** ·
+7381 **1**. So the frame is software-weighted (59% of its ratifies) while still containing the
+regulated-data names.*
+
+**RUN THE TEST FIRST — DO NOT SERVE TEST AND SCREEN FROM ONE PULL.** The design answers a
+**hypothesis** (*do ratified names sit systematically higher?*), which needs matched pairs. The
+stated output is a **screen** (*which ratified names sit cheap?*), which needs coverage of every name
+one would consider underwriting. **Different sample requirements.** If the test returns no systematic
+gap the screen becomes more valuable and earns its own pull; if it returns a large gap the basket is
+largely priced and the screen is hunting a small residual. **Sequence, not one pull serving both.**
 
 **BOUNDARY.** Card: `data/themes/thesis/ai-value-migration.json` at this commit; archived prior at
 `data/themes/thesis/archive/ai-value-migration-2026-08-30.json`. Census figures restated from
@@ -133,12 +190,12 @@ EDGAR 2026-09-11), not re-measured. Basket: `ai-value-migration`, freeze **2026-
 ratified / 189 passed. `market_cap` joined from `theme_universe_snapshot.jsonl` +
 `universe_snapshot.jsonl` on `internal_id` (as-of **2026-08-24**, Polygon close × EDGAR shares);
 `sic` from `securities.jsonl` + `issuers.jsonl`, 2-digit. Size bands: mega ≥$200bn, large ≥$10bn,
-mid ≥$2bn, small below. Measured 2026-09-11.
+mid ≥$2bn, small below. Power figures: paired test, true gap 10 rank points, α=0.05 two-sided, normal approximation.
+SIC codes 4-digit from the same snapshots. Measured 2026-09-11.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.** **The re-scoped card can no longer test its own headline
 claim** — that is the point of recording consequence 1 in the card rather than the record, and it is
-accepted deliberately rather than worked around. **The sampling design is NOT RUN and no pane has
-been pulled**; the market-cap join is as-of 2026-08-24 while the basket froze 2026-09-01, a
+accepted deliberately rather than worked around. **The design is RULED but NOT RUN and no pane has been pulled**; the market-cap join is as-of 2026-08-24 while the basket froze 2026-09-01, a
 **one-week vintage gap** that is immaterial for size *banding* and would not be for a level.
 **Falsifier for the re-scope: any of AMZN, META, GOOGL or NVDA beginning to disclose RPO conversion
 or an AI-attributed line** — at which point the excluded legs become measurable and the card is
