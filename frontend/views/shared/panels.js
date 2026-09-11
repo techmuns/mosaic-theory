@@ -25,8 +25,22 @@ import { DASH, escapeHtml, fmtDate, fmtInt, fmtPrice } from "../../lib/format.js
 const pp = (v, d = 2) => (typeof v === "number" && isFinite(v)
   ? (v >= 0 ? "+" : "") + (v * 100).toFixed(d) + "pp" : DASH);
 const x = (v, d = 1) => (typeof v === "number" && isFinite(v) ? v.toFixed(d) + "x" : DASH);
-const pctc = (v, d = 0) => (typeof v === "number" && isFinite(v)
-  ? (v * 100).toFixed(d) + "%" : DASH);
+// A NONZERO SHARE NEVER PRINTS AS "0%". AORT's fixed average is struck over 0.4% of its stack and
+// rounded to "over 0% of principal" — a rate presented over apparently nothing, which reads as a
+// bug rather than as the warning it is. The floor is a display fix, not the coverage THRESHOLD
+// still open for a ruling; it makes the small number visible rather than deciding what to do about
+// it.
+const pctc = (v, d = 0) => {
+  if (typeof v !== "number" || !isFinite(v)) return DASH;
+  const pct = v * 100;
+  // WORDS, NOT A BARE "<". These strings are interpolated straight into HTML, so "<1%" is read as
+  // the start of a tag and the browser swallows it — the label vanished entirely on AORT and the
+  // tile read "over  of principal". Caught only because the rendered text was checked, not the
+  // formatter.
+  if (pct > 0 && pct < 1) return "under 1%";
+  if (pct < 0 && pct > -1) return "under 1% (negative)";
+  return pct.toFixed(d) + "%";
+};
 const rate = (v, d = 2) => (typeof v === "number" && isFinite(v) ? v.toFixed(d) + "%" : DASH);
 
 // A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md, 2026-09-10). These three caps were
@@ -145,18 +159,23 @@ const BODY = {
       + (v.days_elapsed != null
         ? `<p class="pn-sub">${fmtInt(v.days_elapsed)} of ${fmtInt(v.horizon_days)} days</p>` : "");
   },
-  multiple_and_price(v) {
-    return `<p class="pn-big">${x(v.current)}<small>${escapeHtml(String(v.metric || ""))} · ${
-      pctc(v.percentile)}ile of its historical range</small></p>`
+  multiple_and_price(v, row) {
+    // THE COMPARISON LEADS. A bare "25.8x" answers nothing; "25.8x vs 17.4x median" is a reading.
+    const med = (typeof v.median === "number" && isFinite(v.median))
+      ? `<b>${x(v.current)}</b> vs ${x(v.median)} median` : `<b>${x(v.current)}</b>`;
+    return `<p class="pn-big">${med}${staleBadge(row, v.as_of)}<small>${
+      escapeHtml(String(v.metric || ""))} · ${pctc(v.percentile)}ile of its own range · as of ${
+      escapeHtml(fmtDate(v.as_of))}</small></p>`
       + rangeBar(v)
       // THE MARK'S OWN AS-OF LEADS THE LINE, and it is NOT the monitor day. The dossier's multiple
       // is stamped when the valuation panel was pulled: VRRM's reads 2026-03-31 and LLY's 2026-08-20
       // in the same 2026-08-11 snapshot. Calling the appended point "today's mark" under the page's
       // "As of <monitor day>" header asserted a vintage the payload contradicts — and this repo's
       // rule is that a vintage mark LEADS the numbers it governs, read after them it does not work.
-      + `<p class="pn-sub">as of ${escapeHtml(fmtDate(v.as_of))} · range ${x(v.low)}–${x(v.high)} · median ${
-        x(v.median)} · ${fmtInt(v.n_closes)} closes${v.range_excludes_current
-        ? `, excluding the current mark (${escapeHtml(fmtDate(v.as_of))})` : ""}</p>`
+      // The as-of and the median BOTH moved up into the headline, so this line stops repeating
+      // them. It printed the date twice in one sentence and the median twice on one tile.
+      + `<p class="pn-sub">range ${x(v.low)}–${x(v.high)} over ${fmtInt(v.n_closes)} closes${
+        v.range_excludes_current ? ", which exclude the mark above" : ""}</p>`
       + sparkline(v.series, { current: v.current, nClose: v.n_closes,
         excludesCurrent: v.range_excludes_current });
   },
@@ -180,6 +199,26 @@ const BODY = {
     }).join("")}</ul>`;
   },
   dilution(v) {
+    // FORM CODES ARE NOT ENGLISH. "424B5" tells a reader nothing; "drawdown from a shelf" does.
+    // Grouping by MEANING also stops the chart ranking 424B5 against 424B2, a distinction that
+    // carries no decision content — both are draws on the same shelf.
+    const MEANS = {
+      "S-3ASR": "shelf registered", "S-3": "shelf registered", "F-3": "shelf registered",
+      "424B2": "drawn from shelf", "424B5": "drawn from shelf", "424B3": "drawn from shelf",
+      "S-8": "employee plans", "S-1": "new registration", "F-1": "new registration",
+      "S-4": "merger shares",
+    };
+    // AMENDMENTS AND POST-EFFECTIVE VARIANTS ARE THE SAME FILING. The corpus carries "S-3/A",
+    // "S-8 POS" and "S-4/A", which a first cut passed through untranslated — so the tile still
+    // showed three codes as jargon beside the plain-English groups. The base form is what carries
+    // the meaning; the suffix says it is a revision of one.
+    const base = (code) => String(code).replace(/\s*(POS|POSASR)$/i, "").replace(/\/A$/i, "").trim();
+    const grouped = {};
+    for (const [code, n] of (v.forms || [])) {
+      const k = MEANS[base(code)] || base(code);
+      grouped[k] = (grouped[k] || 0) + n;
+    }
+    v = { ...v, forms: Object.entries(grouped).sort((a, b) => b[1] - a[1]) };
     const f = v.forms || [];
     const top = f.slice(0, FORM_BARS);
     const mx = Math.max(1, ...top.map((i) => i[1]));
@@ -234,14 +273,23 @@ const BODY = {
   cost_of_borrowing(v) {
     // COVERAGE IS NEVER OPTIONAL BESIDE A RATE. AORT's fixed average is struck over one $0.9M bond
     // in a $220.9M stack; printing 6.05% alone repeats the lease defect one level down.
-    const rows = [[`fixed · ${pctc(v.fixed_coverage)} of stack`, v.fixed_pct],
-      [`all-in · ${pctc(v.all_in_coverage)} of stack`, v.all_in_pct]];
-    return `<p class="pn-big">${rate(v.fixed_pct)}<small>weighted-average FIXED coupon, over ${
+    // THE ALL-IN ROW EARNS ITS PLACE ONLY WHEN IT DIFFERS. With no floating debt the two bases
+    // are identical, and printing "4.16%" three times on one tile (headline + two rows) reads as
+    // three findings. AORT's 5.63% fixed against 7.81% all-in is the case worth the row.
+    const differs = typeof v.all_in_pct === "number" && typeof v.fixed_pct === "number"
+      && Math.abs(v.all_in_pct - v.fixed_pct) >= 0.01;
+    // Coverage is already in the headline; repeating it as a table row was the same duplication
+    // the all-in row had. The table now carries only what the headline does NOT say.
+    const rows = [];
+    if (differs) {
+      rows.push([`all-in (incl. floating at today's rate)`, v.all_in_pct]);
+    }
+    return `<p class="pn-big">${rate(v.fixed_pct)}<small>weighted-average FIXED coupon, covering ${
       pctc(v.fixed_coverage)} of principal</small></p>`
       + `<table class="pn-tbl"><tbody>${rows.map(([l, r]) =>
-        `<tr><th>${escapeHtml(l)}</th><td>${rate(r)}</td></tr>`).join("")}
-        <tr><th>floating share</th><td>${pctc(v.floating_share)}</td></tr>
-        <tr><th>lease liabilities held out</th><td>${fmtInt(v.lease_musd)}m</td></tr>
+        `<tr><th>${escapeHtml(l)}</th><td>${r === null ? "" : rate(r)}</td></tr>`).join("")}
+        ${v.floating_share ? `<tr><th>floating</th><td>${pctc(v.floating_share)}</td></tr>` : ""}
+        ${v.lease_musd ? `<tr><th>leases held out</th><td>$${fmtInt(v.lease_musd)}m</td></tr>` : ""}
         </tbody></table>`;
   },
 };
@@ -257,7 +305,9 @@ const BODY = {
 function renderedBody(row) {
   if (row.state === "refused") return "";
   const f = BODY[row.key];
-  return f ? f(row.value || {}) : "";
+  // The ROW travels with the value: a body needs the page's as-of and the panel's cadence to age
+  // its own figure, and reaching for them any other way would be a second lookup that can disagree.
+  return f ? f(row.value || {}, row) : "";
 }
 
 export function rendersAsRefusal(row) {
@@ -269,9 +319,11 @@ export function rendersAsRefusal(row) {
 //: gets a distance and no story about what it costs. Inventing a default here would put one
 //: position's archetype back on every name, which is the defect this field exists to close.
 const AXIS = {
-  multiple: "This name's underwrite rests on the MULTIPLE — closing this distance is the call "
-    + "breaking.",
-  earnings: "This name's underwrite rests on EARNINGS ARRIVAL — this line can travel a long way "
+  // Phrased against what the tile now SHOWS. The earlier wording said "closing this distance",
+  // which referred to a distance the retitled panel no longer claims to display.
+  multiple: "This name rests on the MULTIPLE — the multiple moving back toward its range is the "
+    + "call breaking.",
+  earnings: "This name rests on EARNINGS ARRIVAL — the multiple can travel a long way here "
     + "without the thesis moving.",
 };
 
@@ -282,6 +334,18 @@ function axisLine(row) {
   // seeing it here means the artifact predates that check — and a silent drop would hide it.
   const said = AXIS[a] || `Declared load-bearing axis: ${escapeHtml(String(a))} (unrecognised).`;
   return `<span class="pn-axis">${AXIS[a] ? escapeHtml(said) : said}</span>`;
+}
+
+//: Days after which a figure's own as-of is worth flagging on the tile. Quarterly data is normally
+//: a quarter old, so a bare date is not news — a figure OLDER than its own cadence is.
+const STALE_AFTER = {event: 120, quarterly: 120, monthly: 45, weekly: 14, daily: 5};
+
+function staleBadge(row, asOf) {
+  if (!asOf || !row.as_of_page) return "";
+  const age = Math.round((new Date(row.as_of_page) - new Date(asOf)) / 86400000);
+  const limit = STALE_AFTER[row.cadence] ?? 120;
+  if (!isFinite(age) || age <= limit) return "";
+  return `<span class="pn-stale" title="this figure is older than the page">${fmtInt(age)}d old</span>`;
 }
 
 function tile(row) {
@@ -353,7 +417,7 @@ export function tabTickers(rows) {
     .map((r) => String(r.ticker)))].sort();
 }
 
-export function panelGridHtml(rows, { ticker } = {}) {
+export function panelGridHtml(rows, { ticker, asOf } = {}) {
   // A THEME ROW'S `ticker` IS A DRIVER KEY — the tier attaches to the driver, not the name. The
   // ticker filter must therefore let theme rows through, or the whole tier disappears from every
   // page while looking exactly like a tier that emitted nothing.
@@ -361,7 +425,9 @@ export function panelGridHtml(rows, { ticker } = {}) {
     || String(r.ticker).toUpperCase() === String(ticker).toUpperCase());
   if (!mine.length) return "";
   const byTier = { universal: [], cohort: [], theme: [], name: [] };
-  for (const r of mine) (byTier[r.tier] || byTier.name).push(r);
+  // The PAGE's as-of, carried onto each row so a body can age its own figure against it. Without
+  // it a tile cannot know that its number is older than the day it is being read on.
+  for (const r of mine) (byTier[r.tier] || byTier.name).push(asOf ? { ...r, as_of_page: asOf } : r);
   const groups = Object.entries(byTier).filter(([, v]) => v.length).map(([t, v]) =>
     `<h4 class="pn-tier">${escapeHtml(t)}</h4><div class="pn-grid">${
       v.map(tile).join("")}</div>`).join("");
@@ -409,5 +475,5 @@ export async function render(root, params, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml:
     `<p class="subtitle muted">As of ${escapeHtml(fmtDate(mon.as_of))} — every figure a dated,
       committed number. The browser never fetches a live price.</p>
-     <div class="pn-tabs">${tabs}</div>${panelGridHtml(rows, { ticker: want })}` });
+     <div class="pn-tabs">${tabs}</div>${panelGridHtml(rows, { ticker: want, asOf: mon.as_of })}` });
 }

@@ -365,9 +365,8 @@ COMMISSIONING = PanelSpec(
         "economic question under a name of its own, which is why this is config and not code",
     },
     cadence="quarterly",
-    changes_the_call="A ratio that climbs while the in-service base stops growing says capital is "
-    "going in and not yet earning — the duration question the memo calls the whole trade. Falling "
-    "back toward the in-service growth rate says the buildout is converting.",
+    changes_the_call="Climbing while the in-service base flattens says capital is going in and "
+    "not yet earning. Falling back toward that base's growth says the buildout is converting.",
     caveat="Assets not yet in service spans EVERY asset type, while the denominator is the "
     "technical-infrastructure member alone — so this is not a commissioning RATE. The "
     "like-for-like figure is reported beside it.",
@@ -413,13 +412,9 @@ COST_OF_BORROWING = PanelSpec(
     changes_the_call="Every leverage leg is underwritten at a cost of debt. A stack repricing "
     "upward as tranches mature raises the bar the business must clear before equity sees anything, "
     "and it moves without any operating news at all.",
-    caveat="The average covers only tranches stating BOTH a principal and a FIXED coupon, and its "
-    "coverage is printed beside it — a floating tranche has no fixed coupon and is reported as its "
-    "own share rather than averaged in at zero, which would fabricate a lower cost exactly where a "
-    "name carries most floating debt. LEASE liabilities are excluded entirely: the CIQ panel lists "
-    "them as tranches whose 'coupon' is an imputed discount rate, not a cost of borrowed money, "
-    "and their principal is reported separately. The denominator is the LISTED tranches, which for "
-    "several names is a fraction of the stack the same panel's summary totals.",
+    caveat="Read the coverage beside the rate — a low coverage means the average describes a "
+    "small slice of the stack. Floating tranches and lease liabilities are held out, not averaged "
+    "in, and the denominator is the listed tranches only.",
 )
 
 

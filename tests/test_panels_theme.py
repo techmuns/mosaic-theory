@@ -105,7 +105,7 @@ def test_a_corrupted_deadline_still_renders_its_row() -> None:
 def test_the_panel_says_it_measures_nothing() -> None:
     """Verified before the panel was written: no trigger on any committed card carries a metric or
     a threshold. The caveat is the channel that keeps the page honest about it."""
-    assert "nothing here is measured" in THEME_THESIS.caveat
+    assert "othing here is measured" in THEME_THESIS.caveat  # case-agnostic on the lead word
     assert THEME_THESIS.tier == "theme"
     assert THEME_THESIS.changes_the_call.strip()
     for p in (ROOT / "data" / "themes" / "thesis").glob("*.json"):

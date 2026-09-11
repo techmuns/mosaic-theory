@@ -47,12 +47,10 @@ THEME_THESIS = PanelSpec(
         ),
     ),
     cadence="event",
-    changes_the_call="A falsifier whose window has closed is the thesis owing an answer — the "
-    "fund said what would prove it wrong and by when, and the date arrived. It does not declare "
-    "the thesis dead: the machine says the window closed, the human reads whether it fired.",
-    caveat="No trigger on any committed card carries a metric or a threshold, so nothing here is "
-    "measured — the panel shows the criterion, its deadline and WHERE it would be checked. A basis "
-    "naming a source outside the repo is marked unverifiable, never silently treated as checked.",
+    changes_the_call="A falsifier whose window has closed is the thesis owing an answer. The "
+    "machine says the window closed; you read whether it fired.",
+    caveat="Nothing here is measured — no card carries a metric. Each criterion shows its "
+    "deadline and where it would be checked; a source outside this repo is marked unverifiable.",
 )
 
 
