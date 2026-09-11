@@ -100,7 +100,15 @@ def test_cnxc_has_exactly_the_two_forward_years_the_adjacent_check_needs() -> No
 #: to route. Same class as FUBO (a property of the coverage) one step further along, and it
 #: self-clears the day TX45 reaches a modelled revenue line. Recorded in full beside the sibling
 #: exemption in `test_consensus_transform.py`. (Operator-accepted 2026-09-01.)
-UNROUTED_BY_DESIGN = frozenset({"FUBO", "TECX"})
+#:
+#: ORKA: the SAME class as TECX, and the second instance is what makes it a class rather than a
+#: one-off. Pre-revenue clinical-stage, so `consensus_levels` is absent entirely — yet the street
+#: covers it heavily (12 analysts, mean target $155.00, 11 Buy / 2 Outperform at 2026-08-28) and
+#: the SAME Estimates export populates `eps_trend` and `revision_history`, which is what separates
+#: "the street forecasts no revenue" from "our extraction failed". Self-clears the day ORKA-001
+#: reaches a modelled revenue line. Recorded in full beside the sibling exemption in
+#: `test_consensus_transform.py`. (Operator-accepted 2026-09-10.)
+UNROUTED_BY_DESIGN = frozenset({"FUBO", "TECX", "ORKA"})
 
 
 def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
