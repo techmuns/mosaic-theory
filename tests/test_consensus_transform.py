@@ -154,6 +154,14 @@ def test_every_dossier_carries_levels_except_the_standing_rule_exemptions() -> N
     #: name starts carrying levels and the `assert not has` below fires — the exemption cannot
     #: outlive its own reason silently. (Operator-accepted 2026-09-01.)
     exempt: dict[str, str] = {
+        "ORKA": "pre-revenue clinical-stage — the SAME reason as TECX, and the second instance "
+                "confirms it is a property of the coverage rather than a one-off: the street "
+                "covers it heavily (12 analysts, mean target $155.00, 11 Buy / 2 Outperform at "
+                "2026-08-28) but publishes no revenue/EBITDA levels because there is no revenue "
+                "to forecast; eps_trend and revision_history populate from the same Estimates "
+                "export, which is what distinguishes absent COVERAGE from a failed EXTRACTION. "
+                "Self-clearing: the day ORKA-001 reaches a modelled revenue line this fires. "
+                "(Operator-accepted 2026-09-10.)",
         "TECX": "pre-revenue clinical-stage — the street covers it (9 analysts, targets and EPS "
                 "estimates) but publishes no revenue/EBITDA levels because there is no revenue "
                 "to forecast; the same Estimates export populates eps_trend and consensus_stats",
