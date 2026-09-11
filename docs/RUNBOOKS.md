@@ -365,6 +365,16 @@ EXPOSURE into an investment view were not written down.
     sits between its own median 24.24x and p75 26.75x; WST's 36.9x is the **37th** percentile of its
     own history, below median. **A distorted anchor is a reason to price off something else, or to
     state the distortion as the binding assumption — never to anchor anyway and displace from it.**
+    **A LEG'S MULTIPLE IS STRUCK ONCE, AT A STATED PRICE, AND IS THEREAFTER FIXED IN TURNS —
+    never a standing rule like "holds current".** The two read identically at the striking moment and
+    diverge at every other price, and the difference decides whether a limit can exist at all.
+    *Under a floating "holds current", the exit multiple is `P / NTM_now`, so
+    `base / P = NTM_exit / NTM_now` — INDEPENDENT OF P. The base return collapses to the EPS growth
+    rate, the IRR gate passes at EVERY price or at NONE, and no limit price exists. On WST
+    (2026-09-11) that reading made a 13.13% IRR unimprovable by any entry, which is not a property
+    of the name.* So: strike the number, stamp the price it was struck at, and record it as turns.
+    GOOGL is the precedent read correctly — bull **26.0x** "holds today's ~26.03x" is a FIXED figure
+    struck as a displacement, not a rule that floats with the tape.
     **THE BASE LEG GETS ITS OWN MECHANISM — never the residual between bear and bull.** If bear is
     "the observed compression continues" and bull is "it stops", a base struck between them is an
     INTERPOLATION, not a case: nothing in the world does half of two opposite things. State what
