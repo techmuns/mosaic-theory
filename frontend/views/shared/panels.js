@@ -203,10 +203,12 @@ const BODY = {
     // Grouping by MEANING also stops the chart ranking 424B5 against 424B2, a distinction that
     // carries no decision content — both are draws on the same shelf.
     const MEANS = {
-      "S-3ASR": "shelf registered", "S-3": "shelf registered", "F-3": "shelf registered",
-      "424B2": "drawn from shelf", "424B5": "drawn from shelf", "424B3": "drawn from shelf",
-      "S-8": "employee plans", "S-1": "new registration", "F-1": "new registration",
-      "S-4": "merger shares",
+      "S-3ASR": "permission to sell, kept open", "S-3": "permission to sell, kept open",
+      "F-3": "permission to sell, kept open",
+      "424B2": "offerings actually made", "424B5": "offerings actually made",
+      "424B3": "offerings actually made",
+      "S-8": "shares set aside for staff", "S-1": "first-time registration",
+      "F-1": "first-time registration", "S-4": "shares issued in a takeover",
     };
     // AMENDMENTS AND POST-EFFECTIVE VARIANTS ARE THE SAME FILING. The corpus carries "S-3/A",
     // "S-8 POS" and "S-4/A", which a first cut passed through untranslated — so the tile still
@@ -229,11 +231,16 @@ const BODY = {
     const more = f.length > top.length
       ? `<p class="pn-sub">showing ${fmtInt(top.length)} of ${fmtInt(f.length)} form types
          (${fmtInt(drawn)} of ${fmtInt(total)} filings)</p>` : "";
-    return `<div class="pn-bars">${top.map(([k, n]) =>
+    // A LEAD LINE THAT SAYS WHAT THE CARD IS ABOUT, before any number. The bars alone assumed the
+    // reader already knew what a shelf registration is and why anyone watches one.
+    const lead = `<p class="pn-lead">Filings that let this company sell new securities — and how
+      often it has done so. <b>${fmtInt(total)}</b> in the last ${
+      Math.round((v.window_days || 1095) / 365)} years.</p>`;
+    return lead + `<div class="pn-bars">${top.map(([k, n]) =>
       `<div class="pn-bar"><span class="pn-bl">${escapeHtml(k)}</span>
         <span class="pn-bt"><i class="pn-bf pos" style="left:0;width:${(n / mx * 100).toFixed(0)}%"></i></span>
         <span class="pn-bv">${fmtInt(n)}</span></div>`).join("")}</div>${more}`
-      + (v.line ? `<p class="pn-sub">${escapeHtml(String(v.line))}</p>` : "");
+      + latestLine(v);
   },
   sources(v) {
     const refs = v.refs || [];
@@ -346,6 +353,14 @@ function staleBadge(row, asOf) {
   const limit = STALE_AFTER[row.cadence] ?? 120;
   if (!isFinite(age) || age <= limit) return "";
   return `<span class="pn-stale" title="this figure is older than the page">${fmtInt(age)}d old</span>`;
+}
+
+function latestLine(v) {
+  // The most recent date, in words. It was the one thing the assembler's raw sentence carried that
+  // the bars did not — and that sentence now sits in Sources, where a form code belongs.
+  const dates = Object.values(v.last_by_form || {}).filter(Boolean).sort();
+  if (!dates.length) return "";
+  return `<p class="pn-sub">Most recent: ${escapeHtml(fmtDate(dates[dates.length - 1]))}</p>`;
 }
 
 function tile(row) {

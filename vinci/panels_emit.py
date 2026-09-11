@@ -139,8 +139,12 @@ def panel_rows_for(
         builders["kills"] = (pay.kills(freshness, record), ["scenario record measured_triggers"])
     dil = m.get("dilution_pipeline") or {}
     if dil:
-        builders["dilution"] = (pay.dilution(dil), [
-            str((dil.get("line") or {}).get("source_ref") or "")])
+        _dil = pay.dilution(dil)
+        # The assembler's own sentence is PROVENANCE, not body text — it names the form codes the
+        # tile now translates, and its dates travel structurally above.
+        builders["dilution"] = (_dil, [
+            str((dil.get("line") or {}).get("source_ref") or ""),
+            str(_dil.get("line") or "")])
     prim = m.get("primary_source") or {}
     if prim:
         builders["sources"] = (pay.sources(prim), [])

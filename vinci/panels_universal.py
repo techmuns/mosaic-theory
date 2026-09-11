@@ -112,7 +112,7 @@ FILING_WATCH = PanelSpec(
 DILUTION = PanelSpec(
     key="dilution",
     tier="universal",
-    title="Shelf & prospectus activity",
+    title="New securities registered for sale",
     requires=(
         Requirement(
             kind="metric_path",
@@ -122,10 +122,11 @@ DILUTION = PanelSpec(
         ),
     ),
     cadence="weekly",
-    changes_the_call="A shelf being drawn on moves per-share value with no operating news at "
-    "all.",
-    caveat="Filing COUNTS, not amounts. This shows that capacity exists and is being used — it "
-    "does not size the dilution, and no share count or dollar figure is on file here.",
+    changes_the_call="New SHARES sold shrink every per-share figure the case rests on, with no "
+    "operating news at all. Bonds sold do not — and the count above includes both.",
+    caveat="These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of "
+    "eight of Alphabet's showed three bond offerings and four share registrations. It counts "
+    "filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
 )
 
 ATTRIBUTION = PanelSpec(

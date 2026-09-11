@@ -23,7 +23,8 @@ a missing optional key (an older committed snapshot will not carry a field added
                        range_excludes_current}
   filing_watch        {last_evidence_date, last_evidence_source, newer_filings: [...],
                        next_expected_print, next_expected_basis, unread_print}
-  dilution            {line, forms: [[form, count], …], window_days}
+  dilution            {line, forms: [[form, count], …], last_by_form: {form: date},
+                       window_days}
   attribution         {position_return, benchmark, benchmark_return, excess, days_elapsed,
                        horizon_days}
   sources             {refs: [...]}
@@ -155,14 +156,28 @@ def kills(freshness: dict[str, Any], record: dict[str, Any] | None) -> dict[str,
 
 
 def dilution(pipeline: dict[str, Any]) -> dict[str, Any]:
+    """Filing counts by form, and the LATEST DATE per form — both structured.
+
+    THE DATE IS CARRIED, NOT PARSED BACK OUT. The assembler's `line` is a display string
+    ("prospectus supplements 28 (424B2/424B5, last 2026-08-07)") and the only thing in it the bars
+    do not already say is that date. Re-reading it from the rendered sentence is the prohibited
+    re-parse, so the date travels as a value and the sentence goes to the tile's Sources tier where
+    provenance belongs.
+    """
     forms: dict[str, int] = {}
+    last: dict[str, str] = {}
     for f in pipeline.get("filings") or []:
-        if isinstance(f, dict):
-            k = str(f.get("form"))
-            forms[k] = forms.get(k, 0) + 1
+        if not isinstance(f, dict):
+            continue
+        k = str(f.get("form"))
+        forms[k] = forms.get(k, 0) + 1
+        d = str(f.get("filing_date") or "")
+        if d and d > last.get(k, ""):
+            last[k] = d
     return {
         "line": (pipeline.get("line") or {}).get("value"),
         "forms": sorted(forms.items(), key=lambda kv: (-kv[1], kv[0])),
+        "last_by_form": last,
         "window_days": pipeline.get("window_days"),
     }
 
