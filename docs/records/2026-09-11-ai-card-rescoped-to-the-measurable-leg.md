@@ -70,7 +70,7 @@ archived card — only `first_confirming` and the appended `note` entry differ.
 
 ---
 
-# ITEM 3 — the sampling design, RULED 2026-09-11, NOT YET RUN
+# ITEM 3 — the sampling design, RULED 2026-09-11 · MANIFEST BUILT, PULL IS THE OPERATOR'S
 
 The question: **do the 168 ratified verdicts sit on the expensive side of the market's own line?** If
 the market already separated regulatory depth / proprietary workflow data / systems of record from
@@ -183,6 +183,80 @@ one would consider underwriting. **Different sample requirements.** If the test 
 gap the screen becomes more valuable and earns its own pull; if it returns a large gap the basket is
 largely priced and the screen is hunting a small residual. **Sequence, not one pull serving both.**
 
+## THE PANE MANIFEST — every decision removed from the pull
+
+**69 pairs · 138 names · 13 panes · 69 ratified / 69 passed.** Band mix: large 28, mid 62, small 48.
+
+**Pairs are matched NEAREST-CAP within size band**, greedy from the smaller arm so every one of its
+names is used. **Match quality: median cap ratio 1.03–1.05x**, worst 1.44x — the size confound is
+removed rather than merely banded.
+
+**The MEGA band is dropped — 1 pair.** A two-name stratum cannot support a within-stratum percentile
+rank; it would contribute a sign, not a rank. Dropping it lands on exactly the ruled **N=69**.
+
+**Unused names, stated rather than hidden:** matching consumes the smaller arm, so **38 large, 5 mid
+and 10 small ratified names are not pulled.** The ratified sample is therefore representative of
+*ratified-matched-to-passed*, not of all ratified — the standard matched-design trade, taken
+deliberately because the alternative is measuring size.
+
+```
+# AI VALUE-MIGRATION — DISCRIMINATOR TEST · CIQ Charting pane manifest
+# 69 matched pairs · 138 names · 13 panes · frame: SIC 73
+# Pairs matched NEAREST-CAP within size band (median cap ratio 1.03-1.05x).
+#
+# PULL SETTINGS — IDENTICAL ON EVERY PANE, or the ranks are not comparable:
+#   metric  : Forward P/E
+#   window  : the SAME start and end date on all panes (any range; it must just match)
+#   frequency: daily
+#   export  : Charting Excel Export — the format vinci/dossier/ciq_charting.py parses
+#
+# [R] = ratified · [P] = passed. A pane may span bands; the analysis pools by stratum,
+# so pane membership carries no meaning and pairs may be split across panes.
+
+## PANE  1  (11 series)
+   NET[R]  MELI[P]  NBIS[R]  ADSK[P]  XYZ[R]  WDAY[P]  CRWV[R]  TEAM[P]  MDB[R]  TWLO[P]  RDDT[R]
+## PANE  2  (11 series)
+   ZM[P]  ZS[R]  CTSH[P]  VRSK[R]  OMC[P]  NTNX[R]  WIT[P]  PTC[R]  FLUT[P]  TRU[R]  GEN[P]
+## PANE  3  (11 series)
+   GWRE[R]  LDOS[P]  FIG[R]  CACI[P]  CART[R]  HUBS[P]  PCOR[R]  SNAP[P]  ESTC[R]  PATH[P]  APPF[R]
+## PANE  4  (11 series)
+   DBX[P]  GTLB[R]  NAVN[P]  S[R]  LYFT[P]  ZETA[R]  DOX[P]  QLYS[R]  BZ[P]  OTEX[R]  TTD[P]
+## PANE  5  (11 series)
+   NTSK[R]  NICE[P]  CVLT[R]  WPP[P]  KVYO[R]  MBGL[P]  ACIW[R]  EPAM[P]  VRNS[R]  EXLS[P]  WIX[R]
+## PANE  6  (11 series)
+   NIQ[P]  BOX[R]  RNG[P]  DOCS[R]  SAIC[P]  CCC[R]  PSN[P]  XMTR[R]  MNDY[P]  WK[R]  KFY[P]
+## PANE  7  (11 series)
+   FA[R]  FRSH[P]  AGYS[R]  CARG[P]  KC[R]  TNET[P]  INTA[R]  MBLY[P]  SPSC[R]  SOUN[P]  CLBT[R]
+## PANE  8  (11 series)
+   MAN[P]  ALRM[R]  APPN[P]  RUM[R]  KD[P]  TDC[R]  FIVN[P]  NCNO[R]  PAYO[P]  BLKB[R]  ASAN[P]
+## PANE  9  (11 series)
+   DV[R]  PRCH[P]  PDFS[R]  CXM[P]  BL[R]  PRGS[P]  XZO[R]  CNXC[P]  BBAI[R]  AI[P]  ARLO[R]
+## PANE 10  (11 series)
+   COUR[P]  CLVT[R]  CCO[P]  CERT[R]  GTM[P]  TRIP[R]  UPWK[P]  RDVT[R]  KFRC[P]  VERX[R]  EVER[P]
+## PANE 11  (11 series)
+   SHAZ[R]  PLTK[P]  BLZE[R]  SABR[P]  PD[R]  NXDR[P]  HSTM[R]  RPD[P]  RXT[R]  GRPN[P]  CASS[R]
+## PANE 12  (11 series)
+   CEVA[P]  PHR[R]  TASK[P]  YEXT[R]  NRDS[P]  CTEV[R]  OOMA[P]  RSKD[R]  CARS[P]  WEAV[R]  OSPN[P]
+## PANE 13  (6 series)
+   SLP[R]  BLND[P]  CRNC[R]  FVRR[P]  TLS[R]  VTEX[P]
+```
+
+## TWO OPERATIONAL CARRIES FOR WHEN THE PANES LAND
+
+**1. THE SENTINEL DETECTOR IS LEADING-RUN-SPECIFIC, AND A CLEAN BANNER IS NOT EVIDENCE OF CLEAN
+DATA.** `_leading_sentinel` requires the repeated run to be **leading** — it returns `None` for an
+interior run, and `ChartingSeries.report()` then prints *"no sentinel runs"*. **At 138 names there
+will be far more entry dates — IPOs, spin-offs, relistings — than the 3 in 11 series the rule was
+verified on, so expect mid-series constants the leading-run rule cannot see.** The banner will read
+clean and mean *"found nothing"*, not *"nothing there"*. **Same shape as the truncation lesson:
+read the coverage banner as a statement about the DETECTOR, not the data.**
+
+**2. RUN THE SYMMETRIC ARTIFACT DETECTOR AND COUNT WHAT IT DROPS.** On the WST peers export
+`find_spikes` returned **45 spikes in 27,632 cells, 14 of them inverted** — a V-only test would have
+silently returned 31. **At 138 series × ~2,512 dates ≈ 346,656 cells the same rate implies roughly
+560 spikes and ~175 inverted.** That is an expectation to check the run against, not a prediction to
+trust: a count far below it is itself a finding about the detector.
+
 **BOUNDARY.** Card: `data/themes/thesis/ai-value-migration.json` at this commit; archived prior at
 `data/themes/thesis/archive/ai-value-migration-2026-08-30.json`. Census figures restated from
 `docs/records/2026-09-11-ai-disclosure-census.md` (9 names, 18 primary documents, 881,731 words,
@@ -190,7 +264,7 @@ EDGAR 2026-09-11), not re-measured. Basket: `ai-value-migration`, freeze **2026-
 ratified / 189 passed. `market_cap` joined from `theme_universe_snapshot.jsonl` +
 `universe_snapshot.jsonl` on `internal_id` (as-of **2026-08-24**, Polygon close × EDGAR shares);
 `sic` from `securities.jsonl` + `issuers.jsonl`, 2-digit. Size bands: mega ≥$200bn, large ≥$10bn,
-mid ≥$2bn, small below. Power figures: paired test, true gap 10 rank points, α=0.05 two-sided, normal approximation.
+mid ≥$2bn, small below. Pairs: SIC 73 only, `market_cap` as-of 2026-08-24, greedy nearest-cap inside size bands mega >=$200bn / large >=$10bn / mid >=$2bn / small below; mega dropped at 1 pair. Power figures: paired test, true gap 10 rank points, α=0.05 two-sided, normal approximation.
 SIC codes 4-digit from the same snapshots. Measured 2026-09-11.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.** **The re-scoped card can no longer test its own headline
