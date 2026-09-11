@@ -128,7 +128,18 @@ def panel_rows_for(
             "AND the benchmark alike)"])
     val = m.get("valuation") or {}
     if val:
-        mp = pay.multiple_and_price(val)
+        # THE NAME'S DECLARED BASIS reaches the payload builder, not just the renderer: which
+        # metric to read is a selection, and selections happen before markup. Undeclared, the
+        # builder uses the repo default and stamps the payload so the tile can say which.
+        _mp_cfg = (declarations.get(ticker) or {}).get("multiple_and_price") or {}
+        _want = _mp_cfg.get("valuation_metric")
+        try:
+            mp = pay.multiple_and_price(val, metric=_want)
+        except pay.MetricNotFoundError as exc:
+            # A DECLARED METRIC THAT IS NOT THERE IS A LOUD REFUSAL, never a substitution: showing
+            # a different multiple under a heading the name chose is the defect this replaced.
+            mp = None
+            why_empty["multiple_and_price"] = str(exc)
         builders["multiple_and_price"] = (mp, [
             str((val.get("ev_ebitda") or {}).get("source_ref") or ""),
             str((val.get("own_history") or {}).get("source_ref") or "")])

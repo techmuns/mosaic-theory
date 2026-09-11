@@ -105,7 +105,13 @@ class Requirement(BaseModel, frozen=True):
 
 
 class RenderOption(BaseModel, frozen=True):
-    """One per-name knob that parameterises what a panel SAYS, not what it probes.
+    """One per-name knob consumed AFTER the gate — by the payload builder or the renderer.
+
+    NOT "render-only", despite the name: `valuation_metric` selects WHICH entry of a name's
+    valuation history the payload reads, which is upstream of any markup. The dividing line that
+    matters is the GATE: `config_schema` keys are read by a REQUIREMENT and decide what gets
+    probed, so a key no requirement reads is a silent no-op and is refused. These keys are read
+    after the decision is made, so that check would reject them while being right about probe keys.
 
     A SECOND KIND OF CONFIG, kept apart from `config_schema` deliberately. `config_schema` keys are
     read by a REQUIREMENT — they decide what gets probed, and a key no requirement reads is a silent

@@ -79,6 +79,13 @@ MULTIPLE_AND_PRICE = PanelSpec(
     changes_the_call="Where the case rests on the multiple, movement here IS the call moving. "
     "Where it rests on earnings, this line can travel a long way without the thesis changing.",
     render_config={
+        "valuation_metric": RenderOption(
+            means="which multiple THIS NAME'S case is underwritten on, named exactly as the "
+            "dossier's own history labels it — 'P/LTM EPS' for a P/E-basis underwrite, "
+            "'EV/EBITDA (TEV/LTM)' for an enterprise-basis one. Undeclared, the panel shows the "
+            "repo default and SAYS so: 'the multiple the case rests on' and 'a multiple' are "
+            "different claims.",
+            allowed=("EV/EBITDA (TEV/LTM)", "P/LTM EPS")),
         "load_bearing_axis": RenderOption(
             means="which axis this name's underwrite actually rests on, read off its own record "
             "— 'multiple' when the case turns on the multiple re-rating or de-rating (GOOGL: bear "

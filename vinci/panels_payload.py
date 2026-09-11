@@ -68,13 +68,52 @@ def attribution(row: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
-    """The name's own multiple history. SERIES PASSES THROUGH AS NUMBERS — the renderer draws the
-    sparkline from these pairs, so no chart geometry is computed here and none is parsed there."""
+#: The metric a name's multiple panel shows when it has NOT declared one. NAMED, not positional —
+#: the whole defect this replaces was `hist[0]`, which returned whichever metric the assembler
+#: happened to emit first. A default is a decision; an index is an accident.
+DEFAULT_VALUATION_METRIC = "EV/EBITDA (TEV/LTM)"
+
+
+class MetricNotFoundError(LookupError):
+    """The named valuation metric is not in this name's history — refuse rather than substitute."""
+
+
+def pick_metric(hist: list[dict[str, Any]], want: str) -> dict[str, Any]:
+    """The entry whose `metric` is `want`. BY NAME, NEVER BY POSITION.
+
+    DOCUMENT ORDER IS NOT A CONTRACT — the repo wrote that down in `edgar/segments.py` after taking
+    the first of two segment reports and filing geography figures as segment economics. This is the
+    same defect one layer up: `own_history` carries TWO entries for most names (EV/EBITDA and
+    P/LTM EPS), `hist[0]` took EV/EBITDA for every one of them, and GOOGL's case is underwritten on
+    P/E — 25.8x at the 100th percentile shown, 27.3x at the 49th meant, with the right number
+    sitting unread at index 1.
+
+    Matching is exact on the metric label. A near-match is NOT accepted: two valuation metrics whose
+    names differ by a word are different numbers, which is the basis-confusion class this repo has
+    already paid for.
+    """
+    for h in hist:
+        if str(h.get("metric") or "").strip() == want.strip():
+            return h
+    raise MetricNotFoundError(
+        f"no history for metric {want!r} — this name carries "
+        f"{[str(h.get('metric')) for h in hist]}. Showing another metric under this panel's "
+        f"heading would report a number the case does not rest on.")
+
+
+def multiple_and_price(valuation: dict[str, Any], *,
+                       metric: str | None = None) -> dict[str, Any] | None:
+    """The name's own multiple history, for the metric its case rests on.
+
+    `metric` is the name's declared basis; absent, the repo default is used and the payload says
+    so, because a reader must be able to tell "this is the metric the underwrite is on" from "this
+    is the metric we show when nobody said".
+    """
     hist = (valuation.get("own_history") or {}).get("value") or []
     if not hist or not isinstance(hist, list):
         return None
-    h = hist[0]
+    want = metric or DEFAULT_VALUATION_METRIC
+    h = pick_metric(hist, want)
     cur = _num(h.get("current"))
     if cur is None:
         return None
@@ -84,11 +123,6 @@ def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
     # extra point is the CURRENT mark appended to the historical closes. `low`/`high`/`median`/
     # `percentile` are struck over the HISTORICAL window and exclude it — which is why SMPL's
     # current 5.56x sits BELOW its own stated 6.11x low, a real state and not a data error.
-    #
-    # Stated as a FLAG rather than left to the renderer to infer: a sparkline drawn over every point
-    # beneath a band drawn over n_closes would show a line leaving its own range with nothing saying
-    # why, and the obvious "fix" for that appearance is to widen the band — which would silently
-    # restate the percentile the whole panel turns on.
     n = h.get("n_closes")
     current_is_last = (
         isinstance(n, int) and len(series) == n + 1
@@ -101,6 +135,13 @@ def multiple_and_price(valuation: dict[str, Any]) -> dict[str, Any] | None:
         "n_closes": n, "as_of": h.get("as_of"), "series": series,
         "current_is_last_point": current_is_last,
         "range_excludes_current": current_is_last,
+        # WHETHER THIS IS THE NAME'S DECLARED BASIS or the repo default. The tile must be able to
+        # say which: "the multiple the case rests on" and "a multiple" are different claims.
+        "metric_is_declared": metric is not None,
+        # SORTED, so the payload carries no trace of the input's order. Left as-is this list was
+        # the one remaining thing a reshuffle could change — which the order-independence pin
+        # caught immediately, on the very defect it was written for.
+        "metrics_available": sorted(str(x.get("metric")) for x in hist),
     }
 
 

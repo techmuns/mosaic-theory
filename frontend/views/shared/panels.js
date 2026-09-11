@@ -163,8 +163,14 @@ const BODY = {
     // THE COMPARISON LEADS. A bare "25.8x" answers nothing; "25.8x vs 17.4x median" is a reading.
     const med = (typeof v.median === "number" && isFinite(v.median))
       ? `<b>${x(v.current)}</b> vs ${x(v.median)} median` : `<b>${x(v.current)}</b>`;
-    return `<p class="pn-big">${med}${staleBadge(row, v.as_of)}<small>${
-      escapeHtml(String(v.metric || ""))} · ${pctc(v.percentile)}ile of its own range · as of ${
+    // THE BASIS IS NAMED AND ITS PROVENANCE STATED. "the multiple the case rests on" and "a
+    // multiple we show when nobody said" are different claims, and the tile has to be able to
+    // make only the true one.
+    const basis = v.metric_is_declared
+      ? `<b>${escapeHtml(String(v.metric || ""))}</b> — this name's underwritten basis`
+      : `${escapeHtml(String(v.metric || ""))} — default basis, not declared for this name`;
+    return `<p class="pn-big">${med}${staleBadge(row, v.as_of)}<small>${basis} · ${
+      pctc(v.percentile)}ile of its own range · as of ${
       escapeHtml(fmtDate(v.as_of))}</small></p>`
       + rangeBar(v)
       // THE MARK'S OWN AS-OF LEADS THE LINE, and it is NOT the monitor day. The dossier's multiple
