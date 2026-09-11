@@ -868,7 +868,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -1202,7 +1207,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -1564,7 +1574,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -1740,176 +1755,182 @@
       "missing": [],
       "reason": "",
       "value": {
-        "metric": "EV/EBITDA (TEV/LTM)",
-        "current": 25.809247,
-        "low": 10.934315,
-        "high": 24.782368,
-        "median": 17.365283,
-        "percentile": 1.0,
+        "metric": "P/LTM EPS",
+        "current": 27.264892,
+        "low": 17.496159,
+        "high": 57.63035,
+        "median": 27.713261,
+        "percentile": 0.4864864864864865,
         "n_closes": 37,
         "as_of": "2026-06-30",
         "series": [
           [
             "2017-03-31",
-            16.659732
+            30.411905
           ],
           [
             "2017-06-30",
-            17.538375
+            31.415494
           ],
           [
             "2017-09-29",
-            17.947729
+            35.288864
           ],
           [
             "2017-12-29",
-            18.387363
+            35.207101
           ],
           [
             "2018-03-29",
-            17.365283
+            57.63035
           ],
           [
             "2018-06-29",
-            18.578737
+            47.806398
           ],
           [
             "2018-09-28",
-            19.282916
+            52.130245
           ],
           [
             "2018-12-31",
-            15.788764
+            39.215539
           ],
           [
             "2019-03-29",
-            17.60915
+            26.928989
           ],
           [
             "2019-06-28",
-            14.854759
+            27.16366
           ],
           [
             "2019-09-30",
-            16.183809
+            24.651894
           ],
           [
             "2019-12-31",
-            17.215785
+            28.741571
           ],
           [
             "2020-03-31",
-            13.767523
+            23.63472
           ],
           [
             "2020-06-30",
-            17.049333
+            28.605947
           ],
           [
             "2020-09-30",
-            18.374552
+            32.21637
           ],
           [
             "2020-12-31",
-            21.2367
+            33.866353
           ],
           [
             "2021-03-31",
-            22.204411
+            35.188588
           ],
           [
             "2021-06-30",
-            23.477481
+            32.540044
           ],
           [
             "2021-09-30",
-            21.25664
+            29.001165
           ],
           [
             "2021-12-31",
-            20.427852
+            27.908412
           ],
           [
             "2022-03-31",
-            18.303308
+            24.789878
           ],
           [
             "2022-06-30",
-            13.422001
+            19.706693
           ],
           [
             "2022-09-30",
-            11.521566
+            17.787585
           ],
           [
             "2022-12-30",
-            10.934315
+            17.496159
           ],
           [
             "2023-03-31",
-            13.234257
+            22.76034
           ],
           [
             "2023-06-30",
-            15.384011
+            26.615667
           ],
           [
             "2023-09-29",
-            16.454258
+            27.713261
           ],
           [
             "2023-12-29",
-            16.642059
+            26.810968
           ],
           [
             "2024-03-28",
-            17.32194
+            26.019807
           ],
           [
             "2024-06-28",
-            19.165507
+            27.957106
           ],
           [
             "2024-09-30",
-            16.522989
+            23.80273
           ],
           [
             "2024-12-31",
-            17.686616
+            25.123634
           ],
           [
             "2025-03-31",
-            13.642264
+            19.225356
           ],
           [
             "2025-06-30",
-            14.833976
+            19.668612
           ],
           [
             "2025-09-30",
-            19.832636
+            25.901667
           ],
           [
             "2025-12-31",
-            24.782368
+            30.88284
           ],
           [
             "2026-03-31",
-            21.955508
+            26.624515
           ],
           [
             "2026-06-30",
-            25.809247
+            27.264892
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": true,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       ],
       "render_config": {
+        "valuation_metric": "P/LTM EPS",
         "load_bearing_axis": "multiple"
       }
     },
@@ -2343,7 +2364,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -2683,7 +2709,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -2958,7 +2989,11 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -3216,7 +3251,11 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -3549,7 +3588,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -3984,7 +4028,11 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -4433,7 +4481,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -4820,7 +4873,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -5140,7 +5198,12 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)",
+          "P/LTM EPS"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
@@ -5479,7 +5542,11 @@
           ]
         ],
         "current_is_last_point": true,
-        "range_excludes_current": true
+        "range_excludes_current": true,
+        "metric_is_declared": false,
+        "metrics_available": [
+          "EV/EBITDA (TEV/LTM)"
+        ]
       },
       "sources": [
         "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
