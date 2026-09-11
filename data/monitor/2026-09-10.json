@@ -908,10 +908,10 @@
       "ticker": "AORT",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -927,10 +927,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2025-08-08",
+          "S-3ASR": "2024-03-01"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001628280-25-039226",
+        "shelf registrations 1 (S-3ASR, last 2024-03-01) · employee-plan (S-8) 1 (S-8, last 2025-08-08) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -1234,10 +1239,10 @@
       "ticker": "BRBR",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1249,10 +1254,14 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2024-09-12"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-24-217983",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -1592,10 +1601,10 @@
       "ticker": "EPAM",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1611,10 +1620,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-08-06",
+          "S-3ASR": "2023-10-03"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001140361-26-031685",
+        "shelf registrations 1 (S-3ASR, last 2023-10-03) · employee-plan (S-8) 3 (S-8, last 2026-08-06) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -1928,10 +1942,10 @@
       "ticker": "GOOGL",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -1955,10 +1969,17 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B2": "2026-08-07",
+          "424B5": "2026-08-06",
+          "S-8": "2026-07-23",
+          "S-3ASR": "2026-06-01"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-340264",
+        "shelf registrations 2 (S-3ASR, last 2026-06-01); prospectus supplements 28 (424B2/424B5, last 2026-08-07) · employee-plan (S-8) 1 (S-8, last 2026-07-23) — routine — 3y window to 2026-08-24"
       ],
       "render_config": {}
     },
@@ -2362,10 +2383,10 @@
       "ticker": "IT",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2381,10 +2402,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2025-11-17",
+          "S-3ASR": "2025-11-12"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-25-283946",
+        "shelf registrations 1 (S-3ASR, last 2025-11-12); prospectus supplements 2 (424B5, last 2025-11-17) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -2690,10 +2716,10 @@
       "ticker": "LLY",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2709,10 +2735,15 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B2": "2026-05-08",
+          "S-3ASR": "2025-02-19"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-213175",
+        "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -2969,10 +3000,10 @@
       "ticker": "MVST",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -2992,10 +3023,16 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2025-10-03",
+          "S-3/A": "2025-04-28",
+          "S-3": "2025-01-24"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0000947871-25-000882",
+        "shelf registrations 2 (S-3/S-3/A, last 2025-04-28); prospectus supplements 1 (424B5, last 2025-10-03) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3219,10 +3256,10 @@
       "ticker": "NCNO",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3234,10 +3271,14 @@
             3
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-03-31"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001902733-26-000024",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 3 (S-8, last 2026-03-31) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3541,10 +3582,10 @@
       "ticker": "NFLX",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3564,10 +3605,16 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B5": "2026-07-21",
+          "424B2": "2026-07-20",
+          "S-3ASR": "2024-07-29"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-310568",
+        "shelf registrations 1 (S-3ASR, last 2024-07-29); prospectus supplements 4 (424B2/424B5, last 2026-07-21) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -3974,10 +4021,10 @@
       "ticker": "SMPL",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -3989,10 +4036,14 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8": "2026-02-06"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001104659-26-011163",
+        "no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2026-02-06) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -4140,10 +4191,10 @@
       "ticker": "TECX",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4183,10 +4234,21 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-8 POS": "2026-03-09",
+          "S-8": "2026-02-27",
+          "424B3": "2025-07-15",
+          "S-3": "2025-07-07",
+          "424B5": "2025-06-11",
+          "S-1": "2025-03-26",
+          "S-4/A": "2024-04-29",
+          "S-4": "2024-02-14"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-25→2026-08-24 · latest 0001193125-26-098838",
+        "shelf registrations 1 (S-3, last 2025-07-07); prospectus supplements 14 (424B3/424B5, last 2025-07-15); fresh registrations 2 (S-1, last 2025-03-26); merger registrations 4 (S-4/S-4/A, last 2024-04-29) · employee-plan (S-8) 5 (S-8/S-8 POS, last 2026-03-09) — routine — 3y window to 2026-08-24"
       ],
       "render_config": {}
     },
@@ -4404,10 +4466,10 @@
       "ticker": "UBER",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4431,10 +4493,17 @@
             1
           ]
         ],
+        "last_by_form": {
+          "S-3ASR": "2026-02-13",
+          "424B2": "2025-09-10",
+          "424B3": "2025-09-08",
+          "S-8": "2025-02-14"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001552781-26-000059",
+        "shelf registrations 1 (S-3ASR, last 2026-02-13); prospectus supplements 4 (424B2/424B3, last 2025-09-10) · employee-plan (S-8) 2 (S-8, last 2025-02-14) — routine — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -4784,10 +4853,10 @@
       "ticker": "V",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
@@ -4815,10 +4884,18 @@
             1
           ]
         ],
+        "last_by_form": {
+          "424B3": "2026-04-13",
+          "S-4/A": "2026-04-06",
+          "S-4": "2026-03-05",
+          "424B2": "2026-02-04",
+          "S-3ASR": "2024-07-24"
+        },
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14 · latest 0001193125-26-152096",
+        "shelf registrations 1 (S-3ASR, last 2024-07-24); prospectus supplements 6 (424B2/424B3, last 2026-04-13); merger registrations 5 (S-4/S-4/A, last 2026-04-06) — 3y window to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -5096,20 +5173,22 @@
       "ticker": "VRRM",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
       "value": {
         "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
         "forms": [],
+        "last_by_form": {},
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+        "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
       ],
       "render_config": {}
     },
@@ -5443,20 +5522,22 @@
       "ticker": "WERN",
       "key": "dilution",
       "tier": "universal",
-      "title": "Shelf & prospectus activity",
+      "title": "New securities registered for sale",
       "state": "ready",
-      "changes_the_call": "A shelf being drawn on moves per-share value with no operating news at all.",
-      "caveat": "Filing COUNTS, not amounts. This shows that capacity exists and is being used — it does not size the dilution, and no share count or dollar figure is on file here.",
+      "changes_the_call": "New SHARES sold shrink every per-share figure the case rests on, with no operating news at all. Bonds sold do not — and the count above includes both.",
+      "caveat": "These filings MIX DEBT AND EQUITY and this panel does not separate them — a sample of eight of Alphabet's showed three bond offerings and four share registrations. It counts filings, not amounts: it cannot tell you whether your slice of the company got smaller.",
       "cadence": "weekly",
       "missing": [],
       "reason": "",
       "value": {
         "line": "no registration statements or prospectus supplements on file in the 3y to 2026-08-14",
         "forms": [],
+        "last_by_form": {},
         "window_days": 1095
       },
       "sources": [
-        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14"
+        "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-08-15→2026-08-14",
+        "no registration statements or prospectus supplements on file in the 3y to 2026-08-14"
       ],
       "render_config": {}
     },
